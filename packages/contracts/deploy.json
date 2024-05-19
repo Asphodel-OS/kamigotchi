@@ -154,7 +154,9 @@
         "IdOwnsConditionComponent",
         "IsRewardComponent",
         "IndexComponent",
+        "LevelComponent",
         "LogicTypeComponent",
+        "NameComponent",
         "TypeComponent"
       ]
     },
@@ -170,6 +172,7 @@
         "IsCompleteComponent",
         "IndexComponent",
         "IndexRoomComponent",
+        "LevelComponent",
         "LogicTypeComponent",
         "NameComponent",
         "TypeComponent"

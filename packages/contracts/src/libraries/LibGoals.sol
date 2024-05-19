@@ -5,6 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { LibQuery } from "solecs/LibQuery.sol";
 
 import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
@@ -15,6 +16,7 @@ import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComp
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -35,7 +37,13 @@ import { LibScore } from "libraries/LibScore.sol";
  *   - to achieve a Goal with multiple objectives, create multiple Goals
  * - Requirements (generic account requirements via LibBoolean)
  * - Rewards (e.g. coins, items, etc)
- *   - Rewards are lazily distributed depending on Quest Contribution
+ *   - Tiered - eg Bronze, Silver, Gold
+ *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
+ *     - Uses LevelComp as the min contribution to qualify for a tier
+ *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
+ *   - Shape: Condition + Level + Name
+ *     - Condition shape handles reward type and quantity
+ *     - Logic type is either "REWARD" or "DISPLAY_ONLY"
  * - Balance
  *   - Stores current goal progress
  *
@@ -92,12 +100,23 @@ library LibGoals {
   }
 
   /// @notice adds a reward to a goal
-  /// @dev rewards are either split according to contribution %, or given out equally
-  /// @dev piggybacks off LibBoolean. reward.logic is either "PROPORTIONAL", "EQUAL", or "DISPLAY_ONLY"
+  /**  @dev
+   * - Rewards (e.g. coins, items, etc)
+   *   - Tiered - eg Bronze, Silver, Gold
+   *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
+   *     - Uses LevelComp as the min contribution to qualify for a tier
+   *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
+   *   - Shape: Condition + Level + Name
+   *     - Condition shape handles reward type and quantity
+   *     - Logic type is either "REWARD" or "DISPLAY_ONLY"
+   */
+  /// @param minContribution needed to qualify for tier; "DISPLAY_ONLY" do not have this
   function addReward(
     IWorld world,
     IUintComp components,
     uint32 goalIndex,
+    string memory name,
+    uint256 minContribution,
     Condition memory reward
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
@@ -107,12 +126,13 @@ library LibGoals {
     );
 
     IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
     require(
-      reward.logic.eq("PROPORTIONAL") ||
-        reward.logic.eq("EQUAL") ||
-        reward.logic.eq("DISPLAY_ONLY"),
+      reward.logic.eq("REWARD") || reward.logic.eq("DISPLAY_ONLY"),
       "LibGoals: invalid reward distribution"
     );
+    if (!reward.logic.eq("DISPLAY_ONLY"))
+      LevelComponent(getAddressById(components, LevelCompID)).set(id, minContribution);
     LibBoolean.create(components, id, reward);
   }
 
@@ -134,6 +154,8 @@ library LibGoals {
     for (uint256 i = 0; i < reqIDs.length; i++) {
       LibBoolean.unsetAll(components, reqIDs[i]);
       IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).remove(reqIDs[i]);
+      NameComponent(getAddressById(components, NameCompID)).remove(reqIDs[i]);
+      LevelComponent(getAddressById(components, LevelCompID)).remove(reqIDs[i]);
     }
 
     // remove rewards
@@ -178,51 +200,48 @@ library LibGoals {
     return amt;
   }
 
-  /// @notice distributes rewards
   function distributeRewards(
     IWorld world,
     IUintComp components,
+    uint32 goalIndex,
     uint256 goalID,
+    uint256 accID
+  ) internal {
+    // filters out DISPLAY_ONLY rewards via Level check
+    uint256[] memory rewardIDs = queryActiveRewards(components, goalIndex);
+
+    BalanceComponent balComp = BalanceComponent(getAddressById(components, BalCompID));
+    uint256 accCont = balComp.get(genContributionID(goalID, accID));
+
+    _distributeRewards(world, components, balComp, accCont, accID, rewardIDs);
+  }
+
+  /// @notice internal helper make it a little more readable
+  function _distributeRewards(
+    IWorld world,
+    IUintComp components,
+    BalanceComponent balComp,
+    uint256 accCont,
     uint256 accID,
     uint256[] memory rewardIDs
   ) internal {
-    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
-    LogicTypeComponent logicComp = LogicTypeComponent(getAddressById(components, LogicTypeCompID));
+    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
     IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    BalanceComponent balComp = BalanceComponent(getAddressById(components, BalCompID));
+    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
 
     for (uint256 i; i < rewardIDs.length; i++) {
-      distributeReward(
+      // check tier qualification; skip if unqualified
+      if (levelComp.get(rewardIDs[i]) > accCont) continue;
+
+      LibAccount.incBalanceOf(
         world,
         components,
-        goalID,
         accID,
-        Condition(
-          typeComp.get(rewardIDs[i]),
-          logicComp.get(rewardIDs[i]),
-          indexComp.has(rewardIDs[i]) ? indexComp.get(rewardIDs[i]) : 0,
-          balComp.has(rewardIDs[i]) ? balComp.get(rewardIDs[i]) : 0
-        )
+        typeComp.get(rewardIDs[i]),
+        indexComp.has(rewardIDs[i]) ? indexComp.get(rewardIDs[i]) : 0,
+        balComp.has(rewardIDs[i]) ? balComp.get(rewardIDs[i]) : 0
       );
     }
-  }
-
-  function distributeReward(
-    IWorld world,
-    IUintComp components,
-    uint256 goalID,
-    uint256 accID,
-    Condition memory reward
-  ) internal {
-    if (reward.logic.eq("DISPLAY_ONLY")) return;
-    if (reward.logic.eq("PROPORTIONAL")) {
-      // gets proportional amount based on contribution
-      BalanceComponent balComp = BalanceComponent(getAddressById(components, BalCompID));
-      uint256 total = balComp.get(goalID);
-      uint256 contribution = balComp.get(genContributionID(goalID, accID));
-      reward.value = (reward.value * contribution) / total;
-    }
-    LibAccount.incBalanceOf(world, components, accID, reward.type_, reward.index, reward.value);
   }
 
   ////////////////////
@@ -339,6 +358,24 @@ library LibGoals {
     return
       IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).getEntitiesWithValue(
         pointer
+      );
+  }
+
+  ////////////////////
+  // QUERIES
+
+  /// @notice gets rewards that arent only for display
+  /// @dev only active rewards have a level component (minimum contribution)
+  function queryActiveRewards(
+    IUintComp components,
+    uint32 goalIndex
+  ) internal view returns (uint256[] memory) {
+    uint256 pointer = genRwdPtr(goalIndex);
+    return
+      LibQuery.getIsWithValue(
+        getComponentById(components, IdOwnsCondCompID),
+        getComponentById(components, LevelCompID),
+        abi.encode(pointer)
       );
   }
 

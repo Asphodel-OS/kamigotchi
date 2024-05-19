@@ -20,13 +20,7 @@ contract GoalClaimSystem is System {
     require(goalID != 0, "goal not found");
     require(LibGoals.canClaim(components, goalID, accountID), "cannot claim from this goal");
 
-    LibGoals.distributeRewards(
-      world,
-      components,
-      goalID,
-      accountID,
-      LibGoals.getRewards(components, goalIndex)
-    );
+    LibGoals.distributeRewards(world, components, goalIndex, goalID, accountID);
     LibGoals.setClaimed(components, goalID, accountID);
 
     // standard logging and tracking
