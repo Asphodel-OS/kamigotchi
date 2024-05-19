@@ -34,34 +34,34 @@ library LibQuery {
     return entities;
   }
 
-  /// @notice to query a value entry for an entity via IsComponent (eg isAcc)
+  /// @notice to query for an entity that has two components, with a matching value for the first comp
   /// @dev primary components must be a value without global scaling
   function getIsWithValue(
     IUintComp components,
-    uint256 compA,
-    uint256 compB,
+    uint256 compHasValue,
+    uint256 compHas,
     bytes memory value
   ) internal view returns (uint256[] memory) {
     return
       getIsWithValue(
-        getComponentById(components, compA),
-        getComponentById(components, compB),
+        getComponentById(components, compHasValue),
+        getComponentById(components, compHas),
         value
       );
   }
 
-  /// @notice to query a value entry for an entity via IsComponent (eg isAcc)
+  /// @notice to query for an entity that has two components, with a matching value for the first comp
   /// @dev primary components must be a value without global scaling
   function getIsWithValue(
-    IComponent compA,
-    IComponent compB,
+    IComponent compHasValue,
+    IComponent compHas,
     bytes memory value
   ) internal view returns (uint256[] memory) {
-    uint256[] memory hasValue = compA.getEntitiesWithValue(value);
+    uint256[] memory hasValue = compHasValue.getEntitiesWithValue(value);
 
     uint256 numIs;
     for (uint256 i = 0; i < hasValue.length; i++) {
-      if (compB.has(hasValue[i])) numIs++;
+      if (compHas.has(hasValue[i])) numIs++;
       else hasValue[i] = 0;
     }
 

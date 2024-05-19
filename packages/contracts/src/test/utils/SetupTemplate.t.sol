@@ -396,9 +396,17 @@ abstract contract SetupTemplate is TestSetupImports {
     return abi.decode(__GoalCreateRequirementSystem.executeTyped(index, condition), (uint256));
   }
 
-  function _createGoalReward(uint32 index, Condition memory condition) internal returns (uint256) {
+  function _createGoalReward(
+    uint32 index,
+    uint256 minCont,
+    Condition memory condition
+  ) internal returns (uint256) {
     vm.prank(deployer);
-    return abi.decode(__GoalCreateRewardSystem.executeTyped(index, condition), (uint256));
+    return
+      abi.decode(
+        __GoalCreateRewardSystem.executeTyped(index, "name", minCont, condition),
+        (uint256)
+      );
   }
 
   function _createRoom(

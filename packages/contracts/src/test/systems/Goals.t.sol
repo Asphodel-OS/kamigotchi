@@ -9,8 +9,8 @@ contract GoalsTest is SetupTemplate {
     uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0));
     uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 0, 0));
     uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 0, 0));
-    uint256 rewardID1 = _createGoalReward(1, Condition("type", "EQUAL", 0, 0));
-    uint256 rewardID2 = _createGoalReward(1, Condition("type", "PROPORTIONAL", 0, 0));
+    uint256 rewardID1 = _createGoalReward(1, 0, Condition("type", "REWARD", 0, 0));
+    uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 0, 0));
 
     vm.prank(deployer);
     __GoalDeleteSystem.executeTyped(index);
@@ -20,67 +20,100 @@ contract GoalsTest is SetupTemplate {
     uint32 goalIndex = 1;
     uint256 targetAmt = 1111;
     uint256 currContribAmt = 0;
-    _createGenericItem(1); // reward - every contributer gets 1
-    _createGenericItem(2); // reward - gets based on contribution
+    _createGenericItem(1); // reward - bronze tier
+    _createGenericItem(2); // reward - silver tier
+    _createGenericItem(3); // reward - gold tier
     uint256 goalID = _createGoal(goalIndex, 0, Condition("COIN", "CURR_MIN", 0, targetAmt));
-    uint256 rewardEqID = _createGoalReward(goalIndex, Condition("ITEM", "EQUAL", 1, 1));
-    uint256 rewardPropID = _createGoalReward(
-      goalIndex,
-      Condition("ITEM", "PROPORTIONAL", 2, targetAmt)
-    );
-    _fundAccount(alice.index, 100);
-    _fundAccount(bob.index, 2000);
+    uint256 rwdBronze = _createGoalReward(goalIndex, 100, Condition("ITEM", "REWARD", 1, 1));
+    uint256 rwdSilver = _createGoalReward(goalIndex, 200, Condition("ITEM", "REWARD", 2, 1));
+    uint256 rwdGold = _createGoalReward(goalIndex, 300, Condition("ITEM", "REWARD", 3, 1));
+    uint256 rwdDisplay = _createGoalReward(goalIndex, 0, Condition("ITEM", "DISPLAY_ONLY", 3, 1));
+
+    /////
+    // SETTING ACCOUNTS
+    PlayerAccount memory accLurker = _accounts[0]; // does not contribute
+    PlayerAccount memory accSlacker = _accounts[1]; // contributes a little, < bronze
+    PlayerAccount memory accBronze = _accounts[2]; // contributes till bronze
+    PlayerAccount memory accSilver = _accounts[3]; // contributes till silver
+    PlayerAccount memory accGold = _accounts[4]; // contributes till gold
+
+    _fundAccount(accSlacker.index, 50);
+    _fundAccount(accBronze.index, 100);
+    _fundAccount(accSilver.index, 200);
+    _fundAccount(accGold.index, 2000);
 
     /////
     // CONTRIBUTIONS
 
-    // alice contributes 100
-    vm.prank(alice.operator);
-    _GoalContributeSystem.executeTyped(goalIndex, 100);
-    currContribAmt += 100;
-    _assertContribution(goalID, alice.id, currContribAmt);
-    assertEq(0, _CoinComponent.get(alice.id));
+    // check contribution shape; slacker contributes 50
+    vm.prank(accSlacker.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 50);
+    currContribAmt += 50;
+    _assertContribution(goalID, accSlacker.id, 50);
+    assertEq(0, _CoinComponent.get(accSlacker.id));
     _assertGoalStatus(goalID, currContribAmt, false);
 
-    // bob first contributes another 100
-    vm.prank(bob.operator);
+    // add contribution for bronze and silver (alr checked shape)
+    vm.prank(accBronze.operator);
     _GoalContributeSystem.executeTyped(goalIndex, 100);
     currContribAmt += 100;
-    _assertContribution(goalID, bob.id, 100);
-    assertEq(1900, _CoinComponent.get(bob.id));
-    _assertGoalStatus(goalID, currContribAmt, false);
+    vm.prank(accSilver.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 200);
+    currContribAmt += 200;
 
-    // bob contributes the rest, but it caps out at 1111 - 200 = 911
-    vm.prank(bob.operator);
-    _GoalContributeSystem.executeTyped(goalIndex, 1900);
-    _assertContribution(goalID, bob.id, 1011);
-    assertEq(989, _CoinComponent.get(bob.id)); // 2000 - 1011 = 989
+    // gold first contribution
+    vm.prank(accGold.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 100);
+    currContribAmt += 100;
+
+    // gold contributes, but it caps out at 1111 - 450 = 611
+    vm.prank(accGold.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 1000);
+    currContribAmt += 611;
+    _assertContribution(goalID, accGold.id, 761);
+    assertEq(1239, _CoinComponent.get(accGold.id)); // 2000 - 761 = 1289
     _assertGoalStatus(goalID, 1111, true);
 
-    // bob tries to contribute again
-    vm.prank(bob.operator);
+    // gold tries to contribute again
+    vm.prank(accGold.operator);
     vm.expectRevert("cannot contribute to this goal");
     _GoalContributeSystem.executeTyped(goalIndex, 100);
 
     /////
     // REWARDS
 
-    // alice claims rewards
-    vm.prank(alice.operator);
-    _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(alice.index, 1), "equal reward dist mismatch"); // equally rewarded
-    assertEq(100, _getItemBalance(alice.index, 2), "proportional reward dist mismatch"); // proportional rewarded
-
-    // bob claims rewards
-    vm.prank(bob.operator);
-    _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(bob.index, 1), "equal reward dist mismatch"); // equally rewarded
-    assertEq(1011, _getItemBalance(bob.index, 2), "proportional reward dist mismatch"); // proportional rewarded
-
-    // bob tries to claim again
-    vm.prank(bob.operator);
+    // non participator tries to claim
+    vm.prank(accLurker.operator);
     vm.expectRevert("cannot claim from this goal");
     _GoalClaimSystem.executeTyped(goalIndex);
+
+    // not-even-bronze claims, gets nothing
+    vm.prank(accSlacker.operator);
+    _GoalClaimSystem.executeTyped(goalIndex);
+    assertEq(0, _getItemBalance(accSlacker.index, 1));
+    assertEq(0, _getItemBalance(accSlacker.index, 2));
+    assertEq(0, _getItemBalance(accSlacker.index, 3));
+
+    // bronze claims, gets bronze tier
+    vm.prank(accBronze.operator);
+    _GoalClaimSystem.executeTyped(goalIndex);
+    assertEq(1, _getItemBalance(accBronze.index, 1));
+    assertEq(0, _getItemBalance(accBronze.index, 2));
+    assertEq(0, _getItemBalance(accBronze.index, 3));
+
+    // silver claims, gets silver tier
+    vm.prank(accSilver.operator);
+    _GoalClaimSystem.executeTyped(goalIndex);
+    assertEq(1, _getItemBalance(accSilver.index, 1));
+    assertEq(1, _getItemBalance(accSilver.index, 2));
+    assertEq(0, _getItemBalance(accSilver.index, 3));
+
+    // gold claims, gets gold tier
+    vm.prank(accGold.operator);
+    _GoalClaimSystem.executeTyped(goalIndex);
+    assertEq(1, _getItemBalance(accGold.index, 1));
+    assertEq(1, _getItemBalance(accGold.index, 2));
+    assertEq(1, _getItemBalance(accGold.index, 3));
   }
 
   //////////////////
