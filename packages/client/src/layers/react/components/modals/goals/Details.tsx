@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Goal } from 'layers/network/shapes/Goal';
+import { Goal, sortRewards } from 'layers/network/shapes/Goal';
 import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
 import { HelpIcon } from 'layers/react/components/library/HelpIcon';
 import { ItemIconHorizontal } from 'layers/react/components/library/ItemIconHorizontal';
@@ -12,69 +12,68 @@ interface Props {
 }
 
 // type to store a process reward's DetailedEntity and balance
-interface Reward {
+interface DisplayRwd {
   entity: DetailedEntity;
-  type: string; // condition logic - either PROPORTIONAL, EQUAL, or DISPLAY_ONLY
+  tier: string; // tier name
   balance: number;
+}
+
+interface RewardTier {
+  name: string;
+  rewards: DisplayRwd[];
+  cutoff: number;
 }
 
 // the table rendering of the leaderboard modal
 export const Details = (props: Props) => {
   const { goal, getDescribedEntity } = props;
 
-  const [individualRwds, setIndividualRwds] = useState<Reward[]>([]);
-  const [communityRwds, setCommunityRwds] = useState<Reward[]>([]);
+  const [displayRwds, setDisplayRwds] = useState<RewardTier[]>([]);
 
   useEffect(() => {
-    const rewards = props.goal.rewards.map((r) => ({
-      entity: getDescribedEntity(r.target.type, r.target.index ?? 0),
-      type: r.logic,
-      balance: (r.target.value ?? 0) * 1,
-    }));
-    setIndividualRwds(rewards.filter((r) => r.type === 'PROPORTIONAL'));
-    setCommunityRwds(rewards.filter((r) => r.type === 'EQUAL' || r.type === 'DISPLAY_ONLY'));
+    const sortedRaw = sortRewards(props.goal.rewards);
+
+    // converts rewards into something displayable
+    const rewards: RewardTier[] = [];
+    sortedRaw.forEach((value, key) => {
+      rewards.push({
+        name: key,
+        rewards: value.map((rwd) => ({
+          entity: getDescribedEntity(rwd.value.target.type, rwd.value.target.index ?? 0),
+          tier: key,
+          balance: (rwd.value.target.value ?? 0) * 1,
+        })),
+        cutoff: value[0].cutoff * 1,
+      });
+    });
+    setDisplayRwds(rewards);
   }, [goal]);
 
   ////////////////
   // SMALL DISPLAYS
 
-  const RewardsRow = (rewards: Reward[]) => {
+  const TierBox = (tier: RewardTier) => {
+    const helpText =
+      tier.cutoff > 0
+        ? `Have a contribution score of at least ${tier.cutoff}`
+        : 'Everyone gets this';
     return (
-      <Row>
-        {rewards.map((reward) => (
-          <ItemIconHorizontal
-            item={reward.entity}
-            size='small'
-            balance={reward.balance}
-            styleOverride={{ box: { borderColor: '#444' } }}
-          />
-        ))}
-      </Row>
-    );
-  };
-
-  const CommunityBox = () => {
-    if (communityRwds.length === 0) return <></>;
-    return (
-      <Box>
+      <Box style={{ margin: '0 0.1vw 0 0' }}>
         <Row>
-          <SmallTitleText>Community</SmallTitleText>
-          <HelpIcon tooltip={['A prize pool that is split according to contribution.']} />
+          <SmallTitleText>{tier.name}</SmallTitleText>
+          <HelpIcon tooltip={[helpText]} />
         </Row>
-        {RewardsRow(communityRwds)}
-      </Box>
-    );
-  };
 
-  const IndividualBox = () => {
-    if (individualRwds.length === 0) return <></>;
-    return (
-      <Box>
         <Row>
-          <SmallTitleText>Individual</SmallTitleText>
-          <HelpIcon tooltip={['All participants get these rewards.']} />
+          {tier.rewards.map((reward) => (
+            <ItemIconHorizontal
+              item={reward.entity}
+              size='small'
+              balance={reward.balance}
+              styleOverride={{ box: { borderColor: '#444', marginBottom: '0' } }}
+            />
+          ))}
         </Row>
-        {RewardsRow(individualRwds)}
       </Box>
     );
   };
@@ -92,9 +91,10 @@ export const Details = (props: Props) => {
   const RewardsBox = (
     <div>
       <SubTitleText>Rewards</SubTitleText>
-      <Row>
-        {IndividualBox()}
-        {CommunityBox()}
+      <Row style={{ justifyContent: 'flex-start' }}>
+        {displayRwds.map((tier) => {
+          return TierBox(tier);
+        })}
       </Row>
     </div>
   );

@@ -44,7 +44,7 @@ export type ConditionStructOutput = [string, string, number, BigNumber] & {
 export interface _GoalCreateRewardSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,(string,string,uint32,uint256))": FunctionFragment;
+    "executeTyped(uint32,string,uint256,(string,string,uint32,uint256))": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -63,7 +63,12 @@ export interface _GoalCreateRewardSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, ConditionStruct]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      ConditionStruct
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -135,6 +140,8 @@ export interface _GoalCreateRewardSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      cutoff: PromiseOrValue<BigNumberish>,
       reward: ConditionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -154,6 +161,8 @@ export interface _GoalCreateRewardSystem extends BaseContract {
 
   executeTyped(
     goalIndex: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
+    cutoff: PromiseOrValue<BigNumberish>,
     reward: ConditionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -173,6 +182,8 @@ export interface _GoalCreateRewardSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      cutoff: PromiseOrValue<BigNumberish>,
       reward: ConditionStruct,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -204,6 +215,8 @@ export interface _GoalCreateRewardSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      cutoff: PromiseOrValue<BigNumberish>,
       reward: ConditionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -224,6 +237,8 @@ export interface _GoalCreateRewardSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      cutoff: PromiseOrValue<BigNumberish>,
       reward: ConditionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

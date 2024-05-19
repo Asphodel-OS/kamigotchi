@@ -147,9 +147,10 @@ export function setupWorldAPI(systems: any, provider: any) {
       0,
       20000
     );
-    await api.goal.add.reward(1, 'Door unlock', 'DISPLAY_ONLY', 0, 0);
-    await api.goal.add.reward(1, 'ITEM', 'PROPORTIONAL', 2, 400);
-    await api.goal.add.reward(1, 'ITEM', 'EQUAL', 1, 1);
+    await api.goal.add.reward(1, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, 0);
+    await api.goal.add.reward(1, 'Bronze', 100, 'ITEM', 'REWARD', 1, 1);
+    await api.goal.add.reward(1, 'Silver', 400, 'ITEM', 'REWARD', 2, 2);
+    await api.goal.add.reward(1, 'Gold', 800, 'ITEM', 'REWARD', 3, 3);
   }
 
   async function deleteGoals(indices: number[]) {

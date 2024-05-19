@@ -88,13 +88,15 @@ export function createAdminAPI(systems: any) {
 
   async function createGoalReward(
     goalIndex: number,
+    name: string,
+    cutoff: number,
     type: string,
     logic: string,
     conIndex: number,
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create.Reward'].executeTyped(goalIndex, [
+    return systems['system.Goal.Create.Reward'].executeTyped(goalIndex, name, cutoff, [
       type,
       logic,
       conIndex,

@@ -30,13 +30,20 @@ export interface Goal {
   currBalance: number;
   objective: Condition;
   requirements: Condition[];
-  rewards: Condition[];
+  rewards: Reward[];
   complete: boolean;
 }
 
 // Contribution represents details of individual's contribution to a goal
 export interface Contribution extends Score {
   claimed?: boolean;
+}
+
+export interface Reward {
+  id: EntityID;
+  cutoff: number;
+  name: string;
+  value: Condition;
 }
 
 ///////////////////
@@ -59,6 +66,25 @@ export const getGoalByIndex = (world: World, components: Components, index: numb
     };
 
   return getGoal(world, components, entityIndex);
+};
+
+// sorts rewards by tier
+export const sortRewards = (rewards: Reward[]): Map<string, Reward[]> => {
+  rewards.sort((a, b) => a.cutoff - b.cutoff);
+
+  const tiers = new Map<string, Reward[]>();
+  for (let i = 0; i < rewards.length; i++) {
+    if (rewards[i].value.logic === 'DISPLAY_ONLY') {
+      // set display only rewards to the front
+      // because their cutoff is 0, will be brought front during sort
+      tiers.set(rewards[i].name, [rewards[i]]);
+    } else {
+      if (!tiers.has(rewards[i].name)) tiers.set(rewards[i].name, []);
+      tiers.get(rewards[i].name)!.push(rewards[i]);
+    }
+  }
+
+  return tiers;
 };
 
 export const canContribute = (
@@ -104,6 +130,21 @@ export const getGoal = (world: World, components: Components, entityIndex: Entit
     rewards: queryGoalRewards(world, components, goalIndex),
     complete: hasComponent(IsComplete, entityIndex) || (false as boolean),
     room: getComponentValue(RoomIndex, entityIndex)?.value || (0 as number),
+  };
+};
+
+export const getReward = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): Reward => {
+  const { Level, Name } = components;
+
+  return {
+    id: world.entities[entityIndex],
+    cutoff: getComponentValue(Level, entityIndex)?.value || (0 as number),
+    name: getComponentValue(Name, entityIndex)?.value || ('' as string),
+    value: getCondition(world, components, entityIndex),
   };
 };
 
@@ -160,7 +201,7 @@ const queryGoalRequirements = (
   return raw.map((index): Condition => getCondition(world, components, index));
 };
 
-const queryGoalRewards = (world: World, components: Components, goalIndex: number): Condition[] => {
+const queryGoalRewards = (world: World, components: Components, goalIndex: number): Reward[] => {
   const { OwnsConditionID } = components;
 
   const pointerID = getRwdPtr(goalIndex);
@@ -168,7 +209,7 @@ const queryGoalRewards = (world: World, components: Components, goalIndex: numbe
   const queryFragments = [HasValue(OwnsConditionID, { value: pointerID })];
   const raw = Array.from(runQuery(queryFragments));
 
-  return raw.map((index): Condition => getCondition(world, components, index));
+  return raw.map((index): Reward => getReward(world, components, index));
 };
 
 /////////////////
