@@ -14,7 +14,7 @@ contract _GoalCreateRewardSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint32 goalIndex, string memory name, uint256 minCont, Condition memory reward) = abi.decode(
+    (uint32 goalIndex, string memory name, uint256 cutoff, Condition memory reward) = abi.decode(
       arguments,
       (uint32, string, uint256, Condition)
     );
@@ -23,7 +23,7 @@ contract _GoalCreateRewardSystem is System {
     require(!LibString.eq(reward.type_, ""), "Req type cannot be empty");
     require(!LibString.eq(reward.logic, ""), "Req logic cannot be empty");
 
-    uint256 id = LibGoals.addReward(world, components, goalIndex, name, minCont, reward);
+    uint256 id = LibGoals.addReward(world, components, goalIndex, name, cutoff, reward);
 
     return abi.encode(id);
   }
@@ -31,9 +31,9 @@ contract _GoalCreateRewardSystem is System {
   function executeTyped(
     uint32 goalIndex,
     string memory name,
-    uint256 minCont,
+    uint256 cutoff,
     Condition memory reward
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(goalIndex, name, minCont, reward));
+    return execute(abi.encode(goalIndex, name, cutoff, reward));
   }
 }
