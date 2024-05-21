@@ -43,7 +43,7 @@ export interface Reward {
   id: EntityID;
   cutoff: number;
   name: string;
-  value: Condition;
+  Reward: Condition;
 }
 
 ///////////////////
@@ -144,7 +144,7 @@ export const getReward = (
     id: world.entities[entityIndex],
     cutoff: getComponentValue(Level, entityIndex)?.value || (0 as number),
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    value: getCondition(world, components, entityIndex),
+    Reward: getCondition(world, components, entityIndex),
   };
 };
 
