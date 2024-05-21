@@ -26,7 +26,7 @@ export async function initSkills(api: AdminAPI, indices?: number[]) {
 async function initSkill(api: AdminAPI, skill: any) {
   const index = Number(skill['Index']);
   const name = skill['Name'];
-  const filename = name.toLowerCase().replace(/ /g, '-');
+  const filename = name.toLowerCase().replace(/ /g, '_');
   const mediaUri = `images/skills/${filename}.png`;
   const description = skill['Description'] ?? '';
   const tree = skill['Tree'];

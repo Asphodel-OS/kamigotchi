@@ -12,7 +12,7 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
   // Friends
-  await api.config.set.number('BASE_FRIENDS_LIMIT', 10);
+  await api.config.set.number('FRIENDS_BASE_LIMIT', 10);
   await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 
   // Kami Mint Price and Limits
