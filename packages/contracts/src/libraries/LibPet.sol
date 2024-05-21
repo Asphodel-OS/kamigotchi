@@ -154,7 +154,7 @@ library LibPet {
   // Calculate the full cooldown duration of a Kami's Standard Action
   function calcCooldown(IUintComp components, uint256 id) internal view returns (uint256) {
     int256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN").toInt256();
-    int256 shift = LibBonus.getRaw(components, id, "STD_COOLDOWN");
+    int256 shift = LibBonus.getRaw(components, id, "STND_COOLDOWN_SHIFT");
     int256 cooldown = base + shift;
     if (cooldown < 0) return 0;
     return cooldown.toUint256();
@@ -179,7 +179,7 @@ library LibPet {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_MUSU_STRAIN");
-    int256 bonusBoost = LibBonus.getRaw(components, id, "STD_STRAIN_BOOST");
+    int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
     uint256 precision = 10 ** uint(config[3] + config[7]);

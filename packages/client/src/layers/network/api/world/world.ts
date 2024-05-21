@@ -10,7 +10,7 @@ import { initNpcs } from './npcs';
 import { deleteQuests, initLocalQuests, initQuests, initQuestsByIndex } from './quests';
 import { deleteRelationships, initRelationships } from './relationships';
 import { deleteRooms, initRoom, initRooms } from './rooms';
-import { deleteSkills, initSkills, initSkillsByIndex } from './skills';
+import { deleteSkills, initSkills } from './skills';
 import { deleteTraits, initTraits } from './traits';
 import { setAutoMine, setTimestamp } from './utils';
 
@@ -89,8 +89,7 @@ export function setupWorldAPI(systems: any, provider: MUDJsonRpcProvider) {
       delete: (indices: number[]) => deleteRooms(api, indices),
     },
     skill: {
-      init: () => initSkills(api),
-      initByIndex: (indices: number[]) => initSkillsByIndex(api, indices),
+      init: (indices?: number[]) => initSkills(api, indices),
       delete: (indices: number[]) => deleteSkills(api, indices),
     },
     traits: {

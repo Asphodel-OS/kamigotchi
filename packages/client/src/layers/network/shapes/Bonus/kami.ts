@@ -114,9 +114,9 @@ export const getBonuses = (
         nudge: 0,
         ratio: 0,
         shift: 0,
-        boost: getBonusValue(world, components, holderID, 'STD_STRAIN_BOOST', 3),
+        boost: getBonusValue(world, components, holderID, 'STND_STRAIN_BOOST', 3),
       },
-      cooldown: getBonusValue(world, components, holderID, 'STD_COOLDOWN', 0),
+      cooldown: getBonusValue(world, components, holderID, 'STND_COOLDOWN_SHIFT', 0),
     },
   };
 

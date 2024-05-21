@@ -1,66 +1,76 @@
+import effectsCSV from 'assets/data/skills/effects.csv';
 import skillsCSV from 'assets/data/skills/skills.csv';
 import { AdminAPI } from '../admin';
 import { sleepIf } from './utils';
 
-export async function initSkills(api: AdminAPI) {
+// inits all skills or by optional indices parameter
+export async function initSkills(api: AdminAPI, indices?: number[]) {
   for (let i = 0; i < skillsCSV.length; i++) {
     const skill = skillsCSV[i];
+    const index = Number(skill['Index']);
+    if (!index) continue;
+
+    if (indices && !indices.includes(index)) continue; // optional indices filter
+
     await sleepIf();
     try {
-      if (skill['Status'] !== 'For Implementation') continue;
-      if (skill['Class'] === 'Skill' || skill['Class'] === '') await initSkill(api, skill);
-      else if (skill['Class'] === 'Effect') await initSkillEffect(api, skill);
-      else if (skill['Class'] === 'Requirement') await initSkillRequirement(api, skill);
-    } catch {}
+      await initSkill(api, skill);
+      await initEffect(api, skill);
+      await initMutualExclusionRequirement(api, skill);
+    } catch (e) {
+      console.error(`Could not create skill ${index}`, e);
+    }
   }
 }
 
-export async function initSkillsByIndex(api: AdminAPI, indices: number[]) {
-  for (let i = 0; i < skillsCSV.length; i++) {
-    const skill = skillsCSV[i];
-    if (!indices.includes(Number(skill['Index']))) continue;
-    await sleepIf();
-    try {
-      if (skill['Status'] !== 'For Implementation') continue;
-      if (skill['Class'] === 'Skill' || skill['Class'] === '') await initSkill(api, skill);
-      else if (skill['Class'] === 'Effect') await initSkillEffect(api, skill);
-      else if (skill['Class'] === 'Requirement') await initSkillRequirement(api, skill);
-    } catch {}
-  }
-}
+async function initSkill(api: AdminAPI, skill: any) {
+  const index = Number(skill['Index']);
+  const name = skill['Name'];
+  const filename = name.toLowerCase().replace(/ /g, '-');
+  const mediaUri = `images/skills/${filename}.png`;
+  const description = skill['Description'] ?? '';
+  const tree = skill['Tree'];
+  const cost = Number(skill['Cost']);
+  const max = Number(skill['Max']);
+  const tier = Number(skill['Tier']);
 
-export async function initSkill(api: AdminAPI, entry: any) {
   await api.registry.skill.create(
-    Number(entry['Index']), // individual skill index
+    index,
     'KAMI', // skills are only for Kami rn
     'PASSIVE', // all skills are passive rn
-    entry['Tree'],
-    entry['Name'], // name of skill
-    entry['Description'] ?? '',
-    Number(entry['Cost per level']), // cost of skill
-    Number(entry['Max Lvl']), // max level of skill
-    Number(entry['Tier']) - 1,
-    'images/skills/' + entry['Name'].toLowerCase() + '.png' // media uri
+    tree,
+    name,
+    description,
+    cost,
+    max,
+    tier - 1,
+    mediaUri
   );
 }
 
-export async function initSkillEffect(api: AdminAPI, entry: any) {
-  await api.registry.skill.add.effect(
-    Number(entry['Index']), // individual skill index
-    entry['ConType'], // type of effect
-    entry['ConSubtype'], // subtype of effect
-    entry['ConValue'] // value of effect
-  );
+async function initEffect(api: AdminAPI, skill: any) {
+  const index = Number(skill['Index']);
+  const key = skill['Effect'].split(' ')[0];
+  const effect = effectsCSV.find((e: any) => e['Key'] === key);
+
+  const type = effect['Type']; // effect context
+  const ast = effect['AsphoAST'].toUpperCase();
+  const operation = effect['Operation'].toUpperCase();
+  const subtype = type === 'STAT' ? `${ast}` : `${ast}_${operation}`;
+  const value = Number(skill['Value']) * 10 ** Number(effect['Precision']);
+  await api.registry.skill.add.effect(index, type, subtype, value);
 }
 
-export async function initSkillRequirement(api: AdminAPI, entry: any) {
-  await api.registry.skill.add.requirement(
-    Number(entry['Index']), // individual skill index
-    entry['ConType'], // type of requirement
-    entry['ConSubtype'], // logic type of requirement
-    entry['ConIndex'], // index of requirement
-    entry['ConValue'] // value of requirement
-  );
+// only processes Mutual Exclusion requirement for now
+async function initMutualExclusionRequirement(api: AdminAPI, skill: any) {
+  const index = Number(skill['Index']);
+  const keys = skill['Exclusion'];
+  if (!keys) return;
+
+  const values = keys.split(',');
+  values.forEach(async (v: string) => {
+    await api.registry.skill.add.requirement(index, 'SKILL', 'CURR_MAX', Number(v), 0);
+  });
 }
 
 export async function deleteSkills(api: AdminAPI, indices: number[]) {
