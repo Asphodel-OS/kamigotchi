@@ -2,13 +2,13 @@ import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { Account } from 'layers/react/store';
+import { Farcaster } from 'layers/react/store';
 import { likeCast, unlikeCast } from 'src/clients/neynar';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   data: {
-    account: Account;
+    account: Farcaster;
     cast: CastWithInteractions;
     casts: CastWithInteractions[];
   };
@@ -27,7 +27,7 @@ export const Message = (props: Props) => {
 
   // checks whether the cast has been liked by the current user
   const isLiked = (cast: CastWithInteractions) => {
-    const fAccount = account.farcaster;
+    const fAccount = account;
     if (fAccount.id == 0) return false;
     return !!cast.reactions.likes.find((l) => l.fid == fAccount.id);
   };
@@ -69,7 +69,7 @@ export const Message = (props: Props) => {
 
   // trigger a like of a cast
   async function handleCastLike(cast: CastWithInteractions) {
-    const fAccount = account.farcaster;
+    const fAccount = account;
     if (!fAccount.signer) return;
     const response = await likeCast(fAccount.signer, cast.hash);
 
@@ -88,7 +88,7 @@ export const Message = (props: Props) => {
 
   // trigger an unlike of a cast
   async function handleCastUnlike(cast: CastWithInteractions) {
-    const fAccount = account.farcaster;
+    const fAccount = account;
     if (!fAccount.signer) return;
     const response = await unlikeCast(fAccount.signer, cast.hash);
 

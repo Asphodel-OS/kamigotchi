@@ -7,11 +7,13 @@ import { create } from 'zustand';
 // as well as the validations run on
 interface State {
   account: Account;
+  farcaster: Farcaster;
   validations: Validations;
 }
 
 interface Actions {
   setAccount: (data: Account) => void;
+  setFarcaster: (data: Farcaster) => void;
   setValidations: (data: Validations) => void;
 }
 
@@ -26,10 +28,9 @@ export interface Account {
   name: string;
   ownerAddress: string;
   operatorAddress: string;
-  farcaster: Farcaster;
 }
 
-interface Farcaster {
+export interface Farcaster {
   id: number;
   signer: string; // neynar signer uuid
 }
@@ -41,7 +42,6 @@ export const emptyAccountDetails = (): Account => ({
   name: '',
   ownerAddress: '',
   operatorAddress: '',
-  farcaster: { id: 0, signer: '' },
 });
 
 ////////////////
@@ -60,6 +60,7 @@ interface Validations {
 export const useAccount = create<State & Actions>((set) => {
   const initialState: State = {
     account: emptyAccountDetails(),
+    farcaster: { id: 0, signer: '' },
     validations: {
       accountExists: false,
       operatorMatches: false,
@@ -69,6 +70,7 @@ export const useAccount = create<State & Actions>((set) => {
   return {
     ...initialState,
     setAccount: (data: Account) => set((state: State) => ({ ...state, account: data })),
+    setFarcaster: (data: Farcaster) => set((state: State) => ({ ...state, farcaster: data })),
     setValidations: (data: Validations) => set((state: State) => ({ ...state, validations: data })),
   };
 });

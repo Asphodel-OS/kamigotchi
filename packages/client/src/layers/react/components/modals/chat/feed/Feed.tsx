@@ -19,7 +19,7 @@ interface Props {
 export const Feed = (props: Props) => {
   const { max, casts } = props;
   const { pushCasts, setCasts } = props.actions;
-  const { account } = useAccount();
+  const { farcaster } = useAccount();
   const { modals } = useVisibility();
 
   const [scrollBottom, setScrollBottom] = useState(0);
@@ -91,7 +91,11 @@ export const Feed = (props: Props) => {
       {casts
         ?.toReversed()
         .map((cast) => (
-          <Message key={cast.hash} data={{ account, cast, casts }} actions={{ setCasts }} />
+          <Message
+            key={cast.hash}
+            data={{ account: farcaster, cast, casts }}
+            actions={{ setCasts }}
+          />
         ))}
     </Wrapper>
   );

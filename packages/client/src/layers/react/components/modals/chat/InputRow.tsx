@@ -27,7 +27,7 @@ interface Props {
 export const InputRow = (props: Props) => {
   const { account, actionSystem } = props;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
-  const { account: kamiAccount } = useAccount(); // client side account representation in store
+  const { farcaster: farcasterAccount } = useAccount(); // client side account representation in store
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -38,17 +38,17 @@ export const InputRow = (props: Props) => {
 
   // check whether the client is authenticated through neynar
   useEffect(() => {
-    const fAccount = kamiAccount.farcaster;
+    const fAccount = farcasterAccount;
     const isAuthenticated = !!fAccount.id && !!fAccount.signer;
     setIsAuthenticated(isAuthenticated);
-  }, [kamiAccount.farcaster]);
+  }, [farcasterAccount]);
 
   // check whether this kami account is linked to the authenticated farcaster account
   useEffect(() => {
-    const fAccount = kamiAccount.farcaster;
+    const fAccount = farcasterAccount;
     const isAuthorized = isAuthenticated && fAccount.id == account.fid;
     setIsAuthorized(isAuthorized);
-  }, [isAuthenticated, kamiAccount.farcaster, account.fid]);
+  }, [isAuthenticated, farcasterAccount, account.fid]);
 
   /////////////////
   // ACTION
@@ -56,7 +56,7 @@ export const InputRow = (props: Props) => {
   // send a message to chat
   // TODO: don't assume success here
   const sendCast = async (text: string) => {
-    const fAccount = kamiAccount.farcaster;
+    const fAccount = farcasterAccount;
     if (!fAccount.signer) return;
     setIsSending(true);
     const response = await neynarClient.publishCast(fAccount.signer, text, {

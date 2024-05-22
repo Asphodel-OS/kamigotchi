@@ -22,7 +22,7 @@ export const FarcasterConnect = (props: Props) => {
   const { actionSystem, account, size } = props;
   const { selectedAddress, apis } = useNetwork();
   const [fUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
-  const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
+  const { farcaster: farcasterAccount, setFarcaster: setFarcasterAccount } = useAccount();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -33,24 +33,23 @@ export const FarcasterConnect = (props: Props) => {
   // on load, copy the farcaster details from localstorage to the Kami Account in Store
   useEffect(() => {
     if (!fUser) return;
-    if (kamiAccount.farcaster.id === fUser.fid) return;
-    const neynarDetails = { id: fUser.fid, signer: fUser.signer_uuid ?? '' };
-    setKamiAccount({ ...kamiAccount, farcaster: neynarDetails });
+    if (farcasterAccount.id === fUser.fid) return;
+    setFarcasterAccount({ id: fUser.fid, signer: fUser.signer_uuid ?? '' });
   }, [fUser]);
 
   // check whether the client is authenticated through neynar
   useEffect(() => {
-    const fAccount = kamiAccount.farcaster;
+    const fAccount = farcasterAccount;
     const isAuthenticated = !!fAccount.id && !!fAccount.signer;
     setIsAuthenticated(isAuthenticated);
-  }, [kamiAccount.farcaster]);
+  }, [farcasterAccount]);
 
   // check whether this kami account is linked to the authenticated farcaster account
   useEffect(() => {
-    const fAccount = kamiAccount.farcaster;
+    const fAccount = farcasterAccount;
     const isAuthorized = isAuthenticated && fAccount.id == account.fid;
     setIsAuthorized(isAuthorized);
-  }, [isAuthenticated, kamiAccount.farcaster, account.fid]);
+  }, [isAuthenticated, farcasterAccount, account.fid]);
 
   /////////////////
   // ACTION

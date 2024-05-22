@@ -1,7 +1,7 @@
-import { Account, emptyAccountDetails, useAccount } from './account';
+import { Account, Farcaster, emptyAccountDetails, useAccount } from './account';
 import { useNetwork } from './network';
 import { useSelected } from './selected';
-import { Buttons, Fixtures, Modals, Validators, useVisibility } from './visibility';
+import { Fixtures, Modals, Validators, useVisibility } from './visibility';
 
 export { emptyAccountDetails, useAccount, useNetwork, useSelected, useVisibility };
-export type { Account, Buttons, Fixtures, Modals, Validators };
+export type { Account, Farcaster, Fixtures, Modals, Validators };
