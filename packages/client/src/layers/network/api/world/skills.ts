@@ -12,9 +12,9 @@ export async function initSkills(api: AdminAPI, indices?: number[]) {
 
     if (indices && !indices.includes(index)) continue; // optional indices filter
 
-    await sleepIf();
     try {
       await initSkill(api, skill);
+      await sleepIf();
       await initEffect(api, skill);
       await initMutualExclusionRequirement(api, skill);
     } catch (e) {

@@ -335,7 +335,6 @@ export function createAdminAPI(systems: any) {
     treeTier: number,
     media: string
   ) {
-    await sleepIf();
     return systems['system._Registry.Skill.Create'].executeTyped(
       index,
       for_,
@@ -351,7 +350,6 @@ export function createAdminAPI(systems: any) {
   }
 
   async function deleteSkill(index: number) {
-    await sleepIf();
     return systems['system._Registry.Skill.Delete'].executeTyped(index);
   }
 
