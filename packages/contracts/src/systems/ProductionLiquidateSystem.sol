@@ -13,7 +13,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibProduction } from "libraries/LibProduction.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
@@ -33,10 +33,7 @@ contract ProductionLiquidateSystem is System {
 
     // basic requirements (state and idle time)
     require(!LibPet.onCooldown(components, petID), "FarmLiquidate: pet on cooldown");
-    require(
-      LibProduction.isActive(components, targetProductionID),
-      "FarmLiquidate: Harvest inactive"
-    );
+    require(LibHarvest.isActive(components, targetProductionID), "FarmLiquidate: Harvest inactive");
 
     // health check
     LibPet.sync(components, petID);
@@ -44,21 +41,18 @@ contract ProductionLiquidateSystem is System {
 
     // check that the two kamis share the same node
     uint256 productionID = LibPet.getProduction(components, petID);
-    uint256 nodeID = LibProduction.getNode(components, productionID);
-    uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
+    uint256 nodeID = LibHarvest.getNode(components, productionID);
+    uint256 targetNodeID = LibHarvest.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "FarmLiquidate: target too far");
     require(LibAccount.sharesRoom(components, accountID, nodeID), "FarmLiquidate: node too far");
 
     // check that the pet is capable of liquidating the target production
-    uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
+    uint256 targetPetID = LibHarvest.getPet(components, targetProductionID);
     LibPet.sync(components, targetPetID);
-    require(
-      LibProduction.isLiquidatableBy(components, targetPetID, petID),
-      "Pet: you lack violence"
-    );
+    require(LibHarvest.isLiquidatableBy(components, targetPetID, petID), "Pet: you lack violence");
 
     // collect the money to the production. drain accordingly
-    uint256 bounty = LibProduction.getBalance(components, targetProductionID);
+    uint256 bounty = LibHarvest.getBalance(components, targetProductionID);
     uint256 salvage = LibKill.calcSalvage(components, targetPetID, bounty);
     uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
     uint256 recoil = LibPet.calcStrain(components, petID, spoils);
@@ -72,7 +66,7 @@ contract ProductionLiquidateSystem is System {
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);
-    LibProduction.stop(components, targetProductionID);
+    LibHarvest.stop(components, targetProductionID);
     LibKill.create(world, components, petID, targetPetID, nodeID, bounty, spoils);
     LibPet.setLastActionTs(components, petID, block.timestamp);
 

@@ -35,7 +35,7 @@ import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 
 /// @notice A registry for Skill related entities
 /// @dev Skills are not copied onto entities, only referenced when assigning the effect
-library LibRegistrySkill {
+library LibSkillRegistry {
   /////////////////
   // INTERACTIONS
 
@@ -76,7 +76,7 @@ library LibRegistrySkill {
 
     if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
     else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
-    else revert("LibRegistrySkill: invalid type");
+    else revert("LibSkillRegistry: invalid type");
   }
 
   function createEffect(

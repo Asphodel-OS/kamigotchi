@@ -24,7 +24,7 @@ import { LibStat } from "libraries/LibStat.sol";
 
 // Registries hold shared information on individual entity instances in the world.
 // This can include attribute information such as capabilities, stats and effects.
-library LibRegistryItem {
+library LibItemRegistry {
   /////////////////
   // INTERACTIONS
 

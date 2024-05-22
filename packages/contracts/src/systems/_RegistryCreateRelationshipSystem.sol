@@ -6,7 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryRelationship as LibRegRel } from "libraries/LibRegistryRelationship.sol";
+import { LibRelationshipRegistry as LibRegRel } from "libraries/LibRelationshipRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Relationship.Create"));
 

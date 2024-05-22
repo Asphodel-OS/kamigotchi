@@ -14,7 +14,7 @@ import { Pet721 } from "tokens/Pet721.sol";
 
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
@@ -153,7 +153,7 @@ library LibPet721 {
     // scoping is used to save memory while execution
     {
       // color
-      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibTraitRegistry.getColorRarities(
         components
       );
       traits[4] = LibRandom.selectFromWeighted(
@@ -164,7 +164,7 @@ library LibPet721 {
     }
     {
       // background
-      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibTraitRegistry.getBackgroundRarities(
         components
       );
       traits[3] = LibRandom.selectFromWeighted(
@@ -175,7 +175,7 @@ library LibPet721 {
     }
     {
       // body
-      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibTraitRegistry.getBodyRarities(
         components
       );
       traits[2] = LibRandom.selectFromWeighted(
@@ -186,7 +186,7 @@ library LibPet721 {
     }
     {
       // hand
-      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibTraitRegistry.getHandRarities(
         components
       );
       traits[1] = LibRandom.selectFromWeighted(
@@ -197,7 +197,7 @@ library LibPet721 {
     }
     {
       // face
-      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibTraitRegistry.getFaceRarities(
         components
       );
       traits[0] = LibRandom.selectFromWeighted(
@@ -215,11 +215,11 @@ library LibPet721 {
   /// @param   petID       entityID of pet
   /// @param   traits      array of traits, indices ordered [Face, Hand, Body, Background, Color]
   function assignTraits(IUintComp components, uint256 petID, uint32[] memory traits) internal {
-    LibRegistryTrait.setColorIndex(components, petID, traits[4]);
-    LibRegistryTrait.setBackgroundIndex(components, petID, traits[3]);
-    LibRegistryTrait.setBodyIndex(components, petID, traits[2]);
-    LibRegistryTrait.setHandIndex(components, petID, traits[1]);
-    LibRegistryTrait.setFaceIndex(components, petID, traits[0]);
+    LibTraitRegistry.setColorIndex(components, petID, traits[4]);
+    LibTraitRegistry.setBackgroundIndex(components, petID, traits[3]);
+    LibTraitRegistry.setBodyIndex(components, petID, traits[2]);
+    LibTraitRegistry.setHandIndex(components, petID, traits[1]);
+    LibTraitRegistry.setFaceIndex(components, petID, traits[0]);
   }
 
   //////////////////
@@ -290,11 +290,11 @@ library LibPet721 {
     comps[4] = "Background";
 
     string[] memory names = new string[](5);
-    names[0] = LibRegistryTrait.getBodyNameOf(components, petID);
-    names[1] = LibRegistryTrait.getColorNameOf(components, petID);
-    names[2] = LibRegistryTrait.getFaceNameOf(components, petID);
-    names[3] = LibRegistryTrait.getHandNameOf(components, petID);
-    names[4] = LibRegistryTrait.getBackgroundNameOf(components, petID);
+    names[0] = LibTraitRegistry.getBodyNameOf(components, petID);
+    names[1] = LibTraitRegistry.getColorNameOf(components, petID);
+    names[2] = LibTraitRegistry.getFaceNameOf(components, petID);
+    names[3] = LibTraitRegistry.getHandNameOf(components, petID);
+    names[4] = LibTraitRegistry.getBackgroundNameOf(components, petID);
 
     for (uint256 i; i < names.length; i++) {
       string memory entry = _traitToString(comps[i], names[i], true);

@@ -36,18 +36,18 @@ contract MurderTest is SetupTemplate {
 
   function _createFoodListings(uint32 npcIndex) internal {
     uint32 itemIndex;
-    uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
+    uint[] memory registryIDs = LibItemRegistry.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibRegistryItem.getIndex(components, registryIDs[i]);
+      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
   function _createReviveListings(uint32 npcIndex) internal {
     uint32 itemIndex;
-    uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
+    uint[] memory registryIDs = LibItemRegistry.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibRegistryItem.getIndex(components, registryIDs[i]);
+      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
@@ -63,9 +63,9 @@ contract MurderTest is SetupTemplate {
   // checks whether a production should be liquidatable by a pet
   // assumes the production is active to simulate a health sync
   function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
-    uint victimID = LibProduction.getPet(components, productionID);
+    uint victimID = LibHarvest.getPet(components, productionID);
     uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
-    uint output = LibProduction.calcBounty(components, productionID);
+    uint output = LibHarvest.calcBounty(components, productionID);
     uint drain = LibPet.calcStrain(components, victimID, output);
     uint health = uint(int(LibStat.getHealth(components, victimID).sync));
     health = (health > drain) ? health - drain : 0;
@@ -405,10 +405,10 @@ contract MurderTest is SetupTemplate {
   //     playerIndex = rand % numPlayers;
   //     petIndex = rand % numPets;
   //     attackerID = _petIDs[playerIndex][petIndex];
-  //     nodeID = LibProduction.getNode(components, LibPet.getProduction(components, attackerID));
+  //     nodeID = LibHarvest.getNode(components, LibPet.getProduction(components, attackerID));
   //     productionIDs = getAllOnNode(components, nodeID);
   //     productionID = productionIDs[rand % productionIDs.length];
-  //     victimID = LibProduction.getPet(components, productionID);
+  //     victimID = LibHarvest.getPet(components, productionID);
 
   //     // fast forward 15-75min
   //     _fastForward((rand % 1 hours) + 15 minutes);

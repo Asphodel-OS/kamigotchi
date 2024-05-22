@@ -99,7 +99,7 @@ pragma solidity ^0.8.0;
 //   ) internal view returns (uint) {
 //     string memory nodeAff = LibNode.getAffinity(
 //       components,
-//       LibProduction.getNode(components, prodID)
+//       LibHarvest.getNode(components, prodID)
 //     );
 //     string[] memory petAffs = LibPet.getAffinities(components, petID);
 
@@ -172,9 +172,9 @@ pragma solidity ^0.8.0;
 //     uint productionID = abi.decode(productionIDFarm20, (uint));
 
 //     // test that a production is created with the expected base fields
-//     assertEq(LibProduction.getPet(components, productionID), kamiID);
-//     assertEq(LibProduction.getNode(components, productionID), nodeID);
-//     assertEq(LibProduction.getState(components, productionID), "ACTIVE");
+//     assertEq(LibHarvest.getPet(components, productionID), kamiID);
+//     assertEq(LibHarvest.getNode(components, productionID), nodeID);
+//     assertEq(LibHarvest.getState(components, productionID), "ACTIVE");
 
 //     // test that the kami's state is updated
 //     assertEq(LibPet.getState(components, kamiID), "HARVESTING");
@@ -225,7 +225,7 @@ pragma solidity ^0.8.0;
 
 //     // check multiplier
 //     assertEq(expected, _calcAffinityMultiplier(prodID, petID));
-//     assertEq(expected, LibProduction.calcAffinityMult(components, prodID, petID));
+//     assertEq(expected, LibHarvest.calcAffinityMult(components, prodID, petID));
 
 //     // add bonus
 //     /** add a bonus of 2 to all, therefore expected:
@@ -251,7 +251,7 @@ pragma solidity ^0.8.0;
 //     else expected *= 5; // weak
 
 //     assertEq(expected, _calcAffinityMultiplier(prodID, petID, 2));
-//     assertEq(expected, LibProduction.calcAffinityMult(components, prodID, petID));
+//     assertEq(expected, LibHarvest.calcAffinityMult(components, prodID, petID));
 //   }
 
 //   /////////////////
@@ -443,7 +443,7 @@ pragma solidity ^0.8.0;
 //       for (uint j = 0; j < numKamis; j++) {
 //         if (_isStarved[j]) continue;
 
-//         rate = LibProduction.getRate(components, productionIDs[j]);
+//         rate = LibHarvest.getRate(components, productionIDs[j]);
 //         assertEq(rate, _calcRate(productionIDs[j]));
 //         drain = _calcHealthDrain(_calcOutput(rate, timeDelta));
 
@@ -552,18 +552,18 @@ pragma solidity ^0.8.0;
 //     );
 //     assertEq(
 //       _calcAffinityMultiplier(prodID, petID),
-//       LibProduction.calcAffinityMult(components, prodID, petID),
+//       LibHarvest.calcAffinityMult(components, prodID, petID),
 //       "Affinity multiplier calc mismatch"
 //     );
 //     assertEq(
 //       _calcAffinityMultiplier(prodID, petID) * _calcBonusMultiplier(0),
-//       LibProduction.calcRateMultiplier(components, prodID),
+//       LibHarvest.calcRateMultiplier(components, prodID),
 //       "Multiplier calc mismatch"
 //     );
-//     assertEq(_calcRate(prodID), LibProduction.calcRate(components, prodID), "Rate calc mismatch");
+//     assertEq(_calcRate(prodID), LibHarvest.calcRate(components, prodID), "Rate calc mismatch");
 //     assertEq(
 //       _RateComponent.get(prodID),
-//       LibProduction.calcRate(components, prodID),
+//       LibHarvest.calcRate(components, prodID),
 //       "Rate set mismatch"
 //     );
 
@@ -572,10 +572,10 @@ pragma solidity ^0.8.0;
 
 //     // checking time based calcs
 //     uint256 rate = _calcRate(prodID);
-//     assertEq(timeDelta, LibProduction.calcDuration(components, prodID), "Duration calc mismatch");
+//     assertEq(timeDelta, LibHarvest.calcDuration(components, prodID), "Duration calc mismatch");
 //     assertEq(
 //       _calcOutput(rate, timeDelta),
-//       LibProduction.calcBounty(components, prodID),
+//       LibHarvest.calcBounty(components, prodID),
 //       "Output calc mismatch"
 //     );
 //     assertEq(

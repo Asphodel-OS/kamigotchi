@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibLootbox } from "libraries/LibLootbox.sol";
 
 uint256 constant ID = uint256(keccak256("system.Lootbox.Reveal.Start"));
@@ -25,7 +25,7 @@ contract LootboxStartRevealSystem is System {
 
     require(amt <= 10, "LootboxStartReveal: max 10");
 
-    uint256 regID = LibRegistryItem.getByInstance(components, invID);
+    uint256 regID = LibItemRegistry.getByInstance(components, invID);
     require(LibLootbox.isLootbox(components, regID), "LootboxStartReveal: not lootbox");
 
     uint256 revealID = LibLootbox.startReveal(world, components, invID, amt);

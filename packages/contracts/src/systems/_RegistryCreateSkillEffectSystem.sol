@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create.Effect"));
@@ -21,8 +21,8 @@ contract _RegistryCreateSkillEffectSystem is System {
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
     // create an empty Skill and set any non-zero fields
-    uint256 id = LibRegistrySkill.createEffect(world, components, skillIndex, type_, value);
-    if (!LibString.eq(subtype, "")) LibRegistrySkill.setSubtype(components, id, subtype);
+    uint256 id = LibSkillRegistry.createEffect(world, components, skillIndex, type_, value);
+    if (!LibString.eq(subtype, "")) LibSkillRegistry.setSubtype(components, id, subtype);
 
     return abi.encode(id);
   }

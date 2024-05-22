@@ -39,9 +39,9 @@ uint256 constant RATE_PREC = 9;
 uint256 constant INTENSITY_PREC = 9;
 
 /*
- * LibProduction handles all retrieval and manipulation of mining nodes/productions
+ * LibHarvest handles all retrieval and manipulation of mining nodes/productions
  */
-library LibProduction {
+library LibHarvest {
   using SafeCastLib for int32;
   using SafeCastLib for uint32;
   using SafeCastLib for int256;

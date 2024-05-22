@@ -9,7 +9,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Use.Item"));
 

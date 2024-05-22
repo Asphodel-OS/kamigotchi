@@ -18,7 +18,7 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 library LibLootbox {
   /**
@@ -65,7 +65,7 @@ library LibLootbox {
     uint256 holderID
   ) internal {
     uint256 count = getBalance(components, revealID);
-    uint256 regID = LibRegistryItem.getByIndex(components, getIndex(components, revealID));
+    uint256 regID = LibItemRegistry.getByIndex(components, getIndex(components, revealID));
     uint32[] memory keys = getKeys(components, regID);
     uint256[] memory weights = getWeights(components, regID);
     uint256 seed = uint256(

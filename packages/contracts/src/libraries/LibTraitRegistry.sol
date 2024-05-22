@@ -22,7 +22,7 @@ import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-// LibRegistryTrait is based heavily off LibRegistryItem, but is used for traits.
+// LibTraitRegistry is based heavily off LibItemRegistry, but is used for traits.
 // IndexTrait is the automatically incremented domain index, but traits are
 // more commonly identified by the specific index (e.g. body, hand, color index)
 
@@ -37,7 +37,7 @@ struct TraitValues {
   string affinity;
 }
 
-library LibRegistryTrait {
+library LibTraitRegistry {
   /////////////////
   // INTERACTIONS
 

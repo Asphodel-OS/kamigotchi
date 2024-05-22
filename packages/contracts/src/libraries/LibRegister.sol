@@ -73,7 +73,7 @@ library LibRegister {
   }
 
   // Process the contents of a register from the register to the specified entity.
-  function process(IWorld world, IUintComp components, uint256 id, bool reversed) internal {
+  function process(IUintComp components, uint256 id, bool reversed) internal {
     uint256 balance;
     uint32 itemIndex;
     uint256 toInvID;
@@ -101,8 +101,8 @@ library LibRegister {
   }
 
   // Revert all inventory and token balances in a register back to the delegator of the register.
-  function reverse(IWorld world, IUintComp components, uint256 id) internal {
-    process(world, components, id, true);
+  function reverse(IUintComp components, uint256 id) internal {
+    process(components, id, true);
     cancel(components, id);
   }
 

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-import { LibRegistryRelationship as LibRegRel } from "libraries/LibRegistryRelationship.sol";
+import { LibRelationshipRegistry as LibRegRel } from "libraries/LibRelationshipRegistry.sol";
 
 struct RSIndexPair {
   uint32 npc;

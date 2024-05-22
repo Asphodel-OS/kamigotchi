@@ -12,7 +12,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibProduction } from "libraries/LibProduction.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Collect"));
@@ -24,14 +24,14 @@ contract ProductionCollectSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    uint256 petID = LibProduction.getPet(components, id);
+    uint256 petID = LibHarvest.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
     require(LibPet.getAccount(components, petID) == accountID, "FarmCollect: pet not urs");
     require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");
 
-    uint256 timeDelta = block.timestamp - LibProduction.getLastTs(components, id);
+    uint256 timeDelta = block.timestamp - LibHarvest.getLastTs(components, id);
 
     // health check
     LibPet.sync(components, petID);
@@ -42,12 +42,12 @@ contract ProductionCollectSystem is System {
     );
 
     // process collection
-    uint256 output = LibProduction.claim(components, id);
+    uint256 output = LibHarvest.claim(components, id);
     LibExperience.inc(components, petID, output);
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
-    uint256 nodeID = LibProduction.getNode(components, id);
+    uint256 nodeID = LibHarvest.getNode(components, id);
     LibScore.inc(components, accountID, "COLLECT", output);
     LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", output);
     LibNode.logHarvestAt(components, accountID, LibNode.getIndex(components, nodeID), output);
@@ -57,7 +57,7 @@ contract ProductionCollectSystem is System {
       LibNode.getAffinity(components, nodeID),
       output
     );
-    LibProduction.logHarvestTime(components, accountID, timeDelta);
+    LibHarvest.logHarvestTime(components, accountID, timeDelta);
     LibAccount.updateLastTs(components, accountID);
 
     return abi.encode(output);

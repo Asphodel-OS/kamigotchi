@@ -10,8 +10,8 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibProduction } from "libraries/LibProduction.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -26,8 +26,8 @@ contract PetFeedSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // get/check registry entry
-    uint256 registryID = LibRegistryItem.getByIndex(components, itemIndex);
-    string memory type_ = LibRegistryItem.getType(components, registryID);
+    uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
+    string memory type_ = LibItemRegistry.getType(components, registryID);
     require(LibString.eq(type_, "FOOD"), "PetFeed: that's not food");
 
     // standard checks (ownership, state, roomIndex)
@@ -57,7 +57,7 @@ contract PetFeedSystem is System {
     // reset the pet's intensity
     if (LibPet.isHarvesting(components, id)) {
       uint256 productionID = LibPet.getProduction(components, id);
-      LibProduction.resetIntensity(components, productionID);
+      LibHarvest.resetIntensity(components, productionID);
     }
 
     // standard logging and tracking

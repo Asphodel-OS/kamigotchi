@@ -11,7 +11,7 @@ import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComp
 import { IndexRelationshipComponent, ID as IndexRelCompID } from "components/IndexRelationshipComponent.sol";
 import { IsRelationshipComponent, ID as IsRelCompID } from "components/IsRelationshipComponent.sol";
 
-import { LibRegistryRelationship } from "libraries/LibRegistryRelationship.sol";
+import { LibRelationshipRegistry } from "libraries/LibRelationshipRegistry.sol";
 
 library LibRelationship {
   /////////////////
@@ -44,7 +44,7 @@ library LibRelationship {
     uint32 npcIndex,
     uint32 relIndex
   ) internal view returns (bool) {
-    uint256 registryID = LibRegistryRelationship.get(components, npcIndex, relIndex);
+    uint256 registryID = LibRelationshipRegistry.get(components, npcIndex, relIndex);
     if (isBlacklisted(components, accountID, registryID)) return false;
     if (isWhitelisted(components, accountID, registryID)) return true;
     return false;
@@ -66,8 +66,8 @@ library LibRelationship {
     uint256 accountID,
     uint256 registryID
   ) internal view returns (bool) {
-    uint32[] memory blacklist = LibRegistryRelationship.getBlacklist(components, registryID);
-    uint32 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
+    uint32[] memory blacklist = LibRelationshipRegistry.getBlacklist(components, registryID);
+    uint32 npcIndex = LibRelationshipRegistry.getNpcIndex(components, registryID);
     for (uint256 i = 0; i < blacklist.length; i++) {
       if (has(components, accountID, npcIndex, blacklist[i])) return true;
     }
@@ -81,8 +81,8 @@ library LibRelationship {
     uint256 accountID,
     uint256 registryID
   ) internal view returns (bool) {
-    uint32[] memory whitelist = LibRegistryRelationship.getWhitelist(components, registryID);
-    uint32 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
+    uint32[] memory whitelist = LibRelationshipRegistry.getWhitelist(components, registryID);
+    uint32 npcIndex = LibRelationshipRegistry.getNpcIndex(components, registryID);
     if (whitelist.length == 0) return true;
     for (uint256 i = 0; i < whitelist.length; i++) {
       if (has(components, accountID, npcIndex, whitelist[i])) return true;
@@ -100,7 +100,7 @@ library LibRelationship {
     uint32 relIndex
   ) internal view returns (uint256 result) {
     uint256 id = genID(accountID, npcIndex, relIndex);
-    return LibRegistryRelationship.isRelationship(components, id) ? id : 0;
+    return LibRelationshipRegistry.isRelationship(components, id) ? id : 0;
   }
 
   /////////////////

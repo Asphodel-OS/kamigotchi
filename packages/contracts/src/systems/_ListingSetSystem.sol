@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Listing.Set"));
 
@@ -21,7 +21,7 @@ contract _ListingSetSystem is System {
     );
 
     require(LibNPC.getByIndex(components, npcIndex) != 0, "NPC: does not exist");
-    require(LibRegistryItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
+    require(LibItemRegistry.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
     uint256 id = LibListing.get(components, npcIndex, itemIndex);
     if (id == 0) id = LibListing.create(components, npcIndex, itemIndex, buyPrice, sellPrice);

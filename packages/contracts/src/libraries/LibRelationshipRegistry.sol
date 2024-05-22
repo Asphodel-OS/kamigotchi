@@ -16,7 +16,7 @@ import { WhitelistComponent, ID as WhitelistCompID } from "components/WhitelistC
 
 // This library contains functions for interacting with the Relationship Registry.
 // The registry determines how players can navigate relationships with NPCs.
-library LibRegistryRelationship {
+library LibRelationshipRegistry {
   /////////////////
   // INTERACTIONS
 

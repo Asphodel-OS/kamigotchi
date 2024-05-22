@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create"));
 
@@ -25,7 +25,7 @@ contract _RegistryCreateQuestSystem is System {
 
     // set repeatable (if so)
     if (duration > 0) {
-      LibRegistryQuests.setRepeatable(components, regID, duration);
+      LibQuestRegistry.setRepeatable(components, regID, duration);
     }
 
     return abi.encode(regID);

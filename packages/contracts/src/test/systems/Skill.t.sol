@@ -66,7 +66,7 @@ contract SkillTest is SetupTemplate {
 
   function testCreateTree() public {
     uint256 regID = _createSkill(1, "ACCOUNT", "PASSIVE", "TREE", 0, 5, 1);
-    (bool has, string memory tree, uint256 tier) = LibRegistrySkill.getTree(components, regID);
+    (bool has, string memory tree, uint256 tier) = LibSkillRegistry.getTree(components, regID);
     assertFalse(regID == 0);
     assertTrue(has);
     assertEq("TREE", tree);

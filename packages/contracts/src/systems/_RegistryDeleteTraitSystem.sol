@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Trait.Delete"));
@@ -18,20 +18,20 @@ contract _RegistryDeleteTraitSystem is System {
 
     uint256 traitID;
     if (LibString.eq(traitType, "BODY"))
-      traitID = LibRegistryTrait.getByBodyIndex(components, index);
+      traitID = LibTraitRegistry.getByBodyIndex(components, index);
     else if (LibString.eq(traitType, "BACKGROUND"))
-      traitID = LibRegistryTrait.getByBackgroundIndex(components, index);
+      traitID = LibTraitRegistry.getByBackgroundIndex(components, index);
     else if (LibString.eq(traitType, "COLOR"))
-      traitID = LibRegistryTrait.getByColorIndex(components, index);
+      traitID = LibTraitRegistry.getByColorIndex(components, index);
     else if (LibString.eq(traitType, "FACE"))
-      traitID = LibRegistryTrait.getByFaceIndex(components, index);
+      traitID = LibTraitRegistry.getByFaceIndex(components, index);
     else if (LibString.eq(traitType, "HAND"))
-      traitID = LibRegistryTrait.getByHandIndex(components, index);
+      traitID = LibTraitRegistry.getByHandIndex(components, index);
     else revert("invalid traitType");
 
     require(traitID != 0, "Trait: does not exist");
 
-    LibRegistryTrait.remove(components, traitID);
+    LibTraitRegistry.remove(components, traitID);
 
     return "";
   }

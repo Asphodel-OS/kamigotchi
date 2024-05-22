@@ -47,7 +47,7 @@ import { GACHA_ID, GACHA_DATA_ID } from "libraries/LibGacha.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.BatchMint"));
 
@@ -196,7 +196,7 @@ abstract contract TraitHandler {
 
     // get indices, rarities, and stats for each trait type
     for (uint256 i; i < 5; i++) {
-      uint256[] memory ids = LibRegistryTrait.getAllOfType(components, traitNames[i]);
+      uint256[] memory ids = LibTraitRegistry.getAllOfType(components, traitNames[i]);
       uint32 length = uint32(ids.length);
 
       uint32[] memory keys = new uint32[](length);

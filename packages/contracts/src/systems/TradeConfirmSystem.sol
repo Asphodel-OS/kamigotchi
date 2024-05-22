@@ -31,7 +31,7 @@ contract TradeConfirmSystem is System {
     // Process the trade and mark complete if both parties have confirmed.
     bool tradeComplete;
     if (LibTrade.isDoubleConfirmed(components, tradeID)) {
-      tradeComplete = LibTrade.process(world, components, tradeID);
+      tradeComplete = LibTrade.process(components, tradeID);
     }
 
     // standard logging and tracking

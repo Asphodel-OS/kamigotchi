@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Item.Delete"));
 
@@ -14,10 +14,10 @@ contract _RegistryDeleteItemSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     uint32 index = abi.decode(arguments, (uint32));
 
-    uint256 registryID = LibRegistryItem.getByIndex(components, index);
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
     require(registryID != 0, "ItemReg: does not exists");
 
-    LibRegistryItem.deleteItem(components, registryID);
+    LibItemRegistry.deleteItem(components, registryID);
 
     return "";
   }

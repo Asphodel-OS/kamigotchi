@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 import { LibRelationship } from "libraries/LibRelationship.sol";
-import { LibRegistryRelationship } from "libraries/LibRegistryRelationship.sol";
+import { LibRelationshipRegistry } from "libraries/LibRelationshipRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.Relationship.Advance"));
 
@@ -24,7 +24,7 @@ contract RelationshipAdvanceSystem is System {
     require(LibNPC.sharesRoomWith(components, npcID, accountID), "RS: must be in same room");
 
     // check that the flag exists and that the account doesnt already have it
-    uint256 registryID = LibRegistryRelationship.get(components, npcIndex, relIndex);
+    uint256 registryID = LibRelationshipRegistry.get(components, npcIndex, relIndex);
     require(registryID != 0, "RS: flag does not exist");
     require(
       !LibRelationship.has(components, accountID, npcIndex, relIndex),

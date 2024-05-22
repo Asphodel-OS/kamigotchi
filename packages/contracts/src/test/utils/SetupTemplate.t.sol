@@ -255,7 +255,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _stopProduction(uint productionID) internal {
-    uint petID = LibProduction.getPet(components, productionID);
+    uint petID = LibHarvest.getPet(components, productionID);
     uint accountID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accountID);
 
@@ -264,7 +264,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _collectProduction(uint productionID) internal {
-    uint petID = LibProduction.getPet(components, productionID);
+    uint petID = LibHarvest.getPet(components, productionID);
     uint accountID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accountID);
 
@@ -363,12 +363,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _setPetTrait(uint petID, string memory trait, uint32 traitIndex) internal {
     vm.startPrank(deployer);
-    if (trait.eq("BODY")) LibRegistryTrait.setBodyIndex(components, petID, traitIndex);
-    else if (trait.eq("HAND")) LibRegistryTrait.setHandIndex(components, petID, traitIndex);
-    else if (trait.eq("FACE")) LibRegistryTrait.setFaceIndex(components, petID, traitIndex);
-    else if (trait.eq("COLOR")) LibRegistryTrait.setColorIndex(components, petID, traitIndex);
+    if (trait.eq("BODY")) LibTraitRegistry.setBodyIndex(components, petID, traitIndex);
+    else if (trait.eq("HAND")) LibTraitRegistry.setHandIndex(components, petID, traitIndex);
+    else if (trait.eq("FACE")) LibTraitRegistry.setFaceIndex(components, petID, traitIndex);
+    else if (trait.eq("COLOR")) LibTraitRegistry.setColorIndex(components, petID, traitIndex);
     else if (trait.eq("BACKGROUND"))
-      LibRegistryTrait.setBackgroundIndex(components, petID, traitIndex);
+      LibTraitRegistry.setBackgroundIndex(components, petID, traitIndex);
     vm.stopPrank();
   }
 
@@ -505,7 +505,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createGenericItem(uint32 index) public returns (uint256 id) {
     vm.startPrank(deployer);
 
-    id = LibRegistryItem.genID(index);
+    id = LibItemRegistry.genID(index);
     _IsRegistryComponent.set(id);
     _IndexItemComponent.set(id, index);
 

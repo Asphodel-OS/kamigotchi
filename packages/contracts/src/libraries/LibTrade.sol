@@ -49,33 +49,33 @@ library LibTrade {
   }
 
   // Cancel an existing trade. World required bc LibRegister.reverse calls LibRegister.process
-  function cancel(IWorld world, IUintComp components, uint256 id) internal {
+  function cancel(IUintComp components, uint256 id) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("CANCELED"));
 
     // Check whether it's just a request. If so, no registers have been created.
-    IsRequestComponent IsRequestC = IsRequestComponent(getAddressById(components, IsRequestCompID));
-    if (IsRequestC.has(id)) {
-      IsRequestC.remove(id);
+    IsRequestComponent comp = IsRequestComponent(getAddressById(components, IsRequestCompID));
+    if (comp.has(id)) {
+      comp.remove(id);
       return;
     }
 
     // reverse the registers
     uint256[] memory registerIDs = getRegisters(components, id);
     for (uint256 i; i < registerIDs.length; i++) {
-      LibRegister.reverse(world, components, registerIDs[i]);
+      LibRegister.reverse(components, registerIDs[i]);
       LibRegister.cancel(components, registerIDs[i]);
     }
   }
 
   // Process a trade upon confirmation from both parties
   // TODO(jb): ? delete all the created inventory components
-  function process(IWorld world, IUintComp components, uint256 id) internal returns (bool) {
+  function process(IUintComp components, uint256 id) internal returns (bool) {
     uint256 requesterID = getRequestee(components, id);
     uint256 requesteeID = getRequester(components, id);
     uint256 requesterRegisterID = LibRegister.get(components, requesterID, id);
     uint256 requesteeRegisterID = LibRegister.get(components, requesteeID, id);
-    LibRegister.process(world, components, requesterRegisterID, false);
-    LibRegister.process(world, components, requesteeRegisterID, false);
+    LibRegister.process(components, requesterRegisterID, false);
+    LibRegister.process(components, requesteeRegisterID, false);
     StateComponent(getAddressById(components, StateCompID)).set(id, string("COMPLETE"));
     return true;
   }

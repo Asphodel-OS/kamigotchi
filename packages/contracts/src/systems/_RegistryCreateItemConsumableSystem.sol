@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibString } from "solady/utils/LibString.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Create.Item.Consumable"));
 
@@ -21,10 +21,10 @@ contract _RegistryCreateItemConsumableSystem is System {
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, string, string));
 
-    uint256 registryID = LibRegistryItem.getByIndex(components, index);
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
     require(!LibString.eq(name, ""), "CreateMiscItem: name empty");
 
-    LibRegistryItem.createConsumable(components, index, name, description, type_, media);
+    LibItemRegistry.createConsumable(components, index, name, description, type_, media);
 
     return "";
   }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create.Requirement"));
@@ -24,15 +24,15 @@ contract _RegistryCreateSkillRequirementSystem is System {
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
     // create an empty Skill and set any non-zero fields
-    uint256 id = LibRegistrySkill.createRequirement(
+    uint256 id = LibSkillRegistry.createRequirement(
       world,
       components,
       skillIndex,
       type_,
       logicType
     );
-    if (index != 0) LibRegistrySkill.setIndex(components, id, index);
-    if (value != 0) LibRegistrySkill.setBalance(components, id, value);
+    if (index != 0) LibSkillRegistry.setIndex(components, id, index);
+    if (value != 0) LibSkillRegistry.setBalance(components, id, value);
 
     return abi.encode(id);
   }

@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create.Objective"));
@@ -26,12 +26,12 @@ contract _RegistryCreateQuestObjectiveSystem is System {
     ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
 
     // check that the quest exists
-    uint256 questID = LibRegistryQuests.getByQuestIndex(components, questIndex);
+    uint256 questID = LibQuestRegistry.getByQuestIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Objective type cannot be empty");
 
     // create an empty Quest Objective and set any non-zero fields
-    uint256 id = LibRegistryQuests.createEmptyObjective(
+    uint256 id = LibQuestRegistry.createEmptyObjective(
       world,
       components,
       questIndex,
@@ -41,7 +41,7 @@ contract _RegistryCreateQuestObjectiveSystem is System {
       index
     );
 
-    if (value != 0) LibRegistryQuests.setBalance(components, id, value);
+    if (value != 0) LibQuestRegistry.setBalance(components, id, value);
 
     return abi.encode(id);
   }

@@ -23,7 +23,7 @@ import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant TREE_POINTS_PER_TIER = 5;
@@ -64,7 +64,7 @@ library LibSkill {
 
   // process the upgrade of a skill (can be generic or stat skill)
   function processEffectUpgrade(IUintComp components, uint256 holderID, uint256 effectID) public {
-    if (LibRegistrySkill.getType(components, effectID).eq("STAT")) {
+    if (LibSkillRegistry.getType(components, effectID).eq("STAT")) {
       processStatEffectUpgrade(components, holderID, effectID);
     } else {
       processGeneralEffectUpgrade(components, holderID, effectID);
@@ -77,12 +77,12 @@ library LibSkill {
     uint256 holderID,
     uint256 effectID
   ) internal {
-    string memory type_ = LibRegistrySkill.getType(components, effectID);
-    string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
+    string memory type_ = LibSkillRegistry.getType(components, effectID);
+    string memory subtype = LibSkillRegistry.getSubtype(components, effectID);
     string memory bonusType;
     if (subtype.eq("")) bonusType = type_;
     else bonusType = LibString.concat(LibString.concat(type_, "_"), subtype);
-    int256 value = LibRegistrySkill.getBalanceSigned(components, effectID);
+    int256 value = LibSkillRegistry.getBalanceSigned(components, effectID);
 
     LibBonus.inc(components, holderID, bonusType, value);
   }
@@ -94,8 +94,8 @@ library LibSkill {
     uint256 holderID,
     uint256 effectID
   ) internal {
-    string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
-    int32 amt = int32(LibRegistrySkill.getBalanceSigned(components, effectID));
+    string memory subtype = LibSkillRegistry.getSubtype(components, effectID);
+    int32 amt = int32(LibSkillRegistry.getBalanceSigned(components, effectID));
 
     LibStat.shift(components, holderID, subtype, amt);
   }
@@ -114,22 +114,22 @@ library LibSkill {
     uint256 targetID,
     uint256 registryID // skill registry entity id
   ) internal view returns (bool) {
-    uint32 skillIndex = LibRegistrySkill.getSkillIndex(components, registryID);
+    uint32 skillIndex = LibSkillRegistry.getSkillIndex(components, registryID);
 
     // check point balance against skill cost
-    uint256 cost = LibRegistrySkill.getCost(components, registryID);
+    uint256 cost = LibSkillRegistry.getCost(components, registryID);
     if (getPoints(components, targetID) < cost) return false;
 
     // check current points invested in this skill against the max
     uint256 id = get(components, targetID, skillIndex);
-    uint256 max = LibRegistrySkill.getMax(components, registryID);
+    uint256 max = LibSkillRegistry.getMax(components, registryID);
     if (getPoints(components, id) >= max) return false;
 
     // check skill tree
     if (!meetsTreePrerequisites(components, targetID, registryID)) return false;
 
     // check all other requirements
-    uint256[] memory requirements = LibRegistrySkill.getRequirementsByIndex(components, skillIndex);
+    uint256[] memory requirements = LibSkillRegistry.getRequirementsByIndex(components, skillIndex);
     return LibBoolean.checkConditions(components, requirements, targetID);
   }
 
@@ -139,7 +139,7 @@ library LibSkill {
     uint256 targetID,
     uint256 registryID
   ) internal view returns (bool) {
-    (bool has, string memory tree, uint256 tier) = LibRegistrySkill.getTree(components, registryID);
+    (bool has, string memory tree, uint256 tier) = LibSkillRegistry.getTree(components, registryID);
 
     // if no skill tree, automatically pass
     if (!has) return true;
@@ -246,7 +246,7 @@ library LibSkill {
     uint256 registryID,
     uint256 cost
   ) internal {
-    (bool has, string memory tree, ) = LibRegistrySkill.getTree(components, registryID);
+    (bool has, string memory tree, ) = LibSkillRegistry.getTree(components, registryID);
     if (has) LibDataEntity.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), cost);
   }
 

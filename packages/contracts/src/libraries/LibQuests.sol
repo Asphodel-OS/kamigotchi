@@ -29,7 +29,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LOGIC, HANDLER, LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 /**
  * @notice LibQuests handles quests!
@@ -62,7 +62,7 @@ library LibQuests {
     setTimeStart(components, id, block.timestamp);
 
     // snapshot objectives values if logic type needs it
-    uint256[] memory objectives = LibRegistryQuests.getObjectivesByQuestIndex(
+    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(
       components,
       questIndex
     );
@@ -95,7 +95,7 @@ library LibQuests {
     }
 
     // snapshot objectives values if logic type needs it
-    uint256[] memory objectives = LibRegistryQuests.getObjectivesByQuestIndex(
+    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(
       components,
       questIndex
     );
@@ -119,8 +119,6 @@ library LibQuests {
 
     uint32 questIndex = getQuestIndex(components, questID);
     distributeRewards(world, components, questIndex, accountID);
-
-    uint256 questRegID = LibRegistryQuests.getByQuestIndex(components, questIndex);
   }
 
   function drop(IUintComp components, uint256 questID) internal {
@@ -180,7 +178,7 @@ library LibQuests {
 
     // can accept if time passed
     uint256 timeStart = getTimeStart(components, repeatQuestID);
-    uint256 regID = LibRegistryQuests.getByQuestIndex(components, questIndex);
+    uint256 regID = LibQuestRegistry.getByQuestIndex(components, questIndex);
     uint256 duration = getTime(components, regID);
     return block.timestamp > timeStart + duration;
   }
@@ -190,7 +188,7 @@ library LibQuests {
     uint32 questIndex,
     uint256 accountID
   ) internal view returns (bool result) {
-    uint256[] memory requirements = LibRegistryQuests.getRequirementsByQuestIndex(
+    uint256[] memory requirements = LibQuestRegistry.getRequirementsByQuestIndex(
       components,
       questIndex
     );
@@ -220,7 +218,7 @@ library LibQuests {
   ) internal view returns (bool result) {
     uint32 questIndex = getQuestIndex(components, questID);
 
-    uint256[] memory objectives = LibRegistryQuests.getObjectivesByQuestIndex(
+    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(
       components,
       questIndex
     );
@@ -253,7 +251,7 @@ library LibQuests {
     uint32 questIndex,
     uint256 accountID
   ) internal {
-    uint256[] memory rewards = LibRegistryQuests.getRewardsByQuestIndex(components, questIndex);
+    uint256[] memory rewards = LibQuestRegistry.getRewardsByQuestIndex(components, questIndex);
 
     for (uint256 i = 0; i < rewards.length; i++) {
       string memory _type = getType(components, rewards[i]);

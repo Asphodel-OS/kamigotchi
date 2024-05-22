@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.Quest.Accept"));
 
@@ -15,7 +15,7 @@ contract QuestAcceptSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint32 index = abi.decode(arguments, (uint32));
-    uint256 regID = LibRegistryQuests.getByQuestIndex(components, index);
+    uint256 regID = LibQuestRegistry.getByQuestIndex(components, index);
     require(regID != 0, "Quest not found");
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);

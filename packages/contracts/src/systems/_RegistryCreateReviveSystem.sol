@@ -6,7 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Revive.Create"));
 
@@ -22,12 +22,12 @@ contract _RegistryCreateReviveSystem is System {
       int32 health,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, int32, string));
-    uint256 registryID = LibRegistryItem.getByIndex(components, index);
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
 
     require(!LibString.eq(name, ""), "CreateRevive: name is empty");
     require(health > 0, "CreateRevive: health not > 0");
 
-    LibRegistryItem.createRevive(components, index, name, description, health, media);
+    LibItemRegistry.createRevive(components, index, name, description, health, media);
 
     return "";
   }

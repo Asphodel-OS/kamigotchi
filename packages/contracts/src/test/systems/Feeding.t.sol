@@ -23,18 +23,18 @@ contract FeedingTest is SetupTemplate {
   // HELPER FUNCTIONS
 
   function _getListingItemIndex(uint listingID) internal view returns (uint32) {
-    uint registryID = LibRegistryItem.getByInstance(components, listingID);
-    return LibRegistryItem.getIndex(components, registryID);
+    uint registryID = LibItemRegistry.getByInstance(components, listingID);
+    return LibItemRegistry.getIndex(components, registryID);
   }
 
   function _getFoodHealAmount(uint32 index) internal view returns (int32) {
-    uint registryID = LibRegistryItem.getByIndex(components, index);
+    uint registryID = LibItemRegistry.getByIndex(components, index);
     return LibStat.getHealth(components, registryID).base;
   }
 
   function _calcHarvestingPetHealth(uint petID) internal view returns (uint) {
     uint productionID = LibPet.getProduction(components, petID);
-    uint output = LibProduction.calcBounty(components, productionID);
+    uint output = LibHarvest.calcBounty(components, productionID);
     uint drain = LibPet.calcStrain(components, petID, output);
     uint health = uint(int(LibStat.getHealth(components, petID).sync));
     health = (health > drain) ? health - drain : 0;
@@ -43,18 +43,18 @@ contract FeedingTest is SetupTemplate {
 
   function _createFoodListings(uint32 npcIndex) internal {
     uint32 itemIndex;
-    uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
+    uint[] memory registryIDs = LibItemRegistry.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibRegistryItem.getIndex(components, registryIDs[i]);
+      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
   function _createReviveListings(uint32 npcIndex) internal {
     uint32 itemIndex;
-    uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
+    uint[] memory registryIDs = LibItemRegistry.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibRegistryItem.getIndex(components, registryIDs[i]);
+      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }

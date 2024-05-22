@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { TraitValues, LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { TraitValues, LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Trait.Create"));
@@ -44,15 +44,15 @@ contract _RegistryCreateTraitSystem is System {
     );
 
     if (LibString.eq(traitType, "BODY")) {
-      LibRegistryTrait.createBody(components, index, values);
+      LibTraitRegistry.createBody(components, index, values);
     } else if (LibString.eq(traitType, "BACKGROUND")) {
-      LibRegistryTrait.createBackground(components, index, values);
+      LibTraitRegistry.createBackground(components, index, values);
     } else if (LibString.eq(traitType, "COLOR")) {
-      LibRegistryTrait.createColor(components, index, values);
+      LibTraitRegistry.createColor(components, index, values);
     } else if (LibString.eq(traitType, "FACE")) {
-      LibRegistryTrait.createFace(components, index, values);
+      LibTraitRegistry.createFace(components, index, values);
     } else if (LibString.eq(traitType, "HAND")) {
-      LibRegistryTrait.createHand(components, index, values);
+      LibTraitRegistry.createHand(components, index, values);
     } else {
       revert("invalid traitType");
     }

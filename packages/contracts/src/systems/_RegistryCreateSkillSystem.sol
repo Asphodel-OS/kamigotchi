@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create"));
 
@@ -33,10 +33,10 @@ contract _RegistryCreateSkillSystem is System {
     require(!LibString.eq(type_, ""), "SkillCreate: type empty");
     require(!LibString.eq(name, ""), "SkillCreate: name empty");
 
-    uint256 regID = LibRegistrySkill.getByIndex(components, index);
+    uint256 regID = LibSkillRegistry.getByIndex(components, index);
     require(regID == 0, "SkillCreate: already exists");
 
-    regID = LibRegistrySkill.create(
+    regID = LibSkillRegistry.create(
       components,
       index,
       for_,
@@ -47,7 +47,7 @@ contract _RegistryCreateSkillSystem is System {
       max,
       media
     );
-    if (!LibString.eq(tree, "")) LibRegistrySkill.setTree(components, regID, tree, treeTier);
+    if (!LibString.eq(tree, "")) LibSkillRegistry.setTree(components, regID, tree, treeTier);
 
     return abi.encode(regID);
   }

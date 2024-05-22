@@ -134,28 +134,16 @@
     {
       "last deployed": "26th December 2023",
       "name": "_ConfigSetSystem",
-      "writeAccess": [
-        "IsConfigComponent",
-        "NameComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "ValueComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_ConfigSetStringSystem",
-      "writeAccess": [
-        "IsConfigComponent",
-        "NameComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "ValueComponent"]
     },
     {
       "name": "_ConfigSetWeiSystem",
-      "writeAccess": [
-        "IsConfigComponent",
-        "NameComponent",
-        "WeiComponent"
-      ]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "WeiComponent"]
     },
     {
       "last deployed": "26th December 2023",
@@ -197,54 +185,37 @@
     {
       "last deployed": "26th December 2023",
       "name": "_NodeSetAffinitySystem [Depreciated]",
-      "writeAccess": [
-        "AffinityComponent"
-      ]
+      "writeAccess": ["AffinityComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_NodeSetDescriptionSystem [Depreciated]",
-      "writeAccess": [
-        "DescriptionComponent"
-      ]
+      "writeAccess": ["DescriptionComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_NodeSetRoomIndexSystem [Depreciated]",
-      "writeAccess": [
-        "IndexRoomComponent"
-      ]
+      "writeAccess": ["IndexRoomComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_NodeSetNameSystem [Depreciated]",
-      "writeAccess": [
-        "NameComponent"
-      ]
+      "writeAccess": ["NameComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_NPCCreateSystem",
-      "writeAccess": [
-        "IsNPCComponent",
-        "IndexNPCComponent",
-        "IndexRoomComponent",
-        "NameComponent"
-      ]
+      "writeAccess": ["IsNPCComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_NPCSetRoomIndexSystem",
-      "writeAccess": [
-        "IndexRoomComponent"
-      ]
+      "writeAccess": ["IndexRoomComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_NPCSetNameSystem",
-      "writeAccess": [
-        "NameComponent"
-      ]
+      "writeAccess": ["NameComponent"]
     },
     {
       "last deployed": "26th December 2023",
@@ -330,30 +301,22 @@
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryCreateQuestSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryCreateQuestObjectiveSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryCreateQuestRequirementSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryCreateQuestRewardSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
@@ -427,9 +390,7 @@
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryCreateTraitSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "3rd January 2024",
@@ -483,9 +444,7 @@
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryDeleteQuestSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
@@ -512,18 +471,12 @@
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryUpdateRelationshipSystem",
-      "writeAccess": [
-        "NameComponent",
-        "BlacklistComponent",
-        "WhitelistComponent"
-      ]
+      "writeAccess": ["NameComponent", "BlacklistComponent", "WhitelistComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_RegistryUpdateTraitSystem [Depreciated]",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
@@ -550,23 +503,17 @@
     {
       "last deployed": "26th December 2023",
       "name": "_RoomSetDescriptionSystem [Depreciated]",
-      "writeAccess": [
-        "DescriptionComponent"
-      ]
+      "writeAccess": ["DescriptionComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_RoomSetExitsSystem [Depreciated]",
-      "writeAccess": [
-        "ExitsComponent"
-      ]
+      "writeAccess": ["ExitsComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "_RoomSetNameSystem [Depreciated]",
-      "writeAccess": [
-        "NameComponent"
-      ]
+      "writeAccess": ["NameComponent"]
     },
     {
       "last deployed": "26th December 2023",
@@ -614,18 +561,12 @@
     {
       "last deployed": "26th December 2023",
       "name": "AccountSetNameSystem",
-      "writeAccess": [
-        "NameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["NameComponent", "TimeLastComponent"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "AccountSetOperatorSystem",
-      "writeAccess": [
-        "AddressOperatorComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["AddressOperatorComponent", "TimeLastComponent"]
     },
     {
       "last deployed": "26th December 2023",
@@ -834,16 +775,12 @@
     {
       "last deployed": "26th December 2023",
       "name": "Pet721MintSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
       "name": "Pet721RevealSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
@@ -970,11 +907,7 @@
     {
       "last deployed": "26th December 2023",
       "name": "PetNameSystem",
-      "writeAccess": [
-        "CanNameComponent",
-        "NameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["CanNameComponent", "NameComponent", "TimeLastComponent"]
     },
     {
       "last deployed": "16th Jan 2023",
@@ -994,10 +927,7 @@
     {
       "last deployed": "26th December 2023",
       "name": "PetSetAccountSystem",
-      "writeAccess": [
-        "IdAccountComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["IdAccountComponent", "TimeLastComponent"]
     },
     {
       "last deployed": "26th December 2023",
@@ -1025,11 +955,7 @@
     {
       "last deployed": "26th December 2023",
       "name": "PetUseItemSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "CanNameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["BalanceComponent", "CanNameComponent", "TimeLastComponent"]
     },
     {
       "last deployed": "16th Jan 2023",
@@ -1139,9 +1065,7 @@
     {
       "last deployed": "26th December 2023",
       "name": "QuestCompleteSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "last deployed": "26th December 2023",
@@ -1212,16 +1136,16 @@
     "LibNPC",
     "LibPet721",
     "LibPet",
-    "LibProduction",
+    "LibHarvest",
     "LibPrototype",
     "LibQuests",
     "LibRandom",
     "LibRegistryAffinity",
-    "LibRegistryItem",
-    "LibRegistryQuests",
-    "LibRegistrySkill",
-    "LibRegistryRelationship",
-    "LibRegistryTrait",
+    "LibItemRegistry",
+    "LibQuestRegistry",
+    "LibSkillRegistry",
+    "LibRelationshipRegistry",
+    "LibTraitRegistry",
     "LibRelationship",
     "LibRoom",
     "LibTimelock",

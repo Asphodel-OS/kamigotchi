@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibString } from "solady/utils/LibString.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Food.Create"));
 
@@ -23,11 +23,11 @@ contract _RegistryCreateFoodSystem is System {
       uint256 experience,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, int32, uint256, string));
-    uint256 registryID = LibRegistryItem.getByIndex(components, index);
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
 
     require(!LibString.eq(name, ""), "CreateFood: name cannot be empty");
 
-    LibRegistryItem.createFood(components, index, name, description, health, experience, media);
+    LibItemRegistry.createFood(components, index, name, description, health, experience, media);
 
     return "";
   }

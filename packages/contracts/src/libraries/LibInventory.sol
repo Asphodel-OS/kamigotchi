@@ -12,7 +12,7 @@ import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryC
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // handles nonfungible inventory instances
@@ -87,8 +87,8 @@ library LibInventory {
 
   // Check if the associated registry entry has a type
   function hasType(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 registryID = LibRegistryItem.getByInstance(components, id);
-    return LibRegistryItem.hasType(components, registryID);
+    uint256 registryID = LibItemRegistry.getByInstance(components, id);
+    return LibItemRegistry.hasType(components, registryID);
   }
 
   /////////////////
@@ -116,8 +116,8 @@ library LibInventory {
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory v) {
-    uint256 registryID = LibRegistryItem.getByInstance(components, id);
-    return LibRegistryItem.getType(components, registryID);
+    uint256 registryID = LibItemRegistry.getByInstance(components, id);
+    return LibItemRegistry.getType(components, registryID);
   }
 
   /////////////////

@@ -8,7 +8,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
 uint256 constant ID = uint256(keccak256("system.Skill.Upgrade"));
@@ -22,7 +22,7 @@ contract SkillUpgradeSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // check that the skill exists
-    uint256 registryID = LibRegistrySkill.getByIndex(components, skillIndex);
+    uint256 registryID = LibSkillRegistry.getByIndex(components, skillIndex);
     require(registryID != 0, "SkillUpgrade: skill not found");
 
     // entity type check
@@ -52,7 +52,7 @@ contract SkillUpgradeSystem is System {
     );
 
     // decrement the skill cost
-    uint256 cost = LibRegistrySkill.getCost(components, registryID);
+    uint256 cost = LibSkillRegistry.getCost(components, registryID);
     LibSkill.dec(components, holderID, cost);
 
     // create the skill if it doesnt exist and increment it
@@ -61,7 +61,7 @@ contract SkillUpgradeSystem is System {
     LibSkill.inc(components, skillID, 1);
 
     // get the skill's effects and update the holder's bonuses accordingly
-    uint256[] memory effectIDs = LibRegistrySkill.getEffectsByIndex(components, skillIndex);
+    uint256[] memory effectIDs = LibSkillRegistry.getEffectsByIndex(components, skillIndex);
     for (uint256 i = 0; i < effectIDs.length; i++) {
       LibSkill.processEffectUpgrade(components, holderID, effectIDs[i]);
     }

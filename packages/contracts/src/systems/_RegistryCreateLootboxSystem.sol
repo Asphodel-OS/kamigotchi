@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibString } from "solady/utils/LibString.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Lootbox.Create"));
 
@@ -22,10 +22,10 @@ contract _RegistryCreateLootboxSystem is System {
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, uint32[], uint256[], string));
 
-    uint256 registryID = LibRegistryItem.getByIndex(components, index);
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
     require(!LibString.eq(name, ""), "CreateLootbox: name empty");
 
-    LibRegistryItem.createLootbox(components, index, name, description, keys, weights, media);
+    LibItemRegistry.createLootbox(components, index, name, description, keys, weights, media);
 
     return "";
   }

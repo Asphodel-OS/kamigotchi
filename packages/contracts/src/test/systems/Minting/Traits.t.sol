@@ -103,11 +103,11 @@ contract TraitsTest is SetupTemplate {
     uint[] memory petIDs = __721BatchMinterSystem.batchMint(numPets);
     vm.stopPrank();
 
-    uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, "BACKGROUND");
-    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, "BODY");
-    uint[] memory colors = LibRegistryTrait.getAllOfType(components, "COLOR");
-    uint[] memory faces = LibRegistryTrait.getAllOfType(components, "FACE");
-    uint[] memory hands = LibRegistryTrait.getAllOfType(components, "HAND");
+    uint[] memory backgrounds = LibTraitRegistry.getAllOfType(components, "BACKGROUND");
+    uint[] memory bodies = LibTraitRegistry.getAllOfType(components, "BODY");
+    uint[] memory colors = LibTraitRegistry.getAllOfType(components, "COLOR");
+    uint[] memory faces = LibTraitRegistry.getAllOfType(components, "FACE");
+    uint[] memory hands = LibTraitRegistry.getAllOfType(components, "HAND");
 
     uint[] memory bgCounts = new uint[](backgrounds.length);
     uint[] memory bodyCounts = new uint[](bodies.length);
@@ -116,11 +116,11 @@ contract TraitsTest is SetupTemplate {
     uint[] memory handCounts = new uint[](hands.length);
 
     for (uint i = 0; i < numPets; i++) {
-      bgCounts[LibRegistryTrait.getBackgroundIndex(components, petIDs[i])]++;
-      bodyCounts[LibRegistryTrait.getBodyIndex(components, petIDs[i])]++;
-      colorCounts[LibRegistryTrait.getColorIndex(components, petIDs[i])]++;
-      faceCounts[LibRegistryTrait.getFaceIndex(components, petIDs[i])]++;
-      handCounts[LibRegistryTrait.getHandIndex(components, petIDs[i])]++;
+      bgCounts[LibTraitRegistry.getBackgroundIndex(components, petIDs[i])]++;
+      bodyCounts[LibTraitRegistry.getBodyIndex(components, petIDs[i])]++;
+      colorCounts[LibTraitRegistry.getColorIndex(components, petIDs[i])]++;
+      faceCounts[LibTraitRegistry.getFaceIndex(components, petIDs[i])]++;
+      handCounts[LibTraitRegistry.getHandIndex(components, petIDs[i])]++;
     }
 
     uint[][5] memory traits = [backgrounds, bodies, colors, faces, hands];
@@ -132,7 +132,7 @@ contract TraitsTest is SetupTemplate {
     for (uint i = 0; i < traits.length; i++) {
       for (uint j = 0; j < traits[i].length; j++) {
         count = counts[i][j];
-        name = LibRegistryTrait.getName(components, traits[i][j]);
+        name = LibTraitRegistry.getName(components, traits[i][j]);
         console.log("%s: %d", name, count);
       }
       console.log("\n");

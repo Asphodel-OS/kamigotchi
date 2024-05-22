@@ -32,9 +32,9 @@ import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibProduction } from "libraries/LibProduction.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
@@ -129,7 +129,7 @@ library LibPet {
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
-      uint256 deltaBalance = LibProduction.sync(components, productionID);
+      uint256 deltaBalance = LibHarvest.sync(components, productionID);
       uint256 damage = calcStrain(components, id, deltaBalance);
       drain(components, id, damage.toInt32());
     } else if (LibString.eq(state, "RESTING")) {
@@ -441,7 +441,7 @@ library LibPet {
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
-      uint256 nodeID = LibProduction.getNode(components, productionID);
+      uint256 nodeID = LibHarvest.getNode(components, productionID);
       roomIndex = LibNode.getRoom(components, nodeID);
     } else if (LibString.eq(state, "721_EXTERNAL")) {
       roomIndex = 0;
@@ -467,7 +467,7 @@ library LibPet {
 
   // Get the production of a pet. Return 0 if there are none.
   function getProduction(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibProduction.getForPet(components, id);
+    return LibHarvest.getForPet(components, id);
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -477,19 +477,19 @@ library LibPet {
   // Get the traits of a pet, specifically the list of trait registry IDs
   function getTraits(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     uint256[] memory traits = new uint256[](5);
-    traits[0] = LibRegistryTrait.getBackgroundOf(components, id);
-    traits[1] = LibRegistryTrait.getBodyOf(components, id);
-    traits[2] = LibRegistryTrait.getColorOf(components, id);
-    traits[3] = LibRegistryTrait.getFaceOf(components, id);
-    traits[4] = LibRegistryTrait.getHandOf(components, id);
+    traits[0] = LibTraitRegistry.getBackgroundOf(components, id);
+    traits[1] = LibTraitRegistry.getBodyOf(components, id);
+    traits[2] = LibTraitRegistry.getColorOf(components, id);
+    traits[3] = LibTraitRegistry.getFaceOf(components, id);
+    traits[4] = LibTraitRegistry.getHandOf(components, id);
     return traits;
   }
 
   // Get the pet's affinities. hardcoded to check for body and hands.
   function getAffinities(IUintComp components, uint256 id) internal view returns (string[] memory) {
     string[] memory affinities = new string[](2);
-    uint256 bodyRegistryID = LibRegistryTrait.getBodyOf(components, id);
-    uint256 handRegistryID = LibRegistryTrait.getHandOf(components, id);
+    uint256 bodyRegistryID = LibTraitRegistry.getBodyOf(components, id);
+    uint256 handRegistryID = LibTraitRegistry.getHandOf(components, id);
     affinities[0] = getAffinity(components, bodyRegistryID);
     affinities[1] = getAffinity(components, handRegistryID);
     return affinities;

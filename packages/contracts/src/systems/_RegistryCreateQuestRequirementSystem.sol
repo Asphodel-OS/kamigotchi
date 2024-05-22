@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create.Requirement"));
@@ -24,20 +24,20 @@ contract _RegistryCreateQuestRequirementSystem is System {
     ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
 
     // check that the quest exists
-    uint256 questID = LibRegistryQuests.getByQuestIndex(components, questIndex);
+    uint256 questID = LibQuestRegistry.getByQuestIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
     // create an empty Quest Requirement and set any non-zero fields
-    uint256 id = LibRegistryQuests.createEmptyRequirement(
+    uint256 id = LibQuestRegistry.createEmptyRequirement(
       world,
       components,
       questIndex,
       logicType,
       type_
     );
-    if (index != 0) LibRegistryQuests.setIndex(components, id, index);
-    if (value != 0) LibRegistryQuests.setBalance(components, id, value);
+    if (index != 0) LibQuestRegistry.setIndex(components, id, index);
+    if (value != 0) LibQuestRegistry.setBalance(components, id, value);
 
     return abi.encode(id);
   }

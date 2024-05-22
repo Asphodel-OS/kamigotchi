@@ -9,7 +9,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Revive"));
@@ -23,8 +23,8 @@ contract PetReviveSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // get/check registry entry
-    uint256 registryID = LibRegistryItem.getByIndex(components, itemIndex);
-    string memory type_ = LibRegistryItem.getType(components, registryID);
+    uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
+    string memory type_ = LibItemRegistry.getType(components, registryID);
     require(LibString.eq(type_, "REVIVE"), "PetRevive: god can't save you");
 
     // standard checks (ownership, cooldown, state)

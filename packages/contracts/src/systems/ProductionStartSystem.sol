@@ -8,7 +8,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibProduction } from "libraries/LibProduction.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Start"));
 
@@ -34,10 +34,10 @@ contract ProductionStartSystem is System {
     require(LibAccount.sharesRoom(components, accountID, nodeID), "FarmStart: node too far");
 
     // start the production, create if none exists
-    uint256 id = LibProduction.getForPet(components, petID);
-    if (id == 0) id = LibProduction.create(components, nodeID, petID);
-    else LibProduction.setNode(components, id, nodeID);
-    LibProduction.start(components, id);
+    uint256 id = LibHarvest.getForPet(components, petID);
+    if (id == 0) id = LibHarvest.create(components, nodeID, petID);
+    else LibHarvest.setNode(components, id, nodeID);
+    LibHarvest.start(components, id);
     LibPet.setState(components, petID, "HARVESTING");
     LibPet.setLastActionTs(components, petID, block.timestamp);
 

@@ -32,7 +32,7 @@ import { LibInventory } from "libraries/LibInventory.sol";
 // A registry for Quest related entities
 // Quest is copied to an Account, the rest are referenced
 
-library LibRegistryQuests {
+library LibQuestRegistry {
   /////////////////
   // INTERACTIONS
 
