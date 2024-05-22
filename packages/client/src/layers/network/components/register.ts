@@ -136,7 +136,6 @@ export function createComponents(world: World) {
     Name: defineStringEZ('Name', 'component.name'),
     PriceBuy: defineNumberEZ('PriceBuy', 'component.price.buy'),
     PriceSell: defineNumberEZ('PriceSell', 'component.price.sell'),
-    QuestPoint: defineNumberEZ('QuestPoint', 'component.quest.point'),
     Rarity: defineNumberEZ('Rarity', 'component.rarity'),
     Rate: defineNumberEZ('Rate', 'component.rate'),
     Reroll: defineNumberEZ('Rerolls', 'component.reroll'),

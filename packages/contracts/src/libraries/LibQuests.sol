@@ -21,7 +21,6 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -122,8 +121,6 @@ library LibQuests {
     distributeRewards(world, components, questIndex, accountID);
 
     uint256 questRegID = LibRegistryQuests.getByQuestIndex(components, questIndex);
-    uint256 points = getPoints(components, questRegID);
-    distributePoints(components, accountID, points);
   }
 
   function drop(IUintComp components, uint256 questID) internal {
@@ -264,12 +261,6 @@ library LibQuests {
       uint256 amount = getBalance(components, rewards[i]);
       LibAccount.incBalanceOf(world, components, accountID, _type, index, amount);
     }
-  }
-
-  function distributePoints(IUintComp components, uint256 accountID, uint256 amount) internal {
-    QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
-    uint256 bal = comp.has(accountID) ? comp.get(accountID) : 0;
-    comp.set(accountID, bal + amount);
   }
 
   function checkCurrent(
@@ -510,10 +501,6 @@ library LibQuests {
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
     return comp.has(id) ? comp.get(id) : 0;
-  }
-
-  function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    return QuestPointComponent(getAddressById(components, QuestPointCompID)).get(id);
   }
 
   ////////////////

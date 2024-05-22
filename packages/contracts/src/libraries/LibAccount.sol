@@ -20,7 +20,6 @@ import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomCompon
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
@@ -180,10 +179,6 @@ library LibAccount {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
-  function setQuestPoints(IUintComp components, uint256 id, uint256 amt) internal {
-    QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, amt);
-  }
-
   function setMint20Minted(
     IWorld world,
     IUintComp components,
@@ -252,12 +247,6 @@ library LibAccount {
   // get the address of an Account Owner
   function getOwner(IUintComp components, uint256 id) internal view returns (address) {
     return AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).get(id);
-  }
-
-  function getQuestPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
-    if (comp.has(id)) return comp.get(id);
-    else return 0;
   }
 
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {

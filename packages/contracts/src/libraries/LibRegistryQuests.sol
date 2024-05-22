@@ -20,7 +20,6 @@ import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestCompone
 import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
@@ -44,8 +43,7 @@ library LibRegistryQuests {
     uint32 index,
     string memory name,
     string memory description,
-    string memory endText,
-    uint256 points
+    string memory endText
   ) internal returns (uint256) {
     uint256 id = genQuestID(index);
     IsQuestComponent isQuestComp = IsQuestComponent(getAddressById(components, IsQuestCompID));
@@ -57,7 +55,6 @@ library LibRegistryQuests {
     setName(components, id, name);
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
     DescriptionAltComponent(getAddressById(components, DescAltCompID)).set(id, endText);
-    QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, points);
 
     return id;
   }
@@ -136,7 +133,6 @@ library LibRegistryQuests {
     unsetName(components, questID);
     DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
-    QuestPointComponent(getAddressById(components, QuestPointCompID)).remove(questID);
 
     unsetIsRepeatable(components, questID);
     unsetTime(components, questID);

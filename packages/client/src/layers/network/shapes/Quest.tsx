@@ -123,7 +123,6 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
     Name,
     Time,
     QuestIndex,
-    QuestPoint,
     StartTime,
   } = components;
 
@@ -131,8 +130,6 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
   const registryIndex = Array.from(
     runQuery([Has(IsRegistry), Has(IsQuest), HasValue(QuestIndex, { value: questIndex })])
   )[0];
-
-  const points = (getComponentValue(QuestPoint, registryIndex)?.value || (0 as number)) * 1;
 
   let result: Quest = {
     id: world.entities[entityIndex],
@@ -145,7 +142,7 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
     requirements: queryQuestRequirements(world, components, questIndex),
     objectives: queryQuestObjectives(world, components, questIndex),
     rewards: queryQuestRewards(world, components, questIndex, world.entities[entityIndex], points),
-    points: points,
+    points: 0, // QP depreciated
   };
 
   if (hasComponent(IsRepeatable, registryIndex)) {

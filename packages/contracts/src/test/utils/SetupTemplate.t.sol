@@ -525,10 +525,6 @@ abstract contract SetupTemplate is TestSetupImports {
   /* QUESTS */
 
   function _createQuest(uint32 index, uint duration) public returns (uint256) {
-    return _createQuest(index, 0, duration);
-  }
-
-  function _createQuest(uint32 index, uint points, uint duration) public returns (uint256) {
     vm.prank(deployer);
     return
       abi.decode(
@@ -537,7 +533,6 @@ abstract contract SetupTemplate is TestSetupImports {
           LibString.toString(index),
           "DESCRIPTION",
           "",
-          points,
           duration
         ),
         (uint256)

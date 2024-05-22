@@ -30,13 +30,11 @@ export async function initLocalQuests(api: AdminAPI) {
 }
 
 export async function initQuest(api: AdminAPI, entry: any) {
-  // console.log('initQuest', entry['Index']);
   await api.registry.quest.create(
     Number(entry['Index']),
     entry['Title'],
     entry['Introduction text'],
     entry['Resolution text'],
-    Number(entry['QP'] ?? 0),
     entry['Daily'] === 'Yes' ? 64800 : 0
   );
 }

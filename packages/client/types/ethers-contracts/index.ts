@@ -161,7 +161,6 @@ export type { ProxyPermissionsMint20Component } from "./ProxyPermissionsMint20Co
 export type { QuestAcceptSystem } from "./QuestAcceptSystem";
 export type { QuestCompleteSystem } from "./QuestCompleteSystem";
 export type { QuestDropSystem } from "./QuestDropSystem";
-export type { QuestPointComponent } from "./QuestPointComponent";
 export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
 export type { RegisterSystem } from "./RegisterSystem";
@@ -405,7 +404,6 @@ export { ProxyPermissionsMint20Component__factory } from "./factories/ProxyPermi
 export { QuestAcceptSystem__factory } from "./factories/QuestAcceptSystem__factory";
 export { QuestCompleteSystem__factory } from "./factories/QuestCompleteSystem__factory";
 export { QuestDropSystem__factory } from "./factories/QuestDropSystem__factory";
-export { QuestPointComponent__factory } from "./factories/QuestPointComponent__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";
 export { RegisterSystem__factory } from "./factories/RegisterSystem__factory";

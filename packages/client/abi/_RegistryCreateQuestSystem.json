@@ -60,11 +60,6 @@
           "internalType": "string"
         },
         {
-          "name": "points",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
           "name": "duration",
           "type": "uint256",
           "internalType": "uint256"
@@ -137,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,string,uint256,uint256)": "5058ce7b",
+    "executeTyped(uint32,string,string,string,uint256)": "d1a2c23a",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

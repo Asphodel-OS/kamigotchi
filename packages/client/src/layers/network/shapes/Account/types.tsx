@@ -110,7 +110,6 @@ export const getAccount = (
     Name,
     OperatorAddress,
     OwnerAddress,
-    QuestPoint,
     Stamina,
     StartTime,
   } = components;
@@ -128,7 +127,7 @@ export const getAccount = (
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     kamis: [], // placeholder
     level: 0, // placeholder
-    questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
+    questPoints: 0, // QP is deprecated
     skillPoints: 0, // placeholder
     stamina: getStat(entityIndex, Stamina),
     time: {

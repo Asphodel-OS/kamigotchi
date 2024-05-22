@@ -374,22 +374,6 @@ contract QuestsTest is SetupTemplate {
     assertEq(2 * 10 ** 18, _Mint20.balanceOf(_getOwner(0)));
   }
 
-  function testRewardPoints() public {
-    // create quest
-    _createQuest(1, 2, 0);
-
-    uint256 regID = LibRegistryQuests.getByQuestIndex(components, 1);
-    assertTrue(regID != 0);
-    assertEq(_QuestPointComponent.get(regID), 2);
-    assertEq(LibQuests.getPoints(components, regID), 2);
-
-    // accept quest
-    uint256 questID = _acceptQuest(0, 1);
-
-    _completeQuest(0, questID);
-    assertEq(LibAccount.getQuestPoints(components, _getAccount(0)), 2);
-  }
-
   //////////////////
   // ASSERTIONS
 
