@@ -12,7 +12,6 @@ import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.
 import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { IsProductionComponent, ID as IsProdCompID } from "components/IsProductionComponent.sol";
-import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
