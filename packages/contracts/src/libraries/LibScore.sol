@@ -96,7 +96,12 @@ library LibScore {
   /////////////////
   // GETTERS
 
-  /// @notice get current epoch for leaderboard
+  function get(IUintComp components, uint256 id) internal view returns (uint256) {
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    return comp.has(id) ? comp.get(id) : 0;
+  }
+
+  // get current epoch for leaderboard
   function getCurentEpoch(IUintComp components) internal view returns (uint256) {
     return LibConfig.get(components, "LEADERBOARD_EPOCH");
   }

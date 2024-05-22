@@ -39,6 +39,7 @@
     { "comp": "IndexBodyComponent", "name": "BodyIndex", "type": "uint32" },
     { "comp": "IndexColorComponent", "name": "ColorIndex", "type": "uint32" },
     { "comp": "IndexFaceComponent", "name": "FaceIndex", "type": "uint32" },
+    { "comp": "IndexFactionComponent", "name": "FactionIndex", "type": "uint32" },
     { "comp": "IndexHandComponent", "name": "HandIndex", "type": "uint32" },
     { "comp": "IndexItemComponent", "name": "ItemIndex", "type": "uint32" },
     { "comp": "IndexNodeComponent", "name": "NodeIndex", "type": "uint32" },
@@ -118,6 +119,16 @@
     {
       "name": "_ConfigSetSystem",
       "writeAccess": ["ValueComponent"]
+    },
+    {
+      "name": "_FactionRegistrySystem",
+      "writeAccess": [
+        "IsRegistryComponent",
+        "IndexFactionComponent",
+        "NameComponent",
+        "DescriptionComponent",
+        "MediaURIComponent"
+      ]
     },
     {
       "name": "_GoalRegistrySystem",
@@ -724,6 +735,7 @@
     "LibConfig",
     "LibDataEntity",
     "LibExperience",
+    "LibFactions",
     "LibFlag",
     "LibFriend",
     "LibGacha",

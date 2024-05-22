@@ -26,6 +26,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
@@ -102,11 +103,13 @@ library LibAccount {
     string memory _type,
     uint32 index,
     uint256 amount
-  ) public {
+  ) internal {
     if (LibString.eq(_type, "ITEM")) {
       LibInventory.incFor(components, holderID, index, amount);
     } else if (LibString.eq(_type, "MINT20")) {
       LibMint20.mint(world, getOwner(components, holderID), amount);
+    } else if (LibString.eq(_type, "REPUTATION")) {
+      LibFactions.incRep(components, holderID, index, amount);
     } else {
       require(false, "LibAccount: unknown type");
     }

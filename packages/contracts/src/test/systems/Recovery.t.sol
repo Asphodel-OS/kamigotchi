@@ -10,17 +10,6 @@ contract RecoveryTest is SetupTemplate {
   using SafeCastLib for int32;
   using SafeCastLib for uint256;
 
-  ExternalCaller _externalCaller = new ExternalCaller();
-
-  function setUp() public override {
-    super.setUp();
-
-    vm.startPrank(deployer);
-    _HealthComponent.authorizeWriter(address(_externalCaller));
-    _TimeLastComponent.authorizeWriter(address(_externalCaller));
-    vm.stopPrank();
-  }
-
   /////////////////
   // CALCS
   function _calcRecovery(
@@ -96,10 +85,10 @@ contract RecoveryTest is SetupTemplate {
       // overflow
       vm.prank(deployer);
       vm.expectRevert();
-      _externalCaller.sync(components, petID);
+      ExternalCaller.petSync(petID);
     } else {
       vm.prank(deployer);
-      _externalCaller.sync(components, petID);
+      ExternalCaller.petSync(petID);
 
       uint256 expectedHealth;
       if (currHealth.toUint256() + recovery >= health.toUint256())
@@ -120,12 +109,5 @@ contract RecoveryTest is SetupTemplate {
   /// @notice handles % bonus manipulation (base value of 1000 bps)
   function _handlePercentBonus(int256 bonus) internal pure returns (uint256) {
     return bonus > -1000 ? uint256(bonus + 1000) : 1;
-  }
-}
-
-// for public libraries to be called properly via prank
-contract ExternalCaller {
-  function sync(IUint256Component components, uint256 id) public {
-    LibPet.sync(components, id);
   }
 }

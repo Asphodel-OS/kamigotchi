@@ -22,7 +22,6 @@ import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
-
 // Components
 <% components.forEach(component=> { -%>
 import { <%= component.comp %>, ID as <%= component.comp %>ID } from "components/<%- component.comp %>.sol";
@@ -33,3 +32,7 @@ import { <%= component.comp %>, ID as <%= component.comp %>ID } from "components
 import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- system.name %>.sol";
 <% }); -%>
 
+// Tokens
+import { Farm20 } from "tokens/Farm20.sol";
+import { Mint20 } from "tokens/Mint20.sol";
+import { Pet721 } from "tokens/Pet721.sol";

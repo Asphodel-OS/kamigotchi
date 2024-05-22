@@ -3,6 +3,7 @@ import _721BatchMinterSystem from "../abi/_721BatchMinterSystem.json";
 import _AdminGiveSystem from "../abi/_AdminGiveSystem.json";
 import _AuthManageRoleSystem from "../abi/_AuthManageRoleSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
+import _FactionRegistrySystem from "../abi/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../abi/_GoalRegistrySystem.json";
 import _ItemRegistrySystem from "../abi/_ItemRegistrySystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
@@ -66,6 +67,7 @@ export const SystemAbis = {
   "system._Admin.Give": _AdminGiveSystem.abi,
   "system._Auth.Manage.Role": _AuthManageRoleSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
+  "system.faction.registry": _FactionRegistrySystem.abi,
   "system.goal.registry": _GoalRegistrySystem.abi,
   "system.item.registry": _ItemRegistrySystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,

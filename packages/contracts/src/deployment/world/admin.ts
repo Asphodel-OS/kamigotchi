@@ -59,6 +59,22 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
+  // FACTIONS
+
+  async function createFaction(index: number, name: string, description: string, image: string) {
+    genCall('system.faction.registry', [index, name, description, image], 'create', [
+      'uint32',
+      'string',
+      'string',
+      'string',
+    ]);
+  }
+
+  async function deleteFaction(index: number) {
+    genCall('system.faction.registry', [index], 'remove');
+  }
+
+  /////////////////
   //  GOALS
 
   async function createGoal(
@@ -532,6 +548,10 @@ export function createAdminAPI(compiledCalls: string[]) {
         number: setConfig,
         string: setConfigString,
       },
+    },
+    faction: {
+      create: createFaction,
+      delete: deleteFaction,
     },
     goal: {
       create: createGoal,

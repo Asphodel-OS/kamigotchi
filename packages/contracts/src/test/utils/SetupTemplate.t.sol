@@ -405,6 +405,15 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // WORLD POPULATION
 
+  function _createFaction(
+    uint32 index,
+    string memory name,
+    string memory description
+  ) internal returns (uint256) {
+    vm.prank(deployer);
+    return __FactionRegistrySystem.create(abi.encode(index, name, description, ""));
+  }
+
   function _createGoal(
     uint32 index,
     uint32 roomIndex,

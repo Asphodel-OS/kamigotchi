@@ -2,6 +2,7 @@ import { AdminAPI } from '../admin';
 
 import { initAuth, initLocalAuth } from './auth';
 import { initConfigs, initLocalConfigs } from './configs';
+import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
 import { initItems } from './items';
@@ -16,6 +17,7 @@ import { initTraits } from './traits';
 export async function initAll(api: AdminAPI, local: boolean) {
   await initAuth(api);
   await initConfigs(api);
+  await initFactions(api);
   await initRooms(api);
   await initNodes(api);
   await initItems(api);
@@ -40,6 +42,7 @@ export async function initAllLocal(api: AdminAPI) {
 
 export { initAuth } from './auth';
 export { initConfigs, initLocalConfigs } from './configs';
+export { deleteFactions, initFactions, reviseFactions } from './factions';
 export { initGachaPool } from './gacha';
 export { deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';

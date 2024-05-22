@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { SystemStorage } from "solecs/SystemStorage.sol";
-import { LibDeploy, DeployResult } from "deployment/contracts/LibDeploy.sol";
+import { LibDeploy, DeployResult } from "deployment/LibDeploy.sol";
 
 string constant mnemonic = "test test test test test test test test test test test junk";
 

@@ -3,6 +3,7 @@ import { _721BatchMinterSystem } from "./ethers-contracts/_721BatchMinterSystem"
 import { _AdminGiveSystem } from "./ethers-contracts/_AdminGiveSystem";
 import { _AuthManageRoleSystem } from "./ethers-contracts/_AuthManageRoleSystem";
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
+import { _FactionRegistrySystem } from "./ethers-contracts/_FactionRegistrySystem";
 import { _GoalRegistrySystem } from "./ethers-contracts/_GoalRegistrySystem";
 import { _ItemRegistrySystem } from "./ethers-contracts/_ItemRegistrySystem";
 import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
@@ -66,6 +67,7 @@ export type SystemTypes = {
   "system._Admin.Give": _AdminGiveSystem;
   "system._Auth.Manage.Role": _AuthManageRoleSystem;
   "system._Config.Set": _ConfigSetSystem;
+  "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
   "system.item.registry": _ItemRegistrySystem;
   "system._Listing.Set": _ListingSetSystem;

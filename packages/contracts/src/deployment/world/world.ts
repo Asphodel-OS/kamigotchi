@@ -1,4 +1,5 @@
 import {
+  deleteFactions,
   deleteGoals,
   deleteItems,
   deleteNodes,
@@ -10,6 +11,7 @@ import {
   initAllLocal,
   initAuth,
   initConfigs,
+  initFactions,
   initGachaPool,
   initGoals,
   initItems,
@@ -20,6 +22,7 @@ import {
   initRooms,
   initSkills,
   initTraits,
+  reviseFactions,
   reviseItems,
   reviseNodes,
   reviseQuests,
@@ -59,6 +62,11 @@ export class WorldState {
     },
     config: {
       init: () => this.genCalls(initConfigs),
+    } as SubFunc,
+    faction: {
+      init: () => this.genCalls(initFactions),
+      delete: (indices: number[]) => this.genCalls((api) => deleteFactions(api, indices)),
+      revise: (indices: number[]) => this.genCalls((api) => reviseFactions(api, indices)),
     } as SubFunc,
     goals: {
       init: () => this.genCalls(initGoals),

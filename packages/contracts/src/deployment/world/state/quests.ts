@@ -13,8 +13,7 @@ export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
       if (
         quest['Status'] !== 'For Implementation' &&
         quest['Status'] !== 'Revise Deployment' &&
-        quest['Status'] !== 'Ingame' &&
-        quest['Status'] !== 'Needs Revision Work' // a lil clunky to accommodate notion
+        quest['Status'] !== 'Ingame' // a lil clunky to accommodate notion
       )
         continue;
       if (quest['Class'] === 'Quest' || quest['Class'] === '') await initQuest(api, quest);
@@ -28,14 +27,14 @@ export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
 }
 
 export async function initLocalQuests(api: AdminAPI) {
-  api.registry.quest.create(
-    1000000,
-    'The Chosen Taruchi',
-    'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
-    'Was it really worth it?',
-    0
-  );
-  api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
+  // api.registry.quest.create(
+  //   1000000,
+  //   'The Chosen Taruchi',
+  //   'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
+  //   'Was it really worth it?',
+  //   0
+  // );
+  // api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
 }
 
 export async function deleteQuests(api: AdminAPI, indices: number[]) {
@@ -71,6 +70,11 @@ async function initQuest(api: AdminAPI, entry: any) {
     entry['Resolution text'],
     entry['Daily'] === 'Yes' ? 64800 : 0
   );
+
+  const agencyRep = Number(entry['Agency Rep']);
+  if (agencyRep || agencyRep > 0) {
+    await api.registry.quest.add.reward(Number(entry['Index']), 'REPUTATION', 1, agencyRep);
+  }
 }
 
 async function initQuestRequirement(api: AdminAPI, entry: any) {

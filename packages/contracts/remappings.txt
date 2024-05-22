@@ -1,7 +1,7 @@
 solecs/=src/solecs
 
 components/=src/components
-deployment/=src/deployment
+deployment/=src/deployment/contracts
 libraries/=src/libraries
 systems/=src/systems
 test/=src/test

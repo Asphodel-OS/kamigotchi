@@ -54,6 +54,7 @@ export function createComponents(world: World) {
     BodyIndex: defineNumberComponent(world, 'BodyIndex', 'component.index.body'),
     ColorIndex: defineNumberComponent(world, 'ColorIndex', 'component.index.color'),
     FaceIndex: defineNumberComponent(world, 'FaceIndex', 'component.index.face'),
+    FactionIndex: defineNumberComponent(world, 'FactionIndex', 'component.index.faction'),
     HandIndex: defineNumberComponent(world, 'HandIndex', 'component.index.hand'),
     ItemIndex: defineNumberComponent(world, 'ItemIndex', 'component.index.item'),
     NodeIndex: defineNumberComponent(world, 'NodeIndex', 'component.index.node'),

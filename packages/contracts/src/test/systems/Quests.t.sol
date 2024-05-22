@@ -371,6 +371,19 @@ contract QuestsTest is SetupTemplate {
     assertEq(2 * 10 ** 18, _Mint20.balanceOf(_getOwner(0)));
   }
 
+  function testRewardFaction() public {
+    // create quest
+    _createQuest(1, 0);
+    _createQuestReward(1, "REPUTATION", 1, 111);
+
+    // accept and complete quest
+    uint256 questID = _acceptQuest(alice.index, 1);
+    _completeQuest(alice.index, questID);
+
+    // check REPUTATION
+    assertEq(LibFactions.getRep(components, alice.id, 1), 111);
+  }
+
   //////////////////
   // ASSERTIONS
 

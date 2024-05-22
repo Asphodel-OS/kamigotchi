@@ -63,7 +63,7 @@ export async function generateLibDeploy(
   }
 
   console.log(`Deploy config: \n`, JSON.stringify(config, null, 2));
-
+  await generateImports(out);
   // Generate LibDeploy
   console.log('Generating deployment script');
   await generateImports(out);

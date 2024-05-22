@@ -2,30 +2,10 @@
 pragma solidity ^0.8.0;
 
 import "test/utils/MudTest.t.sol";
+import "deployment/Imports.sol";
 
-// Libraries
-<% libraries.forEach(library => { -%>
-import { <%=library%> } from "libraries/<%= library %>.sol";
-<% }); -%>
-import { LibBoolean } from "libraries/utils/LibBoolean.sol";
-import { LibHash } from "libraries/utils/LibHash.sol";
-import { LibPack } from "libraries/utils/LibPack.sol";
-import { LibRandom } from "libraries/utils/LibRandom.sol";
-
-// Components
-<% components.forEach(component => { -%>
-import { <%= component.comp %>, ID as <%= component.comp %>ID } from "components/<%- component.comp %>.sol";
-<% }); -%>
-
-// Systems
-<% systems.forEach(system => { -%>
-import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- system.name %>.sol";
-<% }); -%>
-
-// Tokens
-import { Farm20 } from "tokens/Farm20.sol";
-import { Mint20 } from "tokens/Mint20.sol";
-import { Pet721 } from "tokens/Pet721.sol";
+// Utils
+import { WrapCaller } from "test/utils/WrapCaller.sol";
 
 abstract contract TestSetupImports is MudTest {
   // Components vars
@@ -43,8 +23,11 @@ abstract contract TestSetupImports is MudTest {
   Mint20 _Mint20;
   Pet721 _Pet721;
 
+  WrapCaller ExternalCaller;
+
   function setUp() public virtual override {
     super.setUp();
+    ExternalCaller = new WrapCaller(world, components);
 
 <% components.forEach(component => { -%>
     _<%= component.comp %> = <%= component.comp %>(component(<%= component.comp %>ID));
@@ -57,5 +40,11 @@ abstract contract TestSetupImports is MudTest {
     _Farm20 = _Farm20ProxySystem.getToken();
     _Pet721 = _Pet721ProxySystem.getToken();
     _Mint20 = _Mint20ProxySystem.getToken();
+
+    vm.startPrank(deployer);
+<% components.forEach(component => { -%>
+    _<%= component.comp %>.authorizeWriter(address(ExternalCaller));
+<% }); -%>
+    vm.stopPrank();
   }
 }
