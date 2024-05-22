@@ -78,10 +78,6 @@ export function registerAccountRegistrar() {
           ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
           operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
           name: getComponentValue(Name, entityIndex)?.value as string,
-          farcaster: {
-            id: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
-            signer: '',
-          },
         };
       };
 
@@ -95,10 +91,6 @@ export function registerAccountRegistrar() {
           ownerAddress: account.ownerEOA ?? fallback.ownerAddress,
           operatorAddress: account.operatorEOA ?? fallback.operatorAddress,
           name: account.name ?? fallback.name,
-          farcaster: {
-            id: account.fid ?? fallback.farcaster.id,
-            signer: fallback.farcaster.signer,
-          },
         };
       };
 
@@ -185,9 +177,14 @@ export function registerAccountRegistrar() {
         }
 
         if (isVisible != validators.accountRegistrar) {
-          setValidators({ ...validators, accountRegistrar: isVisible });
+          setValidators({
+            walletConnector: false,
+            accountRegistrar: isVisible,
+            operatorUpdater: false,
+            gasHarasser: false,
+          });
         }
-      }, [networkValidations, validations.accountExists, validators.walletConnector]);
+      }, [networkValidations, validations.accountExists]);
 
       /////////////////
       // ACTION

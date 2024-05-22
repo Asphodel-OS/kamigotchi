@@ -18,7 +18,7 @@ import { useNetwork, useVisibility } from 'layers/react/store';
 // The purpose of this modal is to warn the user when something is amiss.
 //
 // TERMINOLOGY:
-//    injectedAddress (privy) = ownerAddress (kamiworld) = connectorAddress (e.g. MM)
+//    injectedAddress (privy) = ownerAddress (kamiworld)
 //    embeddedAddress (privy) = operatorAddress (kamiworld)
 export function registerWalletConnecter() {
   registerUIComponent(
@@ -32,7 +32,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { network } = layers;
-      const { address: connectorAddress, chain } = useAccount();
+      const { address: injectedAddress, chain, isConnected } = useAccount();
       const { ready, authenticated, login, logout } = usePrivy();
       const { wallets } = useWallets();
 
@@ -49,16 +49,16 @@ export function registerWalletConnecter() {
       useEffect(() => {
         if (!ready) return;
         const chainMatches = chain?.id === defaultChain.id;
-        if (!chainMatches) setState('wrongChain');
-        else if (!authenticated) {
+        if (!authenticated || !isConnected) {
           setState('disconnected');
           setSelectedAddress('');
-        } else updateNetworkSettings();
+        } else if (!chainMatches) setState('wrongChain');
+        else updateNetworkSettings();
 
         if (!isEqual(validations, { authenticated, chainMatches })) {
           setValidations({ authenticated, chainMatches });
         }
-      }, [ready, authenticated, chain, wallets]);
+      }, [ready, authenticated, isConnected, chain, wallets]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -68,7 +68,12 @@ export function registerWalletConnecter() {
           toggleFixtures(false);
         }
         if (isVisible != validators.walletConnector) {
-          setValidators({ ...validators, walletConnector: isVisible });
+          setValidators({
+            walletConnector: isVisible,
+            accountRegistrar: false,
+            operatorUpdater: false,
+            gasHarasser: false,
+          });
         }
       }, [validations]);
 
@@ -77,9 +82,9 @@ export function registerWalletConnecter() {
         const injectedWallet = getInjectedWallet(wallets);
         if (injectedWallet) {
           const injectedAddress = injectedWallet.address;
-          if (connectorAddress !== injectedAddress) logout();
+          if (injectedAddress !== injectedAddress) logout();
         }
-      }, [wallets, connectorAddress]);
+      }, [wallets, injectedAddress]);
 
       /////////////////
       // ACTIONS

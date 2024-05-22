@@ -1,21 +1,19 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
+import { formatEther } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
+import { GasConstants } from 'constants/gas';
+import { waitForActionCompletion } from 'layers/network/utils';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
-
-import { GasConstants } from 'constants/gas';
 import { playFund, playSuccess } from 'utils/sounds';
-import { formatEther } from 'viem';
 
-// TODO: check for whether an account with the burner address already exists
 export function registerGasHarasser() {
   registerUIComponent(
     'GasHarasser',
@@ -53,7 +51,7 @@ export function registerGasHarasser() {
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
         if (!validations.operatorMatches) return;
-        const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > GasConstants.Warning;
+        const hasGas = hasEnoughGas(balance?.value ?? BigInt(0));
         if (hasGas == validations.operatorHasGas) return; // no change
         setValidations({ ...validations, operatorHasGas: hasGas });
       }, [validations.operatorMatches, balance]);
@@ -69,17 +67,25 @@ export function registerGasHarasser() {
 
         if (isVisible) toggleModals(false);
         if (isVisible != validators.gasHarasser) {
-          setValidators({ ...validators, gasHarasser: isVisible });
+          setValidators({
+            walletConnector: false,
+            accountRegistrar: false,
+            operatorUpdater: false,
+            gasHarasser: isVisible,
+          });
         }
-      }, [
-        networkValidations,
-        validations.operatorMatches,
-        validations.operatorHasGas,
-        validators.operatorUpdater,
-      ]);
+      }, [networkValidations, validations.operatorMatches, validations.operatorHasGas]);
 
       /////////////////
-      // ACTIONS
+      // INTERPRETATION
+
+      // abstracted out for easy modification and readability. keyword: 'Enough'
+      const hasEnoughGas = (value: bigint) => {
+        return Number(formatEther(value)) > GasConstants.Warning;
+      };
+
+      /////////////////
+      // ACTION
 
       const fundTx = async () => {
         const api = apis.get(selectedAddress);
@@ -99,7 +105,7 @@ export function registerGasHarasser() {
       };
 
       /////////////////
-      // INTERACTIONS
+      // INTERACTION
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let newValue = Number(event.target.value);

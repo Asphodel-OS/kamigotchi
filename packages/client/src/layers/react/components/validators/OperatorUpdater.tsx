@@ -52,9 +52,14 @@ export function registerOperatorUpdater() {
 
         if (isVisible) toggleModals(false);
         if (isVisible != validators.operatorUpdater) {
-          setValidators({ ...validators, operatorUpdater: isVisible });
+          setValidators({
+            walletConnector: false,
+            accountRegistrar: false,
+            operatorUpdater: isVisible,
+            gasHarasser: false,
+          });
         }
-      }, [networkValidations, validations.operatorMatches, validators.accountRegistrar]);
+      }, [networkValidations, validations.accountExists, validations.operatorMatches]);
 
       /////////////////
       // ACTIONS
