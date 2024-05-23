@@ -1,3 +1,4 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -10,44 +11,48 @@ import {
   parseTreeRequirementText,
 } from 'layers/network/shapes/Skill';
 import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
+import { playClick } from 'utils/sounds';
 
 interface Props {
-  data: {
-    account: Account;
-    kami: Kami;
-    skills: Map<number, Skill>; // Map of Skills in the registry (by index)
-    index: number; // index of the displayed skill
-  };
+  account: Account;
+  kami: Kami;
+  index: number;
+  skills: Map<number, Skill>; // registry skills
+  upgradeError: string[] | undefined;
   actions: {
-    upgrade: (skill: Skill) => void;
+    upgrade: (skill: Skill) => EntityIndex;
   };
   utils: {
-    getSkillUpgradeError: (
-      index: number,
-      kami: Kami,
-      registry: Map<number, Skill>
-    ) => string[] | undefined;
-    getTreePoints: (target: Kami, tree: string) => number;
+    getSkillImage: (skill: Skill) => string;
+    getTreePoints: (tree: string) => number;
+    updateKamiAfterAction: (actionIndex: EntityIndex) => void;
   };
 }
 
 // The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
-  const { actions, data, utils } = props;
-  const [rSkill, setRSkill] = useState<Skill | undefined>(undefined);
+  const { index, account, kami, skills, upgradeError, actions, utils } = props;
+  const [skill, setSkill] = useState<Skill | undefined>(skills.get(index)); // registry skill instance
   const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
   const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
-    setRSkill(data.skills.get(data.index)); // registry skill instance
-    setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
-    setDisabledReason(
-      data.kami.account?.index !== data.account.index
-        ? ['not ur kami']
-        : utils.getSkillUpgradeError(data.index, data.kami, data.skills)
-    );
-  }, [data.index, data.kami]);
+    const skill = skills.get(index);
+    setSkill(skill); // registry skill instance
+    setKSkill(kami.skills?.find((s) => s.index * 1 === skill?.index)); // kami skill instance
+    setDisabledReason(kami.account?.index !== account.index ? ['not ur kami'] : upgradeError);
+  }, [index, kami]);
+
+  ////////////////////
+  // INTERACTION
+
+  // trigger an upgrade of the skill
+  const triggerUpgrade = (skill: Skill) => {
+    playClick();
+    const actionIndex = actions.upgrade(skill);
+    utils.updateKamiAfterAction(actionIndex);
+  };
 
   ////////////////////
   // INTERPRETATION
@@ -56,7 +61,7 @@ export const Details = (props: Props) => {
   const getUpgradeButtonTooltip = () => {
     if (disabledReason) return disabledReason;
 
-    const cost = rSkill?.cost ?? 1;
+    const cost = skill?.cost ?? 1;
     const currLevel = kSkill?.points.current ?? 0;
     const tooltipText = [
       `Upgrade Skill (${cost}pt${cost > 1 ? 's' : ''})`,
@@ -86,16 +91,16 @@ export const Details = (props: Props) => {
   ////////////////////
   // RENDER
 
-  if (!rSkill) return <></>;
+  if (!skill) return <></>;
   return (
     <Container>
       <ImageSection>
-        <Image src={rSkill.image} />
+        <Image src={utils.getSkillImage(skill)} />
         <div style={{ position: 'absolute', bottom: '.6vw', right: '.6vw' }}>
           <Tooltip text={getUpgradeButtonTooltip()}>
             <ActionButton
               text={'Upgrade'}
-              onClick={() => actions.upgrade(rSkill)}
+              onClick={() => triggerUpgrade(skill)}
               disabled={!!disabledReason}
             />
           </Tooltip>
@@ -103,32 +108,32 @@ export const Details = (props: Props) => {
         <div style={{ position: 'absolute', top: '.6vw', right: '.6vw' }}>
           <HelpIcon
             tooltip={[
-              `Skill Index: ${data.index}`,
-              `Cost: ${rSkill.cost} Skill Point(s)`,
-              `Max: Level ${rSkill.points.max}`,
+              `Skill Index: ${skill.index}`,
+              `Cost: ${skill.cost} Skill Point(s)`,
+              `Max: Level ${skill.points.max}`,
             ]}
           />
         </div>
       </ImageSection>
 
       <NameSection>
-        <Name>{rSkill.name}</Name>
+        <Name>{skill.name}</Name>
         <LevelText>
-          [{kSkill?.points.current ?? 0}/{rSkill.points.max}]
+          [{kSkill?.points.current ?? 0}/{skill.points.max}]
         </LevelText>
       </NameSection>
 
-      <Description>{rSkill.description}</Description>
+      <Description>{skill.description}</Description>
 
       <LabeledList
         label='Effects'
-        values={(rSkill.effects ?? []).map((eff) => parseEffectText(eff))}
+        values={(skill.effects ?? []).map((eff) => parseEffectText(eff))}
       />
       <LabeledList
         label='Requirements'
         values={[
-          parseTreeRequirementText(rSkill, utils.getTreePoints(data.kami, rSkill.tree)),
-          ...(rSkill.requirements ?? []).map((req) => parseRequirementText(req, data.skills)),
+          parseTreeRequirementText(skill, utils.getTreePoints(skill.tree)),
+          ...(skill.requirements ?? []).map((req) => parseRequirementText(req, skills)),
         ]}
       />
     </Container>

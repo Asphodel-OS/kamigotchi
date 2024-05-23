@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { EntityIndex } from '@mud-classic/recs';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
@@ -9,9 +10,11 @@ import {
   getSkillUpgradeError,
   getTreePoints,
 } from 'layers/network/shapes/Skill';
+import { waitForActionCompletion } from 'layers/network/utils';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store';
+import { sleep } from 'utils/misc';
 import { KillLogs } from './battles/KillLogs';
 import { Banner } from './header/Banner';
 import { Tabs } from './header/Tabs';
@@ -33,7 +36,7 @@ export function registerKamiModal() {
       const { network } = layers;
       return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(network, { inventory: true, kamis: true });
+          const account = getAccountFromBurner(network, { kamis: true });
           return {
             network,
             data: { account },
@@ -48,12 +51,20 @@ export function registerKamiModal() {
       const { actions, api, components, world } = network;
       const { kamiIndex } = useSelected();
       const [tab, setTab] = useState('traits');
+      const [kami, setKami] = useState<Kami>();
+
+      /////////////////
+      // SUBSCIRPTION
+
+      useEffect(() => {
+        setKami(getSelectedKami(kamiIndex));
+      }, [kamiIndex]);
 
       /////////////////
       // DATA FETCHING
 
-      const getSelectedKami = () => {
-        return getKamiByIndex(world, components, kamiIndex, {
+      const getSelectedKami = (index: number) => {
+        return getKamiByIndex(world, components, index, {
           account: true,
           deaths: true,
           kills: true,
@@ -64,7 +75,14 @@ export function registerKamiModal() {
       };
 
       /////////////////
-      // ACTIONS
+      // ACTION
+
+      // awaits the result of an action and then updates the kami data
+      const updateKamiAfterAction = async (actionIndex: EntityIndex) => {
+        await waitForActionCompletion(actions!.Action, actionIndex);
+        sleep(2000); // the above function is janky so we add a buffer
+        setKami(getSelectedKami(kamiIndex));
+      };
 
       const levelUp = (kami: Kami) => {
         actions.add({
@@ -78,7 +96,7 @@ export function registerKamiModal() {
       };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
-        actions.add({
+        const actionIndex = actions.add({
           action: 'SkillUpgrade',
           params: [kami.id, skill.index],
           description: `Upgrading ${skill.name} for ${kami.name}`,
@@ -86,40 +104,38 @@ export function registerKamiModal() {
             return api.player.skill.upgrade(kami.id, skill.index);
           },
         });
+        return actionIndex;
       };
 
       /////////////////
       // DISPLAY
 
+      if (!kami) return <></>;
       return (
         <ModalWrapper
           divName='kami'
           id='kamiModal'
           header={[
-            <Banner
-              key='banner'
-              data={{ account, kami: getSelectedKami() }}
-              actions={{ levelUp }}
-            />,
+            <Banner key='banner' data={{ account, kami: kami! }} actions={{ levelUp }} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
           overlay
           noPadding
         >
-          {tab === 'battles' && <KillLogs kami={getSelectedKami()} />}
-          {tab === 'traits' && <Traits kami={getSelectedKami()} />}
+          {tab === 'battles' && <KillLogs kami={kami!} />}
+          {tab === 'traits' && <Traits kami={kami!} />}
           {tab === 'skills' && (
             <Skills
               account={account}
-              kami={getSelectedKami()}
+              kami={kami!}
               skills={getRegistrySkills(world, components)}
-              actions={{ upgrade: upgradeSkill }}
+              actions={{ upgrade: (skill: Skill) => upgradeSkill(kami!, skill) }}
               utils={{
-                getSkillUpgradeError: (index: number, kami: Kami, registry: Map<number, Skill>) =>
-                  getSkillUpgradeError(world, components, index, kami, registry),
-                getTreePoints: (target: Kami, tree: string) =>
-                  getTreePoints(world, components, target, tree),
+                getUpgradeError: (index: number, registry: Map<number, Skill>) =>
+                  getSkillUpgradeError(world, components, index, kami!, registry),
+                getTreePoints: (tree: string) => getTreePoints(world, components, kami!, tree),
+                updateKamiAfterAction,
               }}
             />
           )}

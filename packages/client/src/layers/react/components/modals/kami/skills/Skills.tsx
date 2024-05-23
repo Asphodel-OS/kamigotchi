@@ -1,10 +1,11 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { SkillImages } from 'assets/images/skills';
 import { Account } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
-import { playClick } from 'utils/sounds';
 import { Details } from './Details';
 import { Matrix } from './matrix/Matrix';
 
@@ -13,21 +14,18 @@ interface Props {
   kami: Kami;
   skills: Skill[]; // registry skills
   actions: {
-    upgrade: Function;
+    upgrade: (skill: Skill) => EntityIndex;
   };
   utils: {
-    getSkillUpgradeError: (
-      index: number,
-      kami: Kami,
-      registry: Map<number, Skill>
-    ) => string[] | undefined;
-    getTreePoints: (target: Kami, tree: string) => number;
+    getUpgradeError: (index: number, registry: Map<number, Skill>) => string[] | undefined;
+    getTreePoints: (tree: string) => number;
+    updateKamiAfterAction: (actionIndex: EntityIndex) => void;
   };
 }
 
 export const Skills = (props: Props) => {
   // console.log('mSkill:', props.kami);
-  const { account, kami, skills, actions } = props;
+  const { account, kami, skills, actions, utils } = props;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
@@ -41,12 +39,11 @@ export const Skills = (props: Props) => {
   }, [skills.length]);
 
   ////////////////////
-  // INTERACTIONS
+  // INTERPRETATION
 
-  // trigger an upgrade of the skill
-  const triggerUpgrade = (skill: Skill) => {
-    playClick();
-    actions.upgrade(kami, skill);
+  const getSkillImage = (skill: Skill) => {
+    const imageKey = skill.name.toLowerCase().replace(' ', '_') as keyof typeof SkillImages;
+    return SkillImages[imageKey] ?? skill.image;
   };
 
   ////////////////////
@@ -55,15 +52,26 @@ export const Skills = (props: Props) => {
   return (
     <Wrapper>
       <Details
-        data={{ account, kami, index: displayed, skills: skillMap }}
-        actions={{ upgrade: (skill: Skill) => triggerUpgrade(skill) }}
-        utils={props.utils}
+        account={account}
+        kami={kami}
+        index={displayed}
+        skills={skillMap}
+        actions={{ upgrade: actions.upgrade }}
+        upgradeError={utils.getUpgradeError(displayed, skillMap)}
+        utils={{
+          getSkillImage,
+          getTreePoints: utils.getTreePoints,
+          updateKamiAfterAction: utils.updateKamiAfterAction,
+        }}
       />
       <Matrix
         kami={kami}
         skills={skillMap}
         setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
-        utils={props.utils}
+        utils={{
+          getUpgradeError: (index: number) => utils.getUpgradeError(index, skillMap),
+          getTreePoints: utils.getTreePoints,
+        }}
       />
     </Wrapper>
   );

@@ -12,11 +12,8 @@ interface Props {
   skills: Map<number, Skill>;
   setDisplayed: (skillIndex: number) => void;
   utils: {
-    getSkillUpgradeError: (
-      index: number,
-      kami: Kami,
-      registry: Map<number, Skill>
-    ) => string[] | undefined;
+    getUpgradeError: (index: number) => string[] | undefined;
+    getTreePoints: (tree: string) => number;
   };
 }
 
@@ -43,9 +40,9 @@ export const Matrix = (props: Props) => {
                   key={index}
                   index={index}
                   kami={kami}
-                  skills={skills}
+                  skill={skills.get(index)!}
+                  upgradeError={utils.getUpgradeError(index)}
                   setDisplayed={() => setDisplayed(index)}
-                  utils={utils}
                 />
               ))}
             </Row>

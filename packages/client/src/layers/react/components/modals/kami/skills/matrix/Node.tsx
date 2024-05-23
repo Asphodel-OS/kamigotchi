@@ -1,36 +1,30 @@
 import styled from 'styled-components';
 
-import { skillImages } from 'assets/images/skills';
+import { SkillImages } from 'assets/images/skills';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill, getSkillInstance } from 'layers/network/shapes/Skill';
 import { Tooltip } from 'layers/react/components/library';
 
 interface Props {
   index: number;
-  skills: Map<number, Skill>;
+  skill: Skill;
   kami: Kami;
+  upgradeError: string[] | undefined;
   setDisplayed: () => void;
-  utils: {
-    getSkillUpgradeError: (
-      index: number,
-      kami: Kami,
-      registry: Map<number, Skill>
-    ) => string[] | undefined;
-  };
 }
 
 export const Node = (props: Props) => {
-  const { index, skills, kami, setDisplayed, utils } = props;
-  const skill = skills.get(index);
+  const { index, skill, kami, upgradeError, setDisplayed } = props;
   if (skill == undefined) return <></>;
 
-  const upgradeError = utils.getSkillUpgradeError(index, kami, skills);
   const acquirable = upgradeError == undefined || upgradeError[0].startsWith('Maxed Out');
 
   const kSkill = getSkillInstance(kami, skill);
   const maxedOut = kSkill?.points.current === skill.points.max;
   const titleText = [`${skill.name} [${kSkill?.points.current ?? 0}/${skill.points.max}]`];
-  const image = skillImages[skill.name.toLowerCase() as keyof typeof skillImages] ?? skill.image;
+  const imageKey = skill.name.toLowerCase().replace(' ', '_') as keyof typeof SkillImages;
+  const image = SkillImages[imageKey] ?? skill.image;
+
   return (
     <Tooltip text={titleText}>
       <Container key={index} onClick={setDisplayed} acquirable={acquirable}>

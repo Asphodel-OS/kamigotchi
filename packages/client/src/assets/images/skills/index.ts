@@ -61,7 +61,7 @@ import warmup_exercise from './warmup_exercise.png';
 import wide_portfolio from './wide_portfolio.png';
 import workout_routine from './workout_routine.png';
 
-export const skillImages = {
+export const SkillImages = {
   acquisitiveness,
   advanced_mewing,
   aggression,
