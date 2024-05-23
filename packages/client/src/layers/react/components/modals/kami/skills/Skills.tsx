@@ -6,7 +6,7 @@ import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 import { Details } from './Details';
-import { Matrix } from './Matrix';
+import { Matrix } from './matrix/Matrix';
 
 interface Props {
   account: Account;
