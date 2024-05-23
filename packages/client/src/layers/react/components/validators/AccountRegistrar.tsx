@@ -164,15 +164,13 @@ export function registerAccountRegistrar() {
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
-        const isVisible =
-          networkValidations.authenticated &&
-          networkValidations.chainMatches &&
-          !validations.accountExists;
+        const isValidated = networkValidations.authenticated && networkValidations.chainMatches;
+        const isVisible = isValidated && !validations.accountExists;
 
         if (isVisible) {
           toggleModals(false);
           toggleFixtures(false);
-        } else if (!validators.walletConnector) {
+        } else if (isValidated && validations.accountExists) {
           toggleFixtures(true);
         }
 

@@ -32,7 +32,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { network } = layers;
-      const { address: injectedAddress, chain, isConnected } = useAccount();
+      const { address: wagmiAddress, chain, isConnected } = useAccount();
       const { ready, authenticated, login, logout } = usePrivy();
       const { wallets } = useWallets();
 
@@ -77,14 +77,15 @@ export function registerWalletConnecter() {
         }
       }, [validations]);
 
-      // log the user out if mismatch of privy injected wallet and wagmi connector
+      // if a mismatch is detected between the privy injected wallet and wagmi connector,
+      // log the user out to reset the validator flow
       useEffect(() => {
         const injectedWallet = getInjectedWallet(wallets);
         if (injectedWallet) {
           const injectedAddress = injectedWallet.address;
-          if (injectedAddress !== injectedAddress) logout();
+          if (injectedAddress !== wagmiAddress) logout();
         }
-      }, [wallets, injectedAddress]);
+      }, [wallets, wagmiAddress]);
 
       /////////////////
       // ACTIONS
@@ -156,8 +157,8 @@ export function registerWalletConnecter() {
       };
 
       const handleClick = () => {
-        if (!validations.chainMatches) updateConnectedChain();
-        else if (!authenticated) login();
+        if (state === 'disconnected') login();
+        else if (state === 'wrongChain') updateConnectedChain();
       };
 
       /////////////////
