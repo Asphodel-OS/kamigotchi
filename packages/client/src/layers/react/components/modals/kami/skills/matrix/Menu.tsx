@@ -11,17 +11,22 @@ export const Menu = (props: Props) => {
   const { options, mode, setMode } = props;
   return (
     <Container>
-      {options.map((name) => (
-        <Tooltip text={[`${name} tree`]} key={name}>
-          <ActionButton text={mode === name ? name : name[0]} onClick={() => setMode(name)} />
-        </Tooltip>
-      ))}
+      {options.map((treeName) => {
+        const name = treeName.toLowerCase();
+        const label = mode === treeName ? name : name[0];
+        return (
+          <Tooltip key={name} text={[`${name} tree`]}>
+            <ActionButton text={label} onClick={() => setMode(treeName)} />
+          </Tooltip>
+        );
+      })}
     </Container>
   );
 };
 
 const Container = styled.div`
   position: absolute;
+  border-bottom: solid black 0.15vw;
   background-color: #999;
   opacity: 0.9;
   z-index: 1;

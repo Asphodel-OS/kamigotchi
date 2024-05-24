@@ -116,25 +116,25 @@ export function registerKamiModal() {
           divName='kami'
           id='kamiModal'
           header={[
-            <Banner key='banner' data={{ account, kami: kami! }} actions={{ levelUp }} />,
+            <Banner key='banner' data={{ account, kami: kami }} actions={{ levelUp }} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
           overlay
           noPadding
         >
-          {tab === 'battles' && <KillLogs kami={kami!} />}
-          {tab === 'traits' && <Traits kami={kami!} />}
+          {tab === 'battles' && <KillLogs kami={kami} />}
+          {tab === 'traits' && <Traits kami={kami} />}
           {tab === 'skills' && (
             <Skills
               account={account}
-              kami={kami!}
+              kami={kami}
               skills={getRegistrySkills(world, components)}
-              actions={{ upgrade: (skill: Skill) => upgradeSkill(kami!, skill) }}
+              actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill) }}
               utils={{
                 getUpgradeError: (index: number, registry: Map<number, Skill>) =>
-                  getSkillUpgradeError(world, components, index, kami!, registry),
-                getTreePoints: (tree: string) => getTreePoints(world, components, kami!, tree),
+                  getSkillUpgradeError(world, components, index, kami, registry),
+                getTreePoints: (tree: string) => getTreePoints(world, components, kami, tree),
                 updateKamiAfterAction,
               }}
             />

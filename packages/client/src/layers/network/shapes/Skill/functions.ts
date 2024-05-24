@@ -55,13 +55,8 @@ export const getUpgradeError = (
     return [`Insufficient Skill Points.`, `Need ${rSkill.cost}. Have ${kami.skillPoints}.`];
 };
 
-export const getTreePoints = (
-  world: World,
-  components: Components,
-  target: Account | Kami,
-  tree: string
-) => {
-  const treePoints = getData(world, components, target.id, tree + 'SKILL_POINTS_USE');
+export const getTreePoints = (world: World, components: Components, kami: Kami, tree: string) => {
+  const treePoints = getData(world, components, kami.id, tree + 'SKILL_POINTS_USE');
   return treePoints ? treePoints : 0;
 };
 

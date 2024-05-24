@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { SkillTrees } from 'constants/skills/trees';
+import { SkillTrees, TierRequirements } from 'constants/skills/trees';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
+import { Tooltip } from 'layers/react/components/library';
 import { Menu } from './Menu';
 import { Node } from './Node';
 
@@ -32,9 +33,16 @@ export const Matrix = (props: Props) => {
       <Menu options={Array.from(SkillTrees.keys())} mode={mode} setMode={setMode} />
       <Content>
         {SkillTrees.get(mode)!.map((row, i) => {
+          const tier = i + 1;
+          const tierRequirement = TierRequirements[tier];
+          const locked = utils.getTreePoints(mode) < tierRequirement;
           return (
-            <Row key={i}>
-              <RowNumber>{i + 1}</RowNumber>
+            <Row key={tier} locked={locked}>
+              <RowPrefix>
+                <Tooltip text={[`unlock with ${tierRequirement} points`, `in ${mode} tree`]}>
+                  <RowNumber>{tier}</RowNumber>
+                </Tooltip>
+              </RowPrefix>
               {row.map((index) => (
                 <Node
                   key={index}
@@ -73,8 +81,9 @@ const Content = styled.div`
   overflow-y: scroll;
 `;
 
-const Row = styled.div`
+const Row = styled.div<{ locked: boolean }>`
   position: relative;
+  border-bottom: solid black 0.15vw;
   padding: 1.2vw 3vw;
 
   display: flex;
@@ -82,15 +91,15 @@ const Row = styled.div`
   justify-content: space-evenly;
   align-items: center;
 
-  &:hover {
-    background-color: #ddd;
-  }
+  background-color: ${({ locked }) => (locked ? '#ddd' : '#fff')};
+`;
+
+const RowPrefix = styled.div`
+  position: absolute;
+  left: 2vw;
 `;
 
 const RowNumber = styled.div`
-  position: absolute;
-  left: 2vw;
-
   color: black;
   font-family: Pixel;
   font-size: 1.2vw;

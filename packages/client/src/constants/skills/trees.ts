@@ -31,10 +31,10 @@ const HarvesterTree = [
 ];
 
 export const SkillTrees = new Map([
-  ['predator', PredatorTree],
-  ['enlightened', EnlightenedTree],
-  ['guardian', GuardianTree],
-  ['harvester', HarvesterTree],
+  ['Predator', PredatorTree],
+  ['Enlightened', EnlightenedTree],
+  ['Guardian', GuardianTree],
+  ['Harvester', HarvesterTree],
 ]);
 
 export const TierRequirements = [0, 0, 5, 15, 25, 40]; // no 0 tier
