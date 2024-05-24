@@ -100,7 +100,7 @@ export function registerMapModal() {
           id='world_map'
           divName='map'
           header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
-          footer={Footer()}
+          // footer={Footer()}
           canExit
           noPadding
         >
