@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { SystemCall } from "./SystemCall.s.sol";
-import { Location } from "libraries/LibRoom.sol";
+import { Coord } from "libraries/LibRoom.sol";
 
 contract InitWorld is SystemCall {
   function initWorld(uint256 deployerPriv, address worldAddr) external {

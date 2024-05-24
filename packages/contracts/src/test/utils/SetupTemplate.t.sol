@@ -8,7 +8,7 @@ import { Stat } from "components/types/Stat.sol";
 import "./TestSetupImports.sol";
 
 import { Condition } from "libraries/utils/LibBoolean.sol";
-import { Location } from "libraries/LibRoom.sol";
+import { Coord } from "libraries/LibRoom.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
@@ -81,10 +81,10 @@ abstract contract SetupTemplate is TestSetupImports {
   // sets up rooms to a default state. override to change/remove behaviour if needed
   // is a big square with every room connected to each other
   function setUpRooms() public virtual {
-    _createRoom("testRoom1", Location(1, 1, 0), 1, 4);
-    _createRoom("testRoom2", Location(2, 1, 0), 2, 3);
-    _createRoom("testRoom3", Location(1, 2, 0), 3, 2);
-    _createRoom("testRoom4", Location(2, 2, 0), 4, 1);
+    _createRoom("testRoom1", Coord(1, 1, 0), 1, 4);
+    _createRoom("testRoom2", Coord(2, 1, 0), 2, 3);
+    _createRoom("testRoom3", Coord(1, 2, 0), 3, 2);
+    _createRoom("testRoom4", Coord(2, 2, 0), 4, 1);
   }
 
   function setUpTime() public virtual {
@@ -212,7 +212,7 @@ abstract contract SetupTemplate is TestSetupImports {
     }
   }
 
-  function _moveAccount(uint playerIndex, Location memory location) internal {
+  function _moveAccount(uint playerIndex, Coord memory location) internal {
     uint256 roomID = LibRoom.queryByLocation(components, location);
     return _moveAccount(playerIndex, LibRoom.getIndex(components, roomID));
   }
@@ -411,7 +411,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createRoom(
     string memory name,
-    Location memory location,
+    Coord memory location,
     uint32 index
   ) internal returns (uint256) {
     uint32[] memory exits = new uint32[](0);
@@ -420,7 +420,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createRoom(
     string memory name,
-    Location memory location,
+    Coord memory location,
     uint32 index,
     uint32 exitIndex
   ) internal returns (uint256) {
@@ -432,7 +432,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createRoom(
     string memory name,
-    Location memory location,
+    Coord memory location,
     uint32 index,
     uint32[] memory exits
   ) internal returns (uint256) {
@@ -1053,7 +1053,7 @@ abstract contract SetupTemplate is TestSetupImports {
   ///////////////////////
   // UTILS
 
-  function assertEq(Location memory a, Location memory b) public {
+  function assertEq(Coord memory a, Coord memory b) public {
     assertTrue(a.x == b.x && a.y == b.y && a.z == b.z);
   }
 }

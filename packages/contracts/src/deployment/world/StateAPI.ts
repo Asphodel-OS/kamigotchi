@@ -1,6 +1,6 @@
-import { BigNumberish } from "ethers";
-import { parseCall } from "../commands/utils/systemCall";
-import { SystemAbis } from "./abis/SystemAbis";
+import { BigNumberish } from 'ethers';
+import { parseCall } from '../commands/utils/systemCall';
+import { SystemAbis } from './abis/SystemAbis';
 
 /// @note not currently in use, but archived in the codebase to potentially be useful someday
 /**
@@ -15,11 +15,11 @@ export type StateAPI = Awaited<ReturnType<typeof createStateAPI>>;
 export function createStateAPI(compiledCalls: string[]) {
   function call(system: keyof typeof SystemAbis, args: any[]) {
     const data = parseCall(system, args);
-    let result = data.system + ", abi.encode(" + data.args + ")";
-    result = result.replace(/\n/g, "\\n");
+    let result = data.system + ', abi.encode(' + data.args + ')';
+    result = result.replace(/\n/g, '\\n');
     result = result.replace(/[\u2018\u2019]/g, "'");
     result = result.replace(/[\u201C\u201D]/g, '\\"');
-    result = result.replace(/[\u2026]/g, "...");
+    result = result.replace(/[\u2026]/g, '...');
     compiledCalls.push(result);
     // console.log(result);
   }
@@ -27,23 +27,23 @@ export function createStateAPI(compiledCalls: string[]) {
   // ACCOUNTS
 
   function registerAccount(operatorAddress: BigNumberish, name: string, food: string) {
-    return call("system.Account.Register", [operatorAddress, name, food]);
+    return call('system.Account.Register', [operatorAddress, name, food]);
   }
 
   /////////////////
   //  CONFIG
 
   function setConfig(field: string, value: BigNumberish) {
-    return call("system._Config.Set", [field, value]);
+    return call('system._Config.Set', [field, value]);
   }
 
   // values must be ≤ 32char
   function setConfigString(field: string, value: string) {
-    return call("system._Config.Set.String", [field, value]);
+    return call('system._Config.Set.String', [field, value]);
   }
 
   function setConfigWei(field: string, value: BigNumberish) {
-    return call("system._Config.Set.Wei", [field, value]);
+    return call('system._Config.Set.Wei', [field, value]);
   }
 
   /////////////////
@@ -51,15 +51,15 @@ export function createStateAPI(compiledCalls: string[]) {
 
   // (creates an NPC with the name at the specified roomIndex
   function createNPC(index: number, name: string, roomIndex: number) {
-    return call("system._NPC.Create", [index, name, roomIndex]);
+    return call('system._NPC.Create', [index, name, roomIndex]);
   }
 
   function setNPCRoom(index: number, roomIndex: number) {
-    return call("system._NPC.Set.Room", [index, roomIndex]);
+    return call('system._NPC.Set.Room', [index, roomIndex]);
   }
 
   function setNPCName(index: number, name: string) {
-    return call("system._NPC.Set.Name", [index, name]);
+    return call('system._NPC.Set.Name', [index, name]);
   }
 
   // /////////////////
@@ -84,7 +84,7 @@ export function createStateAPI(compiledCalls: string[]) {
     buyPrice: number,
     sellPrice: number
   ) {
-    return call("system._Listing.Set", [merchantIndex, itemIndex, buyPrice, sellPrice]);
+    return call('system._Listing.Set', [merchantIndex, itemIndex, buyPrice, sellPrice]);
   }
 
   /////////////////
@@ -105,12 +105,12 @@ export function createStateAPI(compiledCalls: string[]) {
     description: string,
     affinity: string
   ) {
-    return call("system._Node.Create", [index, type, roomIndex, name, description, affinity]);
+    return call('system._Node.Create', [index, type, roomIndex, name, description, affinity]);
   }
 
   // @dev deletes node
   function deleteNode(index: number) {
-    return call("system._Node.Delete", [index]);
+    return call('system._Node.Delete', [index]);
   }
 
   /////////////////
@@ -126,12 +126,12 @@ export function createStateAPI(compiledCalls: string[]) {
     roomIndex: number,
     repeatTime: number
   ) {
-    return call("system._Registry.Quest.Create", [index, name, description, roomIndex, repeatTime]);
+    return call('system._Registry.Quest.Create', [index, name, description, roomIndex, repeatTime]);
   }
 
   // delete a quest along with its objectives, requirements and rewards
   function deleteQuest(index: number) {
-    return call("system._Registry.Quest.Delete", [index]);
+    return call('system._Registry.Quest.Delete', [index]);
   }
 
   // creates a Objective for an existing Quest
@@ -143,7 +143,7 @@ export function createStateAPI(compiledCalls: string[]) {
     index: number,
     value: number
   ) {
-    return call("system._Registry.Quest.Create.Objective", [
+    return call('system._Registry.Quest.Create.Objective', [
       questIndex,
       name,
       logicType,
@@ -161,7 +161,7 @@ export function createStateAPI(compiledCalls: string[]) {
     index: number,
     value: number
   ) {
-    return call("system._Registry.Quest.Create.Requirement", [
+    return call('system._Registry.Quest.Create.Requirement', [
       questIndex,
       logicType,
       type,
@@ -172,7 +172,7 @@ export function createStateAPI(compiledCalls: string[]) {
 
   // creates a Reward for an existing Quest
   function addQuestReward(questIndex: number, type: string, index: number, value: number) {
-    return call("system._Registry.Quest.Create.Reward", [questIndex, type, index, value]);
+    return call('system._Registry.Quest.Create.Reward', [questIndex, type, index, value]);
   }
 
   /////////////////
@@ -186,8 +186,8 @@ export function createStateAPI(compiledCalls: string[]) {
     description: string,
     exits: number[]
   ) {
-    const loc = `Location(${location.x},${location.y},${location.z})`;
-    return call("system._Room.Create", [
+    const loc = `Coord(${location.x},${location.y},${location.z})`;
+    return call('system._Room.Create', [
       loc,
       roomIndex,
       name,
@@ -204,7 +204,7 @@ export function createStateAPI(compiledCalls: string[]) {
     logicType: string,
     type: string
   ) {
-    return call("system._Room.Create.Gate", [
+    return call('system._Room.Create.Gate', [
       roomIndex,
       sourceIndex,
       conditionIndex,
@@ -215,7 +215,7 @@ export function createStateAPI(compiledCalls: string[]) {
   }
 
   function deleteRoom(roomIndex: number) {
-    return call("system._Room.Delete", [roomIndex]);
+    return call('system._Room.Delete', [roomIndex]);
   }
 
   /////////////////
@@ -231,7 +231,7 @@ export function createStateAPI(compiledCalls: string[]) {
     description: string,
     media: string
   ) {
-    return call("system._Registry.Skill.Create", [
+    return call('system._Registry.Skill.Create', [
       index,
       for_,
       type,
@@ -244,7 +244,7 @@ export function createStateAPI(compiledCalls: string[]) {
   }
 
   function deleteSkill(index: number) {
-    return call("system._Registry.Skill.Delete", [index]);
+    return call('system._Registry.Skill.Delete', [index]);
   }
 
   function addSkillEffect(
@@ -255,7 +255,7 @@ export function createStateAPI(compiledCalls: string[]) {
     index: number,
     value: number
   ) {
-    return call("system._Registry.Skill.Create.Effect", [
+    return call('system._Registry.Skill.Create.Effect', [
       skillIndex,
       type,
       subtype,
@@ -266,7 +266,7 @@ export function createStateAPI(compiledCalls: string[]) {
   }
 
   function addSkillRequirement(skillIndex: number, type: string, index: number, value: number) {
-    return call("system._Registry.Skill.Create.Requirement", [skillIndex, type, index, value]);
+    return call('system._Registry.Skill.Create.Requirement', [skillIndex, type, index, value]);
   }
 
   /////////////////
@@ -281,7 +281,7 @@ export function createStateAPI(compiledCalls: string[]) {
     experience: number,
     media: string
   ) {
-    return call("system._Registry.Food.Create", [
+    return call('system._Registry.Food.Create', [
       index,
       name,
       description,
@@ -299,7 +299,7 @@ export function createStateAPI(compiledCalls: string[]) {
     weights: number[],
     media: string
   ) {
-    return call("system._Registry.Lootbox.Create", [
+    return call('system._Registry.Lootbox.Create', [
       index,
       name,
       description,
@@ -317,7 +317,7 @@ export function createStateAPI(compiledCalls: string[]) {
     type_: string,
     media: string
   ) {
-    return call("system._Registry.Create.Item.Consumable", [
+    return call('system._Registry.Create.Item.Consumable', [
       index,
       name,
       description,
@@ -334,12 +334,12 @@ export function createStateAPI(compiledCalls: string[]) {
     health: number,
     media: string
   ) {
-    return call("system._Registry.Revive.Create", [index, name, description, health, media]);
+    return call('system._Registry.Revive.Create', [index, name, description, health, media]);
   }
 
   // @dev deletes an item registry
   function deleteItem(index: number) {
-    return call("system._Registry.Item.Delete", [index]);
+    return call('system._Registry.Item.Delete', [index]);
   }
 
   // @dev adds a trait in registry
@@ -355,7 +355,7 @@ export function createStateAPI(compiledCalls: string[]) {
     name: string,
     type: string
   ) {
-    return call("system._Registry.Trait.Create", [
+    return call('system._Registry.Trait.Create', [
       index,
       health,
       power,
@@ -371,7 +371,7 @@ export function createStateAPI(compiledCalls: string[]) {
 
   // @dev deletes trait
   function deleteTrait(index: number, type: string) {
-    return call("system._Registry.Trait.Delete", [index, type]);
+    return call('system._Registry.Trait.Delete', [index, type]);
   }
 
   //////////////////
@@ -384,7 +384,7 @@ export function createStateAPI(compiledCalls: string[]) {
     whitelist: number[],
     blacklist: number[]
   ) {
-    return call("system._Registry.Relationship.Create", [
+    return call('system._Registry.Relationship.Create', [
       indexNPC,
       indexRelationship,
       name,
@@ -400,7 +400,7 @@ export function createStateAPI(compiledCalls: string[]) {
     whitelist: number[],
     blacklist: number[]
   ) {
-    return call("system._Registry.Relationship.Update", [
+    return call('system._Registry.Relationship.Update', [
       indexNPC,
       indexRelationship,
       name,
@@ -410,7 +410,7 @@ export function createStateAPI(compiledCalls: string[]) {
   }
 
   function deleteRelationship(indexNPC: number, indexRelationship: number) {
-    return call("system._Registry.Relationship.Delete", [indexNPC, indexRelationship]);
+    return call('system._Registry.Relationship.Delete', [indexNPC, indexRelationship]);
   }
 
   return {

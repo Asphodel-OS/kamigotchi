@@ -19,7 +19,7 @@ library SystemStorage {
     IWorld world;
   }
 
-  /** Location in memory where the Layout struct will be stored */
+  /** Coord in memory where the Layout struct will be stored */
   bytes32 internal constant STORAGE_SLOT = keccak256("solecs.contracts.storage.System");
 
   /**

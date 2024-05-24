@@ -42,7 +42,7 @@
         {
           "name": "location",
           "type": "tuple",
-          "internalType": "struct Location",
+          "internalType": "struct Coord",
           "components": [
             {
               "name": "x",
