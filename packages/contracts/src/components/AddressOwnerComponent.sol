@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
-import { AddressComponent } from "components/types/AddressComponent.sol";
+import { AddressComponent } from "components/base/AddressComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.address.owner"));
 

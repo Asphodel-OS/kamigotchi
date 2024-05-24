@@ -297,19 +297,6 @@
     },
     {
       "type": "function",
-      "name": "registerIndexer",
-      "inputs": [
-        {
-          "name": "",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "registerWorld",
       "inputs": [
         {
@@ -544,7 +531,6 @@
     "hasValue(uint256,string)": "9d72b0e1",
     "id()": "af640d0f",
     "owner()": "8da5cb5b",
-    "registerIndexer(address)": "75c0669c",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "removeBatch(uint256[])": "8482643e",

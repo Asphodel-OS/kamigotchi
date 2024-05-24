@@ -44,7 +44,6 @@ export interface HashComponentInterface extends utils.Interface {
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
-    "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "removeBatch(uint256[])": FunctionFragment;
@@ -76,7 +75,6 @@ export interface HashComponentInterface extends utils.Interface {
       | "has"
       | "id"
       | "owner"
-      | "registerIndexer"
       | "registerWorld"
       | "remove"
       | "removeBatch"
@@ -142,10 +140,6 @@ export interface HashComponentInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "registerIndexer",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "registerWorld",
     values: [PromiseOrValue<string>]
@@ -225,10 +219,6 @@ export interface HashComponentInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "registerIndexer",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "registerWorld",
     data: BytesLike
@@ -383,11 +373,6 @@ export interface HashComponent extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    registerIndexer(
-      arg0: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     registerWorld(
       _world: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -516,11 +501,6 @@ export interface HashComponent extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  registerIndexer(
-    arg0: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   registerWorld(
     _world: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -648,11 +628,6 @@ export interface HashComponent extends BaseContract {
     id(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    registerIndexer(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     registerWorld(
       _world: PromiseOrValue<string>,
@@ -792,11 +767,6 @@ export interface HashComponent extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    registerIndexer(
-      arg0: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     registerWorld(
       _world: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -923,11 +893,6 @@ export interface HashComponent extends BaseContract {
     id(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    registerIndexer(
-      arg0: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     registerWorld(
       _world: PromiseOrValue<string>,

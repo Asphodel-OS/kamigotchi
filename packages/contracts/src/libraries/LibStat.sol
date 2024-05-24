@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { Stat } from "components/types/Stat.sol";
 
-import { Stat, StatComponent } from "components/types/StatComponent.sol";
+import { StatComponent } from "components/base/StatComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
