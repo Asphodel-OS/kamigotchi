@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
+import { Stat } from "components/types/Stat.sol";
 
 import "./TestSetupImports.sol";
 
 import { Condition } from "libraries/utils/LibBoolean.sol";
 import { Location } from "libraries/LibRoom.sol";
-import { Stat } from "components/types/StatComponent.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;

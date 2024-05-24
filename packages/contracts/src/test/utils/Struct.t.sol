@@ -4,13 +4,13 @@ pragma solidity >=0.8.0;
 import { console } from "forge-std/Test.sol";
 
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
+import { Stat } from "components/types/Stat.sol";
 
-import { Uint256BareComponent } from "components/types/Uint256BareComponent.sol";
+import { Uint256BareComponent } from "components/base/Uint256BareComponent.sol";
 import { LocationComponent } from "components/LocationComponent.sol";
-import { StatComponent } from "components/types/StatComponent.sol";
+import { StatComponent } from "components/base/StatComponent.sol";
 
 import { Location } from "components/LocationComponent.sol";
-import { Stat } from "components/types/StatComponent.sol";
 
 import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
 
@@ -95,5 +95,45 @@ contract StructTest is EmptyWorld {
     gasstart = gasleft();
     statComp.set(id, Stat(2, 2, 2, 0));
     console.log("Stat: ", gasstart - gasleft());
+  }
+
+  function testVisibilityCosts() public {
+    uint256 gasstart;
+
+    gasstart = gasleft();
+    uint256 a = isPublicView(0);
+    console.log("Public view: ", gasstart - gasleft());
+
+    gasstart = gasleft();
+    uint256 b = isInternalView(0);
+    console.log("Internal view: ", gasstart - gasleft());
+
+    gasstart = gasleft();
+    uint256 c = isPublicPure(0);
+    console.log("Public pure: ", gasstart - gasleft());
+
+    gasstart = gasleft();
+    uint256 d = isInternalPure(0);
+    console.log("Internal pure: ", gasstart - gasleft());
+
+    gasstart = gasleft();
+    uint256 e = 1;
+    console.log("Raw: ", gasstart - gasleft());
+  }
+
+  function isPublicView(uint256 id) public view returns (uint256) {
+    return 1;
+  }
+
+  function isInternalView(uint256 id) internal view returns (uint256) {
+    return 1;
+  }
+
+  function isPublicPure(uint256 id) public pure returns (uint256) {
+    return 1;
+  }
+
+  function isInternalPure(uint256 id) internal pure returns (uint256) {
+    return 1;
   }
 }

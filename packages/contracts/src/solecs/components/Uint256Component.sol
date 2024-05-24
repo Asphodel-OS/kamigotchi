@@ -5,8 +5,9 @@ import { Component } from "../Component.sol";
 import { LibTypes } from "../LibTypes.sol";
 import { IUint256Component } from "../interfaces/IUint256Component.sol";
 
-/**
- * Reference implementation of a component storing a uint256 value for each entity.
+/** @notice
+ * SOLECS implementation of a component storing a uint256 value for each entity.
+ * used for internal solecs testing; Live uint256Comp does not use this
  */
 contract Uint256Component is Component, IUint256Component {
   constructor(address world, uint256 id) Component(world, id) {}

@@ -77,9 +77,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    * @param entity Entity to extract the raw value in this component for.
    */
   function extractRaw(uint256 entity) public virtual override onlyWriter returns (bytes memory) {
-    bytes memory value = entityToValue[entity];
-    if (value.length > 0) _remove(entity);
-    return value;
+    return _extractRaw(entity);
   }
 
   /**
@@ -89,12 +87,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
   function extractRawBatch(
     uint256[] memory entities
   ) public virtual override onlyWriter returns (bytes[] memory) {
-    bytes[] memory values = new bytes[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) {
-      values[i] = entityToValue[entities[i]];
-      if (values[i].length > 0) _remove(entities[i]);
-    }
-    return values;
+    return _extractRawBatch(entities);
   }
 
   /**
@@ -110,8 +103,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    * @param entity Entity to get the raw value in this component for.
    */
   function getRaw(uint256 entity) public view virtual override returns (bytes memory) {
-    // Return the entity's component value
-    return entityToValue[entity];
+    return _getRaw(entity);
   }
 
   /**
@@ -135,11 +127,6 @@ abstract contract BareComponent is IComponent, OwnableWritable {
   function getEntitiesWithValue(
     bytes memory
   ) public view virtual override returns (uint256[] memory) {
-    revert BareComponent__NotImplemented();
-  }
-
-  /** Not implemented in BareComponent */
-  function registerIndexer(address) external virtual override {
     revert BareComponent__NotImplemented();
   }
 
@@ -211,5 +198,35 @@ abstract contract BareComponent is IComponent, OwnableWritable {
     for (uint256 i = 0; i < entities.length; i++) {
       currWorld.registerComponentValueRemoved(entities[i]);
     }
+  }
+
+  /**
+   * Gets and removes the raw value of the given entity in this component.
+   * @param entity Entity to extract the raw value in this component for.
+   */
+  function _extractRaw(uint256 entity) internal virtual returns (bytes memory) {
+    bytes memory value = _getRaw(entity);
+    if (value.length > 0) _remove(entity);
+    return value;
+  }
+
+  /**
+   * Gets and removes the raw values of the given entities in this component.
+   * @param entities Entities to extract the raw values in this component for.
+   */
+  function _extractRawBatch(uint256[] memory entities) internal virtual returns (bytes[] memory) {
+    bytes[] memory values = _getRawBatch(entities);
+    _removeBatch(entities);
+    return values;
+  }
+
+  function _getRaw(uint256 entity) internal view virtual returns (bytes memory) {
+    return entityToValue[entity];
+  }
+
+  function _getRawBatch(uint256[] memory entities) internal view virtual returns (bytes[] memory) {
+    bytes[] memory values = new bytes[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++) values[i] = entityToValue[entities[i]];
+    return values;
   }
 }

@@ -3,31 +3,12 @@ pragma solidity ^0.8.0;
 
 import "solecs/BareComponent.sol";
 
-// Stat is a struct that holds the modifying values of a core stat.
-// Total = (1 + boost) * (base + shift)
-struct Stat {
-  int32 base;
-  int32 shift; // fixed +/- shift on the base stat
-  int32 boost; // % multiplier on post-shifted stat (3 decimals of precision)
-  int32 sync; // the last synced value of stat (optional, for depletable stats)
-}
-
-// on registry traits
-// - trait stats should only maintain a base value
-// - on instantiation these base values are added to the target's stat.base value
-// - sync value of depletable stats like hp and slots are inferred by total base value
-
-// on consumable registry-items
-// - base value updates the target's stat.shift value (e.g. perma stat boost items)
-// - sync value updates the target's stat.sync value (e.g. potions)
-
-// on nonfungible items (e.g. equipment)
-// - item instance tracks its own base, shift, boost and sync values
-// - shift and boost start at 0 and are upgradable
-// - sync only makes sense for depletable stats like slots and durability
-// - how overall stats are computed with equipment has yet to be determined
+import { Stat, StatLib } from "components/types/Stat.sol";
 
 contract StatComponent is BareComponent {
+  using StatLib for Stat;
+  using StatLib for uint256;
+
   constructor(address world, uint256 id) BareComponent(world, id) {}
 
   function getSchema()
@@ -53,35 +34,37 @@ contract StatComponent is BareComponent {
   }
 
   function set(uint256 entity, Stat memory value) public onlyWriter {
-    _set(entity, abi.encode(value));
+    _set(entity, abi.encode(value.toUint()));
   }
 
   function setBatch(uint256[] memory entities, Stat[] memory values) public virtual {
     bytes[] memory rawValues = new bytes[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) rawValues[i] = abi.encode(values[i]);
+    for (uint256 i = 0; i < entities.length; i++) rawValues[i] = abi.encode(values[i].toUint());
 
     setBatch(entities, rawValues);
   }
 
   function extract(uint256 entity) public virtual returns (Stat memory) {
-    return abi.decode(extractRaw(entity), (Stat));
+    return abi.decode(extractRaw(entity), (uint256)).toStat();
   }
 
   function extractBatch(uint256[] memory entities) public virtual returns (Stat[] memory) {
     bytes[] memory rawValues = extractRawBatch(entities);
     Stat[] memory values = new Stat[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (Stat));
+    for (uint256 i = 0; i < entities.length; i++)
+      values[i] = abi.decode(rawValues[i], (uint256)).toStat();
     return values;
   }
 
   function get(uint256 entity) public view virtual returns (Stat memory) {
-    return abi.decode(getRaw(entity), (Stat));
+    return abi.decode(getRaw(entity), (uint256)).toStat();
   }
 
   function getBatch(uint256[] memory entities) public view virtual returns (Stat[] memory) {
     bytes[] memory rawValues = getRawBatch(entities);
     Stat[] memory values = new Stat[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (Stat));
+    for (uint256 i = 0; i < entities.length; i++)
+      values[i] = abi.decode(rawValues[i], (uint256)).toStat();
     return values;
   }
 
@@ -123,5 +106,11 @@ contract StatComponent is BareComponent {
     if (value.sync > max) value.sync = max;
     _set(entity, abi.encode(value));
     return value.sync;
+  }
+
+  ///////////////////
+  // INTERNAL
+  function _set(uint256 entity, Stat memory value) internal {
+    super._set(entity, abi.encode(value.toUint()));
   }
 }
