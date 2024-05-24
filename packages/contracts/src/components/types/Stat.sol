@@ -26,6 +26,31 @@ struct Stat {
 // - how overall stats are computed with equipment has yet to be determined
 
 library StatLib {
+  ///////////////
+  // CALCS
+
+  function calcTotal(Stat memory value) internal pure returns (int32) {
+    int32 total = ((1e3 + value.boost) * (value.base + value.shift)) / 1e3;
+    return (total > 0) ? total : int32(0);
+  }
+
+  function shift(Stat memory value, int32 amt) internal pure returns (int32) {
+    return value.shift + amt;
+  }
+
+  function boost(Stat memory value, int32 amt) internal pure returns (int32) {
+    return value.boost + amt;
+  }
+
+  function sync(Stat memory value, int32 amt, int32 max) internal pure returns (int32) {
+    value.sync += amt;
+    if (value.sync < 0) value.sync = 0;
+    if (value.sync > max) value.sync = max;
+    return value.sync;
+  }
+
+  ///////////////
+  // ENCODING
   function encode(Stat memory stat) internal pure returns (bytes memory) {
     return abi.encode(toUint(stat));
   }
@@ -34,6 +59,16 @@ library StatLib {
     bytes[] memory encoded = new bytes[](stats.length);
     for (uint256 i = 0; i < stats.length; i++) encoded[i] = encode(stats[i]);
     return encoded;
+  }
+
+  function decode(bytes memory encoded) internal pure returns (Stat memory) {
+    return toStat(abi.decode(encoded, (uint256)));
+  }
+
+  function decodeBatch(bytes[] memory encoded) internal pure returns (Stat[] memory) {
+    Stat[] memory stats = new Stat[](encoded.length);
+    for (uint256 i = 0; i < encoded.length; i++) stats[i] = decode(encoded[i]);
+    return stats;
   }
 
   function toUint(Stat memory stat) internal pure returns (uint256) {
