@@ -21,7 +21,7 @@ contract _RegistryCreateQuestSystem is System {
       uint256 duration
     ) = abi.decode(arguments, (uint32, string, string, string, uint256));
 
-    uint256 regID = LibRegistryQuests.createQuest(components, index, name, description, endText);
+    uint256 regID = LibQuestRegistry.createQuest(components, index, name, description, endText);
 
     // set repeatable (if so)
     if (duration > 0) {

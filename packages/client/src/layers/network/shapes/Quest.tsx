@@ -141,7 +141,7 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
     repeatable: hasComponent(IsRepeatable, registryIndex) || (false as boolean),
     requirements: queryQuestRequirements(world, components, questIndex),
     objectives: queryQuestObjectives(world, components, questIndex),
-    rewards: queryQuestRewards(world, components, questIndex, world.entities[entityIndex], points),
+    rewards: queryQuestRewards(world, components, questIndex, world.entities[entityIndex]),
     points: 0, // QP depreciated
   };
 
@@ -323,18 +323,13 @@ const queryQuestRewards = (
   world: World,
   components: Components,
   questIndex: number,
-  questID: EntityID,
-  points: number
+  questID: EntityID
 ): Reward[] => {
   const { IsRegistry, IsReward, QuestIndex } = components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), Has(IsReward), HasValue(QuestIndex, { value: questIndex })])
   );
-  const queried = entityIndices.map((entityIndex) => getReward(world, components, entityIndex));
-
-  if (points > 0)
-    return [{ id: questID, target: { type: 'QUEST_POINTS', value: points } }, ...queried];
-  else return queried;
+  return entityIndices.map((entityIndex) => getReward(world, components, entityIndex));
 };
 
 const querySnapshotObjective = (
