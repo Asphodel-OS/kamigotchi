@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { Location, LibRoom } from "libraries/LibRoom.sol";
+import { Coord, LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system._Room.Delete"));
 

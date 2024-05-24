@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { Location, LibRoom } from "libraries/LibRoom.sol";
+import { Coord, LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system._Room.Create"));
 
@@ -15,12 +15,12 @@ contract _RoomCreateSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      Location memory location,
+      Coord memory location,
       uint32 index,
       string memory name,
       string memory description,
       uint32[] memory exits
-    ) = abi.decode(arguments, (Location, uint32, string, string, uint32[]));
+    ) = abi.decode(arguments, (Coord, uint32, string, string, uint32[]));
 
     require(LibRoom.queryByLocation(components, location) == 0, "Room: already exists at location");
     require(LibRoom.queryByIndex(components, index) == 0, "Room: already exists at index");
@@ -33,7 +33,7 @@ contract _RoomCreateSystem is System {
   }
 
   function executeTyped(
-    Location memory location,
+    Coord memory location,
     uint32 index,
     string memory name,
     string memory description,

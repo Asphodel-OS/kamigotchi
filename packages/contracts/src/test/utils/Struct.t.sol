@@ -10,7 +10,7 @@ import { Uint256BareComponent } from "components/base/Uint256BareComponent.sol";
 import { LocationComponent } from "components/LocationComponent.sol";
 import { StatComponent } from "components/base/StatComponent.sol";
 
-import { Location } from "components/LocationComponent.sol";
+import { Coord } from "components/LocationComponent.sol";
 
 import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
 
@@ -44,8 +44,8 @@ contract StructTest is EmptyWorld {
     console.log("Uint256 bare: ", gasstart - gasleft());
     // location
     gasstart = gasleft();
-    locComp.set(id, Location(1, 1, 0));
-    console.log("Location: ", gasstart - gasleft());
+    locComp.set(id, Coord(1, 1, 0));
+    console.log("Coord: ", gasstart - gasleft());
     // stat
     gasstart = gasleft();
     statComp.set(id, Stat(1, 1, 1, 1));
@@ -60,7 +60,7 @@ contract StructTest is EmptyWorld {
     // location
     gasstart = gasleft();
     locComp.get(id);
-    console.log("Location: ", gasstart - gasleft());
+    console.log("Coord: ", gasstart - gasleft());
     // stat
     gasstart = gasleft();
     statComp.get(id);
@@ -75,7 +75,7 @@ contract StructTest is EmptyWorld {
     // location
     gasstart = gasleft();
     locComp.has(id);
-    console.log("Location: ", gasstart - gasleft());
+    console.log("Coord: ", gasstart - gasleft());
     // stat
     gasstart = gasleft();
     statComp.has(id);
@@ -89,8 +89,8 @@ contract StructTest is EmptyWorld {
     console.log("Uint256 bare: ", gasstart - gasleft());
     // location
     gasstart = gasleft();
-    locComp.set(id, Location(2, 2, 0));
-    console.log("Location: ", gasstart - gasleft());
+    locComp.set(id, Coord(2, 2, 0));
+    console.log("Coord: ", gasstart - gasleft());
     // stat
     gasstart = gasleft();
     statComp.set(id, Stat(2, 2, 2, 0));

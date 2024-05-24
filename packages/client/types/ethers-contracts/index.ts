@@ -24,6 +24,7 @@ export type { CacheOperatorComponent } from "./CacheOperatorComponent";
 export type { CanNameComponent } from "./CanNameComponent";
 export type { CoinComponent } from "./CoinComponent";
 export type { ControlledBridgeSystem } from "./ControlledBridgeSystem";
+export type { CoordComponent } from "./CoordComponent";
 export type { CostComponent } from "./CostComponent";
 export type { DamageComponent } from "./DamageComponent";
 export type { DescriptionAltComponent } from "./DescriptionAltComponent";
@@ -260,6 +261,7 @@ export { CacheOperatorComponent__factory } from "./factories/CacheOperatorCompon
 export { CanNameComponent__factory } from "./factories/CanNameComponent__factory";
 export { CoinComponent__factory } from "./factories/CoinComponent__factory";
 export { ControlledBridgeSystem__factory } from "./factories/ControlledBridgeSystem__factory";
+export { CoordComponent__factory } from "./factories/CoordComponent__factory";
 export { CostComponent__factory } from "./factories/CostComponent__factory";
 export { DamageComponent__factory } from "./factories/DamageComponent__factory";
 export { DescriptionAltComponent__factory } from "./factories/DescriptionAltComponent__factory";

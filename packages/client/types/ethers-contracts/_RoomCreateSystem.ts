@@ -27,13 +27,13 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type LocationStruct = {
+export type CoordStruct = {
   x: PromiseOrValue<BigNumberish>;
   y: PromiseOrValue<BigNumberish>;
   z: PromiseOrValue<BigNumberish>;
 };
 
-export type LocationStructOutput = [number, number, number] & {
+export type CoordStructOutput = [number, number, number] & {
   x: number;
   y: number;
   z: number;
@@ -62,7 +62,7 @@ export interface _RoomCreateSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
-      LocationStruct,
+      CoordStruct,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -138,7 +138,7 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      location: LocationStruct,
+      location: CoordStruct,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
@@ -160,7 +160,7 @@ export interface _RoomCreateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    location: LocationStruct,
+    location: CoordStruct,
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
@@ -182,7 +182,7 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      location: LocationStruct,
+      location: CoordStruct,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
@@ -216,7 +216,7 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      location: LocationStruct,
+      location: CoordStruct,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
@@ -239,7 +239,7 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      location: LocationStruct,
+      location: CoordStruct,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,

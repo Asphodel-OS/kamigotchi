@@ -13,22 +13,22 @@ contract RoomTest is SetupTemplate {
   }
 
   function initBasicRooms() public {
-    _createRoom("testRoom1", Location(1, 1, 0), 1, 4);
-    _createRoom("testRoom2", Location(2, 1, 0), 2, 3);
-    _createRoom("testRoom3", Location(1, 2, 0), 3, 2);
-    _createRoom("testRoom4", Location(2, 2, 0), 4, 1);
+    _createRoom("testRoom1", Coord(1, 1, 0), 1, 4);
+    _createRoom("testRoom2", Coord(2, 1, 0), 2, 3);
+    _createRoom("testRoom3", Coord(1, 2, 0), 3, 2);
+    _createRoom("testRoom4", Coord(2, 2, 0), 4, 1);
   }
 
   ///////////////
   // TESTS
 
   function testRegistryRoom() public {
-    uint256 roomID = _createRoom("1", Location(1, 1, 0), 1);
+    uint256 roomID = _createRoom("1", Coord(1, 1, 0), 1);
     assertTrue(_IsRoomComponent.has(roomID));
-    assertTrue(_isSameLocation(Location(1, 1, 0), _locFromIndex(1)));
+    assertTrue(_isSameLocation(Coord(1, 1, 0), _locFromIndex(1)));
 
-    _createRoom("2", Location(2, 1, 0), 2);
-    _createRoom("3", Location(1, 2, 0), 3);
+    _createRoom("2", Coord(2, 1, 0), 2);
+    _createRoom("3", Coord(1, 2, 0), 3);
 
     uint256 gate1 = _createRoomGate(1, 0, 10, 1, "ITEM", "CURR_MIN");
     assertTrue(_IdRoomComponent.has(gate1));
@@ -83,12 +83,12 @@ contract RoomTest is SetupTemplate {
 
     address operator = _operators[_owners[0]];
 
-    _createRoom("1", Location(1, 1, 0), 1);
-    _createRoom("2", Location(2, 1, 0), 2);
-    _createRoom("3", Location(1, 2, 0), 3);
-    _createRoom("4", Location(2, 2, 0), 4);
-    _createRoom("5", Location(5, 2, 0), 5);
-    _createRoom("6", Location(2, 1, 1), 6);
+    _createRoom("1", Coord(1, 1, 0), 1);
+    _createRoom("2", Coord(2, 1, 0), 2);
+    _createRoom("3", Coord(1, 2, 0), 3);
+    _createRoom("4", Coord(2, 2, 0), 4);
+    _createRoom("5", Coord(5, 2, 0), 5);
+    _createRoom("6", Coord(2, 1, 1), 6);
 
     // assert from room 1 perspective
     assertTrue(LibRoom.isAdjacent(_locFromIndex(1), _locFromIndex(2)));
@@ -133,13 +133,13 @@ contract RoomTest is SetupTemplate {
   //   // Large inputs are not expected here, hence int16 instead of int32 is ok
   //   vm.assume(z1 < 2 && z1 > -2);
   //   vm.assume(z2 < 2 && z2 > -2);
-  //   vm.assume(_isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
+  //   vm.assume(_isSameLocation(Coord(x1, y1, z1), Coord(x2, y2, z2)));
 
   //   uint32 accountIndex = 0;
-  //   _createRoom("1", Location(x1, y1, z1), 1);
-  //   _createRoom("2", Location(x2, y2, z2), 2);
+  //   _createRoom("1", Coord(x1, y1, z1), 1);
+  //   _createRoom("2", Coord(x2, y2, z2), 2);
 
-  //   if (_uncheckedAdjacent(Location(x1, y1, z1), Location(x2, y2, z2))) {
+  //   if (_uncheckedAdjacent(Coord(x1, y1, z1), Coord(x2, y2, z2))) {
   //     _AssertReachable(1, 2);
   //     _AssertAccRoom(accountIndex, 1);
   //     _moveAccount(accountIndex, 2);
@@ -168,12 +168,12 @@ contract RoomTest is SetupTemplate {
   //   vm.assume(z1 < 2 && z1 > -2);
   //   vm.assume(z2 < 2 && z2 > -2);
   //   vm.assume(exit != 1 && exit != 0);
-  //   vm.assume(_isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
-  //   vm.assume(!LibRoom.isAdjacent(Location(x1, y1, z1), Location(x2, y2, z2)));
+  //   vm.assume(_isSameLocation(Coord(x1, y1, z1), Coord(x2, y2, z2)));
+  //   vm.assume(!LibRoom.isAdjacent(Coord(x1, y1, z1), Coord(x2, y2, z2)));
 
   //   uint32 accountIndex = 0;
-  //   _createRoom("1", Location(x1, y1, z1), 1, exit);
-  //   _createRoom("2", Location(x2, y2, z2), exit);
+  //   _createRoom("1", Coord(x1, y1, z1), 1, exit);
+  //   _createRoom("2", Coord(x2, y2, z2), exit);
 
   //   _AssertReachable(1, exit);
 
@@ -196,12 +196,12 @@ contract RoomTest is SetupTemplate {
   //   vm.assume(z2 < 2 && z2 > -2);
   //   vm.assume(realExit != fakeExit);
   //   vm.assume(realExit != 1 && fakeExit != 1);
-  //   vm.assume(_isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
-  //   vm.assume(!LibRoom.isAdjacent(Location(x1, y1, z1), Location(x2, y2, z2)));
+  //   vm.assume(_isSameLocation(Coord(x1, y1, z1), Coord(x2, y2, z2)));
+  //   vm.assume(!LibRoom.isAdjacent(Coord(x1, y1, z1), Coord(x2, y2, z2)));
 
   //   uint32 accountIndex = 0;
-  //   _createRoom("1", Location(x1, y1, z1), 1, realExit);
-  //   _createRoom("2", Location(x2, y2, z2), fakeExit);
+  //   _createRoom("1", Coord(x1, y1, z1), 1, realExit);
+  //   _createRoom("2", Coord(x2, y2, z2), fakeExit);
 
   //   _AssertReachable(1, fakeExit, false);
 
@@ -214,8 +214,8 @@ contract RoomTest is SetupTemplate {
 
   function testOpenedGate() public {
     uint32 accountIndex = 0;
-    _createRoom("1", Location(1, 1, 0), 1);
-    _createRoom("2", Location(0, 1, 0), 2);
+    _createRoom("1", Coord(1, 1, 0), 1);
+    _createRoom("2", Coord(0, 1, 0), 2);
 
     vm.startPrank(deployer);
     __RoomCreateGateSystem.executeTyped(2, 0, 0, 0, "ITEM", "CURR_MIN");
@@ -230,11 +230,11 @@ contract RoomTest is SetupTemplate {
     uint32[] memory exits = new uint32[](2);
     exits[0] = 2;
     exits[1] = 4;
-    _createRoom("1", Location(1, 1, 0), 1, exits);
-    _createRoom("2", Location(10, 10, 10), 2);
-    _createRoom("3", Location(2, 1, 0), 3);
-    _createRoom("4", Location(11, 10, 10), 4);
-    _createRoom("5", Location(1, 2, 0), 5);
+    _createRoom("1", Coord(1, 1, 0), 1, exits);
+    _createRoom("2", Coord(10, 10, 10), 2);
+    _createRoom("3", Coord(2, 1, 0), 3);
+    _createRoom("4", Coord(11, 10, 10), 4);
+    _createRoom("5", Coord(1, 2, 0), 5);
     vm.startPrank(deployer);
     __RoomCreateGateSystem.executeTyped(2, 0, 10, 1, "ITEM", "CURR_MIN");
     __RoomCreateGateSystem.executeTyped(3, 0, 10, 1, "ITEM", "CURR_MIN");
@@ -288,8 +288,8 @@ contract RoomTest is SetupTemplate {
     uint32 goalIndex = 1;
     uint256 goalAmt = 1111;
     uint256 goalID = _createGoal(goalIndex, 1, Condition("COIN", "CURR_MIN", 0, goalAmt));
-    _createRoom("1", Location(1, 1, 0), 1); // original room, goal located here
-    _createRoom("2", Location(0, 1, 0), 2); // room to be gated
+    _createRoom("1", Coord(1, 1, 0), 1); // original room, goal located here
+    _createRoom("2", Coord(0, 1, 0), 2); // room to be gated
     _createRoomGate(2, 0, 0, LibGoals.genGoalID(goalIndex), "COMPLETE_COMP", "BOOL_IS");
 
     // alice tries to move to room 2, but its closed
@@ -312,17 +312,6 @@ contract RoomTest is SetupTemplate {
     _GoalContributeSystem.executeTyped(goalIndex, goalAmt);
     _moveAccount(alice.index, 2);
     _AssertAccRoom(uint32(alice.index), 2);
-  }
-
-  //////////////
-  // UTILS TEST
-
-  function testUintConversion(int32 x, int32 y, int32 z) public {
-    Location memory original = Location(x, y, z);
-    uint256 converted = LibRoom.locationToUint256(original);
-    Location memory postConvert = LibRoom.uint256ToLocation(converted);
-
-    assertEq(original, postConvert);
   }
 
   //////////////
@@ -355,15 +344,15 @@ contract RoomTest is SetupTemplate {
     );
   }
 
-  function _isSameLocation(Location memory a, Location memory b) internal pure returns (bool) {
+  function _isSameLocation(Coord memory a, Coord memory b) internal pure returns (bool) {
     return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
   }
 
-  function _locFromIndex(uint32 index) internal view returns (Location memory) {
+  function _locFromIndex(uint32 index) internal view returns (Coord memory) {
     return LibRoom.getLocation(components, LibRoom.queryByIndex(components, index));
   }
 
-  function _uncheckedAdjacent(Location memory a, Location memory b) internal view returns (bool) {
+  function _uncheckedAdjacent(Coord memory a, Coord memory b) internal view returns (bool) {
     // unchecked to deal with overflows (numbers that big wont happen irl - admin defined)
     return
       ((a.z == b.z && a.x == b.x) && (a.y + 1 == b.y || a.y - 1 == b.y)) ||

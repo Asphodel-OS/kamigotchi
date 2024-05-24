@@ -9,9 +9,9 @@ contract Pet721StakeTest is SetupTemplate {
   }
 
   function setUpRooms() public override {
-    _createRoom("testRoom1", Location(1, 1, 0), 1, 12);
-    _createRoom("testRoom4", Location(1, 2, 0), 2);
-    _createRoom("testRoom12", Location(2, 2, 0), 12, 1);
+    _createRoom("testRoom1", Coord(1, 1, 0), 1, 12);
+    _createRoom("testRoom4", Coord(1, 2, 0), 2);
+    _createRoom("testRoom12", Coord(2, 2, 0), 12, 1);
   }
 
   ////////////

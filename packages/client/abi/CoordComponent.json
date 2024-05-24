@@ -7,6 +7,11 @@
           "name": "world",
           "type": "address",
           "internalType": "address"
+        },
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "stateMutability": "nonpayable"
