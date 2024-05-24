@@ -11,7 +11,7 @@ export const calcIdleTime = (production?: Production): number => {
 };
 
 export const calcIntensityTime = (production: Production): number => {
-  if (!production) return 0;
+  if (!production || !production.time.reset) return 0;
   return Math.floor(Date.now() / 1000 - production.time.reset); // intensity period
 };
 
@@ -51,7 +51,7 @@ export const calcFertility = (production: Production, kami: Kami): number => {
 };
 
 export const calcDedication = (production: Production, kami: Kami) => {
-  const precision = 1e9;
+  const precision = 1e9; // figure to truncate by
   const config = kami.config.harvest.dedication;
   const ratio = config.ratio.value;
   const intensity = calcIntensity(production, kami);
@@ -79,9 +79,9 @@ export const calcEfficacyShift = (production: Production, kami: Kami): number =>
 };
 
 export const calcIntensity = (production: Production, kami: Kami): number => {
-  const precision = 1e9;
+  const precision = 1e9; // figure to truncate by
   const config = kami.config.harvest.intensity;
-  const base = calcIntensityTime(production);
+  const base = Math.floor(calcIntensityTime(production) / 60);
   const nudge = kami.bonuses.harvest.intensity.nudge;
   const ratio = config.ratio.value; // intensity period
   const intensity = Math.floor(precision * ((base + nudge) / ratio)) / precision;

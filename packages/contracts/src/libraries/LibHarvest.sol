@@ -200,10 +200,10 @@ library LibHarvest {
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
 
-    uint256 base = calcIntensityDuration(components, id);
+    uint256 base = calcIntensityDuration(components, id) / 60; // calculated in minutes, truncated
     uint256 nudge = LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
-    uint256 ratio = config[2]; // period. inverted
-    uint256 precision = 10 ** (INTENSITY_PREC + config[3]); // ratio is inverted here
+    uint256 ratio = config[2]; // period. apply as inverted ratio
+    uint256 precision = 10 ** (INTENSITY_PREC + config[3]); // additive as ratio is inverted
     return (precision * (base + nudge)) / ratio;
   }
 
@@ -277,8 +277,11 @@ library LibHarvest {
     return IdPetComponent(getAddressById(components, IdPetCompID)).get(id);
   }
 
+  // the check here is just a patch to address broken kamis in the current deployment
   function getResetTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeResetComponent(getAddressById(components, TimeResetCompID)).get(id);
+    TimeResetComponent comp = TimeResetComponent(getAddressById(components, TimeResetCompID));
+    if (comp.has(id)) return comp.get(id);
+    return block.timestamp; // if missing then we have no intensity
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
