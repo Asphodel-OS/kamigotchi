@@ -9,10 +9,9 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
-import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { BareValueComponent, ID as ValueCompID } from "components/BareValueComponent.sol";
 
-/// @notice a config entity is a global config of field values, identified by its NameComponent
+/// @notice a config entity is a global config of field values, identified deterministically
 /** @dev
  * There are 3 types of configs, all packed and stored into a single uint256.
  * - uint256

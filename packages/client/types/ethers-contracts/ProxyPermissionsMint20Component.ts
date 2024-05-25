@@ -36,10 +36,8 @@ export interface ProxyPermissionsMint20ComponentInterface
     "extractRaw(uint256)": FunctionFragment;
     "extractRawBatch(uint256[])": FunctionFragment;
     "get(uint256)": FunctionFragment;
-    "getAt(bytes,uint256)": FunctionFragment;
     "getBatch(uint256[])": FunctionFragment;
     "getEntities()": FunctionFragment;
-    "getEntitiesWithValue(bool)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "getRawBatch(uint256[])": FunctionFragment;
@@ -54,7 +52,6 @@ export interface ProxyPermissionsMint20ComponentInterface
     "set(uint256,bytes)": FunctionFragment;
     "setBatch(uint256[],bytes[])": FunctionFragment;
     "setBatch(uint256[])": FunctionFragment;
-    "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -69,11 +66,9 @@ export interface ProxyPermissionsMint20ComponentInterface
       | "extractRaw"
       | "extractRawBatch"
       | "get"
-      | "getAt"
       | "getBatch"
       | "getEntities"
-      | "getEntitiesWithValue(bool)"
-      | "getEntitiesWithValue(bytes)"
+      | "getEntitiesWithValue"
       | "getRaw"
       | "getRawBatch"
       | "getSchema"
@@ -87,7 +82,6 @@ export interface ProxyPermissionsMint20ComponentInterface
       | "set(uint256,bytes)"
       | "setBatch(uint256[],bytes[])"
       | "setBatch(uint256[])"
-      | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -119,10 +113,6 @@ export interface ProxyPermissionsMint20ComponentInterface
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAt",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getBatch",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
@@ -131,11 +121,7 @@ export interface ProxyPermissionsMint20ComponentInterface
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(bool)",
-    values: [PromiseOrValue<boolean>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -182,10 +168,6 @@ export interface ProxyPermissionsMint20ComponentInterface
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "size",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -214,18 +196,13 @@ export interface ProxyPermissionsMint20ComponentInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "get", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(bool)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getRaw", data: BytesLike): Result;
@@ -262,7 +239,6 @@ export interface ProxyPermissionsMint20ComponentInterface
     functionFragment: "setBatch(uint256[])",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -353,12 +329,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -366,13 +336,8 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -436,11 +401,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -489,12 +449,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getAt(
-    value: PromiseOrValue<BytesLike>,
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getBatch(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
@@ -502,13 +456,8 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  "getEntitiesWithValue(bool)"(
-    value: PromiseOrValue<boolean>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  "getEntitiesWithValue(bytes)"(
-    value: PromiseOrValue<BytesLike>,
+  getEntitiesWithValue(
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -572,11 +521,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  size(
-    value: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -625,12 +569,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -638,13 +576,8 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -708,11 +641,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -773,12 +701,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -786,13 +708,8 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -854,11 +771,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -908,12 +820,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -921,13 +827,8 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -987,11 +888,6 @@ export interface ProxyPermissionsMint20Component extends BaseContract {
     "setBatch(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

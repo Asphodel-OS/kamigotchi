@@ -16,7 +16,6 @@ import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
-import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";

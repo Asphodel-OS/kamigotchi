@@ -11,7 +11,6 @@ import { LibPack } from "libraries/utils/LibPack.sol";
 
 import { IdBareHolderComponent, ID as IdBareHolderCompID } from "components/IdBareHolderComponent.sol";
 import { IdScoreTypeComponent, ID as IdScoreTypeCompID } from "components/IdScoreTypeComponent.sol";
-import { EpochComponent, ID as EpochCompID } from "components/EpochComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -93,10 +92,6 @@ library LibScore {
 
   /////////////////
   // GETTERS
-
-  function getEpoch(IUintComp components, uint256 id) internal view returns (uint256) {
-    return EpochComponent(getAddressById(components, EpochCompID)).get(id);
-  }
 
   // get current epoch for leaderboard
   function getCurentEpoch(IUintComp components) internal view returns (uint256) {

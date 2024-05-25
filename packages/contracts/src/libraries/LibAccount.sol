@@ -9,8 +9,6 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 import { Stat } from "components/types/Stat.sol";
 
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
-import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
-import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
