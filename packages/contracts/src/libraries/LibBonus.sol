@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { BalanceSignedComponent as IntBalComp, ID as IntBalCompID } from "components/BalanceSignedComponent.sol";
+import { ValueSignedComponent as IntBalComp, ID as IntBalCompID } from "components/ValueSignedComponent.sol";
 import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
 import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
