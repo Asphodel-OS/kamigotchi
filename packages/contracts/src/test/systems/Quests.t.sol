@@ -159,7 +159,7 @@ contract QuestsTest is SetupTemplate {
     assertEq(snapshots.length, 1);
     assertTrue(_IsObjectiveComponent.has(snapshots[0]));
     assertEq(_IDOwnsQuestComponent.get(snapshots[0]), questID);
-    assertEq(_BalanceComponent.get(snapshots[0]), startAmt);
+    assertEq(_ValueComponent.get(snapshots[0]), startAmt);
 
     // check completability
     assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));

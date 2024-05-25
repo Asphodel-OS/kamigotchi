@@ -9,11 +9,11 @@ export const getBonusValue = (
   type: string,
   precision: number = 0
 ): number => {
-  const { BalanceSigned } = components;
+  const { ValueSigned } = components;
   const entityIndex = getEntityIndex(world, holderID, type);
   if (!entityIndex) return 0;
 
-  const raw = BigNumber.from(getComponentValue(BalanceSigned, entityIndex)?.value ?? 0);
+  const raw = BigNumber.from(getComponentValue(ValueSigned, entityIndex)?.value ?? 0);
   return raw.fromTwos(256).toNumber() / 10 ** precision;
 };
 

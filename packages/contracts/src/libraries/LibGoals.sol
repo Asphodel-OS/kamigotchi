@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
-import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as BalCompID } from "components/ValueComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsGoalComponent, ID as IsGoalCompID } from "components/IsGoalComponent.sol";
@@ -50,7 +50,7 @@ import { LibScore } from "libraries/LibScore.sol";
  * Contributing to goals results in a Contribution Entity (goal+account)
  * - Contributions uses LibScore to track points for leaderboard compatibility
  *   - epoch is not used
- * - stores Contribution Points in BalanceComponent (via score)
+ * - stores Contribution Points in ValueComponent (via score)
  * - stores whether the goal has been completed in IsCompleteComponent
  */
 library LibGoals {
@@ -204,7 +204,7 @@ library LibGoals {
     // filters out DISPLAY_ONLY rewards via Level check
     uint256[] memory rewardIDs = queryActiveRewards(components, goalIndex);
 
-    BalanceComponent balComp = BalanceComponent(getAddressById(components, BalCompID));
+    ValueComponent balComp = ValueComponent(getAddressById(components, BalCompID));
     uint256 accCont = balComp.get(genContributionID(goalID, accID));
 
     _distributeRewards(world, components, balComp, accCont, accID, rewardIDs);
@@ -214,7 +214,7 @@ library LibGoals {
   function _distributeRewards(
     IWorld world,
     IUintComp components,
-    BalanceComponent balComp,
+    ValueComponent balComp,
     uint256 accCont,
     uint256 accID,
     uint256[] memory rewardIDs
@@ -255,9 +255,7 @@ library LibGoals {
     bool goalCompleted = completeComp.has(goalID);
     bool accClaimed = completeComp.has(contributionID);
 
-    bool accContributed = BalanceComponent(getAddressById(components, BalCompID)).has(
-      contributionID
-    );
+    bool accContributed = ValueComponent(getAddressById(components, BalCompID)).has(contributionID);
     // true if goal completed, account contributed, account hasnt claimed reward
     return goalCompleted && accContributed && !accClaimed;
   }

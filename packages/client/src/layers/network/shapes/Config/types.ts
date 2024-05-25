@@ -9,7 +9,7 @@ export const getConfigFieldValue = (
   components: Components,
   field: string
 ): number => {
-  const { BareValue } = components;
+  const { Value } = components;
 
   const configEntityIndex = getEntityIndex(world, field);
   if (!configEntityIndex) {
@@ -17,7 +17,7 @@ export const getConfigFieldValue = (
     return 0;
   }
 
-  return (getComponentValue(BareValue, configEntityIndex)?.value as number) * 1;
+  return (getComponentValue(Value, configEntityIndex)?.value as number) * 1;
 };
 
 // get an Config from its EntityIndex
@@ -26,7 +26,7 @@ export const getConfigFieldValueArray = (
   components: Components,
   field: string
 ): number[] => {
-  const { BareValue } = components;
+  const { Value } = components;
 
   const configEntityIndex = getEntityIndex(world, field);
   if (!configEntityIndex) {
@@ -34,7 +34,7 @@ export const getConfigFieldValueArray = (
     return [0];
   }
 
-  const raw = getComponentValue(BareValue, configEntityIndex)?.value;
+  const raw = getComponentValue(Value, configEntityIndex)?.value;
   if (!raw) return [];
   return unpackArray(BigNumber.from(raw));
 };
@@ -45,14 +45,14 @@ export const getConfigFieldValueWei = (
   components: Components,
   field: string
 ): bigint => {
-  const { BareValue } = components;
+  const { Value } = components;
 
   const configEntityIndex = getEntityIndex(world, field);
   if (!configEntityIndex) {
     // console.warn(`Config field not found for ${field}`);
     return 0n;
   }
-  const stringVal = (getComponentValue(BareValue, configEntityIndex)?.value as number) || 0;
+  const stringVal = (getComponentValue(Value, configEntityIndex)?.value as number) || 0;
   return BigInt(stringVal);
 };
 

@@ -116,9 +116,7 @@ export function createComponents(world: World) {
     // General Attributes
     Affinity: defineStringEZ('Affinity', 'component.affiinity'),
     Balance: defineNumberEZ('Balance', 'component.balance'),
-    Balances: defineNumberArrayComponent(world, 'Balances', 'component.balances'),
-    BalanceSigned: defineNumberEZ('Balance', 'component.balance.signed'),
-    BareValue: defineNumberEZ('BareValue', 'component.barevalue'),
+    Balances: defineNumberArrayComponent(world, 'Balances', 'component.values'),
     Coin: defineNumberEZ('Coin', 'component.coin'),
     Cost: defineNumberEZ('Cost', 'component.cost'),
     Description: defineStringEZ('Description', 'component.description'),
@@ -141,6 +139,7 @@ export function createComponents(world: World) {
     Subtype: defineStringEZ('Subtype', 'component.subtype'),
     Type: defineStringEZ('Type', 'component.type'),
     Value: defineNumberEZ('Value', 'component.value'),
+    ValueSigned: defineNumberEZ('ValueSigned', 'component.value.signed'),
     Weights: defineNumberArrayComponent(world, 'Weights', 'component.weights'),
 
     // Time/Block Tracking
