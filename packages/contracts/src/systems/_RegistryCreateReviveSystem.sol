@@ -22,14 +22,15 @@ contract _RegistryCreateReviveSystem is System {
       int32 health,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, int32, string));
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
 
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    require(registryID == 0, "CreateRevive: item already exists");
     require(!LibString.eq(name, ""), "CreateRevive: name is empty");
     require(health > 0, "CreateRevive: health not > 0");
 
-    LibItemRegistry.createRevive(components, index, name, description, health, media);
+    uint256 id = LibItemRegistry.createRevive(components, index, name, description, health, media);
 
-    return "";
+    return abi.encode(id);
   }
 
   function executeTyped(
