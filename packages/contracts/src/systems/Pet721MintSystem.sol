@@ -45,7 +45,7 @@ contract Pet721MintSystem is System {
     uint32 index = uint32(LibPet721.getCurrentSupply(world)) + 1;
     uint256[] memory petIDs = new uint256[](amount);
     for (uint32 i; i < amount; i++) {
-      uint256 petID = LibPet.create(world, components, accountID, index + i);
+      uint256 petID = LibPet.create(components, accountID, index + i);
       LibRandom.setRevealBlock(components, petID, block.number);
       LibPet721.mintInGame(world, index + i);
 

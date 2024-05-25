@@ -13,7 +13,7 @@ import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
-import { IndexFarcasterComponent, ID as IndexFarcasterCompID } from "components/IndexFarcasterComponent.sol";
+import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { CacheOperatorComponent, ID as CacheOperatorCompID } from "components/CacheOperatorComponent.sol";
@@ -161,7 +161,7 @@ library LibAccount {
   }
 
   function setFarcasterIndex(IUintComp components, uint256 id, uint32 fid) internal {
-    IndexFarcasterComponent(getAddressById(components, IndexFarcasterCompID)).set(id, fid);
+    FarcasterIndexComponent(getAddressById(components, FarcarsterIndexCompID)).set(id, fid);
   }
 
   function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
@@ -264,7 +264,7 @@ library LibAccount {
   // retrieves the account with farcaster index
   function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
     uint256[] memory results = LibQuery.getIsWithValue(
-      getComponentById(components, IndexFarcasterCompID),
+      getComponentById(components, FarcarsterIndexCompID),
       getComponentById(components, IsAccCompID),
       abi.encode(fid)
     );
