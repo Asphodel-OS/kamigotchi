@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "components/base/Uint256BareComponent.sol";
+import { TypeLib } from "components/types/standard.sol";
 
 uint256 constant ID = uint256(keccak256("component.hash"));
 
@@ -10,6 +11,6 @@ contract HashComponent is Uint256BareComponent {
   constructor(address world) Uint256BareComponent(world, ID) {}
 
   function set(uint256 id, bytes32 value) public onlyWriter {
-    _set(id, abi.encode(uint256(value)));
+    _set(id, TypeLib.encodeUint256(uint256(value)));
   }
 }

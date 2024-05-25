@@ -6,7 +6,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { BareValueComponent, ID as BareValueCompID } from "components/BareValueComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";

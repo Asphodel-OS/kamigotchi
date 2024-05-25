@@ -15,7 +15,6 @@
     "CostComponent",
     "DescriptionAltComponent",
     "DescriptionComponent",
-    "EpochComponent",
     "ExitsComponent",
     "ExperienceComponent",
     "ForComponent",
@@ -471,7 +470,6 @@
       "writeAccess": [
         "BalanceComponent",
         "BareValueComponent",
-        "EpochComponent",
         "IdBareHolderComponent",
         "IdScoreTypeComponent",
         "TimeLastComponent"
