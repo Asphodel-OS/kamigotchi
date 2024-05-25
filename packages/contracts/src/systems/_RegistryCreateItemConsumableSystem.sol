@@ -22,11 +22,18 @@ contract _RegistryCreateItemConsumableSystem is System {
     ) = abi.decode(arguments, (uint32, string, string, string, string));
 
     uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    require(registryID == 0, "CreateMiscItem: item already exists");
     require(!LibString.eq(name, ""), "CreateMiscItem: name empty");
 
-    LibItemRegistry.createConsumable(components, index, name, description, type_, media);
-
-    return "";
+    uint256 id = LibItemRegistry.createConsumable(
+      components,
+      index,
+      name,
+      description,
+      type_,
+      media
+    );
+    return abi.encode(id);
   }
 
   function executeTyped(

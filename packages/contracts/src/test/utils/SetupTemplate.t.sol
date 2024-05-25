@@ -75,7 +75,13 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // sets up items to a default state. override to change/remove behaviour if needed
   function setUpItems() public virtual {
-    _initItems();
+    // food (foodIndex, name, health)
+    _createFood(1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
+    _createFood(2, "Candy", "DESCRIPTION", 50, 0, ""); // itemIndex 2
+    _createFood(3, "Cookie Sticks", "DESCRIPTION", 100, 0, ""); // itemIndex 3
+
+    // revives (reviveIndex, name, health)
+    _createRevive(1000, "Ribbon", "DESCRIPTION", 10, ""); // itemIndex 1000
   }
 
   // sets up rooms to a default state. override to change/remove behaviour if needed
@@ -509,7 +515,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* ITEMS */
 
-  // @notice creates and empty item index for testing
+  /// @notice creates and empty item index for testing
   function _createGenericItem(uint32 index) public returns (uint256 id) {
     vm.startPrank(deployer);
 
@@ -518,6 +524,44 @@ abstract contract SetupTemplate is TestSetupImports {
     _IndexItemComponent.set(id, index);
 
     vm.stopPrank();
+  }
+
+  function _createFood(
+    uint32 index,
+    string memory name,
+    string memory description,
+    int32 health,
+    uint256 experience,
+    string memory mediaURI
+  ) public returns (uint256 id) {
+    vm.prank(deployer);
+    return
+      abi.decode(
+        __RegistryCreateFoodSystem.executeTyped(
+          index,
+          name,
+          description,
+          health,
+          experience,
+          mediaURI
+        ),
+        (uint256)
+      );
+  }
+
+  function _createRevive(
+    uint32 index,
+    string memory name,
+    string memory description,
+    int32 health,
+    string memory mediaURI
+  ) public returns (uint256 id) {
+    vm.prank(deployer);
+    return
+      abi.decode(
+        __RegistryCreateReviveSystem.executeTyped(index, name, description, health, mediaURI),
+        (uint256)
+      );
   }
 
   function _createLootbox(
@@ -930,20 +974,6 @@ abstract contract SetupTemplate is TestSetupImports {
     // Hands
     registerTrait(12, 50, 0, 0, 5, 0, 5, "SCRAP", "Scrap Hands Mythic", "HAND");
     registerTrait(13, 0, 0, 5, 5, 0, 5, "EERIE", "Eerie Hands Mythic", "HAND");
-  }
-
-  function _initItems() internal {
-    vm.startPrank(deployer);
-
-    // food (foodIndex, name, health)
-    __RegistryCreateFoodSystem.executeTyped(1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
-    __RegistryCreateFoodSystem.executeTyped(2, "Candy", "DESCRIPTION", 50, 0, ""); // itemIndex 2
-    __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", "DESCRIPTION", 100, 0, ""); // itemIndex 3
-
-    // revives (reviveIndex, name, health)
-    __RegistryCreateReviveSystem.executeTyped(1000, "Ribbon", "DESCRIPTION", 10, ""); // itemIndex 4
-
-    vm.stopPrank();
   }
 
   /////////////////

@@ -9,6 +9,8 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 contract MurderTest is SetupTemplate {
   uint _idleRequirement;
   uint[] internal _listingIDs;
+  uint[] internal _foodRegistryIDs;
+  uint[] internal _reviveRegistryIDs;
   uint[] internal _nodeIDs;
   mapping(uint => uint[]) internal _petIDs;
 
@@ -31,12 +33,22 @@ contract MurderTest is SetupTemplate {
     _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
   }
 
+  function setUpItems() public override {
+    // food (foodIndex, name, health)
+    _foodRegistryIDs.push(_createFood(1, "Gum", "DESCRIPTION", 25, 0, "")); // itemIndex 1
+    _foodRegistryIDs.push(_createFood(2, "Candy", "DESCRIPTION", 50, 0, "")); // itemIndex 2
+    _foodRegistryIDs.push(_createFood(3, "Cookie Sticks", "DESCRIPTION", 100, 0, "")); // itemIndex 3
+
+    // revives (reviveIndex, name, health)
+    _reviveRegistryIDs.push(_createRevive(1000, "Ribbon", "DESCRIPTION", 10, "")); // itemIndex 1000
+  }
+
   /////////////////
   // HELPER FUNCTIONS
 
   function _createFoodListings(uint32 npcIndex) internal {
     uint32 itemIndex;
-    uint[] memory registryIDs = LibItemRegistry.getAllFood(components);
+    uint[] memory registryIDs = _foodRegistryIDs;
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
@@ -45,7 +57,7 @@ contract MurderTest is SetupTemplate {
 
   function _createReviveListings(uint32 npcIndex) internal {
     uint32 itemIndex;
-    uint[] memory registryIDs = LibItemRegistry.getAllRevive(components);
+    uint[] memory registryIDs = _reviveRegistryIDs;
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
