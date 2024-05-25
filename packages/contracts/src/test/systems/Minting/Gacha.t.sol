@@ -165,13 +165,13 @@ contract GachaTest is SetupTemplate {
 
   //   // checking results
   //   for (uint256 i; i < mint1; i++) {
-  //     assertEq(_IdAccountComponent.get(results[i]), _getAccount(1));
+  //     assertEq(_AccountComponent.get(results[i]), _getAccount(1));
   //   }
   //   for (uint256 i = mint1; i < mint1 + mint2; i++) {
-  //     assertEq(_IdAccountComponent.get(results[i]), _getAccount(2));
+  //     assertEq(_AccountComponent.get(results[i]), _getAccount(2));
   //   }
   //   for (uint256 i = mint1 + mint2; i < mint1 + mint2 + mint3; i++) {
-  //     assertEq(_IdAccountComponent.get(results[i]), _getAccount(3));
+  //     assertEq(_AccountComponent.get(results[i]), _getAccount(3));
   //   }
   // }
 
@@ -295,7 +295,7 @@ contract GachaTest is SetupTemplate {
     account = _getAccount(account);
     assertTrue(rerolls == 0 ? !_RerollComponent.has(id) : _RerollComponent.get(id) == rerolls);
     assertTrue(_BareValueComponent.has(id));
-    assertEq(_IdAccountComponent.get(id), account);
+    assertEq(_AccountComponent.get(id), account);
     assertEq(_BlockRevealComponent.get(id), revealBlock);
     assertEq(_TypeComponent.get(id), "GACHA_COMMIT");
   }

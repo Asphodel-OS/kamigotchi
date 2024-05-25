@@ -8,7 +8,7 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
@@ -163,7 +163,7 @@ library LibSkill {
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 value) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, value);
+    HolderComponent(getAddressById(components, HolderCompID)).set(id, value);
   }
 
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {

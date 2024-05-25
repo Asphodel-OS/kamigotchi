@@ -9,7 +9,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Strings } from "utils/Strings.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
 import { IdScoreTypeComponent, ID as IdScoreTypeCompID } from "components/IdScoreTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
@@ -37,7 +37,7 @@ library LibScore {
     uint256 holderID,
     uint256 typeID
   ) internal returns (uint256) {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
+    HolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
     IdScoreTypeComponent(getAddressById(components, IdScoreTypeCompID)).set(id, typeID);
   }
 
