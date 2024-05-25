@@ -97,7 +97,7 @@ contract InventoryTest is SetupTemplate {
   function assertInvExistence(uint256 id, bool exists) public {
     assertEq(exists, _IsInventoryComponent.has(id));
     assertEq(exists, _IndexItemComponent.has(id));
-    assertEq(exists, _BalanceComponent.has(id));
+    assertEq(exists, _ValueComponent.has(id));
   }
 
   function assertInvBalance(uint256 accIndex, uint32 index, uint256 balance) public {
@@ -109,7 +109,7 @@ contract InventoryTest is SetupTemplate {
     if (id == 0 || !_IsInventoryComponent.has(id)) assertInvExistence(id, false);
     else {
       assertTrue(_IsInventoryComponent.has(id));
-      assertEq(_BalanceComponent.get(id), balance);
+      assertEq(_ValueComponent.get(id), balance);
     }
   }
 }

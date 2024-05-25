@@ -22,7 +22,7 @@ import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeC
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
@@ -204,7 +204,7 @@ library LibQuestRegistry {
   // SETTERS
 
   function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
@@ -263,8 +263,8 @@ library LibQuestRegistry {
   // UNSETTERS
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    if (BalanceComponent(getAddressById(components, BalanceCompID)).has(id)) {
-      BalanceComponent(getAddressById(components, BalanceCompID)).remove(id);
+    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
+      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
     }
   }
 

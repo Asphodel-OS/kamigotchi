@@ -123,7 +123,7 @@ contract GoalsTest is SetupTemplate {
     uint256 contributionID = LibGoals.genContributionID(goalID, accID);
     assertEq(
       amt,
-      _BalanceComponent.has(contributionID) ? _BalanceComponent.get(contributionID) : 0,
+      _ValueComponent.has(contributionID) ? _ValueComponent.get(contributionID) : 0,
       "unequal account contribution"
     );
   }
@@ -131,7 +131,7 @@ contract GoalsTest is SetupTemplate {
   function _assertGoalStatus(uint256 goalID, uint256 amount, bool complete) internal {
     assertEq(
       amount,
-      _BalanceComponent.has(goalID) ? _BalanceComponent.get(goalID) : 0,
+      _ValueComponent.has(goalID) ? _ValueComponent.get(goalID) : 0,
       "unequal goal live amount"
     );
     assertEq(complete, _IsCompleteComponent.has(goalID), "wrong goal complete");

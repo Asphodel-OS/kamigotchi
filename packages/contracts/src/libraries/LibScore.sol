@@ -12,7 +12,7 @@ import { LibPack } from "libraries/utils/LibPack.sol";
 import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
 import { IdScoreTypeComponent, ID as IdScoreTypeCompID } from "components/IdScoreTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 
 // entityID for leaderboard's current epoch. Contains just the Epoch component, declared in initSystem.
@@ -49,7 +49,7 @@ library LibScore {
     uint256 typeID,
     uint256 amt
   ) internal {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 bal;
     if (comp.has(id)) bal = comp.get(id);
     else create(components, id, holderID, typeID);
@@ -73,7 +73,7 @@ library LibScore {
     uint256 typeID,
     uint256 amt
   ) internal {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 bal;
     if (comp.has(id)) bal = comp.get(id);
     else create(components, id, holderID, typeID);

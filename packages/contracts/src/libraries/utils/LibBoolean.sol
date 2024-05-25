@@ -7,7 +7,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
@@ -51,7 +51,7 @@ struct Condition {
  * - TypeComponent (key)
  * - LogicTypeComponent (key)
  * - IndexComponent (optional key)
- * - BalanceComponent (value)
+ * - ValueComponent (value)
  *
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
  * heavily inspired by Quest condition checks. Does not yet support increase/decrease checks, but can in future
@@ -102,7 +102,7 @@ library LibBoolean {
   ) internal view returns (bool) {
     if (conditionIDs.length == 0) return true;
     IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    BalanceComponent balComp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent balComp = ValueComponent(getAddressById(components, ValueCompID));
     TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
     LogicTypeComponent logicTypeComp = LogicTypeComponent(
       getAddressById(components, LogicTypeCompID)
@@ -176,7 +176,7 @@ library LibBoolean {
   //////////////
   // SETTERS
   function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
@@ -203,7 +203,7 @@ library LibBoolean {
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
@@ -250,7 +250,7 @@ library LibBoolean {
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     return comp.has(id) ? comp.get(id) : 0;
   }
 
