@@ -53,13 +53,13 @@ library LibPet {
   // ENTITY INTERACTIONS
 
   /// @notice create a pet entity and set its base fields
+  /// @dev assumes index is not in use
   function create(
-    IWorld world,
     IUintComp components,
     uint256 accountID,
     uint32 index
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = genID(index);
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
     IndexPetComponent(getAddressById(components, IndexPetCompID)).set(id, index);
     setOwner(components, id, accountID);
@@ -510,15 +510,10 @@ library LibPet {
   /////////////////
   // QUERIES
 
-  // get the entity ID of a pet from its index (tokenID)
-  // NOTE: this looks unreliable if we use pet index to identify pets on other entities
-  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
-    uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetCompID))
-      .getEntitiesWithValue(index);
-    // assumes only 1 pet per index
-    if (results.length > 0) {
-      result = results[0];
-    }
+  /// @notice get the entity ID of a pet from its index (tokenID)
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
+    uint256 id = genID(index);
+    return isPet(components, id) ? id : 0;
   }
 
   /// @notice retrieves the pet with the specified name
@@ -549,5 +544,12 @@ library LibPet {
 
   function logRevive(IUintComp components, uint256 accountID) internal {
     LibDataEntity.inc(components, accountID, 0, "KAMI_REVIVE", 1);
+  }
+
+  ////////////////////
+  // UTILS
+
+  function genID(uint32 petIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("pet.id", petIndex)));
   }
 }
