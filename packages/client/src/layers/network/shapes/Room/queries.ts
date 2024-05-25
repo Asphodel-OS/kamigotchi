@@ -23,11 +23,11 @@ export const queryGates = (
   toIndex: number,
   fromIndex: number
 ): Condition[] => {
-  const { RoomID, SourceID } = components;
+  const { RoomID, PointerID } = components;
 
   const toQuery = [
     HasValue(RoomID, { value: getGateToPtr(toIndex) }),
-    HasValue(SourceID, { value: fromIndex == 0 ? '0x00' : getGateFromPtr(fromIndex) }),
+    HasValue(PointerID, { value: fromIndex == 0 ? '0x00' : getGateFromPtr(fromIndex) }),
   ];
 
   const raw = Array.from(runQuery(toQuery));

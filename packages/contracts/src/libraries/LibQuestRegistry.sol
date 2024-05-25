@@ -10,7 +10,7 @@ import { DescriptionAltComponent, ID as DescAltCompID } from "components/Descrip
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
-import { IdOwnsConditionComponent, ID as IdOwnsCondCompID } from "components/IdOwnsConditionComponent.sol";
+import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
@@ -208,7 +208,7 @@ library LibQuestRegistry {
   }
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).set(id, ownerID);
+    IdPointerComponent(getAddressById(components, IdPointerCompID)).set(id, ownerID);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
@@ -269,8 +269,8 @@ library LibQuestRegistry {
   }
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    if (IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).has(id)) {
-      IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).remove(id);
+    if (IdPointerComponent(getAddressById(components, IdPointerCompID)).has(id)) {
+      IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(id);
     }
   }
 
@@ -387,9 +387,7 @@ library LibQuestRegistry {
     uint256 pointer
   ) internal view returns (uint256[] memory) {
     return
-      IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).getEntitiesWithValue(
-        pointer
-      );
+      IdPointerComponent(getAddressById(components, IdPointerCompID)).getEntitiesWithValue(pointer);
   }
 
   /////////////////
