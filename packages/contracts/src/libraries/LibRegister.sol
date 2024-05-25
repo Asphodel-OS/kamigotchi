@@ -6,8 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdDelegateeComponent, ID as IdDelegateeCompID } from "components/IdDelegateeComponent.sol";
-import { IdDelegatorComponent, ID as IdDelegatorCompID } from "components/IdDelegatorComponent.sol";
+import { DelegateeComponent, ID as DelegateeCompID } from "components/DelegateeComponent.sol";
+import { DelegatorComponent, ID as IdDelegatorCompID } from "components/DelegatorComponent.sol";
 import { IsRegisterComponent, ID as IsRegisterCompID } from "components/IsRegisterComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
@@ -16,11 +16,11 @@ import { Strings } from "utils/Strings.sol";
 
 // A Register is an intermediary for a list of items being delegated from one entity to
 // another (from delegator, to delegatee). This entity anchors a list of inventory slots.
-// The actual data mapping goes from Inventory => Register, where IdAccount = registerID.
+// The actual data mapping goes from Inventory => Register, where Account = registerID.
 // In the example of Trade, the Trade entity is the Delegatee, while the Account entity
 // adding to the trade is the Delegator.
 // @dev State = [ ACTIVE | CONFIRMED | CANCELED ]
-// TODO: generalize LibInventory ownership component (currently IdAccountComponent).
+// TODO: generalize LibInventory ownership component (currently AccountComponent).
 library LibRegister {
   /////////////////
   // INTERACTIONS
@@ -34,8 +34,8 @@ library LibRegister {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsRegisterComponent(getAddressById(components, IsRegisterCompID)).set(id);
-    IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).set(id, delegatorID);
-    IdDelegateeComponent(getAddressById(components, IdDelegateeCompID)).set(id, delegateeID);
+    DelegatorComponent(getAddressById(components, IdDelegatorCompID)).set(id, delegatorID);
+    DelegateeComponent(getAddressById(components, DelegateeCompID)).set(id, delegateeID);
     StateComponent(getAddressById(components, StateCompID)).set(id, string("ACTIVE"));
     return id;
   }
@@ -51,7 +51,7 @@ library LibRegister {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256) {
-    uint256 delegatorID = IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(
+    uint256 delegatorID = DelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(
       registerID
     );
 
@@ -121,11 +121,11 @@ library LibRegister {
   // COMPONENT RETRIEVAL
 
   function getDelegatee(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdDelegateeComponent(getAddressById(components, IdDelegateeCompID)).get(id);
+    return DelegateeComponent(getAddressById(components, DelegateeCompID)).get(id);
   }
 
   function getDelegator(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(id);
+    return DelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(id);
   }
 
   /////////////////
@@ -168,7 +168,7 @@ library LibRegister {
     if (delegateeID != 0) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdDelegateeCompID),
+        getComponentById(components, DelegateeCompID),
         abi.encode(delegateeID)
       );
     }

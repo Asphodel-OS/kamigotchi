@@ -6,6 +6,6 @@ uint256 constant ID = uint256(keccak256("component.id.source"));
 
 // the Source Entity of Something
 // in a commit-reveal, it is the source of data. in a kill log, it is the killer
-contract IdSourceComponent is Uint256BareComponent {
+contract SourceComponent is Uint256BareComponent {
   constructor(address world) Uint256BareComponent(world, ID) {}
 }

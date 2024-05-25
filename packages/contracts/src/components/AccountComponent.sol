@@ -5,6 +5,6 @@ import "components/base/Uint256BareComponent.sol";
 uint256 constant ID = uint256(keccak256("component.id.account"));
 
 // a reference to a Account entity's ID
-contract IdAccountComponent is Uint256BareComponent {
+contract AccountComponent is Uint256BareComponent {
   constructor(address world) Uint256BareComponent(world, ID) {}
 }
