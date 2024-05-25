@@ -7,7 +7,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
-import { BareValueComponent, ID as ValueCompID } from "components/BareValueComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 /// @notice Library for data entity patterns. a key value store entity linked to an owner
 /** @dev
@@ -30,7 +30,7 @@ library LibDataEntity {
   // INTERACTIONS
 
   function inc(IUintComp components, uint256 dataID, uint256 amt) internal returns (uint256) {
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
     comp.set(dataID, value + amt);
     return value + amt;
@@ -48,7 +48,7 @@ library LibDataEntity {
   }
 
   function dec(IUintComp components, uint256 dataID, uint256 amt) internal returns (uint256) {
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
     comp.set(dataID, value - amt);
     return value - amt;
@@ -66,7 +66,7 @@ library LibDataEntity {
   }
 
   function set(IUintComp components, uint256 dataID, uint256 value) internal {
-    BareValueComponent(getAddressById(components, ValueCompID)).set(dataID, value);
+    ValueComponent(getAddressById(components, ValueCompID)).set(dataID, value);
   }
 
   function set(
@@ -84,7 +84,7 @@ library LibDataEntity {
   // GETTERS
 
   function get(IUintComp components, uint256 dataID) internal view returns (uint256) {
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     return comp.has(dataID) ? comp.get(dataID) : 0;
   }
 

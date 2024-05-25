@@ -5,8 +5,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
-import { BalancesComponent, ID as BalancesCompID } from "components/BalancesComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsLogComponent, ID as IsLogCompID } from "components/IsLogComponent.sol";
@@ -126,7 +126,7 @@ library LibLootbox {
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalanceCompID)).get(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
   }
 
   function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -149,11 +149,11 @@ library LibLootbox {
   // SETTERS
 
   function setBalance(IUintComp components, uint256 id, uint256 balance) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, balance);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, balance);
   }
 
   function setBalances(IUintComp components, uint256 id, uint256[] memory balances) internal {
-    BalancesComponent(getAddressById(components, BalancesCompID)).set(id, balances);
+    ValuesComponent(getAddressById(components, ValuesCompID)).set(id, balances);
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
@@ -177,7 +177,7 @@ library LibLootbox {
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).remove(id);
+    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   function unsetHolder(IUintComp components, uint256 id) internal {

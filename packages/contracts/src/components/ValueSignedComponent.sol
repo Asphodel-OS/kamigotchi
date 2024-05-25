@@ -4,7 +4,7 @@ import "components/base/Int256BareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.balance.signed"));
 
-// signed version of BalanceComponent - allows negative balances
-contract BalanceSignedComponent is Int256BareComponent {
+// signed version of ValueComponent - allows negative balances
+contract ValueSignedComponent is Int256BareComponent {
   constructor(address world) Int256BareComponent(world, ID) {}
 }

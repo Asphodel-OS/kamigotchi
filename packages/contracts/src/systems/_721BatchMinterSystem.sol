@@ -13,7 +13,7 @@ import { Stat } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
@@ -299,7 +299,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   LevelComponent internal immutable levelComp;
   ExperienceComponent internal immutable expComp;
   SkillPointComponent internal immutable skillPointComp;
-  BalanceComponent internal immutable balanceComp;
+  ValueComponent internal immutable balanceComp;
 
   constructor(
     IWorld _world,
@@ -320,7 +320,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     levelComp = LevelComponent(getAddressById(components, LevelCompID));
     expComp = ExperienceComponent(getAddressById(components, ExperienceCompID));
     skillPointComp = SkillPointComponent(getAddressById(components, SkillPointCompID));
-    balanceComp = BalanceComponent(getAddressById(components, BalanceCompID));
+    balanceComp = ValueComponent(getAddressById(components, ValueCompID));
   }
 
   /// @dev if calling many times, reduce call data by memozing address / bitpacking

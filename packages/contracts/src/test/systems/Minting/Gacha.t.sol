@@ -222,7 +222,7 @@ contract GachaTest is SetupTemplate {
       ogIndices[i] = uint256(keccak256(abi.encode(id, seed)));
 
       vm.prank(deployer);
-      _BareValueComponent.set(id, ogIndices[i]);
+      _ValueComponent.set(id, ogIndices[i]);
     }
 
     // sort
@@ -231,7 +231,7 @@ contract GachaTest is SetupTemplate {
     // check sort
     uint256 curr;
     for (uint256 i = 0; i < length; i++) {
-      uint256 val = _BareValueComponent.get(sortedIDs[i]);
+      uint256 val = _ValueComponent.get(sortedIDs[i]);
       assertTrue(val >= curr);
       curr = val;
     }
@@ -294,7 +294,7 @@ contract GachaTest is SetupTemplate {
   ) internal {
     account = _getAccount(account);
     assertTrue(rerolls == 0 ? !_RerollComponent.has(id) : _RerollComponent.get(id) == rerolls);
-    assertTrue(_BareValueComponent.has(id));
+    assertTrue(_ValueComponent.has(id));
     assertEq(_IdAccountComponent.get(id), account);
     assertEq(_BlockRevealComponent.get(id), revealBlock);
     assertEq(_TypeComponent.get(id), "GACHA_COMMIT");

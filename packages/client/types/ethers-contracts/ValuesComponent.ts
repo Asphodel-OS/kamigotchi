@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface BalanceSignedComponentInterface extends utils.Interface {
+export interface ValuesComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "extract(uint256)": FunctionFragment;
@@ -47,10 +47,10 @@ export interface BalanceSignedComponentInterface extends utils.Interface {
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "removeBatch(uint256[])": FunctionFragment;
-    "set(uint256,int256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
+    "set(uint256,uint256[])": FunctionFragment;
+    "setBatch(uint256[],uint256[][])": FunctionFragment;
     "setBatch(uint256[],bytes[])": FunctionFragment;
-    "setBatch(uint256[],int256[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -77,10 +77,10 @@ export interface BalanceSignedComponentInterface extends utils.Interface {
       | "registerWorld"
       | "remove"
       | "removeBatch"
-      | "set(uint256,int256)"
       | "set(uint256,bytes)"
+      | "set(uint256,uint256[])"
+      | "setBatch(uint256[],uint256[][])"
       | "setBatch(uint256[],bytes[])"
-      | "setBatch(uint256[],int256[])"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -151,20 +151,20 @@ export interface BalanceSignedComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,int256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch(uint256[],bytes[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
+    functionFragment: "set(uint256,uint256[])",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch(uint256[],int256[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
+    functionFragment: "setBatch(uint256[],uint256[][])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[][]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBatch(uint256[],bytes[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -223,19 +223,19 @@ export interface BalanceSignedComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,int256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "set(uint256,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBatch(uint256[],bytes[])",
+    functionFragment: "set(uint256,uint256[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBatch(uint256[],int256[])",
+    functionFragment: "setBatch(uint256[],uint256[][])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBatch(uint256[],bytes[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -271,12 +271,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface BalanceSignedComponent extends BaseContract {
+export interface ValuesComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: BalanceSignedComponentInterface;
+  interface: ValuesComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -326,12 +326,12 @@ export interface BalanceSignedComponent extends BaseContract {
     get(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber[]]>;
 
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+    ): Promise<[BigNumber[][]]>;
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
@@ -378,27 +378,27 @@ export interface BalanceSignedComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,int256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setBatch(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
+    "set(uint256,uint256[])"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setBatch(uint256[],int256[])"(
+    "setBatch(uint256[],uint256[][])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "setBatch(uint256[],bytes[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -448,12 +448,12 @@ export interface BalanceSignedComponent extends BaseContract {
   get(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<BigNumber[]>;
 
   getBatch(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  ): Promise<BigNumber[][]>;
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -500,27 +500,27 @@ export interface BalanceSignedComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,int256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   "set(uint256,bytes)"(
     entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setBatch(uint256[],bytes[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BytesLike>[],
+  "set(uint256,uint256[])"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setBatch(uint256[],int256[])"(
+  "setBatch(uint256[],uint256[][])"(
     entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BigNumberish>[][],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "setBatch(uint256[],bytes[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BytesLike>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -550,12 +550,12 @@ export interface BalanceSignedComponent extends BaseContract {
     extract(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<BigNumber[]>;
 
     extractBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<BigNumber[][]>;
 
     extractRaw(
       entity: PromiseOrValue<BigNumberish>,
@@ -570,12 +570,12 @@ export interface BalanceSignedComponent extends BaseContract {
     get(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<BigNumber[]>;
 
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<BigNumber[][]>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -622,27 +622,27 @@ export interface BalanceSignedComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,int256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setBatch(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
+    "set(uint256,uint256[])"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setBatch(uint256[],int256[])"(
+    "setBatch(uint256[],uint256[][])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setBatch(uint256[],bytes[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -754,27 +754,27 @@ export interface BalanceSignedComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,int256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setBatch(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
+    "set(uint256,uint256[])"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setBatch(uint256[],int256[])"(
+    "setBatch(uint256[],uint256[][])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "setBatch(uint256[],bytes[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -875,27 +875,27 @@ export interface BalanceSignedComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,int256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBatch(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
+    "set(uint256,uint256[])"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBatch(uint256[],int256[])"(
+    "setBatch(uint256[],uint256[][])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setBatch(uint256[],bytes[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

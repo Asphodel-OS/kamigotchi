@@ -9,7 +9,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IDOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsInventoryComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
@@ -31,7 +31,7 @@ library LibInventory {
     uint32 itemIndex
   ) internal returns (uint256 id) {
     id = genID(holderID, itemIndex);
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, 0);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, 0);
     IsInventoryComponent(getAddressById(components, IsInvCompID)).set(id);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
     OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
@@ -39,7 +39,7 @@ library LibInventory {
 
   /// @notice Delete the inventory instance
   function del(IUintComp components, uint256 id) internal {
-    getComponentById(components, BalanceCompID).remove(id);
+    getComponentById(components, ValueCompID).remove(id);
     getComponentById(components, IsInvCompID).remove(id);
     getComponentById(components, IndexItemCompID).remove(id);
     getComponentById(components, OwnerCompID).remove(id);
@@ -47,14 +47,14 @@ library LibInventory {
 
   /// @notice Increase a inventory balance by the specified amount
   function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     bal = comp.get(id);
     comp.set(id, bal += amt);
   }
 
   /// @notice Decrease a inventory balance by the specified amount
   function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     bal = comp.get(id);
     require(bal >= amt, "Inventory: insufficient balance"); // for user error feedback
     comp.set(id, bal -= amt);
@@ -62,12 +62,12 @@ library LibInventory {
 
   /// @notice sets the balance of an inventory instance
   function set(IUintComp components, uint256 id, uint256 amt) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, amt);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, amt);
   }
 
   /// @notice Transfer the specified fungible inventory amt from=>to entity
   function transfer(IUintComp components, uint256 fromID, uint256 toID, uint256 amt) internal {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
 
     // removing from
     uint256 fromBal = comp.get(fromID);
@@ -82,7 +82,7 @@ library LibInventory {
   // CHECKERS
 
   function hasBalance(IUintComp components, uint256 id) internal view returns (bool) {
-    return BalanceComponent(getAddressById(components, BalanceCompID)).has(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).has(id);
   }
 
   // Check if the associated registry entry has a type
@@ -104,7 +104,7 @@ library LibInventory {
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
-    return BalanceComponent(getAddressById(components, BalanceCompID)).get(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
   }
 
   function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
