@@ -8,7 +8,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Coord, CoordLib } from "components/types/Coord.sol";
 
 import { IdRoomComponent, ID as IdRoomCompID } from "components/IdRoomComponent.sol";
-import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
+import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -58,7 +58,7 @@ library LibRoom {
     if (condValue != 0) LibBoolean.setBalance(components, id, condValue);
 
     IdRoomComponent(getAddressById(components, IdRoomCompID)).set(id, genGateAtPtr(roomIndex));
-    IdSourceComponent sourceComp = IdSourceComponent(getAddressById(components, IdSourceCompID));
+    IdPointerComponent sourceComp = IdPointerComponent(getAddressById(components, IdPointerCompID));
     if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
     else sourceComp.set(id, 0);
   }
@@ -76,9 +76,7 @@ library LibRoom {
 
   function removeGate(IUintComp components, uint256 id) internal {
     IdRoomComponent(getAddressById(components, IdRoomCompID)).remove(id);
-    // IdSourceComponent sourceComp = IdSourceComponent(getAddressById(components, IdSourceCompID));
-    // if (sourceComp.has(id)) sourceComp.remove(id);
-    IdSourceComponent(getAddressById(components, IdSourceCompID)).remove(id);
+    IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(id);
 
     LibBoolean.remove(components, id);
     LibBoolean.unsetIndex(components, id);
@@ -205,7 +203,7 @@ library LibRoom {
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IdSourceCompID),
+      getComponentById(components, IdPointerCompID),
       abi.encode(0)
     );
 
@@ -225,7 +223,7 @@ library LibRoom {
   ) internal view returns (uint256[] memory) {
     uint256[] memory gatesTo = IdRoomComponent(getAddressById(components, IdRoomCompID))
       .getEntitiesWithValue(genGateAtPtr(toIndex));
-    uint256[] memory gatesFrom = IdSourceComponent(getAddressById(components, IdSourceCompID))
+    uint256[] memory gatesFrom = IdPointerComponent(getAddressById(components, IdPointerCompID))
       .getEntitiesWithValue(genGateSourcePtr(toIndex));
     return LibArray.concat(gatesTo, gatesFrom);
   }

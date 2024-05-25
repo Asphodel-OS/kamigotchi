@@ -33,7 +33,7 @@ contract RoomTest is SetupTemplate {
     uint256 gate1 = _createRoomGate(1, 0, 10, 1, "ITEM", "CURR_MIN");
     assertTrue(_IdRoomComponent.has(gate1));
     assertEq(LibRoom.genGateAtPtr(1), _IdRoomComponent.get(gate1));
-    assertEq(_IdSourceComponent.get(gate1), 0);
+    assertEq(_IdPointerComponent.get(gate1), 0);
     uint256[] memory allGates = LibRoom.queryAllGates(components, 1);
     assertEq(allGates.length, 1);
     assertEq(allGates[0], gate1);
@@ -43,7 +43,7 @@ contract RoomTest is SetupTemplate {
 
     uint256 gate2 = _createRoomGate(1, 2, 10, 1, "ITEM", "CURR_MIN");
     assertEq(LibRoom.genGateAtPtr(1), _IdRoomComponent.get(gate2));
-    assertEq(LibRoom.genGateSourcePtr(2), _IdSourceComponent.get(gate2));
+    assertEq(LibRoom.genGateSourcePtr(2), _IdPointerComponent.get(gate2));
     allGates = LibRoom.queryAllGates(components, 1);
     assertEq(allGates.length, 2);
     assertEq(allGates[0], gate1);

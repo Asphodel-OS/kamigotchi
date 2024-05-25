@@ -45,10 +45,10 @@ export const getScoreFromHash = (
 
 // get a Score object from its EnityIndex
 export const getScore = (world: World, components: Components, index: EntityIndex): Score => {
-  const { BareHolderID, Balance } = components;
+  const { HolderID, Balance } = components;
 
   // populate the holder
-  const accountID = getComponentValue(BareHolderID, index)?.value as EntityID;
+  const accountID = getComponentValue(HolderID, index)?.value as EntityID;
   const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
   const account = getAccount(world, components, accountEntityIndex);
 

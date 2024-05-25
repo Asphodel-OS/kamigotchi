@@ -66,17 +66,16 @@ export function createComponents(world: World) {
 
     // IDs
     AccountID: defineStringEZ('AccountID', 'component.id.account'),
-    BareHolderID: defineStringEZ('BareHolderID', 'component.id.holder.bare'),
     DelegateeID: defineStringEZ('DelegateeID', 'component.id.delegatee'),
     DelegatorID: defineStringEZ('DelegatorID', 'component.id.delegator'),
     HolderID: defineStringEZ('HolderID', 'component.id.holder'),
     NodeID: defineStringEZ('NodeID', 'component.id.node'),
-    OwnsConditionID: defineStringEZ('OwnsConditionID', 'component.id.condition.owns'),
     OwnsInventoryID: defineStringEZ('OwnsInventoryID', 'component.id.inventory.owns'),
     OwnsPetID: defineStringEZ('OwnsPetID', 'component.id.pet.owns'),
     OwnsQuestID: defineStringEZ('OwnsQuestID', 'component.id.quest.owns'),
     OwnsRelationshipID: defineStringEZ('OwnsRelationshipID', 'component.id.relationship.owns'),
     PetID: defineStringEZ('PetID', 'component.id.pet'),
+    PointerID: defineStringEZ('PointerID', 'component.id.pointer'),
     RequesteeID: defineStringEZ('RequesteeID', 'component.id.requestee'),
     RequesterID: defineStringEZ('RequesterID', 'component.id.requester'),
     RoomID: defineStringEZ('RoomID', 'component.id.room'),
