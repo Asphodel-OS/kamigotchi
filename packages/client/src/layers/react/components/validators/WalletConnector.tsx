@@ -77,15 +77,20 @@ export function registerWalletConnecter() {
         }
       }, [validations]);
 
-      // if a mismatch is detected between the privy injected wallet and wagmi connector,
-      // log the user out to reset the validator flow
+      // force logout the user when certain conditions are met:
+      // - when the injected wallet is disconnected
+      // - when a mismatch is detected between the privy injected wallet and wagmi connector,
       useEffect(() => {
-        const injectedWallet = getInjectedWallet(wallets);
-        if (injectedWallet) {
-          const injectedAddress = injectedWallet.address;
-          if (injectedAddress !== wagmiAddress) logout();
+        if (!authenticated) return;
+        if (!isConnected) logout();
+        else {
+          const injectedWallet = getInjectedWallet(wallets);
+          if (injectedWallet) {
+            const injectedAddress = injectedWallet.address;
+            if (injectedAddress !== wagmiAddress) logout();
+          }
         }
-      }, [wallets, wagmiAddress]);
+      }, [isConnected, authenticated, wallets, wagmiAddress]);
 
       /////////////////
       // ACTIONS
