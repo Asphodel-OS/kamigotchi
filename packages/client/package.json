@@ -91,7 +91,7 @@
     "utf-8-validate": "^5.0.2",
     "uuid": "^9.0.1",
     "viem": "^2.9.4",
-    "wagmi": "^2.5.13",
+    "wagmi": "^2.9.0",
     "zustand": "^4.3.1"
   },
   "staticFiles": {
