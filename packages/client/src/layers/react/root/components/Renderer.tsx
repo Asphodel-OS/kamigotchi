@@ -1,26 +1,13 @@
 import { filterNullishValues } from '@mud-classic/utils';
-import { useEngineStore, useLayers } from 'layers/react/engine/hooks';
+import { useLayers, useStore } from 'layers/react/root/hooks';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { Layers } from 'layers/network';
 import { useStream } from 'layers/network/utils';
-import { GridConfiguration, UIComponent } from 'layers/react/engine/types';
-import { Layers } from 'src/types';
+import { GridConfiguration, UIComponent } from 'layers/react/root/types';
 import { Cell } from './Cell';
-
-const UIGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(100, 1%);
-  grid-template-rows: repeat(100, 1%);
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  width: 100vw;
-  pointer-events: none;
-  z-index: 100;
-`;
 
 const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.memo(
   ({ children, gridConfig }) => {
@@ -58,7 +45,7 @@ export const UIComponentRenderer: React.FC<{
 });
 
 export const ComponentRenderer: React.FC = observer(() => {
-  const { UIComponents } = useEngineStore();
+  const { UIComponents } = useStore();
   const layers = useLayers();
   if (!layers) return null;
 
@@ -81,3 +68,16 @@ export const ComponentRenderer: React.FC = observer(() => {
     </UIGrid>
   );
 });
+
+const UIGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(100, 1%);
+  grid-template-rows: repeat(100, 1%);
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  pointer-events: none;
+  z-index: 100;
+`;

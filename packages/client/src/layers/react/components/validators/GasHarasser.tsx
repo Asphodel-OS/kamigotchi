@@ -10,7 +10,7 @@ import { GasConstants } from 'constants/gas';
 import { waitForActionCompletion } from 'layers/network/utils';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 import { playFund, playSuccess } from 'utils/sounds';
 

@@ -5,7 +5,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { Kards } from './Kards';
 
 export function registerPartyModal() {

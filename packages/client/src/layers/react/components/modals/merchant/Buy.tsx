@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Listing, getListing } from 'layers/network/shapes/Listing';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { ActionButton } from '../../library/ActionButton';
 

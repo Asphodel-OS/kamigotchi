@@ -6,7 +6,7 @@ import { DialogueNode, dialogues } from 'constants/dialogue';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
 export function registerDialogueModal() {

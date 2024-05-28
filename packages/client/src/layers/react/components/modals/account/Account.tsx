@@ -10,7 +10,7 @@ import {
 } from 'layers/network/shapes/Account';
 import { Friendship } from 'layers/network/shapes/Friendship';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected } from 'layers/react/store';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';

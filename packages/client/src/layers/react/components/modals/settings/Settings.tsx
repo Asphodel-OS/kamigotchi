@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { settingsIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 
 import { Account } from './Account';
 import { Volume } from './Volume';

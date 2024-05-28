@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { backgrounds } from 'assets/images/backgrounds';
 import { getAccountByOwner } from 'layers/network/shapes/Account';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork, useSelected } from 'layers/react/store';
 import { Room } from './Room';
 

@@ -10,7 +10,7 @@ import {
 } from 'layers/network/shapes/Account';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
 import { Battery, Tooltip } from 'layers/react/components/library';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useVisibility } from 'layers/react/store';
 
 export function registerAccountHeader() {

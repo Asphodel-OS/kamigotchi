@@ -2,7 +2,7 @@ import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-class
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { Modals, useVisibility } from 'layers/react/store';
 
 export function registerNotificationFixture() {

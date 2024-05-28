@@ -6,7 +6,7 @@ import { Details, LeaderboardKey, leaderboardsDetails } from 'constants/leaderbo
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'layers/network/shapes/Score';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
 import { Filters } from './Filters';

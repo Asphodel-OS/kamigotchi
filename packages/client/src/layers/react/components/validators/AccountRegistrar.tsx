@@ -24,7 +24,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import {
   Account as KamiAccount,
   emptyAccountDetails,

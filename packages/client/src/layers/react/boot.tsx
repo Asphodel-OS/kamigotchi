@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom/client';
 
+import { Layers } from 'layers/network';
 import 'layers/react/styles/font.css';
-import { Layers } from 'src/types';
 import { registerLoadingState, registerUIComponents } from './components';
-import { Engine } from './engine/Engine';
+import { Root } from './root/Root';
 
 export const mountReact: { current: (mount: boolean) => void } = {
   current: () => void 0,
@@ -19,7 +19,7 @@ export function boot() {
   if (!rootElement) return console.warn('React root not found');
 
   const root = ReactDOM.createRoot(rootElement);
-  root.render(<Engine setLayers={setLayers} mountReact={mountReact} />);
+  root.render(<Root setLayers={setLayers} mountReact={mountReact} />);
   registerLoadingState();
-  registerUIComponents();
+  registerUIComponents(); // possibly should run this on a delayed callback once fully booted
 }

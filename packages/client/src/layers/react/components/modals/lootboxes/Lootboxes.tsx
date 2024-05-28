@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { waitForActionCompletion } from 'layers/network/utils';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';

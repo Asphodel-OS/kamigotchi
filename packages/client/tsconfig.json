@@ -11,6 +11,7 @@
     "paths": {
       "abi/*": ["./abi/*", "./abi"],
       "assets/*": ["./src/assets/*", "./src/assets"],
+      "clients/*": ["./src/clients/*", "./src/clients"],
       "constants/*": ["./src/constants/*", "./src/constants"],
       "layers/*": ["./src/layers/*", "./src/layers"],
       "utils/*": ["./src/utils/*", "./src/utils"],

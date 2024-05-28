@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useVisibility } from 'layers/react/store';
 import { Controls } from './Controls';
 import { Logs } from './Logs';

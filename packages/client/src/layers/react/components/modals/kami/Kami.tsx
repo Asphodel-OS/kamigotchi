@@ -12,7 +12,7 @@ import {
 } from 'layers/network/shapes/Skill';
 import { waitForActionCompletion } from 'layers/network/utils';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected } from 'layers/react/store';
 import { sleep } from 'utils/misc';
 import { KillLogs } from './battles/KillLogs';

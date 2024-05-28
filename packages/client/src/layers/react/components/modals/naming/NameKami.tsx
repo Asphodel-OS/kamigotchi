@@ -5,7 +5,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
 import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
 export function registerNameKamiModal() {

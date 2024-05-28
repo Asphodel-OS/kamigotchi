@@ -9,7 +9,7 @@ import { IconButton } from 'layers/react/components/library/IconButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
 export function registerEMABoardModal() {

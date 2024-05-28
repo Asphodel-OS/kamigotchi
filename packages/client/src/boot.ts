@@ -1,9 +1,8 @@
 /* eslint-disable prefer-const */
 import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
 
-import { createNetworkConfig, createNetworkLayer } from 'layers/network';
+import { createNetworkConfig, createNetworkLayer, Layers } from 'layers/network';
 import { boot as bootReact, mountReact, setLayers } from 'layers/react/boot';
-import { Layers } from './types';
 
 // boot the whole thing
 export async function boot() {
@@ -11,7 +10,7 @@ export async function boot() {
   mountReact.current(false);
   const layers = await bootGame();
   mountReact.current(true);
-  setLayers.current(layers as Layers);
+  setLayers.current(layers);
 }
 
 // boot the game's network layer

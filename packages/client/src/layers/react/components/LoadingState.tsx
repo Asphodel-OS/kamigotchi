@@ -2,8 +2,8 @@ import { getComponentValue } from '@mud-classic/recs';
 import { concat, map } from 'rxjs';
 
 import { GodID, SyncState } from 'layers/network/workers/workers';
-import { BootScreen } from 'layers/react/engine/components';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
+import { BootScreen } from 'layers/react/root/components';
 
 export function registerLoadingState() {
   registerUIComponent(

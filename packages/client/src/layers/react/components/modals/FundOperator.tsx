@@ -9,7 +9,7 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { GasConstants } from 'constants/gas';
 import { ActionButton, ModalWrapper } from 'layers/react/components/library';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork } from 'layers/react/store';
 import { playFund } from 'utils/sounds';
 

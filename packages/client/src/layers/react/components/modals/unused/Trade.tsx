@@ -8,7 +8,7 @@ import {
 } from '@mud-classic/recs';
 import { map, merge } from 'rxjs';
 
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 
 // NOTE(ja): potentially may want to split this up into two components (main window + registers)
 export function registerTradeModal() {

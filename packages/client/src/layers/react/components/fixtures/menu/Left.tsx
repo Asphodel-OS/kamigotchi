@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useVisibility } from 'layers/react/store';
 import styled from 'styled-components';
 import { AccountMenuButton, MapMenuButton, PartyMenuButton } from './buttons';

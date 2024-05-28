@@ -16,7 +16,7 @@ import {
 } from 'layers/network/shapes/Goal';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';

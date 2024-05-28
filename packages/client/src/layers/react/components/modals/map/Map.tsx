@@ -7,7 +7,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Room, getAllRooms } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { Exits } from './Exits';
 import { Grid } from './Grid';
