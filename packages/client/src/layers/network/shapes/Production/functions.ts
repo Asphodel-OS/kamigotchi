@@ -10,9 +10,11 @@ export const calcIdleTime = (production?: Production): number => {
   return Math.floor(Date.now() / 1000 - production.time.last);
 };
 
+// get the number of seconds passed since the last production reset
 export const calcIntensityTime = (production: Production): number => {
   if (!production || !production.time.reset) return 0;
-  return Math.floor(Date.now() / 1000 - production.time.reset); // intensity period
+  const secondsSinceReset = Date.now() / 1000 - production.time.reset;
+  return Math.floor(secondsSinceReset); // intensity period
 };
 
 // calculate the duration since a production was started
@@ -43,6 +45,7 @@ export const calcRate = (production: Production, kami: Kami): number => {
   return (base + nudge) * boost;
 };
 
+// calculate the traditional harvesting rate (per hour)
 export const calcFertility = (production: Production, kami: Kami): number => {
   const config = kami.config.harvest.fertility;
   const ratio = config.ratio.value;
@@ -50,6 +53,7 @@ export const calcFertility = (production: Production, kami: Kami): number => {
   return (kami.stats.power.total * ratio * efficacy) / 3600;
 };
 
+// calculate the Intensity-based harvesting rate
 export const calcDedication = (production: Production, kami: Kami) => {
   const precision = 1e9; // figure to truncate by
   const config = kami.config.harvest.dedication;

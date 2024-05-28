@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client';
 
 import 'layers/react/styles/font.css';
 import { Layers } from 'src/types';
-import { registerUIComponents } from './components';
+import { registerLoadingState, registerUIComponents } from './components';
 import { Engine } from './engine/Engine';
 
 export const mountReact: { current: (mount: boolean) => void } = {
@@ -20,5 +20,6 @@ export function boot() {
 
   const root = ReactDOM.createRoot(rootElement);
   root.render(<Engine setLayers={setLayers} mountReact={mountReact} />);
+  registerLoadingState();
   registerUIComponents();
 }

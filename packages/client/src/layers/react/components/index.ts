@@ -1,5 +1,3 @@
-import { registerLoadingState } from './LoadingState';
-
 import { registerScene } from './canvas';
 
 import { registerAccountHeader } from './fixtures/header';
@@ -35,9 +33,9 @@ import {
   registerWalletConnecter,
 } from './validators';
 
-export function registerUIComponents() {
-  registerLoadingState();
+export { registerLoadingState } from './LoadingState';
 
+export function registerUIComponents() {
   // fixtures
   registerAccountHeader();
   registerActionQueue();

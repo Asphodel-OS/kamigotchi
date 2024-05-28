@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { toHex } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'layers/network/createNetworkLayer';
@@ -33,6 +33,7 @@ export function registerWalletConnecter() {
     (layers) => {
       const { network } = layers;
       const { address: wagmiAddress, chain, isConnected, status } = useAccount();
+      const { connectors, connect } = useConnect();
       const { ready, authenticated, login, logout } = usePrivy();
       const { wallets } = useWallets();
 
@@ -49,10 +50,11 @@ export function registerWalletConnecter() {
       useEffect(() => {
         if (!ready) return;
         const chainMatches = chain?.id === defaultChain.id;
-        if (!authenticated || !isConnected) {
+        if (!isConnected) {
           setState('disconnected');
           setSelectedAddress('');
         } else if (!chainMatches) setState('wrongChain');
+        else if (!authenticated) setState('unauthenticated');
         else updateNetworkSettings();
 
         if (!isEqual(validations, { authenticated, chainMatches })) {
@@ -79,7 +81,6 @@ export function registerWalletConnecter() {
 
       // force logout the user when certain conditions are met:
       useEffect(() => {
-        console.log(status, isConnected, authenticated, wallets, wagmiAddress);
         if (!authenticated) return;
 
         // when the injected wallet is disconnected
@@ -89,7 +90,7 @@ export function registerWalletConnecter() {
           return;
         }
 
-        // when a mismatch is detected between the privy injected wallet and wagmi connector
+        // when a wallet mismatch is detected between privy and wagmi
         const injectedWallet = getInjectedWallet(wallets);
         if (injectedWallet) {
           const injectedAddress = injectedWallet.address;
@@ -99,7 +100,7 @@ export function registerWalletConnecter() {
             return;
           }
         }
-      }, [isConnected, authenticated, wallets, wagmiAddress, status]);
+      }, [isConnected, authenticated, wallets, wagmiAddress]);
 
       /////////////////
       // ACTIONS
@@ -171,8 +172,9 @@ export function registerWalletConnecter() {
       };
 
       const handleClick = () => {
-        if (state === 'disconnected') login();
+        if (state === 'disconnected') connect({ connector: connectors[0] });
         else if (state === 'wrongChain') updateConnectedChain();
+        else if (state === 'unauthenticated') login();
       };
 
       /////////////////
@@ -189,26 +191,30 @@ export function registerWalletConnecter() {
       };
 
       const getTitle = () => {
-        if (state === 'disconnected') return 'Wallet Disconnected';
+        if (state === 'disconnected') return 'Disconnected';
         if (state === 'wrongChain') return 'Wrong Network';
+        if (state === 'unauthenticated') return 'Logged Out';
         return '';
       };
 
       const getWarning = () => {
         if (state === 'disconnected') return `Your wallet is currently disconnected.`;
         if (state === 'wrongChain') return `You're currently connected to ${chain?.name} network`;
+        if (state === 'unauthenticated') return `You are currently logged out.`;
         return '';
       };
 
       const getDescription = () => {
         if (state === 'disconnected') return 'You must connect one to continue.';
         if (state === 'wrongChain') return `Please connect to ${defaultChain.name} network.`;
+        if (state === 'unauthenticated') return 'You must log in to continue.';
         return '';
       };
 
       const getButtonLabel = () => {
-        if (state === 'disconnected') return 'Log in';
+        if (state === 'disconnected') return 'Connect';
         if (state === 'wrongChain') return 'Change Networks';
+        if (state === 'unauthenticated') return 'Log in';
         return '';
       };
 

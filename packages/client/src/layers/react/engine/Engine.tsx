@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 
 import { defaultChain } from 'constants/chains';
 import { Layers } from 'src/types';
@@ -45,6 +46,7 @@ export const Engine: React.FC<{
     transports: {
       [defaultChain.id]: defaultTransport,
     },
+    connectors: [injected()],
     pollingInterval: 1000, // TODO: set this with a config value
   });
 
@@ -71,8 +73,8 @@ export const Engine: React.FC<{
 
   if (!mounted || !layers) return <BootScreen />;
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <PrivyProvider appId={import.meta.env.VITE_PRIVY_APP_ID} config={privyConfig}>
+    <PrivyProvider appId={import.meta.env.VITE_PRIVY_APP_ID} config={privyConfig}>
+      <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <LayerContext.Provider value={layers}>
             <EngineContext.Provider value={EngineStore}>
@@ -80,7 +82,7 @@ export const Engine: React.FC<{
             </EngineContext.Provider>
           </LayerContext.Provider>
         </QueryClientProvider>
-      </PrivyProvider>
-    </WagmiProvider>
+      </WagmiProvider>
+    </PrivyProvider>
   );
 });
