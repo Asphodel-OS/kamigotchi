@@ -2,7 +2,7 @@ import { bgPlaytestDay } from 'assets/images/rooms/47_scrap-paths';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
-import { triggerGoalModal } from 'layers/react/triggers/triggerGoalModal';
+import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 
 export const room47: Room = {
   roomIndex: 47,

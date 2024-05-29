@@ -1,8 +1,8 @@
 /* eslint-disable prefer-const */
 import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
 
+import { boot as bootReact, mountReact, setLayers } from 'app/boot';
 import { createNetworkConfig, createNetworkLayer, Layers } from 'layers/network';
-import { boot as bootReact, mountReact, setLayers } from 'layers/react/boot';
 
 // boot the whole thing
 export async function boot() {

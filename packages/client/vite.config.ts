@@ -15,6 +15,7 @@ export default defineConfig({
       abi: path.resolve(__dirname, './abi'),
       src: path.resolve(__dirname, './src'),
       types: path.resolve(__dirname, './types'),
+      app: path.resolve(__dirname, './src/app'),
       assets: path.resolve(__dirname, './src/assets'),
       clients: path.resolve(__dirname, './src/clients'),
       constants: path.resolve(__dirname, './src/constants'),

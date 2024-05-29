@@ -1,8 +1,8 @@
+import { triggerLeaderboardModal } from 'app/triggers/triggerLeaderboardModal';
+import { triggerShopModal } from 'app/triggers/triggerShopModal';
 import { bgPlaytest } from 'assets/images/rooms/13_giftshop';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerLeaderboardModal } from 'layers/react/triggers/triggerLeaderboardModal';
-import { triggerShopModal } from 'layers/react/triggers/triggerShopModal';
 
 export const room13: Room = {
   roomIndex: 13,

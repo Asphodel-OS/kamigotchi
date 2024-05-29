@@ -10,6 +10,7 @@
     "baseUrl": "./",
     "paths": {
       "abi/*": ["./abi/*", "./abi"],
+      "app/*": ["./src/app/*", "./src/app"],
       "assets/*": ["./src/assets/*", "./src/assets"],
       "clients/*": ["./src/clients/*", "./src/clients"],
       "constants/*": ["./src/constants/*", "./src/constants"],

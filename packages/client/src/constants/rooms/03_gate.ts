@@ -1,7 +1,7 @@
+import { triggerNodeModal } from 'app/triggers/triggerNodeModal';
 import { bgPlaytestDay } from 'assets/images/rooms/3_gate';
 import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerNodeModal } from 'layers/react/triggers/triggerNodeModal';
 
 export const room03: Room = {
   roomIndex: 3,

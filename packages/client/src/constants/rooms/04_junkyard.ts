@@ -1,7 +1,7 @@
+import { triggerPetMintModal } from 'app/triggers/triggerPetMintModal';
 import { bgPlaytestNight } from 'assets/images/rooms/4_junkyard';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerPetMintModal } from 'layers/react/triggers/triggerPetMintModal';
 
 export const room04: Room = {
   roomIndex: 4,
