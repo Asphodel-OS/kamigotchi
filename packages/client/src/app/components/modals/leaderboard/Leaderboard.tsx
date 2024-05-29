@@ -78,11 +78,7 @@ export function registerLeaderboardModal() {
           </ColumnTitleBox>
           <Table data={tableData} prefix={lbDetails ? lbDetails.scorePrefix ?? '' : ''} />
           {lbDetails && lbDetails.showFilter ? (
-            <Filters
-              filter={filter}
-              setFilter={setFilter}
-              epochOptions={Array.from(new Set(components.Epoch.values.value.values()))}
-            />
+            <Filters filter={filter} setFilter={setFilter} epochOptions={[1]} />
           ) : (
             <div></div>
           )}

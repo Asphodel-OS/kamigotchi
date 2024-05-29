@@ -124,7 +124,6 @@ export function createComponents(world: World) {
     Cost: defineNumberEZ('Cost', 'component.cost'),
     Description: defineStringEZ('Description', 'component.description'),
     DescriptionAlt: defineStringEZ('Description', 'component.description.alt'),
-    Epoch: defineNumberEZ('Epoch', 'component.epoch'),
     Experience: defineNumberEZ('Experience', 'component.experience'),
     For: defineNumberEZ('For', 'component.for'),
     Hash: defineStringEZ('Hash', 'component.hash'),

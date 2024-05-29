@@ -10,7 +10,6 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
-import { IdHolderComponent, ID as HolderCompID } from "components/IdHolderComponent.sol";
 import { IdOwnsQuestComponent, ID as OwnQuestCompID } from "components/IdOwnsQuestComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
