@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { IEntityIndexer } from "./interfaces/IEntityIndexer.sol";
 import { IWorld } from "./interfaces/IWorld.sol";
 import { BareComponent } from "./BareComponent.sol";
 
@@ -20,9 +19,6 @@ abstract contract Component is BareComponent {
   /** Reverse mapping from value to set of entities */
   mapping(bytes32 => EnumerableSet.UintSet) internal valToEntities;
 
-  /** List of indexers to be updated when a component value changes */
-  IEntityIndexer[] internal indexers;
-
   constructor(address _world, uint256 _id) BareComponent(_world, _id) {}
 
   /**
@@ -32,7 +28,7 @@ abstract contract Component is BareComponent {
   function getEntitiesWithValue(
     bytes memory value
   ) public view virtual override returns (uint256[] memory) {
-    return valToEntities[keccak256(value)].values();
+    return _getEntitiesWithValue(value);
   }
 
   /**
@@ -53,14 +49,6 @@ abstract contract Component is BareComponent {
   }
 
   /**
-   * @notice Register a new indexer that gets notified when a component value is set.
-   * @param indexer Address of the indexer to notify when a component value is set.
-   */
-  function registerIndexer(address indexer) external virtual override onlyWriter {
-    indexers.push(IEntityIndexer(indexer));
-  }
-
-  /**
    * @inheritdoc BareComponent
    */
   function _set(uint256 entity, bytes memory value) internal virtual override {
@@ -74,10 +62,6 @@ abstract contract Component is BareComponent {
 
     // Store the entity's value; Emit global event
     super._set(entity, value);
-
-    for (uint256 i = 0; i < indexers.length; i++) {
-      indexers[i].update(entity, value);
-    }
   }
 
   /**
@@ -96,11 +80,6 @@ abstract contract Component is BareComponent {
 
     // Store the entity's value; Emit global event
     super._setBatch(entities, values);
-
-    for (uint256 i = 0; i < indexers.length; i++) {
-      IEntityIndexer indexer = indexers[i];
-      for (uint256 j = 0; j < entities.length; j++) indexer.update(entities[j], values[j]);
-    }
   }
 
   /**
@@ -115,10 +94,6 @@ abstract contract Component is BareComponent {
 
     // Remove the entity from the mapping; Emit global event
     super._remove(entity);
-
-    for (uint256 i = 0; i < indexers.length; i++) {
-      indexers[i].remove(entity);
-    }
   }
 
   /**
@@ -135,10 +110,11 @@ abstract contract Component is BareComponent {
 
     // Remove the entities from the mapping; Emit global event
     super._removeBatch(entities);
+  }
 
-    for (uint256 i = 0; i < indexers.length; i++) {
-      IEntityIndexer indexer = indexers[i];
-      for (uint256 j = 0; j < entities.length; j++) indexer.remove(entities[j]);
-    }
+  function _getEntitiesWithValue(
+    bytes memory value
+  ) internal view virtual returns (uint256[] memory) {
+    return valToEntities[keccak256(value)].values();
   }
 }

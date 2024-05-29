@@ -33,7 +33,5 @@ interface IComponent is IOwnableWritable {
 
   function getEntitiesWithValue(bytes memory value) external view returns (uint256[] memory);
 
-  function registerIndexer(address indexer) external;
-
   function world() external view returns (address);
 }

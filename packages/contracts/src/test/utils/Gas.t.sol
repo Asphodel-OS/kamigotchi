@@ -5,9 +5,9 @@ import { console } from "forge-std/Test.sol";
 
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
-import { BoolComponent } from "components/types/BoolComponent.sol";
-import { Uint256BareComponent } from "components/types/Uint256BareComponent.sol";
-import { Uint256Component } from "components/types/Uint256Component.sol";
+import { BoolComponent } from "components/base/BoolComponent.sol";
+import { Uint256BareComponent } from "components/base/Uint256BareComponent.sol";
+import { Uint256Component } from "components/base/Uint256Component.sol";
 
 import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
 

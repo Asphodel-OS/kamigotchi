@@ -46,14 +46,13 @@ export interface BoolComponentInterface extends utils.Interface {
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
-    "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "removeBatch(uint256[])": FunctionFragment;
     "set(uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "setBatch(uint256[],bytes[])": FunctionFragment;
-    "setBatch(uint256[],bool[])": FunctionFragment;
+    "setBatch(uint256[])": FunctionFragment;
     "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
@@ -80,14 +79,13 @@ export interface BoolComponentInterface extends utils.Interface {
       | "has"
       | "id"
       | "owner"
-      | "registerIndexer"
       | "registerWorld"
       | "remove"
       | "removeBatch"
       | "set(uint256)"
       | "set(uint256,bytes)"
       | "setBatch(uint256[],bytes[])"
-      | "setBatch(uint256[],bool[])"
+      | "setBatch(uint256[])"
       | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
@@ -155,10 +153,6 @@ export interface BoolComponentInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "registerIndexer",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "registerWorld",
     values: [PromiseOrValue<string>]
   ): string;
@@ -183,8 +177,8 @@ export interface BoolComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch(uint256[],bool[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<boolean>[]]
+    functionFragment: "setBatch(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "size",
@@ -243,10 +237,6 @@ export interface BoolComponentInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "registerIndexer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "registerWorld",
     data: BytesLike
   ): Result;
@@ -268,7 +258,7 @@ export interface BoolComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBatch(uint256[],bool[])",
+    functionFragment: "setBatch(uint256[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
@@ -408,11 +398,6 @@ export interface BoolComponent extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    registerIndexer(
-      indexer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     registerWorld(
       _world: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -445,9 +430,8 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -550,11 +534,6 @@ export interface BoolComponent extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  registerIndexer(
-    indexer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   registerWorld(
     _world: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -587,9 +566,8 @@ export interface BoolComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setBatch(uint256[],bool[])"(
+  "setBatch(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<boolean>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -692,11 +670,6 @@ export interface BoolComponent extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    registerIndexer(
-      indexer: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     registerWorld(
       _world: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -729,9 +702,8 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -844,11 +816,6 @@ export interface BoolComponent extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    registerIndexer(
-      indexer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     registerWorld(
       _world: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -881,9 +848,8 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -985,11 +951,6 @@ export interface BoolComponent extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    registerIndexer(
-      indexer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     registerWorld(
       _world: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1022,9 +983,8 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

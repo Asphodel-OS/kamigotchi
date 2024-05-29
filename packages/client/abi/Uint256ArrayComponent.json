@@ -186,8 +186,8 @@
       "inputs": [
         {
           "name": "value",
-          "type": "bytes",
-          "internalType": "bytes"
+          "type": "uint256[]",
+          "internalType": "uint256[]"
         }
       ],
       "outputs": [
@@ -205,8 +205,8 @@
       "inputs": [
         {
           "name": "value",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "outputs": [
@@ -318,19 +318,6 @@
         }
       ],
       "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "registerIndexer",
-      "inputs": [
-        {
-          "name": "indexer",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -581,14 +568,13 @@
     "getBatch(uint256[])": "088dd0b9",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
-    "getEntitiesWithValue(uint256)": "fbdfa1ea",
+    "getEntitiesWithValue(uint256[])": "963e9eb0",
     "getRaw(uint256)": "dd98e3c9",
     "getRawBatch(uint256[])": "4323c4ef",
     "getSchema()": "6b122fe0",
     "has(uint256)": "cccf7a8e",
     "id()": "af640d0f",
     "owner()": "8da5cb5b",
-    "registerIndexer(address)": "75c0669c",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "removeBatch(uint256[])": "8482643e",

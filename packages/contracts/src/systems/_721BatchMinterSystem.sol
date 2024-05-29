@@ -3,14 +3,15 @@ pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { Uint32Component } from "components/types/Uint32Component.sol";
+import { Uint32Component } from "components/base/Uint32Component.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
+import { Stat } from "components/types/Stat.sol";
 
-import { Stat, StatComponent } from "components/types/StatComponent.sol";
+import { StatComponent } from "components/base/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";

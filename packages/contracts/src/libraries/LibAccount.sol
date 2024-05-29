@@ -6,6 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
+import { Stat } from "components/types/Stat.sol";
 
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
@@ -31,7 +32,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
-import { Stat, LibStat } from "libraries/LibStat.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 library LibAccount {
   /////////////////
