@@ -74,10 +74,14 @@ contract SkillTest is SetupTemplate {
   }
 
   function testSkillTree(uint32 tier) public {
-    uint256 regID1 = _createSkill(1, "ACCOUNT", "PASSIVE", "TREE", 0, 5, 0);
-    uint256 regID2 = _createSkill(2, "ACCOUNT", "PASSIVE", "TREE", 0, 5, 1);
-    uint256 regID3 = _createSkill(3, "ACCOUNT", "PASSIVE", "TREE", 0, 5, 2);
-    uint256 regIDFuzz = _createSkill(4, "ACCOUNT", "PASSIVE", "TREE", 0, 5, tier); // fuzz test
+    uint256 regID1 = _createSkill(1, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 0);
+    uint256 regID2 = _createSkill(2, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 1);
+    uint256 regID3 = _createSkill(3, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 2);
+    uint256 regIDFuzz = _createSkill(4, "ACCOUNT", "PASSIVE", "TREE", 1, 5, tier); // fuzz test
+
+    // giving account skill points to spend
+    vm.prank(deployer);
+    _SkillPointComponent.set(alice.id, 100);
 
     // test under tree tier
     for (uint256 i; i < 4; i++) {
@@ -95,7 +99,7 @@ contract SkillTest is SetupTemplate {
     assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regID2));
     assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regID3));
 
-    // test first tier
+    // // test first tier
     _upgradeSkill(alice.index, alice.id, 1);
     _upgradeSkill(alice.index, alice.id, 2);
     vm.prank(alice.operator);

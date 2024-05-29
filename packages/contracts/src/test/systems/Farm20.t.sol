@@ -18,11 +18,6 @@ contract Farm20Test is SetupTemplate {
     minDelay = _Farm20WithdrawSystem.getMinDelay();
   }
 
-  function setUpAccounts() public override {
-    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
-    _registerAccounts(10);
-  }
-
   function setUpRooms() public override {
     _createRoom("testRoom1", Coord(1, 1, 0), 1, 12);
     _createRoom("testRoom4", Coord(1, 2, 0), 2);
