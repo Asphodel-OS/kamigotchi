@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
-import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
+import { ItemImages } from 'assets/images/items';
+import { Item } from 'layers/network/shapes/Item';
 import { Tooltip } from 'layers/react/components/library';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  item: DetailedEntity;
+  item: Item;
   size: 'small' | 'large' | 'fixed';
   hoverText?: boolean | string[];
   balance?: number;
@@ -19,12 +20,23 @@ interface Props {
 }
 
 export const ItemIcon = (props: Props) => {
+  const { balance, size, item } = props;
+
   // layer on a sound effect
   const handleClick = async () => {
     if (props.onClick) {
       playClick();
       await props.onClick();
     }
+  };
+
+  // clean up name of item to standard format and query out map of item images
+  const getImage = (item: Item) => {
+    let name = item.name.toLowerCase();
+    name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
+    name = name.replaceAll('(', '').replaceAll(')', '');
+    const image = ItemImages[name as keyof typeof ItemImages];
+    return image || item.image;
   };
 
   const setBoxStyles = () => {
@@ -45,54 +57,54 @@ export const ItemIcon = (props: Props) => {
     return styles;
   };
 
-  const balance = () => {
-    if (props.balance) {
-      if (props.size == 'small') return <SmallBalance>{props.balance}</SmallBalance>;
-      else if (props.size == 'large') return <LargeBalance>{props.balance}</LargeBalance>;
-      else if (props.size == 'fixed') return <FixedBalance>{props.balance}</FixedBalance>;
+  const BalanceBadge = () => {
+    if (balance) {
+      if (size == 'small') return <SmallBalance>{balance}</SmallBalance>;
+      else if (size == 'large') return <LargeBalance>{balance}</LargeBalance>;
+      else if (size == 'fixed') return <FixedBalance>{balance}</FixedBalance>;
     } else {
       return <></>;
     }
   };
 
   const base = () => {
-    if (props.size == 'small')
+    if (size == 'small')
       return (
         <SmallBox style={setBoxStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <SmallIcon style={setIconStyles()} src={props.item.image} />
+              <SmallIcon style={setIconStyles()} src={getImage(item)} />
             </ButtonWrapper>
           ) : (
-            <SmallIcon src={props.item.image} />
+            <SmallIcon src={getImage(item)} />
           )}
-          {balance()}
+          {BalanceBadge()}
         </SmallBox>
       );
-    else if (props.size == 'large')
+    else if (size == 'large')
       return (
         <LargeBox style={setBoxStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <LargeIcon style={setIconStyles()} src={props.item.image4x ?? props.item.image} />
+              <LargeIcon style={setIconStyles()} src={getImage(item)} />
             </ButtonWrapper>
           ) : (
-            <LargeIcon src={props.item.image4x ?? props.item.image} />
+            <LargeIcon src={getImage(item)} />
           )}
-          {balance()}
+          {BalanceBadge()}
         </LargeBox>
       );
-    else props.size == 'fixed';
+    else size == 'fixed';
     return (
       <FixedBox style={setBoxStyles()}>
         {props.onClick ? (
           <ButtonWrapper onClick={handleClick}>
-            <FixedIcon style={setIconStyles()} src={props.item.image} />
+            <FixedIcon style={setIconStyles()} src={getImage(item)} />
           </ButtonWrapper>
         ) : (
-          <FixedIcon src={props.item.image} />
+          <FixedIcon src={getImage(item)} />
         )}
-        {balance()}
+        {BalanceBadge()}
       </FixedBox>
     );
   };
@@ -101,11 +113,7 @@ export const ItemIcon = (props: Props) => {
 
   if (typeof props.hoverText === 'boolean' && props.hoverText)
     result = (
-      <Tooltip
-        text={
-          props.item.description ? [props.item.name, '', props.item.description] : [props.item.name]
-        }
-      >
+      <Tooltip text={item.description ? [item.name, '', item.description] : [item.name]}>
         {result}
       </Tooltip>
     );

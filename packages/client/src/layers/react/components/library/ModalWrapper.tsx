@@ -38,7 +38,7 @@ export const ModalWrapper = (props: Props) => {
 
 interface Wrapper {
   isOpen: boolean;
-  overlay?: boolean;
+  overlay: boolean;
 }
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.

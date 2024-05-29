@@ -23,7 +23,7 @@ export const Node = (props: Props) => {
     setDisplayed();
   };
 
-  const imageKey = skill.name.toLowerCase().replace(' ', '_') as keyof typeof SkillImages;
+  const imageKey = skill.name.toLowerCase().replaceAll(' ', '_') as keyof typeof SkillImages;
   const image = SkillImages[imageKey] ?? skill.image;
   const kSkill = getSkillInstance(kami, skill);
 
