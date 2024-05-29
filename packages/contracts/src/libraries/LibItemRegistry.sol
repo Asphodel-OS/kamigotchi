@@ -302,35 +302,6 @@ library LibItemRegistry {
     return comp.has(id) ? id : 0;
   }
 
-  ////////////////
-  // TEST HELPERS
-
-  function getAllFood(IUintComp components) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, TypeCompID),
-      abi.encode("FOOD")
-    );
-
-    return LibQuery.query(fragments);
-  }
-
-  function getAllRevive(IUintComp components) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, TypeCompID),
-      abi.encode("REVIVE")
-    );
-
-    return LibQuery.query(fragments);
-  }
-
   /////////////////
   // UTILS
 

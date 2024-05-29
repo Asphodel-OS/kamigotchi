@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { Uint32Component } from "components/base/Uint32Component.sol";
+import { Uint32BareComponent } from "components/base/Uint32BareComponent.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
@@ -181,7 +181,7 @@ abstract contract TraitHandler {
     uint32[] memory offsets = new uint32[](5);
     offsets[0] = 0;
 
-    Uint32Component[] memory traitComps = new Uint32Component[](5);
+    Uint32BareComponent[] memory traitComps = new Uint32BareComponent[](5);
     traitComps[0] = indexFaceComp;
     traitComps[1] = indexHandComp;
     traitComps[2] = indexBodyComp;
@@ -358,13 +358,14 @@ contract _721BatchMinterSystem is System, TraitHandler {
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](amount);
     for (uint32 i; i < amount; i++) {
-      uint256 id = world.getUniqueEntityId();
+      uint32 index = startIndex + i;
+      uint256 id = LibPet.genID(index);
       ids[i] = id;
 
       canNameComp.set(id); // normally after reveal
       idOwnsPetComp.set(id, GACHA_ID); // seed in gacha
       isPetComp.set(id);
-      indexPetComp.set(id, startIndex + i);
+      indexPetComp.set(id, index);
       nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
       stateComp.set(id, string("RESTING"));
       timeStartComp.set(id, block.timestamp);

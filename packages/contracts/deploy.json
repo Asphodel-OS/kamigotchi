@@ -44,7 +44,7 @@
     "IndexBodyComponent",
     "IndexColorComponent",
     "IndexFaceComponent",
-    "IndexFarcasterComponent",
+    "FarcasterIndexComponent",
     "IndexHandComponent",
     "IndexItemComponent",
     "IndexNodeComponent",
@@ -514,7 +514,7 @@
     },
     {
       "name": "AccountSetFarcasterDataSystem",
-      "writeAccess": ["IndexFarcasterComponent", "MediaURIComponent", "TimeLastComponent"]
+      "writeAccess": ["FarcasterIndexComponent", "MediaURIComponent", "TimeLastComponent"]
     },
     {
       "name": "Farm20ProxySystem",

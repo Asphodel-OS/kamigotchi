@@ -23,13 +23,21 @@ contract _RegistryCreateFoodSystem is System {
       uint256 experience,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, int32, uint256, string));
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
 
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    require(registryID == 0, "CreateFood: item already exists");
     require(!LibString.eq(name, ""), "CreateFood: name cannot be empty");
 
-    LibItemRegistry.createFood(components, index, name, description, health, experience, media);
-
-    return "";
+    uint256 id = LibItemRegistry.createFood(
+      components,
+      index,
+      name,
+      description,
+      health,
+      experience,
+      media
+    );
+    return abi.encode(id);
   }
 
   function executeTyped(
