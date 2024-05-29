@@ -16,6 +16,7 @@ contract StatComponent is BareComponent {
   {
     keys = new string[](1);
     values = new LibTypes.SchemaValue[](1);
+
     keys[0] = "value";
     values[0] = LibTypes.SchemaValue.UINT256;
   }

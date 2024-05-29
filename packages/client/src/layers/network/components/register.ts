@@ -3,7 +3,6 @@ import { World } from '@mud-classic/recs';
 import {
   defineBoolComponent,
   defineLoadingStateComponent,
-  defineLocationComponent,
   defineNumberArrayComponent,
   defineNumberComponent,
   defineStatComponent,
@@ -130,7 +129,7 @@ export function createComponents(world: World) {
     For: defineNumberEZ('For', 'component.for'),
     Hash: defineStringEZ('Hash', 'component.hash'),
     Level: defineNumberEZ('Level', 'component.level'),
-    Location: defineLocationComponent(world, 'Location', 'component.location'),
+    Location: defineStringEZ('Location', 'component.location'),
     LogicType: defineStringEZ('LogicType', 'component.logictype'),
     Max: defineNumberEZ('Max', 'component.max'),
     Name: defineStringEZ('Name', 'component.name'),

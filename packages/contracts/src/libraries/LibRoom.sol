@@ -5,6 +5,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { Coord, CoordLib } from "components/types/Coord.sol";
 
 import { IdRoomComponent, ID as IdRoomCompID } from "components/IdRoomComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
@@ -20,12 +21,6 @@ import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
-struct Location {
-  int32 x;
-  int32 y;
-  int32 z;
-}
-
 library LibRoom {
   /////////////////
   // ENTITIES
@@ -33,7 +28,7 @@ library LibRoom {
   /// @notice Create a room at a given location.
   function create(
     IUintComp components,
-    Location memory location,
+    Coord memory location,
     uint32 index,
     string memory name,
     string memory description
@@ -106,8 +101,8 @@ library LibRoom {
     uint256 toID
   ) internal view returns (bool) {
     LocationComponent locationComp = LocationComponent(getAddressById(components, LocationCompID));
-    Location memory fromLoc = locationComp.get(fromID);
-    Location memory toLoc = locationComp.get(toID);
+    Coord memory fromLoc = locationComp.get(fromID);
+    Coord memory toLoc = locationComp.get(toID);
     if (isAdjacent(fromLoc, toLoc)) return true;
 
     uint32[] memory exits = getSpecialExits(components, fromID);
@@ -130,7 +125,7 @@ library LibRoom {
   }
 
   /// @notice checks if two locations are adjacent, XY axis only
-  function isAdjacent(Location memory a, Location memory b) internal pure returns (bool) {
+  function isAdjacent(Coord memory a, Coord memory b) internal pure returns (bool) {
     if (a.z == b.z) {
       if (a.x == b.x) return a.y == b.y + 1 || a.y == b.y - 1;
       if (a.y == b.y) return a.x == b.x + 1 || a.x == b.x - 1;
@@ -156,7 +151,7 @@ library LibRoom {
     return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).get(id);
   }
 
-  function getLocation(IUintComp components, uint256 id) internal view returns (Location memory) {
+  function getLocation(IUintComp components, uint256 id) internal view returns (Coord memory) {
     return LocationComponent(getAddressById(components, LocationCompID)).get(id);
   }
 
@@ -185,7 +180,7 @@ library LibRoom {
 
   function queryByLocation(
     IUintComp components,
-    Location memory loc
+    Coord memory loc
   ) internal view returns (uint256 result) {
     uint256[] memory results = LibQuery.getIsWithValue(
       components,
@@ -259,21 +254,5 @@ library LibRoom {
   // eg. Moves room 1 -> room 2; genGateSourcePointer(1) is used to point to the room
   function genGateSourcePtr(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("room.gate.from", index)));
-  }
-
-  function locationToUint256(Location memory location) internal pure returns (uint256) {
-    return
-      (uint256(uint32(location.x)) << 128) |
-      (uint256(uint32(location.y)) << 64) |
-      uint256(uint32(location.z));
-  }
-
-  function uint256ToLocation(uint256 value) internal pure returns (Location memory) {
-    return
-      Location(
-        int32(int((value >> 128))),
-        int32(int((value >> 64) & 0xFFFFFFFFFFFFFFFF)),
-        int32(int((value) & 0xFFFFFFFFFFFFFFFF))
-      );
   }
 }

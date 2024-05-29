@@ -39,7 +39,7 @@ export type CoordStructOutput = [number, number, number] & {
   z: number;
 };
 
-export interface LocationComponentInterface extends utils.Interface {
+export interface CoordComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "extract(uint256)": FunctionFragment;
@@ -307,12 +307,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface LocationComponent extends BaseContract {
+export interface CoordComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: LocationComponentInterface;
+  interface: CoordComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

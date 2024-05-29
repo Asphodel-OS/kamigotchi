@@ -17,7 +17,7 @@ import { Condition, passesConditions } from '../utils/Conditionals';
 import { getGatesBetween } from './functions';
 import { queryRoomsEntitiesX } from './queries';
 
-export interface Location {
+export interface Coord {
   x: number;
   y: number;
   z: number;
@@ -31,7 +31,7 @@ export interface Room {
   name: string;
   description: string;
   exits: Exit[];
-  location: Location;
+  location: Coord;
   owner?: Account;
   players?: Account[];
 }
@@ -66,17 +66,13 @@ export const getRoom = (
   index: EntityIndex,
   options?: RoomOptions
 ): Room => {
-  const { IsAccount, AccountID, Description, Exits, Location, RoomIndex, Name } = components;
+  const { IsAccount, AccountID, Description, Exits, RoomIndex, Name } = components;
 
   const roomIndex = getComponentValue(RoomIndex, index)?.value as number;
-  const loc = {
-    x: getComponentValue(Location, index)?.x as number,
-    y: getComponentValue(Location, index)?.y as number,
-    z: getComponentValue(Location, index)?.z as number,
-  };
+  const loc = getLocation(components, index);
 
   const specialExits = (getComponentValue(Exits, index)?.value as number[]) || [];
-  const adjExits = getAdjacentIndices(world, components, loc);
+  const adjExits = getAdjacentIndices(components, loc);
   const rawExits = [...specialExits, ...adjExits];
 
   let room: Room = {
@@ -135,6 +131,11 @@ const getExit = (
   };
 };
 
+const getLocation = (components: Components, index: EntityIndex): Coord => {
+  const { Location } = components;
+  return bigIntToCoord(BigInt(getComponentValue(Location, index)?.value || 0));
+};
+
 ///////////////////
 // UTILS
 
@@ -146,7 +147,7 @@ export const getGateFromPtr = (index: number): EntityID => {
   return utils.solidityKeccak256(['string', 'uint32'], ['room.gate.from', index]) as EntityID;
 };
 
-const getAdjacentIndices = (world: World, components: Components, location: Location): number[] => {
+const getAdjacentIndices = (components: Components, location: Coord): number[] => {
   const { RoomIndex } = components;
 
   const results: number[] = [];
@@ -159,10 +160,11 @@ const getAdjacentIndices = (world: World, components: Components, location: Loca
       results.push((getComponentValue(RoomIndex, ids[0])?.value || 0) * 1);
     }
   }
+
   return results;
 };
 
-const getAdjacentLocations = (location: Location): Location[] => {
+const getAdjacentLocations = (location: Coord): Coord[] => {
   const { x, y, z } = location;
   return [
     { x: x + 1, y, z },
@@ -170,4 +172,16 @@ const getAdjacentLocations = (location: Location): Location[] => {
     { x, y: y + 1, z },
     { x, y: y - 1, z },
   ];
+};
+
+export const coordToBigInt = (value: Coord): bigint => {
+  return (BigInt(value.x) << 128n) | (BigInt(value.y) << 64n) | BigInt(value.z);
+};
+
+export const bigIntToCoord = (value: bigint): Coord => {
+  return {
+    x: Number(value >> 128n),
+    y: Number((value >> 64n) & 0xffffffffffffffffn),
+    z: Number(value & 0xffffffffffffffffn),
+  };
 };
