@@ -5,8 +5,7 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
+import { ActionButton, ValidatorWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 import { playScribble, playSuccess } from 'utils/sounds';

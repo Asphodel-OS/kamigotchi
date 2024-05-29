@@ -3,9 +3,7 @@ import styled from 'styled-components';
 
 import { Inventory } from 'layers/network/shapes/Inventory';
 import { Lootbox } from 'layers/network/shapes/Lootbox';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ItemIcon } from 'layers/react/components/library/ItemIcon';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { ActionButton, ItemIcon, Tooltip } from 'layers/react/components/library';
 
 interface Props {
   inventory: Inventory | undefined;

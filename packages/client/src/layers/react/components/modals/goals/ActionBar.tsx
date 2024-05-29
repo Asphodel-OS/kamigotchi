@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { Account } from 'layers/network/shapes/Account';
 import { Contribution, Goal } from 'layers/network/shapes/Goal';
 import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { InputSingleNumberForm } from 'layers/react/components/library/InputSingleNumberForm';
+import { ActionButton, InputSingleNumberForm } from 'layers/react/components/library';
 
 interface Props {
   actions: {

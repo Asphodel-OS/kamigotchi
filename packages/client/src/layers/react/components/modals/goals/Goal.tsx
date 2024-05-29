@@ -14,8 +14,7 @@ import {
   getContributions,
   getGoalByIndex,
 } from 'layers/network/shapes/Goal';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
@@ -164,7 +163,6 @@ export function registerGoalModal() {
 
       return (
         <ModalWrapper
-          divName='goal'
           id='goal'
           header={<ModalHeader title='Collaborative Quest' icon={questsIcon} />}
           canExit

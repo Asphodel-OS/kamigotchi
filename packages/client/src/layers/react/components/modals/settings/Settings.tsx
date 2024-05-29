@@ -2,8 +2,7 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { settingsIcon } from 'assets/images/icons/menu';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 
 import { Account } from './Account';
@@ -23,8 +22,7 @@ export function registerSettingsModal() {
     () => {
       return (
         <ModalWrapper
-          divName='settings'
-          id='settings_modal'
+          id='settings'
           header={<ModalHeader title='Settings' icon={settingsIcon} />}
           canExit
         >

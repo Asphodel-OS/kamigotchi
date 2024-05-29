@@ -64,8 +64,7 @@ export function registerChatModal() {
 
       return (
         <ModalWrapper
-          divName='chat'
-          id='chat_modal'
+          id='chat'
           header={<ModalHeader title='Chat' icon={chatIcon} />}
           footer={<InputRow account={account} actions={{ pushCast }} actionSystem={actions} />}
           canExit

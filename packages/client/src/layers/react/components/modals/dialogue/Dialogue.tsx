@@ -4,8 +4,7 @@ import styled from 'styled-components';
 
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
@@ -111,7 +110,7 @@ export function registerDialogueModal() {
       };
 
       return (
-        <ModalWrapper id='dialogue_modal' divName='dialogue' canExit overlay>
+        <ModalWrapper id='dialogue' canExit overlay>
           <Text>
             {dialogueNode.text[step]}
             <ButtonRow>

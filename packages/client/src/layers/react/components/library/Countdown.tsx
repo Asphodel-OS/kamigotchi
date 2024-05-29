@@ -1,10 +1,29 @@
-import React from 'react';
 import styled from 'styled-components';
 
 interface Props {
   total: number;
   current: number;
 }
+
+// 0% means countdown is finished
+export const Countdown = (props: Props) => {
+  const { total, current } = props;
+  const percent = (current / total) * 100;
+
+  let color = '#29ABE9'; // blue;
+  if (percent > 80)
+    color = '#FF6611'; // red
+  else if (percent > 50)
+    color = '#FFD022'; // yellow
+  else if (percent > 0) color = '#23BD41'; // green
+
+  return (
+    <CountdownWrapper>
+      <CountdownCircle percent={percent} color={color} />
+      <InnerCircle />
+    </CountdownWrapper>
+  );
+};
 
 const CountdownWrapper = styled.div`
   position: relative;
@@ -35,22 +54,3 @@ const InnerCircle = styled.div`
   background: white;
   border-radius: 50%;
 `;
-
-// 0% means countdown is finished
-export const Countdown: React.FC<Props> = ({ total, current }) => {
-  const percent = (current / total) * 100;
-
-  let color = '#29ABE9'; // blue;
-  if (percent > 80) color = '#FF6611'; // red
-  else if (percent > 50) color = '#FFD022'; // yellow
-  else if (percent > 0) color = '#23BD41'; // green
-
-  return (
-    <CountdownWrapper>
-      <CountdownCircle percent={percent} color={color} />
-      <InnerCircle />
-    </CountdownWrapper>
-  );
-};
-
-export default Countdown;

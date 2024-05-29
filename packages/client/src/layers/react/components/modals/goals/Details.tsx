@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 import { Goal, sortRewards } from 'layers/network/shapes/Goal';
 import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
-import { HelpIcon } from 'layers/react/components/library/HelpIcon';
-import { ItemIconHorizontal } from 'layers/react/components/library/ItemIconHorizontal';
+import { HelpIcon, ItemIconHorizontal } from 'layers/react/components/library';
 
 interface Props {
   goal: Goal;

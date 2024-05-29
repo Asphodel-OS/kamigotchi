@@ -7,8 +7,7 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 
 import { getItemByIndex } from 'layers/network/shapes/Item';
 import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
@@ -198,7 +197,7 @@ export function registerLootboxesModal() {
       };
 
       return (
-        <ModalWrapper divName='lootboxes' id='LootboxesModal' header={Header()} overlay canExit>
+        <ModalWrapper id='lootboxes' header={Header()} overlay canExit>
           {SelectScreen()}
         </ModalWrapper>
       );

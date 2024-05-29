@@ -169,7 +169,7 @@ export function registerFundOperatorModal() {
       }, [amount, OwnerBalance, OperatorBalance, isFunding]);
 
       return (
-        <ModalWrapper divName='operatorFund' id='operatorFund' canExit overlay>
+        <ModalWrapper id='operatorFund' canExit overlay>
           <Grid>
             <Header>Operator gas</Header>
             <Row>

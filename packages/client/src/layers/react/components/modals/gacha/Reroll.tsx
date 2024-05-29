@@ -2,7 +2,7 @@ import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ActionButton } from 'layers/react/components/library';
 import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 

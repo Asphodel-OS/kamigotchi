@@ -5,7 +5,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { getKamiConfig } from 'layers/network/shapes/Config';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Node, getNodeByIndex } from 'layers/network/shapes/Node';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected } from 'layers/react/store';
 import { Banner } from './Banner';
@@ -137,7 +137,6 @@ export function registerNodeModal() {
       return (
         <ModalWrapper
           id='node'
-          divName='node'
           header={[
             <Banner
               key='banner'
@@ -155,7 +154,7 @@ export function registerNodeModal() {
             allies={node.kamis?.allies!}
             enemies={node.kamis?.enemies!}
             actions={{ collect, feed, liquidate, stop }}
-            battleConfig={kamiConfig}
+            kamiConfig={kamiConfig}
             tab={tab}
           />
         </ModalWrapper>

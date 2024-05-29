@@ -8,8 +8,7 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { GasConstants } from 'constants/gas';
 import { waitForActionCompletion } from 'layers/network/utils';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
+import { ActionButton, ValidatorWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 import { playFund, playSuccess } from 'utils/sounds';

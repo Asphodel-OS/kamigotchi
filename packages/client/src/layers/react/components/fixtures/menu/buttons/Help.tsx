@@ -1,6 +1,6 @@
 import { helpIcon } from 'assets/images/icons/menu';
 
-import { MenuButton } from 'layers/react/components/library/MenuButton';
+import { MenuButton } from 'layers/react/components/library';
 import { Modals } from 'layers/react/store';
 
 export const HelpMenuButton = () => {

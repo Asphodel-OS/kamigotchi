@@ -7,7 +7,7 @@ import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { OpenInNewIcon } from 'assets/images/icons/misc';
 import { NetworkLayer } from 'layers/network';
 import { ActionState, ActionStateString } from 'layers/network/systems/ActionSystem/constants';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Tooltip } from 'layers/react/components/library';
 
 interface Props {
   network: NetworkLayer;

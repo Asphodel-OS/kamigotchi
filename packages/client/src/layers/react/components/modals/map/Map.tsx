@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Room, getAllRooms } from 'layers/network/shapes/Room';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { Exits } from './Exits';
@@ -97,8 +96,7 @@ export function registerMapModal() {
 
       return (
         <ModalWrapper
-          id='world_map'
-          divName='map'
+          id='map'
           header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
           // footer={Footer()}
           canExit

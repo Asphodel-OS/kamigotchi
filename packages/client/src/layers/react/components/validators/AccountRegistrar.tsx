@@ -20,10 +20,12 @@ import {
   getAccountEntityIndexByName,
   getAccountEntityIndexByOwner,
 } from 'layers/network/shapes/Account';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { CopyButton } from 'layers/react/components/library/CopyButton';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
+import {
+  ActionButton,
+  CopyButton,
+  Tooltip,
+  ValidatorWrapper,
+} from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import {
   Account as KamiAccount,

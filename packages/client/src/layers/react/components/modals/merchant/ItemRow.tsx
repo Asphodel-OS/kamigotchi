@@ -1,8 +1,8 @@
 import { Listing } from 'layers/network/shapes/Listing';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ActionButton } from 'layers/react/components/library';
 import { useSelected, useVisibility } from 'layers/react/store';
 import styled from 'styled-components';
-import { Tooltip } from '../../library/Tooltip';
+import { Tooltip } from '../../library';
 
 export interface Props {
   listing: Listing;

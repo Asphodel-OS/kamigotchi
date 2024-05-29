@@ -12,8 +12,7 @@ import {
   parseQuestsStatus,
 } from 'layers/network/shapes/Quest';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { Footer } from './Footer';
 import { List } from './List';
@@ -107,8 +106,7 @@ export function registerQuestsModal() {
 
       return (
         <ModalWrapper
-          id='quest_modal'
-          divName='quests'
+          id='quests'
           header={[
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,

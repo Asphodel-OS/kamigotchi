@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
-import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { InputSingleTextForm, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
@@ -54,7 +53,7 @@ export function registerNameKamiModal() {
       };
 
       return (
-        <ModalWrapper id='name_kami_modal' divName='nameKami' canExit>
+        <ModalWrapper id='nameKami' canExit>
           <Title>Name your Kami</Title>
           <Description>A Kami can only be named once. Choose wisely.</Description>
           <InputSingleTextForm

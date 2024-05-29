@@ -1,6 +1,6 @@
 import { EntityIndex } from '@mud-classic/recs';
 import { getRarities } from 'constants/rarities';
-import { ItemIcon } from 'layers/react/components/library/ItemIcon';
+import { ItemIcon } from 'layers/react/components/library';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';

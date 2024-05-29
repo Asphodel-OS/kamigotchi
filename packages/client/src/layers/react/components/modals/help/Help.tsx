@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import { HelpMenuIcons } from 'assets/images/icons/help';
+import { HelpMenuIcons } from 'assets/images/help';
 import { helpIcon } from 'assets/images/icons/menu';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { IconButton } from 'layers/react/components/library/IconButton';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import {
+  ActionButton,
+  IconButton,
+  ModalHeader,
+  ModalWrapper,
+  Tooltip,
+} from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { SectionContent } from './SectionContent';
 import { CopyInfo } from './copy';
@@ -72,12 +74,7 @@ export function registerHelpModal() {
       );
 
       return (
-        <ModalWrapper
-          divName='help'
-          id='help_modal'
-          header={<ModalHeader title='Help' icon={helpIcon} />}
-          canExit
-        >
+        <ModalWrapper id='help' header={<ModalHeader title='Help' icon={helpIcon} />} canExit>
           <BackButton />
           <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
           {tab === HelpTabs.HOME ? <Menu /> : <SectionContent body={CopyInfo[tab].body} />}

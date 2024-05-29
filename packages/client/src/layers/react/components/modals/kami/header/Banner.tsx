@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 import { StatIcons } from 'assets/images/icons/stats';
 import { Account } from 'layers/network/shapes/Account';
-import { ExperienceBar } from 'layers/react/components/library/ExperienceBar';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { ExperienceBar, Tooltip } from 'layers/react/components/library';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 

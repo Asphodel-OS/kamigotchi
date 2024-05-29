@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { ExitButton } from 'layers/react/components/library/ExitButton';
+import { ExitButton } from 'layers/react/components/library';
 import { Modals, useVisibility } from 'layers/react/store';
 
 interface Props {
-  id: string;
-  divName: keyof Modals;
+  id: keyof Modals;
   children: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
@@ -18,27 +17,15 @@ interface Props {
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { divName, id, children, header, footer, canExit, overlay, noPadding } = props;
+  const { id, children, header, footer, canExit, overlay, noPadding } = props;
   const { modals } = useVisibility();
 
-  // update modal visibility according to store settings
-  useEffect(() => {
-    const element = document.getElementById(id);
-    if (element) {
-      const isVisible = modals[divName];
-      element.style.display = isVisible ? 'block' : 'none';
-    }
-  }, [modals[divName]]);
-
-  // conditional stlying for modals overlayed on top
-  const zindex = overlay ? { position: 'relative', zIndex: '2' } : {};
-
   return (
-    <Wrapper id={id} isOpen={modals[divName]} style={{ ...zindex }}>
+    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay}>
       <Content>
         {canExit && (
           <ButtonRow>
-            <ExitButton divName={divName} />
+            <ExitButton divName={id} />
           </ButtonRow>
         )}
         {header && <Header>{header}</Header>}
@@ -51,17 +38,19 @@ export const ModalWrapper = (props: Props) => {
 
 interface Wrapper {
   isOpen: boolean;
+  overlay?: boolean;
 }
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
 const Wrapper = styled.div<Wrapper>`
-  display: none;
+  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+  animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
+  pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
+  position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
+  z-index: ${({ overlay }) => (overlay ? 2 : 0)};
+
   justify-content: center;
   align-items: center;
-  opacity: ${({ isOpen }) => (isOpen ? '1' : '0')};
-  animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
-  transition: opacity 0.5s ease-in-out;
-  pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
 `;
 
 const Content = styled.div`
@@ -114,23 +103,15 @@ const Children = styled.div<{ noPadding?: boolean }>`
 `;
 
 const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 // NOTE: this is not actually used atm as we set display:none on close. This is
 // done to avoid having active, invisible buttons lingering on the UI after close.
 const fadeOut = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+  to { opacity: 0; }
 `;
 
 export { Wrapper as ModalWrapperLite };

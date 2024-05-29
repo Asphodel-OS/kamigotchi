@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Tooltip } from 'layers/react/components/library';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 

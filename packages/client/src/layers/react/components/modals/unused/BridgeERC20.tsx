@@ -5,8 +5,7 @@ import { useBalance, useReadContract } from 'wagmi';
 
 import { abi } from 'abi/Farm20ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork } from 'layers/react/store';
 
@@ -157,7 +156,7 @@ export function registerERC20BridgeModal() {
       };
 
       return (
-        <ModalWrapper divName='bridgeERC20' id='bridgeERC20' canExit overlay>
+        <ModalWrapper id='bridgeERC20' canExit overlay>
           <Header>Bridge $MUSU</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>{StateBox(true)}</div>

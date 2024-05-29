@@ -1,6 +1,5 @@
 import { Account } from 'layers/network/shapes/Account';
-import { ActionListButton } from 'layers/react/components/library';
-import { AccountCard } from 'layers/react/components/library/AccountCard';
+import { AccountCard, ActionListButton } from 'layers/react/components/library';
 import styled from 'styled-components';
 
 interface Props {

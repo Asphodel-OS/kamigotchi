@@ -3,10 +3,10 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Listing, getListing } from 'layers/network/shapes/Listing';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
-import { ActionButton } from '../../library/ActionButton';
+import { ActionButton } from '../../library';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerBuyModal() {
@@ -87,7 +87,7 @@ export function registerBuyModal() {
       const CancelButton = () => <ActionButton onClick={() => closeModal()} text='Cancel' />;
 
       return (
-        <ModalWrapper id='buy' divName='buy' header={<Title>Confirm Purchase</Title>} overlay>
+        <ModalWrapper id='buy' header={<Title>Confirm Purchase</Title>} overlay>
           <Content>
             <Image src={listing.item.image} />
             <InfoSection>

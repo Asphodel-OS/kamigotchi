@@ -1,5 +1,5 @@
 import { operatorIcon } from 'assets/images/icons/menu';
-import { MenuButton } from 'layers/react/components/library/MenuButton';
+import { MenuButton } from 'layers/react/components/library';
 import { Modals, useAccount, useSelected } from 'layers/react/store';
 
 export const AccountMenuButton = () => {

@@ -11,7 +11,7 @@ import {
   getTreePoints,
 } from 'layers/network/shapes/Skill';
 import { waitForActionCompletion } from 'layers/network/utils';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected } from 'layers/react/store';
 import { sleep } from 'utils/misc';
@@ -113,8 +113,7 @@ export function registerKamiModal() {
       if (!kami) return <></>;
       return (
         <ModalWrapper
-          divName='kami'
-          id='kamiModal'
+          id='kami'
           header={[
             <Banner key='banner' data={{ account, kami: kami }} actions={{ levelUp }} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,

@@ -9,8 +9,7 @@ import { useAccount, useConnect } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'layers/network/createNetworkLayer';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
+import { ActionButton, ValidatorWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useNetwork, useVisibility } from 'layers/react/store';
 

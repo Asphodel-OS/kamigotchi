@@ -298,7 +298,6 @@ export function registerGachaModal() {
 
       return (
         <ModalWrapper
-          divName='gacha'
           id='gacha'
           header={
             <ModalHeader

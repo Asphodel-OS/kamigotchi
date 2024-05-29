@@ -3,12 +3,15 @@ import styled from 'styled-components';
 
 import { useIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Inventory } from 'layers/network/shapes/Inventory';
 import { Kami } from 'layers/network/shapes/Kami';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { IconButton } from 'layers/react/components/library/IconButton';
-import { KamiCard } from 'layers/react/components/library/KamiCard';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import {
+  ActionButton,
+  IconButton,
+  KamiCard,
+  ModalWrapper,
+  Tooltip,
+} from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
@@ -51,7 +54,9 @@ export function registerEMABoardModal() {
       };
 
       const useRenamePotion = (kami: Kami) => {
-        const inv = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001);
+        const inv = data.account.inventories?.consumables.find(
+          (inv: Inventory) => inv.item.index === 9001
+        );
         if (!inv) return;
 
         actions.add({
@@ -157,12 +162,7 @@ export function registerEMABoardModal() {
       };
 
       return (
-        <ModalWrapper
-          id='ema_board_modal'
-          divName='emaBoard'
-          header={<Title>Ema Board</Title>}
-          canExit
-        >
+        <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
           <List>{KamiList(data.account.kamis)}</List>
         </ModalWrapper>
       );

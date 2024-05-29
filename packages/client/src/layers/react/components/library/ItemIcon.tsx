@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Tooltip } from 'layers/react/components/library';
 import { playClick } from 'utils/sounds';
 
 interface Props {

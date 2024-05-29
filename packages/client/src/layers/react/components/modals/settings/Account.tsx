@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { CopyButton } from 'layers/react/components/library/CopyButton';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { ActionButton, CopyButton, Tooltip } from 'layers/react/components/library';
 import { useAccount, useVisibility } from 'layers/react/store';
 
 export const Account = () => {

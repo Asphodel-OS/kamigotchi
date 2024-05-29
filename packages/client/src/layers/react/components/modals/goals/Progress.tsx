@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Contribution, Goal } from 'layers/network/shapes/Goal';
 import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
 import { MUSUEntity, parseQuantity } from 'layers/network/shapes/utils/parseDescription';
-import { ProgressBar } from '../../library/ProgressBar';
+import { ProgressBar } from 'layers/react/components/library';
 
 interface Props {
   goal: Goal;

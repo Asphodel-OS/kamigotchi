@@ -3,8 +3,7 @@ import { interval, map } from 'rxjs';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { Kards } from './Kards';
 
@@ -69,12 +68,7 @@ export function registerPartyModal() {
       };
 
       return (
-        <ModalWrapper
-          id='party_modal'
-          divName='party'
-          header={<ModalHeader title='Party' icon={kamiIcon} />}
-          canExit
-        >
+        <ModalWrapper id='party' header={<ModalHeader title='Party' icon={kamiIcon} />} canExit>
           <Kards account={account} kamis={account.kamis} actions={{ feed, revive }} />
         </ModalWrapper>
       );

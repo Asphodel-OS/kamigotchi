@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Merchant, getMerchantByIndex } from 'layers/network/shapes/Merchant';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected } from 'layers/react/store';
 import { Listings } from './Listings';
@@ -63,7 +63,6 @@ export function registerMerchantModal() {
       return (
         <ModalWrapper
           id='merchant'
-          divName='merchant'
           header={<Title>{`${merchant?.name}'s Shop`}</Title>}
           footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit

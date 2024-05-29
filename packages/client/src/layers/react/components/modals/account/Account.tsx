@@ -135,9 +135,7 @@ export function registerAccountModal() {
 
       return (
         <ModalWrapper
-          key='modal-wrapper'
-          id='account_modal'
-          divName='account'
+          id='account'
           header={<ModalHeader key='header' title='Operator' icon={operatorIcon} />}
           canExit
         >

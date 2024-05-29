@@ -3,8 +3,7 @@ import { interval, map } from 'rxjs';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -42,7 +41,7 @@ export function registerInventoryModal() {
         if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
         if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
 
-        return inventories.filter((inv) => !inv.item.is.fungible || inv.balance! > 0);
+        return inventories.filter((inv) => inv.balance! > 0);
       };
 
       /////////////////
@@ -50,8 +49,7 @@ export function registerInventoryModal() {
 
       return (
         <ModalWrapper
-          id='inventory-modal'
-          divName='inventory'
+          id='inventory'
           header={<ModalHeader title='Inventory' icon={inventoryIcon} />}
           footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit

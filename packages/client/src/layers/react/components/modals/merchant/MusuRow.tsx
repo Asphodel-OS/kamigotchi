@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import musuIcon from 'assets/images/icons/musu.png';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Tooltip } from 'layers/react/components/library';
 
 interface Props {
   balance: number;

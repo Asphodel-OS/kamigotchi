@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Details, LeaderboardKey, leaderboardsDetails } from 'constants/leaderboards/leaderboards';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'layers/network/shapes/Score';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useSelected, useVisibility } from 'layers/react/store';
 
@@ -67,7 +67,7 @@ export function registerLeaderboardModal() {
       }, [filter, modals.leaderboard]);
 
       return (
-        <ModalWrapper divName='leaderboard' id='leaderboard' canExit overlay>
+        <ModalWrapper id='leaderboard' canExit overlay>
           <Header>{lbDetails ? lbDetails.title : 'Leaderboards'}</Header>
           <ColumnTitleBox>
             <ColumnTitleText style={{ flexBasis: '10%' }}>Rank</ColumnTitleText>

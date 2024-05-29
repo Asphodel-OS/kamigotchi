@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ActionButton } from 'layers/react/components/library';
 
 interface Props {
   tab: string;

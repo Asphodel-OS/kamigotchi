@@ -8,7 +8,7 @@ import { useReadContract } from 'wagmi';
 import { abi } from 'abi/Pet721ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/root';
 import { useAccount, useNetwork } from 'layers/react/store';
 
@@ -213,7 +213,7 @@ export function registerERC721BridgeModal() {
       const isOutOfWorld = (kami: Kami): boolean => kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapper id='bridgeERC721' divName='bridgeERC721' canExit overlay>
+        <ModalWrapper id='bridgeERC721' canExit overlay>
           <Title>Stake/Unstake Kamis</Title>
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>In game</Description>

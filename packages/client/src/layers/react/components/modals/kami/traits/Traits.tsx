@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { StatIcons } from 'assets/images/icons/stats';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Trait } from 'layers/network/shapes/Trait';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Tooltip } from 'layers/react/components/library';
 
 interface Props {
   kami: Kami;

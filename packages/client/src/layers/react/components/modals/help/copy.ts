@@ -1,5 +1,5 @@
 import { HelpBanners } from 'assets/images/banners';
-import { HelpMenuIcons } from 'assets/images/icons/help';
+import { HelpMenuIcons } from 'assets/images/help';
 import { HelpTabs, PageCopy } from './types';
 
 const WelcomeCopy: PageCopy = {

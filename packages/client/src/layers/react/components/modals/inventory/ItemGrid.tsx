@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Inventory } from 'layers/network/shapes/Inventory';
-import { ItemIcon } from 'layers/react/components/library/ItemIcon';
+import { ItemIcon } from 'layers/react/components/library';
 import { useVisibility } from 'layers/react/store';
 
 interface Props {

@@ -16,10 +16,7 @@ import {
   isUnrevealed,
   onCooldown,
 } from 'layers/network/shapes/Kami';
-import { IconButton } from 'layers/react/components/library/IconButton';
-import { IconListButton } from 'layers/react/components/library/IconListButton';
-import { KamiCard } from 'layers/react/components/library/KamiCard';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { IconButton, IconListButton, KamiCard, Tooltip } from 'layers/react/components/library';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { getRateDisplay } from 'utils/rates';
 import { playClick } from 'utils/sounds';

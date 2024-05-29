@@ -6,8 +6,7 @@ import { NodeImages } from 'constants/nodes';
 import { Account } from 'layers/network/shapes/Account';
 import { Kami, canHarvest, isResting, onCooldown } from 'layers/network/shapes/Kami';
 import { Node } from 'layers/network/shapes/Node';
-import { IconListButton } from 'layers/react/components/library/IconListButton';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { IconListButton, Tooltip } from 'layers/react/components/library';
 
 interface Props {
   account: Account;
