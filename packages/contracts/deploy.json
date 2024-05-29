@@ -22,11 +22,10 @@
     "HarmonyComponent",
     "HealthComponent",
     "IdAccountComponent",
-    "IdBareHolderComponent",
     "IdDelegateeComponent",
     "IdDelegatorComponent",
     "IdHolderComponent",
-    "IdOwnsConditionComponent",
+    "IdPointerComponent",
     "IdOwnsInventoryComponent",
     "IdOwnsQuestComponent",
     "IdOwnsRelationshipComponent",
@@ -138,7 +137,7 @@
       "name": "_GoalCreateRequirementSystem",
       "writeAccess": [
         "BalanceComponent",
-        "IdOwnsConditionComponent",
+        "IdPointerComponent",
         "IsRequirementComponent",
         "IndexComponent",
         "LogicTypeComponent",
@@ -149,7 +148,7 @@
       "name": "_GoalCreateRewardSystem",
       "writeAccess": [
         "BalanceComponent",
-        "IdOwnsConditionComponent",
+        "IdPointerComponent",
         "IsRewardComponent",
         "IndexComponent",
         "LevelComponent",
@@ -163,7 +162,7 @@
       "writeAccess": [
         "BalanceComponent",
         "DescriptionComponent",
-        "IdOwnsConditionComponent",
+        "IdPointerComponent",
         "IsGoalComponent",
         "IsRequirementComponent",
         "IsRewardComponent",
@@ -329,7 +328,7 @@
         "IsEffectComponent",
         "IndexSkillComponent",
         "IndexComponent",
-        "IdOwnsConditionComponent",
+        "IdPointerComponent",
         "LogicTypeComponent",
         "SubtypeComponent",
         "TypeComponent"
@@ -343,7 +342,7 @@
         "IsRequirementComponent",
         "IndexSkillComponent",
         "IndexComponent",
-        "IdOwnsConditionComponent",
+        "IdPointerComponent",
         "LogicTypeComponent",
         "TypeComponent"
       ]
@@ -400,7 +399,7 @@
     {
       "name": "_RegistryDeleteSkillSystem",
       "writeAccess": [
-        "IdOwnsConditionComponent",
+        "IdPointerComponent",
         "IsRegistryComponent",
         "IsSkillComponent",
         "IsEffectComponent",
@@ -429,8 +428,8 @@
       "name": "_RoomCreateGateSystem",
       "writeAccess": [
         "BalanceComponent",
+        "IdPointerComponent",
         "IdRoomComponent",
-        "IdSourceComponent",
         "IndexRoomComponent",
         "IndexComponent",
         "LogicTypeComponent",
@@ -452,8 +451,8 @@
       "name": "_RoomDeleteSystem",
       "writeAccess": [
         "BalanceComponent",
+        "IdPointerComponent",
         "IdRoomComponent",
-        "IdSourceComponent",
         "IndexRoomComponent",
         "IndexComponent",
         "IsRoomComponent",
@@ -470,7 +469,7 @@
       "writeAccess": [
         "BalanceComponent",
         "BareValueComponent",
-        "IdBareHolderComponent",
+        "IdHolderComponent",
         "IdScoreTypeComponent",
         "TimeLastComponent"
       ]
@@ -543,7 +542,7 @@
       "name": "FriendAcceptSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IdHolderComponent",
+        "IdPointerComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -554,7 +553,7 @@
       "name": "FriendBlockSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IdHolderComponent",
+        "IdPointerComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -565,7 +564,18 @@
       "name": "FriendCancelSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IdHolderComponent",
+        "IdPointerComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent",
+        "TimeLastComponent"
+      ]
+    },
+    {
+      "name": "FriendRequestSystem",
+      "writeAccess": [
+        "IdAccountComponent",
+        "IdPointerComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -578,7 +588,7 @@
         "BalanceComponent",
         "BareValueComponent",
         "CoinComponent",
-        "IdBareHolderComponent",
+        "IdHolderComponent",
         "IdScoreTypeComponent",
         "IsCompleteComponent",
         "TimeLastComponent"
@@ -589,23 +599,11 @@
       "writeAccess": ["*"]
     },
     {
-      "name": "FriendRequestSystem",
-      "writeAccess": [
-        "IdAccountComponent",
-        "IdHolderComponent",
-        "IdTargetComponent",
-        "IsFriendshipComponent",
-        "StateComponent",
-        "TimeLastComponent"
-      ]
-    },
-    {
       "name": "ListingBuySystem",
       "writeAccess": [
         "BalanceComponent",
         "BareValueComponent",
         "CoinComponent",
-        "IdBareHolderComponent",
         "IdHolderComponent",
         "IdOwnsInventoryComponent",
         "IdScoreTypeComponent",
@@ -730,7 +728,6 @@
         "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
-        "IdBareHolderComponent",
         "IdHolderComponent",
         "IdScoreTypeComponent",
         "IndexComponent",
@@ -834,7 +831,6 @@
         "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
-        "IdBareHolderComponent",
         "IdHolderComponent",
         "IdScoreTypeComponent",
         "IndexComponent",
@@ -849,7 +845,6 @@
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
         "BareValueComponent",
-        "IdBareHolderComponent",
         "IdHolderComponent",
         "IdNodeComponent",
         "IdSourceComponent",
@@ -894,7 +889,6 @@
         "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
-        "IdBareHolderComponent",
         "IdHolderComponent",
         "IdScoreTypeComponent",
         "IndexComponent",

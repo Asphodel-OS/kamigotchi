@@ -191,22 +191,22 @@ const queryGoalRequirements = (
   components: Components,
   goalIndex: number
 ): Condition[] => {
-  const { OwnsConditionID } = components;
+  const { PointerID } = components;
 
   const pointerID = getReqPtr(goalIndex);
 
-  const queryFragments = [HasValue(OwnsConditionID, { value: pointerID })];
+  const queryFragments = [HasValue(PointerID, { value: pointerID })];
   const raw = Array.from(runQuery(queryFragments));
 
   return raw.map((index): Condition => getCondition(world, components, index));
 };
 
 const queryGoalRewards = (world: World, components: Components, goalIndex: number): Reward[] => {
-  const { OwnsConditionID } = components;
+  const { PointerID } = components;
 
   const pointerID = getRwdPtr(goalIndex);
 
-  const queryFragments = [HasValue(OwnsConditionID, { value: pointerID })];
+  const queryFragments = [HasValue(PointerID, { value: pointerID })];
   const raw = Array.from(runQuery(queryFragments));
 
   return raw.map((index): Reward => getReward(world, components, index));
