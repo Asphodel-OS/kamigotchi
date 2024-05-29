@@ -1,15 +1,16 @@
 import { ExternalProvider } from '@ethersproject/providers';
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
+import { switchChain } from '@wagmi/core';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
-import { toHex } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/store';
+import { wagmiConfig } from 'clients/wagmi';
 import { defaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'layers/network/createNetworkLayer';
 
@@ -142,37 +143,9 @@ export function registerWalletConnecter() {
         }
       };
 
-      // triggers a network switch request with the connector found in the window.ethereum slot
-      const updateConnectedChain = async () => {
-        const injectedWallet = getInjectedWallet(wallets);
-        if (!injectedWallet) return console.error(`No injected wallet found.`);
-
-        if (window.ethereum) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: toHex(defaultChain.id),
-                  chainName: defaultChain.name,
-                  rpcUrls: defaultChain.rpcUrls.default.http,
-                  nativeCurrency: defaultChain.nativeCurrency,
-                  blockExplorerUrls: [
-                    defaultChain.blockExplorers?.default.url ?? 'https://etherscan.io',
-                  ],
-                },
-              ],
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          injectedWallet.switchChain(defaultChain.id);
-        }
-      };
-
       const handleClick = () => {
         if (state === 'disconnected') connect({ connector: connectors[0] });
-        else if (state === 'wrongChain') updateConnectedChain();
+        else if (state === 'wrongChain') switchChain(wagmiConfig, { chainId: defaultChain.id });
         else if (state === 'unauthenticated') login();
       };
 

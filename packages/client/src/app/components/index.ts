@@ -3,10 +3,10 @@ import { registerScene } from './canvas';
 import { registerAccountHeader } from './fixtures/header';
 import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
 import { registerNotificationFixture } from './fixtures/notifications';
-import { registerActionQueue } from './fixtures/queue/';
+import { registerActionQueue } from './fixtures/queue';
 
 import { registerAccountModal } from './modals/account';
-import { registerChatModal } from './modals/chat/';
+import { registerChatModal } from './modals/chat';
 import { registerDialogueModal } from './modals/dialogue';
 import { registerGachaModal } from './modals/gacha';
 import { registerHelpModal } from './modals/help';
