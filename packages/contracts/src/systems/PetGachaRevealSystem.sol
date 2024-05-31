@@ -22,7 +22,7 @@ contract PetGachaRevealSystem is System {
     // sorts commits by cronological order via increment
     uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
 
-    uint256[] memory seeds = LibGacha.calcSeeds(components, commitIDs);
+    uint256[] memory seeds = LibGacha.extractSeeds(components, commitIDs);
     uint256[] memory petIDs = LibGacha.selectPets(components, seeds);
     _transferPets(commitIDs, petIDs);
 
