@@ -49,7 +49,7 @@ export const Commits = (props: Props) => {
 
   const ActiveCell = (commit: GachaCommit) => {
     return (
-      <CellContainer id={`grid-${commit.id}`}>
+      <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName>
         <Row>
           <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
@@ -60,7 +60,7 @@ export const Commits = (props: Props) => {
 
   const ExpiredCell = (commit: GachaCommit) => {
     return (
-      <CellContainer id={`grid-${commit.id}`}>
+      <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ExpiredName>Expired Commit, {getCommitTimeFrom(commit)}</ExpiredName>
         <Description>Your kami is stuck, but can be retrieved.</Description>
         <Description> Please send this commit's ID to support on discord.</Description>

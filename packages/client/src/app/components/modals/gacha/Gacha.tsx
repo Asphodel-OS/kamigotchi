@@ -115,14 +115,18 @@ export function registerGachaModal() {
 
       useEffect(() => {
         const tx = async () => {
-          if (isConnected && !triedReveal) {
-            setTriedReveal(true);
-            // wait to give buffer for OP rpc
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            const filtered = data.commits.filter((n) => {
-              return isGachaAvailable(n, Number(blockNumber));
-            });
-            revealTx(filtered);
+          if (isConnected && !triedReveal && data.commits.length > 0) {
+            try {
+              // wait to give buffer for OP rpc
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              const filtered = data.commits.filter((n) => {
+                return isGachaAvailable(n, Number(blockNumber));
+              });
+              revealTx(filtered);
+              setTriedReveal(true);
+            } catch (e) {
+              console.log('Gacha.tsx: handleMint() reveal failed', e);
+            }
             if (waitingToReveal) {
               setWaitingToReveal(false);
               setModals({ ...modals, party: true });
