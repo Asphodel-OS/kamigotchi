@@ -123,44 +123,43 @@
     {
       "name": "_GoalCreateSystem",
       "writeAccess": [
-        "BalanceComponent",
         "DescriptionComponent",
         "IsGoalComponent",
         "IndexComponent",
         "IndexRoomComponent",
         "LogicTypeComponent",
         "NameComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "_GoalCreateRequirementSystem",
       "writeAccess": [
-        "BalanceComponent",
         "IDPointerComponent",
         "IsRequirementComponent",
         "IndexComponent",
         "LogicTypeComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "_GoalCreateRewardSystem",
       "writeAccess": [
-        "BalanceComponent",
         "IDPointerComponent",
         "IsRewardComponent",
         "IndexComponent",
         "LevelComponent",
         "LogicTypeComponent",
         "NameComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "_GoalDeleteSystem",
       "writeAccess": [
-        "BalanceComponent",
         "DescriptionComponent",
         "IDPointerComponent",
         "IsGoalComponent",
@@ -172,7 +171,8 @@
         "LevelComponent",
         "LogicTypeComponent",
         "NameComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -323,7 +323,6 @@
     {
       "name": "_RegistryCreateSkillEffectSystem",
       "writeAccess": [
-        "BalanceSignedComponent",
         "IsRegistryComponent",
         "IsEffectComponent",
         "IndexSkillComponent",
@@ -331,20 +330,21 @@
         "IDPointerComponent",
         "LogicTypeComponent",
         "SubtypeComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueSignedComponent"
       ]
     },
     {
       "name": "_RegistryCreateSkillRequirementSystem",
       "writeAccess": [
-        "BalanceComponent",
         "IsRegistryComponent",
         "IsRequirementComponent",
         "IndexSkillComponent",
         "IndexComponent",
         "IDPointerComponent",
         "LogicTypeComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -427,13 +427,13 @@
     {
       "name": "_RoomCreateGateSystem",
       "writeAccess": [
-        "BalanceComponent",
         "IDPointerComponent",
         "IDRoomComponent",
         "IndexRoomComponent",
         "IndexComponent",
         "LogicTypeComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -450,7 +450,6 @@
     {
       "name": "_RoomDeleteSystem",
       "writeAccess": [
-        "BalanceComponent",
         "IDPointerComponent",
         "IDRoomComponent",
         "IndexRoomComponent",
@@ -461,7 +460,8 @@
         "LocationComponent",
         "LogicTypeComponent",
         "NameComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -663,16 +663,6 @@
     {
       "name": "Mint20ProxySystem",
       "writeAccess": []
-    },
-    {
-      "name": "Mint20MintSystem",
-      "writeAccess": [
-        "BareValueComponent",
-        "IdAccountComponent",
-        "IdPetComponent",
-        "TimeLastComponent",
-        "ProxyPermissionsMint20Component"
-      ]
     },
     {
       "name": "Pet721IsInWorldSystem",

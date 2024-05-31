@@ -5,8 +5,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsLogComponent, ID as IsLogCompID } from "components/IsLogComponent.sol";
@@ -14,6 +12,8 @@ import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxC
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";

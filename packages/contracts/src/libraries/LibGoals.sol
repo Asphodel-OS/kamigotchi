@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
-import { ValueComponent, ID as BalCompID } from "components/ValueComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsGoalComponent, ID as IsGoalCompID } from "components/IsGoalComponent.sol";
@@ -171,7 +171,7 @@ library LibGoals {
     uint256 amt
   ) internal returns (uint256) {
     uint256 objID = genObjID(goalID);
-    IUintComp balComp = IUintComp(getAddressById(components, BalCompID));
+    IUintComp balComp = IUintComp(getAddressById(components, ValueCompID));
     uint256 currBal = balComp.safeGetUint256(goalID);
     uint256 targetBal = balComp.safeGetUint256(objID);
 
@@ -204,7 +204,7 @@ library LibGoals {
     // filters out DISPLAY_ONLY rewards via Level check
     uint256[] memory rewardIDs = queryActiveRewards(components, goalIndex);
 
-    ValueComponent balComp = ValueComponent(getAddressById(components, BalCompID));
+    ValueComponent balComp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 accCont = balComp.get(genContributionID(goalID, accID));
 
     _distributeRewards(world, components, balComp, accCont, accID, rewardIDs);
@@ -255,7 +255,9 @@ library LibGoals {
     bool goalCompleted = completeComp.has(goalID);
     bool accClaimed = completeComp.has(contributionID);
 
-    bool accContributed = ValueComponent(getAddressById(components, BalCompID)).has(contributionID);
+    bool accContributed = ValueComponent(getAddressById(components, ValueCompID)).has(
+      contributionID
+    );
     // true if goal completed, account contributed, account hasnt claimed reward
     return goalCompleted && accContributed && !accClaimed;
   }
