@@ -134,26 +134,6 @@ library LibGacha {
     return total;
   }
 
-  /// @notice calculates and extracts the seed from gacha commits
-  function calcSeeds(
-    IUintComp components,
-    uint256[] memory ids
-  ) internal returns (uint256[] memory) {
-    uint256[] memory results = new uint256[](ids.length);
-    uint256[] memory blockNums = BlockRevealComponent(getAddressById(components, BlockRevealCompID))
-      .getBatch(ids);
-    uint256[] memory increments = ValueComponent(getAddressById(components, ValueCompID)).getBatch(
-      ids
-    );
-
-    for (uint256 i; i < ids.length; i++)
-      results[i] = uint256(
-        keccak256(abi.encode(LibRandom.getSeedBlockhash(blockNums[i]), increments[i]))
-      );
-
-    return results;
-  }
-
   /// @notice uses insertion sort to sort commits by increment
   function sortCommits(
     IUintComp components,
@@ -192,6 +172,25 @@ library LibGacha {
     uint256[] memory selectedIndex = LibRandom.getRandomBatchNoReplacement(seeds, max);
 
     uint256[] memory results = _extractPets(components, selectedIndex, max);
+    return results;
+  }
+
+  /// @notice calculates and extracts the seed from gacha commits
+  function extractSeeds(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](ids.length);
+    uint256[] memory blockNums = BlockRevealComponent(getAddressById(components, BlockRevealCompID))
+      .extractBatch(ids);
+    uint256[] memory increments = ValueComponent(getAddressById(components, ValueCompID))
+      .extractBatch(ids);
+
+    for (uint256 i; i < ids.length; i++)
+      results[i] = uint256(
+        keccak256(abi.encode(LibRandom.getSeedBlockhash(blockNums[i]), increments[i]))
+      );
+
     return results;
   }
 
