@@ -5,6 +5,6 @@ import "components/base/Uint256Component.sol";
 uint256 constant ID = uint256(keccak256("component.id.quest.owns"));
 
 // A reference to a Quest entity's owner ID. Used to represent object ownership in the world
-contract IdOwnsQuestComponent is Uint256Component {
+contract IDOwnsQuestComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

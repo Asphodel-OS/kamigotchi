@@ -17,7 +17,7 @@ import { BalanceComponent, ID as BalanceCompID } from "components/BalanceCompone
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
-import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
+import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBgCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
@@ -288,7 +288,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
   Pet721 internal immutable pet721;
   CanNameComponent internal immutable canNameComp;
-  IdOwnsPetComponent internal immutable idOwnsPetComp;
+  IDOwnsPetComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
   MediaURIComponent internal immutable mediaURIComp;
@@ -309,7 +309,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
     pet721 = LibPet721.getContract(world);
     canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
-    idOwnsPetComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    idOwnsPetComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
     mediaURIComp = MediaURIComponent(getAddressById(components, MediaURICompID));

@@ -154,11 +154,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that snapshots are correctly stored
     vm.prank(deployer); // load bearing entity lol
-    _IdOwnsQuestComponent.set(1, 1); // load bearing entity lol
+    _IDOwnsQuestComponent.set(1, 1); // load bearing entity lol
     uint256[] memory snapshots = _getQuestObjSnapshots(questID);
     assertEq(snapshots.length, 1);
     assertTrue(_IsObjectiveComponent.has(snapshots[0]));
-    assertEq(_IdOwnsQuestComponent.get(snapshots[0]), questID);
+    assertEq(_IDOwnsQuestComponent.get(snapshots[0]), questID);
     assertEq(_BalanceComponent.get(snapshots[0]), startAmt);
 
     // check completability
@@ -395,7 +395,7 @@ contract QuestsTest is SetupTemplate {
   function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
     return
       LibQuery.getIsWithValue(
-        getComponentById(components, IdOwnsQuestComponentID),
+        getComponentById(components, IDOwnsQuestComponentID),
         getComponentById(components, IsObjectiveComponentID),
         abi.encode(questID)
       );
@@ -404,7 +404,7 @@ contract QuestsTest is SetupTemplate {
   function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
     return
       LibQuery.getIsWithValue(
-        getComponentById(components, IdOwnsQuestComponentID),
+        getComponentById(components, IDOwnsQuestComponentID),
         getComponentById(components, IsQuestComponentID),
         abi.encode(accountID)
       );

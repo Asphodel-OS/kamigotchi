@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IdOwnsInventoryComponent.sol";
+import { IDOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsInventoryComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";

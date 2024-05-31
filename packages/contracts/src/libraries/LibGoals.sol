@@ -9,7 +9,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 
 import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
-import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
+import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsGoalComponent, ID as IsGoalCompID } from "components/IsGoalComponent.sol";
 import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
@@ -90,7 +90,7 @@ library LibGoals {
     Condition memory requirement
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    IdPointerComponent(getAddressById(components, IdPointerCompID)).set(id, genReqPtr(goalIndex));
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, genReqPtr(goalIndex));
 
     IsRequirementComponent(getAddressById(components, IsRequirementCompID)).set(id);
     LibBoolean.create(components, id, requirement);
@@ -117,7 +117,7 @@ library LibGoals {
     Condition memory reward
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    IdPointerComponent(getAddressById(components, IdPointerCompID)).set(id, genRwdPtr(goalIndex));
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, genRwdPtr(goalIndex));
 
     IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
@@ -147,7 +147,7 @@ library LibGoals {
     uint256[] memory reqIDs = getRequirements(components, index);
     for (uint256 i = 0; i < reqIDs.length; i++) {
       LibBoolean.unsetAll(components, reqIDs[i]);
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(reqIDs[i]);
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(reqIDs[i]);
       NameComponent(getAddressById(components, NameCompID)).remove(reqIDs[i]);
       LevelComponent(getAddressById(components, LevelCompID)).remove(reqIDs[i]);
     }
@@ -156,7 +156,7 @@ library LibGoals {
     uint256[] memory rewIDs = getRewards(components, index);
     for (uint256 i = 0; i < rewIDs.length; i++) {
       LibBoolean.unsetAll(components, rewIDs[i]);
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(rewIDs[i]);
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(rewIDs[i]);
     }
   }
 
@@ -350,7 +350,7 @@ library LibGoals {
     uint256 pointer
   ) internal view returns (uint256[] memory) {
     return
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).getEntitiesWithValue(pointer);
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(pointer);
   }
 
   ////////////////////
@@ -365,7 +365,7 @@ library LibGoals {
     uint256 pointer = genRwdPtr(goalIndex);
     return
       LibQuery.getIsWithValue(
-        getComponentById(components, IdPointerCompID),
+        getComponentById(components, IDPointerCompID),
         getComponentById(components, LevelCompID),
         abi.encode(pointer)
       );

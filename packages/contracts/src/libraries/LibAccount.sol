@@ -9,7 +9,7 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 import { Stat } from "components/types/Stat.sol";
 
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
-import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
+import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
@@ -305,7 +305,7 @@ library LibAccount {
     uint256 accountID
   ) internal view returns (uint256[] memory) {
     return
-      IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).getEntitiesWithValue(
+      IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).getEntitiesWithValue(
         accountID
       );
   }

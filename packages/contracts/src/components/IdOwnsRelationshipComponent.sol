@@ -5,6 +5,6 @@ import "components/base/Uint256Component.sol";
 uint256 constant ID = uint256(keccak256("component.id.relationship.owns"));
 
 // A reference to a Relationship entity's owner ID. Used to represent object ownership in the world
-contract IdOwnsRelationshipComponent is Uint256Component {
+contract IDOwnsRelationshipComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

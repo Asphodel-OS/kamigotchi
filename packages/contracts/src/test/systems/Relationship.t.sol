@@ -41,7 +41,7 @@ contract RelationshipTest is SetupTemplate {
     uint256 rsID = _advRelationship(0, index.npc, index.rel);
     assertEq(LibRelationship.get(components, _getAccount(0), index.npc, index.rel), rsID);
     assertTrue(_IsRelationshipComponent.has(rsID));
-    assertEq(_IdOwnsRelationshipComponent.get(rsID), _getAccount(0));
+    assertEq(_IDOwnsRelationshipComponent.get(rsID), _getAccount(0));
     assertEq(_IndexNPCComponent.get(rsID), index.npc);
     assertEq(_IndexRelationshipComponent.get(rsID), index.rel);
 

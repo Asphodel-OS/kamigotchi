@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IdRoomComponentInterface extends utils.Interface {
+export interface IDRoomComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "extract(uint256)": FunctionFragment;
@@ -295,12 +295,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface IdRoomComponent extends BaseContract {
+export interface IDRoomComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IdRoomComponentInterface;
+  interface: IDRoomComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

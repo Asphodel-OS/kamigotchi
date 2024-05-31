@@ -9,7 +9,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { BareValueComponent, ID as BareValueCompID } from "components/BareValueComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
-import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
+import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
@@ -80,7 +80,7 @@ library LibGacha {
   /// @notice deposits pets into the gacha pool
   /// @dev doesnt use LibPet for batch efficiency
   function depositPets(IUintComp components, uint256[] memory petIDs) internal {
-    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
 
     uint256 numInGacha = getNumInGacha(components);
@@ -99,7 +99,7 @@ library LibGacha {
     uint256[] memory accountIDs,
     uint256[] memory rerolls
   ) internal {
-    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
 
     for (uint256 i; i < petIDs.length; i++) rerolls[i]++;
@@ -202,7 +202,7 @@ library LibGacha {
   ) internal returns (uint256[] memory) {
     uint256 count = indices.length;
     uint256[] memory results = new uint256[](count);
-    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     IsPetComponent isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
 
     for (uint256 i; i < count; i++) {
@@ -233,7 +233,7 @@ library LibGacha {
   }
 
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
-    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     return ownerComp.size(abi.encode(GACHA_ID));
   }
 

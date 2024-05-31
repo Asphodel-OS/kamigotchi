@@ -5,6 +5,6 @@ import "components/base/Uint256Component.sol";
 uint256 constant ID = uint256(keccak256("component.id.room"));
 
 // a reference to a Room entity's ID
-contract IdRoomComponent is Uint256Component {
+contract IDRoomComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

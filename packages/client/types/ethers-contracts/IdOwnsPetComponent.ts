@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IdOwnsPetComponentInterface extends utils.Interface {
+export interface IDOwnsPetComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "extract(uint256)": FunctionFragment;
@@ -295,12 +295,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface IdOwnsPetComponent extends BaseContract {
+export interface IDOwnsPetComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IdOwnsPetComponentInterface;
+  interface: IDOwnsPetComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -6,7 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdOwnsRelationshipComponent, ID as IdOwnsRSCompID } from "components/IdOwnsRelationshipComponent.sol";
+import { IDOwnsRelationshipComponent, ID as IDOwnsRSCompID } from "components/IDOwnsRelationshipComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { IndexRelationshipComponent, ID as IndexRelCompID } from "components/IndexRelationshipComponent.sol";
 import { IsRelationshipComponent, ID as IsRelCompID } from "components/IsRelationshipComponent.sol";
@@ -25,7 +25,7 @@ library LibRelationship {
   ) internal returns (uint256) {
     uint256 id = genID(accountID, npcIndex, relIndex);
     IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id);
-    IdOwnsRelationshipComponent(getAddressById(components, IdOwnsRSCompID)).set(id, accountID);
+    IDOwnsRelationshipComponent(getAddressById(components, IDOwnsRSCompID)).set(id, accountID);
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, npcIndex);
     IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, relIndex);
     return id;
