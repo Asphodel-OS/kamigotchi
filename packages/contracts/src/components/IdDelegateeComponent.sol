@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 import "components/base/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.id.requestee"));
+uint256 constant ID = uint256(keccak256("component.id.delegatee"));
 
-// a reference to a Requestee entity's ID
-contract RequesteeComponent is Uint256BareComponent {
+// a reference to a Delegatee entity's ID
+contract IdDelegateeComponent is Uint256BareComponent {
   constructor(address world) Uint256BareComponent(world, ID) {}
 }

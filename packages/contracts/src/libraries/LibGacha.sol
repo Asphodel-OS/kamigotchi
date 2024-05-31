@@ -8,7 +8,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BareValueComponent, ID as BareValueCompID } from "components/BareValueComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
-import { AccountComponent, ID as AccountCompID } from "components/AccountComponent.sol";
+import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
@@ -37,7 +37,7 @@ library LibGacha {
     uint256 revealBlock
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    AccountComponent(getAddressById(components, AccountCompID)).set(id, accountID);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
     BlockRevealComponent(getAddressById(components, BlockRevealCompID)).set(id, revealBlock);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, string("GACHA_COMMIT"));
 
@@ -68,7 +68,7 @@ library LibGacha {
     }
 
     // setting values
-    getComponentById(components, AccountCompID).setAll(ids, accountID);
+    getComponentById(components, IdAccountCompID).setAll(ids, accountID);
     getComponentById(components, BlockRevealCompID).setAll(ids, revealBlock);
     getComponentById(components, TypeCompID).setAll(ids, string("GACHA_COMMIT"));
     valueComp.setBatch(ids, increments);
@@ -221,7 +221,7 @@ library LibGacha {
   // GETTERS
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return AccountComponent(getAddressById(components, AccountCompID)).get(id);
+    return IdAccountComponent(getAddressById(components, IdAccountCompID)).get(id);
   }
 
   function getBaseRerollCost(IUintComp components) internal view returns (uint256) {
@@ -304,7 +304,7 @@ library LibGacha {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    return AccountComponent(getAddressById(components, AccountCompID)).extractBatch(ids);
+    return IdAccountComponent(getAddressById(components, IdAccountCompID)).extractBatch(ids);
   }
 
   function extractIncrementBatch(

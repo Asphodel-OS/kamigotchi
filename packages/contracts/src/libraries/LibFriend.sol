@@ -8,9 +8,9 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { AccountComponent, ID as AccountCompID } from "components/AccountComponent.sol";
+import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
-import { TargetComponent, ID as TargetCompID } from "components/TargetComponent.sol";
+import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { IsFriendshipComponent, ID as IsFriendCompID } from "components/IsFriendshipComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 
@@ -40,8 +40,8 @@ library LibFriend {
   ) internal returns (uint256 id) {
     id = genID(accID, targetID);
     IsFriendshipComponent(getAddressById(components, IsFriendCompID)).set(id);
-    AccountComponent(getAddressById(components, AccountCompID)).set(id, accID);
-    TargetComponent(getAddressById(components, TargetCompID)).set(id, targetID);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
     StateComponent(getAddressById(components, StateCompID)).set(id, state);
 
     if (state.eq("REQUEST")) updateInReqCounter(components, id, targetID);
@@ -57,8 +57,8 @@ library LibFriend {
   ) internal returns (uint256 id) {
     id = genID(accID, senderID);
     IsFriendshipComponent(getAddressById(components, IsFriendCompID)).set(id);
-    AccountComponent(getAddressById(components, AccountCompID)).set(id, accID);
-    TargetComponent(getAddressById(components, TargetCompID)).set(id, senderID);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, senderID);
 
     // set state - raw component for efficiency
     uint256[] memory toUpdates = new uint256[](2);
@@ -123,11 +123,11 @@ library LibFriend {
   // GETTERS
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return AccountComponent(getAddressById(components, AccountCompID)).get(id);
+    return IdAccountComponent(getAddressById(components, IdAccountCompID)).get(id);
   }
 
   function getTarget(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TargetComponent(getAddressById(components, TargetCompID)).get(id);
+    return IdTargetComponent(getAddressById(components, IdTargetCompID)).get(id);
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -142,7 +142,7 @@ library LibFriend {
   // SETTERS
 
   function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
-    AccountComponent(getAddressById(components, AccountCompID)).set(id, accountID);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
   }
 
   function setIsFriendship(IUintComp components, uint256 id) internal {
@@ -150,7 +150,7 @@ library LibFriend {
   }
 
   function setTarget(IUintComp components, uint256 id, uint256 targetID) internal {
-    TargetComponent(getAddressById(components, TargetCompID)).set(id, targetID);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
   }
 
   function setState(IUintComp components, uint256 id, string memory state) internal {
@@ -158,7 +158,7 @@ library LibFriend {
   }
 
   function unsetAccount(IUintComp components, uint256 id) internal {
-    AccountComponent(getAddressById(components, AccountCompID)).remove(id);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).remove(id);
   }
 
   function unsetIsFriendship(IUintComp components, uint256 id) internal {
@@ -166,7 +166,7 @@ library LibFriend {
   }
 
   function unsetTarget(IUintComp components, uint256 id) internal {
-    TargetComponent(getAddressById(components, TargetCompID)).remove(id);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).remove(id);
   }
 
   function unsetState(IUintComp components, uint256 id) internal {

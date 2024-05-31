@@ -6,8 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { RequesteeComponent, ID as IdReqeeCompID } from "components/RequesteeComponent.sol";
-import { RequesterComponent, ID as IdReqerCompID } from "components/RequesterComponent.sol";
+import { IdRequesteeComponent, ID as IdReqeeCompID } from "components/IdRequesteeComponent.sol";
+import { IdRequesterComponent, ID as IdReqerCompID } from "components/IdRequesterComponent.sol";
 import { IsRequestComponent, ID as IsRequestCompID } from "components/IsRequestComponent.sol";
 import { IsTradeComponent, ID as IsTradeCompID } from "components/IsTradeComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
@@ -30,8 +30,8 @@ library LibTrade {
     uint256 id = world.getUniqueEntityId();
     IsTradeComponent(getAddressById(components, IsTradeCompID)).set(id);
     IsRequestComponent(getAddressById(components, IsRequestCompID)).set(id);
-    RequesteeComponent(getAddressById(components, IdReqeeCompID)).set(id, aliceID);
-    RequesterComponent(getAddressById(components, IdReqerCompID)).set(id, bobID);
+    IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).set(id, aliceID);
+    IdRequesterComponent(getAddressById(components, IdReqerCompID)).set(id, bobID);
     StateComponent(getAddressById(components, StateCompID)).set(id, string("INITIATED"));
     return id;
   }
@@ -41,8 +41,8 @@ library LibTrade {
     IsRequestComponent(getAddressById(components, IsRequestCompID)).remove(id);
     StateComponent(getAddressById(components, StateCompID)).set(id, string("ACCEPTED"));
 
-    uint256 aliceID = RequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
-    uint256 bobID = RequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
+    uint256 aliceID = IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
+    uint256 bobID = IdRequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
     LibRegister.create(world, components, aliceID, id);
     LibRegister.create(world, components, bobID, id);
   }
@@ -125,11 +125,11 @@ library LibTrade {
   // GETTERS
 
   function getRequestee(IUintComp components, uint256 id) internal view returns (uint256) {
-    return RequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
+    return IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
   }
 
   function getRequester(IUintComp components, uint256 id) internal view returns (uint256) {
-    return RequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
+    return IdRequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
   }
 
   /////////////////

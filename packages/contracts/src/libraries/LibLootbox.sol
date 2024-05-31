@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { BalancesComponent, ID as BalancesCompID } from "components/BalancesComponent.sol";
-import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsLogComponent, ID as IsLogCompID } from "components/IsLogComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
@@ -130,7 +130,7 @@ library LibLootbox {
   }
 
   function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
-    return HolderComponent(getAddressById(components, HolderCompID)).get(id);
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
@@ -157,7 +157,7 @@ library LibLootbox {
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    HolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
   }
 
   function setIndex(IUintComp components, uint256 id, uint32 index) internal {
@@ -181,7 +181,7 @@ library LibLootbox {
   }
 
   function unsetHolder(IUintComp components, uint256 id) internal {
-    HolderComponent(getAddressById(components, HolderCompID)).remove(id);
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).remove(id);
   }
 
   function unsetIndex(IUintComp components, uint256 id) internal {

@@ -5,7 +5,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
+import { IdHolderComponent, ID as HolderCompID } from "components/IdHolderComponent.sol";
 import { TimelockComponent, ID as TimelockCompID, TimelockOp } from "components/TimelockComponent.sol";
 
 /// @notice library that handles MUD side timelock and other controlled bridge logic
@@ -37,7 +37,7 @@ library LibTimelock {
   // SETTERS
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    HolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
+    IdHolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
   }
 
   function setTimelock(
@@ -54,7 +54,7 @@ library LibTimelock {
   }
 
   function unsetHolder(IUintComp components, uint256 id) internal {
-    HolderComponent(getAddressById(components, HolderCompID)).remove(id);
+    IdHolderComponent(getAddressById(components, HolderCompID)).remove(id);
   }
 
   function unsetTimelock(IUintComp components, uint256 id) internal {

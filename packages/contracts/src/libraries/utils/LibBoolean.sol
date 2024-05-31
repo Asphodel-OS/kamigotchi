@@ -8,7 +8,7 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
-import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -180,7 +180,7 @@ library LibBoolean {
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    HolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
   }
 
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {

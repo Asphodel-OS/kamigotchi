@@ -8,7 +8,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BalanceSignedComponent as IntBalComp, ID as IntBalCompID } from "components/BalanceSignedComponent.sol";
 import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
-import { HolderComponent, ID as HolderCompID } from "components/HolderComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibStat } from "libraries/LibStat.sol";

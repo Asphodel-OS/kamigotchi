@@ -8,8 +8,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
-import { SourceComponent, ID as SourceCompID } from "components/SourceComponent.sol";
-import { TargetComponent, ID as TargetCompID } from "components/TargetComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
+import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { IsKillComponent, ID as IsKillCompID } from "components/IsKillComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
@@ -45,8 +45,8 @@ library LibKill {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsKillComponent(getAddressById(components, IsKillCompID)).set(id);
-    SourceComponent(getAddressById(components, SourceCompID)).set(id, sourceID);
-    TargetComponent(getAddressById(components, TargetCompID)).set(id, targetID);
+    IdSourceComponent(getAddressById(components, IdSourceCompID)).set(id, sourceID);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
     IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
       id,
