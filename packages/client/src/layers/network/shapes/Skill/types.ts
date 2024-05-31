@@ -121,7 +121,7 @@ export const getRequirement = (
   components: Components,
   entityIndex: EntityIndex
 ): Requirement => {
-  const { Balance, Index, LogicType, Type } = components;
+  const { Value, Index, LogicType, Type } = components;
 
   return {
     id: world.entities[entityIndex],
@@ -129,7 +129,7 @@ export const getRequirement = (
     target: {
       type: getComponentValue(Type, entityIndex)?.value || ('' as string),
       index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Balance, entityIndex)?.value,
+      value: getComponentValue(Value, entityIndex)?.value,
     },
   };
 };

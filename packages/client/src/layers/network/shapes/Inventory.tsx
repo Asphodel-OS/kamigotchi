@@ -36,7 +36,7 @@ export const getTypedInventory = (
   index: EntityIndex,
   getTypedItem: (world: World, components: Components, index: EntityIndex) => Item
 ): Inventory => {
-  const { Balance, IsRegistry, ItemIndex } = components;
+  const { Value, IsRegistry, ItemIndex } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
@@ -51,7 +51,7 @@ export const getTypedInventory = (
     item: item,
   };
 
-  inventory.balance = (getComponentValue(Balance, index)?.value as number) * 1;
+  inventory.balance = (getComponentValue(Value, index)?.value as number) * 1;
 
   return inventory;
 };

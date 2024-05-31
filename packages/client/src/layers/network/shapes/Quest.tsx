@@ -158,7 +158,7 @@ const getRequirement = (
   components: Components,
   entityIndex: EntityIndex
 ): Requirement => {
-  const { Balance, Index, LogicType, Type } = components;
+  const { Value, Index, LogicType, Type } = components;
 
   let requirement: Requirement = {
     id: world.entities[entityIndex],
@@ -171,7 +171,7 @@ const getRequirement = (
   const index = getComponentValue(Index, entityIndex)?.value;
   if (index) requirement.target.index = index;
 
-  const value = getComponentValue(Balance, entityIndex)?.value;
+  const value = getComponentValue(Value, entityIndex)?.value;
   if (value) requirement.target.value = value;
 
   return requirement;
@@ -183,7 +183,7 @@ const getObjective = (
   components: Components,
   entityIndex: EntityIndex
 ): Objective => {
-  const { Balance, Index, LogicType, Name, Type } = components;
+  const { Value, Index, LogicType, Name, Type } = components;
 
   let objective: Objective = {
     id: world.entities[entityIndex],
@@ -197,7 +197,7 @@ const getObjective = (
   const index = getComponentValue(Index, entityIndex)?.value;
   if (index) objective.target.index = index;
 
-  const value = getComponentValue(Balance, entityIndex)?.value;
+  const value = getComponentValue(Value, entityIndex)?.value;
   if (value) objective.target.value = value;
 
   return objective;
@@ -205,7 +205,7 @@ const getObjective = (
 
 // Get a Reward Registry object
 const getReward = (world: World, components: Components, entityIndex: EntityIndex): Reward => {
-  const { Balance, Index, Type } = components;
+  const { Value, Index, Type } = components;
 
   let reward: Reward = {
     id: world.entities[entityIndex],
@@ -217,7 +217,7 @@ const getReward = (world: World, components: Components, entityIndex: EntityInde
   const index = getComponentValue(Index, entityIndex)?.value;
   if (index) reward.target.index = index;
 
-  const value = getComponentValue(Balance, entityIndex)?.value;
+  const value = getComponentValue(Value, entityIndex)?.value;
   if (value) reward.target.value = value;
 
   return reward;

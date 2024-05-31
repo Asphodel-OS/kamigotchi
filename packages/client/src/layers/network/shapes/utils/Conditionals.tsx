@@ -39,7 +39,7 @@ export const getCondition = (
   components: Components,
   entityIndex: EntityIndex | undefined
 ): Condition => {
-  const { Balance, Index, LogicType, Type } = components;
+  const { Value, Index, LogicType, Type } = components;
 
   if (!entityIndex)
     return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
@@ -50,7 +50,7 @@ export const getCondition = (
     target: {
       type: getComponentValue(Type, entityIndex)?.value || ('' as string),
       index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Balance, entityIndex)?.value,
+      value: getComponentValue(Value, entityIndex)?.value,
     },
   };
 };

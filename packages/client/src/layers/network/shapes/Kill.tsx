@@ -28,7 +28,7 @@ export const getKill = (
   entityIndex: EntityIndex,
   options?: Options
 ): Kill => {
-  const { NodeID, SourceID, TargetID, Balance, Coin, Time } = components;
+  const { NodeID, SourceID, TargetID, Value, Coin, Time } = components;
 
   // populate the Node
   const nodeID = getComponentValue(NodeID, entityIndex)?.value as EntityID;
@@ -39,7 +39,7 @@ export const getKill = (
     id: world.entities[entityIndex],
     entityIndex,
     node,
-    balance: (getComponentValue(Balance, entityIndex)?.value as number) * 1,
+    balance: (getComponentValue(Value, entityIndex)?.value as number) * 1,
     bounty: (getComponentValue(Coin, entityIndex)?.value as number) * 1,
     time: (getComponentValue(Time, entityIndex)?.value as number) * 1,
   };
