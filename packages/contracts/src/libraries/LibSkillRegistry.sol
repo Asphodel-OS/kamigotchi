@@ -17,8 +17,8 @@ import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryCom
 import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 
-import { ValueSignedComponent, ID as BalSignedCompID } from "components/ValueSignedComponent.sol";
-import { ValueComponent, ID as BalCompID } from "components/ValueComponent.sol";
+import { ValueSignedComponent, ID as ValueSignedCompID } from "components/ValueSignedComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
@@ -93,7 +93,7 @@ library LibSkillRegistry {
     setIsEffect(components, id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
-    ValueSignedComponent(getAddressById(components, BalSignedCompID)).set(id, value);
+    ValueSignedComponent(getAddressById(components, ValueSignedCompID)).set(id, value);
 
     return id;
   }
@@ -222,7 +222,7 @@ library LibSkillRegistry {
   }
 
   function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, BalCompID)).set(id, value);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   /////////////////
@@ -305,14 +305,14 @@ library LibSkillRegistry {
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    if (ValueComponent(getAddressById(components, BalCompID)).has(id)) {
-      ValueComponent(getAddressById(components, BalCompID)).remove(id);
+    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
+      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
     }
   }
 
   function unsetBalanceSigned(IUintComp components, uint256 id) internal {
-    if (ValueSignedComponent(getAddressById(components, BalSignedCompID)).has(id)) {
-      ValueSignedComponent(getAddressById(components, BalSignedCompID)).remove(id);
+    if (ValueSignedComponent(getAddressById(components, ValueSignedCompID)).has(id)) {
+      ValueSignedComponent(getAddressById(components, ValueSignedCompID)).remove(id);
     }
   }
 
@@ -320,11 +320,11 @@ library LibSkillRegistry {
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, BalCompID)).get(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
   }
 
   function getBalanceSigned(IUintComp components, uint256 id) internal view returns (int256) {
-    return ValueSignedComponent(getAddressById(components, BalSignedCompID)).get(id);
+    return ValueSignedComponent(getAddressById(components, ValueSignedCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {

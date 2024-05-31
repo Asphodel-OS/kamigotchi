@@ -13,7 +13,6 @@ import { Stat } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
@@ -39,6 +38,7 @@ import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/Tim
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { Pet721 } from "tokens/Pet721.sol";
 
