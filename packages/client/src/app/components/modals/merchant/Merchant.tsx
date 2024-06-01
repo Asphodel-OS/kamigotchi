@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/store';
+import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Merchant, getMerchantByIndex } from 'layers/network/shapes/Merchant';
 import { Listings } from './Listings';

@@ -1,4 +1,4 @@
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
 export const triggerShopModal = (npcIndex: number) => {

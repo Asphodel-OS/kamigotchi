@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
 import { Account } from 'layers/network/shapes/Account';

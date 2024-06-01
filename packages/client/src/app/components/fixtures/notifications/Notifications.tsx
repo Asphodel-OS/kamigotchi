@@ -3,7 +3,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { registerUIComponent } from 'app/root';
-import { Modals, useVisibility } from 'app/store';
+import { Modals, useVisibility } from 'app/stores';
 
 export function registerNotificationFixture() {
   registerUIComponent(

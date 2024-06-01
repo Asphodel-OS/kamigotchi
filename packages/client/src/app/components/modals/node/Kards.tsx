@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
 import { KamiConfig } from 'layers/network/shapes/Config';

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';

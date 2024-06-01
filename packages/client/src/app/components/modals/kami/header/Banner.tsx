@@ -2,7 +2,7 @@ import { Kami } from 'layers/network/shapes/Kami';
 import styled from 'styled-components';
 
 import { ExperienceBar, Tooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { StatIcons } from 'assets/images/icons/stats';
 import { Account } from 'layers/network/shapes/Account';
 import { playClick } from 'utils/sounds';

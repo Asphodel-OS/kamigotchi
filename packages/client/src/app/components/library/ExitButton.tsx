@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
 interface Props {

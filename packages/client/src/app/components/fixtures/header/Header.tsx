@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Battery, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import musuIcon from 'assets/images/icons/musu.png';
 import {
   Account,

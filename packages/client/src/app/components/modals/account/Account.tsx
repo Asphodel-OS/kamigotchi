@@ -3,7 +3,7 @@ import { interval, map } from 'rxjs';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/store';
+import { useSelected } from 'app/stores';
 import { operatorIcon } from 'assets/images/icons/menu';
 import {
   Account,

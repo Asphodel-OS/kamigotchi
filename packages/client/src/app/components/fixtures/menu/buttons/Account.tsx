@@ -1,5 +1,5 @@
 import { MenuButton } from 'app/components/library';
-import { Modals, useAccount, useSelected } from 'app/store';
+import { Modals, useAccount, useSelected } from 'app/stores';
 import { operatorIcon } from 'assets/images/icons/menu';
 
 export const AccountMenuButton = () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';

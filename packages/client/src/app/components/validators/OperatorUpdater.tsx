@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useAccount, useNetwork, useVisibility } from 'app/store';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { playScribble, playSuccess } from 'utils/sounds';
 
 // TODO: check for whether an account with the burner address already exists

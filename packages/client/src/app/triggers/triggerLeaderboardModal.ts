@@ -1,4 +1,4 @@
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { LeaderboardKey } from 'constants/leaderboards/leaderboards';
 import { playClick } from 'utils/sounds';
 

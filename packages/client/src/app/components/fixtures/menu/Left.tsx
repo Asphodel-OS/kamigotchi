@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
 import { AccountMenuButton, MapMenuButton, PartyMenuButton } from './buttons';
 

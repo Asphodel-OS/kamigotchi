@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionButton, CopyButton, Tooltip } from 'app/components/library';
-import { useAccount, useVisibility } from 'app/store';
+import { useAccount, useVisibility } from 'app/stores';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();

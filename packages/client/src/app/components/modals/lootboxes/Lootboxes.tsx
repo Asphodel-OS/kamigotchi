@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import { getItemByIndex } from 'layers/network/shapes/Item';
 import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
 import { Opener } from './Opener';

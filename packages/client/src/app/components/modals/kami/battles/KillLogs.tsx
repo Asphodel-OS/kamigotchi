@@ -1,7 +1,7 @@
 import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import styled from 'styled-components';
 
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Kill } from 'layers/network/shapes/Kill';
 import { playClick } from 'utils/sounds';

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Tooltip } from './Tooltip';
 
-import { Modals, useVisibility } from 'app/store';
+import { Modals, useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
 interface Props {
