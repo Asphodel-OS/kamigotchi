@@ -6,16 +6,11 @@ import { Contract, ContractInterface } from 'ethers';
 import { keys } from 'lodash';
 import { Subject } from 'rxjs';
 
+import { Network, createNetwork, createSystemExecutor } from 'engine/executors';
+import { Mappings } from 'engine/types';
 import { defineStringComponent } from 'layers/network/components';
-import {
-  Ack,
-  InputType,
-  Mappings,
-  Network,
-  createNetwork,
-  createSyncWorker,
-  createSystemExecutor,
-} from 'layers/network/workers';
+import { createSyncWorker } from 'workers/create';
+import { Ack, InputType } from 'workers/sync';
 import {
   ContractComponent,
   ContractComponents,
@@ -30,7 +25,7 @@ import {
 
 export async function setupMUDNetwork<
   C extends ContractComponents,
-  SystemTypes extends { [key: string]: Contract }
+  SystemTypes extends { [key: string]: Contract },
 >(
   world: World,
   contractComponents: C,

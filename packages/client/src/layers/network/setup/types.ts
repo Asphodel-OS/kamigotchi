@@ -1,24 +1,26 @@
-import { EntityIndex, Schema, Components, Type, Component } from "@mud-classic/recs";
-import { Contract } from "ethers";
+import { Component, Components, EntityIndex, Schema, Type } from '@mud-classic/recs';
+import { Contract } from 'ethers';
 
-import { NetworkConfig, SyncWorkerConfig, NetworkComponentUpdate, SystemCall } from "layers/network/workers";
-
+import { NetworkComponentUpdate, NetworkConfig, SyncWorkerConfig, SystemCall } from 'engine/types';
 
 export type SetupContractConfig = NetworkConfig &
-  Omit<SyncWorkerConfig, "worldContract" | "mappings"> & {
+  Omit<SyncWorkerConfig, 'worldContract' | 'mappings'> & {
     worldAddress: string;
     devMode?: boolean;
   };
 
-export type DecodedNetworkComponentUpdate = Omit<Omit<NetworkComponentUpdate, "entity">, "component"> & {
+export type DecodedNetworkComponentUpdate = Omit<
+  Omit<NetworkComponentUpdate, 'entity'>,
+  'component'
+> & {
   entity: EntityIndex;
   component: Component<Schema>;
 };
 
 export type DecodedSystemCall<
   T extends { [key: string]: Contract } = { [key: string]: Contract },
-  C extends Components = Components
-> = Omit<SystemCall<C>, "updates"> & {
+  C extends Components = Components,
+> = Omit<SystemCall<C>, 'updates'> & {
   systemId: keyof T;
   args: Record<string, unknown>;
   updates: DecodedNetworkComponentUpdate[];

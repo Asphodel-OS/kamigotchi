@@ -3,7 +3,7 @@ import { concat, map } from 'rxjs';
 
 import { registerUIComponent } from 'app/root';
 import { BootScreen } from 'app/root/components';
-import { GodID, SyncState } from 'layers/network/workers/workers';
+import { GodID, SyncState } from 'engine/constants';
 
 export function registerLoadingState() {
   registerUIComponent(

@@ -1,10 +1,9 @@
-import { Provider } from "@ethersproject/providers";
-import { mapObject } from "@mud-classic/utils";
-import { Contract, Signer } from "ethers";
-import { computed, IComputedValue } from "mobx";
+import { Provider } from '@ethersproject/providers';
+import { mapObject } from '@mud-classic/utils';
+import { Contract, Signer } from 'ethers';
+import { IComputedValue, computed } from 'mobx';
 
-import { Contracts, ContractsConfig } from "../workers/types";
-
+import { Contracts, ContractsConfig } from 'engine/types';
 
 /**
  * Create an object of contracts connected to the currently connected provider.

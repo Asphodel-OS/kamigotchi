@@ -19,8 +19,10 @@ export default defineConfig({
       assets: path.resolve(__dirname, './src/assets'),
       clients: path.resolve(__dirname, './src/clients'),
       constants: path.resolve(__dirname, './src/constants'),
+      engine: path.resolve(__dirname, './src/engine'),
       layers: path.resolve(__dirname, './src/layers'),
       utils: path.resolve(__dirname, './src/utils'),
+      workers: path.resolve(__dirname, './src/workers'),
     },
   },
   server: {

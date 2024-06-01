@@ -1,9 +1,9 @@
-import { Components } from "@mud-classic/recs";
-import { map, Observable, Subject, timer } from "rxjs";
+import { Components } from '@mud-classic/recs';
+import { map, Observable, Subject, timer } from 'rxjs';
 
-import { NetworkEvent } from "./types";
-import { Input, Ack, ack } from "./workers/SyncWorker";
-import { fromWorker } from "./workers/utils";
+import { NetworkEvent } from 'engine/types';
+import { fromWorker } from 'workers/utils';
+import { Ack, ack, Input } from './sync/Worker';
 
 /**
  * Create a new SyncWorker ({@link Sync.worker.ts}) to performn contract/client state sync.
@@ -17,7 +17,9 @@ import { fromWorker } from "./workers/utils";
  */
 export function createSyncWorker<C extends Components = Components>(ack$?: Observable<Ack>) {
   const input$ = new Subject<Input>();
-  const worker = new Worker(new URL("./workers/Sync.worker.ts", import.meta.url), { type: "module" });
+  const worker = new Worker(new URL('./sync/Sync.worker.ts', import.meta.url), {
+    type: 'module',
+  });
   const ecsEvents$ = new Subject<NetworkEvent<C>[]>();
 
   // Send ack every 16ms if no external ack$ is provided

@@ -14,8 +14,10 @@
       "assets/*": ["./src/assets/*", "./src/assets"],
       "clients/*": ["./src/clients/*", "./src/clients"],
       "constants/*": ["./src/constants/*", "./src/constants"],
+      "engine/*": ["./src/engine/*", "./src/engine"],
       "layers/*": ["./src/layers/*", "./src/layers"],
       "utils/*": ["./src/utils/*", "./src/utils"],
+      "workers/*": ["./src/workers/*", "./src/workers"],
       "types/*": ["./types/*", "./types"]
     },
     "resolveJsonModule": true /* Enable importing .json files */,

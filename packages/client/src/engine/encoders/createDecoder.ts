@@ -1,13 +1,13 @@
-import { BigNumber } from "ethers";
-import { BytesLike, defaultAbiCoder as abi } from "ethers/lib/utils";
+import { BigNumber } from 'ethers';
+import { BytesLike, defaultAbiCoder as abi } from 'ethers/lib/utils';
 import {
   ContractSchemaValue,
   ContractSchemaValueArrayToElement,
   ContractSchemaValueId,
   ContractSchemaValueTypes,
-} from "../types";
+} from '../types';
 
-export function flattenValue<V extends ContractSchemaValue>(
+function flattenValue<V extends ContractSchemaValue>(
   value: BigNumber | BigNumber[] | number | number[] | boolean | boolean[] | string | string[],
   valueType: V
 ): ContractSchemaValueTypes[V] {
@@ -18,7 +18,7 @@ export function flattenValue<V extends ContractSchemaValue>(
     ) as unknown as ContractSchemaValueTypes[V]; // Typescript things it is possible we return a nested array, but it is not
 
   // Value is already flat
-  if (typeof value === "number" || typeof value === "string" || typeof value === "boolean")
+  if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean')
     return value as ContractSchemaValueTypes[V];
 
   // The value returned by abi.decode is Hexable but not a ethers.BigNumber
@@ -60,7 +60,7 @@ export function flattenValue<V extends ContractSchemaValue>(
     return value.toString() as ContractSchemaValueTypes[V];
   }
 
-  throw new Error("Unknown value type");
+  throw new Error('Unknown value type');
 }
 
 /**
@@ -84,7 +84,7 @@ export function createDecoder<D extends { [key: string]: unknown }>(
 
     // Now keys and valueTypes lengths must match
     if (keys.length !== valueTypes.length) {
-      throw new Error("Component schema keys and values length does not match");
+      throw new Error('Component schema keys and values length does not match');
     }
 
     // Construct the client component value

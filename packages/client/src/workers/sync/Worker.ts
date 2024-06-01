@@ -20,6 +20,7 @@ import {
   Subject,
   take,
 } from 'rxjs';
+
 import {
   createCacheStore,
   getCacheStoreEntries,
@@ -29,9 +30,10 @@ import {
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
-} from '../cache/CacheStore';
-import { createBlockNumberStream } from '../executors/createBlockNumberStream';
-import { createReconnectingProvider } from '../providers/createProvider';
+} from 'engine/cache';
+import { GodID, SyncState } from 'engine/constants';
+import { createBlockNumberStream } from 'engine/executors';
+import { createReconnectingProvider } from 'engine/providers';
 import {
   isNetworkComponentUpdateEvent,
   NetworkComponentUpdate,
@@ -39,9 +41,8 @@ import {
   NetworkEvents,
   SyncStateStruct,
   SyncWorkerConfig,
-} from '../types';
-import { GodID, SyncState } from './constants';
-import { debug as parentDebug } from './debug';
+} from 'engine/types';
+import { debug as parentDebug } from '../debug';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,
@@ -53,7 +54,7 @@ import {
   fetchEventsInBlockRangeChunked,
   fetchSnapshotChunked,
   getSnapshotBlockNumber,
-} from './syncUtils';
+} from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
 

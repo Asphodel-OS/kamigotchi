@@ -4,12 +4,12 @@ import { Type, createWorld, defineComponent } from '@mud-classic/recs';
 import { createNetworkConfig } from 'layers/network';
 import { SystemAbis } from 'types/SystemAbis.mjs';
 import { SystemTypes } from 'types/SystemTypes';
+import { createNetwork } from '../../engine';
 import { createAdminAPI, createPlayerAPI, setupWorldAPI } from './api';
 import { createComponents } from './components';
 import { initExplorer } from './explorer';
 import { SetupContractConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
-import { createNetwork } from './workers';
 
 export type NetworkLayer = Awaited<ReturnType<typeof createNetworkLayer>>;
 
