@@ -33,6 +33,7 @@ import { createChannel, createClient } from "nice-grpc-web";
 import { formatComponentID, formatEntityID } from "../utils";
 import { grpc } from "@improbable-eng/grpc-web";
 import { debug as parentDebug } from "./debug";
+import componentSchemas from "../../components/componentSchemas.json";
 
 const debug = parentDebug.extend("syncUtils");
 
@@ -118,6 +119,7 @@ export async function fetchSnapshotChunked(
   setPercentage?: (percentage: number) => void,
   pruneOptions?: { playerAddress: string; hashedComponentId: string }
 ): Promise<CacheStore> {
+  numChunks = 1;
   const cacheStore = createCacheStore();
   const chunkPercentage = Math.ceil(100 / numChunks);
 
@@ -184,11 +186,15 @@ export async function reduceFetchedStateV2(
   decode: ReturnType<typeof createDecode>
 ): Promise<void> {
   const { state, blockNumber, stateComponents, stateEntities } = response;
+  //console.log("stateComponents ", stateComponents)
   const stateEntitiesHex = stateEntities.map((e) => Uint8ArrayToHexString(e) as EntityID);
   const stateComponentsHex = stateComponents.map((e) => to256BitString(e));
 
   for (const { componentIdIdx, entityIdIdx, value: rawValue } of state) {
     const component = stateComponentsHex[componentIdIdx]!;
+    //console.log("componentIdIdx ", componentIdIdx)
+    //console.log("component ", component)
+    //console.log("??????")
     const entity = stateEntitiesHex[entityIdIdx]!;
     if (entity == undefined) debug("invalid entity index", stateEntities.length, entityIdIdx);
     const value = await decode(component, rawValue);
@@ -356,15 +362,32 @@ export async function fetchStateInBlockRange(
  */
 export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvider) {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
-  const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World;
+  const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World; 
+  console.log(typeof componentSchemas)
+  interface Schema {
+    keys: string[];
+    values: number[];
+  }
+  interface JsonData {
+    [key: string]: Schema;
+  }
+  const myObject: JsonData = <JsonData>componentSchemas;
+
+  for(const componentId in myObject) { 
+    decoders[componentId] = createDecoder(myObject[componentId].keys, myObject[componentId].values);
+  }
 
   async function decode(componentId: string, data: BytesLike, componentAddress?: string): Promise<ComponentValue> {
     // Create the decoder if it doesn't exist yet
-    if (!decoders[componentId]) {
+    if (!decoders[componentId]) { 
+      console.log(myObject[componentId])
       const address = componentAddress || (await world.getComponent(componentId));
-      debug("Creating decoder for", address);
+      
       const component = new Contract(address, ComponentAbi, provider) as unknown as Component;
       const [keys, values] = await component.getSchema();
+      console.log("componentId: ", componentId)
+      console.log("keys: ", keys)
+      console.log("values: ", values)
       decoders[componentId] = createDecoder(keys, values);
     }
 
