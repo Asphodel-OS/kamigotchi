@@ -21,16 +21,6 @@ import {
   take,
 } from 'rxjs';
 
-import {
-  createCacheStore,
-  getCacheStoreEntries,
-  getIndexDBCacheStoreBlockNumber,
-  getIndexDbECSCache,
-  loadIndexDbCacheStore,
-  saveCacheStoreToIndexDb,
-  storeEvent,
-  storeEvents,
-} from 'engine/cache';
 import { GodID, SyncState } from 'engine/constants';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/executors/providers';
@@ -43,6 +33,16 @@ import {
   SyncWorkerConfig,
 } from 'engine/types';
 import { debug as parentDebug } from '../debug';
+import {
+  createCacheStore,
+  getCacheStoreEntries,
+  getIndexDBCacheStoreBlockNumber,
+  getIndexDbECSCache,
+  loadIndexDbCacheStore,
+  saveCacheStoreToIndexDb,
+  storeEvent,
+  storeEvents,
+} from './cache';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,

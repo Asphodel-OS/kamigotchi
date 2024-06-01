@@ -9,7 +9,6 @@ import { BigNumber, BytesLike, Contract } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
 
-import { CacheStore, createCacheStore, storeEvent, storeEvents } from 'engine/cache';
 import { createDecoder } from 'engine/encoders';
 import {
   ContractConfig,
@@ -20,7 +19,6 @@ import {
   SystemCallTransaction,
 } from 'engine/types';
 import {
-  ECSStateReply,
   ECSStateReplyV2,
   ECSStateSnapshotServiceClient,
   ECSStateSnapshotServiceDefinition,
@@ -33,6 +31,7 @@ import {
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { debug as parentDebug } from '../debug';
 import { fetchEventsInBlockRange } from './blocks';
+import { CacheStore, createCacheStore, storeEvent, storeEvents } from './cache';
 import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
@@ -78,32 +77,6 @@ export async function getSnapshotBlockNumber(
 }
 
 /**
- * Load from the remote snapshot service.
- *
- * @param snapshotClient ECSStateSnapshotServiceClient
- * @param worldAddress Address of the World contract to get the snapshot for.
- * @param decode Function to decode raw component values ({@link createDecode}).
- * @returns Promise resolving with {@link CacheStore} containing the snapshot state.
- * @deprecated this util will be removed in a future version, use fetchSnapshotChunked instead
- */
-export async function fetchSnapshot(
-  snapshotClient: ECSStateSnapshotServiceClient,
-  worldAddress: string,
-  decode: ReturnType<typeof createDecode>
-): Promise<CacheStore> {
-  const cacheStore = createCacheStore();
-
-  try {
-    const response = await snapshotClient.getStateLatest({ worldAddress });
-    await reduceFetchedState(response, cacheStore, decode);
-  } catch (e) {
-    console.error(e);
-  }
-
-  return cacheStore;
-}
-
-/**
  * Load from the remote snapshot service in chunks via a stream.
  *
  * @param snapshotClient ECSStateSnapshotServiceClient
@@ -137,7 +110,7 @@ export async function fetchSnapshotChunked(
 
     let i = 0;
     for await (const responseChunk of response) {
-      await reduceFetchedStateV2(responseChunk, cacheStore, decode);
+      await reduceFetchedState(responseChunk, cacheStore, decode);
       setPercentage && setPercentage((i++ / numChunks) * 100);
     }
   } catch (e) {
@@ -150,42 +123,12 @@ export async function fetchSnapshotChunked(
 /**
  * Reduces a snapshot response by storing corresponding ECS events into the cache store.
  *
- * @param response ECSStateReply
- * @param cacheStore {@link CacheStore} to store snapshot state into.
- * @param decode Function to decode raw component values ({@link createDecode}).
- * @returns Promise resolving once state is reduced into {@link CacheStore}.
- * @deprecated this util will be removed in a future version, use reduceFetchedStateV2 instead
- */
-export async function reduceFetchedState(
-  response: ECSStateReply,
-  cacheStore: CacheStore,
-  decode: ReturnType<typeof createDecode>
-): Promise<void> {
-  const { state, blockNumber, stateComponents, stateEntities } = response;
-
-  for (const { componentIdIdx, entityIdIdx, value: rawValue } of state) {
-    const component = to256BitString(stateComponents[componentIdIdx]!);
-    const entity = stateEntities[entityIdIdx] as EntityID;
-    const value = await decode(component, rawValue);
-    storeEvent(cacheStore, {
-      type: NetworkEvents.NetworkComponentUpdate,
-      component,
-      entity,
-      value,
-      blockNumber,
-    });
-  }
-}
-
-/**
- * Reduces a snapshot response by storing corresponding ECS events into the cache store.
- *
  * @param response ECSStateReplyV2
  * @param cacheStore {@link CacheStore} to store snapshot state into.
  * @param decode Function to decode raw component values ({@link createDecode}).
  * @returns Promise resolving once state is reduced into {@link CacheStore}.
  */
-export async function reduceFetchedStateV2(
+export async function reduceFetchedState(
   response: ECSStateReplyV2,
   cacheStore: CacheStore,
   decode: ReturnType<typeof createDecode>
@@ -372,7 +315,6 @@ export async function fetchStateInBlockRange(
 export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvider) {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
   const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World;
-
   async function decode(
     componentId: string,
     data: BytesLike,
@@ -380,7 +322,7 @@ export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvi
   ): Promise<ComponentValue> {
     // Create the decoder if it doesn't exist yet
     if (!decoders[componentId]) {
-      const address = componentAddress || (await world.getComponent(componentId));
+      const address = componentAddress ?? (await world.getComponent(componentId));
       debug('Creating decoder for', address);
       const component = new Contract(address, ComponentAbi, provider) as unknown as Component;
       const [keys, values] = await component.getSchema();

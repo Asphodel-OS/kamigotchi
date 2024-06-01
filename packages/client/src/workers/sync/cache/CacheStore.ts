@@ -2,9 +2,9 @@ import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/rec
 import { packTuple, transformIterator, unpackTuple } from '@mud-classic/utils';
 
 import { debug as parentDebug } from 'workers/debug';
-import { NetworkComponentUpdate, NetworkEvents } from '../types';
-import { ECSStateReply } from '../types/ecs-snapshot/ecs-snapshot';
-import { formatEntityID } from '../utils';
+import { NetworkComponentUpdate, NetworkEvents } from '../../../engine/types';
+import { ECSStateReply } from '../../../engine/types/ecs-snapshot/ecs-snapshot';
+import { formatEntityID } from '../../../engine/utils';
 import { initCache } from './initCache';
 
 const debug = parentDebug.extend('CacheStore');
