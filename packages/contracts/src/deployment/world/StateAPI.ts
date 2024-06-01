@@ -37,15 +37,6 @@ export function createStateAPI(compiledCalls: string[]) {
     return call('system._Config.Set', [field, value]);
   }
 
-  // values must be ≤ 32char
-  function setConfigString(field: string, value: string) {
-    return call('system._Config.Set.String', [field, value]);
-  }
-
-  function setConfigWei(field: string, value: BigNumberish) {
-    return call('system._Config.Set.Wei', [field, value]);
-  }
-
   /////////////////
   //  NPCs
 
@@ -420,8 +411,6 @@ export function createStateAPI(compiledCalls: string[]) {
     config: {
       set: {
         number: setConfig,
-        string: setConfigString,
-        wei: setConfigWei,
       },
     },
     listing: {

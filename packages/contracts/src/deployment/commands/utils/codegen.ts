@@ -50,6 +50,13 @@ export async function generateLibDeploy(
 
   // Generate LibDeploy
   console.log('Generating deployment script');
+  // component & system import script
+  const Imports = await ejs.renderFile(path.join(contractsDir, 'Imports.ejs'), config, {
+    async: true,
+  });
+  const ImportsPath = path.join(out, 'Imports.sol');
+  await writeFile(ImportsPath, Imports);
+  // LibDeploy.sol
   const LibDeploy = await ejs.renderFile(path.join(contractsDir, 'LibDeploy.ejs'), config, {
     async: true,
   });

@@ -6,7 +6,7 @@ import { ISystem } from "solecs/interfaces/ISystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-// import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
+import "./imports.sol";
 
 import "forge-std/Script.sol";
 
@@ -33,7 +33,7 @@ contract SystemCall is Script {
   //   vm.startBroadcast(deployerPriv);
   //   return
   //     _call(
-  //       "system.Account.Register",
+  //       uint256(keccak256("system.Account.Register")),
   //       hex"00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000046e616d6500000000000000000000000000000000000000000000000000000000"
   //     );
   // }
