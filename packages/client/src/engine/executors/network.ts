@@ -1,13 +1,13 @@
-import { computed, observable, toJS } from "mobx";
-import { createSigner } from "./createSigner";
-import { createReconnectingProvider } from "../providers/createProvider";
-import { NetworkConfig } from "../types";
-import { combineLatest, concatMap, EMPTY, filter, map, throttleTime } from "rxjs";
-import { createClock } from "./createClock";
-import { fetchBlock } from "../utils";
-import { createBlockNumberStream } from "./createBlockNumberStream";
-import { Signer, Wallet } from "ethers";
-import { computedToStream } from "@mud-classic/utils";
+import { computedToStream } from '@mud-classic/utils';
+import { Signer, Wallet } from 'ethers';
+import { computed, observable, toJS } from 'mobx';
+import { EMPTY, combineLatest, concatMap, filter, map, throttleTime } from 'rxjs';
+
+import { NetworkConfig } from '../types';
+import { fetchBlock } from '../utils';
+import { createClock } from './clock';
+import { Providers, createReconnectingProvider } from './providers';
+import { createBlockNumberStream } from './utils';
 
 export type Network = Awaited<ReturnType<typeof createNetwork>>;
 
@@ -37,10 +37,14 @@ export async function createNetwork(initialConfig: NetworkConfig) {
   });
 
   // Get address
-  const initialConnectedAddress = config.provider.externalProvider ? await signer.get()?.getAddress() : undefined;
+  const initialConnectedAddress = config.provider.externalProvider
+    ? await signer.get()?.getAddress()
+    : undefined;
 
   const connectedAddress = computed(() =>
-    config.privateKey ? new Wallet(config.privateKey).address.toLowerCase() : initialConnectedAddress?.toLowerCase()
+    config.privateKey
+      ? new Wallet(config.privateKey).address.toLowerCase()
+      : initialConnectedAddress?.toLowerCase()
   );
 
   const connectedAddressChecksummed = computed(() =>
@@ -84,4 +88,8 @@ export async function createNetwork(initialConfig: NetworkConfig) {
     connectedAddress,
     connectedAddressChecksummed,
   };
+}
+
+function createSigner(privateKey: string, providers: Providers) {
+  return new Wallet(privateKey, providers.json);
 }

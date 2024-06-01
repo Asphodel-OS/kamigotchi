@@ -20,19 +20,6 @@ import { BigNumber } from 'ethers';
 import { filter } from 'rxjs';
 
 import { GodID } from 'engine/constants';
-import { Clock } from 'engine/executors';
-
-export function getCurrentTurn(
-  world: World,
-  gameConfigComponent: Component<{
-    startTime: Type.String;
-    turnLength: Type.String;
-    actionCooldownLength: Type.String;
-  }>,
-  clock: Clock
-) {
-  return getTurnAtTime(world, gameConfigComponent, clock.currentTime / 1000);
-}
 
 export function getTurnAtTime(
   world: World,

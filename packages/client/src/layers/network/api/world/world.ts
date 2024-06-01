@@ -1,4 +1,4 @@
-import { MUDJsonRpcProvider } from 'engine/providers';
+import { MUDJsonRpcProvider } from 'engine/executors/providers';
 import { createAdminAPI } from '../admin';
 import { createPlayerAPI } from '../player';
 import { initConfigs, initLocalConfigs } from './configs';

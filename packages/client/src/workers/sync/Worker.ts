@@ -33,7 +33,7 @@ import {
 } from 'engine/cache';
 import { GodID, SyncState } from 'engine/constants';
 import { createBlockNumberStream } from 'engine/executors';
-import { createReconnectingProvider } from 'engine/providers';
+import { createReconnectingProvider } from 'engine/executors/providers';
 import {
   isNetworkComponentUpdateEvent,
   NetworkComponentUpdate,

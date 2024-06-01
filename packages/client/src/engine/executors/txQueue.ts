@@ -4,9 +4,9 @@ import { Mutex } from 'async-mutex';
 import { BaseContract, BigNumber, BigNumberish, CallOverrides, Overrides } from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 
-import { ConnectionState } from '../providers/createProvider';
 import { Contracts, TxQueue } from '../types';
-import { Network } from './createNetwork';
+import { Network } from './network';
+import { ConnectionState } from './providers/create';
 import { getRevertReason } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;

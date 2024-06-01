@@ -1,8 +1,13 @@
-import { JsonRpcProvider, Networkish, Web3Provider, WebSocketProvider } from "@ethersproject/providers";
-import { callWithRetry, observableToComputed, timeoutAfter } from "@mud-classic/utils";
-import { IComputedValue, IObservableValue, observable, reaction, runInAction } from "mobx";
-import { MUDJsonRpcBatchProvider, MUDJsonRpcProvider } from "./provider";
-import { ProviderConfig } from "../types";
+import {
+  JsonRpcProvider,
+  Networkish,
+  Web3Provider,
+  WebSocketProvider,
+} from '@ethersproject/providers';
+import { callWithRetry, observableToComputed, timeoutAfter } from '@mud-classic/utils';
+import { IComputedValue, IObservableValue, observable, reaction, runInAction } from 'mobx';
+import { ProviderConfig } from '../../types';
+import { MUDJsonRpcBatchProvider, MUDJsonRpcProvider } from './MUDProviders';
 
 export type Providers = ReturnType<typeof createProvider>;
 
@@ -15,19 +20,25 @@ export type Providers = ReturnType<typeof createProvider>;
  *   ws: WebSocketProvider
  * }
  */
-export function createProvider({ chainId, jsonRpcUrl, wsRpcUrl, externalProvider, options }: ProviderConfig) {
+export function createProvider({
+  chainId,
+  jsonRpcUrl,
+  wsRpcUrl,
+  externalProvider,
+  options,
+}: ProviderConfig) {
   const network: Networkish = {
     chainId,
-    name: "mudChain",
+    name: 'mudChain',
   };
   const providers = externalProvider
     ? { json: new Web3Provider(externalProvider, network), ws: undefined }
     : {
-      json: options?.batch
-        ? new MUDJsonRpcBatchProvider(jsonRpcUrl, network)
-        : new MUDJsonRpcProvider(jsonRpcUrl, network),
-      ws: wsRpcUrl ? new WebSocketProvider(wsRpcUrl, network) : undefined,
-    };
+        json: options?.batch
+          ? new MUDJsonRpcBatchProvider(jsonRpcUrl, network)
+          : new MUDJsonRpcProvider(jsonRpcUrl, network),
+        ws: wsRpcUrl ? new WebSocketProvider(wsRpcUrl, network) : undefined,
+      };
 
   if (options?.pollingInterval) {
     providers.json.pollingInterval = options.pollingInterval;
@@ -78,7 +89,8 @@ export async function createReconnectingProvider(config: IComputedValue<Provider
     await callWithRetry(async () => {
       const newProviders = createProvider(conf);
       // If the connection is not successful, this will throw an error, triggering a retry
-      !conf?.options?.skipNetworkCheck && (await ensureNetworkIsUp(newProviders.json, newProviders.ws));
+      !conf?.options?.skipNetworkCheck &&
+        (await ensureNetworkIsUp(newProviders.json, newProviders.ws));
       runInAction(() => {
         providers.set(newProviders);
         connected.set(ConnectionState.CONNECTED);
@@ -118,7 +130,7 @@ export async function createReconnectingProvider(config: IComputedValue<Provider
     const currentProviders = providers.get();
     if (!currentProviders?.ws) return;
     try {
-      await timeoutAfter(currentProviders.ws.getBlockNumber(), 10000, "Network Request Timed out");
+      await timeoutAfter(currentProviders.ws.getBlockNumber(), 10000, 'Network Request Timed out');
     } catch {
       initProviders();
     }
@@ -141,7 +153,6 @@ export async function createReconnectingProvider(config: IComputedValue<Provider
   };
 }
 
-
 /**
  * Await network to be reachable.
  *
@@ -149,11 +160,16 @@ export async function createReconnectingProvider(config: IComputedValue<Provider
  * @param wssProvider ethers WebSocketProvider
  * @returns Promise resolving once the network is reachable
  */
-export async function ensureNetworkIsUp(provider: JsonRpcProvider, wssProvider?: WebSocketProvider): Promise<void> {
+export async function ensureNetworkIsUp(
+  provider: JsonRpcProvider,
+  wssProvider?: WebSocketProvider
+): Promise<void> {
   const networkInfoPromise = () => {
-    return Promise.all([provider.getBlockNumber(), wssProvider ? wssProvider.getBlockNumber() : Promise.resolve()]);
+    return Promise.all([
+      provider.getBlockNumber(),
+      wssProvider ? wssProvider.getBlockNumber() : Promise.resolve(),
+    ]);
   };
   await callWithRetry(networkInfoPromise, [], 10, 1000);
   return;
 }
-
