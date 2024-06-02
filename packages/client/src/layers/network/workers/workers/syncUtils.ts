@@ -184,16 +184,12 @@ export async function reduceFetchedStateV2(
   cacheStore: CacheStore,
   decode: ReturnType<typeof createDecode>
 ): Promise<void> {
-  const { state, blockNumber, stateComponents, stateEntities } = response;
-  console.log("stateComponents ", stateComponents)
+  const { state, blockNumber, stateComponents, stateEntities } = response; 
   const stateEntitiesHex = stateEntities.map((e) => Uint8ArrayToHexString(e) as EntityID);
   const stateComponentsHex = stateComponents.map((e) => to256BitString(e));
 
   for (const { componentIdIdx, entityIdIdx, value: rawValue } of state) {
-    const component = stateComponentsHex[componentIdIdx]!;
-    //console.log("componentIdIdx ", componentIdIdx)
-    //console.log("component ", component)
-    //console.log("??????")
+    const component = stateComponentsHex[componentIdIdx]!; 
     const entity = stateEntitiesHex[entityIdIdx]!;
     if (entity == undefined) debug("invalid entity index", stateEntities.length, entityIdIdx);
     const value = await decode(component, rawValue);
@@ -369,21 +365,20 @@ export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvi
   interface JsonData {
     [key: string]: Schema;
   }
-  const myObject: JsonData = <JsonData>componentSchemas;
+  const componentSchema: JsonData = <JsonData>componentSchemas;
   
-  for(const componentId in myObject) { 
-    decoders[componentId] = createDecoder(myObject[componentId].keys, myObject[componentId].values);
+  for(const componentId in componentSchema) { 
+    decoders[componentId] = createDecoder(componentSchema[componentId].keys, componentSchema[componentId].values);
   }
   
   async function decode(componentId: string, data: BytesLike, componentAddress?: string): Promise<ComponentValue> {
     // Create the decoder if it doesn't exist yet
     if (!decoders[componentId]) { 
-      console.log(myObject[componentId])
+      console.log("Missing componentId: ", componentId)  
       const address = componentAddress || (await world.getComponent(componentId));
       
       const component = new Contract(address, ComponentAbi, provider) as unknown as Component;
       const [keys, values] = await component.getSchema();
-      console.log("Missing componentId: ", componentId) 
       decoders[componentId] = createDecoder(keys, values);
     }
 
