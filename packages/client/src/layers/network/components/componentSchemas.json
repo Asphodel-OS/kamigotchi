@@ -886,5 +886,67 @@
         "values": [
             15
         ]
+    },
+    "0x017c816a964927a00e050edd780dcf113ca2756dfa9e9fda94a05c140d9317b0": {
+        "keys": [
+            "value"
+        ],
+        "values": [
+            13
+        ]
+    },
+    "0x024accd0d273ef6123273b21662f5cc055a7d58adf98cc1b060edd029af93f7f": {
+        "keys": [
+            "value"
+        ],
+        "values": [
+            15
+        ]
+    },
+    "0x036642765aca64d0dc0aa7a1a5b293901589aec219fb89c7c5e7c042e927386c": {
+        "keys": [
+            "base",
+            "shift",
+            "boost",
+            "sync"
+        ],
+        "values": [
+            3,
+            3,
+            3,
+            3
+        ]
+    },
+    "0x040fc38fe5717491c84059f73f7686f4157d14971215773d341a2ede964d65ac": {
+        "keys": [
+            "value"
+        ],
+        "values": [
+            13
+        ]
+    },
+    "0x071f2d4d401ceededbebbb9f948817d282fa65f150729530fbd14f610dc1e616": {
+        "keys": [
+            "value"
+        ],
+        "values": [
+            13
+        ]
+    },
+    "0x076fae2ce684ff843e499be243657d8fb16b0eb71350c7a9da8fa7be44c14f3e": {
+        "keys": [
+            "value"
+        ],
+        "values": [
+            10
+        ]
+    },
+    "0x0e980fab8730829e1930c8cdc024ae35650d9eec12d20425b19fc4ade883178c": {
+        "keys": [
+            "value"
+        ],
+        "values": [
+            13
+        ]
     }
 }

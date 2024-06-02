@@ -119,7 +119,6 @@ export async function fetchSnapshotChunked(
   setPercentage?: (percentage: number) => void,
   pruneOptions?: { playerAddress: string; hashedComponentId: string }
 ): Promise<CacheStore> { 
-  numChunks = 1;
   const cacheStore = createCacheStore();
   const chunkPercentage = Math.ceil(100 / numChunks);
 
@@ -371,11 +370,11 @@ export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvi
     [key: string]: Schema;
   }
   const myObject: JsonData = <JsonData>componentSchemas;
-  /*
+  
   for(const componentId in myObject) { 
     decoders[componentId] = createDecoder(myObject[componentId].keys, myObject[componentId].values);
   }
-  */
+  
   async function decode(componentId: string, data: BytesLike, componentAddress?: string): Promise<ComponentValue> {
     // Create the decoder if it doesn't exist yet
     if (!decoders[componentId]) { 
@@ -384,9 +383,7 @@ export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvi
       
       const component = new Contract(address, ComponentAbi, provider) as unknown as Component;
       const [keys, values] = await component.getSchema();
-      console.log("componentId: ", componentId)
-      console.log("keys: ", keys)
-      console.log("values: ", values)
+      console.log("Missing componentId: ", componentId) 
       decoders[componentId] = createDecoder(keys, values);
     }
 

@@ -41,7 +41,7 @@ for componentId, address in componentId_address_pairs:
     "values": component_schema[1] 
   }
 
-file_name = "ComponentSchemas.json"
+file_name = "componentSchemas.json"
 with open(file_name, 'w') as file:
     json.dump(componentId_schema_map, file, indent=4)
     
