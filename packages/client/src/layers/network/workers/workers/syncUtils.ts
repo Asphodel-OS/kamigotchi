@@ -119,6 +119,7 @@ export async function fetchSnapshotChunked(
   setPercentage?: (percentage: number) => void,
   pruneOptions?: { playerAddress: string; hashedComponentId: string }
 ): Promise<CacheStore> { 
+  numChunks = 1;
   const cacheStore = createCacheStore();
   const chunkPercentage = Math.ceil(100 / numChunks);
 
@@ -185,7 +186,7 @@ export async function reduceFetchedStateV2(
   decode: ReturnType<typeof createDecode>
 ): Promise<void> {
   const { state, blockNumber, stateComponents, stateEntities } = response;
-  //console.log("stateComponents ", stateComponents)
+  console.log("stateComponents ", stateComponents)
   const stateEntitiesHex = stateEntities.map((e) => Uint8ArrayToHexString(e) as EntityID);
   const stateComponentsHex = stateComponents.map((e) => to256BitString(e));
 
@@ -361,8 +362,7 @@ export async function fetchStateInBlockRange(
  */
 export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvider) {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
-  const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World; 
-  console.log(typeof componentSchemas)
+  const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World;  
   interface Schema {
     keys: string[];
     values: number[];
@@ -371,11 +371,11 @@ export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvi
     [key: string]: Schema;
   }
   const myObject: JsonData = <JsonData>componentSchemas;
-
+  /*
   for(const componentId in myObject) { 
     decoders[componentId] = createDecoder(myObject[componentId].keys, myObject[componentId].values);
   }
-
+  */
   async function decode(componentId: string, data: BytesLike, componentAddress?: string): Promise<ComponentValue> {
     // Create the decoder if it doesn't exist yet
     if (!decoders[componentId]) { 
