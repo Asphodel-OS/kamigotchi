@@ -118,8 +118,7 @@ export async function fetchSnapshotChunked(
   numChunks = 10,
   setPercentage?: (percentage: number) => void,
   pruneOptions?: { playerAddress: string; hashedComponentId: string }
-): Promise<CacheStore> {
-  numChunks = 1;
+): Promise<CacheStore> { 
   const cacheStore = createCacheStore();
   const chunkPercentage = Math.ceil(100 / numChunks);
 
