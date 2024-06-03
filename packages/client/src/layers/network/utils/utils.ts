@@ -1,37 +1,25 @@
 import {
   Component,
+  ComponentValue,
   EntityID,
   EntityIndex,
-  getComponentValue,
-  getComponentValueStrict,
   Has,
-  hasComponent,
   HasValue,
-  runQuery,
+  Metadata,
+  Schema,
   Type,
   World,
-  Schema,
-  ComponentValue,
   componentValueEquals,
-  Metadata,
-} from "@mud-classic/recs";
-import { Coord, keccak256 } from "@mud-classic/utils";
-import { BigNumber } from "ethers";
-import { Clock, GodID } from "layers/network/workers";
-import { deferred } from "@mud-classic/utils";
-import { filter } from "rxjs";
+  getComponentValue,
+  getComponentValueStrict,
+  hasComponent,
+  runQuery,
+} from '@mud-classic/recs';
+import { Coord, deferred, keccak256 } from '@mud-classic/utils';
+import { BigNumber } from 'ethers';
+import { filter } from 'rxjs';
 
-export function getCurrentTurn(
-  world: World,
-  gameConfigComponent: Component<{
-    startTime: Type.String;
-    turnLength: Type.String;
-    actionCooldownLength: Type.String;
-  }>,
-  clock: Clock
-) {
-  return getTurnAtTime(world, gameConfigComponent, clock.currentTime / 1000);
-}
+import { GodID } from 'engine/constants';
 
 export function getTurnAtTime(
   world: World,
@@ -53,7 +41,11 @@ export function getTurnAtTime(
 
 export function getGameConfig(
   world: World,
-  gameConfigComponent: Component<{ startTime: Type.String; turnLength: Type.String; actionCooldownLength: Type.String }>
+  gameConfigComponent: Component<{
+    startTime: Type.String;
+    turnLength: Type.String;
+    actionCooldownLength: Type.String;
+  }>
 ) {
   const godEntityIndex = world.entityToIndex.get(GodID);
   if (godEntityIndex == null) return;
@@ -99,7 +91,9 @@ export function resolveRelationshipChain(
   const { world } = relationshipComponent;
 
   while (hasComponent(relationshipComponent, entity)) {
-    const entityValue = world.entityToIndex.get(getComponentValueStrict(relationshipComponent, entity).value);
+    const entityValue = world.entityToIndex.get(
+      getComponentValueStrict(relationshipComponent, entity).value
+    );
     if (!entityValue) return;
     entity = entityValue;
   }
@@ -123,7 +117,9 @@ export function findEntityWithComponentInRelationshipChain(
   const { world } = relationshipComponent;
 
   while (hasComponent(relationshipComponent, entity)) {
-    const entityValue = world.entityToIndex.get(getComponentValueStrict(relationshipComponent, entity).value);
+    const entityValue = world.entityToIndex.get(
+      getComponentValueStrict(relationshipComponent, entity).value
+    );
     if (entityValue == null) return;
     entity = entityValue;
 
@@ -150,7 +146,9 @@ export function findInRelationshipChain(
   const { world } = relationshipComponent;
 
   while (hasComponent(relationshipComponent, entity)) {
-    const entityValue = world.entityToIndex.get(getComponentValueStrict(relationshipComponent, entity).value);
+    const entityValue = world.entityToIndex.get(
+      getComponentValueStrict(relationshipComponent, entity).value
+    );
     if (entityValue == null) return false;
     entity = entityValue;
 
@@ -250,7 +248,11 @@ export function waitForComponentValueIn<S extends Schema, T>(
   let dispose = resolve;
   const subscription = component.update$
     .pipe(
-      filter((e) => e.entity === entity && Boolean(values.find((value) => componentValueEquals(value, e.value[0]))))
+      filter(
+        (e) =>
+          e.entity === entity &&
+          Boolean(values.find((value) => componentValueEquals(value, e.value[0])))
+      )
     )
     .subscribe(() => {
       resolve();

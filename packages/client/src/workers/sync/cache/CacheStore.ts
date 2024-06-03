@@ -1,20 +1,17 @@
-import { Components, ComponentValue, EntityID, SchemaOf } from "@mud-classic/recs";
-import { packTuple, transformIterator, unpackTuple } from "@mud-classic/utils";
-import { initCache } from "./initCache";
-import { NetworkComponentUpdate, NetworkEvents } from "../types";
-import { ECSStateReply } from "../types/ecs-snapshot/ecs-snapshot";
-import { formatEntityID } from "../utils";
-import { debug as parentDebug } from "../workers/debug";
+import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
+import { packTuple, transformIterator, unpackTuple } from '@mud-classic/utils';
 
-const debug = parentDebug.extend("CacheStore");
+import { debug as parentDebug } from 'workers/debug';
+import { NetworkComponentUpdate, NetworkEvents } from '../../../engine/types';
+import { ECSStateReply } from '../../../engine/types/ecs-snapshot/ecs-snapshot';
+import { formatEntityID } from '../../../engine/utils';
+import { initCache } from './initCache';
+
+const debug = parentDebug.extend('CacheStore');
 
 export type State = Map<number, ComponentValue>;
 export type CacheStore = ReturnType<typeof createCacheStore>;
 export type ECSCache = Awaited<ReturnType<typeof getIndexDbECSCache>>;
-
-export function getCacheId(namespace: string, chainId: number, worldAddress: string) {
-  return `${namespace}-${chainId}-${worldAddress}`;
-}
 
 export function createCacheStore() {
   const components: string[] = [];
@@ -29,7 +26,12 @@ export function createCacheStore() {
 
 export function storeEvent<Cm extends Components>(
   cacheStore: CacheStore,
-  { component, entity, value, blockNumber }: Omit<NetworkComponentUpdate<Cm>, "lastEventInTx" | "txHash">
+  {
+    component,
+    entity,
+    value,
+    blockNumber,
+  }: Omit<NetworkComponentUpdate<Cm>, 'lastEventInTx' | 'txHash'>
 ) {
   // Remove the 0 padding from all entityes
   const normalizedEntity = formatEntityID(entity);
@@ -63,7 +65,7 @@ export function storeEvent<Cm extends Components>(
 
 export function storeEvents<Cm extends Components>(
   cacheStore: CacheStore,
-  events: Omit<NetworkComponentUpdate<Cm>, "lastEventInTx" | "txHash">[]
+  events: Omit<NetworkComponentUpdate<Cm>, 'lastEventInTx' | 'txHash'>[]
 ) {
   for (const event of events) {
     storeEvent(cacheStore, event);
@@ -91,7 +93,7 @@ export function getCacheStoreEntries<Cm extends Components>({
       entity: entity as EntityID,
       value: value as ComponentValue<SchemaOf<Cm[keyof Cm]>>,
       lastEventInTx: false,
-      txHash: "cache",
+      txHash: 'cache',
       blockNumber: blockNumber,
     };
 
@@ -99,36 +101,20 @@ export function getCacheStoreEntries<Cm extends Components>({
   });
 }
 
-export function mergeCacheStores(stores: CacheStore[]): CacheStore {
-  const result = createCacheStore();
-
-  // Sort by block number (increasing)
-  const sortedStores = [...stores].sort((a, b) => a.blockNumber - b.blockNumber);
-
-  // Insert the cached events into the result store (from stores with low block number to high number)
-  for (const store of sortedStores) {
-    for (const updateEvent of getCacheStoreEntries(store)) {
-      storeEvent(result, updateEvent);
-    }
-    result.blockNumber = store.blockNumber;
-  }
-
-  return result;
-}
-
 export async function saveCacheStoreToIndexDb(cache: ECSCache, store: CacheStore) {
-  debug("store cache with size", store.state.size, "at block", store.blockNumber);
-  await cache.set("ComponentValues", "current", store.state);
-  await cache.set("Mappings", "components", store.components);
-  await cache.set("Mappings", "entities", store.entities);
-  await cache.set("BlockNumber", "current", store.blockNumber);
+  debug('store cache with size', store.state.size, 'at block', store.blockNumber);
+  await cache.set('ComponentValues', 'current', store.state);
+  await cache.set('Mappings', 'components', store.components);
+  await cache.set('Mappings', 'entities', store.entities);
+  await cache.set('BlockNumber', 'current', store.blockNumber);
 }
 
 export async function loadIndexDbCacheStore(cache: ECSCache): Promise<CacheStore> {
-  const state = (await cache.get("ComponentValues", "current")) ?? new Map<number, ComponentValue>();
-  const blockNumber = (await cache.get("BlockNumber", "current")) ?? 0;
-  const components = (await cache.get("Mappings", "components")) ?? [];
-  const entities = (await cache.get("Mappings", "entities")) ?? [];
+  const state =
+    (await cache.get('ComponentValues', 'current')) ?? new Map<number, ComponentValue>();
+  const blockNumber = (await cache.get('BlockNumber', 'current')) ?? 0;
+  const components = (await cache.get('Mappings', 'components')) ?? [];
+  const entities = (await cache.get('Mappings', 'entities')) ?? [];
   const componentToIndex = new Map<string, number>();
   const entityToIndex = new Map<string, number>();
 
@@ -146,19 +132,46 @@ export async function loadIndexDbCacheStore(cache: ECSCache): Promise<CacheStore
 }
 
 export async function getIndexDBCacheStoreBlockNumber(cache: ECSCache): Promise<number> {
-  return (await cache.get("BlockNumber", "current")) ?? 0;
+  return (await cache.get('BlockNumber', 'current')) ?? 0;
 }
 
-export function getIndexDbECSCache(chainId: number, worldAddress: string, version?: number, idb?: IDBFactory) {
+export function getIndexDbECSCache(
+  chainId: number,
+  worldAddress: string,
+  version?: number,
+  idb?: IDBFactory
+) {
   return initCache<{
     ComponentValues: State;
     BlockNumber: number;
     Mappings: string[];
     Snapshot: ECSStateReply;
   }>(
-    getCacheId("ECSCache", chainId, worldAddress), // Store a separate cache for each World contract address
-    ["ComponentValues", "BlockNumber", "Mappings", "Snapshot"],
+    getCacheId('ECSCache', chainId, worldAddress), // Store a separate cache for each World contract address
+    ['ComponentValues', 'BlockNumber', 'Mappings', 'Snapshot'],
     version,
     idb
   );
+}
+
+function getCacheId(namespace: string, chainId: number, worldAddress: string) {
+  return `${namespace}-${chainId}-${worldAddress}`;
+}
+
+// unused
+function mergeCacheStores(stores: CacheStore[]): CacheStore {
+  const result = createCacheStore();
+
+  // Sort by block number (increasing)
+  const sortedStores = [...stores].sort((a, b) => a.blockNumber - b.blockNumber);
+
+  // Insert the cached events into the result store (from stores with low block number to high number)
+  for (const store of sortedStores) {
+    for (const updateEvent of getCacheStoreEntries(store)) {
+      storeEvent(result, updateEvent);
+    }
+    result.blockNumber = store.blockNumber;
+  }
+
+  return result;
 }

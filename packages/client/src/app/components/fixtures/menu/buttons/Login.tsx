@@ -1,6 +1,6 @@
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 
-import { useAccount } from 'app/store';
+import { useAccount } from 'app/stores';
 import { getAbbreviatedAddress } from 'utils/address';
 import { ActionButton, Tooltip } from '../../../library';
 

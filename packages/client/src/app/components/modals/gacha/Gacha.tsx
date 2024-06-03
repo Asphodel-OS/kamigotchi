@@ -14,7 +14,7 @@ import {
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/store';
+import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { GachaCommit, calcRerollCost, isGachaAvailable } from 'layers/network/shapes/Gacha';
 import { Kami } from 'layers/network/shapes/Kami';

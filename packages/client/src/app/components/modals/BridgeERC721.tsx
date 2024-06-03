@@ -8,7 +8,7 @@ import { useReadContract } from 'wagmi';
 import { abi } from 'abi/Pet721ProxySystem.json';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useAccount, useNetwork } from 'app/store';
+import { useAccount, useNetwork } from 'app/stores';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
 

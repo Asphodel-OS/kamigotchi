@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
 

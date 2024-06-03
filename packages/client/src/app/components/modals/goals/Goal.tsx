@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { Account, getAccountFromBurner } from 'layers/network/shapes/Account';
 import {
   Contribution,

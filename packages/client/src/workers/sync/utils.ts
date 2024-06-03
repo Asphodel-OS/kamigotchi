@@ -1,40 +1,40 @@
-import { JsonRpcProvider, Network } from "@ethersproject/providers";
-import { EntityID, ComponentValue, Components } from "@mud-classic/recs";
-import { to256BitString, awaitPromise, range, Uint8ArrayToHexString } from "@mud-classic/utils";
-import { BytesLike, Contract, BigNumber } from "ethers";
-import { Observable, map, concatMap, of, from } from "rxjs";
-import { createDecoder } from "../encoders/createDecoder";
-import { createTopics } from "../createTopics";
-import { fetchEventsInBlockRange } from "./blocks";
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { grpc } from '@improbable-eng/grpc-web';
+import { ComponentValue, Components, EntityID } from '@mud-classic/recs';
+import { abi as ComponentAbi } from '@mud-classic/solecs/abi/Component.json';
+import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
+import { Component, World } from '@mud-classic/solecs/types/ethers-contracts';
+import { Uint8ArrayToHexString, awaitPromise, range, to256BitString } from '@mud-classic/utils';
+import { BigNumber, BytesLike, Contract } from 'ethers';
+import { createChannel, createClient } from 'nice-grpc-web';
+import { Observable, concatMap, from, map, of } from 'rxjs';
+
+import { createDecoder } from 'engine/encoders';
 import {
-  ECSStateReply,
+  ContractConfig,
+  NetworkComponentUpdate,
+  NetworkEvent,
+  NetworkEvents,
+  SystemCall,
+  SystemCallTransaction,
+} from 'engine/types';
+import {
   ECSStateReplyV2,
   ECSStateSnapshotServiceClient,
   ECSStateSnapshotServiceDefinition,
-} from "../types/ecs-snapshot/ecs-snapshot";
-import {
-  NetworkComponentUpdate,
-  ContractConfig,
-  SystemCallTransaction,
-  NetworkEvents,
-  SystemCall,
-  NetworkEvent,
-} from "../types";
-import { CacheStore, createCacheStore, storeEvent, storeEvents } from "../cache/CacheStore";
-import { abi as ComponentAbi } from "@mud-classic/solecs/abi/Component.json";
-import { abi as WorldAbi } from "@mud-classic/solecs/abi/World.json";
-import { Component, World } from "@mud-classic/solecs/types/ethers-contracts";
+} from 'engine/types/ecs-snapshot/ecs-snapshot';
 import {
   ECSStreamBlockBundleReply,
   ECSStreamServiceClient,
   ECSStreamServiceDefinition,
-} from "../types/ecs-stream/ecs-stream";
-import { createChannel, createClient } from "nice-grpc-web";
-import { formatComponentID, formatEntityID } from "../utils";
-import { grpc } from "@improbable-eng/grpc-web";
-import { debug as parentDebug } from "./debug";
+} from 'engine/types/ecs-stream/ecs-stream';
+import { formatComponentID, formatEntityID } from 'engine/utils';
+import { debug as parentDebug } from '../debug';
+import { fetchEventsInBlockRange } from './blocks';
+import { CacheStore, createCacheStore, storeEvent, storeEvents } from './cache';
+import { createTopics } from './topics';
 
-const debug = parentDebug.extend("syncUtils");
+const debug = parentDebug.extend('syncUtils');
 
 /**
  * Create a ECSStateSnapshotServiceClient
@@ -77,32 +77,6 @@ export async function getSnapshotBlockNumber(
 }
 
 /**
- * Load from the remote snapshot service.
- *
- * @param snapshotClient ECSStateSnapshotServiceClient
- * @param worldAddress Address of the World contract to get the snapshot for.
- * @param decode Function to decode raw component values ({@link createDecode}).
- * @returns Promise resolving with {@link CacheStore} containing the snapshot state.
- * @deprecated this util will be removed in a future version, use fetchSnapshotChunked instead
- */
-export async function fetchSnapshot(
-  snapshotClient: ECSStateSnapshotServiceClient,
-  worldAddress: string,
-  decode: ReturnType<typeof createDecode>
-): Promise<CacheStore> {
-  const cacheStore = createCacheStore();
-
-  try {
-    const response = await snapshotClient.getStateLatest({ worldAddress });
-    await reduceFetchedState(response, cacheStore, decode);
-  } catch (e) {
-    console.error(e);
-  }
-
-  return cacheStore;
-}
-
-/**
  * Load from the remote snapshot service in chunks via a stream.
  *
  * @param snapshotClient ECSStateSnapshotServiceClient
@@ -124,19 +98,19 @@ export async function fetchSnapshotChunked(
   try {
     const response = pruneOptions
       ? snapshotClient.getStateLatestStreamPrunedV2({
-        worldAddress,
-        chunkPercentage,
-        pruneAddress: pruneOptions?.playerAddress,
-        pruneComponentId: pruneOptions?.hashedComponentId,
-      })
+          worldAddress,
+          chunkPercentage,
+          pruneAddress: pruneOptions?.playerAddress,
+          pruneComponentId: pruneOptions?.hashedComponentId,
+        })
       : snapshotClient.getStateLatestStreamV2({
-        worldAddress,
-        chunkPercentage,
-      });
+          worldAddress,
+          chunkPercentage,
+        });
 
     let i = 0;
     for await (const responseChunk of response) {
-      await reduceFetchedStateV2(responseChunk, cacheStore, decode);
+      await reduceFetchedState(responseChunk, cacheStore, decode);
       setPercentage && setPercentage((i++ / numChunks) * 100);
     }
   } catch (e) {
@@ -149,36 +123,12 @@ export async function fetchSnapshotChunked(
 /**
  * Reduces a snapshot response by storing corresponding ECS events into the cache store.
  *
- * @param response ECSStateReply
- * @param cacheStore {@link CacheStore} to store snapshot state into.
- * @param decode Function to decode raw component values ({@link createDecode}).
- * @returns Promise resolving once state is reduced into {@link CacheStore}.
- * @deprecated this util will be removed in a future version, use reduceFetchedStateV2 instead
- */
-export async function reduceFetchedState(
-  response: ECSStateReply,
-  cacheStore: CacheStore,
-  decode: ReturnType<typeof createDecode>
-): Promise<void> {
-  const { state, blockNumber, stateComponents, stateEntities } = response;
-
-  for (const { componentIdIdx, entityIdIdx, value: rawValue } of state) {
-    const component = to256BitString(stateComponents[componentIdIdx]!);
-    const entity = stateEntities[entityIdIdx] as EntityID;
-    const value = await decode(component, rawValue);
-    storeEvent(cacheStore, { type: NetworkEvents.NetworkComponentUpdate, component, entity, value, blockNumber });
-  }
-}
-
-/**
- * Reduces a snapshot response by storing corresponding ECS events into the cache store.
- *
  * @param response ECSStateReplyV2
  * @param cacheStore {@link CacheStore} to store snapshot state into.
  * @param decode Function to decode raw component values ({@link createDecode}).
  * @returns Promise resolving once state is reduced into {@link CacheStore}.
  */
-export async function reduceFetchedStateV2(
+export async function reduceFetchedState(
   response: ECSStateReplyV2,
   cacheStore: CacheStore,
   decode: ReturnType<typeof createDecode>
@@ -190,9 +140,15 @@ export async function reduceFetchedStateV2(
   for (const { componentIdIdx, entityIdIdx, value: rawValue } of state) {
     const component = stateComponentsHex[componentIdIdx]!;
     const entity = stateEntitiesHex[entityIdIdx]!;
-    if (entity == undefined) debug("invalid entity index", stateEntities.length, entityIdIdx);
+    if (entity == undefined) debug('invalid entity index', stateEntities.length, entityIdIdx);
     const value = await decode(component, rawValue);
-    storeEvent(cacheStore, { type: NetworkEvents.NetworkComponentUpdate, component, entity, value, blockNumber });
+    storeEvent(cacheStore, {
+      type: NetworkEvents.NetworkComponentUpdate,
+      component,
+      entity,
+      value,
+      blockNumber,
+    });
   }
 }
 
@@ -261,7 +217,9 @@ export function createLatestEventStreamRPC(
   return blockNumber$.pipe(
     map(async (blockNumber) => {
       const from =
-        lastSyncedBlockNumber == null || lastSyncedBlockNumber >= blockNumber ? blockNumber : lastSyncedBlockNumber + 1;
+        lastSyncedBlockNumber == null || lastSyncedBlockNumber >= blockNumber
+          ? blockNumber
+          : lastSyncedBlockNumber + 1;
       const to = blockNumber;
       lastSyncedBlockNumber = to;
       const events = await fetchWorldEvents(from, to);
@@ -357,12 +315,15 @@ export async function fetchStateInBlockRange(
 export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvider) {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
   const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World;
-
-  async function decode(componentId: string, data: BytesLike, componentAddress?: string): Promise<ComponentValue> {
+  async function decode(
+    componentId: string,
+    data: BytesLike,
+    componentAddress?: string
+  ): Promise<ComponentValue> {
     // Create the decoder if it doesn't exist yet
     if (!decoders[componentId]) {
-      const address = componentAddress || (await world.getComponent(componentId));
-      debug("Creating decoder for", address);
+      const address = componentAddress ?? (await world.getComponent(componentId));
+      debug('Creating decoder for', address);
       const component = new Contract(address, ComponentAbi, provider) as unknown as Component;
       const [keys, values] = await component.getSchema();
       decoders[componentId] = createDecoder(keys, values);
@@ -382,7 +343,7 @@ export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvi
 export function createWorldTopics() {
   // @ts-ignore
   return createTopics<{ World: World }>({
-    World: { abi: WorldAbi, topics: ["ComponentValueSet", "ComponentValueRemoved"] },
+    World: { abi: WorldAbi, topics: ['ComponentValueSet', 'ComponentValueRemoved'] },
   });
 }
 
@@ -404,7 +365,14 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
 
   // Fetches World events in the provided block range (including from and to)
   return async (from: number, to: number) => {
-    const contractsEvents = await fetchEventsInBlockRange(provider, topics, from, to, { World: worldConfig }, batch);
+    const contractsEvents = await fetchEventsInBlockRange(
+      provider,
+      topics,
+      from,
+      to,
+      { World: worldConfig },
+      batch
+    );
     const ecsEvents: NetworkComponentUpdate<C>[] = [];
 
     for (const event of contractsEvents) {
@@ -435,11 +403,11 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
         txHash,
       } as NetworkComponentUpdate<C>;
 
-      if (event.eventKey === "ComponentValueRemoved") {
+      if (event.eventKey === 'ComponentValueRemoved') {
         ecsEvents.push(ecsEvent);
       }
 
-      if (event.eventKey === "ComponentValueSet") {
+      if (event.eventKey === 'ComponentValueSet') {
         const value = await decode(component, data, address);
         ecsEvents.push({ ...ecsEvent, value });
       }
@@ -470,7 +438,10 @@ export function createTransformWorldEventsFromStream(decode: ReturnType<typeof c
       const component = formatComponentID(rawComponentId);
       const entity = formatEntityID(entityId);
 
-      const value = ecsEvent.eventType === "ComponentValueSet" ? await decode(component, ecsEvent.value) : undefined;
+      const value =
+        ecsEvent.eventType === 'ComponentValueSet'
+          ? await decode(component, ecsEvent.value)
+          : undefined;
 
       // Since ECS events are coming in ordered over the wire, we check if the following event has a
       // different transaction then the current, which would mean an event associated with another
@@ -494,14 +465,17 @@ export function createTransformWorldEventsFromStream(decode: ReturnType<typeof c
 }
 
 function groupByTxHash(events: NetworkComponentUpdate[]) {
-  return events.reduce((acc, event) => {
-    if (["worker", "cache"].includes(event.txHash)) return acc;
+  return events.reduce(
+    (acc, event) => {
+      if (['worker', 'cache'].includes(event.txHash)) return acc;
 
-    if (!acc[event.txHash]) acc[event.txHash] = [];
-    acc[event.txHash]!.push(event);
+      if (!acc[event.txHash]) acc[event.txHash] = [];
+      acc[event.txHash]!.push(event);
 
-    return acc;
-  }, {} as { [key: string]: NetworkComponentUpdate[] });
+      return acc;
+    },
+    {} as { [key: string]: NetworkComponentUpdate[] }
+  );
 }
 
 function parseSystemCallTransactionFromStreamNetworkComponentUpdate(event: NetworkComponentUpdate) {
@@ -524,7 +498,9 @@ export function parseSystemCallsFromStreamEvents(events: NetworkComponentUpdate[
   for (const txHash of Object.keys(transactionHashToEvents)) {
     // All ECS events include the information needed to parse the SysytemCallTransasction out, so it doesn't
     // matter which one we take here.
-    const tx = parseSystemCallTransactionFromStreamNetworkComponentUpdate(transactionHashToEvents[txHash]![0]!);
+    const tx = parseSystemCallTransactionFromStreamNetworkComponentUpdate(
+      transactionHashToEvents[txHash]![0]!
+    );
     if (!tx) continue;
 
     systemCalls.push({
@@ -564,7 +540,7 @@ export function createFetchSystemCallsFromEvents(provider: JsonRpcProvider) {
   };
 }
 
-function createFetchSystemCallData(fetchBlock: ReturnType<typeof createBlockCache>["fetchBlock"]) {
+function createFetchSystemCallData(fetchBlock: ReturnType<typeof createBlockCache>['fetchBlock']) {
   return async (txHash: string, blockNumber: number) => {
     const block = await fetchBlock(blockNumber);
     if (!block) return;

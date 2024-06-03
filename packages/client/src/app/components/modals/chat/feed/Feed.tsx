@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
-import { useAccount, useVisibility } from 'app/store';
+import { useAccount, useVisibility } from 'app/stores';
 import { pollChannelCasts } from 'src/clients/neynar';
 import { Message } from './Message';
 

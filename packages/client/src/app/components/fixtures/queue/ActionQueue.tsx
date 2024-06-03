@@ -4,7 +4,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import { Controls } from './Controls';
 import { Logs } from './Logs';
 

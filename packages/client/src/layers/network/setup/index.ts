@@ -1,3 +1,10 @@
-export * from "./setupMUDNetwork";
-export * from "./utils";
-export * from "./types";
+export { setupMUDNetwork } from './setupMUDNetwork';
+export type {
+  ContractComponent,
+  ContractComponents,
+  DecodedNetworkComponentUpdate,
+  DecodedSystemCall,
+  NetworkComponents,
+  SetupContractConfig,
+} from './types';
+export * from './utils';

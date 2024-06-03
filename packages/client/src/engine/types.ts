@@ -1,11 +1,14 @@
-import { Result } from "@ethersproject/abi";
-import { ExternalProvider } from "@ethersproject/providers";
-import { Components, ComponentValue, EntityID, SchemaOf } from "@mud-classic/recs";
-import { Cached } from "@mud-classic/utils";
-import { TxMetadata } from "./types/ecs-stream/ecs-stream";
-import { BaseContract, BigNumber, ContractInterface } from "ethers";
-import { Observable } from "rxjs";
-import { SyncState } from "./workers";
+import { Result } from '@ethersproject/abi';
+import { ExternalProvider } from '@ethersproject/providers';
+import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
+import { Cached } from '@mud-classic/utils';
+import { BaseContract, BigNumber, ContractInterface } from 'ethers';
+
+import { SyncState } from 'engine/constants';
+import { ClockConfig } from './executors';
+import { TxMetadata } from './types/ecs-stream/ecs-stream';
+
+// NOTE: this file is a monstrosity that needs to be broken out across multiple files
 
 export interface NetworkConfig {
   chainId: number;
@@ -21,20 +24,6 @@ export interface NetworkConfig {
   encoders?: boolean;
   pruneOptions?: { playerAddress: string; hashedComponentId: string };
 }
-
-export interface ClockConfig {
-  period: number;
-  initialTime: number;
-  syncInterval: number;
-}
-
-export type Clock = {
-  time$: Observable<number>;
-  currentTime: number;
-  lastUpdateTime: number;
-  update: (time: number, maintainStale?: boolean) => void;
-  dispose: () => void;
-};
 
 export interface ProviderConfig {
   chainId: number;
@@ -58,11 +47,6 @@ export type ContractsConfig<C extends Contracts> = {
 };
 
 export type TxQueue<C extends Contracts> = Cached<C>;
-
-export type ContractTopics = {
-  key: string;
-  topics: string[][];
-};
 
 export type ContractEvent<C extends Contracts> = {
   contractKey: keyof C;
@@ -105,11 +89,13 @@ export type SystemCall<C extends Components = Components> = {
 };
 
 export enum NetworkEvents {
-  SystemCall = "SystemCall",
-  NetworkComponentUpdate = "NetworkComponentUpdate",
+  SystemCall = 'SystemCall',
+  NetworkComponentUpdate = 'NetworkComponentUpdate',
 }
 
-export type NetworkEvent<C extends Components = Components> = NetworkComponentUpdate<C> | SystemCall<C>;
+export type NetworkEvent<C extends Components = Components> =
+  | NetworkComponentUpdate<C>
+  | SystemCall<C>;
 
 export function isSystemCallEvent<C extends Components>(e: NetworkEvent<C>): e is SystemCall<C> {
   return e.type === NetworkEvents.SystemCall;
@@ -174,40 +160,40 @@ export enum ContractSchemaValue {
 }
 
 export const ContractSchemaValueId: { [key in ContractSchemaValue]: string } = {
-  [ContractSchemaValue.BOOL]: "bool",
-  [ContractSchemaValue.INT8]: "int8",
-  [ContractSchemaValue.INT16]: "int16",
-  [ContractSchemaValue.INT32]: "int32",
-  [ContractSchemaValue.INT64]: "int64",
-  [ContractSchemaValue.INT128]: "int128",
-  [ContractSchemaValue.INT256]: "int256",
-  [ContractSchemaValue.INT]: "int",
-  [ContractSchemaValue.UINT8]: "uint8",
-  [ContractSchemaValue.UINT16]: "uint16",
-  [ContractSchemaValue.UINT32]: "uint32",
-  [ContractSchemaValue.UINT64]: "uint64",
-  [ContractSchemaValue.UINT128]: "uint128",
-  [ContractSchemaValue.UINT256]: "uint256",
-  [ContractSchemaValue.BYTES]: "bytes",
-  [ContractSchemaValue.STRING]: "string",
-  [ContractSchemaValue.ADDRESS]: "address",
-  [ContractSchemaValue.BYTES4]: "bytes4",
-  [ContractSchemaValue.BOOL_ARRAY]: "bool[]",
-  [ContractSchemaValue.INT8_ARRAY]: "int8[]",
-  [ContractSchemaValue.INT16_ARRAY]: "int16[]",
-  [ContractSchemaValue.INT32_ARRAY]: "int32[]",
-  [ContractSchemaValue.INT64_ARRAY]: "int64[]",
-  [ContractSchemaValue.INT128_ARRAY]: "int128[]",
-  [ContractSchemaValue.INT256_ARRAY]: "int256[]",
-  [ContractSchemaValue.INT_ARRAY]: "int[]",
-  [ContractSchemaValue.UINT8_ARRAY]: "uint8[]",
-  [ContractSchemaValue.UINT16_ARRAY]: "uint16[]",
-  [ContractSchemaValue.UINT32_ARRAY]: "uint32[]",
-  [ContractSchemaValue.UINT64_ARRAY]: "uint64[]",
-  [ContractSchemaValue.UINT128_ARRAY]: "uint128[]",
-  [ContractSchemaValue.UINT256_ARRAY]: "uint256[]",
-  [ContractSchemaValue.BYTES_ARRAY]: "bytes[]",
-  [ContractSchemaValue.STRING_ARRAY]: "string[]",
+  [ContractSchemaValue.BOOL]: 'bool',
+  [ContractSchemaValue.INT8]: 'int8',
+  [ContractSchemaValue.INT16]: 'int16',
+  [ContractSchemaValue.INT32]: 'int32',
+  [ContractSchemaValue.INT64]: 'int64',
+  [ContractSchemaValue.INT128]: 'int128',
+  [ContractSchemaValue.INT256]: 'int256',
+  [ContractSchemaValue.INT]: 'int',
+  [ContractSchemaValue.UINT8]: 'uint8',
+  [ContractSchemaValue.UINT16]: 'uint16',
+  [ContractSchemaValue.UINT32]: 'uint32',
+  [ContractSchemaValue.UINT64]: 'uint64',
+  [ContractSchemaValue.UINT128]: 'uint128',
+  [ContractSchemaValue.UINT256]: 'uint256',
+  [ContractSchemaValue.BYTES]: 'bytes',
+  [ContractSchemaValue.STRING]: 'string',
+  [ContractSchemaValue.ADDRESS]: 'address',
+  [ContractSchemaValue.BYTES4]: 'bytes4',
+  [ContractSchemaValue.BOOL_ARRAY]: 'bool[]',
+  [ContractSchemaValue.INT8_ARRAY]: 'int8[]',
+  [ContractSchemaValue.INT16_ARRAY]: 'int16[]',
+  [ContractSchemaValue.INT32_ARRAY]: 'int32[]',
+  [ContractSchemaValue.INT64_ARRAY]: 'int64[]',
+  [ContractSchemaValue.INT128_ARRAY]: 'int128[]',
+  [ContractSchemaValue.INT256_ARRAY]: 'int256[]',
+  [ContractSchemaValue.INT_ARRAY]: 'int[]',
+  [ContractSchemaValue.UINT8_ARRAY]: 'uint8[]',
+  [ContractSchemaValue.UINT16_ARRAY]: 'uint16[]',
+  [ContractSchemaValue.UINT32_ARRAY]: 'uint32[]',
+  [ContractSchemaValue.UINT64_ARRAY]: 'uint64[]',
+  [ContractSchemaValue.UINT128_ARRAY]: 'uint128[]',
+  [ContractSchemaValue.UINT256_ARRAY]: 'uint256[]',
+  [ContractSchemaValue.BYTES_ARRAY]: 'bytes[]',
+  [ContractSchemaValue.STRING_ARRAY]: 'string[]',
 };
 
 export const ContractSchemaValueArrayToElement = {

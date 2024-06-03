@@ -9,10 +9,10 @@ import { useAccount, useConnect } from 'wagmi';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useNetwork, useVisibility } from 'app/store';
+import { useNetwork, useVisibility } from 'app/stores';
 import { wagmiConfig } from 'clients/wagmi';
 import { defaultChain } from 'constants/chains';
-import { createNetworkInstance, updateNetworkLayer } from 'layers/network/createNetworkLayer';
+import { createNetworkInstance, updateNetworkLayer } from 'layers/network';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.

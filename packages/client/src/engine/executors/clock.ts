@@ -1,5 +1,18 @@
-import { ReplaySubject } from "rxjs";
-import { Clock, ClockConfig } from "../types";
+import { Observable, ReplaySubject } from 'rxjs';
+
+export interface ClockConfig {
+  period: number;
+  initialTime: number;
+  syncInterval: number;
+}
+
+export type Clock = {
+  time$: Observable<number>;
+  currentTime: number;
+  lastUpdateTime: number;
+  update: (time: number, maintainStale?: boolean) => void;
+  dispose: () => void;
+};
 
 /**
  * Create a clock optimistically keeping track of the current chain time.

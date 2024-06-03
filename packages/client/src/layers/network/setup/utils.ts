@@ -1,37 +1,37 @@
+import { JsonRpcProvider } from '@ethersproject/providers';
 import {
-  Ack,
-  ack,
-  createEncoder,
+  Component,
+  Components,
+  EntityID,
+  EntityIndex,
+  getComponentEntities,
+  getComponentValue,
+  getComponentValueStrict,
+  removeComponent,
+  Schema,
+  setComponent,
+  Type,
+  World,
+} from '@mud-classic/recs';
+import { Component as SolecsComponent } from '@mud-classic/solecs';
+import ComponentAbi from '@mud-classic/solecs/abi/Component.json';
+import { toEthAddress } from '@mud-classic/utils';
+import { BigNumber, Contract, Signer } from 'ethers';
+import { compact, toLower } from 'lodash';
+import { IComputedValue } from 'mobx';
+import { filter, map, Observable, Subject, timer } from 'rxjs';
+
+import { createEncoder } from 'engine/encoders';
+import {
   isNetworkComponentUpdateEvent,
   isSystemCallEvent,
   Mappings,
   NetworkComponentUpdate,
   NetworkEvent,
   SystemCall,
-} from "layers/network/workers";
-import {
-  Components,
-  World,
-  Schema,
-  Type,
-  EntityID,
-  getComponentValue,
-  removeComponent,
-  setComponent,
-  EntityIndex,
-  getComponentEntities,
-  getComponentValueStrict,
-  Component,
-} from "@mud-classic/recs";
-import { toEthAddress } from "@mud-classic/utils";
-import { Component as SolecsComponent } from "@mud-classic/solecs";
-import ComponentAbi from "@mud-classic/solecs/abi/Component.json";
-import { Contract, BigNumber, Signer } from "ethers";
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { toLower, compact } from "lodash";
-import { IComputedValue } from "mobx";
-import { filter, map, Observable, Subject, timer } from "rxjs";
-import { DecodedNetworkComponentUpdate, DecodedSystemCall } from "./types";
+} from 'engine/types';
+import { Ack, ack } from 'workers/sync';
+import { DecodedNetworkComponentUpdate, DecodedSystemCall } from './types';
 
 export function createDecodeNetworkComponentUpdate<C extends Components>(
   world: World,
@@ -39,7 +39,8 @@ export function createDecodeNetworkComponentUpdate<C extends Components>(
   mappings: Mappings<C>
 ): (update: NetworkComponentUpdate) => DecodedNetworkComponentUpdate | undefined {
   return (update: NetworkComponentUpdate) => {
-    const entityIndex = world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
+    const entityIndex =
+      world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
     const componentKey = mappings[update.component];
     if (!componentKey) {
       console.error(`
@@ -57,7 +58,10 @@ export function createDecodeNetworkComponentUpdate<C extends Components>(
   };
 }
 
-export function createSystemCallStreams<C extends Components, SystemTypes extends { [key: string]: Contract }>(
+export function createSystemCallStreams<
+  C extends Components,
+  SystemTypes extends { [key: string]: Contract },
+>(
   world: World,
   systemNames: string[],
   systemsRegistry: Component<{ value: Type.String }>,
@@ -65,7 +69,10 @@ export function createSystemCallStreams<C extends Components, SystemTypes extend
   decodeNetworkComponentUpdate: ReturnType<typeof createDecodeNetworkComponentUpdate>
 ) {
   const systemCallStreams = systemNames.reduce(
-    (streams, systemId) => ({ ...streams, [systemId]: new Subject<DecodedSystemCall<SystemTypes>>() }),
+    (streams, systemId) => ({
+      ...streams,
+      [systemId]: new Subject<DecodedSystemCall<SystemTypes>>(),
+    }),
     {} as Record<string, Subject<DecodedSystemCall<SystemTypes, C>>>
   );
 
@@ -74,7 +81,9 @@ export function createSystemCallStreams<C extends Components, SystemTypes extend
     decodeAndEmitSystemCall: (systemCall: SystemCall<C>) => {
       const { tx } = systemCall;
 
-      const systemEntityIndex = world.entityToIndex.get(toLower(BigNumber.from(tx.to).toHexString()) as EntityID);
+      const systemEntityIndex = world.entityToIndex.get(
+        toLower(BigNumber.from(tx.to).toHexString()) as EntityID
+      );
       if (!systemEntityIndex) return;
 
       const hashedSystemId = getComponentValue(systemsRegistry, systemEntityIndex)?.value;
@@ -109,7 +118,7 @@ export async function createEncoders(
   async function fetchAndCreateEncoder(entity: EntityIndex) {
     const componentAddress = toEthAddress(world.entities[entity]);
     const componentId = getComponentValueStrict(components, entity).value;
-    console.info("[SyncUtils] Creating encoder for " + componentAddress);
+    console.info('[SyncUtils] Creating encoder for ' + componentAddress);
     const componentContract = new Contract(
       componentAddress,
       ComponentAbi.abi,
@@ -123,7 +132,9 @@ export async function createEncoders(
   for (const entity of getComponentEntities(components)) fetchAndCreateEncoder(entity);
 
   // Keep up to date
-  const subscription = components.update$.subscribe((update) => fetchAndCreateEncoder(update.entity));
+  const subscription = components.update$.subscribe((update) =>
+    fetchAndCreateEncoder(update.entity)
+  );
   world.registerDisposer(() => subscription?.unsubscribe());
 
   return encoders;
@@ -157,10 +168,11 @@ export function applyNetworkUpdates<C extends Components>(
       if (isNetworkComponentUpdateEvent<C>(update)) {
         if (update.lastEventInTx) txReduced$.next(update.txHash);
 
-        const entityIndex = world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
+        const entityIndex =
+          world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
         const componentKey = mappings[update.component];
         if (!componentKey) {
-          console.warn("Unknown component:", update);
+          console.warn('Unknown component:', update);
           continue;
         }
 

@@ -1,10 +1,16 @@
-import { ethers, VoidSigner } from "ethers";
-import { Contracts, ContractTopics } from "./types";
+import { ethers, VoidSigner } from 'ethers';
 
-export type TopicsConfig<C extends Contracts> = {
+import { Contracts } from 'engine/types';
+
+export type ContractTopics = {
+  key: string;
+  topics: string[][];
+};
+
+type TopicsConfig<C extends Contracts> = {
   [ContractType in keyof C]: {
     abi: ethers.ContractInterface;
-    topics: (keyof C[ContractType]["filters"])[];
+    topics: (keyof C[ContractType]['filters'])[];
   };
 };
 

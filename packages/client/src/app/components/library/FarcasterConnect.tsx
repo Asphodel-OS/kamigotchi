@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { IconButton, Tooltip } from 'app/components/library';
-import { useAccount, useNetwork } from 'app/store';
+import { useAccount, useNetwork } from 'app/stores';
 import { farcasterLogo } from 'assets/images/logos';
 import { Account } from 'layers/network/shapes/Account';
 import { ActionSystem } from 'layers/network/systems/ActionSystem';

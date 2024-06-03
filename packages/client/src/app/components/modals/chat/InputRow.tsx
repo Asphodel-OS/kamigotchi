@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { FarcasterConnect, InputSingleTextForm } from 'app/components/library';
-import { useAccount } from 'app/store';
+import { useAccount } from 'app/stores';
 import { chatIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
 import { ActionSystem } from 'layers/network/systems';

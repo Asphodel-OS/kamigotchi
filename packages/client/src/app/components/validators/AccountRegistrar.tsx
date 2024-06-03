@@ -22,7 +22,7 @@ import {
   useAccount,
   useNetwork,
   useVisibility,
-} from 'app/store';
+} from 'app/stores';
 import {
   Account,
   getAccount,

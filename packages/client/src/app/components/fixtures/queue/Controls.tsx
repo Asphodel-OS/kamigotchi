@@ -4,7 +4,7 @@ import { formatEther } from 'viem';
 import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
 import { GasGauge, IconButton, Tooltip } from 'app/components/library';
-import { useAccount } from 'app/store';
+import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';
 import { parseTokenBalance } from 'utils/balances';

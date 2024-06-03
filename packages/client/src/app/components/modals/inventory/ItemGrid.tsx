@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ItemIcon } from 'app/components/library';
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import { Inventory } from 'layers/network/shapes/Inventory';
 
 interface Props {

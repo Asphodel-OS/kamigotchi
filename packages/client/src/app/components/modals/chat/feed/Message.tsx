@@ -2,7 +2,7 @@ import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { Farcaster } from 'app/store';
+import { Farcaster } from 'app/stores';
 import { likeCast, unlikeCast } from 'src/clients/neynar';
 import { playClick } from 'utils/sounds';
 

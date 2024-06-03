@@ -1,4 +1,4 @@
-import { useVisibility, Validators } from 'app/store';
+import { useVisibility, Validators } from 'app/stores';
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 

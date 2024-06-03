@@ -1,4 +1,4 @@
-import { useVisibility } from 'app/store';
+import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
 export const triggerPetMintModal = () => {

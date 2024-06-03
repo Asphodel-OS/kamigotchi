@@ -11,8 +11,8 @@ import { deferred, keccak256, toEthAddress } from '@mud-classic/utils';
 import { Contract, ContractInterface, Signer } from 'ethers';
 import { observable, runInAction } from 'mobx';
 
-import { Network } from './createNetwork';
-import { createTxQueue } from './createTxQueue';
+import { Network } from './network';
+import { createTxQueue } from './txQueue';
 
 /**
  * Create a system executor object.

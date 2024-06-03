@@ -20,6 +20,19 @@ import {
   Subject,
   take,
 } from 'rxjs';
+
+import { GodID, SyncState } from 'engine/constants';
+import { createBlockNumberStream } from 'engine/executors';
+import { createReconnectingProvider } from 'engine/executors/providers';
+import {
+  isNetworkComponentUpdateEvent,
+  NetworkComponentUpdate,
+  NetworkEvent,
+  NetworkEvents,
+  SyncStateStruct,
+  SyncWorkerConfig,
+} from 'engine/types';
+import { debug as parentDebug } from '../debug';
 import {
   createCacheStore,
   getCacheStoreEntries,
@@ -29,19 +42,7 @@ import {
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
-} from '../cache/CacheStore';
-import { createBlockNumberStream } from '../executors/createBlockNumberStream';
-import { createReconnectingProvider } from '../providers/createProvider';
-import {
-  isNetworkComponentUpdateEvent,
-  NetworkComponentUpdate,
-  NetworkEvent,
-  NetworkEvents,
-  SyncStateStruct,
-  SyncWorkerConfig,
-} from '../types';
-import { GodID, SyncState } from './constants';
-import { debug as parentDebug } from './debug';
+} from './cache';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,
@@ -53,7 +54,7 @@ import {
   fetchEventsInBlockRangeChunked,
   fetchSnapshotChunked,
   getSnapshotBlockNumber,
-} from './syncUtils';
+} from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
 

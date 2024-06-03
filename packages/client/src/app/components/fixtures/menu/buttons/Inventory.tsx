@@ -1,5 +1,5 @@
 import { MenuButton } from 'app/components/library';
-import { Modals } from 'app/store';
+import { Modals } from 'app/stores';
 import { inventoryIcon } from 'assets/images/icons/menu';
 
 export const InventoryMenuButton = () => {

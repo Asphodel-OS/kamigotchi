@@ -3,7 +3,7 @@ import { interval, map } from 'rxjs';
 
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/store';
+import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { getKamiConfig } from 'layers/network/shapes/Config';
 import { Kami } from 'layers/network/shapes/Kami';

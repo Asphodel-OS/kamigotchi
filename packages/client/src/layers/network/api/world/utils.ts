@@ -1,4 +1,4 @@
-import { MUDJsonRpcProvider } from 'layers/network/workers/providers/provider';
+import { MUDJsonRpcProvider } from 'engine/executors/providers';
 
 export function sleepIf() {
   const urlParams = new URLSearchParams(window.location.search);

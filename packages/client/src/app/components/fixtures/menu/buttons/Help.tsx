@@ -1,7 +1,7 @@
 import { helpIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'app/components/library';
-import { Modals } from 'app/store';
+import { Modals } from 'app/stores';
 
 export const HelpMenuButton = () => {
   const modalsToHide: Partial<Modals> = {

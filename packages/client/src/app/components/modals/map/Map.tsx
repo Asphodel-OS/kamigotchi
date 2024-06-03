@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected, useVisibility } from 'app/store';
+import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Room, getAllRooms } from 'layers/network/shapes/Room';

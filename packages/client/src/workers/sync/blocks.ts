@@ -1,10 +1,10 @@
-import { Formatter, JsonRpcProvider, Log } from "@ethersproject/providers";
-import { callWithRetry, range, sleep } from "@mud-classic/utils";
-import { BigNumber, Contract } from "ethers";
-import { resolveProperties, defaultAbiCoder as abi } from "ethers/lib/utils";
+import { Formatter, JsonRpcProvider, Log } from '@ethersproject/providers';
+import { callWithRetry, range, sleep } from '@mud-classic/utils';
+import { BigNumber, Contract } from 'ethers';
+import { resolveProperties } from 'ethers/lib/utils';
 
-import { Contracts, ContractTopics, ContractEvent, ContractsConfig } from "../types";
-
+import { ContractEvent, Contracts, ContractsConfig } from 'engine/types';
+import { ContractTopics } from './topics';
 
 /**
  * Fetch events from block range, ordered by block, transaction index and log index
@@ -66,7 +66,8 @@ export async function fetchEventsInBlockRange<C extends Contracts>(
     const contractKey = addressToContractKey[log.address.toLowerCase()];
     if (!contractKey) {
       throw new Error(
-        "This should not happen. An event's address is not part of the contracts dictionnary: " + log.address
+        "This should not happen. An event's address is not part of the contracts dictionnary: " +
+          log.address
       );
     }
 
@@ -86,7 +87,7 @@ export async function fetchEventsInBlockRange<C extends Contracts>(
         lastEventInTx,
       });
     } catch (e) {
-      console.warn("Error", e);
+      console.warn('Error', e);
       console.warn("A log couldn't be parsed with the corresponding contract interface!");
     }
   }
@@ -113,7 +114,10 @@ export async function fetchLogs<C extends Contracts>(
   contracts: ContractsConfig<C>,
   requireMinimumBlockNumber?: number
 ): Promise<Array<Log>> {
-  const getLogPromise = async (contractAddress: string, topics: string[][]): Promise<Array<Log>> => {
+  const getLogPromise = async (
+    contractAddress: string,
+    topics: string[][]
+  ): Promise<Array<Log>> => {
     const params = await resolveProperties({
       filter: provider._getFilter({
         fromBlock: startBlockNumber, // inclusive
@@ -122,7 +126,7 @@ export async function fetchLogs<C extends Contracts>(
         topics: topics,
       }),
     });
-    const logs: Array<Log> = await provider.perform("getLogs", params);
+    const logs: Array<Log> = await provider.perform('getLogs', params);
     logs.forEach((log) => {
       if (log.removed == null) {
         log.removed = false;
@@ -132,7 +136,7 @@ export async function fetchLogs<C extends Contracts>(
   };
 
   const blockPromise = async () => {
-    const _blockNumber = await provider.perform("getBlockNumber", {});
+    const _blockNumber = await provider.perform('getBlockNumber', {});
     const blockNumber = BigNumber.from(_blockNumber).toNumber();
     return blockNumber;
   };
@@ -151,14 +155,19 @@ export async function fetchLogs<C extends Contracts>(
   if (requireMinimumBlockNumber) {
     for (const _ in range(10)) {
       const call = () => Promise.all([blockPromise(), ...getLogPromises()]);
-      const [blockNumber, logs] = await callWithRetry<[number, ...Array<Array<Log>>]>(call, [], 10, 1000);
+      const [blockNumber, logs] = await callWithRetry<[number, ...Array<Array<Log>>]>(
+        call,
+        [],
+        10,
+        1000
+      );
       if (blockNumber < requireMinimumBlockNumber) {
         await sleep(500);
       } else {
         return (logs ?? []).flat();
       }
     }
-    throw new Error("Could not fetch logs with a required minimum block number");
+    throw new Error('Could not fetch logs with a required minimum block number');
   } else {
     const call = () => Promise.all([...getLogPromises()]);
     const logs = await callWithRetry<Array<Array<Log>>>(call, [], 10, 1000);
