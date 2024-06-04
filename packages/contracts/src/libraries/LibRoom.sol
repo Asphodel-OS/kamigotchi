@@ -7,8 +7,8 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Coord, CoordLib } from "components/types/Coord.sol";
 
-import { IdRoomComponent, ID as IdRoomCompID } from "components/IdRoomComponent.sol";
-import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
+import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.sol";
+import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -57,8 +57,8 @@ library LibRoom {
     if (condIndex != 0) LibBoolean.setIndex(components, id, condIndex);
     if (condValue != 0) LibBoolean.setBalance(components, id, condValue);
 
-    IdRoomComponent(getAddressById(components, IdRoomCompID)).set(id, genGateAtPtr(roomIndex));
-    IdPointerComponent sourceComp = IdPointerComponent(getAddressById(components, IdPointerCompID));
+    IDRoomComponent(getAddressById(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
+    IDPointerComponent sourceComp = IDPointerComponent(getAddressById(components, IDPointerCompID));
     if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
     else sourceComp.set(id, 0);
   }
@@ -75,8 +75,8 @@ library LibRoom {
   }
 
   function removeGate(IUintComp components, uint256 id) internal {
-    IdRoomComponent(getAddressById(components, IdRoomCompID)).remove(id);
-    IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(id);
+    IDRoomComponent(getAddressById(components, IDRoomCompID)).remove(id);
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
 
     LibBoolean.remove(components, id);
     LibBoolean.unsetIndex(components, id);
@@ -198,12 +198,12 @@ library LibRoom {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IdRoomCompID),
+      getComponentById(components, IDRoomCompID),
       abi.encode(genGateAtPtr(toIndex))
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IdPointerCompID),
+      getComponentById(components, IDPointerCompID),
       abi.encode(0)
     );
 
@@ -221,9 +221,9 @@ library LibRoom {
     IUintComp components,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    uint256[] memory gatesTo = IdRoomComponent(getAddressById(components, IdRoomCompID))
+    uint256[] memory gatesTo = IDRoomComponent(getAddressById(components, IDRoomCompID))
       .getEntitiesWithValue(genGateAtPtr(toIndex));
-    uint256[] memory gatesFrom = IdPointerComponent(getAddressById(components, IdPointerCompID))
+    uint256[] memory gatesFrom = IDPointerComponent(getAddressById(components, IDPointerCompID))
       .getEntitiesWithValue(genGateSourcePtr(toIndex));
     return LibArray.concat(gatesTo, gatesFrom);
   }

@@ -10,7 +10,7 @@ import { DescriptionAltComponent, ID as DescAltCompID } from "components/Descrip
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
-import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
+import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
@@ -208,7 +208,7 @@ library LibQuestRegistry {
   }
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IdPointerComponent(getAddressById(components, IdPointerCompID)).set(id, ownerID);
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, ownerID);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
@@ -269,8 +269,8 @@ library LibQuestRegistry {
   }
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    if (IdPointerComponent(getAddressById(components, IdPointerCompID)).has(id)) {
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(id);
+    if (IDPointerComponent(getAddressById(components, IDPointerCompID)).has(id)) {
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
     }
   }
 
@@ -387,7 +387,7 @@ library LibQuestRegistry {
     uint256 pointer
   ) internal view returns (uint256[] memory) {
     return
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).getEntitiesWithValue(pointer);
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(pointer);
   }
 
   /////////////////

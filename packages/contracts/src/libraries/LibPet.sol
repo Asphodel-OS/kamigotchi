@@ -10,7 +10,7 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 import { Stat } from "components/types/Stat.sol";
 
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
-import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
+import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
@@ -256,7 +256,7 @@ library LibPet {
 
   // Check whether a pet is attached to an account
   function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).has(id);
+    return IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).has(id);
   }
 
   // Check whether a pet is dead.
@@ -330,7 +330,7 @@ library LibPet {
   // SETTERS
 
   function setOwner(IUintComp components, uint256 id, uint256 accountID) internal {
-    IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).set(id, accountID);
+    IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).set(id, accountID);
   }
 
   // add or remove the CanName component
@@ -411,7 +411,7 @@ library LibPet {
 
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).get(id);
+    return IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).get(id);
   }
 
   // null string might not be very useful, may be better for a has check
@@ -498,7 +498,7 @@ library LibPet {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    IdOwnsPetComponent comp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    IDOwnsPetComponent comp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       results[i] = comp.get(ids[i]);
@@ -532,7 +532,7 @@ library LibPet {
   ) internal view returns (uint256[] memory) {
     return
       LibQuery.getIsWithValue(
-        getComponentById(components, IdOwnsPetCompID),
+        getComponentById(components, IDOwnsPetCompID),
         getComponentById(components, IsPetCompID),
         abi.encode(accountID)
       );

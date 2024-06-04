@@ -11,7 +11,7 @@ import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQue
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
 import { ID as IsPetCompID } from "components/IsPetComponent.sol";
-import { IdPointerComponent, ID as IdPointerCompID } from "components/IdPointerComponent.sol";
+import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
@@ -155,7 +155,7 @@ library LibSkillRegistry {
   // SETTERS
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IdPointerComponent(getAddressById(components, IdPointerCompID)).set(id, ownerID);
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, ownerID);
   }
 
   function setIsEffect(IUintComp components, uint256 id) internal {
@@ -229,7 +229,7 @@ library LibSkillRegistry {
   // UNSETTERS
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    IdPointerComponent(getAddressById(components, IdPointerCompID)).remove(id);
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
   }
 
   function unsetIsEffect(IUintComp components, uint256 id) internal {
@@ -383,7 +383,7 @@ library LibSkillRegistry {
     uint32 index
   ) internal view returns (uint256[] memory) {
     return
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).getEntitiesWithValue(
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(
         genEffectPtr(index)
       );
   }
@@ -394,7 +394,7 @@ library LibSkillRegistry {
     uint32 index
   ) internal view returns (uint256[] memory) {
     return
-      IdPointerComponent(getAddressById(components, IdPointerCompID)).getEntitiesWithValue(
+      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(
         genReqPtr(index)
       );
   }

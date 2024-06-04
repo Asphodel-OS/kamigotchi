@@ -6,6 +6,6 @@ uint256 constant ID = uint256(keccak256("component.id.score.type"));
 
 // IdScoreType is a reverse mapping that points to the entity that describes a score
 // this can be a hash(score type, epoch), or an entity like a Goal
-contract IdScoreTypeComponent is Uint256Component {
+contract IDScoreTypeComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

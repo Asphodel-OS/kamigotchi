@@ -275,13 +275,13 @@ contract GachaTest is SetupTemplate {
   ////////////////
 
   function _assertInGacha(uint256 petID) internal {
-    assertEq(_IdOwnsPetComponent.get(petID), GACHA_ID);
+    assertEq(_IDOwnsPetComponent.get(petID), GACHA_ID);
     assertTrue(!_RerollComponent.has(petID));
   }
 
   function _assertOutGacha(uint256 petID, uint256 account, uint256 rerolls) internal {
     account = _getAccount(account);
-    assertEq(_IdOwnsPetComponent.get(petID), account);
+    assertEq(_IDOwnsPetComponent.get(petID), account);
     assertEq(_RerollComponent.get(petID), rerolls);
     assertEq(_StateComponent.get(petID), "RESTING");
   }
