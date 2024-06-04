@@ -12,80 +12,79 @@ import { deleteTraits, initTraits } from './state/traits';
 
 import { AdminAPI, createAdminAPI } from './admin';
 
-/// @note not currently in use, but archived in the codebase to potentially be useful someday
 /**
  * This is adapted off world.ts from the client package.
- *
- * Not implemented
  */
 
-export async function run() {
-  const compiledCalls: string[] = [];
-  const state = createAdminAPI(compiledCalls);
-  await setUpWorld(state).init();
-  writeOutput(compiledCalls);
-}
+export function createWorldAPI() {
+  async function genCalls(func: (api: AdminAPI) => Promise<void>) {
+    const compiledCalls: string[] = [];
+    const state = createAdminAPI(compiledCalls);
+    await func(state);
+    writeOutput(compiledCalls);
+  }
 
-function setUpWorld(api: AdminAPI) {
-  async function initAll() {
-    // await initConfigs(api);
-    // await initRooms(api);
-    // await initNodes(api);
-    // await initItems(api);
-    // await initNpcs(api);
-    // await initQuests(api);
-    // await initSkills(api);
-    // await initTraits(api);
-    // await initRelationships(api);
-    // await initGoals(api);
+  async function initAll(api: AdminAPI) {
+    await initConfigs(api);
+    await initRooms(api);
+    await initNodes(api);
+    await initItems(api);
+    await initNpcs(api);
+    await initQuests(api);
+    await initSkills(api);
+    await initTraits(api);
+    await initRelationships(api);
+    await initGoals(api);
 
-    await initGachaPool(api, 333);
+    await initGachaPool(api, 50);
   }
 
   return {
-    init: initAll,
+    init: () => genCalls(initAll),
     config: {
-      init: () => initConfigs(api),
+      init: () => genCalls(initConfigs),
     },
     goals: {
-      init: () => initGoals(api),
-      delete: (indices: number[]) => deleteGoals(api, indices),
+      init: () => genCalls(initGoals),
+      delete: (indices: number[]) => genCalls((api) => deleteGoals(api, indices)),
     },
     items: {
-      init: () => initItems(api),
-      delete: (indices: number[]) => deleteItems(api, indices),
+      init: () => genCalls(initItems),
+      delete: (indices: number[]) => genCalls((api) => deleteItems(api, indices)),
     },
     npcs: {
-      init: () => initNpcs(api),
+      init: () => genCalls(initNpcs),
     },
     nodes: {
-      init: () => initNodes(api),
-      delete: (indices: number[]) => deleteNodes(api, indices),
+      init: () => genCalls(initNodes),
+      delete: (indices: number[]) => genCalls((api) => deleteNodes(api, indices)),
     },
     mint: {
-      init: (n: number) => initGachaPool(api, n),
+      init: (n: number) => genCalls((api) => initGachaPool(api, n)),
     },
     quests: {
-      init: () => initQuests(api),
-      initByIndex: (indices: number[]) => initQuestsByIndex(api, indices),
-      delete: (indices: number[]) => deleteQuests(api, indices),
+      init: () => genCalls(initQuests),
+      initByIndex: (indices: number[]) => genCalls((api) => initQuestsByIndex(api, indices)),
+      delete: (indices: number[]) => genCalls((api) => deleteQuests(api, indices)),
     },
     relationships: {
-      init: () => initRelationships(api),
-      delete: (npcs: number[], indices: number[]) => deleteRelationships(api, indices, npcs),
+      init: () => genCalls(initRelationships),
+      delete: (npcs: number[], indices: number[]) =>
+        genCalls((api) => deleteRelationships(api, indices, npcs)),
     },
     rooms: {
-      init: () => initRooms(api),
-      initByIndex: (i: number) => initRoom(api, i),
-      delete: (indices: number[]) => deleteRooms(api, indices),
+      init: () => genCalls(initRooms),
+      initByIndex: (i: number) => genCalls((api) => initRoom(api, i)),
+      delete: (indices: number[]) => genCalls((api) => deleteRooms(api, indices)),
     },
     skill: {
-      init: (indices?: number[]) => initSkills(api, indices),
-      delete: (indices: number[]) => deleteSkills(api, indices),
+      init: (indices?: number[]) => genCalls((api) => initSkills(api, indices)),
+      delete: (indices: number[]) => genCalls((api) => deleteSkills(api, indices)),
     },
     traits: {
-      init: () => initTraits(api),
-      delete: (indices: number[], types: string[]) => deleteTraits(api, indices, types),
+      init: () => genCalls(initTraits),
+      delete: (indices: number[], types: string[]) =>
+        genCalls((api) => deleteTraits(api, indices, types)),
     },
   };
 }
@@ -99,5 +98,3 @@ function writeOutput(data: string[]) {
     encoding: 'utf8',
   });
 }
-
-run();
