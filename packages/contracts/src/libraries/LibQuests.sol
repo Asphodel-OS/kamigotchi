@@ -8,7 +8,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
@@ -388,7 +388,7 @@ library LibQuests {
   // SETTERS
 
   function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    BalanceComponent(getAddressById(components, BalCompID)).set(id, value);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   function setCompleted(IUintComp components, uint256 id) internal {
@@ -432,7 +432,7 @@ library LibQuests {
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    BalanceComponent(getAddressById(components, BalCompID)).remove(id);
+    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   function unsetCompleted(IUintComp components, uint256 id) internal {
@@ -467,7 +467,7 @@ library LibQuests {
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     return comp.has(id) ? comp.get(id) : 0;
   }
 

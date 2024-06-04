@@ -81,7 +81,7 @@ export const getLootboxLog = (
   components: Components,
   index: EntityIndex
 ): LootboxLog => {
-  const { Balance, Balances, IsRegistry, ItemIndex, RevealBlock, Keys, Time, Weights } = components;
+  const { Value, Values, IsRegistry, ItemIndex, RevealBlock, Keys, Time, Weights } = components;
 
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
   const regID = Array.from(
@@ -92,7 +92,7 @@ export const getLootboxLog = (
     id: world.entities[index],
     entityIndex: index,
     isRevealed: !hasComponent(RevealBlock, index),
-    balance: getComponentValue(Balance, index)?.value as number,
+    balance: getComponentValue(Value, index)?.value as number,
     index: itemIndex,
     time: getComponentValue(Time, index)?.value as number,
     droptable: {
@@ -104,7 +104,7 @@ export const getLootboxLog = (
   if (!log.isRevealed) {
     log.revealBlock = getComponentValue(RevealBlock, index)?.value as number;
   } else {
-    log.droptable.results = getComponentValue(Balances, index)?.value as number[];
+    log.droptable.results = getComponentValue(Values, index)?.value as number[];
   }
 
   return log;

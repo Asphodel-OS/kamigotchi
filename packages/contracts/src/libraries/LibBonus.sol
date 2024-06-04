@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { BalanceSignedComponent as IntBalComp, ID as IntBalCompID } from "components/BalanceSignedComponent.sol";
+import { ValueSignedComponent as SignedValComp, ID as SignedValCompID } from "components/ValueSignedComponent.sol";
 import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -22,14 +22,14 @@ library LibBonus {
 
   function inc(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
     uint256 id = genID(holderID, type_);
-    IntBalComp comp = IntBalComp(getAddressById(components, IntBalCompID));
+    SignedValComp comp = SignedValComp(getAddressById(components, SignedValCompID));
     int256 curr = comp.has(id) ? comp.get(id) : int256(0);
     comp.set(id, curr + amt);
   }
 
   function dec(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
     uint256 id = genID(holderID, type_);
-    IntBalComp comp = IntBalComp(getAddressById(components, IntBalCompID));
+    SignedValComp comp = SignedValComp(getAddressById(components, SignedValCompID));
     int256 curr = comp.has(id) ? comp.get(id) : int256(0);
     comp.set(id, curr - amt);
   }
@@ -67,7 +67,7 @@ library LibBonus {
     string memory type_
   ) internal view returns (int256) {
     uint256 id = genID(holderID, type_);
-    IntBalComp comp = IntBalComp(getAddressById(components, IntBalCompID));
+    SignedValComp comp = SignedValComp(getAddressById(components, SignedValCompID));
     return comp.has(id) ? comp.get(id) : int256(0);
   }
 

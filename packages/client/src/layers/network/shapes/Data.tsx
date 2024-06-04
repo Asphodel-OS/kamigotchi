@@ -11,13 +11,13 @@ export const getData = (
   type: string,
   index?: number
 ): number => {
-  const { BareValue } = components;
+  const { Value } = components;
   const configEntityIndex = getEntityIndex(world, id, index ? index : 0, type);
   if (!configEntityIndex) {
     // console.warn(`data field not found for ${type}`);
     return 0;
   }
-  return (getComponentValue(BareValue, configEntityIndex)?.value as number) * 1;
+  return (getComponentValue(Value, configEntityIndex)?.value as number) * 1;
 };
 
 const getEntityIndex = (

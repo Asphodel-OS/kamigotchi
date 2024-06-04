@@ -100,14 +100,14 @@ export const getEffect = (
   components: Components,
   entityIndex: EntityIndex
 ): Effect => {
-  const { BalanceSigned, Subtype, Type } = components;
+  const { ValueSigned, Subtype, Type } = components;
 
   let effect: Effect = {
     id: world.entities[entityIndex],
     type: getComponentValue(Type, entityIndex)?.value || ('' as string),
     subtype: getComponentValue(Subtype, entityIndex)?.value || ('' as string),
     value:
-      BigNumber.from(getComponentValue(BalanceSigned, entityIndex)?.value || 0)
+      BigNumber.from(getComponentValue(ValueSigned, entityIndex)?.value || 0)
         .fromTwos(256)
         .toNumber() || (0 as number),
   };
@@ -121,7 +121,7 @@ export const getRequirement = (
   components: Components,
   entityIndex: EntityIndex
 ): Requirement => {
-  const { Balance, Index, LogicType, Type } = components;
+  const { Value, Index, LogicType, Type } = components;
 
   return {
     id: world.entities[entityIndex],
@@ -129,7 +129,7 @@ export const getRequirement = (
     target: {
       type: getComponentValue(Type, entityIndex)?.value || ('' as string),
       index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Balance, entityIndex)?.value,
+      value: getComponentValue(Value, entityIndex)?.value,
     },
   };
 };

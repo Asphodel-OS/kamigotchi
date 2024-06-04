@@ -115,7 +115,7 @@ export const canClaim = (goal: Goal, contribution: Contribution | undefined): [b
 // SHAPES
 
 export const getGoal = (world: World, components: Components, entityIndex: EntityIndex): Goal => {
-  const { Balance, Description, Index, IsComplete, Name, RoomIndex } = components;
+  const { Value, Description, Index, IsComplete, Name, RoomIndex } = components;
   const goalID = world.entities[entityIndex];
   const goalIndex = getComponentValue(Index, entityIndex)?.value || (0 as number);
 
@@ -124,7 +124,7 @@ export const getGoal = (world: World, components: Components, entityIndex: Entit
     index: goalIndex,
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     description: getComponentValue(Description, entityIndex)?.value || ('' as string),
-    currBalance: getComponentValue(Balance, entityIndex)?.value || (0 as number),
+    currBalance: getComponentValue(Value, entityIndex)?.value || (0 as number),
     objective: getCondition(world, components, getObjEntityIndex(world, goalID)),
     requirements: queryGoalRequirements(world, components, goalIndex),
     rewards: queryGoalRewards(world, components, goalIndex),
@@ -161,12 +161,12 @@ const getContribution = (
   entityIndex: EntityIndex,
   account: Account
 ): Contribution => {
-  const { Balance, IsComplete } = components;
+  const { Value, IsComplete } = components;
 
   return {
     account: account,
     claimed: getComponentValue(IsComplete, entityIndex)?.value || (false as boolean),
-    score: getComponentValue(Balance, entityIndex)?.value || (0 as number),
+    score: getComponentValue(Value, entityIndex)?.value || (0 as number),
   };
 };
 

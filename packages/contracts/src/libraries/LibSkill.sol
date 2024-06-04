@@ -16,7 +16,6 @@ import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { SkillPointComponent, ID as SPCompID } from "components/SkillPointComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
@@ -204,10 +203,6 @@ library LibSkill {
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     return TypeComponent(getAddressById(components, TypeCompID)).get(id);
-  }
-
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
   }
 
   // get the point value of a specific skill for a target

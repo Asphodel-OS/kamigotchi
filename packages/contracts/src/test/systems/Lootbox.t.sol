@@ -54,7 +54,7 @@ contract LootboxTest is SetupTemplate {
         (uint256)
       );
       assertEq(_IndexItemComponent.get(revealID), lootboxIndex);
-      assertEq(_BalanceComponent.get(revealID), useAmt);
+      assertEq(_ValueComponent.get(revealID), useAmt);
       assertEq(_IdHolderComponent.get(revealID), _getAccount(0));
       assertEq(_BlockRevealComponent.get(revealID), _currBlock);
 
