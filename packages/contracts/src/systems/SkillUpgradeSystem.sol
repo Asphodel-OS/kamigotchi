@@ -35,13 +35,7 @@ contract SkillUpgradeSystem is System {
       require(accountID == holderID, "SkillUpgrade: not ur account");
     } else if (isPet) {
       require(accountID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
-      require(
-        LibPet.getRoom(components, holderID) == LibAccount.getRoom(components, accountID),
-        "SkillUpgrade: must be in same room"
-      );
-
-      // NOTE: we don't block skill upgrading by cooldown time or pet status
-      // but we need to sync in advance to get accurate historical output
+      require(LibPet.isResting(components, holderID), "SkillUpgrade: pet not resting");
       LibPet.sync(components, holderID);
     }
 
@@ -65,11 +59,6 @@ contract SkillUpgradeSystem is System {
     for (uint256 i = 0; i < effectIDs.length; i++) {
       LibSkill.processEffectUpgrade(components, holderID, effectIDs[i]);
     }
-
-    // NOTE: we sync the pet a second time here, because the updated Production Rate
-    // informs the FE. it's gas inefficient, but it keeps the code sane up there.
-    // Can consider wiping once the calculations are mirrored on the FE.
-    if (isPet) LibPet.sync(components, holderID);
 
     // standard logging and tracking
     LibSkill.logUsePoint(components, accountID);

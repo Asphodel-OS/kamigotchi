@@ -1,4 +1,4 @@
-import { Kami } from 'layers/network/shapes/Kami';
+import { Kami, isResting } from 'layers/network/shapes/Kami';
 import styled from 'styled-components';
 
 import { ExperienceBar, Tooltip } from 'app/components/library';
@@ -66,6 +66,7 @@ export const Banner = (props: Props) => {
 
   const getLevelUpDisabledReason = () => {
     if (!isMine(kami)) return 'not ur kami';
+    if (!isResting(kami)) return 'kami must be resting';
   };
 
   const handleAccountClick = () => {

@@ -1,4 +1,3 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -14,12 +13,11 @@ interface Props {
   kami: Kami;
   skills: Skill[]; // registry skills
   actions: {
-    upgrade: (skill: Skill) => EntityIndex;
+    upgrade: (skill: Skill) => void;
   };
   utils: {
     getUpgradeError: (index: number, registry: Map<number, Skill>) => string[] | undefined;
     getTreePoints: (tree: string) => number;
-    updateKamiAfterAction: (actionIndex: EntityIndex) => void;
   };
 }
 
@@ -61,7 +59,6 @@ export const Skills = (props: Props) => {
         utils={{
           getSkillImage,
           getTreePoints: utils.getTreePoints,
-          updateKamiAfterAction: utils.updateKamiAfterAction,
         }}
       />
       <Matrix

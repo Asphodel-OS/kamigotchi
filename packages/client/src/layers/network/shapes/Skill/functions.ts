@@ -2,7 +2,7 @@ import { World } from '@mud-classic/recs';
 import { Components } from 'layers/network';
 import { Account } from '../Account';
 import { getData } from '../Data';
-import { Kami, isDead, isOffWorld, isStarving, isWithAccount } from '../Kami';
+import { Kami, isDead, isHarvesting, isOffWorld, isStarving } from '../Kami';
 import { checkCondition } from '../utils/Conditionals';
 import { Effect, Requirement, Skill } from './types';
 
@@ -33,8 +33,8 @@ export const getUpgradeError = (
   // status/roomIndex check
   if (isDead(kami)) return [`${kami.name} is Dead`];
   if (isOffWorld(kami)) return [`${kami.name} is Off World`];
-  if (isStarving(kami)) return [`${kami.name} is Starving`];
-  if (!isWithAccount(kami)) return [`${kami.name} is too far away.`];
+  if (isStarving(kami)) return [`${kami.name} is busy Starving`];
+  if (isHarvesting(kami)) return [`${kami.name} is busy Harvesting`];
 
   // tree check
   if (rSkill.treeTier > 0) {

@@ -85,7 +85,7 @@ export function registerKamiModal() {
       };
 
       const levelUp = (kami: Kami) => {
-        actions.add({
+        const actionIndex = actions.add({
           action: 'KamiLevel',
           params: [kami.id],
           description: `Leveling up ${kami.name}`,
@@ -93,6 +93,7 @@ export function registerKamiModal() {
             return api.player.pet.level(kami.id);
           },
         });
+        updateKamiAfterAction(actionIndex);
       };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
@@ -104,7 +105,7 @@ export function registerKamiModal() {
             return api.player.skill.upgrade(kami.id, skill.index);
           },
         });
-        return actionIndex;
+        updateKamiAfterAction(actionIndex);
       };
 
       /////////////////
@@ -134,7 +135,6 @@ export function registerKamiModal() {
                 getUpgradeError: (index: number, registry: Map<number, Skill>) =>
                   getSkillUpgradeError(world, components, index, kami, registry),
                 getTreePoints: (tree: string) => getTreePoints(world, components, kami, tree),
-                updateKamiAfterAction,
               }}
             />
           )}

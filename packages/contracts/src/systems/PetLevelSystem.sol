@@ -23,10 +23,7 @@ contract PetLevelSystem is System {
     // standard checks (type check, ownership, roomIndex)
     require(LibPet.isPet(components, id), "PetLevel: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "PetLevel: not urs");
-    require(
-      LibPet.getRoom(components, id) == LibAccount.getRoom(components, accountID),
-      "PetLevel: must be in same room"
-    );
+    require(LibPet.isResting(components, id), "PetLevel: pet not resting");
 
     // check that the pet meets the experience requirement
     uint256 levelCost = LibExperience.calcLevelCost(components, id);
