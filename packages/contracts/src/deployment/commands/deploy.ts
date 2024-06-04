@@ -60,6 +60,7 @@ const run = async () => {
   );
 
   await setAutoMine(mode, false);
+  await setTimestamp(mode);
 };
 
 const getDeployerKey = (mode: string) => {
@@ -82,6 +83,14 @@ const setAutoMine = async (mode: string, on: boolean) => {
   if (mode === 'DEV') {
     const provider = new JsonRpcProvider(process.env.DEV_RPC!);
     await provider.send(`${on ? 'anvil_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
+  }
+};
+
+const setTimestamp = async (mode: string) => {
+  if (mode === 'DEV') {
+    const provider = new JsonRpcProvider(process.env.DEV_RPC!);
+    const timestamp = Math.floor(new Date().getTime() / 1000);
+    await provider.send('evm_setNextBlockTimestamp', [timestamp]);
   }
 };
 

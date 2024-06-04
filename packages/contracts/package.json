@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "----- TOP LEVEL COMMANDS -----": "---------------------------",
-    "abi": "pnpm abi:gen && pnpm abi:types && pnpm abi:clean",
+    "abi": "pnpm abi:gen && pnpm abi:types && pnpm abi:deploy:gen && pnpm abi:clean",
     "build": "pnpm codegen && rimraf out && pnpm build:systems && pnpm abi",
     "codegen": "pnpm codegen:imports && pnpm codegen:deploy && pnpm codegen:tests",
     "deploy": "pnpm deploy:script",

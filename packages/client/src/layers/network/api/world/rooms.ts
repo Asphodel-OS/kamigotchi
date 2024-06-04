@@ -10,11 +10,9 @@ export async function initRooms(api: AdminAPI) {
       // console.log(room);
       await sleepIf();
       await api.room.create(
-        {
-          x: Number(room['X']),
-          y: Number(room['Y']),
-          z: Number(room['Z']),
-        },
+        Number(room['X']),
+        Number(room['Y']),
+        Number(room['Z']),
         Number(room['Index']),
         room['Name'],
         room['Description'],
@@ -38,11 +36,9 @@ export async function initRoom(api: AdminAPI, roomIndex: number) {
   if (!room) return;
 
   await api.room.create(
-    {
-      x: Number(room['X']),
-      y: Number(room['Y']),
-      z: Number(room['Z']),
-    },
+    Number(room['X']),
+    Number(room['Y']),
+    Number(room['Z']),
     Number(room['Index']),
     room['Name'],
     room['Description'],

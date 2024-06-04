@@ -62,12 +62,16 @@ export function createAdminAPI(systems: any) {
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create'].executeTyped(goalIndex, name, description, roomIndex, [
+    return systems['system.Goal.Create'].executeTyped(
+      goalIndex,
+      name,
+      description,
+      roomIndex,
       type,
       logic,
       conIndex,
-      conValue,
-    ]);
+      conValue
+    );
   }
 
   async function createGoalRequirement(
@@ -78,12 +82,13 @@ export function createAdminAPI(systems: any) {
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create.Requirement'].executeTyped(goalIndex, [
+    return systems['system.Goal.Create.Requirement'].executeTyped(
+      goalIndex,
       type,
       logic,
       conIndex,
-      conValue,
-    ]);
+      conValue
+    );
   }
 
   async function createGoalReward(
@@ -96,12 +101,15 @@ export function createAdminAPI(systems: any) {
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create.Reward'].executeTyped(goalIndex, name, cutoff, [
+    return systems['system.Goal.Create.Reward'].executeTyped(
+      goalIndex,
+      name,
+      cutoff,
       type,
       logic,
       conIndex,
-      conValue,
-    ]);
+      conValue
+    );
   }
 
   async function deleteGoal(goalIndex: number) {
@@ -280,7 +288,9 @@ export function createAdminAPI(systems: any) {
 
   // @dev creates a room with name, roomIndex and exits. cannot overwrite room at roomIndex
   async function createRoom(
-    location: { x: number; y: number; z: number },
+    x: number,
+    y: number,
+    z: number,
     roomIndex: number,
     name: string,
     description: string,
@@ -288,7 +298,9 @@ export function createAdminAPI(systems: any) {
   ) {
     await sleepIf();
     return systems['system._Room.Create'].executeTyped(
-      location,
+      x,
+      y,
+      z,
       roomIndex,
       name,
       description,
