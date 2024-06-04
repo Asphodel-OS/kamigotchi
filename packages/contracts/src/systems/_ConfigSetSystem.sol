@@ -21,6 +21,10 @@ contract _ConfigSetSystem is System {
     return "";
   }
 
+  function executeTyped(string memory name, uint256 value) public onlyOwner returns (bytes memory) {
+    return execute(abi.encode(name, value));
+  }
+
   function setValue(string memory name, uint256 value) public onlyOwner {
     uint256 configID = LibConfig.getID(name);
     LibConfig.setValue(components, configID, value);

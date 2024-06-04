@@ -69,6 +69,7 @@
     "@openzeppelin/contracts": "^4.9.0",
     "@solidstate/contracts": "^0.0.52",
     "@types/minimatch": "^5.1.2",
+    "csv-parse": "^5.5.6",
     "dotenv-cli": "^7.2.1",
     "erc721a": "^4.2.3",
     "glob": "7.2.0",

@@ -162,16 +162,25 @@ ${systems.map((system, index) => `  "${ids[index]}": ${system}.abi,`).join('\n')
 }
 
 /**
- * Generate SystemAbis.ts from client system config
+ * Generate SystemAbis.ts & SystemMappings.ts from client system config
  * Copies over mud autogen system abis into a here
  * needed to bypass esm/cjs/node stuff
  */
-export async function generateSystemAbis() {
-  const outPath = path.join(deploymentDir, 'world/abis/SystemAbis.ts');
+export async function generateAbiMappings() {
+  // copying ABIs
+  const outPath = path.join(deploymentDir, 'world/mappings/SystemAbis.ts');
   const original = await readFile(path.join(clientDir, 'types/SystemAbis.mjs'), {
     encoding: 'utf8',
   });
   const result = original.replace(/..\/abi/g, '../../../../../client/abi');
   await writeFile(outPath, result);
+
+  // copying mappings
+  const outPathMapping = path.join(deploymentDir, 'world/mappings/SystemMappings.ts');
+  const mappings = await readFile(path.join(clientDir, 'types/SystemMappings.ts'), {
+    encoding: 'utf8',
+  });
+  await writeFile(outPathMapping, mappings);
+
   return;
 }

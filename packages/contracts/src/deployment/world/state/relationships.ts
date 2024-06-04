@@ -2,7 +2,6 @@
 // RELATIONSHIPS
 
 import { AdminAPI } from '../admin';
-import { sleepIf } from './utils';
 
 export async function initRelationships(api: AdminAPI) {
   //        /->8->9-\
@@ -23,7 +22,6 @@ export async function initRelationships(api: AdminAPI) {
 
 export async function deleteRelationships(api: AdminAPI, npcs: number[], indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
-    await sleepIf();
     try {
       await api.registry.relationship.delete(npcs[i], indices[i]);
     } catch {

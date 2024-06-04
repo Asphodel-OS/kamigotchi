@@ -1,10 +1,10 @@
-import effectsCSV from 'assets/data/skills/effects.csv';
-import skillsCSV from 'assets/data/skills/skills.csv';
 import { AdminAPI } from '../admin';
-import { sleepIf } from './utils';
+import { readFile } from './utils';
 
 // inits all skills or by optional indices parameter
 export async function initSkills(api: AdminAPI, indices?: number[]) {
+  const skillsCSV = await readFile('skills/Skills.csv');
+  const effectsCSV = await readFile('skills/Effects.csv');
   for (let i = 0; i < skillsCSV.length; i++) {
     const skill = skillsCSV[i];
     const index = Number(skill['Index']);
@@ -14,8 +14,7 @@ export async function initSkills(api: AdminAPI, indices?: number[]) {
 
     try {
       await initSkill(api, skill);
-      await sleepIf();
-      await initEffect(api, skill);
+      await initEffect(api, skill, effectsCSV);
       await initMutualExclusionRequirement(api, skill);
     } catch (e) {
       console.error(`Could not create skill ${index}`, e);
@@ -48,7 +47,7 @@ async function initSkill(api: AdminAPI, skill: any) {
   );
 }
 
-async function initEffect(api: AdminAPI, skill: any) {
+async function initEffect(api: AdminAPI, skill: any, effectsCSV: any) {
   const index = Number(skill['Index']);
   const key = skill['Effect'].split(' ')[0];
   const effect = effectsCSV.find((e: any) => e['Key'] === key);
@@ -75,7 +74,6 @@ async function initMutualExclusionRequirement(api: AdminAPI, skill: any) {
 
 export async function deleteSkills(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
-    await sleepIf();
     try {
       await api.registry.skill.delete(indices[i]);
     } catch {

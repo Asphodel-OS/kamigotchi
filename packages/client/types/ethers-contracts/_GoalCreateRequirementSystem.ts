@@ -27,24 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type ConditionStruct = {
-  type_: PromiseOrValue<string>;
-  logic: PromiseOrValue<string>;
-  index: PromiseOrValue<BigNumberish>;
-  value: PromiseOrValue<BigNumberish>;
-};
-
-export type ConditionStructOutput = [string, string, number, BigNumber] & {
-  type_: string;
-  logic: string;
-  index: number;
-  value: BigNumber;
-};
-
 export interface _GoalCreateRequirementSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,(string,string,uint32,uint256))": FunctionFragment;
+    "executeTyped(uint32,string,string,uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -63,7 +49,13 @@ export interface _GoalCreateRequirementSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, ConditionStruct]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -135,7 +127,10 @@ export interface _GoalCreateRequirementSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
-      requirement: ConditionStruct,
+      reqType: PromiseOrValue<string>,
+      reqLogic: PromiseOrValue<string>,
+      reqIndex: PromiseOrValue<BigNumberish>,
+      reqValue: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -154,7 +149,10 @@ export interface _GoalCreateRequirementSystem extends BaseContract {
 
   executeTyped(
     goalIndex: PromiseOrValue<BigNumberish>,
-    requirement: ConditionStruct,
+    reqType: PromiseOrValue<string>,
+    reqLogic: PromiseOrValue<string>,
+    reqIndex: PromiseOrValue<BigNumberish>,
+    reqValue: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -173,7 +171,10 @@ export interface _GoalCreateRequirementSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
-      requirement: ConditionStruct,
+      reqType: PromiseOrValue<string>,
+      reqLogic: PromiseOrValue<string>,
+      reqIndex: PromiseOrValue<BigNumberish>,
+      reqValue: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -204,7 +205,10 @@ export interface _GoalCreateRequirementSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
-      requirement: ConditionStruct,
+      reqType: PromiseOrValue<string>,
+      reqLogic: PromiseOrValue<string>,
+      reqIndex: PromiseOrValue<BigNumberish>,
+      reqValue: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -224,7 +228,10 @@ export interface _GoalCreateRequirementSystem extends BaseContract {
 
     executeTyped(
       goalIndex: PromiseOrValue<BigNumberish>,
-      requirement: ConditionStruct,
+      reqType: PromiseOrValue<string>,
+      reqLogic: PromiseOrValue<string>,
+      reqIndex: PromiseOrValue<BigNumberish>,
+      reqValue: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -50,6 +50,8 @@ contract SystemCall is Script {
   //////////////
   // INTERNAL
 
+  // _system(_getSysAddr(systemID)).function(args);
+
   function _call(uint256 systemID, bytes memory args) public returns (bytes memory) {
     return _getSys(systemID).execute(args);
   }
@@ -64,6 +66,10 @@ contract SystemCall is Script {
       addr = getAddressById(systems, systemID);
       systemAddrs[systemID] = addr;
     }
+  }
+
+  function _getSysAddr(string memory systemID) internal returns (address addr) {
+    return _getSysAddr(uint256(keccak256(abi.encodePacked(systemID))));
   }
 
   /// sets up contract with world, components and system registry

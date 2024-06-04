@@ -57,13 +57,7 @@
     {
       "type": "function",
       "name": "init",
-      "inputs": [
-        {
-          "name": "arugments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
+      "inputs": [],
       "outputs": [],
       "stateMutability": "nonpayable"
     },
@@ -126,7 +120,7 @@
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
-    "init(bytes)": "4ddf47d4",
+    "init()": "e1c7392a",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

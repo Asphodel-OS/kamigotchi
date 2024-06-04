@@ -2,6 +2,10 @@
 import _721BatchMinterSystem from "../../../../../client/abi/_721BatchMinterSystem.json";
 import _ConfigSetSystem from "../../../../../client/abi/_ConfigSetSystem.json";
 import _devGiveTokensSystem from "../../../../../client/abi/_devGiveTokensSystem.json";
+import _GoalCreateRequirementSystem from "../../../../../client/abi/_GoalCreateRequirementSystem.json";
+import _GoalCreateRewardSystem from "../../../../../client/abi/_GoalCreateRewardSystem.json";
+import _GoalCreateSystem from "../../../../../client/abi/_GoalCreateSystem.json";
+import _GoalDeleteSystem from "../../../../../client/abi/_GoalDeleteSystem.json";
 import _ListingSetSystem from "../../../../../client/abi/_ListingSetSystem.json";
 import _NodeCreateSystem from "../../../../../client/abi/_NodeCreateSystem.json";
 import _NodeDeleteSystem from "../../../../../client/abi/_NodeDeleteSystem.json";
@@ -36,7 +40,6 @@ import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSyst
 import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
-import AccountUpgradeSkillSystem from "../../../../../client/abi/AccountUpgradeSkillSystem.json";
 import Farm20DepositSystem from "../../../../../client/abi/Farm20DepositSystem.json";
 import Farm20ProxySystem from "../../../../../client/abi/Farm20ProxySystem.json";
 import Farm20WithdrawSystem from "../../../../../client/abi/Farm20WithdrawSystem.json";
@@ -44,13 +47,14 @@ import FriendAcceptSystem from "../../../../../client/abi/FriendAcceptSystem.jso
 import FriendBlockSystem from "../../../../../client/abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../../../../../client/abi/FriendCancelSystem.json";
 import FriendRequestSystem from "../../../../../client/abi/FriendRequestSystem.json";
+import GoalClaimSystem from "../../../../../client/abi/GoalClaimSystem.json";
+import GoalContributeSystem from "../../../../../client/abi/GoalContributeSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
 import LootboxExecuteRevealSystem from "../../../../../client/abi/LootboxExecuteRevealSystem.json";
 import LootboxStartRevealSystem from "../../../../../client/abi/LootboxStartRevealSystem.json";
 import Mint20MintSystem from "../../../../../client/abi/Mint20MintSystem.json";
 import Mint20ProxySystem from "../../../../../client/abi/Mint20ProxySystem.json";
-import NodeCollectSystem from "../../../../../client/abi/NodeCollectSystem.json";
 import Pet721IsInWorldSystem from "../../../../../client/abi/Pet721IsInWorldSystem.json";
 import Pet721MetadataSystem from "../../../../../client/abi/Pet721MetadataSystem.json";
 import Pet721MintSystem from "../../../../../client/abi/Pet721MintSystem.json";
@@ -65,8 +69,6 @@ import PetGachaRevealSystem from "../../../../../client/abi/PetGachaRevealSystem
 import PetLevelSystem from "../../../../../client/abi/PetLevelSystem.json";
 import PetNameSystem from "../../../../../client/abi/PetNameSystem.json";
 import PetReviveSystem from "../../../../../client/abi/PetReviveSystem.json";
-import PetSetAccountSystem from "../../../../../client/abi/PetSetAccountSystem.json";
-import PetUpgradeSkillSystem from "../../../../../client/abi/PetUpgradeSkillSystem.json";
 import PetUseItemSystem from "../../../../../client/abi/PetUseItemSystem.json";
 import ProductionCollectSystem from "../../../../../client/abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../../../../../client/abi/ProductionLiquidateSystem.json";
@@ -87,6 +89,10 @@ export const SystemAbis = {
   "system.Pet721.BatchMint": _721BatchMinterSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
   "system._devGiveTokens": _devGiveTokensSystem.abi,
+  "system.Goal.Create.Requirement": _GoalCreateRequirementSystem.abi,
+  "system.Goal.Create.Reward": _GoalCreateRewardSystem.abi,
+  "system.Goal.Create": _GoalCreateSystem.abi,
+  "system.Goal.Delete": _GoalDeleteSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
   "system._Node.Delete": _NodeDeleteSystem.abi,
@@ -121,7 +127,6 @@ export const SystemAbis = {
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
-  "system.Account.Upgrade.Skill": AccountUpgradeSkillSystem.abi,
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
   "system.Farm20.Proxy": Farm20ProxySystem.abi,
   "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
@@ -129,13 +134,14 @@ export const SystemAbis = {
   "system.Friend.Block": FriendBlockSystem.abi,
   "system.Friend.Cancel": FriendCancelSystem.abi,
   "system.Friend.Request": FriendRequestSystem.abi,
+  "system.Goal.Claim": GoalClaimSystem.abi,
+  "system.Goal.Contribute": GoalContributeSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem.abi,
   "system.Lootbox.Reveal.Start": LootboxStartRevealSystem.abi,
   "system.Mint20.Mint": Mint20MintSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
-  "system.Node.Collect": NodeCollectSystem.abi,
   "system.Pet721.IsInWorld": Pet721IsInWorldSystem.abi,
   "system.Pet721.Metadata": Pet721MetadataSystem.abi,
   "system.Pet721.Mint": Pet721MintSystem.abi,
@@ -150,8 +156,6 @@ export const SystemAbis = {
   "system.Pet.Level": PetLevelSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,
-  "system.Pet.SetAccount": PetSetAccountSystem.abi,
-  "system.Pet.Upgrade.Skill": PetUpgradeSkillSystem.abi,
   "system.Pet.Use.Item": PetUseItemSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,

@@ -1,13 +1,12 @@
-import droptablesCSV from 'assets/data/items/droptables.csv';
-import itemsCSV from 'assets/data/items/items.csv';
 import { AdminAPI } from '../admin';
-import { sleepIf } from './utils';
+import { readFile } from './utils';
 
 export async function initItems(api: AdminAPI) {
+  const droptablesCSV = await readFile('items/Droptables.csv');
+  const itemsCSV = await readFile('items/Items.csv');
   for (let i = 0; i < itemsCSV.length; i++) {
-    await sleepIf();
     const item = itemsCSV[i];
-    const type = item['Type'].toUpperCase();
+    const type = String(item['Type']).toUpperCase();
     // console.log(itemsCSV[i]);
     try {
       if (type === 'FOOD') await setFood(api, item);
@@ -21,7 +20,6 @@ export async function initItems(api: AdminAPI) {
 
 export async function deleteItems(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
-    await sleepIf();
     try {
       await api.registry.item.delete(indices[i]);
     } catch {

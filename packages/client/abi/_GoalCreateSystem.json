@@ -60,31 +60,24 @@
           "internalType": "uint32"
         },
         {
-          "name": "objective",
-          "type": "tuple",
-          "internalType": "struct Condition",
-          "components": [
-            {
-              "name": "type_",
-              "type": "string",
-              "internalType": "string"
-            },
-            {
-              "name": "logic",
-              "type": "string",
-              "internalType": "string"
-            },
-            {
-              "name": "index",
-              "type": "uint32",
-              "internalType": "uint32"
-            },
-            {
-              "name": "value",
-              "type": "uint256",
-              "internalType": "uint256"
-            }
-          ]
+          "name": "objType",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "objLogic",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "objIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "objValue",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [
@@ -154,7 +147,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,uint32,(string,string,uint32,uint256))": "06557f73",
+    "executeTyped(uint32,string,string,uint32,string,string,uint32,uint256)": "e5fa7743",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

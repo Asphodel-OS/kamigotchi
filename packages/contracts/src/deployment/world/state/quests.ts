@@ -1,12 +1,10 @@
-import questCSV from 'assets/data/quests/quests.csv';
-import { parseToLogicType } from 'layers/network/shapes/utils/Conditionals';
 import { AdminAPI } from '../admin';
-import { sleepIf } from './utils';
+import { parseToLogicType, readFile } from './utils';
 
 export async function initQuests(api: AdminAPI) {
+  const questCSV = await readFile('quests/Quests.csv');
   for (let i = 0; i < questCSV.length; i++) {
     const quest = questCSV[i];
-    await sleepIf();
     try {
       if (quest['Status'] !== 'For Implementation') continue;
       if (quest['Class'] === 'Quest' || quest['Class'] === '') await initQuest(api, quest);
@@ -23,7 +21,6 @@ export async function initLocalQuests(api: AdminAPI) {
     'The Chosen Taruchi',
     'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
     'Was it really worth it?',
-    0,
     0
   );
   api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
@@ -73,10 +70,10 @@ export async function initQuestReward(api: AdminAPI, entry: any) {
 }
 
 export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
+  const questCSV = await readFile('quests/Quests.csv');
   for (let i = 0; i < questCSV.length; i++) {
     const quest = questCSV[i];
     if (!indices.includes(Number(quest['Index']))) continue;
-    await sleepIf();
     try {
       if (quest['Status'] !== 'For Implementation') continue;
       if (quest['Class'] === 'Quest' || quest['Class'] === '') await initQuest(api, quest);
@@ -89,7 +86,6 @@ export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
 
 export async function deleteQuests(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
-    await sleepIf();
     try {
       await api.registry.quest.delete(indices[i]);
     } catch {

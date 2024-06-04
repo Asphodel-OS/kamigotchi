@@ -37,6 +37,30 @@
     },
     {
       "type": "function",
+      "name": "executeTyped",
+      "inputs": [
+        {
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "value",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "owner",
       "inputs": [],
       "outputs": [
@@ -147,6 +171,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
+    "executeTyped(string,uint256)": "92976665",
     "owner()": "8da5cb5b",
     "setValue(string,uint256)": "7c2da7aa",
     "setValueArray(string,uint32[8])": "348984f3",

@@ -1,6 +1,6 @@
 import { BigNumberish } from 'ethers';
 import { parseCall } from '../commands/utils/systemCall';
-import { SystemAbis } from './abis/SystemAbis';
+import { SystemAbis } from './mappings/SystemAbis';
 
 /// @note not currently in use, but archived in the codebase to potentially be useful someday
 /**

@@ -1,12 +1,13 @@
-import backgroundCSV from 'assets/data/traits/backgrounds.csv';
-import bodyCSV from 'assets/data/traits/bodies.csv';
-import colorCSV from 'assets/data/traits/colors.csv';
-import faceCSV from 'assets/data/traits/faces.csv';
-import handCSV from 'assets/data/traits/hands.csv';
 import { AdminAPI } from '../admin';
-import { sleepIf } from './utils';
+import { readFile } from './utils';
 
 export async function initTraits(api: AdminAPI) {
+  const backgroundCSV = await readFile('traits/Backgrounds.csv');
+  const bodyCSV = await readFile('traits/Bodies.csv');
+  const colorCSV = await readFile('traits/Colors.csv');
+  const faceCSV = await readFile('traits/Faces.csv');
+  const handCSV = await readFile('traits/Hands.csv');
+
   await initTraitTable(api, backgroundCSV, 'BACKGROUND');
   await initTraitTable(api, bodyCSV, 'BODY');
   await initTraitTable(api, colorCSV, 'COLOR');
@@ -18,7 +19,6 @@ export async function initTraits(api: AdminAPI) {
 export async function initTraitTable(api: AdminAPI, table: any, type: string) {
   for (let i = 0; i < table.length; i++) {
     const trait = table[i];
-    await sleepIf();
     try {
       api.registry.trait.create(
         Number(trait['Index']), // individual trait index
@@ -41,7 +41,6 @@ export async function initTraitTable(api: AdminAPI, table: any, type: string) {
 
 export async function deleteTraits(api: AdminAPI, indices: number[], types: string[]) {
   for (let i = 0; i < indices.length; i++) {
-    await sleepIf();
     try {
       await api.registry.trait.delete(indices[i], types[i]);
     } catch {

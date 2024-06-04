@@ -1,20 +1,16 @@
-import roomsCSV from 'assets/data/rooms/rooms.csv';
-import { getGoalID } from 'layers/network/shapes/Goal';
 import { AdminAPI } from '../admin';
-import { sleepIf } from './utils';
+import { getGoalID, readFile } from './utils';
 
 export async function initRooms(api: AdminAPI) {
+  const roomsCSV = await readFile('rooms/Rooms.csv');
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
     if (room['Enabled'] === 'true') {
       // console.log(room);
-      await sleepIf();
       await api.room.create(
-        {
-          x: Number(room['X']),
-          y: Number(room['Y']),
-          z: Number(room['Z']),
-        },
+        Number(room['X']),
+        Number(room['Y']),
+        Number(room['Z']),
         Number(room['Index']),
         room['Name'],
         room['Description'],
@@ -34,15 +30,14 @@ export async function initRooms(api: AdminAPI) {
 }
 
 export async function initRoom(api: AdminAPI, roomIndex: number) {
+  const roomsCSV = await readFile('rooms/Rooms.csv');
   const room = roomsCSV.find((r: any) => Number(r['Index']) === roomIndex);
   if (!room) return;
 
   await api.room.create(
-    {
-      x: Number(room['X']),
-      y: Number(room['Y']),
-      z: Number(room['Z']),
-    },
+    Number(room['X']),
+    Number(room['Y']),
+    Number(room['Z']),
     Number(room['Index']),
     room['Name'],
     room['Description'],

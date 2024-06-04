@@ -30,6 +30,7 @@ import type {
 export interface _ConfigSetSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
+    "executeTyped(string,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "setValue(string,uint256)": FunctionFragment;
     "setValueArray(string,uint32[8])": FunctionFragment;
@@ -40,6 +41,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "execute"
+      | "executeTyped"
       | "owner"
       | "setValue"
       | "setValueArray"
@@ -50,6 +52,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeTyped",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -70,6 +76,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "executeTyped",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setValue", data: BytesLike): Result;
   decodeFunctionResult(
@@ -136,6 +146,12 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    executeTyped(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     setValue(
@@ -167,6 +183,12 @@ export interface _ConfigSetSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  executeTyped(
+    name: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   setValue(
@@ -195,6 +217,12 @@ export interface _ConfigSetSystem extends BaseContract {
   callStatic: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    executeTyped(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -241,6 +269,12 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    executeTyped(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     setValue(
@@ -270,6 +304,12 @@ export interface _ConfigSetSystem extends BaseContract {
   populateTransaction: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    executeTyped(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
