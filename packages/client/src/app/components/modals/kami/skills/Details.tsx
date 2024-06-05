@@ -1,4 +1,3 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -19,13 +18,10 @@ interface Props {
   index: number;
   skills: Map<number, Skill>; // registry skills
   upgradeError: string[] | undefined;
-  actions: {
-    upgrade: (skill: Skill) => EntityIndex;
-  };
+  actions: { upgrade: (skill: Skill) => void };
   utils: {
     getSkillImage: (skill: Skill) => string;
     getTreePoints: (tree: string) => number;
-    updateKamiAfterAction: (actionIndex: EntityIndex) => void;
   };
 }
 
@@ -50,8 +46,7 @@ export const Details = (props: Props) => {
   // trigger an upgrade of the skill
   const triggerUpgrade = (skill: Skill) => {
     playClick();
-    const actionIndex = actions.upgrade(skill);
-    utils.updateKamiAfterAction(actionIndex);
+    actions.upgrade(skill);
   };
 
   ////////////////////
