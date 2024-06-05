@@ -7,9 +7,9 @@ import { Stat } from "components/types/Stat.sol";
 
 import { Condition } from "libraries/utils/LibBoolean.sol";
 import { Coord } from "libraries/LibRoom.sol";
+import { MUSU_INDEX } from "libraries/LibInventory.sol";
 
 import "./TestSetupImports.sol";
-import "libraries/utils/Constants.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;

@@ -15,7 +15,10 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-import "libraries/utils/Constants.sol";
+////////////////////
+// CONSTANTS
+
+uint32 constant MUSU_INDEX = 1;
 
 // handles nonfungible inventory instances
 library LibInventory {

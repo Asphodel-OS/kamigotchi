@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { parseToLogicType, readFile } from './utils';
+import { parseToInitCon, readFile } from './utils';
 
 export async function initQuests(api: AdminAPI) {
   const questCSV = await readFile('quests/Quests.csv');
@@ -11,7 +11,9 @@ export async function initQuests(api: AdminAPI) {
       else if (quest['Class'] === 'Requirement') await initQuestRequirement(api, quest);
       else if (quest['Class'] === 'Objective') await initQuestObjective(api, quest);
       else if (quest['Class'] === 'Reward') await initQuestReward(api, quest);
-    } catch {}
+    } catch {
+      console.error('Could not create quest', quest['Class'], quest['Index']);
+    }
   }
 }
 
@@ -37,36 +39,46 @@ export async function initQuest(api: AdminAPI, entry: any) {
 }
 
 export async function initQuestRequirement(api: AdminAPI, entry: any) {
-  // console.log('req', entry['Index']);
-  await api.registry.quest.add.requirement(
-    Number(entry['Index']),
-    parseToLogicType(entry['Operator']),
+  const cond = parseToInitCon(
+    entry['Operator'],
     entry['SubType'],
     Number(entry['IndexFor'] ?? 0),
     Number(entry['ValueFor'] ?? 0)
+  );
+  await api.registry.quest.add.requirement(
+    Number(entry['Index']),
+    cond.logicType,
+    cond.type,
+    cond.index,
+    cond.value
   );
 }
 
 export async function initQuestObjective(api: AdminAPI, entry: any) {
-  // console.log('obj', entry['Index']);
+  const cond = parseToInitCon(
+    '', // objective logic operators alr processed
+    entry['SubType'],
+    Number(entry['IndexFor'] ?? 0),
+    Number(entry['ValueFor'] ?? 0)
+  );
   await api.registry.quest.add.objective(
     Number(entry['Index']),
     entry['ConditionDescription'],
     entry['DeltaType'] + '_' + entry['Operator'],
-    entry['SubType'],
-    Number(entry['IndexFor'] ?? 0),
-    Number(entry['ValueFor'] ?? 0)
+    cond.type,
+    cond.index,
+    cond.value
   );
 }
 
 export async function initQuestReward(api: AdminAPI, entry: any) {
-  // console.log('reward', entry['Index']);
-  await api.registry.quest.add.reward(
-    Number(entry['Index']),
+  const cond = parseToInitCon(
+    '', // no reward logic operators
     entry['SubType'],
     Number(entry['IndexFor'] ?? 0),
     Number(entry['ValueFor'] ?? 0)
   );
+  await api.registry.quest.add.reward(Number(entry['Index']), cond.type, cond.index, cond.value);
 }
 
 export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
@@ -80,7 +92,9 @@ export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
       else if (quest['Class'] === 'Requirement') await initQuestRequirement(api, quest);
       else if (quest['Class'] === 'Objective') await initQuestObjective(api, quest);
       else if (quest['Class'] === 'Reward') await initQuestReward(api, quest);
-    } catch {}
+    } catch {
+      console.error('Could not create quest', quest['Class'], quest['Index']);
+    }
   }
 }
 

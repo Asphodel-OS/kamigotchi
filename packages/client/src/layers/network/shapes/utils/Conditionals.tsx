@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
 
+import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'layers/network';
 import { Account } from '../Account';
 import { getData } from '../Data';
@@ -137,9 +138,7 @@ export const getBalance = (
   type: string
 ): number => {
   // universal gets - account and kami shape compatible
-  if (type === 'COIN') {
-    return getData(world, components, holder.id, 'COIN_TOTAL', 0) || 0;
-  } else if (type === 'SKILL') {
+  if (type === 'SKILL') {
     const skill = holder.skills?.find((s) => s.index === index);
     return skill?.points.current || 0;
   }
@@ -147,9 +146,7 @@ export const getBalance = (
   // account specific, check if holder is account shaped
   if ('kamis' in holder) {
     if (type === 'ITEM') {
-      return getInventoryBalance(holder, index, type);
-    } else if (type === 'COIN') {
-      return getData(world, components, holder.id, 'COIN_TOTAL', 0) || 0;
+      return getInventoryBalance(world, components, holder, index ?? 0);
     } else if (type === 'KAMI') {
       return holder.kamis?.length || 0;
     } else if (type === 'KAMI_LEVEL_HIGHEST') {
@@ -206,25 +203,13 @@ export const getBool = (
   return false;
 };
 
-const getInventoryBalance = (account: Account, index: number | undefined, type: string): number => {
-  if (index === undefined) return 0; // should not reach here
-  if (account.inventories === undefined) return 0; // should not reach here
-
-  let balance = 0;
-  switch (type) {
-    case 'EQUIP':
-      balance = getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
-    case 'FOOD':
-      balance = getInventoryByIndex(account.inventories.food, index)?.balance || 0;
-    case 'MOD':
-      balance = getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
-    case 'REVIVE':
-      balance = getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
-    default:
-      balance = 0; // should not reach here
-  }
-
-  return Number(balance);
+const getInventoryBalance = (
+  world: World,
+  components: Components,
+  account: Account,
+  index: number
+): number => {
+  return getInventoryByIndex(world, components, account.id, index).balance ?? 0;
 };
 
 //////////////
@@ -260,8 +245,23 @@ export const checkLogicOperator = (
   else return false; // should not reach here
 };
 
-// parses common human readable words into machine types
-export const parseToLogicType = (str: string): string => {
+// parses common human readable conditions into machine types for init
+export const parseToInitCon = (
+  logicType: string,
+  type: string,
+  index: number,
+  value: number
+): { logicType: string; type: string; index: number; value: number } => {
+  return {
+    logicType: logicType == '' ? '' : parseToLogicType(logicType),
+    type: parseToConType(type),
+    index: parseToConIndex(type, index),
+    value: value,
+  };
+};
+
+// parses common human readable words into machine types. Assumes current.
+const parseToLogicType = (str: string): string => {
   const is = ['IS', 'COMPLETE', 'AT'];
   const min = ['MIN', 'HAVE', 'GREATER'];
   const max = ['MAX', 'LESSER'];
@@ -277,6 +277,17 @@ export const parseToLogicType = (str: string): string => {
     console.error('unrecognized logic type');
     return '';
   }
+};
+
+const parseToConType = (str: string): string => {
+  // coins are items now
+  return str.replace('COIN', 'ITEM');
+};
+
+const parseToConIndex = (type: string, index: number): number => {
+  // coins are items, use MUSU index
+  if (type.includes('COIN')) return MUSU_INDEX;
+  else return index;
 };
 
 /////////////////////////

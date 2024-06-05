@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ProgressBar } from 'app/components/library';
 import { Contribution, Goal } from 'layers/network/shapes/Goal';
 import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
-import { MUSUEntity, parseQuantity } from 'layers/network/shapes/utils/parseDescription';
+import { parseQuantity } from 'layers/network/shapes/utils/parseDescription';
 
 interface Props {
   goal: Goal;
@@ -19,11 +19,10 @@ interface Objective {
   current: number;
 }
 
-// the table rendering of the leaderboard modal
 export const Progress = (props: Props) => {
   const { goal, accContribution, getDescribedEntity } = props;
 
-  const [objType, setObjType] = useState<DetailedEntity>(MUSUEntity);
+  const [objType, setObjType] = useState<DetailedEntity>({ ObjectType: '', image: '', name: '' });
 
   useEffect(() => {
     const type = getDescribedEntity(goal.objective.target.type, goal.objective.target.index ?? 0);

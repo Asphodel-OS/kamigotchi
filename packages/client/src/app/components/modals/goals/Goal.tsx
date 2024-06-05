@@ -77,7 +77,7 @@ export function registerGoalModal() {
 
           setScores(getContributions(world, components, goal.id));
         }
-      }, [goalIndex, modals.goal, step]);
+      }, [goalIndex, modals.goal, step, data.account.coin]);
 
       /////////////////
       // INTERACTIONS

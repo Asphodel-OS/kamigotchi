@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
+import { MUSU_INDEX } from 'constants/indices';
 import { Account } from 'layers/network/shapes/Account';
 import { Item } from 'layers/network/shapes/Item';
-import { Condition, Objective, Quest, Requirement, Reward } from 'layers/network/shapes/Quest';
+import { Objective, Quest, Requirement, Reward } from 'layers/network/shapes/Quest';
 import { Room } from 'layers/network/shapes/Room';
+import { Condition } from 'layers/network/shapes/utils/Conditionals';
 import moment from 'moment';
 
 interface Props {
@@ -163,19 +165,15 @@ export const List = (props: Props) => {
 
   const getRewardText = (reward: Reward): string => {
     const value = (reward.target.value ?? 0) * 1;
-    switch (reward.target.type) {
-      case 'COIN':
-        return `${value} $MUSU`;
-      case 'ITEM':
-        return `${value} ${getItemName(reward.target.index!)}`;
-      case 'EXPERIENCE':
-        return `${value} Experience`;
-      case 'MINT20':
-        return `${value} $KAMI`;
-      case 'QUEST_POINTS':
-        return `${value} Quest Point${value == 1 ? '' : 's'}`;
-      default:
-        return '???';
+    if (reward.target.type === 'ITEM') {
+      if (reward.target.index === MUSU_INDEX) return `${value} $MUSU`;
+      else return `${value} ${getItemName(reward.target.index!)}`;
+    } else if (reward.target.type === 'EXPERIENCE') {
+      return `${value} Experience`;
+    } else if (reward.target.type === 'MINT20') {
+      return `${value} $KAMI`;
+    } else {
+      return '???';
     }
   };
 
@@ -191,7 +189,7 @@ export const List = (props: Props) => {
     if (con.target.type.includes('TIME')) {
       tar = moment.duration((con.target.value ?? 0) * 1000).humanize();
       curr = moment.duration((con.status?.current ?? 0) * 1000).humanize();
-    } else if (con.target.type.includes('COIN')) {
+    } else if (con.target.type.includes('ITEM') && con.target.index === MUSU_INDEX) {
       tar = tar + ' $MUSU';
       curr = curr + ' $MUSU';
     }

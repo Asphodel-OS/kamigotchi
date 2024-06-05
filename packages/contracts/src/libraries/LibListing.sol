@@ -13,12 +13,9 @@ import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComp
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-// import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
-
-import "libraries/utils/Constants.sol";
 
 /*
  * LibListing handles all operations interacting with Listings
@@ -70,7 +67,6 @@ library LibListing {
 
     LibInventory.incFor(components, accountID, itemIndex, amt);
     LibInventory.decFor(components, accountID, MUSU_INDEX, amt * price);
-    // LibCoin.dec(components, accountID, amt * price);
     return true;
   }
 
@@ -89,7 +85,6 @@ library LibListing {
 
     LibInventory.decFor(components, accountID, itemIndex, amt);
     LibInventory.incFor(components, accountID, MUSU_INDEX, amt * price);
-    // LibCoin.inc(components, accountID, amt * price);
     return true;
   }
 
@@ -199,11 +194,11 @@ library LibListing {
 
   /// @notice log coins spent
   function logSpendCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
-    LibDataEntity.inc(components, accountID, 0, "COIN_SPEND", amt);
+    LibDataEntity.inc(components, accountID, MUSU_INDEX, "ITEM_SPEND", amt);
   }
 
   /// @notice log coin revenue earned
   function logEarnCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
-    LibDataEntity.inc(components, accountID, 0, "COIN_REVENUE", amt);
+    LibDataEntity.inc(components, accountID, MUSU_INDEX, "ITEM_REVENUE", amt);
   }
 }

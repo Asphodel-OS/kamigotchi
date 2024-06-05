@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
+import { getCoinBal } from '../Inventory';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './functions';
@@ -32,11 +33,11 @@ export const getProduction = (
   options?: ProductionOptions,
   kami?: Kami
 ): Production => {
-  const { NodeID, PetID, Coin, State, LastTime, ResetTime, StartTime } = components;
+  const { NodeID, PetID, State, LastTime, ResetTime, StartTime } = components;
   let production: Production = {
     id: world.entities[index],
     rate: 0,
-    balance: ((getComponentValue(Coin, index)?.value as number) ?? 0) * 1,
+    balance: getCoinBal(world, components, world.entities[index]),
     state: getComponentValue(State, index)?.value as string,
     time: {
       last: (getComponentValue(LastTime, index)?.value as number) * 1,

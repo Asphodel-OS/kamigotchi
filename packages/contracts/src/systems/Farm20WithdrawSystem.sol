@@ -8,10 +8,8 @@ import { ControlledBridgeSystem } from "utils/ControlledBridgeSystem.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibTimelock } from "libraries/LibTimelock.sol";
-
-import "libraries/utils/Constants.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";

@@ -22,13 +22,11 @@ import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
-
-import "libraries/utils/Constants.sol";
 
 struct HarvestRates {
   uint8 prec;

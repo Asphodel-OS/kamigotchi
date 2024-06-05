@@ -14,7 +14,9 @@ export async function initItems(api: AdminAPI) {
       else if (type === 'MISC') await setMisc(api, item);
       else if (type === 'LOOTBOX') await setLootbox(api, item, droptablesCSV);
       else console.error('Item type not found: ' + type);
-    } catch {}
+    } catch {
+      console.error('Could not create item', item['Index']);
+    }
   }
 }
 

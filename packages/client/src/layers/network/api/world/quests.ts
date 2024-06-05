@@ -1,5 +1,5 @@
 import questCSV from 'assets/data/quests/quests.csv';
-import { parseToLogicType } from 'layers/network/shapes/utils/Conditionals';
+import { parseToInitCon } from 'layers/network/shapes/utils/Conditionals';
 import { AdminAPI } from '../admin';
 import { sleepIf } from './utils';
 
@@ -23,7 +23,6 @@ export async function initLocalQuests(api: AdminAPI) {
     'The Chosen Taruchi',
     'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
     'Was it really worth it?',
-    0,
     0
   );
   api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
@@ -40,36 +39,46 @@ export async function initQuest(api: AdminAPI, entry: any) {
 }
 
 export async function initQuestRequirement(api: AdminAPI, entry: any) {
-  // console.log('req', entry['Index']);
-  await api.registry.quest.add.requirement(
-    Number(entry['Index']),
-    parseToLogicType(entry['Operator']),
+  const cond = parseToInitCon(
+    entry['Operator'],
     entry['SubType'],
     Number(entry['IndexFor'] ?? 0),
     Number(entry['ValueFor'] ?? 0)
+  );
+  await api.registry.quest.add.requirement(
+    Number(entry['Index']),
+    cond.logicType,
+    cond.type,
+    cond.index,
+    cond.value
   );
 }
 
 export async function initQuestObjective(api: AdminAPI, entry: any) {
-  // console.log('obj', entry['Index']);
+  const cond = parseToInitCon(
+    '', // objective logic operators alr processed
+    entry['SubType'],
+    Number(entry['IndexFor'] ?? 0),
+    Number(entry['ValueFor'] ?? 0)
+  );
   await api.registry.quest.add.objective(
     Number(entry['Index']),
     entry['ConditionDescription'],
     entry['DeltaType'] + '_' + entry['Operator'],
-    entry['SubType'],
-    Number(entry['IndexFor'] ?? 0),
-    Number(entry['ValueFor'] ?? 0)
+    cond.type,
+    cond.index,
+    cond.value
   );
 }
 
 export async function initQuestReward(api: AdminAPI, entry: any) {
-  // console.log('reward', entry['Index']);
-  await api.registry.quest.add.reward(
-    Number(entry['Index']),
+  const cond = parseToInitCon(
+    '', // no reward logic operators
     entry['SubType'],
     Number(entry['IndexFor'] ?? 0),
     Number(entry['ValueFor'] ?? 0)
   );
+  await api.registry.quest.add.reward(Number(entry['Index']), cond.type, cond.index, cond.value);
 }
 
 export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
