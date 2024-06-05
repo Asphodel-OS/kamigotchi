@@ -13,14 +13,18 @@ import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComp
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { IsKillComponent, ID as IsKillCompID } from "components/IsKillComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { CoinComponent, ID as CoinCompID } from "components/CoinComponent.sol";
+// import { CoinComponent, ID as CoinCompID } from "components/CoinComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
+
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { Gaussian } from "utils/Gaussian.sol";
+
+import { MUSU_INDEX } from "libraries/utils/Constants.sol";
 
 uint256 constant ANIMOSITY_PREC = 6;
 
@@ -54,7 +58,8 @@ library LibKill {
     );
 
     ValueComponent(getAddressById(components, ValueCompID)).set(id, balance);
-    CoinComponent(getAddressById(components, CoinCompID)).set(id, bounty);
+    // CoinComponent(getAddressById(components, CoinCompID)).set(id, bounty);
+    LibInventory.setFor(components, targetID, MUSU_INDEX, bounty);
     TimeComponent(getAddressById(components, TimeCompID)).set(id, block.timestamp);
     return id;
   }

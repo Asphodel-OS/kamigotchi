@@ -13,10 +13,12 @@ import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComp
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
+// import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
+
+import "libraries/utils/Constants.sol";
 
 /*
  * LibListing handles all operations interacting with Listings
@@ -66,9 +68,9 @@ library LibListing {
       return false;
     }
 
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    LibInventory.inc(components, inventoryID, amt);
-    LibCoin.dec(components, accountID, amt * price);
+    LibInventory.incFor(components, accountID, itemIndex, amt);
+    LibInventory.decFor(components, accountID, MUSU_INDEX, amt * price);
+    // LibCoin.dec(components, accountID, amt * price);
     return true;
   }
 
@@ -85,9 +87,9 @@ library LibListing {
       return false;
     }
 
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    LibInventory.dec(components, inventoryID, amt);
-    LibCoin.inc(components, accountID, amt * price);
+    LibInventory.decFor(components, accountID, itemIndex, amt);
+    LibInventory.incFor(components, accountID, MUSU_INDEX, amt * price);
+    // LibCoin.inc(components, accountID, amt * price);
     return true;
   }
 

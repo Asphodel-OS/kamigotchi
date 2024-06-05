@@ -3,13 +3,6 @@ import { BigNumberish } from 'ethers';
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
 export function createAdminAPI(systems: any) {
-  /// NOTE: do not use in production
-  // @dev give coins for testing
-  // @param amount      amount
-  async function giveCoins(addy: string, amount: number) {
-    return systems['system._devGiveTokens'].executeTyped(addy, amount);
-  }
-
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(commitIDs: BigNumberish[]) {
@@ -568,7 +561,6 @@ export function createAdminAPI(systems: any) {
   }
 
   return {
-    giveCoins,
     bridge: {
       cancel: cancelBridgeTx,
     },

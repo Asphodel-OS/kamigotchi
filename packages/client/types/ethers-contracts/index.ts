@@ -18,7 +18,6 @@ export type { BoolBareComponent } from "./BoolBareComponent";
 export type { BoolComponent } from "./BoolComponent";
 export type { CacheOperatorComponent } from "./CacheOperatorComponent";
 export type { CanNameComponent } from "./CanNameComponent";
-export type { CoinComponent } from "./CoinComponent";
 export type { ControlledBridgeSystem } from "./ControlledBridgeSystem";
 export type { CoordComponent } from "./CoordComponent";
 export type { CostComponent } from "./CostComponent";
@@ -232,7 +231,6 @@ export type { _RegistryUpdateRelationshipSystem } from "./_RegistryUpdateRelatio
 export type { _RoomCreateGateSystem } from "./_RoomCreateGateSystem";
 export type { _RoomCreateSystem } from "./_RoomCreateSystem";
 export type { _RoomDeleteSystem } from "./_RoomDeleteSystem";
-export type { _devGiveTokensSystem } from "./_devGiveTokensSystem";
 export * as factories from "./factories";
 export { AccountFundSystem__factory } from "./factories/AccountFundSystem__factory";
 export { AccountMoveSystem__factory } from "./factories/AccountMoveSystem__factory";
@@ -251,7 +249,6 @@ export { BoolBareComponent__factory } from "./factories/BoolBareComponent__facto
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";
 export { CacheOperatorComponent__factory } from "./factories/CacheOperatorComponent__factory";
 export { CanNameComponent__factory } from "./factories/CanNameComponent__factory";
-export { CoinComponent__factory } from "./factories/CoinComponent__factory";
 export { ControlledBridgeSystem__factory } from "./factories/ControlledBridgeSystem__factory";
 export { CoordComponent__factory } from "./factories/CoordComponent__factory";
 export { CostComponent__factory } from "./factories/CostComponent__factory";
@@ -465,4 +462,3 @@ export { _RegistryUpdateRelationshipSystem__factory } from "./factories/_Registr
 export { _RoomCreateGateSystem__factory } from "./factories/_RoomCreateGateSystem__factory";
 export { _RoomCreateSystem__factory } from "./factories/_RoomCreateSystem__factory";
 export { _RoomDeleteSystem__factory } from "./factories/_RoomDeleteSystem__factory";
-export { _devGiveTokensSystem__factory } from "./factories/_devGiveTokensSystem__factory";

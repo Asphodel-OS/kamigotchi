@@ -8,13 +8,15 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
+
+import "libraries/utils/Constants.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
@@ -59,9 +61,9 @@ contract ProductionLiquidateSystem is System {
 
     if (salvage > 0) {
       uint256 victimAccountID = LibPet.getAccount(components, targetPetID);
-      LibCoin.inc(components, victimAccountID, salvage);
+      LibInventory.incFor(components, victimAccountID, MUSU_INDEX, salvage);
     }
-    LibCoin.inc(components, productionID, spoils);
+    LibInventory.incFor(components, productionID, MUSU_INDEX, spoils);
     LibPet.drain(components, petID, SafeCastLib.toInt32(recoil));
 
     // kill the target and shut off the production

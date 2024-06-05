@@ -41,10 +41,10 @@ contract LibBooleanTest is SetupTemplate {
 
   function testGetBalanceOfCoin(uint256 amt) public {
     vm.startPrank(deployer);
-    LibCoin._set(components, defaultAccID, amt);
+    LibInventory.setFor(components, defaultAccID, MUSU_INDEX, amt);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "COIN", 0), amt);
+    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
   }
 
   function testGetBalanceOfLevel(uint256 amt) public {

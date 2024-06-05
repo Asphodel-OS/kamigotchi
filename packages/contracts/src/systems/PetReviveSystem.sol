@@ -32,8 +32,7 @@ contract PetReviveSystem is System {
     require(LibPet.isDead(components, id), "PetRevive: pet not dead");
 
     // decrement item from inventory with implicit check for insufficient balance
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    LibInventory.dec(components, inventoryID, 1);
+    LibInventory.decFor(components, accountID, itemIndex, 1);
 
     // revive and heal according to item stats
     LibPet.revive(components, id);

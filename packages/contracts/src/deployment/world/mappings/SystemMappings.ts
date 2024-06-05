@@ -2,7 +2,6 @@
 export const systemToId = {
   _721BatchMinterSystem: "system.Pet721.BatchMint",
   _ConfigSetSystem: "system._Config.Set",
-  _devGiveTokensSystem: "system._devGiveTokens",
   _GoalCreateRequirementSystem: "system.Goal.Create.Requirement",
   _GoalCreateRewardSystem: "system.Goal.Create.Reward",
   _GoalCreateSystem: "system.Goal.Create",
@@ -90,7 +89,6 @@ export const systemToId = {
 export const idToSystem = {
   "system.Pet721.BatchMint": "_721BatchMinterSystem",
   "system._Config.Set": "_ConfigSetSystem",
-  "system._devGiveTokens": "_devGiveTokensSystem",
   "system.Goal.Create.Requirement": "_GoalCreateRequirementSystem",
   "system.Goal.Create.Reward": "_GoalCreateRewardSystem",
   "system.Goal.Create": "_GoalCreateSystem",

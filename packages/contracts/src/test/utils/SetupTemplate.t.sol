@@ -5,10 +5,11 @@ import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { Stat } from "components/types/Stat.sol";
 
-import "./TestSetupImports.sol";
-
 import { Condition } from "libraries/utils/LibBoolean.sol";
 import { Coord } from "libraries/LibRoom.sol";
+
+import "./TestSetupImports.sol";
+import "libraries/utils/Constants.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
@@ -137,15 +138,16 @@ abstract contract SetupTemplate is TestSetupImports {
   // ACCOUNT MANAGEMENT
 
   function _fundAccount(uint playerIndex, uint amount) internal {
-    address operator = _getOperator(playerIndex);
-
-    vm.prank(deployer);
-    __devGiveTokensSystem.executeTyped(operator, amount);
+    uint256 accountID = _getAccount(playerIndex);
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, accountID, MUSU_INDEX, amount);
+    LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, amount);
+    vm.stopPrank();
   }
 
   function _getAccountBalance(uint playerIndex) internal view returns (uint) {
     uint accountID = _getAccount(playerIndex);
-    return LibCoin.get(components, accountID);
+    return LibInventory.getBalanceOf(components, accountID, MUSU_INDEX);
   }
 
   // get an account by the Owner address' testing playerIndex

@@ -20,13 +20,17 @@ contract GoalsTest is SetupTemplate {
     uint32 goalIndex = 1;
     uint256 targetAmt = 1111;
     uint256 currContribAmt = 0;
-    _createGenericItem(1); // reward - bronze tier
-    _createGenericItem(2); // reward - silver tier
-    _createGenericItem(3); // reward - gold tier
-    uint256 goalID = _createGoal(goalIndex, 0, Condition("COIN", "CURR_MIN", 0, targetAmt));
-    uint256 rwdBronze = _createGoalReward(goalIndex, 100, Condition("ITEM", "REWARD", 1, 1));
-    uint256 rwdSilver = _createGoalReward(goalIndex, 200, Condition("ITEM", "REWARD", 2, 1));
-    uint256 rwdGold = _createGoalReward(goalIndex, 300, Condition("ITEM", "REWARD", 3, 1));
+    _createGenericItem(100); // reward - bronze tier
+    _createGenericItem(200); // reward - silver tier
+    _createGenericItem(300); // reward - gold tier
+    uint256 goalID = _createGoal(
+      goalIndex,
+      0,
+      Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt)
+    );
+    uint256 rwdBronze = _createGoalReward(goalIndex, 100, Condition("ITEM", "REWARD", 100, 1));
+    uint256 rwdSilver = _createGoalReward(goalIndex, 200, Condition("ITEM", "REWARD", 200, 1));
+    uint256 rwdGold = _createGoalReward(goalIndex, 300, Condition("ITEM", "REWARD", 300, 1));
     uint256 rwdDisplay = _createGoalReward(goalIndex, 0, Condition("ITEM", "DISPLAY_ONLY", 3, 1));
 
     /////
@@ -50,7 +54,7 @@ contract GoalsTest is SetupTemplate {
     _GoalContributeSystem.executeTyped(goalIndex, 50);
     currContribAmt += 50;
     _assertContribution(goalID, accSlacker.id, 50);
-    assertEq(0, _CoinComponent.get(accSlacker.id));
+    assertEq(0, LibInventory.getBalanceOf(components, accSlacker.id, MUSU_INDEX));
     _assertGoalStatus(goalID, currContribAmt, false);
 
     // add contribution for bronze and silver (alr checked shape)
@@ -71,7 +75,7 @@ contract GoalsTest is SetupTemplate {
     _GoalContributeSystem.executeTyped(goalIndex, 1000);
     currContribAmt += 611;
     _assertContribution(goalID, accGold.id, 761);
-    assertEq(1239, _CoinComponent.get(accGold.id)); // 2000 - 761 = 1289
+    assertEq(1239, LibInventory.getBalanceOf(components, accGold.id, MUSU_INDEX)); // 2000 - 761 = 1289
     _assertGoalStatus(goalID, 1111, true);
 
     // gold tries to contribute again
@@ -90,30 +94,30 @@ contract GoalsTest is SetupTemplate {
     // not-even-bronze claims, gets nothing
     vm.prank(accSlacker.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(0, _getItemBalance(accSlacker.index, 1));
-    assertEq(0, _getItemBalance(accSlacker.index, 2));
-    assertEq(0, _getItemBalance(accSlacker.index, 3));
+    assertEq(0, _getItemBalance(accSlacker.index, 100));
+    assertEq(0, _getItemBalance(accSlacker.index, 200));
+    assertEq(0, _getItemBalance(accSlacker.index, 300));
 
     // bronze claims, gets bronze tier
     vm.prank(accBronze.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(accBronze.index, 1));
-    assertEq(0, _getItemBalance(accBronze.index, 2));
-    assertEq(0, _getItemBalance(accBronze.index, 3));
+    assertEq(1, _getItemBalance(accBronze.index, 100));
+    assertEq(0, _getItemBalance(accBronze.index, 200));
+    assertEq(0, _getItemBalance(accBronze.index, 300));
 
     // silver claims, gets silver tier
     vm.prank(accSilver.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(accSilver.index, 1));
-    assertEq(1, _getItemBalance(accSilver.index, 2));
-    assertEq(0, _getItemBalance(accSilver.index, 3));
+    assertEq(1, _getItemBalance(accSilver.index, 100));
+    assertEq(1, _getItemBalance(accSilver.index, 200));
+    assertEq(0, _getItemBalance(accSilver.index, 300));
 
     // gold claims, gets gold tier
     vm.prank(accGold.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(accGold.index, 1));
-    assertEq(1, _getItemBalance(accGold.index, 2));
-    assertEq(1, _getItemBalance(accGold.index, 3));
+    assertEq(1, _getItemBalance(accGold.index, 100));
+    assertEq(1, _getItemBalance(accGold.index, 200));
+    assertEq(1, _getItemBalance(accGold.index, 300));
   }
 
   //////////////////

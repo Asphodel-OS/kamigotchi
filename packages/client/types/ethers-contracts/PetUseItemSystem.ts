@@ -30,7 +30,7 @@ import type {
 export interface PetUseItemSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -121,7 +121,7 @@ export interface PetUseItemSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -140,7 +140,7 @@ export interface PetUseItemSystem extends BaseContract {
 
   executeTyped(
     id: PromiseOrValue<BigNumberish>,
-    invID: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -159,7 +159,7 @@ export interface PetUseItemSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -190,7 +190,7 @@ export interface PetUseItemSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -210,7 +210,7 @@ export interface PetUseItemSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

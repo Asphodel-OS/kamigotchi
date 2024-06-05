@@ -7,7 +7,6 @@
     "BlockRevealComponent",
     "CacheOperatorComponent",
     "CanNameComponent",
-    "CoinComponent",
     "CostComponent",
     "DescriptionAltComponent",
     "DescriptionComponent",
@@ -110,10 +109,6 @@
     "WhitelistComponent"
   ],
   "systems": [
-    {
-      "name": "_devGiveTokensSystem",
-      "writeAccess": ["CoinComponent", "ValueComponent"]
-    },
     {
       "name": "_ConfigSetSystem",
       "writeAccess": ["ValueComponent"]
@@ -516,8 +511,10 @@
     {
       "name": "Farm20DepositSystem",
       "writeAccess": [
-        "CoinComponent",
         "IdHolderComponent",
+        "IDOwnsInventoryComponent",
+        "IndexItemComponent",
+        "IsInventoryComponent",
         "ProxyPermissionsFarm20Component",
         "TimeLastComponent",
         "ValueComponent"
@@ -526,8 +523,10 @@
     {
       "name": "Farm20WithdrawSystem",
       "writeAccess": [
-        "CoinComponent",
         "IdHolderComponent",
+        "IDOwnsInventoryComponent",
+        "IsInventoryComponent",
+        "IndexItemComponent",
         "ProxyPermissionsFarm20Component",
         "TimeLastComponent",
         "TimelockComponent",
@@ -581,9 +580,11 @@
     {
       "name": "GoalContributeSystem",
       "writeAccess": [
-        "CoinComponent",
         "IdHolderComponent",
         "IDScoreTypeComponent",
+        "IDOwnsInventoryComponent",
+        "IndexItemComponent",
+        "IsInventoryComponent",
         "IsCompleteComponent",
         "TimeLastComponent",
         "ValueComponent"
@@ -596,12 +597,12 @@
     {
       "name": "ListingBuySystem",
       "writeAccess": [
-        "CoinComponent",
         "IdHolderComponent",
         "IDOwnsInventoryComponent",
         "IDScoreTypeComponent",
         "IndexItemComponent",
         "IndexComponent",
+        "IndexItemComponent",
         "IsInventoryComponent",
         "TimeLastComponent",
         "TypeComponent",
@@ -611,7 +612,6 @@
     {
       "name": "ListingSellSystem",
       "writeAccess": [
-        "CoinComponent",
         "IdHolderComponent",
         "IndexComponent",
         "TimeLastComponent",
@@ -700,7 +700,6 @@
     {
       "name": "PetFeedSystem",
       "writeAccess": [
-        "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
@@ -758,7 +757,6 @@
     {
       "name": "PetLevelSystem",
       "writeAccess": [
-        "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
         "LevelComponent",
@@ -793,12 +791,14 @@
     {
       "name": "ProductionCollectSystem",
       "writeAccess": [
-        "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
         "IDScoreTypeComponent",
+        "IDOwnsInventoryComponent",
+        "IsInventoryComponent",
         "IndexComponent",
+        "IndexItemComponent",
         "RateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
@@ -814,11 +814,13 @@
         "IdNodeComponent",
         "IdSourceComponent",
         "IDScoreTypeComponent",
+        "IDOwnsInventoryComponent",
         "IdTargetComponent",
         "IndexComponent",
+        "IndexItemComponent",
         "IndexNodeComponent",
+        "IsInventoryComponent",
         "IsKillComponent",
-        "CoinComponent",
         "HealthComponent",
         "RateComponent",
         "StateComponent",
@@ -832,29 +834,34 @@
     {
       "name": "ProductionStartSystem",
       "writeAccess": [
+        "IDOwnsInventoryComponent",
+        "IsInventoryComponent",
         "IsProductionComponent",
-        "CoinComponent",
-        "HealthComponent",
         "IdNodeComponent",
         "IdPetComponent",
         "IndexNodeComponent",
+        "IndexItemComponent",
+        "HealthComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
         "TimeResetComponent",
-        "TimeStartComponent"
+        "TimeStartComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "ProductionStopSystem",
       "writeAccess": [
-        "CoinComponent",
+        "IDOwnsInventoryComponent",
+        "IsInventoryComponent",
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
         "IDScoreTypeComponent",
         "IndexComponent",
+        "IndexItemComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
@@ -913,7 +920,6 @@
     {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
-        "CoinComponent",
         "IdHolderComponent",
         "IndexSkillComponent",
         "IsBonusComponent",
@@ -941,7 +947,6 @@
     "LibAccount",
     "LibAffinity",
     "LibBonus",
-    "LibCoin",
     "LibConfig",
     "LibDataEntity",
     "LibExperience",

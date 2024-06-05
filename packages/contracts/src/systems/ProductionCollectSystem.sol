@@ -7,13 +7,15 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
+
+import "libraries/utils/Constants.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Collect"));
 
@@ -49,7 +51,8 @@ contract ProductionCollectSystem is System {
     // standard logging and tracking
     uint256 nodeID = LibHarvest.getNode(components, id);
     LibScore.inc(components, accountID, "COLLECT", output);
-    LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", output);
+    LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, output);
+    // LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", output);
     LibNode.logHarvestAt(components, accountID, LibNode.getIndex(components, nodeID), output);
     LibNode.logHarvestAffinity(
       components,

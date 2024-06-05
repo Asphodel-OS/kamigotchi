@@ -99,12 +99,7 @@ library LibLootbox {
     uint256 count
   ) internal {
     if (count == 0) return;
-
-    uint256 invID = LibInventory.get(components, holderID, index);
-    if (invID == 0) {
-      invID = LibInventory.create(components, holderID, index);
-    }
-    LibInventory.inc(components, invID, count);
+    else LibInventory.incFor(components, holderID, index, count);
   }
 
   /// @notice logs the reveal result, deleting unessary fields
