@@ -52,7 +52,8 @@ export function registerScene() {
         <Wrapper>
           <Container>
             <Room index={roomIndex} />
-            <Wallpaper src={backgrounds.kamiPatternWide} />
+            <Wallpaper src={backgrounds.long} />
+            <Wallpaper />
           </Container>
         </Wrapper>
       );
@@ -83,11 +84,12 @@ const Container = styled.div`
 `;
 
 const Wallpaper = styled.img`
-  height: 100%;
-  min-width: 100%;
   position: absolute;
+  width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+
   z-index: -3;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
 `;
