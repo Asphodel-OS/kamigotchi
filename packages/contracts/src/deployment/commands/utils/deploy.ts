@@ -1,9 +1,9 @@
-import { constants } from "ethers";
-import { generateLibDeploy } from "./codegen";
-import { findLog } from "./findLog";
-import execa = require("execa");
+import { constants } from 'ethers';
+import { generateLibDeploy } from './codegen';
+import { findLog } from './findLog';
+import execa = require('execa');
 
-const contractsDir = __dirname + "/../../contracts/";
+const contractsDir = __dirname + '/../../contracts/';
 
 /**
  * Deploy world, components and systems from deploy.json
@@ -15,44 +15,44 @@ const contractsDir = __dirname + "/../../contracts/";
  */
 export async function deploy(
   deployerPriv?: string,
-  rpc = "http://localhost:8545",
+  rpc = 'http://localhost:8545',
   reuseComponents?: boolean,
   worldAddress?: string,
   forgeOpts?: string
 ) {
   const child = execa(
-    "forge",
+    'forge',
     [
-      "script",
-      "src/deployment/contracts/Deploy.s.sol:Deploy",
-      "--broadcast",
-      "--sig",
-      "deploy(uint256,address,bool)",
+      'script',
+      'src/deployment/contracts/Deploy.s.sol:Deploy',
+      '--broadcast',
+      '--sig',
+      'deploy(uint256,address,bool)',
       deployerPriv || constants.AddressZero, // Deployer
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       (reuseComponents || false).toString(), // Reuse components
-      "--fork-url",
+      '--fork-url',
       rpc,
-      "--skip",
-      "test",
-      ...(forgeOpts?.split(" ") || []),
+      '--skip',
+      'test',
+      ...(forgeOpts?.split(' ') || []),
     ],
-    { stdio: ["inherit", "pipe", "pipe"] }
+    { stdio: ['inherit', 'pipe', 'pipe'] }
   );
 
-  child.stderr?.on("data", (data) => console.log("stderr:", data.toString()));
-  child.stdout?.on("data", (data) => console.log(data.toString()));
+  child.stderr?.on('data', (data) => console.log('stderr:', data.toString()));
+  child.stdout?.on('data', (data) => console.log(data.toString()));
 
   // Extract world address from deploy script
-  const lines = (await child).stdout?.split("\n");
-  const deployedWorldAddress = findLog(lines, "world: contract IWorld");
-  const startBlock = findLog(lines, "startBlock: uint256");
+  const lines = (await child).stdout?.split('\n');
+  const deployedWorldAddress = findLog(lines, 'world: contract IWorld');
+  const startBlock = findLog(lines, 'startBlock: uint256');
 
-  console.log("---------------------------------------------\n");
-  console.log("Deployed world at:", deployedWorldAddress);
-  console.log("Start block:", startBlock);
-  console.log("\n---------------------------------------------");
-  console.log("\n\n");
+  console.log('---------------------------------------------\n');
+  console.log('Deployed world at:', deployedWorldAddress);
+  console.log('Start block:', startBlock);
+  console.log('\n---------------------------------------------');
+  console.log('\n\n');
 
   return { child: await child, deployedWorldAddress, startBlock };
 }

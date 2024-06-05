@@ -19,8 +19,12 @@ contract _GoalCreateSystem is System {
       string memory name,
       string memory description,
       uint32 roomIndex,
-      Condition memory objective
-    ) = abi.decode(arguments, (uint32, string, string, uint32, Condition));
+      string memory objType,
+      string memory objLogic,
+      uint32 objIndex,
+      uint256 objValue
+    ) = abi.decode(arguments, (uint32, string, string, uint32, string, string, uint32, uint256));
+    Condition memory objective = Condition(objType, objLogic, objIndex, objValue);
 
     // check that the goal exists
     require(LibGoals.getByIndex(components, goalIndex) == 0, "Goal alr exist");
@@ -38,8 +42,14 @@ contract _GoalCreateSystem is System {
     string memory name,
     string memory description,
     uint32 roomIndex,
-    Condition memory objective
+    string memory objType,
+    string memory objLogic,
+    uint32 objIndex,
+    uint256 objValue
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(goalIndex, name, description, roomIndex, objective));
+    return
+      execute(
+        abi.encode(goalIndex, name, description, roomIndex, objType, objLogic, objIndex, objValue)
+      );
   }
 }

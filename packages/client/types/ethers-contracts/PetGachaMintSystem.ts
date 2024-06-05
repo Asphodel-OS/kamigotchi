@@ -31,7 +31,7 @@ export interface PetGachaMintSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
-    "init(bytes)": FunctionFragment;
+    "init()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -53,10 +53,7 @@ export interface PetGachaMintSystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "init",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
+  encodeFunctionData(functionFragment: "init", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -132,7 +129,6 @@ export interface PetGachaMintSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     init(
-      arugments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -155,7 +151,6 @@ export interface PetGachaMintSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   init(
-    arugments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -177,10 +172,7 @@ export interface PetGachaMintSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    init(
-      arugments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    init(overrides?: CallOverrides): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -213,7 +205,6 @@ export interface PetGachaMintSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     init(
-      arugments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -237,7 +228,6 @@ export interface PetGachaMintSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     init(
-      arugments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

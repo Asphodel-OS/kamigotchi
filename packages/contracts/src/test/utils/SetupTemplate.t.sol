@@ -43,7 +43,7 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpTime();
 
     vm.prank(deployer);
-    _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
+    _PetGachaMintSystem.init(); // todo: make deploy script call `init()`
 
     setUpAccounts();
     setUpMint();
@@ -389,7 +389,16 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       abi.decode(
-        __GoalCreateSystem.executeTyped(index, "name", "description", roomIndex, condition),
+        __GoalCreateSystem.executeTyped(
+          index,
+          "name",
+          "description",
+          roomIndex,
+          condition.type_,
+          condition.logic,
+          condition.index,
+          condition.value
+        ),
         (uint256)
       );
   }
@@ -399,7 +408,17 @@ abstract contract SetupTemplate is TestSetupImports {
     Condition memory condition
   ) internal returns (uint256) {
     vm.prank(deployer);
-    return abi.decode(__GoalCreateRequirementSystem.executeTyped(index, condition), (uint256));
+    return
+      abi.decode(
+        __GoalCreateRequirementSystem.executeTyped(
+          index,
+          condition.type_,
+          condition.logic,
+          condition.index,
+          condition.value
+        ),
+        (uint256)
+      );
   }
 
   function _createGoalReward(
@@ -410,7 +429,15 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       abi.decode(
-        __GoalCreateRewardSystem.executeTyped(index, "name", minCont, condition),
+        __GoalCreateRewardSystem.executeTyped(
+          index,
+          "name",
+          minCont,
+          condition.type_,
+          condition.logic,
+          condition.index,
+          condition.value
+        ),
         (uint256)
       );
   }
@@ -443,7 +470,11 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32[] memory exits
   ) internal returns (uint256) {
     vm.prank(deployer);
-    return abi.decode(__RoomCreateSystem.executeTyped(location, index, name, "", exits), (uint256));
+    return
+      abi.decode(
+        __RoomCreateSystem.executeTyped(location.x, location.y, location.z, index, name, "", exits),
+        (uint256)
+      );
   }
 
   function _createRoomGate(

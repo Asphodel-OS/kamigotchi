@@ -3,6 +3,7 @@ const { hideBin } = require('yargs/helpers');
 import { JsonRpcProvider } from '@ethersproject/providers';
 import dotenv from 'dotenv';
 import { generateAndDeploy } from './utils/deploy';
+import { generateInitScript, initWorld } from './utils/initWorld';
 const openurl = require('openurl');
 
 const argv = yargs(hideBin(process.argv)).argv;
@@ -21,6 +22,12 @@ const run = async () => {
 
   await setAutoMine(mode, true);
 
+  // todo: separate generate files, put them into one chunk
+  if (argv.init) {
+    // generate init script
+    generateInitScript();
+  }
+
   const result = await generateAndDeploy({
     config: config,
     rpc: getRpc(mode)!,
@@ -31,12 +38,19 @@ const run = async () => {
     forgeOpts: argv.forgeOpts,
   });
 
-  /// foundry implementation of world.ts - not in use
-  // const initResult = await executeCallFromStream(
-  //   getRpc(mode)!,
-  //   getDeployerKey(mode)!,
-  //   "0x610178da211fef7d417bc0e6fed39f05609ad788"
-  // );
+  // world state
+  if (argv.init) {
+    await initWorld(
+      getDeployerKey(mode)!,
+      getRpc(mode)!,
+      result.deployedWorldAddress!,
+      argv.forgeOpts
+    );
+
+    console.log('---------------------------------------------\n');
+    console.log('World state initialized ');
+    console.log('\n---------------------------------------------');
+  }
 
   openurl.open(
     'http://localhost:3000/?worldAddress=' +
@@ -46,6 +60,7 @@ const run = async () => {
   );
 
   await setAutoMine(mode, false);
+  await setTimestamp(mode);
 };
 
 const getDeployerKey = (mode: string) => {
@@ -68,6 +83,14 @@ const setAutoMine = async (mode: string, on: boolean) => {
   if (mode === 'DEV') {
     const provider = new JsonRpcProvider(process.env.DEV_RPC!);
     await provider.send(`${on ? 'anvil_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
+  }
+};
+
+const setTimestamp = async (mode: string) => {
+  if (mode === 'DEV') {
+    const provider = new JsonRpcProvider(process.env.DEV_RPC!);
+    const timestamp = Math.floor(new Date().getTime() / 1000);
+    await provider.send('evm_setNextBlockTimestamp', [timestamp]);
   }
 };
 

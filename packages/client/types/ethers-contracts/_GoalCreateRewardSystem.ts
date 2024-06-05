@@ -27,24 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type ConditionStruct = {
-  type_: PromiseOrValue<string>;
-  logic: PromiseOrValue<string>;
-  index: PromiseOrValue<BigNumberish>;
-  value: PromiseOrValue<BigNumberish>;
-};
-
-export type ConditionStructOutput = [string, string, number, BigNumber] & {
-  type_: string;
-  logic: string;
-  index: number;
-  value: BigNumber;
-};
-
 export interface _GoalCreateRewardSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,string,uint256,(string,string,uint32,uint256))": FunctionFragment;
+    "executeTyped(uint32,string,uint256,string,string,uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -67,7 +53,10 @@ export interface _GoalCreateRewardSystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
-      ConditionStruct
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -142,7 +131,10 @@ export interface _GoalCreateRewardSystem extends BaseContract {
       goalIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       cutoff: PromiseOrValue<BigNumberish>,
-      reward: ConditionStruct,
+      rwdType: PromiseOrValue<string>,
+      rwdLogic: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      rwdValue: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -163,7 +155,10 @@ export interface _GoalCreateRewardSystem extends BaseContract {
     goalIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     cutoff: PromiseOrValue<BigNumberish>,
-    reward: ConditionStruct,
+    rwdType: PromiseOrValue<string>,
+    rwdLogic: PromiseOrValue<string>,
+    rwdIndex: PromiseOrValue<BigNumberish>,
+    rwdValue: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -184,7 +179,10 @@ export interface _GoalCreateRewardSystem extends BaseContract {
       goalIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       cutoff: PromiseOrValue<BigNumberish>,
-      reward: ConditionStruct,
+      rwdType: PromiseOrValue<string>,
+      rwdLogic: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      rwdValue: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -217,7 +215,10 @@ export interface _GoalCreateRewardSystem extends BaseContract {
       goalIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       cutoff: PromiseOrValue<BigNumberish>,
-      reward: ConditionStruct,
+      rwdType: PromiseOrValue<string>,
+      rwdLogic: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      rwdValue: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -239,7 +240,10 @@ export interface _GoalCreateRewardSystem extends BaseContract {
       goalIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       cutoff: PromiseOrValue<BigNumberish>,
-      reward: ConditionStruct,
+      rwdType: PromiseOrValue<string>,
+      rwdLogic: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      rwdValue: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

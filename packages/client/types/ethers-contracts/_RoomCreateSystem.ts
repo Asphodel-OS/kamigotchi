@@ -27,22 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type CoordStruct = {
-  x: PromiseOrValue<BigNumberish>;
-  y: PromiseOrValue<BigNumberish>;
-  z: PromiseOrValue<BigNumberish>;
-};
-
-export type CoordStructOutput = [number, number, number] & {
-  x: number;
-  y: number;
-  z: number;
-};
-
 export interface _RoomCreateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped((int32,int32,int32),uint32,string,string,uint32[])": FunctionFragment;
+    "executeTyped(int32,int32,int32,uint32,string,string,uint32[])": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -62,7 +50,9 @@ export interface _RoomCreateSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
-      CoordStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -138,7 +128,9 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      location: CoordStruct,
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
+      z: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
@@ -160,7 +152,9 @@ export interface _RoomCreateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    location: CoordStruct,
+    x: PromiseOrValue<BigNumberish>,
+    y: PromiseOrValue<BigNumberish>,
+    z: PromiseOrValue<BigNumberish>,
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
@@ -182,7 +176,9 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      location: CoordStruct,
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
+      z: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
@@ -216,7 +212,9 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      location: CoordStruct,
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
+      z: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
@@ -239,7 +237,9 @@ export interface _RoomCreateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      location: CoordStruct,
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
+      z: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
