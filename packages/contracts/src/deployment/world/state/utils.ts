@@ -1,30 +1,38 @@
 import { parse } from 'csv-parse/sync';
 import { utils } from 'ethers';
-// import { MUDJsonRpcProvider } from 'layers/network/workers/providers/provider';
 
-// export function sleepIf() {
-//   const urlParams = new URLSearchParams(window.location.search);
-//   const mode = urlParams.get('mode') || import.meta.env.MODE;
-//   if (mode && (mode == 'staging' || mode == 'production')) {
-//     console.log('sleeping');
-//     return new Promise((resolve) => setTimeout(resolve, 4000));
-//   }
-// }
+////////////////
+// CONSTANTS
 
-// // temporary function to enable switch anvil modes for sending many transactions at one go
-// // will not be needed when world.ts migrates to solidity
-// export function setAutoMine(provider: MUDJsonRpcProvider, on: boolean) {
-//   if (import.meta.env.MODE == 'development' || import.meta.env.MODE == undefined) {
-//     provider.send(`${on ? 'evm_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
-//   }
-// }
+export const MUSU_INDEX = 1;
 
-// export function setTimestamp(provider: MUDJsonRpcProvider) {
-//   if (import.meta.env.MODE == 'development' || import.meta.env.MODE == undefined) {
-//     const timestamp = Math.floor(new Date().getTime() / 1000);
-//     provider.send('evm_setNextBlockTimestamp', [timestamp]);
-//   }
-// }
+///////////////
+// GETTERS
+
+export const getGoalID = (index: number) => {
+  return utils.solidityKeccak256(['string', 'uint32'], ['goal', index]);
+};
+
+///////////////
+// PROCESSORS
+
+// parses common human readable conditions into machine types for init
+export const parseToInitCon = (
+  logicType: string,
+  type: string,
+  index: number,
+  value: number
+): { logicType: string; type: string; index: number; value: number } => {
+  return {
+    logicType: logicType == '' ? '' : parseToLogicType(logicType),
+    type: parseToConType(type),
+    index: parseToConIndex(type, index),
+    value: value,
+  };
+};
+
+///////////////
+// MISC
 
 export async function readFile(file: string) {
   const fs = require('fs');
@@ -33,8 +41,11 @@ export async function readFile(file: string) {
   return await parse(result, { columns: true });
 }
 
+///////////////
+// INTERNAL
+
 // parses common human readable words into machine types
-export const parseToLogicType = (str: string): string => {
+const parseToLogicType = (str: string): string => {
   const is = ['IS', 'COMPLETE', 'AT'];
   const min = ['MIN', 'HAVE', 'GREATER'];
   const max = ['MAX', 'LESSER'];
@@ -52,6 +63,13 @@ export const parseToLogicType = (str: string): string => {
   }
 };
 
-export const getGoalID = (index: number) => {
-  return utils.solidityKeccak256(['string', 'uint32'], ['goal', index]);
+const parseToConType = (str: string): string => {
+  // coins are items now
+  return str.replace('COIN', 'ITEM');
+};
+
+const parseToConIndex = (type: string, index: number): number => {
+  // coins are items, use MUSU index
+  if (type.includes('COIN')) return MUSU_INDEX;
+  else return index;
 };

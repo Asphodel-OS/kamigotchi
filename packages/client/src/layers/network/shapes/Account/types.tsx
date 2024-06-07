@@ -12,7 +12,7 @@ import {
   getAccOutgoingRequests,
 } from '../Friendship';
 import { GachaCommit, queryAccCommits } from '../Gacha';
-import { Inventory, queryInventoryX, sortInventories } from '../Inventory';
+import { Inventory, getCoinBal, queryInventoryX, sortInventories } from '../Inventory';
 import { Kami, queryKamisX } from '../Kami';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
@@ -101,7 +101,6 @@ export const getAccount = (
 ): Account => {
   const {
     AccountIndex,
-    Coin,
     FarcasterIndex,
     LastActionTime,
     LastTime,
@@ -114,16 +113,18 @@ export const getAccount = (
     StartTime,
   } = components;
 
+  const id = world.entities[entityIndex];
+
   let account: Account = {
     entityIndex,
-    id: world.entities[entityIndex],
+    id: id,
     index: getComponentValue(AccountIndex, entityIndex)?.value as number,
     ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
     operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
     fid: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
     pfpURI: getComponentValue(MediaURI, entityIndex)?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
-    coin: (getComponentValue(Coin, entityIndex)?.value || (0 as number)) * 1,
+    coin: getCoinBal(world, components, id),
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     kamis: [], // placeholder
     level: 0, // placeholder

@@ -26,7 +26,7 @@ contract QuestsTest is SetupTemplate {
 
     uint256[] memory reqsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
-      uint256 newID = _createQuestRequirement(1, "CURR_MIN", "COIN", 0, 1);
+      uint256 newID = _createQuestRequirement(1, "CURR_MIN", "ITEM", MUSU_INDEX, 1);
       reqsArr[i] = newID;
 
       uint256[] memory newArr = LibQuestRegistry.getRequirementsByQuestIndex(components, 1);
@@ -36,7 +36,7 @@ contract QuestsTest is SetupTemplate {
 
     uint256[] memory objsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
-      uint256 newID = _createQuestObjective(1, "Quest 1", "CURR_MIN", "COIN_TOTAL", uint32(i), 10);
+      uint256 newID = _createQuestObjective(1, "Quest 1", "CURR_MIN", "ITEM_TOTAL", MUSU_INDEX, 10);
       objsArr[i] = newID;
 
       uint256[] memory newArr = LibQuestRegistry.getObjectivesByQuestIndex(components, 1);
@@ -46,7 +46,7 @@ contract QuestsTest is SetupTemplate {
 
     uint256[] memory rewsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
-      uint256 newID = _createQuestReward(1, "COIN", 0, 1);
+      uint256 newID = _createQuestReward(1, "ITEM", MUSU_INDEX, 1);
       rewsArr[i] = newID;
 
       uint256[] memory newArr = LibQuestRegistry.getRewardsByQuestIndex(components, 1);
@@ -176,9 +176,9 @@ contract QuestsTest is SetupTemplate {
   function testQuestCoinHave() public {
     // create quest
     _createQuest(1, 0);
-    _createQuestRequirement(1, "CURR_MIN", "COIN", 0, 1);
-    _createQuestObjective(1, "Quest 1", "CURR_MIN", "COIN", 0, 10);
-    _createQuestReward(1, "COIN", 0, 1);
+    _createQuestRequirement(1, "CURR_MIN", "ITEM", 1, 1);
+    _createQuestObjective(1, "Quest 1", "CURR_MIN", "ITEM", 1, 10);
+    _createQuestReward(1, "ITEM", 1, 1);
 
     // register the account
     address operator = _getOperator(0);
@@ -206,17 +206,14 @@ contract QuestsTest is SetupTemplate {
     vm.prank(operator);
     vm.expectRevert("Quests: alr completed");
     _QuestCompleteSystem.executeTyped(questID);
-
-    // check coin reward distributed correctly
-    // assertEq(LibCoin.get(components, _getAccount(0)), 11);
   }
 
   function testQuestCoinGather() public {
     // create quest
     _createQuest(1, 0);
-    _createQuestRequirement(1, "CURR_MIN", "COIN", 0, 1);
-    _createQuestObjective(1, "NAME", "INC_MIN", "COIN_TOTAL", 0, 10);
-    _createQuestReward(1, "COIN", 0, 1);
+    _createQuestRequirement(1, "CURR_MIN", "ITEM", 1, 1);
+    _createQuestObjective(1, "NAME", "INC_MIN", "ITEM_TOTAL", 1, 10);
+    _createQuestReward(1, "ITEM", 1, 1);
 
     // register account
     address operator = _getOperator(0);
@@ -239,7 +236,7 @@ contract QuestsTest is SetupTemplate {
     // and that any rewards (coin) is distributed correctly
     _fundAccount(0, 1);
     _completeQuest(0, questID);
-    assertEq(LibCoin.get(components, _getAccount(0)), 12);
+    assertEq(LibInventory.getBalanceOf(components, _getAccount(0), MUSU_INDEX), 12);
 
     // check that quest cant be completed twice
     vm.prank(operator);

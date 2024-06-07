@@ -8,17 +8,22 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IDOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsInventoryComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
+import { IsInventoryComponent as IsInvComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
+////////////////////
+// CONSTANTS
+
+uint32 constant MUSU_INDEX = 1;
+
 // handles nonfungible inventory instances
 library LibInventory {
   /////////////////
-  // INTERACTIONS
+  // SHAPES
 
   /**
    * @notice  Create a new item inventory instance for a specified holder
@@ -27,14 +32,43 @@ library LibInventory {
    */
   function create(
     IUintComp components,
+    uint256 id,
+    uint256 holderID,
+    uint32 itemIndex
+  ) internal returns (uint256) {
+    IsInvComponent(getAddressById(components, IsInvCompID)).set(id);
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
+    OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, 0);
+  }
+
+  function create(
+    IUintComp components,
     uint256 holderID,
     uint32 itemIndex
   ) internal returns (uint256 id) {
     id = genID(holderID, itemIndex);
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, 0);
-    IsInventoryComponent(getAddressById(components, IsInvCompID)).set(id);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
-    OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
+    create(components, id, holderID, itemIndex);
+  }
+
+  /// @notice checks if inventory exists, creates otherwise
+  /**@dev
+   * slightly optimises the `check if exist, else create` pattern
+   *   - reduces 2 reads and 1 hash
+   */
+  function createFor(
+    IUintComp components,
+    uint256 holderID,
+    uint32 itemIndex
+  ) internal returns (uint256 id) {
+    id = genID(holderID, itemIndex);
+    IsInvComponent isComp = IsInvComponent(getAddressById(components, IsInvCompID));
+    if (!isComp.has(id)) {
+      isComp.set(id);
+      IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
+      OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
+      ValueComponent(getAddressById(components, ValueCompID)).set(id, 0);
+    }
   }
 
   /// @notice Delete the inventory instance
@@ -45,19 +79,59 @@ library LibInventory {
     getComponentById(components, OwnerCompID).remove(id);
   }
 
+  /////////////////
+  // INTERACTIONS
+
+  /// @notice increase, and creates new inventory if needed
+  function incFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
+    uint256 id = createFor(components, holderID, itemIndex);
+    inc(components, id, amt);
+  }
+
+  /// @notice decrease, and creates new inventory if needed
+  function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
+    uint256 id = createFor(components, holderID, itemIndex);
+    dec(components, id, amt);
+  }
+
+  /// @notice sets, and creates new inventory if needed
+  function setFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
+    uint256 id = createFor(components, holderID, itemIndex);
+    set(components, id, amt);
+  }
+
+  /// @notice transfers, and creates new inventory if needed
+  /// @dev avoided some component cache optims for readability
+  function transferFor(
+    IUintComp components,
+    uint256 fromHolder,
+    uint256 toHolder,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal {
+    // raw existence check to cache component
+    uint256 fromID = genID(fromHolder, itemIndex);
+    uint256 toID = genID(toHolder, itemIndex);
+    IsInvComponent isComp = IsInvComponent(getAddressById(components, IsInvCompID));
+    if (!isComp.has(fromID)) create(components, fromID, fromHolder, itemIndex);
+    if (!isComp.has(toID)) create(components, toID, toHolder, itemIndex);
+
+    transfer(components, fromID, toID, amt);
+  }
+
   /// @notice Increase a inventory balance by the specified amount
-  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
+  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 val) {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    bal = comp.get(id);
-    comp.set(id, bal += amt);
+    val = comp.get(id);
+    comp.set(id, val += amt);
   }
 
   /// @notice Decrease a inventory balance by the specified amount
-  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
+  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 val) {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    bal = comp.get(id);
-    require(bal >= amt, "Inventory: insufficient balance"); // for user error feedback
-    comp.set(id, bal -= amt);
+    val = comp.get(id);
+    require(val >= amt, "Inventory: insufficient balance"); // for user error feedback
+    comp.set(id, val -= amt);
   }
 
   /// @notice sets the balance of an inventory instance
@@ -120,6 +194,15 @@ library LibInventory {
     return LibItemRegistry.getType(components, registryID);
   }
 
+  function getTypeByIndex(
+    IUintComp components,
+    uint32 itemIndex
+  ) internal view returns (string memory) {
+    // skips registry existence check - its implicitly checked when getting type
+    uint256 registryID = LibItemRegistry.genID(itemIndex);
+    return LibItemRegistry.getType(components, registryID);
+  }
+
   /////////////////
   // QUERIES
 
@@ -130,7 +213,7 @@ library LibInventory {
     uint32 itemIndex
   ) internal view returns (uint256 result) {
     uint256 id = genID(holderID, itemIndex);
-    return IsInventoryComponent(getAddressById(components, IsInvCompID)).has(id) ? id : 0;
+    return IsInvComponent(getAddressById(components, IsInvCompID)).has(id) ? id : 0;
   }
 
   /// @notice Get all the inventories belonging to a holder

@@ -26,7 +26,6 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
 // A registry for Quest related entities

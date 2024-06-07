@@ -15,7 +15,9 @@ export async function initNodes(api: AdminAPI) {
         node['Description'],
         node['Affinity']
       );
-    } catch {}
+    } catch {
+      console.error('Could not create node', node['Index']);
+    }
   }
 }
 

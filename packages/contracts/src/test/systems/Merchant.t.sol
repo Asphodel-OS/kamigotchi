@@ -17,10 +17,10 @@ contract NPCTest is SetupTemplate {
   }
 
   function setUpItems() public override {
-    _createGenericItem(1);
-    _createGenericItem(2);
-    _createGenericItem(3);
-    _createGenericItem(4);
+    _createGenericItem(100);
+    _createGenericItem(101);
+    _createGenericItem(102);
+    _createGenericItem(103);
   }
 
   function setUpAccounts() public override {
@@ -138,10 +138,10 @@ contract NPCTest is SetupTemplate {
     // initial creation, check that item/npc indices and prices are correct
     uint numListings = 4;
     TestListingData[] memory listings = new TestListingData[](numListings);
-    listings[0] = TestListingData(1, 1, 100, 50);
-    listings[1] = TestListingData(1, 2, 80, 40);
-    listings[2] = TestListingData(1, 3, 60, 30);
-    listings[3] = TestListingData(1, 4, 40, 20);
+    listings[0] = TestListingData(1, 100, 100, 50);
+    listings[1] = TestListingData(1, 101, 80, 40);
+    listings[2] = TestListingData(1, 102, 60, 30);
+    listings[3] = TestListingData(1, 103, 40, 20);
 
     uint[] memory listingIDs = new uint[](numListings);
     for (uint i = 0; i < numListings; i++) {
@@ -158,10 +158,10 @@ contract NPCTest is SetupTemplate {
     }
 
     // price update, check fields are updated correctly and listings are not duplicated
-    listings[0] = TestListingData(1, 1, 10, 5);
-    listings[1] = TestListingData(1, 2, 8, 4);
-    listings[2] = TestListingData(1, 3, 6, 3);
-    listings[3] = TestListingData(1, 4, 4, 2);
+    listings[0] = TestListingData(1, 100, 10, 5);
+    listings[1] = TestListingData(1, 101, 8, 4);
+    listings[2] = TestListingData(1, 102, 6, 3);
+    listings[3] = TestListingData(1, 103, 4, 2);
 
     uint newListingID;
     for (uint i = 0; i < numListings; i++) {
@@ -193,10 +193,10 @@ contract NPCTest is SetupTemplate {
     // check that listings cannot be created for nonexistent npcs
     numListings = 4;
     TestListingData[] memory invalidNPCListings = new TestListingData[](numListings);
-    invalidNPCListings[0] = TestListingData(3, 1, 100, 50);
-    invalidNPCListings[1] = TestListingData(3, 2, 80, 40);
-    invalidNPCListings[2] = TestListingData(3, 3, 60, 30);
-    invalidNPCListings[3] = TestListingData(3, 4, 40, 20);
+    invalidNPCListings[0] = TestListingData(3, 100, 100, 50);
+    invalidNPCListings[1] = TestListingData(3, 101, 80, 40);
+    invalidNPCListings[2] = TestListingData(3, 102, 60, 30);
+    invalidNPCListings[3] = TestListingData(3, 103, 40, 20);
 
     for (uint i = 0; i < numListings; i++) {
       vm.prank(deployer);
@@ -212,10 +212,10 @@ contract NPCTest is SetupTemplate {
     // check that listings cannot be created for nonexistent items
     numListings = 4;
     TestListingData[] memory invalidItemListings = new TestListingData[](numListings);
-    invalidItemListings[0] = TestListingData(1, 5, 100, 50);
-    invalidItemListings[1] = TestListingData(1, 5, 80, 40);
-    invalidItemListings[2] = TestListingData(1, 5, 60, 30);
-    invalidItemListings[3] = TestListingData(1, 5, 40, 20);
+    invalidItemListings[0] = TestListingData(1, 105, 100, 50);
+    invalidItemListings[1] = TestListingData(1, 105, 80, 40);
+    invalidItemListings[2] = TestListingData(1, 105, 60, 30);
+    invalidItemListings[3] = TestListingData(1, 105, 40, 20);
 
     for (uint i = 0; i < numListings; i++) {
       vm.prank(deployer);
@@ -237,16 +237,16 @@ contract NPCTest is SetupTemplate {
     // create listings for both npcs
     uint numListings = 4;
     TestListingData[] memory listings1 = new TestListingData[](numListings);
-    listings1[0] = TestListingData(1, 1, 80, 40);
-    listings1[1] = TestListingData(1, 2, 60, 30);
-    listings1[2] = TestListingData(1, 3, 40, 20);
-    listings1[3] = TestListingData(1, 4, 20, 10);
+    listings1[0] = TestListingData(1, 100, 80, 40);
+    listings1[1] = TestListingData(1, 101, 60, 30);
+    listings1[2] = TestListingData(1, 102, 40, 20);
+    listings1[3] = TestListingData(1, 103, 20, 10);
 
     TestListingData[] memory listings2 = new TestListingData[](numListings);
-    listings2[0] = TestListingData(2, 1, 80, 40);
-    listings2[1] = TestListingData(2, 2, 60, 30);
-    listings2[2] = TestListingData(2, 3, 40, 20);
-    listings2[3] = TestListingData(2, 4, 20, 10);
+    listings2[0] = TestListingData(2, 100, 80, 40);
+    listings2[1] = TestListingData(2, 101, 60, 30);
+    listings2[2] = TestListingData(2, 102, 40, 20);
+    listings2[3] = TestListingData(2, 103, 20, 10);
 
     uint[] memory listingIDs1 = new uint[](numListings);
     uint[] memory listingIDs2 = new uint[](numListings);
@@ -356,7 +356,7 @@ contract NPCTest is SetupTemplate {
         testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc
         listingIDs[i * testData.numItems + j] = _setListing(
           i,
-          uint32(j + 1),
+          uint32(j + 100),
           testData.buyPrice,
           testData.buyPrice / 2
         );
@@ -396,7 +396,7 @@ contract NPCTest is SetupTemplate {
         testData.balanceChange = testData.stockChange * testData.buyPrice;
         if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
           vm.prank(_getOperator(testData.playerIndex));
-          vm.expectRevert("Coin: insufficient balance");
+          vm.expectRevert("Inventory: insufficient balance");
           _ListingBuySystem.executeTyped(listingID, testData.stockChange);
         } else {
           _buyFromListing(testData.playerIndex, listingID, testData.stockChange);

@@ -49,9 +49,9 @@ export async function initWorld(
   return { child: await child };
 }
 
-export async function generateInitScript() {
+export async function generateInitScript(local: boolean) {
   // Generate system calls
-  await createWorldAPI().init();
+  await createWorldAPI(local).init();
 
   // generate system calls
   await generateInitWorld();

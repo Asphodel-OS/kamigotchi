@@ -20,9 +20,9 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -70,8 +70,7 @@ library LibHarvest {
     uint256 accountID = LibPet.getAccount(components, petID);
 
     uint256 balance = getBalance(components, id);
-    LibCoin.inc(components, accountID, balance);
-    LibCoin._set(components, id, 0);
+    LibInventory.transferFor(components, id, accountID, MUSU_INDEX, balance);
     return balance;
   }
 
@@ -82,7 +81,7 @@ library LibHarvest {
   // Starts an _existing_ production if not already started.
   function start(IUintComp components, uint256 id) public {
     setState(components, id, "ACTIVE");
-    LibCoin._set(components, id, 0);
+    LibInventory.setFor(components, id, MUSU_INDEX, 0);
     setStartTs(components, id, block.timestamp);
     setResetTs(components, id, block.timestamp); // intensity reset time
     setLastTs(components, id, block.timestamp);
@@ -97,7 +96,7 @@ library LibHarvest {
   function sync(IUintComp components, uint256 id) public returns (uint256 delta) {
     if (isActive(components, id)) {
       delta = calcBounty(components, id);
-      LibCoin.inc(components, id, delta);
+      LibInventory.incFor(components, id, MUSU_INDEX, delta);
       setLastTs(components, id, block.timestamp);
     }
   }
@@ -262,7 +261,7 @@ library LibHarvest {
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibCoin.get(components, id);
+    return LibInventory.getBalanceOf(components, id, MUSU_INDEX);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {

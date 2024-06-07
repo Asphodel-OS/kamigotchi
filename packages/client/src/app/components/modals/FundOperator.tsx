@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
@@ -22,19 +22,12 @@ export function registerFundOperatorModal() {
       rowStart: 30,
       rowEnd: 74,
     },
-    (layers) => {
-      const {
-        network: {
-          components: { IsAccount, OperatorAddress },
-        },
-      } = layers;
-
-      return merge(OperatorAddress.update$, IsAccount.update$).pipe(
+    (layers) =>
+      interval(1000).pipe(
         map(() => {
           return { network: layers.network };
         })
-      );
-    },
+      ),
 
     ({ network }) => {
       const { actions, world } = network;

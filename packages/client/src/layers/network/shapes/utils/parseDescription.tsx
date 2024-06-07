@@ -3,19 +3,11 @@ import { Components } from 'layers/network';
 import { DetailedEntity } from './EntityTypes';
 
 import { helpIcon, questsIcon } from 'assets/images/icons/menu';
-import musuIcon from 'assets/images/icons/musu.png';
 
 import moment from 'moment';
 import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
-
-// DetailedEntity wrapper for $MUSU representation
-export const MUSUEntity: DetailedEntity = {
-  ObjectType: 'COIN',
-  image: musuIcon,
-  name: '$MUSU',
-};
 
 /**
  * Gets an entity from a description (TYPE, INDEX)
@@ -28,8 +20,7 @@ export const getDescribedEntity = (
   index: number,
   optionsPassthrough?: any
 ): DetailedEntity => {
-  if (type === 'COIN') return MUSUEntity;
-  else if (type === 'ITEM') return getItemByIndex(world, components, index);
+  if (type === 'ITEM') return getItemByIndex(world, components, index);
   else if (type === 'SKILL') return getSkillByIndex(world, components, index, optionsPassthrough);
   else if (type === 'QUEST')
     return {

@@ -10,8 +10,8 @@ import { IdDelegateeComponent, ID as IdDelegateeCompID } from "components/IdDele
 import { IdDelegatorComponent, ID as IdDelegatorCompID } from "components/IdDelegatorComponent.sol";
 import { IsRegisterComponent, ID as IsRegisterCompID } from "components/IsRegisterComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { Strings } from "utils/Strings.sol";
 
 // A Register is an intermediary for a list of items being delegated from one entity to
@@ -57,7 +57,7 @@ library LibRegister {
 
     // token case, no ItemInventory entity created
     if (itemIndex == 0) {
-      LibCoin.transfer(components, delegatorID, registerID, amt);
+      LibInventory.transferFor(components, delegatorID, registerID, MUSU_INDEX, amt);
       return 0;
     }
 
@@ -96,8 +96,8 @@ library LibRegister {
     }
 
     // Process token balance.
-    balance = LibCoin.get(components, id);
-    LibCoin.transfer(components, id, toID, balance);
+    balance = LibInventory.getBalanceOf(components, id, MUSU_INDEX);
+    LibInventory.transferFor(components, id, toID, MUSU_INDEX, balance);
   }
 
   // Revert all inventory and token balances in a register back to the delegator of the register.

@@ -23,7 +23,6 @@ interface RewardTier {
   cutoff: number;
 }
 
-// the table rendering of the leaderboard modal
 export const Details = (props: Props) => {
   const { goal, getDescribedEntity } = props;
 
@@ -57,15 +56,16 @@ export const Details = (props: Props) => {
         ? `Have a contribution score of at least ${tier.cutoff}`
         : 'Everyone gets this';
     return (
-      <Box style={{ margin: '0 0.1vw 0 0' }}>
+      <Box key={tier.name} style={{ margin: '0 0.1vw 0 0' }}>
         <Row>
           <SmallTitleText>{tier.name}</SmallTitleText>
           <HelpIcon tooltip={[helpText]} />
         </Row>
 
         <Row>
-          {tier.rewards.map((reward) => (
+          {tier.rewards.map((reward, i) => (
             <ItemIconHorizontal
+              key={`reward-${tier.name}-${i}`}
               item={reward.entity}
               size='small'
               balance={reward.balance}

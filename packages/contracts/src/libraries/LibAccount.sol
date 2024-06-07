@@ -24,7 +24,6 @@ import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/Tim
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -99,27 +98,21 @@ library LibAccount {
   function incBalanceOf(
     IWorld world,
     IUintComp components,
-    uint256 id,
+    uint256 holderID,
     string memory _type,
     uint32 index,
     uint256 amount
   ) public {
-    uint256 inventoryID;
     if (LibString.eq(_type, "ITEM")) {
-      inventoryID = LibInventory.get(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.create(components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
-      LibInventory.logIncItemTotal(components, id, index, amount);
-    } else if (LibString.eq(_type, "COIN")) {
-      LibCoin.inc(components, id, amount);
+      LibInventory.incFor(components, holderID, index, amount);
     } else if (LibString.eq(_type, "MINT20")) {
-      uint256 accountMinted = getMint20Minted(components, id);
+      uint256 accountMinted = getMint20Minted(components, holderID);
       require(
         accountMinted + amount <= LibConfig.get(components, "MINT_ACCOUNT_MAX"),
         "Mint20Mint: account limit exceeded"
       );
-      address to = getOwner(components, id);
-      setMint20Minted(world, components, id, accountMinted + amount);
+      address to = getOwner(components, holderID);
+      setMint20Minted(world, components, holderID, accountMinted + amount);
       LibMint20.mint(world, to, amount);
     } else {
       require(false, "LibAccount: unknown type");
@@ -129,18 +122,13 @@ library LibAccount {
   // decreases the balance of X (type+index) of an account
   function decBalanceOf(
     IUintComp components,
-    uint256 id,
+    uint256 holderID,
     string memory _type,
     uint32 index,
     uint256 amount
   ) public {
-    uint256 inventoryID;
     if (LibString.eq(_type, "ITEM")) {
-      inventoryID = LibInventory.get(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.create(components, id, index);
-      LibInventory.dec(components, inventoryID, amount);
-    } else if (LibString.eq(_type, "COIN")) {
-      LibCoin.dec(components, id, amount);
+      LibInventory.decFor(components, holderID, index, amount);
     } else {
       require(false, "LibAccount: unknown type");
     }

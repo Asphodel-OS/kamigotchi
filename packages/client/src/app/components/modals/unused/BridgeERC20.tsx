@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { useBalance, useReadContract } from 'wagmi';
 
@@ -18,13 +18,11 @@ export function registerERC20BridgeModal() {
       rowStart: 30,
       rowEnd: 74,
     },
-    (layers) => {
-      const { network } = layers;
-      const { actions, components, systems } = network;
-      const { Coin } = components;
-
-      return merge(Coin.update$).pipe(
+    (layers) =>
+      interval(1000).pipe(
         map(() => {
+          const { network } = layers;
+          const { actions, systems } = network;
           const account = getAccountFromBurner(network);
           return {
             actions,
@@ -32,8 +30,7 @@ export function registerERC20BridgeModal() {
             proxyAddy: systems['system.Farm20.Proxy'].address,
           };
         })
-      );
-    },
+      ),
 
     ({ actions, account, proxyAddy }) => {
       const { account: kamiAccount } = useAccount();

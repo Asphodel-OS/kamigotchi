@@ -10,8 +10,19 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { utils } from 'ethers';
 import { Components } from 'layers/network';
-import { Item, getItem } from './Item';
+import { Item, getItem, getItemByIndex } from './Item';
+
+import { MUSU_INDEX } from 'constants/indices';
+
+//////////////
+// GETTERS
+
+export const getCoinBal = (world: World, components: Components, holderID: EntityID): number => {
+  const inv = getInventoryByIndex(world, components, holderID, MUSU_INDEX);
+  return inv.balance ?? 0;
+};
 
 // standardized shape of a FE Inventory Entity
 export interface Inventory {
@@ -65,13 +76,45 @@ export const sortInventories = (inventories: Inventory[]) => {
 };
 
 // get an Inventory from a inventories of Inventories
-export const getInventoryByIndex = (inventories: Inventory[], index: number) => {
+export const getInventoryFromList = (inventories: Inventory[], index: number) => {
   if (!inventories) return;
   for (let i = 0, len = inventories.length; i < len; i++) {
     if (inventories[i].item.index === index) {
       return inventories[i];
     }
   }
+};
+
+// gets inventory by index via deterministic ID.
+// @returns Inventory. If empty, returns inventory with balance 0
+export const getInventoryByIndex = (
+  world: World,
+  components: Components,
+  holderID: EntityID,
+  index: number
+): Inventory => {
+  const entityIndex = getEntityIndex(world, holderID, index);
+  if (!entityIndex)
+    // inventory does not exist, return empty inventory without balance
+    return {
+      id: '0' as EntityID,
+      entityIndex: 0 as EntityIndex,
+      item: getItemByIndex(world, components, index),
+      balance: 0,
+    };
+  else return getInventory(world, components, entityIndex);
+};
+
+const getEntityIndex = (
+  world: World,
+  holderID: EntityID,
+  index: number
+): EntityIndex | undefined => {
+  const id = utils.solidityKeccak256(
+    ['string', 'uint256', 'uint32'],
+    ['inventory.instance', holderID ?? 0, index]
+  );
+  return world.entityToIndex.get(id as EntityID);
 };
 
 /////////////////

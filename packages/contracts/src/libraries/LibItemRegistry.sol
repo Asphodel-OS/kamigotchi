@@ -26,7 +26,33 @@ import { LibStat } from "libraries/LibStat.sol";
 // This can include attribute information such as capabilities, stats and effects.
 library LibItemRegistry {
   /////////////////
-  // INTERACTIONS
+  // SHAPES
+
+  /// @notice create a base Registry entry for an item.
+  /** @dev
+   * empty item, can be built on for item types or left like this
+   * $MUSU is an item like this, intended index 1
+   */
+  function createItem(
+    IUintComp components,
+    uint32 index,
+    string memory name,
+    string memory description,
+    string memory mediaURI
+  ) internal returns (uint256 id) {
+    id = genID(index);
+    require(
+      !IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id),
+      "item reg: item alr exists"
+    );
+
+    setIndex(components, id, index);
+    setIsRegistry(components, id);
+
+    setName(components, id, name);
+    setDescription(components, id, description);
+    setMediaURI(components, id, mediaURI);
+  }
 
   /// @notice Create a Registry entry for a Consumable Item.
   function createConsumable(
@@ -47,6 +73,7 @@ library LibItemRegistry {
   /// @param index   The index of the item to create an inventory for
   /// @param keys    The keys of the items in lootbox's droptable
   /// @param weights The weights of the items in lootbox's droptable
+  /// @dev intended for registry entry 10000-11000
   function createLootbox(
     IUintComp components,
     uint32 index,
@@ -65,6 +92,10 @@ library LibItemRegistry {
   }
 
   /// @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
+  /** @dev
+   * intended for registry entry 100-1000
+   * potentially just labeled as a consumable in future
+   */
   function createFood(
     IUintComp components,
     uint32 index,
@@ -83,6 +114,10 @@ library LibItemRegistry {
   }
 
   /// @notice Create a Registry entry for a Revive item. (e.g. ribbon)
+  /** @dev
+   * intended for registry entry 1000-2000
+   * potentially combined with food/consumable in future
+   */
   function createRevive(
     IUintComp components,
     uint32 index,
@@ -95,28 +130,6 @@ library LibItemRegistry {
     setIsConsumable(components, id);
     setType(components, id, "REVIVE");
     LibStat.setHealth(components, id, Stat(0, 0, 0, health));
-  }
-
-  /// @notice create a base Registry entry for an item.
-  function createItem(
-    IUintComp components,
-    uint32 index,
-    string memory name,
-    string memory description,
-    string memory mediaURI
-  ) internal returns (uint256 id) {
-    id = genID(index);
-    require(
-      !IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id),
-      "item reg: item alr exists"
-    );
-
-    setIndex(components, id, index);
-    setIsRegistry(components, id);
-
-    setName(components, id, name);
-    setDescription(components, id, description);
-    setMediaURI(components, id, mediaURI);
   }
 
   /// @notice delete a Registry entry for an item.

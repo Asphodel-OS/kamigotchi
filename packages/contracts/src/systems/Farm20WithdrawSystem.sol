@@ -7,8 +7,8 @@ import { getAddressById } from "solecs/utils.sol";
 import { ControlledBridgeSystem } from "utils/ControlledBridgeSystem.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibTimelock } from "libraries/LibTimelock.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
@@ -38,7 +38,10 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Withdraw: no account");
     require(LibAccount.getRoom(components, accountID) == ROOM, "Farm20Withdraw: not in room 12");
-    require(LibCoin.get(components, accountID) >= value, "Coin: insufficient balance");
+    require(
+      LibInventory.getBalanceOf(components, accountID, MUSU_INDEX) >= value,
+      "Coin: insufficient balance"
+    );
 
     // scheduling timelock
     _schedule(msg.sender, value, block.timestamp);
@@ -58,7 +61,7 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
 
     // withdraw balance
     uint256 accountID = LibAccount.getByOwner(components, target);
-    LibCoin.dec(components, accountID, value);
+    LibInventory.decFor(components, accountID, MUSU_INDEX, value);
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.withdraw((target), value);
 

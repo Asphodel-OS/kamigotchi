@@ -32,8 +32,8 @@ export function createPlayerAPI(systems: any) {
   }
 
   // use a pet item
-  function usePetItem(petID: BigNumberish, invID: BigNumberish) {
-    return systems['system.Pet.Use.Item'].executeTyped(petID, invID);
+  function usePetItem(petID: BigNumberish, itemIndex: BigNumberish) {
+    return systems['system.Pet.Use.Item'].executeTyped(petID, itemIndex);
   }
 
   /////////////////

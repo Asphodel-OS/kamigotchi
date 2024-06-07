@@ -1,10 +1,10 @@
-import { initConfigs } from './state/configs';
+import { initConfigs, initLocalConfigs } from './state/configs';
 import { initGachaPool } from './state/gacha';
 import { deleteGoals, initGoals } from './state/goals';
 import { deleteItems, initItems } from './state/items';
 import { deleteNodes, initNodes } from './state/nodes';
 import { initNpcs } from './state/npcs';
-import { deleteQuests, initQuests, initQuestsByIndex } from './state/quests';
+import { deleteQuests, initLocalQuests, initQuests, initQuestsByIndex } from './state/quests';
 import { deleteRelationships, initRelationships } from './state/relationships';
 import { deleteRooms, initRoom, initRooms } from './state/rooms';
 import { deleteSkills, initSkills } from './state/skills';
@@ -16,7 +16,7 @@ import { AdminAPI, createAdminAPI } from './admin';
  * This is adapted off world.ts from the client package.
  */
 
-export function createWorldAPI() {
+export function createWorldAPI(local: boolean) {
   async function genCalls(func: (api: AdminAPI) => Promise<void>) {
     const compiledCalls: string[] = [];
     const state = createAdminAPI(compiledCalls);
@@ -36,7 +36,11 @@ export function createWorldAPI() {
     await initRelationships(api);
     await initGoals(api);
 
-    await initGachaPool(api, 50);
+    if (local) {
+      await initLocalConfigs(api);
+      await initGachaPool(api, 50);
+      await initLocalQuests(api);
+    }
   }
 
   return {

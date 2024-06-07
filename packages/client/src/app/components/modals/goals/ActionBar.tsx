@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
@@ -22,25 +22,18 @@ interface Props {
   };
 }
 
-// the table rendering of the leaderboard modal
 export const ActionBar = (props: Props) => {
   const { actions, account, contribution, goal, utils } = props;
 
   const [contributeAmount, setContributeAmount] = useState(0);
-  const [accBalance, setAccBalance] = useState(0);
 
-  useEffect(() => {
-    const accBalance = utils.getBalance(
-      account,
-      goal.objective.target.index,
-      goal.objective.target.type
-    );
-    setAccBalance(accBalance);
-  }, [account]);
+  const accBalance = () => {
+    return utils.getBalance(account, goal.objective.target.index, goal.objective.target.type);
+  };
 
   const maxAmt = () => {
     const goalLeft = goal.objective.target.value ?? 0 - goal.currBalance;
-    return Math.min(accBalance, goalLeft);
+    return Math.min(accBalance(), goalLeft);
   };
 
   const txContribute = () => {
@@ -76,14 +69,14 @@ export const ActionBar = (props: Props) => {
           buttonText='Contribute'
         />
         <SubText>
-          Contribute to{' '}
+          Contribute{' '}
           {
             utils.getDescribedEntity(goal.objective.target.type, goal.objective.target.index ?? 0)
               .name
           }
           ?
         </SubText>
-        <SubText>You have {accBalance} available.</SubText>
+        <SubText>You have {accBalance()} available.</SubText>
       </div>
     );
   };

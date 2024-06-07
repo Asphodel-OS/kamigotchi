@@ -6,7 +6,6 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Inventory } from 'layers/network/shapes/Inventory';
 import { Kami } from 'layers/network/shapes/Kami';
 
 export function registerEMABoardModal() {
@@ -48,17 +47,13 @@ export function registerEMABoardModal() {
       };
 
       const useRenamePotion = (kami: Kami) => {
-        const inv = data.account.inventories?.consumables.find(
-          (inv: Inventory) => inv.item.index === 9001
-        );
-        if (!inv) return;
-
+        const itemIndex = 9001;
         actions.add({
           action: 'KamiFeed',
-          params: [kami.id, inv.id],
+          params: [kami.id, itemIndex],
           description: `Using holy dust on ${kami.name}`,
           execute: async () => {
-            return api.player.pet.use(kami.id, inv.id);
+            return api.player.pet.use(kami.id, itemIndex);
           },
         });
       };

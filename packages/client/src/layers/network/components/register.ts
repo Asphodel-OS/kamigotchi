@@ -115,7 +115,6 @@ export function createComponents(world: World) {
 
     // General Attributes
     Affinity: defineStringEZ('Affinity', 'component.affiinity'),
-    Coin: defineNumberEZ('Coin', 'component.coin'),
     Cost: defineNumberEZ('Cost', 'component.cost'),
     Description: defineStringEZ('Description', 'component.description'),
     DescriptionAlt: defineStringEZ('Description', 'component.description.alt'),

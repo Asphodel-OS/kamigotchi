@@ -47,8 +47,7 @@ contract PetFeedSystem is System {
     LibPet.sync(components, id);
 
     // decrement item from inventory
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
+    LibInventory.decFor(components, accountID, itemIndex, 1); // implicit check for insufficient balance
 
     // execute feeding actions
     LibPet.heal(components, id, LibStat.getHealth(components, registryID).sync);

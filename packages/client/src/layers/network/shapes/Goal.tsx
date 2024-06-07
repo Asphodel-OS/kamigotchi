@@ -74,7 +74,7 @@ export const sortRewards = (rewards: Reward[]): Map<string, Reward[]> => {
 
   const tiers = new Map<string, Reward[]>();
   for (let i = 0; i < rewards.length; i++) {
-    if (rewards[i].value.logic === 'DISPLAY_ONLY') {
+    if (rewards[i].Reward.logic === 'DISPLAY_ONLY') {
       // set display only rewards to the front
       // because their cutoff is 0, will be brought front during sort
       tiers.set(rewards[i].name, [rewards[i]]);

@@ -6,8 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
@@ -34,10 +34,11 @@ contract Farm20DepositSystem is System {
 
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
-    LibCoin.inc(components, accountID, amount);
+    LibInventory.incFor(components, accountID, MUSU_INDEX, amount);
 
     // standard logging and tracking
-    LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", amount);
+    LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, amount);
+    // LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", amount);
     LibDataEntity.inc(components, accountID, 0, "COIN_DEPOSIT", amount);
     LibAccount.updateLastTs(components, accountID);
     return "";

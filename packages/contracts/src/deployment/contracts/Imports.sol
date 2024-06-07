@@ -21,7 +21,6 @@ import { BlacklistComponent, ID as BlacklistComponentID } from "components/Black
 import { BlockRevealComponent, ID as BlockRevealComponentID } from "components/BlockRevealComponent.sol";
 import { CacheOperatorComponent, ID as CacheOperatorComponentID } from "components/CacheOperatorComponent.sol";
 import { CanNameComponent, ID as CanNameComponentID } from "components/CanNameComponent.sol";
-import { CoinComponent, ID as CoinComponentID } from "components/CoinComponent.sol";
 import { CostComponent, ID as CostComponentID } from "components/CostComponent.sol";
 import { DescriptionAltComponent, ID as DescriptionAltComponentID } from "components/DescriptionAltComponent.sol";
 import { DescriptionComponent, ID as DescriptionComponentID } from "components/DescriptionComponent.sol";
@@ -124,7 +123,6 @@ import { WeightsComponent, ID as WeightsComponentID } from "components/WeightsCo
 import { WhitelistComponent, ID as WhitelistComponentID } from "components/WhitelistComponent.sol";
 
 // Systems
-import { _devGiveTokensSystem, ID as _devGiveTokensSystemID } from "systems/_devGiveTokensSystem.sol";
 import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
 import { _GoalCreateSystem, ID as _GoalCreateSystemID } from "systems/_GoalCreateSystem.sol";
 import { _GoalCreateRequirementSystem, ID as _GoalCreateRequirementSystemID } from "systems/_GoalCreateRequirementSystem.sol";
