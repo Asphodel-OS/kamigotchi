@@ -1,5 +1,5 @@
 import { BigNumberish } from 'ethers';
-import { createCall, toUint32FixedArrayLiteral } from '../commands/utils/systemCall';
+import { createCall, toUint32FixedArrayLiteral } from '../commands/utils/systemCaller';
 import { SystemAbis } from '../world/mappings/SystemAbis';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;

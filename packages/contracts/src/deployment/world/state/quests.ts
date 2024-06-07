@@ -28,59 +28,6 @@ export async function initLocalQuests(api: AdminAPI) {
   api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
 }
 
-export async function initQuest(api: AdminAPI, entry: any) {
-  await api.registry.quest.create(
-    Number(entry['Index']),
-    entry['Title'],
-    entry['Introduction text'],
-    entry['Resolution text'],
-    entry['Daily'] === 'Yes' ? 64800 : 0
-  );
-}
-
-export async function initQuestRequirement(api: AdminAPI, entry: any) {
-  const cond = parseToInitCon(
-    entry['Operator'],
-    entry['SubType'],
-    Number(entry['IndexFor'] ?? 0),
-    Number(entry['ValueFor'] ?? 0)
-  );
-  await api.registry.quest.add.requirement(
-    Number(entry['Index']),
-    cond.logicType,
-    cond.type,
-    cond.index,
-    cond.value
-  );
-}
-
-export async function initQuestObjective(api: AdminAPI, entry: any) {
-  const cond = parseToInitCon(
-    '', // objective logic operators alr processed
-    entry['SubType'],
-    Number(entry['IndexFor'] ?? 0),
-    Number(entry['ValueFor'] ?? 0)
-  );
-  await api.registry.quest.add.objective(
-    Number(entry['Index']),
-    entry['ConditionDescription'],
-    entry['DeltaType'] + '_' + entry['Operator'],
-    cond.type,
-    cond.index,
-    cond.value
-  );
-}
-
-export async function initQuestReward(api: AdminAPI, entry: any) {
-  const cond = parseToInitCon(
-    '', // no reward logic operators
-    entry['SubType'],
-    Number(entry['IndexFor'] ?? 0),
-    Number(entry['ValueFor'] ?? 0)
-  );
-  await api.registry.quest.add.reward(Number(entry['Index']), cond.type, cond.index, cond.value);
-}
-
 export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
   const questCSV = await readFile('quests/Quests.csv');
   for (let i = 0; i < questCSV.length; i++) {
@@ -106,4 +53,57 @@ export async function deleteQuests(api: AdminAPI, indices: number[]) {
       console.error('Could not delete quest ' + indices[i]);
     }
   }
+}
+
+async function initQuest(api: AdminAPI, entry: any) {
+  await api.registry.quest.create(
+    Number(entry['Index']),
+    entry['Title'],
+    entry['Introduction text'],
+    entry['Resolution text'],
+    entry['Daily'] === 'Yes' ? 64800 : 0
+  );
+}
+
+async function initQuestRequirement(api: AdminAPI, entry: any) {
+  const cond = parseToInitCon(
+    entry['Operator'],
+    entry['SubType'],
+    Number(entry['IndexFor'] ?? 0),
+    Number(entry['ValueFor'] ?? 0)
+  );
+  await api.registry.quest.add.requirement(
+    Number(entry['Index']),
+    cond.logicType,
+    cond.type,
+    cond.index,
+    cond.value
+  );
+}
+
+async function initQuestObjective(api: AdminAPI, entry: any) {
+  const cond = parseToInitCon(
+    '', // objective logic operators alr processed
+    entry['SubType'],
+    Number(entry['IndexFor'] ?? 0),
+    Number(entry['ValueFor'] ?? 0)
+  );
+  await api.registry.quest.add.objective(
+    Number(entry['Index']),
+    entry['ConditionDescription'],
+    entry['DeltaType'] + '_' + entry['Operator'],
+    cond.type,
+    cond.index,
+    cond.value
+  );
+}
+
+async function initQuestReward(api: AdminAPI, entry: any) {
+  const cond = parseToInitCon(
+    '', // no reward logic operators
+    entry['SubType'],
+    Number(entry['IndexFor'] ?? 0),
+    Number(entry['ValueFor'] ?? 0)
+  );
+  await api.registry.quest.add.reward(Number(entry['Index']), cond.type, cond.index, cond.value);
 }

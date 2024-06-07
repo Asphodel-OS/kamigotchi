@@ -3,7 +3,7 @@ const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 import { generateAbiMappings } from './utils/codegen';
 import { getDeployerKey, getRpc, getWorld } from './utils/getConfig';
-import { createCall, executeCall } from './utils/systemCall';
+import { createCall, executeCall } from './utils/systemCaller';
 
 const argv = yargs(hideBin(process.argv))
   .usage("Usage: $0 -genAbis <bool> -mode <mode> -system <system.id> -args <'arg1','arg2'>")
@@ -16,7 +16,7 @@ const run = async () => {
 
   if (argv.genAbis) generateAbiMappings();
 
-  const data = createCall(argv.system, argv.args.split(','), getWorld(mode));
+  const data = createCall(argv.system, argv.args.split(','), undefined, getWorld(mode));
   const result = await executeCall(getRpc(mode), getDeployerKey(mode), data);
 
   return result;

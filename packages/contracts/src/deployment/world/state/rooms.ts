@@ -6,16 +6,7 @@ export async function initRooms(api: AdminAPI) {
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
     if (room['Enabled'] === 'true') {
-      // console.log(room);
-      await api.room.create(
-        Number(room['X']),
-        Number(room['Y']),
-        Number(room['Z']),
-        Number(room['Index']),
-        room['Name'],
-        room['Description'],
-        room['Exits'].split(',').map((n: string) => Number(n.trim()))
-      );
+      await initRoom(api, room);
     }
   }
 
@@ -29,20 +20,15 @@ export async function initRooms(api: AdminAPI) {
   initGates(api);
 }
 
-export async function initRoom(api: AdminAPI, roomIndex: number) {
+export async function initRoomsByIndex(api: AdminAPI, indices: number[]) {
   const roomsCSV = await readFile('rooms/Rooms.csv');
-  const room = roomsCSV.find((r: any) => Number(r['Index']) === roomIndex);
-  if (!room) return;
-
-  await api.room.create(
-    Number(room['X']),
-    Number(room['Y']),
-    Number(room['Z']),
-    Number(room['Index']),
-    room['Name'],
-    room['Description'],
-    room['Exits'].split(',').map((n: string) => Number(n.trim()))
-  );
+  for (let i = 0; i < roomsCSV.length; i++) {
+    const room = roomsCSV[i];
+    if (room['Enabled'] === 'true') {
+      if (!indices.includes(Number(room['Index']))) continue;
+      await initRoom(api, room);
+    }
+  }
 }
 
 export async function initGates(api: AdminAPI) {
@@ -62,4 +48,16 @@ export async function deleteRooms(api: AdminAPI, indices: number[]) {
       console.error('Could not delete room at roomIndex ' + indices[i]);
     }
   }
+}
+
+async function initRoom(api: AdminAPI, entry: any) {
+  await api.room.create(
+    Number(entry['X']),
+    Number(entry['Y']),
+    Number(entry['Z']),
+    Number(entry['Index']),
+    entry['Name'],
+    entry['Description'],
+    entry['Exits'].split(',').map((n: string) => Number(n.trim()))
+  );
 }

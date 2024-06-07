@@ -15,8 +15,18 @@ export async function initTraits(api: AdminAPI) {
   await initTraitTable(api, handCSV, 'HAND');
 }
 
+// export async function deleteTraits(api: AdminAPI, indices: number[], types: string[]) {
+//   for (let i = 0; i < indices.length; i++) {
+//     try {
+//       await api.registry.trait.delete(indices[i], types[i]);
+//     } catch {
+//       console.error('Could not delete trait ' + indices[i]);
+//     }
+//   }
+// }
+
 // inits a single type of trait, returns number of traits
-export async function initTraitTable(api: AdminAPI, table: any, type: string) {
+async function initTraitTable(api: AdminAPI, table: any, type: string) {
   for (let i = 0; i < table.length; i++) {
     const trait = table[i];
     try {
@@ -37,14 +47,4 @@ export async function initTraitTable(api: AdminAPI, table: any, type: string) {
     }
   }
   return table.length;
-}
-
-export async function deleteTraits(api: AdminAPI, indices: number[], types: string[]) {
-  for (let i = 0; i < indices.length; i++) {
-    try {
-      await api.registry.trait.delete(indices[i], types[i]);
-    } catch {
-      console.error('Could not delete trait ' + indices[i]);
-    }
-  }
 }
