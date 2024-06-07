@@ -26,7 +26,7 @@ const run = async () => {
   // todo: separate generate files, put them into one chunk
   if (argv.init) {
     // generate init script
-    generateInitScript(mode, ['init'], 'init');
+    generateInitScript(mode, [], 'init');
   }
 
   const result = await generateAndDeploy({
