@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
@@ -12,7 +13,17 @@ import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
 
-// merchant window with listings. assumes at most 1 merchant per room
+const nullNode: Node = {
+  id: '0' as EntityID,
+  index: 404,
+  entityIndex: 0 as EntityIndex,
+  type: '' as string,
+  roomIndex: 0,
+  name: 'Empty Node',
+  description: 'There is no node in this room.',
+  affinity: '' as string,
+};
+
 export function registerNodeModal() {
   registerUIComponent(
     'NodeModal',
@@ -31,14 +42,15 @@ export function registerNodeModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const { nodeIndex } = useSelected.getState();
+          const { roomIndex } = useSelected.getState();
 
           const account = getAccountFromBurner(network, { kamis: true, inventory: true });
           const kamiConfig = getKamiConfig(world, components);
-          const node = getNodeByIndex(world, components, nodeIndex, {
+          let node = getNodeByIndex(world, components, roomIndex, {
             kamis: true,
             accountID: account?.id,
           });
+          if (!node) node = nullNode;
 
           return {
             network,
@@ -49,18 +61,19 @@ export function registerNodeModal() {
 
     // Render
     ({ data, network }) => {
-      // console.log('NodeM: data', data);
       const { account, kamiConfig } = data;
       const { actions, api, components, world } = network;
       const [tab, setTab] = useState('allies');
-      const { nodeIndex } = useSelected();
+      const { roomIndex } = useSelected();
       const [node, setNode] = useState<Node>(data.node);
 
       // updates from selected Node updates
       useEffect(() => {
         const nodeOptions = { kamis: true, accountID: account.id };
-        setNode(getNodeByIndex(world, components, nodeIndex, nodeOptions));
-      }, [nodeIndex]);
+        let node = getNodeByIndex(world, components, roomIndex, nodeOptions);
+        if (!node) node = nullNode;
+        setNode(node);
+      }, [roomIndex]);
 
       // updates from component subscription updates
       useEffect(() => {

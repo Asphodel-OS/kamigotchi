@@ -1,19 +1,22 @@
-import nodesCSV from 'assets/data/nodes/nodes.csv';
+import roomsCSV from 'assets/data/rooms/rooms.csv';
 import { AdminAPI } from '../admin';
 import { sleepIf } from './utils';
 
 export async function initNodes(api: AdminAPI) {
-  for (let i = 0; i < nodesCSV.length; i++) {
-    const node = nodesCSV[i];
+  // nodes data are stored in rooms csv
+  for (let i = 0; i < roomsCSV.length; i++) {
+    const entry = roomsCSV[i];
     await sleepIf();
+    if (entry['Enabled'] !== 'true') continue;
+    if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
       await api.node.create(
-        Number(node['Index']),
-        node['Type'],
-        Number(node['RoomIndex']),
-        node['Name'],
-        node['Description'],
-        node['Affinity']
+        Number(entry['Index']),
+        'HARVEST', // all nodes are harvesting nodes rn
+        Number(entry['Index']),
+        entry['Name'],
+        entry['Description'],
+        entry['Affinity']
       );
     } catch {}
   }

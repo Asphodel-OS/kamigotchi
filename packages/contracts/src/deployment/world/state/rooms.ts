@@ -2,7 +2,7 @@ import { AdminAPI } from '../admin';
 import { getGoalID, readFile } from './utils';
 
 export async function initRooms(api: AdminAPI) {
-  const roomsCSV = await readFile('rooms/Rooms.csv');
+  const roomsCSV = await readFile('rooms/rooms.csv');
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
     if (room['Enabled'] === 'true') {
@@ -21,7 +21,7 @@ export async function initRooms(api: AdminAPI) {
 }
 
 export async function initRoomsByIndex(api: AdminAPI, indices: number[]) {
-  const roomsCSV = await readFile('rooms/Rooms.csv');
+  const roomsCSV = await readFile('rooms/rooms.csv');
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
     if (room['Enabled'] === 'true') {

@@ -1,25 +1,37 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
-import { NodeImages } from 'constants/nodes';
 import { Account } from 'layers/network/shapes/Account';
 import { Kami, canHarvest, isResting, onCooldown } from 'layers/network/shapes/Kami';
 import { Node } from 'layers/network/shapes/Node';
 
 interface Props {
   account: Account;
-  node: Node;
+  node: Node | undefined;
   kamis: Kami[];
   addKami: (kami: Kami) => void;
 }
+
+const nullNode: Node = {
+  id: '0' as EntityID,
+  index: 404,
+  entityIndex: 0 as EntityIndex,
+  type: '' as string,
+  roomIndex: 0,
+  name: 'Empty Node',
+  description: 'There is no node in this room.',
+  affinity: '' as string,
+};
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
   const [_, setLastRefresh] = useState(Date.now());
-  const { account, node, kamis } = props;
+  const { account, node: rawNode, kamis } = props;
+  const [node, setNode] = useState<Node>(nullNode);
 
   /////////////////
   // TRACKING
@@ -34,6 +46,10 @@ export const Banner = (props: Props) => {
       clearInterval(timerId);
     };
   }, []);
+
+  useEffect(() => {
+    setNode(rawNode === undefined ? nullNode : rawNode);
+  }, [rawNode]);
 
   /////////////////
   // INTERPRETATION
@@ -94,7 +110,7 @@ export const Banner = (props: Props) => {
 
   return (
     <Container key={node.name}>
-      <Image src={NodeImages[node.index]} />
+      {/* <Image src={NodeImages[node.index]} /> */}
       <Content>
         <ContentTop>
           <TitleRow>
