@@ -2,14 +2,17 @@ import { AdminAPI } from '../admin';
 import { readFile } from './utils';
 
 export async function initNodes(api: AdminAPI) {
-  const nodesCSV = await readFile('nodes/Nodes.csv');
+  // nodes data are stored in rooms csv
+  const roomsCSV = await readFile('rooms/rooms.csv');
 
-  for (let i = 0; i < nodesCSV.length; i++) {
-    const node = nodesCSV[i];
+  for (let i = 0; i < roomsCSV.length; i++) {
+    const entry = roomsCSV[i];
+    if (entry['Enabled'] !== 'true') continue;
+    if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
-      await initNode(api, node);
+      await initNode(api, entry);
     } catch {
-      console.error('Could not create node', node['Index']);
+      console.error('Could not create node', entry['Index']);
     }
   }
 }
@@ -27,8 +30,8 @@ export async function deleteNodes(api: AdminAPI, indices: number[]) {
 async function initNode(api: AdminAPI, entry: any) {
   await api.node.create(
     Number(entry['Index']),
-    entry['Type'],
-    Number(entry['RoomIndex']),
+    'HARVEST', // all nodes are harvesting nodes rn
+    Number(entry['Index']),
     entry['Name'],
     entry['Description'],
     entry['Affinity']

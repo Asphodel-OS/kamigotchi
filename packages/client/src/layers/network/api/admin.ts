@@ -144,7 +144,7 @@ export function createAdminAPI(systems: any) {
 
   async function initGachaIncrement() {
     await sleepIf();
-    return systems['system.Pet.Gacha.Mint'].init(0);
+    return systems['system.Pet.Gacha.Mint'].init();
   }
 
   // sets the prices for the merchant at the specified roomIndex

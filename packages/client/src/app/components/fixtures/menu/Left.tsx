@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
-import { AccountMenuButton, MapMenuButton, PartyMenuButton } from './buttons';
+import { AccountMenuButton, MapMenuButton, NodeMenuButton, PartyMenuButton } from './buttons';
 
 export function registerMenuLeft() {
   registerUIComponent(
@@ -23,6 +23,7 @@ export function registerMenuLeft() {
           <AccountMenuButton />
           <MapMenuButton />
           <PartyMenuButton />
+          <NodeMenuButton />
         </Wrapper>
       );
     }
