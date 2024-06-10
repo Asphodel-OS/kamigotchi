@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { AccountCard, ActionListButton } from 'app/components/library';
-import { Friendship } from 'layers/network/shapes/Friendship';
+import { Friendship } from 'network/shapes/Friendship';
 
 interface Props {
   blocked: Friendship[];

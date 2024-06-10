@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { Listing, getListing } from 'layers/network/shapes/Listing';
+import { Listing, getListing } from 'network/shapes/Listing';
 import { ActionButton } from '../../library';
 
 // merchant window with listings. assumes at most 1 merchant per room

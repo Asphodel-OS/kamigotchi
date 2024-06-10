@@ -2,7 +2,7 @@
 import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
 
 import { boot as bootReact, mountReact, setLayers } from 'app/boot';
-import { createNetworkConfig, createNetworkLayer, Layers } from 'layers/network';
+import { Layers, createNetworkConfig, createNetworkLayer } from 'network/';
 
 // boot the whole thing
 export async function boot() {

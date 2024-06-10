@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { OpenInNewIcon } from 'assets/images/icons/misc';
-import { NetworkLayer } from 'layers/network';
-import { ActionState, ActionStateString } from 'layers/network/systems/ActionSystem/constants';
+import { NetworkLayer } from 'network/';
+import { ActionState, ActionStateString } from 'network/systems/ActionSystem/constants';
 
 interface Props {
   network: NetworkLayer;

@@ -20,7 +20,7 @@ export default defineConfig({
       clients: path.resolve(__dirname, './src/clients'),
       constants: path.resolve(__dirname, './src/constants'),
       engine: path.resolve(__dirname, './src/engine'),
-      layers: path.resolve(__dirname, './src/layers'),
+      network: path.resolve(__dirname, './src/network'),
       utils: path.resolve(__dirname, './src/utils'),
       workers: path.resolve(__dirname, './src/workers'),
     },

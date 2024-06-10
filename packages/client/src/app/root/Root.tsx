@@ -8,7 +8,7 @@ import { privyConfig } from 'clients/privy';
 import { tanstackClient } from 'clients/tanstack';
 import { wagmiConfig } from 'clients/wagmi';
 import { defaultChain } from 'constants/chains';
-import { Layers } from 'layers/network';
+import { Layers } from 'network/';
 import { BootScreen, MainWindow } from './components';
 import { NetworkContext, RootContext } from './context';
 import { RootStore } from './store';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Listing } from 'layers/network/shapes/Listing';
+import { Listing } from 'network/shapes/Listing';
 import { ItemRow } from './ItemRow';
 
 export interface Props {

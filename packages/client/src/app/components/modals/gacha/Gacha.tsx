@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { registerUIComponent } from 'app/root';
-import { waitForActionCompletion } from 'layers/network/utils';
+import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
@@ -15,9 +15,9 @@ import {
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { GachaCommit, calcRerollCost, isGachaAvailable } from 'layers/network/shapes/Gacha';
-import { Kami } from 'layers/network/shapes/Kami';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { GachaCommit, calcRerollCost, isGachaAvailable } from 'network/shapes/Gacha';
+import { Kami } from 'network/shapes/Kami';
 import { playVend } from 'utils/sounds';
 import { erc20Abi, formatUnits } from 'viem';
 import { Commits } from './Commits';

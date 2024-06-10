@@ -2,8 +2,8 @@ import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/mate
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
-import { Kami } from 'layers/network/shapes/Kami';
-import { Kill } from 'layers/network/shapes/Kill';
+import { Kami } from 'network/shapes/Kami';
+import { Kill } from 'network/shapes/Kill';
 import { playClick } from 'utils/sounds';
 
 interface Props {

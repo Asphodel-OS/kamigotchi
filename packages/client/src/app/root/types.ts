@@ -1,7 +1,7 @@
 import React from 'react';
 import { Observable } from 'rxjs';
 
-import { Layers } from 'layers/network';
+import { Layers } from 'network/';
 
 export type GridConfiguration = {
   colStart: number;

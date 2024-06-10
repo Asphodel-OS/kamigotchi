@@ -5,8 +5,8 @@ import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/c
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Kami } from 'layers/network/shapes/Kami';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { Kami } from 'network/shapes/Kami';
 
 export function registerEMABoardModal() {
   registerUIComponent(

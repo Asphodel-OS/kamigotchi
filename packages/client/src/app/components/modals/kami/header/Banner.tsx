@@ -1,10 +1,10 @@
-import { Kami, isResting } from 'layers/network/shapes/Kami';
+import { Kami, isResting } from 'network/shapes/Kami';
 import styled from 'styled-components';
 
 import { ExperienceBar, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { StatIcons } from 'assets/images/icons/stats';
-import { Account } from 'layers/network/shapes/Account';
+import { Account } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 
 interface Props {

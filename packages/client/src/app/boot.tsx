@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
 
 import 'app/styles/font.css';
-import { Layers } from 'layers/network';
+import { Layers } from 'network/';
 import { registerLoadingState, registerUIComponents } from './components';
 import { Root } from './root/Root';
 

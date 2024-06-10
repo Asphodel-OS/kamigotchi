@@ -10,15 +10,15 @@
     "baseUrl": "./",
     "paths": {
       "abi/*": ["./abi/*", "./abi"],
+      "types/*": ["./types/*", "./types"],
       "app/*": ["./src/app/*", "./src/app"],
       "assets/*": ["./src/assets/*", "./src/assets"],
       "clients/*": ["./src/clients/*", "./src/clients"],
       "constants/*": ["./src/constants/*", "./src/constants"],
       "engine/*": ["./src/engine/*", "./src/engine"],
-      "layers/*": ["./src/layers/*", "./src/layers"],
+      "network/*": ["./src/network/*", "./src/network"],
       "utils/*": ["./src/utils/*", "./src/utils"],
-      "workers/*": ["./src/workers/*", "./src/workers"],
-      "types/*": ["./types/*", "./types"]
+      "workers/*": ["./src/workers/*", "./src/workers"]
     },
     "resolveJsonModule": true /* Enable importing .json files */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,

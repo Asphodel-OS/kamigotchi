@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, ItemIcon, Tooltip } from 'app/components/library';
-import { Inventory } from 'layers/network/shapes/Inventory';
-import { Lootbox } from 'layers/network/shapes/Lootbox';
+import { Inventory } from 'network/shapes/Inventory';
+import { Lootbox } from 'network/shapes/Lootbox';
 
 interface Props {
   inventory: Inventory | undefined;

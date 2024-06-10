@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
-import { getAccountByOwner } from 'layers/network/shapes/Account';
+import { getAccountByOwner } from 'network/shapes/Account';
 import { Room } from './Room';
 
 // The Scene paints the wallpaper and the room. It updates the selected room

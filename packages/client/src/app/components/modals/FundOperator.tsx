@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { waitForActionCompletion } from 'layers/network/utils';
+import { waitForActionCompletion } from 'network/utils';
 import React, { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';

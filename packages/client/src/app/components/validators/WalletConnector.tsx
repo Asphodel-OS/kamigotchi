@@ -12,7 +12,7 @@ import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { wagmiConfig } from 'clients/wagmi';
 import { defaultChain } from 'constants/chains';
-import { createNetworkInstance, updateNetworkLayer } from 'layers/network';
+import { createNetworkInstance, updateNetworkLayer } from 'network/';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.

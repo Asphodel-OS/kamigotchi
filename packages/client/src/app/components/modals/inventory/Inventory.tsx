@@ -3,8 +3,8 @@ import { interval, map } from 'rxjs';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { inventoryIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Inventory } from 'layers/network/shapes/Inventory';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { Inventory } from 'network/shapes/Inventory';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 

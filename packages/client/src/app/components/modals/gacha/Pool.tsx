@@ -7,8 +7,8 @@ import { KamiGrid } from './components/KamiGrid';
 
 import { EntityID } from '@mud-classic/recs';
 import musuIcon from 'assets/images/icons/musu.png';
-import { GACHA_ID } from 'layers/network/shapes/Gacha';
-import { Kami, Options, QueryOptions } from 'layers/network/shapes/Kami';
+import { GACHA_ID } from 'network/shapes/Gacha';
+import { Kami, Options, QueryOptions } from 'network/shapes/Kami';
 
 interface Props {
   actions: {

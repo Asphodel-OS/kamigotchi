@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Room } from 'layers/network/shapes/Room';
+import { Room } from 'network/shapes/Room';
 
 interface Props {
   index: number; // index of displayed room

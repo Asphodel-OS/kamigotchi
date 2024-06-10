@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
-import { Room } from 'layers/network/shapes/Room';
+import { Room } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
 interface Props {

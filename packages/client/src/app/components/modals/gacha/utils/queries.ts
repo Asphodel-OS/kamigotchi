@@ -1,12 +1,6 @@
 import { World } from '@mud-classic/recs';
-import { Components } from 'layers/network';
-import {
-  Kami,
-  Options,
-  QueryOptions,
-  getKami,
-  queryKamiEntitiesX,
-} from 'layers/network/shapes/Kami';
+import { Components } from 'network/';
+import { Kami, Options, QueryOptions, getKami, queryKamiEntitiesX } from 'network/shapes/Kami';
 
 export const getLazyKamis = (
   world: World,

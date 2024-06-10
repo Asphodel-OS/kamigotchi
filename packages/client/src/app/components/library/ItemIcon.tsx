@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
-import { Item } from 'layers/network/shapes/Item';
+import { Item } from 'network/shapes/Item';
 import { playClick } from 'utils/sounds';
 
 interface Props {

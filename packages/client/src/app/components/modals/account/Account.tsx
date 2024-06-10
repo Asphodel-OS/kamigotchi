@@ -10,8 +10,8 @@ import {
   getAccountByIndex,
   getAccountFromBurner,
   getAllAccounts,
-} from 'layers/network/shapes/Account';
-import { Friendship } from 'layers/network/shapes/Friendship';
+} from 'network/shapes/Account';
+import { Friendship } from 'network/shapes/Friendship';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
 import { Bio } from './bio/Bio';

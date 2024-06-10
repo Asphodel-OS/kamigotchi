@@ -8,7 +8,7 @@ import {
 } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
 import { IconButton } from '@mui/material';
-import { waitForActionCompletion } from 'layers/network/utils';
+import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -28,7 +28,7 @@ import {
   getAccount,
   getAccountEntityIndexByName,
   getAccountEntityIndexByOwner,
-} from 'layers/network/shapes/Account';
+} from 'network/shapes/Account';
 import { playSignup } from 'utils/sounds';
 
 /**

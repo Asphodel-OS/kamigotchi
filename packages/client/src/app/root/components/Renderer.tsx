@@ -5,8 +5,8 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { GridConfiguration, UIComponent } from 'app/root/types';
-import { Layers } from 'layers/network';
-import { useStream } from 'layers/network/utils';
+import { Layers } from 'network/';
+import { useStream } from 'network/utils';
 import { Cell } from './Cell';
 
 const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.memo(

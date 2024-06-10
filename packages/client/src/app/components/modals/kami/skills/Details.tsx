@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
-import { Account } from 'layers/network/shapes/Account';
-import { Kami } from 'layers/network/shapes/Kami';
+import { Account } from 'network/shapes/Account';
+import { Kami } from 'network/shapes/Kami';
 import {
   Skill,
   parseEffectText,
   parseRequirementText,
   parseTreeRequirementText,
-} from 'layers/network/shapes/Skill';
+} from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {

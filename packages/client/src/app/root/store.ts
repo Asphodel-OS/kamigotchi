@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
 import { Observable } from 'rxjs';
 
-import { Layers } from 'layers/network';
+import { Layers } from 'network/';
 import { GridConfiguration, UIComponent } from './types';
 
 export const RootStore = observable({

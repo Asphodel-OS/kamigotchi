@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Merchant, getMerchantByIndex } from 'layers/network/shapes/Merchant';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { Merchant, getMerchantByIndex } from 'network/shapes/Merchant';
 import { Listings } from './Listings';
 import { MusuRow } from './MusuRow';
 

@@ -5,15 +5,10 @@ import { interval, map } from 'rxjs';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { questsIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { getItem, getItemByIndex } from 'layers/network/shapes/Item';
-import {
-  Quest,
-  getQuestByIndex,
-  getRegistryQuests,
-  parseQuestsStatus,
-} from 'layers/network/shapes/Quest';
-import { getRoomByIndex } from 'layers/network/shapes/Room';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { getItem, getItemByIndex } from 'network/shapes/Item';
+import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'network/shapes/Quest';
+import { getRoomByIndex } from 'network/shapes/Room';
 import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';

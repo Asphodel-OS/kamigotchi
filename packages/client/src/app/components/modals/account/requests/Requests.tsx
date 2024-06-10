@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
-import { Account } from 'layers/network/shapes/Account';
-import { Friendship } from 'layers/network/shapes/Friendship';
+import { Account } from 'network/shapes/Account';
+import { Friendship } from 'network/shapes/Friendship';
 import { Inbound } from './Inbound';
 import { Outbound } from './Outbound';
 import { Searched } from './Searched';

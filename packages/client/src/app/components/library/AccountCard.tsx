@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
-import { Account } from 'layers/network/shapes/Account';
+import { Account } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 import { Card } from './Card';
 import { Tooltip } from './Tooltip';

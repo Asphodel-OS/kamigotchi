@@ -5,15 +5,15 @@ import { interval, map } from 'rxjs';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { Kami, getKamiByIndex } from 'network/shapes/Kami';
 import {
   Skill,
   getRegistrySkills,
   getSkillUpgradeError,
   getTreePoints,
-} from 'layers/network/shapes/Skill';
-import { waitForActionCompletion } from 'layers/network/utils';
+} from 'network/shapes/Skill';
+import { waitForActionCompletion } from 'network/utils';
 import { sleep } from 'utils/misc';
 import { KillLogs } from './battles/KillLogs';
 import { Banner } from './header/Banner';

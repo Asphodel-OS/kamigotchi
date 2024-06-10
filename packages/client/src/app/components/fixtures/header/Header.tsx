@@ -10,8 +10,8 @@ import {
   calcStamina,
   calcStaminaPercent,
   getAccountFromBurner,
-} from 'layers/network/shapes/Account';
-import { getRoomByIndex } from 'layers/network/shapes/Room';
+} from 'network/shapes/Account';
+import { getRoomByIndex } from 'network/shapes/Room';
 
 export function registerAccountHeader() {
   registerUIComponent(

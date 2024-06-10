@@ -4,7 +4,7 @@ import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
-import { Kami } from 'layers/network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 
 interface Props {
   kamis: Kami[];

@@ -4,12 +4,12 @@ import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/indices';
-import { Account } from 'layers/network/shapes/Account';
-import { Item } from 'layers/network/shapes/Item';
-import { Objective, Quest, Requirement, Reward } from 'layers/network/shapes/Quest';
-import { Room } from 'layers/network/shapes/Room';
-import { Condition } from 'layers/network/shapes/utils/Conditionals';
 import moment from 'moment';
+import { Account } from 'network/shapes/Account';
+import { Item } from 'network/shapes/Item';
+import { Objective, Quest, Requirement, Reward } from 'network/shapes/Quest';
+import { Room } from 'network/shapes/Room';
+import { Condition } from 'network/shapes/utils/Conditionals';
 
 interface Props {
   account: Account;

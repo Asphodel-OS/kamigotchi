@@ -2,9 +2,9 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
-import { Account } from 'layers/network/shapes/Account';
-import { Contribution, Goal } from 'layers/network/shapes/Goal';
-import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
+import { Account } from 'network/shapes/Account';
+import { Contribution, Goal } from 'network/shapes/Goal';
+import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 
 interface Props {
   actions: {

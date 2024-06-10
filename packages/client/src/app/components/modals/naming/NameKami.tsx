@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { InputSingleTextForm, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { Kami, getKami } from 'layers/network/shapes/Kami';
+import { Kami, getKami } from 'network/shapes/Kami';
 
 export function registerNameKamiModal() {
   registerUIComponent(

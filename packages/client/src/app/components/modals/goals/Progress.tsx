@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ProgressBar } from 'app/components/library';
-import { Contribution, Goal } from 'layers/network/shapes/Goal';
-import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
-import { parseQuantity } from 'layers/network/shapes/utils/parseDescription';
+import { Contribution, Goal } from 'network/shapes/Goal';
+import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
+import { parseQuantity } from 'network/shapes/utils/parseDescription';
 
 interface Props {
   goal: Goal;

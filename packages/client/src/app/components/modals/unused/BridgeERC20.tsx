@@ -7,7 +7,7 @@ import { abi } from 'abi/Farm20ProxySystem.json';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 
 export function registerERC20BridgeModal() {
   registerUIComponent(

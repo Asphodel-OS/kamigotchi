@@ -2,7 +2,7 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { mapBackgrounds } from 'assets/images/map';
-import { Room, emptyRoom } from 'layers/network/shapes/Room';
+import { Room, emptyRoom } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 import { Tooltip } from '../../library';
 

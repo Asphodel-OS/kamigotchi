@@ -3,9 +3,9 @@ import { ItemIcon } from 'app/components/library';
 import { getRarities } from 'constants/rarities';
 import styled from 'styled-components';
 
-import { Account } from 'layers/network/shapes/Account';
-import { Item } from 'layers/network/shapes/Item';
-import { LootboxLog } from 'layers/network/shapes/Lootbox';
+import { Account } from 'network/shapes/Account';
+import { Item } from 'network/shapes/Item';
+import { LootboxLog } from 'network/shapes/Lootbox';
 
 interface Props {
   account: Account;

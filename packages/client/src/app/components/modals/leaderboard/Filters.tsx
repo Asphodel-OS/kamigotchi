@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ScoresFilter } from 'layers/network/shapes/Score';
+import { ScoresFilter } from 'network/shapes/Score';
 import { ActionListButton } from '../../library';
 
 interface Props {

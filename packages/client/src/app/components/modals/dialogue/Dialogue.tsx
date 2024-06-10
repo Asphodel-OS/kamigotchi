@@ -6,7 +6,7 @@ import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { DialogueNode, dialogues } from 'constants/dialogue';
-import { getRoomByIndex } from 'layers/network/shapes/Room';
+import { getRoomByIndex } from 'network/shapes/Room';
 
 export function registerDialogueModal() {
   registerUIComponent(

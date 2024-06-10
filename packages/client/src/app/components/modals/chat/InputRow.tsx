@@ -6,8 +6,8 @@ import { useLocalStorage } from 'usehooks-ts';
 import { FarcasterConnect, InputSingleTextForm } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { chatIcon } from 'assets/images/icons/actions';
-import { Account } from 'layers/network/shapes/Account';
-import { ActionSystem } from 'layers/network/systems';
+import { Account } from 'network/shapes/Account';
+import { ActionSystem } from 'network/systems';
 import {
   FarcasterUser,
   createEmptyCast,

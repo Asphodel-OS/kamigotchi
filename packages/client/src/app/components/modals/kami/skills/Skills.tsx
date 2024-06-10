@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SkillImages } from 'assets/images/skills';
-import { Account } from 'layers/network/shapes/Account';
-import { Kami } from 'layers/network/shapes/Kami';
-import { Skill } from 'layers/network/shapes/Skill';
+import { Account } from 'network/shapes/Account';
+import { Kami } from 'network/shapes/Kami';
+import { Skill } from 'network/shapes/Skill';
 import { Details } from './Details';
 import { Matrix } from './matrix/Matrix';
 

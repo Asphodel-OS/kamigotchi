@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { HelpIcon, ItemIconHorizontal } from 'app/components/library';
-import { Goal, sortRewards } from 'layers/network/shapes/Goal';
-import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
+import { Goal, sortRewards } from 'network/shapes/Goal';
+import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 
 interface Props {
   goal: Goal;

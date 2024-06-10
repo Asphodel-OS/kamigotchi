@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
-import { Account } from 'layers/network/shapes/Account';
-import { Inventory } from 'layers/network/shapes/Inventory';
+import { Account } from 'network/shapes/Account';
+import { Inventory } from 'network/shapes/Inventory';
 import {
   Kami,
   calcHealth,
@@ -17,7 +17,7 @@ import {
   isResting,
   isUnrevealed,
   onCooldown,
-} from 'layers/network/shapes/Kami';
+} from 'network/shapes/Kami';
 import { getRateDisplay } from 'utils/rates';
 import { playClick } from 'utils/sounds';
 

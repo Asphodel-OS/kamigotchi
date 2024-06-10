@@ -1,17 +1,17 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { registerUIComponent } from 'app/root';
-import { waitForActionCompletion } from 'layers/network/utils';
+import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 
 import { useVisibility } from 'app/stores';
-import { getItemByIndex } from 'layers/network/shapes/Item';
-import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
+import { getItemByIndex } from 'network/shapes/Item';
+import { getLootboxByIndex, getLootboxLog } from 'network/shapes/Lootbox';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';

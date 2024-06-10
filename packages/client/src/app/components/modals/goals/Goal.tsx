@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { Account, getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Account, getAccountFromBurner } from 'network/shapes/Account';
 import {
   Contribution,
   Goal,
@@ -16,13 +16,13 @@ import {
   getContributionByHash,
   getContributions,
   getGoalByIndex,
-} from 'layers/network/shapes/Goal';
+} from 'network/shapes/Goal';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { Score } from 'layers/network/shapes/Score';
-import { getBalance } from 'layers/network/shapes/utils/Conditionals';
-import { getDescribedEntity } from 'layers/network/shapes/utils/parseDescription';
-import { waitForActionCompletion } from 'layers/network/utils';
+import { Score } from 'network/shapes/Score';
+import { getBalance } from 'network/shapes/utils/Conditionals';
+import { getDescribedEntity } from 'network/shapes/utils/parseDescription';
+import { waitForActionCompletion } from 'network/utils';
 import { ActionBar } from './ActionBar';
 import { Details } from './Details';
 import { Leaderboard } from './Leaderboard';

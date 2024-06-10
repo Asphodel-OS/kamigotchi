@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
 
-import { GachaCommit, isGachaAvailable } from 'layers/network/shapes/Gacha';
+import { GachaCommit, isGachaAvailable } from 'network/shapes/Gacha';
 
 interface Props {
   actions: {

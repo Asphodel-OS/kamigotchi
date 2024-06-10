@@ -1,6 +1,6 @@
 import { AccountCard, ActionListButton } from 'app/components/library';
-import { Account } from 'layers/network/shapes/Account';
-import { Friendship } from 'layers/network/shapes/Friendship';
+import { Account } from 'network/shapes/Account';
+import { Friendship } from 'network/shapes/Friendship';
 import styled from 'styled-components';
 
 interface Props {

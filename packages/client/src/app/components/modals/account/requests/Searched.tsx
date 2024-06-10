@@ -1,5 +1,5 @@
 import { AccountCard, ActionListButton } from 'app/components/library';
-import { Account } from 'layers/network/shapes/Account';
+import { Account } from 'network/shapes/Account';
 import styled from 'styled-components';
 
 interface Props {

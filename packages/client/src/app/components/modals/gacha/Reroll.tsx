@@ -7,7 +7,7 @@ import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
 import { ethereumLogo } from 'assets/images/logos';
-import { Kami } from 'layers/network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 
 interface Props {
   actions: {

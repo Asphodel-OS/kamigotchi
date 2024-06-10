@@ -1,6 +1,6 @@
 import { ActionButton } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Listing } from 'layers/network/shapes/Listing';
+import { Listing } from 'network/shapes/Listing';
 import styled from 'styled-components';
 import { Tooltip } from '../../library';
 

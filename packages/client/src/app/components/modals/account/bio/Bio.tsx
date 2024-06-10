@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { FarcasterConnect, Tooltip } from 'app/components/library';
-import { Account } from 'layers/network/shapes/Account';
-import { ActionSystem } from 'layers/network/systems/ActionSystem';
+import { Account } from 'network/shapes/Account';
+import { ActionSystem } from 'network/systems/ActionSystem';
 import { playClick } from 'utils/sounds';
 
 interface Props {

@@ -4,8 +4,8 @@ import { useLocalStorage } from 'usehooks-ts';
 import { IconButton, Tooltip } from 'app/components/library';
 import { useAccount, useNetwork } from 'app/stores';
 import { farcasterLogo } from 'assets/images/logos';
-import { Account } from 'layers/network/shapes/Account';
-import { ActionSystem } from 'layers/network/systems/ActionSystem';
+import { Account } from 'network/shapes/Account';
+import { ActionSystem } from 'network/systems/ActionSystem';
 import { FarcasterUser, emptyFaracasterUser, handleSignIn } from 'src/clients/neynar';
 
 interface Props {

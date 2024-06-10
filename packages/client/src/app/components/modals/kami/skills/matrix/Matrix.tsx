@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { SkillTrees, TierRequirements } from 'constants/skills/trees';
-import { Kami } from 'layers/network/shapes/Kami';
-import { Skill } from 'layers/network/shapes/Skill';
+import { Kami } from 'network/shapes/Kami';
+import { Skill } from 'network/shapes/Skill';
 import { Menu } from './Menu';
 import { Node } from './Node';
 

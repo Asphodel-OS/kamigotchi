@@ -5,8 +5,8 @@ import { interval, map } from 'rxjs';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { chatIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import moment from 'moment';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
 

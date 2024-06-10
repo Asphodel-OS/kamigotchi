@@ -5,9 +5,9 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
 import { rooms } from 'constants/rooms';
-import { Account } from 'layers/network/shapes/Account';
-import { Kami, canHarvest, isResting, onCooldown } from 'layers/network/shapes/Kami';
-import { Node } from 'layers/network/shapes/Node';
+import { Account } from 'network/shapes/Account';
+import { Kami, canHarvest, isResting, onCooldown } from 'network/shapes/Kami';
+import { Node } from 'network/shapes/Node';
 
 interface Props {
   account: Account;

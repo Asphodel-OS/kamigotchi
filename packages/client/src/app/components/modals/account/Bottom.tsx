@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { Account } from 'layers/network/shapes/Account';
-import { Friendship } from 'layers/network/shapes/Friendship';
+import { Account } from 'network/shapes/Account';
+import { Friendship } from 'network/shapes/Friendship';
 import { Blocked } from './blocked/Blocked';
 import { Friends } from './friends/Friends';
 import { Kamis } from './party/Kamis';

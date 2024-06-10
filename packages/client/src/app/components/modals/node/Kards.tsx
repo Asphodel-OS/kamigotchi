@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
-import { Account } from 'layers/network/shapes/Account';
-import { KamiConfig } from 'layers/network/shapes/Config';
-import { Inventory } from 'layers/network/shapes/Inventory';
+import { Account } from 'network/shapes/Account';
+import { KamiConfig } from 'network/shapes/Config';
+import { Inventory } from 'network/shapes/Inventory';
 import {
   Kami,
   calcCooldown,
@@ -18,7 +18,7 @@ import {
   isHarvesting,
   isStarving,
   onCooldown,
-} from 'layers/network/shapes/Kami';
+} from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 interface Props {

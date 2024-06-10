@@ -3,8 +3,8 @@ import { interval, map } from 'rxjs';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { kamiIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Kami } from 'layers/network/shapes/Kami';
+import { getAccountFromBurner } from 'network/shapes/Account';
+import { Kami } from 'network/shapes/Kami';
 import { Kards } from './Kards';
 
 export function registerPartyModal() {
