@@ -53,6 +53,7 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
   let mode = import.meta.env.MODE;
   if (mode === 'development') config = createConfigRawLocal(externalProvider);
   else if (mode === 'staging') config = createConfigRawOPSepolia(externalProvider);
+  else if (mode === 'caldera') config = createConfigRawCaldera(externalProvider);
   else config = createConfigRawLocal(externalProvider);
 
   if (
@@ -100,6 +101,29 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
 
   // EOAs and privatekey
   // TODO: make sure it's safe then rug all the below
+  if (externalProvider) config.externalProvider = externalProvider;
+  else {
+    // either pull or set up local burner
+    let privateKey = localStorage.getItem('operatorPrivateKey');
+    const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
+    localStorage.setItem('operatorPrivateKey', wallet.privateKey);
+    config.privateKey = wallet.privateKey;
+  }
+  return config;
+}
+
+// Get the network config of a deployment to Optimism testnet
+function createConfigRawCaldera(externalProvider?: ExternalProvider): NetworkConfig {
+  let config: NetworkConfig = <NetworkConfig>{
+    devMode: false,
+    jsonRpc: 'https://kamitestnet1.rpc.caldera.xyz/http',
+    wsRpc: 'wss://kamitestnet1.rpc.caldera.xyz/ws',
+
+    chainId: 2017048,
+    worldAddress: '0xeb2DB9B4900fcA1D3B7b130967E4b5D1e68c2bFa',
+    initialBlockNumber: 969,
+  };
+
   if (externalProvider) config.externalProvider = externalProvider;
   else {
     // either pull or set up local burner

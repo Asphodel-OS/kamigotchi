@@ -69,7 +69,7 @@ export class WorldState {
       delete: (indices: number[]) => this.genCalls((api) => deleteNodes(api, indices)),
     } as SubFunc,
     mint: {
-      init: (n: number) => this.genCalls((api) => initGachaPool(api, n)),
+      init: () => this.genCalls((api) => initGachaPool(api, 333)),
     } as SubFunc,
     quests: {
       init: () => this.genCalls(initQuests),
