@@ -1,96 +1,109 @@
-import { initConfigs, initLocalConfigs } from './state/configs';
-import { initGachaPool } from './state/gacha';
-import { deleteGoals, initGoals } from './state/goals';
-import { deleteItems, initItems } from './state/items';
-import { deleteNodes, initNodes } from './state/nodes';
-import { initNpcs } from './state/npcs';
-import { deleteQuests, initLocalQuests, initQuests, initQuestsByIndex } from './state/quests';
-import { deleteRelationships, initRelationships } from './state/relationships';
-import { deleteRooms, initRoom, initRooms } from './state/rooms';
-import { deleteSkills, initSkills } from './state/skills';
-import { deleteTraits, initTraits } from './state/traits';
+import {
+  deleteGoals,
+  deleteItems,
+  deleteNodes,
+  deleteQuests,
+  deleteRelationships,
+  deleteRooms,
+  deleteSkills,
+  initAll,
+  initAllLocal,
+  initConfigs,
+  initGachaPool,
+  initGoals,
+  initItems,
+  initNodes,
+  initNpcs,
+  initQuests,
+  initQuestsByIndex,
+  initRelationships,
+  initRooms,
+  initRoomsByIndex,
+  initSkills,
+  initTraits,
+} from './state';
 
 import { AdminAPI, createAdminAPI } from './admin';
+
+export type WorldAPI = typeof WorldState.prototype.api;
+
+export type SubFunc = {
+  init: () => Promise<void>;
+  initByIndex?: (indices: number[]) => Promise<void>;
+  delete?: (indices: number[]) => Promise<void>;
+};
 
 /**
  * This is adapted off world.ts from the client package.
  */
+export class WorldState {
+  compiledCalls: string[];
+  adminAPI: AdminAPI;
 
-export function createWorldAPI(local: boolean) {
-  async function genCalls(func: (api: AdminAPI) => Promise<void>) {
-    const compiledCalls: string[] = [];
-    const state = createAdminAPI(compiledCalls);
-    await func(state);
-    writeOutput(compiledCalls);
+  constructor() {
+    this.compiledCalls = [];
+    this.adminAPI = createAdminAPI(this.compiledCalls);
   }
 
-  async function initAll(api: AdminAPI) {
-    await initConfigs(api);
-    await initRooms(api);
-    await initNodes(api);
-    await initItems(api);
-    await initNpcs(api);
-    await initQuests(api);
-    await initSkills(api);
-    await initTraits(api);
-    await initRelationships(api);
-    await initGoals(api);
-
-    if (local) {
-      await initLocalConfigs(api);
-      await initGachaPool(api, 50);
-      await initLocalQuests(api);
-    }
-  }
-
-  return {
-    init: () => genCalls(initAll),
+  api = {
+    init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
+    local: {
+      init: () => this.genCalls((api) => initAllLocal(api)),
+    } as SubFunc,
     config: {
-      init: () => genCalls(initConfigs),
-    },
+      init: () => this.genCalls(initConfigs),
+    } as SubFunc,
     goals: {
-      init: () => genCalls(initGoals),
-      delete: (indices: number[]) => genCalls((api) => deleteGoals(api, indices)),
-    },
+      init: () => this.genCalls(initGoals),
+      delete: (indices: number[]) => this.genCalls((api) => deleteGoals(api, indices)),
+    } as SubFunc,
     items: {
-      init: () => genCalls(initItems),
-      delete: (indices: number[]) => genCalls((api) => deleteItems(api, indices)),
-    },
+      init: () => this.genCalls(initItems),
+      delete: (indices: number[]) => this.genCalls((api) => deleteItems(api, indices)),
+    } as SubFunc,
     npcs: {
-      init: () => genCalls(initNpcs),
-    },
+      init: () => this.genCalls(initNpcs),
+    } as SubFunc,
     nodes: {
-      init: () => genCalls(initNodes),
-      delete: (indices: number[]) => genCalls((api) => deleteNodes(api, indices)),
-    },
+      init: () => this.genCalls(initNodes),
+      delete: (indices: number[]) => this.genCalls((api) => deleteNodes(api, indices)),
+    } as SubFunc,
     mint: {
-      init: (n: number) => genCalls((api) => initGachaPool(api, n)),
-    },
+      init: (n: number) => this.genCalls((api) => initGachaPool(api, n)),
+    } as SubFunc,
     quests: {
-      init: () => genCalls(initQuests),
-      initByIndex: (indices: number[]) => genCalls((api) => initQuestsByIndex(api, indices)),
-      delete: (indices: number[]) => genCalls((api) => deleteQuests(api, indices)),
-    },
+      init: () => this.genCalls(initQuests),
+      initByIndex: (indices: number[]) => this.genCalls((api) => initQuestsByIndex(api, indices)),
+      delete: (indices: number[]) => this.genCalls((api) => deleteQuests(api, indices)),
+    } as SubFunc,
     relationships: {
-      init: () => genCalls(initRelationships),
+      init: () => this.genCalls(initRelationships),
       delete: (npcs: number[], indices: number[]) =>
-        genCalls((api) => deleteRelationships(api, indices, npcs)),
-    },
+        this.genCalls((api) => deleteRelationships(api, indices, npcs)),
+    } as SubFunc,
     rooms: {
-      init: () => genCalls(initRooms),
-      initByIndex: (i: number) => genCalls((api) => initRoom(api, i)),
-      delete: (indices: number[]) => genCalls((api) => deleteRooms(api, indices)),
-    },
-    skill: {
-      init: (indices?: number[]) => genCalls((api) => initSkills(api, indices)),
-      delete: (indices: number[]) => genCalls((api) => deleteSkills(api, indices)),
-    },
+      init: () => this.genCalls(initRooms),
+      initByIndex: (indices: number[]) => this.genCalls((api) => initRoomsByIndex(api, indices)),
+      delete: (indices: number[]) => this.genCalls((api) => deleteRooms(api, indices)),
+    } as SubFunc,
+    skills: {
+      init: (indices?: number[]) => this.genCalls((api) => initSkills(api, indices)),
+      delete: (indices: number[]) => this.genCalls((api) => deleteSkills(api, indices)),
+    } as SubFunc,
     traits: {
-      init: () => genCalls(initTraits),
-      delete: (indices: number[], types: string[]) =>
-        genCalls((api) => deleteTraits(api, indices, types)),
-    },
+      init: () => this.genCalls(initTraits),
+      // delete: (indices: number[], types: string[]) =>
+      //   genCalls((api) => deleteTraits(api, indices, types)),
+    } as SubFunc,
   };
+
+  async genCalls(func: (api: AdminAPI) => Promise<void>) {
+    await func(this.adminAPI);
+  }
+
+  async writeCalls() {
+    writeOutput(this.compiledCalls);
+  }
 }
 
 function writeOutput(data: string[]) {

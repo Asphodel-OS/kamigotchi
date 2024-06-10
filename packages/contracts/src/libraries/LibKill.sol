@@ -18,12 +18,10 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { Gaussian } from "utils/Gaussian.sol";
-
-import { MUSU_INDEX } from "libraries/utils/Constants.sol";
 
 uint256 constant ANIMOSITY_PREC = 6;
 

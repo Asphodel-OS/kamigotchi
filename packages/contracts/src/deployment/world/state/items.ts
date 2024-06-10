@@ -30,7 +30,7 @@ export async function deleteItems(api: AdminAPI, indices: number[]) {
   }
 }
 
-export async function setFood(api: AdminAPI, item: any) {
+async function setFood(api: AdminAPI, item: any) {
   await api.registry.item.create.food(
     Number(item['Index']),
     item['Name'],
@@ -41,7 +41,7 @@ export async function setFood(api: AdminAPI, item: any) {
   );
 }
 
-export async function setRevive(api: AdminAPI, item: any) {
+async function setRevive(api: AdminAPI, item: any) {
   await api.registry.item.create.revive(
     Number(item['Index']),
     item['Name'],
@@ -51,7 +51,7 @@ export async function setRevive(api: AdminAPI, item: any) {
   );
 }
 
-export async function setMisc(api: AdminAPI, item: any) {
+async function setMisc(api: AdminAPI, item: any) {
   await api.registry.item.create.consumable(
     Number(item['Index']),
     item['Name'],
@@ -61,7 +61,7 @@ export async function setMisc(api: AdminAPI, item: any) {
   );
 }
 
-export async function setLootbox(api: AdminAPI, item: any, droptables: any) {
+async function setLootbox(api: AdminAPI, item: any, droptables: any) {
   await api.registry.item.create.lootbox(
     Number(item['Index']),
     item['Name'],

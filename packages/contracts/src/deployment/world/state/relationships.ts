@@ -22,6 +22,10 @@ export async function initRelationships(api: AdminAPI) {
 
 export async function deleteRelationships(api: AdminAPI, npcs: number[], indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
-    await api.registry.relationship.delete(npcs[i], indices[i]);
+    try {
+      await api.registry.relationship.delete(npcs[i], indices[i]);
+    } catch {
+      console.error('Could not delete relationship ' + indices[i] + ' for npc ' + npcs[i]);
+    }
   }
 }

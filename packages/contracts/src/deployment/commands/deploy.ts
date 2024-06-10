@@ -1,10 +1,11 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-import { JsonRpcProvider } from '@ethersproject/providers';
 import dotenv from 'dotenv';
-import { generateAndDeploy } from './utils/deploy';
-import { generateInitScript, initWorld } from './utils/initWorld';
 const openurl = require('openurl');
+
+import { generateAndDeploy } from './utils/deployer';
+import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from './utils/utils';
+import { generateInitScript, initWorld } from './utils/worldIniter';
 
 const argv = yargs(hideBin(process.argv)).argv;
 dotenv.config();
@@ -25,7 +26,7 @@ const run = async () => {
   // todo: separate generate files, put them into one chunk
   if (argv.init) {
     // generate init script
-    generateInitScript(mode === 'DEV');
+    generateInitScript(mode, [], 'init');
   }
 
   const result = await generateAndDeploy({
@@ -61,37 +62,6 @@ const run = async () => {
 
   await setAutoMine(mode, false);
   await setTimestamp(mode);
-};
-
-const getDeployerKey = (mode: string) => {
-  if (mode === 'TEST') return process.env.TEST_DEPLOYER_PRIV;
-  else return process.env.DEV_DEPLOYER_PRIV;
-};
-
-const getRpc = (mode: string) => {
-  if (mode === 'TEST') return process.env.TEST_RPC;
-  else return process.env.DEV_RPC;
-};
-
-const getWorld = (mode: string) => {
-  if (mode === 'TEST') return process.env.TEST_WORLD;
-  else return process.env.DEV_WORLD;
-};
-
-const setAutoMine = async (mode: string, on: boolean) => {
-  console.log(`** Setting automine to ${on} **`);
-  if (mode === 'DEV') {
-    const provider = new JsonRpcProvider(process.env.DEV_RPC!);
-    await provider.send(`${on ? 'anvil_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
-  }
-};
-
-const setTimestamp = async (mode: string) => {
-  if (mode === 'DEV') {
-    const provider = new JsonRpcProvider(process.env.DEV_RPC!);
-    const timestamp = Math.floor(new Date().getTime() / 1000);
-    await provider.send('evm_setNextBlockTimestamp', [timestamp]);
-  }
 };
 
 run();
