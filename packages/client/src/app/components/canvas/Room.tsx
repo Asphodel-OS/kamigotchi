@@ -2,6 +2,7 @@ import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
+import { useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
 
@@ -12,6 +13,7 @@ interface Props {
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index } = props;
+  const { modals, setModals } = useVisibility();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
 
@@ -33,7 +35,29 @@ export const Room = (props: Props) => {
     }
 
     setRoom(newRoom);
+    closeModals();
   }, [index]);
+
+  const closeModals = () => {
+    setModals({
+      ...modals,
+      accountOperator: false,
+      bridgeERC20: false,
+      bridgeERC721: false,
+      buy: false,
+      emaBoard: false,
+      gacha: false,
+      goal: false,
+      kami: false,
+      leaderboard: false,
+      lootboxes: false,
+      merchant: false,
+      nameKami: false,
+      node: false,
+      operatorFund: false,
+      dialogue: false,
+    });
+  };
 
   // return the background path for now
   // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg

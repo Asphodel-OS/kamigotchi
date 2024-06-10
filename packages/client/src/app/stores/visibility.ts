@@ -53,9 +53,9 @@ export interface Modals {
   kami: boolean;
   leaderboard: boolean;
   lootboxes: boolean;
-  nameKami: boolean;
   map: boolean;
   merchant: boolean;
+  nameKami: boolean;
   node: boolean;
   operatorFund: boolean;
   party: boolean;
@@ -79,9 +79,9 @@ export const toggleModals = (isOn: boolean): Modals => ({
   kami: isOn,
   leaderboard: isOn,
   lootboxes: isOn,
-  nameKami: isOn,
   map: isOn,
   merchant: isOn,
+  nameKami: isOn,
   node: isOn,
   operatorFund: isOn,
   party: isOn,

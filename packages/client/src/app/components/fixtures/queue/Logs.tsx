@@ -34,14 +34,24 @@ export const Logs = (props: Props) => {
   const Status = (status: string, metadata: string) => {
     const icon = statusIcons[status.toLowerCase()];
 
-    let tooltip = [status];
+    let event = '';
+    let details = metadata;
     if (/\S/.test(metadata)) {
-      const event = metadata.substring(0, metadata.indexOf(':'));
-      const reasonStart = metadata.substring(metadata.indexOf('message\\":\\"') + 12);
-      const reason = reasonStart.substring(0, reasonStart.indexOf('\\"'));
-      tooltip = [`${status} (${event})`, '', `${reason}`];
+      const bodyStart = metadata.indexOf('body=');
+      if (bodyStart != -1) {
+        const errorStart = metadata.indexOf('error='); // used to determine end of body segment
+        const body = metadata.substring(bodyStart + 6, errorStart - 5).replaceAll('\\"', '"');
+        const response = JSON.parse(body);
+        const responseMessage = response?.error?.message ?? response?.message;
+        const splitIndex = responseMessage.indexOf(':');
+        if (splitIndex != -1) {
+          event = responseMessage.substring(0, splitIndex);
+          details = responseMessage.substring(splitIndex + 1);
+        }
+      }
     }
 
+    const tooltip = [`${status} (${event})`, '', details];
     return <Tooltip text={tooltip}>{icon}</Tooltip>;
   };
 
