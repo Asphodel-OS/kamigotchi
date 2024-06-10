@@ -8,11 +8,12 @@ export const getNodeByIndex = (
   components: Components,
   index: number,
   options?: Options
-): Node => {
+): Node | undefined => {
   const { IsNode, NodeIndex } = components;
-  const entityIndex = Array.from(runQuery([Has(IsNode), HasValue(NodeIndex, { value: index })]))[0];
+  const entityIndices = Array.from(runQuery([Has(IsNode), HasValue(NodeIndex, { value: index })]));
+  if (entityIndices.length === 0) return undefined;
 
-  return getNode(world, components, entityIndex, options);
+  return getNode(world, components, entityIndices[0], options);
 };
 
 export const getAllNodes = (world: World, components: Components, options?: Options): Node[] => {

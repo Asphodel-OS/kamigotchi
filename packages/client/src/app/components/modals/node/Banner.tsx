@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
+import { rooms } from 'constants/rooms';
 import { Account } from 'layers/network/shapes/Account';
 import { Kami, canHarvest, isResting, onCooldown } from 'layers/network/shapes/Kami';
 import { Node } from 'layers/network/shapes/Node';
@@ -17,7 +18,7 @@ interface Props {
 
 const nullNode: Node = {
   id: '0' as EntityID,
-  index: 404,
+  index: 0,
   entityIndex: 0 as EntityIndex,
   type: '' as string,
   roomIndex: 0,
@@ -108,9 +109,15 @@ export const Banner = (props: Props) => {
     );
   };
 
+  const NodeImage = () => {
+    const url =
+      rooms[node.index] === undefined || node.index === 0 ? '' : rooms[node.index].background.path;
+    return url === '' ? <div /> : <Image src={url} />;
+  };
+
   return (
     <Container key={node.name}>
-      {/* <Image src={NodeImages[node.index]} /> */}
+      {NodeImage()}
       <Content>
         <ContentTop>
           <TitleRow>
@@ -126,15 +133,17 @@ export const Banner = (props: Props) => {
 };
 
 const Container = styled.div`
-  border-bottom: solid black 0.15vw;
-  color: black;
-
   display: flex;
   flex-flow: row nowrap;
+  position: relative;
+
+  border-bottom: solid black 0.15vw;
+  color: black;
+  height: 11.1vw;
 `;
 
 const Image = styled.img`
-  border-radius: 8px 0px 0px 0px;
+  border-radius: 0.45vw 0 0 0;
   border-right: solid black 0.15vw;
   height: 11vw;
 `;
@@ -158,26 +167,33 @@ const ButtonRow = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: flex-end;
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0.3vw;
 `;
 
 const TitleRow = styled.div`
   padding: 0.3vw 0vw;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: flex-end;
+  row-gap: 0.3vw;
+  max-width: 95%;
 `;
 
 const TitleText = styled.p`
   font-family: Pixel;
   font-size: 1.2vw;
+  padding-right: 0.5vw;
 `;
 
 const AffinityText = styled.div`
   color: #777;
-  padding-left: 0.5vw;
-  flex-grow: 1;
 
+  flex-grow: 1;
   font-family: Pixel;
   font-size: 0.7vw;
 `;
@@ -187,6 +203,5 @@ const DescriptionText = styled.p`
   font-family: Pixel;
   line-height: 0.9vw;
   text-align: left;
-  padding-top: 0.4vw;
-  padding-left: 0.2vw;
+  padding: 0.4vw 2vw 0 0.2vw;
 `;

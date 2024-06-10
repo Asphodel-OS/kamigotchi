@@ -15,13 +15,17 @@ import { Tabs } from './Tabs';
 
 const nullNode: Node = {
   id: '0' as EntityID,
-  index: 404,
+  index: 0,
   entityIndex: 0 as EntityIndex,
   type: '' as string,
   roomIndex: 0,
   name: 'Empty Node',
   description: 'There is no node in this room.',
   affinity: '' as string,
+  kamis: {
+    allies: [],
+    enemies: [],
+  },
 };
 
 export function registerNodeModal() {
