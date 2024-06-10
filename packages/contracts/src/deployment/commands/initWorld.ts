@@ -20,7 +20,7 @@ const run = async () => {
   const world = argv.world ? argv.world : getWorld(mode);
   const categories: (keyof WorldAPI)[] = argv.categories
     ? argv.categories.split(',').map((cat: string) => cat.trim() as keyof WorldAPI)
-    : ['global'];
+    : [];
   const action = argv.action ? (argv.action as keyof SubFunc) : 'init';
   if (action !== 'init' && categories.length > 1)
     throw new Error('Only one category allowed for non-init actions');

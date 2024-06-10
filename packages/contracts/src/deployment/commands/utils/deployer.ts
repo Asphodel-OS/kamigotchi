@@ -1,6 +1,7 @@
 import { constants } from 'ethers';
 import { generateLibDeploy } from './codegen';
 import { findLog } from './findLog';
+import { ignoreSolcErrors } from './utils';
 import execa = require('execa');
 
 const contractsDir = __dirname + '/../../contracts/';
@@ -35,6 +36,7 @@ export async function deploy(
       rpc,
       '--skip',
       'test',
+      ...ignoreSolcErrors,
       ...(forgeOpts?.split(' ') || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }

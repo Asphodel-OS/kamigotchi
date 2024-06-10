@@ -4,6 +4,7 @@ import { generateInitWorld } from './codegen';
 import execa = require('execa');
 
 import { SubFunc, WorldAPI } from '../../world/world';
+import { ignoreSolcErrors } from './utils';
 
 const contractsDir = __dirname + '/../../contracts/';
 
@@ -35,6 +36,7 @@ export async function initWorld(
       rpc,
       '--skip',
       'test',
+      ...ignoreSolcErrors,
       ...(forgeOpts?.split(' ') || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
