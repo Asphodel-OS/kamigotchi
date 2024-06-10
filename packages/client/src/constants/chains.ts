@@ -16,8 +16,8 @@ export const caldera = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: { http: ['https://kamitestnet1.rpc.caldera.xyz/http'] },
-    default: { http: ['wss://kamitestnet1.rpc.caldera.xyz/ws'] },
+    public: { http: ['https://kamitestnet1.rpc.caldera.xyz/http/'] },
+    default: { http: ['https://kamitestnet1.rpc.caldera.xyz/http/'] },
   },
   blockExplorers: {
     etherscan: { name: 'Explorer', url: 'https://kamitestnet1.explorer.caldera.xyz/' },

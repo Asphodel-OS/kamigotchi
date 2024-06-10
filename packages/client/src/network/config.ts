@@ -116,8 +116,8 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
 function createConfigRawCaldera(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: 'https://kamitestnet1.rpc.caldera.xyz/http',
-    wsRpc: 'wss://kamitestnet1.rpc.caldera.xyz/ws',
+    jsonRpc: 'https://kamitestnet1.rpc.caldera.xyz/http/',
+    wsRpc: 'wss://kamitestnet1.rpc.caldera.xyz/ws/',
 
     chainId: 2017048,
     worldAddress: '0xeb2DB9B4900fcA1D3B7b130967E4b5D1e68c2bFa',
