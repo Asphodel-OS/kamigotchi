@@ -3,6 +3,8 @@ import { WorldState } from '../../world/world';
 import { generateInitWorld } from './codegen';
 import execa = require('execa');
 
+import { AdminAPI } from '../../world/admin';
+import { SystemAbis } from '../../world/mappings/SystemAbis';
 import { SubFunc, WorldAPI } from '../../world/world';
 import { ignoreSolcErrors } from './utils';
 
@@ -51,6 +53,25 @@ export async function initWorld(
   console.log('\n\n');
 
   return { child: await child };
+}
+
+/// @dev generates a single call piggybacking off initWorld.s.sol
+export async function generateSingleCall(
+  mode: string,
+  systemID: string,
+  func: string,
+  args: any[]
+) {
+  const world = new WorldState();
+  const toCall = async (api: AdminAPI) => {
+    const system = systemID as keyof typeof SystemAbis;
+    if (!system) throw new Error(`No such system ${systemID}`);
+    await api.gen(system, args, func, true);
+  };
+
+  await world.genCalls(toCall);
+  await world.writeCalls();
+  await generateInitWorld();
 }
 
 export async function generateInitScript(

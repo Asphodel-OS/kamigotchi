@@ -452,6 +452,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   return {
+    gen: genCall,
     config: {
       set: {
         array: setConfigArray,
