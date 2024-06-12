@@ -31,7 +31,7 @@ export function registerGasHarasser() {
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators, toggleModals } = useVisibility();
 
-      const [value, setValue] = useState(0.075);
+      const [value, setValue] = useState(0.005);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -142,7 +142,7 @@ export function registerGasHarasser() {
             <Input
               type='number'
               value={value}
-              step='0.01'
+              step='0.005'
               onChange={(e) => handleChange(e)}
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}

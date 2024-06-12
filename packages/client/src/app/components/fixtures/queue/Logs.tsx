@@ -79,7 +79,7 @@ export const Logs = (props: Props) => {
       <Tooltip text={[`View on Etherscan`]}>
         <OpenIcon
           src={OpenInNewIcon}
-          onClick={() => window.open(`https://sepolia-optimism.etherscan.io//tx/${hash}`, '_blank')}
+          onClick={() => window.open(`https://yominet.explorer.caldera.xyz/tx/${hash}`, '_blank')}
         />
       </Tooltip>
     );

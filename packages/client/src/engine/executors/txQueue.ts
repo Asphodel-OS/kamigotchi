@@ -1,7 +1,7 @@
 import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, deferred, mapObject, uuid } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
-import { BaseContract, BigNumber, BigNumberish, CallOverrides, Overrides } from 'ethers';
+import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 
 import { Contracts, TxQueue } from '../types';
@@ -130,16 +130,16 @@ export function createTxQueue<C extends Contracts>(
 
         // Populate tx
         const populatedTx = await member(...argsWithoutOverrides, configOverrides);
-        try {
-          const maxPriorityFeeResponse = await (target.provider as JsonRpcProvider).send(
-            'eth_maxPriorityFeePerGas',
-            []
-          );
-          const maxPriorityFee = BigNumber.from(maxPriorityFeeResponse).mul(125).div(100);
-          populatedTx.maxPriorityFeePerGas = maxPriorityFee;
-        } catch (e) {
-          console.warn('[TXQueue] Failed to get maxPriorityFeePerGas', e);
-        }
+        // try {
+        //   const maxPriorityFeeResponse = await (target.provider as JsonRpcProvider).send(
+        //     'eth_maxPriorityFeePerGas',
+        //     []
+        //   );
+        //   const maxPriorityFee = BigNumber.from(maxPriorityFeeResponse).mul(125).div(100);
+        //   populatedTx.maxPriorityFeePerGas = maxPriorityFee;
+        // } catch (e) {
+        //   console.warn('[TXQueue] Failed to get maxPriorityFeePerGas', e);
+        // }
 
         // Execute tx
         let hash: string;
