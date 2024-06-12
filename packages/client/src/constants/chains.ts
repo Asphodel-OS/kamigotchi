@@ -11,7 +11,6 @@ const rawYominet = {
   },
   rpcUrls: {
     default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
-    // default: { http: ['https://yominet.rpc.caldera.xyz/http'] },
   },
 
   blockExplorers: {

@@ -89,8 +89,8 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: 'https://yominet.rpc.caldera.xyz/http',
-    wsRpc: 'wss://yominet.rpc.caldera.xyz/ws',
+    jsonRpc: 'https://yominet.rpc.caldera.xyz/http/',
+    wsRpc: 'wss://yominet.rpc.caldera.xyz/ws/',
     snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
 
     chainId: 5264468217,
