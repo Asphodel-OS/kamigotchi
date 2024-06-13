@@ -40,7 +40,6 @@ export interface AffinityComponentInterface extends utils.Interface {
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "getRawBatch(uint256[])": FunctionFragment;
-    "getSchema()": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "hasValue(uint256,string)": FunctionFragment;
     "id()": FunctionFragment;
@@ -71,7 +70,6 @@ export interface AffinityComponentInterface extends utils.Interface {
       | "getEntitiesWithValue"
       | "getRaw"
       | "getRawBatch"
-      | "getSchema"
       | "has"
       | "hasValue"
       | "id"
@@ -133,7 +131,6 @@ export interface AffinityComponentInterface extends utils.Interface {
     functionFragment: "getRawBatch",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
-  encodeFunctionData(functionFragment: "getSchema", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "has",
     values: [PromiseOrValue<BigNumberish>]
@@ -215,7 +212,6 @@ export interface AffinityComponentInterface extends utils.Interface {
     functionFragment: "getRawBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getSchema", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasValue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
@@ -357,10 +353,6 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
-    getSchema(
-      overrides?: CallOverrides
-    ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
-
     has(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -485,10 +477,6 @@ export interface AffinityComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
-  getSchema(
-    overrides?: CallOverrides
-  ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
-
   has(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -612,10 +600,6 @@ export interface AffinityComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
-
-    getSchema(
-      overrides?: CallOverrides
-    ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -753,8 +737,6 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getSchema(overrides?: CallOverrides): Promise<BigNumber>;
-
     has(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -879,8 +861,6 @@ export interface AffinityComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getSchema(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,

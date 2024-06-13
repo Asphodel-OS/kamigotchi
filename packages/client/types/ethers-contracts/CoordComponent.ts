@@ -54,7 +54,6 @@ export interface CoordComponentInterface extends utils.Interface {
     "getEntitiesWithValue((int32,int32,int32))": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "getRawBatch(uint256[])": FunctionFragment;
-    "getSchema()": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -87,7 +86,6 @@ export interface CoordComponentInterface extends utils.Interface {
       | "getEntitiesWithValue((int32,int32,int32))"
       | "getRaw"
       | "getRawBatch"
-      | "getSchema"
       | "has"
       | "id"
       | "owner"
@@ -157,7 +155,6 @@ export interface CoordComponentInterface extends utils.Interface {
     functionFragment: "getRawBatch",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
-  encodeFunctionData(functionFragment: "getSchema", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "has",
     values: [PromiseOrValue<BigNumberish>]
@@ -244,7 +241,6 @@ export interface CoordComponentInterface extends utils.Interface {
     functionFragment: "getRawBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getSchema", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -397,10 +393,6 @@ export interface CoordComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
-    getSchema(
-      overrides?: CallOverrides
-    ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
-
     has(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -535,10 +527,6 @@ export interface CoordComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
-  getSchema(
-    overrides?: CallOverrides
-  ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
-
   has(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -672,10 +660,6 @@ export interface CoordComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
-
-    getSchema(
-      overrides?: CallOverrides
-    ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -823,8 +807,6 @@ export interface CoordComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getSchema(overrides?: CallOverrides): Promise<BigNumber>;
-
     has(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -959,8 +941,6 @@ export interface CoordComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getSchema(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,

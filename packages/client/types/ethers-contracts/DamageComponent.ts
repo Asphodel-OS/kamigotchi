@@ -38,7 +38,6 @@ export interface DamageComponentInterface extends utils.Interface {
     "getEntitiesWithValue(uint256)": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "getRawBatch(uint256[])": FunctionFragment;
-    "getSchema()": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
@@ -67,7 +66,6 @@ export interface DamageComponentInterface extends utils.Interface {
       | "getEntitiesWithValue(uint256)"
       | "getRaw"
       | "getRawBatch"
-      | "getSchema"
       | "getValue"
       | "has"
       | "id"
@@ -121,7 +119,6 @@ export interface DamageComponentInterface extends utils.Interface {
     functionFragment: "getRawBatch",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
-  encodeFunctionData(functionFragment: "getSchema", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getValue",
     values: [PromiseOrValue<BigNumberish>]
@@ -201,7 +198,6 @@ export interface DamageComponentInterface extends utils.Interface {
     functionFragment: "getRawBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getSchema", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getValue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
@@ -328,10 +324,6 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
-    getSchema(
-      overrides?: CallOverrides
-    ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
-
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -445,10 +437,6 @@ export interface DamageComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
-  getSchema(
-    overrides?: CallOverrides
-  ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
-
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -561,10 +549,6 @@ export interface DamageComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
-
-    getSchema(
-      overrides?: CallOverrides
-    ): Promise<[string[], number[]] & { keys: string[]; values: number[] }>;
 
     getValue(
       entity: PromiseOrValue<BigNumberish>,
@@ -691,8 +675,6 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getSchema(overrides?: CallOverrides): Promise<BigNumber>;
-
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -806,8 +788,6 @@ export interface DamageComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getSchema(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getValue(
       entity: PromiseOrValue<BigNumberish>,
