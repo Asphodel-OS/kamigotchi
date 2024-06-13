@@ -154,7 +154,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       ? createSnapshotClient(snapshotServiceUrl)
       : undefined;
     const indexDbCache = await getIndexDbECSCache(chainId, worldContract.address);
-    const decode = createDecode(worldContract, provider);
+    const decode = createDecode();
     const fetchWorldEvents = createFetchWorldEventsInBlockRange(
       provider,
       worldContract,

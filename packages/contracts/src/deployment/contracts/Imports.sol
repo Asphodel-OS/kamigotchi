@@ -26,6 +26,7 @@ import { DescriptionAltComponent, ID as DescriptionAltComponentID } from "compon
 import { DescriptionComponent, ID as DescriptionComponentID } from "components/DescriptionComponent.sol";
 import { ExitsComponent, ID as ExitsComponentID } from "components/ExitsComponent.sol";
 import { ExperienceComponent, ID as ExperienceComponentID } from "components/ExperienceComponent.sol";
+import { FarcasterIndexComponent, ID as FarcasterIndexComponentID } from "components/FarcasterIndexComponent.sol";
 import { ForComponent, ID as ForComponentID } from "components/ForComponent.sol";
 import { HashComponent, ID as HashComponentID } from "components/HashComponent.sol";
 import { HarmonyComponent, ID as HarmonyComponentID } from "components/HarmonyComponent.sol";
@@ -51,14 +52,14 @@ import { IndexBackgroundComponent, ID as IndexBackgroundComponentID } from "comp
 import { IndexBodyComponent, ID as IndexBodyComponentID } from "components/IndexBodyComponent.sol";
 import { IndexColorComponent, ID as IndexColorComponentID } from "components/IndexColorComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceComponentID } from "components/IndexFaceComponent.sol";
-import { FarcasterIndexComponent, ID as FarcasterIndexComponentID } from "components/FarcasterIndexComponent.sol";
 import { IndexHandComponent, ID as IndexHandComponentID } from "components/IndexHandComponent.sol";
 import { IndexItemComponent, ID as IndexItemComponentID } from "components/IndexItemComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeComponentID } from "components/IndexNodeComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
-import { IndexRelationshipComponent, ID as IndexRelationshipComponentID } from "components/IndexRelationshipComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestComponentID } from "components/IndexQuestComponent.sol";
+import { IndexRelationshipComponent, ID as IndexRelationshipComponentID } from "components/IndexRelationshipComponent.sol";
+import { IndexRoomComponent, ID as IndexRoomComponentID } from "components/IndexRoomComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillComponentID } from "components/IndexSkillComponent.sol";
 import { IsAccountComponent, ID as IsAccountComponentID } from "components/IsAccountComponent.sol";
 import { IsBonusComponent, ID as IsBonusComponentID } from "components/IsBonusComponent.sol";
@@ -89,7 +90,6 @@ import { IsSkillComponent, ID as IsSkillComponentID } from "components/IsSkillCo
 import { KeysComponent, ID as KeysComponentID } from "components/KeysComponent.sol";
 import { LevelComponent, ID as LevelComponentID } from "components/LevelComponent.sol";
 import { LocationComponent, ID as LocationComponentID } from "components/LocationComponent.sol";
-import { IndexRoomComponent, ID as IndexRoomComponentID } from "components/IndexRoomComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeComponentID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxComponentID } from "components/MaxComponent.sol";
 import { MediaURIComponent, ID as MediaURIComponentID } from "components/MediaURIComponent.sol";
@@ -109,9 +109,9 @@ import { StaminaComponent, ID as StaminaComponentID } from "components/StaminaCo
 import { StateComponent, ID as StateComponentID } from "components/StateComponent.sol";
 import { SubtypeComponent, ID as SubtypeComponentID } from "components/SubtypeComponent.sol";
 import { TimeComponent, ID as TimeComponentID } from "components/TimeComponent.sol";
-import { TimelockComponent, ID as TimelockComponentID } from "components/TimelockComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActionComponentID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastComponentID } from "components/TimeLastComponent.sol";
+import { TimelockComponent, ID as TimelockComponentID } from "components/TimelockComponent.sol";
 import { TimeResetComponent, ID as TimeResetComponentID } from "components/TimeResetComponent.sol";
 import { TimeStartComponent, ID as TimeStartComponentID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeComponentID } from "components/TypeComponent.sol";

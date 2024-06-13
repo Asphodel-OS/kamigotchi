@@ -1,5 +1,5 @@
-import { keccak256 as keccak256Bytes, toUtf8Bytes } from "ethers/lib/utils";
-import { readFileSync } from "fs";
+import { keccak256 as keccak256Bytes, toUtf8Bytes } from 'ethers/lib/utils';
+import { readFileSync } from 'fs';
 
 export const IDregex = new RegExp(/(?<=uint256 constant ID = uint256\(keccak256\(")(.*)(?="\))/);
 

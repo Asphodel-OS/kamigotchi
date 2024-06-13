@@ -15,7 +15,7 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 
 // Components
 <% components.forEach(component=> { -%>
-import { <%= component %>, ID as <%= component %>ID } from "components/<%- component %>.sol";
+import { <%= component.comp %>, ID as <%= component.comp %>ID } from "components/<%- component.comp %>.sol";
 <% }); -%>
 
 // Systems

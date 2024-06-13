@@ -1,11 +1,10 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { grpc } from '@improbable-eng/grpc-web';
 import { ComponentValue, Components, EntityID } from '@mud-classic/recs';
-import { abi as ComponentAbi } from '@mud-classic/solecs/abi/Component.json';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
-import { Component, World } from '@mud-classic/solecs/types/ethers-contracts';
+import { World } from '@mud-classic/solecs/types/ethers-contracts';
 import { Uint8ArrayToHexString, awaitPromise, range, to256BitString } from '@mud-classic/utils';
-import { BigNumber, BytesLike, Contract } from 'ethers';
+import { BigNumber, BytesLike } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
 
@@ -29,6 +28,7 @@ import {
   ECSStreamServiceDefinition,
 } from 'engine/types/ecs-stream/ecs-stream';
 import { formatComponentID, formatEntityID } from 'engine/utils';
+import { ComponentsSchema } from 'types/ComponentsSchema';
 import { debug as parentDebug } from '../debug';
 import { fetchEventsInBlockRange } from './blocks';
 import { CacheStore, createCacheStore, storeEvent, storeEvents } from './cache';
@@ -312,23 +312,29 @@ export async function fetchStateInBlockRange(
  * @param provider ethers JsonRpcProvider
  * @returns Function to decode raw component values using their contract component id
  */
-export function createDecode(worldConfig: ContractConfig, provider: JsonRpcProvider) {
+export function createDecode() {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
-  const world = new Contract(worldConfig.address, worldConfig.abi, provider) as unknown as World;
-  async function decode(
-    componentId: string,
-    data: BytesLike,
-    componentAddress?: string
-  ): Promise<ComponentValue> {
-    // Create the decoder if it doesn't exist yet
+
+  // hardcode world.component.components and world.component.systems to use uint256 schema
+  decoders['0x4350dba81aa91e31664a09d24a668f006169a11b3d962b7557aed362d3252aec'] = createDecoder(
+    ['value'],
+    [13]
+  ); // world.component.components
+  decoders['0x017c816a964927a00e050edd780dcf113ca2756dfa9e9fda94a05c140d9317b0'] = createDecoder(
+    ['value'],
+    [13]
+  ); // world.component.systems
+  async function decode(componentId: string, data: BytesLike): Promise<ComponentValue> {
     if (!decoders[componentId]) {
-      const address = componentAddress ?? (await world.getComponent(componentId));
-      debug('Creating decoder for', address);
-      const component = new Contract(address, ComponentAbi, provider) as unknown as Component;
-      const [keys, values] = await component.getSchema();
+      debug('Creating decoder for', componentId);
+      const compID = componentId as keyof typeof ComponentsSchema;
+      const schema = ComponentsSchema[compID];
+      if (!schema) throw new Error(`No schema found for component ${compID}`);
+
+      const keys = schema.keys;
+      const values = schema.values;
       decoders[componentId] = createDecoder(keys, values);
     }
-
     // Decode the raw value
     return decoders[componentId]!(data);
   }

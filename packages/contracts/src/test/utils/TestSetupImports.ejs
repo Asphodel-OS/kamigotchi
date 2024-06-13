@@ -14,7 +14,7 @@ import { LibRandom } from "libraries/utils/LibRandom.sol";
 
 // Components
 <% components.forEach(component => { -%>
-import { <%= component %>, ID as <%= component %>ID } from "components/<%- component %>.sol";
+import { <%= component.comp %>, ID as <%= component.comp %>ID } from "components/<%- component.comp %>.sol";
 <% }); -%>
 
 // Systems
@@ -30,7 +30,7 @@ import { Pet721 } from "tokens/Pet721.sol";
 abstract contract TestSetupImports is MudTest {
   // Components vars
 <% components.forEach(component => { -%>
-  <%= component %> _<%= component %>;
+  <%= component.comp %> _<%= component.comp %>;
 <% }); -%>
 
   // System vars
@@ -47,7 +47,7 @@ abstract contract TestSetupImports is MudTest {
     super.setUp();
 
 <% components.forEach(component => { -%>
-    _<%= component %> = <%= component %>(component(<%= component %>ID));
+    _<%= component.comp %> = <%= component.comp %>(component(<%= component.comp %>ID));
 <% }); -%>
 
 <% systems.forEach(system => { -%>

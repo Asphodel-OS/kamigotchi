@@ -19,6 +19,12 @@
         "bracketSpacing": true,
         "singleQuote": false
       }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 120
+      }
     }
   ]
 }

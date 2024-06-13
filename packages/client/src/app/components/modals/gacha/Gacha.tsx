@@ -115,13 +115,14 @@ export function registerGachaModal() {
 
       useEffect(() => {
         const tx = async () => {
-          if (isConnected && !triedReveal && data.commits.length > 0) {
+          if (!isConnected) return;
+
+          const filtered = data.commits.filter((n) => isGachaAvailable(n, Number(blockNumber)));
+          if (!triedReveal && filtered.length > 0) {
             try {
               // wait to give buffer for OP rpc
               await new Promise((resolve) => setTimeout(resolve, 500));
-              const filtered = data.commits.filter((n) => {
-                return isGachaAvailable(n, Number(blockNumber));
-              });
+
               revealTx(filtered);
               setTriedReveal(true);
             } catch (e) {
@@ -133,6 +134,7 @@ export function registerGachaModal() {
             }
           }
         };
+
         tx();
       }, [data.commits]);
 
