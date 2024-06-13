@@ -15,6 +15,7 @@ export type NetworkConfig = {
   externalProvider?: ExternalProvider;
   initialBlockNumber: number;
   checkpointUrl?: string;
+  // faucetServiceUrl?: string;
   snapshotServiceUrl?: string;
   streamServiceUrl?: string;
 };
@@ -92,6 +93,7 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     jsonRpc: 'https://yominet.rpc.caldera.xyz/http/',
     wsRpc: 'wss://yominet.rpc.caldera.xyz/ws/',
     snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
+    // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 5264468217,
     worldAddress: '0xeb2DB9B4900fcA1D3B7b130967E4b5D1e68c2bFa',

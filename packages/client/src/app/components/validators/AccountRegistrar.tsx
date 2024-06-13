@@ -384,6 +384,9 @@ export function registerAccountRegistrar() {
               <BackButton />
               <SubmitButton />
             </Row>
+            <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+              Need eth? Check out the faucet.
+            </Link>
           </>
         );
       };
@@ -430,6 +433,20 @@ const Description = styled.p`
   text-align: center;
   font-family: Pixel;
   padding: 10px;
+`;
+
+const Link = styled.div`
+  cursor: pointer;
+  font-size: 9px;
+  color: #999;
+  text-align: center;
+  font-family: Pixel;
+  text-decoration: underline;
+  padding: 1vh 0 0 0;
+
+  &:hover {
+    color: #11b;
+  }
 `;
 
 const Input = styled.input`

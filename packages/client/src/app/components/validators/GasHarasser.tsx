@@ -149,6 +149,9 @@ export function registerGasHarasser() {
             />
             <ActionButton text='Feed' onClick={feed} size='vending' />
           </Row>
+          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+            Need eth? Check out the faucet.
+          </Link>
         </ValidatorWrapper>
       );
     }
@@ -157,10 +160,25 @@ export function registerGasHarasser() {
 
 const Description = styled.div`
   font-size: 12px;
+  line-height: 15px;
   color: #333;
   text-align: center;
   font-family: Pixel;
   padding: 5px 0px;
+`;
+
+const Link = styled.div`
+  cursor: pointer;
+  font-size: 9px;
+  color: #999;
+  text-align: center;
+  font-family: Pixel;
+  text-decoration: underline;
+  padding: 0.5vh 0 0 0;
+
+  &:hover {
+    color: #11b;
+  }
 `;
 
 const Input = styled.input`
