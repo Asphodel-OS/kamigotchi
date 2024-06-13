@@ -1,5 +1,5 @@
 import '@ethersproject/abstract-provider'; // we really need to figure out why this is necessary
-import { Type, World, defineComponent } from '@mud-classic/recs';
+import { Metadata, Type, World, defineComponent } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { keccak256 } from '@mud-classic/utils';
 import { Contract, ContractInterface } from 'ethers';
@@ -8,7 +8,6 @@ import { Subject } from 'rxjs';
 
 import { Network, createNetwork, createSystemExecutor } from 'engine/executors';
 import { Mappings } from 'engine/types';
-import { defineStringComponent } from 'network/components';
 import { createSyncWorker } from 'workers/create';
 import { Ack, InputType } from 'workers/sync';
 import {
@@ -35,7 +34,7 @@ export async function setupMUDNetwork<
 ) {
   const SystemsRegistry = findOrDefineComponent(
     contractComponents,
-    defineStringComponent(world, {
+    defineRegistryComponent(world, {
       id: 'SystemsRegistry',
       metadata: { contractId: 'world.component.systems' },
     })
@@ -43,7 +42,7 @@ export async function setupMUDNetwork<
 
   const ComponentsRegistry = findOrDefineComponent(
     contractComponents,
-    defineStringComponent(world, {
+    defineRegistryComponent(world, {
       id: 'ComponentsRegistry',
       metadata: { contractId: 'world.component.components' },
     })
@@ -181,4 +180,14 @@ function findOrDefineComponent<Cs extends ContractComponents, C extends Contract
   }
 
   return existingComponent || component;
+}
+
+/**
+ * defines a registry component (for Components or Systems)
+ */
+function defineRegistryComponent<M extends Metadata>(
+  world: World,
+  options?: { id?: string; metadata?: M; indexed?: boolean }
+) {
+  return defineComponent<{ value: Type.String }, M>(world, { value: Type.String }, options);
 }

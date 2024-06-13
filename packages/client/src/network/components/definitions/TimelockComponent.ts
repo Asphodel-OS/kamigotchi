@@ -1,6 +1,6 @@
-import { defineComponent, World, Type } from "@mud-classic/recs";
+import { Type, World, defineComponent } from '@mud-classic/recs';
 
-export function defineTimelockComponent(world: World) {
+export function defineTimelockComponent(world: World, name: string, contractId: any) {
   return defineComponent(
     world,
     {
@@ -9,9 +9,9 @@ export function defineTimelockComponent(world: World) {
       salt: Type.Number,
     },
     {
-      id: 'Timelock',
+      id: name,
       metadata: {
-        contractId: 'component.Timelock',
+        contractId: contractId,
       },
     }
   );

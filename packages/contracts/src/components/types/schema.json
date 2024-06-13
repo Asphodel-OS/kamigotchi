@@ -1,0 +1,50 @@
+{
+  "address": {
+    "keys": ["'value'"],
+    "values": [13]
+  },
+  "bool": {
+    "keys": ["'value'"],
+    "values": [0]
+  },
+  "Coord": {
+    "keys": ["'value'"],
+    "values": [13]
+  },
+  "int32": {
+    "keys": ["'value'"],
+    "values": [3]
+  },
+  "int256": {
+    "keys": ["'value'"],
+    "values": [6]
+  },
+  "Stat": {
+    "keys": ["'value'"],
+    "values": [13]
+  },
+  "string": {
+    "keys": ["'value'"],
+    "values": [15]
+  },
+  "uint32[]": {
+    "keys": ["'value'"],
+    "values": [28]
+  },
+  "uint32": {
+    "keys": ["'value'"],
+    "values": [10]
+  },
+  "uint256[]": {
+    "keys": ["'value'"],
+    "values": [31]
+  },
+  "uint256": {
+    "keys": ["'value'"],
+    "values": [13]
+  },
+  "TimelockOp": {
+    "keys": ["'target'", "'value'", "'salt'"],
+    "values": [16, 13, 13]
+  }
+}

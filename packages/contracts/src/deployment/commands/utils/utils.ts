@@ -43,3 +43,23 @@ export const ignoreSolcErrors = [
   '--ignored-error-codes',
   '2018',
 ];
+
+export const parseCompTypeDef = (type: string, override?: string): string => {
+  if (override) type = override;
+  const defBool = ['bool'];
+  const defStat = ['Stat'];
+  const defString = ['string', 'address', 'Coord'];
+  const defNumber = ['uint32', 'uint256', 'int256', 'number'];
+
+  const isArray = type.includes('[]');
+  if (isArray) type = type.replace('[]', '');
+
+  let definer: string = '';
+  if (defBool.includes(type)) definer = 'Bool';
+  else if (defStat.includes(type)) definer = 'Stat';
+  else if (defString.includes(type)) definer = 'String';
+  else if (defNumber.includes(type)) definer = 'Number';
+  else if (type === 'TimelockOp') definer = 'Timelock';
+
+  return 'define' + definer + (isArray ? 'Array' : '') + 'Component';
+};

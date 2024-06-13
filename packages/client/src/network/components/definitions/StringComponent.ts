@@ -1,8 +1,9 @@
-import { defineComponent, Metadata, Type, World } from "@mud-classic/recs";
+import { defineComponent, Metadata, Type, World } from '@mud-classic/recs';
 
-export function defineStringComponent<M extends Metadata>(
-  world: World,
-  options?: { id?: string; metadata?: M; indexed?: boolean }
-) {
-  return defineComponent<{ value: Type.String }, M>(world, { value: Type.String }, options);
+export function defineStringComponent(world: World, name: string, contractId: string) {
+  return defineComponent<{ value: Type.String }, Metadata>(
+    world,
+    { value: Type.String },
+    { id: name, metadata: { contractId: contractId } }
+  );
 }
