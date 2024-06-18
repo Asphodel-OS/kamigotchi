@@ -1,0 +1,111 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddressById, getComponentById } from "solecs/utils.sol";
+
+import { LibComp } from "libraries/utils/LibComp.sol";
+
+import { HasFlagComponent, ID as HasFlagCompID } from "components/HasFlagComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+
+/** @notice
+ * LibFlag handles Flags - meta-entities that indicate their parent Has a specific Flag.
+ * Usecases:
+ *   - Community management roles (ie. commManager, moderator, etc.)
+ *   - Flags for entities (ie. Passport Holder flag for an Account)
+ *
+ * Entity Shape:
+ *   - ID: hash(parentID, flagType)
+ *   - HasFlag: bool
+ *   - [optional] IdHolder: ID (for FE reverse mapping)
+ *   - [optional] Type: string (for FE reverse mapping)
+ */
+library LibFlag {
+  using LibComp for IComponent;
+
+  //////////////////
+  // SHAPES
+
+  /// @notice sets a bare flag
+  /// @dev should be needed for most flags
+  function set(
+    IUintComp components,
+    uint256 parentID,
+    string memory flagType,
+    bool state
+  ) internal returns (uint256 id) {
+    id = genID(parentID, flagType);
+    _set(components, id, state);
+  }
+
+  /// @notice sets a flag that can be reversed mapped on FE
+  /// @dev not needed for most flags - only those that are to be listed on FE
+  function setFull(
+    IUintComp components,
+    uint256 parentID,
+    string memory flagType
+  ) internal returns (uint256 id) {
+    id = genID(parentID, flagType);
+    _set(components, id, true);
+    getComponentById(components, IdHolderCompID).setIfEmpty(id, parentID);
+    getComponentById(components, TypeCompID).setIfEmpty(id, flagType);
+  }
+
+  /// @notice sets a flag, with ID already generated
+  function _set(IUintComp components, uint256 id, bool state) internal {
+    if (state) HasFlagComponent(getAddressById(components, HasFlagCompID)).set(id);
+    else unset(components, id);
+  }
+
+  /// @notice unsets a flag. does not remove IdHolder or Type (if any)
+  function unset(IUintComp components, uint256 id) internal {
+    HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
+  }
+
+  /// @notice deletes a full flag
+  function deleteFlagFull(IUintComp components, uint256 id) internal {
+    HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
+    getComponentById(components, IdHolderCompID).remove(id);
+    getComponentById(components, TypeCompID).remove(id);
+  }
+
+  //////////////////
+  // INTERACTIONS
+
+  /// @notice gets a flag, then sets to desired state
+  function getAndSet(
+    IUintComp components,
+    uint256 parentID,
+    string memory flagType,
+    bool state
+  ) internal returns (bool prev) {
+    uint256 id = genID(parentID, flagType);
+
+    HasFlagComponent flagComp = HasFlagComponent(getAddressById(components, HasFlagCompID));
+    prev = flagComp.has(id);
+    state ? flagComp.set(id) : flagComp.remove(id);
+  }
+
+  //////////////////
+  // GETTERS
+
+  function has(
+    IUintComp components,
+    uint256 parentID,
+    string memory flagType
+  ) internal view returns (bool) {
+    uint256 id = genID(parentID, flagType);
+    return HasFlagComponent(getAddressById(components, HasFlagCompID)).has(id);
+  }
+
+  //////////////////
+  // UTILS
+
+  function genID(uint256 id, string memory flagType) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("has.flag", id, flagType)));
+  }
+}

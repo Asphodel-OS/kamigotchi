@@ -13,7 +13,6 @@ import { Stat } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
@@ -287,7 +286,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
   ////////////////////
 
   Pet721 internal immutable pet721;
-  CanNameComponent internal immutable canNameComp;
   IDOwnsPetComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
@@ -308,7 +306,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
     baseSeed = uint256(keccak256(abi.encode(blockhash(block.number == 0 ? 0 : block.number - 1))));
 
     pet721 = LibPet721.getContract(world);
-    canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
     idOwnsPetComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
@@ -362,7 +359,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
       uint256 id = LibPet.genID(index);
       ids[i] = id;
 
-      canNameComp.set(id); // normally after reveal
       idOwnsPetComp.set(id, GACHA_ID); // seed in gacha
       isPetComp.set(id);
       indexPetComp.set(id, index);

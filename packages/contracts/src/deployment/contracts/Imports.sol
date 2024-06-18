@@ -20,6 +20,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibFriend } from "libraries/LibFriend.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
@@ -59,7 +60,6 @@ import { AffinityComponent, ID as AffinityComponentID } from "components/Affinit
 import { BlacklistComponent, ID as BlacklistComponentID } from "components/BlacklistComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealComponentID } from "components/BlockRevealComponent.sol";
 import { CacheOperatorComponent, ID as CacheOperatorComponentID } from "components/CacheOperatorComponent.sol";
-import { CanNameComponent, ID as CanNameComponentID } from "components/CanNameComponent.sol";
 import { CostComponent, ID as CostComponentID } from "components/CostComponent.sol";
 import { DescriptionAltComponent, ID as DescriptionAltComponentID } from "components/DescriptionAltComponent.sol";
 import { DescriptionComponent, ID as DescriptionComponentID } from "components/DescriptionComponent.sol";
@@ -67,6 +67,7 @@ import { ExitsComponent, ID as ExitsComponentID } from "components/ExitsComponen
 import { ExperienceComponent, ID as ExperienceComponentID } from "components/ExperienceComponent.sol";
 import { FarcasterIndexComponent, ID as FarcasterIndexComponentID } from "components/FarcasterIndexComponent.sol";
 import { ForComponent, ID as ForComponentID } from "components/ForComponent.sol";
+import { HasFlagComponent, ID as HasFlagComponentID } from "components/HasFlagComponent.sol";
 import { HashComponent, ID as HashComponentID } from "components/HashComponent.sol";
 import { HarmonyComponent, ID as HarmonyComponentID } from "components/HarmonyComponent.sol";
 import { HealthComponent, ID as HealthComponentID } from "components/HealthComponent.sol";

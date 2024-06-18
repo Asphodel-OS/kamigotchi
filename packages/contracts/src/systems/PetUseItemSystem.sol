@@ -27,7 +27,7 @@ contract PetUseItemSystem is System {
     /// NOTE: might separate into different systems later, or better generalised handling
     string memory type_ = LibInventory.getTypeByIndex(components, itemIndex);
     if (LibString.eq(type_, "RENAME_POTION")) {
-      LibPet.setCanName(components, id, true);
+      LibPet.setNameable(components, id, true);
     } else {
       require(false, "ItemUse: unknown item type");
     }

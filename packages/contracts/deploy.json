@@ -6,7 +6,6 @@
     { "comp": "BlacklistComponent", "name": "Blacklist", "type": "uint32[]" },
     { "comp": "BlockRevealComponent", "name": "RevealBlock", "type": "uint256" },
     { "comp": "CacheOperatorComponent", "name": "OperatorCache", "type": "address", "FEtype": "number" },
-    { "comp": "CanNameComponent", "name": "CanName", "type": "bool" },
     { "comp": "CostComponent", "name": "Cost", "type": "uint256" },
     { "comp": "DescriptionAltComponent", "name": "DescriptionAlt", "type": "string" },
     { "comp": "DescriptionComponent", "name": "Description", "type": "string" },
@@ -14,6 +13,7 @@
     { "comp": "ExperienceComponent", "name": "Experience", "type": "uint256" },
     { "comp": "FarcasterIndexComponent", "name": "FarcasterIndex", "type": "uint32" },
     { "comp": "ForComponent", "name": "For", "type": "uint256" },
+    { "comp": "HasFlagComponent", "name": "HasFlag", "type": "bool" },
     { "comp": "HashComponent", "name": "Hash", "type": "uint256", "FEtype": "string" },
     { "comp": "HarmonyComponent", "name": "Harmony", "type": "Stat" },
     { "comp": "HealthComponent", "name": "Health", "type": "Stat" },
@@ -759,7 +759,7 @@
     },
     {
       "name": "PetNameSystem",
-      "writeAccess": ["CanNameComponent", "NameComponent", "TimeLastComponent"]
+      "writeAccess": ["HasFlagComponent", "NameComponent", "TimeLastComponent"]
     },
     {
       "name": "PetReviveSystem",
@@ -775,7 +775,7 @@
     },
     {
       "name": "PetUseItemSystem",
-      "writeAccess": ["CanNameComponent", "TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["HasFlagComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
       "name": "ProductionCollectSystem",
@@ -939,6 +939,7 @@
     "LibConfig",
     "LibDataEntity",
     "LibExperience",
+    "LibFlag",
     "LibFriend",
     "LibGacha",
     "LibGoals",

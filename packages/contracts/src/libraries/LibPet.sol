@@ -27,6 +27,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
@@ -79,7 +80,6 @@ library LibPet {
   /// @dev most of the reveal logic (generation) is in the Pet721RevealSystem itself
   ///       this function is for components saved directly on the Pet Entity
   function reveal(IUintComp components, uint256 id, string memory uri) internal {
-    setCanName(components, id, true);
     revive(components, id);
     setStats(components, id);
     setMediaURI(components, id, uri);
@@ -249,11 +249,6 @@ library LibPet {
     return getAccount(components, id) == accountID;
   }
 
-  // Check wether a pet can be named
-  function canName(IUintComp components, uint256 id) internal view returns (bool) {
-    return CanNameComponent(getAddressById(components, CanNameCompID)).has(id);
-  }
-
   // Check whether a pet is attached to an account
   function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
     return IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).has(id);
@@ -326,18 +321,20 @@ library LibPet {
     return true;
   }
 
+  /// @notice Check if a pet can be named, rename
+  /**  @dev
+   * checks for NOT_NAMEABLE flag
+   * inverse check for upgradability shapes & to save gas on pet creation
+   */
+  function useNameable(IUintComp components, uint256 id) internal returns (bool) {
+    return !LibFlag.getAndSet(components, id, "NOT_NAMEABLE", true);
+  }
+
   /////////////////
   // SETTERS
 
   function setOwner(IUintComp components, uint256 id, uint256 accountID) internal {
     IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).set(id, accountID);
-  }
-
-  // add or remove the CanName component
-  function setCanName(IUintComp components, uint256 id, bool can) internal {
-    CanNameComponent canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
-    if (can) canNameComp.set(id);
-    else if (canNameComp.has(id)) canNameComp.remove(id);
   }
 
   // Update the TimeLastAction of a pet. to inform cooldown constraints on Standard Actions
@@ -356,6 +353,11 @@ library LibPet {
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  /// @dev using NOT_NAMEABLE flag
+  function setNameable(IUintComp components, uint256 id, bool can) internal {
+    LibFlag.set(components, id, "NOT_NAMEABLE", !can);
   }
 
   function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {

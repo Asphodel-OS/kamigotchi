@@ -21,15 +21,18 @@ contract PetNameSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibPet.isPet(components, id), "PetName: not a pet");
-    require(LibPet.canName(components, id), "PetName: cannot be named");
+    // require(LibPet.canName(components, id), "PetName: cannot be named");
     require(LibPet.getAccount(components, id) == accountID, "PetName: not urs");
     require(LibPet.getRoom(components, id) == ROOM, "PetName: must be in room 11");
     require(bytes(name).length > 0, "PetName: name cannot be empty");
     require(bytes(name).length <= 16, "PetName: name can be at most 16 characters");
     require(LibPet.getByName(components, name) == 0, "PetName: name taken");
 
+    // checks and sets nameability
+    require(LibPet.useNameable(components, id), "PetName: cannot be named");
+
     LibPet.setName(components, id, name);
-    LibPet.setCanName(components, id, false);
+    // LibPet.setCanName(components, id, false);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

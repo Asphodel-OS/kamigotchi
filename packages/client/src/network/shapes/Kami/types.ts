@@ -18,6 +18,7 @@ import {
   getConfigFieldValueArray,
   getKamiConfig,
 } from '../Config';
+import { hasFlag } from '../Flag';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
@@ -54,7 +55,7 @@ export interface Kami extends DetailedEntity {
   skills?: Skill[];
   traits?: Traits;
   affinities?: string[];
-  namable: boolean;
+  nameable: boolean;
 }
 
 interface KamiExperience {
@@ -82,7 +83,6 @@ export const getKami = (
   const {
     BackgroundIndex,
     BodyIndex,
-    CanName,
     ColorIndex,
     Experience,
     FaceIndex,
@@ -106,10 +106,12 @@ export const getKami = (
     OwnsPetID,
   } = components;
 
+  const id = world.entities[entityIndex];
+
   // populate the base Kami data
   let kami: Kami = {
     ObjectType: 'KAMI',
-    id: world.entities[entityIndex],
+    id: id,
     index: getComponentValue(PetIndex, entityIndex)?.value as number,
     entityIndex,
     name: getComponentValue(Name, entityIndex)?.value as string,
@@ -120,7 +122,7 @@ export const getKami = (
       threshold: 0,
     },
     state: getComponentValue(State, entityIndex)?.value as string,
-    namable: getComponentValue(CanName, entityIndex)?.value as boolean,
+    nameable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
     time: {
       cooldown: {
         last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,

@@ -68,7 +68,7 @@ export function registerEMABoardModal() {
       };
 
       const canName = (kami: Kami): boolean => {
-        return kami.namable ? kami.namable : false;
+        return kami.nameable ? kami.nameable : false;
       };
 
       // set the button based on whether

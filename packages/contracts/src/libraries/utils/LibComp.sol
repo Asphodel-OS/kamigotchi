@@ -141,6 +141,22 @@ library LibComp {
     component.setBatch(entities, values);
   }
 
+  function setIfEmpty(IComp component, uint256 id, bytes memory value) internal {
+    if (!component.has(id)) component.set(id, value);
+  }
+
+  function setIfEmpty(IComp component, uint256 id, uint256 value) internal {
+    if (!component.has(id)) component.set(id, abi.encode(value));
+  }
+
+  function setIfEmpty(IComp component, uint256 id, uint32 value) internal {
+    if (!component.has(id)) component.set(id, abi.encode(value));
+  }
+
+  function setIfEmpty(IComp component, uint256 id, string memory value) internal {
+    if (!component.has(id)) component.set(id, abi.encode(value));
+  }
+
   /////////////////
   // CALCS
 
