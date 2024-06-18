@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
+import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
@@ -79,6 +80,7 @@ export interface Inventories {
   mods: Inventory[];
   consumables: Inventory[];
   lootboxes: Inventory[];
+  misc: Inventory[];
 }
 
 export interface Friends {
@@ -156,14 +158,18 @@ export const getAccount = (
     const mods: Inventory[] = [];
     const consumables: Inventory[] = [];
     const lootboxes: Inventory[] = [];
+    const misc: Inventory[] = [];
     for (let i = 0; i < inventoryResults.length; i++) {
       const inventory = inventoryResults[i];
+      if (inventory.item.index === MUSU_INDEX) continue; // skip musu
+
       if (inventory.item.type === 'FOOD') foods.push(inventory);
-      if (inventory.item.type === 'REVIVE') revives.push(inventory);
-      if (inventory.item.type === 'GEAR') gear.push(inventory);
-      if (inventory.item.type === 'MOD') mods.push(inventory);
-      if (inventory.item.type === 'CONSUMABLE') consumables.push(inventory);
-      if (inventory.item.type === 'LOOTBOX') lootboxes.push(inventory);
+      else if (inventory.item.type === 'REVIVE') revives.push(inventory);
+      else if (inventory.item.type === 'GEAR') gear.push(inventory);
+      else if (inventory.item.type === 'MOD') mods.push(inventory);
+      else if (inventory.item.type === 'CONSUMABLE') consumables.push(inventory);
+      else if (inventory.item.type === 'LOOTBOX') lootboxes.push(inventory);
+      else misc.push(inventory);
     }
     sortInventories(foods);
     sortInventories(revives);
@@ -171,6 +177,7 @@ export const getAccount = (
     sortInventories(mods);
     sortInventories(consumables);
     sortInventories(lootboxes);
+    sortInventories(misc);
 
     account.inventories = {
       food: foods,
@@ -179,6 +186,7 @@ export const getAccount = (
       mods: mods,
       consumables: consumables,
       lootboxes: lootboxes,
+      misc: misc,
     };
   }
 

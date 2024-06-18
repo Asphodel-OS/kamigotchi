@@ -40,6 +40,7 @@ export function registerInventoryModal() {
         if (accInv?.gear) inventories = inventories.concat(accInv.gear);
         if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
         if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
+        if (accInv?.misc) inventories = inventories.concat(accInv.misc);
 
         return inventories.filter((inv) => inv.balance! > 0);
       };

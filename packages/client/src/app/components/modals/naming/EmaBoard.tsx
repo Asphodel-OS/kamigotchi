@@ -6,6 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getInventoryByIndex } from 'network/shapes/Inventory';
 import { Kami } from 'network/shapes/Kami';
 
 export function registerEMABoardModal() {
@@ -23,6 +24,7 @@ export function registerEMABoardModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
+          const { world, components } = network;
           const account = getAccountFromBurner(network, {
             inventory: true,
             kamis: true,
@@ -30,7 +32,10 @@ export function registerEMABoardModal() {
 
           return {
             network,
-            data: { account },
+            data: {
+              account: account,
+              dustAmt: getInventoryByIndex(world, components, account.id, 9001).balance,
+            },
           };
         })
       ),
@@ -95,16 +100,11 @@ export function registerEMABoardModal() {
       const UseDustButton = (kami: Kami) => {
         if (canName(kami)) return <div></div>;
 
-        const dustAmtRaw = data.account.inventories?.consumables.find(
-          (inv) => inv.item.index === 9001
-        )?.balance;
-        const dustAmt = dustAmtRaw ? dustAmtRaw : 0;
-
         let button = (
           <IconButton
             img={useIcon}
             onClick={() => useRenamePotion(kami)}
-            disabled={dustAmt == 0 || isHarvesting(kami) || isDead(kami)}
+            disabled={data.dustAmt == 0 || isHarvesting(kami) || isDead(kami)}
           />
         );
 
@@ -112,10 +112,10 @@ export function registerEMABoardModal() {
           return <Tooltip text={['too far away']}>{button}</Tooltip>;
         } else if (isDead(kami)) {
           return <Tooltip text={['cannot hear you (dead)']}>{button}</Tooltip>;
-        } else if (dustAmt == 0) {
+        } else if (data.dustAmt == 0) {
           return <Tooltip text={['you have no holy dust']}>{button}</Tooltip>;
         }
-        return <Tooltip text={['use holy dust']}>{button}</Tooltip>;
+        return <Tooltip text={[`use holy dust (have ${data.dustAmt})`]}>{button}</Tooltip>;
       };
 
       const CombinedButton = (kami: Kami) => {
