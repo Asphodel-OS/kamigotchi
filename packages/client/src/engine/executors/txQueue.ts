@@ -131,12 +131,19 @@ export function createTxQueue<C extends Contracts>(
         // Populate tx
         const populatedTx = await member(...argsWithoutOverrides, configOverrides);
         try {
+          // TODO: dont be calling this sync - dont want to wait for response
+          const maxFeeResponse = await (target.provider as JsonRpcProvider).send(
+            'eth_gasPrice',
+            []
+          );
+          const rawMaxFee = BigNumber.from(maxFeeResponse);
           const maxPriorityFeeResponse = await (target.provider as JsonRpcProvider).send(
             'eth_maxPriorityFeePerGas',
             []
           );
-          const maxPriorityFee = BigNumber.from(maxPriorityFeeResponse); //.mul(125).div(100);
+          const maxPriorityFee = BigNumber.from(maxPriorityFeeResponse);
           populatedTx.maxPriorityFeePerGas = maxPriorityFee;
+          populatedTx.maxFeePerGas = rawMaxFee.sub(maxPriorityFee).mul(2).add(maxPriorityFee); // base * 2 + priority
         } catch (e) {
           console.warn('[TXQueue] Failed to get maxPriorityFeePerGas', e);
         }
