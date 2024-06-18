@@ -47,6 +47,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _PetGachaMintSystem.init(); // todo: make deploy script call `init()`
 
     setUpAccounts();
+    setUpAuthRoles();
     setUpMint();
     setUpItems();
     setUpRooms();
@@ -58,6 +59,13 @@ abstract contract SetupTemplate is TestSetupImports {
     _registerAccounts(10);
     alice = _accounts[0];
     bob = _accounts[1];
+  }
+
+  function setUpAuthRoles() public virtual {
+    vm.startPrank(deployer);
+    __AuthManageRoleSystem.addRole(deployer, "ROLE_ADMIN");
+    __AuthManageRoleSystem.addRole(deployer, "ROLE_COMMUNITY_MANAGER");
+    vm.stopPrank();
   }
 
   // sets up default configs. override to change/remove behaviour if needed

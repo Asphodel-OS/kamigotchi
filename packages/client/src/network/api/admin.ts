@@ -20,6 +20,19 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
+  // AUTH
+
+  async function addRole(addr: string, role: string) {
+    await sleepIf();
+    return systems['system._Auth.Manage.Role'].addRole(addr, role);
+  }
+
+  async function removeRole(addr: string, role: string) {
+    await sleepIf();
+    return systems['system._Auth.Manage.Role'].removeRole(addr, role);
+  }
+
+  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
@@ -561,6 +574,12 @@ export function createAdminAPI(systems: any) {
   }
 
   return {
+    auth: {
+      roles: {
+        add: addRole,
+        remove: removeRole,
+      },
+    },
     bridge: {
       cancel: cancelBridgeTx,
     },

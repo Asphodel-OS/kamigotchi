@@ -8,6 +8,7 @@ import {
   deleteSkills,
   initAll,
   initAllLocal,
+  initAuth,
   initConfigs,
   initGachaPool,
   initGoals,
@@ -50,6 +51,9 @@ export class WorldState {
     local: {
       init: () => this.genCalls((api) => initAllLocal(api)),
     } as SubFunc,
+    auth: {
+      init: () => this.genCalls(initAuth),
+    },
     config: {
       init: () => this.genCalls(initConfigs),
     } as SubFunc,

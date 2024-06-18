@@ -9,10 +9,12 @@ import { LibInventory } from "libraries/LibInventory.sol";
 import { LibLootbox } from "libraries/LibLootbox.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
+
 uint256 constant ID = uint256(keccak256("system.Lootbox.Reveal.Execute"));
 
 // @notice reveals lootbox and distributes items
-contract LootboxExecuteRevealSystem is System {
+contract LootboxExecuteRevealSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -39,7 +41,7 @@ contract LootboxExecuteRevealSystem is System {
     return "";
   }
 
-  function forceReveal(uint256 id) public onlyOwner {
+  function forceReveal(uint256 id) public onlyCommManager(components) {
     LibRandom.setRevealBlock(components, id, block.number - 1);
 
     uint256 accountID = LibLootbox.getHolder(components, id);

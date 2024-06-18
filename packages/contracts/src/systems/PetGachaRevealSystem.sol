@@ -9,10 +9,12 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
+
 uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Reveal"));
 
 /// @notice reveals gacha results. owner agnostic - reveal is sent to original account
-contract PetGachaRevealSystem is System {
+contract PetGachaRevealSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function reveal(uint256[] memory rawCommitIDs) external returns (uint256[] memory) {
@@ -30,7 +32,9 @@ contract PetGachaRevealSystem is System {
   }
 
   /// @notice admin reveal if user misses 256 block window
-  function forceReveal(uint256[] memory commitIDs) external onlyOwner returns (uint256[] memory) {
+  function forceReveal(
+    uint256[] memory commitIDs
+  ) external onlyCommManager(components) returns (uint256[] memory) {
     require(commitIDs.length > 0, "need commits to reveal");
     _checkTypes(commitIDs);
 

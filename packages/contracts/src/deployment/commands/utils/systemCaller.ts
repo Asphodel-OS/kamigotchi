@@ -111,8 +111,8 @@ export const encodeArgs = (system: keyof typeof SystemAbis, args: any[]) => {
 
 export const parseArgs = (args: any[]) => {
   return args.map((arg) => {
-    if (typeof arg === 'string' && !arg.includes('['))
-      // if string, and not array
+    if (typeof arg === 'string' && !arg.includes('[') && !arg.startsWith('0x'))
+      // if string, and not array or starts with 0x
       return `\\"${arg}\\"`; // converting to string literal
     else return arg;
   });

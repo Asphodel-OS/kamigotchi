@@ -163,6 +163,7 @@ import { WeightsComponent, ID as WeightsComponentID } from "components/WeightsCo
 import { WhitelistComponent, ID as WhitelistComponentID } from "components/WhitelistComponent.sol";
 
 // Systems
+import { _AuthManageRoleSystem, ID as _AuthManageRoleSystemID } from "systems/_AuthManageRoleSystem.sol";
 import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
 import { _GoalCreateSystem, ID as _GoalCreateSystemID } from "systems/_GoalCreateSystem.sol";
 import { _GoalCreateRequirementSystem, ID as _GoalCreateRequirementSystemID } from "systems/_GoalCreateRequirementSystem.sol";

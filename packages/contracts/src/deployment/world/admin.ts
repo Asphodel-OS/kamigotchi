@@ -21,6 +21,17 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
+  // AUTH
+
+  async function addRole(addr: string, role: string) {
+    genCall('system._Auth.Manage.Role', [addr, role], 'addRole', true);
+  }
+
+  async function removeRole(addr: string, role: string) {
+    genCall('system._Auth.Manage.Role', [addr, role], 'removeRole', true);
+  }
+
+  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
@@ -453,6 +464,12 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   return {
     gen: genCall,
+    auth: {
+      roles: {
+        add: addRole,
+        remove: removeRole,
+      },
+    },
     config: {
       set: {
         array: setConfigArray,

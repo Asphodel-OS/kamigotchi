@@ -110,6 +110,10 @@
   ],
   "systems": [
     {
+      "name": "_AuthManageRoleSystem",
+      "writeAccess": ["HasFlagComponent", "IdHolderComponent", "TypeComponent"]
+    },
+    {
       "name": "_ConfigSetSystem",
       "writeAccess": ["ValueComponent"]
     },

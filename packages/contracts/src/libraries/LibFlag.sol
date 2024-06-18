@@ -67,7 +67,8 @@ library LibFlag {
   }
 
   /// @notice deletes a full flag
-  function deleteFlagFull(IUintComp components, uint256 id) internal {
+  function removeFull(IUintComp components, uint256 parentID, string memory flag) internal {
+    uint256 id = genID(parentID, flag);
     HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
     getComponentById(components, IdHolderCompID).remove(id);
     getComponentById(components, TypeCompID).remove(id);
