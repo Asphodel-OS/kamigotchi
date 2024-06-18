@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { ExperienceBar, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { StatIcons } from 'assets/images/icons/stats';
+import { StatDescriptions } from 'constants/stats';
 import { Account } from 'network/shapes/Account';
+import { Stat } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -23,42 +25,7 @@ export const Banner = (props: Props) => {
 
   const { setAccount } = useSelected();
   const { modals, setModals } = useVisibility();
-  const statsArray = Object.entries(kami.stats);
   const affinities = kami.affinities?.join(' | ');
-  const statsDetails = new Map(
-    Object.entries({
-      health: {
-        description: 'Health defines how resilient a Kami is to accumulated damage',
-        image: StatIcons.health,
-        base: kami.stats.health.base,
-        bonus: kami.stats.health.shift,
-      },
-      power: {
-        description: 'Power determines the potential rate at which $MUSU can be farmed',
-        image: StatIcons.power,
-        base: kami.stats.power.base,
-        bonus: kami.stats.power.shift,
-      },
-      violence: {
-        description: 'Violence dictates the threshold at which a Kami can liquidate others',
-        image: StatIcons.violence,
-        base: kami.stats.violence.base,
-        bonus: kami.stats.violence.shift,
-      },
-      harmony: {
-        description: 'Harmony divines resting recovery rate and defends against violence',
-        image: StatIcons.harmony,
-        base: kami.stats.harmony.base,
-        bonus: kami.stats.harmony.shift,
-      },
-      slots: {
-        description: 'Slots are room for upgrades ^_^',
-        image: StatIcons.slots,
-        base: kami.stats.slots.base,
-        bonus: kami.stats.slots.shift,
-      },
-    })
-  );
 
   const isMine = (kami: Kami) => {
     return kami.account?.index === account.index;
@@ -99,24 +66,24 @@ export const Banner = (props: Props) => {
               current={kami.experience.current}
               total={kami.experience.threshold}
               triggerLevelUp={() => props.actions.levelUp(kami)}
-              disabled={!isMine(kami)}
+              disabled={!!getLevelUpDisabledReason()}
               disabledReason={getLevelUpDisabledReason()}
             />
           </TitleRow>
         </ContentTop>
         <ContentMiddle>
-          {statsArray.map((stat: [string, number]) => {
-            const details = statsDetails.get(stat[0]);
-            const valueString = `${details?.base! + details?.bonus!}`;
-            const tooltipText = [
-              `${details?.base} + ${details?.bonus}`,
-              details?.description ?? '',
-            ];
+          {Object.entries(kami.stats).map(([key, value]) => {
+            const description = StatDescriptions[key as keyof typeof StatDescriptions];
+            const icon = StatIcons[key as keyof typeof StatIcons];
+            const v = value as Stat;
+
+            const total = v.base + v.shift;
+            const tooltipText = [`${key} (${v.base} + ${v.shift})`, '', description];
             return (
-              <Tooltip key={stat[0]} text={tooltipText} grow>
+              <Tooltip key={key} text={tooltipText} grow>
                 <InfoBox>
-                  <Icon src={details?.image} />
-                  <InfoContent>{valueString}</InfoContent>
+                  <Icon src={icon} />
+                  <InfoContent>{total}</InfoContent>
                 </InfoBox>
               </Tooltip>
             );

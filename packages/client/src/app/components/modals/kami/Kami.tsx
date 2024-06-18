@@ -14,7 +14,6 @@ import {
   getTreePoints,
 } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
-import { sleep } from 'utils/misc';
 import { KillLogs } from './battles/KillLogs';
 import { Banner } from './header/Banner';
 import { Tabs } from './header/Tabs';
@@ -28,7 +27,7 @@ export function registerKamiModal() {
       colStart: 25,
       colEnd: 78,
       rowStart: 3,
-      rowEnd: 100,
+      rowEnd: 88,
     },
 
     // Requirement
@@ -80,7 +79,6 @@ export function registerKamiModal() {
       // awaits the result of an action and then updates the kami data
       const updateKamiAfterAction = async (actionIndex: EntityIndex) => {
         await waitForActionCompletion(actions!.Action, actionIndex);
-        sleep(2000); // the above function is janky so we add a buffer
         setKami(getSelectedKami(kamiIndex));
       };
 
