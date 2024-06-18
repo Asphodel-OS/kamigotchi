@@ -189,24 +189,6 @@
     },
     {
       "type": "function",
-      "name": "getSchema",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "keys",
-          "type": "string[]",
-          "internalType": "string[]"
-        },
-        {
-          "name": "values",
-          "type": "uint8[]",
-          "internalType": "enum LibTypes.SchemaValue[]"
-        }
-      ],
-      "stateMutability": "pure"
-    },
-    {
-      "type": "function",
       "name": "getValue",
       "inputs": [
         {
@@ -523,7 +505,6 @@
     "getEntitiesWithValue(bytes)": "b361be46",
     "getRaw(uint256)": "dd98e3c9",
     "getRawBatch(uint256[])": "4323c4ef",
-    "getSchema()": "6b122fe0",
     "getValue(uint256)": "0ff4c916",
     "has(uint256)": "cccf7a8e",
     "id()": "af640d0f",

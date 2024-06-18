@@ -14,19 +14,6 @@ uint256 constant ID = uint256(keccak256("mudwar.components.Position"));
 contract PositionComponent is Component {
   constructor(address world) Component(world, ID) {}
 
-  function getSchema()
-    public
-    pure
-    override
-    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
-  {
-    keys[0] = "x";
-    values[0] = LibTypes.SchemaValue.INT64;
-
-    keys[1] = "y";
-    values[1] = LibTypes.SchemaValue.INT64;
-  }
-
   function set(uint256 entity, Position calldata value) public {
     set(entity, abi.encode(value));
   }

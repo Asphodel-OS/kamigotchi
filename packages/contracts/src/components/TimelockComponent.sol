@@ -13,25 +13,6 @@ struct TimelockOp {
 contract TimelockComponent is Component {
   constructor(address world) Component(world, ID) {}
 
-  function getSchema()
-    public
-    pure
-    override
-    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
-  {
-    keys = new string[](3);
-    values = new LibTypes.SchemaValue[](3);
-
-    keys[0] = "target";
-    values[0] = LibTypes.SchemaValue.ADDRESS;
-
-    keys[1] = "value";
-    values[1] = LibTypes.SchemaValue.UINT256;
-
-    keys[2] = "salt";
-    values[2] = LibTypes.SchemaValue.UINT256;
-  }
-
   function set(uint256 entity, TimelockOp memory value) public {
     set(entity, abi.encode(value));
   }

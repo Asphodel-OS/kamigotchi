@@ -6,19 +6,6 @@ import { TypeLib } from "components/types/standard.sol";
 contract StringBareComponent is BareComponent {
   constructor(address world, uint256 id) BareComponent(world, id) {}
 
-  function getSchema()
-    public
-    pure
-    override
-    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
-  {
-    keys = new string[](1);
-    values = new LibTypes.SchemaValue[](1);
-
-    keys[0] = "value";
-    values[0] = LibTypes.SchemaValue.STRING;
-  }
-
   function set(uint256 entity, string memory value) external virtual onlyWriter {
     _set(entity, TypeLib.encodeString(value));
   }
