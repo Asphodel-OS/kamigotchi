@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { getCoinBal } from './Inventory';
 import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
 
@@ -28,7 +29,9 @@ export const getKill = (
   entityIndex: EntityIndex,
   options?: Options
 ): Kill => {
-  const { NodeID, SourceID, TargetID, Value, Coin, Time } = components;
+  const { NodeID, SourceID, TargetID, Value, Time } = components;
+
+  const id = world.entities[entityIndex];
 
   // populate the Node
   const nodeID = getComponentValue(NodeID, entityIndex)?.value as EntityID;
@@ -36,11 +39,11 @@ export const getKill = (
   const node = getNode(world, components, nodeEntityIndex);
 
   const killLog: Kill = {
-    id: world.entities[entityIndex],
+    id: id,
     entityIndex,
     node,
     balance: (getComponentValue(Value, entityIndex)?.value as number) * 1,
-    bounty: (getComponentValue(Coin, entityIndex)?.value as number) * 1,
+    bounty: getCoinBal(world, components, id),
     time: (getComponentValue(Time, entityIndex)?.value as number) * 1,
   };
 

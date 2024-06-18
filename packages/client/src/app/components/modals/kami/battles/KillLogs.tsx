@@ -86,7 +86,7 @@ export const KillLogs = (props: Props) => {
       <TableContainer>
         <Table>
           <Head />
-          {logs.map((log, index) => Row(log, index))}
+          <tbody>{logs.map((log, index) => Row(log, index))}</tbody>
         </Table>
       </TableContainer>
     </Container>
@@ -101,11 +101,4 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-`;
-
-const Title = styled.div`
-  padding: 0.5vw;
-  color: black;
-  font-family: Pixel;
-  font-size: 2vw;
 `;
