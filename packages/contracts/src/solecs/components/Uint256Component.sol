@@ -12,19 +12,6 @@ import { IUint256Component } from "../interfaces/IUint256Component.sol";
 contract Uint256Component is Component, IUint256Component {
   constructor(address world, uint256 id) Component(world, id) {}
 
-  function getSchema()
-    public
-    pure
-    override
-    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
-  {
-    keys = new string[](1);
-    values = new LibTypes.SchemaValue[](1);
-
-    keys[0] = "value";
-    values[0] = LibTypes.SchemaValue.UINT256;
-  }
-
   function set(uint256 entity, uint256 value) public virtual {
     set(entity, abi.encode(value));
   }

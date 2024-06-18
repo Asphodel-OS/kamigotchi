@@ -8,15 +8,6 @@ uint256 constant ID = uint256(keccak256("mudwar.components.Damage"));
 contract DamageComponent is Component {
   constructor(address world) Component(world, ID) {}
 
-  function getSchema()
-    public
-    pure
-    override
-    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
-  {
-    values[0] = LibTypes.SchemaValue.UINT256;
-  }
-
   function set(uint256 entity, uint256 value) public {
     set(entity, abi.encode(value));
   }

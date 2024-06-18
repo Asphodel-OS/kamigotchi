@@ -8,15 +8,6 @@ contract PrototypeTagComponent is Component {
 
   constructor(address world) Component(world, ID) {}
 
-  function getSchema()
-    public
-    pure
-    override
-    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
-  {
-    values[0] = LibTypes.SchemaValue.UINT256;
-  }
-
   function set(uint256 entity, bool value) public {
     set(entity, abi.encode(value));
   }
