@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./Imports.sol";
+
+import { SystemCall } from "./SystemCall.s.sol";
+
+/// Copy this to GodSystem.s.sol to use
+/// @notice a special script that can perform any operation. Useful for testing
+contract GodSystem is SystemCall {
+  function run(uint256 deployerPriv, address worldAddr) external {
+    _setUp(worldAddr);
+    vm.startBroadcast(deployerPriv);
+
+    // custom system calls here
+  }
+}

@@ -28,29 +28,8 @@ contract SystemCall is Script {
     return _call(systemID, args);
   }
 
-  // function call2(uint256 deployerPriv, address worldAddr) external returns (bytes memory) {
-  //   _setUp(worldAddr);
-  //   vm.startBroadcast(deployerPriv);
-  //   return
-  //     _call(
-  //       "system.Account.Register",
-  //       hex"00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000046e616d6500000000000000000000000000000000000000000000000000000000"
-  //     );
-  // }
-
-  // function callConfig(uint256 deployerPriv, address worldAddr) external returns (bytes memory) {
-  //   _setUp(worldAddr);
-  //   vm.startBroadcast(deployerPriv);
-  //   return
-  //     _ConfigSetSystem(_getSysAddr(_ConfigSetSystemID)).execute(
-  //       hex"000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000004d2000000000000000000000000000000000000000000000000000000000000000b434f4e4649475f4e414d45000000000000000000000000000000000000000000"
-  //     );
-  // }
-
   //////////////
   // INTERNAL
-
-  // _system(_getSysAddr(systemID)).function(args);
 
   function _call(uint256 systemID, bytes memory args) public returns (bytes memory) {
     return _getSys(systemID).execute(args);

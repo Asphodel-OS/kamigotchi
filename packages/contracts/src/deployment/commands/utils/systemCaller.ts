@@ -41,10 +41,33 @@ export const executeCallFromStream = async (rpc: string, deployerKey: string, wo
     [
       'script',
       'src/deployment/contracts/InitWorld.s.sol:InitWorld',
+      '--broadcast',
       '--fork-url',
       rpc,
       '--sig',
       'initWorld(uint256,address)',
+      deployerKey,
+      world || '0x00',
+    ],
+    { stdio: ['inherit', 'pipe', 'pipe'] }
+  );
+  child.stderr?.on('data', (data) => console.log('stderr:', data.toString()));
+  child.stdout?.on('data', (data) => console.log(data.toString()));
+
+  return { child: await child };
+};
+
+export const executeGodSystem = async (rpc: string, deployerKey: string, world: string) => {
+  const child = execa(
+    'forge',
+    [
+      'script',
+      'src/deployment/contracts/GodSystem.s.sol:GodSystem',
+      '--broadcast',
+      '--fork-url',
+      rpc,
+      '--sig',
+      'run(uint256,address)',
       deployerKey,
       world || '0x00',
     ],

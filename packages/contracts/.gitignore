@@ -15,8 +15,9 @@ artifacts/
 broadcast/
 /cache/
 out/
-src/deployment/contracts/LibDeploy.sol
 src/deployment/contracts/initStream.json
+src/deployment/contracts/GodSystem.s.sol
 src/deployment/contracts/InitWorld.s.sol
+src/deployment/contracts/LibDeploy.sol
 src/test/utils/TestSetupImports.sol
 /types/
