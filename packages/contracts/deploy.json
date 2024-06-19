@@ -1,5 +1,6 @@
 {
   "components": [
+    { "comp": "CanNameComponent", "name": "_depreciatedCanName", "type": "bool" },
     { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
     { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
     { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
