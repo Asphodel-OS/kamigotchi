@@ -46,7 +46,7 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 2500, 3, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 480, 0, 0, 0, 0, 0]);
-  await api.config.set.array('KAMI_HARV_DEDICATION', [0, 0, 7560, 3]); // nontraditional AST node, but similar
+  await api.config.set.array('KAMI_HARV_DEDICATION', [0, 0, 15, 3]); // nontraditional AST node, but similar
 
   // Health Effects
   await api.config.set.array('KAMI_MUSU_STRAIN', [0, 0, 200, 3, 0, 0, 1000, 3]);

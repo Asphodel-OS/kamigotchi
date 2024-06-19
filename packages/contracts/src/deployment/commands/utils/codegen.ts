@@ -39,8 +39,8 @@ export async function generateLibDeploy(
   // Filter components
   if (components) {
     const componentsArray = components.split(',').map((comp: string) => comp.trim());
-    config.components = config.components.filter((component: string) =>
-      componentsArray.includes(component)
+    config.components = config.components.filter((component: any) =>
+      componentsArray.includes(component.comp)
     );
     config.systems = [];
   }
@@ -81,6 +81,11 @@ export async function generateInitWorld() {
   });
   const initWorldPath = path.join(contractsDir, 'InitWorld.s.sol');
   await writeFile(initWorldPath, InitWorld);
+}
+
+export async function clearInitWorld() {
+  const initWorldPath = path.join(contractsDir, 'InitWorld.s.sol');
+  await rm(initWorldPath, { force: true });
 }
 
 export async function generateSystemTypes(

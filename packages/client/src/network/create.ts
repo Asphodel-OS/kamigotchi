@@ -4,7 +4,7 @@ import { Type, createWorld, defineComponent } from '@mud-classic/recs';
 import { createNetwork } from 'engine/executors';
 import { SystemAbis } from 'types/SystemAbis.mjs';
 import { SystemTypes } from 'types/SystemTypes';
-import { createAdminAPI, createPlayerAPI, setupWorldAPI } from './api';
+import { createAdminAPI, createPlayerAPI } from './api';
 import { createComponents } from './components';
 import { createConfig } from './config';
 import { initExplorer } from './explorer';
@@ -41,7 +41,6 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     api: {
       admin: createAdminAPI(systems),
       player: createPlayerAPI(systems),
-      world: setupWorldAPI(systems, provider),
     },
     updates: {
       components: {
@@ -73,7 +72,6 @@ export async function updateNetworkLayer(layer: NetworkLayer, provider?: Externa
   layer.api = {
     admin: createAdminAPI(systems),
     player: createPlayerAPI(systems),
-    world: setupWorldAPI(systems, provider ?? networkInstance.providers.get().json),
   };
   return layer;
 }

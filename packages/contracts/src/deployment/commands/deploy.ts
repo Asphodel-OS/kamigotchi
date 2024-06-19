@@ -3,6 +3,7 @@ const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 const openurl = require('openurl');
 
+import { clearInitWorld } from './utils/codegen';
 import { generateAndDeploy } from './utils/deployer';
 import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from './utils/utils';
 import { generateInitScript, initWorld } from './utils/worldIniter';
@@ -27,6 +28,9 @@ const run = async () => {
   if (argv.init) {
     // generate init script
     generateInitScript(mode, [], 'init');
+  } else {
+    // empty init script for partial deployments
+    clearInitWorld();
   }
 
   const result = await generateAndDeploy({
