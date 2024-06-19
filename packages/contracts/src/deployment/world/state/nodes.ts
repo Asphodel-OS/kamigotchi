@@ -34,6 +34,6 @@ async function initNode(api: AdminAPI, entry: any) {
     Number(entry['Index']),
     entry['Name'],
     entry['Description'],
-    entry['Affinity']
+    entry['Affinity'].toUpperCase()
   );
 }
