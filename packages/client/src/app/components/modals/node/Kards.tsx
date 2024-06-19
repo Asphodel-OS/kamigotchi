@@ -56,13 +56,9 @@ export const Kards = (props: Props) => {
   // INTERPRETATION
 
   const hasFood = (account: Account): boolean => {
-    let inventories = account.inventories;
-    if (!inventories || !inventories.food) return false;
-
-    const total = inventories.food.reduce(
-      (tot: number, inv: Inventory) => tot + (inv.balance || 0),
-      0
-    );
+    const foods = account.inventories?.filter((inv) => inv.item.type === 'FOOD');
+    if (!foods || foods.length == 0) return false;
+    const total = foods.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
     return total > 0;
   };
 
@@ -173,7 +169,7 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
     const stockedInventory =
-      account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
+      account.inventories?.filter((inv: Inventory) => inv.item.type === 'FOOD') ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       const healAmt = inv.item.stats?.health.sync ?? 0;

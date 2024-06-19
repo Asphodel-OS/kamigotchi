@@ -51,24 +51,16 @@ export const Kards = (props: Props) => {
   // INTERPRETATION
 
   const hasFood = (account: Account): boolean => {
-    let inventories = account.inventories;
-    if (!inventories || !inventories.food) return false;
-
-    const total = inventories.food.reduce(
-      (tot: number, inv: Inventory) => tot + (inv.balance || 0),
-      0
-    );
+    const foods = account.inventories?.filter((inv) => inv.item.type === 'FOOD');
+    if (!foods || foods.length == 0) return false;
+    const total = foods.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
     return total > 0;
   };
 
   const hasRevive = (account: Account): boolean => {
-    let inventories = account.inventories;
-    if (!inventories || !inventories.revives) return false;
-
-    const total = inventories.revives.reduce(
-      (tot: number, inv: Inventory) => tot + (inv.balance || 0),
-      0
-    );
+    const revives = account.inventories?.filter((inv) => inv.item.type === 'REVIVE');
+    if (!revives || revives.length == 0) return false;
+    const total = revives.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
     return total > 0;
   };
 
@@ -128,7 +120,7 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
     const stockedInventory =
-      account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
+      account.inventories?.filter((inv: Inventory) => inv.item.type === 'FOOD') ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       const healAmt = inv.item.stats?.health.sync ?? 0;
@@ -176,11 +168,14 @@ export const Kards = (props: Props) => {
     if (!hasRevive(account)) tooltipText = 'no revives in inventory';
     else if (onCooldown(kami)) tooltipText = 'on cooldown';
 
+    const stockedInventory =
+      account.inventories?.filter((inv: Inventory) => inv.item.type === 'REVIVE') ?? [];
+
     return (
       <Tooltip text={[tooltipText]}>
         <IconButton
           img={reviveIcon}
-          onClick={() => actions.revive(kami, account.inventories!.revives[0].item.index)}
+          onClick={() => actions.revive(kami, stockedInventory[0].item.index)}
           disabled={!hasRevive(account) || onCooldown(kami)}
           noMargin
         />

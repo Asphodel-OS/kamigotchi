@@ -1,6 +1,5 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
@@ -13,7 +12,7 @@ import {
   getAccOutgoingRequests,
 } from '../Friendship';
 import { GachaCommit, queryAccCommits } from '../Gacha';
-import { Inventory, getCoinBal, queryInventoryX, sortInventories } from '../Inventory';
+import { Inventory, cleanInventories, getCoinBal, queryInventoryX } from '../Inventory';
 import { Kami, queryKamisX } from '../Kami';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
@@ -47,7 +46,7 @@ export interface Account {
   gacha?: {
     commits: GachaCommit[];
   };
-  inventories?: Inventories;
+  inventories?: Inventory[];
   lootboxLogs?: {
     unrevealed: LootboxLog[];
     revealed: LootboxLog[];
@@ -71,16 +70,6 @@ export interface AccountOptions {
   quests?: boolean;
   lootboxLogs?: boolean;
   stats?: boolean;
-}
-
-export interface Inventories {
-  food: Inventory[];
-  revives: Inventory[];
-  gear: Inventory[];
-  mods: Inventory[];
-  consumables: Inventory[];
-  lootboxes: Inventory[];
-  misc: Inventory[];
 }
 
 export interface Friends {
@@ -151,43 +140,9 @@ export const getAccount = (
 
   // populate inventories
   if (options?.inventory) {
-    const inventoryResults = queryInventoryX(world, components, { owner: account.id });
-    const foods: Inventory[] = [];
-    const revives: Inventory[] = [];
-    const gear: Inventory[] = [];
-    const mods: Inventory[] = [];
-    const consumables: Inventory[] = [];
-    const lootboxes: Inventory[] = [];
-    const misc: Inventory[] = [];
-    for (let i = 0; i < inventoryResults.length; i++) {
-      const inventory = inventoryResults[i];
-      if (inventory.item.index === MUSU_INDEX) continue; // skip musu
-
-      if (inventory.item.type === 'FOOD') foods.push(inventory);
-      else if (inventory.item.type === 'REVIVE') revives.push(inventory);
-      else if (inventory.item.type === 'GEAR') gear.push(inventory);
-      else if (inventory.item.type === 'MOD') mods.push(inventory);
-      else if (inventory.item.type === 'CONSUMABLE') consumables.push(inventory);
-      else if (inventory.item.type === 'LOOTBOX') lootboxes.push(inventory);
-      else misc.push(inventory);
-    }
-    sortInventories(foods);
-    sortInventories(revives);
-    sortInventories(gear);
-    sortInventories(mods);
-    sortInventories(consumables);
-    sortInventories(lootboxes);
-    sortInventories(misc);
-
-    account.inventories = {
-      food: foods,
-      revives: revives,
-      gear: gear,
-      mods: mods,
-      consumables: consumables,
-      lootboxes: lootboxes,
-      misc: misc,
-    };
+    account.inventories = cleanInventories(
+      queryInventoryX(world, components, { owner: account.id })
+    );
   }
 
   // populate Kamis

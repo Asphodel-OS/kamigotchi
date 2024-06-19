@@ -36,18 +36,21 @@ export function registerLootboxesModal() {
             lootboxLogs: true,
             inventory: true,
           });
+          const accLootboxes = (account.inventories || []).filter(
+            (inv) => inv.item.type === 'LOOTBOX'
+          );
           const selectedBox = getLootboxByIndex(world, components, 10001);
 
           return {
             network: layers.network,
-            data: { account, selectedBox },
+            data: { account, accLootboxes, selectedBox },
           };
         })
       ),
 
     // Render
     ({ network, data }) => {
-      const { account, selectedBox } = data;
+      const { account, accLootboxes, selectedBox } = data;
       const { actions, api, components, world } = network;
 
       const { modals } = useVisibility();
@@ -172,7 +175,7 @@ export function registerLootboxesModal() {
           case 'OPEN':
             return (
               <Opener
-                inventory={account.inventories?.lootboxes[0]}
+                inventory={accLootboxes[0]}
                 lootbox={selectedBox}
                 utils={{ setAmount, setState }}
               />
@@ -187,7 +190,7 @@ export function registerLootboxesModal() {
           default:
             return (
               <Opener
-                inventory={account.inventories?.lootboxes[0]}
+                inventory={accLootboxes[0]}
                 lootbox={selectedBox}
                 utils={{ setAmount, setState }}
               />

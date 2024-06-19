@@ -25,6 +25,7 @@ export interface Item extends DetailedEntity {
   };
   type: string;
   stats?: Stats;
+  experience?: number; // maybe merge in Stats in future?
 }
 
 /**
@@ -49,6 +50,7 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     image: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
     image4x: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
     stats: getStats(components, entityIndex),
+    experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
     is: {
       consumable: hasComponent(IsConsumable, entityIndex),
       lootbox: hasComponent(IsLootbox, entityIndex),

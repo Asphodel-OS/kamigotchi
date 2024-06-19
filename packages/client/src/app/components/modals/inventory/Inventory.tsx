@@ -4,7 +4,6 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Inventory } from 'network/shapes/Inventory';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 
@@ -30,21 +29,6 @@ export function registerInventoryModal() {
     },
     // Render
     ({ data }) => {
-      const getInventories = () => {
-        let accInv = data.account.inventories;
-        let inventories: Inventory[] = [];
-
-        if (accInv?.food) inventories = inventories.concat(accInv.food);
-        if (accInv?.revives) inventories = inventories.concat(accInv.revives);
-        if (accInv?.mods) inventories = inventories.concat(accInv.mods);
-        if (accInv?.gear) inventories = inventories.concat(accInv.gear);
-        if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
-        if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
-        if (accInv?.misc) inventories = inventories.concat(accInv.misc);
-
-        return inventories.filter((inv) => inv.balance! > 0);
-      };
-
       /////////////////
       // DISPLAY
 
@@ -56,7 +40,7 @@ export function registerInventoryModal() {
           canExit
           overlay
         >
-          <ItemGrid key='grid' inventories={getInventories()} />
+          <ItemGrid key='grid' inventories={data.account.inventories || []} />
         </ModalWrapper>
       );
     }
