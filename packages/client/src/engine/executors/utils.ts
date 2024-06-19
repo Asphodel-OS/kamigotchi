@@ -1,9 +1,10 @@
-import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
+import { BaseProvider, JsonRpcProvider, TransactionRequest } from '@ethersproject/providers';
 import { extractEncodedArguments, stretch } from '@mud-classic/utils';
 import { defaultAbiCoder as abi } from 'ethers/lib/utils';
 import { IComputedValue, reaction } from 'mobx';
 import { EMPTY, ReplaySubject, concat, concatMap, endWith, filter, map, range, take } from 'rxjs';
 
+import { BigNumberish, Overrides } from 'ethers';
 import { Providers } from './providers';
 
 /**
@@ -81,4 +82,31 @@ export function createBlockNumberStream(
   const blockNumber$ = concat(initialSync$, blockNumberEvent$);
 
   return { blockNumber$, dispose };
+}
+
+export async function getTxGasData(
+  provider: JsonRpcProvider,
+  estimateGas: () => BigNumberish | Promise<BigNumberish>
+) {
+  let gasOverrides: Overrides = {};
+
+  const promises: Promise<any>[] = [];
+  const estimate = estimateGas();
+  promises.push(
+    typeof estimate === typeof Promise<BigNumberish>
+      ? (estimate as Promise<BigNumberish>)
+      : Promise.resolve(estimate)
+  );
+  promises.push(provider.getFeeData());
+
+  await Promise.all(promises).then((results) => {
+    gasOverrides.gasLimit = results[0];
+    gasOverrides.maxPriorityFeePerGas = results[1].maxPriorityFeePerGas;
+    // base * 2 + priority
+    gasOverrides.maxFeePerGas = results[1].lastBaseFeePerGas
+      .mul(2)
+      .add(results[1].maxPriorityFeePerGas);
+  });
+
+  return gasOverrides;
 }

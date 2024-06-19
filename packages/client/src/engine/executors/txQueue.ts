@@ -1,13 +1,13 @@
 import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, deferred, mapObject, uuid } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
-import { BaseContract, BigNumber, BigNumberish, CallOverrides, Overrides } from 'ethers';
+import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 
 import { Contracts, TxQueue } from '../types';
 import { Network } from './network';
 import { ConnectionState } from './providers/create';
-import { getRevertReason } from './utils';
+import { getRevertReason, getTxGasData } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -26,8 +26,7 @@ export function createTxQueue<C extends Contracts>(
 ): { txQueue: TxQueue<C>; dispose: () => void; ready: IComputedValue<boolean | undefined> } {
   const queue = createPriorityQueue<{
     execute: (
-      nonce: number,
-      gasLimit: BigNumberish
+      txOverrides: Overrides
     ) => Promise<{ hash: string; wait: () => Promise<TransactionReceipt> }>;
     estimateGas: () => BigNumberish | Promise<BigNumberish>;
     cancel: (error: any) => void;
@@ -91,7 +90,7 @@ export function createTxQueue<C extends Contracts>(
 
     // Extract existing overrides from function call
     const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
-    const overrides = (hasOverrides ? args[args.length - 1] : {}) as CallOverrides;
+    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as CallOverrides;
     const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
 
     // Store state mutability to know when to increase the nonce
@@ -100,7 +99,7 @@ export function createTxQueue<C extends Contracts>(
 
     // Create a function that estimates gas if no gas is provided
     let estimateGas: () => BigNumberish | Promise<BigNumberish>;
-    const gasLimit = overrides['gasLimit'];
+    const gasLimit = callOverrides['gasLimit'];
     if (gasLimit) estimateGas = () => gasLimit;
     else {
       const estGasFunction = target.estimateGas[prop as string];
@@ -109,7 +108,7 @@ export function createTxQueue<C extends Contracts>(
     }
 
     // Create a function that executes the tx when called
-    const execute = async (nonce: number, gasLimit: BigNumberish) => {
+    const execute = async (txData: Overrides) => {
       try {
         const member = target.populateTransaction[prop as string];
         if (member == undefined) {
@@ -124,29 +123,9 @@ export function createTxQueue<C extends Contracts>(
           );
         }
 
-        // Populate config
-        // TODO: rug this?
-        const configOverrides = { ...overrides, nonce };
-
-        // Populate tx
+        // Populate config and Tx
+        const configOverrides = { ...callOverrides, ...txData };
         const populatedTx = await member(...argsWithoutOverrides, configOverrides);
-        try {
-          // TODO: dont be calling this sync - dont want to wait for response
-          const maxFeeResponse = await (target.provider as JsonRpcProvider).send(
-            'eth_gasPrice',
-            []
-          );
-          const rawMaxFee = BigNumber.from(maxFeeResponse);
-          const maxPriorityFeeResponse = await (target.provider as JsonRpcProvider).send(
-            'eth_maxPriorityFeePerGas',
-            []
-          );
-          const maxPriorityFee = BigNumber.from(maxPriorityFeeResponse);
-          populatedTx.maxPriorityFeePerGas = maxPriorityFee;
-          populatedTx.maxFeePerGas = rawMaxFee.sub(maxPriorityFee).mul(2).add(maxPriorityFee); // base * 2 + priority
-        } catch (e) {
-          console.warn('[TXQueue] Failed to get maxPriorityFeePerGas', e);
-        }
 
         // Execute tx
         let hash: string;
@@ -223,19 +202,20 @@ export function createTxQueue<C extends Contracts>(
       const stateMutability = txRequest.stateMutability;
 
       // Await gas estimation to avoid increasing nonce before tx is actually sent
-      let gasLimit: BigNumberish;
+      let txData: Overrides;
       try {
-        gasLimit = await txRequest.estimateGas();
+        const start = Date.now();
+        // wait for network if not ready
+        const { provider, nonce } = await awaitValue(readyState);
+        txData = await getTxGasData(provider as JsonRpcProvider, txRequest.estimateGas);
+        txData.nonce = nonce;
       } catch (e) {
         console.error('[TXQueue] GAS ESTIMATION ERROR', e);
         return txRequest.cancel(e);
       }
 
-      // Wait if nonce is not ready
-      const { nonce } = await awaitValue(readyState);
-
       try {
-        return await txRequest.execute(nonce, gasLimit);
+        return await txRequest.execute(txData);
       } catch (e: any) {
         console.warn('[TXQueue] TXQUEUE EXECUTION FAILED', e);
         // Nonce is handled centrally in finally block (for both failing and successful tx)
