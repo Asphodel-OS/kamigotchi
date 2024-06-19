@@ -126,21 +126,9 @@ export function createTxQueue<C extends Contracts>(
         // Populate config and Tx
         const configOverrides = { ...callOverrides, ...txData };
         const populatedTx = await member(...argsWithoutOverrides, configOverrides);
+        const tx = await target.signer.sendTransaction(populatedTx);
+        const hash = tx.hash;
 
-        // Execute tx
-        let hash: string;
-        try {
-          // Attempt to sign the transaction and send it raw for higher performance
-          const signedTx = await target.signer.signTransaction(populatedTx);
-          hash = await (target.provider as JsonRpcProvider).perform('sendTransaction', {
-            signedTransaction: signedTx,
-          });
-        } catch (e) {
-          // Some signers don't support signing without sending (looking at you MetaMask),
-          // so sign+send using the signer as a fallback
-          const tx = await target.signer.sendTransaction(populatedTx);
-          hash = tx.hash;
-        }
         const response = target.provider.getTransaction(hash) as Promise<
           ReturnTypeStrict<(typeof target)[typeof prop]>
         >;
