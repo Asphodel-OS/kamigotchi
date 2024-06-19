@@ -40,6 +40,21 @@
       "name": "executeTyped",
       "inputs": [
         {
+          "name": "owner",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_type",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
           "name": "amount",
           "type": "uint256",
           "internalType": "uint256"
@@ -112,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(address,string,uint32,uint256)": "d9b9e32c",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

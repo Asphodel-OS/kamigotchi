@@ -33,6 +33,15 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
+  // COMMUNITY MANAGEMENT
+
+  // @dev for admins - give stuff to users
+  async function adminGive(addr: string, itemIndex: number, amount: number) {
+    await sleepIf();
+    return systems['system._Admin.Give'].executeTyped(addr, itemIndex, amount);
+  }
+
+  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {

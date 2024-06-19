@@ -27,11 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface Pet721RevealSystemInterface extends utils.Interface {
+export interface _AdminGiveSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32)": FunctionFragment;
-    "forceReveal(uint32)": FunctionFragment;
+    "executeTyped(address,string,uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -40,7 +39,6 @@ export interface Pet721RevealSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "execute"
       | "executeTyped"
-      | "forceReveal"
       | "owner"
       | "transferOwnership"
   ): FunctionFragment;
@@ -51,11 +49,12 @@ export interface Pet721RevealSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "forceReveal",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -66,10 +65,6 @@ export interface Pet721RevealSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "forceReveal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -97,12 +92,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface Pet721RevealSystem extends BaseContract {
+export interface _AdminGiveSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: Pet721RevealSystemInterface;
+  interface: _AdminGiveSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -130,12 +125,10 @@ export interface Pet721RevealSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    forceReveal(
-      petIndex: PromiseOrValue<BigNumberish>,
+      owner: PromiseOrValue<string>,
+      _type: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -153,12 +146,10 @@ export interface Pet721RevealSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    petIndex: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  forceReveal(
-    petIndex: PromiseOrValue<BigNumberish>,
+    owner: PromiseOrValue<string>,
+    _type: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -176,12 +167,10 @@ export interface Pet721RevealSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    forceReveal(
-      petIndex: PromiseOrValue<BigNumberish>,
+      owner: PromiseOrValue<string>,
+      _type: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -211,12 +200,10 @@ export interface Pet721RevealSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    forceReveal(
-      petIndex: PromiseOrValue<BigNumberish>,
+      owner: PromiseOrValue<string>,
+      _type: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -235,12 +222,10 @@ export interface Pet721RevealSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    forceReveal(
-      petIndex: PromiseOrValue<BigNumberish>,
+      owner: PromiseOrValue<string>,
+      _type: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

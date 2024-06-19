@@ -106,14 +106,7 @@ library LibAccount {
     if (LibString.eq(_type, "ITEM")) {
       LibInventory.incFor(components, holderID, index, amount);
     } else if (LibString.eq(_type, "MINT20")) {
-      uint256 accountMinted = getMint20Minted(components, holderID);
-      require(
-        accountMinted + amount <= LibConfig.get(components, "MINT_ACCOUNT_MAX"),
-        "Mint20Mint: account limit exceeded"
-      );
-      address to = getOwner(components, holderID);
-      setMint20Minted(world, components, holderID, accountMinted + amount);
-      LibMint20.mint(world, to, amount);
+      LibMint20.mint(world, getOwner(components, holderID), amount);
     } else {
       require(false, "LibAccount: unknown type");
     }
@@ -164,15 +157,6 @@ library LibAccount {
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
-  }
-
-  function setMint20Minted(
-    IWorld world,
-    IUintComp components,
-    uint256 account,
-    uint256 value
-  ) internal {
-    LibDataEntity.set(components, account, 0, "MINT20_MINT", value);
   }
 
   /////////////////
@@ -238,10 +222,6 @@ library LibAccount {
 
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibDataEntity.get(components, id, 0, "PET721_MINT");
-  }
-
-  function getMint20Minted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibDataEntity.get(components, id, 0, "MINT20_MINT");
   }
 
   /////////////////

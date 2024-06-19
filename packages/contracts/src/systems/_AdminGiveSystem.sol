@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+
+import { System } from "solecs/System.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibString } from "solady/utils/LibString.sol";
+
+import { LibAccount } from "libraries/LibAccount.sol";
+import { LibGacha } from "libraries/LibGacha.sol";
+import { LibPet } from "libraries/LibPet.sol";
+
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
+
+uint256 constant ID = uint256(keccak256("system._Admin.Give"));
+
+/// @notice for playtest & general testing - enables admins to give stuff
+contract _AdminGiveSystem is System, AuthRoles {
+  constructor(IWorld _world, address _components) System(_world, _components) {}
+
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
+    (address owner, string memory _type, uint32 index, uint256 amount) = abi.decode(
+      arguments,
+      (address, string, uint32, uint256)
+    );
+    uint256 accID = LibAccount.getByOwner(components, owner);
+    LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
+
+    return "";
+  }
+
+  function executeTyped(
+    address owner,
+    string memory _type,
+    uint32 index,
+    uint256 amount
+  ) public onlyAdmin(components) returns (bytes memory) {
+    return execute(abi.encode(owner, _type, index, amount));
+  }
+}

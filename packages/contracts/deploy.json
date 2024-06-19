@@ -109,6 +109,7 @@
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
+    { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
       "writeAccess": ["HasFlagComponent", "IdHolderComponent", "TypeComponent"]
