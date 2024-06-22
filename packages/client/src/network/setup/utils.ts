@@ -22,15 +22,15 @@ import { IComputedValue } from 'mobx';
 import { filter, map, Observable, Subject, timer } from 'rxjs';
 
 import { createEncoder } from 'engine/encoders';
+import { Mappings } from 'engine/types';
+import { Ack, ack } from 'workers/sync';
 import {
   isNetworkComponentUpdateEvent,
   isSystemCallEvent,
-  Mappings,
   NetworkComponentUpdate,
   NetworkEvent,
   SystemCall,
-} from 'engine/types';
-import { Ack, ack } from 'workers/sync';
+} from 'workers/types';
 import { DecodedNetworkComponentUpdate, DecodedSystemCall } from './types';
 
 export function createDecodeNetworkComponentUpdate<C extends Components>(

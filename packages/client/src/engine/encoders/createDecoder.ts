@@ -1,11 +1,12 @@
 import { BigNumber } from 'ethers';
 import { BytesLike, defaultAbiCoder as abi } from 'ethers/lib/utils';
+
 import {
   ContractSchemaValue,
   ContractSchemaValueArrayToElement,
   ContractSchemaValueId,
   ContractSchemaValueTypes,
-} from '../types';
+} from './types';
 
 function flattenValue<V extends ContractSchemaValue>(
   value: BigNumber | BigNumber[] | number | number[] | boolean | boolean[] | string | string[],

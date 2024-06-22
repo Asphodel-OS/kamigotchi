@@ -10,14 +10,6 @@ import { Observable, concatMap, from, map, of } from 'rxjs';
 
 import { createDecoder } from 'engine/encoders';
 import {
-  ContractConfig,
-  NetworkComponentUpdate,
-  NetworkEvent,
-  NetworkEvents,
-  SystemCall,
-  SystemCallTransaction,
-} from 'engine/types';
-import {
   ECSStateReplyV2,
   ECSStateSnapshotServiceClient,
   ECSStateSnapshotServiceDefinition,
@@ -29,7 +21,15 @@ import {
 } from 'engine/types/ecs-stream/ecs-stream';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { ComponentsSchema } from 'types/ComponentsSchema';
+import { ContractConfig } from 'workers/types';
 import { debug as parentDebug } from '../debug';
+import {
+  NetworkComponentUpdate,
+  NetworkEvent,
+  NetworkEvents,
+  SystemCall,
+  SystemCallTransaction,
+} from '../types';
 import { fetchEventsInBlockRange } from './blocks';
 import { CacheStore, createCacheStore, storeEvent, storeEvents } from './cache';
 import { createTopics } from './topics';

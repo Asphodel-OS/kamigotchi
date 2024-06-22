@@ -4,10 +4,12 @@ import { Mutex } from 'async-mutex';
 import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 
-import { Contracts, TxQueue } from '../types';
-import { Network } from './network';
-import { ConnectionState } from './providers/create';
-import { getRevertReason, getTxGasData } from './utils';
+import { Network } from 'engine/executors';
+import { ConnectionState } from 'engine/providers';
+import { Contracts } from 'engine/types';
+import { createPriorityQueue } from './priorityQueue';
+import { TxQueue } from './types';
+import { getRevertReason, getTxGasData, isOverrides } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -20,7 +22,7 @@ type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : nev
  * @param options The concurrency declares how many transactions can wait for confirmation at the same time.
  * @returns TxQueue object
  */
-export function createTxQueue<C extends Contracts>(
+export function create<C extends Contracts>(
   computedContracts: IComputedValue<C> | IObservableValue<C>,
   network: Network
 ): { txQueue: TxQueue<C>; dispose: () => void; ready: IComputedValue<boolean | undefined> } {
@@ -28,7 +30,7 @@ export function createTxQueue<C extends Contracts>(
     execute: (
       txOverrides: Overrides
     ) => Promise<{ hash: string; wait: () => Promise<TransactionReceipt> }>;
-    estimateGas: () => BigNumberish | Promise<BigNumberish>;
+    estimateGas: () => Promise<BigNumberish>;
     cancel: (error: any) => void;
     stateMutability?: string;
   }>();
@@ -65,6 +67,7 @@ export function createTxQueue<C extends Contracts>(
   // Set the nonce on init and reset if the signer changed
   const dispose = autorun(resetNonce);
 
+  // increment the nonce
   function incNonce() {
     runInAction(() => {
       const currentNonce = _nonce.get();
@@ -73,6 +76,7 @@ export function createTxQueue<C extends Contracts>(
     });
   }
 
+  // queue up a transaction call in the txQueue
   function queueCall(
     target: C[keyof C],
     prop: keyof C[keyof C],
@@ -97,15 +101,9 @@ export function createTxQueue<C extends Contracts>(
     const fragment = target.interface.fragments.find((fragment) => fragment.name === prop);
     const stateMutability = fragment && (fragment as { stateMutability?: string }).stateMutability;
 
-    // Create a function that estimates gas if no gas is provided
-    let estimateGas: () => BigNumberish | Promise<BigNumberish>;
-    const gasLimit = callOverrides['gasLimit'];
-    if (gasLimit) estimateGas = () => gasLimit;
-    else {
-      const estGasFunction = target.estimateGas[prop as string];
-      if (estGasFunction) estimateGas = () => estGasFunction(...args);
-      else estimateGas = () => 100000;
-    }
+    // Create a function that estimates gas
+    const estGasFunction = target.estimateGas[prop as string];
+    const estimateGas = () => estGasFunction(...args);
 
     // Create a function that executes the tx when called
     const execute = async (txData: Overrides) => {
@@ -157,8 +155,8 @@ export function createTxQueue<C extends Contracts>(
     // Queue the tx execution
     queue.add(uuid(), {
       execute,
-      estimateGas,
       cancel: (error?: any) => reject(error ?? new Error('TX_CANCELLED')),
+      estimateGas,
       stateMutability,
     });
 
@@ -190,23 +188,23 @@ export function createTxQueue<C extends Contracts>(
       const stateMutability = txRequest.stateMutability;
 
       // Await gas estimation to avoid increasing nonce before tx is actually sent
-      let txData: Overrides;
+      let txOverrides: Overrides;
       try {
-        const start = Date.now();
         // wait for network if not ready
         const { provider, nonce } = await awaitValue(readyState);
-        txData = await getTxGasData(provider as JsonRpcProvider, txRequest.estimateGas);
-        txData.nonce = nonce;
+        txOverrides = await getTxGasData(provider as JsonRpcProvider, txRequest.estimateGas);
+
+        txOverrides.nonce = nonce;
       } catch (e) {
         console.error('[TXQueue] GAS ESTIMATION ERROR', e);
         return txRequest.cancel(e);
       }
 
       try {
-        return await txRequest.execute(txData);
+        return await txRequest.execute(txOverrides);
       } catch (e: any) {
+        // Nonce is handled centrally in finally block, regardless of failure
         console.warn('[TXQueue] TXQUEUE EXECUTION FAILED', e);
-        // Nonce is handled centrally in finally block (for both failing and successful tx)
         error = e;
       } finally {
         // If the error includes information about the transaction,
@@ -262,6 +260,7 @@ export function createTxQueue<C extends Contracts>(
     processQueue();
   }
 
+  // NOTE(jb): no clue what this actually does
   function proxyContract<Contract extends C[keyof C]>(contract: Contract): Contract {
     return mapObject(contract as any, (value, key) => {
       // Relay all base contract methods to the original target
@@ -288,57 +287,4 @@ export function createTxQueue<C extends Contracts>(
     dispose,
     ready: computed(() => (readyState ? true : undefined)),
   };
-}
-
-function isOverrides(obj: any): obj is Overrides {
-  if (typeof obj !== 'object' || Array.isArray(obj) || obj === null) return false;
-  return (
-    'nonce' in obj ||
-    'type' in obj ||
-    'accessList' in obj ||
-    'customData' in obj ||
-    'value' in obj ||
-    'blockTag' in obj ||
-    'from' in obj
-  );
-}
-
-/**
- * Simple priority queue
- * @returns priority queue object
- */
-function createPriorityQueue<T>() {
-  const queue = new Map<string, { element: T; priority: number }>();
-
-  function queueByPriority() {
-    // Entries with a higher priority get executed first
-    return [...queue.entries()].sort((a, b) => (a[1].priority >= b[1].priority ? -1 : 1));
-  }
-
-  function add(id: string, element: T, priority = 1) {
-    queue.set(id, { element, priority });
-  }
-
-  function remove(id: string) {
-    queue.delete(id);
-  }
-
-  function setPriority(id: string, priority: number) {
-    const entry = queue.get(id);
-    if (!entry) return;
-    queue.set(id, { ...entry, priority });
-  }
-
-  function next(): T | undefined {
-    if (queue.size === 0) return;
-    const [key, value] = queueByPriority()[0]!;
-    if (queue.has(key)) queue.delete(key);
-    return value.element;
-  }
-
-  function size(): number {
-    return queue.size;
-  }
-
-  return { add, remove, setPriority, next, size };
 }

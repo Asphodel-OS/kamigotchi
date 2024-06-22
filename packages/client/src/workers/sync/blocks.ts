@@ -3,7 +3,8 @@ import { callWithRetry, range, sleep } from '@mud-classic/utils';
 import { BigNumber, Contract } from 'ethers';
 import { resolveProperties } from 'ethers/lib/utils';
 
-import { ContractEvent, Contracts, ContractsConfig } from 'engine/types';
+import { Contracts } from 'engine/types';
+import { ContractEvent, ContractsConfig } from 'workers/types';
 import { ContractTopics } from './topics';
 
 /**

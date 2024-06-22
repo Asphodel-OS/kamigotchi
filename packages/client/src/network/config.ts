@@ -4,7 +4,7 @@ import { Wallet } from 'ethers';
 import { SetupContractConfig } from 'network/setup';
 
 // flat network configuration struct
-// TODO: replace this with Lattice's version in "@mud-classic/network/dist/types"
+// TODO: replace this with the version in "engine/types"
 export type NetworkConfig = {
   devMode: boolean;
   worldAddress: string;

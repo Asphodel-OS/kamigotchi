@@ -23,7 +23,8 @@ import {
 
 import { GodID, SyncState } from 'engine/constants';
 import { createBlockNumberStream } from 'engine/executors';
-import { createReconnectingProvider } from 'engine/executors/providers';
+import { createReconnectingProvider } from 'engine/providers';
+import { debug as parentDebug } from '../debug';
 import {
   isNetworkComponentUpdateEvent,
   NetworkComponentUpdate,
@@ -31,8 +32,7 @@ import {
   NetworkEvents,
   SyncStateStruct,
   SyncWorkerConfig,
-} from 'engine/types';
-import { debug as parentDebug } from '../debug';
+} from '../types';
 import {
   createCacheStore,
   getCacheStoreEntries,

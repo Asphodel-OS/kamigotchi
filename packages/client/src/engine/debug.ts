@@ -1,3 +1,3 @@
-import createDebug from "debug";
+import createDebug from 'debug';
 
-export const debug = createDebug("mud:network");
+export const debug = createDebug('kami:network');

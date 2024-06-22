@@ -3,10 +3,10 @@ import { Signer, Wallet } from 'ethers';
 import { computed, observable, toJS } from 'mobx';
 import { EMPTY, combineLatest, concatMap, filter, map, throttleTime } from 'rxjs';
 
+import { Providers, createReconnectingProvider } from '../providers';
 import { NetworkConfig } from '../types';
 import { fetchBlock } from '../utils';
 import { createClock } from './clock';
-import { Providers, createReconnectingProvider } from './providers';
 import { createBlockNumberStream } from './utils';
 
 export type Network = Awaited<ReturnType<typeof createNetwork>>;

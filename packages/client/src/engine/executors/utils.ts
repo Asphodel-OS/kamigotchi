@@ -1,27 +1,8 @@
-import { BaseProvider, JsonRpcProvider, TransactionRequest } from '@ethersproject/providers';
-import { extractEncodedArguments, stretch } from '@mud-classic/utils';
-import { defaultAbiCoder as abi } from 'ethers/lib/utils';
+import { stretch } from '@mud-classic/utils';
 import { IComputedValue, reaction } from 'mobx';
 import { EMPTY, ReplaySubject, concat, concatMap, endWith, filter, map, range, take } from 'rxjs';
 
-import { BigNumberish, Overrides } from 'ethers';
-import { Providers } from './providers';
-
-/**
- * Get the revert reason from a given transaction hash
- *
- * @param txHash Transaction hash to get the revert reason from
- * @param provider ethers Provider
- * @returns Promise resolving with revert reason string
- */
-export async function getRevertReason(txHash: string, provider: BaseProvider): Promise<string> {
-  // Decoding the revert reason: https://docs.soliditylang.org/en/latest/control-structures.html#revert
-  const tx = await provider.getTransaction(txHash);
-  // tx.gasPrice = undefined; // tx object contains both gasPrice and maxFeePerGas
-  const encodedRevertReason = await provider.call(tx as TransactionRequest);
-  const decodedRevertReason = abi.decode(['string'], extractEncodedArguments(encodedRevertReason));
-  return decodedRevertReason[0];
-}
+import { Providers } from 'engine/providers';
 
 /**
  * Creates a stream of block numbers based on the `block` event of the currently connected provider.
@@ -82,31 +63,4 @@ export function createBlockNumberStream(
   const blockNumber$ = concat(initialSync$, blockNumberEvent$);
 
   return { blockNumber$, dispose };
-}
-
-export async function getTxGasData(
-  provider: JsonRpcProvider,
-  estimateGas: () => BigNumberish | Promise<BigNumberish>
-) {
-  let gasOverrides: Overrides = {};
-
-  const promises: Promise<any>[] = [];
-  const estimate = estimateGas();
-  promises.push(
-    typeof estimate === typeof Promise<BigNumberish>
-      ? (estimate as Promise<BigNumberish>)
-      : Promise.resolve(estimate)
-  );
-  promises.push(provider.getFeeData());
-
-  await Promise.all(promises).then((results) => {
-    gasOverrides.gasLimit = results[0];
-    gasOverrides.maxPriorityFeePerGas = results[1].maxPriorityFeePerGas;
-    // base * 2 + priority
-    gasOverrides.maxFeePerGas = results[1].lastBaseFeePerGas
-      .mul(2)
-      .add(results[1].maxPriorityFeePerGas);
-  });
-
-  return gasOverrides;
 }

@@ -6,8 +6,13 @@ import {
 } from '@ethersproject/providers';
 import { callWithRetry, observableToComputed, timeoutAfter } from '@mud-classic/utils';
 import { IComputedValue, IObservableValue, observable, reaction, runInAction } from 'mobx';
-import { ProviderConfig } from '../../types';
-import { MUDJsonRpcBatchProvider, MUDJsonRpcProvider } from './MUDProviders';
+
+import {
+  ConnectionState,
+  MUDJsonRpcBatchProvider,
+  MUDJsonRpcProvider,
+  ProviderConfig,
+} from './types';
 
 export type Providers = ReturnType<typeof createProvider>;
 
@@ -45,12 +50,6 @@ export function createProvider({
   }
 
   return providers;
-}
-
-export enum ConnectionState {
-  DISCONNECTED,
-  CONNECTING,
-  CONNECTED,
 }
 
 /**

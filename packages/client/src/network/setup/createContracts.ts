@@ -3,7 +3,8 @@ import { mapObject } from '@mud-classic/utils';
 import { Contract, Signer } from 'ethers';
 import { IComputedValue, computed } from 'mobx';
 
-import { Contracts, ContractsConfig } from 'engine/types';
+import { Contracts } from 'engine/types';
+import { ContractsConfig } from 'workers/types';
 
 /**
  * Create an object of contracts connected to the currently connected provider.

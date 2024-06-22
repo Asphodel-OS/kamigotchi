@@ -1,9 +1,9 @@
 import { Components } from '@mud-classic/recs';
 import { map, Observable, Subject, timer } from 'rxjs';
 
-import { NetworkEvent } from 'engine/types';
 import { fromWorker } from 'workers/utils';
 import { Ack, ack, Input } from './sync/Worker';
+import { NetworkEvent } from './types';
 
 /**
  * Create a new SyncWorker ({@link Sync.worker.ts}) to performn contract/client state sync.
