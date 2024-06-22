@@ -46,7 +46,7 @@ export const Grid = (props: Props) => {
 
     // push the rooms into their respective locations
     const xOffset = minX - 1;
-    const yOffset = minY - 1;
+    const yOffset = minY;
     for (const [_, room] of rooms) {
       if (room.location.z !== z) continue;
       grid[room.location.y - yOffset][room.location.x - xOffset] = room;
