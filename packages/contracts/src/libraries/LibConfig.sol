@@ -39,7 +39,7 @@ library LibConfig {
 
   /// @notice Set a string value of a global config field entity
   function setValueString(IUintComp components, uint256 id, string memory value) internal {
-    require(bytes(value).length <= 32, "LibConfig: string too long");
+    require(bytes(value).length < 32, "LibConfig: string too long");
     require(bytes(value).length > 0, "LibConfig: string too short");
     setValue(components, id, LibPack.stringToUint(value));
   }
