@@ -390,7 +390,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
       mediaURIComp.set(
         ids[i],
         LibString.concat(
-          _baseURI,
+          LibString.concat(_baseURI, "/"),
           LibString.concat(LibString.toString(LibPack.packArr(traits, 8)), ".gif")
         )
       );
