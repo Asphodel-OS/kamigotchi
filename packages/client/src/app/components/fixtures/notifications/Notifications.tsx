@@ -58,11 +58,15 @@ export function registerNotificationFixture() {
         );
       };
 
+      const isVisible = () => {
+        return fixtures.notifications && list.length > 0;
+      };
+
       /////////////////
       // RENDER
 
       return (
-        <Wrapper style={{ display: fixtures.notifications ? 'block' : 'none' }}>
+        <Wrapper style={{ display: isVisible() ? 'block' : 'none' }}>
           {list.map((id) => SingleNotif(id))}
         </Wrapper>
       );
