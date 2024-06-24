@@ -31,7 +31,7 @@ export function registerGasHarasser() {
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators, toggleModals } = useVisibility();
 
-      const [value, setValue] = useState(0.005);
+      const [value, setValue] = useState(0.01);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -114,9 +114,7 @@ export function registerGasHarasser() {
       };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-          fundTx();
-        }
+        if (event.key === 'Enter') feed();
       };
 
       const feed = async () => {
@@ -132,26 +130,24 @@ export function registerGasHarasser() {
         <ValidatorWrapper
           id='gas-harasser'
           divName='gasHarasser'
-          title='Feed Your Avatar'
-          errorPrimary='Avatar is EMPTY and STARVING'
-          errorSecondary={`You're lucky we don't report you to the authorities..`}
+          title='Embedded wallet is empty!'
+          errorPrimary={`Please top up on gas ._.`}
         >
-          <Description>Account Avatar: {account.operatorAddress}</Description>
-          <br />
+          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+            Need eth? Check out the faucet.
+          </Link>
+          <Description>Address: {account.operatorAddress}</Description>
           <Row>
             <Input
               type='number'
               value={value}
-              step='0.005'
+              step='0.0005'
               onChange={(e) => handleChange(e)}
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
-            <ActionButton text='Feed' onClick={feed} size='vending' />
+            <ActionButton text='Feed' onClick={feed} size='validator' />
           </Row>
-          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
-            Need eth? Check out the faucet.
-          </Link>
         </ValidatorWrapper>
       );
     }
@@ -159,45 +155,11 @@ export function registerGasHarasser() {
 }
 
 const Description = styled.div`
-  font-size: 12px;
-  line-height: 15px;
   color: #333;
+  font-family: Pixel;
+  font-size: 1.2vh;
+  line-height: 1.5vh;
   text-align: center;
-  font-family: Pixel;
-  padding: 5px 0px;
-`;
-
-const Link = styled.div`
-  cursor: pointer;
-  font-size: 9px;
-  color: #999;
-  text-align: center;
-  font-family: Pixel;
-  text-decoration: underline;
-  padding: 0.5vh 0 0 0;
-
-  &:hover {
-    color: #11b;
-  }
-`;
-
-const Input = styled.input`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 15px 12px;
-  margin: 5px 0px;
-
-  text-align: left;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
 
 const Row = styled.div`
@@ -205,4 +167,37 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin: 0.75vh;
+`;
+
+const Input = styled.input`
+  background-color: #ffffff;
+  border: solid black 0.1vh;
+  border-radius: 0.45vh;
+  color: black;
+  width: 12vh;
+  padding: 0.9vh;
+
+  font-family: Pixel;
+  font-size: 1.2vh;
+  text-align: left;
+  text-decoration: none;
+
+  cursor: text;
+  justify-content: center;
+`;
+
+const Link = styled.div`
+  color: #999;
+  cursor: pointer;
+  padding-bottom: 1.2vh;
+
+  font-family: Pixel;
+  font-size: 1.2vh;
+  text-decoration: underline;
+  text-align: center;
+
+  &:hover {
+    color: #11b;
+  }
 `;
