@@ -2,7 +2,7 @@ import { utils } from 'ethers';
 import { AdminAPI } from '../admin';
 
 export async function initConfigs(api: AdminAPI) {
-  await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami/');
+  await api.config.set.string('BASE_URI', 'https://i.test.asphodel.io/kami');
 
   // Leaderboards
   await api.config.set.number('LEADERBOARD_EPOCH', 1);
@@ -17,10 +17,6 @@ export async function initConfigs(api: AdminAPI) {
 
   // Kami Mint Price and Limits
   // to be 5, set at 500 for testing
-  await api.config.set.number('MINT_ACCOUNT_MAX', 5);
-  await api.config.set.number('MINT_INITIAL_MAX', 1111);
-  await api.config.set.number('MINT_TOTAL_MAX', 4444);
-  await api.config.set.number('MINT_PRICE', utils.parseEther('0.0'));
   await api.config.set.number('GACHA_REROLL_PRICE', utils.parseEther('0.0001'));
 
   // Kami Base Stats
@@ -62,7 +58,7 @@ export async function initConfigs(api: AdminAPI) {
 
 // local config settings for faster testing
 export async function initLocalConfigs(api: AdminAPI) {
-  await api.config.set.number('MINT_ACCOUNT_MAX', 50000000);
+  await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami');
   await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
   await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
   await api.config.set.number('KAMI_STANDARD_COOLDOWN', 30);

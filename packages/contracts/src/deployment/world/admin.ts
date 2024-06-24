@@ -204,7 +204,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     logicType: string,
     type: string,
     index: number,
-    value: number
+    value: BigNumberish
   ) {
     genCall('system._Registry.Quest.Create.Objective', [
       questIndex,
@@ -222,7 +222,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     logicType: string,
     type: string,
     index: number,
-    value: number
+    value: BigNumberish
   ) {
     genCall('system._Registry.Quest.Create.Requirement', [
       questIndex,
@@ -234,7 +234,12 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   // creates a Reward for an existing Quest
-  async function addQuestReward(questIndex: number, type: string, index: number, value: number) {
+  async function addQuestReward(
+    questIndex: number,
+    type: string,
+    index: number,
+    value: BigNumberish
+  ) {
     genCall('system._Registry.Quest.Create.Reward', [questIndex, type, index, value]);
   }
 

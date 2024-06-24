@@ -1074,9 +1074,6 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initMintConfigs() internal {
-    _setConfig("MINT_ACCOUNT_MAX", 500);
-    _setConfig("MINT_INITIAL_MAX", 1111);
-    _setConfig("MINT_PRICE", 0);
     _setConfig("GACHA_REROLL_PRICE", 0);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }

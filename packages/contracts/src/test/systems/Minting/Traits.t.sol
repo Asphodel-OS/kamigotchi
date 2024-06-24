@@ -17,7 +17,6 @@ contract TraitsTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _setConfig("MINT_ACCOUNT_MAX", 1e9);
     _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
 
     // accounts must be created after new config set

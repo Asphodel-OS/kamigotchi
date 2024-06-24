@@ -1,12 +1,16 @@
 import { AdminAPI } from '../admin';
 import { readFile } from './utils';
 
-export async function initNodes(api: AdminAPI) {
+export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
   // nodes data are stored in rooms csv
   const roomsCSV = await readFile('rooms/rooms.csv');
 
   for (let i = 0; i < roomsCSV.length; i++) {
     const entry = roomsCSV[i];
+
+    // skip if indices are overridden and entry isn't included
+    if (overrideIndices && !overrideIndices.includes(Number(entry['Index']))) continue;
+
     if (entry['Enabled'] !== 'true') continue;
     if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
@@ -25,6 +29,20 @@ export async function deleteNodes(api: AdminAPI, indices: number[]) {
       console.error('Could not delete node ' + indices[i]);
     }
   }
+}
+
+export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const nodesCSV = await readFile('rooms/rooms.csv');
+    for (let i = 0; i < nodesCSV.length; i++) {
+      if (nodesCSV[i]['Status'] === 'Revise Deployment') indices.push(Number(nodesCSV[i]['Index']));
+    }
+  }
+
+  await deleteNodes(api, indices);
+  await initNodes(api, indices);
 }
 
 async function initNode(api: AdminAPI, entry: any) {

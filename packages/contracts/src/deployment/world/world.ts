@@ -16,12 +16,15 @@ import {
   initNodes,
   initNpcs,
   initQuests,
-  initQuestsByIndex,
   initRelationships,
   initRooms,
-  initRoomsByIndex,
   initSkills,
   initTraits,
+  reviseItems,
+  reviseNodes,
+  reviseQuests,
+  reviseRooms,
+  reviseSkills,
 } from './state';
 
 import { AdminAPI, createAdminAPI } from './admin';
@@ -29,9 +32,9 @@ import { AdminAPI, createAdminAPI } from './admin';
 export type WorldAPI = typeof WorldState.prototype.api;
 
 export type SubFunc = {
-  init: () => Promise<void>;
-  initByIndex?: (indices: number[]) => Promise<void>;
-  delete?: (indices: number[]) => Promise<void>;
+  init: (indices?: number[]) => Promise<void>;
+  delete?: (indices?: number[]) => Promise<void>;
+  revise?: (indices?: number[]) => Promise<void>;
 };
 
 /**
@@ -62,37 +65,40 @@ export class WorldState {
       delete: (indices: number[]) => this.genCalls((api) => deleteGoals(api, indices)),
     } as SubFunc,
     items: {
-      init: () => this.genCalls(initItems),
-      delete: (indices: number[]) => this.genCalls((api) => deleteItems(api, indices)),
+      init: (indices?: number[]) => this.genCalls((api) => initItems(api, indices)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteItems(api, indices || [])),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseItems(api, indices)),
     } as SubFunc,
     npcs: {
       init: () => this.genCalls(initNpcs),
     } as SubFunc,
     nodes: {
-      init: () => this.genCalls(initNodes),
-      delete: (indices: number[]) => this.genCalls((api) => deleteNodes(api, indices)),
+      init: (indices?: number[]) => this.genCalls((api) => initNodes(api, indices)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteNodes(api, indices || [])),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseNodes(api, indices)),
     } as SubFunc,
     mint: {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),
     } as SubFunc,
     quests: {
-      init: () => this.genCalls(initQuests),
-      initByIndex: (indices: number[]) => this.genCalls((api) => initQuestsByIndex(api, indices)),
-      delete: (indices: number[]) => this.genCalls((api) => deleteQuests(api, indices)),
+      init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices || [])),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseQuests(api, indices)),
     } as SubFunc,
     relationships: {
       init: () => this.genCalls(initRelationships),
-      delete: (npcs: number[], indices: number[]) =>
-        this.genCalls((api) => deleteRelationships(api, indices, npcs)),
+      delete: (npcs: number[], indices?: number[]) =>
+        this.genCalls((api) => deleteRelationships(api, indices || [], npcs)),
     } as SubFunc,
     rooms: {
-      init: () => this.genCalls(initRooms),
-      initByIndex: (indices: number[]) => this.genCalls((api) => initRoomsByIndex(api, indices)),
-      delete: (indices: number[]) => this.genCalls((api) => deleteRooms(api, indices)),
+      init: (indices?: number[]) => this.genCalls((api) => initRooms(api, indices)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteRooms(api, indices || [])),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseRooms(api, indices)),
     } as SubFunc,
     skills: {
       init: (indices?: number[]) => this.genCalls((api) => initSkills(api, indices)),
-      delete: (indices: number[]) => this.genCalls((api) => deleteSkills(api, indices)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteSkills(api, indices || [])),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseSkills(api, indices)),
     } as SubFunc,
     traits: {
       init: () => this.genCalls(initTraits),

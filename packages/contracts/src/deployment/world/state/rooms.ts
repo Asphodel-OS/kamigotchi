@@ -1,10 +1,14 @@
 import { AdminAPI } from '../admin';
 import { getGoalID, readFile } from './utils';
 
-export async function initRooms(api: AdminAPI) {
+export async function initRooms(api: AdminAPI, overrideIndices?: number[]) {
   const roomsCSV = await readFile('rooms/rooms.csv');
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
+
+    // skip if indices are overridden and room isn't included
+    if (overrideIndices && !overrideIndices.includes(Number(room['Index']))) continue;
+
     if (room['Enabled'] === 'true') {
       await initRoom(api, room);
     }
@@ -18,17 +22,6 @@ export async function initRooms(api: AdminAPI) {
   }
 
   initGates(api);
-}
-
-export async function initRoomsByIndex(api: AdminAPI, indices: number[]) {
-  const roomsCSV = await readFile('rooms/rooms.csv');
-  for (let i = 0; i < roomsCSV.length; i++) {
-    const room = roomsCSV[i];
-    if (room['Enabled'] === 'true') {
-      if (!indices.includes(Number(room['Index']))) continue;
-      await initRoom(api, room);
-    }
-  }
 }
 
 export async function initGates(api: AdminAPI) {
@@ -48,6 +41,20 @@ export async function deleteRooms(api: AdminAPI, indices: number[]) {
       console.error('Could not delete room at roomIndex ' + indices[i]);
     }
   }
+}
+
+export async function reviseRooms(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const roomsCSV = await readFile('rooms/rooms.csv');
+    for (let i = 0; i < roomsCSV.length; i++) {
+      if (roomsCSV[i]['Status'] === 'Revise Deployment') indices.push(Number(roomsCSV[i]['Index']));
+    }
+  }
+
+  await deleteRooms(api, indices);
+  await initRooms(api, indices);
 }
 
 async function initRoom(api: AdminAPI, entry: any) {

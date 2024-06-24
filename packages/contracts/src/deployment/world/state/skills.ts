@@ -3,8 +3,8 @@ import { readFile } from './utils';
 
 // inits all skills or by optional indices parameter
 export async function initSkills(api: AdminAPI, indices?: number[]) {
-  const skillsCSV = await readFile('skills/Skills.csv');
-  const effectsCSV = await readFile('skills/Effects.csv');
+  const skillsCSV = await readFile('skills/skills.csv');
+  const effectsCSV = await readFile('skills/effects.csv');
   for (let i = 0; i < skillsCSV.length; i++) {
     const skill = skillsCSV[i];
     const index = Number(skill['Index']);
@@ -20,6 +20,31 @@ export async function initSkills(api: AdminAPI, indices?: number[]) {
       console.error(`Could not create skill ${index}`, e);
     }
   }
+}
+
+export async function deleteSkills(api: AdminAPI, indices: number[]) {
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      await api.registry.skill.delete(indices[i]);
+    } catch {
+      console.error('Could not delete skill ' + indices[i]);
+    }
+  }
+}
+
+export async function reviseSkills(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const skillsCSV = await readFile('skills/skills.csv');
+    for (let i = 0; i < skillsCSV.length; i++) {
+      if (skillsCSV[i]['Status'] === 'Revise Deployment')
+        indices.push(Number(skillsCSV[i]['Index']));
+    }
+  }
+
+  await deleteSkills(api, indices);
+  await initSkills(api, indices);
 }
 
 async function initSkill(api: AdminAPI, skill: any) {
@@ -70,14 +95,4 @@ async function initMutualExclusionRequirement(api: AdminAPI, skill: any) {
   values.forEach(async (v: string) => {
     await api.registry.skill.add.requirement(index, 'SKILL', 'CURR_MAX', Number(v), 0);
   });
-}
-
-export async function deleteSkills(api: AdminAPI, indices: number[]) {
-  for (let i = 0; i < indices.length; i++) {
-    try {
-      await api.registry.skill.delete(indices[i]);
-    } catch {
-      console.error('Could not delete skill ' + indices[i]);
-    }
-  }
 }

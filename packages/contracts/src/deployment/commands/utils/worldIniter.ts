@@ -93,14 +93,10 @@ export async function generateInitScript(
       const func = world.api[category] as SubFunc; // init special case filtered out
       if (!func) throw new Error(`No such category ${category}`);
 
-      if (action === 'init') {
-        await func.init();
-      } else {
-        const call = func[action];
-        if (!call) throw new Error(`No such action ${action} on world.${category}`);
-        if (!args) throw new Error(`No args provided for ${category}.${action}`);
-        await call(args);
-      }
+      const call = func[action];
+      if (!call) throw new Error(`No such action ${action} on world.${category}`);
+      // if (!args) throw new Error(`No args provided for ${category}.${action}`);
+      await call(args);
     }
   }
 

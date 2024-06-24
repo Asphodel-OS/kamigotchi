@@ -2,11 +2,11 @@ import { AdminAPI } from '../admin';
 import { readFile } from './utils';
 
 export async function initTraits(api: AdminAPI) {
-  const backgroundCSV = await readFile('traits/Backgrounds.csv');
-  const bodyCSV = await readFile('traits/Bodies.csv');
-  const colorCSV = await readFile('traits/Colors.csv');
-  const faceCSV = await readFile('traits/Faces.csv');
-  const handCSV = await readFile('traits/Hands.csv');
+  const backgroundCSV = await readFile('traits/backgrounds.csv');
+  const bodyCSV = await readFile('traits/bodies.csv');
+  const colorCSV = await readFile('traits/colors.csv');
+  const faceCSV = await readFile('traits/faces.csv');
+  const handCSV = await readFile('traits/hands.csv');
 
   await initTraitTable(api, backgroundCSV, 'BACKGROUND');
   await initTraitTable(api, bodyCSV, 'BODY');

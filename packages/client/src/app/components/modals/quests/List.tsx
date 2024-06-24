@@ -139,24 +139,9 @@ export const List = (props: Props) => {
 
     const now = lastRefresh / 1000;
     const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
-    if (Number(curr.startTime) + Number(wait) > Number(now)) {
+    if (Number(curr.startTime) + Number(wait) > Number(now))
       return `repeats in ${moment.duration((curr.startTime + wait - now) * 1000).humanize()}`;
-      // const timeLeft = Number(curr.startTime) + Number(wait) - Number(now);
-      // let timeText = '';
-      // if (timeLeft > 3600) {
-      //   const hours = Math.floor(timeLeft / 3600);
-      //   timeText = `${hours} ${hours > 1 ? 'hours' : 'hour'} `;
-      // }
-      // if (timeLeft > 60) {
-      //   const mins = Math.floor((timeLeft % 3600) / 60);
-      //   timeText = timeText + `${mins} ${mins > 1 ? 'minutes' : 'minute'} `;
-      // }
-      // const seconds = Math.ceil(timeLeft % 60);
-      // timeText = timeText + `${seconds} ${seconds > 1 ? 'seconds' : 'second'}`;
-      // return `repeats in ${timeText}`;
-    } else {
-      return '';
-    }
+    else return '';
   };
 
   const getRequirementText = (requirement: Requirement): string => {
@@ -224,6 +209,8 @@ export const List = (props: Props) => {
       text = `Complete ${targetVal} daily quests`;
     else if (con.target.type == 'ROOM')
       text = `Move to ${props.utils.getRoom(con.target.index!)?.name || `Room ${targetVal}`}`;
+    else if (con.target.type == 'COMPLETE_COMP')
+      text = 'Gate at Scrap Paths unlocked'; // hardcoded - only goals use this. change in future
     else text = '???';
 
     return text + parseConditionalTracking(con);

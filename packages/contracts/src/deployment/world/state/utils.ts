@@ -1,5 +1,5 @@
 import { parse } from 'csv-parse/sync';
-import { utils } from 'ethers';
+import { BigNumberish, utils } from 'ethers';
 
 ////////////////
 // CONSTANTS
@@ -21,13 +21,13 @@ export const parseToInitCon = (
   logicType: string,
   type: string,
   index: number,
-  value: number
-): { logicType: string; type: string; index: number; value: number } => {
+  value: BigNumberish
+): { logicType: string; type: string; index: number; value: BigNumberish } => {
   return {
     logicType: logicType == '' ? '' : parseToLogicType(logicType),
     type: parseToConType(type),
     index: parseToConIndex(type, index),
-    value: value,
+    value: parseToConValue(type, index, value),
   };
 };
 
@@ -64,12 +64,18 @@ const parseToLogicType = (str: string): string => {
 };
 
 const parseToConType = (str: string): string => {
-  // coins are items now
-  return str.replace('COIN', 'ITEM');
+  if (str === 'GOAL') return 'COMPLETE_COMP';
+  else return str.replace('COIN', 'ITEM');
 };
 
 const parseToConIndex = (type: string, index: number): number => {
   // coins are items, use MUSU index
   if (type.includes('COIN')) return MUSU_INDEX;
+  else if (type === 'GOAL') return 0;
   else return index;
+};
+
+const parseToConValue = (type: string, index: number, value: BigNumberish): BigNumberish => {
+  if (type === 'GOAL') return getGoalID(index);
+  else return value;
 };

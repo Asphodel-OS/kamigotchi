@@ -1,12 +1,22 @@
 import { AdminAPI } from '../admin';
 import { parseToInitCon, readFile } from './utils';
 
-export async function initQuests(api: AdminAPI) {
-  const questCSV = await readFile('quests/Quests.csv');
+export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
+  const questCSV = await readFile('quests/quests.csv');
   for (let i = 0; i < questCSV.length; i++) {
     const quest = questCSV[i];
+
+    // skip if indices are overridden and quest isn't included
+    if (overrideIndices && !overrideIndices.includes(Number(quest['Index']))) continue;
+
     try {
-      if (quest['Status'] !== 'For Implementation') continue;
+      if (
+        quest['Status'] !== 'For Implementation' &&
+        quest['Status'] !== 'Revise Deployment' &&
+        quest['Status'] !== 'Ingame' &&
+        quest['Status'] !== 'Needs Revision Work' // a lil clunky to accommodate notion
+      )
+        continue;
       if (quest['Class'] === 'Quest' || quest['Class'] === '') await initQuest(api, quest);
       else if (quest['Class'] === 'Requirement') await initQuestRequirement(api, quest);
       else if (quest['Class'] === 'Objective') await initQuestObjective(api, quest);
@@ -28,23 +38,6 @@ export async function initLocalQuests(api: AdminAPI) {
   api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
 }
 
-export async function initQuestsByIndex(api: AdminAPI, indices: number[]) {
-  const questCSV = await readFile('quests/Quests.csv');
-  for (let i = 0; i < questCSV.length; i++) {
-    const quest = questCSV[i];
-    if (!indices.includes(Number(quest['Index']))) continue;
-    try {
-      if (quest['Status'] !== 'For Implementation') continue;
-      if (quest['Class'] === 'Quest' || quest['Class'] === '') await initQuest(api, quest);
-      else if (quest['Class'] === 'Requirement') await initQuestRequirement(api, quest);
-      else if (quest['Class'] === 'Objective') await initQuestObjective(api, quest);
-      else if (quest['Class'] === 'Reward') await initQuestReward(api, quest);
-    } catch {
-      console.error('Could not create quest', quest['Class'], quest['Index']);
-    }
-  }
-}
-
 export async function deleteQuests(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
     try {
@@ -53,6 +46,21 @@ export async function deleteQuests(api: AdminAPI, indices: number[]) {
       console.error('Could not delete quest ' + indices[i]);
     }
   }
+}
+
+export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const questsCSV = await readFile('quests/quests.csv');
+    for (let i = 0; i < questsCSV.length; i++) {
+      if (questsCSV[i]['Status'] === 'Revise Deployment')
+        indices.push(Number(questsCSV[i]['Index']));
+    }
+  }
+
+  await deleteQuests(api, indices);
+  await initQuests(api, indices);
 }
 
 async function initQuest(api: AdminAPI, entry: any) {
