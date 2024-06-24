@@ -9,7 +9,7 @@ interface Props {
   disabled?: boolean;
   fill?: boolean;
   inverted?: boolean;
-  size?: 'small' | 'medium' | 'large' | 'vending' | 'menu' | 'icon-medium';
+  size?: 'small' | 'medium' | 'large' | 'vending' | 'menu' | 'validator';
   pulse?: boolean;
   tooltip?: string[];
 }
@@ -26,7 +26,7 @@ export const ActionButton = (props: Props) => {
   const setStyles = () => {
     let styles: any = {};
 
-    const size = props.size || 'medium';
+    const size = props.size ?? 'medium';
     if (size === 'small') {
       styles.fontSize = '.6vw';
       styles.margin = '0vw .12vw';
@@ -45,6 +45,12 @@ export const ActionButton = (props: Props) => {
       styles.padding = '.7vw 1.4vw';
       styles.borderRadius = '.7vw';
       styles.borderWidth = '.2vw';
+    } else if (size === 'validator') {
+      styles.fontSize = '1.2vh';
+      styles.margin = '0vh .1vh';
+      styles.padding = '0.9vh';
+      styles.borderRadius = '0.45vh';
+      styles.borderWidth = '0.1vh';
     } else if (size === 'vending') {
       styles.fontSize = '12px';
       styles.margin = '3px';
@@ -57,13 +63,6 @@ export const ActionButton = (props: Props) => {
       styles.borderRadius = '0.9vh';
       styles.borderWidth = '.15vw';
       styles.height = '4.5vh';
-    } else if (size === 'icon-medium') {
-      styles.fontSize = '.8vw';
-      styles.margin = '.2vw';
-      styles.padding = '.4vw';
-      styles.borderRadius = '.4vw';
-      styles.borderWidth = '.15vw';
-      styles.height = '2.5vw';
     }
 
     if (props.inverted) {

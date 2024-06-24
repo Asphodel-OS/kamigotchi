@@ -66,7 +66,7 @@ const Content = styled.div`
   transform: translate(-50%, -50%);
   max-width: 100%;
   max-height: 100%;
-  padding: 3vh 5vw;
+  padding: 3vh 6vh;
 
   display: flex;
   flex-flow: column nowrap;
@@ -80,71 +80,64 @@ const Header = styled.div`
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 0.6vh;
   width: 100%;
 `;
 
 const Title = styled.div`
   color: #333;
-  padding: 7px;
+  padding: 0.45vh;
   font-family: Pixel;
-  font-size: 24px;
+  font-size: 2.1vh;
   text-align: center;
 `;
 
 const Subtitle = styled.div`
   color: #666;
-  padding: 5px;
+  padding: 0.45vh;
   font-family: Pixel;
-  font-size: 12px;
+  font-size: 1.8vh;
   text-align: center;
 `;
 
 const ErrorPrimary = styled.div`
   color: #922;
-  padding: 5px;
+  padding: 0.45vh;
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 1.5vh;
   text-align: center;
 `;
 
 const ErrorSecondary = styled.div`
   color: #922;
-  padding: 5px;
+  padding: 0.45vh;
   font-family: Pixel;
-  font-size: 12px;
+  font-size: 0.9vh;
   text-align: center;
 `;
 
 const Children = styled.div`
-  padding: 0.4vw;
+  padding: 0.45vh;
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
 
   display: flex;
   flex-flow: column nowrap;
+  align-items: center;
   font-family: Pixel;
 `;
 
 const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 // NOTE: this is not actually used atm as we set display:none on close. This is
 // done to avoid having active, invisible buttons lingering on the UI after close.
 const fadeOut = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+  to { opacity: 0; }
 `;
 
 export { Wrapper as ValidatorWrapperLite };
