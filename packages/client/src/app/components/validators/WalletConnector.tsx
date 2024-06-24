@@ -170,8 +170,9 @@ export function registerWalletConnecter() {
       };
 
       const getWarning = () => {
+        const chainName = chain?.name ?? 'wrong';
         if (state === 'disconnected') return `Your wallet is currently disconnected.`;
-        if (state === 'wrongChain') return `You're currently connected to ${chain?.name} network`;
+        if (state === 'wrongChain') return `You're currently connected to the ${chainName} network`;
         if (state === 'unauthenticated') return `You are currently logged out.`;
         return '';
       };

@@ -1,12 +1,29 @@
 import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
 import { Chain, localhost, optimism } from '@wagmi/core/chains';
 
+export const ethereum = {
+  id: 1,
+  name: 'Ethereum',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
+  },
+
+  blockExplorers: {
+    default: { name: 'Explorer', url: 'https://etherscan.io' },
+  },
+} as const satisfies Chain;
+
 const rawYominet = {
   id: 5264468217,
   name: 'yominet',
   nativeCurrency: {
     decimals: 18,
-    name: 'Ethereum',
+    name: 'Ether',
     symbol: 'ETH',
   },
   rpcUrls: {
