@@ -23,15 +23,22 @@ export async function getTxGasData(
   provider: JsonRpcProvider,
   estimateGas: () => Promise<BigNumberish>
 ) {
+  const estMaxFee = async () => await provider.send('eth_gasPrice', []);
+  const estMaxPrioFee = async () => await provider.send('eth_maxPriorityFeePerGas', []);
+
   const gasOverrides: Overrides = {};
-  await Promise.all([estimateGas(), provider.getFeeData()]).then((results) => {
-    const gasLimit = results[0];
-    const feeData = results[1];
-    const maxPrioFee = feeData.maxPriorityFeePerGas ?? BigNumber.from('0');
-    const lastBaseFee = feeData.lastBaseFeePerGas ?? BigNumber.from('0');
+  await Promise.allSettled([estimateGas(), estMaxFee(), estMaxPrioFee()]).then((results) => {
+    const gasLimit = results[0].status === 'fulfilled' ? results[0].value : BigNumber.from(0);
+    const maxFeeRaw = results[1].status === 'fulfilled' ? results[1].value : 0;
+    const maxPriorityFeeRaw = results[2].status === 'fulfilled' ? results[2].value : 0;
+
+    const maxFee = BigNumber.from(maxFeeRaw);
+    const maxPriorityFee = BigNumber.from(maxPriorityFeeRaw);
+    const baseFee = maxFee.sub(maxPriorityFee);
+
     gasOverrides.gasLimit = gasLimit;
-    gasOverrides.maxPriorityFeePerGas = maxPrioFee;
-    gasOverrides.maxFeePerGas = lastBaseFee.mul(2).add(maxPrioFee);
+    gasOverrides.maxPriorityFeePerGas = maxPriorityFee;
+    gasOverrides.maxFeePerGas = baseFee.mul(2).add(maxPriorityFee);
   });
 
   return gasOverrides;

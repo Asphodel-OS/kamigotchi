@@ -1,9 +1,11 @@
+const txCostEst = 1 / 1e6;
+
 export const GasConstants = {
-  Max: 0.01,
-  Full: 0.008,
-  Half: 0.004,
-  Quarter: 0.002,
-  Low: 0.001,
-  Warning: 0.001,
+  Max: 1000 * txCostEst,
+  Full: 100 * txCostEst,
+  Half: 50 * txCostEst,
+  Quarter: 25 * txCostEst,
+  Low: 10 * txCostEst,
+  Warning: 5 * txCostEst,
   Empty: 0,
 };

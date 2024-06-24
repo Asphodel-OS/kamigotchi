@@ -31,7 +31,8 @@ export function registerGasHarasser() {
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators, toggleModals } = useVisibility();
 
-      const [value, setValue] = useState(0.01);
+      const fullGas = 0.0001; // hard coded bc js floating points are retarded
+      const [value, setValue] = useState(fullGas);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -141,7 +142,7 @@ export function registerGasHarasser() {
             <Input
               type='number'
               value={value}
-              step='0.0005'
+              step={fullGas / 2}
               onChange={(e) => handleChange(e)}
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
