@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
@@ -41,6 +41,13 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  &:hover {
+    animation: ${({}) => hover} 0.2s;
+    transform: scale(1.15);
+  }
+  &:active {
+    animation: ${({}) => click} 0.3s;
+  }
 `;
 
 const Meter = styled.div`
@@ -88,8 +95,19 @@ const Pivot = styled.div`
   border-radius: 0.15vw;
   width: 0.3vw;
   height: 0.3vw;
-  bottom: -18%;
+  bottom: -17%;
   right: 50%;
   transform-origin: bottom center;
   transform: translateX(50%);
+`;
+
+const hover = keyframes`
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+`;
+
+const click = keyframes`
+  0% { transform: scale(1.15); }
+  50% { transform: scale(.95); }
+  100% { transform: scale(1.15); }
 `;
