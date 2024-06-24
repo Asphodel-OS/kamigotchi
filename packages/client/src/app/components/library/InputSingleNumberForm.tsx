@@ -17,7 +17,7 @@ interface Props {
   label?: string;
   placeholder?: string;
   onSubmit?: Function;
-  watch?: (value: number) => void;
+  watch?: { value: number; set: (value: number) => void };
   stepper?: boolean;
   disabled?: boolean;
   tooltip?: string[];
@@ -30,24 +30,21 @@ const disabledStepperStyle = {
 
 // InputSingleNumberForm is a styled number input field with buttons to increase or decrease
 export const InputSingleNumberForm = (props: Props) => {
-  const [value, setValue] = useState<number>(props.initialValue || 0);
+  const [value, setValue] = props.watch
+    ? [props.watch.value, props.watch.set]
+    : useState<number>(props.initialValue || 0);
   let styleOverride = {};
   if (props.fullWidth) styleOverride = { width: '100%', maxWidth: '100%' };
   const step = props.bounds.step || 1;
 
-  const updateValue = (newValue: number) => {
-    setValue(newValue);
-    if (props.watch) props.watch(newValue);
-  };
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateValue(parseInt(event.target.value) || props.initialValue || 0);
+    setValue(parseInt(event.target.value) || props.initialValue || 0);
   };
 
   const handleSubmit = () => {
     playClick();
     props.onSubmit && props.onSubmit(value);
-    updateValue(props.initialValue || 0);
+    setValue(props.initialValue || 0);
   };
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,7 +61,7 @@ export const InputSingleNumberForm = (props: Props) => {
       <StepperGroup>
         <StepperButtonTop
           style={atMax ? disabledStepperStyle : {}}
-          onClick={() => (atMax ? 0 : updateValue(value + step))}
+          onClick={() => (atMax ? 0 : setValue(value + step))}
         >
           {' '}
           +{' '}
@@ -72,7 +69,7 @@ export const InputSingleNumberForm = (props: Props) => {
         <hr style={{ width: '100%', height: '0px', border: '0.08vw solid black' }} />
         <StepperButtonBottom
           style={atMin ? disabledStepperStyle : {}}
-          onClick={() => (atMin ? 0 : updateValue(value - step))}
+          onClick={() => (atMin ? 0 : setValue(value - step))}
         >
           {' '}
           -{' '}

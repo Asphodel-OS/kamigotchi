@@ -12,9 +12,6 @@ interface Props {
     commits: GachaCommit[];
     blockNumber: number;
   };
-  display: {
-    Tab: JSX.Element;
-  };
 }
 
 export const Commits = (props: Props) => {
@@ -78,7 +75,6 @@ export const Commits = (props: Props) => {
 
   return (
     <OuterBox key='grid'>
-      {props.display.Tab}
       <InnerBox>{props.data.commits.map((commit) => Cell(commit))}</InnerBox>
     </OuterBox>
   );

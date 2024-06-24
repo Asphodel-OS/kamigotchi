@@ -16,14 +16,14 @@ import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { GachaCommit, calcRerollCost, isGachaAvailable } from 'network/shapes/Gacha';
+import { GACHA_ID, GachaCommit, calcRerollCost, isGachaAvailable } from 'network/shapes/Gacha';
 import { Kami } from 'network/shapes/Kami';
 import { playVend } from 'utils/sounds';
 import { erc20Abi, formatUnits } from 'viem';
 import { Commits } from './Commits';
 import { Pool } from './Pool';
 import { Reroll } from './Reroll';
-import { Tabs } from './components/Tabs';
+import { Tabs } from './Tabs';
 import { getLazyKamis } from './utils/queries';
 
 export function registerGachaModal() {
@@ -39,6 +39,7 @@ export function registerGachaModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
+          const { world, components } = network;
           const account = getAccountFromBurner(network, { gacha: true, kamis: true });
 
           const commits = [...(account.gacha ? account.gacha.commits : [])].reverse();
@@ -46,7 +47,11 @@ export function registerGachaModal() {
           return {
             network,
             data: {
-              kamis: account.kamis,
+              accKamis: account.kamis,
+              gachaKamis: getLazyKamis(world, components)(
+                { account: GACHA_ID as EntityID },
+                { traits: true }
+              ),
               commits: commits,
             },
           };
@@ -74,7 +79,6 @@ export function registerGachaModal() {
 
       useWatchBlockNumber({
         onBlockNumber: (n) => {
-          refetchMint20Addy();
           refetchOwnerMint20Balance();
           refetchOwnerEthBalance();
           setBlockNumber(n);
@@ -87,7 +91,7 @@ export function registerGachaModal() {
       });
 
       // $KAMI Contract Address
-      const { data: mint20Addy, refetch: refetchMint20Addy } = useReadContract({
+      const { data: mint20Addy } = useReadContract({
         address: network.systems['system.Mint20.Proxy']?.address as `0x${string}`,
         abi: Mint20ProxySystemABI,
         functionName: 'getTokenAddy',
@@ -257,7 +261,14 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const TabsBar = <Tabs tab={tab} setTab={setTab} commits={data.commits.length} />;
+      const TabsBar = (
+        <Tabs
+          tab={tab}
+          setTab={setTab}
+          commits={data.commits.length}
+          gachaBalance={data.gachaKamis.length}
+        />
+      );
 
       const MainDisplay = () => {
         if (tab === 'MINT')
@@ -271,9 +282,8 @@ export function registerGachaModal() {
                     ownerMint20Balance?.[1]?.result
                   ),
                 },
+                lazyKamis: data.gachaKamis,
               }}
-              display={{ Tab: TabsBar }}
-              query={{ getLazyKamis: getLazyKamis(world, components) }}
             />
           );
         else if (tab === 'REROLL')
@@ -281,10 +291,9 @@ export function registerGachaModal() {
             <Reroll
               actions={{ handleReroll }}
               data={{
-                kamis: data.kamis || [],
+                kamis: data.accKamis || [],
                 balance: ownerEthBalance?.value || 0n, // bigint used for dealing with wei
               }}
-              display={{ Tab: TabsBar }}
               utils={{ getRerollCost }}
             />
           );
@@ -296,7 +305,6 @@ export function registerGachaModal() {
                 commits: data.commits || [],
                 blockNumber: Number(blockNumber),
               }}
-              display={{ Tab: TabsBar }}
             />
           );
         else return <div />;
@@ -313,6 +321,7 @@ export function registerGachaModal() {
           }
           canExit
         >
+          {TabsBar}
           {MainDisplay()}
         </ModalWrapper>
       );

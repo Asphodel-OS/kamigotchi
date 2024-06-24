@@ -79,25 +79,37 @@ export const KamiGrid = (props: Props) => {
     const gross = props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
     const remainder = gross % 5 == 0 ? 0 : 5 - (gross % 5);
 
-    return Array(remainder).fill(<EmptyEntry key={'empty'} />);
+    return Array(remainder).fill(<EmptyEntry />);
   };
 
   return (
     <Container key='grid'>
-      {props.kamis.map((kami) => Cell(kami))}
-      {ShowMoreIcon}
-      {NullItems()}
+      <InnerBox>
+        {props.kamis.map((kami) => Cell(kami))}
+        {ShowMoreIcon}
+        {NullItems()}
+      </InnerBox>
     </Container>
   );
 };
 
 const Container = styled.div`
+  border: solid 0.15vw black;
+  border-radius: 0.75vw;
+  padding: 2vh 1vw;
+  margin: 1vh 2vw;
+
+  height: 100%;
+  overflow-y: scroll;
+`;
+
+const InnerBox = styled.div`
   display: flex;
   flex-flow: wrap;
   justify-content: center;
   align-items: flex-start;
-
   overflow-y: scroll;
+  height: 100%;
 `;
 
 const CellContainer = styled.div`

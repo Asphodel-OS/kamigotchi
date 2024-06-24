@@ -2,13 +2,11 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
-import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
-import { EntityID } from '@mud-classic/recs';
-import musuIcon from 'assets/images/icons/musu.png';
-import { GACHA_ID } from 'network/shapes/Gacha';
-import { Kami, Options, QueryOptions } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
+import { GachaTicket } from 'network/shapes/utils/EntityTypes';
+import { SideBalance } from './components/SideBalance';
 
 interface Props {
   actions: {
@@ -18,12 +16,7 @@ interface Props {
     account: {
       balance: number;
     };
-  };
-  display: {
-    Tab: JSX.Element;
-  };
-  query: {
-    getLazyKamis: (queryOpts: QueryOptions, options?: Options) => Array<() => Kami>;
+    lazyKamis: Array<() => Kami>;
   };
 }
 
@@ -31,7 +24,10 @@ export const Pool = (props: Props) => {
   const [mintAmt, setMintAmt] = useState<number>(0);
   const [numShown, setNumShown] = useState<number>(49);
 
-  const mintPrice = 1;
+  const {
+    account: { balance: accBal },
+    lazyKamis,
+  } = props.data;
 
   //////////////////
   // LOGIC
@@ -59,8 +55,6 @@ export const Pool = (props: Props) => {
     ];
   };
 
-  const lazyKamis = props.query.getLazyKamis({ account: GACHA_ID as EntityID }, { traits: true });
-
   const getTruncatedKamis = () => {
     const amt = numShown < lazyKamis.length ? numShown : lazyKamis.length;
     const shortLazies = [...lazyKamis].splice(0, amt);
@@ -73,18 +67,24 @@ export const Pool = (props: Props) => {
 
   const FooterButton = (
     <Footer>
-      <div style={{ width: '60%' }}></div>
+      <SideBalance
+        balance={accBal.toFixed(1)}
+        title='Balance'
+        icon={GachaTicket.image}
+        onClick={() => setMintAmt(accBal)}
+      />
+      <div style={{ flexGrow: 6 }} />
       <InputSingleNumberForm
         id='mint-stepper'
-        bounds={{ min: 0, max: props.data.account.balance, step: 1 }}
-        watch={setMintAmt}
+        bounds={{ min: 0, max: accBal, step: 1 }}
+        watch={{ value: mintAmt, set: setMintAmt }}
         stepper
       />
       <ActionButton
         onClick={props.actions.handleMint(mintAmt)}
         text='Mint'
         size='large'
-        disabled={mintAmt === 0 || mintAmt > props.data.account.balance}
+        disabled={mintAmt === 0 || mintAmt > accBal}
         fill
       />
     </Footer>
@@ -92,23 +92,13 @@ export const Pool = (props: Props) => {
 
   return (
     <OuterBox>
-      <BalanceBar
-        balance={props.data.account.balance.toFixed(2)}
-        price={mintPrice.toFixed(2)}
-        name='Mint price'
-        icon={musuIcon}
+      <KamiGrid
+        kamis={getTruncatedKamis()}
+        amtShown={numShown}
+        grossShowable={lazyKamis.length}
+        incAmtShown={() => setNumShown(numShown + 25)}
+        getKamiText={getKamiText}
       />
-      <InnerBox>
-        {props.display.Tab}
-        <AmountText>Kamigotchis in pool: {lazyKamis.length}</AmountText>
-        <KamiGrid
-          kamis={getTruncatedKamis()}
-          amtShown={numShown}
-          grossShowable={lazyKamis.length}
-          incAmtShown={() => setNumShown(numShown + 25)}
-          getKamiText={getKamiText}
-        />
-      </InnerBox>
       {FooterButton}
     </OuterBox>
   );
@@ -117,26 +107,18 @@ export const Pool = (props: Props) => {
 const Footer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 
-  width: 100%;
-  padding: 0vh 1vw 1vh;
+  padding: 0.5vh 2vw 1vh;
 `;
 
-const InnerBox = styled.div`
+const Row = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-
-  flex: 1;
-  border: solid 0.15vw black;
-  border-radius: 0.75vw;
-  height: 60%;
-  padding: 1vw;
-  margin: 1vw;
-
-  gap: 1.2vw;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0.25vh;
 `;
 
 const OuterBox = styled.div`
@@ -145,12 +127,6 @@ const OuterBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  height: 100%;
-`;
-
-const AmountText = styled.p`
-  font-family: Pixel;
-  font-size: 1.6vw;
-  text-align: start;
-  color: #444;
+  height: 50vh;
+  flex-grow: 1;
 `;

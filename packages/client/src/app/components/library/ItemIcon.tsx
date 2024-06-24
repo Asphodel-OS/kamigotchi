@@ -211,8 +211,8 @@ const FixedBox = styled.div`
 `;
 
 const FixedIcon = styled.img`
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   padding: 5px;
   image-rendering: pixelated;
 `;

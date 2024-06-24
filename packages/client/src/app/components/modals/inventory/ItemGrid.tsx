@@ -3,14 +3,24 @@ import styled from 'styled-components';
 import { ItemIcon } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Inventory } from 'network/shapes/Inventory';
+import { GachaTicketInventory } from 'network/shapes/utils/EntityTypes';
 
 interface Props {
   inventories: Inventory[];
+  tickets: number;
 }
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
   const { modals, setModals } = useVisibility();
+
+  // hardcoding for gacha ticket
+  const getTicketCell = () => {
+    if (props.tickets === 0) return <></>;
+
+    GachaTicketInventory.balance = props.tickets;
+    return Cell(GachaTicketInventory);
+  };
 
   const openLootbox = () => {
     setModals({ ...modals, lootboxes: true, inventory: false });
@@ -33,7 +43,11 @@ export const ItemGrid = (props: Props) => {
     );
   };
 
-  return <Container key='grid'>{props.inventories.map((inv) => Cell(inv))}</Container>;
+  return (
+    <Container key='grid'>
+      {[getTicketCell(), ...props.inventories.map((inv) => Cell(inv))]}
+    </Container>
+  );
 };
 
 const Container = styled.div`

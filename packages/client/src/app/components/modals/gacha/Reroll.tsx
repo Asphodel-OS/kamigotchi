@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
-import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
-import { ethereumLogo } from 'assets/images/logos';
 import { Kami } from 'network/shapes/Kami';
+import { SideBalance } from './components/SideBalance';
 
 interface Props {
   actions: {
@@ -16,9 +15,6 @@ interface Props {
   data: {
     kamis: Kami[];
     balance: bigint;
-  };
-  display: {
-    Tab: JSX.Element;
   };
   utils: {
     getRerollCost: (kami: Kami) => bigint;
@@ -66,7 +62,8 @@ export const Reroll = (props: Props) => {
 
   const FooterButton = (
     <Footer>
-      <div style={{ width: '73%' }}></div>
+      <SideBalance balance={formatWei(rerollPrice) + 'Ξ'} title='Re-roll cost' />
+      <div style={{ flexGrow: 6 }} />
       <ActionButton
         onClick={handleReroll}
         text='Re-roll'
@@ -106,17 +103,7 @@ export const Reroll = (props: Props) => {
 
   return (
     <OuterBox>
-      <BalanceBar
-        balance={formatWei(props.data.balance)}
-        price={formatWei(rerollPrice)}
-        name='Total re-roll price'
-        icon={ethereumLogo}
-      />
-      <InnerBox>
-        {props.display.Tab}
-        <AmountText>Kamigotchis re-rollable: {props.data.kamis.length}</AmountText>
-        {Grid}
-      </InnerBox>
+      {Grid}
       {FooterButton}
     </OuterBox>
   );
@@ -125,26 +112,10 @@ export const Reroll = (props: Props) => {
 const Footer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 
-  width: 100%;
-  padding: 0.2vh 1vw 1.2vh;
-`;
-
-const InnerBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-
-  flex: 1;
-  border: solid 0.15vw black;
-  border-radius: 0.75vw;
-  height: 60%;
-  padding: 1vw;
-  margin: 1vw;
-
-  gap: 1.2vw;
+  padding: 0.5vh 2vw 1vh;
 `;
 
 const OuterBox = styled.div`
@@ -153,14 +124,8 @@ const OuterBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  height: 100%;
-`;
-
-const AmountText = styled.p`
-  font-family: Pixel;
-  font-size: 1.6vw;
-  text-align: start;
-  color: #444;
+  height: 50vh;
+  flex-grow: 1;
 `;
 
 const EmptyText = styled.div`

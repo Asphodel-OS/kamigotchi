@@ -9,6 +9,7 @@ interface Props {
   tab: string;
   setTab: (tab: string) => void;
   commits: number;
+  gachaBalance: number;
 }
 
 export const Tabs = (props: Props) => {
@@ -20,7 +21,7 @@ export const Tabs = (props: Props) => {
 
   let text: string[] = [];
   if (props.tab === 'MINT')
-    text = ['Get a kamigochi from the gacha pool!', '', 'Each kamigochi costs 1 $KAMI.'];
+    text = ['A kami gacha pool!', '', 'Each ticket gets you a random kami from the pool.'];
   else if (props.tab === 'REROLL')
     text = [
       'Re-roll your kamigochi to get a new one from the pool!',
@@ -38,31 +39,34 @@ export const Tabs = (props: Props) => {
 
   return (
     <Container>
-      <div>
+      <Row>
         <ActionButton
           onClick={() => setTab('MINT')}
           text='Mint'
           disabled={props.tab === 'MINT'}
-          size='vending'
+          size='medium'
         />
         <ActionButton
           onClick={() => setTab('REROLL')}
           text='Re-roll'
           disabled={props.tab === 'REROLL'}
-          size='vending'
+          size='medium'
         />
         {props.commits > 0 && (
           <ActionButton
             onClick={() => setTab('COMMITS')}
             text='Pending'
             disabled={props.tab === 'COMMITS'}
-            size='vending'
+            size='medium'
           />
         )}
-      </div>
-      <Tooltip text={text}>
-        <Help src={helpIcon} />
-      </Tooltip>
+      </Row>
+      <Row>
+        <BalanceText>{props.gachaBalance} kamis in pool</BalanceText>
+        <Tooltip text={text}>
+          <Help src={helpIcon} />
+        </Tooltip>
+      </Row>
     </Container>
   );
 };
@@ -72,9 +76,23 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  padding: 1vh 1.6vw 0.2vh;
 `;
 
 const Help = styled.img`
-  width: 1.5vw;
+  height: 2.4vh;
   margin: 0.1vh 0.5vw;
+`;
+
+const BalanceText = styled.div`
+  font-family: Pixel;
+  font-size: 1.2vw;
+  color: #333;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
