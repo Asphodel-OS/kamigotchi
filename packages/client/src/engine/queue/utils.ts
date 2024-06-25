@@ -23,11 +23,11 @@ export async function getTxGasData(
   provider: JsonRpcProvider,
   estimateGas: () => Promise<BigNumberish>
 ) {
-  const estMaxFee = async () => await provider.send('eth_gasPrice', []);
-  const estMaxPrioFee = async () => await provider.send('eth_maxPriorityFeePerGas', []);
+  const estMaxFee = provider.send('eth_gasPrice', []);
+  const estMaxPrioFee = provider.send('eth_maxPriorityFeePerGas', []);
 
   const gasOverrides: Overrides = {};
-  await Promise.allSettled([estimateGas(), estMaxFee(), estMaxPrioFee()]).then((results) => {
+  await Promise.allSettled([estimateGas(), estMaxFee, estMaxPrioFee]).then((results) => {
     const gasLimit = results[0].status === 'fulfilled' ? results[0].value : BigNumber.from(0);
     const maxFeeRaw = results[1].status === 'fulfilled' ? results[1].value : 0;
     const maxPriorityFeeRaw = results[2].status === 'fulfilled' ? results[2].value : 0;
