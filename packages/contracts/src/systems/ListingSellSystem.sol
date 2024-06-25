@@ -40,7 +40,7 @@ contract ListingSellSystem is System {
       LibListing.getItemIndex(components, listingID),
       amt
     );
-    LibListing.logSpendCoin(components, accountID, amt * price);
+    LibListing.logEarnCoin(components, accountID, amt * price);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

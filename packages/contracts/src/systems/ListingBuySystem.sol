@@ -41,7 +41,7 @@ contract ListingBuySystem is System {
 
     // standard logging and tracking
     LibInventory.logIncItemTotal(components, accountID, itemIndex, amt);
-    LibListing.logEarnCoin(components, accountID, amt * price);
+    LibListing.logSpendCoin(components, accountID, amt * price);
     LibListing.logIncItemBuy(components, accountID, itemIndex, amt);
     LibScore.inc(components, accountID, "TOTAL_SPENT", amt * price);
     LibAccount.updateLastTs(components, accountID);
