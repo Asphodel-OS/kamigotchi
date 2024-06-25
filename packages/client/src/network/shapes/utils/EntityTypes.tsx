@@ -1,19 +1,18 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { baseURI } from 'constants/media';
+import { ItemImages } from 'assets/images/items';
 import { Inventory } from '../Inventory';
 
 // base shape of an entity with basic details
 export interface DetailedEntity {
   ObjectType: string;
   image: string;
-  image4x?: string;
   name: string;
   description?: string;
 }
 
 export const GachaTicket: DetailedEntity = {
   ObjectType: 'GACHA_TICKET',
-  image: baseURI + 'images/items/gacha_ticket.png',
+  image: ItemImages['gacha_ticket'],
   name: 'Gacha Ticket',
   description: 'Redeemable for one Kami. You should take this to the vending machine…',
 };

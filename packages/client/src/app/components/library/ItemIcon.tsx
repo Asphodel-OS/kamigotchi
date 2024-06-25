@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { ItemImages } from 'assets/images/items';
 import { Item } from 'network/shapes/Item';
 import { playClick } from 'utils/sounds';
 
@@ -28,15 +27,6 @@ export const ItemIcon = (props: Props) => {
       playClick();
       await props.onClick();
     }
-  };
-
-  // clean up name of item to standard format and query out map of item images
-  const getImage = (item: Item) => {
-    let name = item.name.toLowerCase();
-    name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-    name = name.replaceAll('(', '').replaceAll(')', '');
-    const image = ItemImages[name as keyof typeof ItemImages];
-    return image || item.image;
   };
 
   const setBoxStyles = () => {
@@ -73,10 +63,10 @@ export const ItemIcon = (props: Props) => {
         <SmallBox style={setBoxStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <SmallIcon style={setIconStyles()} src={getImage(item)} />
+              <SmallIcon style={setIconStyles()} src={item.image} />
             </ButtonWrapper>
           ) : (
-            <SmallIcon src={getImage(item)} />
+            <SmallIcon src={item.image} />
           )}
           {BalanceBadge()}
         </SmallBox>
@@ -86,10 +76,10 @@ export const ItemIcon = (props: Props) => {
         <LargeBox style={setBoxStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <LargeIcon style={setIconStyles()} src={getImage(item)} />
+              <LargeIcon style={setIconStyles()} src={item.image} />
             </ButtonWrapper>
           ) : (
-            <LargeIcon src={getImage(item)} />
+            <LargeIcon src={item.image} />
           )}
           {BalanceBadge()}
         </LargeBox>
@@ -99,10 +89,10 @@ export const ItemIcon = (props: Props) => {
       <FixedBox style={setBoxStyles()}>
         {props.onClick ? (
           <ButtonWrapper onClick={handleClick}>
-            <FixedIcon style={setIconStyles()} src={getImage(item)} />
+            <FixedIcon style={setIconStyles()} src={item.image} />
           </ButtonWrapper>
         ) : (
-          <FixedIcon src={getImage(item)} />
+          <FixedIcon src={item.image} />
         )}
         {BalanceBadge()}
       </FixedBox>

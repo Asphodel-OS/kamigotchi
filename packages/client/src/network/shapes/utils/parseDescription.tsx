@@ -1,6 +1,6 @@
 import { World } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { DetailedEntity } from './EntityTypes';
+import { DetailedEntity, GachaTicket } from './EntityTypes';
 
 import { helpIcon, questsIcon } from 'assets/images/icons/menu';
 
@@ -28,6 +28,8 @@ export const getDescribedEntity = (
       image: questsIcon,
       name: getQuestByIndex(world, components, index)?.name ?? `Quest ${index}`,
     };
+  else if (type === 'MINT20')
+    return GachaTicket; // hardcoded gacha ticket
   else return { ObjectType: type, image: helpIcon, name: type };
 };
 

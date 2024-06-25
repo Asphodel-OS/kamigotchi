@@ -10,6 +10,7 @@ import { Item } from 'network/shapes/Item';
 import { Objective, Quest, Requirement, Reward } from 'network/shapes/Quest';
 import { Room } from 'network/shapes/Room';
 import { Condition } from 'network/shapes/utils/Conditionals';
+import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 
 interface Props {
   account: Account;
@@ -25,6 +26,7 @@ interface Props {
     getItem: (index: EntityIndex) => Item;
     getRoom: (roomIndex: number) => Room;
     getQuestByIndex: (index: number) => Quest | undefined;
+    getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
 }
 
@@ -156,7 +158,7 @@ export const List = (props: Props) => {
     } else if (reward.target.type === 'EXPERIENCE') {
       return `${value} Experience`;
     } else if (reward.target.type === 'MINT20') {
-      return `${value} $KAMI`;
+      return `${value} Gacha Ticket`;
     } else {
       return '???';
     }
@@ -320,9 +322,16 @@ export const List = (props: Props) => {
       <ConditionContainer key='rewards'>
         <ConditionName>Rewards</ConditionName>
         {rewards.map((reward) => (
-          <ConditionDescription key={reward.id}>
-            - {`${getRewardText(reward)}`}
-          </ConditionDescription>
+          <Row key={reward.id}>
+            <ConditionDescription key={reward.id}>
+              - {`${getRewardText(reward)}`}
+            </ConditionDescription>
+            <ConditionImage
+              src={
+                props.utils.getDescribedEntity(reward.target.type, reward.target.index || 0).image
+              }
+            />
+          </Row>
         ))}
       </ConditionContainer>
     );
@@ -504,8 +513,19 @@ const ConditionDescription = styled.div`
   padding: 0.4vh 0.5vw;
 `;
 
+const ConditionImage = styled.img`
+  height: 1.5vw;
+`;
+
 const DoneContainer = styled(QuestContainer)`
   border-color: #999;
   border-width: 1.5px;
   color: #bbb;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;

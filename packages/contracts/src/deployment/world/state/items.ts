@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { readFile } from './utils';
+import { getItemImage, readFile } from './utils';
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   const droptablesCSV = await readFile('items/droptables.csv');
@@ -54,7 +54,7 @@ async function setFood(api: AdminAPI, item: any) {
     item['Description'],
     Number(item['Health'] ?? 0),
     Number(item['XP'] ?? 0),
-    item['MediaURI']
+    getItemImage(item['Name'])
   );
 }
 
@@ -64,7 +64,7 @@ async function setRevive(api: AdminAPI, item: any) {
     item['Name'],
     item['Description'],
     Number(item['Health'] ?? 0),
-    item['MediaURI']
+    getItemImage(item['Name'])
   );
 }
 
@@ -74,7 +74,7 @@ async function setMisc(api: AdminAPI, item: any) {
     item['Name'],
     item['Description'],
     item['miscCategory'],
-    item['MediaURI']
+    getItemImage(item['Name'])
   );
 }
 
@@ -85,7 +85,7 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     item['Description'],
     [1, 2, 3],
     [9, 9, 7],
-    item['MediaURI']
+    getItemImage(item['Name'])
   );
   return; // using placeholder lootboxes for now. similar challenges in representation to rooms
   await api.registry.item.create.lootbox(
@@ -94,6 +94,6 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     item['Description'],
     droptables[Number(item['Droptable']) - 1]['Key'],
     droptables[Number(item['Droptable']) - 1]['Tier'],
-    item['MediaURI']
+    getItemImage(item['Name'])
   );
 }

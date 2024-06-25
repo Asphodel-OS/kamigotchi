@@ -31,6 +31,13 @@ export const parseToInitCon = (
   };
 };
 
+export const getItemImage = (str: string): string => {
+  let name = str.toLowerCase();
+  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
+  name = name.replaceAll('(', '').replaceAll(')', '');
+  return 'images/items/' + name + '.png';
+};
+
 ///////////////
 // MISC
 

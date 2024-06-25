@@ -9,8 +9,8 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { ItemImages } from 'assets/images/items';
 import { Components } from 'network/';
-import { baseURI } from 'src/constants/media';
 import { Stats, getStats } from './Stats';
 import { DetailedEntity } from './utils/EntityTypes';
 
@@ -39,16 +39,17 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
   const { Description, Experience, ItemIndex, IsConsumable, IsLootbox, MediaURI, Name, Type } =
     components;
 
+  const name = (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item';
+
   let Item: Item = {
     ObjectType: 'ITEM',
     entityIndex,
     id: world.entities[entityIndex],
     index: getComponentValue(ItemIndex, entityIndex)?.value as number,
     type: getComponentValue(Type, entityIndex)?.value as string,
-    name: (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item',
+    name: name,
     description: getComponentValue(Description, entityIndex)?.value as string,
-    image: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
-    image4x: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
+    image: getImage(name),
     stats: getStats(components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
     is: {
@@ -82,4 +83,18 @@ export const getAllItems = (world: World, components: Components): Item[] => {
   const { IsRegistry, ItemIndex } = components;
   const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(ItemIndex)]));
   return entityIndices.map((entityIndex) => getItem(world, components, entityIndex));
+};
+
+//////////////////
+// IMAGE MAPPING
+
+// clean up name of item to standard format and query out map of item images
+const getImage = (name: string) => {
+  name = name.toLowerCase();
+  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
+  name = name.replaceAll('(', '').replaceAll(')', '');
+  const key = name as keyof typeof ItemImages;
+  if (!key) throw new Error(`No image found for ${name}`);
+
+  return ItemImages[key];
 };

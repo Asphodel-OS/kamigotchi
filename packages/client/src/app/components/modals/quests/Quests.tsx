@@ -9,6 +9,7 @@ import { getAccountFromBurner } from 'network/shapes/Account';
 import { getItem, getItemByIndex } from 'network/shapes/Item';
 import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'network/shapes/Quest';
 import { getRoomByIndex } from 'network/shapes/Room';
+import { getDescribedEntity } from 'network/shapes/utils/parseDescription';
 import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';
@@ -121,6 +122,8 @@ export function registerQuestsModal() {
               getQuestByIndex: (index: number) => getQuestByIndex(world, components, index),
               queryItemRegistry: (index: number) =>
                 getItemByIndex(world, components, index).entityIndex,
+              getDescribedEntity: (type: string, index: number) =>
+                getDescribedEntity(world, components, type, index),
             }}
           />
         </ModalWrapper>
