@@ -8,9 +8,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Room, getAllRooms } from 'network/shapes/Room';
-import { Exits } from './Exits';
 import { Grid } from './Grid';
-import { Players } from './Players';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -40,6 +38,7 @@ export function registerMapModal() {
       const { actions, api, components, world } = network;
       const { roomIndex: selectedRoom, setRoom: setSelectedRoom } = useSelected();
       const { modals } = useVisibility();
+
       const [hoveredRoom, setHoveredRoom] = useState(0);
       const [displayedRoom, setDisplayedRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
@@ -82,15 +81,6 @@ export function registerMapModal() {
         });
       };
 
-      const Footer = () => {
-        return (
-          <FooterRow>
-            <Exits index={displayedRoom} rooms={roomMap} actions={{ move }} />
-            <Players index={displayedRoom} rooms={roomMap} />
-          </FooterRow>
-        );
-      };
-
       ///////////////////
       // RENDER
 
@@ -98,17 +88,14 @@ export function registerMapModal() {
         <ModalWrapper
           id='map'
           header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
-          // footer={Footer()}
           canExit
           noPadding
+          truncate
         >
           <Container>
             <Row>
               <Grid index={selectedRoom} rooms={roomMap} actions={{ move, setHoveredRoom }} />
             </Row>
-            {/* <Row>
-              <RoomInfo index={displayedRoom} rooms={roomMap} />
-            </Row> */}
           </Container>
         </ModalWrapper>
       );
@@ -130,10 +117,4 @@ const Row = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-`;
-
-const FooterRow = styled.div`
-  height: 9vw;
-  display: flex;
-  flex-direction: row;
 `;

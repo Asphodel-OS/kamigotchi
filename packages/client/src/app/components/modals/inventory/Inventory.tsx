@@ -39,6 +39,7 @@ export function registerInventoryModal() {
           footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit
           overlay
+          truncate
         >
           <ItemGrid key='grid' inventories={data.account.inventories || []} />
         </ModalWrapper>

@@ -74,7 +74,12 @@ export function registerHelpModal() {
       );
 
       return (
-        <ModalWrapper id='help' header={<ModalHeader title='Help' icon={helpIcon} />} canExit>
+        <ModalWrapper
+          id='help'
+          header={<ModalHeader title='Help' icon={helpIcon} />}
+          canExit
+          truncate
+        >
           <BackButton />
           <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
           {tab === HelpTabs.HOME ? <Menu /> : <SectionContent body={CopyInfo[tab].body} />}

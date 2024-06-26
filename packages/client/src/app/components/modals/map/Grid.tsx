@@ -109,21 +109,16 @@ export const Grid = (props: Props) => {
                   }}
                 />
               );
-              if (isRoom)
+
+              if (isRoom) {
+                const name = `${room.name} ${isBlocked ? '(blocked)' : ''}`;
+                const description = [name, '', room.description, ''];
                 tile = (
-                  <Tooltip
-                    key={j}
-                    text={[
-                      `${room.name} ${isBlocked ? '(blocked)' : ''}`,
-                      '',
-                      room.description,
-                      '',
-                    ]}
-                    grow
-                  >
+                  <Tooltip key={j} text={description} grow>
                     {tile}
                   </Tooltip>
                 );
+              }
               return tile;
             })}
           </Row>

@@ -25,6 +25,7 @@ export function registerSettingsModal() {
           id='settings'
           header={<ModalHeader title='Settings' icon={settingsIcon} />}
           canExit
+          truncate
         >
           <Volume />
           <Divider />
