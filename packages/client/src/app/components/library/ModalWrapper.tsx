@@ -78,15 +78,15 @@ const ButtonRow = styled.div`
 `;
 
 const Header = styled.div`
-  border-radius: 10px 10px 0px 0px;
   border-bottom: solid black 0.15vw;
+  border-radius: 0.45vw 0.45vw 0 0;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Footer = styled.div`
-  border-radius: 0px 0px 10px 10px;
   border-top: solid black 0.15vw;
+  border-radius: 0 0 0.45vw 0.45vw;
   display: flex;
   flex-flow: column nowrap;
 `;
