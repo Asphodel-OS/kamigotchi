@@ -96,10 +96,6 @@ export function registerAccountHeader() {
       return (
         <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
           <Row>
-            <TextBox>{`${account.name} - ${room.name}`}</TextBox>
-          </Row>
-          <Line />
-          <Row>
             <Cell>
               <Tooltip text={getStaminaTooltip(account)}>
                 <TextBox>
@@ -133,7 +129,7 @@ const Container = styled.div`
   border: 0.15vw solid black;
   border-radius: 0.6vw;
   width: 99%;
-  height: 9vh;
+  height: 4.5vh;
 
   display: flex;
   flex-flow: column nowrap;
@@ -145,10 +141,10 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
-  height: 50%;
 
   flex-grow: 1;
 `;
