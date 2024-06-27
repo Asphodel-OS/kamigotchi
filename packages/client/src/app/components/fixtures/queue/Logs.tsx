@@ -24,7 +24,7 @@ export const Logs = (props: Props) => {
   // scroll to bottom when tx added
   useEffect(() => {
     const logs = document.getElementById('tx-logs');
-    if (logs) logs.scrollTop = logs.scrollHeight + 100;
+    if (logs) logs.scrollTop = logs.scrollHeight + 1000;
   }, [actionIndices]);
 
   //////////////////
