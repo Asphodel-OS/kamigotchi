@@ -33,7 +33,7 @@ export const useSelected = create<State & Actions>((set) => {
     dialogueIndex: 0 as number,
     goalIndex: [0] as number[],
     kamiIndex: 0 as number,
-    leaderboardKey: '',
+    leaderboardKey: 'default',
     listingEntityIndex: 0 as EntityIndex,
     nodeIndex: 0 as number,
     npcIndex: 0 as number,

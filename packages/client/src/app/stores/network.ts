@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { TxQueue } from 'engine/types';
+import { TxQueue } from 'engine/queue';
 import { PlayerAPI, createPlayerAPI } from 'network/api/player';
 import { SystemTypes } from 'types/SystemTypes';
 
@@ -8,6 +8,7 @@ export interface State {
   burnerAddress: string;
   selectedAddress: string;
   validations: Validations;
+  randNum: number;
   apis: Map<string, PlayerAPI>;
 }
 
@@ -28,6 +29,7 @@ export const useNetwork = create<State & Actions>((set) => {
   const initialState: State = {
     burnerAddress: '',
     selectedAddress: '',
+    randNum: Math.random(),
     apis: new Map<string, PlayerAPI>(),
     validations: {
       authenticated: false,
