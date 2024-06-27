@@ -105,6 +105,7 @@ const Container = styled.div`
   width: auto;
   height: auto;
 `;
+
 const Background = styled.img`
   width: 100%;
   height: 100%;
