@@ -1,11 +1,11 @@
-import jackkahunalaguna from './jackkahunalaguna_black.png';
-import killyou from './killyou_black.png';
-import longrng from './longrng_black.png';
-import mazzy from './mazzy_black.png';
-import netorarecrypto from './netorarecrypto_black.png';
-import opnpc from './opnpc_black.png';
-import qko from './qko_black.png';
-import simsrichard from './simsrichard_black.png';
+import jackkahunalaguna from './jackkahunalaguna.png';
+import killyou from './killyou.png';
+import longrng from './longrng.png';
+import mazzy from './mazzy.png';
+import netorarecrypto from './netorarecrypto.png';
+import opnpc from './opnpc.png';
+import qko from './qko.png';
+import simsrichard from './simsrichard.png';
 
 export const loadingScreens = {
   jackkahunalaguna,
