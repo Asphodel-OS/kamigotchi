@@ -52,8 +52,7 @@ export function registerScene() {
         <Wrapper>
           <Container>
             <Room index={roomIndex} />
-            <Wallpaper src={backgrounds.long} />
-            <Wallpaper />
+            <Wallpaper src={backgrounds.long2} />
           </Container>
         </Wrapper>
       );

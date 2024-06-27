@@ -85,8 +85,10 @@ export const Room = (props: Props) => {
 
   return (
     <Wrapper>
-      <Background src={getBackground()} />
-      {room.objects.map((object) => getClickbox(object))}
+      <Container>
+        <Background src={getBackground()} />
+        {room.objects.map((object) => getClickbox(object))}
+      </Container>
     </Wrapper>
   );
 };
@@ -98,9 +100,15 @@ const Wrapper = styled.div`
   z-index: -2;
 `;
 
+const Container = styled.div`
+  position: relative;
+  width: auto;
+  height: auto;
+`;
 const Background = styled.img`
   width: 100%;
   height: 100%;
+  object-fit: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -115,10 +123,10 @@ interface Coordinates {
 const Clickbox = styled.div<Coordinates>`
   border-radius: 3vw;
   position: absolute;
-  top: ${(props) => props.y1}%;
-  left: ${(props) => props.x1}%;
-  width: ${(props) => props.x2 - props.x1}%;
-  height: ${(props) => props.y2 - props.y1}%;
+  top: ${({ y1 }) => y1}%;
+  left: ${({ x1 }) => x1}%;
+  width: ${({ x1, x2 }) => x2 - x1}%;
+  height: ${({ y1, y2 }) => y2 - y1}%;
 
   cursor: pointer;
   pointer-events: auto;
