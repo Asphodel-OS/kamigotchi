@@ -17,13 +17,18 @@ export const room13: Room = {
   objects: [
     {
       name: 'clock',
-      coordinates: { x1: 85, y1: 20, x2: 106, y2: 41 },
+      coordinates: { x1: 75, y1: 33, x2: 96, y2: 53 },
       dialogue: 131,
     },
     {
       name: 'mina',
-      coordinates: { x1: 33, y1: 20, x2: 66, y2: 68 },
+      coordinates: { x1: 33, y1: 12, x2: 63, y2: 68 },
       dialogue: 132,
+    },
+    {
+      name: 'exit',
+      coordinates: { x1: 83, y1: 17, x2: 111, y2: 32 },
+      dialogue: 133,
     },
     {
       name: 'cashregister',
@@ -31,8 +36,8 @@ export const room13: Room = {
       onClick: () => triggerShopModal(1),
     },
     {
-      name: 'shop door',
-      coordinates: { x1: 118, y1: 30, x2: 127, y2: 47 },
+      name: 'leaderboard',
+      coordinates: { x1: 117, y1: 27, x2: 128, y2: 49 },
       onClick: () => triggerLeaderboardModal('minaSpent'),
     },
   ],

@@ -10,24 +10,14 @@ export const mina: DialogueNode = {
   text: ["Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon."],
 };
 
-export default [clock, mina];
+const exit: DialogueNode = {
+  index: 133,
+  text: ["There's no exit in sight, but you also don't feel trapped."],
+  action: {
+    type: 'move',
+    label: 'Leave',
+    input: 2,
+  },
+};
 
-// export const room13: Room = {
-//   roomIndex: 13,
-//   background: {
-//     key: 'bg_room013',
-//     path: backgroundMina,
-//   },
-//   music: {
-//     key: 'forest',
-//     path: forestOST,
-//   },
-//   objects: [
-//     {
-//       key: 'cashregister',
-//       path: objectCashRegister,
-//       offset: { x: -50.5, y: -8.02 },
-//       onClick: () => triggerShopModal(1),
-//     },
-//   ],
-// };
+export default [clock, mina, exit];
