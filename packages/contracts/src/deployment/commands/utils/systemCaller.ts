@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import execa = require('execa');
 
+import { ParamType } from '@ethersproject/abi';
 import { SystemAbis } from '../../world/mappings/SystemAbis';
 import { idToSystem } from '../../world/mappings/SystemMappings';
 
@@ -8,10 +9,9 @@ type Call = {
   system: string;
   id: string;
   args: string;
-  world?: string;
 };
 
-export const executeCall = async (rpc: string, deployerKey: string, data: Call) => {
+export const executeCall = async (rpc: string, deployerKey: string, data: Call, world?: string) => {
   const child = execa(
     'forge',
     [
@@ -23,7 +23,7 @@ export const executeCall = async (rpc: string, deployerKey: string, data: Call) 
       '--sig',
       'call(uint256,address,uint256,bytes)',
       deployerKey,
-      data.world || '0',
+      world || '0',
       data.system,
       data.args,
     ],
@@ -82,31 +82,23 @@ export const executeGodSystem = async (rpc: string, deployerKey: string, world: 
 export const createCall = (
   systemID: keyof typeof SystemAbis,
   args: any[],
-  typed?: boolean,
-  world?: string
+  encodedArgs: boolean,
+  encodedTypes?: ParamType[]
 ): Call => {
   return {
     system: idToSystem[systemID],
     id: getSystemID(systemID).toString(10),
-    args: typed ? parseArgs(args).join(', ') : encodeArgs(systemID, args),
-    world,
+    args: encodedArgs ? encodeArgs(systemID, args, encodedTypes) : parseArgs(args).join(', '),
   };
 };
 
-export const encodeArgs = (system: keyof typeof SystemAbis, args: any[]) => {
-  const abi = getAbi(system).find((abi) => abi.type === 'function' && abi.name === 'executeTyped');
-  if (abi)
-    return (
-      'hex\\"' +
-      ethers.utils.defaultAbiCoder
-        .encode(
-          abi.inputs.map((n: { type: any }) => n.type),
-          args
-        )
-        .slice(2) +
-      '\\"'
-    );
-  return '';
+export const encodeArgs = (
+  system: keyof typeof SystemAbis,
+  args: any[],
+  encodedTypes?: ParamType[]
+) => {
+  const types = encodedTypes ?? getExecuteTyped(system); // uses executeTyped if no types provided
+  return 'hex\\"' + ethers.utils.defaultAbiCoder.encode(types, args).slice(2) + '\\"';
 };
 
 export const parseArgs = (args: any[]) => {
@@ -140,4 +132,12 @@ const getSystemID = (system: string): bigint => {
 
 const getAbi = (system: keyof typeof SystemAbis) => {
   return SystemAbis[system];
+};
+
+const getExecuteTyped = (system: keyof typeof SystemAbis) => {
+  const abi = getAbi(system).find(
+    (abi: any) => abi.type === 'function' && abi.name === 'executeTyped'
+  );
+  if (!abi) throw new Error('No executeTyped function found');
+  return abi.inputs.map((n: { type: any }) => n.type);
 };

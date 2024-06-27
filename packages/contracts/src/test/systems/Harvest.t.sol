@@ -129,11 +129,11 @@ pragma solidity ^0.8.0;
 //     for (uint32 i = 0; i < 10; i++) {
 //       vm.prank(_getOwner(0));
 //       vm.expectRevert();
-//       __NodeCreateSystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
+//       __NodeRegistrySystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
 
 //       vm.prank(_getOperator(0));
 //       vm.expectRevert();
-//       __NodeCreateSystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
+//       __NodeRegistrySystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
 //     }
 
 //     // test that a node created by the deployer has the expected fields

@@ -1,0 +1,193 @@
+{
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "_world",
+          "type": "address",
+          "internalType": "contract IWorld"
+        },
+        {
+          "name": "_components",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "createConsumable",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "createFood",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "createLootbox",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "createRevive",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "execute",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "remove",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotOwner",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotTransitiveOwner",
+      "inputs": []
+    }
+  ],
+  "methodIdentifiers": {
+    "createConsumable(bytes)": "e96e3836",
+    "createFood(bytes)": "62bd64bd",
+    "createLootbox(bytes)": "b72c6001",
+    "createRevive(bytes)": "a0e9f15c",
+    "execute(bytes)": "09c5eabe",
+    "owner()": "8da5cb5b",
+    "remove(uint32)": "00d84fd8",
+    "transferOwnership(address)": "f2fde38b"
+  }
+}

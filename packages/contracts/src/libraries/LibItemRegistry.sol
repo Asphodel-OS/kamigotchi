@@ -68,6 +68,28 @@ library LibItemRegistry {
     setType(components, id, type_);
   }
 
+  /// @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
+  /** @dev
+   * intended for registry entry 100-1000
+   * potentially just labeled as a consumable in future
+   */
+  function createFood(
+    IUintComp components,
+    uint32 index,
+    string memory name,
+    string memory description,
+    int32 health,
+    uint256 experience,
+    string memory mediaURI
+  ) internal returns (uint256 id) {
+    id = createItem(components, index, name, description, mediaURI);
+    setIsConsumable(components, id);
+    setType(components, id, "FOOD");
+
+    if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
+    if (experience > 0) setExperience(components, id, experience);
+  }
+
   /// @notice sets lootbox registry entity
   /// @param components  The components contract
   /// @param index   The index of the item to create an inventory for
@@ -89,28 +111,6 @@ library LibItemRegistry {
 
     setKeys(components, id, keys);
     setWeights(components, id, weights);
-  }
-
-  /// @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
-  /** @dev
-   * intended for registry entry 100-1000
-   * potentially just labeled as a consumable in future
-   */
-  function createFood(
-    IUintComp components,
-    uint32 index,
-    string memory name,
-    string memory description,
-    int32 health,
-    uint256 experience,
-    string memory mediaURI
-  ) internal returns (uint256 id) {
-    id = createItem(components, index, name, description, mediaURI);
-    setIsConsumable(components, id);
-    setType(components, id, "FOOD");
-
-    if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
-    if (experience > 0) setExperience(components, id, experience);
   }
 
   /// @notice Create a Registry entry for a Revive item. (e.g. ribbon)

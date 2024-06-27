@@ -1,3 +1,4 @@
+import { defaultAbiCoder } from '@ethersproject/abi';
 import { BigNumberish } from 'ethers';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
@@ -77,15 +78,11 @@ export function createAdminAPI(systems: any) {
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create'].executeTyped(
-      goalIndex,
-      name,
-      description,
-      roomIndex,
-      type,
-      logic,
-      conIndex,
-      conValue
+    return systems['system.goal.registry'].create(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'uint32', 'string', 'string', 'uint32', 'uint256'],
+        [goalIndex, name, description, roomIndex, type, logic, conIndex, conValue]
+      )
     );
   }
 
@@ -97,12 +94,11 @@ export function createAdminAPI(systems: any) {
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create.Requirement'].executeTyped(
-      goalIndex,
-      type,
-      logic,
-      conIndex,
-      conValue
+    return systems['system.goal.registry'].addRequirement(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'uint32', 'uint256'],
+        [goalIndex, type, logic, conIndex, conValue]
+      )
     );
   }
 
@@ -116,20 +112,17 @@ export function createAdminAPI(systems: any) {
     conValue: number
   ) {
     await sleepIf();
-    return systems['system.Goal.Create.Reward'].executeTyped(
-      goalIndex,
-      name,
-      cutoff,
-      type,
-      logic,
-      conIndex,
-      conValue
+    return systems['system.goal.registry'].addReward(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'uint256', 'string', 'string', 'uint32', 'uint256'],
+        [goalIndex, name, cutoff, type, logic, conIndex, conValue]
+      )
     );
   }
 
   async function deleteGoal(goalIndex: number) {
     await sleepIf();
-    return systems['system.Goal.Delete'].executeTyped(goalIndex);
+    return systems['system.goal.registry'].remove(goalIndex);
   }
 
   /////////////////
@@ -138,17 +131,19 @@ export function createAdminAPI(systems: any) {
   // (creates an NPC with the name at the specified roomIndex
   async function createNPC(index: number, name: string, roomIndex: number) {
     await sleepIf();
-    return systems['system._NPC.Create'].executeTyped(index, name, roomIndex);
+    return systems['system.npc.registry'].create(
+      defaultAbiCoder.encode(['uint32', 'string', 'uint32'], [index, name, roomIndex])
+    );
   }
 
   async function setNPCRoom(index: number, roomIndex: number) {
     await sleepIf();
-    return systems['system._NPC.Set.Room'].executeTyped(index, roomIndex);
+    return systems['system.npc.registry'].setRoom(index, roomIndex);
   }
 
   async function setNPCName(index: number, name: string) {
     await sleepIf();
-    return systems['system._NPC.Set.Name'].executeTyped(index, name);
+    return systems['system.npc.registry'].setName(index, name);
   }
 
   /////////////////
@@ -204,20 +199,18 @@ export function createAdminAPI(systems: any) {
     affinity: string
   ) {
     await sleepIf();
-    return systems['system._Node.Create'].executeTyped(
-      index,
-      type,
-      roomIndex,
-      name,
-      description,
-      affinity
+    return systems['system.node.registry'].create(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'uint32', 'string', 'string', 'string'],
+        [index, type, roomIndex, name, description, affinity]
+      )
     );
   }
 
   // @dev deletes node
   async function deleteNode(index: number) {
     await sleepIf();
-    return systems['system._Node.Delete'].executeTyped(index);
+    return systems['system.node.registry'].remove(index);
   }
 
   /////////////////
@@ -234,7 +227,7 @@ export function createAdminAPI(systems: any) {
     repeatTime: number
   ) {
     await sleepIf();
-    return systems['system._Registry.Quest.Create'].executeTyped(
+    return systems['system.quest.registry'].executeTyped(
       index,
       name,
       description,
@@ -246,7 +239,7 @@ export function createAdminAPI(systems: any) {
   // delete a quest along with its objectives, requirements and rewards
   async function deleteQuest(index: number) {
     await sleepIf();
-    return systems['system._Registry.Quest.Delete'].executeTyped(index);
+    return systems['system.quest.registry'].remove(index);
   }
 
   // creates a Objective for an existing Quest
@@ -259,13 +252,11 @@ export function createAdminAPI(systems: any) {
     value: number
   ) {
     await sleepIf();
-    return systems['system._Registry.Quest.Create.Objective'].executeTyped(
-      questIndex,
-      name,
-      logicType,
-      type,
-      index,
-      value
+    return systems['system.quest.registry'].addObjective(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'string', 'uint32', 'uint256'],
+        [questIndex, name, logicType, type, index, value]
+      )
     );
   }
 
@@ -278,23 +269,22 @@ export function createAdminAPI(systems: any) {
     value: number
   ) {
     await sleepIf();
-    return systems['system._Registry.Quest.Create.Requirement'].executeTyped(
-      questIndex,
-      logicType,
-      type,
-      index,
-      value
+    return systems['system.quest.registry'].addRequirement(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'uint32', 'uint256'],
+        [questIndex, logicType, type, index, value]
+      )
     );
   }
 
   // creates a Reward for an existing Quest
   async function addQuestReward(questIndex: number, type: string, index: number, value: number) {
     await sleepIf();
-    return systems['system._Registry.Quest.Create.Reward'].executeTyped(
-      questIndex,
-      type,
-      index,
-      value
+    return systems['system.quest.registry'].addReward(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'uint32', 'uint256'],
+        [questIndex, type, index, value]
+      )
     );
   }
 
@@ -312,14 +302,11 @@ export function createAdminAPI(systems: any) {
     exits: number[]
   ) {
     await sleepIf();
-    return systems['system._Room.Create'].executeTyped(
-      x,
-      y,
-      z,
-      roomIndex,
-      name,
-      description,
-      exits.length == 0 ? [] : exits
+    return systems['system.room.registry'].create(
+      defaultAbiCoder.encode(
+        ['int32', 'int32', 'int32', 'uint32', 'string', 'string', 'uint32[]'],
+        [x, y, z, roomIndex, name, description, exits.length == 0 ? [] : exits]
+      )
     );
   }
 
@@ -332,19 +319,17 @@ export function createAdminAPI(systems: any) {
     logicType: string
   ) {
     await sleepIf();
-    return systems['system._Room.Create.Gate'].executeTyped(
-      roomIndex,
-      sourceIndex,
-      conditionIndex,
-      conditionValue,
-      type,
-      logicType
+    return systems['system.room.registry'].addGate(
+      defaultAbiCoder.encode(
+        ['uint32', 'uint32', 'uint32', 'uint32', 'string', 'string'],
+        [roomIndex, sourceIndex, conditionIndex, conditionValue, type, logicType]
+      )
     );
   }
 
   async function deleteRoom(roomIndex: number) {
     await sleepIf();
-    return systems['system._Room.Delete'].executeTyped(roomIndex);
+    return systems['system.room.registry'].remove(roomIndex);
   }
 
   /////////////////
@@ -362,31 +347,36 @@ export function createAdminAPI(systems: any) {
     treeTier: number,
     media: string
   ) {
-    return systems['system._Registry.Skill.Create'].executeTyped(
-      index,
-      for_,
-      type,
-      tree,
-      name,
-      description,
-      cost,
-      max,
-      treeTier,
-      media
+    return systems['system.skill.registry'].create(
+      defaultAbiCoder.encode(
+        [
+          'uint32',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'uint256',
+          'uint256',
+          'uint256',
+          'string',
+        ],
+        [index, for_, type, tree, name, description, cost, max, treeTier, media]
+      )
     );
   }
 
   async function deleteSkill(index: number) {
-    return systems['system._Registry.Skill.Delete'].executeTyped(index);
+    return systems['system.skill.registry'].remove(index);
   }
 
   async function addSkillEffect(skillIndex: number, type: string, subtype: string, value: number) {
     await sleepIf();
-    return systems['system._Registry.Skill.Create.Effect'].executeTyped(
-      skillIndex,
-      type,
-      subtype,
-      value
+    return systems['system.skill.registry'].addEffect(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'int256'],
+        [skillIndex, type, subtype, value]
+      )
     );
   }
 
@@ -398,12 +388,11 @@ export function createAdminAPI(systems: any) {
     value: number
   ) {
     await sleepIf();
-    return systems['system._Registry.Skill.Create.Requirement'].executeTyped(
-      skillIndex,
-      type,
-      logicType,
-      index,
-      value
+    return systems['system.skill.registry'].addRequirement(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'uint32', 'uint256'],
+        [skillIndex, type, logicType, index, value]
+      )
     );
   }
 
@@ -420,13 +409,11 @@ export function createAdminAPI(systems: any) {
     media: string
   ) {
     await sleepIf();
-    return systems['system._Registry.Food.Create'].executeTyped(
-      index,
-      name,
-      description,
-      health,
-      experience,
-      media
+    return systems['system.item.registry'].createFood(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'int32', 'uint256', 'string'],
+        [index, name, description, health, experience, media]
+      )
     );
   }
 
@@ -439,13 +426,11 @@ export function createAdminAPI(systems: any) {
     media: string
   ) {
     await sleepIf();
-    return systems['system._Registry.Lootbox.Create'].executeTyped(
-      index,
-      name,
-      description,
-      keys,
-      weights,
-      media
+    return systems['system.item.registry'].createLootbox(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'uint32[]', 'uint256[]', 'string'],
+        [index, name, description, keys, weights, media]
+      )
     );
   }
 
@@ -458,12 +443,11 @@ export function createAdminAPI(systems: any) {
     media: string
   ) {
     await sleepIf();
-    return systems['system._Registry.Create.Item.Consumable'].executeTyped(
-      index,
-      name,
-      description,
-      type_,
-      media
+    return systems['system.item.registry'].createConsumable(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'string', 'string'],
+        [index, name, description, type_, media]
+      )
     );
   }
 
@@ -476,19 +460,18 @@ export function createAdminAPI(systems: any) {
     media: string
   ) {
     await sleepIf();
-    return systems['system._Registry.Revive.Create'].executeTyped(
-      index,
-      name,
-      description,
-      health,
-      media
+    return systems['system.item.registry'].createRevive(
+      defaultAbiCoder.encode(
+        ['uint32', 'string', 'string', 'int32', 'string'],
+        [index, name, description, health, media]
+      )
     );
   }
 
   // @dev deletes an item registry
   async function deleteItem(index: number) {
     await sleepIf();
-    return systems['system._Registry.Item.Delete'].executeTyped(index);
+    return systems['system.item.registry'].remove(index);
   }
 
   // @dev adds a trait in registry
@@ -505,24 +488,29 @@ export function createAdminAPI(systems: any) {
     type: string
   ) {
     await sleepIf();
-    return systems['system._Registry.Trait.Create'].executeTyped(
-      index,
-      health,
-      power,
-      violence,
-      harmony,
-      slots,
-      rarity,
-      affinity,
-      name,
-      type
+    return systems['system.trait.registry'].create(
+      defaultAbiCoder.encode(
+        [
+          'uint32',
+          'int32',
+          'int32',
+          'int32',
+          'int32',
+          'int32',
+          'uint256',
+          'string',
+          'string',
+          'string',
+        ],
+        [index, health, power, violence, harmony, slots, rarity, affinity, name, type]
+      )
     );
   }
 
   // @dev deletes trait
   async function deleteTrait(index: number, type: string) {
     await sleepIf();
-    return systems['system._Registry.Trait.Delete'].executeTyped(index, type);
+    return systems['system.trait.registry'].remove(index, type);
   }
 
   //////////////////
@@ -536,12 +524,11 @@ export function createAdminAPI(systems: any) {
     blacklist: number[]
   ) {
     await sleepIf();
-    return systems['system._Registry.Relationship.Create'].executeTyped(
-      indexNPC,
-      indexRelationship,
-      name,
-      whitelist,
-      blacklist
+    return systems['system.relationship.registry'].create(
+      defaultAbiCoder.encode(
+        ['uint32', 'uint32', 'string', 'uint32[]', 'uint32[]'],
+        [indexNPC, indexRelationship, name, whitelist, blacklist]
+      )
     );
   }
 
@@ -553,21 +540,17 @@ export function createAdminAPI(systems: any) {
     blacklist: number[]
   ) {
     await sleepIf();
-    return systems['system._Registry.Relationship.Update'].executeTyped(
-      indexNPC,
-      indexRelationship,
-      name,
-      whitelist,
-      blacklist
+    return systems['system.relationship.registry'].update(
+      defaultAbiCoder.encode(
+        ['uint32', 'uint32', 'string', 'uint32[]', 'uint32[]'],
+        [indexNPC, indexRelationship, name, whitelist, blacklist]
+      )
     );
   }
 
   async function deleteRelationship(indexNPC: number, indexRelationship: number) {
     await sleepIf();
-    return systems['system._Registry.Relationship.Delete'].executeTyped(
-      indexNPC,
-      indexRelationship
-    );
+    return systems['system.relationship.registry'].remove(indexNPC, indexRelationship);
   }
 
   //////////////////

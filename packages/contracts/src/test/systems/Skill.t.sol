@@ -18,7 +18,7 @@ contract SkillTest is SetupTemplate {
     _createSkillRequirement(1, "TEST_TYPE", "CURR_MIN", 0, 1);
 
     vm.prank(deployer);
-    __RegistryDeleteSkillSystem.executeTyped(1);
+    __SkillRegistrySystem.remove(1);
   }
 
   // test whether skill upgrades are properly gated by skill point availability

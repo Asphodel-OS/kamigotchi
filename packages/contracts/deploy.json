@@ -120,44 +120,7 @@
       "writeAccess": ["ValueComponent"]
     },
     {
-      "name": "_GoalCreateSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "IsGoalComponent",
-        "IndexComponent",
-        "IndexRoomComponent",
-        "LogicTypeComponent",
-        "NameComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "_GoalCreateRequirementSystem",
-      "writeAccess": [
-        "IDPointerComponent",
-        "IsRequirementComponent",
-        "IndexComponent",
-        "LogicTypeComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "_GoalCreateRewardSystem",
-      "writeAccess": [
-        "IDPointerComponent",
-        "IsRewardComponent",
-        "IndexComponent",
-        "LevelComponent",
-        "LogicTypeComponent",
-        "NameComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "_GoalDeleteSystem",
+      "name": "_GoalRegistrySystem",
       "writeAccess": [
         "DescriptionComponent",
         "IDPointerComponent",
@@ -175,6 +138,23 @@
       ]
     },
     {
+      "name": "_ItemRegistrySystem",
+      "writeAccess": [
+        "DescriptionComponent",
+        "ExperienceComponent",
+        "IsRegistryComponent",
+        "IsConsumableComponent",
+        "IsLootboxComponent",
+        "IndexItemComponent",
+        "HealthComponent",
+        "KeysComponent",
+        "WeightsComponent",
+        "NameComponent",
+        "MediaURIComponent",
+        "TypeComponent"
+      ]
+    },
+    {
       "name": "_ListingSetSystem",
       "writeAccess": [
         "IsListingComponent",
@@ -185,7 +165,7 @@
       ]
     },
     {
-      "name": "_NodeCreateSystem",
+      "name": "_NodeRegistrySystem",
       "writeAccess": [
         "IsNodeComponent",
         "AffinityComponent",
@@ -197,88 +177,15 @@
       ]
     },
     {
-      "name": "_NodeDeleteSystem",
-      "writeAccess": [
-        "IsNodeComponent",
-        "AffinityComponent",
-        "DescriptionComponent",
-        "IndexNodeComponent",
-        "IndexRoomComponent",
-        "NameComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "_NPCCreateSystem",
+      "name": "_NPCRegistrySystem",
       "writeAccess": ["IsNPCComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
     },
     {
-      "name": "_NPCSetRoomSystem",
-      "writeAccess": ["IndexRoomComponent"]
-    },
-    {
-      "name": "_NPCSetNameSystem",
-      "writeAccess": ["NameComponent"]
-    },
-    {
-      "name": "_RegistryCreateItemConsumableSystem",
-      "writeAccess": [
-        "IsConsumableComponent",
-        "IsRegistryComponent",
-        "IndexItemComponent",
-        "DescriptionComponent",
-        "MediaURIComponent",
-        "NameComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateFoodSystem",
-      "writeAccess": [
-        "IndexItemComponent",
-        "IsRegistryComponent",
-        "IsConsumableComponent",
-        "NameComponent",
-        "DescriptionComponent",
-        "ExperienceComponent",
-        "HealthComponent",
-        "MediaURIComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateLootboxSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "IsRegistryComponent",
-        "IsConsumableComponent",
-        "IsLootboxComponent",
-        "IndexItemComponent",
-        "KeysComponent",
-        "WeightsComponent",
-        "NameComponent",
-        "MediaURIComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateQuestSystem",
+      "name": "_QuestRegistrySystem",
       "writeAccess": ["*"]
     },
     {
-      "name": "_RegistryCreateQuestObjectiveSystem",
-      "writeAccess": ["*"]
-    },
-    {
-      "name": "_RegistryCreateQuestRequirementSystem",
-      "writeAccess": ["*"]
-    },
-    {
-      "name": "_RegistryCreateQuestRewardSystem",
-      "writeAccess": ["*"]
-    },
-    {
-      "name": "_RegistryCreateRelationshipSystem",
+      "name": "_RelationshipRegistrySystem",
       "writeAccess": [
         "IsRegistryComponent",
         "IsRelationshipComponent",
@@ -290,113 +197,24 @@
       ]
     },
     {
-      "name": "_RegistryCreateReviveSystem",
+      "name": "_RoomRegistrySystem",
       "writeAccess": [
-        "IndexItemComponent",
-        "IsRegistryComponent",
-        "IsConsumableComponent",
-        "NameComponent",
-        "DescriptionComponent",
-        "HealthComponent",
-        "MediaURIComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateSkillSystem",
-      "writeAccess": [
-        "IsRegistryComponent",
-        "IsSkillComponent",
-        "IndexSkillComponent",
-        "CostComponent",
-        "DescriptionComponent",
-        "ForComponent",
-        "LevelComponent",
-        "MaxComponent",
-        "MediaURIComponent",
-        "NameComponent",
-        "SubtypeComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateSkillEffectSystem",
-      "writeAccess": [
-        "IsRegistryComponent",
-        "IsEffectComponent",
-        "IndexSkillComponent",
-        "IndexComponent",
         "IDPointerComponent",
-        "LogicTypeComponent",
-        "SubtypeComponent",
-        "TypeComponent",
-        "ValueSignedComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateSkillRequirementSystem",
-      "writeAccess": [
-        "IsRegistryComponent",
-        "IsRequirementComponent",
-        "IndexSkillComponent",
+        "IDRoomComponent",
+        "IndexRoomComponent",
         "IndexComponent",
-        "IDPointerComponent",
+        "IsRoomComponent",
+        "DescriptionComponent",
+        "ExitsComponent",
+        "LocationComponent",
         "LogicTypeComponent",
+        "NameComponent",
         "TypeComponent",
         "ValueComponent"
       ]
     },
     {
-      "name": "_RegistryCreateTraitSystem",
-      "writeAccess": ["*"]
-    },
-    {
-      "name": "_RegistryDeleteTraitSystem",
-      "writeAccess": [
-        "IndexBodyComponent",
-        "IndexBackgroundComponent",
-        "IndexColorComponent",
-        "IndexFaceComponent",
-        "IndexHandComponent",
-        "IsRegistryComponent",
-        "NameComponent",
-        "RarityComponent",
-        "AffinityComponent",
-        "ForComponent",
-        "HealthComponent",
-        "HarmonyComponent",
-        "PowerComponent",
-        "SlotsComponent",
-        "ViolenceComponent"
-      ]
-    },
-    {
-      "name": "_RegistryDeleteItemSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "ExperienceComponent",
-        "IsRegistryComponent",
-        "IndexItemComponent",
-        "NameComponent",
-        "TypeComponent",
-        "IsLootboxComponent",
-        "IsConsumableComponent",
-        "HealthComponent",
-        "PowerComponent",
-        "ViolenceComponent",
-        "HarmonyComponent",
-        "MediaURIComponent",
-        "SlotsComponent",
-        "KeysComponent",
-        "WeightsComponent"
-      ]
-    },
-    {
-      "name": "_RegistryDeleteQuestSystem",
-      "writeAccess": ["*"]
-    },
-    {
-      "name": "_RegistryDeleteSkillSystem",
+      "name": "_SkillRegistrySystem",
       "writeAccess": [
         "IDPointerComponent",
         "IsRegistryComponent",
@@ -408,6 +226,7 @@
         "CostComponent",
         "DescriptionComponent",
         "ForComponent",
+        "LevelComponent",
         "IndexComponent",
         "LogicTypeComponent",
         "MaxComponent",
@@ -419,48 +238,8 @@
       ]
     },
     {
-      "name": "_RegistryUpdateRelationshipSystem",
-      "writeAccess": ["NameComponent", "BlacklistComponent", "WhitelistComponent"]
-    },
-    {
-      "name": "_RoomCreateGateSystem",
-      "writeAccess": [
-        "IDPointerComponent",
-        "IDRoomComponent",
-        "IndexRoomComponent",
-        "IndexComponent",
-        "LogicTypeComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "_RoomCreateSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "ExitsComponent",
-        "IsRoomComponent",
-        "IndexRoomComponent",
-        "LocationComponent",
-        "NameComponent"
-      ]
-    },
-    {
-      "name": "_RoomDeleteSystem",
-      "writeAccess": [
-        "IDPointerComponent",
-        "IDRoomComponent",
-        "IndexRoomComponent",
-        "IndexComponent",
-        "IsRoomComponent",
-        "DescriptionComponent",
-        "ExitsComponent",
-        "LocationComponent",
-        "LogicTypeComponent",
-        "NameComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
+      "name": "_TraitRegistrySystem",
+      "writeAccess": ["*"]
     },
     {
       "name": "AccountFundSystem",

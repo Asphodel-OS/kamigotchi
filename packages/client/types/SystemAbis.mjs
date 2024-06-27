@@ -3,38 +3,16 @@ import _721BatchMinterSystem from "../abi/_721BatchMinterSystem.json";
 import _AdminGiveSystem from "../abi/_AdminGiveSystem.json";
 import _AuthManageRoleSystem from "../abi/_AuthManageRoleSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
-import _GoalCreateRequirementSystem from "../abi/_GoalCreateRequirementSystem.json";
-import _GoalCreateRewardSystem from "../abi/_GoalCreateRewardSystem.json";
-import _GoalCreateSystem from "../abi/_GoalCreateSystem.json";
-import _GoalDeleteSystem from "../abi/_GoalDeleteSystem.json";
+import _GoalRegistrySystem from "../abi/_GoalRegistrySystem.json";
+import _ItemRegistrySystem from "../abi/_ItemRegistrySystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
-import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
-import _NodeDeleteSystem from "../abi/_NodeDeleteSystem.json";
-import _NPCCreateSystem from "../abi/_NPCCreateSystem.json";
-import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
-import _NPCSetRoomSystem from "../abi/_NPCSetRoomSystem.json";
-import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
-import _RegistryCreateItemConsumableSystem from "../abi/_RegistryCreateItemConsumableSystem.json";
-import _RegistryCreateLootboxSystem from "../abi/_RegistryCreateLootboxSystem.json";
-import _RegistryCreateQuestObjectiveSystem from "../abi/_RegistryCreateQuestObjectiveSystem.json";
-import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRequirementSystem.json";
-import _RegistryCreateQuestRewardSystem from "../abi/_RegistryCreateQuestRewardSystem.json";
-import _RegistryCreateQuestSystem from "../abi/_RegistryCreateQuestSystem.json";
-import _RegistryCreateRelationshipSystem from "../abi/_RegistryCreateRelationshipSystem.json";
-import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
-import _RegistryCreateSkillEffectSystem from "../abi/_RegistryCreateSkillEffectSystem.json";
-import _RegistryCreateSkillRequirementSystem from "../abi/_RegistryCreateSkillRequirementSystem.json";
-import _RegistryCreateSkillSystem from "../abi/_RegistryCreateSkillSystem.json";
-import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
-import _RegistryDeleteItemSystem from "../abi/_RegistryDeleteItemSystem.json";
-import _RegistryDeleteQuestSystem from "../abi/_RegistryDeleteQuestSystem.json";
-import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshipSystem.json";
-import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
-import _RegistryDeleteTraitSystem from "../abi/_RegistryDeleteTraitSystem.json";
-import _RegistryUpdateRelationshipSystem from "../abi/_RegistryUpdateRelationshipSystem.json";
-import _RoomCreateGateSystem from "../abi/_RoomCreateGateSystem.json";
-import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
-import _RoomDeleteSystem from "../abi/_RoomDeleteSystem.json";
+import _NodeRegistrySystem from "../abi/_NodeRegistrySystem.json";
+import _NPCRegistrySystem from "../abi/_NPCRegistrySystem.json";
+import _QuestRegistrySystem from "../abi/_QuestRegistrySystem.json";
+import _RelationshipRegistrySystem from "../abi/_RelationshipRegistrySystem.json";
+import _RoomRegistrySystem from "../abi/_RoomRegistrySystem.json";
+import _SkillRegistrySystem from "../abi/_SkillRegistrySystem.json";
+import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
@@ -88,38 +66,16 @@ export const SystemAbis = {
   "system._Admin.Give": _AdminGiveSystem.abi,
   "system._Auth.Manage.Role": _AuthManageRoleSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
-  "system.Goal.Create.Requirement": _GoalCreateRequirementSystem.abi,
-  "system.Goal.Create.Reward": _GoalCreateRewardSystem.abi,
-  "system.Goal.Create": _GoalCreateSystem.abi,
-  "system.Goal.Delete": _GoalDeleteSystem.abi,
+  "system.goal.registry": _GoalRegistrySystem.abi,
+  "system.item.registry": _ItemRegistrySystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
-  "system._Node.Create": _NodeCreateSystem.abi,
-  "system._Node.Delete": _NodeDeleteSystem.abi,
-  "system._NPC.Create": _NPCCreateSystem.abi,
-  "system._NPC.Set.Name": _NPCSetNameSystem.abi,
-  "system._NPC.Set.Room": _NPCSetRoomSystem.abi,
-  "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
-  "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem.abi,
-  "system._Registry.Lootbox.Create": _RegistryCreateLootboxSystem.abi,
-  "system._Registry.Quest.Create.Objective": _RegistryCreateQuestObjectiveSystem.abi,
-  "system._Registry.Quest.Create.Requirement": _RegistryCreateQuestRequirementSystem.abi,
-  "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem.abi,
-  "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
-  "system._Registry.Relationship.Create": _RegistryCreateRelationshipSystem.abi,
-  "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
-  "system._Registry.Skill.Create.Effect": _RegistryCreateSkillEffectSystem.abi,
-  "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
-  "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
-  "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
-  "system._Registry.Item.Delete": _RegistryDeleteItemSystem.abi,
-  "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
-  "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem.abi,
-  "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
-  "system._Registry.Trait.Delete": _RegistryDeleteTraitSystem.abi,
-  "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem.abi,
-  "system._Room.Create.Gate": _RoomCreateGateSystem.abi,
-  "system._Room.Create": _RoomCreateSystem.abi,
-  "system._Room.Delete": _RoomDeleteSystem.abi,
+  "system.node.registry": _NodeRegistrySystem.abi,
+  "system.npc.registry": _NPCRegistrySystem.abi,
+  "system.quest.registry": _QuestRegistrySystem.abi,
+  "system.relationship.registry": _RelationshipRegistrySystem.abi,
+  "system.room.registry": _RoomRegistrySystem.abi,
+  "system.skill.registry": _SkillRegistrySystem.abi,
+  "system.trait.registry": _TraitRegistrySystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Register": AccountRegisterSystem.abi,

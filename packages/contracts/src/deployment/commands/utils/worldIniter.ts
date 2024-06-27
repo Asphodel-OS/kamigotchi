@@ -66,7 +66,7 @@ export async function generateSingleCall(
   const toCall = async (api: AdminAPI) => {
     const system = systemID as keyof typeof SystemAbis;
     if (!system) throw new Error(`No such system ${systemID}`);
-    await api.gen(system, args, func, true);
+    await api.gen(system, args, func);
   };
 
   await world.genCalls(toCall);

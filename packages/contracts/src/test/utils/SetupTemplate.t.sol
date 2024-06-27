@@ -398,8 +398,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __GoalCreateSystem.executeTyped(
+      __GoalRegistrySystem.create(
+        abi.encode(
           index,
           "name",
           "description",
@@ -408,8 +408,7 @@ abstract contract SetupTemplate is TestSetupImports {
           condition.logic,
           condition.index,
           condition.value
-        ),
-        (uint256)
+        )
       );
   }
 
@@ -419,15 +418,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __GoalCreateRequirementSystem.executeTyped(
-          index,
-          condition.type_,
-          condition.logic,
-          condition.index,
-          condition.value
-        ),
-        (uint256)
+      __GoalRegistrySystem.addRequirement(
+        abi.encode(index, condition.type_, condition.logic, condition.index, condition.value)
       );
   }
 
@@ -438,8 +430,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __GoalCreateRewardSystem.executeTyped(
+      __GoalRegistrySystem.addReward(
+        abi.encode(
           index,
           "name",
           minCont,
@@ -447,8 +439,7 @@ abstract contract SetupTemplate is TestSetupImports {
           condition.logic,
           condition.index,
           condition.value
-        ),
-        (uint256)
+        )
       );
   }
 
@@ -481,9 +472,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RoomCreateSystem.executeTyped(location.x, location.y, location.z, index, name, "", exits),
-        (uint256)
+      __RoomRegistrySystem.create(
+        abi.encode(location.x, location.y, location.z, index, name, "", exits)
       );
   }
 
@@ -497,16 +487,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RoomCreateGateSystem.executeTyped(
-          roomIndex,
-          sourceIndex,
-          conditionIndex,
-          conditionValue,
-          logicType,
-          type_
-        ),
-        (uint256)
+      __RoomRegistrySystem.addGate(
+        abi.encode(roomIndex, sourceIndex, conditionIndex, conditionValue, logicType, type_)
       );
   }
 
@@ -518,21 +500,15 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory affinity
   ) internal returns (uint) {
     vm.prank(deployer);
-    bytes memory nodeID = __NodeCreateSystem.executeTyped(
-      index,
-      "HARVEST",
-      roomIndex,
-      name,
-      description,
-      affinity
-    );
-    return abi.decode(nodeID, (uint));
+    return
+      __NodeRegistrySystem.create(
+        abi.encode(index, "HARVEST", roomIndex, name, description, affinity)
+      );
   }
 
   function _createNPC(uint32 index, uint32 roomIndex, string memory name) public returns (uint) {
     vm.prank(deployer);
-    bytes memory merchantID = __NPCCreateSystem.executeTyped(index, name, roomIndex);
-    return abi.decode(merchantID, (uint));
+    return __NPCRegistrySystem.create(abi.encode(index, name, roomIndex));
   }
 
   function _setListing(
@@ -577,16 +553,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) public returns (uint256 id) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateFoodSystem.executeTyped(
-          index,
-          name,
-          description,
-          health,
-          experience,
-          mediaURI
-        ),
-        (uint256)
+      __ItemRegistrySystem.createFood(
+        abi.encode(index, name, description, health, experience, mediaURI)
       );
   }
 
@@ -599,10 +567,7 @@ abstract contract SetupTemplate is TestSetupImports {
   ) public returns (uint256 id) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateReviveSystem.executeTyped(index, name, description, health, mediaURI),
-        (uint256)
-      );
+      __ItemRegistrySystem.createRevive(abi.encode(index, name, description, health, mediaURI));
   }
 
   function _createLootbox(
@@ -610,9 +575,10 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory name,
     uint32[] memory keys,
     uint[] memory weights
-  ) public {
+  ) public returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateLootboxSystem.executeTyped(index, name, "DESCRIPTION", keys, weights, "");
+    return
+      __ItemRegistrySystem.createLootbox(abi.encode(index, name, "DESCRIPTION", keys, weights, ""));
   }
 
   /* QUESTS */
@@ -620,15 +586,8 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createQuest(uint32 index, uint duration) public returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateQuestSystem.executeTyped(
-          index,
-          LibString.toString(index),
-          "DESCRIPTION",
-          "",
-          duration
-        ),
-        (uint256)
+      __QuestRegistrySystem.create(
+        abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
       );
   }
 
@@ -642,16 +601,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) public returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateQuestObjectiveSystem.executeTyped(
-          questIndex,
-          name,
-          logicType,
-          _type,
-          index,
-          value
-        ),
-        (uint256)
+      __QuestRegistrySystem.addObjective(
+        abi.encode(questIndex, name, logicType, _type, index, value)
       );
   }
 
@@ -664,16 +615,7 @@ abstract contract SetupTemplate is TestSetupImports {
   ) public returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateQuestRequirementSystem.executeTyped(
-          questIndex,
-          logicType,
-          _type,
-          index,
-          value
-        ),
-        (uint256)
-      );
+      __QuestRegistrySystem.addRequirement(abi.encode(questIndex, logicType, _type, index, value));
   }
 
   function _createQuestReward(
@@ -683,11 +625,7 @@ abstract contract SetupTemplate is TestSetupImports {
     uint value // can be empty
   ) public returns (uint256) {
     vm.prank(deployer);
-    return
-      abi.decode(
-        __RegistryCreateQuestRewardSystem.executeTyped(questIndex, _type, itemIndex, value),
-        (uint256)
-      );
+    return __QuestRegistrySystem.addReward(abi.encode(questIndex, _type, itemIndex, value));
   }
 
   /* RELATIONSHIP */
@@ -707,15 +645,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateRelationshipSystem.executeTyped(
-          npcIndex,
-          relIndex,
-          name,
-          whitelist,
-          blacklist
-        ),
-        (uint256)
+      __RelationshipRegistrySystem.create(
+        abi.encode(npcIndex, relIndex, name, whitelist, blacklist)
       );
   }
 
@@ -755,20 +686,8 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateSkillSystem.executeTyped(
-          index,
-          for_,
-          type_,
-          tree,
-          name,
-          "description",
-          cost,
-          max,
-          treeTier,
-          ""
-        ),
-        (uint256)
+      __SkillRegistrySystem.create(
+        abi.encode(index, for_, type_, tree, name, "description", cost, max, treeTier, "")
       );
   }
 
@@ -779,11 +698,7 @@ abstract contract SetupTemplate is TestSetupImports {
     int value // can be empty
   ) internal returns (uint256) {
     vm.prank(deployer);
-    return
-      abi.decode(
-        __RegistryCreateSkillEffectSystem.executeTyped(skillIndex, type_, subtype, value),
-        (uint256)
-      );
+    return __SkillRegistrySystem.addEffect(abi.encode(skillIndex, type_, subtype, value));
   }
 
   function _createSkillRequirement(
@@ -795,16 +710,7 @@ abstract contract SetupTemplate is TestSetupImports {
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
-      abi.decode(
-        __RegistryCreateSkillRequirementSystem.executeTyped(
-          skillIndex,
-          type_,
-          logicType,
-          index,
-          value
-        ),
-        (uint256)
-      );
+      __SkillRegistrySystem.addRequirement(abi.encode(skillIndex, type_, logicType, index, value));
   }
 
   /* TRAITS */
@@ -822,17 +728,19 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory traitType
   ) internal {
     vm.prank(deployer);
-    __RegistryCreateTraitSystem.executeTyped(
-      specialIndex,
-      health,
-      power,
-      violence,
-      harmony,
-      slots,
-      rarityTier,
-      affinity,
-      name,
-      traitType
+    __TraitRegistrySystem.create(
+      abi.encode(
+        specialIndex,
+        health,
+        power,
+        violence,
+        harmony,
+        slots,
+        rarityTier,
+        affinity,
+        name,
+        traitType
+      )
     );
   }
 

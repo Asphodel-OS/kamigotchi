@@ -10,8 +10,16 @@ export function createAdminAPI(compiledCalls: string[]) {
   // @param args arguments to pass to the system
   // @param func optional, function name to call instead of executeTyped
   // @param typed optional, if true, skip argument encoding
-  function genCall(systemID: keyof typeof SystemAbis, args: any[], func?: string, typed?: boolean) {
-    const call = createCall(systemID, args, typed);
+  function genCall(
+    systemID: keyof typeof SystemAbis,
+    args: any[],
+    func?: string,
+    encodedTypes?: any[]
+  ) {
+    // if execute or has typed args, encode args
+    const encode = func === undefined || encodedTypes !== undefined;
+
+    const call = createCall(systemID, args, encode, encodedTypes);
     compiledCalls.push(`    {
       "system": "${call.system}",
       "id": "${call.id}",
@@ -24,11 +32,11 @@ export function createAdminAPI(compiledCalls: string[]) {
   // AUTH
 
   async function addRole(addr: string, role: string) {
-    genCall('system._Auth.Manage.Role', [addr, role], 'addRole', true);
+    genCall('system._Auth.Manage.Role', [addr, role], 'addRole');
   }
 
   async function removeRole(addr: string, role: string) {
-    genCall('system._Auth.Manage.Role', [addr, role], 'removeRole', true);
+    genCall('system._Auth.Manage.Role', [addr, role], 'removeRole');
   }
 
   /////////////////
@@ -42,12 +50,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     const arr = new Array(8);
     arr.fill(0);
     for (let i = 0; i < value.length; i++) arr[i] = value[i];
-    genCall('system._Config.Set', [field, toUint32FixedArrayLiteral(arr)], 'setValueArray', true);
+    genCall('system._Config.Set', [field, toUint32FixedArrayLiteral(arr)], 'setValueArray');
   }
 
   // values must be ≤ 32char
   async function setConfigString(field: string, value: string) {
-    genCall('system._Config.Set', [field, value], 'setValueString', true);
+    genCall('system._Config.Set', [field, value], 'setValueString');
   }
 
   /////////////////
@@ -63,16 +71,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     conIndex: number,
     conValue: number
   ) {
-    genCall('system.Goal.Create', [
-      goalIndex,
-      name,
-      description,
-      roomIndex,
-      type,
-      logic,
-      conIndex,
-      conValue,
-    ]);
+    genCall(
+      'system.goal.registry',
+      [goalIndex, name, description, roomIndex, type, logic, conIndex, conValue],
+      'create',
+      ['uint32', 'string', 'string', 'uint32', 'string', 'string', 'uint32', 'uint256']
+    );
   }
 
   async function createGoalRequirement(
@@ -82,7 +86,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     conIndex: number,
     conValue: number
   ) {
-    genCall('system.Goal.Create.Requirement', [goalIndex, type, logic, conIndex, conValue]);
+    genCall(
+      'system.goal.registry',
+      [goalIndex, type, logic, conIndex, conValue],
+      'addRequirement',
+      ['uint32', 'string', 'string', 'uint32', 'uint256']
+    );
   }
 
   async function createGoalReward(
@@ -94,19 +103,16 @@ export function createAdminAPI(compiledCalls: string[]) {
     conIndex: number,
     conValue: number
   ) {
-    genCall('system.Goal.Create.Reward', [
-      goalIndex,
-      name,
-      cutoff,
-      type,
-      logic,
-      conIndex,
-      conValue,
-    ]);
+    genCall(
+      'system.goal.registry',
+      [goalIndex, name, cutoff, type, logic, conIndex, conValue],
+      'addReward',
+      ['uint32', 'string', 'uint256', 'string', 'string', 'uint32', 'uint256']
+    );
   }
 
   async function deleteGoal(goalIndex: number) {
-    genCall('system.Goal.Delete', [goalIndex]);
+    genCall('system.goal.registry', [goalIndex], 'remove');
   }
 
   /////////////////
@@ -114,30 +120,34 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   // (creates an NPC with the name at the specified roomIndex
   async function createNPC(index: number, name: string, roomIndex: number) {
-    genCall('system._NPC.Create', [index, name, roomIndex]);
+    genCall('system.npc.registry', [index, name, roomIndex], 'create', [
+      'uint32',
+      'string',
+      'uint32',
+    ]);
   }
 
   async function setNPCRoom(index: number, roomIndex: number) {
-    genCall('system._NPC.Set.Room', [index, roomIndex]);
+    genCall('system.npc.registry', [index, roomIndex], 'setRoom');
   }
 
   async function setNPCName(index: number, name: string) {
-    genCall('system._NPC.Set.Name', [index, name]);
+    genCall('system.npc.registry', [index, name], 'setName');
   }
 
   /////////////////
   // MINT
 
   async function initBatchMinter() {
-    genCall('system.Pet721.BatchMint', [], 'setTraits', true);
+    genCall('system.Pet721.BatchMint', [], 'setTraits');
   }
 
   async function batchMint(amount: number) {
-    genCall('system.Pet721.BatchMint', [amount], 'batchMint', true);
+    genCall('system.Pet721.BatchMint', [amount], 'batchMint');
   }
 
   async function initGachaIncrement() {
-    genCall('system.Pet.Gacha.Mint', [], 'init', true);
+    genCall('system.Pet.Gacha.Mint', [], 'init');
   }
 
   // sets the prices for the merchant at the specified roomIndex
@@ -168,12 +178,17 @@ export function createAdminAPI(compiledCalls: string[]) {
     description: string,
     affinity: string
   ) {
-    genCall('system._Node.Create', [index, type, roomIndex, name, description, affinity]);
+    genCall(
+      'system.node.registry',
+      [index, type, roomIndex, name, description, affinity],
+      'create',
+      ['uint32', 'string', 'uint32', 'string', 'string', 'string']
+    );
   }
 
   // @dev deletes node
   async function deleteNode(index: number) {
-    genCall('system._Node.Delete', [index]);
+    genCall('system.node.registry', [index], 'remove');
   }
 
   /////////////////
@@ -189,12 +204,18 @@ export function createAdminAPI(compiledCalls: string[]) {
     endText: string,
     repeatTime: number
   ) {
-    genCall('system._Registry.Quest.Create', [index, name, description, endText, repeatTime]);
+    genCall('system.quest.registry', [index, name, description, endText, repeatTime], 'create', [
+      'uint32',
+      'string',
+      'string',
+      'string',
+      'uint256',
+    ]);
   }
 
   // delete a quest along with its objectives, requirements and rewards
   async function deleteQuest(index: number) {
-    genCall('system._Registry.Quest.Delete', [index]);
+    genCall('system.quest.registry', [index], 'remove');
   }
 
   // creates a Objective for an existing Quest
@@ -206,14 +227,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     index: number,
     value: BigNumberish
   ) {
-    genCall('system._Registry.Quest.Create.Objective', [
-      questIndex,
-      name,
-      logicType,
-      type,
-      index,
-      value,
-    ]);
+    genCall(
+      'system.quest.registry',
+      [questIndex, name, logicType, type, index, value],
+      'addObjective',
+      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256']
+    );
   }
 
   // creates a Requirement for an existing Quest
@@ -224,13 +243,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     index: number,
     value: BigNumberish
   ) {
-    genCall('system._Registry.Quest.Create.Requirement', [
-      questIndex,
-      logicType,
-      type,
-      index,
-      value,
-    ]);
+    genCall(
+      'system.quest.registry',
+      [questIndex, logicType, type, index, value],
+      'addRequirement',
+      ['uint32', 'string', 'string', 'uint32', 'uint256']
+    );
   }
 
   // creates a Reward for an existing Quest
@@ -240,7 +258,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     index: number,
     value: BigNumberish
   ) {
-    genCall('system._Registry.Quest.Create.Reward', [questIndex, type, index, value]);
+    genCall('system.quest.registry', [questIndex, type, index, value], 'addReward', [
+      'uint32',
+      'string',
+      'uint32',
+      'uint256',
+    ]);
   }
 
   /////////////////
@@ -248,7 +271,6 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   // @dev creates a room with name, roomIndex and exits. cannot overwrite room at roomIndex
   async function createRoom(
-    // location: { x: number; y: number; z: number },
     x: number,
     y: number,
     z: number,
@@ -257,15 +279,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     description: string,
     exits: number[]
   ) {
-    genCall('system._Room.Create', [
-      x,
-      y,
-      z,
-      roomIndex,
-      name,
-      description,
-      exits.length == 0 ? [] : exits,
-    ]);
+    genCall(
+      'system.room.registry',
+      [x, y, z, roomIndex, name, description, exits.length == 0 ? [] : exits],
+      'create',
+      ['int32', 'int32', 'int32', 'uint32', 'string', 'string', 'uint32[]']
+    );
   }
 
   async function createRoomGate(
@@ -276,18 +295,16 @@ export function createAdminAPI(compiledCalls: string[]) {
     type: string,
     logicType: string
   ) {
-    genCall('system._Room.Create.Gate', [
-      roomIndex,
-      sourceIndex,
-      conditionIndex,
-      conditionValue,
-      type,
-      logicType,
-    ]);
+    genCall(
+      'system.room.registry',
+      [roomIndex, sourceIndex, conditionIndex, conditionValue, type, logicType],
+      'addGate',
+      ['uint32', 'uint32', 'uint32', 'uint256', 'string', 'string']
+    );
   }
 
   async function deleteRoom(roomIndex: number) {
-    genCall('system._Room.Delete', [roomIndex]);
+    genCall('system.room.registry', [roomIndex], 'remove');
   }
 
   /////////////////
@@ -305,26 +322,36 @@ export function createAdminAPI(compiledCalls: string[]) {
     treeTier: number,
     media: string
   ) {
-    genCall('system._Registry.Skill.Create', [
-      index,
-      for_,
-      type,
-      tree,
-      name,
-      description,
-      cost,
-      max,
-      treeTier,
-      media,
-    ]);
+    genCall(
+      'system.skill.registry',
+      [index, for_, type, tree, name, description, cost, max, treeTier, media],
+      'create',
+      [
+        'uint32',
+        'string',
+        'string',
+        'string',
+        'string',
+        'string',
+        'uint256',
+        'uint256',
+        'uint256',
+        'string',
+      ]
+    );
   }
 
   async function deleteSkill(index: number) {
-    genCall('system._Registry.Skill.Delete', [index]);
+    genCall('system.skill.registry', [index], 'remove');
   }
 
   async function addSkillEffect(skillIndex: number, type: string, subtype: string, value: number) {
-    genCall('system._Registry.Skill.Create.Effect', [skillIndex, type, subtype, value]);
+    genCall('system.skill.registry', [skillIndex, type, subtype, value], 'addEffect', [
+      'uint32',
+      'string',
+      'string',
+      'int256',
+    ]);
   }
 
   async function addSkillRequirement(
@@ -334,13 +361,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     index: number,
     value: number
   ) {
-    genCall('system._Registry.Skill.Create.Requirement', [
-      skillIndex,
-      type,
-      logicType,
-      index,
-      value,
-    ]);
+    genCall(
+      'system.skill.registry',
+      [skillIndex, type, logicType, index, value],
+      'addRequirement',
+      ['uint32', 'string', 'string', 'uint32', 'uint256']
+    );
   }
 
   /////////////////
@@ -355,7 +381,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     experience: number,
     media: string
   ) {
-    genCall('system._Registry.Food.Create', [index, name, description, health, experience, media]);
+    genCall(
+      'system.item.registry',
+      [index, name, description, health, experience, media],
+      'createFood',
+      ['uint32', 'string', 'string', 'int32', 'uint256', 'string']
+    );
   }
 
   async function registerLootbox(
@@ -366,7 +397,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     weights: number[],
     media: string
   ) {
-    genCall('system._Registry.Lootbox.Create', [index, name, description, keys, weights, media]);
+    genCall(
+      'system.item.registry',
+      [index, name, description, keys, weights, media],
+      'createLootbox',
+      ['uint32', 'string', 'string', 'uint32[]', 'uint256[]', 'string']
+    );
   }
 
   // @dev add a misc item in registry entry
@@ -377,7 +413,13 @@ export function createAdminAPI(compiledCalls: string[]) {
     type_: string,
     media: string
   ) {
-    genCall('system._Registry.Create.Item.Consumable', [index, name, description, type_, media]);
+    genCall('system.item.registry', [index, name, description, type_, media], 'createConsumable', [
+      'uint32',
+      'string',
+      'string',
+      'string',
+      'string',
+    ]);
   }
 
   // @dev add a revive item registry entry
@@ -388,12 +430,18 @@ export function createAdminAPI(compiledCalls: string[]) {
     health: number,
     media: string
   ) {
-    genCall('system._Registry.Revive.Create', [index, name, description, health, media]);
+    genCall('system.item.registry', [index, name, description, health, media], 'createRevive', [
+      'uint32',
+      'string',
+      'string',
+      'int32',
+      'string',
+    ]);
   }
 
   // @dev deletes an item registry
   async function deleteItem(index: number) {
-    genCall('system._Registry.Item.Delete', [index]);
+    genCall('system.item.registry', [index], 'remove');
   }
 
   // @dev adds a trait in registry
@@ -409,23 +457,28 @@ export function createAdminAPI(compiledCalls: string[]) {
     name: string,
     type: string
   ) {
-    genCall('system._Registry.Trait.Create', [
-      index,
-      health,
-      power,
-      violence,
-      harmony,
-      slots,
-      rarity,
-      affinity,
-      name,
-      type,
-    ]);
+    genCall(
+      'system.trait.registry',
+      [index, health, power, violence, harmony, slots, rarity, affinity, name, type],
+      'create',
+      [
+        'uint32',
+        'int32',
+        'int32',
+        'int32',
+        'int32',
+        'int32',
+        'uint256',
+        'string',
+        'string',
+        'string',
+      ]
+    );
   }
 
   // @dev deletes trait
   async function deleteTrait(index: number, type: string) {
-    genCall('system._Registry.Trait.Delete', [index, type]);
+    genCall('system.trait.registry', [index, type], 'remove');
   }
 
   //////////////////
@@ -438,13 +491,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     whitelist: number[],
     blacklist: number[]
   ) {
-    genCall('system._Registry.Relationship.Create', [
-      indexNPC,
-      indexRelationship,
-      name,
-      whitelist,
-      blacklist,
-    ]);
+    genCall(
+      'system.relationship.registry',
+      [indexNPC, indexRelationship, name, whitelist, blacklist],
+      'create',
+      ['uint32', 'uint32', 'string', 'uint32[]', 'uint32[]']
+    );
   }
 
   async function updateRelationship(
@@ -454,17 +506,16 @@ export function createAdminAPI(compiledCalls: string[]) {
     whitelist: number[],
     blacklist: number[]
   ) {
-    genCall('system._Registry.Relationship.Update', [
-      indexNPC,
-      indexRelationship,
-      name,
-      whitelist,
-      blacklist,
-    ]);
+    genCall(
+      'system.relationship.registry',
+      [indexNPC, indexRelationship, name, whitelist, blacklist],
+      'update',
+      ['uint32', 'uint32', 'string', 'uint32[]', 'uint32[]']
+    );
   }
 
   async function deleteRelationship(indexNPC: number, indexRelationship: number) {
-    genCall('system._Registry.Relationship.Delete', [indexNPC, indexRelationship]);
+    genCall('system.relationship.registry', [indexNPC, indexRelationship], 'remove');
   }
 
   return {

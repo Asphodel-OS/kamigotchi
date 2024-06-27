@@ -36,11 +36,11 @@ contract NPCTest is SetupTemplate {
     for (uint i = 0; i < 5; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
-      __NPCCreateSystem.executeTyped(1, "testNPC", 2);
+      __NPCRegistrySystem.create(abi.encode(1, "testNPC", 2));
 
       vm.prank(_getOperator(0));
       vm.expectRevert();
-      __NPCCreateSystem.executeTyped(2, "testNPC", 1);
+      __NPCRegistrySystem.create(abi.encode(2, "testNPC", 1));
     }
 
     // create a npc and ensure its fields are correct
@@ -55,7 +55,7 @@ contract NPCTest is SetupTemplate {
     // test that we can't create a npc with the same index
     vm.expectRevert("NPC: already exists");
     vm.prank(deployer);
-    __NPCCreateSystem.executeTyped(1, "testNPC", 3); // index, name, roomIndex
+    __NPCRegistrySystem.create(abi.encode(1, "testNPC", 3)); // index, name, roomIndex
 
     // but that we CAN create npc with the same name and roomIndex
     uint32 npcIndex2 = 2;
@@ -73,9 +73,9 @@ contract NPCTest is SetupTemplate {
     uint32 newNPCRoomIndex = 2;
     string memory newNPCName = "newNPCName";
     vm.prank(deployer);
-    __NPCSetRoomSystem.executeTyped(2, newNPCRoomIndex);
+    __NPCRegistrySystem.setRoom(2, newNPCRoomIndex);
     vm.prank(deployer);
-    __NPCSetNameSystem.executeTyped(2, newNPCName);
+    __NPCRegistrySystem.setName(2, newNPCName);
 
     assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
     assertEq(npcRoomIndex1, LibNPC.getRoom(components, npcID1));
@@ -88,26 +88,26 @@ contract NPCTest is SetupTemplate {
     // test that we can't update a npc that doesnt exist
     vm.prank(deployer);
     vm.expectRevert("NPC: does not exist");
-    __NPCSetRoomSystem.executeTyped(3, newNPCRoomIndex);
+    __NPCRegistrySystem.setRoom(3, newNPCRoomIndex);
 
     vm.prank(deployer);
     vm.expectRevert("NPC: does not exist");
-    __NPCSetNameSystem.executeTyped(4, newNPCName);
+    __NPCRegistrySystem.setName(4, newNPCName);
 
     // test that we can't update a npc's attributes as a random address
     for (uint i = 0; i < 5; i++) {
       vm.startPrank(_getOwner(i));
       vm.expectRevert();
-      __NPCSetRoomSystem.executeTyped(1, newNPCRoomIndex);
+      __NPCRegistrySystem.setRoom(1, newNPCRoomIndex);
 
       vm.expectRevert();
-      __NPCSetNameSystem.executeTyped(1, newNPCName);
+      __NPCRegistrySystem.setName(1, newNPCName);
 
       vm.expectRevert();
-      __NPCSetRoomSystem.executeTyped(2, newNPCRoomIndex);
+      __NPCRegistrySystem.setRoom(2, newNPCRoomIndex);
 
       vm.expectRevert();
-      __NPCSetNameSystem.executeTyped(2, newNPCName);
+      __NPCRegistrySystem.setName(2, newNPCName);
 
       vm.stopPrank();
     }

@@ -13,7 +13,7 @@ contract GoalsTest is SetupTemplate {
     uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 0, 0));
 
     vm.prank(deployer);
-    __GoalDeleteSystem.executeTyped(index);
+    __GoalRegistrySystem.remove(index);
   }
 
   function testGoalCoinBasic() public {

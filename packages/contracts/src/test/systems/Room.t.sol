@@ -57,7 +57,7 @@ contract RoomTest is SetupTemplate {
     assertEq(spGates[0], gate1);
 
     vm.prank(deployer);
-    __RoomDeleteSystem.executeTyped(1);
+    __RoomRegistrySystem.remove(1);
     assertEq(LibRoom.queryByIndex(components, 1), 0);
     allGates = LibRoom.queryAllGates(components, 1);
     assertEq(allGates.length, 0);
@@ -218,7 +218,7 @@ contract RoomTest is SetupTemplate {
     _createRoom("2", Coord(0, 1, 0), 2);
 
     vm.startPrank(deployer);
-    __RoomCreateGateSystem.executeTyped(2, 0, 0, 0, "ITEM", "CURR_MIN");
+    __RoomRegistrySystem.addGate(abi.encode(2, 0, 0, 0, "ITEM", "CURR_MIN"));
     vm.stopPrank();
 
     _AssertAccRoom(accountIndex, 1);
@@ -236,10 +236,10 @@ contract RoomTest is SetupTemplate {
     _createRoom("4", Coord(11, 10, 10), 4);
     _createRoom("5", Coord(1, 2, 0), 5);
     vm.startPrank(deployer);
-    __RoomCreateGateSystem.executeTyped(2, 0, 10, 1, "ITEM", "CURR_MIN");
-    __RoomCreateGateSystem.executeTyped(3, 0, 10, 1, "ITEM", "CURR_MIN");
-    __RoomCreateGateSystem.executeTyped(4, 1, 10, 1, "ITEM", "CURR_MIN");
-    __RoomCreateGateSystem.executeTyped(5, 1, 10, 1, "ITEM", "CURR_MIN");
+    __RoomRegistrySystem.addGate(abi.encode(2, 0, 10, 1, "ITEM", "CURR_MIN"));
+    __RoomRegistrySystem.addGate(abi.encode(3, 0, 10, 1, "ITEM", "CURR_MIN"));
+    __RoomRegistrySystem.addGate(abi.encode(4, 1, 10, 1, "ITEM", "CURR_MIN"));
+    __RoomRegistrySystem.addGate(abi.encode(5, 1, 10, 1, "ITEM", "CURR_MIN"));
     vm.stopPrank();
 
     uint32 accountIndex = 0;
