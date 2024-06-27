@@ -1,32 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
+import { useNetwork } from 'app/stores';
 import { loadingScreens } from 'assets/images/loading';
 
 export const BootScreen: React.FC<{}> = ({ children }) => {
-  const [rand, setRand] = useState(0); // index of randomly selected banner
+  const { randNum } = useNetwork();
   const bannerKeys = Object.keys(loadingScreens);
   const bannerValues = Object.values(loadingScreens);
 
-  // set the banner on startup and on a 5 second interval
-  useEffect(() => {
-    refreshBanner();
-    const timerId = setInterval(refreshBanner, 5000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
-  }, []);
-
-  // swaps the banner image
-  const refreshBanner = () => {
-    setRand(Math.floor(Math.random() * bannerKeys.length));
+  const getBannerIndex = () => {
+    return Math.floor(randNum * bannerKeys.length);
   };
 
   return (
     <Container>
-      <Image src={bannerValues[rand]} />
+      <Image src={bannerValues[getBannerIndex()]} />
       <Status>{children}</Status>
-      <Tag>banner by: {bannerKeys[rand]}</Tag>
+      <TagContainer>
+        <Tag>banner by: </Tag>
+        <Tag>{bannerKeys[getBannerIndex()]}</Tag>
+      </TagContainer>
     </Container>
   );
 };
@@ -59,18 +53,21 @@ const Status = styled.div`
   width: 100%;
 
   text-align: center;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 3vh;
+  font-family: Pixel;
+  font-size: 2.4vh;
 `;
 
-const Tag = styled.div`
-  color: #fff;
+const TagContainer = styled.div`
   position: absolute;
   bottom: 5vh;
   left: 5vw;
   width: 100%;
+`;
 
+const Tag = styled.div`
+  color: #fff;
   text-align: left;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 2vh;
+  font-family: Pixel;
+  font-size: 1.8vh;
+  line-height: 2.4vh;
 `;

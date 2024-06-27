@@ -4,12 +4,11 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 
-import { privyConfig } from 'clients/privy';
-import { tanstackClient } from 'clients/tanstack';
-import { wagmiConfig } from 'clients/wagmi';
+import { BootScreen } from 'app/components/boot';
+import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
 import { defaultChain } from 'constants/chains';
 import { Layers } from 'network/';
-import { BootScreen, MainWindow } from './components';
+import { MainWindow } from './components';
 import { NetworkContext, RootContext } from './context';
 import { RootStore } from './store';
 

@@ -1,4 +1,5 @@
 import { registerScene } from './canvas';
+export { registerLoadingState } from './boot';
 
 import { registerAccountHeader } from './fixtures/header';
 import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
@@ -9,6 +10,7 @@ import { registerAccountModal } from './modals/account';
 import { registerChatModal } from './modals/chat';
 import { registerDialogueModal } from './modals/dialogue';
 import { registerGachaModal } from './modals/gacha';
+import { registerGoalModal } from './modals/goals';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
 import { registerKamiModal } from './modals/kami';
@@ -22,18 +24,16 @@ import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
 
+// unused
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
 
-import { registerGoalModal } from './modals/goals/Goal';
 import {
   registerAccountRegistrar,
   registerGasHarasser,
   registerOperatorUpdater,
   registerWalletConnecter,
 } from './validators';
-
-export { registerLoadingState } from './LoadingState';
 
 export function registerUIComponents() {
   // fixtures
