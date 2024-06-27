@@ -24,7 +24,7 @@ export function registerScene() {
       const { network } = layers;
       const { world, components } = network;
 
-      return interval(1000).pipe(
+      return interval(100).pipe(
         map(() => {
           const { selectedAddress } = useNetwork.getState();
           const account = getAccountByOwner(world, components, selectedAddress);

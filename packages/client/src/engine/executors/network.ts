@@ -73,7 +73,7 @@ export async function createNetwork(initialConfig: NetworkConfig) {
       filter((blockTimestamp) => blockTimestamp !== clock.currentTime) // Ignore if the current local timestamp is correct
     )
     .subscribe(clock.update); // Update the local clock
-  disposers.push(() => syncBlockSub?.unsubscribe());
+  disposers.push(() => syncBlockSub.unsubscribe());
 
   return {
     providers,

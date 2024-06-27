@@ -23,9 +23,9 @@ export type NetworkConfig = {
 // shape a flat NetworkConfig struct into lattice's SetupContractConfig struct
 const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) => ({
   clock: {
-    period: 1000,
+    period: 500, // what does this even do
     initialTime: 0,
-    syncInterval: 5000,
+    syncInterval: 500,
   },
   provider: {
     jsonRpcUrl: config.jsonRpc,
