@@ -1,18 +1,14 @@
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
 
-import {
-  calcProductionBounty,
-  calcProductionIdletime,
-  getProductionRoomIndex,
-} from '../Production';
+import { calcHarvestBounty, calcHarvestIdletime, getHarvestRoomIndex } from '../Harvest';
 import { Kami } from './types';
 
-// interpret the roomIndex of the kami based on the kami's state (using Account and Production Node)
+// interpret the roomIndex of the kami based on the kami's state (using Account and Harvest Node)
 // return 0 if the roomIndex cannot be determined from information provided
 export const getRoomIndex = (kami: Kami): number => {
   let roomIndex = 0;
   if (isOffWorld(kami)) roomIndex = 0;
-  else if (isHarvesting(kami)) return getProductionRoomIndex(kami.production);
+  else if (isHarvesting(kami)) return getHarvestRoomIndex(kami.production);
   else {
     if (!kami.account) roomIndex = 0;
     else roomIndex = kami.account.roomIndex;
@@ -71,9 +67,7 @@ export const isWithAccount = (kami: Kami): boolean => {
     const kamiLoc = kami.production?.node?.roomIndex ?? 0;
     if (accLoc == 0 || kamiLoc == 0)
       console.warn(
-        `Invalid RoomIndex for kami ${
-          kami.index * 1
-        }\n\tProduction: ${kamiLoc} \n\tAccount: ${accLoc}`
+        `Invalid RoomIndex for kami ${kami.index * 1}\n\tHarvest: ${kamiLoc} \n\tAccount: ${accLoc}`
       );
     return accLoc === kamiLoc;
   }
@@ -97,7 +91,7 @@ export const calcIdleTime = (kami: Kami): number => {
 // calculate the time a production has been active since its last update
 export const calcHarvestTime = (kami: Kami): number => {
   if (!isHarvesting(kami)) return 0;
-  return calcProductionIdletime(kami.production);
+  return calcHarvestIdletime(kami.production);
 };
 
 // calculate the cooldown remaining on kami standard actions
@@ -156,7 +150,7 @@ const calcRestingHealthRate = (kami: Kami): number => {
 // calculate the expected output from a pet production based on start time
 export const calcOutput = (kami: Kami): number => {
   if (!isHarvesting(kami) || !kami.production) return 0;
-  else return calcProductionBounty(kami.production);
+  else return calcHarvestBounty(kami.production);
 };
 
 ////////////////

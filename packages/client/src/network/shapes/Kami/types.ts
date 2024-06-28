@@ -19,8 +19,8 @@ import {
   getKamiConfig,
 } from '../Config';
 import { hasFlag } from '../Flag';
+import { Harvest, getHarvest } from '../Harvest';
 import { Kill, getKill } from '../Kill';
-import { Production, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
@@ -51,7 +51,7 @@ export interface Kami extends DetailedEntity {
   account?: Account;
   deaths?: Kill[];
   kills?: Kill[];
-  production?: Production;
+  production?: Harvest;
   skills?: Skill[];
   traits?: Traits;
   affinities?: string[];
@@ -211,14 +211,14 @@ export const getKami = (
     kami.affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
   }
 
-  // populate Production
+  // populate Harvest
   // NOTE: productions should come after traits for harvest calcs to work correctly
   if (options?.production) {
     const productionIndex = Array.from(
       runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
     )[0];
     if (productionIndex)
-      kami.production = getProduction(world, components, productionIndex, { node: true }, kami);
+      kami.production = getHarvest(world, components, productionIndex, { node: true }, kami);
   }
   /////////////////
   // ADJUSTMENTS

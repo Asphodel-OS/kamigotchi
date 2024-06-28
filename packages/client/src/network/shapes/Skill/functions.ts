@@ -13,7 +13,7 @@ export const getInstance = (target: Account | Kami, rSkill: Skill) => {
 
 // get the reason why a player cannot upgrade a skill
 // checking (in order) roomIndex/status, maxxed out, requirements unmet, not enough points
-// NOTE: assumes Account, Skills and Production are attached to the input Kami
+// NOTE: assumes Account, Skills and Harvest are attached to the input Kami
 export const getUpgradeError = (
   world: World,
   components: Components,

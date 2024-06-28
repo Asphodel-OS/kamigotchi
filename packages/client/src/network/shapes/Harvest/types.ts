@@ -6,8 +6,8 @@ import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './functions';
 
-// standardized shape of an Production Entity
-export interface Production {
+// standardized shape of an Harvest Entity
+export interface Harvest {
   id: EntityID;
   balance: number;
   rate: number;
@@ -20,21 +20,21 @@ export interface Production {
   node?: Node;
 }
 
-// optional data to populate for a Production Entity
-export interface ProductionOptions {
+// optional data to populate for a Harvest Entity
+export interface HarvestOptions {
   node?: boolean;
 }
 
-// get an Production from its EnityIndex
-export const getProduction = (
+// get an Harvest from its EnityIndex
+export const getHarvest = (
   world: World,
   components: Components,
   index: EntityIndex,
-  options?: ProductionOptions,
+  options?: HarvestOptions,
   kami?: Kami
-): Production => {
+): Harvest => {
   const { NodeID, PetID, State, LastTime, ResetTime, StartTime } = components;
-  let production: Production = {
+  let production: Harvest = {
     id: world.entities[index],
     rate: 0,
     balance: getCoinBal(world, components, world.entities[index]),

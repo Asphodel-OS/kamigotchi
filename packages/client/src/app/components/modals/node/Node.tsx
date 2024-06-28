@@ -90,7 +90,7 @@ export function registerNodeModal() {
       // collects on an existing production
       const collect = (kami: Kami) => {
         actions.add({
-          action: 'ProductionCollect',
+          action: 'HarvestCollect',
           params: [kami.id],
           description: `Collecting ${kami.name}'s Harvest`,
           execute: async () => {
@@ -115,7 +115,7 @@ export function registerNodeModal() {
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
         actions.add({
-          action: 'ProductionLiquidate',
+          action: 'HarvestLiquidate',
           params: [enemyKami.production!.id, myKami.id],
           description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
@@ -127,7 +127,7 @@ export function registerNodeModal() {
       // starts a production for the given pet and node
       const start = (kami: Kami, node: Node) => {
         actions.add({
-          action: 'ProductionStart',
+          action: 'HarvestStart',
           params: [kami.id, node.id],
           description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
@@ -139,7 +139,7 @@ export function registerNodeModal() {
       // stops a production
       const stop = (kami: Kami) => {
         actions.add({
-          action: 'ProductionStop',
+          action: 'HarvestStop',
           params: [kami.production!.id],
           description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
           execute: async () => {
