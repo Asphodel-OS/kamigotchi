@@ -17,35 +17,38 @@ contract ListingSellSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 listingID, uint256 amt) = abi.decode(arguments, (uint256, uint256));
+    (uint32 merchantIndex, uint32[] memory itemIndices, uint256 amt) = abi.decode(
+      arguments,
+      (uint32, uint32[], uint256)
+    );
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    uint256 merchantID = LibListing.getMerchant(components, listingID);
-
+    uint256 merchantID = LibNPC.get(components, merchantIndex);
+    require(merchantID != 0, "merchant does not exist");
     require(
       LibNPC.sharesRoomWith(components, merchantID, accountID),
       "Listing.Sell(): must be in same room as npc"
     );
-    require(
-      LibListing.getSellPrice(components, listingID) != 0,
-      "Listing.Sell(): invalid listing!"
-    );
 
-    uint256 price = LibListing.getSellPrice(components, listingID);
-    LibListing.sellTo(components, listingID, accountID, amt);
+    uint256 total;
+    for (uint256 i; i < itemIndices.length; i++) {
+      uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
+      require(listingID != 0, "listing does not exist");
+
+      total += LibListing.sell(components, listingID, accountID, itemIndices[i], amt);
+      LibListing.logIncItemSell(components, accountID, itemIndices[i], amt);
+    }
 
     // standard logging and tracking
-    LibListing.logIncItemSell(
-      components,
-      accountID,
-      LibListing.getItemIndex(components, listingID),
-      amt
-    );
-    LibListing.logEarnCoin(components, accountID, amt * price);
+    LibListing.logEarnCoin(components, accountID, total);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
 
-  function executeTyped(uint256 listingID, uint256 amt) public returns (bytes memory) {
-    return execute(abi.encode(listingID, amt));
+  function executeTyped(
+    uint32 merchantIndex,
+    uint32[] memory itemIndices,
+    uint256 amt
+  ) public returns (bytes memory) {
+    return execute(abi.encode(merchantIndex, itemIndices, amt));
   }
 }

@@ -282,7 +282,9 @@ library LibAccount {
   // DATA LOGGING
 
   function getAndUpdateTotalAccs(IUintComp components) internal returns (uint32) {
-    return uint32(LibDataEntity.inc(components, 0, 0, "TOTAL_NUM_ACCOUNTS", 1));
+    uint256 total = LibDataEntity.get(components, 0, 0, "TOTAL_NUM_ACCOUNTS") + 1;
+    LibDataEntity.set(components, 0, 0, "TOTAL_NUM_ACCOUNTS", total);
+    return uint32(total);
   }
 
   function logIncPetsMinted(

@@ -134,17 +134,19 @@ export function createPlayerAPI(systems: any) {
   //   LISTINGS
 
   // @dev allows a character to buy an item through a merchant listing entity
-  // @param listingID    entity ID of listing
-  // @param amt          amount to buy
-  function buyFromListing(listingID: BigNumberish, amt: number) {
-    return systems['system.Listing.Buy'].executeTyped(listingID, amt);
+  // @param merchantIndex    entity ID of merchant
+  // @param itemIndices      array of item indices
+  // @param amt              amount to buy
+  function buyFromListing(merchantIndex: number, itemIndices: number[], amt: number) {
+    return systems['system.Listing.Buy'].executeTyped(merchantIndex, itemIndices, amt);
   }
 
   // @dev allows a character to sell an item through a merchant listing entity
-  // @param listingID    entity ID of listing
-  // @param amt          amount to sell
-  function sellToListing(listingID: BigNumberish, amt: number) {
-    return systems['system.Listing.Sell'].executeTyped(listingID, amt);
+  // @param merchantIndex    entity ID of merchant
+  // @param itemIndices      array of item indices
+  // @param amt              amount to sell
+  function sellToListing(merchantIndex: number, itemIndices: number[], amt: number) {
+    return systems['system.Listing.Sell'].executeTyped(merchantIndex, itemIndices, amt);
   }
 
   /////////////////

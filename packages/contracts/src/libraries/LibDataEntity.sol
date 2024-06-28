@@ -29,11 +29,18 @@ library LibDataEntity {
   /////////////////
   // INTERACTIONS
 
-  function inc(IUintComp components, uint256 dataID, uint256 amt) internal returns (uint256) {
+  function inc(IUintComp components, uint256 dataID, uint256 amt) internal {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
     comp.set(dataID, value + amt);
-    return value + amt;
+  }
+
+  function inc(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    for (uint256 i; i < dataIDs.length; i++) {
+      uint256 value = comp.has(dataIDs[i]) ? comp.get(dataIDs[i]) : 0;
+      comp.set(dataIDs[i], value + amt);
+    }
   }
 
   function inc(
@@ -42,16 +49,36 @@ library LibDataEntity {
     uint32 index,
     string memory type_,
     uint256 amt
-  ) internal returns (uint256) {
+  ) internal {
     uint256 dataID = getID(holderID, index, type_);
     return inc(components, dataID, amt);
   }
 
-  function dec(IUintComp components, uint256 dataID, uint256 amt) internal returns (uint256) {
+  function inc(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
+    string[] memory types,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], types[i]);
+
+    return inc(components, dataIDs, amt);
+  }
+
+  function dec(IUintComp components, uint256 dataID, uint256 amt) internal {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
     comp.set(dataID, value - amt);
-    return value - amt;
+  }
+
+  function dec(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    for (uint256 i; i < dataIDs.length; i++) {
+      uint256 value = comp.has(dataIDs[i]) ? comp.get(dataIDs[i]) : 0;
+      comp.set(dataIDs[i], value - amt);
+    }
   }
 
   function dec(
@@ -60,9 +87,22 @@ library LibDataEntity {
     uint32 index,
     string memory type_,
     uint256 amt
-  ) internal returns (uint256) {
+  ) internal {
     uint256 dataID = getID(holderID, index, type_);
     return dec(components, dataID, amt);
+  }
+
+  function dec(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
+    string[] memory types,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], types[i]);
+
+    return dec(components, dataIDs, amt);
   }
 
   function set(IUintComp components, uint256 dataID, uint256 value) internal {

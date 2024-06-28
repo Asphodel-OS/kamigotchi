@@ -19,7 +19,7 @@ contract RelationshipAdvanceSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // npc existence and roomIndex check
-    uint256 npcID = LibNPC.getByIndex(components, npcIndex);
+    uint256 npcID = LibNPC.get(components, npcIndex);
     require(npcID != 0, "RS: npc does not exist");
     require(LibNPC.sharesRoomWith(components, npcID, accountID), "RS: must be in same room");
 

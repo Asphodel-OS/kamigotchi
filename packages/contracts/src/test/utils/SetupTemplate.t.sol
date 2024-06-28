@@ -234,13 +234,21 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _buyFromListing(uint playerIndex, uint listingID, uint amount) internal {
+    uint32[] memory itemIndices = new uint32[](1);
+    itemIndices[0] = LibListing.getItemIndex(components, listingID);
+    uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
+
     vm.prank(_getOperator(playerIndex));
-    _ListingBuySystem.executeTyped(listingID, amount);
+    _ListingBuySystem.executeTyped(npcIndex, itemIndices, amount);
   }
 
   function _sellToListing(uint playerIndex, uint listingID, uint amount) internal {
+    uint32[] memory itemIndices = new uint32[](1);
+    itemIndices[0] = LibListing.getItemIndex(components, listingID);
+    uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
+
     vm.prank(_getOperator(playerIndex));
-    _ListingSellSystem.executeTyped(listingID, amount);
+    _ListingSellSystem.executeTyped(npcIndex, itemIndices, amount);
   }
 
   // easy function for getting the proper inputs to feed a pet

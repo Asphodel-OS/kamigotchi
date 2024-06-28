@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -19,36 +18,40 @@ contract ListingBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 listingID, uint256 amt) = abi.decode(arguments, (uint256, uint256));
+    (uint32 merchantIndex, uint32[] memory itemIndices, uint256 amt) = abi.decode(
+      arguments,
+      (uint32, uint32[], uint256)
+    );
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    uint256 merchantID = LibListing.getMerchant(components, listingID);
-
+    uint256 merchantID = LibNPC.get(components, merchantIndex);
+    require(merchantID != 0, "merchant does not exist");
     require(
       LibNPC.sharesRoomWith(components, merchantID, accountID),
       "Listing.Buy(): must be in same room as npc"
     );
-    require(
-      LibListing.getBuyPrice(components, listingID) != 0,
-      "Listing.Buy(): invalid listing!!!"
-    );
 
-    // create an inventory for the account first if one doesn't exist
-    uint32 itemIndex = LibListing.getItemIndex(components, listingID);
-    if (LibInventory.get(components, accountID, itemIndex) == 0)
-      LibInventory.create(components, accountID, itemIndex);
-    uint256 price = LibListing.getBuyPrice(components, listingID);
-    LibListing.buyFrom(components, listingID, accountID, amt);
+    uint256 total;
+    for (uint256 i; i < itemIndices.length; i++) {
+      uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
+      require(listingID != 0, "listing does not exist");
+
+      total += LibListing.buy(components, listingID, accountID, itemIndices[i], amt);
+      LibListing.logIncItemBuy(components, accountID, itemIndices[i], amt);
+    }
 
     // standard logging and tracking
-    LibInventory.logIncItemTotal(components, accountID, itemIndex, amt);
-    LibListing.logSpendCoin(components, accountID, amt * price);
-    LibListing.logIncItemBuy(components, accountID, itemIndex, amt);
-    LibScore.inc(components, accountID, "TOTAL_SPENT", amt * price);
+    LibListing.logSpendCoin(components, accountID, total);
+    LibScore.inc(components, accountID, "TOTAL_SPENT", total);
     LibAccount.updateLastTs(components, accountID);
+
     return "";
   }
 
-  function executeTyped(uint256 listingID, uint256 amt) public returns (bytes memory) {
-    return execute(abi.encode(listingID, amt));
+  function executeTyped(
+    uint32 merchantIndex,
+    uint32[] memory itemIndices,
+    uint256 amt
+  ) public returns (bytes memory) {
+    return execute(abi.encode(merchantIndex, itemIndices, amt));
   }
 }

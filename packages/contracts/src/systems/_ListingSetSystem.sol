@@ -20,7 +20,7 @@ contract _ListingSetSystem is System {
       (uint32, uint32, uint256, uint256)
     );
 
-    require(LibNPC.getByIndex(components, npcIndex) != 0, "NPC: does not exist");
+    require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
     require(LibItemRegistry.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
     uint256 id = LibListing.get(components, npcIndex, itemIndex);

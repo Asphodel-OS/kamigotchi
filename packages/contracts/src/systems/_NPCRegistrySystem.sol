@@ -18,21 +18,21 @@ contract _NPCRegistrySystem is System {
       (uint32, string, uint32)
     );
 
-    uint256 id = LibNPC.getByIndex(components, index);
+    uint256 id = LibNPC.get(components, index);
     require(id == 0, "NPC: already exists");
 
     return LibNPC.create(components, index, name, roomIndex);
   }
 
   function setName(uint32 index, string memory name) public onlyOwner {
-    uint256 id = LibNPC.getByIndex(components, index);
+    uint256 id = LibNPC.get(components, index);
     require(id != 0, "NPC: does not exist");
 
     LibNPC.setName(components, id, name);
   }
 
   function setRoom(uint32 index, uint32 roomIndex) public onlyOwner {
-    uint256 id = LibNPC.getByIndex(components, index);
+    uint256 id = LibNPC.get(components, index);
     require(id != 0, "NPC: does not exist");
 
     LibNPC.setRoomIndex(components, id, roomIndex);

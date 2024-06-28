@@ -53,7 +53,7 @@ export function registerBuyModal() {
           params: [listing.id, amt],
           description: `Buying ${amt} of ${listing.item!.name}`,
           execute: async () => {
-            return api.player.listing.buy(listing.id, amt);
+            return api.player.listing.buy(listing.NPCIndex, [listing.item.index], amt);
           },
         });
         closeModal();

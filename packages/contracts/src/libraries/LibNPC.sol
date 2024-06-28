@@ -77,7 +77,7 @@ library LibNPC {
   // QUERIES
 
   // Return the ID of a Merchant by its index
-  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
+  function get(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
     IsNPCComponent comp = IsNPCComponent(getAddressById(components, IsNPCCompID));
     return comp.has(id) ? id : 0;

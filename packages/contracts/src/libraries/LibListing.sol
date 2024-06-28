@@ -53,63 +53,46 @@ library LibListing {
 
   // processes a buy for amt of item from a listing to an account. assumes the account already
   // has the appropriate inventory entity
-  function buyFrom(
+  function buy(
     IUintComp components,
-    uint256 id,
+    uint256 listingID,
     uint256 accountID,
+    uint32 itemIndex,
     uint256 amt
-  ) internal returns (bool) {
-    uint32 itemIndex = getItemIndex(components, id);
-    uint256 price = getBuyPrice(components, id);
-    if (price == 0) {
-      return false;
-    }
+  ) internal returns (uint256 total) {
+    uint256 price = getBuyPrice(components, listingID);
+    require(price > 0, "Listing.Buy(): invalid listing");
 
+    total = amt * price;
     LibInventory.incFor(components, accountID, itemIndex, amt);
-    LibInventory.decFor(components, accountID, MUSU_INDEX, amt * price);
-    return true;
+    LibInventory.decFor(components, accountID, MUSU_INDEX, total);
   }
 
   // processes a sell for amt of item from an account to a listing
-  function sellTo(
+  function sell(
     IUintComp components,
-    uint256 id,
+    uint256 listingID,
     uint256 accountID,
+    uint32 itemIndex,
     uint256 amt
-  ) internal returns (bool) {
-    uint32 itemIndex = getItemIndex(components, id);
-    uint256 price = getSellPrice(components, id);
-    if (price == 0) {
-      return false;
-    }
+  ) internal returns (uint256 total) {
+    uint256 price = getSellPrice(components, listingID);
+    require(price > 0, "Listing.Sell(): invalid listing");
 
+    total = amt * price;
     LibInventory.decFor(components, accountID, itemIndex, amt);
-    LibInventory.incFor(components, accountID, MUSU_INDEX, amt * price);
-    return true;
-  }
-
-  /////////////////
-  // CHECKERS
-
-  function hasBuyPrice(IUintComp components, uint256 id) internal view returns (bool) {
-    return PriceBuyComponent(getAddressById(components, PriceBuyCompID)).has(id);
-  }
-
-  function hasSellPrice(IUintComp components, uint256 id) internal view returns (bool) {
-    return PriceSellComponent(getAddressById(components, PriceSellCompID)).has(id);
+    LibInventory.incFor(components, accountID, MUSU_INDEX, total);
   }
 
   /////////////////
   // SETTERS
 
   function removeBuyPrice(IUintComp components, uint256 id) internal {
-    if (hasBuyPrice(components, id))
-      PriceBuyComponent(getAddressById(components, PriceBuyCompID)).remove(id);
+    PriceBuyComponent(getAddressById(components, PriceBuyCompID)).remove(id);
   }
 
   function removeSellPrice(IUintComp components, uint256 id) internal {
-    if (hasSellPrice(components, id))
-      PriceSellComponent(getAddressById(components, PriceSellCompID)).remove(id);
+    PriceSellComponent(getAddressById(components, PriceSellCompID)).remove(id);
   }
 
   function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
@@ -125,7 +108,7 @@ library LibListing {
 
   // return the ID of the merchant that hosts a listing
   function getMerchant(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibNPC.getByIndex(components, getNPCIndex(components, id));
+    return LibNPC.get(components, getNPCIndex(components, id));
   }
 
   function getNPCIndex(IUintComp components, uint256 id) internal view returns (uint32) {
@@ -138,13 +121,13 @@ library LibListing {
   }
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    if (hasBuyPrice(components, id))
-      price = PriceBuyComponent(getAddressById(components, PriceBuyCompID)).get(id);
+    PriceBuyComponent comp = PriceBuyComponent(getAddressById(components, PriceBuyCompID));
+    return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    if (hasSellPrice(components, id))
-      price = PriceSellComponent(getAddressById(components, PriceSellCompID)).get(id);
+    PriceSellComponent comp = PriceSellComponent(getAddressById(components, PriceSellCompID));
+    return comp.has(id) ? comp.get(id) : 0;
   }
 
   /////////////////
@@ -177,8 +160,18 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(components, accountID, 0, "ITEM_BUY_TOTAL", amt);
-    LibDataEntity.inc(components, accountID, itemIndex, "ITEM_BUY", amt);
+    uint32[] memory indices = new uint32[](3);
+    indices[1] = itemIndex;
+    indices[2] = itemIndex;
+    string[] memory types = new string[](3);
+    types[0] = "ITEM_BUY_TOTAL";
+    types[1] = "ITEM_BUY";
+    types[2] = "ITEM_TOTAL";
+
+    LibDataEntity.inc(components, accountID, indices, types, amt);
+
+    // LibDataEntity.inc(components, accountID, 0, "ITEM_BUY_TOTAL", amt);
+    // LibDataEntity.inc(components, accountID, itemIndex, "ITEM_BUY", amt);
   }
 
   /// @notice log increase for item sell
@@ -188,8 +181,16 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(components, accountID, 0, "ITEM_SELL_TOTAL", amt);
-    LibDataEntity.inc(components, accountID, itemIndex, "ITEM_SELL", amt);
+    uint32[] memory indices = new uint32[](2);
+    indices[1] = itemIndex;
+    string[] memory types = new string[](2);
+    types[0] = "ITEM_SELL_TOTAL";
+    types[1] = "ITEM_SELL";
+
+    LibDataEntity.inc(components, accountID, indices, types, amt);
+
+    // LibDataEntity.inc(components, accountID, 0, "ITEM_SELL_TOTAL", amt);
+    // LibDataEntity.inc(components, accountID, itemIndex, "ITEM_SELL", amt);
   }
 
   /// @notice log coins spent
@@ -199,6 +200,15 @@ library LibListing {
 
   /// @notice log coin revenue earned
   function logEarnCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
-    LibDataEntity.inc(components, accountID, MUSU_INDEX, "ITEM_REVENUE", amt);
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = MUSU_INDEX;
+    indices[1] = MUSU_INDEX;
+    string[] memory types = new string[](2);
+    types[0] = "ITEM_REVENUE";
+    types[1] = "ITEM_TOTAL";
+
+    LibDataEntity.inc(components, accountID, indices, types, amt);
+
+    // LibDataEntity.inc(components, accountID, MUSU_INDEX, "ITEM_REVENUE", amt);
   }
 }

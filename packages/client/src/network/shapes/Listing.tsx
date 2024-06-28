@@ -17,11 +17,12 @@ export interface Listing {
   entityIndex: EntityIndex;
   buyPrice: number;
   item: Item;
+  NPCIndex: number;
 }
 
 // get an Listing from its EntityIndex
 export const getListing = (world: World, components: Components, index: EntityIndex): Listing => {
-  const { IsRegistry, ItemIndex, PriceBuy } = components;
+  const { IsRegistry, ItemIndex, NPCIndex, PriceBuy } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
@@ -35,6 +36,7 @@ export const getListing = (world: World, components: Components, index: EntityIn
     entityIndex: index,
     buyPrice: (getComponentValue(PriceBuy, index)?.value as number) * 1,
     item: item,
+    NPCIndex: (getComponentValue(NPCIndex, index)?.value as number) * 1,
   };
 
   return listing;

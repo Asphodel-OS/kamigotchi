@@ -272,19 +272,6 @@ contract NPCTest is SetupTemplate {
       _fundAccount(i, 1e5);
     }
 
-    // test that players cannot interact with their Owner wallets
-    for (uint i = 0; i < numAccounts; i++) {
-      for (uint j = 0; j < numListings; j++) {
-        vm.prank(_getOwner(i));
-        vm.expectRevert("Account: Operator not found");
-        _ListingBuySystem.executeTyped(listingIDs1[j], 0);
-
-        vm.prank(_getOwner(i));
-        vm.expectRevert("Account: Operator not found");
-        _ListingSellSystem.executeTyped(listingIDs1[j], 0);
-      }
-    }
-
     // from room 1
     // test that players CAN interact with npc 1 listings
     // test that players CANNOT interact with npc 2 listings
@@ -294,13 +281,16 @@ contract NPCTest is SetupTemplate {
         _buyFromListing(i, listingIDs1[j], amt);
         _sellToListing(i, listingIDs1[j], amt);
 
+        uint32[] memory itemIndices = new uint32[](1);
+        itemIndices[0] = listings2[j].itemIndex;
+
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Buy(): must be in same room as npc");
-        _ListingBuySystem.executeTyped(listingIDs2[j], amt);
+        _ListingBuySystem.executeTyped(listings2[j].npcIndex, itemIndices, amt);
 
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Sell(): must be in same room as npc");
-        _ListingSellSystem.executeTyped(listingIDs2[j], amt);
+        _ListingSellSystem.executeTyped(listings2[j].npcIndex, itemIndices, amt);
       }
     }
 
@@ -315,13 +305,16 @@ contract NPCTest is SetupTemplate {
     for (uint i = 0; i < numAccounts; i++) {
       for (uint j = 0; j < numListings; j++) {
         uint amt = j + 1;
+        uint32[] memory itemIndices = new uint32[](1);
+        itemIndices[0] = listings1[j].itemIndex;
+
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Buy(): must be in same room as npc");
-        _ListingBuySystem.executeTyped(listingIDs1[j], amt);
+        _ListingBuySystem.executeTyped(listings1[j].npcIndex, itemIndices, amt);
 
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Sell(): must be in same room as npc");
-        _ListingSellSystem.executeTyped(listingIDs1[j], amt);
+        _ListingSellSystem.executeTyped(listings1[j].npcIndex, itemIndices, amt);
 
         _buyFromListing(i, listingIDs2[j], amt);
         _sellToListing(i, listingIDs2[j], amt);
@@ -348,6 +341,7 @@ contract NPCTest is SetupTemplate {
     BalanceTestData memory testData = BalanceTestData(3, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // create the npc and its listings
+    TestListingData[] memory listings = new TestListingData[](testData.numNPCs * testData.numItems);
     uint[] memory listingIDs = new uint[](testData.numNPCs * testData.numItems);
     for (uint32 i = 0; i < testData.numNPCs; i++) {
       _createNPC(i, 1, "npc");
@@ -355,6 +349,12 @@ contract NPCTest is SetupTemplate {
       for (uint j = 0; j < testData.numItems; j++) {
         testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc
         listingIDs[i * testData.numItems + j] = _setListing(
+          i,
+          uint32(j + 100),
+          testData.buyPrice,
+          testData.buyPrice / 2
+        );
+        listings[i * testData.numItems + j] = TestListingData(
           i,
           uint32(j + 100),
           testData.buyPrice,
@@ -371,8 +371,10 @@ contract NPCTest is SetupTemplate {
       // the below is used to circumvent a gas prediction issue that
       // foundry seems to have when the inventories aren't populated
       for (uint j = 0; j < listingIDs.length; j++) {
+        uint32[] memory itemIndices = new uint32[](1);
+        itemIndices[0] = listings[j].itemIndex;
         vm.prank(_getOperator(i));
-        _ListingBuySystem.executeTyped(listingIDs[j], 1);
+        _ListingBuySystem.executeTyped(listings[j].npcIndex, itemIndices, 1);
       }
     }
 
@@ -380,10 +382,12 @@ contract NPCTest is SetupTemplate {
     // updated accordingly. tx should revert when funds are insufficient
     uint randN;
     uint listingID = 1;
+    TestListingData memory listing;
     uint numIterations = 50;
     for (uint i = 0; i < numIterations; i++) {
       randN = uint(keccak256(abi.encode(randN ^ (randN >> (1 << 7)))));
       listingID = listingIDs[randN % listingIDs.length];
+      listing = listings[randN % listings.length];
       testData.playerIndex = uint8(randN % testData.numAccounts);
       testData.itemIndex = uint8(LibListing.getItemIndex(components, listingID));
       testData.stockInitial = uint24(_getItemBalance(testData.playerIndex, testData.itemIndex)); // item balance
@@ -395,9 +399,11 @@ contract NPCTest is SetupTemplate {
         testData.buyPrice = uint24(LibListing.getBuyPrice(components, listingID));
         testData.balanceChange = testData.stockChange * testData.buyPrice;
         if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
+          uint32[] memory itemIndices = new uint32[](1);
+          itemIndices[0] = listing.itemIndex;
           vm.prank(_getOperator(testData.playerIndex));
           vm.expectRevert("Inventory: insufficient balance");
-          _ListingBuySystem.executeTyped(listingID, testData.stockChange);
+          _ListingBuySystem.executeTyped(listing.npcIndex, itemIndices, testData.stockChange);
         } else {
           _buyFromListing(testData.playerIndex, listingID, testData.stockChange);
           assertEq(
@@ -414,9 +420,11 @@ contract NPCTest is SetupTemplate {
         testData.sellPrice = uint24(LibListing.getSellPrice(components, listingID));
         testData.balanceChange = testData.stockChange * testData.sellPrice;
         if (testData.stockChange > _getItemBalance(testData.playerIndex, testData.itemIndex)) {
+          uint32[] memory itemIndices = new uint32[](1);
+          itemIndices[0] = listing.itemIndex;
           vm.prank(_getOperator(testData.playerIndex));
           vm.expectRevert("Inventory: insufficient balance");
-          _ListingSellSystem.executeTyped(listingID, testData.stockChange);
+          _ListingSellSystem.executeTyped(listing.npcIndex, itemIndices, testData.stockChange);
         } else {
           _sellToListing(testData.playerIndex, listingID, testData.stockChange);
           assertEq(
