@@ -5,11 +5,14 @@ import "forge-std/Script.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibDeploy, DeployResult } from "./LibDeploy.sol";
 
-contract Deploy is Script {
+import { InitWorld } from "./InitWorld.s.sol";
+
+contract Deploy is InitWorld {
   function deploy(
     uint256 deployerPriv,
     address worldAddr,
-    bool reuseComps
+    bool reuseComps,
+    bool initWorld
   ) external returns (IWorld world, uint256 startBlock) {
     startBlock = block.number;
 
@@ -17,5 +20,11 @@ contract Deploy is Script {
     vm.startBroadcast(deployerPriv);
     DeployResult memory result = LibDeploy.deploy(deployer, worldAddr, reuseComps);
     world = worldAddr == address(0) ? result.world : IWorld(worldAddr);
+
+    // init world using init world script
+    if (initWorld) {
+      _setUp(address(world)); // set up global variables
+      _initWorld(address(world));
+    }
   }
 }

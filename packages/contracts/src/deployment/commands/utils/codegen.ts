@@ -84,8 +84,17 @@ export async function generateInitWorld() {
 }
 
 export async function clearInitWorld() {
+  // const initWorldPath = path.join(contractsDir, 'InitWorld.s.sol');
+  // await rm(initWorldPath, { force: true });
+  const InitWorld = await ejs.renderFile(
+    path.join(contractsDir, 'InitWorld.s.ejs'),
+    { calls: [] },
+    {
+      async: true,
+    }
+  );
   const initWorldPath = path.join(contractsDir, 'InitWorld.s.sol');
-  await rm(initWorldPath, { force: true });
+  await writeFile(initWorldPath, InitWorld);
 }
 
 export async function generateSystemTypes(

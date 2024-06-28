@@ -7,9 +7,14 @@ import { SystemCall } from "./SystemCall.s.sol";
 import { Coord } from "libraries/LibRoom.sol";
 
 contract InitWorld is SystemCall {
-  function initWorld(uint256 deployerPriv, address worldAddr) external {
+  function initWorld(uint256 deployerPriv, address worldAddr) public {
     _setUp(worldAddr);
     vm.startBroadcast(deployerPriv);
+
+    _initWorld(worldAddr);
+  }
+  
+  function _initWorld( address worldAddr) internal {
     <% calls.forEach(call=> { -%>
       <%- call.system %>(_getSysAddr(<%- call.id %>)).<%- call.func %>(
         <%- call.args %>

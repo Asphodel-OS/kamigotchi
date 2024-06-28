@@ -6,7 +6,7 @@ const openurl = require('openurl');
 import { clearInitWorld } from './utils/codegen';
 import { generateAndDeploy } from './utils/deployer';
 import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from './utils/utils';
-import { generateInitScript, initWorld } from './utils/worldIniter';
+import { generateInitScript } from './utils/worldIniter';
 
 const argv = yargs(hideBin(process.argv)).argv;
 dotenv.config();
@@ -40,22 +40,9 @@ const run = async () => {
     worldAddress: world,
     components: argv.components,
     systems: argv.systems,
+    initWorld: argv.init,
     forgeOpts: argv.forgeOpts,
   });
-
-  // world state
-  if (argv.init) {
-    await initWorld(
-      getDeployerKey(mode)!,
-      getRpc(mode)!,
-      result.deployedWorldAddress!,
-      argv.forgeOpts
-    );
-
-    console.log('---------------------------------------------\n');
-    console.log('World state initialized ');
-    console.log('\n---------------------------------------------');
-  }
 
   openurl.open(
     'http://localhost:3000/?worldAddress=' +
@@ -65,7 +52,7 @@ const run = async () => {
   );
 
   await setAutoMine(mode, false);
-  await setTimestamp(mode);
+  await setTimestamp(mode && world);
 };
 
 run();
