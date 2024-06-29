@@ -40,8 +40,17 @@ export const Logs = (props: Props) => {
       const bodyStart = metadata.indexOf('body=');
       if (bodyStart != -1) {
         const errorStart = metadata.indexOf('error='); // used to determine end of body segment
-        const body = metadata.substring(bodyStart + 6, errorStart - 5).replaceAll('\\"', '"');
-        const response = JSON.parse(body);
+
+        // retarded patch for now bc privy ruins error parsing
+        let response: any;
+        try {
+          const body = metadata.substring(bodyStart + 6, errorStart - 3).replaceAll('\\"', '"');
+          response = JSON.parse(body);
+        } catch (e) {
+          const body = metadata.substring(bodyStart + 6, errorStart - 5).replaceAll('\\"', '"');
+          response = JSON.parse(body);
+        }
+
         const responseMessage = response?.error?.message ?? response?.message;
         const splitIndex = responseMessage.indexOf(':');
         if (splitIndex != -1) {
