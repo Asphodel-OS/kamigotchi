@@ -27,6 +27,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initTraits(api);
   await initRelationships(api);
   await initGoals(api);
+  await initGachaPool(api, 50);
 
   if (local) {
     await initAllLocal(api);
@@ -36,7 +37,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
 export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
-  await initGachaPool(api, 50);
+  // await initGachaPool(api, 50);
   await initLocalQuests(api);
 }
 

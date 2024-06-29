@@ -27,14 +27,14 @@ export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
 }
 
 export async function initLocalQuests(api: AdminAPI) {
-  // api.registry.quest.create(
-  //   1000000,
-  //   'The Chosen Taruchi',
-  //   'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
-  //   'Was it really worth it?',
-  //   0
-  // );
-  // api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
+  api.registry.quest.create(
+    1000000,
+    'The Chosen Taruchi',
+    'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
+    'Was it really worth it?',
+    0
+  );
+  api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
 }
 
 export async function deleteQuests(api: AdminAPI, indices: number[]) {

@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -6,7 +6,6 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { getItem, getItemByIndex } from 'network/shapes/Item';
 import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'network/shapes/Quest';
 import { getRoomByIndex } from 'network/shapes/Room';
 import { getDescribedEntity } from 'network/shapes/utils/parseDescription';
@@ -107,7 +106,7 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
-          footer={<Footer balance={data.account.questPoints} />}
+          footer={<Footer balance={data.account.reputation.agency} />}
           canExit
         >
           <List
@@ -117,11 +116,8 @@ export function registerQuestsModal() {
             actions={{ acceptQuest, completeQuest }}
             utils={{
               setNumAvail: (num: number) => setNumAvail(num),
-              getItem: (index: EntityIndex) => getItem(world, components, index),
               getRoom: (roomIndex: number) => getRoomByIndex(world, components, roomIndex),
               getQuestByIndex: (index: number) => getQuestByIndex(world, components, index),
-              queryItemRegistry: (index: number) =>
-                getItemByIndex(world, components, index).entityIndex,
               getDescribedEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
             }}

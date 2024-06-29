@@ -1,3 +1,4 @@
+import { Tooltip } from 'app/components/library';
 import styled from 'styled-components';
 
 interface Props {
@@ -6,8 +7,17 @@ interface Props {
 
 export const Footer = (props: Props) => {
   return (
-    <Container key='quest points'>
-      <Text>Quest Points: </Text>
+    <Container>
+      <Tooltip
+        text={[
+          `REPUTATION represents your relationship with the Kamigotchi Tourism Agency.`,
+          '',
+          `This is what you'll need for more, uh, permanent rewards....`,
+        ]}
+      >
+        <Text>REPUTATION: </Text>
+      </Tooltip>
+
       <Balance>{Number(props.balance)}</Balance>
     </Container>
   );

@@ -5,6 +5,7 @@ import { DetailedEntity, GachaTicket } from './EntityTypes';
 import { helpIcon, questsIcon } from 'assets/images/icons/menu';
 
 import moment from 'moment';
+import { getFactionByIndex } from '../Faction';
 import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
@@ -28,6 +29,8 @@ export const getDescribedEntity = (
       image: questsIcon,
       name: getQuestByIndex(world, components, index)?.name ?? `Quest ${index}`,
     };
+  else if (type === 'FACTION' || type === 'REPUTATION')
+    return getFactionByIndex(world, components, index);
   else if (type === 'MINT20')
     return GachaTicket; // hardcoded gacha ticket
   else return { ObjectType: type, image: helpIcon, name: type };

@@ -4,6 +4,7 @@ import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { getData } from '../Data';
+import { getReputation } from '../Faction';
 import {
   Friendship,
   getAccBlocked,
@@ -33,7 +34,9 @@ export interface Account {
   coin: number;
   roomIndex: number;
   level: number;
-  questPoints: number;
+  reputation: {
+    agency: number;
+  };
   skillPoints: number;
   stamina: Stat;
   time: {
@@ -119,7 +122,9 @@ export const getAccount = (
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     kamis: [], // placeholder
     level: 0, // placeholder
-    questPoints: 0, // QP is deprecated
+    reputation: {
+      agency: getReputation(world, components, id, 1), // get agency rep
+    },
     skillPoints: 0, // placeholder
     stamina: getStat(entityIndex, Stamina),
     time: {

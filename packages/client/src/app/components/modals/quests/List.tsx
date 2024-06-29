@@ -1,4 +1,3 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -6,7 +5,6 @@ import { ActionButton, Tooltip } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/indices';
 import moment from 'moment';
 import { Account } from 'network/shapes/Account';
-import { Item } from 'network/shapes/Item';
 import { Objective, Quest, Requirement, Reward } from 'network/shapes/Quest';
 import { Room } from 'network/shapes/Room';
 import { Condition } from 'network/shapes/utils/Conditionals';
@@ -22,8 +20,6 @@ interface Props {
   };
   utils: {
     setNumAvail: (num: number) => void;
-    queryItemRegistry: (index: number) => EntityIndex;
-    getItem: (index: EntityIndex) => Item;
     getRoom: (roomIndex: number) => Room;
     getQuestByIndex: (index: number) => Quest | undefined;
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
@@ -31,6 +27,9 @@ interface Props {
 }
 
 export const List = (props: Props) => {
+  const { account, registryQuests, mode, actions, utils } = props;
+  const { getQuestByIndex, getRoom, getDescribedEntity } = utils;
+
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   // ticking
@@ -47,8 +46,8 @@ export const List = (props: Props) => {
 
   // set the number of available quests whenever the registry or account quests are updated
   useEffect(() => {
-    props.utils.setNumAvail(getAvailableQuests().length);
-  }, [props.registryQuests.length, props.account.quests?.ongoing.length]);
+    utils.setNumAvail(getAvailableQuests().length);
+  }, [registryQuests.length, account.quests?.ongoing.length]);
 
   ///////////////////
   // LOGIC
@@ -62,7 +61,7 @@ export const List = (props: Props) => {
   };
 
   const meetsRepeat = (quest: Quest): boolean => {
-    const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
+    const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
     const curr = allQuests?.find((x) => x.index == quest.index);
 
     // has not accepted repeatable before
@@ -101,7 +100,7 @@ export const List = (props: Props) => {
 
   const canAccept = (quest: Quest): boolean => {
     if (quest.repeatable) return meetsRepeat(quest) && meetsRequirements(quest);
-    if (!meetsMax(props.account, quest)) return false;
+    if (!meetsMax(account, quest)) return false;
     return meetsRequirements(quest);
   };
 
@@ -120,14 +119,8 @@ export const List = (props: Props) => {
     return ongoing;
   };
 
-  const getItemName = (itemIndex: number): string => {
-    let entityIndex = props.utils.queryItemRegistry(Number(itemIndex));
-    let registryObject = props.utils.getItem(entityIndex);
-    return registryObject.name ? registryObject.name : `Item ${itemIndex}`;
-  };
-
   const getRepeatText = (quest: Quest): string => {
-    const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
+    const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
     const curr = allQuests?.find((x) => x.index == quest.index);
 
     // has not accepted repeatable before
@@ -151,17 +144,30 @@ export const List = (props: Props) => {
   };
 
   const getRewardText = (reward: Reward): string => {
+    // not all types use getDescribedEntity
+    const name = getDescribedEntity(reward.target.type, reward.target.index || 0).name;
     const value = (reward.target.value ?? 0) * 1;
+
     if (reward.target.type === 'ITEM') {
-      if (reward.target.index === MUSU_INDEX) return `${value} $MUSU`;
-      else return `${value} ${getItemName(reward.target.index!)}`;
+      return `${value} ${name}`;
     } else if (reward.target.type === 'EXPERIENCE') {
       return `${value} Experience`;
     } else if (reward.target.type === 'MINT20') {
-      return `${value} Gacha Ticket`;
+      return `${value} ${name}`;
+    } else if (reward.target.type === 'REPUTATION') {
+      return `${value} REPUTATION`;
     } else {
       return '???';
     }
+  };
+
+  const getRewardImage = (reward: Reward) => {
+    if (reward.target.type === 'REPUTATION') return <div />;
+    return (
+      <ConditionImage
+        src={getDescribedEntity(reward.target.type, reward.target.index || 0).image}
+      />
+    );
   };
 
   // idea: room objectives should state the number of rooms away you are on the grid map
@@ -197,20 +203,19 @@ export const List = (props: Props) => {
     const [targetVal, currVal] = parseConditionalUnits(con);
 
     let text = '';
-    if (con.target.type == 'ITEM') text = `${targetVal} ${getItemName(con.target.index!)}`;
+    if (con.target.type == 'ITEM')
+      text = `${targetVal} ${getDescribedEntity(con.target.type, con.target.index!).name}`;
     else if (con.target.type == 'HARVEST_TIME') text = `Harvest for more than ${targetVal}`;
     else if (con.target.type == 'LIQUIDATE_TOTAL') text = `Liquidate at least ${targetVal} Kami`;
     else if (con.target.type == 'LIQUIDATED_VICTIM') text = `Been liquidated ${targetVal} times`;
     else if (con.target.type == 'KAMI_LEVEL_HIGHEST') text = `Have a Kami of at least ${targetVal}`;
     else if (con.target.type == 'KAMI') text = `Have at least ${targetVal} Kami`;
     else if (con.target.type == 'QUEST')
-      text = `Complete Quest [${
-        props.utils.getQuestByIndex(con.target.index!)?.name || `Quest ${targetVal}`
-      }]`;
+      text = `Complete Quest [${getQuestByIndex(con.target.index!)?.name || `Quest ${targetVal}`}]`;
     else if (con.target.type == 'QUEST_REPEATABLE_COMPLETE')
       text = `Complete ${targetVal} daily quests`;
     else if (con.target.type == 'ROOM')
-      text = `Move to ${props.utils.getRoom(con.target.index!)?.name || `Room ${targetVal}`}`;
+      text = `Move to ${getRoom(con.target.index!)?.name || `Room ${targetVal}`}`;
     else if (con.target.type == 'COMPLETE_COMP')
       text = 'Gate at Scrap Paths unlocked'; // hardcoded - only goals use this. change in future
     else text = '???';
@@ -223,12 +228,12 @@ export const List = (props: Props) => {
 
   const getAvailableQuests = () => {
     // get available, non-repeatable quests from registry
-    const oneTimes = props.registryQuests.filter((q: Quest) => {
-      return meetsRequirements(q) && meetsMax(props.account, q) && !q.repeatable;
+    const oneTimes = registryQuests.filter((q: Quest) => {
+      return meetsRequirements(q) && meetsMax(account, q) && !q.repeatable;
     });
 
     // get available, repeatable quests from registry
-    const repeats = props.registryQuests.filter((q: Quest) => {
+    const repeats = registryQuests.filter((q: Quest) => {
       return meetsRequirements(q) && q.repeatable && meetsRepeat(q);
     });
 
@@ -254,7 +259,7 @@ export const List = (props: Props) => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
         <Tooltip text={[tooltipText]}>
           <ActionButton
-            onClick={() => props.actions.acceptQuest(quest)}
+            onClick={() => actions.acceptQuest(quest)}
             text='Accept'
             disabled={!canAccept(quest)}
           />
@@ -273,7 +278,7 @@ export const List = (props: Props) => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
         <Tooltip text={[tooltipText]}>
           <ActionButton
-            onClick={() => props.actions.completeQuest(quest)}
+            onClick={() => actions.completeQuest(quest)}
             text='Complete'
             disabled={!canComplete(quest)}
           />
@@ -313,8 +318,8 @@ export const List = (props: Props) => {
   const RewardDisplay = (rewards: Reward[]) => {
     if (rewards.length == 0) return <div />;
 
-    // sort rewards so Quest Points are always first
-    const first = 'QUEST_POINTS';
+    // sort rewards so reputation are always first
+    const first = 'REPUTATION';
     rewards.sort((x, y) => {
       return x.target.type == first ? -1 : y.target.type == first ? 1 : 0;
     });
@@ -326,11 +331,7 @@ export const List = (props: Props) => {
             <ConditionDescription key={reward.id}>
               - {`${getRewardText(reward)}`}
             </ConditionDescription>
-            <ConditionImage
-              src={
-                props.utils.getDescribedEntity(reward.target.type, reward.target.index || 0).image
-              }
-            />
+            {getRewardImage(reward)}
           </Row>
         ))}
       </ConditionContainer>
@@ -346,7 +347,7 @@ export const List = (props: Props) => {
       <QuestContainer key={q.id}>
         <QuestName>{q.name}</QuestName>
         <QuestDescription>{q.description}</QuestDescription>
-        {RequirementDisplay(q.requirements)}
+        {/* {RequirementDisplay(q.requirements)} */}
         {ObjectiveDisplay(q.objectives, false)}
         {RewardDisplay(q.rewards)}
         {AcceptButton(q)}
@@ -355,7 +356,7 @@ export const List = (props: Props) => {
   };
 
   const CompletedQuests = () => {
-    let quests = [...(props.account.quests?.completed ?? [])];
+    let quests = [...(account.quests?.completed ?? [])];
 
     const line =
       quests.length > 0 ? (
@@ -385,7 +386,7 @@ export const List = (props: Props) => {
 
   const OngoingQuests = () => {
     getAvailableQuests(); // update numAvail
-    const rawQuests = [...(props.account.quests?.ongoing ?? [])];
+    const rawQuests = [...(account.quests?.ongoing ?? [])];
 
     if (rawQuests.length == 0) return <EmptyText>No ongoing quests. Get a job?</EmptyText>;
 
@@ -416,8 +417,8 @@ export const List = (props: Props) => {
   };
 
   const QuestsDisplay = () => {
-    if (props.mode == 'AVAILABLE') return AvailableQuests();
-    else if (props.mode == 'ONGOING') return OngoingQuests();
+    if (mode == 'AVAILABLE') return AvailableQuests();
+    else if (mode == 'ONGOING') return OngoingQuests();
     else return <div />;
   };
 
