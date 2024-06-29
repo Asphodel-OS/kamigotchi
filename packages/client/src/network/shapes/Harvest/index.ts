@@ -1,6 +1,5 @@
 export {
   calcBounty as calcHarvestBounty,
-  calcDedication as calcHarvestDedication,
   calcFertility as calcHarvestFertiity,
   calcIdleTime as calcHarvestIdletime,
   calcLifeTime as calcHarvestLifeTime,

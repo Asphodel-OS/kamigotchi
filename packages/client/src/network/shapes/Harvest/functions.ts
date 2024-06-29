@@ -40,7 +40,7 @@ export const calcRate = (harvest: Harvest, kami: Kami): number => {
   if (harvest.state !== 'ACTIVE') return 0;
   const config = kami.config.harvest.bounty;
   const base = calcFertility(harvest, kami);
-  const nudge = calcDedication(harvest, kami);
+  const nudge = calcIntensity(harvest, kami);
   const boost = config.boost.value + kami.bonuses.harvest.bounty.boost;
   return (base + nudge) * boost;
 };
@@ -53,16 +53,7 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   return (kami.stats.power.total * ratio * efficacy) / 3600;
 };
 
-// calculate the Intensity-based harvesting rate
-export const calcDedication = (harvest: Harvest, kami: Kami) => {
-  const precision = 1e9; // figure to truncate by
-  const config = kami.config.harvest.dedication;
-  const ratio = config.ratio.value;
-  const intensity = calcIntensity(harvest, kami);
-  const dedication = Math.floor(precision * ratio * intensity ** 2) / precision;
-  return dedication;
-};
-
+// calculate the shift in harvest Efficacy (Fertility Boost)
 export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
   const node = harvest.node;
   if (!node || !kami.affinities || !node.affinity || node.affinity === 'NORMAL') return 0;
@@ -85,10 +76,11 @@ export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
 export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
   const precision = 1e9; // figure to truncate by
   const config = kami.config.harvest.intensity;
-  const base = Math.floor(calcIntensityTime(harvest) / 60);
-  const nudge = kami.bonuses.harvest.intensity.nudge;
-  const ratio = config.ratio.value; // intensity period
-  const intensity = Math.floor(precision * ((base + nudge) / ratio)) / precision;
+  const base = Math.floor(calcIntensityTime(harvest));
+  const nudge = 60 * kami.bonuses.harvest.intensity.nudge;
+  const ratio = config.ratio.value; // Intensity Core
+  const boost = 60 * config.boost.value; // Intensity Period
+  const intensity = Math.floor(precision * (((base + nudge) * ratio) / boost)) / precision;
   return intensity;
 };
 
