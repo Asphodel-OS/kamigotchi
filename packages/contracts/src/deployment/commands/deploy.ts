@@ -20,15 +20,11 @@ const run = async () => {
   // assume world state init if deploying a fresh world, unless explicitly stated
   const init = !partialDeployment || !(argv.skipInit ?? true);
 
-  await setAutoMine(mode, true);
+  if (mode === 'DEV') setAutoMine(true);
 
-  if (init) {
-    // generate init script
-    generateInitScript(mode, [], 'init');
-  } else {
-    // empty init script for partial deployments
-    clearInitWorld();
-  }
+  // geneate or clear world init script based on args
+  if (init) generateInitScript(mode, [], 'init');
+  else clearInitWorld();
 
   const result = await generateAndDeploy({
     config: config,
@@ -48,8 +44,8 @@ const run = async () => {
       result.startBlock
   );
 
-  await setAutoMine(mode, false);
-  await setTimestamp(mode && world);
+  if (mode === 'DEV') await setAutoMine(false);
+  if (mode === 'DEV') await setTimestamp();
 };
 
 run();

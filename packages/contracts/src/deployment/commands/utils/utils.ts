@@ -15,20 +15,16 @@ export const getWorld = (mode: string) => {
   else return process.env.DEV_WORLD;
 };
 
-export const setAutoMine = async (mode: string, on: boolean) => {
+export const setAutoMine = async (on: boolean) => {
   console.log(`** Setting automine to ${on} **`);
-  if (mode === 'DEV') {
-    const provider = new JsonRpcProvider(process.env.DEV_RPC!);
-    await provider.send(`${on ? 'anvil_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
-  }
+  const provider = new JsonRpcProvider(process.env.DEV_RPC!);
+  await provider.send(`${on ? 'anvil_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
 };
 
-export const setTimestamp = async (mode: string) => {
-  if (mode === 'DEV') {
-    const provider = new JsonRpcProvider(process.env.DEV_RPC!);
-    const timestamp = Math.floor(new Date().getTime() / 1000);
-    await provider.send('evm_setNextBlockTimestamp', [timestamp]);
-  }
+export const setTimestamp = async (ts: number = Math.floor(Date.now() / 1000)) => {
+  console.warn(`** Setting timestamp to ${ts} **`);
+  const provider = new JsonRpcProvider(process.env.DEV_RPC!);
+  await provider.send('evm_setNextBlockTimestamp', [ts]);
 };
 
 export const ignoreSolcErrors = [
