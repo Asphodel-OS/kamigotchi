@@ -34,7 +34,7 @@ export function createProvider({
 }: ProviderConfig) {
   const network: Networkish = {
     chainId,
-    name: 'mudChain',
+    name: 'yominet',
   };
   const providers = externalProvider
     ? { json: new Web3Provider(externalProvider, network), ws: undefined }
