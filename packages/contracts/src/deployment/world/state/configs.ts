@@ -61,7 +61,7 @@ export async function initLocalConfigs(api: AdminAPI) {
   await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
   await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
   await api.config.set.number('KAMI_STANDARD_COOLDOWN', 30);
-  await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100000, 3, 0, 0, 1000, 3]);
-  await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 2000, 0, 0, 0, 60, 0]); // inversed boost
-  await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 3, 0, 0, 1000, 3]);
+  await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100, 0, 0, 0, 1000, 3]);
+  await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 3600, 0, 0, 0, 60, 0]); // inversed boost
+  await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100, 0, 0, 0, 1000, 3]);
 }

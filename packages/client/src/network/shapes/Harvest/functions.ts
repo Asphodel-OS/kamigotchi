@@ -74,13 +74,12 @@ export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
 };
 
 export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
-  const precision = 1e9; // figure to truncate by
   const config = kami.config.harvest.intensity;
   const base = Math.floor(calcIntensityTime(harvest));
   const nudge = 60 * kami.bonuses.harvest.intensity.nudge;
   const ratio = config.ratio.value; // Intensity Core
   const boost = 60 * config.boost.value; // Intensity Period
-  const intensity = Math.floor(precision * (((base + nudge) * ratio) / boost)) / precision;
+  const intensity = Math.floor(((base + nudge) * ratio) / boost) / 3600;
   return intensity;
 };
 

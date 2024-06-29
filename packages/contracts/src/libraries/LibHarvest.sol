@@ -189,7 +189,7 @@ library LibHarvest {
     uint256 ratio = config[2]; // intensity core (musu/s)
     uint256 boost = 60 * config[6]; // period, converted to seconds. apply as inverted boost
     uint256 precision = 10 ** (RATE_PREC - config[3] + config[7]); // boost is inverted
-    return (precision * (base + nudge) * ratio) / boost;
+    return (precision * (base + nudge) * ratio) / boost / 3600;
   }
 
   /////////////////
