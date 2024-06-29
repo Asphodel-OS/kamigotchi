@@ -38,10 +38,8 @@ export const Logs = (props: Props) => {
     let details = metadata;
     if (/\S/.test(metadata)) {
       const bodyStart = metadata.indexOf('body=');
-      if (bodyStart != -1) {
-        const errorStart = metadata.indexOf('error='); // used to determine end of body segment
-
-        // retarded patch for now bc privy ruins error parsing
+      const errorStart = metadata.indexOf('error='); // used to determine end of body segment
+      if (bodyStart != -1 && errorStart != -1) {
         let response: any;
         try {
           const body = metadata.substring(bodyStart + 6, errorStart - 3).replaceAll('\\"', '"');
@@ -56,6 +54,8 @@ export const Logs = (props: Props) => {
         if (splitIndex != -1) {
           event = responseMessage.substring(0, splitIndex);
           details = responseMessage.substring(splitIndex + 1);
+        } else {
+          details = responseMessage;
         }
       }
     }

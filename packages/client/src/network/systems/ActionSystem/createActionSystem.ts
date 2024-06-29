@@ -165,6 +165,7 @@ export function createActionSystem<M = undefined>(
     let metadata = error;
     if (metadata.reason) metadata = metadata.reason;
     if (metadata.error) metadata = metadata.error;
+    else if (metadata.data) metadata = metadata.data;
     if (metadata.message) metadata = metadata.message;
     updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
   }
