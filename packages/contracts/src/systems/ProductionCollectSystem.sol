@@ -48,7 +48,7 @@ contract ProductionCollectSystem is System {
 
     // standard logging and tracking
     uint256 nodeID = LibHarvest.getNode(components, id);
-    LibScore.inc(components, accountID, "COLLECT", output);
+    LibScore.incFor(components, accountID, "COLLECT", output);
     LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, output);
     LibNode.logHarvestAt(components, accountID, LibNode.getIndex(components, nodeID), output);
     LibNode.logHarvestAffinity(

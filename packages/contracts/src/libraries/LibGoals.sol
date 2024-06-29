@@ -310,7 +310,7 @@ library LibGoals {
     uint256 amt
   ) internal {
     uint256 id = genContributionID(goalID, holderID);
-    LibScore.inc(components, id, holderID, goalID, amt);
+    LibScore.incFor(components, id, holderID, goalID, amt);
   }
 
   function setComplete(IUintComp components, uint256 id) internal {

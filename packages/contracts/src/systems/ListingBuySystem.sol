@@ -41,7 +41,7 @@ contract ListingBuySystem is System {
 
     // standard logging and tracking
     LibListing.logSpendCoin(components, accountID, total);
-    LibScore.inc(components, accountID, "TOTAL_SPENT", total);
+    LibScore.incFor(components, accountID, "TOTAL_SPENT", total);
     LibAccount.updateLastTs(components, accountID);
 
     return "";

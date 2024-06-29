@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
-import { Strings } from "utils/Strings.sol";
-import { LibPack } from "libraries/utils/LibPack.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IDScoreTypeComponent, ID as IDScoreTypeCompID } from "components/IDScoreTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+
 import { LibConfig } from "libraries/LibConfig.sol";
 
 // entityID for leaderboard's current epoch. Contains just the Epoch component, declared in initSystem.
@@ -28,6 +26,8 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 // Balance: Score balance
 
 library LibScore {
+  using LibComp for IUintComp;
+
   /////////////////
   // INTERACTIONS
 
@@ -42,58 +42,61 @@ library LibScore {
   }
 
   /// @notice increments score balance, creates score if needed
-  function inc(
+  function incFor(
     IUintComp components,
     uint256 id,
     uint256 holderID,
     uint256 typeID,
     uint256 amt
   ) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 bal;
-    if (comp.has(id)) bal = comp.get(id);
-    else create(components, id, holderID, typeID);
-    bal += amt;
-    comp.set(id, bal);
+    if (!getComponentById(components, IDScoreTypeCompID).has(id))
+      create(components, id, holderID, typeID);
+    IUintComp(getAddressById(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice adds score based on current epoch.
   /// @dev wrapper function for epoch/type handling
-  function inc(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
+  function incFor(
+    IUintComp components,
+    uint256 holderID,
+    string memory _type,
+    uint256 amt
+  ) internal {
     uint256 epoch = getCurentEpoch(components);
     uint256 id = genScoreID(holderID, epoch, _type);
-    inc(components, id, holderID, genTypeID(_type, epoch), amt);
+    incFor(components, id, holderID, genTypeID(_type, epoch), amt);
   }
 
   /// @notice decrements score balance, creates score if needed
-  function dec(
+  function decFor(
     IUintComp components,
     uint256 id,
     uint256 holderID,
     uint256 typeID,
     uint256 amt
   ) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 bal;
-    if (comp.has(id)) bal = comp.get(id);
-    else create(components, id, holderID, typeID);
-    bal -= amt;
-    comp.set(id, bal);
+    if (!getComponentById(components, IDScoreTypeCompID).has(id))
+      create(components, id, holderID, typeID);
+    IUintComp(getAddressById(components, ValueCompID)).dec(id, amt);
   }
 
   /// @notice decs score based on current epoch.
   /// @dev wrapper function for epoch/type handling
-  function dec(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
+  function decFor(
+    IUintComp components,
+    uint256 holderID,
+    string memory _type,
+    uint256 amt
+  ) internal {
     uint256 epoch = getCurentEpoch(components);
     uint256 id = genScoreID(holderID, epoch, _type);
-
-    dec(components, id, holderID, genTypeID(_type, epoch), amt);
+    decFor(components, id, holderID, genTypeID(_type, epoch), amt);
   }
 
   /////////////////
   // GETTERS
 
-  // get current epoch for leaderboard
+  /// @notice get current epoch for leaderboard
   function getCurentEpoch(IUintComp components) internal view returns (uint256) {
     return LibConfig.get(components, "LEADERBOARD_EPOCH");
   }
@@ -101,7 +104,7 @@ library LibScore {
   /////////////////
   // SETTERS
 
-  // set current epoch for leaderboard. shoud only be called by owner
+  /// @notice set current epoch for leaderboard. shoud only be called by owner
   function setCurrentEpoch(IUintComp components, uint256 epoch) internal {
     uint256 id = LibConfig.getID("LEADERBOARD_EPOCH");
     LibConfig.setValue(components, id, epoch);

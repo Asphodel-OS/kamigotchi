@@ -60,7 +60,7 @@ contract PetFeedSystem is System {
     }
 
     // standard logging and tracking
-    LibScore.inc(components, accountID, "FEED", 1);
+    LibScore.incFor(components, accountID, "FEED", 1);
     LibDataEntity.inc(components, accountID, itemIndex, "INV_USE", 1);
     LibAccount.updateLastTs(components, accountID);
     return "";
