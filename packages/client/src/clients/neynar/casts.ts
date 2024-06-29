@@ -15,7 +15,7 @@ export const createEmptyCast = (): CastWithInteractions => ({
   parent_url: '',
   root_parent_url: '',
   embeds: [],
-  timestamp: new Date(Date.now()).toISOString(),
+  timestamp: new Date().toISOString(),
   reactions: { likes: [], recasts: [] },
   mentioned_profiles: [],
   replies: { count: 0 },
