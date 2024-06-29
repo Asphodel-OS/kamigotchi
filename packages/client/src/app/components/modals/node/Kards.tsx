@@ -4,7 +4,6 @@ import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/li
 import { useSelected, useVisibility } from 'app/stores';
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { KamiConfig } from 'network/shapes/Config';
 import { Inventory } from 'network/shapes/Inventory';
 import {
   Kami,
@@ -31,12 +30,11 @@ interface Props {
   };
   allies: Kami[];
   enemies: Kami[];
-  kamiConfig: KamiConfig;
   tab: string;
 }
 
 export const Kards = (props: Props) => {
-  const { actions, account, kamiConfig } = props;
+  const { actions, account } = props;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
 
