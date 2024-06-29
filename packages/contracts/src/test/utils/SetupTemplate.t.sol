@@ -966,7 +966,6 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initBaseConfigs() internal {
     _setConfigString("BASE_URI", "https://image.asphodel.io/kami/");
-    _setConfig("MINT_TOTAL_MAX", 33333);
   }
 
   function _initLeaderboardConfigs() internal {

@@ -15,6 +15,16 @@ const deployConfigPath = path.join('./deploy.json');
 const componentRegisterPath = path.join(clientDir, 'src/network/components/register.ts');
 const componentSchemaPath = path.join(clientDir, 'types/ComponentsSchema.ts');
 
+export async function generateImports(out: string) {
+  const config = JSON.parse(await readFile(deployConfigPath, { encoding: 'utf8' }));
+  // component & system import script
+  const Imports = await ejs.renderFile(path.join(contractsDir, 'Imports.ejs'), config, {
+    async: true,
+  });
+  const ImportsPath = path.join(out, 'Imports.sol');
+  await writeFile(ImportsPath, Imports);
+}
+
 /**
  * Generate LibDeploy.sol from deploy.json
  * @param configPath path to deploy.json
@@ -56,12 +66,7 @@ export async function generateLibDeploy(
 
   // Generate LibDeploy
   console.log('Generating deployment script');
-  // component & system import script
-  const Imports = await ejs.renderFile(path.join(contractsDir, 'Imports.ejs'), config, {
-    async: true,
-  });
-  const ImportsPath = path.join(out, 'Imports.sol');
-  await writeFile(ImportsPath, Imports);
+  await generateImports(out);
   // LibDeploy.sol
   const LibDeploy = await ejs.renderFile(path.join(contractsDir, 'LibDeploy.ejs'), config, {
     async: true,

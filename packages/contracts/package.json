@@ -7,7 +7,7 @@
     "----- TOP LEVEL COMMANDS -----": "---------------------------",
     "abi": "pnpm abi:gen && pnpm abi:types && pnpm abi:deploy:gen && pnpm abi:clean",
     "build": "pnpm codegen && rimraf out && pnpm build:systems && pnpm abi",
-    "codegen": "pnpm codegen:imports && pnpm codegen:deploy && pnpm codegen:tests",
+    "codegen": "pnpm codegen:clear && pnpm codegen:imports && pnpm codegen:deploy && pnpm codegen:tests",
     "deploy": "pnpm deploy:script",
     "dev": "pnpm prepare && pnpm start",
     "lint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
@@ -42,10 +42,10 @@
     "abi:types:mappings": "ts-node src/deployment/commands/genTypes.ts --outputDir ../client/types/",
     "abi:deploy:gen": "ts-node src/deployment/commands/genAbi.ts",
     "build:systems": "forge build --skip test",
+    "codegen:clear": "ts-node src/deployment/commands/clearAutogen.ts",
     "codegen:imports": "pnpm ejs src/deployment/contracts/Imports.ejs -f deploy.json -o src/deployment/contracts/Imports.sol",
     "codegen:deploy": "pnpm ejs src/deployment/contracts/LibDeploy.ejs -f deploy.json -o src/deployment/contracts/LibDeploy.sol",
-    "codegen:tests": "pnpm ejs src/test/utils/TestSetupImports.ejs -f deploy.json -o src/test/utils/TestSetupImports.sol",
-    "codegen:world": "pnpm ejs src/deployment/contracts/InitWorld.s.ejs -f src/deployment/contracts/initStream.json -o src/deployment/contracts/InitWorld.s.sol"
+    "codegen:tests": "pnpm ejs src/test/utils/TestSetupImports.ejs -f deploy.json -o src/test/utils/TestSetupImports.sol"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.1.1",
