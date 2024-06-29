@@ -28,13 +28,6 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-struct HarvestRates {
-  uint8 prec;
-  uint32 base;
-  uint8 basePrec;
-  uint8 multiplierPrec;
-}
-
 uint256 constant RATE_PREC = 9;
 uint256 constant INTENSITY_PREC = 9;
 
@@ -124,7 +117,7 @@ library LibHarvest {
     int256 boostBonus = LibBonus.getRaw(components, petID, "HARV_BOUNTY_BOOST");
 
     uint256 base = calcFertility(components, id);
-    uint256 nudge = calcDedication(components, id);
+    uint256 nudge = calcIntensity(components, id);
     uint256 rate = base + nudge;
     uint256 ratio = calcDuration(components, id);
     uint256 boost = (config[6].toInt256() + boostBonus).toUint256();
@@ -132,14 +125,6 @@ library LibHarvest {
     // precision is only divided this time as applied > final (1e0)
     uint256 precision = 10 ** (RATE_PREC + config[3] + config[7]);
     return (rate * ratio * boost) / precision;
-  }
-
-  function calcDedication(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_DEDICATION");
-    uint256 intensity = calcIntensity(components, id);
-    uint256 ratio = config[2]; // dedication core
-    uint256 precision = 10 ** (2 * INTENSITY_PREC + config[3] - RATE_PREC);
-    return (intensity * intensity * ratio) / precision;
   }
 
   // Calculate the efficacy of the core harvesting calc (min 0).
@@ -199,11 +184,12 @@ library LibHarvest {
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
 
-    uint256 base = calcIntensityDuration(components, id) / 60; // calculated in minutes, truncated
-    uint256 nudge = LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
-    uint256 ratio = config[2]; // period. apply as inverted ratio
-    uint256 precision = 10 ** (INTENSITY_PREC + config[3]); // additive as ratio is inverted
-    return (precision * (base + nudge)) / ratio;
+    uint256 base = calcIntensityDuration(components, id);
+    uint256 nudge = 60 * LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
+    uint256 ratio = config[2]; // intensity core (musu/s)
+    uint256 boost = 60 * config[6]; // period, converted to seconds. apply as inverted boost
+    uint256 precision = 10 ** (RATE_PREC - config[3] + config[7]); // boost is inverted
+    return (precision * (base + nudge) * ratio) / boost;
   }
 
   /////////////////
