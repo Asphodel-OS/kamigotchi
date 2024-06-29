@@ -60,7 +60,7 @@ export const Logs = (props: Props) => {
       }
     }
 
-    const tooltip = [`${status} (${event})`, '', details];
+    const tooltip = status === 'Complete' ? [status] : [`${status} (${event})`, '', details];
     return <Tooltip text={tooltip}>{icon}</Tooltip>;
   };
 

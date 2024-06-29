@@ -155,14 +155,16 @@ export function createActionSystem<M = undefined>(
     requests.delete(index); // Remove the request from the ActionSystem
   }
 
-  // Set the action's state to ActionState.Failed
+  // Set the action's state to ActionState.Failed and pass through the error
+  // message as metadata. The rest of the error is logged as a warning and can
+  // be bubbled up, but does not appear to be useful for clientside reporting.
   function handleError(error: any, action: ActionRequest) {
-    console.error('handleError() error: ', error);
-    console.error('handleError() action: ', action);
+    console.warn('handleError()', '\naction: ', action, '\nerror: ', error);
     if (!action.index) return;
 
     let metadata = error;
     if (metadata.reason) metadata = metadata.reason;
+    if (metadata.error) metadata = metadata.error;
     if (metadata.message) metadata = metadata.message;
     updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
   }

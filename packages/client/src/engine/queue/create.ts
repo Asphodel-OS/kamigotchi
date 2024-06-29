@@ -1,4 +1,4 @@
-import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers';
+import { TransactionReceipt } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, deferred, mapObject, uuid } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
 import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
@@ -160,71 +160,57 @@ export function create<C extends Contracts>(
       stateMutability,
     });
 
-    // Start processing the queue
-    processQueue();
-
-    // Promise resolves when the transaction is confirmed and is rejected if the
-    // transaction fails or is cancelled.
-    return promise;
+    processQueue(); // Start processing the queue
+    return promise; // Promise resolves when the tx is confirmed or rejected
   }
 
   async function processQueue() {
-    // Check if there is a request to process
     const txRequest = queue.next();
     if (!txRequest) return;
-
-    // Increase utilization to prevent executing more tx than allowed by capacity
-    utilization++;
-
-    // Start processing another request from the queue
-    // Note: we start processing again after increasing the utilization to process up to `concurrency` tx request in parallel.
-    // At the end of this function after decreasing the utilization we call processQueue again trigger tx requests waiting for capacity.
-    processQueue();
+    utilization++; // Increase utilization to track capacity
+    processQueue(); // Start processing another request from the queue
 
     // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
     const txResult = await submissionMutex.runExclusive(async () => {
-      // Define variables in scope visible to finally block
-      let error: any;
-      const stateMutability = txRequest.stateMutability;
-
-      // Await gas estimation to avoid increasing nonce before tx is actually sent
+      // First estimate gas to avoid increasing nonce before tx is sent
       let txOverrides: Overrides;
       try {
-        // wait for network if not ready
-        const { provider, nonce } = await awaitValue(readyState);
-        txOverrides = await getTxGasData(provider as JsonRpcProvider, txRequest.estimateGas);
-
+        const { provider, nonce } = await awaitValue(readyState); // wait for network if not ready
+        txOverrides = await getTxGasData(provider, txRequest.estimateGas);
         txOverrides.nonce = nonce;
       } catch (e) {
-        console.error('[TXQueue] GAS ESTIMATION ERROR', e);
+        console.warn('[TXQueue] GAS ESTIMATION FAILED');
         return txRequest.cancel(e);
       }
 
+      // Execute the tx
+      let error: any;
       try {
         return await txRequest.execute(txOverrides);
-      } catch (e: any) {
-        // Nonce is handled centrally in finally block, regardless of failure
-        console.warn('[TXQueue] TXQUEUE EXECUTION FAILED', e);
+      } catch (e) {
+        console.warn('[TXQueue] EXECUTION FAILED');
         error = e;
       } finally {
-        // If the error includes information about the transaction,
-        // then the transaction was submitted and the nonce needs to be
-        // increased regardless of the error
-        const isNonViewTransaction =
-          error && 'transaction' in error && txRequest.stateMutability !== 'view';
-        const shouldIncreaseNonce = (!error && stateMutability !== 'view') || isNonViewTransaction;
+        // If tx was submitted, inc nonce regardless of error
+        const isViewTx = txRequest.stateMutability === 'view';
+        const isMutationError = !!error?.transaction && !isViewTx; // wtf does this even mean
+        const doIncNonce = (!error && !isViewTx) || isMutationError;
 
-        const shouldResetNonce =
-          error &&
-          (('code' in error && error.code === 'NONCE_EXPIRED') ||
-            JSON.stringify(error).includes('transaction already imported'));
+        const isExpirationError = error?.code === 'NONCE_EXPIRED';
+        const isRepeatError = error?.reason?.includes('transaction already imported');
+        const doResetNonce = isExpirationError || isRepeatError;
+
         console.log(
-          `[TXQueue] TX Sent (error=${!!error}, isMutationError=${!!isNonViewTransaction} incNonce=${!!shouldIncreaseNonce} resetNonce=${!!shouldResetNonce})`
+          `[TXQueue] TX Sent\n`,
+          `(error=${!!error},`,
+          `isMutationError=${isMutationError},`,
+          `incNonce=${!!doIncNonce},`,
+          `resetNonce=${!!doResetNonce})`
         );
-        // Nonce handeling
-        if (shouldIncreaseNonce) incNonce();
-        if (shouldResetNonce) await resetNonce();
-        // Bubble up error
+
+        // Nonce handling
+        if (doIncNonce) incNonce();
+        if (doResetNonce) await resetNonce();
         if (error) txRequest.cancel(error);
       }
     });
@@ -241,16 +227,7 @@ export function create<C extends Contracts>(
         getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
           console.warn('[TXQueue] Revert reason:', reason)
         );
-
-        const params = new URLSearchParams(window.location.search);
-        const worldAddress = params.get('worldAddress');
-        // Log useful commands that can be used to replay this tx
-        const trace = `mud trace --config deploy.json --world ${worldAddress} --tx ${txResult.hash}`;
-
-        console.log('---------- DEBUG COMMANDS (RUN IN TERMINAL) -------------');
-        console.log('Trace:');
-        console.log(trace);
-        console.log('---------------------------------------------------------');
+        console.log(`txHash: ${txResult.hash}`);
       }
     }
 
