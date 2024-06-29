@@ -6,6 +6,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { GachaTicketInventory } from 'network/shapes/utils/EntityTypes';
 import { erc20Abi, formatUnits } from 'viem';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -59,6 +60,20 @@ export function registerInventoryModal() {
         ],
       });
 
+      const getInventories = () => {
+        const inventories = data.account.inventories || [];
+        if (ticketBal) {
+          const numTicketsRaw = ticketBal[0].result ?? 0n;
+          const numTicketsDecimals = ticketBal[1].result ?? 18;
+          if (numTicketsRaw > 0) {
+            const ticketInventory = GachaTicketInventory;
+            ticketInventory.balance = Number(formatUnits(numTicketsRaw, numTicketsDecimals));
+            inventories.unshift(ticketInventory);
+          }
+        }
+        return inventories;
+      };
+
       /////////////////
       // DISPLAY
 
@@ -71,13 +86,7 @@ export function registerInventoryModal() {
           overlay
           truncate
         >
-          <ItemGrid
-            key='grid'
-            inventories={data.account.inventories || []}
-            tickets={Number(
-              formatUnits(ticketBal?.[0]?.result || 0n, ticketBal?.[1]?.result || 18)
-            )}
-          />
+          <ItemGrid key='grid' inventories={getInventories()} />
         </ModalWrapper>
       );
     }

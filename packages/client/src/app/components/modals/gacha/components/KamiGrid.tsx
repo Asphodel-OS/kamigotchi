@@ -69,7 +69,9 @@ export const KamiGrid = (props: Props) => {
   };
 
   const ShowMoreIcon = props.amtShown < props.grossShowable && (
-    <ShowMoreButton onClick={props.incAmtShown}>See more</ShowMoreButton>
+    <ShowMoreButton key='showMore' onClick={props.incAmtShown}>
+      See more
+    </ShowMoreButton>
   );
 
   // finish the list with null items to justify elements in grid
@@ -79,7 +81,7 @@ export const KamiGrid = (props: Props) => {
     const gross = props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
     const remainder = gross % 5 == 0 ? 0 : 5 - (gross % 5);
 
-    return Array(remainder).fill(<EmptyEntry />);
+    return Array(remainder).map((_, i) => <EmptyEntry key={`null-${i}`} />);
   };
 
   return (
