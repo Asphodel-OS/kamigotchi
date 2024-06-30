@@ -7,8 +7,10 @@ import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Merchant, getMerchantByIndex } from 'network/shapes/Merchant';
-import { Listings } from './Listings';
-import { MusuRow } from './MusuRow';
+import { Cart } from './cart';
+import { Catalog } from './catalog';
+import { Header } from './header';
+import { CartItem } from './types';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerMerchantModal() {
@@ -17,10 +19,10 @@ export function registerMerchantModal() {
 
     // Grid Config
     {
-      colStart: 30,
-      colEnd: 70,
-      rowStart: 20,
-      rowEnd: 70,
+      colStart: 20,
+      colEnd: 80,
+      rowStart: 15,
+      rowEnd: 85,
     },
 
     // Requirement
@@ -29,57 +31,54 @@ export function registerMerchantModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const { npcIndex } = useSelected.getState();
           const account = getAccountFromBurner(network, { inventory: true });
-          const merchant = getMerchantByIndex(world, components, npcIndex);
-
+          const getMerchant = (npcIndex: number) => getMerchantByIndex(world, components, npcIndex);
           return {
-            network,
-            data: { account, merchant },
+            data: { account },
+            functions: { getMerchant },
           };
         })
       ),
 
     // Render
-    ({ network, data }) => {
+    ({ data, functions }) => {
       // console.log('mMerchant: data', data);
-      const { world, components } = network;
+      const { getMerchant } = functions;
+      const { account } = data;
       const { npcIndex } = useSelected();
-      const [merchant, setMerchant] = useState<Merchant>(data.merchant);
-
-      // updates from component subscription updates
-      useEffect(() => {
-        setMerchant(data.merchant);
-      }, [data.merchant]);
+      const [merchant, setMerchant] = useState<Merchant>(getMerchant(npcIndex));
+      const [cart, setCart] = useState<CartItem[]>([]);
 
       // updates from selected Merchant updates
       useEffect(() => {
-        setMerchant(getMerchantByIndex(world, components, npcIndex));
+        setMerchant(getMerchant(npcIndex));
       }, [npcIndex]);
 
       /////////////////
       // DISPLAY
 
+      if (!merchant) return <></>;
       return (
-        <ModalWrapper
-          id='merchant'
-          header={<Title>{`${merchant?.name}'s Shop`}</Title>}
-          footer={<MusuRow key='musu' balance={data.account.coin} />}
-          canExit
-        >
-          <Listings listings={merchant?.listings} />
+        <ModalWrapper id='merchant' canExit>
+          <Header merchant={merchant} player={account} />
+          <Body>
+            <Catalog listings={merchant.listings} cart={cart} setCart={setCart} />
+            <Cart listings={merchant.listings} cart={cart} setCart={setCart} />
+          </Body>
         </ModalWrapper>
       );
     }
   );
 }
 
-const Title = styled.div`
-  width: 100%;
-  padding: 2vw;
+const Body = styled.div`
+  border: solid black 0.15vw;
+  border-radius: 0.4vw;
+  margin: 2.4vw;
 
-  color: black;
-  font-family: Pixel;
-  font-size: 1.5vw;
-  text-align: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
 `;
