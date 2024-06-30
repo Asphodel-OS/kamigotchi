@@ -78,47 +78,51 @@ export const IconButton = (props: Props) => {
   );
 };
 
-const Button = styled.div<{ color?: string; disabled?: boolean; pulse?: boolean }>`
+interface ButtonProps {
+  color?: string;
+  disabled?: boolean;
+  pulse?: boolean;
+}
+
+const Button = styled.div<ButtonProps>`
   border: solid black;
   justify-content: center;
 
-  font-family: Pixel;
-  text-align: center;
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  pointer-events: auto;
+  &:hover {
+    animation: ${() => hoverFx} 0.2s;
+    transform: scale(1.15);
+  }
+  &:active {
+    animation: ${() => clickFx} 0.3s;
+  }
 
-  ${({ color, disabled }) =>
-    disabled
-      ? `background-color: '#bbb';`
-      : `
-    background-color: ${color ? color : '#fff'};
-    &:hover {
-      cursor: pointer;
-      background-color: ${color ? color : '#bbb'};
-      opacity: ${color ? 0.6 : 0.9};
-    }
-    &:active {
-      background-color: ${color ? color : '#999'};
-      opacity: ${color ? 0.3 : 0.6};
-    }
-  `}
-
-  ${({ pulse }) =>
-    pulse &&
-    `
-    animation: ${Pulse} 3s ease-in-out infinite;
-  `}
+  animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
 `;
 
 const Image = styled.img`
   width: 100%;
 `;
 
-const Pulse = keyframes`
+const pulseFx = keyframes`
   0%, 80%, 90%, 100% {
     background-color: #ffffff;
   }
   85%, 95% {
     background-color: #e8e8e8;
   }
+`;
+
+const hoverFx = keyframes`
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+`;
+
+const clickFx = keyframes`
+  0% { transform: scale(1.15); }
+  50% { transform: scale(.95); }
+  100% { transform: scale(1.15); }
 `;

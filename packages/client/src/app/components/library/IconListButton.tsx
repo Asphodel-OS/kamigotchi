@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
-import styled from 'styled-components';
-
 import { Popover } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
+
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -52,15 +52,15 @@ export function IconListButton(props: Props) {
   const element = (option: Option, i: number) => {
     if (option.disabled)
       return (
-        <Item key={i} style={{ backgroundColor: '#ccc' }}>
+        <Option key={i} style={{ backgroundColor: '#ccc' }}>
           {option.text}
-        </Item>
+        </Option>
       );
     else
       return (
-        <Item key={i} onClick={() => onSelect(option)}>
+        <Option key={i} onClick={() => onSelect(option)}>
           {option.text}
-        </Item>
+        </Option>
       );
   };
 
@@ -89,40 +89,33 @@ export function IconListButton(props: Props) {
   );
 }
 
-const Button = styled.button<{ disabled: boolean; noMargin: boolean }>`
+interface ButtonProps {
+  disabled: boolean;
+  noMargin: boolean;
+}
+
+const Button = styled.button<ButtonProps>`
   position: relative;
-  background-color: #fff;
   border: solid black 0.15vw;
   border-radius: 0.4vw;
   color: black;
 
-  margin: ${(props) => {
-    return props.noMargin ? '0vw' : '0.2vw';
-  }};
   padding: 0.4vw;
-
   display: flex;
-  font-family: Pixel;
-  font-size: 0.8vw;
   justify-content: center;
-  text-align: center;
-  text-decoration: none;
 
-  cursor: pointer;
-  pointer-events: auto;
+  margin: ${({ noMargin }) => (noMargin ? '0vw' : '0.2vw')};
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  ${({ disabled }) =>
-    !disabled &&
-    `
-    &:hover {
-      opacity: 0.9;
-      background-color: #bbb;
-    }
-    &:active {
-      opacity: 0.6;
-      background-color: #999;
-    }
-  `}
+  &:hover {
+    animation: ${() => hoverFx} 0.2s;
+    transform: scale(1.15);
+  }
+  &:active {
+    animation: ${() => clickFx} 0.3s;
+  }
 `;
 
 const Corner = styled.div`
@@ -146,7 +139,7 @@ const Menu = styled.div`
   min-width: 7vw;
 `;
 
-const Item = styled.div`
+const Option = styled.div`
   border-radius: 0.4vw;
   padding: 0.6vw;
   justify-content: left;
@@ -162,4 +155,15 @@ const Item = styled.div`
   &:active {
     background-color: #bbb;
   }
+`;
+
+const hoverFx = keyframes`
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+`;
+
+const clickFx = keyframes`
+  0% { transform: scale(1.15); }
+  50% { transform: scale(.95); }
+  100% { transform: scale(1.15); }
 `;

@@ -188,7 +188,7 @@ export const Kards = (props: Props) => {
     });
 
     // check whether the kami can be fed and generate a tooltip for the reason
-    let tooltip = 'feed kami';
+    let tooltip = 'Feed Kami';
     if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
       tooltip = `not at your roomIndex`;
     } else if (isFull(kami)) {
@@ -203,7 +203,7 @@ export const Kards = (props: Props) => {
       <Tooltip key='feed-tooltip' text={[tooltip]}>
         <IconListButton
           img={feedIcon}
-          disabled={tooltip !== 'feed kami'}
+          disabled={tooltip !== 'Feed Kami'}
           options={feedOptions}
           noMargin
         />
