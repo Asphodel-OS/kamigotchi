@@ -113,7 +113,7 @@ export function registerAccountHeader() {
               <Tooltip text={getMusuTooltip()}>
                 <TextBox>
                   <Icon src={musuIcon} />
-                  {account.coin}
+                  {account.coin.toLocaleString()}
                 </TextBox>
               </Tooltip>
             </Cell>

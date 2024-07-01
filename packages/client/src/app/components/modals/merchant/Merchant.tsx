@@ -30,21 +30,23 @@ export function registerMerchantModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const { world, components } = network;
+          const { components, world } = network;
           const account = getAccountFromBurner(network, { inventory: true });
           const getMerchant = (npcIndex: number) => getMerchantByIndex(world, components, npcIndex);
           return {
             data: { account },
             functions: { getMerchant },
+            network,
           };
         })
       ),
 
     // Render
-    ({ data, functions }) => {
+    ({ data, functions, network }) => {
       // console.log('mMerchant: data', data);
-      const { getMerchant } = functions;
       const { account } = data;
+      const { getMerchant } = functions;
+      const { actions, api } = network;
       const { npcIndex } = useSelected();
       const [merchant, setMerchant] = useState<Merchant>(getMerchant(npcIndex));
       const [cart, setCart] = useState<CartItem[]>([]);
@@ -53,6 +55,21 @@ export function registerMerchantModal() {
       useEffect(() => {
         setMerchant(getMerchant(npcIndex));
       }, [npcIndex]);
+
+      // buy from a listing
+      const buy = (cart: CartItem[]) => {
+        const indices = cart.map((c) => c.listing.item.index);
+        const amts = cart.map((c) => c.quantity);
+
+        actions.add({
+          action: 'ListingBuy',
+          params: [npcIndex, indices, amts],
+          description: `Purchasing from ${merchant.name}`,
+          execute: async () => {
+            return api.player.listing.buy(npcIndex, indices, amts);
+          },
+        });
+      };
 
       /////////////////
       // DISPLAY
@@ -63,7 +80,7 @@ export function registerMerchantModal() {
           <Header merchant={merchant} player={account} />
           <Body>
             <Catalog listings={merchant.listings} cart={cart} setCart={setCart} />
-            <Cart account={account} cart={cart} setCart={setCart} />
+            <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
           </Body>
         </ModalWrapper>
       );

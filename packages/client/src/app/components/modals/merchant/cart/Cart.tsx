@@ -10,10 +10,19 @@ export interface Props {
   account: Account;
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
+  buy: (cart: CartItem[]) => void;
 }
 
 export const Cart = (props: Props) => {
-  const { account, cart, setCart } = props;
+  const { account, cart, setCart, buy } = props;
+
+  const calcTotalPrice = () => {
+    let total = 0;
+    for (const c of cart) {
+      total += c.listing.buyPrice * c.quantity;
+    }
+    return total;
+  };
 
   const clearItem = (itemIndex: number) => {
     const newCart = [...cart];
@@ -29,12 +38,10 @@ export const Cart = (props: Props) => {
     setCart(newCart);
   };
 
-  const calcTotalPrice = () => {
-    let total = 0;
-    for (const c of cart) {
-      total += c.listing.buyPrice * c.quantity;
-    }
-    return total;
+  const handleBuy = (cart: CartItem[]) => {
+    const filteredCart = cart.filter((c) => c.quantity > 0);
+    buy(filteredCart);
+    setCart([]);
   };
 
   return (
@@ -51,7 +58,7 @@ export const Cart = (props: Props) => {
           />
         ))}
       </Items>
-      {cart.length > 0 && (
+      {cart.length > 0 ? (
         <Checkout>
           <MusuReport>
             <Icon src={musuIcon} />
@@ -60,9 +67,11 @@ export const Cart = (props: Props) => {
           <ActionButton
             text='Buy'
             disabled={calcTotalPrice() > account.coin}
-            onClick={() => setCart([])}
+            onClick={() => handleBuy(cart)}
           />
         </Checkout>
+      ) : (
+        <EmptyText>Your cart is empty.</EmptyText>
       )}
     </Container>
   );
@@ -137,4 +146,14 @@ const Text = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+`;
+
+const EmptyText = styled.div`
+  font-family: Pixel;
+  font-size: 1.15vw;
+  text-align: center;
+  color: #333;
+  padding: 0.9vh 0vw;
+  margin: 3vh;
+  height: 100%;
 `;

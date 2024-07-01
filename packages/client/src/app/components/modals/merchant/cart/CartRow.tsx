@@ -108,11 +108,13 @@ const Image = styled.img`
 
 const Quantity = styled.input`
   border: none;
+  background-color: #eee;
   border-right: 0.15vw solid black;
   border-left: 0.15vw solid black;
   width: 4.5vw;
   height: 100%;
   padding: 0.3vw;
+  margin: 0w;
   cursor: text;
 
   color: black;
