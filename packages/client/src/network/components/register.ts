@@ -15,7 +15,6 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
-    _depreciatedCanName: defineBoolComponent(world, '_depreciatedCanName', 'component.can.name'),
     OperatorAddress: defineStringComponent(world, 'OperatorAddress', 'component.address.operator'),
     OwnerAddress: defineStringComponent(world, 'OwnerAddress', 'component.address.owner'),
     Affinity: defineStringComponent(world, 'Affinity', 'component.affiinity'),

@@ -328,12 +328,14 @@ export function createDecode() {
     if (!decoders[componentId]) {
       debug('Creating decoder for', componentId);
       const compID = componentId as keyof typeof ComponentsSchema;
-      const schema = ComponentsSchema[compID];
-      if (!schema) throw new Error(`No schema found for component ${compID}`);
-
-      const keys = schema.keys;
-      const values = schema.values;
-      decoders[componentId] = createDecoder(keys, values);
+      let schema = ComponentsSchema[compID];
+      if (!schema) {
+        console.warn(`No schema found for component ${String(compID)}`);
+        // set bool as a default schema - only to prevent errors
+        // TODO: whitelist components to listen to (need in snapshot & here)
+        schema = { keys: ['value'], values: [0] };
+      }
+      decoders[componentId] = createDecoder(schema.keys, schema.values);
     }
     // Decode the raw value
     return decoders[componentId]!(data);
