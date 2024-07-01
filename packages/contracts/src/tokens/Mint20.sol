@@ -26,6 +26,7 @@ contract Mint20 is ERC20 {
   // kept without decimals to work natively with game world
   uint256 public totalMinted;
   bool public mintDisabled;
+  bool public transferDisabled;
 
   /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
@@ -49,11 +50,32 @@ contract Mint20 is ERC20 {
 
   constructor(IWorld _world, string memory _name, string memory _symbol) ERC20(_name, _symbol, 18) {
     World = _world;
+    transferDisabled = true;
   }
 
   /// @notice permerantly disables future minting. Used to lock supply
   function disableMinting() external onlyOwner {
     mintDisabled = true;
+  }
+
+  /// @notice enable/disable transfers
+  function disableTransfers(bool _transferDisabled) external onlyOwner {
+    transferDisabled = _transferDisabled;
+  }
+
+  ////////////////////////
+  // OVERRIDES
+
+  /// @notice override transfer to prevent transfers
+  function transfer(address to, uint256 amount) public override returns (bool) {
+    require(!transferDisabled, "Mint20: transfers disabled");
+    return super.transfer(to, amount);
+  }
+
+  /// @notice override transferFrom to prevent transfers
+  function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
+    require(!transferDisabled, "Mint20: transfers disabled");
+    return super.transferFrom(from, to, amount);
   }
 
   //////////////////////////
@@ -66,7 +88,7 @@ contract Mint20 is ERC20 {
     _mintFormatted(to, amount);
   }
 
-  /// @notice burns tokens. Pet721Mint calls this to mint a pet
+  /// @notice burns tokens. Pet721Mint/GachaMint calls this to mint a pet
   function burn(address from, uint256 amount) external onlyWriter {
     super._burn(from, _convertDP(amount));
   }

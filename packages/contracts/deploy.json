@@ -457,38 +457,6 @@
       "writeAccess": []
     },
     {
-      "name": "Pet721UnstakeSystem",
-      "writeAccess": [
-        "IdAccountComponent",
-        "IDOwnsPetComponent",
-        "IdHolderComponent",
-        "ProxyPermissionsERC721Component",
-        "StateComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "Pet721StakeSystem",
-      "writeAccess": [
-        "AddressOperatorComponent",
-        "AddressOwnerComponent",
-        "IdAccountComponent",
-        "IDOwnsPetComponent",
-        "IdHolderComponent",
-        "IsAccountComponent",
-        "IndexRoomComponent",
-        "NameComponent",
-        "ProxyPermissionsERC721Component",
-        "StaminaComponent",
-        "StateComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
       "name": "PetFeedSystem",
       "writeAccess": [
         "ExperienceComponent",

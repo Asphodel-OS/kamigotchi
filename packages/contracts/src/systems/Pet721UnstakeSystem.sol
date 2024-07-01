@@ -13,7 +13,7 @@ import { LibPet } from "libraries/LibPet.sol";
 uint256 constant ID = uint256(keccak256("system.Pet721.Unstake"));
 uint256 constant ROOM = 12;
 
-/// @notice sets a pet game world => outside world
+/// @notice DEPRECIATED sets a pet game world => outside world
 /** @dev
  * Room 12 is the bridge room, system can only be called there
  *  Invarients:
@@ -24,6 +24,20 @@ uint256 constant ROOM = 12;
  *    After withdrawal:
  *      1) Pet is not linked to an Account, owned by EOA
  *      2) Pet state is "721_EXTERNAL"
+ *
+ *  *     {
+      "name": "Pet721UnstakeSystem",
+      "writeAccess": [
+        "IdAccountComponent",
+        "IDOwnsPetComponent",
+        "IdHolderComponent",
+        "ProxyPermissionsERC721Component",
+        "StateComponent",
+        "TimeLastComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
  */
 contract Pet721UnstakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
