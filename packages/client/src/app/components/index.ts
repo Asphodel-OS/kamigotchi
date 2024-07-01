@@ -17,7 +17,7 @@ import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerLootboxesModal } from './modals/lootboxes/Lootboxes';
 import { registerMapModal } from './modals/map';
-import { registerBuyModal, registerMerchantModal } from './modals/merchant';
+import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
@@ -54,7 +54,6 @@ export function registerUIComponents() {
   registerSettingsModal();
 
   // game modals
-  registerBuyModal();
   registerDialogueModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
