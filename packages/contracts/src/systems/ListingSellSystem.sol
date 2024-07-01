@@ -17,9 +17,9 @@ contract ListingSellSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint32 merchantIndex, uint32[] memory itemIndices, uint256 amt) = abi.decode(
+    (uint32 merchantIndex, uint32[] memory itemIndices, uint32[] memory amts) = abi.decode(
       arguments,
-      (uint32, uint32[], uint256)
+      (uint32, uint32[], uint32[])
     );
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 merchantID = LibNPC.get(components, merchantIndex);
@@ -34,8 +34,8 @@ contract ListingSellSystem is System {
       uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
       require(listingID != 0, "listing does not exist");
 
-      total += LibListing.sell(components, listingID, accountID, itemIndices[i], amt);
-      LibListing.logIncItemSell(components, accountID, itemIndices[i], amt);
+      total += LibListing.sell(components, listingID, accountID, itemIndices[i], amts[i]);
+      LibListing.logIncItemSell(components, accountID, itemIndices[i], amts[i]);
     }
 
     // standard logging and tracking
@@ -47,8 +47,8 @@ contract ListingSellSystem is System {
   function executeTyped(
     uint32 merchantIndex,
     uint32[] memory itemIndices,
-    uint256 amt
+    uint32[] memory amts
   ) public returns (bytes memory) {
-    return execute(abi.encode(merchantIndex, itemIndices, amt));
+    return execute(abi.encode(merchantIndex, itemIndices, amts));
   }
 }

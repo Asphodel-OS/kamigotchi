@@ -50,9 +50,9 @@
           "internalType": "uint32[]"
         },
         {
-          "name": "amt",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "amts",
+          "type": "uint32[]",
+          "internalType": "uint32[]"
         }
       ],
       "outputs": [
@@ -122,7 +122,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,uint32[],uint256)": "40a18de1",
+    "executeTyped(uint32,uint32[],uint32[])": "7c3f45fb",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

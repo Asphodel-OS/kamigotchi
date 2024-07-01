@@ -233,22 +233,28 @@ abstract contract SetupTemplate is TestSetupImports {
     return _moveAccount(playerIndex, LibRoom.getIndex(components, roomID));
   }
 
-  function _buyFromListing(uint playerIndex, uint listingID, uint amount) internal {
+  function _buyFromListing(uint playerIndex, uint listingID, uint32 amt) internal {
+    uint32[] memory amts = new uint32[](1);
     uint32[] memory itemIndices = new uint32[](1);
+
+    amts[0] = amt;
     itemIndices[0] = LibListing.getItemIndex(components, listingID);
     uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
 
     vm.prank(_getOperator(playerIndex));
-    _ListingBuySystem.executeTyped(npcIndex, itemIndices, amount);
+    _ListingBuySystem.executeTyped(npcIndex, itemIndices, amts);
   }
 
-  function _sellToListing(uint playerIndex, uint listingID, uint amount) internal {
+  function _sellToListing(uint playerIndex, uint listingID, uint32 amt) internal {
+    uint32[] memory amts = new uint32[](1);
     uint32[] memory itemIndices = new uint32[](1);
+
+    amts[0] = amt;
     itemIndices[0] = LibListing.getItemIndex(components, listingID);
     uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
 
     vm.prank(_getOperator(playerIndex));
-    _ListingSellSystem.executeTyped(npcIndex, itemIndices, amount);
+    _ListingSellSystem.executeTyped(npcIndex, itemIndices, amts);
   }
 
   // easy function for getting the proper inputs to feed a pet
