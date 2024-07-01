@@ -60,10 +60,10 @@ export const Cart = (props: Props) => {
       {cart.length > 0 ? (
         <Checkout>
           <BuyButton onClick={() => handleBuy(cart)} disabled={calcTotalPrice() > account.coin}>
-            <MusuReport>
+            <Total>
               <Icon src={musuIcon} />
               <Text>{calcTotalPrice().toLocaleString()}</Text>
-            </MusuReport>
+            </Total>
             <Text>Buy</Text>
           </BuyButton>
         </Checkout>
@@ -76,7 +76,8 @@ export const Cart = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  height: 100%;
+  user-select: none;
+
   display: flex;
   flex-flow: column nowrap;
   overflow-y: scroll;
@@ -88,12 +89,12 @@ const Title = styled.div`
   background-color: #ddd;
   border-radius: 0 0.25vw 0 0;
   width: 100%;
-  padding: 2.4vh 1.8vh;
+  padding: 2.4vh 1.2vw;
   opacity: 0.9;
 
   color: black;
   font-family: Pixel;
-  font-size: 1.8vh;
+  font-size: 1.2vw;
   text-align: left;
   z-index: 1;
 `;
@@ -152,7 +153,7 @@ const BuyButton = styled.div<BuyButtonProps>`
   }
 `;
 
-const MusuReport = styled.div`
+const Total = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;

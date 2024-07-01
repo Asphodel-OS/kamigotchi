@@ -25,7 +25,7 @@ export const CatalogRow = (props: Props) => {
   return (
     <Container key={listing.item.index} isInCart={isInCart} onClick={() => handleClick()}>
       <Tooltip text={[listing.item.description ?? '']}>
-        <Image src={listing.item.image} />
+        <Image src={listing.item.image} isInCart={isInCart} />
       </Tooltip>
       <Tooltip text={[listing.item.description ?? '']}>
         <Details>
@@ -44,10 +44,11 @@ const Container = styled.div<{ isInCart: boolean }>`
   border: 0.15vw solid black;
   border-radius: 0.4vw;
   margin: 0.4vw;
+
   display: flex;
   flex-direction: row nowrap;
   align-items: center;
-  background-color: ${({ isInCart }) => (isInCart ? '#ddd' : '#fff')};
+
   cursor: pointer;
   &:hover {
     animation: ${() => hoverFx} 0.2s;
@@ -58,8 +59,10 @@ const Container = styled.div<{ isInCart: boolean }>`
   }
 `;
 
-const Image = styled.img`
+const Image = styled.img<{ isInCart: boolean }>`
+  background-color: ${({ isInCart }) => (isInCart ? '#bbb' : '#fff')};
   border-right: 0.15vw solid black;
+  border-radius: 0.25vw 0 0 0.25vw;
   width: 4.5vw;
   padding: 0.45vw;
   font-family: Pixel;

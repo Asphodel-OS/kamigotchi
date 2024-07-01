@@ -22,7 +22,7 @@ export function registerMerchantModal() {
       colStart: 20,
       colEnd: 80,
       rowStart: 15,
-      rowEnd: 85,
+      rowEnd: 88,
     },
 
     // Requirement
@@ -76,7 +76,7 @@ export function registerMerchantModal() {
 
       if (!merchant) return <></>;
       return (
-        <ModalWrapper id='merchant' canExit>
+        <ModalWrapper id='merchant' canExit overlay>
           <Header merchant={merchant} player={account} />
           <Body>
             <Catalog listings={merchant.listings} cart={cart} setCart={setCart} />
@@ -91,11 +91,13 @@ export function registerMerchantModal() {
 const Body = styled.div`
   border: solid black 0.15vw;
   border-radius: 0.4vw;
-  margin: 2.4vw;
+  margin: 0 1.2vw 1.2vw 1.2vw;
+  min-height: 70%;
+  user-select: none;
 
   display: flex;
   flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  height: 70%;
+  justify-content: stretch;
+  align-items: stretch;
+  align-content: stretch;
 `;

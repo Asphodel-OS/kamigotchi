@@ -56,12 +56,12 @@ const Title = styled.div`
   background-color: #ddd;
   border-radius: 0.25vw 0 0 0;
   width: 100%;
-  padding: 2.4vh 1.8vh;
+  padding: 2.4vh 1.2vw;
   opacity: 0.9;
 
   color: black;
   font-family: Pixel;
-  font-size: 1.8vh;
+  font-size: 1.2vw;
   text-align: left;
   z-index: 1;
 `;
