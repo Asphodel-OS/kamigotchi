@@ -4,8 +4,10 @@ import { Tooltip } from 'app/components/library';
 import musuIcon from 'assets/images/icons/musu.png';
 import { Listing } from 'network/shapes/Listing';
 import { playClick } from 'utils/sounds';
+import { CartItem } from '../types';
 
 export interface Props {
+  cart: CartItem[];
   listing: Listing;
   toggle: () => void;
 }
@@ -19,8 +21,9 @@ export const CatalogRow = (props: Props) => {
     toggle();
   };
 
+  const isInCart = props.cart.some((c) => c.listing.item.index === listing.item.index);
   return (
-    <Container key={listing.item.index} onClick={() => handleClick()}>
+    <Container key={listing.item.index} isInCart={isInCart} onClick={() => handleClick()}>
       <Tooltip text={[listing.item.description ?? '']}>
         <Image src={listing.item.image} />
       </Tooltip>
@@ -37,22 +40,21 @@ export const CatalogRow = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isInCart: boolean }>`
   border: 0.15vw solid black;
   border-radius: 0.4vw;
   margin: 0.4vw;
   display: flex;
   flex-direction: row nowrap;
   align-items: center;
-
+  background-color: ${({ isInCart }) => (isInCart ? '#ddd' : '#fff')};
   cursor: pointer;
   &:hover {
-    animation: ${() => hover} 0.2s;
+    animation: ${() => hoverFx} 0.2s;
     transform: scale(1.02);
-    background-color: #ddd;
   }
   &:active {
-    animation: ${() => click} 0.3s;
+    animation: ${() => clickFx} 0.3s;
   }
 `;
 
@@ -91,12 +93,12 @@ const Icon = styled.img`
   margin-right: 0.3vw;
 `;
 
-const hover = keyframes`
+const hoverFx = keyframes`
   0% { transform: scale(1); }
   100% { transform: scale(1.02); }
 `;
 
-const click = keyframes`
+const clickFx = keyframes`
   0% { transform: scale(1.02); }
   50% { transform: scale(.98); }
   100% { transform: scale(1.02); }

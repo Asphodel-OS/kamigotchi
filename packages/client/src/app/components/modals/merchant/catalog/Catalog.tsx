@@ -28,7 +28,12 @@ export const Catalog = (props: Props) => {
       <Title>Catalog</Title>
       <Items>
         {listings.map((l) => (
-          <CatalogRow key={l.entityIndex} listing={l} toggle={() => toggleListing(l.item.index)} />
+          <CatalogRow
+            key={l.entityIndex}
+            listing={l}
+            cart={cart}
+            toggle={() => toggleListing(l.item.index)}
+          />
         ))}
       </Items>
     </Container>
@@ -36,6 +41,7 @@ export const Catalog = (props: Props) => {
 };
 
 const Container = styled.div`
+  position: relative;
   border-right: solid black 0.15vw;
   height: 100%;
 
@@ -46,21 +52,24 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
+  position: absolute;
   background-color: #ddd;
   border-radius: 0.25vw 0 0 0;
   width: 100%;
   padding: 2.4vh 1.8vh;
+  opacity: 0.9;
 
   color: black;
   font-family: Pixel;
   font-size: 1.8vh;
   text-align: left;
+  z-index: 2;
 `;
 
 const Items = styled.div`
+  padding: 7.5vh 0.6vw 0.6vw 0.6vw;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   overflow-y: scroll;
-  padding: 0.5vw;
 `;
