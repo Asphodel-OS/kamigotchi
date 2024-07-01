@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import musuIcon from 'assets/images/icons/musu.png';
+import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/Listing';
 import { playClick } from 'utils/sounds';
 
@@ -54,7 +54,7 @@ export const CartRow = (props: Props) => {
         <StepperButton onClick={handleDec}>-</StepperButton>
       </Stepper>
       <TotalPrice>
-        <Icon src={musuIcon} />
+        <Icon src={ItemImages.musu} />
         <Text>{(listing.buyPrice * quantity).toLocaleString()}</Text>
       </TotalPrice>
     </Container>

@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 
-import musuIcon from 'assets/images/icons/musu.png';
+import { ItemImages } from 'assets/images/items';
 import { Account } from 'network/shapes/Account';
 import { CartItem } from '../types';
 import { CartRow } from './CartRow';
@@ -61,7 +61,7 @@ export const Cart = (props: Props) => {
         <Checkout>
           <BuyButton onClick={() => handleBuy(cart)} disabled={calcTotalPrice() > account.coin}>
             <Total>
-              <Icon src={musuIcon} />
+              <Icon src={ItemImages.musu} />
               <Text>{calcTotalPrice().toLocaleString()}</Text>
             </Total>
             <Text>Buy</Text>

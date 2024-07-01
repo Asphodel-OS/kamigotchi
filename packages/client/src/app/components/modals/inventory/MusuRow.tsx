@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import musuIcon from 'assets/images/icons/musu.png';
+import { ItemImages } from 'assets/images/items';
 
 interface Props {
   balance: number;
@@ -12,7 +12,7 @@ export const MusuRow = (props: Props) => {
   return (
     <Container key='musu'>
       <Tooltip text={['$MUSU']}>
-        <Icon src={musuIcon} />
+        <Icon src={ItemImages.musu} />
       </Tooltip>
       <Balance>{props.balance}</Balance>
     </Container>

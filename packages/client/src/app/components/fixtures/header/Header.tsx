@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { Battery, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
-import musuIcon from 'assets/images/icons/musu.png';
+import { ItemImages } from 'assets/images/items';
+
 import {
   Account,
   calcStamina,
@@ -112,7 +113,7 @@ export function registerAccountHeader() {
             <Cell style={{ borderWidth: 0 }}>
               <Tooltip text={getMusuTooltip()}>
                 <TextBox>
-                  <Icon src={musuIcon} />
+                  <Icon src={ItemImages.musu} />
                   {account.coin.toLocaleString()}
                 </TextBox>
               </Tooltip>

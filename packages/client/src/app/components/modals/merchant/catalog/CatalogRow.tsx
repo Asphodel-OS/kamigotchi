@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import musuIcon from 'assets/images/icons/musu.png';
+import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/Listing';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
@@ -31,7 +31,7 @@ export const CatalogRow = (props: Props) => {
         <Details>
           <Text>{listing.item.name}</Text>
           <Text>
-            <Icon src={musuIcon} />
+            <Icon src={ItemImages.musu} />
             {listing.buyPrice}
           </Text>
         </Details>
