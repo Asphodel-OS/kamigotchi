@@ -63,7 +63,7 @@ const Title = styled.div`
   font-family: Pixel;
   font-size: 1.8vh;
   text-align: left;
-  z-index: 2;
+  z-index: 1;
 `;
 
 const Items = styled.div`

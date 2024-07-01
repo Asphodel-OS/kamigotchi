@@ -1,6 +1,5 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-import { ActionButton } from 'app/components/library';
 import musuIcon from 'assets/images/icons/musu.png';
 import { Account } from 'network/shapes/Account';
 import { CartItem } from '../types';
@@ -60,15 +59,13 @@ export const Cart = (props: Props) => {
       </Items>
       {cart.length > 0 ? (
         <Checkout>
-          <MusuReport>
-            <Icon src={musuIcon} />
-            <Text>{calcTotalPrice().toLocaleString()}</Text>
-          </MusuReport>
-          <ActionButton
-            text='Buy'
-            disabled={calcTotalPrice() > account.coin}
-            onClick={() => handleBuy(cart)}
-          />
+          <BuyButton onClick={() => handleBuy(cart)} disabled={calcTotalPrice() > account.coin}>
+            <MusuReport>
+              <Icon src={musuIcon} />
+              <Text>{calcTotalPrice().toLocaleString()}</Text>
+            </MusuReport>
+            <Text>Buy</Text>
+          </BuyButton>
         </Checkout>
       ) : (
         <EmptyText>Your cart is empty.</EmptyText>
@@ -98,7 +95,7 @@ const Title = styled.div`
   font-family: Pixel;
   font-size: 1.8vh;
   text-align: left;
-  z-index: 2;
+  z-index: 1;
 `;
 
 const Items = styled.div`
@@ -111,17 +108,48 @@ const Items = styled.div`
 
 const Checkout = styled.div`
   position: absolute;
-  background-color: #ddd;
   border-radius: 0 0 0.25vw 0;
-  width: 100%;
+  width: 66%;
   height: 4.5vh;
   bottom: 0;
-  padding: 1.2vw;
+  right: 0;
+  padding: 1.8vw 0.6vw;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+`;
+
+interface BuyButtonProps {
+  disabled?: boolean;
+}
+
+const BuyButton = styled.div<BuyButtonProps>`
+  border: solid 0.15vw black;
+  border-radius: 0.4vw;
+
+  width: 100%;
+  margin: 0.6vh 0;
+  padding: 0.6vh 0.9vw;
+  gap: 0.9vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+
+  &:hover {
+    animation: ${() => hoverFx} 0.2s;
+    transform: scale(1.05);
+  }
+  &:active {
+    animation: ${() => clickFx} 0.3s;
+  }
 `;
 
 const MusuReport = styled.div`
@@ -135,25 +163,31 @@ const MusuReport = styled.div`
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
-  margin-right: 0.3vw;
 `;
 
 const Text = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 0.9vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
 `;
 
 const EmptyText = styled.div`
   font-family: Pixel;
-  font-size: 1.15vw;
+  font-size: 1.2vw;
   text-align: center;
   color: #333;
   padding: 0.9vh 0vw;
   margin: 3vh;
   height: 100%;
+`;
+
+const hoverFx = keyframes`
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); }
+`;
+
+const clickFx = keyframes`
+  0% { transform: scale(1.05); }
+  50% { transform: scale(.95); }
+  100% { transform: scale(1.05); }
 `;
