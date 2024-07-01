@@ -63,7 +63,7 @@ export function registerMerchantModal() {
           <Header merchant={merchant} player={account} />
           <Body>
             <Catalog listings={merchant.listings} cart={cart} setCart={setCart} />
-            <Cart listings={merchant.listings} cart={cart} setCart={setCart} />
+            <Cart account={account} cart={cart} setCart={setCart} />
           </Body>
         </ModalWrapper>
       );
