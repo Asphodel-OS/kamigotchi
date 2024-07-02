@@ -146,10 +146,6 @@ const Row = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-
-  font-family: Pixel;
-  font-size: 0.7vw;
-  text-align: left;
 `;
 
 const RowSegment = styled.div`
@@ -166,11 +162,13 @@ const Bar = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: 0.6vw;
   color: #333;
-  text-align: left;
   margin: 0.2vw;
+
   font-family: Pixel;
+  font-size: 0.6vw;
+  line-height: 0.9vw;
+  text-align: left;
 `;
 
 const OpenIcon = styled.img`
