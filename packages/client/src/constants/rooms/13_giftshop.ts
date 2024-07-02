@@ -1,7 +1,7 @@
 import { triggerLeaderboardModal } from 'app/triggers/triggerLeaderboardModal';
 import { triggerShopModal } from 'app/triggers/triggerShopModal';
 import { bgPlaytest } from 'assets/images/rooms/13_giftshop';
-import { mystique } from 'assets/sound/ost';
+import { shop } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room13: Room = {
@@ -11,8 +11,8 @@ export const room13: Room = {
     path: bgPlaytest,
   },
   music: {
-    key: 'mystique',
-    path: mystique,
+    key: 'shop',
+    path: shop,
   },
   objects: [
     {
