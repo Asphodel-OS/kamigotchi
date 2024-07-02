@@ -7,7 +7,7 @@ import {
   ChatMenuButton,
   HelpMenuButton,
   InventoryMenuButton,
-  LoginMenuButton,
+  LogoutMenuButton,
   QuestMenuButton,
   SettingsMenuButton,
 } from './buttons';
@@ -31,7 +31,7 @@ export function registerMenuRight() {
           <InventoryMenuButton />
           <SettingsMenuButton />
           <HelpMenuButton />
-          <LoginMenuButton />
+          <LogoutMenuButton />
         </Wrapper>
       );
     }

@@ -2,7 +2,7 @@ import { AccountMenuButton } from './Account';
 import { ChatMenuButton } from './Chat';
 import { HelpMenuButton } from './Help';
 import { InventoryMenuButton } from './Inventory';
-import { LoginMenuButton } from './Login';
+import { LogoutMenuButton } from './Logout';
 import { MapMenuButton } from './Map';
 import { NodeMenuButton } from './Node';
 import { PartyMenuButton } from './Party';
@@ -14,7 +14,7 @@ export {
   ChatMenuButton,
   HelpMenuButton,
   InventoryMenuButton,
-  LoginMenuButton,
+  LogoutMenuButton,
   MapMenuButton,
   NodeMenuButton,
   PartyMenuButton,
