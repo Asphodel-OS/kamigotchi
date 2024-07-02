@@ -1,3 +1,4 @@
+import { clickFx, hoverFx } from 'app/styles/effects';
 import styled, { keyframes } from 'styled-components';
 
 import { playClick } from 'utils/sounds';
@@ -69,6 +70,7 @@ export const IconButton = (props: Props) => {
     <Button
       onClick={!disabled ? handleClick : () => {}}
       style={setStyles()}
+      effectScale={1.05}
       color={color}
       disabled={disabled}
       pulse={pulse}
@@ -79,6 +81,7 @@ export const IconButton = (props: Props) => {
 };
 
 interface ButtonProps {
+  effectScale: number;
   color?: string;
   disabled?: boolean;
   pulse?: boolean;
@@ -93,11 +96,11 @@ const Button = styled.div<ButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${() => hoverFx} 0.2s;
-    transform: scale(1.15);
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => effectScale});
   }
   &:active {
-    animation: ${() => clickFx} 0.3s;
+    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
 
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
@@ -114,15 +117,4 @@ const pulseFx = keyframes`
   85%, 95% {
     background-color: #e8e8e8;
   }
-`;
-
-const hoverFx = keyframes`
-  0% { transform: scale(1); }
-  100% { transform: scale(1.15); }
-`;
-
-const clickFx = keyframes`
-  0% { transform: scale(1.15); }
-  50% { transform: scale(.95); }
-  100% { transform: scale(1.15); }
 `;

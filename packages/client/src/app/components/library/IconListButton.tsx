@@ -1,6 +1,7 @@
 import { Popover } from '@mui/material';
+import { clickFx, hoverFx } from 'app/styles/effects';
 import React, { useRef, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
@@ -70,6 +71,7 @@ export function IconListButton(props: Props) {
         ref={toggleRef}
         onClick={handleClick}
         style={setStyles()}
+        effectScale={1.1}
         disabled={!!disabled}
         noMargin={!!noMargin}
       >
@@ -92,6 +94,7 @@ export function IconListButton(props: Props) {
 interface ButtonProps {
   disabled: boolean;
   noMargin: boolean;
+  effectScale: number;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -110,11 +113,11 @@ const Button = styled.button<ButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${() => hoverFx} 0.2s;
-    transform: scale(1.15);
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => effectScale});
   }
   &:active {
-    animation: ${() => clickFx} 0.3s;
+    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
 `;
 
@@ -155,15 +158,4 @@ const Option = styled.div`
   &:active {
     background-color: #bbb;
   }
-`;
-
-const hoverFx = keyframes`
-  0% { transform: scale(1); }
-  100% { transform: scale(1.15); }
-`;
-
-const clickFx = keyframes`
-  0% { transform: scale(1.15); }
-  50% { transform: scale(.95); }
-  100% { transform: scale(1.15); }
 `;

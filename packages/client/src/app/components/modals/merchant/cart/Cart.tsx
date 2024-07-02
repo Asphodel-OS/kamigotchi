@@ -1,5 +1,6 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { Account } from 'network/shapes/Account';
 import { CartItem } from '../types';
@@ -59,7 +60,11 @@ export const Cart = (props: Props) => {
       </Items>
       {cart.length > 0 ? (
         <Checkout>
-          <BuyButton onClick={() => handleBuy(cart)} disabled={calcTotalPrice() > account.coin}>
+          <BuyButton
+            onClick={() => handleBuy(cart)}
+            effectScale={1.05}
+            disabled={calcTotalPrice() > account.coin}
+          >
             <Total>
               <Icon src={ItemImages.musu} />
               <Text>{calcTotalPrice().toLocaleString()}</Text>
@@ -123,6 +128,7 @@ const Checkout = styled.div`
 `;
 
 interface BuyButtonProps {
+  effectScale: number;
   disabled?: boolean;
 }
 
@@ -145,11 +151,11 @@ const BuyButton = styled.div<BuyButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${() => hoverFx} 0.2s;
-    transform: scale(1.05);
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => effectScale});
   }
   &:active {
-    animation: ${() => clickFx} 0.3s;
+    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
 `;
 
@@ -180,15 +186,4 @@ const EmptyText = styled.div`
   padding: 0.9vh 0vw;
   margin: 3vh;
   height: 100%;
-`;
-
-const hoverFx = keyframes`
-  0% { transform: scale(1); }
-  100% { transform: scale(1.05); }
-`;
-
-const clickFx = keyframes`
-  0% { transform: scale(1.05); }
-  50% { transform: scale(.95); }
-  100% { transform: scale(1.05); }
 `;

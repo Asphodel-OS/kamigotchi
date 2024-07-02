@@ -1,6 +1,7 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { useVisibility } from 'app/stores';
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 type GaugeProps = {
@@ -23,7 +24,7 @@ export const GasGauge = (props: GaugeProps) => {
   };
 
   return (
-    <Container onClick={handleClick}>
+    <Container onClick={handleClick} effectScale={1.15}>
       <Meter>
         <Arrow angle={levelToAngle(level)}>
           <Tip />
@@ -35,18 +36,19 @@ export const GasGauge = (props: GaugeProps) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ effectScale: number }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
   &:hover {
-    animation: ${({}) => hover} 0.2s;
-    transform: scale(1.15);
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => effectScale});
   }
   &:active {
-    animation: ${({}) => click} 0.3s;
+    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
 `;
 
@@ -99,15 +101,4 @@ const Pivot = styled.div`
   right: 50%;
   transform-origin: bottom center;
   transform: translateX(50%);
-`;
-
-const hover = keyframes`
-  0% { transform: scale(1); }
-  100% { transform: scale(1.15); }
-`;
-
-const click = keyframes`
-  0% { transform: scale(1.15); }
-  50% { transform: scale(.95); }
-  100% { transform: scale(1.15); }
 `;

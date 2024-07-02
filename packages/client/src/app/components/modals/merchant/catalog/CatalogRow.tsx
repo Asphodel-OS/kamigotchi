@@ -1,6 +1,7 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/Listing';
 import { playClick } from 'utils/sounds';
@@ -23,7 +24,12 @@ export const CatalogRow = (props: Props) => {
 
   const isInCart = props.cart.some((c) => c.listing.item.index === listing.item.index);
   return (
-    <Container key={listing.item.index} isInCart={isInCart} onClick={() => handleClick()}>
+    <Container
+      key={listing.item.index}
+      onClick={() => handleClick()}
+      isInCart={isInCart}
+      effectScale={1.02}
+    >
       <Tooltip text={[listing.item.description ?? '']}>
         <Image src={listing.item.image} isInCart={isInCart} />
       </Tooltip>
@@ -40,7 +46,12 @@ export const CatalogRow = (props: Props) => {
   );
 };
 
-const Container = styled.div<{ isInCart: boolean }>`
+interface ContainerProps {
+  isInCart: boolean;
+  effectScale: number;
+}
+
+const Container = styled.div<ContainerProps>`
   border: 0.15vw solid black;
   border-radius: 0.4vw;
   margin: 0.4vw;
@@ -51,11 +62,11 @@ const Container = styled.div<{ isInCart: boolean }>`
 
   cursor: pointer;
   &:hover {
-    animation: ${() => hoverFx} 0.2s;
-    transform: scale(1.02);
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => effectScale});
   }
   &:active {
-    animation: ${() => clickFx} 0.3s;
+    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
 `;
 
@@ -94,15 +105,4 @@ const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
   margin-right: 0.3vw;
-`;
-
-const hoverFx = keyframes`
-  0% { transform: scale(1); }
-  100% { transform: scale(1.02); }
-`;
-
-const clickFx = keyframes`
-  0% { transform: scale(1.02); }
-  50% { transform: scale(.98); }
-  100% { transform: scale(1.02); }
 `;
