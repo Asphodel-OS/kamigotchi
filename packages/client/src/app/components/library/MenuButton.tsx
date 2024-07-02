@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Tooltip } from './Tooltip';
 
 import { Modals, useVisibility } from 'app/stores';
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -33,7 +34,7 @@ export const MenuButton = (props: Props) => {
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>
-        <Button onClick={handleToggle}>
+        <Button onClick={handleToggle} effectScale={1.1}>
           <Image src={image} alt={id} />
         </Button>
       </div>
@@ -41,15 +42,19 @@ export const MenuButton = (props: Props) => {
   );
 };
 
-const Button = styled.button`
+const Button = styled.button<{ effectScale: number }>`
   height: 4.5vh;
   border-radius: 0.9vh;
   border: solid black 0.15vw;
   cursor: pointer;
   pointer-events: auto;
 
+  &:hover {
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => effectScale});
+  }
   &:active {
-    background-color: #c4c4c4;
+    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
 `;
 

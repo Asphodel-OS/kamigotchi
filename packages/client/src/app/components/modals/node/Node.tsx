@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { ModalWrapper } from 'app/components/library';
@@ -8,7 +9,6 @@ import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node, getNodeByIndex } from 'network/shapes/Node';
-import styled from 'styled-components';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
