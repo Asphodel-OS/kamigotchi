@@ -342,7 +342,13 @@ export const List = (props: Props) => {
   const AvailableQuests = () => {
     const quests = getAvailableQuests();
 
-    if (quests.length == 0) return <EmptyText>No available quests. Do something else.</EmptyText>;
+    if (quests.length == 0)
+      return (
+        <EmptyText>
+          No available quests.
+          <br /> Do something else?
+        </EmptyText>
+      );
 
     return quests.map((q: Quest) => (
       <QuestContainer key={q.id}>
@@ -389,7 +395,13 @@ export const List = (props: Props) => {
     getAvailableQuests(); // update numAvail
     const rawQuests = [...(account.quests?.ongoing ?? [])];
 
-    if (rawQuests.length == 0) return <EmptyText>No ongoing quests. Get a job?</EmptyText>;
+    if (rawQuests.length == 0)
+      return (
+        <EmptyText>
+          No ongoing quests.
+          <br /> Get a job?
+        </EmptyText>
+      );
 
     rawQuests.reverse();
 
@@ -432,15 +444,15 @@ const Container = styled.div`
 `;
 
 const EmptyText = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: center;
-  color: #333;
-  padding: 0.7vh 0vw;
-
-  margin: 1.5vh;
-
   height: 100%;
+  margin: 1.5vh;
+  padding: 1.2vh 0vw;
+
+  color: #333;
+  font-family: Pixel;
+  font-size: 1.8vh;
+  line-height: 4.5vh;
+  text-align: center;
 `;
 
 const CollapseText = styled.button`
