@@ -8,6 +8,7 @@ import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node, getNodeByIndex } from 'network/shapes/Node';
+import styled from 'styled-components';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
@@ -81,6 +82,10 @@ export function registerNodeModal() {
       useEffect(() => {
         setNode(data.node);
       }, [data.node]);
+
+      const getTotalKamis = () => {
+        return (node.kamis?.allies ?? []).length + (node.kamis?.enemies ?? []).length;
+      };
 
       ///////////////////
       // ACTIONS
@@ -163,16 +168,36 @@ export function registerNodeModal() {
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
+          truncate
         >
-          <Kards
-            account={account}
-            allies={node.kamis?.allies!}
-            enemies={node.kamis?.enemies!}
-            actions={{ collect, feed, liquidate, stop }}
-            tab={tab}
-          />
+          {getTotalKamis() > 0 ? (
+            <Kards
+              account={account}
+              allies={node.kamis?.allies!}
+              enemies={node.kamis?.enemies!}
+              actions={{ collect, feed, liquidate, stop }}
+              tab={tab}
+            />
+          ) : (
+            <EmptyText>
+              There are no Kamis on this node. <br />
+              Maybe that's an opportunity..
+            </EmptyText>
+          )}
         </ModalWrapper>
       );
     }
   );
 }
+
+const EmptyText = styled.div`
+  height: 100%;
+  margin: 1.5vh;
+  padding: 1.2vh 0vw;
+
+  color: #333;
+  font-family: Pixel;
+  font-size: 1.8vh;
+  line-height: 4.5vh;
+  text-align: center;
+`;
