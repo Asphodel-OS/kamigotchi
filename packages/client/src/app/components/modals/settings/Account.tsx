@@ -45,11 +45,11 @@ export const Account = () => {
         </Tooltip>
       </HeaderRow>
       <Section key='owner'>
-        <SubHeader>Owner</SubHeader>
+        <SubHeader>Owner (Injected Wallet)</SubHeader>
         {FieldRow('Address', kamiAccount.ownerAddress)}
       </Section>
       <Section key='operator'>
-        <SubHeader>Operator</SubHeader>
+        <SubHeader>Operator (Embedded Wallet)</SubHeader>
         {FieldRow('Address', kamiAccount.operatorAddress)}
         {!import.meta.env.DEV &&
           FieldRow('Private Key', localStorage.getItem('operatorPrivateKey') || '')}
@@ -65,11 +65,11 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  font-size: 1vw;
   color: #333;
-  text-align: left;
-  font-family: Pixel;
   margin: 0.6vw 0vw;
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
 `;
 
 const Section = styled.div`
@@ -86,15 +86,15 @@ const HeaderRow = styled.div`
 `;
 
 const SubHeader = styled.div`
-  font-size: 0.8vw;
   color: #333;
   padding: 0vw 0.2vw;
-  text-align: left;
   font-family: Pixel;
+  font-size: 0.75vw;
+  text-align: left;
 `;
 
 const Row = styled.div`
-  padding: 0.3vw 0vw 0.3vw 0.4vw;
+  padding: 0.75vw 0.6vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -110,7 +110,7 @@ const RowContent = styled.div`
   gap: 0.5vw;
 `;
 
-const Text = styled.p`
+const Text = styled.div`
   color: #333;
   font-family: Pixel;
   font-size: 0.6vw;
