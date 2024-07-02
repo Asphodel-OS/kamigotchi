@@ -68,7 +68,12 @@ export function registerPartyModal() {
       };
 
       return (
-        <ModalWrapper id='party' header={<ModalHeader title='Party' icon={kamiIcon} />} canExit>
+        <ModalWrapper
+          id='party'
+          header={<ModalHeader title='Party' icon={kamiIcon} />}
+          canExit
+          truncate
+        >
           <Kards account={account} kamis={account.kamis} actions={{ feed, revive }} />
         </ModalWrapper>
       );

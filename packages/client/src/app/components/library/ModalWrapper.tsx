@@ -56,12 +56,12 @@ const Wrapper = styled.div<Wrapper>`
 
 const Content = styled.div<{ truncate?: boolean }>`
   position: relative;
+  background-color: white;
   border: solid black 0.15vw;
   border-radius: 0.6vw;
 
-  background-color: white;
   width: 99%;
-  ${({ truncate }) => (truncate ? `` : `height: 99%;`)}
+  ${({ truncate }) => (truncate ? `max-height: 99%;` : `height: 99%;`)}
 
   display: flex;
   flex-flow: column nowrap;

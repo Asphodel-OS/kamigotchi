@@ -10,10 +10,10 @@ export const SectionContent = (props: Props) => {
     <Body>
       {body.map((line: string) => {
         return (
-          <>
+          <Line key={line}>
             {line}
             <br />
-          </>
+          </Line>
         );
       })}
     </Body>
@@ -21,10 +21,13 @@ export const SectionContent = (props: Props) => {
 };
 
 const Body = styled.div`
-  font-size: 1vw;
   color: #333;
-  text-align: left;
-  line-height: 110%;
-  font-family: Pixel;
   padding: 1.5vw;
+`;
+
+const Line = styled.div`
+  font-family: Pixel;
+  font-size: 1vw;
+  line-height: 110%;
+  text-align: left;
 `;

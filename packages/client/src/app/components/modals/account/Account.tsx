@@ -136,8 +136,9 @@ export function registerAccountModal() {
       return (
         <ModalWrapper
           id='account'
-          header={<ModalHeader key='header' title='Operator' icon={operatorIcon} />}
+          header={<ModalHeader key='header' title='Friends' icon={operatorIcon} />}
           canExit
+          truncate
         >
           <Bio
             key='bio'

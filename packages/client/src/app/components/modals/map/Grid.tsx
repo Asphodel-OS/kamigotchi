@@ -186,6 +186,7 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean }>`
   ${({ isHighlighted }) =>
     isHighlighted &&
     `
+    opacity: 0.9;
     border-left: 0.01vw solid black;
     border-bottom: 0.01vw solid black;
   `}

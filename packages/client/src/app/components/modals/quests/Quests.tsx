@@ -108,6 +108,7 @@ export function registerQuestsModal() {
           ]}
           footer={<Footer balance={data.account.reputation.agency} />}
           canExit
+          truncate
         >
           <List
             account={data.account}
