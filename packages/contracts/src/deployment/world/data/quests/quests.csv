@@ -1,12 +1,12 @@
 ﻿Author,Index,Title,Status,Class,SubType,Operator,DeltaType,ConditionDescription,IndexFor,ValueFor,Daily,Agency Rep,Introduction text,Resolution text,Requirements,Objectives,Rewards,Tags,Lethe Notes,Mina Rep
-"Lethe Asphodel, vaitarna, Nedu",1,An Unknown World,Revise Deployment,Quest,,,,,,,No,5,"Welcome to Kamigotchi World. I’ll be your guide. 
+"Lethe Asphodel, vaitarna, Nedu",1,An Unknown World,Ingame,Quest,,,,,,,No,5,"Welcome to Kamigotchi World. I’ll be your guide. 
 
 Start by exploring your surroundings. You can move around by using the Map Menu - try clicking the buttons in the top left of your screen. 
 
 Work out how to move, and then move 3 times. Afterwards, I’ll have a reward for you! ",Well done. You’ll be rewarded for each Quest you complete - complements of the Kamigotchi World Tourism Association.,None.,Move 3 times,1 Gacha Ticket,,,
 ,1,,For Implementation,Objective,MOVE,MIN,INC,Move 3 times,,3,No,,,,,,,,,
 ,1,,For Implementation,Reward,MINT20,,,1 Gacha Ticket,0,1,No,,,,,,,,,
-"Lethe Asphodel, vaitarna, Nedu",2,An ode to MUSU,Revise Deployment,Quest,,,,,,,No,5,"Your Kamigotchi can be used to harvest resources from this world. Open the harvesting menu in the top left bar and take a look. 
+"Lethe Asphodel, vaitarna, Nedu",2,An ode to MUSU,Ingame,Quest,,,,,,,No,5,"Your Kamigotchi can be used to harvest resources from this world. Open the harvesting menu in the top left bar and take a look. 
 
 You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 35 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),,,
 ,2,,For Implementation,Requirement,QUEST,COMPLETE,,Quest 35,35,,No,,,,,,,,,
@@ -26,12 +26,12 @@ Right?",Quest 3 completed (There are levels to this),Spend a Skill Point,1 XP Ca
 ,4,,For Implementation,Requirement,QUEST,COMPLETE,,Quest 3,3,,No,,,,,,,,,
 ,4,,For Implementation,Objective,SKILL_POINTS_USE,MIN,CURR,Spend a Skill Point,,1,No,,,,,,,,,
 ,4,,For Implementation,Reward,ITEM,,,1 XP Candy (Medium),105,1,No,,,,,,,,,
-"torngarsuk, vaitarna, Nedu",5,Back to the mines,Revise Deployment,,,,,,,,No,5,"As your Kamigotchi harvest, they produce Musu. Musu is a universal form of energy in this world. You’ll need it. Gather some.  ","Well done. Now you need to learn how to use MUSU. ",Quest 2 Completed (An ode to MUSU),Collect 100 $MUSU,1 Small XP Candy,,,
+"torngarsuk, vaitarna, Nedu",5,Back to the mines,Ingame,,,,,,,,No,5,"As your Kamigotchi harvest, they produce Musu. Musu is a universal form of energy in this world. You’ll need it. Gather some.  ","Well done. Now you need to learn how to use MUSU. ",Quest 2 Completed (An ode to MUSU),Collect 100 $MUSU,1 Small XP Candy,,,
 ,5,,For Implementation,Requirement,QUEST,COMPLETE,,Quest 2,2,,No,,,,,,,,,
 ,5,,For Implementation,Objective,COIN_TOTAL,MIN,INC,Collect 100 $MUSU,,100,No,,,,,,,,,
 ,5,,For Implementation,Reward,ITEM,,,1 Ribbon,1001,1,No,,,,,,,,,
 ,5,,For Implementation,Reward,ITEM,,,1 Small XP Candy,106,1,No,,,,,,,,,
-"Nedu, Lethe Asphodel",6,There are levels to this II,Revise Deployment,,,,,,,,No,5,"Your Kamigotchi is getting stronger. Good!
+"Nedu, Lethe Asphodel",6,There are levels to this II,Ingame,,,,,,,,No,5,"Your Kamigotchi is getting stronger. Good!
 
 Each level takes more XP than the last. It’ll take a lot of time to reach level 100…. 
 
@@ -41,13 +41,13 @@ I wonder how you’re specializing your Kamigotchi….",Have completed There are
 ,6,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed There are levels to this (3),3,,No,,,,,,,,,
 ,6,,For Implementation,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 10,,10,No,,,,,,,,,
 ,6,,For Implementation,Reward,ITEM,,,2 Gakki,103,2,No,,,,,,,,,
-"Nedu, Lethe Asphodel",7,There are levels to this III,Revise Deployment,,,,,,,,No,20,"It seems you’re a real Kamigotchi trainer. I appreciate the dedication. 
+"Nedu, Lethe Asphodel",7,There are levels to this III,Ingame,,,,,,,,No,20,"It seems you’re a real Kamigotchi trainer. I appreciate the dedication. 
 
 I want to see a level 20 Kamigotchi, now. I’ve got a few XP candies here as a reward. ","Isn’t it beautiful, to see your Kamigotchi grow? ",Have completed There are levels to this II (6),Raise a Kamigotchi to level 20,2 Medium XP Candy,,,
 ,7,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed There are levels to this II (6),6,,No,,,,,,,,,
 ,7,,For Implementation,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 20,,20,No,,,,,,,,,
 ,7,,For Implementation,Reward,ITEM,,,2 Medium XP Candy,105,2,No,,,,,,,,,
-"Lethe Asphodel, torngarsuk, vaitarna",8,Spring Rites,Revise Deployment,,,,,,,,No,5,"Your first Kamigotchi has fallen. But Death is not permanent in this world. 
+"Lethe Asphodel, torngarsuk, vaitarna",8,Spring Rites,Ingame,,,,,,,,No,5,"Your first Kamigotchi has fallen. But Death is not permanent in this world. 
 
 You can resurrect your Kamigotchi by using a Ribbon. This one is free. The rest will not be. 
 
@@ -392,7 +392,7 @@ Nedu,,The resurrection Ribbon,Review,,,,,,,,No,,"You put your Kamigotchi to harv
 ",Have completed Got MUSU? (75),Have used 1 Red Gakki Ribbon,Maple Flavored Ghost Gum,,nedu note: should track all-time red gakki ribbons used,
 Nedu,,Liquidation cascade,Review,,,,,,,,No,,It’s said that only a few Kamigotchi are able to liquidate 3 or more Kamigotchi in one single harvest. Let’s put that theory to the test. Liquidate 3 Kamigotchi without stopping your Harvest to complete this quest.,"That was reckless, but effective. Enjoy the reward, you degen.",Have completed The resurrection Ribbon (83),Liquidate 3 Kamigotchi in a single harvest,XP Candy (Large),,,
 Lethe Asphodel,36,,In progress,,,,,,,,No,,,,"Quest 1 Completed (An Unknown World) ",None,1 Kami Mint Ticket,,,
-Lethe Asphodel,35,Your First Kamigotchi,For Implementation,,,,,,,,No,5,"You got a Gacha Ticket as a reward for the last quest. Good job. 
+Lethe Asphodel,35,Your First Kamigotchi,Ingame,,,,,,,,No,5,"You got a Gacha Ticket as a reward for the last quest. Good job. 
 
 These tickets can be used to mint Kamigotchi on this testnet. These are testnet-only Kami, so don’t get too attached. It’s not like there’s a way to save them…
 
@@ -405,3 +405,19 @@ Lethe Asphodel,,Food Tutorial Quest,In progress,,,,,,,,No,,"See how you got a gu
 This is food for Kamigotchi. ",,,,,,,
 ,36,Working for the Agency,In progress,,,,,,,,No,,,,xx Quest Points,yy Quest Points,,,,
 ,,,Idea,,,,,,,,No,,,,,,,,,
+Lethe Asphodel,37,Further Progression,Revise Deployment,,,,,,,,No,0,"You’re getting started. 
+
+There are things to come for those with sufficient REPUTATION. Quests are one thing, but if you explore this world you’ll find other ways to raise your REPUTATION. 
+
+Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 36 Completed (Proving Yourself),Have 100 Reputation,3x Large XP Candy,,,
+,37,,For Implementation,Requirement,QUEST,COMPLETE,,Quest 36,36,,No,,,,,,,,,
+,37,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 100 REPUTATION,1,100,No,,,,,,,,,
+,37,,For Implementation,Reward,ITEM,,,3x Large XP Candy,104,3,No,,,,,,,,,
+Lethe Asphodel,36,Proving Yourself,Revise Deployment,,,,,,,,No,0,"You’re doing well. 
+
+Completing quests for me will raise your REPUTATION. As your REPUTATION grows, you’ll be able to claim rewards that manifest both within and outside of this world. 
+
+For now, raise your REPUTATION to 25 if you want a second testnet Kamigotchi. ",,Have 10 Reputation,Have 25 Reputation,1 Gacha Ticket,,,
+,36,,For Implementation,Requirement,REPUTATION,MIN,,Have 10 REPUTATION,1,10,No,,,,,,,,,
+,36,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,,
+,36,,For Implementation,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,

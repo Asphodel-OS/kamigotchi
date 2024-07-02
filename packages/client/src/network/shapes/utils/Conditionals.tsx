@@ -4,6 +4,7 @@ import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
 import { Account } from '../Account';
 import { getData } from '../Data';
+import { getReputation } from '../Faction';
 import { getInventoryByIndex } from '../Inventory';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
@@ -141,6 +142,8 @@ export const getBalance = (
   if (type === 'SKILL') {
     const skill = holder.skills?.find((s) => s.index === index);
     return skill?.points.current || 0;
+  } else if (type === 'REPUTATION') {
+    return getReputation(world, components, holder.id, index ?? 0);
   }
 
   // account specific, check if holder is account shaped

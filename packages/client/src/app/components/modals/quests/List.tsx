@@ -218,6 +218,7 @@ export const List = (props: Props) => {
       text = `Move to ${getRoom(con.target.index!)?.name || `Room ${targetVal}`}`;
     else if (con.target.type == 'COMPLETE_COMP')
       text = 'Gate at Scrap Paths unlocked'; // hardcoded - only goals use this. change in future
+    else if (con.target.type == 'REPUTATION') text = `Have ${targetVal} Reputation Points`;
     else text = '???';
 
     return text + parseConditionalTracking(con);
