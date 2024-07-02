@@ -2,14 +2,18 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
+import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
+import { ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
@@ -25,6 +29,9 @@ import { LibStat } from "libraries/LibStat.sol";
 // Registries hold shared information on individual entity instances in the world.
 // This can include attribute information such as capabilities, stats and effects.
 library LibItemRegistry {
+  using SafeCastLib for int32;
+  using LibString for string;
+
   /////////////////
   // SHAPES
 
@@ -36,6 +43,7 @@ library LibItemRegistry {
   function createItem(
     IUintComp components,
     uint32 index,
+    string memory type_,
     string memory name,
     string memory description,
     string memory mediaURI
@@ -47,6 +55,7 @@ library LibItemRegistry {
     );
 
     setIndex(components, id, index);
+    setType(components, id, type_);
     setIsRegistry(components, id);
 
     setName(components, id, name);
@@ -58,36 +67,18 @@ library LibItemRegistry {
   function createConsumable(
     IUintComp components,
     uint32 index,
+    string memory for_,
     string memory name,
     string memory description,
     string memory type_,
     string memory mediaURI
   ) internal returns (uint256 id) {
-    id = createItem(components, index, name, description, mediaURI);
+    id = createItem(components, index, type_, name, description, mediaURI);
     setIsConsumable(components, id);
-    setType(components, id, type_);
-  }
 
-  /// @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
-  /** @dev
-   * intended for registry entry 100-1000
-   * potentially just labeled as a consumable in future
-   */
-  function createFood(
-    IUintComp components,
-    uint32 index,
-    string memory name,
-    string memory description,
-    int32 health,
-    uint256 experience,
-    string memory mediaURI
-  ) internal returns (uint256 id) {
-    id = createItem(components, index, name, description, mediaURI);
-    setIsConsumable(components, id);
-    setType(components, id, "FOOD");
-
-    if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
-    if (experience > 0) setExperience(components, id, experience);
+    if (for_.eq("KAMI")) setFor(components, id, IsPetCompID);
+    else if (for_.eq("ACCOUNT")) setFor(components, id, IsAccountCompID);
+    else revert("LibItemRegistry: invalid type");
   }
 
   /// @notice sets lootbox registry entity
@@ -105,7 +96,7 @@ library LibItemRegistry {
     uint256[] memory weights,
     string memory mediaURI
   ) internal returns (uint256 id) {
-    id = createItem(components, index, name, description, mediaURI);
+    id = createItem(components, index, "LOOTBOX", name, description, mediaURI);
     setIsConsumable(components, id);
     setIsLootbox(components, id);
 
@@ -113,23 +104,16 @@ library LibItemRegistry {
     setWeights(components, id, weights);
   }
 
-  /// @notice Create a Registry entry for a Revive item. (e.g. ribbon)
-  /** @dev
-   * intended for registry entry 1000-2000
-   * potentially combined with food/consumable in future
-   */
-  function createRevive(
-    IUintComp components,
-    uint32 index,
-    string memory name,
-    string memory description,
-    int32 health,
-    string memory mediaURI
-  ) internal returns (uint256 id) {
-    id = createItem(components, index, name, description, mediaURI);
-    setIsConsumable(components, id);
-    setType(components, id, "REVIVE");
-    LibStat.setHealth(components, id, Stat(0, 0, 0, health));
+  /// @notice adds a stat to an item
+  function addStat(IUintComp components, uint256 id, string memory type_, int32 value) internal {
+    if (type_.eq("XP")) setExperience(components, id, value.toUint256());
+    else if (type_.eq("HEALTH")) LibStat.setHealth(components, id, Stat(0, 0, 0, value));
+    else if (type_.eq("MAXHEALTH")) LibStat.setHealth(components, id, Stat(value, 0, 0, 0));
+    else if (type_.eq("POWER")) LibStat.setPower(components, id, Stat(value, 0, 0, 0));
+    else if (type_.eq("VIOLENCE")) LibStat.setViolence(components, id, Stat(value, 0, 0, 0));
+    else if (type_.eq("HARMONY")) LibStat.setHarmony(components, id, Stat(value, 0, 0, 0));
+    else if (type_.eq("STAMINA")) LibStat.setStamina(components, id, Stat(0, 0, 0, value));
+    else revert("LibItemRegistry: invalid stat");
   }
 
   /// @notice delete a Registry entry for an item.
@@ -138,6 +122,7 @@ library LibItemRegistry {
     unsetIsRegistry(components, id);
     unsetIsConsumable(components, id);
     unsetIsLootbox(components, id);
+    unsetFor(components, id);
 
     unsetName(components, id);
     unsetDescription(components, id);
@@ -149,6 +134,7 @@ library LibItemRegistry {
     LibStat.unsetViolence(components, id);
     LibStat.unsetHarmony(components, id);
     LibStat.unsetSlots(components, id);
+    LibStat.unsetStamina(components, id);
     unsetExperience(components, id);
 
     unsetKeys(components, id);
@@ -201,6 +187,10 @@ library LibItemRegistry {
     IsConsumableComponent(getAddressById(components, IsConsumableCompID)).set(id);
   }
 
+  function setFor(IUintComp components, uint256 id, uint for_) internal {
+    ForComponent(getAddressById(components, ForCompID)).set(id, for_);
+  }
+
   function setIsLootbox(IUintComp components, uint256 id) internal {
     IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
   }
@@ -248,6 +238,10 @@ library LibItemRegistry {
   function unsetDescription(IUintComp components, uint256 id) internal {
     DescriptionComponent comp = DescriptionComponent(getAddressById(components, DescriptionCompID));
     if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetFor(IUintComp components, uint256 id) internal {
+    ForComponent(getAddressById(components, ForCompID)).remove(id);
   }
 
   function unsetIsConsumable(IUintComp components, uint256 id) internal {

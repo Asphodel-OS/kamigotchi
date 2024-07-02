@@ -11,5 +11,5 @@ export async function initMerchants(api: AdminAPI) {
   await api.listing.set(1, 101, 50, 0); // merchant index, item index, buy price, sell price
   await api.listing.set(1, 102, 180, 0);
   await api.listing.set(1, 103, 320, 0);
-  await api.listing.set(1, 1001, 500, 0);
+  await api.listing.set(1, 110, 500, 0);
 }

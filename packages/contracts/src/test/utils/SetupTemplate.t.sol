@@ -233,11 +233,11 @@ abstract contract SetupTemplate is TestSetupImports {
     return _moveAccount(playerIndex, LibRoom.getIndex(components, roomID));
   }
 
-  function _buyFromListing(uint playerIndex, uint listingID, uint32 amt) internal {
+  function _buyFromListing(uint playerIndex, uint listingID, uint256 amt) internal {
     uint32[] memory amts = new uint32[](1);
     uint32[] memory itemIndices = new uint32[](1);
 
-    amts[0] = amt;
+    amts[0] = uint32(amt);
     itemIndices[0] = LibListing.getItemIndex(components, listingID);
     uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
 
@@ -245,11 +245,11 @@ abstract contract SetupTemplate is TestSetupImports {
     _ListingBuySystem.executeTyped(npcIndex, itemIndices, amts);
   }
 
-  function _sellToListing(uint playerIndex, uint listingID, uint32 amt) internal {
+  function _sellToListing(uint playerIndex, uint listingID, uint256 amt) internal {
     uint32[] memory amts = new uint32[](1);
     uint32[] memory itemIndices = new uint32[](1);
 
-    amts[0] = amt;
+    amts[0] = uint32(amt);
     itemIndices[0] = LibListing.getItemIndex(components, listingID);
     uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
 
@@ -575,10 +575,11 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory mediaURI
   ) public returns (uint256 id) {
     vm.prank(deployer);
-    return
-      __ItemRegistrySystem.createFood(
-        abi.encode(index, name, description, health, experience, mediaURI)
-      );
+    id = __ItemRegistrySystem.createConsumable(
+      abi.encode(index, "KAMI", name, description, "FOOD", mediaURI)
+    );
+    __ItemRegistrySystem.addStat(index, "XP", int32(int(experience)));
+    __ItemRegistrySystem.addStat(index, "HEALTH", health);
   }
 
   function _createRevive(
@@ -589,8 +590,10 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory mediaURI
   ) public returns (uint256 id) {
     vm.prank(deployer);
-    return
-      __ItemRegistrySystem.createRevive(abi.encode(index, name, description, health, mediaURI));
+    id = __ItemRegistrySystem.createConsumable(
+      abi.encode(index, "KAMI", name, description, "REVIVE", mediaURI)
+    );
+    __ItemRegistrySystem.addStat(index, "HEALTH", health);
   }
 
   function _createLootbox(

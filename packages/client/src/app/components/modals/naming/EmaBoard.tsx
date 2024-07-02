@@ -52,7 +52,7 @@ export function registerEMABoardModal() {
       };
 
       const useRenamePotion = (kami: Kami) => {
-        const itemIndex = 9001;
+        const itemIndex = 111;
         actions.add({
           action: 'KamiFeed',
           params: [kami.id, itemIndex],

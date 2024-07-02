@@ -153,16 +153,22 @@
       "writeAccess": [
         "DescriptionComponent",
         "ExperienceComponent",
+        "ForComponent",
         "IsRegistryComponent",
         "IsConsumableComponent",
         "IsLootboxComponent",
         "IndexItemComponent",
         "HealthComponent",
+        "HarmonyComponent",
+        "PowerComponent",
         "KeysComponent",
         "WeightsComponent",
         "NameComponent",
         "MediaURIComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "SlotsComponent",
+        "StaminaComponent",
+        "ViolenceComponent"
       ]
     },
     {

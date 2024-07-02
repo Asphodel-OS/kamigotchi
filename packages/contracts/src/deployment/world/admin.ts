@@ -388,20 +388,36 @@ export function createAdminAPI(compiledCalls: string[]) {
   /////////////////
   //  ITEMS
 
-  // @dev add a food item registry entry
-  async function registerFood(
+  async function registerBaseItem(
     index: number,
+    for_: string,
     name: string,
     description: string,
-    health: number,
-    experience: number,
+    media: string
+  ) {
+    genCall('system.item.registry', [index, for_, name, description, media], 'create', [
+      'uint32',
+      'string',
+      'string',
+      'string',
+      'string',
+    ]);
+  }
+
+  // @dev add a misc item in registry entry
+  async function registerConsumable(
+    index: number,
+    for_: string,
+    name: string,
+    description: string,
+    type_: string,
     media: string
   ) {
     genCall(
       'system.item.registry',
-      [index, name, description, health, experience, media],
-      'createFood',
-      ['uint32', 'string', 'string', 'int32', 'uint256', 'string']
+      [index, for_, name, description, type_, media],
+      'createConsumable',
+      ['uint32', 'string', 'string', 'string', 'string', 'string']
     );
   }
 
@@ -421,38 +437,8 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
-  // @dev add a misc item in registry entry
-  async function registerConsumable(
-    index: number,
-    name: string,
-    description: string,
-    type_: string,
-    media: string
-  ) {
-    genCall('system.item.registry', [index, name, description, type_, media], 'createConsumable', [
-      'uint32',
-      'string',
-      'string',
-      'string',
-      'string',
-    ]);
-  }
-
-  // @dev add a revive item registry entry
-  async function registerRevive(
-    index: number,
-    name: string,
-    description: string,
-    health: number,
-    media: string
-  ) {
-    genCall('system.item.registry', [index, name, description, health, media], 'createRevive', [
-      'uint32',
-      'string',
-      'string',
-      'int32',
-      'string',
-    ]);
+  async function addStat(index: number, type_: string, value: number) {
+    genCall('system.item.registry', [index, type_, value], 'addStat');
   }
 
   // @dev deletes an item registry
@@ -587,10 +573,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     registry: {
       item: {
         create: {
-          food: registerFood,
+          base: registerBaseItem,
           lootbox: registerLootbox,
           consumable: registerConsumable,
-          revive: registerRevive,
+        },
+        add: {
+          stat: addStat,
         },
         delete: deleteItem,
       },

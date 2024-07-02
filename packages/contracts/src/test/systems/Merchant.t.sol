@@ -283,14 +283,16 @@ contract NPCTest is SetupTemplate {
 
         uint32[] memory itemIndices = new uint32[](1);
         itemIndices[0] = listings2[j].itemIndex;
+        uint32[] memory amts = new uint32[](1);
+        amts[0] = uint32(amt);
 
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Buy(): must be in same room as npc");
-        _ListingBuySystem.executeTyped(listings2[j].npcIndex, itemIndices, amt);
+        _ListingBuySystem.executeTyped(listings2[j].npcIndex, itemIndices, amts);
 
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Sell(): must be in same room as npc");
-        _ListingSellSystem.executeTyped(listings2[j].npcIndex, itemIndices, amt);
+        _ListingSellSystem.executeTyped(listings2[j].npcIndex, itemIndices, amts);
       }
     }
 
@@ -307,14 +309,16 @@ contract NPCTest is SetupTemplate {
         uint amt = j + 1;
         uint32[] memory itemIndices = new uint32[](1);
         itemIndices[0] = listings1[j].itemIndex;
+        uint32[] memory amts = new uint32[](1);
+        amts[0] = uint32(amt);
 
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Buy(): must be in same room as npc");
-        _ListingBuySystem.executeTyped(listings1[j].npcIndex, itemIndices, amt);
+        _ListingBuySystem.executeTyped(listings1[j].npcIndex, itemIndices, amts);
 
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Sell(): must be in same room as npc");
-        _ListingSellSystem.executeTyped(listings1[j].npcIndex, itemIndices, amt);
+        _ListingSellSystem.executeTyped(listings1[j].npcIndex, itemIndices, amts);
 
         _buyFromListing(i, listingIDs2[j], amt);
         _sellToListing(i, listingIDs2[j], amt);
@@ -373,8 +377,11 @@ contract NPCTest is SetupTemplate {
       for (uint j = 0; j < listingIDs.length; j++) {
         uint32[] memory itemIndices = new uint32[](1);
         itemIndices[0] = listings[j].itemIndex;
+        uint32[] memory amts = new uint32[](1);
+        amts[0] = uint32(1);
+
         vm.prank(_getOperator(i));
-        _ListingBuySystem.executeTyped(listings[j].npcIndex, itemIndices, 1);
+        _ListingBuySystem.executeTyped(listings[j].npcIndex, itemIndices, amts);
       }
     }
 
@@ -401,9 +408,12 @@ contract NPCTest is SetupTemplate {
         if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
           uint32[] memory itemIndices = new uint32[](1);
           itemIndices[0] = listing.itemIndex;
+          uint32[] memory amts = new uint32[](1);
+          amts[0] = uint32(uint256(testData.stockChange));
+
           vm.prank(_getOperator(testData.playerIndex));
           vm.expectRevert("Inventory: insufficient balance");
-          _ListingBuySystem.executeTyped(listing.npcIndex, itemIndices, testData.stockChange);
+          _ListingBuySystem.executeTyped(listing.npcIndex, itemIndices, amts);
         } else {
           _buyFromListing(testData.playerIndex, listingID, testData.stockChange);
           assertEq(
@@ -422,9 +432,12 @@ contract NPCTest is SetupTemplate {
         if (testData.stockChange > _getItemBalance(testData.playerIndex, testData.itemIndex)) {
           uint32[] memory itemIndices = new uint32[](1);
           itemIndices[0] = listing.itemIndex;
+          uint32[] memory amts = new uint32[](1);
+          amts[0] = uint32(uint256(testData.stockChange));
+
           vm.prank(_getOperator(testData.playerIndex));
           vm.expectRevert("Inventory: insufficient balance");
-          _ListingSellSystem.executeTyped(listing.npcIndex, itemIndices, testData.stockChange);
+          _ListingSellSystem.executeTyped(listing.npcIndex, itemIndices, amts);
         } else {
           _sellToListing(testData.playerIndex, listingID, testData.stockChange);
           assertEq(

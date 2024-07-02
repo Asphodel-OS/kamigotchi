@@ -25,7 +25,7 @@ const run = async () => {
   if (action !== 'init' && categories.length > 1)
     throw new Error('Only one category allowed for non-init actions');
 
-  await setAutoMine(mode, true);
+  if (mode === 'DEV') setAutoMine(true);
 
   // generate init script and calls
   await generateInitScript(mode, categories, action, argv.args);
@@ -33,7 +33,7 @@ const run = async () => {
   // running script.sol
   await initWorld(getDeployerKey(mode), getRpc(mode)!, world);
 
-  await setAutoMine(mode, false);
+  if (mode === 'DEV') setAutoMine(false);
 };
 
 run();

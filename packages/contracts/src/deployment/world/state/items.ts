@@ -4,17 +4,26 @@ import { getItemImage, readFile } from './utils';
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   const droptablesCSV = await readFile('items/droptables.csv');
   const itemsCSV = await readFile('items/items.csv');
+
+  const ignoreTypes = ['OTHER', 'NFT'];
+  const baseTypes = ['MISC', 'MATERIAL', 'RING'];
   for (let i = 0; i < itemsCSV.length; i++) {
     const item = itemsCSV[i];
-
+    if (
+      item['Status'] !== 'For Implementation' &&
+      item['Status'] !== 'Revise Deployment' &&
+      item['Status'] !== 'Ingame' // a lil clunky to accommodate notion
+    )
+      continue;
     // skip if indices are overridden and item isn't included
     if (overrideIndices && !overrideIndices.includes(Number(item['Index']))) continue;
 
     try {
       const type = String(item['Type']).toUpperCase();
-      if (type === 'FOOD') await setFood(api, item);
-      else if (type === 'REVIVE') await setRevive(api, item);
-      else if (type === 'MISC') await setMisc(api, item);
+      if (ignoreTypes.includes(type)) continue;
+
+      if (baseTypes.includes(type)) await setBase(api, item);
+      else if (type === 'CONSUMABLE') await setConsumable(api, item);
       else if (type === 'LOOTBOX') await setLootbox(api, item, droptablesCSV);
       else console.error('Item type not found: ' + type);
     } catch {
@@ -47,35 +56,26 @@ export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
   await initItems(api, indices);
 }
 
-async function setFood(api: AdminAPI, item: any) {
-  await api.registry.item.create.food(
+async function setBase(api: AdminAPI, item: any) {
+  await api.registry.item.create.base(
     Number(item['Index']),
+    item['Type'].toUpperCase(),
     item['Name'],
     item['Description'],
-    Number(item['Health'] ?? 0),
-    Number(item['XP'] ?? 0),
     getItemImage(item['Name'])
   );
 }
 
-async function setRevive(api: AdminAPI, item: any) {
-  await api.registry.item.create.revive(
-    Number(item['Index']),
-    item['Name'],
-    item['Description'],
-    Number(item['Health'] ?? 0),
-    getItemImage(item['Name'])
-  );
-}
-
-async function setMisc(api: AdminAPI, item: any) {
+async function setConsumable(api: AdminAPI, item: any) {
   await api.registry.item.create.consumable(
     Number(item['Index']),
+    (item['For'] ?? 'KAMI').toUpperCase(),
     item['Name'],
     item['Description'],
-    item['miscCategory'],
+    item['ConsumableType'].toUpperCase(),
     getItemImage(item['Name'])
   );
+  await addStat(api, item);
 }
 
 async function setLootbox(api: AdminAPI, item: any, droptables: any) {
@@ -83,8 +83,8 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     Number(item['Index']),
     item['Name'],
     item['Description'],
-    [1, 2, 3],
-    [9, 9, 7],
+    [11001, 11002, 11006, 101, 102, 103, 106, 105, 104, 109, 108, 107, 110],
+    [9, 9, 9, 9, 8, 7, 8, 7, 6, 9, 8, 7, 7],
     getItemImage(item['Name'])
   );
   return; // using placeholder lootboxes for now. similar challenges in representation to rooms
@@ -96,4 +96,24 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     droptables[Number(item['Droptable']) - 1]['Tier'],
     getItemImage(item['Name'])
   );
+}
+
+async function addStat(api: AdminAPI, item: any) {
+  const index = Number(item['Index']);
+
+  if (Number(item['XP']) > 0) await api.registry.item.add.stat(index, 'XP', Number(item['XP']));
+  if (Number(item['Health']) > 0) {
+    console.log('setting health', item['Health'], Number(item['Health']));
+    await api.registry.item.add.stat(index, 'HEALTH', Number(item['Health']));
+  }
+  if (Number(item['MaxHealth']) > 0)
+    await api.registry.item.add.stat(index, 'MAXHEALTH', Number(item['MaxHealth']));
+  if (Number(item['Power']) > 0)
+    await api.registry.item.add.stat(index, 'POWER', Number(item['Power']));
+  if (Number(item['Violence']) > 0)
+    await api.registry.item.add.stat(index, 'VIOLENCE', Number(item['Violence']));
+  if (Number(item['Harmony']) > 0)
+    await api.registry.item.add.stat(index, 'HARMONY', Number(item['Harmony']));
+  if (Number(item['Stamina']) > 0)
+    await api.registry.item.add.stat(index, 'STAMINA', Number(item['Stamina']));
 }

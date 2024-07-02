@@ -21,7 +21,7 @@ const run = async () => {
   const func = argv.func ? argv.func : 'executeTyped';
   const args = argv.args ? argv.args.split(',') : [];
 
-  await setAutoMine(mode, true);
+  if (mode === 'DEV') setAutoMine(true);
 
   // generate init script and calls
   await generateSingleCall(mode, system, func, args);
@@ -29,7 +29,7 @@ const run = async () => {
   // running script.sol
   await initWorld(getDeployerKey(mode), getRpc(mode)!, world);
 
-  await setAutoMine(mode, false);
+  if (mode === 'DEV') setAutoMine(false);
 };
 
 run();

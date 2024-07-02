@@ -18,6 +18,38 @@
     },
     {
       "type": "function",
+      "name": "addStat",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "create",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "createConsumable",
       "inputs": [
         {
@@ -37,45 +69,7 @@
     },
     {
       "type": "function",
-      "name": "createFood",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "createLootbox",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "createRevive",
       "inputs": [
         {
           "name": "arguments",
@@ -181,10 +175,10 @@
     }
   ],
   "methodIdentifiers": {
+    "addStat(bytes)": "350df03e",
+    "create(bytes)": "cf5ba53f",
     "createConsumable(bytes)": "e96e3836",
-    "createFood(bytes)": "62bd64bd",
     "createLootbox(bytes)": "b72c6001",
-    "createRevive(bytes)": "a0e9f15c",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "remove(uint32)": "00d84fd8",

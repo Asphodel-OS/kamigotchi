@@ -29,10 +29,10 @@ import type {
 
 export interface _ItemRegistrySystemInterface extends utils.Interface {
   functions: {
+    "addStat(bytes)": FunctionFragment;
+    "create(bytes)": FunctionFragment;
     "createConsumable(bytes)": FunctionFragment;
-    "createFood(bytes)": FunctionFragment;
     "createLootbox(bytes)": FunctionFragment;
-    "createRevive(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "remove(uint32)": FunctionFragment;
@@ -41,10 +41,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addStat"
+      | "create"
       | "createConsumable"
-      | "createFood"
       | "createLootbox"
-      | "createRevive"
       | "execute"
       | "owner"
       | "remove"
@@ -52,19 +52,19 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "addStat",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "createConsumable",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createFood",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "createLootbox",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createRevive",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -81,17 +81,14 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addStat", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createConsumable",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "createFood", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createLootbox",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createRevive",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
@@ -148,22 +145,22 @@ export interface _ItemRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     createConsumable(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    createFood(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     createLootbox(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    createRevive(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -186,22 +183,22 @@ export interface _ItemRegistrySystem extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  addStat(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  create(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   createConsumable(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  createFood(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   createLootbox(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  createRevive(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -224,22 +221,22 @@ export interface _ItemRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     createConsumable(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createFood(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     createLootbox(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    createRevive(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -274,22 +271,22 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
+    addStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     createConsumable(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    createFood(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     createLootbox(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    createRevive(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -313,22 +310,22 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
+    addStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     createConsumable(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    createFood(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     createLootbox(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createRevive(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -12,20 +12,35 @@ uint256 constant ID = uint256(keccak256("system.item.registry"));
 contract _ItemRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
+  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 index,
+      string memory type_,
+      string memory name,
+      string memory description,
+      string memory media
+    ) = abi.decode(arguments, (uint32, string, string, string, string));
+
+    uint256 id = LibItemRegistry.createItem(components, index, type_, name, description, media);
+    return id;
+  }
+
   function createConsumable(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 index,
+      string memory for_,
       string memory name,
       string memory description,
       string memory type_,
       string memory media
-    ) = abi.decode(arguments, (uint32, string, string, string, string));
+    ) = abi.decode(arguments, (uint32, string, string, string, string, string));
 
     uint256 registryID = LibItemRegistry.getByIndex(components, index);
     require(registryID == 0, "ItemReg: item already exists");
     require(!LibString.eq(name, ""), "ItemReg: name empty");
 
-    return LibItemRegistry.createConsumable(components, index, name, description, type_, media);
+    return
+      LibItemRegistry.createConsumable(components, index, for_, name, description, type_, media);
   }
 
   function createLootbox(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -46,38 +61,11 @@ contract _ItemRegistrySystem is System {
       LibItemRegistry.createLootbox(components, index, name, description, keys, weights, media);
   }
 
-  function createFood(bytes memory arguments) public onlyOwner returns (uint256) {
-    (
-      uint32 index,
-      string memory name,
-      string memory description,
-      int32 health,
-      uint256 experience,
-      string memory media
-    ) = abi.decode(arguments, (uint32, string, string, int32, uint256, string));
-
+  function addStat(uint32 index, string memory type_, int32 value) public onlyOwner {
     uint256 registryID = LibItemRegistry.getByIndex(components, index);
-    require(registryID == 0, "ItemReg: item already exists");
-    require(!LibString.eq(name, ""), "ItemReg: name empty");
+    require(registryID != 0, "ItemReg: item does not exist");
 
-    return
-      LibItemRegistry.createFood(components, index, name, description, health, experience, media);
-  }
-
-  function createRevive(bytes memory arguments) public onlyOwner returns (uint256) {
-    (
-      uint32 index,
-      string memory name,
-      string memory description,
-      int32 health,
-      string memory media
-    ) = abi.decode(arguments, (uint32, string, string, int32, string));
-
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
-    require(registryID == 0, "ItemReg: item already exists");
-    require(!LibString.eq(name, ""), "ItemReg: name empty");
-
-    return LibItemRegistry.createRevive(components, index, name, description, health, media);
+    LibItemRegistry.addStat(components, registryID, type_, value);
   }
 
   function remove(uint32 index) public onlyOwner {
