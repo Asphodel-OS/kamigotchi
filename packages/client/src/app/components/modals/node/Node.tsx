@@ -46,10 +46,10 @@ export function registerNodeModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const { roomIndex } = useSelected.getState();
+          const { nodeIndex } = useSelected.getState();
 
           const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-          let node = getNodeByIndex(world, components, roomIndex, {
+          let node = getNodeByIndex(world, components, nodeIndex, {
             kamis: true,
             accountID: account?.id,
           });
@@ -67,16 +67,16 @@ export function registerNodeModal() {
       const { account } = data;
       const { actions, api, components, world } = network;
       const [tab, setTab] = useState('allies');
-      const { roomIndex } = useSelected();
+      const { nodeIndex } = useSelected();
       const [node, setNode] = useState<Node>(data.node);
 
       // updates from selected Node updates
       useEffect(() => {
         const nodeOptions = { kamis: true, accountID: account.id };
-        let node = getNodeByIndex(world, components, roomIndex, nodeOptions);
+        let node = getNodeByIndex(world, components, nodeIndex, nodeOptions);
         if (!node) node = nullNode;
         setNode(node);
-      }, [roomIndex]);
+      }, [nodeIndex]);
 
       // updates from component subscription updates
       useEffect(() => {
@@ -90,7 +90,7 @@ export function registerNodeModal() {
       ///////////////////
       // ACTIONS
 
-      // collects on an existing production
+      // collects on an existing harvest
       const collect = (kami: Kami) => {
         actions.add({
           action: 'HarvestCollect',
@@ -114,8 +114,8 @@ export function registerNodeModal() {
         });
       };
 
-      // liquidate a production
-      // assume this function is only called with two kamis that have productions
+      // liquidate a harvest
+      // assume this function is only called with two kamis that have harvests
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
         actions.add({
           action: 'HarvestLiquidate',
@@ -127,7 +127,7 @@ export function registerNodeModal() {
         });
       };
 
-      // starts a production for the given pet and node
+      // starts a harvest for the given pet and node
       const start = (kami: Kami, node: Node) => {
         actions.add({
           action: 'HarvestStart',
@@ -139,7 +139,7 @@ export function registerNodeModal() {
         });
       };
 
-      // stops a production
+      // stops a harvest
       const stop = (kami: Kami) => {
         actions.add({
           action: 'HarvestStop',
