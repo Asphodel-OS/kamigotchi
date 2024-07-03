@@ -24,11 +24,18 @@ const run = async () => {
   const action = argv.action ? (argv.action as keyof SubFunc) : 'init';
   if (action !== 'init' && categories.length > 1)
     throw new Error('Only one category allowed for non-init actions');
+  const args = argv.args
+    ? argv.args
+        .toString()
+        .split(',') // ensure array
+        .map((a: string) => Number(a)) // cast to number
+    : [];
 
   if (mode === 'DEV') setAutoMine(true);
 
   // generate init script and calls
-  await generateInitScript(mode, categories, action, argv.args);
+  console.log(args);
+  await generateInitScript(mode, categories, action, args);
 
   // running script.sol
   await initWorld(getDeployerKey(mode), getRpc(mode)!, world);

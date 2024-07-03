@@ -9,7 +9,7 @@ Work out how to move, and then move 3 times. Afterwards, I’ll have a reward fo
 "Lethe Asphodel, vaitarna, Nedu",2,An ode to MUSU,Ingame,Quest,,,,,,,No,5,"Your Kamigotchi can be used to harvest resources from this world. Open the harvesting menu in the top left bar and take a look. 
 
 You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 35 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),
-,2,,Ingame,Requirement,QUEST,COMPLETE,,Quest 35,35,,No,,,,,,,
+,2,,Ingame,Requirement,QUEST,COMPLETE,,Quest 11,11,,No,,,,,,,
 ,2,,Ingame,Objective,HARVEST_TIME,MIN,CURR,Harvest for > 5 minutes,,300,No,,,,,,,
 ,2,,Ingame,Reward,ITEM,,,1 XP Candy (small),106,1,No,,,,,,,
 "torngarsuk, vaitarna, Nedu",3,There are levels to this,Ingame,,,,,,,,No,5,"Unlike humans, Kamigotchi have the potential to grow and change.  The simplest way to do this is by using XP, which is generated as a byproduct of Harvesting, to level them up.  
