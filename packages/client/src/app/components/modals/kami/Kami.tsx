@@ -33,7 +33,7 @@ export function registerKamiModal() {
     // Requirement
     (layers) => {
       const { network } = layers;
-      return interval(1000).pipe(
+      return interval(5000).pipe(
         map(() => {
           const account = getAccountFromBurner(network, { kamis: true });
           return {
@@ -53,10 +53,19 @@ export function registerKamiModal() {
       const [kami, setKami] = useState<Kami>();
 
       /////////////////
-      // SUBSCIRPTION
+      // SUBSCRIPTION
 
+      // ticking kami data updaes every second
       useEffect(() => {
-        setKami(getSelectedKami(kamiIndex));
+        const updateKami = () => {
+          setKami(getSelectedKami(kamiIndex));
+        };
+
+        updateKami();
+        const timerId = setInterval(updateKami, 1000);
+        return function cleanup() {
+          clearInterval(timerId);
+        };
       }, [kamiIndex]);
 
       /////////////////
@@ -91,7 +100,7 @@ export function registerKamiModal() {
             return api.player.pet.level(kami.id);
           },
         });
-        updateKamiAfterAction(actionIndex);
+        // updateKamiAfterAction(actionIndex);
       };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
@@ -103,7 +112,7 @@ export function registerKamiModal() {
             return api.player.skill.upgrade(kami.id, skill.index);
           },
         });
-        updateKamiAfterAction(actionIndex);
+        // updateKamiAfterAction(actionIndex);
       };
 
       /////////////////
