@@ -1,4 +1,3 @@
-import { triggerNodeModal } from 'app/triggers/triggerNodeModal';
 import { bgPlaytestDay } from 'assets/images/rooms/10_forest-insect';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
@@ -29,10 +28,9 @@ export const room10: Room = {
       coordinates: { x1: 5, y1: 45, x2: 20, y2: 70 },
       dialogue: 103,
     },
-    {
-      name: 'termite mound',
-      coordinates: { x1: 30, y1: 25, x2: 108, y2: 110 },
-      onClick: () => triggerNodeModal(3),
-    },
+    // {
+    //   name: 'termite mound',
+    //   coordinates: { x1: 30, y1: 25, x2: 108, y2: 110 },
+    // },
   ],
 };
