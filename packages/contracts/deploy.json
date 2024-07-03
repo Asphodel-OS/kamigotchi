@@ -529,7 +529,7 @@
     },
     {
       "name": "PetNameSystem",
-      "writeAccess": ["HasFlagComponent", "NameComponent", "TimeLastComponent"]
+      "writeAccess": ["HasFlagComponent", "NameComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
       "name": "PetReviveSystem",
