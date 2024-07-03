@@ -13,13 +13,14 @@ import {
   getAccIncomingRequests,
   getAccOutgoingRequests,
 } from '../Friendship';
-import { GachaCommit, queryAccCommits } from '../Gacha';
+import { queryAccCommits } from '../Gacha';
 import { Inventory, cleanInventories, getCoinBal, queryInventoryX } from '../Inventory';
 import { Kami, queryKamisX } from '../Kami';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
+import { Commit } from '../utils/Revealables';
 
 // standardized shape of an Account Entity
 export interface Account {
@@ -48,7 +49,7 @@ export interface Account {
   kamis: Kami[];
   friends?: Friends;
   gacha?: {
-    commits: GachaCommit[];
+    commits: Commit[];
   };
   inventories?: Inventory[];
   lootboxLogs?: {

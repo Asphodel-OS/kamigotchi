@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, ItemIcon, Tooltip } from 'app/components/library';
@@ -6,38 +5,30 @@ import { Inventory } from 'network/shapes/Inventory';
 import { Lootbox } from 'network/shapes/Lootbox';
 
 interface Props {
-  inventory: Inventory | undefined;
-  lootbox: Lootbox;
-  utils: {
-    setState: (state: string) => void;
-    setAmount: (amount: number) => void;
+  actions: {
+    open: (amount: number) => Promise<void>;
+  };
+  data: {
+    inventory: Inventory | undefined;
+    lootbox: Lootbox;
   };
 }
 
 export const Opener = (props: Props) => {
-  const { inventory, lootbox, utils } = props;
-  const [curBal, setCurBal] = useState(0);
-
-  useEffect(() => {
-    setCurBal(inventory?.balance || 0);
-  }, [inventory ? inventory.item : 0]);
-
-  const startReveal = async (amount: number) => {
-    utils.setAmount(amount);
-    utils.setState('REVEALING');
-    return;
-  };
+  const { data, actions } = props;
 
   ///////////////
   // DISPLAY
 
+  const currBal = data.inventory?.balance || 0;
+
   const OpenButton = (amount: number) => {
-    const enabled = amount <= curBal;
+    const enabled = amount <= currBal;
     const warnText = enabled ? '' : 'Insufficient boxes';
     return (
       <Tooltip text={[warnText]}>
         <ActionButton
-          onClick={() => startReveal(amount)}
+          onClick={() => actions.open(amount)}
           text={`Open ${amount}`}
           size='large'
           disabled={!enabled}
@@ -48,7 +39,7 @@ export const Opener = (props: Props) => {
 
   return (
     <Container>
-      <ItemIcon item={lootbox} balance={curBal} size='large' />
+      <ItemIcon item={data.lootbox} balance={currBal} size='large' />
       <ButtonBox>
         {OpenButton(1)}
         {OpenButton(10)}

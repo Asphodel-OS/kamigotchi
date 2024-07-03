@@ -12,6 +12,9 @@ import { getAccountFromBurner } from 'network/shapes/Account';
 import { useVisibility } from 'app/stores';
 import { getItemByIndex } from 'network/shapes/Item';
 import { getLootboxByIndex, getLootboxLog } from 'network/shapes/Lootbox';
+import { Commit, filterRevealable } from 'network/shapes/utils/Revealables';
+import { useAccount, useWatchBlockNumber } from 'wagmi';
+import { Commits } from './Commits';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
@@ -50,13 +53,22 @@ export function registerLootboxesModal() {
 
     // Render
     ({ network, data }) => {
+      const { isConnected } = useAccount();
       const { account, accLootboxes, selectedBox } = data;
       const { actions, api, components, world } = network;
 
       const { modals } = useVisibility();
       const [state, setState] = useState('OPEN');
-      const [amount, setAmount] = useState(0);
+      const [blockNumber, setBlockNumber] = useState(BigInt(0));
       const [waitingToReveal, setWaitingToReveal] = useState(false);
+
+      /////////////////
+      // SUBSCRIPTIONS
+      useWatchBlockNumber({
+        onBlockNumber: (n) => {
+          setBlockNumber(n);
+        },
+      });
 
       // Refresh modal upon closure
       useEffect(() => {
@@ -72,14 +84,17 @@ export function registerLootboxesModal() {
       useEffect(() => {
         const tx = async () => {
           if (waitingToReveal) {
+            if (!isConnected) return;
+
             // wait to give buffer for OP rpc
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             const raw = [...account.lootboxLogs?.unrevealed!];
-            const reversed = raw.reverse();
+            const reversed = filterRevealable(raw.reverse(), Number(blockNumber));
+
             reversed.forEach(async (LootboxLog) => {
               try {
-                await revealTx(LootboxLog.id);
                 setWaitingToReveal(false);
+                await revealTx(LootboxLog);
                 setState('REWARDS');
               } catch (e) {
                 console.log(e);
@@ -87,27 +102,16 @@ export function registerLootboxesModal() {
             });
           }
         };
+
         tx();
       }, [account.lootboxLogs?.unrevealed, waitingToReveal]);
 
-      // COMMIT REVEAL selected box
-      useEffect(() => {
-        const tx = async () => {
-          if (!waitingToReveal && state === 'REVEALING') {
-            try {
-              setWaitingToReveal(true);
-              await openTx(selectedBox?.index!, amount);
-            } catch (e) {
-              console.log(e);
-            }
-          }
-        };
-        tx();
-      }, [waitingToReveal, amount, state]);
-
       const openTx = async (index: number, amount: number) => {
+        setState('REVEALING');
+
         const actionID = uuid() as EntityID;
         actions.add({
+          id: actionID,
           action: 'LootboxCommit',
           params: [index, amount],
           description: `Opening ${amount} of lootbox ${index}`,
@@ -119,12 +123,15 @@ export function registerLootboxesModal() {
           actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
+        setWaitingToReveal(true);
         return;
       };
 
-      const revealTx = async (id: EntityID) => {
+      const revealTx = async (commit: Commit) => {
+        const id = commit.id;
         const actionID = uuid() as EntityID;
         actions.add({
+          id: actionID,
           action: 'LootboxReveal',
           params: [id],
           description: `Inspecting lootbox contents`,
@@ -160,48 +167,62 @@ export function registerLootboxesModal() {
         );
       };
 
+      const ExpiredButton = () => {
+        const hasExpired = account.lootboxLogs?.unrevealed
+          ? account.lootboxLogs.unrevealed.length > 0
+          : true;
+        if (state !== 'OPEN' || !hasExpired) return <div></div>;
+
+        return (
+          <ExpiredWrapper>
+            <ActionButton
+              text='Expired commits'
+              size='medium'
+              onClick={() => setState('COMMITS')}
+            />
+          </ExpiredWrapper>
+        );
+      };
+
       const Header = () => {
         return (
           <Container>
             <div style={{ position: 'absolute' }}>{BackButton()}</div>
-
             <SubHeader style={{ width: '100%' }}>Open Lootboxes</SubHeader>
           </Container>
         );
       };
 
       const SelectScreen = () => {
-        switch (state) {
-          case 'OPEN':
-            return (
-              <Opener
-                inventory={accLootboxes[0]}
-                lootbox={selectedBox}
-                utils={{ setAmount, setState }}
-              />
-            );
-            break;
-          case 'REVEALING':
-            return <Revealing />;
-            break;
-          case 'REWARDS':
-            return <Rewards account={account} utils={{ getItem, getLog }} />;
-            break;
-          default:
-            return (
-              <Opener
-                inventory={accLootboxes[0]}
-                lootbox={selectedBox}
-                utils={{ setAmount, setState }}
-              />
-            );
-            break;
+        if (state === 'OPEN') {
+          return (
+            <Opener
+              actions={{ open: async (amount: number) => openTx(selectedBox?.index!, amount) }}
+              data={{
+                inventory: accLootboxes[0],
+                lootbox: selectedBox,
+              }}
+              utils={{ setState }}
+            />
+          );
+        } else if (state === 'REVEALING') {
+          return <Revealing />;
+        } else if (state === 'REWARDS') {
+          return <Rewards account={account} utils={{ getItem, getLog }} />;
+        } else if (state === 'COMMITS') {
+          return (
+            <Commits
+              data={{ commits: account.lootboxLogs?.unrevealed!, blockNumber: Number(blockNumber) }}
+              actions={{ revealTx }}
+            />
+          );
         }
       };
 
       return (
         <ModalWrapper id='lootboxes' header={Header()} overlay canExit>
           {SelectScreen()}
+          {ExpiredButton()}
         </ModalWrapper>
       );
     }
@@ -209,6 +230,7 @@ export function registerLootboxesModal() {
 }
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -223,4 +245,10 @@ const SubHeader = styled.p`
   font-family: Pixel;
   font-size: 1.5vw;
   text-align: center;
+`;
+
+const ExpiredWrapper = styled.div`
+  position: absolute;
+  bottom: 1vh;
+  right: 1vw;
 `;

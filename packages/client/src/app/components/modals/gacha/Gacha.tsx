@@ -16,8 +16,9 @@ import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { GACHA_ID, GachaCommit, calcRerollCost, isGachaAvailable } from 'network/shapes/Gacha';
+import { GACHA_ID, calcRerollCost } from 'network/shapes/Gacha';
 import { Kami } from 'network/shapes/Kami';
+import { filterRevealable } from 'network/shapes/utils/Revealables';
 import { playVend } from 'utils/sounds';
 import { erc20Abi, formatUnits } from 'viem';
 import { Commits } from './Commits';
@@ -121,7 +122,7 @@ export function registerGachaModal() {
         const tx = async () => {
           if (!isConnected) return;
 
-          const filtered = data.commits.filter((n) => isGachaAvailable(n, Number(blockNumber)));
+          const filtered = filterRevealable(data.commits, Number(blockNumber));
           if (!triedReveal && filtered.length > 0) {
             try {
               // wait to give buffer for OP rpc
@@ -198,7 +199,7 @@ export function registerGachaModal() {
       };
 
       // reveal gacha result(s)
-      const revealTx = async (commits: GachaCommit[]) => {
+      const revealTx = async (commits: Commit[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 

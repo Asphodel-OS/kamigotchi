@@ -13,23 +13,11 @@ import { utils } from 'ethers';
 import { Components } from 'network/';
 import { getConfigFieldValueWei } from './Config';
 import { Kami, KamiOptions, queryKamisX } from './Kami';
+import { Commit } from './utils/Revealables';
 
 export const GACHA_ID = utils.solidityKeccak256(['string'], ['gacha.id']);
 
-// standardized shape of a gacha commit
-export interface GachaCommit {
-  id: EntityID;
-  revealBlock: number;
-  // account (not needed in FE)
-  // increment (not needed in FE)
-  // reroll (shown in Kami)
-}
-
-export const getCommit = (
-  world: World,
-  components: Components,
-  index: EntityIndex
-): GachaCommit => {
+export const getCommit = (world: World, components: Components, index: EntityIndex): Commit => {
   const { RevealBlock } = components;
 
   return {
@@ -42,7 +30,7 @@ export const queryAccCommits = (
   world: World,
   components: Components,
   accountID: EntityID
-): GachaCommit[] => {
+): Commit[] => {
   const { AccountID, Type, RevealBlock } = components;
 
   const toQuery: QueryFragment[] = [
@@ -53,7 +41,7 @@ export const queryAccCommits = (
 
   const raw = Array.from(runQuery(toQuery));
 
-  return raw.map((index): GachaCommit => getCommit(world, components, index));
+  return raw.map((index): Commit => getCommit(world, components, index));
 };
 
 export const queryGachaKamis = (
@@ -69,9 +57,4 @@ export const calcRerollCost = (world: World, components: Components, kami: Kami)
 
   // placeholder linear function
   return baseCost * BigInt(kami.rerolls + 1);
-};
-
-export const isGachaAvailable = (commit: GachaCommit, currBlock: number): boolean => {
-  // although commits are valid for 256 blocks, set to 250 for a small buffer
-  return commit.revealBlock + 250 > currBlock;
 };

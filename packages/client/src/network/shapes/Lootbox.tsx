@@ -14,6 +14,7 @@ import {
 import { Components } from 'network/';
 import { Inventory, getTypedInventory } from './Inventory';
 import { Item, getItem } from './Item';
+import { Commit } from './utils/Revealables';
 
 export interface Droptable {
   keys: number[];
@@ -25,15 +26,13 @@ export interface Lootbox extends Item {
   droptable: Droptable;
 }
 
-export interface LootboxLog {
-  id: EntityID;
+export interface LootboxLog extends Commit {
   entityIndex: EntityIndex;
   isRevealed: boolean;
   balance: number;
   index: number;
   time: number;
   droptable: Droptable;
-  revealBlock?: number;
 }
 
 // get lootbox as an item with extra stuff
@@ -87,27 +86,22 @@ export const getLootboxLog = (
   const regID = Array.from(
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
   )[0];
+  const isRevealed = !hasComponent(RevealBlock, index);
 
-  const log: LootboxLog = {
+  return {
     id: world.entities[index],
     entityIndex: index,
-    isRevealed: !hasComponent(RevealBlock, index),
+    isRevealed: isRevealed,
     balance: getComponentValue(Value, index)?.value as number,
     index: itemIndex,
     time: getComponentValue(Time, index)?.value as number,
     droptable: {
       keys: getComponentValue(Keys, regID)?.value as number[],
       weights: getComponentValue(Weights, regID)?.value as number[],
+      results: isRevealed ? (getComponentValue(Values, index)?.value as number[]) : undefined,
     },
+    revealBlock: isRevealed ? 0 : (getComponentValue(RevealBlock, index)?.value as number) * 1,
   };
-
-  if (!log.isRevealed) {
-    log.revealBlock = getComponentValue(RevealBlock, index)?.value as number;
-  } else {
-    log.droptable.results = getComponentValue(Values, index)?.value as number[];
-  }
-
-  return log;
 };
 
 ////////////////////

@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
 
-import { canReveal } from 'network/shapes/utils/Revealables';
+import { Commit, canReveal } from 'network/shapes/utils/Revealables';
 
 interface Props {
   actions: {
-    revealTx: (commits: Commit[]) => Promise<void>;
+    revealTx: (commits: Commit) => Promise<void>;
   };
   data: {
     commits: Commit[];
@@ -47,7 +47,7 @@ export const Commits = (props: Props) => {
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName>
         <Row>
-          <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
+          <ActionButton onClick={() => props.actions.revealTx(commit)} text='Reveal' />
         </Row>
       </CellContainer>
     );
@@ -57,7 +57,7 @@ export const Commits = (props: Props) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ExpiredName>Expired Commit, {getCommitTimeFrom(commit)}</ExpiredName>
-        <Description>Your kami is stuck, but can be retrieved.</Description>
+        <Description>Your lootbox is stuck, but can be retrieved.</Description>
         <Description> Please send this commit's ID to support on discord.</Description>
         <Row>
           <ActionButton
