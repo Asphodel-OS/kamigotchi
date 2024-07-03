@@ -43,12 +43,17 @@ export const MenuButton = (props: Props) => {
   );
 };
 
-const Button = styled.button<{ effectScale: number }>`
+interface ButtonProps {
+  effectScale: number;
+  disabled?: boolean;
+}
+
+const Button = styled.button<ButtonProps>`
   height: 4.5vh;
   border-radius: 0.9vh;
   border: solid black 0.15vw;
   cursor: pointer;
-  pointer-events: auto;
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
     animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;

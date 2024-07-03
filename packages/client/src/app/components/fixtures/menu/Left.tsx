@@ -1,7 +1,8 @@
-import { of } from 'rxjs';
+import { interval, map } from 'rxjs';
 
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
+import { getNodeByIndex } from 'network/shapes/Node';
 import styled from 'styled-components';
 import { AccountMenuButton, MapMenuButton, NodeMenuButton, PartyMenuButton } from './buttons';
 
@@ -14,8 +15,19 @@ export function registerMenuLeft() {
       rowStart: 3,
       rowEnd: 6,
     },
-    (layers) => of(layers),
-    () => {
+    // Requirement
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const { network } = layers;
+          const { world, components } = network;
+          const { roomIndex } = useSelected.getState();
+          let node = getNodeByIndex(world, components, roomIndex);
+          return { data: { node } };
+        })
+      ),
+    ({ data }) => {
+      const { node } = data;
       const { fixtures } = useVisibility();
 
       return (
@@ -23,7 +35,7 @@ export function registerMenuLeft() {
           <AccountMenuButton />
           <MapMenuButton />
           <PartyMenuButton />
-          <NodeMenuButton />
+          <NodeMenuButton disabled={!node} />
         </Wrapper>
       );
     }
