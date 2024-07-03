@@ -62,7 +62,7 @@ export const ActionBar = (props: Props) => {
             step: 1,
           }}
           onSubmit={txContribute}
-          watch={setContributeAmount}
+          watch={{ value: contributeAmount, set: setContributeAmount }}
           disabled={!canDo}
           tooltip={!canDo ? [errorText] : undefined}
           hasButton
