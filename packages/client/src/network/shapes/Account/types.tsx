@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
+import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
@@ -209,8 +210,8 @@ export const getAccount = (
   // populate Stats
   if (options?.stats) {
     account.stats = {
-      kills: getData(world, components, account.id, 'LIQUIDATE_TOTAL'),
-      coin: getData(world, components, account.id, 'COIN_TOTAL'),
+      kills: getData(world, components, account.id, 'LIQUIDATE_TOTAL', MUSU_INDEX),
+      coin: getData(world, components, account.id, 'ITEM_TOTAL', MUSU_INDEX),
     };
   }
 

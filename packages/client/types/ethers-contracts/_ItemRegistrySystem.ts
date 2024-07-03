@@ -29,7 +29,7 @@ import type {
 
 export interface _ItemRegistrySystemInterface extends utils.Interface {
   functions: {
-    "addStat(bytes)": FunctionFragment;
+    "addStat(uint32,string,int32)": FunctionFragment;
     "create(bytes)": FunctionFragment;
     "createConsumable(bytes)": FunctionFragment;
     "createLootbox(bytes)": FunctionFragment;
@@ -53,7 +53,11 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addStat",
-    values: [PromiseOrValue<BytesLike>]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "create",
@@ -146,7 +150,9 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   functions: {
     addStat(
-      arguments: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      type_: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -184,7 +190,9 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   addStat(
-    arguments: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    type_: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -222,7 +230,9 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   callStatic: {
     addStat(
-      arguments: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      type_: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -272,7 +282,9 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   estimateGas: {
     addStat(
-      arguments: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      type_: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -311,7 +323,9 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   populateTransaction: {
     addStat(
-      arguments: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      type_: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

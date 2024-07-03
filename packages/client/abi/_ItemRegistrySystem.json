@@ -21,9 +21,19 @@
       "name": "addStat",
       "inputs": [
         {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "type_",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "value",
+          "type": "int32",
+          "internalType": "int32"
         }
       ],
       "outputs": [],
@@ -175,7 +185,7 @@
     }
   ],
   "methodIdentifiers": {
-    "addStat(bytes)": "350df03e",
+    "addStat(uint32,string,int32)": "fc81660a",
     "create(bytes)": "cf5ba53f",
     "createConsumable(bytes)": "e96e3836",
     "createLootbox(bytes)": "b72c6001",

@@ -1,7 +1,8 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { BigNumber, utils } from 'ethers';
+import { utils } from 'ethers';
 
 import { Components } from 'network/';
+import { unpackArray32 } from '../utils/LibPack';
 
 // get an Config from its EntityIndex
 export const getConfigFieldValue = (
@@ -36,7 +37,7 @@ export const getConfigFieldValueArray = (
 
   const raw = getComponentValue(Value, configEntityIndex)?.value;
   if (!raw) return [];
-  return unpackArray(BigNumber.from(raw));
+  return unpackArray32(raw);
 };
 
 // get an Config from its EntityIndex. Wei values are stored in bigint
@@ -59,18 +60,4 @@ export const getConfigFieldValueWei = (
 const getEntityIndex = (world: World, field: string): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'string'], ['is.config', field]);
   return world.entityToIndex.get(id as EntityID);
-};
-
-// unpack a uint32[8] array from a config uint256
-const unpackArray = (packed: BigNumber): number[] => {
-  const result = [];
-  for (let i = 0; i < 8; i++) {
-    // mask to current
-    const curr = packed.and(BigNumber.from(1).shl(32).sub(1));
-    // push to array
-    result.push(curr.toNumber());
-    // updated packed
-    packed = packed.shr(32);
-  }
-  return result.reverse();
 };

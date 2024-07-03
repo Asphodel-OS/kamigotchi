@@ -574,12 +574,13 @@ abstract contract SetupTemplate is TestSetupImports {
     uint256 experience,
     string memory mediaURI
   ) public returns (uint256 id) {
-    vm.prank(deployer);
+    vm.startPrank(deployer);
     id = __ItemRegistrySystem.createConsumable(
       abi.encode(index, "KAMI", name, description, "FOOD", mediaURI)
     );
     __ItemRegistrySystem.addStat(index, "XP", int32(int(experience)));
     __ItemRegistrySystem.addStat(index, "HEALTH", health);
+    vm.stopPrank();
   }
 
   function _createRevive(
@@ -589,11 +590,12 @@ abstract contract SetupTemplate is TestSetupImports {
     int32 health,
     string memory mediaURI
   ) public returns (uint256 id) {
-    vm.prank(deployer);
+    vm.startPrank(deployer);
     id = __ItemRegistrySystem.createConsumable(
       abi.encode(index, "KAMI", name, description, "REVIVE", mediaURI)
     );
     __ItemRegistrySystem.addStat(index, "HEALTH", health);
+    vm.stopPrank();
   }
 
   function _createLootbox(

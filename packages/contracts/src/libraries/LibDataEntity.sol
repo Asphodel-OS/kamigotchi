@@ -120,6 +120,17 @@ library LibDataEntity {
     set(components, dataID, value);
   }
 
+  function setArray(
+    IUintComp components,
+    uint256 holderID,
+    uint32 index,
+    string memory type_,
+    uint32[8] memory values
+  ) internal {
+    uint256 dataID = getID(holderID, index, type_);
+    set(components, dataID, LibPack.packArrU32(values));
+  }
+
   /////////////////
   // GETTERS
 

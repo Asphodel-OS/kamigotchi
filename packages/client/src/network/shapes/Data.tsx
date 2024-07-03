@@ -2,9 +2,33 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { utils } from 'ethers';
 
 import { Components } from 'network/';
+import { unpackArray32 } from './utils/LibPack';
 
 // get a DataEntity for an account
 export const getData = (
+  world: World,
+  components: Components,
+  id: EntityID,
+  type: string,
+  index?: number
+): number => {
+  return _getData(world, components, id, type, index) * 1;
+};
+
+export const getDataArray = (
+  world: World,
+  components: Components,
+  id: EntityID,
+  type: string,
+  index?: number
+): number[] => {
+  const raw = _getData(world, components, id, type, index);
+  if (!raw) return [0, 0, 0, 0, 0, 0, 0, 0];
+  return unpackArray32(raw);
+};
+
+// raw version, returns unchecked number
+export const _getData = (
   world: World,
   components: Components,
   id: EntityID,
@@ -17,7 +41,7 @@ export const getData = (
     // console.warn(`data field not found for ${type}`);
     return 0;
   }
-  return (getComponentValue(Value, configEntityIndex)?.value as number) * 1;
+  return getComponentValue(Value, configEntityIndex)?.value as number;
 };
 
 const getEntityIndex = (

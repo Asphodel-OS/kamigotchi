@@ -18,6 +18,7 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -43,21 +44,19 @@ library LibKill {
     uint256 nodeID,
     uint256 balance,
     uint256 bounty
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
     IsKillComponent(getAddressById(components, IsKillCompID)).set(id);
     IdSourceComponent(getAddressById(components, IdSourceCompID)).set(id, sourceID);
     IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
     IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
-    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
-      id,
-      LibNode.getIndex(components, nodeID)
-    );
-
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, balance);
-    LibInventory.setFor(components, targetID, MUSU_INDEX, bounty);
     TimeComponent(getAddressById(components, TimeCompID)).set(id, block.timestamp);
-    return id;
+
+    // set bounties
+    uint32[8] memory bounties;
+    bounties[0] = balance.toUint32(); // balance (negative)
+    bounties[1] = bounty.toUint32(); // bounty (positive)
+    LibDataEntity.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
   }
 
   /////////////////
