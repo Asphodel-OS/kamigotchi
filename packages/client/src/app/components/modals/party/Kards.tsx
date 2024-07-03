@@ -103,8 +103,10 @@ export const Kards = (props: Props) => {
 
   // toggle the node modal to the selected one
   const selectNode = (index: number) => {
-    if (!modals.node) setModals({ ...modals, node: true });
+    console.log('nodeIndex', nodeIndex);
     if (nodeIndex !== index) setNode(index);
+    if (!modals.node) setModals({ ...modals, node: true });
+    else if (nodeIndex == index) setModals({ ...modals, node: false });
     playClick();
   };
 
