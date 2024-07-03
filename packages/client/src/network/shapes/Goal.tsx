@@ -1,6 +1,7 @@
 import {
   EntityID,
   EntityIndex,
+  Has,
   HasValue,
   World,
   getComponentValue,
@@ -44,6 +45,15 @@ export interface Reward {
 
 ///////////////////
 // FUNCTIONS
+
+export const getAllGoals = (world: World, components: Components): Goal[] => {
+  const { IsGoal } = components;
+
+  const queryFragments = [Has(IsGoal)];
+  const raw = Array.from(runQuery(queryFragments));
+
+  return raw.map((index): Goal => getGoal(world, components, index));
+};
 
 export const getGoalByIndex = (world: World, components: Components, index: number): Goal => {
   const entityIndex = getGoalEntityIndex(world, index);

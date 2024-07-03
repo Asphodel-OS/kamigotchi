@@ -9,6 +9,7 @@ import {
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
+import PlaceholderIcon from 'assets/images/icons/placeholder.png';
 import { Components } from 'network/';
 import { DetailedEntity } from './utils/EntityTypes';
 
@@ -17,9 +18,13 @@ export interface Faction extends DetailedEntity {
   id: EntityID;
   entityIndex: EntityIndex;
   index: number;
-  name: string;
-  description: string;
-  image: string;
+}
+
+export interface Reputation extends DetailedEntity {
+  id: EntityID;
+  entityIndex: EntityIndex;
+  faction: Faction;
+  value?: number;
 }
 
 export const getFactionByIndex = (world: World, components: Components, index: number): Faction => {
@@ -29,7 +34,43 @@ export const getFactionByIndex = (world: World, components: Components, index: n
   return getFaction(world, components, entityIndex);
 };
 
+// get a DetailedEntity entity of a Faction's reputation, similar to an item
+export const getReputationItem = (
+  world: World,
+  components: Components,
+  factionIndex: number
+): Reputation => {
+  const faction = getFactionByIndex(world, components, factionIndex);
+
+  return {
+    ObjectType: 'REPUTATION',
+    id: '' as EntityID,
+    entityIndex: 0 as EntityIndex,
+    faction: faction,
+    name: 'REPUTATION',
+    description: 'Your relationship with the Kamigotchi Tourism Agency.',
+    image: PlaceholderIcon, // placeholder - no reputation image yet
+  };
+};
+
+// get a DetailedEntity entity of a Faction's reputation, similar to an inventory
 export const getReputation = (
+  world: World,
+  components: Components,
+  holderID: EntityID,
+  factionIndex: number
+): Reputation => {
+  const index = getRepEntityIndex(world, holderID, factionIndex);
+
+  return {
+    ...getReputationItem(world, components, factionIndex),
+    id: index ? world.entities[index] : ('' as EntityID),
+    entityIndex: index ?? (0 as EntityIndex),
+    value: getReputationValue(world, components, holderID, factionIndex),
+  };
+};
+
+export const getReputationValue = (
   world: World,
   components: Components,
   holderID: EntityID,

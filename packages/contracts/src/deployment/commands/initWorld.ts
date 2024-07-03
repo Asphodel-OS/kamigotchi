@@ -34,7 +34,6 @@ const run = async () => {
   if (mode === 'DEV') setAutoMine(true);
 
   // generate init script and calls
-  console.log(args);
   await generateInitScript(mode, categories, action, args);
 
   // running script.sol

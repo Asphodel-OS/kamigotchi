@@ -8,7 +8,7 @@ Work out how to move, and then move 3 times. Afterwards, I’ll have a reward fo
 ,1,,Ingame,Reward,MINT20,,,1 Gacha Ticket,0,1,No,,,,,,,
 "Lethe Asphodel, vaitarna, Nedu",2,An ode to MUSU,Ingame,Quest,,,,,,,No,5,"Your Kamigotchi can be used to harvest resources from this world. Open the harvesting menu in the top left bar and take a look. 
 
-You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 35 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),
+You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 11 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),
 ,2,,Ingame,Requirement,QUEST,COMPLETE,,Quest 11,11,,No,,,,,,,
 ,2,,Ingame,Objective,HARVEST_TIME,MIN,CURR,Harvest for > 5 minutes,,300,No,,,,,,,
 ,2,,Ingame,Reward,ITEM,,,1 XP Candy (small),106,1,No,,,,,,,
@@ -66,9 +66,9 @@ Complete 3 daily quests to earn an extra reward! ",Your persistence has been dul
 Nedu,16,"Another day, another quest II",Shelved,,,,,,,,No,20,"Did you know there are some super-rare items to be found in Giftboxes? Because there are. Good luck. 
 
 Collect another 7 and we’ll give you more bonus boxes. Maybe it’ll help! ","This is the dedication we're looking for. Enjoy your reward, you deserve it.","Have completed Another day, another quest I (9)","Complete 7daily quests ",Giftbox x3,
-,16,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Another day, another quest I (9)",9,,No,,,,,,,
-,16,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 7 daily quests ",,7,No,,,,,,,
-,16,,Holding back - DNI,Reward,ITEM,,,3 Giftbox,10001,3,No,,,,,,,
+,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Another day, another quest I (9)",9,,No,,,,,,,
+,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 7 daily quests ",,7,No,,,,,,,
+,,,Holding back - DNI,Reward,ITEM,,,3 Giftbox,10001,3,No,,,,,,,
 Nedu,11,"Another day, another quest III",Shelved,,,,,,,,No,50,"Want to know a secret? We’ll probably be adding more items to the Giftboxes over time. It’s up to you, but holding on to them is also a viable option. 
 
 Ok, you know the drill. See you in three weeks. ","A whole 7 boxes this time!
@@ -90,17 +90,23 @@ Nedu,,Supporting local businesses II,Idea,,,,,,,,No,5,Mina's shop is currently g
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (12),12,,No,,,,,,,
 ,,,Needs Revision Work,Objective,COIN_SPEND,MIN,INC,Spend a cumulative 500 MUSU,,500,No,,,,,,,
 ,,,Needs Revision Work,Reward,ITEM,,,1 XP Candy (Large),104,1,No,,,,,,,
-Nedu,,The Kamigotchi Who Shall Be Named,Needs Revision Work,,,,,,,,No,5,"Deep within the forest is a shrine. Seek it out - beside it lies a board capable of renaming your Kamigotchi using the Holy Dust you just found.  Find this board and give your Kamigotchi their own unique name — but be mindful, as you can only name a Kamigotchi once.","What a beautiful name you chose. Take this XP Candy, your newly-named Kamigotchi will love it.",Have completed Supporting local businesses (9),Name a Kamigotchi using Holy Dust,XP Candy (Small),
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (12),12,,No,,,,,,,
-,,,Needs Revision Work,Requirement,GOAL,COMPLETE,,Complete Goal 1,1,,No,,,,,,,
-,,,Needs Revision Work,Objective,KAMI_NAME,MIN,INC,Name a Kamigotchi using Holy Dust,,1,No,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 XP Candy (Small),106,1,No,,,,,,,
+Nedu,14,The Kamigotchi Who Shall Be Named,Revise Deployment,,,,,,,,No,5,"Deep within the forest lies a shrine - beside it is a board capable of renaming your Kamigotchi. Seek it out and bless one of your Kamigotchi with a new name. 
+
+",,Have completed Supporting local businesses (9),Name a Kamigotchi using Holy Dust,Giftbox,
+,14,,Revise Deployment,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (9),9,,No,,,,,,,
+,14,,Revise Deployment,Requirement,GOAL,COMPLETE,,Complete Goal 1,1,,No,,,,,,,
+,14,,Revise Deployment,Objective,KAMI_NAME,MIN,INC,Name a Kamigotchi using Holy Dust,,1,No,,,,,,,
+,14,,Revise Deployment,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,
 Nedu,,Becoming a niche Kamigotchi micro-celebrity,Shelved,,,,,,,,No,,You know what's better than one friend? Five of them. Collect your reward once you have 5 friends in your friend list.,"You're kinda famous now, congrats! Use your social powers for good.",Have completed Onchain friends (?),Have 5 friends,XP Candy (Medium),
 Nedu,,The Chatroom,Shelved,,,,,,,,No,,Looks like these people are having fun… Why not join them? Connect your Farcaster account to start chatting.,Please be kind when using the chat! Remember a [REDACTED//gibberish] is sitting behind the screen. <3,Have completed Onchain friends (19),Connect your Farcaster account,XP Candy (Medium),
-Nedu,,Got MUSU?,Needs Revision Work,,,,,,,,No,5,"Recent studies suggest that harvesting MUSU may reduce stress levels. De-stress your Kamigotchi by harvesting 350 MUSU. ","Okay, to be honest, those studies we mentioned may not exist... at all. Fruit candies are delicious, though. Enjoy them.",Have completed Back to the mines (5),Harvest 1000 MUSU,Pom-Pom Fruit Candy x2,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,
-,,,Needs Revision Work,Objective,COIN_TOTAL,MIN,INC,Harvest 350 MUSU,,350,No,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,Pom-Pom Fruit Candy x2,102,2,No,,,,,,,
+Nedu,15,Got MUSU?,For Implementation,,,,,,,,No,10,"This world relies on MUSU to function. 
+
+You’ll need MUSU to repair broken parts of this world, as well as to purchase items at the shop, and, well…. you’ll see. 
+
+You’ll need to start gathering it seriously. Get 1000 MUSU and come back to me. ",,Have completed Back to the mines (5),Harvest 1000 MUSU,Giftbox x 2,
+,15,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,
+,15,,For Implementation,Objective,COIN_TOTAL,MIN,INC,Harvest 1000 MUSU,,1000,No,,,,,,,
+,15,,For Implementation,Reward,ITEM,,,Giftbox x 2,10001,2,No,,,,,,,
 Nedu,,Got MUSU? II,Needs Revision Work,,,,,,,,No,20,"Scientists have just concluded that harvesting MUSU is beneficial for Kamigotchi long-term, per new studies. Prove the scientists right by harvesting 1000 MUSU.","We have been fooled once again. The studies were not true, at all. Well, at least you can enjoy these Gakki Cookie Sticks.",Have completed Got MUSU? (74),Harvest 5000 MUSU,Gakki Cookie Sticks,
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (17),27,,No,,,,,,,
 ,,,Needs Revision Work,Objective,COIN_TOTAL,MIN,INC,Harvest 1000 MUSU,,1000,No,,,,,,,
@@ -115,12 +121,14 @@ Try it out. Gather some MUSU from a Kamigotchi using one of your own Kamigotchi.
 ,10,,Revise Deployment,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 1 Kamigotchi,,1,No,,,,,,,
 ,10,,Revise Deployment,Reward,ITEM,,,Medium XP Candy,105,1,No,,,,,,,
 ,10,,Revise Deployment,Reward,ITEM,,,1 gift box,10001,1,No,,,,,,,
-"Lethe Asphodel, torngarsuk, vaitarna",,Harden Your Heart,Needs Revision Work,,,,,,,,No,5,"Liquidate five more Kamigotchi and take their $MUSU. Kami lacking in spiritual Harmony will be your easiest targets, as well as Kami that have Types weak to your Kami. 
+"Lethe Asphodel, torngarsuk, vaitarna",16,Harden Your Heart,For Implementation,,,,,,,,No,10,"Liquidating Kamigotchi can be a very easy way to get MUSU. 
 
-How do the Types work? Check out the help menu for details on this.",That’s 5 fallen Kamigotchi. Do you feel good about yourself?,Quest 20 Completed (An Unforgiving World),Liquidate 5 Kamigotchi,Large XP Candy,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (20),20,,No,,,,,,,
-,,,Needs Revision Work,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 5 Kamigotchi,,5,No,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,Large XP Candy,104,1,No,,,,,,,
+Did you know that liquidating Kamigotchi is much easier if the attacker has the right Type? Well, it is. 
+
+Go hunt down another 5 Kami. I’ll have something very special for you once you’re done. You’ll like it. ",,Quest 10 Completed (An Unforgiving World),Liquidate 5 Kamigotchi,Kami Mochi,
+,16,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,
+,16,,For Implementation,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 5 Kamigotchi,,5,No,,,,,,,
+,16,,For Implementation,Reward,ITEM,,,Kami Mochi,113,1,No,,,,,,,
 "torngarsuk, Nedu",,"Normal, but not really.",Needs Revision Work,,,,,,,,No,5,"Did you know that Nodes, like Kamigotchi, have Types? Your Kamigotchi will gather faster on nodes that match their type - even more if the Kami is a pure-type. 
 
 Head to the Torii Gate near the Vending Machine and harvest 100 MUSU — if you have any Normal-type Kamigotchi, they will appreciate it.","The Torii Gate has been located near the centre of Kamigotchi World for as long as anyone can remember. According to our Kamiscientists, the gate is responsible for keeping the areas nearby stable. ",Quest 2 completed (An ode to MUSU),Gather 100 MUSU,1 Red Gakki Ribbon,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
@@ -393,7 +401,7 @@ Nedu,,In the exploration business,Review,,,,,,,,No,,Your presence in this world 
 Nedu,,The resurrection Ribbon,Review,,,,,,,,No,,"You put your Kamigotchi to harvest, they die, you revive them. It happens. Revive a Kamigotchi to complete this quest.","Please take better care of your Kamigotchi.
 ",Have completed Got MUSU? (75),Have used 1 Red Gakki Ribbon,Maple Flavored Ghost Gum,
 Nedu,,Liquidation cascade,Review,,,,,,,,No,,It’s said that only a few Kamigotchi are able to liquidate 3 or more Kamigotchi in one single harvest. Let’s put that theory to the test. Liquidate 3 Kamigotchi without stopping your Harvest to complete this quest.,"That was reckless, but effective. Enjoy the reward, you degen.",Have completed The resurrection Ribbon (83),Liquidate 3 Kamigotchi in a single harvest,XP Candy (Large),
-Lethe Asphodel,36,,In progress,,,,,,,,No,,,,"Quest 1 Completed (An Unknown World) ",None,1 Kami Mint Ticket,
+Lethe Asphodel,,,In progress,,,,,,,,No,,,,"Quest 1 Completed (An Unknown World) ",None,1 Kami Mint Ticket,
 Lethe Asphodel,11,Your First Kamigotchi,Ingame,,,,,,,,No,5,"You got a Gacha Ticket as a reward for the last quest. Good job. 
 
 These tickets can be used to mint Kamigotchi on this testnet. These are testnet-only Kami, so don’t get too attached. It’s not like there’s a way to save them…
@@ -405,14 +413,14 @@ Seek out the vending machine and get yourself a Kamigotchi. ",,Quest 1 Completed
 Lethe Asphodel,,Food Tutorial Quest,In progress,,,,,,,,No,,"See how you got a gum for completing your first quest? 
 
 This is food for Kamigotchi. ",,,,,
-,36,Working for the Agency,In progress,,,,,,,,No,,,,xx Quest Points,yy Quest Points,,
+,,Working for the Agency,In progress,,,,,,,,No,,,,xx Quest Points,yy Quest Points,,
 ,,,Idea,,,,,,,,No,,,,,,,
 Lethe Asphodel,13,Further Progression,Ingame,,,,,,,,No,0,"You’re getting started. 
 
 There are things to come for those with sufficient REPUTATION. Quests are one thing, but if you explore this world you’ll find other ways to raise your REPUTATION. 
 
-Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 36 Completed (Proving Yourself),Have 100 Reputation,1 Gacha Ticket,
-,13,,For Implementation,Requirement,QUEST,COMPLETE,,Quest 36,36,,No,,,,,,,
+Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 12 Completed (Proving Yourself),Have 100 Reputation,1 Gacha Ticket,
+,13,,For Implementation,Requirement,QUEST,COMPLETE,,Quest 12,12,,No,,,,,,,
 ,13,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 100 REPUTATION,1,100,No,,,,,,,
 ,13,,For Implementation,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,
 Lethe Asphodel,12,Proving Yourself,Ingame,,,,,,,,No,0,"You’re doing well. 

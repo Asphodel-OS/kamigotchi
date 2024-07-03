@@ -5,7 +5,7 @@ import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { getData } from '../Data';
-import { getReputation } from '../Faction';
+import { getReputationValue } from '../Faction';
 import {
   Friendship,
   getAccBlocked,
@@ -124,7 +124,7 @@ export const getAccount = (
     kamis: [], // placeholder
     level: 0, // placeholder
     reputation: {
-      agency: getReputation(world, components, id, 1), // get agency rep
+      agency: getReputationValue(world, components, id, 1), // get agency rep
     },
     skillPoints: 0, // placeholder
     stamina: getStat(entityIndex, Stamina),

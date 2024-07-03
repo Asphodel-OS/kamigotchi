@@ -3,6 +3,7 @@ import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud
 import { Components } from 'network/';
 import { AccountOptions, getAccountByIndex, getAllAccounts } from 'network/shapes/Account';
 import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
+import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Merchant';
@@ -45,6 +46,11 @@ export const initExplorer = (world: World, components: Components) => {
       },
       entities: () => Array.from(components.IsAccount.entities()),
       indices: () => Array.from(components.AccountIndex.values.value.values()),
+    },
+
+    goals: {
+      all: () => getAllGoals(world, components),
+      get: (index: number) => getGoalByIndex(world, components, index),
     },
 
     factions: {

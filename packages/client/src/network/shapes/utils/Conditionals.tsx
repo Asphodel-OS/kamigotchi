@@ -2,9 +2,10 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 
 import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
+import { numberToHex } from 'utils/hex';
 import { Account } from '../Account';
 import { getData } from '../Data';
-import { getReputation } from '../Faction';
+import { getReputationValue } from '../Faction';
 import { getInventoryByIndex } from '../Inventory';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
@@ -143,7 +144,7 @@ export const getBalance = (
     const skill = holder.skills?.find((s) => s.index === index);
     return skill?.points.current || 0;
   } else if (type === 'REPUTATION') {
-    return getReputation(world, components, holder.id, index ?? 0);
+    return getReputationValue(world, components, holder.id, index ?? 0);
   }
 
   // account specific, check if holder is account shaped
@@ -184,7 +185,7 @@ export const getBool = (
   // universal gets - account and kami shape compatible
   if (type === 'COMPLETE_COMP') {
     // converted
-    const rawEntityID = ('0x' + BigInt(value ?? 0).toString(16)) as EntityID; // force value to entityID
+    const rawEntityID = numberToHex(value ?? 0) as EntityID;
     const entityIndex = world.entityToIndex.get(rawEntityID);
     return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
   }
