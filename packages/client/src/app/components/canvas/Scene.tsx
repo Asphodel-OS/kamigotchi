@@ -6,6 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
 import { getAccountByOwner } from 'network/shapes/Account';
+import { getGoalByIndex } from 'network/shapes/Goal';
 import { Room } from './Room';
 
 // The Scene paints the wallpaper and the room. It updates the selected room
@@ -28,15 +29,16 @@ export function registerScene() {
         map(() => {
           const { selectedAddress } = useNetwork.getState();
           const account = getAccountByOwner(world, components, selectedAddress);
+          const goals = [getGoalByIndex(world, components, 1)];
           return {
-            data: { account },
+            data: { account, goals },
           };
         })
       );
     },
 
     ({ data }) => {
-      const { account } = data;
+      const { account, goals } = data;
       const { roomIndex, setRoom } = useSelected();
       const { validations } = useAccount();
 
@@ -51,7 +53,7 @@ export function registerScene() {
       return (
         <Wrapper>
           <Container>
-            <Room index={roomIndex} />
+            <Room index={roomIndex} goals={goals} />
             <Wallpaper src={backgrounds.long2} />
           </Container>
         </Wrapper>

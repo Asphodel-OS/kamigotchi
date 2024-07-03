@@ -4,15 +4,18 @@ import styled, { keyframes } from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
+import room47Image from 'assets/images/rooms/47_scrap-paths/backgrounds/pretest-a.png';
 import { RoomAsset, rooms } from 'constants/rooms';
+import { Goal } from 'network/shapes/Goal';
 
 interface Props {
   index: number;
+  goals: Goal[];
 }
 
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
-  const { index } = props;
+  const { index, goals } = props;
   const { modals, setModals } = useVisibility();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
@@ -61,10 +64,13 @@ export const Room = (props: Props) => {
   // return the background path for now
   // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
+    if (index === 47 && goals[0].complete) return room47Image; // disgusting hardcoding
     return room.background.path;
   };
 
   const getClickbox = (object: RoomAsset) => {
+    if (index === 47 && goals[0].complete) return; // disgusting hardcoding
+
     let coords = object.coordinates;
     if (!coords) return;
     const scale = 100 / 128;
