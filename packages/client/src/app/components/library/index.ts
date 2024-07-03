@@ -17,7 +17,6 @@ export { InputSingleTextForm } from './InputSingleTextForm';
 export { ItemIcon } from './ItemIcon';
 export { ItemIconHorizontal } from './ItemIconHorizontal';
 export { KamiCard } from './KamiCard';
-export { MenuButton } from './MenuButton';
 export { ModalHeader } from './ModalHeader';
 export { ModalWrapper } from './ModalWrapper';
 export { ProgressBar } from './ProgressBar';

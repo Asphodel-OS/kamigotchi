@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Tooltip } from './Tooltip';
 
+import { Tooltip } from 'app/components/library/Tooltip';
 import { Modals, useVisibility } from 'app/stores';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
@@ -12,12 +12,13 @@ interface Props {
   targetModal?: keyof Modals;
   hideModals?: Partial<Modals>;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 // MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
   const { modals, setModals } = useVisibility();
-  const { id, image, tooltip, targetModal, hideModals, onClick } = props;
+  const { id, image, disabled, tooltip, targetModal, hideModals, onClick } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
@@ -34,7 +35,7 @@ export const MenuButton = (props: Props) => {
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>
-        <Button onClick={handleToggle} effectScale={1.1}>
+        <Button onClick={handleToggle} effectScale={1.1} disabled={disabled}>
           <Image src={image} alt={id} />
         </Button>
       </div>

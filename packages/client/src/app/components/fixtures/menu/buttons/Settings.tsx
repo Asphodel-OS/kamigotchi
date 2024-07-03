@@ -1,7 +1,7 @@
 import { settingsIcon } from 'assets/images/icons/menu';
 
-import { MenuButton } from 'app/components/library';
 import { Modals } from 'app/stores';
+import { MenuButton } from './MenuButton';
 
 export const SettingsMenuButton = () => {
   const modalsToHide: Partial<Modals> = {

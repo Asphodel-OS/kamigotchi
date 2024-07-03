@@ -1,6 +1,6 @@
-import { MenuButton } from 'app/components/library';
 import { Modals } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
+import { MenuButton } from './MenuButton';
 
 export const MapMenuButton = () => {
   const modalsToHide: Partial<Modals> = {

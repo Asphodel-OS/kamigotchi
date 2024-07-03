@@ -1,7 +1,7 @@
 import { questsIcon } from 'assets/images/icons/menu';
 
-import { MenuButton } from 'app/components/library';
 import { Modals } from 'app/stores';
+import { MenuButton } from './MenuButton';
 
 export const QuestMenuButton = () => {
   const modalsToHide: Partial<Modals> = {
