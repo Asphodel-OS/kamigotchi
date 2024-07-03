@@ -44,7 +44,6 @@ export const Room = (props: Props) => {
       accountOperator: false,
       bridgeERC20: false,
       bridgeERC721: false,
-      buy: false,
       emaBoard: false,
       gacha: false,
       goal: false,

@@ -1,13 +1,14 @@
 import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
 import { Room, emptyRoom } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../../library';
 
 interface Props {
   index: number; // index of current room
+  zone: number;
   rooms: Map<number, Room>;
   actions: {
     move: (roomIndex: number) => void;
@@ -15,12 +16,16 @@ interface Props {
   };
 }
 export const Grid = (props: Props) => {
-  const { index, rooms, actions } = props;
+  const { index, zone, rooms, actions } = props;
   const [grid, setGrid] = useState<Room[][]>([]);
 
   useEffect(() => {
     const z = rooms.get(index)?.location.z;
     if (!z) return;
+    if (z === 2) {
+      setGrid([]);
+      return;
+    }
 
     // establish the grid size
     let maxX = 0;
@@ -53,7 +58,7 @@ export const Grid = (props: Props) => {
     }
 
     setGrid(grid);
-  }, [rooms.size]);
+  }, [zone]);
 
   /////////////////
   // INTERACTIONS
@@ -68,7 +73,7 @@ export const Grid = (props: Props) => {
 
   return (
     <Container>
-      <Background src={mapBackgrounds.zone1} />
+      <Background src={mapBackgrounds[zone]} />
       <Overlay>
         {grid.map((row, i) => (
           <Row key={i}>

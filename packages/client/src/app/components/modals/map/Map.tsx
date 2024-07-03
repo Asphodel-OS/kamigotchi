@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
-import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Room, getAllRooms } from 'network/shapes/Room';
+import { Room, getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { Grid } from './Grid';
 
 export function registerMapModal() {
@@ -40,8 +39,8 @@ export function registerMapModal() {
       const { modals } = useVisibility();
 
       const [hoveredRoom, setHoveredRoom] = useState(0);
-      const [displayedRoom, setDisplayedRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
+      const [zone, setZone] = useState(1);
 
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
@@ -51,21 +50,21 @@ export function registerMapModal() {
       // query the set of rooms whenever the selected room changes
       useEffect(() => {
         const roomMap = new Map<number, Room>();
+        const currRoom = getRoomByIndex(world, components, selectedRoom);
+        setZone(currRoom.location.z);
+
         const queriedRooms = getAllRooms(world, components, {
           checkExits: { account: data.account },
           players: true,
         });
+
         for (const room of queriedRooms) {
-          roomMap.set(room.index, room);
+          if (room.location.z == currRoom.location.z) {
+            roomMap.set(room.index, room);
+          }
         }
         setRoomMap(roomMap);
       }, [selectedRoom]);
-
-      // set the displayed room based on the selected and hovered
-      useEffect(() => {
-        if (hoveredRoom) setDisplayedRoom(hoveredRoom);
-        else setDisplayedRoom(selectedRoom);
-      }, [hoveredRoom, selectedRoom]);
 
       ///////////////////
       // ACTIONS
@@ -92,29 +91,14 @@ export function registerMapModal() {
           noPadding
           truncate
         >
-          <Container>
-            <Row>
-              <Grid index={selectedRoom} rooms={roomMap} actions={{ move, setHoveredRoom }} />
-            </Row>
-          </Container>
+          <Grid
+            index={selectedRoom}
+            zone={zone}
+            rooms={roomMap}
+            actions={{ move, setHoveredRoom }}
+          />
         </ModalWrapper>
       );
     }
   );
 }
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
-
-const Row = styled.div`
-  height: auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
