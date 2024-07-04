@@ -37,12 +37,14 @@ const run = async () => {
     forgeOpts: argv.forgeOpts,
   });
 
-  openurl.open(
-    'http://localhost:3000/?worldAddress=' +
-      result.deployedWorldAddress +
-      '&initialBlockNumber=' +
-      result.startBlock
-  );
+  if (init) {
+    openurl.open(
+      'http://localhost:3000/?worldAddress=' +
+        result.deployedWorldAddress +
+        '&initialBlockNumber=' +
+        result.startBlock
+    );
+  }
 
   if (mode === 'DEV') await setAutoMine(false);
   if (mode === 'DEV') await setTimestamp();
