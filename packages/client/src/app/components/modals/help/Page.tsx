@@ -8,9 +8,9 @@ export const Page = (props: Props) => {
   const { body } = props;
   return (
     <Container>
-      {body.map((line: string) => {
+      {body.map((line: string, i: number) => {
         return (
-          <Line key={line}>
+          <Line key={i}>
             {line}
             <br />
           </Line>
@@ -26,8 +26,7 @@ const Container = styled.div`
 `;
 
 const Line = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  line-height: 110%;
+  font-size: 0.9vw;
+  line-height: 150%;
   text-align: left;
 `;

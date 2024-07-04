@@ -2,7 +2,6 @@ export enum HelpTabs {
   HOME,
   KAMIS,
   NODES,
-  START,
   WORLD,
 }
 
