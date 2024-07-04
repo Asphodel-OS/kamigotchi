@@ -11,7 +11,7 @@ interface Props {
 export const MusuRow = (props: Props) => {
   return (
     <Container key='musu'>
-      <Tooltip text={['$MUSU']}>
+      <Tooltip text={['MUSU']}>
         <Icon src={ItemImages.musu} />
       </Tooltip>
       <Balance>{props.balance}</Balance>

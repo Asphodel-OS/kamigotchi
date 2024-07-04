@@ -18,7 +18,7 @@ export const ExperienceBar = (props: Props) => {
 
   const getLevelUpTooltip = () => {
     if (disabledReason) return [disabledReason];
-    if (!canLevelUp) return [`Not enough exprience points.`];
+    if (!canLevelUp) return [`Not enough experience points.`];
     return [`Level Up`];
   };
 

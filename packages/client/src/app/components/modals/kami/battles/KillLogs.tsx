@@ -35,7 +35,7 @@ export const KillLogs = (props: Props) => {
         <TableCell sx={headerStyle}>Place</TableCell>
         <TableCell sx={headerStyle}>Adversary</TableCell>
         <TableCell sx={headerStyle}>Outcome</TableCell>
-        <TableCell sx={headerStyle}>PnL ($MUSU)</TableCell>
+        <TableCell sx={headerStyle}>PnL (MUSU)</TableCell>
       </TableRow>
     </TableHead>
   );

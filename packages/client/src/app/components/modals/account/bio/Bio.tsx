@@ -90,7 +90,7 @@ export const Bio = (props: Props) => {
     return (
       <DetailRow>
         <TollIcon style={{ height: '1vw', width: '1vw' }} />
-        <Description>{account.stats?.coin ?? 0} $MUSU Collected</Description>
+        <Description>{account.stats?.coin ?? 0} MUSU Collected</Description>
       </DetailRow>
     );
   };

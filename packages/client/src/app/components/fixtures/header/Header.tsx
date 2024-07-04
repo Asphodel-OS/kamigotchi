@@ -90,7 +90,7 @@ export function registerAccountHeader() {
         return [
           'Musubi (musu)',
           '',
-          'The interconnecting energy of the universe. Collect it from nodes with your Kamis.',
+          'The interconnecting energy of the universe. Collect it by Harvesting with your Kamis.',
         ];
       };
 

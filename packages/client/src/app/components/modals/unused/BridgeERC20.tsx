@@ -63,7 +63,7 @@ export function registerERC20BridgeModal() {
         actions.add({
           action: 'MUSUDeposit',
           params: [amount],
-          description: `Depositing ${amount} $MUSU`,
+          description: `Depositing ${amount} MUSU`,
           execute: async () => {
             return api.ERC20.deposit(amount);
           },
@@ -77,7 +77,7 @@ export function registerERC20BridgeModal() {
         actions.add({
           action: 'MUSUWithdraw',
           params: [amount],
-          description: `Withdrawing ${amount} $MUSU`,
+          description: `Withdrawing ${amount} MUSU`,
           execute: async () => {
             // unimplemented
             // return api.ERC20.withdraw(amount);
@@ -146,7 +146,7 @@ export function registerERC20BridgeModal() {
             style={{ backgroundColor: color }}
             onClick={() => setIsDepositState(fundState)}
           >
-            <Description style={{ color: textColor }}> {balance} $MUSU </Description>
+            <Description style={{ color: textColor }}> {balance} MUSU </Description>
             <SubDescription style={{ color: textColor }}> {text} </SubDescription>
           </BoxButton>
         );
@@ -154,12 +154,12 @@ export function registerERC20BridgeModal() {
 
       return (
         <ModalWrapper id='bridgeERC20' canExit overlay>
-          <Header>Bridge $MUSU</Header>
+          <Header>Bridge MUSU</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>{StateBox(true)}</div>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 2 }}>{StateBox(false)}</div>
             <Description style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}>
-              Bridge $MUSU between your wallet (ERC20) and the game world.
+              Bridge MUSU between your wallet (ERC20) and the game world.
             </Description>
             <div
               style={{

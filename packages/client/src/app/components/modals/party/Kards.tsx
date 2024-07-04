@@ -90,7 +90,7 @@ export const Kards = (props: Props) => {
         description = [
           `Harvesting`,
           `on ${kami.production.node.name}`,
-          `${harvestRate} $MUSU/hr`,
+          `${harvestRate} MUSU/hr`,
           `${healthRate} HP/hr`,
         ];
       }
@@ -204,7 +204,7 @@ export const Kards = (props: Props) => {
               kami={kami}
               description={getDescription(kami)}
               descriptionOnClick={getDescriptionOnClick(kami)}
-              subtext={`${calcOutput(kami)} $MUSU`}
+              subtext={`${calcOutput(kami)} MUSU`}
               actions={DisplayedAction(kami, account)}
               showBattery
               showCooldown

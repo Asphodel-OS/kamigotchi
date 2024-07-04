@@ -70,7 +70,7 @@ export const getTypedInventory = (
 /////////////////
 // UTILS
 
-// removes $MUSU, filters out empty, sorts
+// removes MUSU, filters out empty, sorts
 export const cleanInventories = (inventories: Inventory[]): Inventory[] => {
   return inventories
     .filter((inv) => inv.item.index !== MUSU_INDEX) // skip musu

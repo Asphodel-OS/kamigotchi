@@ -183,8 +183,8 @@ export const List = (props: Props) => {
       tar = moment.duration((con.target.value ?? 0) * 1000).humanize();
       curr = moment.duration((con.status?.current ?? 0) * 1000).humanize();
     } else if (con.target.type.includes('ITEM') && con.target.index === MUSU_INDEX) {
-      tar = tar + ' $MUSU';
-      curr = curr + ' $MUSU';
+      tar = tar + ' MUSU';
+      curr = curr + ' MUSU';
     }
 
     return [tar, curr];

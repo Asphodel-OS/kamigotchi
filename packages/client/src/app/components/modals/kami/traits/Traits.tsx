@@ -17,7 +17,7 @@ export const Traits = (props: Props) => {
         image: StatIcons.health,
       },
       power: {
-        description: 'Power determines the potential rate at which $MUSU can be farmed',
+        description: 'Power determines the potential rate at which MUSU can be farmed',
         image: StatIcons.power,
       },
       violence: {
