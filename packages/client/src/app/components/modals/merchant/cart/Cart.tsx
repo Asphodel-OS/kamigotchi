@@ -60,11 +60,7 @@ export const Cart = (props: Props) => {
       </Items>
       {cart.length > 0 ? (
         <Checkout>
-          <BuyButton
-            onClick={() => handleBuy(cart)}
-            effectScale={1.05}
-            disabled={calcTotalPrice() > account.coin}
-          >
+          <BuyButton onClick={() => handleBuy(cart)} disabled={calcTotalPrice() > account.coin}>
             <Total>
               <Icon src={ItemImages.musu} />
               <Text>{calcTotalPrice().toLocaleString()}</Text>
@@ -128,7 +124,6 @@ const Checkout = styled.div`
 `;
 
 interface BuyButtonProps {
-  effectScale: number;
   disabled?: boolean;
 }
 
@@ -151,11 +146,11 @@ const BuyButton = styled.div<BuyButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
   }
   &:active {
-    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
+    animation: ${() => clickFx()} 0.3s;
   }
 `;
 

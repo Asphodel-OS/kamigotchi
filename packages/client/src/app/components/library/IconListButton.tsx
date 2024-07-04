@@ -71,7 +71,6 @@ export function IconListButton(props: Props) {
         ref={toggleRef}
         onClick={handleClick}
         style={setStyles()}
-        effectScale={1.1}
         disabled={!!disabled}
         noMargin={!!noMargin}
       >
@@ -94,7 +93,6 @@ export function IconListButton(props: Props) {
 interface ButtonProps {
   disabled: boolean;
   noMargin: boolean;
-  effectScale: number;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -113,11 +111,11 @@ const Button = styled.button<ButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
   }
   &:active {
-    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
+    animation: ${() => clickFx()} 0.3s;
   }
 `;
 

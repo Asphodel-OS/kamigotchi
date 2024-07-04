@@ -20,7 +20,7 @@ export const LogoutMenuButton = () => {
 
   return (
     <Tooltip text={['Logout']}>
-      <Button onClick={handleClick} effectScale={1.05}>
+      <Button onClick={handleClick}>
         <Image src={logoutIcon} />
         <Text>Logout</Text>
       </Button>
@@ -28,7 +28,7 @@ export const LogoutMenuButton = () => {
   );
 };
 
-const Button = styled.div<{ effectScale: number }>`
+const Button = styled.div`
   background-color: #fff;
   border-radius: 0.9vh;
   border: solid black 0.15vw;
@@ -45,11 +45,11 @@ const Button = styled.div<{ effectScale: number }>`
   align-items: center;
 
   &:hover {
-    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
   }
   &:active {
-    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
+    animation: ${() => clickFx()} 0.3s;
   }
 `;
 

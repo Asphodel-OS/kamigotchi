@@ -1,5 +1,5 @@
-import { clickFx, hoverFx } from 'app/styles/effects';
-import styled, { keyframes } from 'styled-components';
+import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
+import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
@@ -7,7 +7,7 @@ interface Props {
   onClick: Function;
   img: string;
   disabled?: boolean;
-  size?: 'small' | 'medium' | 'large' | 'book';
+  size?: 'small' | 'medium' | 'large';
   color?: string;
   pulse?: boolean;
   noMargin?: boolean;
@@ -48,15 +48,6 @@ export const IconButton = (props: Props) => {
       styles.padding = '.7vw';
       styles.borderRadius = '.7vw';
       styles.borderWidth = '.2vw';
-    } else if (size === 'book') {
-      // this is tweeked specfically for the help menu
-      styles.width = '8vw';
-      styles.height = '10vw';
-      styles.margin = '.5vw';
-      styles.padding = '.5vw';
-      styles.borderRadius = '1vw';
-      styles.borderWidth = '.25vw';
-      styles.boxShadow = '0 0 1vw 0 rgba(0, 0, 0, 0.5)';
     }
 
     if (noMargin) styles.margin = '0vw';
@@ -70,7 +61,6 @@ export const IconButton = (props: Props) => {
     <Button
       onClick={!disabled ? handleClick : () => {}}
       style={setStyles()}
-      effectScale={1.05}
       color={color}
       disabled={disabled}
       pulse={pulse}
@@ -81,7 +71,6 @@ export const IconButton = (props: Props) => {
 };
 
 interface ButtonProps {
-  effectScale: number;
   color?: string;
   disabled?: boolean;
   pulse?: boolean;
@@ -96,11 +85,11 @@ const Button = styled.div<ButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
   }
   &:active {
-    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
+    animation: ${() => clickFx()} 0.3s;
   }
 
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
@@ -108,13 +97,4 @@ const Button = styled.div<ButtonProps>`
 
 const Image = styled.img`
   width: 100%;
-`;
-
-const pulseFx = keyframes`
-  0%, 80%, 90%, 100% {
-    background-color: #ffffff;
-  }
-  85%, 95% {
-    background-color: #e8e8e8;
-  }
 `;
