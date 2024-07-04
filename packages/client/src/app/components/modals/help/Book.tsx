@@ -1,28 +1,29 @@
-import { clickFx, hoverFx } from 'app/styles/effects';
 import styled from 'styled-components';
 
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
+import { CopyInfo } from './copy';
 
 interface Props {
-  img: string;
-  title: string;
-  onClick: Function;
+  infoKey: keyof typeof CopyInfo;
+  setTab: Function;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
 export const Book = (props: Props) => {
-  const { img, title, onClick } = props;
+  const { infoKey, setTab } = props;
+  const details = CopyInfo[infoKey];
 
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
-    await onClick();
+    setTab(infoKey);
   };
 
   return (
     <Container onClick={handleClick}>
-      <Image src={img} />
-      <Title>{title}</Title>
+      <Image src={details.menuIcon} />
+      <Title>{details.title}</Title>
     </Container>
   );
 };
