@@ -84,15 +84,20 @@ library LibHarvest {
     setState(components, id, "INACTIVE");
   }
 
-  // snapshot a production's balance and time. return the balance delta
+  // snapshot a production's balance and time. return the balance gained
   // also logs the harvest time since the last sync
-  function sync(IUintComp components, uint256 id, uint256 maxGain) public returns (uint256 delta) {
+  function sync(
+    IUintComp components,
+    uint256 id,
+    uint256 maxGain
+  ) public returns (uint256 netBounty) {
     if (isActive(components, id)) {
-      delta = calcBounty(components, id);
-      if (delta > maxGain) delta = maxGain;
-      LibInventory.incFor(components, id, MUSU_INDEX, delta);
+      netBounty = calcBounty(components, id);
+      if (netBounty > maxGain) netBounty = maxGain;
+      LibInventory.incFor(components, id, MUSU_INDEX, netBounty);
+
       uint256 timeDelta = block.timestamp - getLastTs(components, id);
-      uint256 accountID = getPet(components, LibPet.getAccount(components, id));
+      uint256 accountID = LibPet.getAccount(components, getPet(components, id));
       logHarvestTime(components, accountID, timeDelta);
       setLastTs(components, id, block.timestamp);
     }
