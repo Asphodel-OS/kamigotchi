@@ -23,11 +23,7 @@ const gate: DialogueNode = {
 
 const shopDoor: DialogueNode = {
   index: 23,
-  text: [
-    "An otherworldy door is suspended in mid - air! There's a hair - raising energy emanating from it....",
-    'You look around for the shop it should be attached to. It looks mostly the same from the other side, except for the sign says "POHS".',
-    "No telling where you'll end up if you go through.... but it feels safest to enter from the front.",
-  ],
+  text: ["There's some sort of door hanging here in mid-air. The sign above it says 'Shop'."],
   action: {
     type: 'move',
     label: 'Enter',

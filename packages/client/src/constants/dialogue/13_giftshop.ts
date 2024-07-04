@@ -7,12 +7,15 @@ export const clock: DialogueNode = {
 
 export const mina: DialogueNode = {
   index: 132,
-  text: ["Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon."],
+  text: [
+    `You're early..... I'm still just setting up the shop.`,
+    `Interact with the cash register if you want to trade. And I have some tasks for you, if you're free....`,
+  ],
 };
 
 const exit: DialogueNode = {
   index: 133,
-  text: ["There's no exit in sight, but you also don't feel trapped."],
+  text: ['Do you want to leave this.... place?'],
   action: {
     type: 'move',
     label: 'Leave',
