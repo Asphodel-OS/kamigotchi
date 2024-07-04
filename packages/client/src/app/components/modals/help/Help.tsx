@@ -2,17 +2,11 @@ import { useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import {
-  ActionButton,
-  IconButton,
-  ModalHeader,
-  ModalWrapper,
-  Tooltip,
-} from 'app/components/library';
+import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { HelpMenuIcons } from 'assets/images/help';
 import { helpIcon } from 'assets/images/icons/menu';
-import { SectionContent } from './SectionContent';
+import { Books } from './Books';
+import { Page } from './Page';
 import { CopyInfo } from './copy';
 import { HelpTabs } from './types';
 
@@ -25,9 +19,7 @@ export function registerHelpModal() {
       rowStart: 8,
       rowEnd: 75,
     },
-
     (layers) => of(layers),
-
     () => {
       const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
 
@@ -41,38 +33,6 @@ export function registerHelpModal() {
         </ButtonRow>
       );
 
-      const Menu = () => (
-        <MenuBody>
-          <MenuText>
-            Here are valuable resources that can help you navigate Kamigotchi World.
-          </MenuText>
-          <Tooltip text={['Getting Started']}>
-            <Label>Book 1</Label>
-            <IconButton
-              img={HelpMenuIcons.starting}
-              onClick={() => setTab(HelpTabs.START)}
-              size='book'
-            />
-          </Tooltip>
-          <Tooltip text={["What's a Kamigotchi?"]}>
-            <Label>Book 2</Label>
-            <IconButton
-              img={HelpMenuIcons.kamis}
-              onClick={() => setTab(HelpTabs.KAMIS)}
-              size='book'
-            />
-          </Tooltip>
-          <Tooltip text={["What's a Node?"]}>
-            <Label>Book 3</Label>
-            <IconButton
-              img={HelpMenuIcons.nodes}
-              onClick={() => setTab(HelpTabs.NODES)}
-              size='book'
-            />
-          </Tooltip>
-        </MenuBody>
-      );
-
       return (
         <ModalWrapper
           id='help'
@@ -82,7 +42,7 @@ export function registerHelpModal() {
         >
           <BackButton />
           <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
-          {tab === HelpTabs.HOME ? <Menu /> : <SectionContent body={CopyInfo[tab].body} />}
+          {tab === HelpTabs.HOME ? <Books setTab={setTab} /> : <Page body={CopyInfo[tab].body} />}
         </ModalWrapper>
       );
     }
@@ -104,36 +64,4 @@ const Banner = styled.img`
   padding: 2vw;
   padding-bottom: 1vw;
   align-self: center;
-`;
-
-const Label = styled.div`
-  padding: 0.4vw;
-  align-self: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 1vw;
-  line-height: 0.8vw;
-  text-align: center;
-  text-shadow: 0 0 0.4vw rgba(0, 0, 0, 0.5);
-`;
-
-const MenuBody = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5vw;
-`;
-
-const MenuText = styled.div`
-  padding-bottom: 3vw;
-  align-self: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 1vw;
-  line-height: 1.6vw;
-  text-align: center;
-  word-spacing: 1vw;
 `;

@@ -4,10 +4,10 @@ interface Props {
   body: string[];
 }
 
-export const SectionContent = (props: Props) => {
+export const Page = (props: Props) => {
   const { body } = props;
   return (
-    <Body>
+    <Container>
       {body.map((line: string) => {
         return (
           <Line key={line}>
@@ -16,11 +16,11 @@ export const SectionContent = (props: Props) => {
           </Line>
         );
       })}
-    </Body>
+    </Container>
   );
 };
 
-const Body = styled.div`
+const Container = styled.div`
   color: #333;
   padding: 1.5vw;
 `;
