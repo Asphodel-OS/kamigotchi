@@ -26,13 +26,19 @@ export const calcLifeTime = (harvest?: Harvest): number => {
 /////////////////
 // OUTPUT CALCS
 
-// calculate the expected output from a harvest
-// assumes the harvest rate has been updated
+// Calculate the expected output from a harvest. Round down.
+// This factors in maximum gains due to depleted health.
 export const calcBounty = (harvest: Harvest): number => {
   let output = harvest.balance;
   const duration = calcIdleTime(harvest);
   output += Math.floor(duration * harvest.rate);
   return Math.max(0, output);
+};
+
+// Calculate the bounty since last sync.
+export const calcNetBounty = (harvest: Harvest): number => {
+  const duration = calcIdleTime(harvest);
+  return Math.floor(duration * harvest.rate);
 };
 
 // calculate the expected output rate from a harvest
