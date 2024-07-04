@@ -31,8 +31,6 @@ contract ProductionCollectSystem is System {
     require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");
 
-    uint256 timeDelta = block.timestamp - LibHarvest.getLastTs(components, id);
-
     // health check
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
@@ -57,7 +55,6 @@ contract ProductionCollectSystem is System {
       LibNode.getAffinity(components, nodeID),
       output
     );
-    LibHarvest.logHarvestTime(components, accountID, timeDelta);
     LibAccount.updateLastTs(components, accountID);
 
     return abi.encode(output);
