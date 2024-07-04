@@ -43,6 +43,13 @@ contract PetFeedSystem is System {
       "PetFeed: pet must be in same room"
     );
 
+    // check whether harvesting prior to syncing
+    if (LibPet.isHarvesting(components, id)) {
+      uint256 productionID = LibPet.getProduction(components, id);
+      uint256 timeDelta = block.timestamp - LibHarvest.getLastTs(components, productionID);
+      LibHarvest.logHarvestTime(components, accountID, timeDelta);
+    }
+
     // sync
     LibPet.sync(components, id);
 
