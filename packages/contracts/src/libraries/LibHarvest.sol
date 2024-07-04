@@ -29,7 +29,6 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant RATE_PREC = 9;
-uint256 constant INTENSITY_PREC = 9;
 
 /*
  * LibHarvest handles all retrieval and manipulation of mining nodes/productions
@@ -85,10 +84,11 @@ library LibHarvest {
     setState(components, id, "INACTIVE");
   }
 
-  // snapshot a production's the balance and time. return the balance delta
-  function sync(IUintComp components, uint256 id) public returns (uint256 delta) {
+  // snapshot a production's balance and time. return the balance delta
+  function sync(IUintComp components, uint256 id, uint256 maxGain) public returns (uint256 delta) {
     if (isActive(components, id)) {
       delta = calcBounty(components, id);
+      if (delta > maxGain) delta = maxGain;
       LibInventory.incFor(components, id, MUSU_INDEX, delta);
       setLastTs(components, id, block.timestamp);
     }

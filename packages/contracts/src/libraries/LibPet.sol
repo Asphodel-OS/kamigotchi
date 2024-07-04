@@ -128,7 +128,8 @@ library LibPet {
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
-      uint256 deltaBalance = LibHarvest.sync(components, productionID);
+      uint256 maxFarm = calcStrainBountyCap(components, id);
+      uint256 deltaBalance = LibHarvest.sync(components, productionID, maxFarm);
       uint256 damage = calcStrain(components, id, deltaBalance);
       drain(components, id, damage.toInt32());
     } else if (LibString.eq(state, "RESTING")) {
@@ -171,6 +172,13 @@ library LibPet {
     return (metabolism);
   }
 
+  // Calculate resting recovery (HP) of a Kami. This assume Kami is resting. Round down.
+  function calcRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 rate = calcMetabolism(components, id);
+    uint256 duration = block.timestamp - getLastTs(components, id);
+    return (duration * rate) / (10 ** METABOLISM_PREC);
+  }
+
   // Calculate the HP strain on pet from accrual of musu. Round up.
   function calcStrain(
     IUintComp components,
@@ -185,11 +193,16 @@ library LibPet {
     return (amt * core * boost + (precision - 1)) / precision;
   }
 
-  // Calculate resting recovery (HP) of a Kami. This assume Kami is resting. Round down.
-  function calcRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 rate = calcMetabolism(components, id);
-    uint256 duration = block.timestamp - getLastTs(components, id);
-    return (duration * rate) / (10 ** METABOLISM_PREC);
+  // Calculate the max musu a kami can farm based on its hp at the last
+  // harvest sync against its rate of strain per musu. Round down.
+  function calcStrainBountyCap(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_MUSU_STRAIN");
+    int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
+    uint256 healthBudget = LibStat.getHealth(components, id).sync.toUint256();
+    uint256 core = config[2];
+    uint256 boost = uint(config[6].toInt256() + bonusBoost);
+    uint256 precision = 10 ** uint(config[3] + config[7]);
+    return (healthBudget * precision) / (core * boost);
   }
 
   // Calculate and return the total harmony of a pet (including equips)
