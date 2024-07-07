@@ -40,6 +40,14 @@ export function registerHelpModal() {
           canExit
           truncate
         >
+          <Row>
+            <ActionButton
+              text='Join the Discord'
+              onClick={() =>
+                window.open('https://discord.com/channels/1061388463385092277/1258119425350041703')
+              }
+            />
+          </Row>
           <BackButton />
           <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
           {tab === HelpTabs.HOME ? <Books setTab={setTab} /> : <Page body={CopyInfo[tab].body} />}
@@ -48,6 +56,14 @@ export function registerHelpModal() {
     }
   );
 }
+
+const Row = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-self: center;
+`;
 
 const ButtonRow = styled.div`
   position: absolute;
