@@ -33,7 +33,7 @@ contract PetNameSystem is System {
     LibPet.setName(components, id, name);
 
     // standard logging and tracking
-    LibPet.logName(components, accountID);
+    LibPet.logNameChange(components, accountID);
     LibAccount.updateLastTs(components, accountID);
 
     return "";
