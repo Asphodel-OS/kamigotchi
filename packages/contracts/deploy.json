@@ -463,14 +463,18 @@
         "IDScoreTypeComponent",
         "IndexComponent",
         "ExperienceComponent",
+        "HarmonyComponent",
         "HealthComponent",
+        "PowerComponent",
         "RateComponent",
+        "SlotsComponent",
         "StateComponent",
+        "TypeComponent",
+        "ValueComponent",
+        "ViolenceComponent",
         "TimeLastComponent",
         "TimeResetComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeStartComponent"
       ]
     },
     {
