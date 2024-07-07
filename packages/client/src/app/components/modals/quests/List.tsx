@@ -164,7 +164,7 @@ export const List = (props: Props) => {
   };
 
   const getRewardImage = (reward: Reward) => {
-    if (reward.target.type === 'REPUTATION') return <div />;
+    if (reward.target.type === 'REPUTATION' || reward.target.type === 'NFT') return <div />;
     return (
       <ConditionImage
         src={getDescribedEntity(reward.target.type, reward.target.index || 0).image}
