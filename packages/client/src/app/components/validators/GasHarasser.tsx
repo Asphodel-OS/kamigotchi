@@ -6,11 +6,12 @@ import { v4 as uuid } from 'uuid';
 import { formatEther } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, ValidatorWrapper } from 'app/components/library';
+import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { GasConstants } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
+import { getAbbrevAddr } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
 
 export function registerGasHarasser() {
@@ -134,10 +135,9 @@ export function registerGasHarasser() {
           title='Embedded wallet is empty!'
           errorPrimary={`Please top up on gas ._.`}
         >
-          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
-            Need eth? Check out the faucet.
-          </Link>
-          <Description>Address: {account.operatorAddress}</Description>
+          <Tooltip text={[account.operatorAddress]}>
+            <Description>Address: {getAbbrevAddr(account.operatorAddress)}</Description>
+          </Tooltip>
           <Row>
             <Input
               type='number'
@@ -149,6 +149,9 @@ export function registerGasHarasser() {
             />
             <ActionButton text='Feed' onClick={feed} size='validator' />
           </Row>
+          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+            Need eth? Check out the faucet.
+          </Link>
         </ValidatorWrapper>
       );
     }
@@ -190,7 +193,7 @@ const Input = styled.input`
 
 const Link = styled.div`
   color: #11f;
-  padding-bottom: 1.2vh;
+  padding-top: 1.2vh;
   cursor: pointer;
   pointer-events: auto;
 

@@ -72,7 +72,6 @@ const Content = styled.div`
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  font-family: Pixel;
 `;
 
 const Header = styled.div`
@@ -86,38 +85,34 @@ const Header = styled.div`
 
 const Title = styled.div`
   color: #333;
-  padding: 0.45vh;
-  font-family: Pixel;
+  padding: 0.6vh;
   font-size: 2.1vh;
   text-align: center;
 `;
 
 const Subtitle = styled.div`
   color: #666;
-  padding: 0.45vh;
-  font-family: Pixel;
+  padding: 0.6vh;
   font-size: 1.8vh;
   text-align: center;
 `;
 
 const ErrorPrimary = styled.div`
   color: #922;
-  padding: 0.45vh;
-  font-family: Pixel;
+  padding: 0.6vh;
   font-size: 1.5vh;
   text-align: center;
 `;
 
 const ErrorSecondary = styled.div`
   color: #922;
-  padding: 0.45vh;
-  font-family: Pixel;
+  padding: 0.6vh;
   font-size: 0.9vh;
   text-align: center;
 `;
 
 const Children = styled.div`
-  padding: 0.45vh;
+  padding: 0.6vh;
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
@@ -125,7 +120,6 @@ const Children = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  font-family: Pixel;
 `;
 
 const fadeIn = keyframes`

@@ -29,6 +29,7 @@ import {
   getAccountEntityIndexByOwner,
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
+import { getAbbrevAddr } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 
 /**
@@ -239,12 +240,6 @@ export function registerAccountRegistrar() {
       /////////////////
       // INTERPRETATION
 
-      const getAbbrevAddrStr = (addr: string) => {
-        const addrPrefix = addr.slice(0, 6);
-        const addrSuffix = addr.slice(-4);
-        return `${addrPrefix}...${addrSuffix}`;
-      };
-
       const isNameTaken = () => {
         const account = getAccountEntityIndexByName(components, name);
         return !!account;
@@ -265,7 +260,7 @@ export function registerAccountRegistrar() {
         return (
           <AddressRow>
             <Tooltip text={[burnerAddress]}>
-              <Description>Operator: {getAbbrevAddrStr(burnerAddress)}</Description>
+              <Description>Operator: {getAbbrevAddr(burnerAddress)}</Description>
             </Tooltip>
             <Tooltip text={infoText}>
               <IconButton size='small'>
@@ -283,7 +278,7 @@ export function registerAccountRegistrar() {
         return (
           <AddressRow>
             <Tooltip text={[selectedAddress]}>
-              <Description>Owner: {getAbbrevAddrStr(selectedAddress)}</Description>
+              <Description>Owner: {getAbbrevAddr(selectedAddress)}</Description>
             </Tooltip>
           </AddressRow>
         );
