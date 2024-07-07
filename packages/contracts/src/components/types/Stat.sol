@@ -51,6 +51,7 @@ library StatLib {
 
   ///////////////
   // ENCODING
+
   function encode(Stat memory stat) internal pure returns (bytes memory) {
     return abi.encode(toUint(stat));
   }

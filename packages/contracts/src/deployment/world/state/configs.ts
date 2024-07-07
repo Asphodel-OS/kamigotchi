@@ -40,8 +40,8 @@ export async function initConfigs(api: AdminAPI) {
   // Harvest Effects
   await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 1500, 3, 0, 0, 1000, 3]);
-  await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 25, 0, 0, 0, 480, 0]); // inversed boost
+  await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
 
   // Health Effects
   await api.config.set.array('KAMI_MUSU_STRAIN', [0, 0, 200, 3, 0, 0, 1000, 3]);
