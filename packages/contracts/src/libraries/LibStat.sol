@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat, StatLib } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
@@ -21,12 +21,38 @@ library LibStat {
   /////////////////
   // INTERACTIONS
 
+  // Apply the set stats from one entity to another
+  // NOTE: we do not ever expect Base to be set for a consumable
+  // TODO: come up with a non-keyword function name
+  function applyy(IUintComp components, uint256 fromID, uint256 toID) internal {
+    StatComponent statComp;
+    Stat memory fromStat;
+    Stat memory toStat;
+
+    uint256[] memory compIDs = getComponentsSet(components, fromID);
+    for (uint256 i = 0; i < compIDs.length; i++) {
+      statComp = StatComponent(getAddressById(components, compIDs[i]));
+      fromStat = statComp.get(fromID);
+      if (!statComp.has(toID)) toStat = statComp.get(toID);
+      else toStat = toStat = Stat(0, 0, 0, 0);
+
+      if (fromStat.shift != 0) toStat.shift = toStat.shift + fromStat.shift;
+      if (fromStat.boost != 0) toStat.boost = toStat.boost + fromStat.boost;
+      if (fromStat.sync != 0) {
+        int32 max = StatLib.calcTotal(toStat);
+        toStat.sync = StatLib.sync(toStat, fromStat.sync, max);
+      }
+
+      statComp.set(toID, toStat);
+    }
+  }
+
   // Copy the set stats from one entity to another.
   function copy(IUintComp components, uint256 fromID, uint256 toID) internal {
-    uint256[] memory componentIDs = getComponentsSet(components, fromID);
-    for (uint256 i = 0; i < componentIDs.length; i++) {
-      uint256 val = IUintComp(getAddressById(components, componentIDs[i])).get(fromID);
-      IUintComp(getAddressById(components, componentIDs[i])).set(toID, val);
+    uint256[] memory compIDs = getComponentsSet(components, fromID);
+    for (uint256 i = 0; i < compIDs.length; i++) {
+      uint256 val = IUintComp(getAddressById(components, compIDs[i])).get(fromID);
+      IUintComp(getAddressById(components, compIDs[i])).set(toID, val);
     }
   }
 

@@ -25,10 +25,8 @@ contract PetFeedSystem is System {
     (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    // get/check registry entry
-    uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
-    string memory type_ = LibItemRegistry.getType(components, registryID);
-    require(LibString.eq(type_, "FOOD"), "PetFeed: that's not food");
+    // check whether the specified item is consumable
+    require(LibItemRegistry.isConsumable(components, itemIndex), "PetFeed: that's not food");
 
     // standard checks (ownership, state, roomIndex)
     require(LibPet.isPet(components, id), "PetFeed: not a pet");
@@ -40,18 +38,13 @@ contract PetFeedSystem is System {
     );
     require(
       LibPet.getRoom(components, id) == LibAccount.getRoom(components, accountID),
-      "PetFeed: pet must be in same room"
+      "PetFeed: pet too far"
     );
 
-    // sync
+    // process the feeding (sync pet, dec inventory, apply effects)
     LibPet.sync(components, id);
-
-    // decrement item from inventory
-    LibInventory.decFor(components, accountID, itemIndex, 1); // implicit check for insufficient balance
-
-    // execute feeding actions
-    LibPet.heal(components, id, LibStat.getHealth(components, registryID).sync);
-    LibExperience.inc(components, id, LibExperience.get(components, registryID));
+    LibInventory.decFor(components, accountID, itemIndex, 1); // implicit balance check
+    LibPet.feed(components, id, itemIndex);
 
     // reset the pet's intensity
     if (LibPet.isHarvesting(components, id)) {
