@@ -109,10 +109,15 @@ library LibPet {
   // TODO: add support for experience, revives and holy dustgi
   function feed(IUintComp components, uint256 id, uint32 itemIndex) internal {
     uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
-    LibStat.applyy(components, registryID, id);
+    string memory type_ = LibItemRegistry.getType(components, registryID);
 
     // handle revives and experience
-    // LibPet.heal(components, id, LibStat.getHealth(components, registryID).sync);
+    if (LibString.eq(type_, "REVIVE") && isDead(components, id)) {
+      revive(components, id);
+      LibPet.logRevive(components, id);
+    }
+    LibStat.applyy(components, registryID, id);
+
     // LibExperience.inc(components, id, LibExperience.get(componxents, registryID));
   }
 
@@ -568,7 +573,8 @@ library LibPet {
   ////////////////////
   // LOGGING
 
-  function logRevive(IUintComp components, uint256 accountID) internal {
+  function logRevive(IUintComp components, uint256 id) internal {
+    uint256 accountID = LibPet.getAccount(components, id);
     LibDataEntity.inc(components, accountID, 0, "KAMI_REVIVE", 1);
   }
 
