@@ -33,12 +33,11 @@ library LibStat {
     for (uint256 i = 0; i < compIDs.length; i++) {
       statComp = StatComponent(getAddressById(components, compIDs[i]));
       fromStat = statComp.get(fromID);
-      if (!statComp.has(toID)) toStat = statComp.get(toID);
-      else toStat = toStat = Stat(0, 0, 0, 0);
+      toStat = (statComp.has(toID)) ? statComp.get(toID) : Stat(0, 0, 0, 0);
 
-      if (fromStat.shift != 0) toStat.shift = toStat.shift + fromStat.shift;
-      if (fromStat.boost != 0) toStat.boost = toStat.boost + fromStat.boost;
-      if (fromStat.sync != 0) {
+      toStat.shift += fromStat.shift;
+      toStat.boost += fromStat.boost;
+      if (fromStat.sync > 0) {
         int32 max = StatLib.calcTotal(toStat);
         toStat.sync = StatLib.sync(toStat, fromStat.sync, max);
       }
