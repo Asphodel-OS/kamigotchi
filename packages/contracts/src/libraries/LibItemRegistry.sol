@@ -176,6 +176,13 @@ library LibItemRegistry {
     return comp.has(id) && comp.get(id) == for_;
   }
 
+  // NOTE: temporary function as we decide how to identify revives with out type_
+  function isRevive(IUintComp components, uint32 index) internal view returns (bool) {
+    uint256 id = genID(index);
+    string memory type_ = getType(components, id);
+    return LibString.eq(type_, "REVIVE");
+  }
+
   // check whether an entity is an Item Registry instance
   function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
     return isRegistry(components, id) && isItem(components, id);

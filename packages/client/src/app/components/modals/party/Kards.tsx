@@ -142,9 +142,7 @@ export const Kards = (props: Props) => {
     // check whether the kami can be fed and generate a tooltip for the reason
     let tooltip = 'Feed Kami';
     if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
-      tooltip = `not at your roomIndex`;
-    } else if (isFull(kami)) {
-      tooltip = `can't eat, full`;
+      tooltip = `too far away`;
     } else if (!hasFood(account)) {
       tooltip = `buy food, poore`;
     } else if (onCooldown(kami)) {
@@ -155,8 +153,8 @@ export const Kards = (props: Props) => {
       <Tooltip text={[tooltip]}>
         <IconListButton
           img={feedIcon}
-          disabled={tooltip !== 'Feed Kami'}
           options={feedOptions}
+          disabled={tooltip !== 'Feed Kami'}
           noMargin
         />
       </Tooltip>
@@ -171,12 +169,13 @@ export const Kards = (props: Props) => {
 
     const stockedInventory =
       account.inventories?.filter((inv: Inventory) => inv.item.type === 'REVIVE') ?? [];
+    const reviveItem = stockedInventory[0].item;
 
     return (
       <Tooltip text={[tooltipText]}>
         <IconButton
           img={reviveIcon}
-          onClick={() => actions.revive(kami, stockedInventory[0].item.index)}
+          onClick={() => actions.feed(kami, reviveItem.index)}
           disabled={!hasRevive(account) || onCooldown(kami)}
           noMargin
         />

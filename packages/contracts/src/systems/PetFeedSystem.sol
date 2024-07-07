@@ -34,13 +34,19 @@ contract PetFeedSystem is System {
     require(LibPet.getAccount(components, id) == accountID, "PetFeed: pet not urs");
     require(!LibPet.onCooldown(components, id), "PetFeed: pet on cooldown");
     require(
-      LibPet.isResting(components, id) || LibPet.isHarvesting(components, id),
-      "PetFeed: pet must be resting|harvesting"
-    );
-    require(
       LibPet.getRoom(components, id) == LibAccount.getRoom(components, accountID),
       "PetFeed: pet too far"
     );
+
+    // item specific checks
+    if (LibItemRegistry.isRevive(components, itemIndex)) {
+      require(LibPet.isDead(components, id), "PetFeed: pet already alive");
+    } else {
+      require(
+        LibPet.isResting(components, id) || LibPet.isHarvesting(components, id),
+        "PetFeed: pet must be alive"
+      );
+    }
 
     // process the feeding (sync pet, dec inventory, apply effects)
     LibPet.sync(components, id);

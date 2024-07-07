@@ -459,12 +459,13 @@
     {
       "name": "PetFeedSystem",
       "writeAccess": [
-        "ExperienceComponent",
-        "HealthComponent",
         "IdHolderComponent",
         "IDScoreTypeComponent",
         "IndexComponent",
+        "ExperienceComponent",
+        "HealthComponent",
         "RateComponent",
+        "StateComponent",
         "TimeLastComponent",
         "TimeResetComponent",
         "TimeStartComponent",
