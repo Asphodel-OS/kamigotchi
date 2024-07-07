@@ -109,8 +109,8 @@ export function registerGasHarasser() {
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let newValue = Number(event.target.value);
-        newValue = Math.max(GasConstants.Low, newValue);
-        newValue = Math.min(GasConstants.Max, newValue);
+        newValue = Math.max(fullGas / 10, newValue);
+        newValue = Math.min(fullGas * 10, newValue);
         setValue(newValue);
       };
 
@@ -189,9 +189,10 @@ const Input = styled.input`
 `;
 
 const Link = styled.div`
-  color: #999;
-  cursor: pointer;
+  color: #11f;
   padding-bottom: 1.2vh;
+  cursor: pointer;
+  pointer-events: auto;
 
   font-family: Pixel;
   font-size: 1.2vh;
@@ -199,6 +200,7 @@ const Link = styled.div`
   text-align: center;
 
   &:hover {
-    color: #11b;
+    color: #71f;
+    opacity: 0.7;
   }
 `;
