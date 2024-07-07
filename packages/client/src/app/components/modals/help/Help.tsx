@@ -43,9 +43,7 @@ export function registerHelpModal() {
           <Row>
             <ActionButton
               text='Join the Discord'
-              onClick={() =>
-                window.open('https://discord.com/channels/1061388463385092277/1258119425350041703')
-              }
+              onClick={() => window.open('https://discord.gg/eyUAtzZsE8')}
             />
           </Row>
           <BackButton />
