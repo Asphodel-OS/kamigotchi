@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
+import { addressesMatch } from 'utils/address';
 import { playScribble, playSuccess } from 'utils/sounds';
 
 // TODO: check for whether an account with the burner address already exists
@@ -34,10 +35,8 @@ export function registerOperatorUpdater() {
       // run the primary check(s) for this validator, track in store for easy saccess
       useEffect(() => {
         if (!validations.accountExists) return;
-
-        const operatorMatches = !!burnerAddress && kamiAccount.operatorAddress === burnerAddress;
+        const operatorMatches = addressesMatch(kamiAccount.operatorAddress, burnerAddress);
         if (operatorMatches == validations.operatorMatches) return; // no change
-
         setValidations({ ...validations, operatorMatches });
       }, [validations.accountExists, burnerAddress, kamiAccount.operatorAddress]);
 
