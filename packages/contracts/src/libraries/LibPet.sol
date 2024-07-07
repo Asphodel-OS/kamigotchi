@@ -111,11 +111,12 @@ library LibPet {
     uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
     string memory type_ = LibItemRegistry.getType(components, registryID);
 
-    // handle revives and experience
+    // handle revives
     if (LibString.eq(type_, "REVIVE") && isDead(components, id)) {
       revive(components, id);
       LibPet.logRevive(components, id);
     }
+
     LibStat.applyy(components, registryID, id);
 
     // LibExperience.inc(components, id, LibExperience.get(componxents, registryID));

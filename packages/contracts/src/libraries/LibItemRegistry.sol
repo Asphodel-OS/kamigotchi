@@ -162,9 +162,18 @@ library LibItemRegistry {
     return getComponentById(components, IsConsumableCompID).has(id);
   }
 
-  // check whether an entity has a type field
-  function hasType(IUintComp components, uint256 id) internal view returns (bool) {
-    return TypeComponent(getAddressById(components, TypeCompID)).has(id);
+  function isForAccount(IUintComp components, uint32 index) internal view returns (bool) {
+    return isFor(components, index, IsAccountCompID);
+  }
+
+  function isForPet(IUintComp components, uint32 index) internal view returns (bool) {
+    return isFor(components, index, IsPetCompID);
+  }
+
+  function isFor(IUintComp components, uint32 index, uint256 for_) internal view returns (bool) {
+    uint256 id = genID(index);
+    ForComponent comp = ForComponent(getAddressById(components, ForCompID));
+    return comp.has(id) && comp.get(id) == for_;
   }
 
   // check whether an entity is an Item Registry instance

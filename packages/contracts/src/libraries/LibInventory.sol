@@ -159,12 +159,6 @@ library LibInventory {
     return ValueComponent(getAddressById(components, ValueCompID)).has(id);
   }
 
-  // Check if the associated registry entry has a type
-  function hasType(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 registryID = LibItemRegistry.getByInstance(components, id);
-    return LibItemRegistry.hasType(components, registryID);
-  }
-
   /////////////////
   // GETTERS
 

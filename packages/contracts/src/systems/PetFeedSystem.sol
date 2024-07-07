@@ -27,6 +27,7 @@ contract PetFeedSystem is System {
 
     // check whether the specified item is consumable
     require(LibItemRegistry.isConsumable(components, itemIndex), "PetFeed: that's not food");
+    require(LibItemRegistry.isForPet(components, itemIndex), "PetFeed: that's not for pets");
 
     // standard checks (ownership, state, roomIndex)
     require(LibPet.isPet(components, id), "PetFeed: not a pet");
