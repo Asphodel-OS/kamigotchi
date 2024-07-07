@@ -321,6 +321,10 @@ export function registerAccountRegistrar() {
             <br />
             <Description>Kamigotchi are key to this world.</Description>
             <Description>You will need them to progress.</Description>
+            <Description>You'll also need testnet Ethereum! Here's the faucet:</Description>
+            <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+              https://yominet.hub.caldera.xyz/
+            </Link>
             <br />
             <Row>
               <BackButton />
@@ -413,24 +417,24 @@ const Row = styled.div`
 `;
 
 const Description = styled.p`
-  font-size: 14px;
   color: #333;
-  text-align: center;
-  font-family: Pixel;
   padding: 10px;
+  font-size: 1.2vh;
+  text-align: center;
 `;
 
 const Link = styled.div`
-  cursor: pointer;
-  font-size: 9px;
-  color: #999;
-  text-align: center;
-  font-family: Pixel;
-  text-decoration: underline;
+  color: #11f;
   padding: 1vh 0 0 0;
+  cursor: pointer;
+  pointer-events: auto;
+
+  font-size: 1vh;
+  text-align: center;
+  text-decoration: underline;
 
   &:hover {
-    color: #11b;
+    color: #71f;
   }
 `;
 
