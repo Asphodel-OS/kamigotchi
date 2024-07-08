@@ -83,8 +83,8 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     Number(item['Index']),
     item['Name'],
     item['Description'],
-    [11001, 11002, 11006, 101, 102, 103, 106, 105, 104, 109, 108, 107, 110],
-    [9, 9, 9, 9, 8, 7, 8, 7, 6, 9, 8, 7, 7],
+    [11001, 11002, 11006, 101, 102, 103, 106, 105, 104, 109, 108, 107, 110, 112, 113, 114, 115],
+    [9, 9, 9, 9, 8, 7, 8, 7, 6, 9, 8, 7, 7, 6, 6, 6, 6],
     getItemImage(item['Name'])
   );
   return; // using placeholder lootboxes for now. similar challenges in representation to rooms

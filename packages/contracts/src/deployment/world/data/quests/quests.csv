@@ -54,7 +54,7 @@ You can resurrect your Kamigotchi by using a Ribbon. This one is free. The rest 
 Be careful. ",Here’s a freebie. Try to be more careful next time.,Have 1 Kamigotchi Liquidated,"None - Free item ",Ribbon,
 ,8,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,
 ,8,,Ingame,Requirement,LIQUIDATED_VICTIM,MIN,,Have a kami liquidated,,1,No,,,,,,,,
-,8,,Ingame,Reward,ITEM,,,Ribbon,1001,1,No,,,,,,,,
+,8,,Ingame,Reward,ITEM,,,Ribbon,110,1,No,,,,,,,,
 Nedu,,"Another day, another quest I",Shelved,,,,,,,,No,5,,"Have you noticed you now have access to Daily Quests? Completing these quests is your way to get official, Kamigotchi World Tourism Association approved Giftboxes. 
 
 These boxes contain, well, gifts. Give them a try. 
@@ -161,8 +161,8 @@ Why don’t you try and fix it? ",,"Goal 1 Has Not Been Completed, Ode To Musu (
 This world won’t last…….. but I can give you something that will. I need help here….. so work your reputation up to 300 and I’ll give you an NFT. We’ve got plans for this baby, but for now….. 
 
 This NFT won’t be available after the testnet period ends. Good luck.",,At least 50 Reputation,Have 300 Reputation,"Kamigotchi World Passport (NFT) ",
-,20,,For Implementation,Requirement,REPUTATION,MIN,,"50 Reputation ",,50,No,,,,,,,,
-,20,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 300 Reputation,,300,No,,,,,,,,
+,20,,For Implementation,Requirement,REPUTATION,MIN,,"50 Reputation ",1,50,No,,,,,,,,
+,20,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 300 Reputation,1,300,No,,,,,,,,
 ,20,,For Implementation,Reward,NFT,,,"Kamigotchi World Passport (NFT) ",,,No,,,,,,,,
 ,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,
 ,,,Idea,,,,,,,,No,,,,,,,,

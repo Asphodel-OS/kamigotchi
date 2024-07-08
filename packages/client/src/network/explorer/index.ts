@@ -1,7 +1,12 @@
 import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { AccountOptions, getAccountByIndex, getAllAccounts } from 'network/shapes/Account';
+import {
+  AccountOptions,
+  getAccountByIndex,
+  getAccountByOwner,
+  getAllAccounts,
+} from 'network/shapes/Account';
 import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
 import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
@@ -43,6 +48,18 @@ export const initExplorer = (world: World, components: Components) => {
       all: (options?: AccountOptions) => getAllAccounts(world, components, options),
       get: (index: number, options?: {}) => {
         return getAccountByIndex(world, components, index, options);
+      },
+      getByOwner: (owner: string, options?: {}) => {
+        return getAccountByOwner(world, components, owner, {
+          ...options,
+          kamis: true,
+          friends: true,
+          gacha: true,
+          inventory: true,
+          quests: true,
+          lootboxLogs: true,
+          stats: true,
+        });
       },
       entities: () => Array.from(components.IsAccount.entities()),
       indices: () => Array.from(components.AccountIndex.values.value.values()),

@@ -7,7 +7,12 @@ export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
     const quest = questCSV[i];
 
     // skip if indices are overridden and quest isn't included
-    if (overrideIndices && !overrideIndices.includes(Number(quest['Index']))) continue;
+    if (
+      overrideIndices &&
+      overrideIndices.length > 0 &&
+      !overrideIndices.includes(Number(quest['Index']))
+    )
+      continue;
 
     try {
       if (
@@ -71,7 +76,8 @@ async function initQuest(api: AdminAPI, entry: any) {
     entry['Daily'] === 'Yes' ? 64800 : 0
   );
 
-  const agencyRep = Number(entry['Agency Rep']);
+  const agencyRep = Number(entry['REPUTATION']);
+  console.log('AGENCY REP', agencyRep);
   if (agencyRep || agencyRep > 0) {
     await api.registry.quest.add.reward(Number(entry['Index']), 'REPUTATION', 1, agencyRep);
   }
