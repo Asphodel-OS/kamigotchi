@@ -20,6 +20,7 @@ contract PetGachaRerollSystem is System {
     require(accountID != 0, "no account detected");
     require(LibPet.isPetBatch(components, petIDs), "not a pet");
     require(LibPet.assertAccountBatch(components, petIDs, accountID), "not urs");
+    require(LibPet.assertStateBatch(components, petIDs, "RESTING"), "not resting");
 
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, petIDs);

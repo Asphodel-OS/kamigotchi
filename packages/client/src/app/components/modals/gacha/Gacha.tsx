@@ -292,7 +292,7 @@ export function registerGachaModal() {
             <Reroll
               actions={{ handleReroll }}
               data={{
-                kamis: data.accKamis || [],
+                kamis: data.accKamis.filter((kami) => kami.state === 'RESTING') || [],
                 balance: ownerEthBalance?.value || 0n, // bigint used for dealing with wei
               }}
               utils={{ getRerollCost }}

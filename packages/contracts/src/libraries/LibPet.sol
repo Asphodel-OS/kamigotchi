@@ -347,6 +347,17 @@ library LibPet {
     return true;
   }
 
+  function assertStateBatch(
+    IUintComp components,
+    uint256[] memory ids,
+    string memory state
+  ) internal view returns (bool) {
+    StateComponent comp = StateComponent(getAddressById(components, StateCompID));
+    for (uint256 i = 0; i < ids.length; i++)
+      if (!LibString.eq(comp.get(ids[i]), state)) return false;
+    return true;
+  }
+
   function isPetBatch(IUintComp components, uint256[] memory ids) internal view returns (bool) {
     IsPetComponent comp = IsPetComponent(getAddressById(components, IsPetCompID));
     for (uint256 i = 0; i < ids.length; i++) {
