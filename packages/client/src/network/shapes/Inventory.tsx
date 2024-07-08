@@ -73,6 +73,7 @@ export const getTypedInventory = (
 // removes MUSU, filters out empty, sorts
 export const cleanInventories = (inventories: Inventory[]): Inventory[] => {
   return inventories
+    .filter((inv) => !!inv) // skip empty
     .filter((inv) => inv.item.index !== MUSU_INDEX) // skip musu
     .filter((inv) => (inv.balance || 0) > 0) // filter out empty
     .sort((a: Inventory, b: Inventory) => (a.item.index > b.item.index ? 1 : -1)); //sort
