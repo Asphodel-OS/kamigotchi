@@ -172,15 +172,15 @@ export const Kards = (props: Props) => {
     if (!hasRevive(account)) tooltipText = 'no revives in inventory';
     else if (onCooldown(kami)) tooltipText = 'on cooldown';
 
-    const stockedInventory =
+    const stockedInventories =
       account.inventories?.filter((inv: Inventory) => inv.item.type === 'REVIVE') ?? [];
-    const reviveItem = stockedInventory[0].item;
+    const reviveIndex = stockedInventories.length > 0 ? stockedInventories[0].item.index : 110;
 
     return (
       <Tooltip text={[tooltipText]}>
         <IconButton
           img={reviveIcon}
-          onClick={() => actions.feed(kami, reviveItem.index)}
+          onClick={() => actions.feed(kami, reviveIndex)}
           disabled={!hasRevive(account) || onCooldown(kami)}
           noMargin
         />
