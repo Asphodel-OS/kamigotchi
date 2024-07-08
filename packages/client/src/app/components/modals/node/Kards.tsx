@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
+import { Option } from 'app/components/library/IconListButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
@@ -167,9 +168,10 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
     const stockedInventory =
-      account.inventories?.filter((inv: Inventory) => inv.item.type === 'FOOD') ?? [];
+      account.inventories?.filter((inv: Inventory) => inv?.item.type === 'FOOD') ?? [];
 
-    const feedOptions = stockedInventory.map((inv: Inventory) => {
+    let feedOptions = stockedInventory.map((inv: Inventory): Option => {
+      if (!inv) return { text: '', onClick: () => {} };
       const healAmt = inv.item.stats?.health.sync ?? 0;
       const expAmt = inv.item.experience ?? 0;
       const canEat = () => !isFull(kami) || healAmt == 0;
@@ -184,6 +186,8 @@ export const Kards = (props: Props) => {
         disabled: !canEat(),
       };
     });
+
+    feedOptions = feedOptions.filter((option) => !!option.text);
 
     // check whether the kami can be fed and generate a tooltip for the reason
     let tooltip = 'Feed Kami';

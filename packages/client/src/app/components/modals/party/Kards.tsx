@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
+import { Option } from 'app/components/library/IconListButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
@@ -51,14 +52,14 @@ export const Kards = (props: Props) => {
   // INTERPRETATION
 
   const hasFood = (account: Account): boolean => {
-    const foods = account.inventories?.filter((inv) => inv.item.type === 'FOOD');
+    const foods = account.inventories?.filter((inv) => inv?.item.type === 'FOOD');
     if (!foods || foods.length == 0) return false;
     const total = foods.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
     return total > 0;
   };
 
   const hasRevive = (account: Account): boolean => {
-    const revives = account.inventories?.filter((inv) => inv.item.type === 'REVIVE');
+    const revives = account.inventories?.filter((inv) => inv?.item.type === 'REVIVE');
     if (!revives || revives.length == 0) return false;
     const total = revives.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
     return total > 0;
@@ -121,9 +122,11 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
     const stockedInventory =
-      account.inventories?.filter((inv: Inventory) => inv.item.type === 'FOOD') ?? [];
+      account.inventories?.filter((inv: Inventory) => inv?.item.type === 'FOOD') ?? [];
 
-    const feedOptions = stockedInventory.map((inv: Inventory) => {
+    let feedOptions = stockedInventory.map((inv: Inventory): Option => {
+      if (!inv) return { text: '', onClick: () => {} };
+
       const healAmt = inv.item.stats?.health.sync ?? 0;
       const expAmt = inv.item.experience ?? 0;
       const canEat = () => !isFull(kami) || healAmt == 0;
@@ -138,6 +141,8 @@ export const Kards = (props: Props) => {
         disabled: !canEat(),
       };
     });
+
+    feedOptions = feedOptions.filter((option) => !!option.text);
 
     // check whether the kami can be fed and generate a tooltip for the reason
     let tooltip = 'Feed Kami';

@@ -56,6 +56,7 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   const config = kami.config.harvest.fertility;
   const ratio = config.ratio.value;
   const efficacy = config.boost.value + calcEfficacyShift(harvest, kami);
+  const fertility = (kami.stats.power.total * ratio * efficacy) / 3600;
   return (kami.stats.power.total * ratio * efficacy) / 3600;
 };
 
