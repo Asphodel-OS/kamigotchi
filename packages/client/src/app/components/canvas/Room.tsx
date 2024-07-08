@@ -69,8 +69,6 @@ export const Room = (props: Props) => {
   };
 
   const getClickbox = (object: RoomAsset) => {
-    if (index === 47 && goals[0].complete) return; // disgusting hardcoding
-
     let coords = object.coordinates;
     if (!coords) return;
     const scale = 100 / 128;
