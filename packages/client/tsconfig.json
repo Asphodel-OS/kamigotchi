@@ -25,9 +25,7 @@
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "strict": true /* Enable all strict type-checking options. */,
     "target": "esnext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "types": [
-      "vite/client"
-    ] /* Specify type package names to be included without being referenced in a source file. */,
+    "types": ["vite/client"] /* Specify type package names to be included without being referenced in a source file. */,
     "useDefineForClassFields": true /* Emit ECMAScript-standard-compliant class fields. */
   },
   "exclude": ["dist", "packages", "node_modules", "types/", "abi"]

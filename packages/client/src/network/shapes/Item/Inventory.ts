@@ -9,12 +9,11 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-
 import { utils } from 'ethers';
-import { Components } from 'network/';
-import { Item, getItem, getItemByIndex } from './Item';
 
 import { MUSU_INDEX } from 'constants/indices';
+import { Components } from 'network/';
+import { Item, getItem, getItemByIndex } from './Item';
 
 //////////////
 // GETTERS

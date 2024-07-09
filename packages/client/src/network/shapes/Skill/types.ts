@@ -11,7 +11,7 @@ import { BigNumber } from 'ethers';
 
 import { baseURI } from 'constants/media';
 import { Components } from 'network/';
-import { Condition } from '../utils/Conditionals';
+import { Condition } from '../utils';
 import { DetailedEntity } from '../utils/EntityTypes';
 import { querySkillEffects, querySkillRequirements } from './queries';
 

@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Account } from 'network/shapes/Account';
 import { Objective, Quest, Requirement, Reward } from 'network/shapes/Quest';
 import { Room } from 'network/shapes/Room';
-import { Condition } from 'network/shapes/utils/Conditionals';
+import { Condition } from 'network/shapes/utils';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 
 interface Props {

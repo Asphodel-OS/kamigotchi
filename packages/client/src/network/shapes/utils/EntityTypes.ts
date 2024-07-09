@@ -10,6 +10,7 @@ export interface DetailedEntity {
   description?: string;
 }
 
+// TODO: move Gacha ticket shapes to Item/
 export const GachaTicket: DetailedEntity = {
   ObjectType: 'GACHA_TICKET',
   image: ItemImages['gacha_ticket'],

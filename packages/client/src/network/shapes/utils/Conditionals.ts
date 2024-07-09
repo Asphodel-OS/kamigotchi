@@ -8,7 +8,7 @@ import { getReputationValue } from '../Faction';
 import { getInventoryByIndex } from '../Item/Inventory';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
-import { getData } from '../utils';
+import { getData } from './data';
 
 /**
  * A client equivalent to Conditionals. For supporting other shapes

@@ -1,14 +1,13 @@
 import { World } from '@mud-classic/recs';
-import { Components } from 'network/';
-import { DetailedEntity, GachaTicket } from './EntityTypes';
+import moment from 'moment';
 
 import { helpIcon, questsIcon } from 'assets/images/icons/menu';
-
-import moment from 'moment';
+import { Components } from 'network/';
 import { getFactionByIndex, getReputationItem } from '../Faction';
 import { getItemByIndex } from '../Item/Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
+import { DetailedEntity, GachaTicket } from './EntityTypes';
 
 /**
  * Gets an entity from a description (TYPE, INDEX)
