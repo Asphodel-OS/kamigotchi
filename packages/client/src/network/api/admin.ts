@@ -4,6 +4,12 @@ import { BigNumberish } from 'ethers';
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
 export function createAdminAPI(systems: any) {
+  // @dev deletes item index 1001 from all inventories
+  async function deleteTargetInv(ids: BigNumberish[]) {
+    await sleepIf();
+    return systems['system._admin.delete.item.1001'].executeTyped(ids);
+  }
+
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(commitIDs: BigNumberish[]) {
@@ -566,6 +572,7 @@ export function createAdminAPI(systems: any) {
   }
 
   return {
+    deleteInv: deleteTargetInv,
     auth: {
       roles: {
         add: addRole,

@@ -111,6 +111,10 @@
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
+    {
+      "name": "_ItemDelete1001System",
+      "writeAccess": ["IsInventoryComponent", "IndexItemComponent", "ValueComponent", "IDOwnsInventoryComponent"]
+    },
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",

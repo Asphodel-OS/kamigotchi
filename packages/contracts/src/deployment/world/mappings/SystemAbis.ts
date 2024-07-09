@@ -5,6 +5,7 @@ import _AuthManageRoleSystem from "../../../../../client/abi/_AuthManageRoleSyst
 import _ConfigSetSystem from "../../../../../client/abi/_ConfigSetSystem.json";
 import _FactionRegistrySystem from "../../../../../client/abi/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../../../../../client/abi/_GoalRegistrySystem.json";
+import _ItemDelete1001System from "../../../../../client/abi/_ItemDelete1001System.json";
 import _ItemRegistrySystem from "../../../../../client/abi/_ItemRegistrySystem.json";
 import _ListingSetSystem from "../../../../../client/abi/_ListingSetSystem.json";
 import _NodeRegistrySystem from "../../../../../client/abi/_NodeRegistrySystem.json";
@@ -69,6 +70,7 @@ export const SystemAbis = {
   "system._Config.Set": _ConfigSetSystem.abi,
   "system.faction.registry": _FactionRegistrySystem.abi,
   "system.goal.registry": _GoalRegistrySystem.abi,
+  "system._admin.delete.item.1001": _ItemDelete1001System.abi,
   "system.item.registry": _ItemRegistrySystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
   "system.node.registry": _NodeRegistrySystem.abi,

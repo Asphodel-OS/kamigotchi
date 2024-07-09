@@ -5,6 +5,7 @@ import { _AuthManageRoleSystem } from "./ethers-contracts/_AuthManageRoleSystem"
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
 import { _FactionRegistrySystem } from "./ethers-contracts/_FactionRegistrySystem";
 import { _GoalRegistrySystem } from "./ethers-contracts/_GoalRegistrySystem";
+import { _ItemDelete1001System } from "./ethers-contracts/_ItemDelete1001System";
 import { _ItemRegistrySystem } from "./ethers-contracts/_ItemRegistrySystem";
 import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
 import { _NodeRegistrySystem } from "./ethers-contracts/_NodeRegistrySystem";
@@ -69,6 +70,7 @@ export type SystemTypes = {
   "system._Config.Set": _ConfigSetSystem;
   "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
+  "system._admin.delete.item.1001": _ItemDelete1001System;
   "system.item.registry": _ItemRegistrySystem;
   "system._Listing.Set": _ListingSetSystem;
   "system.node.registry": _NodeRegistrySystem;
