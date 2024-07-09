@@ -20,4 +20,8 @@ export const leaderboardsDetails = {
     scoreTitle: 'Spent',
     scorePrefix: '$',
   },
+  liquidate: {
+    title: 'Liquidators',
+    type: 'LIQUIDATE',
+  },
 };
