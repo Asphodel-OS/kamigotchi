@@ -10,11 +10,11 @@ export {
   getBalance,
   getCondition,
   passesConditions,
-} from './conditionals';
+} from './conditional';
 export { getData, getDataArray, unpackArray32 } from './data';
 export { getImage } from './images';
 export { getDescribedEntity, parseQuantity } from './parse';
 
 export type { DetailedEntity } from './EntityTypes';
 export type { Commit } from './commits';
-export type { Condition, Status, Target } from './conditionals';
+export type { Condition, Status, Target } from './conditional';
