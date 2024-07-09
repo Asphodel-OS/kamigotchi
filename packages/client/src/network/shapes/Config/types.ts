@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { utils } from 'ethers';
 
 import { Components } from 'network/';
-import { unpackArray32 } from '../utils/LibPack';
+import { unpackArray32 } from '../utils/data';
 
 // get an Config from its EntityIndex
 export const getConfigFieldValue = (

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ProgressBar } from 'app/components/library';
 import { Contribution, Goal } from 'network/shapes/Goal';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
-import { parseQuantity } from 'network/shapes/utils/parseDescription';
+import { parseQuantity } from 'network/shapes/utils/parse';
 
 interface Props {
   goal: Goal;

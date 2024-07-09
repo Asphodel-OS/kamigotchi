@@ -21,7 +21,7 @@ import {
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Score } from 'network/shapes/Score';
 import { getBalance } from 'network/shapes/utils/Conditionals';
-import { getDescribedEntity } from 'network/shapes/utils/parseDescription';
+import { getDescribedEntity } from 'network/shapes/utils/parse';
 import { waitForActionCompletion } from 'network/utils';
 import { ActionBar } from './ActionBar';
 import { Details } from './Details';

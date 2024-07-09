@@ -11,7 +11,7 @@ import { utils } from 'ethers';
 
 import PlaceholderIcon from 'assets/images/icons/placeholder.png';
 import { Components } from 'network/';
-import { DetailedEntity } from './utils/EntityTypes';
+import { DetailedEntity } from './utils';
 
 // standardized Object shape of a Score Entity
 export interface Faction extends DetailedEntity {

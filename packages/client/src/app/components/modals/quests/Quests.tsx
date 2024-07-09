@@ -8,7 +8,7 @@ import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'network/shapes/Quest';
 import { getRoomByIndex } from 'network/shapes/Room';
-import { getDescribedEntity } from 'network/shapes/utils/parseDescription';
+import { getDescribedEntity } from 'network/shapes/utils/parse';
 import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';

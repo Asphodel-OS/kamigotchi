@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
 
-import { Commit, canReveal } from 'network/shapes/utils/Revealables';
+import { Commit, canReveal } from 'network/shapes/utils';
 
 interface Props {
   actions: {

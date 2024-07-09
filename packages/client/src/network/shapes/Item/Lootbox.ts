@@ -12,7 +12,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Commit } from 'network/shapes/utils/Revealables';
+import { Commit } from '../utils';
 import { Inventory, getTypedInventory } from './Inventory';
 import { Item, getItem } from './Item';
 

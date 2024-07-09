@@ -9,10 +9,9 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
-import { ItemImages } from 'assets/images/items';
 import { Components } from 'network/';
 import { Stats, getStats } from '../Stats';
-import { DetailedEntity } from '../utils/EntityTypes';
+import { DetailedEntity, getImage } from '../utils';
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
@@ -81,18 +80,4 @@ export const getAllItems = (world: World, components: Components): Item[] => {
   const { IsRegistry, ItemIndex } = components;
   const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(ItemIndex)]));
   return entityIndices.map((entityIndex) => getItem(world, components, entityIndex));
-};
-
-//////////////////
-// IMAGE MAPPING
-
-// clean up name of item to standard format and query out map of item images
-const getImage = (name: string) => {
-  name = name.toLowerCase();
-  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '');
-  const key = name as keyof typeof ItemImages;
-  if (!key) throw new Error(`No image found for ${name}`);
-
-  return ItemImages[key];
 };

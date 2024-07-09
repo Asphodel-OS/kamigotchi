@@ -1,9 +1,9 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getDataArray } from './Data';
 import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
+import { getDataArray } from './utils';
 
 // standardized Object shape of a Kill Entity
 export interface Kill {

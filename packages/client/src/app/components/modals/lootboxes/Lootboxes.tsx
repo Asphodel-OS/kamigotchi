@@ -7,12 +7,11 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
-import { getAccountFromBurner } from 'network/shapes/Account';
-
 import { useVisibility } from 'app/stores';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import { getItemByIndex } from 'network/shapes/Item/Item';
 import { getLootboxByIndex, getLootboxLog } from 'network/shapes/Item/Lootbox';
-import { Commit, filterRevealable } from 'network/shapes/utils/Revealables';
+import { Commit, filterRevealable } from 'network/shapes/utils/commits';
 import { useAccount, useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
 import { Opener } from './Opener';

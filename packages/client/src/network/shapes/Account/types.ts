@@ -4,7 +4,6 @@ import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
-import { getData } from '../Data';
 import { getReputationValue } from '../Faction';
 import {
   Friendship,
@@ -20,7 +19,7 @@ import { Kami, queryKamisX } from '../Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
-import { Commit } from '../utils/Revealables';
+import { Commit, getData } from '../utils';
 
 // standardized shape of an Account Entity
 export interface Account {

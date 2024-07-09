@@ -11,9 +11,9 @@ import {
 
 import { utils } from 'ethers';
 import { Components } from 'network/';
-import { Condition, getCondition, passesConditions } from 'network/shapes/utils/Conditionals';
 import { Account } from './Account';
 import { Score, getScoresByType } from './Score';
+import { Condition, getCondition, passesConditions } from './utils';
 
 /////////////////
 // SHAPES

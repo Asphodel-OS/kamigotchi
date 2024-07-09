@@ -4,11 +4,11 @@ import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
 import { numberToHex } from 'utils/hex';
 import { Account } from '../Account';
-import { getData } from '../Data';
 import { getReputationValue } from '../Faction';
 import { getInventoryByIndex } from '../Item/Inventory';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
+import { getData } from '../utils';
 
 /**
  * A client equivalent to Conditionals. For supporting other shapes

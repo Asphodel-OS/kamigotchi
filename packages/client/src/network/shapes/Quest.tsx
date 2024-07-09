@@ -22,7 +22,7 @@ import {
   checkerSwitch,
 } from 'network/shapes/utils/Conditionals';
 import { Account } from './Account';
-import { getData } from './Data';
+import { getData } from './utils';
 
 /////////////////
 // GETTERS

@@ -13,7 +13,7 @@ import { utils } from 'ethers';
 import { Components } from 'network/';
 import { getConfigFieldValueWei } from './Config';
 import { Kami, KamiOptions, queryKamisX } from './Kami';
-import { Commit } from './utils/Revealables';
+import { Commit } from './utils';
 
 export const GACHA_ID = utils.solidityKeccak256(['string'], ['gacha.id']);
 
