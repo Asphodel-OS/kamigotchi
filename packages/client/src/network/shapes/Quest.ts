@@ -99,7 +99,6 @@ export interface Quest {
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Reward[];
-  points: number;
 }
 export interface Objective extends Condition {
   name: string;
@@ -142,7 +141,6 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
     requirements: queryQuestRequirements(world, components, questIndex),
     objectives: queryQuestObjectives(world, components, questIndex),
     rewards: queryQuestRewards(world, components, questIndex, world.entities[entityIndex]),
-    points: 0, // QP depreciated
   };
 
   if (hasComponent(IsRepeatable, registryIndex)) {
