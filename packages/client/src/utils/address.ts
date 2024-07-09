@@ -29,9 +29,7 @@ export const getAbbrevAddr = (
 
 export const addressesMatch = (a1: string, a2: string) => {
   if (!a1 || !a2) return false;
-  console.log(a1, a2);
   a1 = utils.hexZeroPad(BigNumber.from(a1).toHexString(), 20);
   a2 = utils.hexZeroPad(BigNumber.from(a2).toHexString(), 20);
-  console.log(a1, a2);
   return a1 === a2;
 };

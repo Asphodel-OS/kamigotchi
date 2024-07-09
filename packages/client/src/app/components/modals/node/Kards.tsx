@@ -5,7 +5,8 @@ import { Option } from 'app/components/library/IconListButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { Inventory } from 'network/shapes/Inventory';
+import { Inventory } from 'network/shapes/Item';
+import { filterInventories } from 'network/shapes/Item/functions';
 import {
   Kami,
   calcCooldown,
@@ -82,6 +83,25 @@ export const Kards = (props: Props) => {
       reason = 'starving :(';
     }
     return reason;
+  };
+
+  // get a IconListButton option for feeding a Kami
+  const getFeedOption = (kami: Kami, inv: Inventory): Option => {
+    if (!inv) return { text: '', onClick: () => {} };
+
+    const healAmt = inv.item.stats?.health.sync ?? 0;
+    const expAmt = inv.item.experience ?? 0;
+    const canEat = () => !isFull(kami) || healAmt == 0;
+
+    let text = `${inv.item.name}`;
+    if (healAmt > 0) text += ` (+${healAmt}hp)`;
+    if (expAmt > 0) text += ` (+${expAmt}xp)`;
+
+    return {
+      text,
+      onClick: () => actions.feed(kami, inv.item.index),
+      disabled: !canEat(),
+    };
   };
 
   // evaluate tooltip for allied kami Collect button
@@ -167,34 +187,16 @@ export const Kards = (props: Props) => {
   // Feed Button display evaluation
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
-    const stockedInventory =
-      account.inventories?.filter((inv: Inventory) => inv?.item.type === 'FOOD') ?? [];
+    let inventory = filterInventories(account.inventories ?? [], 'consumable', 'kami');
+    inventory = inventory.filter((inv: Inventory) => inv?.item.index !== 110) ?? [];
 
-    let feedOptions = stockedInventory.map((inv: Inventory): Option => {
-      if (!inv) return { text: '', onClick: () => {} };
-      const healAmt = inv.item.stats?.health.sync ?? 0;
-      const expAmt = inv.item.experience ?? 0;
-      const canEat = () => !isFull(kami) || healAmt == 0;
-
-      let text = `${inv.item.name}`;
-      if (healAmt > 0) text += ` (+${healAmt}hp)`;
-      if (expAmt > 0) text += ` (+${expAmt}xp)`;
-
-      return {
-        text,
-        onClick: () => actions.feed(kami, inv.item.index),
-        disabled: !canEat(),
-      };
-    });
-
-    feedOptions = feedOptions.filter((option) => !!option.text);
+    let options = inventory.map((inv: Inventory) => getFeedOption(kami, inv));
+    options = options.filter((option) => !!option.text);
 
     // check whether the kami can be fed and generate a tooltip for the reason
     let tooltip = 'Feed Kami';
     if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
-      tooltip = `not at your roomIndex`;
-    } else if (isFull(kami)) {
-      tooltip = `can't eat, full`;
+      tooltip = `too far away`;
     } else if (!hasFood(account)) {
       tooltip = `buy food, poore`;
     } else if (onCooldown(kami)) {
@@ -205,8 +207,8 @@ export const Kards = (props: Props) => {
       <Tooltip key='feed-tooltip' text={[tooltip]}>
         <IconListButton
           img={feedIcon}
+          options={options}
           disabled={tooltip !== 'Feed Kami'}
-          options={feedOptions}
           noMargin
         />
       </Tooltip>
@@ -260,7 +262,7 @@ export const Kards = (props: Props) => {
 
     return (
       <KamiCard
-        key={kami.entityIndex}
+        key={kami.index}
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
@@ -275,7 +277,7 @@ export const Kards = (props: Props) => {
   const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
     return (
       <KamiCard
-        key={kami.entityIndex}
+        key={kami.index}
         kami={kami}
         subtext={`${kami.account?.name} (\$${calcOutput(kami)})`}
         subtextOnClick={getSubtextOnClick(kami)}

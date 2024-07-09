@@ -9,7 +9,7 @@ import {
 } from 'network/shapes/Account';
 import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
 import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
-import { getAllItems, getItemByIndex } from 'network/shapes/Item/Item';
+import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Npc/Merchant';

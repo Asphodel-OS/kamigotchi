@@ -8,6 +8,7 @@ import { playClick } from 'utils/sounds';
 interface Props {
   img: string;
   options: Option[];
+  balance?: number;
   disabled?: boolean;
   noMargin?: boolean;
 }
@@ -19,7 +20,7 @@ export interface Option {
 }
 
 export function IconListButton(props: Props) {
-  const { img, options, disabled, noMargin } = props;
+  const { img, options, balance, disabled, noMargin } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -41,41 +42,22 @@ export function IconListButton(props: Props) {
     handleClose();
   };
 
-  const setStyles = () => {
-    var styles: any = {};
-    if (disabled) styles.backgroundColor = '#bbb';
-    return styles;
-  };
-
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
-  const element = (option: Option, i: number) => {
-    if (option.disabled)
-      return (
-        <Option key={i} style={{ backgroundColor: '#ccc' }}>
-          {option.text}
-        </Option>
-      );
-    else
-      return (
-        <Option key={i} onClick={() => onSelect(option)}>
-          {option.text}
-        </Option>
-      );
+  const MenuItem = (option: Option, i: number) => {
+    return (
+      <Option key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
+        {option.text}
+      </Option>
+    );
   };
 
   return (
     <div>
-      <Button
-        ref={toggleRef}
-        onClick={handleClick}
-        style={setStyles()}
-        disabled={!!disabled}
-        noMargin={!!noMargin}
-      >
-        <Corner />
-        <Image src={img} />
+      <Button ref={toggleRef} onClick={handleClick} disabled={!!disabled} noMargin={!!noMargin}>
+        {balance ? <Balance>{balance}</Balance> : <Corner />}
+        <Image src={img} isItem={!!balance} />
       </Button>
       <Popover
         id={id}
@@ -84,7 +66,7 @@ export function IconListButton(props: Props) {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Menu>{options.map((option, i) => element(option, i))}</Menu>
+        <Menu>{options.map((option, i) => MenuItem(option, i))}</Menu>
       </Popover>
     </div>
   );
@@ -129,8 +111,25 @@ const Corner = styled.div`
   height: 0;
 `;
 
-const Image = styled.img`
-  width: 1.4vw;
+const Balance = styled.div`
+  position: absolute;
+  background-color: white;
+  border-top: solid black 0.15vw;
+  border-left: solid black 0.15vw;
+  border-radius: 0.3vw 0 0.3vw 0;
+  bottom: 0;
+  right: 0;
+
+  font-size: 9px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2vw;
+`;
+
+const Image = styled.img<{ isItem?: boolean }>`
+  width: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
+  height: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
+  image-rendering: pixelated;
 `;
 
 const Menu = styled.div`
@@ -140,16 +139,16 @@ const Menu = styled.div`
   min-width: 7vw;
 `;
 
-const Option = styled.div`
+const Option = styled.div<{ disabled?: boolean }>`
   border-radius: 0.4vw;
   padding: 0.6vw;
   justify-content: left;
-
-  font-family: Pixel;
   font-size: 0.8vw;
 
-  cursor: pointer;
-  pointer-events: auto;
+  cursor: ${({ disabled }) => (disabled ? 'none' : 'pointer')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+
   &:hover {
     background-color: #ddd;
   }

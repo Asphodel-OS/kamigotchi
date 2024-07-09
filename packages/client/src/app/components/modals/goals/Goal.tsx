@@ -1,3 +1,4 @@
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { questsIcon } from 'assets/images/icons/menu';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
@@ -17,11 +18,8 @@ import {
   getContributions,
   getGoalByIndex,
 } from 'network/shapes/Goal';
-
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Score } from 'network/shapes/Score';
-import { getBalance } from 'network/shapes/utils';
-import { getDescribedEntity } from 'network/shapes/utils/parse';
+import { getBalance, getDescribedEntity } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
 import { ActionBar } from './ActionBar';
 import { Details } from './Details';

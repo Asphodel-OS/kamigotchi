@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getCoinBal } from '../Item/Inventory';
+import { getMusuBalance } from '../Item';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './functions';
@@ -37,7 +37,7 @@ export const getHarvest = (
   let production: Harvest = {
     id: world.entities[index],
     rate: 0,
-    balance: getCoinBal(world, components, world.entities[index]),
+    balance: getMusuBalance(world, components, world.entities[index]),
     state: getComponentValue(State, index)?.value as string,
     time: {
       last: (getComponentValue(LastTime, index)?.value as number) * 1,

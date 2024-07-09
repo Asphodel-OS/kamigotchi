@@ -65,10 +65,6 @@ export const isWithAccount = (kami: Kami): boolean => {
   if (isHarvesting(kami)) {
     const accLoc = kami.account?.roomIndex ?? 0;
     const kamiLoc = kami.production?.node?.roomIndex ?? 0;
-    if (accLoc == 0 || kamiLoc == 0)
-      console.warn(
-        `Invalid RoomIndex for kami ${kami.index * 1}\n\tHarvest: ${kamiLoc} \n\tAccount: ${accLoc}`
-      );
     return accLoc === kamiLoc;
   }
   console.warn(`Invalid State ${kami.state} for kami ${kami.index * 1}`);

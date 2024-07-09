@@ -263,6 +263,10 @@
       "writeAccess": ["IdHolderComponent", "IDScoreTypeComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
+      "name": "AccountConsumeSystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "AccountMoveSystem",
       "writeAccess": [
         "IndexRoomComponent",
@@ -464,6 +468,7 @@
         "IndexComponent",
         "ExperienceComponent",
         "HarmonyComponent",
+        "HasFlagComponent",
         "HealthComponent",
         "PowerComponent",
         "RateComponent",

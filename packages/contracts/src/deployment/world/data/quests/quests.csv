@@ -29,7 +29,7 @@ Right?",Quest 3 completed (There are levels to this),Spend a Skill Point,1 XP Ca
 "torngarsuk, vaitarna, Nedu",5,Back to the mines,Ingame,Quest,,,,,,,No,5,,"As your Kamigotchi harvest, they produce Musu. Musu is a universal form of energy in this world. You’ll need it. Gather some.  ","Well done. Now you need to learn how to use MUSU. ",Quest 2 Completed (An ode to MUSU),Collect 100 $MUSU,1 Small XP Candy,
 ,5,,Ingame,Requirement,QUEST,COMPLETE,,Quest 2,2,,No,,,,,,,,
 ,5,,Ingame,Objective,COIN_TOTAL,MIN,INC,Collect 100 $MUSU,,100,No,,,,,,,,
-,5,,Ingame,Reward,ITEM,,,1 Ribbon,1001,1,No,,,,,,,,
+,5,,Ingame,Reward,ITEM,,,1 Ribbon,110,1,No,,,,,,,,
 ,5,,Ingame,Reward,ITEM,,,1 Small XP Candy,106,1,No,,,,,,,,
 "Nedu, Lethe Asphodel",6,There are more levels to this,Ingame,Quest,,,,,,,No,5,,"Your Kamigotchi is getting stronger. Good!
 
@@ -191,7 +191,7 @@ Nedu,,Onchain Friends,Shelved,,,,,,,,No,,,"The world is vast and danger is every
 Head to the Torii Gate near the Vending Machine and harvest 100 MUSU — if you have any Normal-type Kamigotchi, they will appreciate it.","The Torii Gate has been located near the centre of Kamigotchi World for as long as anyone can remember. According to our Kamiscientists, the gate is responsible for keeping the areas nearby stable. ",Quest 2 completed (An ode to MUSU),Gather 100 MUSU,1 Red Gakki Ribbon,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 2 completed (An ode to MUSU),2,,No,,,,,,,,
 ,,,Needs Revision Work,Objective,HARVEST_NODE_NORMAL,MIN,INC,Gather 100 MUSU from Normal nodes,,100,No,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,1001,1,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,110,1,No,,,,,,,,
 "torngarsuk, Nedu",,"Nuts, bolts and Scrap.",Needs Revision Work,,,,,,,,No,5,,"You can learn a lot from a Kamigotchi just by observing them. For example, Scrap Kamigotchi usually hang out near the Monolith at the heart of the scrapyard, near the Vending Machine.
 
 Go there and harvest 100 MUSU. Maybe you'll learn a thing or two.","That monolith is an unusual structure. Although it’s definitely associated with the accumulation of scrap in this area, nobody knows when it first appeared….","Quest 23 completed (Normal, but not really)",Gather 100 MUSU,1 Pom-Pom Fruit Candy,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
@@ -209,7 +209,7 @@ Explore the forest, find the Insect Node and harvest 100 MUSU. Don't get lost on
 Find it and harvest $100 MUSU. ",This node was definitely a much more recent addition. I’m not sure who created this…,Quest 25 completed (Into the forest’s heart),Gather 100 MUSU,"1 Red Gakki Ribbon, 1 Gakki Cookie Stick","Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 25 completed (Into the forest’s heart),25,,No,,,,,,,,
 ,,,Needs Revision Work,Objective,HARVEST_NODE_EERIE,MIN,INC,Gather 100 MUSU from Eerie nodes,,100,No,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,1001,1,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,110,1,No,,,,,,,,
 ,,,Needs Revision Work,Reward,ITEM,,,1 Gakki Cookie Stick,103,1,No,,,,,,,,
 Lethe Asphodel,,The Suffering Continues,Needs Revision Work,,,,,,,,No,20,,"Well, you’ve proven yourself happy to bring down other Kamigotchi. 
 
@@ -236,7 +236,7 @@ Nedu,,Have you considered not dying?,Needs Revision Work,,,,,,,,No,20,,"The cycl
 Lethe Asphodel,,Fountain of Revival,Needs Revision Work,Quest,,,,,,,No,5,,"We know it’s tough to survive out there. Take this Ribbon. You’ll be able to collect one each week for free as long as you’re holding a Kamigotchi. ",Enjoy.,"Own At Least 1 Kamigotchi, Completed Quest 8 (Spring Rites)",None,1 Ribbon,
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Completed Quest 8 (Spring Rites),8,,No,,,,,,,,
 ,,,Needs Revision Work,Requirement,KAMI,MIN,CURR,Own At Least 1 Kamigotchi,,1,No,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 ribbon,1001,1,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 ribbon,110,1,No,,,,,,,,
 "torngarsuk, vaitarna",,Farming 3: Accumulating $MUSU,Rebuild,,,,,,,,No,,,"Great, you're really taking this seriously. You seem to be developing a good relationship with your Kamigotchi. 
 
 Try to get five thousand $MUSU from harvesting. Believe me, this can happen faster than you might think.

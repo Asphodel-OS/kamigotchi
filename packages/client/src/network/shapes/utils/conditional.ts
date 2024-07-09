@@ -5,7 +5,7 @@ import { Components } from 'network/';
 import { numberToHex } from 'utils/hex';
 import { Account } from '../Account';
 import { getReputationValue } from '../Faction';
-import { getInventoryByIndex } from '../Item/Inventory';
+import { getInventoryByHolderItem } from '../Item';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
 import { getData } from './data';
@@ -213,7 +213,7 @@ const getInventoryBalance = (
   account: Account,
   index: number
 ): number => {
-  return getInventoryByIndex(world, components, account.id, index).balance ?? 0;
+  return getInventoryByHolderItem(world, components, account.id, index).balance ?? 0;
 };
 
 //////////////

@@ -9,8 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { getItemByIndex } from 'network/shapes/Item/Item';
-import { getLootboxByIndex, getLootboxLog } from 'network/shapes/Item/Lootbox';
+import { getItemByIndex, getLootboxLog } from 'network/shapes/Item';
 import { Commit, filterRevealable } from 'network/shapes/utils/commits';
 import { useAccount, useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
@@ -41,7 +40,7 @@ export function registerLootboxesModal() {
           const accLootboxes = (account.inventories || []).filter(
             (inv) => inv.item.type === 'LOOTBOX'
           );
-          const selectedBox = getLootboxByIndex(world, components, 10001);
+          const selectedBox = getItemByIndex(world, components, 10001);
 
           return {
             network: layers.network,

@@ -1,3 +1,4 @@
+import { Kami, isDead, isOffWorld, isResting, isUnrevealed } from '../Kami';
 import { Account } from './types';
 
 /////////////////
@@ -25,4 +26,18 @@ export const calcStamina = (account: Account) => {
 export const calcStaminaPercent = (account: Account) => {
   const stamina = calcStamina(account);
   return Math.floor((100 * stamina) / account.stamina.base);
+};
+
+//////////////////
+// KAMIS
+
+// get kamis accessible to the account
+export const getAccessibleKamis = (account: Account): Kami[] => {
+  return account.kamis?.filter((kami) => {
+    if (isDead(kami) || isResting(kami)) return true;
+    if (isUnrevealed(kami) || isOffWorld(kami)) return false;
+    const accLoc = account?.roomIndex ?? 0;
+    const kamiLoc = kami.production?.node?.roomIndex ?? 0;
+    return accLoc === kamiLoc;
+  });
 };

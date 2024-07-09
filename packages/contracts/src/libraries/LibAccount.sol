@@ -28,6 +28,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -64,6 +65,11 @@ library LibAccount {
     updateLastActionTs(components, id);
     updateLastTs(components, id);
     return id;
+  }
+
+  function consume(IUintComp components, uint256 id, uint32 itemIndex) internal {
+    uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
+    LibStat.applyy(components, registryID, id);
   }
 
   // Move the Account to a room

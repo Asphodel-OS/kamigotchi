@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Item, getItem } from 'network/shapes/Item/Item';
+import { Item, getItem } from 'network/shapes/Item';
 
 // standardized shape of a FE Listing Entity
 export interface Listing {

@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { Item } from 'network/shapes/Item/Item';
+import { Item } from 'network/shapes/Item';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   item: Item;
-  size: 'small' | 'large' | 'fixed';
+  size: 'small' | 'large';
   hoverText?: boolean | string[];
   balance?: number;
   glow?: string;
@@ -51,14 +51,13 @@ export const ItemIcon = (props: Props) => {
     if (balance) {
       if (size == 'small') return <SmallBalance>{balance}</SmallBalance>;
       else if (size == 'large') return <LargeBalance>{balance}</LargeBalance>;
-      else if (size == 'fixed') return <FixedBalance>{balance}</FixedBalance>;
     } else {
       return <></>;
     }
   };
 
   const base = () => {
-    if (size == 'small')
+    if (size == 'small') {
       return (
         <SmallBox style={setBoxStyles()}>
           {props.onClick ? (
@@ -71,7 +70,7 @@ export const ItemIcon = (props: Props) => {
           {BalanceBadge()}
         </SmallBox>
       );
-    else if (size == 'large')
+    } else {
       return (
         <LargeBox style={setBoxStyles()}>
           {props.onClick ? (
@@ -84,32 +83,20 @@ export const ItemIcon = (props: Props) => {
           {BalanceBadge()}
         </LargeBox>
       );
-    else size == 'fixed';
-    return (
-      <FixedBox style={setBoxStyles()}>
-        {props.onClick ? (
-          <ButtonWrapper onClick={handleClick}>
-            <FixedIcon style={setIconStyles()} src={item.image} />
-          </ButtonWrapper>
-        ) : (
-          <FixedIcon src={item.image} />
-        )}
-        {BalanceBadge()}
-      </FixedBox>
-    );
+    }
   };
 
   let result = base();
 
-  if (typeof props.hoverText === 'boolean' && props.hoverText)
+  if (typeof props.hoverText === 'boolean' && props.hoverText) {
     result = (
       <Tooltip text={item.description ? [item.name, '', item.description] : [item.name]}>
         {result}
       </Tooltip>
     );
-  else if (typeof props.hoverText === 'object')
-    // object = string array
+  } else if (typeof props.hoverText === 'object') {
     result = <Tooltip text={props.hoverText}>{result}</Tooltip>;
+  }
 
   return result;
 };
@@ -186,41 +173,6 @@ const SmallBalance = styled.div`
 
   font-family: Pixel;
   font-size: 0.5vw;
-`;
-
-const FixedBox = styled.div`
-  position: relative;
-  border: solid black 1.5px;
-  border-radius: 4px;
-
-  margin: 5px;
-
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const FixedIcon = styled.img`
-  height: 60px;
-  width: 60px;
-  padding: 5px;
-  image-rendering: pixelated;
-`;
-
-const FixedBalance = styled.div`
-  border-top: solid black 1.25px;
-  border-left: solid black 1.25px;
-  border-radius: 2.5px 0 0 0;
-  background-color: #fff;
-
-  position: absolute;
-  color: black;
-  right: 0;
-  bottom: 0;
-  padding: 2px;
-
-  font-family: Pixel;
-  font-size: 8px;
 `;
 
 const ButtonWrapper = styled.div`

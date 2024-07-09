@@ -4,7 +4,7 @@ import moment from 'moment';
 import { helpIcon, questsIcon } from 'assets/images/icons/menu';
 import { Components } from 'network/';
 import { getFactionByIndex, getReputationItem } from '../Faction';
-import { getItemByIndex } from '../Item/Item';
+import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
 import { DetailedEntity, GachaTicket } from './EntityTypes';

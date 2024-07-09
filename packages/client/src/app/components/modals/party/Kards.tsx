@@ -6,7 +6,8 @@ import { Option } from 'app/components/library/IconListButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { Inventory } from 'network/shapes/Inventory';
+import { Inventory } from 'network/shapes/Item';
+import { filterInventories } from 'network/shapes/Item/functions';
 import {
   Kami,
   calcHealth,
@@ -99,6 +100,25 @@ export const Kards = (props: Props) => {
     return description;
   };
 
+  // get a IconListButton option for feeding a Kami
+  const getFeedOption = (kami: Kami, inv: Inventory): Option => {
+    if (!inv) return { text: '', onClick: () => {} };
+
+    const healAmt = inv.item.stats?.health.sync ?? 0;
+    const expAmt = inv.item.experience ?? 0;
+    const canEat = () => !isFull(kami) || healAmt == 0;
+
+    let text = `${inv.item.name}`;
+    if (healAmt > 0) text += ` (+${healAmt}hp)`;
+    if (expAmt > 0) text += ` (+${expAmt}xp)`;
+
+    return {
+      text,
+      onClick: () => actions.feed(kami, inv.item.index),
+      disabled: !canEat(),
+    };
+  };
+
   /////////////////
   // INTERACTION
 
@@ -121,28 +141,11 @@ export const Kards = (props: Props) => {
   // Feed Button display evaluation
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
-    const stockedInventory =
-      account.inventories?.filter((inv: Inventory) => inv?.item.type === 'FOOD') ?? [];
+    let inventory = filterInventories(account.inventories ?? [], 'consumable', 'kami');
+    inventory = inventory.filter((inv: Inventory) => inv?.item.index !== 110) ?? [];
 
-    let feedOptions = stockedInventory.map((inv: Inventory): Option => {
-      if (!inv) return { text: '', onClick: () => {} };
-
-      const healAmt = inv.item.stats?.health.sync ?? 0;
-      const expAmt = inv.item.experience ?? 0;
-      const canEat = () => !isFull(kami) || healAmt == 0;
-
-      let text = `${inv.item.name}`;
-      if (healAmt > 0) text += ` (+${healAmt}hp)`;
-      if (expAmt > 0) text += ` (+${expAmt}xp)`;
-
-      return {
-        text,
-        onClick: () => actions.feed(kami, inv.item.index),
-        disabled: !canEat(),
-      };
-    });
-
-    feedOptions = feedOptions.filter((option) => !!option.text);
+    let options = inventory.map((inv: Inventory) => getFeedOption(kami, inv));
+    options = options.filter((option) => !!option.text);
 
     // check whether the kami can be fed and generate a tooltip for the reason
     let tooltip = 'Feed Kami';
@@ -158,7 +161,7 @@ export const Kards = (props: Props) => {
       <Tooltip text={[tooltip]}>
         <IconListButton
           img={feedIcon}
-          options={feedOptions}
+          options={options}
           disabled={tooltip !== 'Feed Kami'}
           noMargin
         />

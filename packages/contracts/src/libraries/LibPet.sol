@@ -111,10 +111,12 @@ library LibPet {
     uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
     string memory type_ = LibItemRegistry.getType(components, registryID);
 
-    // handle revives
+    // handle niche consumables
     if (LibString.eq(type_, "REVIVE") && isDead(components, id)) {
       revive(components, id);
-      LibPet.logRevive(components, id);
+      logRevive(components, id);
+    } else if (LibString.eq(type_, "RENAME_POTION")) {
+      setNameable(components, id, true);
     }
 
     // handle experience boosts

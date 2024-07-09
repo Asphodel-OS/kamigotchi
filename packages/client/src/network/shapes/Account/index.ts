@@ -1,4 +1,4 @@
-export { calcStamina, calcStaminaPercent } from './functions';
+export { calcStamina, calcStaminaPercent, getAccessibleKamis } from './functions';
 export {
   getAccountByID,
   getAccountByIndex,
@@ -10,9 +10,5 @@ export {
   getAllAccounts,
 } from './queries';
 export { getAccount } from './types';
-export type {
-  Account,
-  Friends as AccountFriends,
-  Inventories as AccountInventories,
-  AccountOptions,
-} from './types';
+
+export type { Account, Friends as AccountFriends, AccountOptions } from './types';

@@ -55,6 +55,10 @@ export function createPlayerAPI(systems: any) {
     });
   }
 
+  function feedAccount(itemIndex: number) {
+    return systems['system.Account.Consume'].executeTyped(itemIndex);
+  }
+
   // @dev moves the account to another room from their current roomIndex
   // @param roomIndex  destination room roomIndex
   function moveAccount(roomIndex: number) {
@@ -340,6 +344,7 @@ export function createPlayerAPI(systems: any) {
       skill: { upgrade: upgradePetSkill },
     },
     account: {
+      consume: feedAccount,
       fund: fundOperator,
       move: moveAccount,
       register: registerAccount,

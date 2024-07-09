@@ -55,7 +55,9 @@ export interface Kami extends DetailedEntity {
   skills?: Skill[];
   traits?: Traits;
   affinities?: string[];
-  nameable: boolean;
+  can: {
+    name: boolean;
+  };
 }
 
 interface KamiExperience {
@@ -122,7 +124,9 @@ export const getKami = (
       threshold: 0,
     },
     state: getComponentValue(State, entityIndex)?.value as string,
-    nameable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
+    can: {
+      name: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
+    },
     time: {
       cooldown: {
         last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,

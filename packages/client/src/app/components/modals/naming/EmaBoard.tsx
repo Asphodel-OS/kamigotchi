@@ -6,7 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { getInventoryByIndex } from 'network/shapes/Item/Inventory';
+import { getInventoryByHolderItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 
 export function registerEMABoardModal() {
@@ -34,7 +34,7 @@ export function registerEMABoardModal() {
             network,
             data: {
               account: account,
-              dustAmt: getInventoryByIndex(world, components, account.id, 9001).balance,
+              dustAmt: getInventoryByHolderItem(world, components, account.id, 9001).balance,
             },
           };
         })
@@ -73,7 +73,7 @@ export function registerEMABoardModal() {
       };
 
       const canName = (kami: Kami): boolean => {
-        return kami.nameable ? kami.nameable : false;
+        return kami.can.name ? kami.can.name : false;
       };
 
       // set the button based on whether

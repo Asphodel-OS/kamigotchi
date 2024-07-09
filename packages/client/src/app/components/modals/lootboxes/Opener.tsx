@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionButton, ItemIcon, Tooltip } from 'app/components/library';
-import { Inventory } from 'network/shapes/Inventory';
-import { Lootbox } from 'network/shapes/Lootbox';
+import { Inventory, Item } from 'network/shapes/Item';
 
 interface Props {
   actions: {
@@ -10,7 +9,7 @@ interface Props {
   };
   data: {
     inventory: Inventory | undefined;
-    lootbox: Lootbox;
+    lootbox: Item;
   };
 }
 

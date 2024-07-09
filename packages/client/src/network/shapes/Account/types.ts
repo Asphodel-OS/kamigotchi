@@ -13,8 +13,14 @@ import {
   getAccOutgoingRequests,
 } from '../Friendship';
 import { queryAccCommits } from '../Gacha';
-import { Inventory, cleanInventories, getCoinBal, queryInventoryX } from '../Item/Inventory';
-import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Item/Lootbox';
+import {
+  Inventory,
+  LootboxLog,
+  cleanInventories,
+  getMusuBalance,
+  queryLootboxLogsByHolder as queryAccLBLogs,
+  queryInventoriesByAccount,
+} from '../Item';
 import { Kami, queryKamisX } from '../Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
@@ -119,7 +125,7 @@ export const getAccount = (
     fid: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
     pfpURI: getComponentValue(MediaURI, entityIndex)?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
-    coin: getCoinBal(world, components, id),
+    coin: getMusuBalance(world, components, id),
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     kamis: [], // placeholder
     level: 0, // placeholder
@@ -147,7 +153,7 @@ export const getAccount = (
   // populate inventories
   if (options?.inventory) {
     account.inventories = cleanInventories(
-      queryInventoryX(world, components, { owner: account.id })
+      queryInventoriesByAccount(world, components, account.id)
     );
   }
 
