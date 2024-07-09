@@ -8,6 +8,7 @@ import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Kami, canHarvest, isResting, onCooldown } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
+import { getAffinityImage } from 'network/shapes/utils';
 
 interface Props {
   account: Account;
@@ -109,6 +110,12 @@ export const Banner = (props: Props) => {
     );
   };
 
+  const AffinityBar = (
+    <Tooltip text={[node.affinity || '']}>
+      <Icon src={getAffinityImage(node.affinity)} />
+    </Tooltip>
+  );
+
   const NodeImage = () => {
     const url =
       rooms[node.index] === undefined || node.index === 0 ? '' : rooms[node.index].background.path;
@@ -122,7 +129,7 @@ export const Banner = (props: Props) => {
         <ContentTop>
           <TitleRow>
             <TitleText>{node.name}</TitleText>
-            <AffinityText>{node.affinity}</AffinityText>
+            {AffinityBar}
           </TitleRow>
           <DescriptionText>{node.description}</DescriptionText>
         </ContentTop>
@@ -140,6 +147,10 @@ const Container = styled.div`
   border-bottom: solid black 0.15vw;
   color: black;
   height: 11.1vw;
+`;
+
+const Icon = styled.img`
+  height: 1.5vw;
 `;
 
 const Image = styled.img`
@@ -188,14 +199,6 @@ const TitleText = styled.p`
   font-family: Pixel;
   font-size: 1.2vw;
   padding-right: 0.5vw;
-`;
-
-const AffinityText = styled.div`
-  color: #777;
-
-  flex-grow: 1;
-  font-family: Pixel;
-  font-size: 0.7vw;
 `;
 
 const DescriptionText = styled.p`

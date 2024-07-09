@@ -11,7 +11,7 @@ import {
 
 import { Components } from 'network/components';
 import { Stats, getStats } from '../Stats';
-import { Commit, DetailedEntity, getImage } from '../utils';
+import { Commit, DetailedEntity, getItemImage } from '../utils';
 import { For, getFor } from './utils';
 
 // The standard shape of a FE Item Entity
@@ -62,7 +62,7 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     type: getComponentValue(Type, entityIndex)?.value as string,
     name: name,
     description: getComponentValue(Description, entityIndex)?.value as string,
-    image: getImage(name),
+    image: getItemImage(name),
     for: getFor(components, entityIndex),
     stats: getStats(components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,

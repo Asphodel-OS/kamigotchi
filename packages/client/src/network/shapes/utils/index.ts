@@ -12,7 +12,7 @@ export {
   passesConditions,
 } from './conditional';
 export { getData, getDataArray, unpackArray32 } from './data';
-export { getImage } from './images';
+export { getAffinityImage, getItemImage } from './images';
 export { getDescribedEntity, parseQuantity } from './parse';
 
 export type { DetailedEntity } from './EntityTypes';

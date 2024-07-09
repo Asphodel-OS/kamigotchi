@@ -7,6 +7,7 @@ import { StatIcons } from 'assets/images/icons/stats';
 import { StatDescriptions } from 'constants/stats';
 import { Account } from 'network/shapes/Account';
 import { Stat } from 'network/shapes/Stats';
+import { getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -25,7 +26,6 @@ export const Banner = (props: Props) => {
 
   const { setAccount } = useSelected();
   const { modals, setModals } = useVisibility();
-  const affinities = kami.affinities?.join(' | ');
 
   const isMine = (kami: Kami) => {
     return kami.account?.index === account.index;
@@ -51,6 +51,22 @@ export const Banner = (props: Props) => {
       };
   };
 
+  ///////////////////
+  // DISPLAY
+
+  const AffinitiesBar = () => {
+    const text = kami.affinities?.join(' | ');
+    return (
+      <Tooltip text={[text || '']}>
+        <AffinityBox>
+          {kami.affinities?.map((affinity) => {
+            return <Icon src={getAffinityImage(affinity)} />;
+          })}
+        </AffinityBox>
+      </Tooltip>
+    );
+  };
+
   return (
     <Container>
       <Image src={kami.image} />
@@ -58,7 +74,7 @@ export const Banner = (props: Props) => {
         <ContentTop>
           <TitleRow>
             <Title>{kami.name}</Title>
-            <Subtext>{affinities}</Subtext>
+            {AffinitiesBar()}
           </TitleRow>
           <TitleRow>
             <ExperienceBar
@@ -107,6 +123,13 @@ const Container = styled.div`
   flex-flow: row nowrap;
 `;
 
+const AffinityBox = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+
+  margin: 0.3vw 0.5vw;
+`;
+
 const Image = styled.img`
   border-radius: 8px 0px 0px 0px;
   border-right: solid black 0.15vw;
@@ -147,12 +170,8 @@ const Title = styled.div`
   font-size: 2vw;
 `;
 
-const Subtext = styled.div`
-  padding: 0 0 0.1vw 0.6vw;
-
-  color: #666;
-  font-family: Pixel;
-  font-size: 0.9vw;
+const SubImage = styled.img`
+  height: 1vw;
 `;
 
 const ContentMiddle = styled.div`
