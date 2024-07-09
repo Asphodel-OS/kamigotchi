@@ -11,8 +11,8 @@ import {
 
 import { ItemImages } from 'assets/images/items';
 import { Components } from 'network/';
-import { Stats, getStats } from './Stats';
-import { DetailedEntity } from './utils/EntityTypes';
+import { Stats, getStats } from '../Stats';
+import { DetailedEntity } from '../utils/EntityTypes';
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
@@ -40,8 +40,7 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     components;
 
   const name = (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item';
-
-  let Item: Item = {
+  let item: Item = {
     ObjectType: 'ITEM',
     entityIndex,
     id: world.entities[entityIndex],
@@ -57,9 +56,9 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
       lootbox: hasComponent(IsLootbox, entityIndex),
     },
   };
-  if (hasComponent(IsLootbox, entityIndex)) Item.type = 'LOOTBOX';
+  if (hasComponent(IsLootbox, entityIndex)) item.type = 'LOOTBOX';
 
-  return Item;
+  return item;
 };
 
 /**
@@ -71,7 +70,6 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
 
 export const getItemByIndex = (world: World, components: Components, index: number): Item => {
   const { IsRegistry, ItemIndex } = components;
-
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
   );

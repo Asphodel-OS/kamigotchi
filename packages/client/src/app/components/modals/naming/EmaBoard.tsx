@@ -6,7 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { getInventoryByIndex } from 'network/shapes/Inventory';
+import { getInventoryByIndex } from 'network/shapes/Item/Inventory';
 import { Kami } from 'network/shapes/Kami';
 
 export function registerEMABoardModal() {

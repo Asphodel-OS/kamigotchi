@@ -10,8 +10,8 @@ import { ActionButton, ModalWrapper } from 'app/components/library';
 import { getAccountFromBurner } from 'network/shapes/Account';
 
 import { useVisibility } from 'app/stores';
-import { getItemByIndex } from 'network/shapes/Item';
-import { getLootboxByIndex, getLootboxLog } from 'network/shapes/Lootbox';
+import { getItemByIndex } from 'network/shapes/Item/Item';
+import { getLootboxByIndex, getLootboxLog } from 'network/shapes/Item/Lootbox';
 import { Commit, filterRevealable } from 'network/shapes/utils/Revealables';
 import { useAccount, useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';

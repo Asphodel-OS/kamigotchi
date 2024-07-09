@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { ItemImages } from 'assets/images/items';
-import { Inventory } from '../Inventory';
+import { Inventory } from '../Item/Inventory';
 
 // base shape of an entity with basic details
 export interface DetailedEntity {

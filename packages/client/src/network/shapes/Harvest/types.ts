@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getCoinBal } from '../Inventory';
+import { getCoinBal } from '../Item/Inventory';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './functions';

@@ -12,9 +12,9 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { Commit } from 'network/shapes/utils/Revealables';
 import { Inventory, getTypedInventory } from './Inventory';
 import { Item, getItem } from './Item';
-import { Commit } from './utils/Revealables';
 
 export interface Droptable {
   keys: number[];
@@ -27,11 +27,13 @@ export interface Lootbox extends Item {
 }
 
 export interface LootboxLog extends Commit {
+  id: EntityID;
   entityIndex: EntityIndex;
   isRevealed: boolean;
   balance: number;
   index: number;
   time: number;
+  revealBlock: number;
   droptable: Droptable;
 }
 

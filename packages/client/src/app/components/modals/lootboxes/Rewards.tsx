@@ -4,8 +4,8 @@ import { getRarities } from 'constants/rarities';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import { Item } from 'network/shapes/Item';
-import { LootboxLog } from 'network/shapes/Lootbox';
+import { Item } from 'network/shapes/Item/Item';
+import { LootboxLog } from 'network/shapes/Item/Lootbox';
 
 interface Props {
   account: Account;

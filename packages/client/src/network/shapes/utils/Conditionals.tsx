@@ -6,7 +6,7 @@ import { numberToHex } from 'utils/hex';
 import { Account } from '../Account';
 import { getData } from '../Data';
 import { getReputationValue } from '../Faction';
-import { getInventoryByIndex } from '../Inventory';
+import { getInventoryByIndex } from '../Item/Inventory';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
 

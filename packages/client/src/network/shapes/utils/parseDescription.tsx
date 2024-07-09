@@ -6,7 +6,7 @@ import { helpIcon, questsIcon } from 'assets/images/icons/menu';
 
 import moment from 'moment';
 import { getFactionByIndex, getReputationItem } from '../Faction';
-import { getItemByIndex } from '../Item';
+import { getItemByIndex } from '../Item/Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
 
