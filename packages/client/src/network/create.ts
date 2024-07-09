@@ -8,6 +8,7 @@ import { createAdminAPI, createPlayerAPI } from './api';
 import { createComponents } from './components';
 import { createConfig } from './config';
 import { initExplorer } from './explorer';
+import { initPlayground } from './playground';
 import { SetupContractConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
 
@@ -28,6 +29,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
 
   const actions = createActionSystem(world, txReduced$, provider);
   const notifications = createNotificationSystem(world);
+  const api = { admin: createAdminAPI(systems), player: createPlayerAPI(systems) };
 
   let networkLayer = {
     world,
@@ -38,16 +40,14 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     startSync,
     systems, // SystemExecutor
     createSystems, // SystemExecutor factory function
-    api: {
-      admin: createAdminAPI(systems),
-      player: createPlayerAPI(systems),
-    },
+    api: api,
     updates: {
       components: {
         Network: defineComponent(world, { value: Type.Boolean }), // local comp to tiggers updates
       },
     },
     explorer: initExplorer(world, components),
+    playground: initPlayground(world, components, api),
   };
 
   return networkLayer;
