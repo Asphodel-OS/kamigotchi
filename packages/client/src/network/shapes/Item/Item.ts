@@ -34,11 +34,17 @@ export interface Item extends DetailedEntity {
  * @param components - the list (as object) of registered components in the world
  * @param entityIndex - the entity index of the item in the registry
  */
-export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
-  const { Description, Experience, ItemIndex, IsConsumable, IsLootbox, MediaURI, Name, Type } =
-    components;
+export const getItem = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex,
+  index?: number
+): Item => {
+  const { Description, Experience, ItemIndex, IsConsumable, IsLootbox, Name, Type } = components;
 
-  const name = (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item';
+  const name =
+    (getComponentValue(Name, entityIndex)?.value as string) ??
+    `Unknown Item ${index ? '(' + index + ')' : ''}`;
   let item: Item = {
     ObjectType: 'ITEM',
     entityIndex,
@@ -72,7 +78,7 @@ export const getItemByIndex = (world: World, components: Components, index: numb
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
   );
-  return getItem(world, components, entityIndices[0]);
+  return getItem(world, components, entityIndices[0], index);
 };
 
 // get all items in the registry

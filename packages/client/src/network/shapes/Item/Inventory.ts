@@ -13,7 +13,7 @@ import { utils } from 'ethers';
 
 import { MUSU_INDEX } from 'constants/indices';
 import { Components } from 'network/';
-import { Item, getItem, getItemByIndex } from './Item';
+import { Item, getItemByIndex } from './Item';
 
 //////////////
 // GETTERS
@@ -37,23 +37,20 @@ export const getInventory = (
   components: Components,
   index: EntityIndex
 ): Inventory => {
-  return getTypedInventory(world, components, index, getItem);
+  return getTypedInventory(world, components, index, getItemByIndex);
 };
 
 export const getTypedInventory = (
   world: World,
   components: Components,
   index: EntityIndex,
-  getTypedItem: (world: World, components: Components, index: EntityIndex) => Item
+  getTypedItem: (world: World, components: Components, itemIndex: number) => Item
 ): Inventory => {
   const { Value, IsRegistry, ItemIndex } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
-  const registryEntityIndex = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
-  )[0];
-  const item = getTypedItem(world, components, registryEntityIndex);
+  const item = getTypedItem(world, components, itemIndex);
 
   let inventory: Inventory = {
     id: world.entities[index],
