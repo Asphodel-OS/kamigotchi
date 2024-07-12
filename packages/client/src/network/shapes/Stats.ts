@@ -19,12 +19,13 @@ export interface Stats {
   violence: Stat;
   harmony: Stat;
   slots: Stat;
+  stamina: Stat;
 }
 
 // get the stats of an entity
 // get the Stats from the EnityIndex of a Kami
 export const getStats = (components: Components, index: EntityIndex): Stats => {
-  const { Harmony, Health, Power, Slots, Violence } = components;
+  const { Harmony, Health, Power, Slots, Stamina, Violence } = components;
 
   return {
     health: getStat(index, Health),
@@ -32,6 +33,7 @@ export const getStats = (components: Components, index: EntityIndex): Stats => {
     violence: getStat(index, Violence),
     harmony: getStat(index, Harmony),
     slots: getStat(index, Slots),
+    stamina: getStat(index, Stamina),
   };
 };
 

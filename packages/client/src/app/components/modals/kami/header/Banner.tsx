@@ -73,6 +73,7 @@ export const Banner = (props: Props) => {
         </ContentTop>
         <ContentMiddle>
           {Object.entries(kami.stats).map(([key, value]) => {
+            if (key === 'stamina') return null;
             const description = StatDescriptions[key as keyof typeof StatDescriptions];
             const icon = StatIcons[key as keyof typeof StatIcons];
             const v = value as Stat;
