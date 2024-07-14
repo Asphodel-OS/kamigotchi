@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { actions, actionSystem, account, playerAccount } = props;
+  const { actionSystem, account, playerAccount } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   /////////////////

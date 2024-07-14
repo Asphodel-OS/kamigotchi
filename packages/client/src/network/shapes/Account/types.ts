@@ -216,7 +216,7 @@ export const getAccount = (
   // populate Stats
   if (options?.stats) {
     account.stats = {
-      kills: getData(world, components, account.id, 'LIQUIDATE_TOTAL', MUSU_INDEX),
+      kills: getData(world, components, account.id, 'LIQUIDATE_TOTAL', 0),
       coin: getData(world, components, account.id, 'ITEM_TOTAL', MUSU_INDEX),
     };
   }
