@@ -48,11 +48,11 @@ const querySkillsX = (
   filters: Filters,
   options?: Options
 ): Skill[] => {
-  const { HolderID, IsRegistry, IsSkill, SkillIndex } = components;
+  const { OwnsSkillID, IsRegistry, IsSkill, SkillIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsSkill)];
   if (filters?.registry) toQuery.push(Has(IsRegistry));
-  if (filters?.holder) toQuery.push(HasValue(HolderID, { value: filters.holder }));
+  if (filters?.holder) toQuery.push(HasValue(OwnsSkillID, { value: filters.holder }));
   if (filters?.index) toQuery.push(HasValue(SkillIndex, { value: filters.index }));
 
   return Array.from(runQuery(toQuery)).map(

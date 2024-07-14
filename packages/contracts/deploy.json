@@ -25,6 +25,7 @@
     { "comp": "IDOwnsInventoryComponent", "name": "OwnsInventoryID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsQuestComponent", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsRelationshipComponent", "name": "OwnsRelationshipID", "type": "uint256", "FEtype": "string" },
+    { "comp": "IDOwnsSkillComponent", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsPetComponent", "name": "OwnsPetID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdNodeComponent", "name": "NodeID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdPetComponent", "name": "PetID", "type": "uint256", "FEtype": "string" },
@@ -689,6 +690,7 @@
       "name": "SkillUpgradeSystem",
       "writeAccess": [
         "IdHolderComponent",
+        "IDOwnsSkillComponent",
         "IndexSkillComponent",
         "IsBonusComponent",
         "IsSkillComponent",

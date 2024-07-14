@@ -47,6 +47,7 @@ export type { IDOwnsInventoryComponent } from "./IDOwnsInventoryComponent";
 export type { IDOwnsPetComponent } from "./IDOwnsPetComponent";
 export type { IDOwnsQuestComponent } from "./IDOwnsQuestComponent";
 export type { IDOwnsRelationshipComponent } from "./IDOwnsRelationshipComponent";
+export type { IDOwnsSkillComponent } from "./IDOwnsSkillComponent";
 export type { IDPointerComponent } from "./IDPointerComponent";
 export type { IDRoomComponent } from "./IDRoomComponent";
 export type { IDScoreTypeComponent } from "./IDScoreTypeComponent";
@@ -259,6 +260,7 @@ export { IDOwnsInventoryComponent__factory } from "./factories/IDOwnsInventoryCo
 export { IDOwnsPetComponent__factory } from "./factories/IDOwnsPetComponent__factory";
 export { IDOwnsQuestComponent__factory } from "./factories/IDOwnsQuestComponent__factory";
 export { IDOwnsRelationshipComponent__factory } from "./factories/IDOwnsRelationshipComponent__factory";
+export { IDOwnsSkillComponent__factory } from "./factories/IDOwnsSkillComponent__factory";
 export { IDPointerComponent__factory } from "./factories/IDPointerComponent__factory";
 export { IDRoomComponent__factory } from "./factories/IDRoomComponent__factory";
 export { IDScoreTypeComponent__factory } from "./factories/IDScoreTypeComponent__factory";

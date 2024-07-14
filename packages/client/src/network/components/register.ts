@@ -40,6 +40,7 @@ export function createComponents(world: World) {
     OwnsInventoryID: defineStringComponent(world, 'OwnsInventoryID', 'component.id.inventory.owns'),
     OwnsQuestID: defineStringComponent(world, 'OwnsQuestID', 'component.id.quest.owns'),
     OwnsRelationshipID: defineStringComponent(world, 'OwnsRelationshipID', 'component.id.relationship.owns'),
+    OwnsSkillID: defineStringComponent(world, 'OwnsSkillID', 'component.id.skill.owns'),
     OwnsPetID: defineStringComponent(world, 'OwnsPetID', 'component.id.pet.owns'),
     NodeID: defineStringComponent(world, 'NodeID', 'component.id.node'),
     PetID: defineStringComponent(world, 'PetID', 'component.id.pet'),

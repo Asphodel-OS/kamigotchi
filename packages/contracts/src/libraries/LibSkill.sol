@@ -8,7 +8,7 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IDOwnsSkillComponent, ID as IdHolderCompID } from "components/IDOwnsSkillComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
@@ -39,12 +39,11 @@ library LibSkill {
     IUintComp components,
     uint256 targetID,
     uint32 skillIndex
-  ) internal returns (uint256) {
-    uint256 id = genID(targetID, skillIndex);
-    setIsSkill(components, id);
-    setHolder(components, id, targetID);
-    setSkillIndex(components, id, skillIndex);
-    return id;
+  ) internal returns (uint256 id) {
+    id = genID(targetID, skillIndex);
+    IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
+    IDOwnsSkillComponent(getAddressById(components, IdHolderCompID)).set(id, targetID);
+    IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, skillIndex);
   }
 
   // increase skill points of a skill by a specified value
@@ -103,10 +102,6 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
-  function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
-    return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
-  }
-
   /// @notice check whether the target meets the prerequisites to invest in a skill
   /// @dev prereqs include cost of skill, max points, and requirements
   function meetsPrerequisites(
@@ -152,32 +147,12 @@ library LibSkill {
   /////////////////
   // SETTERS
 
-  function setIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
-  }
-
-  function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, index);
-  }
-
-  function setHolder(IUintComp components, uint256 id, uint256 value) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, value);
-  }
-
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {
     SkillPointComponent(getAddressById(components, SPCompID)).set(id, value);
   }
 
   /////////////////
   // GETTERS
-
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddressById(components, IndexCompID)).get(id);
-  }
-
-  function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LevelComponent(getAddressById(components, LevelCompID)).get(id);
-  }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
     SkillPointComponent comp = SkillPointComponent(getAddressById(components, SPCompID));
