@@ -16,7 +16,6 @@ export const initPlayground = (
     let reputation_amount = 0;
     const completed_quests_rewards = getCompletedQuests(world, components, account.id)
                                         .map(quest => quest.rewards);
-   
     completed_quests_rewards.forEach((rewards) => {
       rewards.forEach((reward) => {
         if(reward.target.type == "REPUTATION") {
@@ -24,54 +23,22 @@ export const initPlayground = (
         }
       })
     })
-    let logged_rep = getReputationValue(world, components, account.id, 1);
-    if(logged_rep == reputation_amount) {
+    let faction_rep = getReputationValue(world, components, account.id, 1);
+    if(faction_rep == reputation_amount) {
       return 0;
     }
     return reputation_amount
   }
   const getAllAccountsReputationMismatch = (options?: AccountOptions) => {
     const accounts = getAllAccounts(world, components, options);
-
+    console.log(`${accounts.length} accounts`)
     const account_reputation: [String, number][] = accounts.map(account => [account.id, getAccountMismatchReputation(account)])
-    return account_reputation;
-  }
-  const doDaThing = (options?: AccountOptions) => {
-    const accounts_earned_rep  = getAllAccountsReputationMismatch(options).filter(element => element[1] != 0);
-   
-    return accounts_earned_rep;
+    const accounts_with_mismatch = account_reputation.filter(element => element[1] != 0);
+    console.log(`${accounts_with_mismatch.length} accounts with reputation mismatch`)
+    return accounts_with_mismatch;
   }
   return {
-    all: (options?: AccountOptions) =>  doDaThing(options),  
+    all: (options?: AccountOptions) =>  getAllAccountsReputationMismatch(options),  
   }
   
-  /*
-  return {
-    all: (options?: AccountOptions) => {
-      console.log("test")
-      const accounts = getAllAccounts(world, components, options); 
-      for(let i = 0; i < accounts.length; i++) {
-        let account_id = accounts[i].id;
-        console.log("Account: ", account_id);
-        /*
-        let quests = getCompletedQuests(world, components, account_id);
-        if(quests.length==0) {
-          continue
-        }
-        for(let q = 0; q < quests.length; q++) { 
-          account_exp_dict.set(account_id, 0);
-          // find rep rewards
-          for(let r = 0; r < quests[q].rewards.length; r++) { 
-            if(quests[q].rewards[r].target.type == "REPUTATION") {
-              let exp = Number(quests[q].rewards[r].target.value); 
-            }
-          }
-          break
-        } 
-        break
-        
-      }
-    }
-  };
-  */ 
 };
