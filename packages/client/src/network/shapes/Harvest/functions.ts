@@ -57,14 +57,15 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   const ratio = config.ratio.value;
   const efficacy = config.boost.value + calcEfficacyShift(harvest, kami);
   const fertility = (kami.stats.power.total * ratio * efficacy) / 3600;
-  return (kami.stats.power.total * ratio * efficacy) / 3600;
+  return fertility;
 };
 
 // calculate the shift in harvest Efficacy (Fertility Boost)
 export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
   const node = harvest.node;
-  if (!node || !kami.affinities || !node.affinity || node.affinity === 'NORMAL') return 0;
+  if (!node || !kami.traits || !node.affinity || node.affinity === 'NORMAL') return 0;
 
+  const affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
   const config = kami.config.harvest.efficacy;
   const neutShift = config.base;
   const upShift = config.up + kami.bonuses.harvest.fertility.boost;
@@ -72,7 +73,7 @@ export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
 
   // calculate based on matchups
   let shift = 0;
-  kami.affinities?.forEach((affinity) => {
+  affinities?.forEach((affinity) => {
     if (affinity === 'NORMAL') shift += neutShift;
     else if (affinity === node.affinity) shift += upShift;
     else shift += downShift;
