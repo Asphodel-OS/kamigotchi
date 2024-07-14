@@ -54,7 +54,7 @@ export interface Kami extends DetailedEntity {
   production?: Harvest;
   skills?: Skill[];
   traits?: Traits;
-  affinities?: string[];
+  affinities: string[];
   can: {
     name: boolean;
   };
@@ -118,6 +118,7 @@ export const getKami = (
     entityIndex,
     name: getComponentValue(Name, entityIndex)?.value as string,
     image: getComponentValue(MediaURI, entityIndex)?.value as string,
+    affinities: [],
     level: (getComponentValue(Level, entityIndex)?.value ?? (1 as number)) * 1,
     experience: {
       current: (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) * 1,
@@ -212,7 +213,9 @@ export const getKami = (
     kami.traits = getTraits(world, components, traitIndices);
 
     // adding affinities
-    kami.affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
+    if (kami.traits.body.affinity || kami.traits.hand.affinity) {
+      kami.affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
+    }
   }
 
   // populate Harvest

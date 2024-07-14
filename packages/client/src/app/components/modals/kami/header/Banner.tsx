@@ -60,7 +60,7 @@ export const Banner = (props: Props) => {
       <Tooltip text={[text || '']}>
         <AffinityBox>
           {kami.affinities?.map((affinity) => {
-            return <Icon src={getAffinityImage(affinity)} />;
+            return <Icon key={affinity} src={getAffinityImage(affinity)} />;
           })}
         </AffinityBox>
       </Tooltip>
