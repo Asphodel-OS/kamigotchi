@@ -115,6 +115,7 @@ export const Kards = (props: Props) => {
     return {
       text,
       onClick: () => actions.feed(kami, inv.item.index),
+      image: inv.item.image,
       disabled: !canEat(),
     };
   };

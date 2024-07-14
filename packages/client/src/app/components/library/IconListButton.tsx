@@ -16,6 +16,7 @@ interface Props {
 export interface Option {
   text: string;
   onClick: Function;
+  image?: string;
   disabled?: boolean;
 }
 
@@ -48,6 +49,7 @@ export function IconListButton(props: Props) {
   const MenuItem = (option: Option, i: number) => {
     return (
       <Option key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
+        {option.image && <Icon src={option.image} />}
         {option.text}
       </Option>
     );
@@ -126,6 +128,11 @@ const Balance = styled.div`
   padding: 0.2vw;
 `;
 
+const Icon = styled.img`
+  height: 1.4vw;
+  image-rendering: pixelated;
+`;
+
 const Image = styled.img<{ isItem?: boolean }>`
   width: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
   height: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
@@ -140,6 +147,10 @@ const Menu = styled.div`
 `;
 
 const Option = styled.div<{ disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+
   border-radius: 0.4vw;
   padding: 0.6vw;
   justify-content: left;
