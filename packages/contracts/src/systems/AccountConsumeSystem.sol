@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -18,10 +18,10 @@ import { LibScore } from "libraries/LibScore.sol";
 uint256 constant ID = uint256(keccak256("system.Account.Consume"));
 
 // eat one snack
-contract AccountConsumeSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract AccountConsumeSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     uint32 itemIndex = abi.decode(arguments, (uint32));
     uint256 id = LibAccount.getByOperator(components, msg.sender);
     require(id != 0, "AccountConsume: no account");
@@ -40,7 +40,7 @@ contract AccountConsumeSystem is System {
     return "";
   }
 
-  function executeTyped(uint32 itemIndex) public returns (bytes memory) {
+  function executeTyped(uint32 itemIndex) public notPaused returns (bytes memory) {
     return execute(abi.encode(itemIndex));
   }
 }

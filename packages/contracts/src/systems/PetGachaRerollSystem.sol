@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -12,8 +12,8 @@ uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Reroll"));
 
 /// @notice commits to get a random pet from gacha via rerolling + cost
 /// @dev only meant to be called for a single account
-contract PetGachaRerollSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract PetGachaRerollSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
   function reroll(uint256[] memory petIDs) external payable returns (uint256[] memory) {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
@@ -50,7 +50,7 @@ contract PetGachaRerollSystem is System {
     return commitIDs;
   }
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     require(false, "not implemented");
     return "";
   }

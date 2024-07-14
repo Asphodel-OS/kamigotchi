@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -9,10 +9,10 @@ import { LibAccount } from "libraries/LibAccount.sol";
 uint256 constant ID = uint256(keccak256("system.Account.Set.FarcasterData"));
 
 // sets the operating address of an account. must be called by Owner EOA
-contract AccountSetFarcasterDataSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract AccountSetFarcasterDataSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     (uint32 fid, string memory pfpURI) = abi.decode(arguments, (uint32, string));
 
     uint256 accountID = LibAccount.getByFarcasterIndex(components, fid);
@@ -29,7 +29,7 @@ contract AccountSetFarcasterDataSystem is System {
     return abi.encode(accountID);
   }
 
-  function executeTyped(uint32 fid, string memory pfpURI) public returns (bytes memory) {
+  function executeTyped(uint32 fid, string memory pfpURI) public notPaused returns (bytes memory) {
     return execute(abi.encode(fid, pfpURI));
   }
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -10,10 +10,10 @@ import { Coord, LibRoom } from "libraries/LibRoom.sol";
 uint256 constant ID = uint256(keccak256("system.Account.Move"));
 
 // moves the account to a valid room location
-contract AccountMoveSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract AccountMoveSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibAccount.syncStamina(components, accountID) > 0, "AccMove: out of stamina");
 
@@ -39,7 +39,7 @@ contract AccountMoveSystem is System {
     return "";
   }
 
-  function executeTyped(uint32 toIndex) public returns (bytes memory) {
+  function executeTyped(uint32 toIndex) public notPaused returns (bytes memory) {
     return execute(abi.encode(toIndex));
   }
 }

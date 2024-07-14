@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -13,10 +13,10 @@ import { LibSkill } from "libraries/LibSkill.sol";
 uint256 constant ID = uint256(keccak256("system.Pet.Level"));
 
 // level a pet up
-contract PetLevelSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract PetLevelSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
@@ -46,7 +46,7 @@ contract PetLevelSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 id) public returns (bytes memory) {
+  function executeTyped(uint256 id) public notPaused returns (bytes memory) {
     return execute(abi.encode(id));
   }
 }

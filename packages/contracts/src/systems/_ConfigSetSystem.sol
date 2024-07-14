@@ -30,6 +30,11 @@ contract _ConfigSetSystem is System {
     LibConfig.setValue(components, configID, value);
   }
 
+  function setValueBool(string memory name, bool value) public onlyOwner {
+    uint256 configID = LibConfig.getID(name);
+    LibConfig.setValueBool(components, configID, value);
+  }
+
   function setValueArray(string memory name, uint32[8] memory values) public onlyOwner {
     uint256 configID = LibConfig.getID(name);
     LibConfig.setValueArray(components, configID, values);

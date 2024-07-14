@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
@@ -21,10 +21,10 @@ uint256 constant ID = uint256(keccak256("system.Production.Stop"));
 // when a pet is stopped by the owner. When it is stopped by liquidation or death, the
 // output is not collected.
 // TODO: update productions to support all kinds of nodes, not just harvesting
-contract ProductionStopSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract ProductionStopSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 petID = LibHarvest.getPet(components, id);
@@ -69,7 +69,7 @@ contract ProductionStopSystem is System {
     return abi.encode(output);
   }
 
-  function executeTyped(uint256 id) public returns (bytes memory) {
+  function executeTyped(uint256 id) public notPaused returns (bytes memory) {
     return execute(abi.encode(id));
   }
 }

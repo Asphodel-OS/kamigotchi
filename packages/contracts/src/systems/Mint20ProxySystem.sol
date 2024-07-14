@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { Mint20 } from "tokens/Mint20.sol";
@@ -18,10 +18,10 @@ string constant symbol = "KAMI";
  * 1) deploys the ERC20 contract in constructor
  * 2) returns the token address when called
  */
-contract Mint20ProxySystem is System {
+contract Mint20ProxySystem is PlayerSystem {
   address token;
 
-  constructor(IWorld _world, address _components) System(_world, _components) {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {
     Mint20 erc20 = new Mint20(_world, name, symbol);
     token = address(erc20);
   }

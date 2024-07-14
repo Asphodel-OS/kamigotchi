@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { Pet721 } from "tokens/Pet721.sol";
@@ -18,10 +18,10 @@ string constant symbol = "KAMI";
  * 1) deploys the ERC721 contract in constructor
  * 2) returns the token address when called
  */
-contract Pet721ProxySystem is System {
+contract Pet721ProxySystem is PlayerSystem {
   address public token;
 
-  constructor(IWorld _world, address _components) System(_world, _components) {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {
     Pet721 erc721 = new Pet721(_world, name, symbol);
     token = address(erc721);
   }

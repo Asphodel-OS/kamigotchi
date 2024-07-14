@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
@@ -12,10 +12,10 @@ import { LibFriend } from "libraries/LibFriend.sol";
 
 uint256 constant ID = uint256(keccak256("system.Friend.Request"));
 
-contract FriendRequestSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract FriendRequestSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     address targetAddr = abi.decode(arguments, (address));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
@@ -52,7 +52,7 @@ contract FriendRequestSystem is System {
     return abi.encode(requestID);
   }
 
-  function executeTyped(address targetAddr) public returns (bytes memory) {
+  function executeTyped(address targetAddr) public notPaused returns (bytes memory) {
     return execute(abi.encode(targetAddr));
   }
 }

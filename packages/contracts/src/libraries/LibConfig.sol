@@ -13,8 +13,9 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 /// @notice a config entity is a global config of field values, identified deterministically
 /** @dev
- * There are 3 types of configs, all packed and stored into a single uint256.
+ * There are 4 types of configs, all packed and stored into a single uint256.
  * - uint256
+ * - bool (retrieved via has - saves some gas on unpacking)
  * - string
  * - uint32[8] (to store multiple values in a single entry)
  */
@@ -32,6 +33,14 @@ library LibConfig {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
+  /// @notice Set a value of a global config field entity
+  /// @dev bools are
+  function setValueBool(IUintComp components, uint256 id, bool value) internal {
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    if (value) comp.set(id, 1);
+    else comp.remove(id);
+  }
+
   /// @notice Set an array of values of a global config field entity
   function setValueArray(IUintComp components, uint256 id, uint32[8] memory values) internal {
     setValue(components, id, LibPack.packArrU32(values));
@@ -46,6 +55,11 @@ library LibConfig {
 
   //////////////////
   // GETTERS
+
+  function has(IUintComp components, string memory name) internal view returns (bool) {
+    uint256 id = getID(name);
+    return ValueComponent(getAddressById(components, ValueCompID)).has(id);
+  }
 
   /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   function get(IUintComp components, string memory name) internal view returns (uint256) {

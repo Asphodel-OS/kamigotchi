@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -12,10 +12,10 @@ uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Mint"));
 
 /// @notice commits to get a random pet from gacha using a Mint20 token
 /// @dev this acts as a replacement for a traditional reveal
-contract PetGachaMintSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract PetGachaMintSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
@@ -39,7 +39,7 @@ contract PetGachaMintSystem is System {
     return abi.encode(results);
   }
 
-  function executeTyped(uint256 amount) public returns (bytes memory) {
+  function executeTyped(uint256 amount) public notPaused returns (bytes memory) {
     return execute(abi.encode(amount));
   }
 

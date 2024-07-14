@@ -4,6 +4,21 @@ import { utils } from 'ethers';
 import { Components } from 'network/';
 import { unpackArray32 } from '../utils/data';
 
+export const getConfigFieldBool = (
+  world: World,
+  components: Components,
+  field: string
+): boolean => {
+  const { Value } = components;
+
+  const configEntityIndex = getEntityIndex(world, field);
+  if (!configEntityIndex) {
+    return false;
+  }
+
+  return !(getComponentValue(Value, configEntityIndex)?.value === undefined);
+};
+
 // get an Config from its EntityIndex
 export const getConfigFieldValue = (
   world: World,

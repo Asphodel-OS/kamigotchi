@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
@@ -10,8 +10,8 @@ import { LibPet } from "libraries/LibPet.sol";
 uint256 constant ID = uint256(keccak256("system.Pet721.IsInWorld"));
 
 /// @notice a view check to check if pet is in world. Used to allow upgradibiliy
-contract Pet721IsInWorldSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract Pet721IsInWorldSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
   /// @notice checks if pet is in world
   /// @param  petIndex  the ERC721 index of the pet
@@ -20,11 +20,11 @@ contract Pet721IsInWorldSystem is System {
     return LibPet.isInWorld(components, entityID);
   }
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     require(false, "Pet721IsInWorld: no execute");
   }
 
-  function executeTyped() public returns (bytes memory) {
+  function executeTyped() public notPaused returns (bytes memory) {
     require(false, "Pet721IsInWorld: no execute");
   }
 }

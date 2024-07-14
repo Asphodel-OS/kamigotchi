@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
@@ -14,8 +14,8 @@ import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Reveal"));
 
 /// @notice reveals gacha results. owner agnostic - reveal is sent to original account
-contract PetGachaRevealSystem is System, AuthRoles {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract PetGachaRevealSystem is PlayerSystem, AuthRoles {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
   function reveal(uint256[] memory rawCommitIDs) external returns (uint256[] memory) {
     require(rawCommitIDs.length > 0, "need commits to reveal");
@@ -57,7 +57,7 @@ contract PetGachaRevealSystem is System, AuthRoles {
     return petIDs;
   }
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     require(false, "not implemented");
     return "";
   }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
+import { PlayerSystem } from "systems/base/PlayerSystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
@@ -43,10 +43,10 @@ uint256 constant ROOM = 12;
       ]
     },
  */
-contract Pet721StakeSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract Pet721StakeSystem is PlayerSystem {
+  constructor(IWorld _world, address _components) PlayerSystem(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public notPaused returns (bytes memory) {
     uint256 tokenID = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.getByIndex(components, uint32(tokenID));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
@@ -72,7 +72,7 @@ contract Pet721StakeSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 tokenID) public returns (bytes memory) {
+  function executeTyped(uint256 tokenID) public notPaused returns (bytes memory) {
     return execute(abi.encode(tokenID));
   }
 }
