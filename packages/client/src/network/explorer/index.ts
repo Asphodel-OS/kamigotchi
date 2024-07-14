@@ -50,7 +50,7 @@ export const initExplorer = (world: World, components: Components) => {
         return getAccountByIndex(world, components, index, options);
       },
       getByOwner: (owner: string, options?: {}) => {
-        return getAccountByOwner(world, components, owner, {
+        return getAccountByOwner(world, components, owner.toLowerCase(), {
           ...options,
           kamis: true,
           friends: true,

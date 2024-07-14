@@ -54,18 +54,15 @@ export const Banner = (props: Props) => {
   ///////////////////
   // DISPLAY
 
-  const AffinitiesBar = () => {
-    const text = kami.affinities?.join(' | ');
-    return (
-      <Tooltip text={[text || '']}>
-        <AffinityBox>
-          {kami.affinities?.map((affinity) => {
-            return <Icon key={affinity} src={getAffinityImage(affinity)} />;
-          })}
-        </AffinityBox>
-      </Tooltip>
-    );
-  };
+  const AffinitiesBar = (
+    <Tooltip text={[kami.affinities?.join(' | ') || '']}>
+      <AffinityBox>
+        {kami.affinities?.map((affinity) => {
+          return <Icon key={affinity} src={getAffinityImage(affinity)} />;
+        })}
+      </AffinityBox>
+    </Tooltip>
+  );
 
   return (
     <Container>
@@ -74,7 +71,7 @@ export const Banner = (props: Props) => {
         <ContentTop>
           <TitleRow>
             <Title>{kami.name}</Title>
-            {AffinitiesBar()}
+            {AffinitiesBar}
           </TitleRow>
           <TitleRow>
             <ExperienceBar
