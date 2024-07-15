@@ -51,12 +51,35 @@ address writer
 Component(getAddressById(components, componentId)).authorizeWriter(writer);
 }
 
+function unauthorizeWriter(
+IUint256Component components,
+uint256 componentId,
+address writer
+) internal {
+Component(getAddressById(components, componentId)).unauthorizeWriter(writer);
+}
+
 function deploySystems(address _world, bool init) internal {
 World world = World(_world);
-// Deploy systems
-ISystem system;
 IUint256Component components = world.components();
+IUint256Component systems = world.systems();
+ISystem system;
+
+// Deploy systems
 <% systems.forEach(system=> { %>
+// unauthorizing previous system (if any)
+if(systems.getEntitiesWithValue(<%= system.name %>ID).length > 0) {
+  console.log("unauthorizing writer for previous <%= system.name %>");
+  <% system.writeAccess?.forEach(component=> { -%>
+    <% if(component==="*" ) { -%>
+    <% components.forEach(comp=> { -%>
+    authorizeWriter(components, <%= comp.comp %>ID, address(system));
+    <% });-%>
+    <% } else { -%>
+    authorizeWriter(components, <%= component %>ID, address(system));
+    <% } -%>
+    <% });-%>
+}
 console.log("Deploying <%= system.name %>");
 system = new <%= system.name %>(world, address(components));
 world.registerSystem(address(system), <%= system.name %>ID);

@@ -47,7 +47,7 @@ const run = async () => {
   }
 
   if (mode === 'DEV') await setAutoMine(false);
-  if (mode === 'DEV') await setTimestamp();
+  if (mode === 'DEV' && init) await setTimestamp();
 };
 
 run();

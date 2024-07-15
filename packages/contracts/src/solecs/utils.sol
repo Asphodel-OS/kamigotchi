@@ -6,35 +6,35 @@ import { IComponent } from "./interfaces/IComponent.sol";
 import { ISystem } from "./interfaces/ISystem.sol";
 import { systemsComponentId } from "./constants.sol";
 
-/** Turn an entity ID into its corresponding Ethereum address. */
+/// @notice Turn an entity ID into its corresponding Ethereum address.
 function entityToAddress(uint256 entity) pure returns (address) {
   return address(uint160(entity));
 }
 
-/** Turn an Ethereum address into its corresponding entity ID. */
+/// @notice Turn an Ethereum address into its corresponding entity ID.
 function addressToEntity(address addr) pure returns (uint256) {
   return uint256(uint160(addr));
 }
 
-/** Get an Ethereum address from an address/id registry component (like _components/_systems in World.sol) */
+/// @notice Get an Ethereum address from an address/id registry component (like _components/_systems in World.sol)
 function getAddressById(IUint256Component registry, uint256 id) view returns (address) {
   uint256[] memory entities = registry.getEntitiesWithValue(id);
   require(entities.length != 0, "id not registered");
   return entityToAddress(entities[0]);
 }
 
-/** Get an entity id from an address/id registry component (like _components/_systems in World.sol) */
+/// @notice Get an entity id from an address/id registry component (like _components/_systems in World.sol)
 function getIdByAddress(IUint256Component registry, address addr) view returns (uint256) {
   require(registry.has(addressToEntity(addr)), "address not registered");
   return registry.get(addressToEntity(addr));
 }
 
-/** Get a Component from an address/id registry component (like _components in World.sol) */
+/// @notice Get a Component from an address/id registry component (like _components in World.sol)
 function getComponentById(IUint256Component components, uint256 id) view returns (IComponent) {
   return IComponent(getAddressById(components, id));
 }
 
-/**
+/** @notice
  * Get the Ethereum address of a System from an address/id component registry component in which the
  * System registry component is registered (like _components in World.sol)
  */
@@ -43,7 +43,7 @@ function getSystemAddressById(IUint256Component components, uint256 id) view ret
   return getAddressById(systems, id);
 }
 
-/**
+/** @notice
  * Get a System from an address/id component registry component in which the
  * System registry component is registered (like _components in World.sol)
  */
@@ -51,7 +51,7 @@ function getSystemById(IUint256Component components, uint256 id) view returns (I
   return ISystem(getSystemAddressById(components, id));
 }
 
-/** Split a single bytes blob into an array of bytes of the given length */
+/** @notice Split a single bytes blob into an array of bytes of the given length */
 function split(bytes memory data, uint8[] memory lengths) pure returns (bytes[] memory) {
   bytes[] memory unpacked = new bytes[](lengths.length);
   uint256 sum = 0;
