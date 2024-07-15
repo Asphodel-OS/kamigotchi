@@ -19,6 +19,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -140,14 +141,12 @@ library LibSkill {
   ) internal view returns (bool) {
     (bool has, string memory tree, uint256 tier) = LibSkillRegistry.getTree(components, registryID);
 
-    // if no skill tree, automatically pass
-    if (!has) return true;
-
-    // if tier 0, automatically pass
-    if (tier == 0) return true;
+    if (!has) return true; // if no skill tree, automatically pass
+    if (tier == 0) return true; // if tier 0, automatically pass
 
     // check if target has enough points
-    return getTreePoints(components, targetID, tree) >= getTreeTierPoints(tier);
+    uint256 requirement = getTreeTierPoints(components, tier);
+    return getTreePoints(components, targetID, tree) >= requirement;
   }
 
   /////////////////
@@ -197,8 +196,9 @@ library LibSkill {
     return LibDataEntity.get(components, id, 0, tree.concat("SKILL_POINTS_USE"));
   }
 
-  function getTreeTierPoints(uint256 tier) internal pure returns (uint256) {
-    return tier * TREE_POINTS_PER_TIER;
+  function getTreeTierPoints(IUintComp components, uint256 tier) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_TREE_REQ");
+    return config[tier];
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {

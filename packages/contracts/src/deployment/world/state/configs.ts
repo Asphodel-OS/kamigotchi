@@ -30,6 +30,9 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
   await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 
+  // Kami skill tree limits
+  await api.config.set.array('KAMI_TREE_REQ', [0, 5, 15, 25, 40, 55, 75, 95]);
+
   // Kami Standard Cooldown Requirement
   await api.config.set.number('KAMI_STANDARD_COOLDOWN', 180);
 
