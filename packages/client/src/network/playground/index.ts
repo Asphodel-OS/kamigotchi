@@ -14,10 +14,10 @@ export const initPlayground = (
   const getAccountMismatchReputation = (account: Account) => {
     // missing goal reputation rewards
     let expectedRep = 0;
-    const completed_quests_rewards = getCompletedQuests(world, components, account.id).map(
+    const completedQuestRewards = getCompletedQuests(world, components, account.id).map(
       (quest) => quest.rewards
     );
-    completed_quests_rewards.forEach((rewards) => {
+    completedQuestRewards .forEach((rewards) => {
       rewards.forEach((reward) => {
         if (reward.target.type == 'REPUTATION') {
           expectedRep += Number(reward.target.value);
@@ -32,13 +32,13 @@ export const initPlayground = (
   const getAllAccountsReputationMismatch = (options?: AccountOptions) => {
     const accounts = getAllAccounts(world, components, options);
     console.log(`${accounts.length} accounts`);
-    const account_reputation: [String, number][] = accounts.map((account) => [
+    const accountReputation: [String, number][] = accounts.map((account) => [
       account.id,
       getAccountMismatchReputation(account),
     ]);
-    const accounts_with_mismatch = account_reputation.filter((element) => element[1] != 0);
-    console.log(`${accounts_with_mismatch.length} accounts with reputation mismatch`);
-    return accounts_with_mismatch;
+    const accountsWithMismatch = accountReputation.filter((element) => element[1] != 0);
+    console.log(`${accountsWithMismatch.length} accounts with reputation mismatch`);
+    return accountsWithMismatch;
   };
 
   return {
