@@ -44,12 +44,13 @@ export const initPlayground = (
     //returns a desceding order list of [cutOff, amountReputationReward]
     let reputationRewards: Reward[] = rewards.filter((reward) => reward.Reward.target.type == "REPUTATION")
     let parsedRewards: [number, number?][] = reputationRewards.map((reward) => [Number(reward.cutoff), Number(reward.Reward.target.value)])
-    let sortedRewards: [number, number?][] = parsedRewards.sort((a,b) => b[0]-a[0])
+    let sortedRewards: [number, number?][] = parsedRewards.sort((a,b) => b[0]-a[0]) //descending order 
     
     return sortedRewards;
   }
   const getRewardForContribution = (amountContributed: number, reputationRewards:[number, number?][]) => {
     //returns the maxmium reward corresponding to an account amount contributed to the goal
+    //reputationRewards => [cutOff,amountReputationReward]
     for(let i = 0; i < reputationRewards.length; i++) {
       if(amountContributed >= reputationRewards[i][0]) {
         return reputationRewards[i][1];
