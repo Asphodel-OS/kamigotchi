@@ -155,8 +155,12 @@ export function createAdminAPI(systems: any) {
   }
 
   async function batchMint(amount: number) {
-    await sleepIf();
-    return systems['system.Pet721.BatchMint'].batchMint(amount);
+    const perBatch = 10;
+    for (let i = 0; i < amount; i += perBatch) {
+      await systems['system.Pet721.BatchMint'].batchMint(perBatch);
+      await sleepIf();
+    }
+    await systems['system.Pet721.BatchMint'].batchMint(amount % perBatch);
   }
 
   async function initGachaIncrement() {
@@ -561,7 +565,7 @@ export function createAdminAPI(systems: any) {
     const mode = urlParams.get('mode') || import.meta.env.MODE;
     if (mode && ['production', 'staging'].includes(mode)) {
       console.log('sleeping');
-      return new Promise((resolve) => setTimeout(resolve, 4000));
+      return new Promise((resolve) => setTimeout(resolve, 3000));
     }
   }
 
