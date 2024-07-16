@@ -130,13 +130,11 @@ const Balance = styled.div`
 
 const Icon = styled.img`
   height: 1.4vw;
-  image-rendering: pixelated;
 `;
 
 const Image = styled.img<{ isItem?: boolean }>`
   width: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
   height: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
-  image-rendering: pixelated;
 `;
 
 const Menu = styled.div`
