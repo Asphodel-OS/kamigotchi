@@ -113,7 +113,7 @@ export const Bio = (props: Props) => {
       </Content>
       <PfpContainer>
         <Tooltip text={[getLastSeenString()]}>
-          <PfpStatus timeDelta={lastRefresh - 1000 * account.time.last} />
+          <PfpStatus timeDelta={lastRefresh / 1000 - account.time.last} />
           <PfpImage src={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'} />
         </Tooltip>
       </PfpContainer>
@@ -209,8 +209,8 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
   border-radius: 3vw;
 
   background-color: ${(props) => {
-    if (props.timeDelta < 60000) return '#6f3';
-    else if (props.timeDelta < 600000) return '#fd3';
+    if (props.timeDelta < 300) return '#6f3';
+    else if (props.timeDelta < 1800) return '#fd3';
     else return '#f33';
   }};
 `;
