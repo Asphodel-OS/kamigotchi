@@ -6,6 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { settingsIcon } from 'assets/images/icons/menu';
 
 import { Account } from './Account';
+import { Debugging } from './Debugging';
 import { Volume } from './Volume';
 
 export function registerSettingsModal() {
@@ -30,6 +31,8 @@ export function registerSettingsModal() {
           <Volume />
           <Divider />
           <Account />
+          <Divider />
+          <Debugging />
         </ModalWrapper>
       );
     }
