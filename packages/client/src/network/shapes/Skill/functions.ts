@@ -2,6 +2,7 @@ import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
+import { getConfigFieldValueArray } from '../Config';
 import { Kami, isDead, isHarvesting, isOffWorld, isStarving } from '../Kami';
 import { checkCondition, getData } from '../utils';
 import { Effect, Requirement, Skill } from './types';
@@ -40,7 +41,7 @@ export const getUpgradeError = (
   if (rSkill.treeTier > 0) {
     const tree = rSkill.tree;
     const invested = getData(world, components, kami.id, rSkill.tree + 'SKILL_POINTS_USE');
-    const reqPts = getMinTreePoints(rSkill.treeTier);
+    const reqPts = getTreePointsRequirement(world, components, rSkill);
     if (invested < reqPts) return [`Not enough ${tree} points invested [${invested}/${reqPts}]`];
   }
 
@@ -91,29 +92,18 @@ export const parseRequirementText = (
   registry: Map<number, Skill>
 ): string => {
   const index = (requirement.target.index ?? 0) * 1;
+  const value = (requirement.target.value ?? 0) * 1;
+  const type = requirement.target.type;
 
-  switch (requirement.target.type) {
-    case 'LEVEL':
-      return `Kami Lvl${requirement.target.value}`;
-    case 'SKILL':
-      const skillName = registry.get(index!)?.name;
-      if (requirement.target.value ?? 0 == 0) return `Cannot have [${skillName}]`;
-      return `Lvl${(requirement.target.value ?? 0) * 1} [${skillName}]`;
-    default:
-      return ' ???';
+  if (type === 'LEVEL') {
+    return `Kami Lvl${value}`;
+  } else if (type === 'SKILL') {
+    const name = registry.get(index!)?.name;
+    if (value == 0) return `Cannot have [${name}]`;
+    return `Lvl${value} [${name}]`;
+  } else {
+    return ' ???';
   }
-};
-
-export const parseTreeRequirementText = (skill: Skill, invested?: number): string => {
-  if (skill.treeTier == 0) return '';
-  const tree = skill.tree;
-  const reqPts = getMinTreePoints(skill.treeTier);
-  let text = `Invest >${reqPts} ${tree} points`;
-  if (invested !== undefined) {
-    if (invested < reqPts) text += ` [${invested}/${reqPts}]`;
-    else text += ` ✅`;
-  }
-  return text;
 };
 
 ///////////////////////
@@ -134,6 +124,12 @@ export const meetsCost = (skill: Skill, holder: Account | Kami): boolean => {
 ///////////////////////
 // UTILS
 
-const getMinTreePoints = (tier: number) => {
-  return tier * 5;
+// gets the tree-points investment requirement for a skill
+export const getTreePointsRequirement = (
+  world: World,
+  components: Components,
+  skill: Skill
+): number => {
+  const config = getConfigFieldValueArray(world, components, 'KAMI_TREE_REQ');
+  return config[skill.treeTier];
 };

@@ -12,6 +12,7 @@ import {
   getRegistrySkills,
   getSkillUpgradeError,
   getTreePoints,
+  getTreePointsRequirement,
 } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
 import { KillLogs } from './battles/KillLogs';
@@ -142,6 +143,8 @@ export function registerKamiModal() {
                 getUpgradeError: (index: number, registry: Map<number, Skill>) =>
                   getSkillUpgradeError(world, components, index, kami, registry),
                 getTreePoints: (tree: string) => getTreePoints(world, components, kami, tree),
+                getTreeRequirement: (skill: Skill) =>
+                  getTreePointsRequirement(world, components, skill),
               }}
             />
           )}

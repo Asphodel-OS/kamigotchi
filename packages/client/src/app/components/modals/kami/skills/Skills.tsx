@@ -18,6 +18,7 @@ interface Props {
   utils: {
     getUpgradeError: (index: number, registry: Map<number, Skill>) => string[] | undefined;
     getTreePoints: (tree: string) => number;
+    getTreeRequirement: (skill: Skill) => number;
   };
 }
 
@@ -59,6 +60,7 @@ export const Skills = (props: Props) => {
         utils={{
           getSkillImage,
           getTreePoints: utils.getTreePoints,
+          getTreeRequirement: (skill: Skill) => utils.getTreeRequirement(skill),
         }}
       />
       <Matrix

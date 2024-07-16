@@ -4,12 +4,7 @@ import styled from 'styled-components';
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import {
-  Skill,
-  parseEffectText,
-  parseRequirementText,
-  parseTreeRequirementText,
-} from 'network/shapes/Skill';
+import { Skill, parseEffectText, parseRequirementText } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -22,12 +17,14 @@ interface Props {
   utils: {
     getSkillImage: (skill: Skill) => string;
     getTreePoints: (tree: string) => number;
+    getTreeRequirement: (skill: Skill) => number;
   };
 }
 
 // The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
   const { index, account, kami, skills, upgradeError, actions, utils } = props;
+  const { getSkillImage, getTreePoints, getTreeRequirement } = utils;
   const [skill, setSkill] = useState<Skill | undefined>(skills.get(index)); // registry skill instance
   const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
   const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
@@ -51,6 +48,17 @@ export const Details = (props: Props) => {
 
   ////////////////////
   // INTERPRETATION
+
+  const parseTreeRequirementText = (skill: Skill): string => {
+    if (skill.treeTier == 0) return '';
+    const tree = skill.tree;
+    const invested = getTreePoints(skill.tree);
+    const min = getTreeRequirement(skill);
+
+    let text = `Invest >${min} ${tree} points`;
+    text += invested < min ? ` [${invested}/${min}]` : ` ✅`;
+    return text;
+  };
 
   // get the tooltip text for the upgrade button
   const getUpgradeButtonTooltip = () => {
@@ -90,7 +98,7 @@ export const Details = (props: Props) => {
   return (
     <Container>
       <ImageSection>
-        <Image src={utils.getSkillImage(skill)} />
+        <Image src={getSkillImage(skill)} />
         <div style={{ position: 'absolute', bottom: '.6vw', right: '.6vw' }}>
           <Tooltip text={getUpgradeButtonTooltip()}>
             <ActionButton
@@ -127,7 +135,7 @@ export const Details = (props: Props) => {
       <LabeledList
         label='Requirements'
         values={[
-          parseTreeRequirementText(skill, utils.getTreePoints(skill.tree)),
+          parseTreeRequirementText(skill),
           ...(skill.requirements ?? []).map((req) => parseRequirementText(req, skills)),
         ]}
       />

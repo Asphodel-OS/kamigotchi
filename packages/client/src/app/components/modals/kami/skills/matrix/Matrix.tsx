@@ -18,6 +18,7 @@ interface Props {
   };
 }
 
+// TODO: deprecate use of TierRequirements constant
 export const Matrix = (props: Props) => {
   const { kami, skills, setDisplayed, utils } = props;
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
