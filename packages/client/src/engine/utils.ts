@@ -12,6 +12,8 @@ export function messagePayload(msg: Message) {
 }
 
 // Remove zero padding from all entity ids
+// Q(jb): do we even want to do this?  standardization seems preferable
+// ethers utils keccak256 function maintains zero padding
 export function formatEntityID(entityID: string | EntityID | BigNumber): EntityID {
   if (BigNumber.isBigNumber(entityID) || entityID.substring(0, 2) === '0x') {
     return BigNumber.from(entityID).toHexString() as EntityID;
