@@ -64,6 +64,7 @@ export function registerNodeModal() {
 
     // Render
     ({ data, network }) => {
+      // console.log('Node Modal Data', data);
       const { account } = data;
       const { actions, api, components, world } = network;
       const [tab, setTab] = useState('allies');
