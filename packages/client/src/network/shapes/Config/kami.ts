@@ -15,14 +15,16 @@ interface HarvestConfig {
   fertility: AsphoAST;
   efficacy: Efficacy;
   intensity: AsphoAST;
+  strain: AsphoAST;
 }
 
 interface LiquidationConfig {
   animosity: AsphoAST;
+  efficacy: Efficacy;
   threshold: AsphoAST;
   salvage: AsphoAST;
   spoils: AsphoAST;
-  efficacy: Efficacy;
+  karma: AsphoAST;
 }
 
 interface RestConfig {
@@ -31,7 +33,6 @@ interface RestConfig {
 }
 
 interface GeneralConfig {
-  strain: AsphoAST;
   cooldown: number;
 }
 
@@ -61,20 +62,21 @@ export const getConfig = (world: World, components: Components): Config => {
       efficacy: getEfficacyNode(world, components, 'KAMI_HARV_EFFICACY'),
       fertility: getASTNode(world, components, 'KAMI_HARV_FERTILITY'),
       intensity: getASTNode(world, components, 'KAMI_HARV_INTENSITY'),
+      strain: getASTNode(world, components, 'KAMI_HARV_STRAIN'),
     },
     liquidation: {
       animosity: getASTNode(world, components, 'KAMI_LIQ_ANIMOSITY'),
+      efficacy: getEfficacyNode(world, components, 'KAMI_LIQ_EFFICACY'),
       threshold: getASTNode(world, components, 'KAMI_LIQ_THRESHOLD'),
       salvage: getASTNode(world, components, 'KAMI_LIQ_SALVAGE'),
       spoils: getASTNode(world, components, 'KAMI_LIQ_SPOILS'),
-      efficacy: getEfficacyNode(world, components, 'KAMI_LIQ_EFFICACY'),
+      karma: getASTNode(world, components, 'KAMI_LIQ_KARMA'),
     },
     rest: {
       metabolism: getASTNode(world, components, 'KAMI_REST_METABOLISM'),
       recovery: getASTNode(world, components, 'KAMI_REST_RECOVERY'),
     },
     general: {
-      strain: getASTNode(world, components, 'KAMI_MUSU_STRAIN'),
       cooldown: getConfigFieldValue(world, components, 'KAMI_COOLDOWN'),
     },
   };
