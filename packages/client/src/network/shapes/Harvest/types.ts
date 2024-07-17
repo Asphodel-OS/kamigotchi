@@ -4,7 +4,7 @@ import { Components } from 'network/';
 import { getMusuBalance } from '../Item';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
-import { calcRate } from './functions';
+import { calcRate } from './harvest';
 
 // standardized shape of an Harvest Entity
 export interface Harvest {
