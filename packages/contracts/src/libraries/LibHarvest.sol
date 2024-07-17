@@ -208,19 +208,6 @@ library LibHarvest {
     return LibString.eq("ACTIVE", getState(components, id));
   }
 
-  // Check whether the source pet can liquidate the target production, based on pet stats.
-  // NOTE: this asssumes that both the source and target pet's health has been synced in
-  // this block and that the source can attack the target.
-  function isLiquidatableBy(
-    IUintComp components,
-    uint256 targetPetID,
-    uint256 sourcePetID
-  ) public view returns (bool) {
-    uint256 currHealth = (LibStat.getHealth(components, targetPetID).sync).toUint256();
-    uint256 threshold = LibKill.calcThreshold(components, sourcePetID, targetPetID);
-    return threshold > currHealth;
-  }
-
   /////////////////
   // SETTERS
 

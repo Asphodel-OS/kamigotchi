@@ -154,6 +154,7 @@ library LibPet {
       uint256 maxFarm = calcStrainBountyCap(components, id);
       uint256 deltaBalance = LibHarvest.sync(components, productionID, maxFarm);
       uint256 damage = calcStrain(components, id, deltaBalance);
+
       drain(components, id, damage.toInt32());
     } else if (LibString.eq(state, "RESTING")) {
       uint256 recovery = calcRecovery(components, id);
@@ -208,24 +209,26 @@ library LibPet {
     uint256 id,
     uint256 amt
   ) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_MUSU_STRAIN");
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
     int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
+    uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);
-    return (amt * core * boost + (precision - 1)) / precision;
+    return (amt * core * boost + (precision * harmony - 1)) / (precision * harmony);
   }
 
   // Calculate the max musu a kami can farm based on its hp at the last
   // harvest sync against its rate of strain per musu. Round down.
   function calcStrainBountyCap(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_MUSU_STRAIN");
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
     int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
     uint256 healthBudget = LibStat.getHealth(components, id).sync.toUint256();
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
+    uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);
-    return (healthBudget * precision) / (core * boost);
+    return (healthBudget * precision * harmony) / (core * boost);
   }
 
   /////////////////

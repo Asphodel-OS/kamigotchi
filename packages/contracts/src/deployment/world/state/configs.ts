@@ -40,15 +40,15 @@ export async function initConfigs(api: AdminAPI) {
   // SKILL EFFECT (AsphoAST Nodes)
   // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
 
+  // Health Effects
+  await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 1200, 3, 0, 0, 1000, 3]);
+
   // Harvest Effects
   await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 1500, 3, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 25, 0, 0, 0, 480, 0]); // inversed boost
   await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
-
-  // Health Effects
-  await api.config.set.array('KAMI_MUSU_STRAIN', [0, 0, 200, 3, 0, 0, 1000, 3]);
-  await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 1200, 3, 0, 0, 1000, 3]);
+  await api.config.set.array('KAMI_HARV_STRAIN', [0, 0, 5000, 3, 0, 0, 1000, 3]);
 
   // Liquidation Effects
   await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
@@ -56,6 +56,7 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 0, 0, 3, 0, 0, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SPOILS', [0, 0, 500, 3, 0, 0, 0, 0]);
+  await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 500, 3, 0, 0, 0, 0]);
 }
 
 // local config settings for faster testing
