@@ -2,6 +2,7 @@ export { calcStamina, calcStaminaPercent, getAccessibleKamis } from './functions
 export {
   getAccountByID,
   getAccountByIndex,
+  getAccountByName,
   getAccountByOperator,
   getAccountByOwner,
   getAccountEntityIndexByName,

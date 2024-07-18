@@ -43,8 +43,8 @@ export const getAccountByIndex = (
   const { IsAccount, AccountIndex } = components;
   const entityIndex = Array.from(
     runQuery([
-      Has(IsAccount),
       HasValue(AccountIndex, { value: index }), // NOTE: may cause issues if not 0x{hex} formatted
+      Has(IsAccount),
     ])
   )[0];
   return getAccount(world, components, entityIndex, options);
@@ -59,7 +59,7 @@ export const getAccountByOperator = (
 ) => {
   const { IsAccount, OperatorAddress } = components;
   const entityIndex = Array.from(
-    runQuery([Has(IsAccount), HasValue(OperatorAddress, { value: operatorEOA })])
+    runQuery([HasValue(OperatorAddress, { value: operatorEOA }), Has(IsAccount)])
   )[0];
   return getAccount(world, components, entityIndex, options);
 };
@@ -73,9 +73,20 @@ export const getAccountByOwner = (
 ) => {
   const { IsAccount, OwnerAddress } = components;
   const entityIndex = Array.from(
-    runQuery([Has(IsAccount), HasValue(OwnerAddress, { value: ownerEOA })])
+    runQuery([HasValue(OwnerAddress, { value: ownerEOA }), Has(IsAccount)])
   )[0];
   if (entityIndex) return getAccount(world, components, entityIndex, options);
+};
+
+export const getAccountByName = (
+  world: World,
+  components: Components,
+  name: string,
+  options?: AccountOptions
+) => {
+  const { IsAccount, Name } = components;
+  const entityIndex = Array.from(runQuery([HasValue(Name, { value: name }), Has(IsAccount)]))[0];
+  return getAccount(world, components, entityIndex, options);
 };
 
 // get an Account, assuming the currently connected burner is the Operator
