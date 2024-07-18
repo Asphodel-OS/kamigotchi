@@ -22,6 +22,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
 
 uint256 constant ANIMOSITY_PREC = 6;
@@ -57,6 +58,22 @@ library LibKill {
     bounties[0] = balance.toUint32(); // balance (negative)
     bounties[1] = bounty.toUint32(); // bounty (positive)
     LibDataEntity.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
+  }
+
+  /////////////////
+  // CHECKERS
+
+  // Check whether the source pet can liquidate the target production, based on pet stats.
+  // NOTE: this asssumes that both the source and target pet's health has been synced in
+  // this block and that the source can attack the target.
+  function isLiquidatableBy(
+    IUintComp components,
+    uint256 targetPetID,
+    uint256 sourcePetID
+  ) public view returns (bool) {
+    uint256 currHealth = (LibStat.getHealth(components, targetPetID).sync).toUint256();
+    uint256 threshold = calcThreshold(components, sourcePetID, targetPetID);
+    return threshold > currHealth;
   }
 
   /////////////////
@@ -146,6 +163,7 @@ library LibKill {
     return (uint(postShiftVal) * totalHealth) / precision;
   }
 
+  // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
   function calcSalvage(
     IUintComp components,
     uint256 id, // unused atm, but will be used for skill multipliers
@@ -158,7 +176,7 @@ library LibKill {
     return (amt * ratio) / precision;
   }
 
-  // Calculate the reward for liquidating a specified Coin balance
+  // Calculate the reward for liquidating a specified Coin balance. Round down.
   function calcSpoils(
     IUintComp components,
     uint256 id, // unused atm, but will be used for skill multipliers
@@ -169,5 +187,19 @@ library LibKill {
     uint256 ratio = configVals[2] + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(configVals[3]);
     return (amt * ratio) / precision;
+  }
+
+  // Calculate the resulting negative karma (HP loss) from two kamis duking it out. Rounds down.
+  function calcKarma(
+    IUintComp components,
+    uint256 sourceID,
+    uint256 targetID
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
+    uint256 violence1 = LibPet.calcTotalViolence(components, sourceID).toUint256();
+    uint256 violence2 = LibPet.calcTotalViolence(components, targetID).toUint256();
+    uint256 ratio = uint(config[2]);
+    uint256 precision = 10 ** uint(config[3]);
+    return ((violence1 + violence2) * ratio) / precision;
   }
 }

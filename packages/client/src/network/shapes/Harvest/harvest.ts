@@ -5,21 +5,19 @@ import { Harvest } from './types';
 // DURATION CALCS
 
 // calculate the duration since a harvest has been collected from
-export const calcIdleTime = (harvest?: Harvest): number => {
-  if (!harvest) return 0;
+export const calcIdleTime = (harvest: Harvest): number => {
   return Math.floor(Date.now() / 1000 - harvest.time.last);
 };
 
 // get the number of seconds passed since the last harvest reset
 export const calcIntensityTime = (harvest: Harvest): number => {
-  if (!harvest || !harvest.time.reset) return 0;
+  if (!harvest.time.reset) return 0;
   const secondsSinceReset = Date.now() / 1000 - harvest.time.reset;
   return Math.floor(secondsSinceReset); // intensity period
 };
 
 // calculate the duration since a harvest was started
-export const calcLifeTime = (harvest?: Harvest): number => {
-  if (!harvest) return 0;
+export const calcLifeTime = (harvest: Harvest): number => {
   return Math.floor(Date.now() / 1000 - harvest.time.start);
 };
 
@@ -27,7 +25,7 @@ export const calcLifeTime = (harvest?: Harvest): number => {
 // OUTPUT CALCS
 
 // Calculate the expected output from a harvest. Round down.
-// This factors in maximum gains due to depleted health.
+// NOTE: This does notfactor in maximum gains due to depleted health.
 export const calcBounty = (harvest: Harvest): number => {
   let output = harvest.balance;
   const duration = calcIdleTime(harvest);

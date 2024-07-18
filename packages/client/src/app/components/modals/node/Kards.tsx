@@ -5,6 +5,13 @@ import { Option } from 'app/components/library/IconListButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
+import {
+  calcLiqKarma,
+  calcLiqStrain,
+  calcLiqThreshold,
+  canLiquidate,
+  canMog,
+} from 'network/shapes/Harvest';
 import { Inventory } from 'network/shapes/Item';
 import { filterInventories } from 'network/shapes/Item/functions';
 import {
@@ -12,9 +19,6 @@ import {
   calcCooldown,
   calcHealth,
   calcOutput,
-  calcThreshold,
-  canLiquidate,
-  canMog,
   isFull,
   isHarvesting,
   isStarving,
@@ -139,7 +143,7 @@ export const Kards = (props: Props) => {
     const valid = available.filter((kami) => canMog(kami, target));
     if (valid.length == 0 && reason === '') {
       // get the details of the highest cap liquidation
-      const thresholds = available.map((ally) => calcThreshold(ally, target));
+      const thresholds = available.map((ally) => calcLiqThreshold(ally, target));
       const [threshold, index] = thresholds.reduce(
         (a, b, i) => (a[0] < b ? [b, i] : a),
         [Number.MIN_VALUE, -1]
@@ -233,8 +237,11 @@ export const Kards = (props: Props) => {
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
     const options = allies.filter((ally) => canLiquidate(ally, target));
     const actionOptions = options.map((myKami) => {
+      const karma = calcLiqKarma(myKami, target);
+      const strain = calcLiqStrain(myKami, target);
+
       return {
-        text: `${myKami.name}`,
+        text: `${myKami.name} (recoil: ${karma} + ${strain})`,
         onClick: () => actions.liquidate(myKami, target),
       };
     });

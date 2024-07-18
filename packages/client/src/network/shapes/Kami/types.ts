@@ -214,9 +214,10 @@ export const getKami = (
   // populate Harvest
   // NOTE: productions should come after traits for harvest calcs to work correctly
   if (options?.production) {
-    const productionIndex = Array.from(
+    const productionResults = Array.from(
       runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
-    )[0];
+    );
+    const productionIndex = productionResults[0];
     if (productionIndex)
       kami.production = getHarvest(world, components, productionIndex, { node: true }, kami);
   }

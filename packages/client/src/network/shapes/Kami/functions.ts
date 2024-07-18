@@ -1,6 +1,4 @@
-import cdf from '@stdlib/stats-base-dists-normal-cdf';
-
-import { calcHarvestIdletime, calcHarvestNetBounty, getHarvestRoomIndex } from '../Harvest';
+import { calcHarvestIdleTime, calcHarvestNetBounty, getHarvestRoomIndex } from '../Harvest';
 import { Kami } from './types';
 
 // interpret the roomIndex of the kami based on the kami's state (using Account and Harvest Node)
@@ -86,8 +84,8 @@ export const calcIdleTime = (kami: Kami): number => {
 
 // calculate the time a production has been active since its last update
 export const calcHarvestTime = (kami: Kami): number => {
-  if (!isHarvesting(kami)) return 0;
-  return calcHarvestIdletime(kami.production);
+  if (!isHarvesting(kami) || !kami.production) return 0;
+  return calcHarvestIdleTime(kami.production);
 };
 
 // calculate the cooldown remaining on kami standard actions
@@ -125,11 +123,8 @@ export const calcHealthRate = (kami: Kami): number => {
 // calculate the rate of health drain while harvesting
 const calcHarvestingHealthRate = (kami: Kami): number => {
   if (!kami.production) return 0;
-  const strainConfig = kami.config.general.strain;
-  const ratio = strainConfig.ratio.value;
-  const boost = strainConfig.boost.value + kami.bonuses.general.strain.boost;
-  const harvestRate = kami.production.rate;
-  return -1 * harvestRate * ratio * boost;
+  const rate = calcStrainFromBalance(kami, kami.production.rate, false);
+  return -1 * rate;
 };
 
 // calculate the rate of health regen while resting
@@ -158,75 +153,22 @@ export const calcOutput = (kami: Kami): number => {
 // harvest rate and remaining health at last harvest
 const calcStrainBountyCap = (kami: Kami): number => {
   const healthBudget = kami.stats.health.sync;
-  const strainConfig = kami.config.general.strain;
+  const strainConfig = kami.config.harvest.strain;
   const ratio = strainConfig.ratio.value;
-  const boost = strainConfig.boost.value + kami.bonuses.general.strain.boost;
-  return Math.floor(healthBudget / ratio / boost);
+  const boost = strainConfig.boost.value + kami.bonuses.harvest.strain.boost;
+  const harmony = kami.stats.harmony.total;
+  return Math.floor((healthBudget * harmony) / ratio / boost);
 };
 
-////////////////
-// LIQUIDATION
+////////////////////
+// UTILS
 
-// calculate the affinity multiplier for liquidation threshold
-const calcEfficacy = (attacker: Kami, defender: Kami): number => {
-  const thresholdConfig = attacker.config.liquidation.threshold;
-  const effConfig = attacker.config.liquidation.efficacy;
-  const attBonus = attacker.bonuses.attack.threshold.ratio;
-  const defBonus = defender.bonuses.defense.threshold.ratio;
-
-  const base = thresholdConfig.ratio.value;
-  const shiftNeut = effConfig.base;
-  const shiftUp = effConfig.up + attBonus + defBonus;
-  const shiftDown = effConfig.down;
-
-  let shift = shiftNeut;
-  if (attacker.traits && defender.traits) {
-    const attAffinity = attacker.traits.hand.affinity;
-    const defAffinity = defender.traits.body.affinity;
-    if (attAffinity === 'EERIE') {
-      if (defAffinity === 'SCRAP') shift = shiftUp;
-      else if (defAffinity === 'INSECT') shift = shiftDown;
-    } else if (attAffinity === 'SCRAP') {
-      if (defAffinity === 'INSECT') shift = shiftUp;
-      else if (defAffinity === 'EERIE') shift = shiftDown;
-    } else if (attAffinity === 'INSECT') {
-      if (defAffinity === 'EERIE') shift = shiftUp;
-      else if (defAffinity === 'SCRAP') shift = shiftDown;
-    }
-  }
-
-  return base + shift;
-};
-
-// calculate the base liquidation threshold % between two kamis
-const calcAnimosity = (attacker: Kami, defender: Kami): number => {
-  const precision = 10 ** 6;
-  const attViolence = attacker.stats.violence.total;
-  const defHarmony = defender.stats.harmony.total;
-  const base = cdf(Math.log(attViolence / defHarmony), 0, 1);
-  const ratio = attacker.config.liquidation.animosity.ratio.value;
-  return Math.floor(precision * base * ratio) / precision;
-};
-
-// calculate the liquidation threshold b/w two kamis
-export const calcThreshold = (attacker: Kami, defender: Kami): number => {
-  const thresholdConfig = attacker.config.liquidation.threshold;
-  const attBonus = attacker.bonuses.attack.threshold;
-  const defBonus = defender.bonuses.defense.threshold;
-
-  const base = calcAnimosity(attacker, defender);
-  const ratio = calcEfficacy(attacker, defender);
-  const shift = thresholdConfig.shift.value + attBonus.shift + defBonus.shift;
-  const boost = defender.stats.health.total;
-  const threshold = (base * ratio + shift) * boost;
-  return Math.floor(threshold);
-};
-
-// determine whether a kami can liquidate another kami based on all requirements
-export const canLiquidate = (attacker: Kami, defender: Kami): boolean => {
-  return !onCooldown(attacker) && !isStarving(attacker) && canMog(attacker, defender);
-};
-
-export const canMog = (attacker: Kami, defender: Kami): boolean => {
-  return calcHealth(defender) < calcThreshold(attacker, defender);
+// calculate a kami's strain from a musu balance, also works with rates
+export const calcStrainFromBalance = (kami: Kami, balance: number, roundUp = true): number => {
+  const strainConfig = kami.config.harvest.strain;
+  const ratio = strainConfig.ratio.value;
+  const harmony = kami.stats.harmony.total;
+  const boost = strainConfig.boost.value + kami.bonuses.harvest.strain.boost;
+  const strain = (balance * ratio * boost) / harmony;
+  return roundUp ? Math.ceil(strain) : strain;
 };

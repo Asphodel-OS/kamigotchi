@@ -49,20 +49,21 @@ contract ProductionLiquidateSystem is System {
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibHarvest.getPet(components, targetProductionID);
     LibPet.sync(components, targetPetID);
-    require(LibHarvest.isLiquidatableBy(components, targetPetID, petID), "Pet: you lack violence");
+    require(LibKill.isLiquidatableBy(components, targetPetID, petID), "Pet: you lack violence");
 
     // collect the money to the production. drain accordingly
     uint256 bounty = LibHarvest.getBalance(components, targetProductionID);
     uint256 salvage = LibKill.calcSalvage(components, targetPetID, bounty);
     uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
-    uint256 recoil = LibPet.calcStrain(components, petID, spoils);
+    uint256 strain = LibPet.calcStrain(components, petID, spoils);
+    uint256 karma = LibKill.calcKarma(components, petID, targetPetID);
 
     if (salvage > 0) {
       uint256 victimAccountID = LibPet.getAccount(components, targetPetID);
       LibInventory.incFor(components, victimAccountID, MUSU_INDEX, salvage);
     }
     LibInventory.incFor(components, productionID, MUSU_INDEX, spoils);
-    LibPet.drain(components, petID, SafeCastLib.toInt32(recoil));
+    LibPet.drain(components, petID, SafeCastLib.toInt32(strain + karma));
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);

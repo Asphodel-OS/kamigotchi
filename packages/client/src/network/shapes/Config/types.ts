@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 import { Components } from 'network/';
 import { unpackArray32 } from '../utils/data';
@@ -11,14 +11,10 @@ export const getConfigFieldValue = (
   field: string
 ): number => {
   const { Value } = components;
+  const entityIndex = getEntityIndex(world, field);
+  if (!entityIndex) return 0;
 
-  const configEntityIndex = getEntityIndex(world, field);
-  if (!configEntityIndex) {
-    // console.error(`Config field not found for ${field}`);
-    return 0;
-  }
-
-  return (getComponentValue(Value, configEntityIndex)?.value as number) * 1;
+  return (getComponentValue(Value, entityIndex)?.value as number) * 1;
 };
 
 // get an Config from its EntityIndex
@@ -28,14 +24,10 @@ export const getConfigFieldValueArray = (
   field: string
 ): number[] => {
   const { Value } = components;
+  const entityIndex = getEntityIndex(world, field);
+  if (!entityIndex) return [0];
 
-  const configEntityIndex = getEntityIndex(world, field);
-  if (!configEntityIndex) {
-    // console.warn(`Config field not found for ${field}`);
-    return [0];
-  }
-
-  const raw = getComponentValue(Value, configEntityIndex)?.value;
+  const raw = getComponentValue(Value, entityIndex)?.value;
   if (!raw) return [];
   return unpackArray32(raw);
 };
@@ -47,17 +39,15 @@ export const getConfigFieldValueWei = (
   field: string
 ): bigint => {
   const { Value } = components;
+  const entityIndex = getEntityIndex(world, field);
+  if (!entityIndex) return 0n;
 
-  const configEntityIndex = getEntityIndex(world, field);
-  if (!configEntityIndex) {
-    // console.warn(`Config field not found for ${field}`);
-    return 0n;
-  }
-  const stringVal = (getComponentValue(Value, configEntityIndex)?.value as number) || 0;
+  const stringVal = (getComponentValue(Value, entityIndex)?.value as number) || 0;
   return BigInt(stringVal);
 };
 
 const getEntityIndex = (world: World, field: string): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'string'], ['is.config', field]);
-  return world.entityToIndex.get(id as EntityID);
+  const formattedID = BigNumber.from(id).toHexString() as EntityID;
+  return world.entityToIndex.get(formattedID);
 };
