@@ -15,7 +15,7 @@ contract ExperienceTest is SetupTemplate {
     super.setUp();
 
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
+    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
 
     _numPets = 5;
     _petIDs = _mintPets(0, _numPets);
@@ -39,7 +39,7 @@ contract ExperienceTest is SetupTemplate {
     uint expectedExpGain;
     uint numLoops = 3;
     for (uint i = 0; i < numLoops; i++) {
-      _fastForward(3600);
+      _fastForward(360);
       for (uint j = 0; j < _numPets; j++) {
         productionID = LibPet.getProduction(components, _petIDs[j]);
         _collectProduction(productionID);
