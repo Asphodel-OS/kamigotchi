@@ -17,7 +17,7 @@ const run = async () => {
   const world = argv.world ? argv.world : getWorld(mode);
 
   if (mode === 'DEV') setAutoMine(true);
-  await executeGodSystem(getRpc(mode)!, getDeployerKey(mode)!, world);
+  await executeGodSystem(getRpc(mode)!, getDeployerKey(mode)!, world, argv.forgeOpts);
   if (mode === 'DEV') setAutoMine(false);
 };
 

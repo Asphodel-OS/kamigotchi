@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./Imports.sol";
 
 import { SystemCall } from "./SystemCall.s.sol";
+import { console } from "forge-std/console.sol";
 
 /// Copy this to GodSystem.s.sol to use
 /// @notice a special script that can perform any operation. Useful for testing

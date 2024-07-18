@@ -982,38 +982,39 @@ abstract contract SetupTemplate is TestSetupImports {
     _initHealthConfigs();
     _initHarvestConfigs();
     _initLiquidationConfigs();
+    _initSkillConfigs();
   }
 
-  function _initBaseConfigs() internal {
+  function _initBaseConfigs() internal virtual {
     _setConfigString("BASE_URI", "https://image.asphodel.io/kami/");
   }
 
-  function _initLeaderboardConfigs() internal {
+  function _initLeaderboardConfigs() internal virtual {
     _setConfig("LEADERBOARD_EPOCH", 1);
   }
 
-  function _initAccountConfigs() internal {
+  function _initAccountConfigs() internal virtual {
     _setConfig("ACCOUNT_STAMINA_BASE", 20);
     _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
   }
 
-  function _initFriendConfigs() internal {
+  function _initFriendConfigs() internal virtual {
     _setConfig("FRIENDS_BASE_LIMIT", 5);
     _setConfig("FRIENDS_REQUEST_LIMIT", 5);
   }
 
   // Kami Leveling Curve
-  function _initLevelingConfigs() internal {
+  function _initLevelingConfigs() internal virtual {
     _setConfig("KAMI_LVL_REQ_BASE", 40);
     _setConfigArray("KAMI_LVL_REQ_MULT_BASE", [uint32(1259), 3, 0, 0, 0, 0, 0, 0]);
   }
 
-  function _initMintConfigs() internal {
+  function _initMintConfigs() internal virtual {
     _setConfig("GACHA_REROLL_PRICE", 0);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
-  function _initKamiConfigs() internal {
+  function _initKamiConfigs() internal virtual {
     // Idle Requirements
     _setConfig("KAMI_STANDARD_COOLDOWN", 300);
 
@@ -1025,7 +1026,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("KAMI_BASE_SLOTS", 0);
   }
 
-  function _initHealthConfigs() internal {
+  function _initHealthConfigs() internal virtual {
     // Kami Health Drain Rates
     _setConfigArray("HEALTH_RATE_DRAIN_BASE", [uint32(1000), 3, 0, 0, 0, 0, 0, 0]);
 
@@ -1034,7 +1035,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfigArray("KAMI_REST_METABOLISM", [uint32(6), 1000, 3, 3, 0, 0, 0, 0]);
   }
 
-  function _initHarvestConfigs() internal {
+  function _initHarvestConfigs() internal virtual {
     // Harvest Rates
     // [prec, base, base_prec, mult_prec]
     _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
@@ -1042,7 +1043,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfigArray("KAMI_HARV_EFFICACY", [uint32(1000), 1500, 500, 0, 0, 0, 0, 0]);
   }
 
-  function _initLiquidationConfigs() internal {
+  function _initLiquidationConfigs() internal virtual {
     // Liquidation Calcs
     _setConfigArray("LIQ_THRESH_BASE", [uint32(20), 2, 0, 0, 0, 0, 0, 0]);
     // [base, up, down]
@@ -1051,6 +1052,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
     // Liquidation Bounty
     _setConfigArray("LIQ_BOUNTY_BASE", [uint32(50), 3, 0, 0, 0, 0, 0, 0]);
+  }
+
+  function _initSkillConfigs() internal virtual {
+    _setConfigArray("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
   }
 
   ///////////////////////

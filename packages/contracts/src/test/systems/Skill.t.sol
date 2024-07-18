@@ -73,11 +73,11 @@ contract SkillTest is SetupTemplate {
     assertEq(1, tier);
   }
 
-  function testSkillTree(uint32 tier) public {
+  function testSkillTree() public {
     uint256 regID1 = _createSkill(1, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 0);
     uint256 regID2 = _createSkill(2, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 1);
     uint256 regID3 = _createSkill(3, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 2);
-    uint256 regIDFuzz = _createSkill(4, "ACCOUNT", "PASSIVE", "TREE", 1, 5, tier); // fuzz test
+    uint256 regIDFuzz = _createSkill(4, "ACCOUNT", "PASSIVE", "TREE", 1, 5, 3); // fuzz test
 
     // giving account skill points to spend
     vm.prank(deployer);
@@ -118,34 +118,35 @@ contract SkillTest is SetupTemplate {
     assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regID3));
 
     // test second tier
-    _upgradeSkill(alice.index, alice.id, 2);
+    vm.startPrank(deployer);
+    LibDataEntity.set(
+      components,
+      alice.id,
+      0,
+      "TREESKILL_POINTS_USE",
+      LibSkill.getTreeTierPoints(components, 2)
+    );
+    vm.stopPrank();
     _upgradeSkill(alice.index, alice.id, 3);
 
-    if (tier <= 2) {
-      // would be qualified for up to tier 2
-      assertTrue(LibSkill.meetsTreePrerequisites(components, alice.id, regIDFuzz));
-      _upgradeSkill(alice.index, alice.id, 4);
-    } else {
-      // not yet qualified for >= tier 3
-      assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regIDFuzz));
-      vm.prank(alice.operator);
-      vm.expectRevert("SkillUpgrade: unmet prerequisites");
-      _SkillUpgradeSystem.executeTyped(alice.id, 4);
+    // test third tier
+    assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regIDFuzz));
+    vm.prank(alice.operator);
+    vm.expectRevert("SkillUpgrade: unmet prerequisites");
+    _SkillUpgradeSystem.executeTyped(alice.id, 4);
 
-      // setting points up proper
-      vm.startPrank(deployer);
-      LibDataEntity.set(
-        components,
-        alice.id,
-        0,
-        "TREESKILL_POINTS_USE",
-        LibSkill.getTreeTierPoints(tier)
-      );
-      vm.stopPrank();
+    vm.startPrank(deployer);
+    LibDataEntity.set(
+      components,
+      alice.id,
+      0,
+      "TREESKILL_POINTS_USE",
+      LibSkill.getTreeTierPoints(components, 3)
+    );
+    vm.stopPrank();
 
-      assertTrue(LibSkill.meetsTreePrerequisites(components, alice.id, regIDFuzz));
-      _upgradeSkill(alice.index, alice.id, 4);
-    }
+    assertTrue(LibSkill.meetsTreePrerequisites(components, alice.id, regIDFuzz));
+    _upgradeSkill(alice.index, alice.id, 4);
   }
 
   ////////////////
