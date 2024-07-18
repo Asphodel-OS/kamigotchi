@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 
@@ -21,11 +21,11 @@ contract ListingSellSystem is System {
       arguments,
       (uint32, uint32[], uint32[])
     );
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 merchantID = LibNPC.get(components, merchantIndex);
     require(merchantID != 0, "merchant does not exist");
     require(
-      LibNPC.sharesRoomWith(components, merchantID, accountID),
+      LibNPC.sharesRoomWith(components, merchantID, accID),
       "Listing.Sell(): must be in same room as npc"
     );
 
@@ -34,13 +34,13 @@ contract ListingSellSystem is System {
       uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
       require(listingID != 0, "listing does not exist");
 
-      total += LibListing.sell(components, listingID, accountID, itemIndices[i], amts[i]);
-      LibListing.logIncItemSell(components, accountID, itemIndices[i], amts[i]);
+      total += LibListing.sell(components, listingID, accID, itemIndices[i], amts[i]);
+      LibListing.logIncItemSell(components, accID, itemIndices[i], amts[i]);
     }
 
     // standard logging and tracking
-    LibListing.logEarnCoin(components, accountID, total);
-    LibAccount.updateLastTs(components, accountID);
+    LibListing.logEarnCoin(components, accID, total);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

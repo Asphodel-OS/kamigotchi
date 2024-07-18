@@ -18,11 +18,11 @@ contract PetLevelSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (type check, ownership, roomIndex)
     require(LibPet.isPet(components, id), "PetLevel: not a pet");
-    require(LibPet.getAccount(components, id) == accountID, "PetLevel: not urs");
+    require(LibPet.getAccount(components, id) == accID, "PetLevel: not urs");
     require(LibPet.isResting(components, id), "PetLevel: pet not resting");
 
     // check that the pet meets the experience requirement
@@ -41,8 +41,8 @@ contract PetLevelSystem is System {
     LibPet721.updateEvent(world, LibPet.getIndex(components, id));
 
     // standard logging and tracking
-    LibExperience.logPetLevelInc(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
+    LibExperience.logPetLevelInc(components, accID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

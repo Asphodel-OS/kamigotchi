@@ -21,17 +21,17 @@ contract ProductionStartSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint256 nodeID) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, petID) == accountID, "FarmStart: pet not urs");
+    require(LibPet.getAccount(components, petID) == accID, "FarmStart: pet not urs");
     require(LibPet.isResting(components, petID), "FarmStart: pet must be resting");
     require(!LibPet.onCooldown(components, petID), "FarmStart: pet on cooldown");
 
     // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmStart: pet starving..");
-    require(LibAccount.sharesRoom(components, accountID, nodeID), "FarmStart: node too far");
+    require(LibAccount.sharesRoom(components, accID, nodeID), "FarmStart: node too far");
 
     // start the production, create if none exists
     uint256 id = LibHarvest.getForPet(components, petID);
@@ -42,7 +42,7 @@ contract ProductionStartSystem is System {
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(id);
   }
 

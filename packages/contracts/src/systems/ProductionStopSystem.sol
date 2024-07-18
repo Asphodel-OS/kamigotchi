@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -26,11 +26,11 @@ contract ProductionStopSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 petID = LibHarvest.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, petID) == accountID, "FarmStop: pet not urs");
+    require(LibPet.getAccount(components, petID) == accID, "FarmStop: pet not urs");
     require(LibPet.isHarvesting(components, petID), "FarmStop: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmStop: pet on cooldown");
 
@@ -40,7 +40,7 @@ contract ProductionStopSystem is System {
 
     // roomIndex check
     require(
-      LibAccount.getRoom(components, accountID) == LibPet.getRoom(components, petID),
+      LibAccount.getRoom(components, accID) == LibPet.getRoom(components, petID),
       "FarmStop: node too far"
     );
 
@@ -55,16 +55,11 @@ contract ProductionStopSystem is System {
 
     // standard logging and tracking
     uint256 nodeID = LibHarvest.getNode(components, id);
-    LibScore.incFor(components, accountID, "COLLECT", output);
-    LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, output);
-    LibNode.logHarvestAt(components, accountID, LibNode.getIndex(components, nodeID), output);
-    LibNode.logHarvestAffinity(
-      components,
-      accountID,
-      LibNode.getAffinity(components, nodeID),
-      output
-    );
-    LibAccount.updateLastTs(components, accountID);
+    LibScore.incFor(components, accID, "COLLECT", output);
+    LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, output);
+    LibNode.logHarvestAt(components, accID, LibNode.getIndex(components, nodeID), output);
+    LibNode.logHarvestAffinity(components, accID, LibNode.getAffinity(components, nodeID), output);
+    LibAccount.updateLastTs(components, accID);
 
     return abi.encode(output);
   }

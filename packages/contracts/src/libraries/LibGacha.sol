@@ -33,11 +33,11 @@ library LibGacha {
   function commit(
     IWorld world,
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint256 revealBlock
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
     BlockRevealComponent(getAddressById(components, BlockRevealCompID)).set(id, revealBlock);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, string("GACHA_COMMIT"));
 
@@ -53,7 +53,7 @@ library LibGacha {
     IWorld world,
     IUintComp components,
     uint256 amount,
-    uint256 accountID,
+    uint256 accID,
     uint256 revealBlock
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](amount);
@@ -68,7 +68,7 @@ library LibGacha {
     }
 
     // setting values
-    getComponentById(components, IdAccountCompID).setAll(ids, accountID);
+    getComponentById(components, IdAccountCompID).setAll(ids, accID);
     getComponentById(components, BlockRevealCompID).setAll(ids, revealBlock);
     getComponentById(components, TypeCompID).setAll(ids, string("GACHA_COMMIT"));
     valueComp.setBatch(ids, increments);

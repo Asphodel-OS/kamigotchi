@@ -18,7 +18,7 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -57,7 +57,7 @@ library LibKill {
     uint32[8] memory bounties;
     bounties[0] = balance.toUint32(); // balance (negative)
     bounties[1] = bounty.toUint32(); // bounty (positive)
-    LibDataEntity.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
+    LibData.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
   }
 
   /////////////////

@@ -14,11 +14,11 @@ contract AccountMoveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(LibAccount.syncStamina(components, accountID) > 0, "AccMove: out of stamina");
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    require(LibAccount.syncStamina(components, accID) > 0, "AccMove: out of stamina");
 
     uint32 toIndex = abi.decode(arguments, (uint32));
-    uint32 currIndex = LibAccount.getRoom(components, accountID);
+    uint32 currIndex = LibAccount.getRoom(components, accID);
     uint256 currRoomID = LibRoom.queryByIndex(components, currIndex);
     uint256 toRoomID = LibRoom.queryByIndex(components, toIndex);
 
@@ -27,15 +27,15 @@ contract AccountMoveSystem is System {
       "AccMove: unreachable room"
     );
     require(
-      LibRoom.isAccessible(components, currIndex, toIndex, accountID),
+      LibRoom.isAccessible(components, currIndex, toIndex, accID),
       "AccMove: inaccessible room"
     );
 
-    LibAccount.move(components, accountID, toIndex);
+    LibAccount.move(components, accID, toIndex);
 
     // standard logging and tracking
-    LibRoom.logMove(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
+    LibRoom.logMove(components, accID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

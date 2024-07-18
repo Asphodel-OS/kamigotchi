@@ -16,7 +16,7 @@ import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeC
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -235,7 +235,7 @@ library LibBoolean {
     } else if (_type.eq("REPUTATION")) {
       balance = LibFactions.getRep(components, id, index);
     } else {
-      balance = LibDataEntity.get(components, id, index, _type);
+      balance = LibData.get(components, id, index, _type);
     }
   }
 

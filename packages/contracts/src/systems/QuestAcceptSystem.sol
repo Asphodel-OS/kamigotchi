@@ -18,11 +18,11 @@ contract QuestAcceptSystem is System {
     uint256 regID = LibQuestRegistry.getByQuestIndex(components, index);
     require(regID != 0, "Quest not found");
 
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    require(LibQuests.checkRequirements(components, index, accountID), "QuestAccept: reqs not met");
+    require(LibQuests.checkRequirements(components, index, accID), "QuestAccept: reqs not met");
 
-    uint256 questID = LibQuests.queryAccountQuestIndex(components, accountID, index);
+    uint256 questID = LibQuests.queryAccountQuestIndex(components, accID, index);
     if (LibQuests.isRepeatable(components, regID)) {
       // repeatable quests - accepted before check is implicit
       // repeatable quests can only have 0 or 1 instances
@@ -30,15 +30,15 @@ contract QuestAcceptSystem is System {
         LibQuests.checkRepeat(components, index, questID),
         "QuestAccept: repeat cons not met"
       );
-      questID = LibQuests.assignRepeatable(world, components, index, questID, accountID);
+      questID = LibQuests.assignRepeatable(world, components, index, questID, accID);
     } else {
       // not repeatable - check that quest has not been accepted before
       require(questID == 0, "QuestAccept: accepted before");
-      questID = LibQuests.assign(world, components, index, accountID);
+      questID = LibQuests.assign(world, components, index, accID);
     }
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(questID);
   }
 

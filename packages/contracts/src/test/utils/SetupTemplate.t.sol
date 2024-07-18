@@ -146,16 +146,16 @@ abstract contract SetupTemplate is TestSetupImports {
   // ACCOUNT MANAGEMENT
 
   function _fundAccount(uint playerIndex, uint amount) internal {
-    uint256 accountID = _getAccount(playerIndex);
+    uint256 accID = _getAccount(playerIndex);
     vm.startPrank(deployer);
-    LibInventory.incFor(components, accountID, MUSU_INDEX, amount);
-    LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, amount);
+    LibInventory.incFor(components, accID, MUSU_INDEX, amount);
+    LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, amount);
     vm.stopPrank();
   }
 
   function _getAccountBalance(uint playerIndex) internal view returns (uint) {
-    uint accountID = _getAccount(playerIndex);
-    return LibInventory.getBalanceOf(components, accountID, MUSU_INDEX);
+    uint accID = _getAccount(playerIndex);
+    return LibInventory.getBalanceOf(components, accID, MUSU_INDEX);
   }
 
   // get an account by the Owner address' testing playerIndex
@@ -172,14 +172,14 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.startPrank(owner);
     // string memory name = LibString.slice(LibString.toHexString(owner), 0, 15); // maxlen 16
-    uint256 accountID = abi.decode(
+    uint256 accID = abi.decode(
       _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex)),
       (uint256)
     );
     vm.stopPrank();
 
-    _accounts[playerIndex] = PlayerAccount(accountID, playerIndex, operator, owner);
-    return accountID;
+    _accounts[playerIndex] = PlayerAccount(accID, playerIndex, operator, owner);
+    return accID;
   }
 
   // registers n accounts, starting from 0
@@ -258,8 +258,8 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // easy function for getting the proper inputs to feed a pet
   function _feedPet(uint petID, uint32 foodIndex) internal {
-    uint accountID = LibPet.getAccount(components, petID);
-    address operator = LibAccount.getOperator(components, accountID);
+    uint accID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
     _PetFeedSystem.executeTyped(petID, foodIndex);
@@ -267,16 +267,16 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // easy function for getting the proper inputs to revive a pet
   function _revivePet(uint petID, uint32 reviveIndex) internal {
-    uint accountID = LibPet.getAccount(components, petID);
-    address operator = LibAccount.getOperator(components, accountID);
+    uint accID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
     _PetReviveSystem.executeTyped(petID, reviveIndex);
   }
 
   function _startProduction(uint petID, uint nodeID) internal virtual returns (uint) {
-    uint accountID = LibPet.getAccount(components, petID);
-    address operator = LibAccount.getOperator(components, accountID);
+    uint accID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
     bytes memory productionID = _ProductionStartSystem.executeTyped(petID, nodeID);
@@ -285,8 +285,8 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _stopProduction(uint productionID) internal {
     uint petID = LibHarvest.getPet(components, productionID);
-    uint accountID = LibPet.getAccount(components, petID);
-    address operator = LibAccount.getOperator(components, accountID);
+    uint accID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
     _ProductionStopSystem.executeTyped(productionID);
@@ -294,16 +294,16 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _collectProduction(uint productionID) internal {
     uint petID = LibHarvest.getPet(components, productionID);
-    uint accountID = LibPet.getAccount(components, petID);
-    address operator = LibAccount.getOperator(components, accountID);
+    uint accID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
     _ProductionCollectSystem.executeTyped(productionID);
   }
 
   function _liquidateProduction(uint attackerID, uint productionID) internal virtual {
-    uint accountID = LibPet.getAccount(components, attackerID);
-    address operator = LibAccount.getOperator(components, accountID);
+    uint accID = LibPet.getAccount(components, attackerID);
+    address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
     _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
@@ -354,8 +354,8 @@ abstract contract SetupTemplate is TestSetupImports {
   // GETTERS
 
   function _getItemBalance(uint playerIndex, uint32 itemIndex) internal view returns (uint) {
-    uint accountID = _getAccount(playerIndex);
-    uint inventoryID = LibInventory.get(components, accountID, itemIndex);
+    uint accID = _getAccount(playerIndex);
+    uint inventoryID = LibInventory.get(components, accID, itemIndex);
     return inventoryID == 0 ? 0 : LibInventory.getBalance(components, inventoryID);
   }
 
@@ -368,13 +368,13 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _giveLootbox(uint256 playerIndex, uint32 index, uint256 amt) internal {
-    uint256 accountID = _getAccount(playerIndex);
+    uint256 accID = _getAccount(playerIndex);
 
     vm.startPrank(deployer);
-    uint256 invID = LibInventory.get(components, accountID, index);
-    if (invID == 0) invID = LibInventory.create(components, accountID, index);
+    uint256 invID = LibInventory.get(components, accID, index);
+    if (invID == 0) invID = LibInventory.create(components, accID, index);
     LibInventory.inc(components, invID, amt);
-    LibInventory.logIncItemTotal(components, accountID, index, amt);
+    LibInventory.logIncItemTotal(components, accID, index, amt);
     vm.stopPrank();
   }
 

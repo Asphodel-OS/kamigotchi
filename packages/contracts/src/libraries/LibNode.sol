@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 
 import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
@@ -150,7 +150,7 @@ library LibNode {
     uint32 index,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(components, holderID, index, "HARVEST_AT_NODE", amt);
+    LibData.inc(components, holderID, index, "HARVEST_AT_NODE", amt);
   }
 
   function logHarvestAffinity(
@@ -159,13 +159,7 @@ library LibNode {
     string memory affinity,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(
-      components,
-      holderID,
-      0,
-      LibString.concat("HARVEST_AFFINITY_", affinity),
-      amt
-    );
+    LibData.inc(components, holderID, 0, LibString.concat("HARVEST_AFFINITY_", affinity), amt);
   }
 
   /////////////////////

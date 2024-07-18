@@ -16,13 +16,8 @@ contract WrapCaller {
     components = _components;
   }
 
-  function accIncBalOf(
-    uint256 accountID,
-    string memory _type,
-    uint32 index,
-    uint256 amount
-  ) external {
-    LibAccount.incBalanceOf(world, components, accountID, _type, index, amount);
+  function accIncBalOf(uint256 accID, string memory _type, uint32 index, uint256 amount) external {
+    LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
   }
 
   function petSync(uint256 id) public {

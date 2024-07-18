@@ -21,8 +21,8 @@ contract LibBooleanTest is SetupTemplate {
     string memory type_ = "BLAHBLAHBLAH";
 
     vm.startPrank(deployer);
-    uint256 dataID = LibDataEntity.getID(defaultAccID, index, type_);
-    LibDataEntity.set(components, defaultAccID, index, type_, amt);
+    uint256 dataID = LibData.getID(defaultAccID, index, type_);
+    LibData.set(components, defaultAccID, index, type_, amt);
     vm.stopPrank();
 
     assertEq(LibBoolean.getBalanceOf(components, defaultAccID, type_, index), amt);

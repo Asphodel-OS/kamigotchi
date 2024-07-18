@@ -29,7 +29,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
@@ -54,15 +54,11 @@ library LibPet {
 
   /// @notice create a pet entity and set its base fields
   /// @dev assumes index is not in use
-  function create(
-    IUintComp components,
-    uint256 accountID,
-    uint32 index
-  ) internal returns (uint256) {
+  function create(IUintComp components, uint256 accID, uint32 index) internal returns (uint256) {
     uint256 id = genID(index);
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
     IndexPetComponent(getAddressById(components, IndexPetCompID)).set(id, index);
-    setOwner(components, id, accountID);
+    setOwner(components, id, accID);
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
     setStartTs(components, id, block.timestamp);
@@ -87,9 +83,9 @@ library LibPet {
   }
 
   /// @notice bridging a pet Outside => MUD. Does not handle account details
-  function stake(IUintComp components, uint256 id, uint256 accountID) internal {
+  function stake(IUintComp components, uint256 id, uint256 accID) internal {
     setState(components, id, "RESTING");
-    setOwner(components, id, accountID);
+    setOwner(components, id, accID);
   }
 
   /// @notice bridging a pet MUD => Outside. Does not handle account details
@@ -166,10 +162,10 @@ library LibPet {
 
   // transfer ERC721 pet
   // NOTE: transfers are disabled in game
-  function transfer(IUintComp components, uint32 index, uint256 accountID) internal {
+  function transfer(IUintComp components, uint32 index, uint256 accID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = getByIndex(components, index);
-    setOwner(components, id, accountID);
+    setOwner(components, id, accID);
   }
 
   /////////////////
@@ -283,9 +279,9 @@ library LibPet {
   function assertAccount(
     IUintComp components,
     uint256 id,
-    uint256 accountID
+    uint256 accID
   ) internal view returns (bool) {
-    return getAccount(components, id) == accountID;
+    return getAccount(components, id) == accID;
   }
 
   // Check whether a pet is attached to an account
@@ -343,11 +339,11 @@ library LibPet {
   function assertAccountBatch(
     IUintComp components,
     uint256[] memory ids,
-    uint256 accountID
+    uint256 accID
   ) internal view returns (bool) {
     uint256[] memory accounts = getAccountBatch(components, ids);
     for (uint256 i = 0; i < ids.length; i++) {
-      if (accounts[i] != accountID) return false;
+      if (accounts[i] != accID) return false;
     }
     return true;
   }
@@ -383,8 +379,8 @@ library LibPet {
   /////////////////
   // SETTERS
 
-  function setOwner(IUintComp components, uint256 id, uint256 accountID) internal {
-    IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).set(id, accountID);
+  function setOwner(IUintComp components, uint256 id, uint256 accID) internal {
+    IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).set(id, accID);
   }
 
   // Update the TimeLastAction of a pet. to inform cooldown constraints on Standard Actions
@@ -497,8 +493,8 @@ library LibPet {
     } else if (LibString.eq(state, "721_EXTERNAL")) {
       roomIndex = 0;
     } else {
-      uint256 accountID = getAccount(components, id);
-      roomIndex = LibAccount.getRoom(components, accountID);
+      uint256 accID = getAccount(components, id);
+      roomIndex = LibAccount.getRoom(components, accID);
     }
   }
 
@@ -512,8 +508,8 @@ library LibPet {
 
   // get the entity ID of the pet owner
   function getOwner(IUintComp components, uint256 id) internal view returns (address) {
-    uint256 accountID = getAccount(components, id);
-    return LibAccount.getOwner(components, accountID);
+    uint256 accID = getAccount(components, id);
+    return LibAccount.getOwner(components, accID);
   }
 
   // Get the production of a pet. Return 0 if there are none.
@@ -580,13 +576,13 @@ library LibPet {
   /// @notice gets all the pets owned by an account
   function getAllForAccount(
     IUintComp components,
-    uint256 accountID
+    uint256 accID
   ) internal view returns (uint256[] memory) {
     return
       LibQuery.getIsWithValue(
         getComponentById(components, IDOwnsPetCompID),
         getComponentById(components, IsPetCompID),
-        abi.encode(accountID)
+        abi.encode(accID)
       );
   }
 
@@ -594,12 +590,12 @@ library LibPet {
   // LOGGING
 
   function logRevive(IUintComp components, uint256 id) internal {
-    uint256 accountID = LibPet.getAccount(components, id);
-    LibDataEntity.inc(components, accountID, 0, "KAMI_REVIVE", 1);
+    uint256 accID = LibPet.getAccount(components, id);
+    LibData.inc(components, accID, 0, "KAMI_REVIVE", 1);
   }
 
-  function logNameChange(IUintComp components, uint256 accountID) internal {
-    LibDataEntity.inc(components, accountID, 0, "KAMI_NAME", 1);
+  function logNameChange(IUintComp components, uint256 accID) internal {
+    LibData.inc(components, accID, 0, "KAMI_NAME", 1);
   }
 
   ////////////////////

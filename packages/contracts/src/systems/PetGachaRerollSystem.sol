@@ -16,10 +16,10 @@ contract PetGachaRerollSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function reroll(uint256[] memory petIDs) external payable returns (uint256[] memory) {
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "no account detected");
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    require(accID != 0, "no account detected");
     require(LibPet.isPetBatch(components, petIDs), "not a pet");
-    require(LibPet.assertAccountBatch(components, petIDs, accountID), "not urs");
+    require(LibPet.assertAccountBatch(components, petIDs, accID), "not urs");
     require(LibPet.assertStateBatch(components, petIDs, "RESTING"), "not resting");
 
     // get and check price (in wei)
@@ -35,14 +35,14 @@ contract PetGachaRerollSystem is System {
       world,
       components,
       petIDs.length,
-      accountID,
+      accID,
       block.number
     );
     LibGacha.setRerollBatch(components, commitIDs, prevRerolls);
 
     // standard logging and tracking
-    LibAccount.logIncPetsRerolled(world, components, accountID, petIDs.length);
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.logIncPetsRerolled(world, components, accID, petIDs.length);
+    LibAccount.updateLastTs(components, accID);
 
     // sending eth to owner
     payable(owner()).transfer(address(this).balance);

@@ -6,7 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -35,7 +35,7 @@ contract AccountConsumeSystem is System {
     LibAccount.consume(components, id, itemIndex);
 
     // standard logging and tracking
-    LibDataEntity.inc(components, id, itemIndex, "INV_USE", 1);
+    LibData.inc(components, id, itemIndex, "INV_USE", 1);
     LibAccount.updateLastTs(components, id);
     return "";
   }

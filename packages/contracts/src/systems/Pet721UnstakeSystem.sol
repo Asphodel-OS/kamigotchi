@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
@@ -45,14 +45,14 @@ contract Pet721UnstakeSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 tokenID = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.getByIndex(components, uint32(tokenID));
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // account checks
-    require(accountID != 0, "Pet721Stake: no account detected");
-    require(LibAccount.getRoom(components, accountID) == ROOM, "Pet721Stake: must be in room 12");
+    require(accID != 0, "Pet721Stake: no account detected");
+    require(LibAccount.getRoom(components, accID) == ROOM, "Pet721Stake: must be in room 12");
 
     // checks before action
-    require(LibPet.getAccount(components, petID) == accountID, "Pet721Unstake: not urs");
+    require(LibPet.getAccount(components, petID) == accID, "Pet721Unstake: not urs");
     require(LibPet.isResting(components, petID), "Pet721Unstake: must be resting");
 
     // actions to be taken upon bridging out
@@ -60,8 +60,8 @@ contract Pet721UnstakeSystem is System {
     LibPet721.unstake(world, msg.sender, tokenID);
 
     // standard logging and tracking
-    LibDataEntity.inc(components, accountID, 0, "PET721_UNSTAKE", 1);
-    LibAccount.updateLastTs(components, accountID);
+    LibData.inc(components, accID, 0, "PET721_UNSTAKE", 1);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

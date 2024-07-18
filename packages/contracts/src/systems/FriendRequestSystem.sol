@@ -17,11 +17,11 @@ contract FriendRequestSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     address targetAddr = abi.decode(arguments, (address));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
     require(targetID != 0, "FriendRequest: target no account");
-    require(accountID != targetID, "FriendRequest: cannot fren self");
+    require(accID != targetID, "FriendRequest: cannot fren self");
 
     // friendship specific checks
     require(
@@ -31,11 +31,11 @@ contract FriendRequestSystem is System {
     );
     /// @dev FE should not get here; if either alr requested, friends, or blocked, a friendship will exist
     require(
-      LibFriend.getFriendship(components, accountID, targetID) == 0,
+      LibFriend.getFriendship(components, accID, targetID) == 0,
       "FriendRequest: already exists"
     );
 
-    uint256 incomingReq = LibFriend.getFriendship(components, targetID, accountID);
+    uint256 incomingReq = LibFriend.getFriendship(components, targetID, accID);
     if (incomingReq != 0) {
       string memory state = LibFriend.getState(components, incomingReq);
       if (LibString.eq(state, "REQUEST")) require(false, "FriendRequest: inbound request exists");
@@ -45,10 +45,10 @@ contract FriendRequestSystem is System {
     }
 
     // create request
-    uint256 requestID = LibFriend.create(components, accountID, targetID, "REQUEST");
+    uint256 requestID = LibFriend.create(components, accID, targetID, "REQUEST");
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(requestID);
   }
 

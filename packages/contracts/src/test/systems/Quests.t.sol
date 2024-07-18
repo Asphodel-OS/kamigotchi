@@ -145,7 +145,7 @@ contract QuestsTest is SetupTemplate {
     );
     if (startAmt > 0) {
       vm.startPrank(deployer);
-      LibDataEntity.set(components, expData.holderID, expData.index, expData.type_, startAmt);
+      LibData.set(components, expData.holderID, expData.index, expData.type_, startAmt);
       vm.stopPrank();
     }
 
@@ -164,7 +164,7 @@ contract QuestsTest is SetupTemplate {
     // check completability
     assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));
     vm.startPrank(deployer);
-    LibDataEntity.inc(components, expData.holderID, expData.index, expData.type_, useAmt);
+    LibData.inc(components, expData.holderID, expData.index, expData.type_, useAmt);
     vm.stopPrank();
     assertTrue(LibQuests.checkObjectives(components, questID, _getAccount(0)));
 
@@ -387,19 +387,19 @@ contract QuestsTest is SetupTemplate {
   //////////////////
   // ASSERTIONS
 
-  function _assertQuestAccount(uint256 accountID, uint256 questID) internal {
-    assertEq(LibQuests.getOwner(components, questID), accountID);
+  function _assertQuestAccount(uint256 accID, uint256 questID) internal {
+    assertEq(LibQuests.getOwner(components, questID), accID);
   }
 
-  function _assertAccNumQuests(uint256 accountID, uint256 numQuests) internal {
-    assertEq(_getAccountQuests(accountID).length, numQuests);
+  function _assertAccNumQuests(uint256 accID, uint256 numQuests) internal {
+    assertEq(_getAccountQuests(accID).length, numQuests);
   }
 
   ////////////////
   // UTILS
 
   function _getDataID(DataEntity memory data) internal view returns (uint256) {
-    return LibDataEntity.getID(data.holderID, data.index, data.type_);
+    return LibData.getID(data.holderID, data.index, data.type_);
   }
 
   function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
@@ -411,12 +411,12 @@ contract QuestsTest is SetupTemplate {
       );
   }
 
-  function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
+  function _getAccountQuests(uint256 accID) internal view returns (uint256[] memory) {
     return
       LibQuery.getIsWithValue(
         getComponentById(components, IDOwnsQuestComponentID),
         getComponentById(components, IsQuestComponentID),
-        abi.encode(accountID)
+        abi.encode(accID)
       );
   }
 }

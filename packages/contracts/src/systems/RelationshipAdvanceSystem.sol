@@ -16,35 +16,32 @@ contract RelationshipAdvanceSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 npcIndex, uint32 relIndex) = abi.decode(arguments, (uint32, uint32));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // npc existence and roomIndex check
     uint256 npcID = LibNPC.get(components, npcIndex);
     require(npcID != 0, "RS: npc does not exist");
-    require(LibNPC.sharesRoomWith(components, npcID, accountID), "RS: must be in same room");
+    require(LibNPC.sharesRoomWith(components, npcID, accID), "RS: must be in same room");
 
     // check that the flag exists and that the account doesnt already have it
     uint256 registryID = LibRelationshipRegistry.get(components, npcIndex, relIndex);
     require(registryID != 0, "RS: flag does not exist");
     require(
-      !LibRelationship.has(components, accountID, npcIndex, relIndex),
+      !LibRelationship.has(components, accID, npcIndex, relIndex),
       "RS: flag already obtained"
     );
 
     // check blacklist and whitelist
     require(
-      !LibRelationship.isBlacklisted(components, accountID, registryID),
+      !LibRelationship.isBlacklisted(components, accID, registryID),
       "RS: prohibited from advancing"
     );
-    require(
-      LibRelationship.isWhitelisted(components, accountID, registryID),
-      "RS: unmet requirements"
-    );
+    require(LibRelationship.isWhitelisted(components, accID, registryID), "RS: unmet requirements");
 
-    uint256 id = LibRelationship.create(components, accountID, npcIndex, relIndex);
+    uint256 id = LibRelationship.create(components, accID, npcIndex, relIndex);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(id);
   }
 

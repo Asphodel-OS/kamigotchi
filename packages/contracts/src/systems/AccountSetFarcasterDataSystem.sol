@@ -15,18 +15,18 @@ contract AccountSetFarcasterDataSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 fid, string memory pfpURI) = abi.decode(arguments, (uint32, string));
 
-    uint256 accountID = LibAccount.getByFarcasterIndex(components, fid);
-    require(accountID == 0, "Account: fid already claimed");
+    uint256 accID = LibAccount.getByFarcasterIndex(components, fid);
+    require(accID == 0, "Account: fid already claimed");
 
-    accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Account: does not exist");
+    accID = LibAccount.getByOwner(components, msg.sender);
+    require(accID != 0, "Account: does not exist");
 
-    LibAccount.setFarcasterIndex(components, accountID, fid);
-    LibAccount.setMediaURI(components, accountID, pfpURI);
+    LibAccount.setFarcasterIndex(components, accID, fid);
+    LibAccount.setMediaURI(components, accID, pfpURI);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
-    return abi.encode(accountID);
+    LibAccount.updateLastTs(components, accID);
+    return abi.encode(accID);
   }
 
   function executeTyped(uint32 fid, string memory pfpURI) public returns (bytes memory) {

@@ -17,7 +17,7 @@ contract FriendAcceptSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 requestID = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibFriend.isFriendship(components, requestID), "FriendAccept: not a friendship");
     require(
@@ -27,30 +27,30 @@ contract FriendAcceptSystem is System {
 
     // friendship specific checks
     uint256 senderID = LibFriend.getAccount(components, requestID);
-    require(LibFriend.getTarget(components, requestID) == accountID, "FriendAccept: not for you");
+    require(LibFriend.getTarget(components, requestID) == accID, "FriendAccept: not for you");
 
     // check number of friends limit
     uint256 frenLimit = LibBonus.processBonus(
       components,
-      accountID,
+      accID,
       "FRIENDS_LIMIT",
       LibConfig.get(components, "FRIENDS_BASE_LIMIT")
     );
-    require(LibFriend.getFriendCount(components, accountID) < frenLimit, "Friend limit reached");
+    require(LibFriend.getFriendCount(components, accID) < frenLimit, "Friend limit reached");
 
     uint256 senderLimit = LibBonus.processBonus(
       components,
-      accountID,
+      accID,
       "FRIENDS_LIMIT",
       LibConfig.get(components, "FRIENDS_BASE_LIMIT")
     );
     require(LibFriend.getFriendCount(components, senderID) < senderLimit, "Friend limit reached");
 
     // accept request; overwrites any previous request/block
-    uint256 id = LibFriend.accept(components, accountID, senderID, requestID);
+    uint256 id = LibFriend.accept(components, accID, senderID, requestID);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(id);
   }
 

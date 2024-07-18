@@ -16,7 +16,7 @@ import { StateComponent, ID as StateCompID } from "components/StateComponent.sol
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { Strings } from "utils/Strings.sol";
 
 /**
@@ -141,8 +141,8 @@ library LibFriend {
   /////////////////
   // SETTERS
 
-  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
-    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
+  function setAccount(IUintComp components, uint256 id, uint256 accID) internal {
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
   }
 
   function setIsFriendship(IUintComp components, uint256 id) internal {

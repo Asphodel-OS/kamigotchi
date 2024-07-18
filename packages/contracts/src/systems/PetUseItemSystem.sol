@@ -18,11 +18,11 @@ contract PetUseItemSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibPet.isPet(components, id), "not a pet");
-    require(LibPet.getAccount(components, id) == accountID, "Pet not urs");
-    LibInventory.decFor(components, accountID, itemIndex, 1); // implicit inventory balance check
+    require(LibPet.getAccount(components, id) == accID, "Pet not urs");
+    LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check
 
     /// NOTE: might separate into different systems later, or better generalised handling
     string memory type_ = LibInventory.getTypeByIndex(components, itemIndex);
@@ -33,7 +33,7 @@ contract PetUseItemSystem is System {
     }
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

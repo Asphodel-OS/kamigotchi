@@ -19,7 +19,7 @@ contract SkillUpgradeSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 holderID, uint32 skillIndex) = abi.decode(arguments, (uint256, uint32));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check that the skill exists
     uint256 registryID = LibSkillRegistry.getByIndex(components, skillIndex);
@@ -32,9 +32,9 @@ contract SkillUpgradeSystem is System {
 
     // generic requirements
     if (isAccount) {
-      require(accountID == holderID, "SkillUpgrade: not ur account");
+      require(accID == holderID, "SkillUpgrade: not ur account");
     } else if (isPet) {
-      require(accountID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
+      require(accID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
       require(LibPet.isResting(components, holderID), "SkillUpgrade: pet not resting");
       LibPet.sync(components, holderID);
     }
@@ -61,9 +61,9 @@ contract SkillUpgradeSystem is System {
     }
 
     // standard logging and tracking
-    LibSkill.logUsePoint(components, accountID);
+    LibSkill.logUsePoint(components, accID);
     LibSkill.logUseTreePoint(components, holderID, registryID, cost);
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

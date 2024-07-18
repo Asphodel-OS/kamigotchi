@@ -24,7 +24,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibBoolean } from "libraries/utils/LibBoolean.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /**
@@ -375,8 +375,8 @@ library LibGoals {
   // LOGGING
 
   /// @notice log overall goal contirbution, not specific goal
-  function logContribution(IUintComp components, uint256 accountID, uint256 amt) internal {
-    LibDataEntity.inc(components, accountID, 0, "GOAL_CONTRIBUTION", amt);
+  function logContribution(IUintComp components, uint256 accID, uint256 amt) internal {
+    LibData.inc(components, accID, 0, "GOAL_CONTRIBUTION", amt);
   }
 
   ///////////////////////

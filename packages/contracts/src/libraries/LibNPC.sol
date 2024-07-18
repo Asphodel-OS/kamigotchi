@@ -39,11 +39,11 @@ library LibNPC {
   function sharesRoomWith(
     IUintComp components,
     uint256 id,
-    uint256 accountID
+    uint256 accID
   ) internal view returns (bool) {
     IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
     uint32 roomIndex = roomComp.get(id);
-    return roomIndex == 0 || roomIndex == roomComp.get(accountID);
+    return roomIndex == 0 || roomIndex == roomComp.get(accID);
   }
 
   /////////////////

@@ -8,7 +8,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -25,10 +25,10 @@ contract ProductionLiquidateSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, petID) == accountID, "FarmLiquidate: pet not urs");
+    require(LibPet.getAccount(components, petID) == accID, "FarmLiquidate: pet not urs");
     require(LibPet.isHarvesting(components, petID), "FarmLiquidate: pet must be harvesting");
 
     // basic requirements (state and idle time)
@@ -44,7 +44,7 @@ contract ProductionLiquidateSystem is System {
     uint256 nodeID = LibHarvest.getNode(components, productionID);
     uint256 targetNodeID = LibHarvest.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "FarmLiquidate: target too far");
-    require(LibAccount.sharesRoom(components, accountID, nodeID), "FarmLiquidate: node too far");
+    require(LibAccount.sharesRoom(components, accID, nodeID), "FarmLiquidate: node too far");
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibHarvest.getPet(components, targetProductionID);
@@ -72,23 +72,11 @@ contract ProductionLiquidateSystem is System {
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
-    LibScore.incFor(components, accountID, "LIQUIDATE", 1);
-    LibDataEntity.inc(components, accountID, 0, "LIQUIDATE_TOTAL", 1);
-    LibDataEntity.inc(
-      components,
-      accountID,
-      LibNode.getIndex(components, nodeID),
-      "LIQUIDATE_AT_NODE",
-      1
-    );
-    LibDataEntity.inc(
-      components,
-      LibPet.getAccount(components, targetPetID),
-      0,
-      "LIQUIDATED_VICTIM",
-      1
-    );
-    LibAccount.updateLastTs(components, accountID);
+    LibScore.incFor(components, accID, "LIQUIDATE", 1);
+    LibData.inc(components, accID, 0, "LIQUIDATE_TOTAL", 1);
+    LibData.inc(components, accID, LibNode.getIndex(components, nodeID), "LIQUIDATE_AT_NODE", 1);
+    LibData.inc(components, LibPet.getAccount(components, targetPetID), 0, "LIQUIDATED_VICTIM", 1);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

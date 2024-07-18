@@ -6,7 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -23,7 +23,7 @@ contract PetFeedSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check whether the specified item is consumable
     require(LibItemRegistry.isConsumable(components, itemIndex), "PetFeed: that's not food");
@@ -31,10 +31,10 @@ contract PetFeedSystem is System {
 
     // standard checks (ownership, state, roomIndex)
     require(LibPet.isPet(components, id), "PetFeed: not a pet");
-    require(LibPet.getAccount(components, id) == accountID, "PetFeed: pet not urs");
+    require(LibPet.getAccount(components, id) == accID, "PetFeed: pet not urs");
     require(!LibPet.onCooldown(components, id), "PetFeed: pet on cooldown");
     require(
-      LibPet.getRoom(components, id) == LibAccount.getRoom(components, accountID),
+      LibPet.getRoom(components, id) == LibAccount.getRoom(components, accID),
       "PetFeed: pet too far"
     );
 
@@ -50,7 +50,7 @@ contract PetFeedSystem is System {
 
     // process the feeding (sync pet, dec inventory, apply effects)
     LibPet.sync(components, id);
-    LibInventory.decFor(components, accountID, itemIndex, 1); // implicit balance check
+    LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
     LibPet.feed(components, id, itemIndex);
 
     // reset the pet's intensity
@@ -60,9 +60,9 @@ contract PetFeedSystem is System {
     }
 
     // standard logging and tracking
-    LibScore.incFor(components, accountID, "FEED", 1);
-    LibDataEntity.inc(components, accountID, itemIndex, "INV_USE", 1);
-    LibAccount.updateLastTs(components, accountID);
+    LibScore.incFor(components, accID, "FEED", 1);
+    LibData.inc(components, accID, itemIndex, "INV_USE", 1);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

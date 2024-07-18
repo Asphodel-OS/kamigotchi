@@ -18,10 +18,10 @@ contract PetNameSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, string memory name) = abi.decode(arguments, (uint256, string));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibPet.isPet(components, id), "PetName: not a pet");
-    require(LibPet.getAccount(components, id) == accountID, "PetName: not urs");
+    require(LibPet.getAccount(components, id) == accID, "PetName: not urs");
     require(LibPet.getRoom(components, id) == ROOM, "PetName: must be in room 11");
     require(bytes(name).length > 0, "PetName: name cannot be empty");
     require(bytes(name).length <= 16, "PetName: name can be at most 16 characters");
@@ -33,8 +33,8 @@ contract PetNameSystem is System {
     LibPet.setName(components, id, name);
 
     // standard logging and tracking
-    LibPet.logNameChange(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
+    LibPet.logNameChange(components, accID);
+    LibAccount.updateLastTs(components, accID);
 
     return "";
   }

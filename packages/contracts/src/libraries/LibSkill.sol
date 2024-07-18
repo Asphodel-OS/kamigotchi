@@ -21,7 +21,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -193,7 +193,7 @@ library LibSkill {
     uint256 id,
     string memory tree
   ) internal view returns (uint256) {
-    return LibDataEntity.get(components, id, 0, tree.concat("SKILL_POINTS_USE"));
+    return LibData.get(components, id, 0, tree.concat("SKILL_POINTS_USE"));
   }
 
   function getTreeTierPoints(IUintComp components, uint256 tier) internal view returns (uint256) {
@@ -231,7 +231,7 @@ library LibSkill {
   // LOGGING
 
   function logUsePoint(IUintComp components, uint256 holderID) internal {
-    LibDataEntity.inc(components, holderID, 0, "SKILL_POINTS_USE", 1);
+    LibData.inc(components, holderID, 0, "SKILL_POINTS_USE", 1);
   }
 
   /// @notice uses a skill point in a skill tree
@@ -242,7 +242,7 @@ library LibSkill {
     uint256 cost
   ) internal {
     (bool has, string memory tree, ) = LibSkillRegistry.getTree(components, registryID);
-    if (has) LibDataEntity.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), cost);
+    if (has) LibData.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), cost);
   }
 
   //////////////////////

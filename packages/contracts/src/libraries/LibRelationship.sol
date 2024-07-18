@@ -19,13 +19,13 @@ library LibRelationship {
 
   function create(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 npcIndex,
     uint32 relIndex
   ) internal returns (uint256) {
-    uint256 id = genID(accountID, npcIndex, relIndex);
+    uint256 id = genID(accID, npcIndex, relIndex);
     IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id);
-    IDOwnsRelationshipComponent(getAddressById(components, IDOwnsRSCompID)).set(id, accountID);
+    IDOwnsRelationshipComponent(getAddressById(components, IDOwnsRSCompID)).set(id, accID);
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, npcIndex);
     IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, relIndex);
     return id;
@@ -40,36 +40,36 @@ library LibRelationship {
   // Any whitelist flags immediately validate the relationship advancement.
   function canCreate(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 npcIndex,
     uint32 relIndex
   ) internal view returns (bool) {
     uint256 registryID = LibRelationshipRegistry.get(components, npcIndex, relIndex);
-    if (isBlacklisted(components, accountID, registryID)) return false;
-    if (isWhitelisted(components, accountID, registryID)) return true;
+    if (isBlacklisted(components, accID, registryID)) return false;
+    if (isWhitelisted(components, accID, registryID)) return true;
     return false;
   }
 
   // Check whether an account has a specific relationship flag.
   function has(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 npcIndex,
     uint32 relIndex
   ) internal view returns (bool) {
-    return get(components, accountID, npcIndex, relIndex) != 0;
+    return get(components, accID, npcIndex, relIndex) != 0;
   }
 
   // Check whether an account is blacklisted from advancing to a specific relationship flag.
   function isBlacklisted(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint256 registryID
   ) internal view returns (bool) {
     uint32[] memory blacklist = LibRelationshipRegistry.getBlacklist(components, registryID);
     uint32 npcIndex = LibRelationshipRegistry.getNpcIndex(components, registryID);
     for (uint256 i = 0; i < blacklist.length; i++) {
-      if (has(components, accountID, npcIndex, blacklist[i])) return true;
+      if (has(components, accID, npcIndex, blacklist[i])) return true;
     }
     return false;
   }
@@ -78,14 +78,14 @@ library LibRelationship {
   // If the whitelist is empty, the relationship advancement is valid.
   function isWhitelisted(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint256 registryID
   ) internal view returns (bool) {
     uint32[] memory whitelist = LibRelationshipRegistry.getWhitelist(components, registryID);
     uint32 npcIndex = LibRelationshipRegistry.getNpcIndex(components, registryID);
     if (whitelist.length == 0) return true;
     for (uint256 i = 0; i < whitelist.length; i++) {
-      if (has(components, accountID, npcIndex, whitelist[i])) return true;
+      if (has(components, accID, npcIndex, whitelist[i])) return true;
     }
     return false;
   }
@@ -95,11 +95,11 @@ library LibRelationship {
 
   function get(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 npcIndex,
     uint32 relIndex
   ) internal view returns (uint256 result) {
-    uint256 id = genID(accountID, npcIndex, relIndex);
+    uint256 id = genID(accID, npcIndex, relIndex);
     return LibRelationshipRegistry.isRelationship(components, id) ? id : 0;
   }
 

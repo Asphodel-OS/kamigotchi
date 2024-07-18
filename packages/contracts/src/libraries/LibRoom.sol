@@ -19,7 +19,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 
 library LibRoom {
   /////////////////
@@ -114,12 +114,12 @@ library LibRoom {
     IUintComp components,
     uint32 fromIndex,
     uint32 toIndex,
-    uint256 accountID
+    uint256 accID
   ) internal view returns (bool) {
     uint256[] memory conditions = queryGates(components, fromIndex, toIndex);
 
     if (conditions.length == 0) return true;
-    return LibBoolean.checkConditions(components, conditions, accountID);
+    return LibBoolean.checkConditions(components, conditions, accID);
   }
 
   /// @notice checks if two locations are adjacent, XY axis only
@@ -232,7 +232,7 @@ library LibRoom {
   // LOGGING
 
   function logMove(IUintComp components, uint256 holderID) internal {
-    LibDataEntity.inc(components, holderID, 0, "MOVE", 1);
+    LibData.inc(components, holderID, 0, "MOVE", 1);
   }
 
   //////////////////////

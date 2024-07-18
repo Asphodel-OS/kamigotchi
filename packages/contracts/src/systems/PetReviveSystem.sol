@@ -6,7 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
@@ -20,7 +20,7 @@ contract PetReviveSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // get/check registry entry
     uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
@@ -28,11 +28,11 @@ contract PetReviveSystem is System {
     require(LibString.eq(type_, "REVIVE"), "PetRevive: god can't save you");
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, id) == accountID, "PetRevive: pet not urs");
+    require(LibPet.getAccount(components, id) == accID, "PetRevive: pet not urs");
     require(LibPet.isDead(components, id), "PetRevive: pet not dead");
 
     // decrement item from inventory with implicit check for insufficient balance
-    LibInventory.decFor(components, accountID, itemIndex, 1);
+    LibInventory.decFor(components, accID, itemIndex, 1);
 
     // revive and heal according to item stats
     LibPet.revive(components, id);
@@ -41,8 +41,8 @@ contract PetReviveSystem is System {
 
     // standard logging and tracking
     LibPet.logRevive(components, id);
-    LibDataEntity.inc(components, accountID, itemIndex, "INV_USE", 1);
-    LibAccount.updateLastTs(components, accountID);
+    LibData.inc(components, accID, itemIndex, "INV_USE", 1);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 
