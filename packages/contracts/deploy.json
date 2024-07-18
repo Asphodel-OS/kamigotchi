@@ -110,6 +110,10 @@
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
+    {
+      "name": "_ReputationUpdateSystem",
+      "writeAccess": ["IdHolderComponent", "IDScoreTypeComponent", "ValueComponent"]
+    },
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",

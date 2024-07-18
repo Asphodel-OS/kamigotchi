@@ -11,6 +11,7 @@ import { _NodeRegistrySystem } from "./ethers-contracts/_NodeRegistrySystem";
 import { _NPCRegistrySystem } from "./ethers-contracts/_NPCRegistrySystem";
 import { _QuestRegistrySystem } from "./ethers-contracts/_QuestRegistrySystem";
 import { _RelationshipRegistrySystem } from "./ethers-contracts/_RelationshipRegistrySystem";
+import { _ReputationUpdateSystem } from "./ethers-contracts/_ReputationUpdateSystem";
 import { _RoomRegistrySystem } from "./ethers-contracts/_RoomRegistrySystem";
 import { _SkillRegistrySystem } from "./ethers-contracts/_SkillRegistrySystem";
 import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
@@ -76,6 +77,7 @@ export type SystemTypes = {
   "system.npc.registry": _NPCRegistrySystem;
   "system.quest.registry": _QuestRegistrySystem;
   "system.relationship.registry": _RelationshipRegistrySystem;
+  "system._admin.update.reputation": _ReputationUpdateSystem;
   "system.room.registry": _RoomRegistrySystem;
   "system.skill.registry": _SkillRegistrySystem;
   "system.trait.registry": _TraitRegistrySystem;

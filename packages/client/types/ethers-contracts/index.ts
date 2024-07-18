@@ -209,6 +209,7 @@ export type { _NPCRegistrySystem } from "./_NPCRegistrySystem";
 export type { _NodeRegistrySystem } from "./_NodeRegistrySystem";
 export type { _QuestRegistrySystem } from "./_QuestRegistrySystem";
 export type { _RelationshipRegistrySystem } from "./_RelationshipRegistrySystem";
+export type { _ReputationUpdateSystem } from "./_ReputationUpdateSystem";
 export type { _RoomRegistrySystem } from "./_RoomRegistrySystem";
 export type { _SkillRegistrySystem } from "./_SkillRegistrySystem";
 export type { _TraitRegistrySystem } from "./_TraitRegistrySystem";
@@ -421,6 +422,7 @@ export { _NPCRegistrySystem__factory } from "./factories/_NPCRegistrySystem__fac
 export { _NodeRegistrySystem__factory } from "./factories/_NodeRegistrySystem__factory";
 export { _QuestRegistrySystem__factory } from "./factories/_QuestRegistrySystem__factory";
 export { _RelationshipRegistrySystem__factory } from "./factories/_RelationshipRegistrySystem__factory";
+export { _ReputationUpdateSystem__factory } from "./factories/_ReputationUpdateSystem__factory";
 export { _RoomRegistrySystem__factory } from "./factories/_RoomRegistrySystem__factory";
 export { _SkillRegistrySystem__factory } from "./factories/_SkillRegistrySystem__factory";
 export { _TraitRegistrySystem__factory } from "./factories/_TraitRegistrySystem__factory";

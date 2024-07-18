@@ -4,6 +4,11 @@ import { BigNumberish } from 'ethers';
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
 export function createAdminAPI(systems: any) {
+  async function repFixer(accIDs: BigNumberish[], amts: BigNumberish[]) {
+    console.log('repFixer', accIDs, amts);
+    return systems['system._admin.update.reputation'].executeTyped(accIDs, amts);
+  }
+
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(commitIDs: BigNumberish[]) {
@@ -566,6 +571,7 @@ export function createAdminAPI(systems: any) {
   }
 
   return {
+    repFix: repFixer,
     auth: {
       roles: {
         add: addRole,

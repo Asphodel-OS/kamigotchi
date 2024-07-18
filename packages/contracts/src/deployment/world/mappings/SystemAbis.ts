@@ -11,6 +11,7 @@ import _NodeRegistrySystem from "../../../../../client/abi/_NodeRegistrySystem.j
 import _NPCRegistrySystem from "../../../../../client/abi/_NPCRegistrySystem.json";
 import _QuestRegistrySystem from "../../../../../client/abi/_QuestRegistrySystem.json";
 import _RelationshipRegistrySystem from "../../../../../client/abi/_RelationshipRegistrySystem.json";
+import _ReputationUpdateSystem from "../../../../../client/abi/_ReputationUpdateSystem.json";
 import _RoomRegistrySystem from "../../../../../client/abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../../../../../client/abi/_SkillRegistrySystem.json";
 import _TraitRegistrySystem from "../../../../../client/abi/_TraitRegistrySystem.json";
@@ -76,6 +77,7 @@ export const SystemAbis = {
   "system.npc.registry": _NPCRegistrySystem.abi,
   "system.quest.registry": _QuestRegistrySystem.abi,
   "system.relationship.registry": _RelationshipRegistrySystem.abi,
+  "system._admin.update.reputation": _ReputationUpdateSystem.abi,
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
