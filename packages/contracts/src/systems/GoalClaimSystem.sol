@@ -14,17 +14,17 @@ contract GoalClaimSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint32 goalIndex = abi.decode(arguments, (uint32));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     uint256 goalID = LibGoals.getByIndex(components, goalIndex);
     require(goalID != 0, "goal not found");
-    require(LibGoals.canClaim(components, goalID, accountID), "cannot claim from this goal");
+    require(LibGoals.canClaim(components, goalID, accID), "cannot claim from this goal");
 
-    LibGoals.distributeRewards(world, components, goalIndex, goalID, accountID);
-    LibGoals.setClaimed(components, goalID, accountID);
+    LibGoals.distributeRewards(world, components, goalIndex, goalID, accID);
+    LibGoals.setClaimed(components, goalID, accID);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
 
     return "";
   }

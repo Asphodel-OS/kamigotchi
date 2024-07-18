@@ -15,17 +15,17 @@ contract TradeInitiateSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 toID = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // requirements
-    require(accountID != toID, "Trade: no self-trade !!");
-    require(LibTrade.canTrade(components, accountID, toID), "Trade: must be in same room");
-    require(LibTrade.getRequest(components, accountID, toID) == 0, "Trade: request exists");
+    require(accID != toID, "Trade: no self-trade !!");
+    require(LibTrade.canTrade(components, accID, toID), "Trade: must be in same room");
+    require(LibTrade.getRequest(components, accID, toID) == 0, "Trade: request exists");
 
-    uint256 tradeID = LibTrade.create(world, components, accountID, toID);
+    uint256 tradeID = LibTrade.create(world, components, accID, toID);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(tradeID);
   }
 

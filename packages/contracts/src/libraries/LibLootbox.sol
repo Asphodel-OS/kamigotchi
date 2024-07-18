@@ -15,7 +15,7 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
@@ -197,6 +197,6 @@ library LibLootbox {
     uint32 index,
     uint256 count
   ) internal {
-    LibDataEntity.inc(components, holderID, index, "LOOTBOX_OPENED", count);
+    LibData.inc(components, holderID, index, "LOOTBOX_OPENED", count);
   }
 }

@@ -21,7 +21,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -59,10 +59,10 @@ library LibHarvest {
   // assume the production is Active
   function claim(IUintComp components, uint256 id) internal returns (uint256) {
     uint256 petID = getPet(components, id);
-    uint256 accountID = LibPet.getAccount(components, petID);
+    uint256 accID = LibPet.getAccount(components, petID);
 
     uint256 balance = getBalance(components, id);
-    LibInventory.transferFor(components, id, accountID, MUSU_INDEX, balance);
+    LibInventory.transferFor(components, id, accID, MUSU_INDEX, balance);
     return balance;
   }
 
@@ -97,8 +97,8 @@ library LibHarvest {
       LibInventory.incFor(components, id, MUSU_INDEX, netBounty);
 
       uint256 timeDelta = block.timestamp - getLastTs(components, id);
-      uint256 accountID = LibPet.getAccount(components, getPet(components, id));
-      logHarvestTime(components, accountID, timeDelta);
+      uint256 accID = LibPet.getAccount(components, getPet(components, id));
+      logHarvestTime(components, accID, timeDelta);
       setLastTs(components, id, block.timestamp);
     }
   }
@@ -285,8 +285,8 @@ library LibHarvest {
   /////////////////////
   // LOGGING
 
-  function logHarvestTime(IUintComp components, uint256 accountID, uint256 value) internal {
-    LibDataEntity.inc(components, accountID, 0, "HARVEST_TIME", value);
+  function logHarvestTime(IUintComp components, uint256 accID, uint256 value) internal {
+    LibData.inc(components, accID, 0, "HARVEST_TIME", value);
   }
 
   /////////////////////

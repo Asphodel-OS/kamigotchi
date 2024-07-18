@@ -49,11 +49,11 @@ contract Pet721StakeSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 tokenID = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.getByIndex(components, uint32(tokenID));
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // account checks
-    require(accountID != 0, "Pet721Stake: no account detected");
-    require(LibAccount.getRoom(components, accountID) == ROOM, "Pet721Stake: must be in room 12");
+    require(accID != 0, "Pet721Stake: no account detected");
+    require(LibAccount.getRoom(components, accID) == ROOM, "Pet721Stake: must be in room 12");
 
     // checks before action
     require(LibPet721.getEOAOwner(world, tokenID) == msg.sender, "Pet721Stake: not urs");
@@ -63,12 +63,12 @@ contract Pet721StakeSystem is System {
     );
     require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
-    LibPet.stake(components, petID, accountID);
+    LibPet.stake(components, petID, accID);
     LibPet721.stake(world, msg.sender, tokenID);
 
     // standard logging and tracking
-    LibAccount.logIncPetsStaked(world, components, accountID, 1);
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.logIncPetsStaked(world, components, accID, 1);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

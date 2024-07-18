@@ -14,20 +14,20 @@ contract GoalContributeSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 goalIndex, uint256 amt) = abi.decode(arguments, (uint32, uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     uint256 goalID = LibGoals.getByIndex(components, goalIndex);
     require(goalID != 0, "goal not found");
     require(
-      LibGoals.canContribute(components, goalIndex, goalID, accountID),
+      LibGoals.canContribute(components, goalIndex, goalID, accID),
       "cannot contribute to this goal"
     );
 
-    amt = LibGoals.contribute(components, accountID, goalID, amt);
+    amt = LibGoals.contribute(components, accID, goalID, amt);
 
     // standard logging and tracking
-    LibGoals.logContribution(components, accountID, amt);
-    LibAccount.updateLastTs(components, accountID);
+    LibGoals.logContribution(components, accID, amt);
+    LibAccount.updateLastTs(components, accID);
 
     return "";
   }

@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
@@ -28,19 +28,19 @@ contract Farm20DepositSystem is System {
     uint256 amount = abi.decode(arguments, (uint256));
     require(amount > 0, "Farm20Deposit: amt must be > 0");
 
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Farm20Deposit: no account detected");
-    require(LibAccount.getRoom(components, accountID) == ROOM, "Farm20Deposit: must be in room 12");
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    require(accID != 0, "Farm20Deposit: no account detected");
+    require(LibAccount.getRoom(components, accID) == ROOM, "Farm20Deposit: must be in room 12");
 
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
-    token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
-    LibInventory.incFor(components, accountID, MUSU_INDEX, amount);
+    token.deposit(address(uint160(LibAccount.getOwner(components, accID))), amount);
+    LibInventory.incFor(components, accID, MUSU_INDEX, amount);
 
     // standard logging and tracking
-    LibInventory.logIncItemTotal(components, accountID, MUSU_INDEX, amount);
-    // LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", amount);
-    LibDataEntity.inc(components, accountID, 0, "COIN_DEPOSIT", amount);
-    LibAccount.updateLastTs(components, accountID);
+    LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, amount);
+    // LibData.inc(components, accID, 0, "COIN_TOTAL", amount);
+    LibData.inc(components, accID, 0, "COIN_DEPOSIT", amount);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

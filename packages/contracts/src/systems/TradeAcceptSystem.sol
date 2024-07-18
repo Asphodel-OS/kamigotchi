@@ -15,18 +15,18 @@ contract TradeAcceptSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 tradeID = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
     // TODO: ? add restriction against multiple ongoing trades
     require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
     require(LibTrade.isRequest(components, tradeID), "Trade: not a request");
-    require(LibTrade.getRequestee(components, tradeID) == accountID, "Trade: must be requestee");
+    require(LibTrade.getRequestee(components, tradeID) == accID, "Trade: must be requestee");
 
     // standard logging and tracking
     LibTrade.accept(world, components, tradeID);
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

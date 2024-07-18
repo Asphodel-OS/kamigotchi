@@ -11,7 +11,7 @@ import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemC
 import { IsInventoryComponent as IsInvComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -236,10 +236,10 @@ library LibInventory {
   /// @notice log increase for item total
   function logIncItemTotal(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(components, accountID, itemIndex, "ITEM_TOTAL", amt);
+    LibData.inc(components, accID, itemIndex, "ITEM_TOTAL", amt);
   }
 }

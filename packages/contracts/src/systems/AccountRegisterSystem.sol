@@ -23,11 +23,11 @@ contract AccountRegisterSystem is System {
     require(bytes(name).length <= 16, "Account: name must be < 16chars");
     require(LibAccount.getByName(components, name) == 0, "Account: name taken");
 
-    uint256 accountID = LibAccount.create(world, components, msg.sender, operator);
-    LibAccount.setName(components, accountID, name);
+    uint256 accID = LibAccount.create(world, components, msg.sender, operator);
+    LibAccount.setName(components, accID, name);
 
-    LibAccount.updateLastTs(components, accountID);
-    return abi.encode(accountID);
+    LibAccount.updateLastTs(components, accID);
+    return abi.encode(accID);
   }
 
   function executeTyped(address operator, string memory name) public returns (bytes memory) {

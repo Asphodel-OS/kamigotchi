@@ -14,16 +14,16 @@ contract QuestDropSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 questID = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibQuests.isQuest(components, questID), "Quest: not a quest");
     require(!LibQuests.isCompleted(components, questID), "Quests: alr completed");
-    require(accountID == LibQuests.getOwner(components, questID), "Quest: not ur quest");
+    require(accID == LibQuests.getOwner(components, questID), "Quest: not ur quest");
 
     LibQuests.drop(components, questID);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

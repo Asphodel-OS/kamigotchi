@@ -25,7 +25,7 @@ import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComp
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
@@ -230,7 +230,7 @@ library LibAccount {
   }
 
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibDataEntity.get(components, id, 0, "PET721_MINT");
+    return LibData.get(components, id, 0, "PET721_MINT");
   }
 
   /////////////////
@@ -279,47 +279,45 @@ library LibAccount {
   // Get pets owned
   function getPetsOwned(
     IUintComp components,
-    uint256 accountID
+    uint256 accID
   ) internal view returns (uint256[] memory) {
     return
-      IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).getEntitiesWithValue(
-        accountID
-      );
+      IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).getEntitiesWithValue(accID);
   }
 
   //////////////////
   // DATA LOGGING
 
   function getAndUpdateTotalAccs(IUintComp components) internal returns (uint32) {
-    uint256 total = LibDataEntity.get(components, 0, 0, "TOTAL_NUM_ACCOUNTS") + 1;
-    LibDataEntity.set(components, 0, 0, "TOTAL_NUM_ACCOUNTS", total);
+    uint256 total = LibData.get(components, 0, 0, "TOTAL_NUM_ACCOUNTS") + 1;
+    LibData.set(components, 0, 0, "TOTAL_NUM_ACCOUNTS", total);
     return uint32(total);
   }
 
   function logIncPetsMinted(
     IWorld world,
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint256 count
   ) internal {
-    LibDataEntity.inc(components, accountID, 0, "PET721_MINT", count);
+    LibData.inc(components, accID, 0, "PET721_MINT", count);
   }
 
   function logIncPetsRerolled(
     IWorld world,
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint256 count
   ) internal {
-    LibDataEntity.inc(components, accountID, 0, "PET_REROLL", count);
+    LibData.inc(components, accID, 0, "PET_REROLL", count);
   }
 
   function logIncPetsStaked(
     IWorld world,
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint256 count
   ) internal {
-    LibDataEntity.inc(components, accountID, 0, "PET_STAKE", count);
+    LibData.inc(components, accID, 0, "PET_STAKE", count);
   }
 }

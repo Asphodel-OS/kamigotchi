@@ -19,23 +19,23 @@ contract FriendBlockSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     address targetAddr = abi.decode(arguments, (address));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
     require(targetID != 0, "FriendBlock: target no account");
-    require(accountID != targetID, "FriendBlock: cannot block self");
+    require(accID != targetID, "FriendBlock: cannot block self");
 
     // remove existing friendship from target->account
-    uint256 targetToAcc = LibFriend.getFriendship(components, targetID, accountID);
+    uint256 targetToAcc = LibFriend.getFriendship(components, targetID, accID);
     if (targetToAcc != 0 && !LibString.eq(LibFriend.getState(components, targetToAcc), "BLOCKED")) {
       LibFriend.remove(components, targetToAcc);
     }
 
     // block; account->target friendship (if any) will be overwritten
-    uint256 result = LibFriend.create(components, accountID, targetID, "BLOCKED");
+    uint256 result = LibFriend.create(components, accID, targetID, "BLOCKED");
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(result);
   }
 

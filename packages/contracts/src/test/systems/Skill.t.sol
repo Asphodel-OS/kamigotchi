@@ -119,7 +119,7 @@ contract SkillTest is SetupTemplate {
 
     // test second tier
     vm.startPrank(deployer);
-    LibDataEntity.set(
+    LibData.set(
       components,
       alice.id,
       0,
@@ -136,7 +136,7 @@ contract SkillTest is SetupTemplate {
     _SkillUpgradeSystem.executeTyped(alice.id, 4);
 
     vm.startPrank(deployer);
-    LibDataEntity.set(
+    LibData.set(
       components,
       alice.id,
       0,

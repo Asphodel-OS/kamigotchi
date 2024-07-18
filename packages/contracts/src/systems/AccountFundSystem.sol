@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Fund"));
@@ -18,15 +18,15 @@ contract AccountFundSystem is System {
   // funds operator wallet with eth from owner
   // msg.sender is owner wallet
   function ownerToOperator() public payable returns (bytes memory) {
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "AccountFundSystem: no account");
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    require(accID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.incFor(components, accountID, "OPERATOR_GAS", msg.value);
-    LibDataEntity.inc(components, accountID, 0, "OPERATOR_GAS", msg.value);
-    LibAccount.updateLastTs(components, accountID);
+    LibScore.incFor(components, accID, "OPERATOR_GAS", msg.value);
+    LibData.inc(components, accID, 0, "OPERATOR_GAS", msg.value);
+    LibAccount.updateLastTs(components, accID);
 
-    address operator = LibAccount.getOperator(components, accountID);
+    address operator = LibAccount.getOperator(components, accID);
     transfer(operator, msg.value);
     return "";
   }
@@ -34,17 +34,17 @@ contract AccountFundSystem is System {
   // refunds owner gas in operator
   // msg.sender is operator wallet
   function operatorToOwner() public payable returns (bytes memory) {
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // update gas funded
-    LibScore.decFor(components, accountID, "OPERATOR_GAS", msg.value);
-    LibDataEntity.dec(components, accountID, 0, "OPERATOR_GAS", msg.value);
+    LibScore.decFor(components, accID, "OPERATOR_GAS", msg.value);
+    LibData.dec(components, accID, 0, "OPERATOR_GAS", msg.value);
 
-    address owner = LibAccount.getOwner(components, accountID);
+    address owner = LibAccount.getOwner(components, accID);
     transfer(owner, msg.value);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

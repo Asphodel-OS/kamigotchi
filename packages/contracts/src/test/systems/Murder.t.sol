@@ -408,8 +408,8 @@ contract MurderTest is SetupTemplate {
 
   // gets the playerIndex of a pet's owner
   function _getOwnerPlayerIndex(uint petID) internal view returns (uint) {
-    uint accountID = LibPet.getAccount(components, petID);
-    address owner = LibAccount.getOwner(components, accountID);
+    uint accID = LibPet.getAccount(components, petID);
+    address owner = LibAccount.getOwner(components, accID);
     for (uint i = 0; i < _owners.length; i++) {
       if (_owners[i] == owner) {
         return i;

@@ -13,7 +13,7 @@ import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComp
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 
@@ -56,7 +56,7 @@ library LibListing {
   function buy(
     IUintComp components,
     uint256 listingID,
-    uint256 accountID,
+    uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 total) {
@@ -64,15 +64,15 @@ library LibListing {
     require(price > 0, "Listing.Buy(): invalid listing");
 
     total = amt * price;
-    LibInventory.incFor(components, accountID, itemIndex, amt);
-    LibInventory.decFor(components, accountID, MUSU_INDEX, total);
+    LibInventory.incFor(components, accID, itemIndex, amt);
+    LibInventory.decFor(components, accID, MUSU_INDEX, total);
   }
 
   // processes a sell for amt of item from an account to a listing
   function sell(
     IUintComp components,
     uint256 listingID,
-    uint256 accountID,
+    uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 total) {
@@ -80,8 +80,8 @@ library LibListing {
     require(price > 0, "Listing.Sell(): invalid listing");
 
     total = amt * price;
-    LibInventory.decFor(components, accountID, itemIndex, amt);
-    LibInventory.incFor(components, accountID, MUSU_INDEX, total);
+    LibInventory.decFor(components, accID, itemIndex, amt);
+    LibInventory.incFor(components, accID, MUSU_INDEX, total);
   }
 
   /////////////////
@@ -156,7 +156,7 @@ library LibListing {
   /// @notice log increase for item buy
   function logIncItemBuy(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal {
@@ -168,16 +168,16 @@ library LibListing {
     types[1] = "ITEM_BUY";
     types[2] = "ITEM_TOTAL";
 
-    LibDataEntity.inc(components, accountID, indices, types, amt);
+    LibData.inc(components, accID, indices, types, amt);
 
-    // LibDataEntity.inc(components, accountID, 0, "ITEM_BUY_TOTAL", amt);
-    // LibDataEntity.inc(components, accountID, itemIndex, "ITEM_BUY", amt);
+    // LibData.inc(components, accID, 0, "ITEM_BUY_TOTAL", amt);
+    // LibData.inc(components, accID, itemIndex, "ITEM_BUY", amt);
   }
 
   /// @notice log increase for item sell
   function logIncItemSell(
     IUintComp components,
-    uint256 accountID,
+    uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal {
@@ -187,19 +187,19 @@ library LibListing {
     types[0] = "ITEM_SELL_TOTAL";
     types[1] = "ITEM_SELL";
 
-    LibDataEntity.inc(components, accountID, indices, types, amt);
+    LibData.inc(components, accID, indices, types, amt);
 
-    // LibDataEntity.inc(components, accountID, 0, "ITEM_SELL_TOTAL", amt);
-    // LibDataEntity.inc(components, accountID, itemIndex, "ITEM_SELL", amt);
+    // LibData.inc(components, accID, 0, "ITEM_SELL_TOTAL", amt);
+    // LibData.inc(components, accID, itemIndex, "ITEM_SELL", amt);
   }
 
   /// @notice log coins spent
-  function logSpendCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
-    LibDataEntity.inc(components, accountID, MUSU_INDEX, "ITEM_SPEND", amt);
+  function logSpendCoin(IUintComp components, uint256 accID, uint256 amt) internal {
+    LibData.inc(components, accID, MUSU_INDEX, "ITEM_SPEND", amt);
   }
 
   /// @notice log coin revenue earned
-  function logEarnCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
+  function logEarnCoin(IUintComp components, uint256 accID, uint256 amt) internal {
     uint32[] memory indices = new uint32[](2);
     indices[0] = MUSU_INDEX;
     indices[1] = MUSU_INDEX;
@@ -207,8 +207,8 @@ library LibListing {
     types[0] = "ITEM_REVENUE";
     types[1] = "ITEM_TOTAL";
 
-    LibDataEntity.inc(components, accountID, indices, types, amt);
+    LibData.inc(components, accID, indices, types, amt);
 
-    // LibDataEntity.inc(components, accountID, MUSU_INDEX, "ITEM_REVENUE", amt);
+    // LibData.inc(components, accID, MUSU_INDEX, "ITEM_REVENUE", amt);
   }
 }

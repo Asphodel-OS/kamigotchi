@@ -16,7 +16,7 @@ contract FriendCancelSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 friendshipID = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibFriend.isFriendship(components, friendshipID), "FriendCancel: not a friendship");
 
@@ -24,27 +24,21 @@ contract FriendCancelSystem is System {
     if (LibString.eq(state, "REQUEST")) {
       // request can be deleted by either party
       require(
-        LibFriend.getAccount(components, friendshipID) == accountID ||
-          LibFriend.getTarget(components, friendshipID) == accountID,
+        LibFriend.getAccount(components, friendshipID) == accID ||
+          LibFriend.getTarget(components, friendshipID) == accID,
         "FriendCancel: not owner/target"
       );
     } else if (LibString.eq(state, "BLOCKED")) {
       // block can only be deleted by owner
-      require(
-        LibFriend.getAccount(components, friendshipID) == accountID,
-        "FriendCancel: not owner"
-      );
+      require(LibFriend.getAccount(components, friendshipID) == accID, "FriendCancel: not owner");
     } else {
       // if friend, delete friendship owned by other entity
-      require(
-        LibFriend.getAccount(components, friendshipID) == accountID,
-        "FriendCancel: not owner"
-      );
+      require(LibFriend.getAccount(components, friendshipID) == accID, "FriendCancel: not owner");
 
       uint256 counterpartyID = LibFriend.getFriendship(
         components,
         LibFriend.getTarget(components, friendshipID),
-        accountID
+        accID
       );
       LibFriend.remove(components, counterpartyID);
     }
@@ -52,7 +46,7 @@ contract FriendCancelSystem is System {
     LibFriend.remove(components, friendshipID);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

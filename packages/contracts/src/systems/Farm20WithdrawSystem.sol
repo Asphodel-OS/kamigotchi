@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { ControlledBridgeSystem } from "utils/ControlledBridgeSystem.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibTimelock } from "libraries/LibTimelock.sol";
 
@@ -35,20 +35,20 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
   function scheduleWithdraw(uint256 value) public returns (uint256 id) {
     require(value > 0, "Farm20Withdraw: amt must be > 0");
 
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Farm20Withdraw: no account");
-    require(LibAccount.getRoom(components, accountID) == ROOM, "Farm20Withdraw: not in room 12");
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    require(accID != 0, "Farm20Withdraw: no account");
+    require(LibAccount.getRoom(components, accID) == ROOM, "Farm20Withdraw: not in room 12");
     require(
-      LibInventory.getBalanceOf(components, accountID, MUSU_INDEX) >= value,
+      LibInventory.getBalanceOf(components, accID, MUSU_INDEX) >= value,
       "Coin: insufficient balance"
     );
 
     // scheduling timelock
     _schedule(msg.sender, value, block.timestamp);
-    id = LibTimelock.create(world, components, accountID, msg.sender, value, block.timestamp);
+    id = LibTimelock.create(world, components, accID, msg.sender, value, block.timestamp);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
   }
 
   /// @notice executes the withdraw process
@@ -60,14 +60,14 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     LibTimelock.unset(components, id);
 
     // withdraw balance
-    uint256 accountID = LibAccount.getByOwner(components, target);
-    LibInventory.decFor(components, accountID, MUSU_INDEX, value);
+    uint256 accID = LibAccount.getByOwner(components, target);
+    LibInventory.decFor(components, accID, MUSU_INDEX, value);
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.withdraw((target), value);
 
     // standard logging and tracking
-    LibDataEntity.inc(components, accountID, 0, "COIN_WITHDRAW", value);
-    LibAccount.updateLastTs(components, accountID);
+    LibData.inc(components, accID, 0, "COIN_WITHDRAW", value);
+    LibAccount.updateLastTs(components, accID);
   }
 
   /// @notice cancels a transaction, either by Admin (if tx is suspicious) or by user

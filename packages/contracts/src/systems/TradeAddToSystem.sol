@@ -19,20 +19,20 @@ contract TradeAddToSystem is System {
       arguments,
       (uint256, uint32, uint256)
     );
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
     // TODO: add restriction from adding to register when already confirmed
     require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
-    require(LibTrade.hasParticipant(components, tradeID, accountID), "Trade: must be participant");
+    require(LibTrade.hasParticipant(components, tradeID, accID), "Trade: must be participant");
     require(LibTrade.hasState(components, tradeID, "ACCEPTED"), "Trade: must be accepted");
 
-    uint256 registerID = LibRegister.get(components, accountID, tradeID);
+    uint256 registerID = LibRegister.get(components, accID, tradeID);
     LibRegister.addTo(components, registerID, itemIndex, amt);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

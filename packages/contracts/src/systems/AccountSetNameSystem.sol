@@ -14,17 +14,17 @@ contract AccountSetNameSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     string memory name = abi.decode(arguments, (string));
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
-    require(accountID != 0, "Account: does not exist");
+    require(accID != 0, "Account: does not exist");
     require(bytes(name).length > 0, "Account: name cannot be empty");
     require(bytes(name).length <= 16, "Account: name must be < 16chars");
     require(LibAccount.getByName(components, name) == 0, "Account: name taken");
 
-    LibAccount.setName(components, accountID, name);
+    LibAccount.setName(components, accID, name);
 
     // standard logging and tracking
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

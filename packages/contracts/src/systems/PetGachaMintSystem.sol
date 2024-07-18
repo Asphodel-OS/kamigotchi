@@ -18,24 +18,18 @@ contract PetGachaMintSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
 
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "no account detected");
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    require(accID != 0, "no account detected");
 
     // use Mint20 tokens for payment, 1 token for 1 kami. implicit balance check
     LibMint20.burn(world, msg.sender, amount);
 
     // commits random seed for gacha roll
-    uint256[] memory results = LibGacha.commitBatch(
-      world,
-      components,
-      amount,
-      accountID,
-      block.number
-    );
+    uint256[] memory results = LibGacha.commitBatch(world, components, amount, accID, block.number);
 
     // standard logging and tracking
-    LibAccount.logIncPetsMinted(world, components, accountID, amount);
-    LibAccount.updateLastTs(components, accountID);
+    LibAccount.logIncPetsMinted(world, components, accID, amount);
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(results);
   }
 

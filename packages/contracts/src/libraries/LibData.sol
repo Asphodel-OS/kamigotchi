@@ -17,7 +17,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
  *
  * heavily influenced by LibConfig
  */
-library LibDataEntity {
+library LibData {
   function getID(
     uint256 holderID,
     uint32 index,
