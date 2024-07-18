@@ -342,4 +342,12 @@ library LibGacha {
   ) internal returns (uint256[] memory) {
     return BlockRevealComponent(getAddressById(components, BlockRevealCompID)).extractBatch(ids);
   }
+
+  /////////////////
+  // SCRIPTING
+
+  function getAllInGacha(IUintComp components) internal view returns (uint256[] memory) {
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
+    return ownerComp.getEntitiesWithValue(GACHA_ID);
+  }
 }

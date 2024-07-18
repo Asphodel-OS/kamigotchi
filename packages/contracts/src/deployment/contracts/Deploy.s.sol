@@ -2,17 +2,20 @@
 pragma solidity >=0.8.0;
 
 import "forge-std/Script.sol";
+import { LibString } from "solady/utils/LibString.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibDeploy, DeployResult } from "./LibDeploy.sol";
 
 import { InitWorld } from "./InitWorld.s.sol";
+import { LibLocal } from "./LibLocal.s.sol";
 
 contract Deploy is InitWorld {
   function deploy(
     uint256 deployerPriv,
     address worldAddr,
     bool reuseComps,
-    bool initWorld
+    bool initWorld,
+    string memory MODE
   ) external returns (IWorld world, uint256 startBlock) {
     startBlock = block.number;
 
@@ -25,6 +28,9 @@ contract Deploy is InitWorld {
     if (initWorld) {
       _setUp(address(world)); // set up global variables
       _initWorld(address(world));
+
+      // custom local init script
+      if (LibString.eq(MODE, "DEV")) LibLocal.init(world, components, systems);
     }
   }
 }

@@ -35,6 +35,7 @@ const run = async () => {
     systems: argv.systems,
     initWorld: init,
     forgeOpts: argv.forgeOpts,
+    mode: argv.mode,
   });
 
   if (init) {
