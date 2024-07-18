@@ -135,11 +135,12 @@ const Icon = styled.img`
 const Image = styled.img<{ isItem?: boolean }>`
   width: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
   height: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
+  ${({ isItem }) => (isItem ? 'image-rendering: pixelated;' : '')}
 `;
 
 const Menu = styled.div`
   border: solid black 0.15vw;
-  border-radius: 0.4vw;
+  border-radius: 3.5px;
   color: black;
   min-width: 7vw;
 `;
