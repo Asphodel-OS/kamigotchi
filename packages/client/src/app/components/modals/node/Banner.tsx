@@ -117,9 +117,9 @@ export const Banner = (props: Props) => {
   );
 
   const NodeImage = () => {
-    const url =
-      rooms[node.index] === undefined || node.index === 0 ? '' : rooms[node.index].background.path;
-    return url === '' ? <div /> : <Image src={url} />;
+    if (!rooms[node.index] && node.index == 0) return <div />;
+    const url = rooms[node.index].backgrounds[0];
+    return <Image src={url} />;
   };
 
   return (
