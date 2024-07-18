@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/indices';
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { numberToHex } from 'utils/hex';
 import { Account } from '../Account';
@@ -185,7 +186,7 @@ export const getBool = (
   // universal gets - account and kami shape compatible
   if (type === 'COMPLETE_COMP') {
     // converted
-    const rawEntityID = numberToHex(value ?? 0) as EntityID;
+    const rawEntityID = formatEntityID(numberToHex(value ?? 0));
     const entityIndex = world.entityToIndex.get(rawEntityID);
     return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
   }

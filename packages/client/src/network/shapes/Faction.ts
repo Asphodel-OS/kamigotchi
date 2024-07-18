@@ -10,6 +10,7 @@ import {
 import { utils } from 'ethers';
 
 import PlaceholderIcon from 'assets/images/icons/placeholder.png';
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { DetailedEntity } from './utils';
 
@@ -114,7 +115,7 @@ export const getFaction = (world: World, components: Components, index: EntityIn
 
 const getEntityIndex = (world: any, index: number): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'uint32'], ['faction', index]);
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 const getRepEntityIndex = (
@@ -127,5 +128,5 @@ const getRepEntityIndex = (
     ['string', 'uint256', 'uint32'],
     ['faction.reputation', holderID, index]
   );
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };

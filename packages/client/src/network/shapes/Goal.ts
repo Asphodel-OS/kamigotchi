@@ -9,6 +9,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
 import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Account } from './Account';
@@ -227,7 +228,7 @@ export const getGoalID = (index: number) => {
 
 const getGoalEntityIndex = (world: World, goalIndex: number): EntityIndex | undefined => {
   const id = getGoalID(goalIndex);
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 const getContributionEntityIndex = (
@@ -239,20 +240,20 @@ const getContributionEntityIndex = (
     ['string', 'uint256', 'uint256'],
     ['goal.contribution', goalID, accountID]
   );
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 const getObjEntityIndex = (world: World, goalID: EntityID): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'uint256'], ['goal.objective', goalID]);
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 const getReqPtr = (goalIndex: number): EntityID => {
   const id = utils.solidityKeccak256(['string', 'uint32'], ['goal.requirement', goalIndex]);
-  return id as EntityID;
+  return formatEntityID(id);
 };
 
 const getRwdPtr = (goalIndex: number): EntityID => {
   const id = utils.solidityKeccak256(['string', 'uint32'], ['goal.reward', goalIndex]);
-  return id as EntityID;
+  return formatEntityID(id);
 };

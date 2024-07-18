@@ -16,13 +16,14 @@ import {
 import { Component as SolecsComponent } from '@mud-classic/solecs';
 import ComponentAbi from '@mud-classic/solecs/abi/Component.json';
 import { toEthAddress } from '@mud-classic/utils';
-import { BigNumber, Contract, Signer } from 'ethers';
+import { Contract, Signer } from 'ethers';
 import { compact, toLower } from 'lodash';
 import { IComputedValue } from 'mobx';
 import { filter, map, Observable, Subject, timer } from 'rxjs';
 
 import { createEncoder } from 'engine/encoders';
 import { Mappings } from 'engine/types';
+import { formatEntityID } from 'engine/utils';
 import { Ack, ack } from 'workers/sync';
 import {
   isNetworkComponentUpdateEvent,
@@ -81,9 +82,7 @@ export function createSystemCallStreams<
     decodeAndEmitSystemCall: (systemCall: SystemCall<C>) => {
       const { tx } = systemCall;
 
-      const systemEntityIndex = world.entityToIndex.get(
-        toLower(BigNumber.from(tx.to).toHexString()) as EntityID
-      );
+      const systemEntityIndex = world.entityToIndex.get(toLower(formatEntityID(tx.to)) as EntityID);
       if (!systemEntityIndex) return;
 
       const hashedSystemId = getComponentValue(systemsRegistry, systemEntityIndex)?.value;

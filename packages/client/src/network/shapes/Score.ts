@@ -9,6 +9,7 @@ import {
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Account, getAccount } from './Account';
 
@@ -48,7 +49,7 @@ export const getScore = (world: World, components: Components, index: EntityInde
   const { HolderID, Value } = components;
 
   // populate the holder
-  const accountID = getComponentValue(HolderID, index)?.value as EntityID;
+  const accountID = formatEntityID(getComponentValue(HolderID, index)?.value ?? '');
   const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
   const account = getAccount(world, components, accountEntityIndex);
 
@@ -90,10 +91,10 @@ const getEntityIndex = (
     ['string', 'uint256', 'uint32', 'string'],
     [holderID, index, index, field]
   );
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 const getType = (type: string, epoch: number): EntityID => {
   const id = utils.solidityKeccak256(['string', 'string', 'uint256'], ['score.type', type, epoch]);
-  return id as EntityID;
+  return formatEntityID(id);
 };

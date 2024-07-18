@@ -10,12 +10,13 @@ import {
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getConfigFieldValueWei } from './Config';
 import { Kami, KamiOptions, queryKamisX } from './Kami';
 import { Commit } from './utils';
 
-export const GACHA_ID = utils.solidityKeccak256(['string'], ['gacha.id']);
+export const GACHA_ID = formatEntityID(utils.solidityKeccak256(['string'], ['gacha.id']));
 
 export const getCommit = (world: World, components: Components, index: EntityIndex): Commit => {
   const { RevealBlock } = components;
@@ -49,7 +50,7 @@ export const queryGachaKamis = (
   components: Components,
   kamiOptions?: KamiOptions
 ): Kami[] => {
-  return queryKamisX(world, components, { account: GACHA_ID as EntityID }, kamiOptions);
+  return queryKamisX(world, components, { account: GACHA_ID }, kamiOptions);
 };
 
 export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {
