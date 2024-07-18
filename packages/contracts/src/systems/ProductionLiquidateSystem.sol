@@ -73,9 +73,8 @@ contract ProductionLiquidateSystem is System {
 
     // standard logging and tracking
     LibScore.incFor(components, accID, "LIQUIDATE", 1);
-    LibData.inc(components, accID, 0, "LIQUIDATE_TOTAL", 1);
-    LibData.inc(components, accID, LibNode.getIndex(components, nodeID), "LIQUIDATE_AT_NODE", 1);
-    LibData.inc(components, LibPet.getAccount(components, targetPetID), 0, "LIQUIDATED_VICTIM", 1);
+    LibKill.logTotals(components, accID, LibNode.getIndex(components, nodeID));
+    LibKill.logVictim(components, accID, LibPet.getAccount(components, targetPetID));
     LibAccount.updateLastTs(components, accID);
     return "";
   }

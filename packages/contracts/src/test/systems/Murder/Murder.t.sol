@@ -46,6 +46,22 @@ contract MurderTest is SetupTemplate {
   /////////////////
   // TESTS
 
+  function testMurderBasic() public {
+    // setup
+    uint256 aPetID = _mintPet(alice);
+    uint256 bPetID = _mintPet(bob);
+    _fastForward(_idleRequirement);
+
+    // alice places pet, left to farm and die
+    uint256 aProdID = _startProduction(aPetID, _nodeIDs[0]);
+    _fastForward(10 hours);
+
+    // bob places pet, commits a crime
+    _startProduction(bPetID, _nodeIDs[0]);
+    _fastForward(_idleRequirement);
+    _liquidateProduction(bPetID, aProdID);
+  }
+
   // test that the correct account must call the liquidation
   function testMurderPermissionConstraints() public {
     uint numAccounts = 5;

@@ -177,7 +177,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, 0);
     _createQuestRequirement(1, "CURR_MIN", "ITEM", 1, 1);
-    _createQuestObjective(1, "Quest 1", "CURR_MIN", "ITEM", 1, 10);
+    _createQuestObjective(1, "CURR_MIN", "ITEM", 1, 10);
     _createQuestReward(1, "ITEM", 1, 1);
 
     // register the account

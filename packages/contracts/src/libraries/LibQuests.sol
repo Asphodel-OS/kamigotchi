@@ -344,7 +344,7 @@ library LibQuests {
     uint32 questIndex,
     uint256 accID
   ) internal view returns (bool) {
-    uint256 id = queryAccountQuestIndex(components, accID, questIndex);
+    uint256 id = getAccQuestIndex(components, accID, questIndex);
     return id != 0 ? isCompleted(components, id) : false;
   }
 
@@ -461,6 +461,15 @@ library LibQuests {
   /////////////////
   // GETTERS
 
+  function getAccQuestIndex(
+    IUintComp components,
+    uint256 accID,
+    uint32 questIndex
+  ) internal view returns (uint256) {
+    uint256 id = genQuestID(questIndex, accID);
+    return isQuest(components, id) ? id : 0;
+  }
+
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     return comp.has(id) ? comp.get(id) : 0;
@@ -509,16 +518,6 @@ library LibQuests {
 
   /////////////////
   // QUERIES
-
-  function queryAccountQuestIndex(
-    IUintComp components,
-    uint256 accID,
-    uint32 questIndex
-  ) internal view returns (uint256) {
-    uint256 id = genQuestID(questIndex, accID);
-
-    return isQuest(components, id) ? id : 0;
-  }
 
   function querySnapshottedObjectives(
     IUintComp components,

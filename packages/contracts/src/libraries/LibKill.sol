@@ -15,6 +15,7 @@ import { IsKillComponent, ID as IsKillCompID } from "components/IsKillComponent.
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -201,5 +202,23 @@ library LibKill {
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
     return ((violence1 + violence2) * ratio) / precision;
+  }
+
+  /////////////////
+  // LOGGING
+
+  function logTotals(IUintComp components, uint256 accID, uint32 nodeIndex) internal {
+    uint32[] memory indices = new uint32[](2);
+    indices[1] = nodeIndex;
+    string[] memory types = new string[](2);
+    types[0] = "LIQUIDATE_TOTAL";
+    types[1] = "LIQUIDATE_AT_NODE";
+
+    LibData.inc(components, accID, indices, types, 1);
+  }
+
+  function logVictim(IUintComp components, uint256 accID, uint256 victimID) internal {
+    LibData.inc(components, victimID, 0, "LIQUIDATED_VICTIM", 1);
+    LibData.inc(components, accID, LibAccount.getIndex(components, victimID), "LIQ_TARGET_ACC", 1);
   }
 }

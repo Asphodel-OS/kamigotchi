@@ -169,9 +169,6 @@ library LibListing {
     types[2] = "ITEM_TOTAL";
 
     LibData.inc(components, accID, indices, types, amt);
-
-    // LibData.inc(components, accID, 0, "ITEM_BUY_TOTAL", amt);
-    // LibData.inc(components, accID, itemIndex, "ITEM_BUY", amt);
   }
 
   /// @notice log increase for item sell
@@ -188,9 +185,6 @@ library LibListing {
     types[1] = "ITEM_SELL";
 
     LibData.inc(components, accID, indices, types, amt);
-
-    // LibData.inc(components, accID, 0, "ITEM_SELL_TOTAL", amt);
-    // LibData.inc(components, accID, itemIndex, "ITEM_SELL", amt);
   }
 
   /// @notice log coins spent
