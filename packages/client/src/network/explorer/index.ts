@@ -3,7 +3,9 @@ import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud
 import { Components } from 'network/';
 import {
   AccountOptions,
+  getAccountByID,
   getAccountByIndex,
+  getAccountByName,
   getAccountByOwner,
   getAllAccounts,
 } from 'network/shapes/Account';
@@ -46,21 +48,11 @@ export const initExplorer = (world: World, components: Components) => {
   return {
     accounts: {
       all: (options?: AccountOptions) => getAllAccounts(world, components, options),
-      get: (index: number, options?: {}) => {
-        return getAccountByIndex(world, components, index, options);
-      },
-      getByOwner: (owner: string, options?: {}) => {
-        return getAccountByOwner(world, components, owner.toLowerCase(), {
-          ...options,
-          kamis: true,
-          friends: true,
-          gacha: true,
-          inventory: true,
-          quests: true,
-          lootboxLogs: true,
-          stats: true,
-        });
-      },
+      get: (index: number) => getAccountByIndex(world, components, index, fullAccountOptions),
+      getByID: (id: EntityID) => getAccountByID(world, components, id, fullAccountOptions),
+      getByOwner: (owner: string) =>
+        getAccountByOwner(world, components, owner.toLowerCase(), fullAccountOptions),
+      getByName: (name: string) => getAccountByName(world, components, name, fullAccountOptions),
       entities: () => Array.from(components.IsAccount.entities()),
       indices: () => Array.from(components.AccountIndex.values.value.values()),
     },
@@ -158,4 +150,14 @@ export const initExplorer = (world: World, components: Components) => {
       },
     },
   };
+};
+
+const fullAccountOptions: AccountOptions = {
+  kamis: true,
+  friends: true,
+  gacha: true,
+  inventory: true,
+  quests: true,
+  lootboxLogs: true,
+  stats: true,
 };
