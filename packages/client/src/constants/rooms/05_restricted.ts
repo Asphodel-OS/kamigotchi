@@ -1,13 +1,14 @@
-import { bgPlaytestDay } from 'assets/images/rooms/5_restricted';
+import {
+  bgPlaytestDay,
+  bgPlaytestEvening,
+  bgPlaytestNight,
+} from 'assets/images/rooms/5_restricted';
 import { amusement } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room05: Room = {
-  roomIndex: 5,
-  background: {
-    key: 'bg_room005',
-    path: bgPlaytestDay,
-  },
+  index: 5,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'amusement',
     path: amusement,

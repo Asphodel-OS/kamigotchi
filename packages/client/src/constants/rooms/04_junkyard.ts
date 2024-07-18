@@ -1,14 +1,11 @@
 import { triggerPetMintModal } from 'app/triggers/triggerPetMintModal';
-import { bgPlaytestNight } from 'assets/images/rooms/4_junkyard';
+import { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight } from 'assets/images/rooms/4_junkyard';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room04: Room = {
-  roomIndex: 4,
-  background: {
-    key: 'bg_room004',
-    path: bgPlaytestNight,
-  },
+  index: 4,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'mystique',
     path: mystique,

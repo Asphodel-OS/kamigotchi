@@ -5,11 +5,8 @@ import { shop } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room13: Room = {
-  roomIndex: 13,
-  background: {
-    key: 'bg_room013',
-    path: bgPlaytest,
-  },
+  index: 13,
+  backgrounds: [bgPlaytest],
   music: {
     key: 'shop',
     path: shop,

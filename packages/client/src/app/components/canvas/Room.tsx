@@ -25,7 +25,7 @@ export const Room = (props: Props) => {
   // in the Volume Settings modal. This recreates any new music from scratch,
   // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
-    if (index == room.roomIndex) return;
+    if (index == room.index) return;
     const newRoom = rooms[index];
 
     const music = newRoom.music;
@@ -65,7 +65,7 @@ export const Room = (props: Props) => {
   // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
     if (index === 47 && goals[0].complete) return room47Image; // disgusting hardcoding
-    return room.background.path;
+    return room.backgrounds[0];
   };
 
   const getClickbox = (object: RoomAsset) => {

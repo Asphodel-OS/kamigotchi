@@ -1,14 +1,15 @@
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
-import { bgPlaytestDay } from 'assets/images/rooms/34_deeper-into-scrap';
+import {
+  bgPlaytestDay,
+  bgPlaytestEvening,
+  bgPlaytestNight,
+} from 'assets/images/rooms/34_deeper-into-scrap';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room34: Room = {
-  roomIndex: 34,
-  background: {
-    key: 'bg_room34',
-    path: bgPlaytestDay,
-  },
+  index: 34,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'cave',
     path: cave,

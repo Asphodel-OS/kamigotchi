@@ -1,14 +1,15 @@
 import { triggerPetNamingModal } from 'app/triggers/triggerPetNamingModal';
-import { bgPlaytestDay } from 'assets/images/rooms/11_waterfall';
+import {
+  bgPlaytestDay,
+  bgPlaytestEvening,
+  bgPlaytestNight,
+} from 'assets/images/rooms/11_waterfall';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room11: Room = {
-  roomIndex: 11,
-  background: {
-    key: 'bg_room011',
-    path: bgPlaytestDay,
-  },
+  index: 11,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'glitter',
     path: glitter,
