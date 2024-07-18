@@ -4,7 +4,6 @@ import styled, { keyframes } from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
-import room47Image from 'assets/images/rooms/47_scrap-paths/backgrounds/pretest-a.png';
 import { RoomAsset, rooms } from 'constants/rooms';
 import { Goal } from 'network/shapes/Goal';
 
@@ -71,7 +70,6 @@ export const Room = (props: Props) => {
   // return the background path for now
   // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
-    if (index === 47 && goals[0].complete) return room47Image; // disgusting hardcoding
     const epoch = getEpoch(Date.now() / 1000);
     return room.backgrounds[epoch];
   };
