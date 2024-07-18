@@ -20,7 +20,8 @@ export async function deploy(
   reuseComponents?: boolean,
   worldAddress?: string,
   forgeOpts?: string,
-  initWorld?: boolean
+  initWorld?: boolean,
+  mode?: string
 ) {
   const child = execa(
     'forge',
@@ -29,11 +30,12 @@ export async function deploy(
       'src/deployment/contracts/Deploy.s.sol:Deploy',
       '--broadcast',
       '--sig',
-      'deploy(uint256,address,bool,bool)',
+      'deploy(uint256,address,bool,bool, string)',
       deployerPriv || constants.AddressZero, // Deployer
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       (reuseComponents || false).toString(), // Reuse components
       (initWorld || false).toString(), // Init world
+      (mode || 'DEV').toString(), // Mode
       '--fork-url',
       rpc,
       '--skip',
@@ -70,6 +72,7 @@ export type DeployOptions = {
   systems?: string;
   initWorld?: boolean;
   forgeOpts?: string;
+  mode?: string;
 };
 
 export async function generateAndDeploy(args: DeployOptions) {
@@ -93,7 +96,8 @@ export async function generateAndDeploy(args: DeployOptions) {
       args.systems != undefined,
       args.worldAddress,
       args.forgeOpts,
-      args.initWorld
+      args.initWorld,
+      args.mode
     );
     deployedWorldAddress = result.deployedWorldAddress;
     startBlock = result.startBlock;

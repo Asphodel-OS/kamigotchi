@@ -71,7 +71,7 @@ library LibHarvest {
   }
 
   // Starts an _existing_ production if not already started.
-  function start(IUintComp components, uint256 id) public {
+  function start(IUintComp components, uint256 id) internal {
     setState(components, id, "ACTIVE");
     LibInventory.setFor(components, id, MUSU_INDEX, 0);
     setStartTs(components, id, block.timestamp);
