@@ -7,6 +7,7 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
+import { formatEntityID } from 'engine/utils';
 import { utils } from 'ethers';
 
 import { Components } from 'network/';
@@ -51,7 +52,7 @@ export const getFlag = (components: Components, index: EntityIndex): Flag => {
   const { HolderID, Type } = components;
   return {
     has: _has(components, index),
-    holder: getComponentValue(HolderID, index)?.value as EntityID,
+    holder: formatEntityID(getComponentValue(HolderID, index)?.value ?? ''),
     type: getComponentValue(Type, index)?.value as string,
   };
 };
@@ -91,7 +92,7 @@ const getEntityIndex = (
     ['string', 'uint256', 'string'],
     ['has.flag', holderID, field]
   );
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 const _has = (components: Components, index: EntityIndex | undefined): boolean => {

@@ -8,6 +8,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Kami, getKami } from '../Kami';
 
@@ -82,7 +83,9 @@ export const getNode = (
 
     // get list of kamis from list of productions
     for (let i = 0; i < productionEntityIndices.length; i++) {
-      const kamiID = getComponentValue(PetID, productionEntityIndices[i])?.value as EntityID;
+      const kamiID = formatEntityID(
+        getComponentValue(PetID, productionEntityIndices[i])?.value ?? ''
+      );
       const kamiEntityIndex = world.entityToIndex.get(kamiID);
       if (kamiEntityIndex) {
         kamis.push(

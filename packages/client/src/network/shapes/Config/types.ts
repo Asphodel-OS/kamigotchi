@@ -1,6 +1,7 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { BigNumber, utils } from 'ethers';
+import { EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { utils } from 'ethers';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { unpackArray32 } from '../utils/data';
 
@@ -48,6 +49,5 @@ export const getConfigFieldValueWei = (
 
 const getEntityIndex = (world: World, field: string): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'string'], ['is.config', field]);
-  const formattedID = BigNumber.from(id).toHexString() as EntityID;
-  return world.entityToIndex.get(formattedID);
+  return world.entityToIndex.get(formatEntityID(id));
 };

@@ -14,6 +14,7 @@ import { Components } from 'network/';
 import { Account, getAccount } from '../Account';
 import { Condition, passesConditions } from '../utils';
 
+import { formatEntityID } from 'engine/utils';
 import { getGatesBetween } from './functions';
 import { queryRoomsEntitiesX } from './queries';
 
@@ -99,7 +100,7 @@ export const getRoom = (
 
   // if the room has an owner, include their name
   if (options?.owner && hasComponent(AccountID, index)) {
-    const accountID = getComponentValue(AccountID, index)?.value as EntityID;
+    const accountID = formatEntityID(getComponentValue(AccountID, index)?.value ?? '');
     const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
     room.owner = getAccount(world, components, accountEntityIndex);
   }
@@ -140,11 +141,11 @@ const getLocation = (components: Components, index: EntityIndex): Coord => {
 // UTILS
 
 export const getGateToPtr = (index: number): EntityID => {
-  return utils.solidityKeccak256(['string', 'uint32'], ['room.gate.to', index]) as EntityID;
+  return formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['room.gate.to', index]));
 };
 
 export const getGateFromPtr = (index: number): EntityID => {
-  return utils.solidityKeccak256(['string', 'uint32'], ['room.gate.from', index]) as EntityID;
+  return formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['room.gate.from', index]));
 };
 
 const getAdjacentIndices = (components: Components, location: Coord): number[] => {

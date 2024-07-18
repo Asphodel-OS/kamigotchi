@@ -9,6 +9,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Account, getAccountByID } from './Account';
 
@@ -31,14 +32,14 @@ export const getFriendship = (
   const account = getAccountByID(
     world,
     components,
-    getComponentValue(AccountID, entityIndex)?.value as EntityID,
+    formatEntityID(getComponentValue(AccountID, entityIndex)?.value ?? ''),
     accountOptions
   );
 
   const target = getAccountByID(
     world,
     components,
-    getComponentValue(TargetID, entityIndex)?.value as EntityID,
+    formatEntityID(getComponentValue(TargetID, entityIndex)?.value ?? ''),
     accountOptions
   );
 

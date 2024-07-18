@@ -1,4 +1,5 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { formatEntityID } from 'engine/utils';
 import { BigNumber, utils } from 'ethers';
 
 import { Components } from 'network/';
@@ -68,5 +69,5 @@ const getEntityIndex = (
     ['string', 'uint256', 'uint32', 'string'],
     ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
   );
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };

@@ -9,6 +9,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Account, getAccount } from '../Account';
 import { KamiBonuses, getKamiBonuses } from '../Bonus';
@@ -146,7 +147,7 @@ export const getKami = (
 
   // populate Account
   if (options?.account) {
-    const accountID = getComponentValue(OwnsPetID, entityIndex)?.value as EntityID;
+    const accountID = formatEntityID(getComponentValue(OwnsPetID, entityIndex)?.value ?? '');
     const accountIndex = world.entityToIndex.get(accountID);
     if (accountIndex) kami.account = getAccount(world, components, accountIndex);
   }

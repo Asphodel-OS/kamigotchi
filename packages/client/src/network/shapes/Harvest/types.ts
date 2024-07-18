@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getMusuBalance } from '../Item';
 import { Kami, getKami } from '../Kami';
@@ -51,7 +52,7 @@ export const getHarvest = (
 
   // populate Node
   if (options?.node) {
-    const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
+    const nodeID = formatEntityID(getComponentValue(NodeID, index)?.value ?? '');
     const nodeIndex = world.entityToIndex.get(nodeID);
     if (nodeIndex) production.node = getNode(world, components, nodeIndex);
   }
@@ -62,7 +63,7 @@ export const getHarvest = (
   // retrieve the kami if it's not passed in
   // NOTE: rate calcs only work if the node is set
   if (!kami) {
-    const kamiID = getComponentValue(PetID, index)?.value as EntityID;
+    const kamiID = formatEntityID(getComponentValue(PetID, index)?.value ?? '');
     const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
     kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
   }

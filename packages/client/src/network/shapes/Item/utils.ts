@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/re
 import { utils } from 'ethers';
 
 import { MUSU_INDEX } from 'constants/indices';
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
 import { Inventory } from './types';
 
@@ -27,7 +28,7 @@ export const getInventoryEntityIndex = (
     ['string', 'uint256', 'uint32'],
     ['inventory.instance', holderID ?? 0, itemIndex]
   );
-  return world.entityToIndex.get(id as EntityID);
+  return world.entityToIndex.get(formatEntityID(id));
 };
 
 export interface For {
