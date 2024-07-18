@@ -4,6 +4,7 @@ import execa = require('execa');
 import { ParamType } from '@ethersproject/abi';
 import { SystemAbis } from '../../world/mappings/SystemAbis';
 import { idToSystem } from '../../world/mappings/SystemMappings';
+import { ignoreSolcErrors } from './utils';
 
 type Call = {
   system: string;
@@ -11,7 +12,13 @@ type Call = {
   args: string;
 };
 
-export const executeCall = async (rpc: string, deployerKey: string, data: Call, world?: string) => {
+export const executeCall = async (
+  rpc: string,
+  deployerKey: string,
+  data: Call,
+  world?: string,
+  forgeOpts?: string
+) => {
   const child = execa(
     'forge',
     [
@@ -26,6 +33,10 @@ export const executeCall = async (rpc: string, deployerKey: string, data: Call, 
       world || '0',
       data.system,
       data.args,
+      '--skip',
+      'test',
+      ...ignoreSolcErrors,
+      ...(forgeOpts?.split(' ') || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -35,7 +46,12 @@ export const executeCall = async (rpc: string, deployerKey: string, data: Call, 
   return { child: await child };
 };
 
-export const executeCallFromStream = async (rpc: string, deployerKey: string, world: string) => {
+export const executeCallFromStream = async (
+  rpc: string,
+  deployerKey: string,
+  world: string,
+  forgeOpts?: string
+) => {
   const child = execa(
     'forge',
     [
@@ -48,6 +64,10 @@ export const executeCallFromStream = async (rpc: string, deployerKey: string, wo
       'initWorld(uint256,address)',
       deployerKey,
       world || '0x00',
+      '--skip',
+      'test',
+      ...ignoreSolcErrors,
+      ...(forgeOpts?.split(' ') || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -57,7 +77,12 @@ export const executeCallFromStream = async (rpc: string, deployerKey: string, wo
   return { child: await child };
 };
 
-export const executeGodSystem = async (rpc: string, deployerKey: string, world: string) => {
+export const executeGodSystem = async (
+  rpc: string,
+  deployerKey: string,
+  world: string,
+  forgeOpts?: string
+) => {
   const child = execa(
     'forge',
     [
@@ -70,6 +95,10 @@ export const executeGodSystem = async (rpc: string, deployerKey: string, world: 
       'run(uint256,address)',
       deployerKey,
       world || '0x00',
+      '--skip',
+      'test',
+      ...ignoreSolcErrors,
+      ...(forgeOpts?.split(' ') || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
