@@ -18,7 +18,7 @@ contract FeedingTest is SetupTemplate {
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
     _npcID = _createNPC(1, 1, "Test NPC");
 
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
+    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
   }
 
   function setUpItems() public override {
@@ -216,7 +216,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("PetFeed: pet must be in same room");
+        vm.expectRevert("PetFeed: pet too far");
         _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
       }
     }
@@ -229,7 +229,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("PetFeed: pet must be in same room");
+        vm.expectRevert("PetFeed: pet too far");
         _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
       }
     }

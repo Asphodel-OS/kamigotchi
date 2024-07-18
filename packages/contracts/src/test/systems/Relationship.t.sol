@@ -63,13 +63,15 @@ contract RelationshipTest is SetupTemplate {
 
   function testBlacklistedRS(
     bool listed,
-    RSIndexPair memory listIndex,
-    RSIndexPair memory tarIndex
+    uint32 npcIndex,
+    uint32 listIndexSingle,
+    uint32 tarIndexSingle
   ) public {
-    vm.assume(listIndex.npc != 0 && tarIndex.npc != 0);
-    vm.assume(listIndex.rel != 0 && tarIndex.rel != 0);
-    vm.assume(listIndex.npc == tarIndex.npc);
-    vm.assume(listIndex.rel != tarIndex.rel);
+    vm.assume(npcIndex != 0);
+    vm.assume(listIndexSingle != 0 && tarIndexSingle != 0);
+    vm.assume(listIndexSingle != tarIndexSingle);
+    RSIndexPair memory listIndex = RSIndexPair(npcIndex, listIndexSingle);
+    RSIndexPair memory tarIndex = RSIndexPair(npcIndex, tarIndexSingle);
 
     // create relationship
     _createNPC(listIndex.npc, 1, "testNPC");
@@ -99,13 +101,15 @@ contract RelationshipTest is SetupTemplate {
 
   function testWhitelistedRS(
     bool listed,
-    RSIndexPair memory listIndex,
-    RSIndexPair memory tarIndex
+    uint32 npcIndex,
+    uint32 listIndexSingle,
+    uint32 tarIndexSingle
   ) public {
-    vm.assume(listIndex.npc != 0 && tarIndex.npc != 0);
-    vm.assume(listIndex.rel != 0 && tarIndex.rel != 0);
-    vm.assume(listIndex.npc == tarIndex.npc);
-    vm.assume(listIndex.rel != tarIndex.rel);
+    vm.assume(npcIndex != 0);
+    vm.assume(listIndexSingle != 0 && tarIndexSingle != 0);
+    vm.assume(listIndexSingle != tarIndexSingle);
+    RSIndexPair memory listIndex = RSIndexPair(npcIndex, listIndexSingle);
+    RSIndexPair memory tarIndex = RSIndexPair(npcIndex, tarIndexSingle);
 
     // create relationship
     _createNPC(listIndex.npc, 1, "testNPC");

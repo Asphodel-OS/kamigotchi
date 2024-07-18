@@ -191,7 +191,7 @@ abstract contract SetupTemplate is TestSetupImports {
   // OWNER ACTIONS
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory id) {
+  function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
     address owner = _owners[playerIndex];
 
     vm.roll(++_currBlock);
@@ -222,8 +222,7 @@ abstract contract SetupTemplate is TestSetupImports {
   // attempt to move an account if it's not already there
   function _moveAccount(uint playerIndex, uint32 roomIndex) internal {
     if (roomIndex != LibAccount.getRoom(components, _getAccount(playerIndex))) {
-      address operator = _operators[_owners[playerIndex]];
-      vm.prank(operator);
+      vm.prank(_getOperator(playerIndex));
       _AccountMoveSystem.executeTyped(roomIndex);
     }
   }
@@ -313,9 +312,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* LOOTBOXES */
 
   function _openLootbox(uint playerIndex, uint32 index, uint amount) internal virtual {
-    address operator = _getOperator(playerIndex);
-
-    vm.startPrank(operator);
+    vm.startPrank(_getOperator(playerIndex));
     uint256 id = abi.decode(_LootboxStartRevealSystem.executeTyped(index, amount), (uint256));
     vm.roll(_currBlock++);
     _LootboxExecuteRevealSystem.executeTyped(id);
@@ -325,20 +322,17 @@ abstract contract SetupTemplate is TestSetupImports {
   /* QUESTS */
 
   function _acceptQuest(uint playerIndex, uint32 questIndex) internal virtual returns (uint) {
-    address operator = _getOperator(playerIndex);
-    vm.prank(operator);
+    vm.prank(_getOperator(playerIndex));
     return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
   }
 
   function _completeQuest(uint playerIndex, uint questID) internal virtual {
-    address operator = _getOperator(playerIndex);
-    vm.prank(operator);
+    vm.prank(_getOperator(playerIndex));
     _QuestCompleteSystem.executeTyped(questID);
   }
 
   function _dropQuest(uint playerIndex, uint questID) internal virtual {
-    address operator = _getOperator(playerIndex);
-    vm.prank(operator);
+    vm.prank(_getOperator(playerIndex));
     _QuestDropSystem.executeTyped(questID);
   }
 
@@ -352,8 +346,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* SKILLS */
 
   function _upgradeSkill(uint playerIndex, uint targetID, uint32 skillIndex) internal virtual {
-    address operator = _getOperator(playerIndex);
-    vm.prank(operator);
+    vm.prank(_getOperator(playerIndex));
     _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
   }
 
@@ -659,9 +652,8 @@ abstract contract SetupTemplate is TestSetupImports {
   /* RELATIONSHIP */
 
   function _createRelationship(uint32 npcIndex, uint32 relIndex) internal returns (uint256) {
-    uint32[] memory whitelist = new uint32[](0);
-    uint32[] memory blacklist = new uint32[](0);
-    return _createRelationship(npcIndex, relIndex, "relationship name", whitelist, blacklist);
+    uint32[] memory list = new uint32[](0);
+    return _createRelationship(npcIndex, relIndex, "relationship name", list, list);
   }
 
   function _createRelationship(
@@ -1016,7 +1008,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initKamiConfigs() internal virtual {
     // Idle Requirements
-    _setConfig("KAMI_STANDARD_COOLDOWN", 300);
+    _setConfig("KAMI_STANDARD_COOLDOWN", 180);
 
     // Kami Stats
     _setConfig("KAMI_BASE_HEALTH", 50);
@@ -1027,9 +1019,6 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initHealthConfigs() internal virtual {
-    // Kami Health Drain Rates
-    _setConfigArray("HEALTH_RATE_DRAIN_BASE", [uint32(1000), 3, 0, 0, 0, 0, 0, 0]);
-
     // Kami Health Heal Rates
     // (prec, base, base_prec, mult_prec)
     _setConfigArray("KAMI_REST_METABOLISM", [uint32(6), 1000, 3, 3, 0, 0, 0, 0]);
@@ -1037,21 +1026,20 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initHarvestConfigs() internal virtual {
     // Harvest Rates
-    // [prec, base, base_prec, mult_prec]
-    _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
-    // [base, up, down]
-    _setConfigArray("KAMI_HARV_EFFICACY", [uint32(1000), 1500, 500, 0, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_HARV_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_HARV_FERTILITY", [uint32(0), 0, 1500, 3, 0, 0, 1000, 3]);
+    _setConfigArray("KAMI_HARV_INTENSITY", [uint32(0), 0, 25, 0, 0, 0, 480, 0]); // inversed boost
+    _setConfigArray("KAMI_HARV_BOUNTY", [uint32(0), 9, 0, 0, 0, 0, 1000, 3]);
+    _setConfigArray("KAMI_HARV_STRAIN", [uint32(0), 0, 5000, 3, 0, 0, 1000, 3]);
   }
 
   function _initLiquidationConfigs() internal virtual {
-    // Liquidation Calcs
-    _setConfigArray("LIQ_THRESH_BASE", [uint32(20), 2, 0, 0, 0, 0, 0, 0]);
-    // [base, up, down]
-    _setConfigArray("LIQ_THRESH_MULT_AFF", [uint32(100), 200, 50, 0, 0, 0, 0, 0]);
-    _setConfig("LIQ_THRESH_MULT_AFF_PREC", 2);
-
-    // Liquidation Bounty
-    _setConfigArray("LIQ_BOUNTY_BASE", [uint32(50), 3, 0, 0, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_LIQ_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]); // [neut, up, down, prec]
+    _setConfigArray("KAMI_LIQ_ANIMOSITY", [uint32(0), 0, 400, 3, 0, 0, 0, 0]); // nontraditional AST node
+    _setConfigArray("KAMI_LIQ_THRESHOLD", [uint32(0), 3, 1000, 3, 0, 3, 0, 0]);
+    _setConfigArray("KAMI_LIQ_SALVAGE", [uint32(0), 0, 0, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_LIQ_SPOILS", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_LIQ_KARMA", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
   }
 
   function _initSkillConfigs() internal virtual {

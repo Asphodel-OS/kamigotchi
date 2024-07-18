@@ -30,7 +30,7 @@ contract MurderTest is SetupTemplate {
     _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
 
     // starting states
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
+    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
   }
 
   function setUpItems() public override {
@@ -44,77 +44,6 @@ contract MurderTest is SetupTemplate {
   }
 
   /////////////////
-  // HELPER FUNCTIONS
-
-  function _createFoodListings(uint32 npcIndex) internal {
-    uint32 itemIndex;
-    uint[] memory registryIDs = _foodRegistryIDs;
-    for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
-      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
-    }
-  }
-
-  function _createReviveListings(uint32 npcIndex) internal {
-    uint32 itemIndex;
-    uint[] memory registryIDs = _reviveRegistryIDs;
-    for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
-      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
-    }
-  }
-
-  // stocks an account with a bunch of revives
-  function _stockAccount(uint playerIndex) internal {
-    _fundAccount(playerIndex, 1e9);
-    for (uint i = 0; i < _listingIDs.length; i++) {
-      _buyFromListing(playerIndex, _listingIDs[i], 100);
-    }
-  }
-
-  // checks whether a production should be liquidatable by a pet
-  // assumes the production is active to simulate a health sync
-  function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
-    uint victimID = LibHarvest.getPet(components, productionID);
-    uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
-    uint output = LibHarvest.calcBounty(components, productionID);
-    uint drain = LibPet.calcStrain(components, victimID, output);
-    uint health = uint(int(LibStat.getHealth(components, victimID).sync));
-    health = (health > drain) ? health - drain : 0;
-
-    uint threshold = LibKill.calcAnimosity(components, attackerID, victimID); // 1e18 precision
-    return threshold * totalHealth > health * 1e18;
-  }
-
-  // gets the playerIndex of a pet's owner
-  function _getOwnerPlayerIndex(uint petID) internal view returns (uint) {
-    uint accountID = LibPet.getAccount(components, petID);
-    address owner = LibAccount.getOwner(components, accountID);
-    for (uint i = 0; i < _owners.length; i++) {
-      if (_owners[i] == owner) {
-        return i;
-      }
-    }
-  }
-
-  // creates an account and sets up a bunch of drained kamis on the first node with it
-  function _setupDrainedProductions(
-    uint playerIndex,
-    uint numPets,
-    uint nodeID
-  ) internal returns (uint[] memory) {
-    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
-    _fastForward(_idleRequirement);
-
-    uint[] memory productionIDs = new uint[](numPets);
-    for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
-    }
-    _fastForward(100 hours);
-    return productionIDs;
-  }
-
-  /////////////////
   // TESTS
 
   // test that the correct account must call the liquidation
@@ -125,16 +54,12 @@ contract MurderTest is SetupTemplate {
     uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
     // create and stock a bunch of accounts with revives and kamis
-    for (uint i = 0; i < numAccounts; i++) {
-      _petIDs[i] = _mintPets(i, numPets);
-    }
+    for (uint i = 0; i < numAccounts; i++) _petIDs[i] = _mintPets(i, numPets);
     _fastForward(_idleRequirement);
 
     // start harvest on node with other account's kamis, fast forward by idle time requirement
     for (uint i = 0; i < numAccounts; i++) {
-      for (uint j = 0; j < numPets; j++) {
-        _startProduction(_petIDs[i][j], nodeID);
-      }
+      for (uint j = 0; j < numPets; j++) _startProduction(_petIDs[i][j], nodeID);
     }
     _fastForward(_idleRequirement);
 
@@ -148,9 +73,7 @@ contract MurderTest is SetupTemplate {
     }
 
     // check that we CAN liquidate starved kamis from the right account
-    for (uint i = 0; i < numPets; i++) {
-      _liquidateProduction(_petIDs[0][i], victimProductionIDs[i]);
-    }
+    for (uint i = 0; i < numPets; i++) _liquidateProduction(_petIDs[0][i], victimProductionIDs[i]);
   }
 
   // test that the player must be in the same room to command liquidations
@@ -165,9 +88,7 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // start harvest on the right Node
-    for (uint j = 0; j < numPets; j++) {
-      _startProduction(_petIDs[playerIndex][j], nodeID);
-    }
+    for (uint j = 0; j < numPets; j++) _startProduction(_petIDs[playerIndex][j], nodeID);
     _fastForward(_idleRequirement);
 
     // move the Account to room 2
@@ -191,9 +112,8 @@ contract MurderTest is SetupTemplate {
     // move the Account to room 1
     // check that we CAN liquidate
     _moveAccount(playerIndex, 1);
-    for (uint i = 0; i < numPets; i++) {
+    for (uint i = 0; i < numPets; i++)
       _liquidateProduction(_petIDs[playerIndex][i], productionIDs[i]);
-    }
   }
 
   // test that the pets must be on the same Node to liquidate one another
@@ -212,14 +132,12 @@ contract MurderTest is SetupTemplate {
     for (uint i = 1; i < _nodeIDs.length; i++) {
       // move to the room where the Node is
       roomIndex = LibNode.getRoom(components, _nodeIDs[i]);
-      if (LibAccount.getRoom(components, _getAccount(playerIndex)) != roomIndex) {
+      if (LibAccount.getRoom(components, _getAccount(playerIndex)) != roomIndex)
         _moveAccount(playerIndex, roomIndex);
-      }
 
       // start productions for all pets
-      for (uint j = 0; j < numPets; j++) {
+      for (uint j = 0; j < numPets; j++)
         playerProductionIDs[j] = _startProduction(_petIDs[playerIndex][j], _nodeIDs[i]);
-      }
       _fastForward(_idleRequirement);
 
       // attempt to liquidate, then stop production
@@ -234,20 +152,16 @@ contract MurderTest is SetupTemplate {
 
     // move to the room where Node1 is
     roomIndex = LibNode.getRoom(components, _nodeIDs[0]);
-    if (LibAccount.getRoom(components, _getAccount(playerIndex)) != roomIndex) {
+    if (LibAccount.getRoom(components, _getAccount(playerIndex)) != roomIndex)
       _moveAccount(playerIndex, roomIndex);
-    }
 
     // start harvest on right Node for second account's kamis
-    for (uint i = 0; i < numPets; i++) {
-      _startProduction(_petIDs[playerIndex][i], _nodeIDs[0]);
-    }
+    for (uint i = 0; i < numPets; i++) _startProduction(_petIDs[playerIndex][i], _nodeIDs[0]);
     _fastForward(_idleRequirement);
 
     // check that we CAN liquidate
-    for (uint i = 0; i < numPets; i++) {
+    for (uint i = 0; i < numPets; i++)
       _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
-    }
   }
 
   // test that we cannot unless we meet idle requirements
@@ -264,9 +178,8 @@ contract MurderTest is SetupTemplate {
 
     // start harvesting on the same node as our victims
     uint[] memory playerProductionIDs = new uint[](numPets);
-    for (uint i = 0; i < numPets; i++) {
+    for (uint i = 0; i < numPets; i++)
       playerProductionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
-    }
 
     // check that we CANNOT liquidate anytime before the idle requirement is met
     uint numIncrements = 7; // KAMI_STANDARD_COOLDOWN must not be divisible by this number
@@ -282,9 +195,8 @@ contract MurderTest is SetupTemplate {
 
     // check that we CAN liquidate after the idle requirement is met
     _fastForward(_idleRequirement % numIncrements);
-    for (uint i = 0; i < numPets; i++) {
+    for (uint i = 0; i < numPets; i++)
       _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
-    }
   }
 
   // check that pets can only liquidate when both victim and attacker are HARVESTING
@@ -322,9 +234,7 @@ contract MurderTest is SetupTemplate {
     }
 
     // start out player's productions and starve their pets
-    for (uint i = 0; i < numPets; i++) {
-      _startProduction(_petIDs[playerIndex][i], nodeID);
-    }
+    for (uint i = 0; i < numPets; i++) _startProduction(_petIDs[playerIndex][i], nodeID);
     _fastForward(100 hours);
 
     // check that pets CANNOT liquidate when Starving
@@ -364,9 +274,8 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // check that pets CAN liquidate when HARVESTING
-    for (uint i = 0; i < numPets; i++) {
+    for (uint i = 0; i < numPets; i++)
       _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
-    }
     _fastForward(_idleRequirement);
 
     // check that pets CAN can liquidate in succession once idle requirement is met
@@ -454,65 +363,74 @@ contract MurderTest is SetupTemplate {
   //   }
   // }
 
-  //////////////
-  // QUERIES
+  /////////////////
+  // HELPER FUNCTIONS
 
-  // get all productions
-  function getAll(IUint256Component components) internal view returns (uint256[] memory) {
-    return _getAllX(components, 0, 0, "");
+  function _createFoodListings(uint32 npcIndex) internal {
+    uint32 itemIndex;
+    uint[] memory registryIDs = _foodRegistryIDs;
+    for (uint i = 0; i < registryIDs.length; i++) {
+      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
+      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
+    }
   }
 
-  // get all the active productions on a node
-  function getAllOnNode(
-    IUint256Component components,
-    uint256 nodeID
-  ) internal view returns (uint256[] memory) {
-    return _getAllX(components, nodeID, 0, "ACTIVE");
+  function _createReviveListings(uint32 npcIndex) internal {
+    uint32 itemIndex;
+    uint[] memory registryIDs = _reviveRegistryIDs;
+    for (uint i = 0; i < registryIDs.length; i++) {
+      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
+      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
+    }
   }
 
-  // Retrieves all productions based on any defined filters
-  function _getAllX(
-    IUint256Component components,
-    uint256 nodeID,
-    uint256 petID,
-    string memory state
-  ) internal view returns (uint256[] memory) {
-    uint256 numFilters;
-    if (nodeID != 0) numFilters++;
-    if (petID != 0) numFilters++;
-    if (!LibString.eq(state, "")) numFilters++;
-
-    QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-
-    uint256 filterCount;
-    if (nodeID != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IdNodeComponentID),
-        abi.encode(nodeID)
-      );
+  // stocks an account with a bunch of revives
+  function _stockAccount(uint playerIndex) internal {
+    _fundAccount(playerIndex, 1e9);
+    for (uint i = 0; i < _listingIDs.length; i++) {
+      _buyFromListing(playerIndex, _listingIDs[i], 100);
     }
-    if (petID != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IdPetComponentID),
-        abi.encode(petID)
-      );
-    }
-    if (!LibString.eq(state, "")) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, StateComponentID),
-        abi.encode(state)
-      );
-    }
+  }
 
-    fragments[filterCount] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsProductionComponentID),
-      ""
-    );
+  // checks whether a production should be liquidatable by a pet
+  // assumes the production is active to simulate a health sync
+  function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
+    uint victimID = LibHarvest.getPet(components, productionID);
+    uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
+    uint output = LibHarvest.calcBounty(components, productionID);
+    uint drain = LibPet.calcStrain(components, victimID, output);
+    uint health = uint(int(LibStat.getHealth(components, victimID).sync));
+    health = (health > drain) ? health - drain : 0;
 
-    return LibQuery.query(fragments);
+    uint threshold = LibKill.calcAnimosity(components, attackerID, victimID); // 1e18 precision
+    return threshold * totalHealth > health * 1e18;
+  }
+
+  // gets the playerIndex of a pet's owner
+  function _getOwnerPlayerIndex(uint petID) internal view returns (uint) {
+    uint accountID = LibPet.getAccount(components, petID);
+    address owner = LibAccount.getOwner(components, accountID);
+    for (uint i = 0; i < _owners.length; i++) {
+      if (_owners[i] == owner) {
+        return i;
+      }
+    }
+  }
+
+  // creates an account and sets up a bunch of drained kamis on the first node with it
+  function _setupDrainedProductions(
+    uint playerIndex,
+    uint numPets,
+    uint nodeID
+  ) internal returns (uint[] memory) {
+    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+    _fastForward(_idleRequirement);
+
+    uint[] memory productionIDs = new uint[](numPets);
+    for (uint i = 0; i < numPets; i++) {
+      productionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
+    }
+    _fastForward(100 hours);
+    return productionIDs;
   }
 }
