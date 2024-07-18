@@ -61,11 +61,19 @@ export const Room = (props: Props) => {
     });
   };
 
+  // figures out 0 1 or 2, which time of day it is
+  const getEpoch = (time: number): number => {
+    const hours = Math.floor(time / 3600) % 36;
+    const epoch = Math.floor(hours / 12) % room.backgrounds.length;
+    return epoch;
+  };
+
   // return the background path for now
   // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
     if (index === 47 && goals[0].complete) return room47Image; // disgusting hardcoding
-    return room.backgrounds[0];
+    const epoch = getEpoch(Date.now() / 1000);
+    return room.backgrounds[epoch];
   };
 
   const getClickbox = (object: RoomAsset) => {
