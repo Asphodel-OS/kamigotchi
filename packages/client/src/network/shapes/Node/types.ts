@@ -10,7 +10,24 @@ import {
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { Item, getItemByIndex } from '../Item';
 import { Kami, getKami } from '../Kami';
+
+export const NullNode: Node = {
+  id: '0' as EntityID,
+  index: 0,
+  entityIndex: 0 as EntityIndex,
+  type: '' as string,
+  roomIndex: 0,
+  name: 'Empty Node',
+  description: 'There is no node in this room.',
+  affinity: '' as string,
+  drops: [],
+  kamis: {
+    allies: [],
+    enemies: [],
+  },
+};
 
 // standardized shape of a Node Entity
 export interface Node {
@@ -21,6 +38,7 @@ export interface Node {
   roomIndex: number;
   name: string;
   description: string;
+  drops: Item[];
   affinity?: string;
   kamis?: NodeKamis;
 }
@@ -64,6 +82,7 @@ export const getNode = (
     name: getComponentValue(Name, entityIndex)?.value as string,
     description: getComponentValue(Description, entityIndex)?.value as string,
     affinity: getComponentValue(Affinity, entityIndex)?.value as string, // does this break if there's no affinity?
+    drops: [getItemByIndex(world, components, 1)],
   };
 
   // (option) get the kamis on this node
