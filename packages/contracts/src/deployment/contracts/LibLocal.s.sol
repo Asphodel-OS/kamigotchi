@@ -49,7 +49,7 @@ library LibLocal {
   function initHarvests(IUint256Component components, IUint256Component systems) internal {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     uint256[] memory petIDs = LibAccount.getPetsOwned(components, accID);
-    uint256 nodeID = LibNode.getByIndex(components, 1);
+    uint256 nodeID = LibNode.getByIndex(components, 30);
 
     // enslavement
     for (uint256 i = 0; i < petIDs.length; i++) {
