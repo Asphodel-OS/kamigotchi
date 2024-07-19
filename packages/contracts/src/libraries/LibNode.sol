@@ -142,27 +142,6 @@ library LibNode {
   }
 
   /////////////////////
-  // LOGGING
-
-  function logHarvestAt(
-    IUintComp components,
-    uint256 holderID,
-    uint32 index,
-    uint256 amt
-  ) internal {
-    LibData.inc(components, holderID, index, "HARVEST_AT_NODE", amt);
-  }
-
-  function logHarvestAffinity(
-    IUintComp components,
-    uint256 holderID,
-    string memory affinity,
-    uint256 amt
-  ) internal {
-    LibData.inc(components, holderID, 0, LibString.concat("HARVEST_AFFINITY_", affinity), amt);
-  }
-
-  /////////////////////
   // UTILS
 
   function genID(uint32 index) internal pure returns (uint256) {

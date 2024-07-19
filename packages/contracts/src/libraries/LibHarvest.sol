@@ -26,6 +26,7 @@ import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant RATE_PREC = 9;
@@ -287,6 +288,26 @@ library LibHarvest {
 
   function logHarvestTime(IUintComp components, uint256 accID, uint256 value) internal {
     LibData.inc(components, accID, 0, "HARVEST_TIME", value);
+  }
+
+  function logAmounts(
+    IUintComp components,
+    uint256 accID,
+    uint32 nodeIndex,
+    string memory affinity,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal {
+    uint32[] memory indices = new uint32[](3);
+    indices[0] = nodeIndex;
+    indices[1] = itemIndex;
+    indices[2] = itemIndex;
+    string[] memory types = new string[](3);
+    types[0] = "HARVEST_AT_NODE";
+    types[1] = LibString.concat("HARVEST_AFFINITY_", affinity);
+    types[2] = LibString.concat("HARVEST_DURING_", LibPhase.getName(block.timestamp));
+
+    LibData.inc(components, accID, indices, types, amt);
   }
 
   /////////////////////
