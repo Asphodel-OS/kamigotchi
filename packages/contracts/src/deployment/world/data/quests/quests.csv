@@ -464,3 +464,12 @@ Lethe Asphodel,,Food Tutorial Quest,In progress,,,,,,,,No,,,"See how you got a g
 This is food for Kamigotchi. ",,,,,
 ,,Working for the Agency,In progress,,,,,,,,No,,,,,xx Quest Points,yy Quest Points,,
 ,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,Desperate Measures,For Implementation,Quest,,,,,,,No,15,,"Nice to see you again.
+
+We've had a lot of complaints about a specific individual recently. We'd appreciate it if you could help us... do something about this. The rewards will be good.",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",
+"Nedu, Lethe Asphodel",10001,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,For Implementation,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,For Implementation,Reward,ITEM,,,5x Giftbox,10001,5,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,For Implementation,Reward,ITEM,,,1x Large XP Candy,104,1,No,,,,,,,,

@@ -210,7 +210,10 @@ library LibAccount {
     return TimeLastComponent(getAddressById(components, TimeLastCompID)).get(id);
   }
 
-  // gets the roomIndex of a specified account account
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
+    return IndexAccountComponent(getAddressById(components, IndexAccCompID)).get(id);
+  }
+
   function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexRoomComponent(getAddressById(components, RoomCompID)).get(id);
   }

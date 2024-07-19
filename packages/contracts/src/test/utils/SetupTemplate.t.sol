@@ -18,7 +18,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   struct PlayerAccount {
     uint256 id;
-    uint256 index;
+    uint32 index; // testIndex (from 0) ≠ accountIndex (from 1) - need to fix
     address operator;
     address owner;
   }
@@ -31,6 +31,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   PlayerAccount alice;
   PlayerAccount bob;
+  PlayerAccount charlie;
 
   constructor() MudTest() {}
 
@@ -59,6 +60,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _registerAccounts(10);
     alice = _accounts[0];
     bob = _accounts[1];
+    charlie = _accounts[2];
   }
 
   function setUpAuthRoles() public virtual {
@@ -178,7 +180,7 @@ abstract contract SetupTemplate is TestSetupImports {
     );
     vm.stopPrank();
 
-    _accounts[playerIndex] = PlayerAccount(accID, playerIndex, operator, owner);
+    _accounts[playerIndex] = PlayerAccount(accID, uint32(playerIndex), operator, owner);
     return accID;
   }
 
@@ -189,6 +191,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /////////////////
   // OWNER ACTIONS
+
+  function _mintPets(PlayerAccount memory account, uint amt) internal returns (uint[] memory) {
+    return _mintPets(account.index, amt);
+  }
 
   // (public) mint and reveal multiple pets for a calling address
   function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
@@ -201,6 +207,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.roll(++_currBlock);
     return _PetGachaRevealSystem.reveal(commits);
+  }
+
+  function _mintPet(PlayerAccount memory account) internal returns (uint) {
+    return _mintPet(account.index);
   }
 
   // (public) mint and reveal a single pet to a specified address
@@ -321,14 +331,27 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
+  function _acceptQuest(PlayerAccount memory account, uint32 questIndex) internal returns (uint) {
+    return _acceptQuest(account.index, questIndex);
+  }
+
   function _acceptQuest(uint playerIndex, uint32 questIndex) internal virtual returns (uint) {
     vm.prank(_getOperator(playerIndex));
     return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
   }
 
+  function _completeQuest(PlayerAccount memory account, uint32 questIndex) internal {
+    uint256 questID = LibQuests.getAccQuestIndex(components, account.id, questIndex);
+    return _completeQuest(account.index, questID);
+  }
+
   function _completeQuest(uint playerIndex, uint questID) internal virtual {
     vm.prank(_getOperator(playerIndex));
     _QuestCompleteSystem.executeTyped(questID);
+  }
+
+  function _dropQuest(PlayerAccount memory account, uint questID) internal {
+    return _dropQuest(account.index, questID);
   }
 
   function _dropQuest(uint playerIndex, uint questID) internal virtual {
@@ -614,11 +637,21 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createQuestObjective(
     uint32 questIndex,
+    string memory logicType,
+    string memory _type,
+    uint32 index,
+    uint256 value
+  ) public returns (uint256) {
+    return _createQuestObjective(questIndex, "NAME", logicType, _type, index, value);
+  }
+
+  function _createQuestObjective(
+    uint32 questIndex,
     string memory name,
     string memory logicType,
     string memory _type,
     uint32 index, // can be empty
-    uint value // can be empty
+    uint256 value // can be empty
   ) public returns (uint256) {
     vm.prank(deployer);
     return

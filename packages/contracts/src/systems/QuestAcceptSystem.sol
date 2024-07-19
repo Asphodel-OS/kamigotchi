@@ -22,7 +22,7 @@ contract QuestAcceptSystem is System {
 
     require(LibQuests.checkRequirements(components, index, accID), "QuestAccept: reqs not met");
 
-    uint256 questID = LibQuests.queryAccountQuestIndex(components, accID, index);
+    uint256 questID = LibQuests.getAccQuestIndex(components, accID, index);
     if (LibQuests.isRepeatable(components, regID)) {
       // repeatable quests - accepted before check is implicit
       // repeatable quests can only have 0 or 1 instances
