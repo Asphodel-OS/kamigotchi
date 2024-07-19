@@ -1,13 +1,10 @@
-import { bgPlaytestDay } from 'assets/images/rooms/3_gate';
+import { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight } from 'assets/images/rooms/3_gate';
 import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room03: Room = {
-  roomIndex: 3,
-  background: {
-    key: 'bg_room003',
-    path: bgPlaytestDay,
-  },
+  index: 3,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'arrival',
     path: arrival,

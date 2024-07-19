@@ -3,11 +3,8 @@ import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room15: Room = {
-  roomIndex: 15,
-  background: {
-    key: 'bg_room15',
-    path: bgPlaytest,
-  },
+  index: 15,
+  backgrounds: [bgPlaytest],
   music: {
     key: 'cave',
     path: cave,

@@ -4,7 +4,6 @@ import styled, { keyframes } from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
-import room47Image from 'assets/images/rooms/47_scrap-paths/backgrounds/pretest-a.png';
 import { RoomAsset, rooms } from 'constants/rooms';
 import { Goal } from 'network/shapes/Goal';
 
@@ -25,7 +24,7 @@ export const Room = (props: Props) => {
   // in the Volume Settings modal. This recreates any new music from scratch,
   // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
-    if (index == room.roomIndex) return;
+    if (index == room.index) return;
     const newRoom = rooms[index];
 
     const music = newRoom.music;
@@ -61,11 +60,18 @@ export const Room = (props: Props) => {
     });
   };
 
+  // figures out 0 1 or 2, which time of day it is
+  const getEpoch = (time: number): number => {
+    const hours = Math.floor(time / 3600) % 36;
+    const epoch = Math.floor(hours / 12) % room.backgrounds.length;
+    return epoch;
+  };
+
   // return the background path for now
   // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
-    if (index === 47 && goals[0].complete) return room47Image; // disgusting hardcoding
-    return room.background.path;
+    const epoch = getEpoch(Date.now() / 1000);
+    return room.backgrounds[epoch];
   };
 
   const getClickbox = (object: RoomAsset) => {

@@ -50,16 +50,12 @@ import { room49 } from './49_clearing';
 
 // represents a room in all its glory
 export interface Room {
-  roomIndex: number;
-  background: RoomBackground;
+  index: number;
+  backgrounds: string[];
   objects: RoomAsset[];
-  music?: RoomMusic;
+  music?: Music;
 }
 
-interface RoomBackground {
-  key: string;
-  path: string;
-}
 // represents the configuration of a visual media asset in a room
 export interface RoomAsset {
   name: string;
@@ -69,7 +65,7 @@ export interface RoomAsset {
 }
 
 // represents the music in a room
-interface RoomMusic {
+interface Music {
   key: string;
   path: string;
 }
@@ -127,7 +123,7 @@ export const rooms: Room[] = [
   room39,
   room40,
   room41,
-  { roomIndex: 42, background: { key: 'room42', path: '' }, objects: [] },
+  { index: 42, backgrounds: [''], objects: [] },
   room43,
   room44,
   room45,

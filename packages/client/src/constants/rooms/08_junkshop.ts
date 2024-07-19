@@ -3,11 +3,8 @@ import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room08: Room = {
-  roomIndex: 8,
-  background: {
-    key: 'bg_room008',
-    path: bgPlaytest,
-  },
+  index: 8,
+  backgrounds: [bgPlaytest],
   music: {
     key: 'abandoned',
     path: abandoned,

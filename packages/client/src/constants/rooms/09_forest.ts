@@ -1,13 +1,10 @@
-import { bgPlaytestDay } from 'assets/images/rooms/9_forest';
+import { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight } from 'assets/images/rooms/9_forest';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room09: Room = {
-  roomIndex: 9,
-  background: {
-    key: 'bg_room009',
-    path: bgPlaytestDay,
-  },
+  index: 9,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'glitter',
     path: glitter,

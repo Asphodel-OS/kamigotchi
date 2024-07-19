@@ -1,13 +1,14 @@
-import { bgPlaytestDay } from 'assets/images/rooms/31_scrapyard-exit';
+import {
+  bgPlaytestDay,
+  bgPlaytestEvening,
+  bgPlaytestNight,
+} from 'assets/images/rooms/31_scrapyard-exit';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room31: Room = {
-  roomIndex: 31,
-  background: {
-    key: 'bg_room31',
-    path: bgPlaytestDay,
-  },
+  index: 31,
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
     key: 'cave',
     path: cave,
