@@ -305,7 +305,7 @@ library LibHarvest {
     string[] memory types = new string[](3);
     types[0] = "HARVEST_AT_NODE";
     types[1] = LibString.concat("HARVEST_AFFINITY_", affinity);
-    types[2] = LibString.concat("HARVEST_DURING_", LibPhase.getName(block.timestamp));
+    types[2] = LibString.concat("HARVEST_WHEN_", LibPhase.getName(block.timestamp));
 
     LibData.inc(components, accID, indices, types, amt);
   }

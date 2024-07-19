@@ -473,3 +473,41 @@ We've had a lot of complaints about a specific individual recently. We'd appreci
 "Nedu, Lethe Asphodel",10001,,For Implementation,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,For Implementation,Reward,ITEM,,,5x Giftbox,10001,5,No,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,For Implementation,Reward,ITEM,,,1x Large XP Candy,104,1,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+"Nedu, Lethe Asphodel",21,Daily Grind,For Implementation,Quest,,,,,,,No,5,,"This world follows its own cycles. The calendar here isn't quite the same as in your world.... for example, things here run on a 36 hour day. Have you noticed?
+
+Now, Harvest 300 Musu during the daytime. Show me you understand the purpose of those waking hours!",,Have completed The Kamigotchi Who Shall Be Named (14),Harvest 300 Musu during daytime,1x Giftbox,
+Lethe Asphodel,21,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed “The Kamigotchi who shall be named” (14),14,,No,,,,,,,,
+Lethe Asphodel,21,,For Implementation,Objective,HARVEST_WHEN_DAYLIGHT,MIN,INC,Harvest 300 Musu during daytime,,300,No,,,,,,,,
+Lethe Asphodel,21,,For Implementation,Reward,ITEM,,,1x Giftbox,10001,1,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+Lethe Asphodel,22,A place of tranquility,For Implementation,Quest,,,,,,,No,5,,"Kamigotchi world has three times of day - Daylight, Evenfall, and Moonside. Maybe that's a little different to your home world?
+
+Visit the riverside during Evenfall and meditate for a moment…",,Have completed Daily Grind (21),Visit Misty Riverside during the Evenfall,1x Medium XP Candy,
+Lethe Asphodel,22,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed Daily Grind (21),21,,No,,,,,,,,
+Lethe Asphodel,22,,For Implementation,Objective,PHASE,IS,,Visit Misty Riverside during the Evenfall,2,,No,,,,,,,,
+Lethe Asphodel,22,,For Implementation,Reward,ITEM,,,1x Medium XP Candy,105,1,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+Lethe Asphodel,23,A dark forest…,For Implementation,Quest,,,,,,,No,10,,Moonside is the time to hunt. Seek out and slay a Kamigotchi under the cover of darkness.... embrace the call of the night...,,Have completed A place of tranquility (22),Liquidate a Kamigotchi during nighttime,1x Kami Mochi,
+Lethe Asphodel,23,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed A place of tranquility (22),22,,No,,,,,,,,
+Lethe Asphodel,23,,For Implementation,Objective,LIQ_WHEN_MOONSIDE,MIN,INC,Liquidate 1 Kamigotchi during moonside,,1,No,,,,,,,,
+Lethe Asphodel,23,,For Implementation,Reward,ITEM,,,1x Kami Mochi,113,1,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+Lethe Asphodel,24,Feeding them up…,For Implementation,Quest,,,,,,,No,5,,"As you've probably noticed, use of food is key to efficient Harvesting. The more you spend, the more you can earn.....
+
+Now you're getting into the groove of it. Feed Kamigotchi one hundred times in total to show me you understand how eating works.",,Have completed Got MUSU? (15),Feed a Kamigotchi 100 times,2x Giftbox,
+Lethe Asphodel,24,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (15),15,,No,,,,,,,,
+Lethe Asphodel,24,,For Implementation,Objective,PET_FEED,MIN,INC,Feed a Kamigotchi 100 times,,100,No,,,,,,,,
+Lethe Asphodel,24,,For Implementation,Reward,ITEM,,,2x Giftbox,10001,2,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+Lethe Asphodel,25,A Serious Hiker,Review,Quest,,,,,,,No,5,,"Exploration is a key part of mastering this world. Have you taken the time to really look around?
+
+I need you to put in your ten thousand steps for me. Move 200 times and I'll consider you a proven explorer. ",,Have completed There are more levels to this (6),Move 200 times,2x Medium XP Candy,
+Lethe Asphodel,24,,Review,Requirement,QUEST,COMPLETE,,Have completed There are more levels to this (6),6,,No,,,,,,,,
+Lethe Asphodel,24,,Review,Objective,MOVE,MIN,INC,Move 200 times,,200,No,,,,,,,,
+Lethe Asphodel,24,,Review,Reward,ITEM,,,2x Medium XP Candy,105,2,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+Lethe Asphodel,26,Searching for somebody,Review,Quest,,,,Reroll 100 times,,100,No,5,,"Seems like you're struggling to find the right Kamigotchi. Well, here's a consolation prize at least....",,Rerolled at least 10 times,Reroll 100 times,1x Giftbox,
+Lethe Asphodel,25,,Review,Requirement,PET_REROLL,MIN,INC,Have rerolled at least 10 times,,10,No,,,,,,,,
+Lethe Asphodel,25,,Review,Objective,PET_REROLL,MIN,INC,Reroll 100 times,,100,No,,,,,,,,
+Lethe Asphodel,25,,Review,Reward,ITEM,,,1x Giftbox,10001,1,No,,,,,,,,
