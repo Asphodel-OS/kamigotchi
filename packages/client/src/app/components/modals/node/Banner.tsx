@@ -89,7 +89,6 @@ export const Banner = (props: Props) => {
           disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
           fullWidth
           noBounce
-          noMargin
         />
       </Tooltip>
     );

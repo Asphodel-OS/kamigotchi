@@ -209,12 +209,7 @@ export const Kards = (props: Props) => {
 
     return (
       <Tooltip key='feed-tooltip' text={[tooltip]}>
-        <IconListButton
-          img={feedIcon}
-          options={options}
-          disabled={tooltip !== 'Feed Kami'}
-          noMargin
-        />
+        <IconListButton img={feedIcon} options={options} disabled={tooltip !== 'Feed Kami'} />
       </Tooltip>
     );
   };
@@ -254,7 +249,6 @@ export const Kards = (props: Props) => {
           img={liquidateIcon}
           options={actionOptions}
           disabled={actionOptions.length == 0}
-          noMargin
         />
       </Tooltip>
     );
@@ -298,7 +292,7 @@ export const Kards = (props: Props) => {
 
   return (
     <Container>
-      <Label>Allies</Label>
+      {allies ?? <Label>Allies</Label>}
       {allies.map((ally: Kami) => MyKard(ally))}
       <Label>Enemies</Label>
       {enemies.map((enemy: Kami) => EnemyKard(enemy, allies))}

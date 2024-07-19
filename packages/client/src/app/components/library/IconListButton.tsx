@@ -11,7 +11,6 @@ interface Props {
   text?: string;
   balance?: number;
   disabled?: boolean;
-  noMargin?: boolean; // noMargin should be the default.. fix eventually
   fullWidth?: boolean;
   noBounce?: boolean;
 }
@@ -25,7 +24,7 @@ export interface Option {
 
 export function IconListButton(props: Props) {
   const { img, options, text, balance } = props;
-  const { disabled, fullWidth, noMargin, noBounce } = props;
+  const { disabled, fullWidth, noBounce } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -67,7 +66,6 @@ export function IconListButton(props: Props) {
         disabled={!!disabled}
         fullWidth={!!fullWidth}
         noBounce={!!noBounce}
-        noMargin={!!noMargin}
       >
         {balance ? <Balance>{balance}</Balance> : <Corner />}
         <Image src={img} isItem={!!balance} />
@@ -90,7 +88,6 @@ interface ButtonProps {
   disabled: boolean;
   fullWidth: boolean;
   noBounce: boolean;
-  noMargin: boolean;
 }
 
 const Wrapper = styled.div`
@@ -103,14 +100,13 @@ const Button = styled.button<ButtonProps>`
   border-radius: 0.4vw;
   color: black;
 
+  width: 100%;
   padding: 0.4vw;
   gap: 0.4vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
 
-  margin: ${({ noMargin }) => (noMargin ? '0vw' : '0.2vw')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
