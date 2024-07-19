@@ -13,6 +13,9 @@ import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Account, getAccount } from './Account';
 
+const IDStore = new Map<string, string>();
+const TypeStore = new Map<string, string>();
+
 // standardized Object shape of a Score Entity
 export interface Score {
   account: Account;
@@ -87,14 +90,27 @@ const getEntityIndex = (
   index: number,
   field: string
 ): EntityIndex | undefined => {
-  const id = utils.solidityKeccak256(
-    ['string', 'uint256', 'uint32', 'string'],
-    [holderID, index, index, field]
-  );
+  let id = '';
+  const key = holderID + index.toString() + field;
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(
+      ['string', 'uint256', 'uint32', 'string'],
+      [holderID, index, index, field]
+    );
+  }
+
   return world.entityToIndex.get(formatEntityID(id));
 };
 
 const getType = (type: string, epoch: number): EntityID => {
-  const id = utils.solidityKeccak256(['string', 'string', 'uint256'], ['score.type', type, epoch]);
+  let id = '';
+  const key = 'score.type' + type + epoch.toString();
+
+  if (TypeStore.has(key)) id = TypeStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(['string', 'string', 'uint256'], ['score.type', type, epoch]);
+  }
   return formatEntityID(id);
 };

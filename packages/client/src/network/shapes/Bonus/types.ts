@@ -3,6 +3,8 @@ import { formatEntityID } from 'engine/utils';
 import { BigNumber, utils } from 'ethers';
 import { Components } from 'network/';
 
+const IDStore = new Map<string, string>();
+
 export const getBonusValue = (
   world: World,
   components: Components,
@@ -26,9 +28,13 @@ const getEntityIndex = (
   holderID: EntityID,
   field: string
 ): EntityIndex | undefined => {
-  const id = utils.solidityKeccak256(
-    ['string', 'uint256', 'string'],
-    ['bonus', holderID ?? 0, field]
-  );
+  const key = 'bonus' + holderID + field;
+
+  let id = '';
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(['string', 'uint256', 'string'], ['bonus', holderID ?? 0, field]);
+  }
+
   return world.entityToIndex.get(formatEntityID(id));
 };

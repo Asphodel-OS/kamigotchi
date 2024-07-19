@@ -6,6 +6,7 @@ import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
 import { Inventory } from './types';
 
+const IDStore = new Map<string, string>();
 const forAccount = utils.solidityKeccak256(['string'], ['component.is.account']);
 const forKami = utils.solidityKeccak256(['string'], ['component.is.pet']);
 
@@ -24,10 +25,16 @@ export const getInventoryEntityIndex = (
   holderID: EntityID,
   itemIndex: number
 ): EntityIndex | undefined => {
-  const id = utils.solidityKeccak256(
-    ['string', 'uint256', 'uint32'],
-    ['inventory.instance', holderID ?? 0, itemIndex]
-  );
+  let id = '';
+  const key = 'inventory.instance' + holderID + itemIndex.toString();
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(
+      ['string', 'uint256', 'uint32'],
+      ['inventory.instance', holderID, itemIndex]
+    );
+  }
   return world.entityToIndex.get(formatEntityID(id));
 };
 

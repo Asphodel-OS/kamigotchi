@@ -12,6 +12,8 @@ import { utils } from 'ethers';
 
 import { Components } from 'network/';
 
+const IDStore = new Map<string, string>();
+
 // standardized Object shape of a Score Entity
 export interface Flag {
   has: boolean;
@@ -88,10 +90,12 @@ const getEntityIndex = (
   field: string
 ): EntityIndex | undefined => {
   if (!holderID) return;
-  const id = utils.solidityKeccak256(
-    ['string', 'uint256', 'string'],
-    ['has.flag', holderID, field]
-  );
+  let id = '';
+  const key = 'has.flag' + holderID + field;
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(['string', 'uint256', 'string'], ['has.flag', holderID, field]);
+  }
   return world.entityToIndex.get(formatEntityID(id));
 };
 

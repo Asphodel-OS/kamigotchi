@@ -50,7 +50,7 @@ export const getInventoryByHolderItem = (
   holderID: EntityID,
   itemIndex: number
 ): Inventory => {
-  const entityIndex = getInventoryEntityIndex(world, holderID, itemIndex);
+  const entityIndex = getInventoryEntityIndex(world, holderID ?? 0, itemIndex);
   if (!entityIndex)
     // inventory does not exist, return empty inventory without balance
     return {

@@ -4,6 +4,8 @@ import { BigNumber, utils } from 'ethers';
 
 import { Components } from 'network/';
 
+const IDStore = new Map<string, string>();
+
 // unpack a uint32[8] array from a config uint256
 export const unpackArray32 = (packed: BigNumber | number): number[] => {
   packed = BigNumber.from(packed);
@@ -65,9 +67,16 @@ const getEntityIndex = (
   index: number,
   field: string
 ): EntityIndex | undefined => {
-  const id = utils.solidityKeccak256(
-    ['string', 'uint256', 'uint32', 'string'],
-    ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
-  );
+  let id = '';
+  const key = 'idData' + holderID + index.toString() + field;
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(
+      ['string', 'uint256', 'uint32', 'string'],
+      ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
+    ) as EntityID;
+  }
+
   return world.entityToIndex.get(formatEntityID(id));
 };
