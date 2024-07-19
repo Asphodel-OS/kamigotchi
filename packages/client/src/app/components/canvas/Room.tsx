@@ -6,6 +6,7 @@ import { useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
 import { Goal } from 'network/shapes/Goal';
+import { getCurrPhase } from 'network/shapes/utils/phase';
 
 interface Props {
   index: number;
@@ -60,18 +61,11 @@ export const Room = (props: Props) => {
     });
   };
 
-  // figures out 0 1 or 2, which time of day it is
-  const getEpoch = (time: number): number => {
-    const hours = Math.floor(time / 3600) % 36;
-    const epoch = Math.floor(hours / 12) % room.backgrounds.length;
-    return epoch;
-  };
-
   // return the background path for now
-  // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
-    const epoch = getEpoch(Date.now() / 1000);
-    return room.backgrounds[epoch];
+    // phases start at 1, make start at 0
+    const phase = (getCurrPhase() - 1) % room.backgrounds.length;
+    return room.backgrounds[phase];
   };
 
   const getClickbox = (object: RoomAsset) => {

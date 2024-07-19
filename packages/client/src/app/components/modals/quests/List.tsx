@@ -9,6 +9,7 @@ import { Objective, Quest, Requirement, Reward } from 'network/shapes/Quest';
 import { Room } from 'network/shapes/Room';
 import { Condition } from 'network/shapes/utils';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
+import { getPhaseName } from 'network/shapes/utils/phase';
 
 interface Props {
   account: Account;
@@ -221,6 +222,7 @@ export const List = (props: Props) => {
     else if (con.target.type == 'COMPLETE_COMP')
       text = 'Gate at Scrap Paths unlocked'; // hardcoded - only goals use this. change in future
     else if (con.target.type == 'REPUTATION') text = `Have ${targetVal} Reputation Points`;
+    else if (con.target.type == 'PHASE') text = `Accepted at ${getPhaseName(con.target.index!)}`;
     else text = '???';
 
     return text + parseConditionalTracking(con);

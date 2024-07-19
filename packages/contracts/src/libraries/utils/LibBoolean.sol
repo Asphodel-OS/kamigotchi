@@ -16,6 +16,7 @@ import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeC
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
@@ -165,6 +166,8 @@ library LibBoolean {
       result = LibQuests.checkAccQuestComplete(components, index, targetID);
     } else if (_type.eq("ROOM")) {
       result = LibRoom.getIndex(components, targetID) == index;
+    } else if (_type.eq("PHASE")) {
+      result = LibPhase.get(block.timestamp) == index;
     } else {
       require(false, "Unknown bool condition type");
     }

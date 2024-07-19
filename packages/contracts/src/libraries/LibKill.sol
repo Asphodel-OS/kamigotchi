@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
+import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
@@ -23,6 +24,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
 
@@ -208,11 +210,12 @@ library LibKill {
   // LOGGING
 
   function logTotals(IUintComp components, uint256 accID, uint32 nodeIndex) internal {
-    uint32[] memory indices = new uint32[](2);
+    uint32[] memory indices = new uint32[](3);
     indices[1] = nodeIndex;
-    string[] memory types = new string[](2);
+    string[] memory types = new string[](3);
     types[0] = "LIQUIDATE_TOTAL";
     types[1] = "LIQUIDATE_AT_NODE";
+    types[2] = LibString.concat("LIQ_WHEN_", LibPhase.getName(block.timestamp));
 
     LibData.inc(components, accID, indices, types, 1);
   }

@@ -48,8 +48,14 @@ contract ProductionCollectSystem is System {
     uint256 nodeID = LibHarvest.getNode(components, id);
     LibScore.incFor(components, accID, "COLLECT", output);
     LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, output);
-    LibNode.logHarvestAt(components, accID, LibNode.getIndex(components, nodeID), output);
-    LibNode.logHarvestAffinity(components, accID, LibNode.getAffinity(components, nodeID), output);
+    LibHarvest.logAmounts(
+      components,
+      accID,
+      LibNode.getIndex(components, nodeID),
+      LibNode.getAffinity(components, nodeID),
+      MUSU_INDEX,
+      output
+    );
     LibAccount.updateLastTs(components, accID);
 
     return abi.encode(output);

@@ -10,6 +10,7 @@ import { getInventoryByHolderItem } from '../Item';
 import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
 import { getData } from './data';
+import { getCurrPhase } from './phase';
 
 /**
  * A client equivalent to Conditionals. For supporting other shapes
@@ -189,6 +190,8 @@ export const getBool = (
     const rawEntityID = formatEntityID(numberToHex(value ?? 0));
     const entityIndex = world.entityToIndex.get(rawEntityID);
     return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
+  } else if (type === 'PHASE') {
+    return getCurrPhase() == index;
   }
 
   // account specific, check if holder is account shaped
