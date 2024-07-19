@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
 import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Kami, canHarvest, isResting, onCooldown } from 'network/shapes/Kami';
-import { Node, NullNode } from 'network/shapes/Node';
+import { Node } from 'network/shapes/Node';
 import { getAffinityImage } from 'network/shapes/utils';
 
 interface Props {
@@ -16,12 +17,23 @@ interface Props {
   addKami: (kami: Kami) => void;
 }
 
+const nullNode: Node = {
+  id: '0' as EntityID,
+  index: 0,
+  entityIndex: 0 as EntityIndex,
+  type: '' as string,
+  roomIndex: 0,
+  name: 'Empty Node',
+  description: 'There is no node in this room.',
+  affinity: '' as string,
+};
+
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
   const [_, setLastRefresh] = useState(Date.now());
   const { account, node: rawNode, kamis } = props;
-  const [node, setNode] = useState<Node>(NullNode);
+  const [node, setNode] = useState<Node>(nullNode);
 
   /////////////////
   // TRACKING
@@ -38,11 +50,18 @@ export const Banner = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    setNode(rawNode === undefined ? NullNode : rawNode);
+    setNode(rawNode === undefined ? nullNode : rawNode);
   }, [rawNode]);
 
   /////////////////
   // INTERPRETATION
+
+  // evaluate tooltip for allied kami Stop button
+  const getAddTooltip = (kamis: Kami[]): string => {
+    let text = getDisabledReason(kamis);
+    if (text === '') text = 'Add Kami to Node';
+    return text;
+  };
 
   const getDisabledReason = (kamis: Kami[]): string => {
     let reason = '';
@@ -80,19 +99,22 @@ export const Banner = (props: Props) => {
     });
 
     return (
-      <Tooltip text={[getDisabledReason(kamis)]} grow>
+      <Tooltip text={[getAddTooltip(kamis)]}>
         <IconListButton
           key={`harvest-add`}
           img={harvestIcon}
           options={actionOptions}
-          text='Add Kami to Node'
           disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
-          fullWidth
-          noBounce
         />
       </Tooltip>
     );
   };
+
+  const AffinityBar = (
+    <Tooltip text={[node.affinity || '']}>
+      <Icon src={getAffinityImage(node.affinity)} />
+    </Tooltip>
+  );
 
   const NodeImage = () => {
     if (!rooms[node.index] && node.index == 0) return <div />;
@@ -102,96 +124,87 @@ export const Banner = (props: Props) => {
 
   return (
     <Container key={node.name}>
+      {NodeImage()}
       <Content>
-        {NodeImage()}
-        <Details>
-          <Name>{node.name}</Name>
-          <Row>
-            <Label>Type: </Label>
-            <Tooltip text={[node.affinity ?? '']}>
-              <Icon src={getAffinityImage(node.affinity)} />
-            </Tooltip>
-            <Label>Drops: </Label>
-            <Tooltip text={[node.drops[0]?.name ?? '']}>
-              <Icon src={node.drops[0]?.image ?? ''} />
-            </Tooltip>
-          </Row>
-          <Description>{node.description}</Description>
-        </Details>
+        <ContentTop>
+          <TitleRow>
+            <TitleText>{node.name}</TitleText>
+            {AffinityBar}
+          </TitleRow>
+          <DescriptionText>{node.description}</DescriptionText>
+        </ContentTop>
+        <ButtonRow>{AddButton(kamis)}</ButtonRow>
       </Content>
-      <ButtonRow>{AddButton(kamis)}</ButtonRow>
     </Container>
   );
 };
 
 const Container = styled.div`
-  color: black;
+  display: flex;
+  flex-flow: row nowrap;
   position: relative;
-  padding: 0.3vw;
-  gap: 0.3vw;
-  display: flex;
-  flex-flow: column nowrap;
-`;
 
-const Content = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-`;
-
-const Image = styled.img`
-  border-radius: 0.3vw;
-  border: solid black 0.15vw;
-  height: 11vw;
-  width: 11vw;
-`;
-
-const Details = styled.div`
-  padding: 0.6vw;
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const Name = styled.div`
-  font-family: Pixel;
-  font-size: 1.2vw;
-  padding: 0.5vw 0;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  padding: 0.03vw 0;
-  gap: 0.3vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const Label = styled.div`
-  font-size: 0.75vw;
-  color: #666;
-  text-align: left;
-  padding-left: 0.3vw;
+  border-bottom: solid black 0.15vw;
+  color: black;
+  height: 11.1vw;
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
+  height: 1.5vw;
 `;
 
-const Description = styled.div`
-  font-size: 0.75vw;
-  font-family: Pixel;
-  line-height: 1.1vw;
-  text-align: left;
-  padding: 0.45vw 0.3vw;
+const Image = styled.img`
+  border-radius: 0.45vw 0 0 0;
+  border-right: solid black 0.15vw;
+  height: 11vw;
+`;
+
+const Content = styled.div`
+  flex-grow: 1;
+  padding: 1.4vw 0.7vw 0.7vw 0.7vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+`;
+
+const ContentTop = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
 `;
 
 const ButtonRow = styled.div`
-  width: 100%;
-
   display: flex;
   flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0.3vw;
+`;
+
+const TitleRow = styled.div`
+  padding: 0.3vw 0vw;
+
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+  row-gap: 0.3vw;
+  max-width: 95%;
+`;
+
+const TitleText = styled.p`
+  font-family: Pixel;
+  font-size: 1.2vw;
+  padding-right: 0.5vw;
+`;
+
+const DescriptionText = styled.p`
+  font-size: 0.7vw;
+  font-family: Pixel;
+  line-height: 0.9vw;
+  text-align: left;
+  padding: 0.4vw 2vw 0 0.2vw;
 `;

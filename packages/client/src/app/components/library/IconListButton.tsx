@@ -8,11 +8,9 @@ import { playClick } from 'utils/sounds';
 interface Props {
   img: string;
   options: Option[];
-  text?: string;
   balance?: number;
   disabled?: boolean;
-  fullWidth?: boolean;
-  noBounce?: boolean;
+  noMargin?: boolean;
 }
 
 export interface Option {
@@ -23,8 +21,7 @@ export interface Option {
 }
 
 export function IconListButton(props: Props) {
-  const { img, options, text, balance } = props;
-  const { disabled, fullWidth, noBounce } = props;
+  const { img, options, balance, disabled, noMargin } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -59,17 +56,10 @@ export function IconListButton(props: Props) {
   };
 
   return (
-    <Wrapper>
-      <Button
-        ref={toggleRef}
-        onClick={handleClick}
-        disabled={!!disabled}
-        fullWidth={!!fullWidth}
-        noBounce={!!noBounce}
-      >
+    <div>
+      <Button ref={toggleRef} onClick={handleClick} disabled={!!disabled} noMargin={!!noMargin}>
         {balance ? <Balance>{balance}</Balance> : <Corner />}
         <Image src={img} isItem={!!balance} />
-        {text && <Text>{text}</Text>}
       </Button>
       <Popover
         id={id}
@@ -80,19 +70,14 @@ export function IconListButton(props: Props) {
       >
         <Menu>{options.map((option, i) => MenuItem(option, i))}</Menu>
       </Popover>
-    </Wrapper>
+    </div>
   );
 }
 
 interface ButtonProps {
   disabled: boolean;
-  fullWidth: boolean;
-  noBounce: boolean;
+  noMargin: boolean;
 }
-
-const Wrapper = styled.div`
-  width: 100%;
-`;
 
 const Button = styled.button<ButtonProps>`
   position: relative;
@@ -100,35 +85,22 @@ const Button = styled.button<ButtonProps>`
   border-radius: 0.4vw;
   color: black;
 
-  width: 100%;
   padding: 0.4vw;
-  gap: 0.4vw;
   display: flex;
   justify-content: center;
-  align-items: center;
 
+  margin: ${({ noMargin }) => (noMargin ? '0vw' : '0.2vw')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  ${({ noBounce }) =>
-    noBounce
-      ? `
-        &:hover {
-          background-color: #bbb;
-        }
-        &:active {
-          background-color: #999;
-        `
-      : `
-        &:hover {
-          animation: ${() => hoverFx()} 0.2s;
-          transform: scale(1.05);
-        }
-        &:active {
-          animation: ${() => clickFx()} 0.3s;
-        }
-      `}
+  &:hover {
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
+  }
+  &:active {
+    animation: ${() => clickFx()} 0.3s;
+  }
 `;
 
 const Corner = styled.div`
@@ -166,16 +138,11 @@ const Image = styled.img<{ isItem?: boolean }>`
   ${({ isItem }) => (isItem ? 'image-rendering: pixelated;' : '')}
 `;
 
-const Text = styled.div`
-  font-family: Pixel;
-  font-size: 0.8vw;
-`;
-
 const Menu = styled.div`
   border: solid black 0.15vw;
   border-radius: 3.5px;
   color: black;
-  min-width: 6vw;
+  min-width: 7vw;
 `;
 
 const Option = styled.div<{ disabled?: boolean }>`

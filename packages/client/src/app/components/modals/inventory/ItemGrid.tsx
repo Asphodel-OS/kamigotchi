@@ -65,7 +65,6 @@ const Container = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
-  gap: 0.3vw;
 `;
 
 const EmptyText = styled.div`

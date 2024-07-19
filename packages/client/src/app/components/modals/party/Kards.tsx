@@ -160,7 +160,12 @@ export const Kards = (props: Props) => {
 
     return (
       <Tooltip text={[tooltip]}>
-        <IconListButton img={feedIcon} options={options} disabled={tooltip !== 'Feed Kami'} />
+        <IconListButton
+          img={feedIcon}
+          options={options}
+          disabled={tooltip !== 'Feed Kami'}
+          noMargin
+        />
       </Tooltip>
     );
   };

@@ -11,7 +11,6 @@ interface Props {
   footer?: React.ReactNode;
   canExit?: boolean;
   overlay?: boolean;
-  noInternalBorder?: boolean;
   noPadding?: boolean;
   truncate?: boolean;
 }
@@ -19,8 +18,7 @@ interface Props {
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { id, children, header, footer } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate } = props;
+  const { id, children, header, footer, canExit, overlay, noPadding, truncate } = props;
   const { modals } = useVisibility();
 
   return (
@@ -31,9 +29,9 @@ export const ModalWrapper = (props: Props) => {
             <ExitButton divName={id} />
           </ButtonRow>
         )}
-        {header && <Header noBorder={noInternalBorder}>{header}</Header>}
+        {header && <Header>{header}</Header>}
         <Children noPadding={noPadding}>{children}</Children>
-        {footer && <Footer noBorder={noInternalBorder}>{footer}</Footer>}
+        {footer && <Footer>{footer}</Footer>}
       </Content>
     </Wrapper>
   );
@@ -79,15 +77,15 @@ const ButtonRow = styled.div`
   align-self: flex-end;
 `;
 
-const Header = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15vw;')}
+const Header = styled.div`
+  border-bottom: solid black 0.15vw;
   border-radius: 0.45vw 0.45vw 0 0;
   display: flex;
   flex-flow: column nowrap;
 `;
 
-const Footer = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15vw;')}
+const Footer = styled.div`
+  border-top: solid black 0.15vw;
   border-radius: 0 0 0.45vw 0.45vw;
   display: flex;
   flex-flow: column nowrap;

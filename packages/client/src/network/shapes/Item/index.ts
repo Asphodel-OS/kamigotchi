@@ -1,4 +1,3 @@
-export { filterInventories } from './functions';
 export {
   getAllItems,
   getInventoryByHolderItem,
