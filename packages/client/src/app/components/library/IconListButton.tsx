@@ -111,24 +111,13 @@ const Button = styled.button<ButtonProps>`
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  ${({ noBounce }) =>
-    noBounce
-      ? `
-        &:hover {
-          background-color: #bbb;
-        }
-        &:active {
-          background-color: #999;
-        `
-      : `
-        &:hover {
-          animation: ${() => hoverFx()} 0.2s;
-          transform: scale(1.05);
-        }
-        &:active {
-          animation: ${() => clickFx()} 0.3s;
-        }
-      `}
+  &:hover {
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
+  }
+  &:active {
+    animation: ${() => clickFx()} 0.3s;
+  }
 `;
 
 const Corner = styled.div`
