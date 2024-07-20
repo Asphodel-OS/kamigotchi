@@ -104,6 +104,7 @@ export const Kards = (props: Props) => {
     return {
       text,
       onClick: () => actions.feed(kami, inv.item.index),
+      image: inv.item.image,
       disabled: !canEat(),
     };
   };
@@ -292,7 +293,7 @@ export const Kards = (props: Props) => {
 
   return (
     <Container>
-      {allies ?? <Label>Allies</Label>}
+      {allies && <Label>Allies</Label>}
       {allies.map((ally: Kami) => MyKard(ally))}
       <Label>Enemies</Label>
       {enemies.map((enemy: Kami) => EnemyKard(enemy, allies))}
@@ -301,13 +302,16 @@ export const Kards = (props: Props) => {
 };
 
 const Container = styled.div`
-  padding: 0 0.4vw;
+  padding: 0.4vw;
+  gap: 0.3vw;
+  display: flex;
+  flex-flow: column nowrap;
 `;
 
 const Label = styled.div`
   font-size: 1.2vw;
   color: #333;
   text-align: left;
-  padding: 0.5vw;
+  padding: 0.2vw;
   padding-top: 0.8vw;
 `;
