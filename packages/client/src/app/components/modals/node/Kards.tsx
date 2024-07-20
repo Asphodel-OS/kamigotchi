@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
 import { Option } from 'app/components/library/IconListButton';
@@ -12,8 +13,7 @@ import {
   canLiquidate,
   canMog,
 } from 'network/shapes/Harvest';
-import { Inventory } from 'network/shapes/Item';
-import { filterInventories } from 'network/shapes/Item/functions';
+import { Inventory, filterInventories } from 'network/shapes/Item';
 import {
   Kami,
   calcCooldown,
@@ -40,7 +40,7 @@ interface Props {
 }
 
 export const Kards = (props: Props) => {
-  const { actions, account } = props;
+  const { actions, account, allies, enemies } = props;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
 
@@ -209,12 +209,7 @@ export const Kards = (props: Props) => {
 
     return (
       <Tooltip key='feed-tooltip' text={[tooltip]}>
-        <IconListButton
-          img={feedIcon}
-          options={options}
-          disabled={tooltip !== 'Feed Kami'}
-          noMargin
-        />
+        <IconListButton img={feedIcon} options={options} disabled={tooltip !== 'Feed Kami'} />
       </Tooltip>
     );
   };
@@ -254,7 +249,6 @@ export const Kards = (props: Props) => {
           img={liquidateIcon}
           options={actionOptions}
           disabled={actionOptions.length == 0}
-          noMargin
         />
       </Tooltip>
     );
@@ -297,10 +291,23 @@ export const Kards = (props: Props) => {
   };
 
   return (
-    <>
-      {props.tab === 'allies'
-        ? props.allies.map((ally: Kami) => MyKard(ally))
-        : props.enemies.map((enemy: Kami) => EnemyKard(enemy, props.allies))}
-    </>
+    <Container>
+      {allies ?? <Label>Allies</Label>}
+      {allies.map((ally: Kami) => MyKard(ally))}
+      <Label>Enemies</Label>
+      {enemies.map((enemy: Kami) => EnemyKard(enemy, allies))}
+    </Container>
   );
 };
+
+const Container = styled.div`
+  padding: 0 0.4vw;
+`;
+
+const Label = styled.div`
+  font-size: 1.2vw;
+  color: #333;
+  text-align: left;
+  padding: 0.5vw;
+  padding-top: 0.8vw;
+`;

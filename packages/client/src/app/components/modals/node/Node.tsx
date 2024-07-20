@@ -2,31 +2,14 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Node, getNodeByIndex } from 'network/shapes/Node';
+import { Node, NullNode, getNodeByIndex } from 'network/shapes/Node';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
-import { Tabs } from './Tabs';
-
-const nullNode: Node = {
-  id: '0' as EntityID,
-  index: 0,
-  entityIndex: 0 as EntityIndex,
-  type: '' as string,
-  roomIndex: 0,
-  name: 'Empty Node',
-  description: 'There is no node in this room.',
-  affinity: '' as string,
-  kamis: {
-    allies: [],
-    enemies: [],
-  },
-};
 
 export function registerNodeModal() {
   registerUIComponent(
@@ -53,7 +36,7 @@ export function registerNodeModal() {
             kamis: true,
             accountID: account?.id,
           });
-          if (!node) node = nullNode;
+          if (!node) node = NullNode;
 
           return {
             network,
@@ -75,7 +58,7 @@ export function registerNodeModal() {
       useEffect(() => {
         const nodeOptions = { kamis: true, accountID: account.id };
         let node = getNodeByIndex(world, components, nodeIndex, nodeOptions);
-        if (!node) node = nullNode;
+        if (!node) node = NullNode;
         setNode(node);
       }, [nodeIndex]);
 
@@ -166,9 +149,9 @@ export function registerNodeModal() {
               kamis={account.kamis}
               addKami={(kami) => start(kami, node)}
             />,
-            <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
+          noPadding
           truncate
         >
           {getTotalKamis() > 0 ? (
