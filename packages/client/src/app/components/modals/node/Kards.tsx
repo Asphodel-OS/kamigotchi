@@ -293,7 +293,7 @@ export const Kards = (props: Props) => {
 
   return (
     <Container>
-      {allies && <Label>Allies</Label>}
+      {allies && allies.length > 0 && <Label>Allies</Label>}
       {allies.map((ally: Kami) => MyKard(ally))}
       <Label>Enemies</Label>
       {enemies.map((enemy: Kami) => EnemyKard(enemy, allies))}
