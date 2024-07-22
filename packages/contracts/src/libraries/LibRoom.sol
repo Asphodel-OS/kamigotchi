@@ -17,7 +17,7 @@ import { LocationComponent, ID as LocationCompID } from "components/LocationComp
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
-import { LibBoolean } from "libraries/utils/LibBoolean.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 
@@ -53,9 +53,7 @@ library LibRoom {
     string memory logicType
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    LibBoolean.create(components, id, type_, logicType);
-    if (condIndex != 0) LibBoolean.setIndex(components, id, condIndex);
-    if (condValue != 0) LibBoolean.setBalance(components, id, condValue);
+    LibConditional.create(components, id, Condition(type_, logicType, condIndex, condValue));
 
     IDRoomComponent(getAddressById(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
     IDPointerComponent sourceComp = IDPointerComponent(getAddressById(components, IDPointerCompID));
@@ -77,10 +75,7 @@ library LibRoom {
   function removeGate(IUintComp components, uint256 id) internal {
     IDRoomComponent(getAddressById(components, IDRoomCompID)).remove(id);
     IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-
-    LibBoolean.remove(components, id);
-    LibBoolean.unsetIndex(components, id);
-    LibBoolean.unsetBalance(components, id);
+    LibConditional.remove(components, id);
   }
 
   /////////////////
@@ -119,7 +114,7 @@ library LibRoom {
     uint256[] memory conditions = queryGates(components, fromIndex, toIndex);
 
     if (conditions.length == 0) return true;
-    return LibBoolean.checkConditions(components, conditions, accID);
+    return LibConditional.checkConditions(components, conditions, accID);
   }
 
   /// @notice checks if two locations are adjacent, XY axis only

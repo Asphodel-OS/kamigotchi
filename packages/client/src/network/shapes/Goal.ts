@@ -201,7 +201,6 @@ const queryGoalRequirements = (
   const { PointerID } = components;
 
   const pointerID = getReqPtr(goalIndex);
-
   const queryFragments = [HasValue(PointerID, { value: pointerID })];
   const raw = Array.from(runQuery(queryFragments));
 

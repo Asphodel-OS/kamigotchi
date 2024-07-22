@@ -29,30 +29,30 @@ contract QuestsTest is SetupTemplate {
       uint256 newID = _createQuestRequirement(1, "CURR_MIN", "ITEM", MUSU_INDEX, 1);
       reqsArr[i] = newID;
 
-      uint256[] memory newArr = LibQuestRegistry.getRequirementsByQuestIndex(components, 1);
+      uint256[] memory newArr = LibQuestRegistry.getReqsByQuestIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], reqsArr[j]);
     }
-    assertEq(LibQuestRegistry.getRequirementsByQuestIndex(components, 1).length, 5);
+    assertEq(LibQuestRegistry.getReqsByQuestIndex(components, 1).length, 5);
 
     uint256[] memory objsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
       uint256 newID = _createQuestObjective(1, "Quest 1", "CURR_MIN", "ITEM_TOTAL", MUSU_INDEX, 10);
       objsArr[i] = newID;
 
-      uint256[] memory newArr = LibQuestRegistry.getObjectivesByQuestIndex(components, 1);
+      uint256[] memory newArr = LibQuestRegistry.getObjsByQuestIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], objsArr[j]);
     }
-    assertEq(LibQuestRegistry.getObjectivesByQuestIndex(components, 1).length, 5);
+    assertEq(LibQuestRegistry.getObjsByQuestIndex(components, 1).length, 5);
 
     uint256[] memory rewsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
       uint256 newID = _createQuestReward(1, "ITEM", MUSU_INDEX, 1);
       rewsArr[i] = newID;
 
-      uint256[] memory newArr = LibQuestRegistry.getRewardsByQuestIndex(components, 1);
+      uint256[] memory newArr = LibQuestRegistry.getRwdsByQuestIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], rewsArr[j]);
     }
-    assertEq(LibQuestRegistry.getRewardsByQuestIndex(components, 1).length, 5);
+    assertEq(LibQuestRegistry.getRwdsByQuestIndex(components, 1).length, 5);
   }
 
   function testAcceptQuest() public {

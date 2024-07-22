@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { Condition } from "libraries/utils/LibBoolean.sol";
+import { Condition } from "libraries/LibConditional.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
 import { LibString } from "solady/utils/LibString.sol";
 

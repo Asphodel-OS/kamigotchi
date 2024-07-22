@@ -31,7 +31,7 @@ import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeCompone
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
-import { LibBoolean } from "libraries/utils/LibBoolean.sol";
+import { LibConditional } from "libraries/LibConditional.sol";
 
 /// @notice A registry for Skill related entities
 /// @dev Skills are not copied onto entities, only referenced when assigning the effect
@@ -107,7 +107,7 @@ library LibSkillRegistry {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setConditionOwner(components, id, genReqPtr(skillIndex));
-    LibBoolean.create(components, id, type_, logicType);
+    LibConditional.create(components, id, type_, logicType);
 
     setIsRegistry(components, id);
     setIsRequirement(components, id);

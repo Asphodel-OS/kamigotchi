@@ -25,6 +25,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
@@ -63,49 +64,33 @@ library LibQuestRegistry {
     setTime(components, regID, duration);
   }
 
-  function createEmptyObjective(
+  function createObjective(
     IWorld world,
     IUintComp components,
     uint32 questIndex,
     string memory name, // this is a crutch to help FE, ideally we drop this
-    string memory logicType,
-    string memory type_,
-    uint32 objIndex // objs must have an index - it can be 0
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genObjPtr(questIndex));
-
+    Condition memory data
+  ) internal returns (uint256 id) {
+    id = LibConditional.createFor(world, components, data, genObjPtr(questIndex));
     setQuestIndex(components, id, questIndex);
     setIsRegistry(components, id);
     setIsObjective(components, id);
     setName(components, id, name);
-    setLogicType(components, id, logicType);
-    setType(components, id, type_);
-    setIndex(components, id, objIndex);
 
     // reversable hash for easy objective lookup
-    LibHash.set(components, id, abi.encode("Quest.Objective", logicType, type_, objIndex));
-
-    return id;
+    LibHash.set(components, id, abi.encode("Quest.Objective", data.logic, data.type_, data.index));
   }
 
-  function createEmptyRequirement(
+  function createRequirement(
     IWorld world,
     IUintComp components,
     uint32 questIndex,
-    string memory logicType,
-    string memory type_
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genReqPtr(questIndex));
-
+    Condition memory data
+  ) internal returns (uint256 id) {
+    id = LibConditional.createFor(world, components, data, genReqPtr(questIndex));
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setQuestIndex(components, id, questIndex);
-    setLogicType(components, id, logicType);
-    setType(components, id, type_);
-
-    return id;
   }
 
   function createEmptyReward(
@@ -113,16 +98,14 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 questIndex,
     string memory type_
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
     setConditionOwner(components, id, genRwdPtr(questIndex));
 
     setIsRegistry(components, id);
     setIsReward(components, id);
     setQuestIndex(components, id, questIndex);
     setType(components, id, type_);
-
-    return id;
   }
 
   function deleteQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
@@ -262,87 +245,59 @@ library LibQuestRegistry {
   // UNSETTERS
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
-      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
-    }
+    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    if (IDPointerComponent(getAddressById(components, IDPointerCompID)).has(id)) {
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-    }
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
   }
 
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    if (IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id)) {
-      IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-    }
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
   }
 
   function unsetIsRepeatable(IUintComp components, uint256 id) internal {
-    if (IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).has(id)) {
-      IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(id);
-    }
+    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(id);
   }
 
   function unsetIsQuest(IUintComp components, uint256 id) internal {
-    if (IsQuestComponent(getAddressById(components, IsQuestCompID)).has(id)) {
-      IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(id);
-    }
+    IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(id);
   }
 
   function unsetIsObjective(IUintComp components, uint256 id) internal {
-    if (IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).has(id)) {
-      IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).remove(id);
-    }
+    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).remove(id);
   }
 
   function unsetIsRequirement(IUintComp components, uint256 id) internal {
-    if (IsRequirementComponent(getAddressById(components, IsRequirementCompID)).has(id)) {
-      IsRequirementComponent(getAddressById(components, IsRequirementCompID)).remove(id);
-    }
+    IsRequirementComponent(getAddressById(components, IsRequirementCompID)).remove(id);
   }
 
   function unsetIsReward(IUintComp components, uint256 id) internal {
-    if (IsRewardComponent(getAddressById(components, IsRewardCompID)).has(id)) {
-      IsRewardComponent(getAddressById(components, IsRewardCompID)).remove(id);
-    }
+    IsRewardComponent(getAddressById(components, IsRewardCompID)).remove(id);
   }
 
   function unsetIndex(IUintComp components, uint256 id) internal {
-    if (IndexComponent(getAddressById(components, IndexCompID)).has(id)) {
-      IndexComponent(getAddressById(components, IndexCompID)).remove(id);
-    }
+    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
   }
 
   function unsetQuestIndex(IUintComp components, uint256 id) internal {
-    if (IndexQuestComponent(getAddressById(components, IndexQuestCompID)).has(id)) {
-      IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(id);
-    }
+    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(id);
   }
 
   function unsetLogicType(IUintComp components, uint256 id) internal {
-    if (LogicTypeComponent(getAddressById(components, LogicTypeCompID)).has(id)) {
-      LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-    }
+    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
   }
 
   function unsetName(IUintComp components, uint256 id) internal {
-    if (NameComponent(getAddressById(components, NameCompID)).has(id)) {
-      NameComponent(getAddressById(components, NameCompID)).remove(id);
-    }
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
   }
 
   function unsetTime(IUintComp components, uint256 id) internal {
-    if (TimeComponent(getAddressById(components, TimeCompID)).has(id)) {
-      TimeComponent(getAddressById(components, TimeCompID)).remove(id);
-    }
+    TimeComponent(getAddressById(components, TimeCompID)).remove(id);
   }
 
   function unsetType(IUintComp components, uint256 id) internal {
-    if (TypeComponent(getAddressById(components, TypeCompID)).has(id)) {
-      TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    }
+    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
   }
 
   /////////////////
@@ -358,35 +313,27 @@ library LibQuestRegistry {
   }
 
   // get Objectives by Quest index
-  function getObjectivesByQuestIndex(
+  function getObjsByQuestIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return getConditionsByQuestIndex(components, genObjPtr(index));
+    return LibConditional.queryFor(components, genObjPtr(index));
   }
 
   // get requirements by Quest index
-  function getRequirementsByQuestIndex(
+  function getReqsByQuestIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return getConditionsByQuestIndex(components, genReqPtr(index));
+    return LibConditional.queryFor(components, genReqPtr(index));
   }
 
   // get reward by Quest index
-  function getRewardsByQuestIndex(
+  function getRwdsByQuestIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return getConditionsByQuestIndex(components, genRwdPtr(index));
-  }
-
-  function getConditionsByQuestIndex(
-    IUintComp components,
-    uint256 pointer
-  ) internal view returns (uint256[] memory) {
-    return
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(pointer);
+    return LibConditional.queryFor(components, genRwdPtr(index));
   }
 
   /////////////////

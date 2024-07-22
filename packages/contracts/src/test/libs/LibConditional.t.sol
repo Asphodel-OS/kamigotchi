@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-contract LibBooleanTest is SetupTemplate {
+contract LibConditionalTest is SetupTemplate {
   uint256 defaultAccIndex = 0;
   uint256 defaultAccID;
   address defaultOperator;
@@ -25,7 +25,7 @@ contract LibBooleanTest is SetupTemplate {
     LibData.set(components, defaultAccID, index, type_, amt);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, type_, index), amt);
+    assertEq(LibGetter.getBalanceOf(components, defaultAccID, type_, index), amt);
   }
 
   function testGetBalanceOfItem(uint256 amt, uint32 index) public {
@@ -36,7 +36,7 @@ contract LibBooleanTest is SetupTemplate {
     LibInventory.inc(components, invID, amt);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "ITEM", index), amt);
+    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", index), amt);
   }
 
   function testGetBalanceOfCoin(uint256 amt) public {
@@ -44,7 +44,7 @@ contract LibBooleanTest is SetupTemplate {
     LibInventory.setFor(components, defaultAccID, MUSU_INDEX, amt);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
+    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
   }
 
   function testGetBalanceOfLevel(uint256 amt) public {
@@ -52,7 +52,7 @@ contract LibBooleanTest is SetupTemplate {
     LibExperience.setLevel(components, defaultAccID, amt);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "LEVEL", 0), amt);
+    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "LEVEL", 0), amt);
   }
 
   function testGetBalanceOfKamis(uint256 amt) public {
@@ -60,7 +60,7 @@ contract LibBooleanTest is SetupTemplate {
 
     if (amt > 0) _mintPets(defaultAccIndex, amt);
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "KAMI", 0), amt);
+    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI", 0), amt);
   }
 
   function testGetBalanceOfKamiHighestLevel() public {
@@ -74,7 +74,7 @@ contract LibBooleanTest is SetupTemplate {
     LibExperience.setLevel(components, kamis[9], 111);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, defaultAccID, "KAMI_LEVEL_HIGHEST", 111), 111);
+    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI_LEVEL_HIGHEST", 111), 111);
   }
 
   function testGetBalanceOfSkill(uint32 index, uint256 holderID, uint256 amt) public {
@@ -86,6 +86,6 @@ contract LibBooleanTest is SetupTemplate {
     LibSkill.setPoints(components, skillID, amt);
     vm.stopPrank();
 
-    assertEq(LibBoolean.getBalanceOf(components, holderID, "SKILL", index), amt);
+    assertEq(LibGetter.getBalanceOf(components, holderID, "SKILL", index), amt);
   }
 }

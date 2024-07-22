@@ -18,7 +18,7 @@ import { SkillPointComponent, ID as SPCompID } from "components/SkillPointCompon
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBoolean } from "libraries/utils/LibBoolean.sol";
+import { LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -130,7 +130,7 @@ library LibSkill {
 
     // check all other requirements
     uint256[] memory requirements = LibSkillRegistry.getRequirementsByIndex(components, skillIndex);
-    return LibBoolean.checkConditions(components, requirements, targetID);
+    return LibConditional.checkConditions(components, requirements, targetID);
   }
 
   /// @notice check if entity has invested enough in a the appropriate skill tree

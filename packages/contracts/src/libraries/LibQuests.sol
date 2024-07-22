@@ -25,7 +25,7 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LOGIC, HANDLER, LibBoolean } from "libraries/utils/LibBoolean.sol";
+import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
@@ -61,13 +61,10 @@ library LibQuests {
     setTimeStart(components, id, block.timestamp);
 
     // snapshot objectives values if logic type needs it
-    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(
-      components,
-      questIndex
-    );
+    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, ) = LibBoolean.parseLogic(logicType);
+      (HANDLER handler, ) = LibConditional.parseLogic(logicType);
       if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
         snapshotObjective(components, id, objectives[i], accID);
       }
@@ -94,13 +91,10 @@ library LibQuests {
     }
 
     // snapshot objectives values if logic type needs it
-    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(
-      components,
-      questIndex
-    );
+    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, ) = LibBoolean.parseLogic(logicType);
+      (HANDLER handler, ) = LibConditional.parseLogic(logicType);
       if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
         snapshotObjective(components, id, objectives[i], accID);
       }
@@ -181,28 +175,9 @@ library LibQuests {
     IUintComp components,
     uint32 questIndex,
     uint256 accID
-  ) internal view returns (bool result) {
-    uint256[] memory requirements = LibQuestRegistry.getRequirementsByQuestIndex(
-      components,
-      questIndex
-    );
-
-    for (uint256 i; i < requirements.length; i++) {
-      string memory logicType = getLogicType(components, requirements[i]);
-      (HANDLER handler, LOGIC operator) = LibBoolean.parseLogic(logicType);
-
-      if (handler == HANDLER.CURRENT) {
-        result = checkCurrent(components, requirements[i], accID, operator);
-      } else if (handler == HANDLER.BOOLEAN) {
-        result = checkBoolean(components, requirements[i], accID, operator);
-      } else {
-        require(false, "Unknown requirement logic type");
-      }
-
-      if (!result) return false;
-    }
-
-    return true;
+  ) internal view returns (bool) {
+    uint256[] memory requirements = LibQuestRegistry.getReqsByQuestIndex(components, questIndex);
+    return LibConditional.checkConditions(components, requirements, accID);
   }
 
   function checkObjectives(
@@ -211,26 +186,22 @@ library LibQuests {
     uint256 accID
   ) internal view returns (bool result) {
     uint32 questIndex = getQuestIndex(components, questID);
+    uint256[] memory objIDs = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
+    Condition[] memory objs = LibConditional.getBatch(components, objIDs);
 
-    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(
-      components,
-      questIndex
-    );
-
-    for (uint256 i; i < objectives.length; i++) {
-      string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, LOGIC operator) = LibBoolean.parseLogic(logicType);
+    for (uint256 i; i < objs.length; i++) {
+      (HANDLER handler, LOGIC operator) = LibConditional.parseLogic(objs[i]);
 
       if (handler == HANDLER.CURRENT) {
-        result = checkCurrent(components, objectives[i], accID, operator);
+        result = LibConditional.checkCurr(components, accID, objs[i], operator);
       } else if (handler == HANDLER.INCREASE) {
-        result = checkIncrease(components, objectives[i], questID, accID, operator);
+        result = checkIncrease(components, accID, questID, objIDs[i], objs[i], operator);
       } else if (handler == HANDLER.DECREASE) {
-        result = checkDecrease(components, objectives[i], questID, accID, operator);
+        result = checkDecrease(components, accID, questID, objIDs[i], objs[i], operator);
       } else if (handler == HANDLER.BOOLEAN) {
-        result = checkBoolean(components, objectives[i], accID, operator);
+        result = LibConditional.checkBool(components, accID, objs[i], operator);
       } else {
-        require(false, "Unknown condition handler");
+        require(false, "Unknown objective handler");
       }
 
       if (!result) return false;
@@ -245,7 +216,7 @@ library LibQuests {
     uint32 questIndex,
     uint256 accID
   ) internal {
-    uint256[] memory rewards = LibQuestRegistry.getRewardsByQuestIndex(components, questIndex);
+    uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, questIndex);
 
     for (uint256 i = 0; i < rewards.length; i++) {
       string memory _type = getType(components, rewards[i]);
@@ -255,87 +226,50 @@ library LibQuests {
     }
   }
 
-  function checkCurrent(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 accID,
-    LOGIC logic
-  ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint32 index = getIndex(components, conditionID);
-    uint256 expected = getBalance(components, conditionID);
-
-    return LibBoolean.checkCurr(components, accID, index, expected, _type, logic);
-  }
-
   function checkIncrease(
     IUintComp components,
-    uint256 conditionID,
-    uint256 questID,
     uint256 accID,
+    uint256 questID,
+    uint256 conditionID,
+    Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint32 index = getIndex(components, conditionID);
-    uint256 currValue = LibData.get(components, accID, index, _type);
-
     uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
     require(
       snapshotID != 0,
       "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
     ); // longtext >< for a user call to action
+
+    uint256 currValue = LibData.get(components, accID, data.index, data.type_);
     uint256 prevValue = getBalance(components, snapshotID);
 
     // overall value decreased - condition not be met, will overflow if checked
-    if (prevValue > currValue) {
-      return false;
-    }
+    if (prevValue > currValue) return false;
 
-    uint256 delta = getBalance(components, conditionID);
-    return LibBoolean._checkLogicOperator(currValue - prevValue, delta, logic);
+    return LibConditional._checkLogicOperator(currValue - prevValue, data.value, logic);
   }
 
   function checkDecrease(
     IUintComp components,
-    uint256 conditionID,
-    uint256 questID,
     uint256 accID,
+    uint256 questID,
+    uint256 conditionID,
+    Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint32 index = getIndex(components, conditionID);
-    uint256 currValue = LibData.get(components, accID, index, _type);
-
     uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
     require(
       snapshotID != 0,
       "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
     ); // longtext >< for a user call to action
+
+    uint256 currValue = LibData.get(components, accID, data.index, data.type_);
     uint256 prevValue = getBalance(components, snapshotID);
 
     // overall value increased - condition not be met, will overflow if checked
-    if (currValue > prevValue) {
-      return false;
-    }
+    if (currValue > prevValue) return false;
 
-    uint256 delta = getBalance(components, conditionID);
-    return LibBoolean._checkLogicOperator(prevValue - currValue, delta, logic);
-  }
-
-  function checkBoolean(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 accID,
-    LOGIC logic
-  ) internal view returns (bool result) {
-    string memory _type = getType(components, conditionID);
-    uint32 index = getIndex(components, conditionID);
-    uint256 value = getBalance(components, conditionID);
-
-    return LibBoolean.checkBool(components, accID, index, value, _type, logic);
+    return LibConditional._checkLogicOperator(prevValue - currValue, data.value, logic);
   }
 
   // checks if an account has completed a quest
@@ -350,10 +284,6 @@ library LibQuests {
 
   /////////////////
   // CHECKERS
-
-  function hasIndex(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexComponent(getAddressById(components, IndexCompID)).has(id);
-  }
 
   function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
     return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(id);

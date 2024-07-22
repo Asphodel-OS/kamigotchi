@@ -7,23 +7,20 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsGoalComponent, ID as IsGoalCompID } from "components/IsGoalComponent.sol";
-import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
-import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
-import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { Condition, LibBoolean } from "libraries/utils/LibBoolean.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -35,7 +32,7 @@ import { LibScore } from "libraries/LibScore.sol";
  * - Objectives (targets to be achieved, e.g. reach a certain amount of coins)
  *   - Objectives are mapped 1 to 1 with a Goal;
  *   - to achieve a Goal with multiple objectives, create multiple Goals
- * - Requirements (generic account requirements via LibBoolean)
+ * - Requirements (generic account requirements via LibConditional)
  * - Rewards (e.g. coins, items, etc)
  *   - Tiered - eg Bronze, Silver, Gold
  *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
@@ -79,7 +76,7 @@ library LibGoals {
 
     // adding the objective
     uint256 objID = genObjID(id);
-    LibBoolean.create(components, objID, objective);
+    LibConditional.create(components, objID, objective);
   }
 
   /// @notice adds a requirement to a goal
@@ -89,11 +86,7 @@ library LibGoals {
     uint32 goalIndex,
     Condition memory requirement
   ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, genReqPtr(goalIndex));
-
-    IsRequirementComponent(getAddressById(components, IsRequirementCompID)).set(id);
-    LibBoolean.create(components, id, requirement);
+    id = LibConditional.createFor(world, components, requirement, genReqPtr(goalIndex));
   }
 
   /// @notice adds a reward to a goal
@@ -116,10 +109,9 @@ library LibGoals {
     uint256 minContribution,
     Condition memory reward
   ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, genRwdPtr(goalIndex));
+    // piggybacking on LibConditional for rewards
+    id = LibConditional.createFor(world, components, reward, genRwdPtr(goalIndex));
 
-    IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
     require(
       reward.logic.eq("REWARD") || reward.logic.eq("DISPLAY_ONLY"),
@@ -127,7 +119,6 @@ library LibGoals {
     );
     if (!reward.logic.eq("DISPLAY_ONLY"))
       LevelComponent(getAddressById(components, LevelCompID)).set(id, minContribution);
-    LibBoolean.create(components, id, reward);
   }
 
   function remove(IUintComp components, uint32 index) internal {
@@ -141,12 +132,12 @@ library LibGoals {
 
     // remove objective
     uint256 objID = genObjID(goalID);
-    LibBoolean.unsetAll(components, objID);
+    LibConditional.unsetAll(components, objID);
 
     // remove requirements
     uint256[] memory reqIDs = getRequirements(components, index);
     for (uint256 i = 0; i < reqIDs.length; i++) {
-      LibBoolean.unsetAll(components, reqIDs[i]);
+      LibConditional.unsetAll(components, reqIDs[i]);
       IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(reqIDs[i]);
       NameComponent(getAddressById(components, NameCompID)).remove(reqIDs[i]);
       LevelComponent(getAddressById(components, LevelCompID)).remove(reqIDs[i]);
@@ -155,7 +146,7 @@ library LibGoals {
     // remove rewards
     uint256[] memory rewIDs = getRewards(components, index);
     for (uint256 i = 0; i < rewIDs.length; i++) {
-      LibBoolean.unsetAll(components, rewIDs[i]);
+      LibConditional.unsetAll(components, rewIDs[i]);
       IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(rewIDs[i]);
     }
   }
@@ -183,8 +174,8 @@ library LibGoals {
     }
 
     // dec account's balance
-    string memory type_ = LibBoolean.getType(components, objID);
-    uint32 index = LibBoolean.getIndex(components, objID);
+    string memory type_ = LibConditional.getType(components, objID);
+    uint32 index = LibConditional.getIndex(components, objID);
     LibAccount.decBalanceOf(components, accID, type_, index, amt);
 
     // inc goal's balance & inc account contribution
@@ -282,7 +273,7 @@ library LibGoals {
     uint256 accID,
     uint256[] memory requirements
   ) internal view returns (bool) {
-    return LibBoolean.checkConditions(components, requirements, accID);
+    return LibConditional.checkConditions(components, requirements, accID);
   }
 
   function checkRoom(

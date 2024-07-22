@@ -4,26 +4,17 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
-import { LibPhase } from "libraries/utils/LibPhase.sol";
-import { LibData } from "libraries/LibData.sol";
-import { LibExperience } from "libraries/LibExperience.sol";
-import { LibFactions } from "libraries/LibFactions.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
-import { LibQuests } from "libraries/LibQuests.sol";
-import { LibRoom } from "libraries/LibRoom.sol";
-import { LibSkill } from "libraries/LibSkill.sol";
+import { LibGetter } from "libraries/utils/LibGetter.sol";
 
 enum LOGIC {
   MIN,
@@ -57,11 +48,11 @@ struct Condition {
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
  * heavily inspired by Quest condition checks. Does not yet support increase/decrease checks, but can in future
  */
-library LibBoolean {
+library LibConditional {
   using LibString for string;
 
   ///////////////////////
-  // ENTITY
+  // SHAPES
 
   /// @notice creates a condition entity owned by another entity
   /** @dev
@@ -74,8 +65,8 @@ library LibBoolean {
     string memory type_,
     string memory logicType
   ) internal {
-    setType(components, id, type_);
-    setLogicType(components, id, logicType);
+    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
+    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
   }
 
   /// @notice creates a condition entity owned by another entity
@@ -83,13 +74,30 @@ library LibBoolean {
   function create(IUintComp components, uint256 id, Condition memory details) internal {
     create(components, id, details.type_, details.logic);
 
-    if (details.index != 0) setIndex(components, id, details.index);
-    if (details.value != 0) setBalance(components, id, details.value);
+    if (details.index != 0)
+      IndexComponent(getAddressById(components, IndexCompID)).set(id, details.index);
+    if (details.value != 0)
+      ValueComponent(getAddressById(components, ValueCompID)).set(id, details.value);
+  }
+
+  /// @notice creates a condition that points to another entity
+  /// @dev IDPointerComponent used for pointing
+  function createFor(
+    IWorld world,
+    IUintComp components,
+    Condition memory details,
+    uint256 pointerID
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
+    create(components, id, details);
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, pointerID);
   }
 
   function remove(IUintComp components, uint256 id) internal {
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
+    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
+    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   ///////////////////////
@@ -102,20 +110,10 @@ library LibBoolean {
     uint256 targetID
   ) internal view returns (bool) {
     if (conditionIDs.length == 0) return true;
-    IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    ValueComponent balComp = ValueComponent(getAddressById(components, ValueCompID));
-    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
-    LogicTypeComponent logicTypeComp = LogicTypeComponent(
-      getAddressById(components, LogicTypeCompID)
-    );
+    Condition[] memory datas = getBatch(components, conditionIDs);
 
     for (uint256 i = 0; i < conditionIDs.length; i++) {
-      uint32 index = indexComp.has(conditionIDs[i]) ? indexComp.get(conditionIDs[i]) : 0;
-      uint256 value = balComp.has(conditionIDs[i]) ? balComp.get(conditionIDs[i]) : 0;
-      string memory type_ = typeComp.get(conditionIDs[i]);
-      string memory logicType = logicTypeComp.get(conditionIDs[i]);
-
-      if (!check(components, targetID, index, value, type_, logicType)) return false;
+      if (!check(components, targetID, datas[i])) return false;
     }
     return true;
   }
@@ -124,16 +122,11 @@ library LibBoolean {
   function check(
     IUintComp components,
     uint256 targetID,
-    uint32 index,
-    uint256 expected,
-    string memory type_,
-    string memory logicType
+    Condition memory data
   ) internal view returns (bool) {
-    (HANDLER handler, LOGIC logic) = parseLogic(logicType);
-    if (handler == HANDLER.CURRENT)
-      return checkCurr(components, targetID, index, expected, type_, logic);
-    else if (handler == HANDLER.BOOLEAN)
-      return checkBool(components, targetID, index, expected, type_, logic);
+    (HANDLER handler, LOGIC logic) = parseLogic(data);
+    if (handler == HANDLER.CURRENT) return checkCurr(components, targetID, data, logic);
+    else if (handler == HANDLER.BOOLEAN) return checkBool(components, targetID, data, logic);
     else require(false, "Handler not yet implemented");
   }
 
@@ -141,115 +134,67 @@ library LibBoolean {
   function checkCurr(
     IUintComp components,
     uint256 targetID,
-    uint32 index,
-    uint256 expected,
-    string memory _type,
+    Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 value = getBalanceOf(components, targetID, _type, index);
-    return _checkLogicOperator(value, expected, logic);
+    uint256 value = LibGetter.getBalanceOf(components, targetID, data.type_, data.index);
+    return _checkLogicOperator(value, data.value, logic);
   }
 
   /// @notice checks for a boolean value against
   function checkBool(
     IUintComp components,
     uint256 targetID,
-    uint32 index,
-    uint256 expected,
-    string memory _type,
+    Condition memory data,
     LOGIC logic
   ) internal view returns (bool result) {
-    if (_type.eq("COMPLETE_COMP")) {
-      // check if entity has isCompleteComp, with expectedValue acting as entityID
-      result = IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(expected);
-    } else if (_type.eq("QUEST")) {
-      result = LibQuests.checkAccQuestComplete(components, index, targetID);
-    } else if (_type.eq("ROOM")) {
-      result = LibRoom.getIndex(components, targetID) == index;
-    } else if (_type.eq("PHASE")) {
-      result = LibPhase.get(block.timestamp) == index;
-    } else {
-      require(false, "Unknown bool condition type");
-    }
-
+    result = LibGetter.getBool(components, targetID, data.type_, data.index, data.value);
     if (logic == LOGIC.NOT) result = !result;
     else require(logic == LOGIC.IS, "Unknown bool logic operator");
   }
 
   //////////////
   // SETTERS
-  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
-  function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
-  }
-
-  function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-  }
-
-  function setType(IUintComp components, uint256 id, string memory type_) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-  }
 
   function unsetAll(IUintComp components, uint256 id) internal {
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-    unsetBalance(components, id);
-    unsetIndex(components, id);
-  }
-
-  function unsetBalance(IUintComp components, uint256 id) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
-    if (comp.has(id)) comp.remove(id);
+    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
+    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   ///////////////////////
   // GETTERS
 
-  // get the balance of X (type+index) of an account
-  function getBalanceOf(
-    IUintComp components,
-    uint256 id,
-    string memory _type,
-    uint32 index
-  ) public view returns (uint256 balance) {
-    if (_type.eq("ITEM")) {
-      balance = LibInventory.getBalanceOf(components, id, index);
-    } else if (_type.eq("LEVEL")) {
-      balance = LibExperience.getLevel(components, id);
-    } else if (_type.eq("KAMI")) {
-      balance = LibAccount.getPetsOwned(components, id).length;
-    } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
-      balance = getTopLevel(components, LibAccount.getPetsOwned(components, id));
-    } else if (_type.eq("SKILL")) {
-      balance = LibSkill.getPointsOf(components, id, index);
-    } else if (_type.eq("REPUTATION")) {
-      balance = LibFactions.getRep(components, id, index);
-    } else {
-      balance = LibData.get(components, id, index, _type);
-    }
+  function get(IUintComp components, uint256 id) internal view returns (Condition memory) {
+    return
+      Condition({
+        type_: getType(components, id),
+        logic: getLogic(components, id),
+        index: getIndex(components, id),
+        value: getBalance(components, id)
+      });
   }
 
-  function getTopLevel(IUintComp components, uint256[] memory ids) internal view returns (uint256) {
-    uint256 highestLevel = 1;
-    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+  function getBatch(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (Condition[] memory) {
+    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
+    LogicTypeComponent logicComp = LogicTypeComponent(getAddressById(components, LogicTypeCompID));
+    IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
+    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+
+    Condition[] memory conditions = new Condition[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
-      uint256 level = levelComp.get(ids[i]);
-      if (level > highestLevel) highestLevel = level;
+      conditions[i] = Condition({
+        type_: typeComp.get(ids[i]),
+        logic: logicComp.get(ids[i]),
+        index: indexComp.has(ids[i]) ? indexComp.get(ids[i]) : 0,
+        value: valueComp.has(ids[i]) ? valueComp.get(ids[i]) : 0
+      });
     }
-    return highestLevel;
+    return conditions;
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -271,7 +216,18 @@ library LibBoolean {
   }
 
   ///////////////////////
+  // QUERIES
+
+  function queryFor(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
+    return IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(id);
+  }
+
+  ///////////////////////
   // UTILS
+
+  function parseLogic(Condition memory data) internal pure returns (HANDLER, LOGIC) {
+    return parseLogic(data.logic);
+  }
 
   /// @notice determines objective logic handler and operator
   /// @dev gets the logic from a formatted string - "[HANDLER]_[LOGIC]"

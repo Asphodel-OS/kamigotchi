@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { Stat } from "components/types/Stat.sol";
 
-import { Condition } from "libraries/utils/LibBoolean.sol";
+import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";
 import { MUSU_INDEX } from "libraries/LibInventory.sol";
 

@@ -715,6 +715,7 @@
     "LibAccount",
     "LibAffinity",
     "LibBonus",
+    "LibConditional",
     "LibConfig",
     "LibData",
     "LibExperience",

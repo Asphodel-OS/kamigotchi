@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
+import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.registry"));
 
@@ -25,9 +25,7 @@ contract _QuestRegistrySystem is System {
     uint256 regID = LibQuestRegistry.createQuest(components, index, name, description, endText);
 
     // set repeatable (if so)
-    if (duration > 0) {
-      LibQuestRegistry.setRepeatable(components, regID, duration);
-    }
+    if (duration > 0) LibQuestRegistry.setRepeatable(components, regID, duration);
 
     return regID;
   }
@@ -46,19 +44,14 @@ contract _QuestRegistrySystem is System {
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Objective type cannot be empty");
 
-    // create an empty Quest Objective and set any non-zero fields
-    uint256 id = LibQuestRegistry.createEmptyObjective(
-      world,
-      components,
-      questIndex,
-      name,
-      logicType,
-      type_,
-      index
-    );
-    if (value != 0) LibQuestRegistry.setBalance(components, id, value);
-
-    return id;
+    return
+      LibQuestRegistry.createObjective(
+        world,
+        components,
+        questIndex,
+        name,
+        Condition(type_, logicType, index, value)
+      );
   }
 
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -74,18 +67,13 @@ contract _QuestRegistrySystem is System {
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
-    // create an empty Quest Requirement and set any non-zero fields
-    uint256 id = LibQuestRegistry.createEmptyRequirement(
-      world,
-      components,
-      questIndex,
-      logicType,
-      type_
-    );
-    if (index != 0) LibQuestRegistry.setIndex(components, id, index);
-    if (value != 0) LibQuestRegistry.setBalance(components, id, value);
-
-    return id;
+    return
+      LibQuestRegistry.createRequirement(
+        world,
+        components,
+        questIndex,
+        Condition(type_, logicType, index, value)
+      );
   }
 
   function addReward(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -112,17 +100,17 @@ contract _QuestRegistrySystem is System {
     require(registryQuestID != 0, "Quest does not exist");
 
     // delete its requirements
-    uint256[] memory requirements = LibQuestRegistry.getRequirementsByQuestIndex(components, index);
+    uint256[] memory requirements = LibQuestRegistry.getReqsByQuestIndex(components, index);
     for (uint256 i = 0; i < requirements.length; i++)
       LibQuestRegistry.deleteRequirement(components, requirements[i]);
 
     // delete its objectives
-    uint256[] memory objectives = LibQuestRegistry.getObjectivesByQuestIndex(components, index);
+    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, index);
     for (uint256 i = 0; i < objectives.length; i++)
       LibQuestRegistry.deleteObjective(components, objectives[i]);
 
     // delete its rewards
-    uint256[] memory rewards = LibQuestRegistry.getRewardsByQuestIndex(components, index);
+    uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, index);
     for (uint256 i = 0; i < rewards.length; i++)
       LibQuestRegistry.deleteReward(components, rewards[i]);
 
