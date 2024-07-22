@@ -6,7 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
@@ -22,18 +22,19 @@ contract SkillUpgradeSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check that the skill exists
-    uint256 registryID = LibSkillRegistry.getByIndex(components, skillIndex);
-    require(registryID != 0, "SkillUpgrade: skill not found");
+    uint256 regID = LibSkillRegistry.getByIndex(components, skillIndex);
+    require(regID != 0, "SkillUpgrade: skill not found");
 
     // entity type check
-    bool isPet = LibPet.isPet(components, holderID);
-    bool isAccount = LibAccount.isAccount(components, holderID);
-    require(isPet || isAccount, "SkillUpgrade: invalid target");
+    /// @dev calls raw LibFor instead of LibSkill.isFor for gas savings
+    // require(LibSkill.isFor(components, regID, holderID), "SkillUpgrade: invalid target");
+    uint256 forEntity = LibFor.get(components, regID);
+    require(LibFor.isTarget(components, holderID, forEntity), "SkillUpgrade: invalid target");
 
     // generic requirements
-    if (isAccount) {
+    if (LibFor.isAccount(forEntity)) {
       require(accID == holderID, "SkillUpgrade: not ur account");
-    } else if (isPet) {
+    } else if (LibFor.isPet(forEntity)) {
       require(accID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
       require(LibPet.isResting(components, holderID), "SkillUpgrade: pet not resting");
       LibPet.sync(components, holderID);
@@ -41,17 +42,17 @@ contract SkillUpgradeSystem is System {
 
     // points are decremented when checking prerequisites
     require(
-      LibSkill.meetsPrerequisites(components, holderID, registryID),
+      LibSkill.meetsPrerequisites(components, holderID, regID),
       "SkillUpgrade: unmet prerequisites"
     );
 
     // decrement the skill cost
-    uint256 cost = LibSkillRegistry.getCost(components, registryID);
+    uint256 cost = LibSkillRegistry.getCost(components, regID);
     LibSkill.dec(components, holderID, cost);
 
     // create the skill if it doesnt exist and increment it
     uint256 skillID = LibSkill.get(components, holderID, skillIndex);
-    if (skillID == 0) skillID = LibSkill.create(components, holderID, skillIndex);
+    if (skillID == 0) skillID = LibSkill.assign(components, holderID, skillIndex);
     LibSkill.inc(components, skillID, 1);
 
     // get the skill's effects and update the holder's bonuses accordingly
@@ -62,7 +63,7 @@ contract SkillUpgradeSystem is System {
 
     // standard logging and tracking
     LibSkill.logUsePoint(components, accID);
-    LibSkill.logUseTreePoint(components, holderID, registryID, cost);
+    LibSkill.logUseTreePoint(components, holderID, regID, cost);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

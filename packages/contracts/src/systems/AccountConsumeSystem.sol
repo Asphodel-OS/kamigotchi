@@ -7,13 +7,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibPet } from "libraries/LibPet.sol";
-import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
-import { LibStat } from "libraries/LibStat.sol";
-import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Consume"));
 
@@ -24,7 +19,6 @@ contract AccountConsumeSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint32 itemIndex = abi.decode(arguments, (uint32));
     uint256 id = LibAccount.getByOperator(components, msg.sender);
-    require(id != 0, "AccountConsume: no account");
 
     // check whether the specified item is consumable
     require(LibItemRegistry.isConsumable(components, itemIndex), "AccountConsume: item not edible");

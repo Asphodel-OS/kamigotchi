@@ -16,4 +16,11 @@ library LibArray {
     result[arr.length] = value;
     return result;
   }
+
+  /// @notice returns an array with the first X elements
+  function resize(uint256[] memory arr, uint256 size) internal pure returns (uint256[] memory) {
+    uint256[] memory result = new uint256[](size);
+    for (uint256 i; i < size; i++) result[i] = arr[i];
+    return result;
+  }
 }

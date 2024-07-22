@@ -9,8 +9,6 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
-import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
-import { ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -31,6 +29,7 @@ import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeCompone
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 
 /// @notice A registry for Skill related entities
@@ -74,9 +73,7 @@ library LibSkillRegistry {
     setMediaURI(components, id, media);
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
 
-    if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
-    else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
-    else revert("LibSkillRegistry: invalid type");
+    LibFor.setFromString(components, id, for_);
   }
 
   function createEffect(
@@ -85,8 +82,8 @@ library LibSkillRegistry {
     uint32 skillIndex,
     string memory type_,
     int256 value
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
     setConditionOwner(components, id, genEffectPtr(skillIndex));
 
     setIsRegistry(components, id);
@@ -94,8 +91,6 @@ library LibSkillRegistry {
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
     ValueSignedComponent(getAddressById(components, ValueSignedCompID)).set(id, value);
-
-    return id;
   }
 
   function createRequirement(
@@ -104,16 +99,14 @@ library LibSkillRegistry {
     uint32 skillIndex,
     string memory type_,
     string memory logicType
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
     setConditionOwner(components, id, genReqPtr(skillIndex));
     LibConditional.create(components, id, type_, logicType);
 
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setSkillIndex(components, id, skillIndex);
-
-    return id;
   }
 
   function delete_(IUintComp components, uint256 id) internal {

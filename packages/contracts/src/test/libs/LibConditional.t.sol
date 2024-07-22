@@ -82,7 +82,7 @@ contract LibConditionalTest is SetupTemplate {
     vm.assume(holderID > 0);
 
     vm.startPrank(deployer);
-    uint256 skillID = LibSkill.create(components, holderID, index);
+    uint256 skillID = LibSkill.assign(components, holderID, index);
     LibSkill.setPoints(components, skillID, amt);
     vm.stopPrank();
 

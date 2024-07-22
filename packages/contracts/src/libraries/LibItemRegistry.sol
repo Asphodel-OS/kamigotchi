@@ -9,8 +9,6 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
-import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
-import { ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
@@ -24,6 +22,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
 
+import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // Registries hold shared information on individual entity instances in the world.
@@ -76,9 +75,7 @@ library LibItemRegistry {
     id = createItem(components, index, type_, name, description, mediaURI);
     setIsConsumable(components, id);
 
-    if (for_.eq("KAMI")) setFor(components, id, IsPetCompID);
-    else if (for_.eq("ACCOUNT")) setFor(components, id, IsAccountCompID);
-    else revert("LibItemRegistry: invalid type");
+    LibFor.setFromString(components, id, for_);
   }
 
   /// @notice sets lootbox registry entity
@@ -123,7 +120,7 @@ library LibItemRegistry {
     unsetIsRegistry(components, id);
     unsetIsConsumable(components, id);
     unsetIsLootbox(components, id);
-    unsetFor(components, id);
+    LibFor.unset(components, id);
 
     unsetName(components, id);
     unsetDescription(components, id);
@@ -163,17 +160,11 @@ library LibItemRegistry {
   }
 
   function isForAccount(IUintComp components, uint32 index) internal view returns (bool) {
-    return isFor(components, index, IsAccountCompID);
+    return LibFor.isForAccount(components, genID(index));
   }
 
   function isForPet(IUintComp components, uint32 index) internal view returns (bool) {
-    return isFor(components, index, IsPetCompID);
-  }
-
-  function isFor(IUintComp components, uint32 index, uint256 for_) internal view returns (bool) {
-    uint256 id = genID(index);
-    ForComponent comp = ForComponent(getAddressById(components, ForCompID));
-    return comp.has(id) && comp.get(id) == for_;
+    return LibFor.isForPet(components, genID(index));
   }
 
   // NOTE: temporary function as we decide how to identify revives with out type_
@@ -218,10 +209,6 @@ library LibItemRegistry {
 
   function setIsConsumable(IUintComp components, uint256 id) internal {
     IsConsumableComponent(getAddressById(components, IsConsumableCompID)).set(id);
-  }
-
-  function setFor(IUintComp components, uint256 id, uint for_) internal {
-    ForComponent(getAddressById(components, ForCompID)).set(id, for_);
   }
 
   function setIsLootbox(IUintComp components, uint256 id) internal {
@@ -271,10 +258,6 @@ library LibItemRegistry {
   function unsetDescription(IUintComp components, uint256 id) internal {
     DescriptionComponent comp = DescriptionComponent(getAddressById(components, DescriptionCompID));
     if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetFor(IUintComp components, uint256 id) internal {
-    ForComponent(getAddressById(components, ForCompID)).remove(id);
   }
 
   function unsetIsConsumable(IUintComp components, uint256 id) internal {

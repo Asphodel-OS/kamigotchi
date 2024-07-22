@@ -22,6 +22,7 @@ import { LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -34,8 +35,8 @@ library LibSkill {
   /////////////////
   // INTERACTIONS
 
-  // create a skill for an entity
-  function create(
+  // assign a skill to an entity
+  function assign(
     IUintComp components,
     uint256 targetID,
     uint32 skillIndex
@@ -107,6 +108,10 @@ library LibSkill {
     return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
   }
 
+  function isFor(IUintComp components, uint256 regID, uint256 id) internal view returns (bool) {
+    return LibFor.isTargetFor(components, id, regID);
+  }
+
   /// @notice check whether the target meets the prerequisites to invest in a skill
   /// @dev prereqs include cost of skill, max points, and requirements
   function meetsPrerequisites(
@@ -130,6 +135,7 @@ library LibSkill {
 
     // check all other requirements
     uint256[] memory requirements = LibSkillRegistry.getRequirementsByIndex(components, skillIndex);
+    /// TODO: World2: include ForComp, separate requirements from accounts/pets
     return LibConditional.checkConditions(components, requirements, targetID);
   }
 
