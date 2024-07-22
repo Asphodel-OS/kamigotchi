@@ -301,7 +301,7 @@ library LibHarvest {
     uint32[] memory indices = new uint32[](3);
     indices[0] = nodeIndex;
     indices[1] = itemIndex;
-    indices[2] = itemIndex;
+    indices[2] = 0; // temp patch to fix quest 21 not having index. need adjust shapes to fix
     string[] memory types = new string[](3);
     types[0] = "HARVEST_AT_NODE";
     types[1] = LibString.concat("HARVEST_AFFINITY_", affinity);

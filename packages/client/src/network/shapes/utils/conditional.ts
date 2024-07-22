@@ -199,7 +199,7 @@ export const getBool = (
     if (type === 'QUEST') {
       return hasCompletedQuest(world, components, index as number, holder);
     } else if (type === 'ROOM') {
-      return holder.roomIndex == value;
+      return holder.roomIndex == index;
     }
   }
 
