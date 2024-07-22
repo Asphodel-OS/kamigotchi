@@ -18,6 +18,25 @@
     },
     {
       "type": "function",
+      "name": "addRequirement",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "create",
       "inputs": [
         {
@@ -124,6 +143,7 @@
     }
   ],
   "methodIdentifiers": {
+    "addRequirement(bytes)": "7e534103",
     "create(bytes)": "cf5ba53f",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",

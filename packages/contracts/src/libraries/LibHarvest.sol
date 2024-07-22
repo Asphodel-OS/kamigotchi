@@ -44,8 +44,12 @@ library LibHarvest {
   // INTERACTIONS
 
   // Creates a production for a pet at a deposit. Assumes one doesn't already exist.
-  function create(IUintComp components, uint256 nodeID, uint256 petID) internal returns (uint256) {
-    uint256 id = genID(petID);
+  function create(
+    IUintComp components,
+    uint256 nodeID,
+    uint256 petID
+  ) internal returns (uint256 id) {
+    id = genID(petID);
     IsProductionComponent(getAddressById(components, IsProdCompID)).set(id);
     IdPetComponent(getAddressById(components, IdPetCompID)).set(id, petID);
     IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
@@ -53,7 +57,6 @@ library LibHarvest {
       id,
       LibNode.getIndex(components, nodeID)
     );
-    return id;
   }
 
   // claim the existing balance on a Production to the Pet's owner (Account)

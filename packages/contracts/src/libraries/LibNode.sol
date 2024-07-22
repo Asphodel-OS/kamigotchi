@@ -7,8 +7,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { LibData } from "libraries/LibData.sol";
-
 import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
@@ -17,12 +15,16 @@ import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomCompon
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
+import { LibData } from "libraries/LibData.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
+
 /*
  * LibNode handles all retrieval and manipulation of mining nodes/productions
  */
 library LibNode {
   //////////////
-  // INTERACTIONS
+  // SHAPES
 
   // Create a Node as specified and return its id.
   // Type: [ HARVEST | HEALING | SACRIFICIAL | TRAINING ]
@@ -40,7 +42,20 @@ library LibNode {
     return id;
   }
 
-  function remove(IUintComp components, uint256 id) internal returns (uint256) {
+  /// @notice requirements for kamis to be put on a node
+  /// @dev can use either kami or acc as target
+  function createReq(
+    IWorld world,
+    IUintComp components,
+    uint32 nodeIndex,
+    string memory for_,
+    Condition memory req
+  ) internal returns (uint256 id) {
+    id = LibConditional.createFor(world, components, req, genReqPtr(nodeIndex));
+    LibFor.setFromString(components, id, for_);
+  }
+
+  function remove(IUintComp components, uint256 id) internal {
     IsNodeComponent(getAddressById(components, IsNodeCompID)).remove(id);
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).remove(id);
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
@@ -48,7 +63,11 @@ library LibNode {
     AffinityComponent(getAddressById(components, AffCompID)).remove(id);
     DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
     NameComponent(getAddressById(components, NameCompID)).remove(id);
-    return id;
+  }
+
+  function unsetReq(IUintComp components, uint256 id) internal {
+    LibConditional.unset(components, id);
+    LibFor.unset(components, id);
   }
 
   //////////////
@@ -72,6 +91,25 @@ library LibNode {
 
   //////////////
   // CHECKERS
+
+  function checkReqs(
+    IUintComp components,
+    uint32 nodeIndex,
+    uint256 accID,
+    uint256 petID
+  ) internal view returns (bool) {
+    uint256[] memory reqIDs = getReqs(components, nodeIndex);
+    if (reqIDs.length == 0) return true;
+
+    (uint256[] memory accReqs, uint256[] memory petReqs) = LibFor.splitAccAndPet(
+      components,
+      reqIDs
+    );
+
+    return
+      LibConditional.checkConditions(components, accReqs, accID) &&
+      LibConditional.checkConditions(components, petReqs, petID);
+  }
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getType(components, id), "HARVEST");
@@ -108,10 +146,18 @@ library LibNode {
     return IsNodeComponent(getAddressById(components, IsNodeCompID)).has(id) ? id : 0;
   }
 
+  function getReqs(IUintComp components, uint32 index) internal view returns (uint256[] memory) {
+    return LibConditional.queryFor(components, genReqPtr(index));
+  }
+
   /////////////////////
   // UTILS
 
   function genID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("node", index)));
+  }
+
+  function genReqPtr(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("node.requirement", index)));
   }
 }

@@ -183,13 +183,18 @@
     {
       "name": "_NodeRegistrySystem",
       "writeAccess": [
-        "IsNodeComponent",
         "AffinityComponent",
         "DescriptionComponent",
+        "ForComponent",
+        "IDPointerComponent",
+        "IndexComponent",
         "IndexNodeComponent",
         "IndexRoomComponent",
+        "IsNodeComponent",
+        "LogicTypeComponent",
         "NameComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {

@@ -7,7 +7,6 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 contract MurderTest is SetupTemplate {
-  uint _idleRequirement;
   uint[] internal _listingIDs;
   uint[] internal _foodRegistryIDs;
   uint[] internal _reviveRegistryIDs;
@@ -28,9 +27,6 @@ contract MurderTest is SetupTemplate {
     _nodeIDs.push(_createHarvestingNode(3, 2, "Test Node", "this is a node", "EERIE"));
     _nodeIDs.push(_createHarvestingNode(4, 2, "Test Node", "this is a node", "INSECT"));
     _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
-
-    // starting states
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
   }
 
   function setUpItems() public override {
@@ -42,6 +38,8 @@ contract MurderTest is SetupTemplate {
     // revives (reviveIndex, name, health)
     _reviveRegistryIDs.push(_createRevive(1000, "Ribbon", "DESCRIPTION", 10, "")); // itemIndex 1000
   }
+
+  function setUpNodes() public override {}
 
   /////////////////
   // TESTS

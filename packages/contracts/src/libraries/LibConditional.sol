@@ -93,7 +93,7 @@ library LibConditional {
     IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, pointerID);
   }
 
-  function remove(IUintComp components, uint256 id) internal {
+  function unset(IUintComp components, uint256 id) internal {
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
     IndexComponent(getAddressById(components, IndexCompID)).remove(id);

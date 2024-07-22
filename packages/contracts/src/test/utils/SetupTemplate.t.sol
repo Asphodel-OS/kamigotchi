@@ -23,11 +23,12 @@ abstract contract SetupTemplate is TestSetupImports {
     address owner;
   }
 
-  uint _currTime;
+  uint256 _currTime;
+  uint256 _idleRequirement;
   mapping(uint256 => PlayerAccount) internal _accounts;
   address[] internal _owners;
   mapping(address => address) internal _operators; // owner => operator
-  uint internal _currBlock;
+  uint256 internal _currBlock;
 
   PlayerAccount alice;
   PlayerAccount bob;
@@ -43,6 +44,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
     setUpConfigs();
     setUpTime();
+    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
 
     vm.prank(deployer);
     _PetGachaMintSystem.init(); // todo: make deploy script call `init()`
@@ -52,6 +54,7 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpMint();
     setUpItems();
     setUpRooms();
+    setUpNodes();
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed
@@ -102,6 +105,13 @@ abstract contract SetupTemplate is TestSetupImports {
     _createRoom("testRoom2", Coord(2, 1, 0), 2, 3);
     _createRoom("testRoom3", Coord(1, 2, 0), 3, 2);
     _createRoom("testRoom4", Coord(2, 2, 0), 4, 1);
+  }
+
+  function setUpNodes() public virtual {
+    _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
+    _createHarvestingNode(2, 1, "Test Node", "this is a node", "SCRAP");
+    _createHarvestingNode(3, 2, "Test Node", "this is a node", "EERIE");
+    _createHarvestingNode(4, 2, "Test Node", "this is a node", "INSECT");
   }
 
   function setUpTime() public virtual {
@@ -418,6 +428,12 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
+  function _setLevel(uint256 id, uint256 level) internal {
+    vm.startPrank(deployer);
+    LibExperience.setLevel(components, id, level);
+    vm.stopPrank();
+  }
+
   /////////////////
   // WORLD POPULATION
 
@@ -542,6 +558,21 @@ abstract contract SetupTemplate is TestSetupImports {
     return
       __NodeRegistrySystem.create(
         abi.encode(index, "HARVEST", roomIndex, name, description, affinity)
+      );
+  }
+
+  function _createNodeRequirement(
+    uint32 nodeIndex,
+    string memory for_,
+    string memory type_,
+    string memory logicType,
+    uint32 index,
+    uint256 value
+  ) internal returns (uint) {
+    vm.prank(deployer);
+    return
+      __NodeRegistrySystem.addRequirement(
+        abi.encode(nodeIndex, for_, type_, logicType, index, value)
       );
   }
 

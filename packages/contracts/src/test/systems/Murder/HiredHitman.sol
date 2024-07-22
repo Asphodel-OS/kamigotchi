@@ -7,7 +7,6 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 contract HiredHitmanTest is SetupTemplate {
-  uint internal _idleRequirement;
   uint internal nodeID;
   uint internal aPetID;
   uint internal bPetID;
@@ -15,7 +14,6 @@ contract HiredHitmanTest is SetupTemplate {
 
   function setUp() public override {
     super.setUp();
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
 
     aPetID = _mintPet(alice);
     bPetID = _mintPet(bob);
@@ -24,6 +22,8 @@ contract HiredHitmanTest is SetupTemplate {
 
     _fastForward(_idleRequirement);
   }
+
+  function setUpNodes() public override {}
 
   /// @notice sets up a victim by placing a kami on a node and farm for 10h
   function setUpVictim(uint256 victimID) internal returns (uint256 prodID) {

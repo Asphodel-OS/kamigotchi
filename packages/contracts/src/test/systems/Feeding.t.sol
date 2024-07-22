@@ -5,7 +5,6 @@ import "test/utils/SetupTemplate.t.sol";
 
 // this includes the feeding of both food and revives
 contract FeedingTest is SetupTemplate {
-  uint _idleRequirement;
   uint internal _npcID;
   uint internal _nodeID;
   uint[] internal _listingIDs;
@@ -15,10 +14,8 @@ contract FeedingTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
+    _nodeID = LibNode.getByIndex(components, 1);
     _npcID = _createNPC(1, 1, "Test NPC");
-
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
   }
 
   function setUpItems() public override {

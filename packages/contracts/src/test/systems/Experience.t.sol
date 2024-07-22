@@ -5,7 +5,6 @@ import "test/utils/SetupTemplate.t.sol";
 
 // this test experience gain, leveling and all expected effects due to leveling
 contract ExperienceTest is SetupTemplate {
-  uint _idleRequirement;
   uint internal _nodeID;
   uint internal _numPets;
   uint[] internal _petIDs;
@@ -14,8 +13,7 @@ contract ExperienceTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
-    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
+    _nodeID = LibNode.getByIndex(components, 1);
 
     _numPets = 5;
     _petIDs = _mintPets(0, _numPets);

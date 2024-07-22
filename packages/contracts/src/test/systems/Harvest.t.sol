@@ -11,7 +11,6 @@ pragma solidity ^0.8.0;
 //   using SafeCastLib for int32;
 //   using SafeCastLib for uint256;
 
-//   uint _idleRequirement;
 //   mapping(uint => bool) internal _isStarved;
 
 //   // structure of Node data for test purposes
@@ -25,8 +24,6 @@ pragma solidity ^0.8.0;
 
 //   function setUp() public override {
 //     super.setUp();
-
-//     _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
 //   }
 
 //   /////////////////

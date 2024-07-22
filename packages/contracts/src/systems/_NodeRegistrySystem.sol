@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibNode } from "libraries/LibNode.sol";
+import { Condition } from "libraries/LibConditional.sol";
 
 uint256 constant ID = uint256(keccak256("system.node.registry"));
 
@@ -36,9 +37,36 @@ contract _NodeRegistrySystem is System {
     return id;
   }
 
+  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 nodeIndex,
+      string memory for_,
+      string memory type_,
+      string memory logicType,
+      uint32 index,
+      uint256 value
+    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
+
+    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
+    require(nodeID != 0, "Node does not exist");
+    require(!LibString.eq(type_, ""), "Requirement type cannot be empty");
+
+    return
+      LibNode.createReq(
+        world,
+        components,
+        nodeIndex,
+        for_,
+        Condition(type_, logicType, index, value)
+      );
+  }
+
   function remove(uint32 index) public onlyOwner {
     uint256 id = LibNode.getByIndex(components, index);
     require(id != 0, "Node: does not exist");
+
+    uint256[] memory requirements = LibNode.getReqs(components, index);
+    for (uint256 i; i < requirements.length; i++) LibNode.unsetReq(components, requirements[i]);
 
     LibNode.remove(components, id);
   }

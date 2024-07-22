@@ -29,6 +29,7 @@ import type {
 
 export interface _NodeRegistrySystemInterface extends utils.Interface {
   functions: {
+    "addRequirement(bytes)": FunctionFragment;
     "create(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -38,6 +39,7 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addRequirement"
       | "create"
       | "execute"
       | "owner"
@@ -45,6 +47,10 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addRequirement",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "create",
     values: [PromiseOrValue<BytesLike>]
@@ -63,6 +69,10 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addRequirement",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -118,6 +128,11 @@ export interface _NodeRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -140,6 +155,11 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addRequirement(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   create(
     arguments: PromiseOrValue<BytesLike>,
@@ -164,6 +184,11 @@ export interface _NodeRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -199,6 +224,11 @@ export interface _NodeRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -223,6 +253,11 @@ export interface _NodeRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

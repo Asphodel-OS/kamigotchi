@@ -75,7 +75,7 @@ library LibRoom {
   function removeGate(IUintComp components, uint256 id) internal {
     IDRoomComponent(getAddressById(components, IDRoomCompID)).remove(id);
     IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-    LibConditional.remove(components, id);
+    LibConditional.unset(components, id);
   }
 
   /////////////////
