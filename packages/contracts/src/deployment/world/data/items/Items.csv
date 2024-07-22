@@ -1,22 +1,22 @@
 ﻿Image,Index,Name,Status,Type,ConsumableType,For,Description,Health,MaxHealth,Power,Violence,Harmony,Slots,XP,Stamina,DTIndices,DTWeights,_type,IgnoreContract,FamilyIndex(depreciated)
-Items%201b9894152b7f4649a68169aa3a6bcffe/musu.png,1,MUSU,For Implementation,Misc,,,Kamigotchi kurrency,,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ghost_gum_wip_native.png,101,Maple-Flavor Ghost Gum,For Implementation,Consumable,FOOD,Kami,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. ",25,,,,,,,,,,,No,1
-Items%201b9894152b7f4649a68169aa3a6bcffe/pom_poms_candy_wip_native.png,102,Pom-Pom Fruit Candy,For Implementation,Consumable,FOOD,Kami,These fruit candies contain a huge amount of energy. Restores 100 Health to a Kamigotchi.,100,,,,,,,,,,,No,2
-Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,103,Gakki Cookie Sticks,For Implementation,Consumable,FOOD,Kami,Heavy duty rations by a Kami’s standards.. Restores 200 Health to a Kamigotchi.,200,,,,,,,,,,,No,3
-Items%201b9894152b7f4649a68169aa3a6bcffe/large_xp_candy_native.png,104,XP Candy (Large),For Implementation,Consumable,FOOD,Kami,"This gives a lot of XP when fed to a Kamigotchi. ",,,,,,,200,,,,,No,4
-Items%201b9894152b7f4649a68169aa3a6bcffe/medium_xp_candy_native.png,105,XP Candy (Medium),For Implementation,Consumable,FOOD,Kami,"Provides a decent amount of XP when fed to a Kami. ",,,,,,,100,,,,,No,5
-Items%201b9894152b7f4649a68169aa3a6bcffe/small_xp_candy_native.png,106,XP Candy (Small),For Implementation,Consumable,FOOD,Kami,"Feed this to a Kamigotchi to give them a little bit of experience. ",,,,,,,25,,,,,No,6
+Items%201b9894152b7f4649a68169aa3a6bcffe/musu.png,1,MUSU,Ingame,Misc,,,Kamigotchi kurrency,,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ghost_gum_wip_native.png,101,Maple-Flavor Ghost Gum,Ingame,Consumable,FOOD,Kami,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. ",25,,,,,,,,,,,No,1
+Items%201b9894152b7f4649a68169aa3a6bcffe/pom_poms_candy_wip_native.png,102,Pom-Pom Fruit Candy,Ingame,Consumable,FOOD,Kami,These fruit candies contain a huge amount of energy. Restores 100 Health to a Kamigotchi.,100,,,,,,,,,,,No,2
+Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,103,Gakki Cookie Sticks,Ingame,Consumable,FOOD,Kami,Heavy duty rations by a Kami’s standards.. Restores 200 Health to a Kamigotchi.,200,,,,,,,,,,,No,3
+Items%201b9894152b7f4649a68169aa3a6bcffe/large_xp_candy_native.png,104,XP Candy (Large),Ingame,Consumable,FOOD,Kami,"This gives a lot of XP when fed to a Kamigotchi. ",,,,,,,200,,,,,No,4
+Items%201b9894152b7f4649a68169aa3a6bcffe/medium_xp_candy_native.png,105,XP Candy (Medium),Ingame,Consumable,FOOD,Kami,"Provides a decent amount of XP when fed to a Kami. ",,,,,,,100,,,,,No,5
+Items%201b9894152b7f4649a68169aa3a6bcffe/small_xp_candy_native.png,106,XP Candy (Small),Ingame,Consumable,FOOD,Kami,"Feed this to a Kamigotchi to give them a little bit of experience. ",,,,,,,25,,,,,No,6
 Items%201b9894152b7f4649a68169aa3a6bcffe/cheeseburger_native.png,,Cheeseburger,Not Implemented,Consumable,FOOD,,,,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,107,Ice Cream (Large),For Implementation,Consumable,FOOD,Account,,,,,,,,,16,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_medium_native.png,108,Ice Cream (Medium),For Implementation,Consumable,FOOD,Account,,,,,,,,,8,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_small_native.png,109,Ice Cream (Small),For Implementation,Consumable,FOOD,Account,,,,,,,,,4,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,110,Red Gakki Ribbon,For Implementation,Consumable,REVIVE,Kami,"Capable of raising a Kamigotchi from the dead. 
+Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,107,Ice Cream (Large),Ingame,Consumable,FOOD,Account,,,,,,,,,16,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_medium_native.png,108,Ice Cream (Medium),Ingame,Consumable,FOOD,Account,,,,,,,,,8,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_small_native.png,109,Ice Cream (Small),Ingame,Consumable,FOOD,Account,,,,,,,,,4,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,110,Red Gakki Ribbon,Ingame,Consumable,REVIVE,Kami,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. ",10,,,,,,,,,,,No,1
-Items%201b9894152b7f4649a68169aa3a6bcffe/holy_dust_native.png,111,Holy Dust,For Implementation,Consumable,RENAME_POTION,Kami,This sacred dust can be used to rename Kamigotchi… At the proper place.,,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/lootbox_native.png,10001,Agency Giftbox,For Implementation,Lootbox,,,Something is inside…..,,,,,,,,,"[11001, 11002, 11006, 101, 102, 103, 106, 105, 104, 109, 108, 107, 110]","[9, 9, 9, 9, 8, 7, 8, 7, 6, 9, 8, 7, 7]",,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/plastic_bottle_native.png,11001,Plastic Bottle,For Implementation,Material,,,"Can be reprocessed into valuable raw Microplastics. ",,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/stone_native.png,11002,Stone,For Implementation,Material,,,"It’s just a stone. Can be used to get Stone. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/holy_dust_native.png,111,Holy Dust,Ingame,Consumable,RENAME_POTION,Kami,This sacred dust can be used to rename Kamigotchi… At the proper place.,,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/lootbox_native.png,10001,Giftbox,For Implementation,Lootbox,,,Something is inside…..,,,,,,,,,"[11001, 11002, 11006, 101, 102, 103, 106, 105, 104, 109, 108, 107, 110, 112, 113, 114, 115]","[9, 9, 9, 9, 8, 7, 8, 7, 6, 9, 8, 7, 7, 6, 6, 6, 6]",,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/plastic_bottle_native.png,11001,Plastic Bottle,Ingame,Material,,,"Can be reprocessed into valuable raw Microplastics. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/stone_native.png,11002,Stone,Ingame,Material,,,"It’s just a stone. Can be used to get Stone. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/screwdriver_native.png,11003,Screwdriver,Not Implemented,Material,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/glass_jar_native.png,11004,Glass Jar,Not Implemented,Material,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/pine_pollen_native.png,11005,Pine Pollen,Not Implemented,Material,,,,,,,,,,,,,,,No,
@@ -25,13 +25,11 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/mint_native.png,11007,Mint,Not Implemen
 Items%201b9894152b7f4649a68169aa3a6bcffe/pine_cone_native.png,11008,Pine Cone,Not Implemented,Material,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_water_breathing_native.png,12001,Ring of Water Breathing,Not Implemented,Ring,,,Allows the bearer to travel underwater.,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,12002,Ring of Spirits,Not Implemented,Ring,,,,,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,13000,Badge,Not Implemented,Ring,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/kamigotchi_ticket_native.png,,Gacha Ticket,Ingame,Other,,,"Redeemable for one Kami. You should take this to the vending machine… ",,,,,,,,,,,,Yes,
 Items%201b9894152b7f4649a68169aa3a6bcffe/passport_yellow.png,,Passport,Not Implemented,NFT,,,,,,,,,,,,,,,Yes,
 ,,Land Deed,Not Implemented,NFT,,,,,,,,,,,,,,,Yes,
-,," Sunset Apple Mochi
-",Not Implemented,Consumable,,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power.",,,1,,,,,,,,,No,
-,," Kami Mochi
-",Not Implemented,Consumable,,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. ",,,,1,,,,,,,,No,
-,,Mana Mochi,Not Implemented,Consumable,,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.,,,,,1,,,,,,,No,
-,," Gaokerena Mochi
-",Not Implemented,Consumable,,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. ",,10,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/sunset_apple_mochi_native.png,112,Sunset Apple Mochi,For Implementation,Consumable,,Kami,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power.",,,1,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/kami_mochi_native.png,113,Kami Mochi,For Implementation,Consumable,,Kami,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. ",,,,1,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/mana_mochi_native.png,114,Mana Mochi,For Implementation,Consumable,,Kami,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.,,,,,1,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/gaokerena_mochi_native.png,115,Gaokerena Mochi,For Implementation,Consumable,,Kami,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. ",,10,,,,,,,,,,No,

@@ -1,34 +1,42 @@
 import agency_giftbox from './agency_giftbox.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
+import gaokerena_mochi from './gaokerena_mochi.png';
 import holy_dust from './holy_dust.png';
 import ice_cream_large from './ice_cream_large.png';
 import ice_cream_medium from './ice_cream_medium.png';
 import ice_cream_small from './ice_cream_small.png';
+import kami_mochi from './kami_mochi.png';
+import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import musu from './musu.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import ring_of_spirits from './ring_of_spirits.png';
 import ring_of_water_breathing from './ring_of_water_breathing.png';
+import sunset_apple_mochi from './sunset_apple_mochi.png';
 import xp_candy_large from './xp_candy_large.png';
 import xp_candy_medium from './xp_candy_medium.png';
 import xp_candy_small from './xp_candy_small.png';
 
 export const ItemImages = {
   agency_giftbox: agency_giftbox,
-  gakki_cookie_sticks: gakki_cookie_sticks,
   gacha_ticket: gacha_ticket,
+  gakki_cookie_sticks: gakki_cookie_sticks,
+  gaokerena_mochi: gaokerena_mochi,
   holy_dust: holy_dust,
   ice_cream_large: ice_cream_large,
   ice_cream_medium: ice_cream_medium,
   ice_cream_small: ice_cream_small,
+  kami_mochi: kami_mochi,
+  mana_mochi: mana_mochi,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   musu: musu,
   red_gakki_ribbon: red_gakki_ribbon,
   ring_of_spirits: ring_of_spirits,
   ring_of_water_breathing: ring_of_water_breathing,
   pom_pom_fruit_candy: pom_pom_fruit_candy,
+  sunset_apple_mochi: sunset_apple_mochi,
   xp_candy_large: xp_candy_large,
   xp_candy_medium: xp_candy_medium,
   xp_candy_small: xp_candy_small,

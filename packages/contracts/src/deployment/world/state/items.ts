@@ -60,7 +60,7 @@ async function setBase(api: AdminAPI, item: any) {
   await api.registry.item.create.base(
     Number(item['Index']),
     item['Type'].toUpperCase(),
-    item['Name'],
+    item['Name'].trim(),
     item['Description'],
     getItemImage(item['Name'])
   );
@@ -70,7 +70,7 @@ async function setConsumable(api: AdminAPI, item: any) {
   await api.registry.item.create.consumable(
     Number(item['Index']),
     (item['For'] ?? 'KAMI').toUpperCase(),
-    item['Name'],
+    item['Name'].trim(),
     item['Description'],
     item['ConsumableType'].toUpperCase(),
     getItemImage(item['Name'])
@@ -81,7 +81,7 @@ async function setConsumable(api: AdminAPI, item: any) {
 async function setLootbox(api: AdminAPI, item: any, droptables: any) {
   await api.registry.item.create.lootbox(
     Number(item['Index']),
-    item['Name'],
+    item['Name'].trim(),
     item['Description'],
     [11001, 11002, 11006, 101, 102, 103, 106, 105, 104, 109, 108, 107, 110, 112, 113, 114, 115],
     [9, 9, 9, 9, 8, 7, 8, 7, 6, 9, 8, 7, 7, 6, 6, 6, 6],
@@ -90,7 +90,7 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
   return; // using placeholder lootboxes for now. similar challenges in representation to rooms
   await api.registry.item.create.lootbox(
     Number(item['Index']),
-    item['Name'],
+    item['Name'].trim(),
     item['Description'],
     droptables[Number(item['Droptable']) - 1]['Key'],
     droptables[Number(item['Droptable']) - 1]['Tier'],
