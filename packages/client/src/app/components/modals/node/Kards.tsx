@@ -91,7 +91,7 @@ export const Kards = (props: Props) => {
 
   // get a IconListButton option for feeding a Kami
   const getFeedOption = (kami: Kami, inv: Inventory): Option => {
-    if (!inv) return { text: '', onClick: () => {} };
+    if (!inv || !inv.item) return { text: '', onClick: () => {} };
 
     const healAmt = inv.item.stats?.health.sync ?? 0;
     const expAmt = inv.item.experience ?? 0;
@@ -150,7 +150,7 @@ export const Kards = (props: Props) => {
         [Number.MIN_VALUE, -1]
       );
       const champion = available[index];
-      reason = `${champion.name} can liquidate below ${Math.round(threshold)} Health`;
+      reason = `${champion?.name} can liquidate below ${Math.round(threshold)} Health`;
     }
 
     if (reason === '') reason = 'Liquidate this Kami';
@@ -295,7 +295,7 @@ export const Kards = (props: Props) => {
     <Container>
       {allies && allies.length > 0 && <Label>Allies</Label>}
       {allies.map((ally: Kami) => MyKard(ally))}
-      <Label>Enemies</Label>
+      {enemies && enemies.length > 0 && <Label>Enemies</Label>}
       {enemies.map((enemy: Kami) => EnemyKard(enemy, allies))}
     </Container>
   );
