@@ -473,13 +473,16 @@ We've had a lot of complaints about a specific individual recently. We'd appreci
 "Nedu, Lethe Asphodel",10001,,Ingame,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,5x Giftbox,10001,5,No,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,1x Large XP Candy,104,1,No,,,,,,,,
-,10002,Fountain of Revival,Ingame,Quest,,,,,,,Yes,,,"Kamigotchi rise, fall, and rise again......
+,10002,Fountain of Revival [Daily],Ingame,Quest,,,,,,,Yes,,,"Kamigotchi rise, fall, and rise again......
 
 Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",
 ,10002,,Ingame,Requirement,ROOM,IS,,At room 11,11,,No,,,,,,,,
-Lethe Asphodel,10002,,Ingame,Requirement,PHASE,IS,,Day,1,,No,,,,,,,,
 ,10002,,Ingame,Reward,ITEM,,,1 Revive,110,1,No,,,,,,,,
 ,,,Idea,,,,,,,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,Doing your Dailies [Daily],Ingame,Quest,,,,,,,Yes,,,"GM. Time for your daily gathering quest, Anon. If you can scrape together 150 MUSU, I'll give you a giftbox…",,Have completed An Unforgiving World (10),Gather 150 MUSU,1x Giftbox,
+"Nedu, Lethe Asphodel",10003,,Ingame,Requirement,QUEST,COMPLETE,,Completed Back To The Mines (5),5,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,,Ingame,Objective,COIN_TOTAL,MIN,INC,Gather 150 Musu,1,150,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,,Ingame,Reward,ITEM,,,1x Giftbox,10001,1,No,,,,,,,,
 "Nedu, Lethe Asphodel",21,Daily Grind,Ingame,Quest,,,,,,,No,5,,"This world follows its own cycles. The calendar here isn't quite the same as in your world.... for example, things here run on a 36 hour day. Have you noticed?
 
 Now, Harvest 300 Musu during the daytime. Show me you understand the purpose of those waking hours!",,Have completed The Kamigotchi Who Shall Be Named (14),Harvest 300 Musu during daytime,1x Giftbox,
@@ -491,7 +494,8 @@ Lethe Asphodel,22,A place of tranquility,Ingame,Quest,,,,,,,No,5,,"Kamigotchi wo
 
 Visit the riverside during Evenfall and meditate for a moment…",,Have completed Daily Grind (21),Visit Misty Riverside during the Evenfall,1x Medium XP Candy,
 Lethe Asphodel,22,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Daily Grind (21),21,,No,,,,,,,,
-Lethe Asphodel,22,,Ingame,Objective,PHASE,IS,CURR,Visit Misty Riverside during the Evenfall,2,,No,,,,,,,,
+Lethe Asphodel,22,,Ingame,Objective,ROOM,IS,BOOL,Visit Misty Riverside,1,,No,,,,,,,,
+Lethe Asphodel,22,,Ingame,Objective,PHASE,IS,BOOL,During Evenfall,2,,No,,,,,,,,
 Lethe Asphodel,22,,Ingame,Reward,ITEM,,,1x Medium XP Candy,105,1,No,,,,,,,,
 ,,,Idea,,,,,,,,No,,,,,,,,
 Lethe Asphodel,23,A dark forest…,For Implementation,Quest,,,,,,,No,10,,Moonside is the time to hunt. Seek out and slay a Kamigotchi under the cover of darkness.... embrace the call of the night...,,Have completed A place of tranquility (22),Liquidate a Kamigotchi during nighttime,1x Kami Mochi,
@@ -526,3 +530,7 @@ Lethe Asphodel,26,,Review,Reward,ITEM,,,1x Red Gakki Ribbon,110,1,No,,,,,,,,
 vaitarna,,,Idea,,,,,,,,No,,,,,,,,
 vaitarna,,,Idea,,,,,,,,No,,,,,,,,
 vaitarna,,,Idea,,,,,,,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,,Ingame,Objective,COIN_TOTAL,MIN,INC,Gather 150 Musu,1,150,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,,Ingame,Reward,ITEM,,,1x Giftbox,10001,1,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,,Ingame,Requirement,QUEST,COMPLETE,,Completed Back To The Mines (5),5,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10003,Doing your Dailies [Daily],Ingame,Quest,,,,,,,Yes,,,"GM. Time for your daily gathering quest, Anon. If you can scrape together 150 MUSU, I'll give you a giftbox…",,Have completed An Unforgiving World (10),Gather 150 MUSU,1x Giftbox,
