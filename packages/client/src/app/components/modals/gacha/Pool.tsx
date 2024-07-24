@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
 import { KamiGrid } from './components/KamiGrid';
 
+import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { GachaTicket } from 'network/shapes/utils/EntityTypes';
 import { SideBalance } from './components/SideBalance';
@@ -21,8 +22,16 @@ interface Props {
 }
 
 export const Pool = (props: Props) => {
+  const { modals } = useVisibility();
+
   const [mintAmt, setMintAmt] = useState<number>(0);
-  const [numShown, setNumShown] = useState<number>(49);
+  const [numShown, setNumShown] = useState<number>(0);
+
+  // prevent loading of kami when modal is closed
+  useEffect(() => {
+    if (modals.gacha) setNumShown(49);
+    else setNumShown(0);
+  }, [modals.gacha]);
 
   const {
     account: { balance: accBal },

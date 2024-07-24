@@ -21,7 +21,7 @@ export const KillLogs = (props: Props) => {
   logs = logs.sort((a, b) => b.time - a.time);
 
   const getPnLString = (log: Kill): string => {
-    if (log.target?.index) {
+    if (log.target !== undefined) {
       return `+${log.bounty}`;
     } else {
       return `-${log.balance}`;
@@ -43,8 +43,8 @@ export const KillLogs = (props: Props) => {
   const Row = (log: Kill, index: number) => {
     const killStyle = { ...cellStyle, color: 'green' };
     const deathStyle = { ...cellStyle, color: 'red' };
-    const type = log.source?.index === undefined ? 'kill' : 'death';
-    const adversary = log.source?.index === undefined ? log.target : log.source;
+    const type = log.source === undefined ? 'kill' : 'death';
+    const adversary = log.source === undefined ? log.target : log.source;
     const date = new Date(log.time * 1000);
     const dateString = date.toLocaleString('default', {
       month: 'short',

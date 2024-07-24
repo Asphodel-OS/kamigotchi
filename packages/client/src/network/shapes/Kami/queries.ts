@@ -5,6 +5,7 @@ import {
   HasValue,
   QueryFragment,
   World,
+  getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
@@ -15,6 +16,12 @@ import { Kami, Options, getKami } from './types';
 export type QueryOptions = {
   account?: EntityID;
   state?: string;
+};
+
+// gets a kami name (and only name)
+export const getKamiName = (components: Components, index: EntityIndex): string => {
+  const { Name } = components;
+  return (getComponentValue(Name, index)?.value as string) || '';
 };
 
 export const queryKamisX = (
