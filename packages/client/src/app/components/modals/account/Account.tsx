@@ -7,10 +7,11 @@ import { useSelected } from 'app/stores';
 import { operatorIcon } from 'assets/images/icons/menu';
 import {
   Account,
+  BareAccount,
   getAccountByIndex,
   getAccountFromBurner,
-  getAllAccounts,
 } from 'network/shapes/Account';
+import { getAllAccountsBare } from 'network/shapes/Account/queries';
 import { Friendship } from 'network/shapes/Friendship';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
@@ -48,7 +49,6 @@ export function registerAccountModal() {
     },
     // Render
     ({ data, network }) => {
-      // console.log('AccountM: data', data);
       const { actions, api, components, world } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(
@@ -92,7 +92,7 @@ export function registerAccountModal() {
       };
 
       // block an account
-      const blockFren = (account: Account) => {
+      const blockFren = (account: BareAccount) => {
         actions.add({
           action: 'BlockFriend',
           params: [account.ownerEOA],
@@ -116,7 +116,7 @@ export function registerAccountModal() {
       };
 
       // send a friend request
-      const requestFren = (account: Account) => {
+      const requestFren = (account: BareAccount) => {
         actions.add({
           action: 'RequestFriend',
           params: [account.ownerEOA],
@@ -153,7 +153,7 @@ export function registerAccountModal() {
             tab={tab}
             data={{
               account,
-              accounts: getAllAccounts(world, components),
+              getAllAccs: () => getAllAccountsBare(world, components),
             }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
           />

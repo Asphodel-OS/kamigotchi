@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
-import { Account } from 'network/shapes/Account';
+import { Account, BareAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Inbound } from './Inbound';
 import { Outbound } from './Outbound';
@@ -10,16 +10,16 @@ import { Searched } from './Searched';
 
 interface Props {
   account: Account;
-  accounts: Account[];
+  accounts: BareAccount[];
   requests: {
     inbound: Friendship[];
     outbound: Friendship[];
   };
   actions: {
     acceptFren: (friendship: Friendship) => void;
-    blockFren: (account: Account) => void;
+    blockFren: (account: BareAccount) => void;
     cancelFren: (friendship: Friendship) => void;
-    requestFren: (account: Account) => void;
+    requestFren: (account: BareAccount) => void;
   };
 }
 
@@ -27,7 +27,7 @@ export const Requests = (props: Props) => {
   const { account, requests, actions } = props;
   const [mode, setMode] = useState('inbound');
   const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState([] as Account[]);
+  const [searchResults, setSearchResults] = useState([] as BareAccount[]);
   const [knownAccIndices, setKnownAccIndices] = useState([] as number[]);
 
   // keep track of which accounts are already friends, requested or blocked
@@ -59,11 +59,12 @@ export const Requests = (props: Props) => {
   //////////////////
   // INTERPRETATION
 
+  // TODO:  implement a lazy query or something less compute heavy
   // filters the list of accounts by whether their name/ownerEOA contains a substring
   const filterAccounts = (value: string) => {
     const accounts = props.accounts.filter((account) => !knownAccIndices.includes(account.index));
 
-    if (value.length < 2) return accounts;
+    if (value.length < 2) accounts;
 
     return accounts.filter(
       (account) =>

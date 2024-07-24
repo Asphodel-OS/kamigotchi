@@ -10,6 +10,6 @@ export {
   getAccountFromBurner,
   getAllAccounts,
 } from './queries';
-export { getAccount } from './types';
+export { getAccount, getBareAccount } from './types';
 
-export type { Account, Friends as AccountFriends, AccountOptions } from './types';
+export type { Account, Friends as AccountFriends, AccountOptions, BareAccount } from './types';

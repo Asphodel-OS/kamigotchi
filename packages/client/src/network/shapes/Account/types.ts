@@ -27,16 +27,20 @@ import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
 import { Commit, getData } from '../utils';
 
-// standardized shape of an Account Entity
-export interface Account {
+// account shape with minimal fields
+export interface BareAccount {
   id: EntityID;
   index: number;
   entityIndex: EntityIndex;
   ownerEOA: string;
   operatorEOA: string;
-  fid: number;
   name: string;
   pfpURI: string;
+}
+
+// standardized shape of an Account Entity
+export interface Account extends BareAccount {
+  fid: number;
 
   coin: number;
   roomIndex: number;
@@ -93,6 +97,50 @@ export interface Friends {
   };
 }
 
+export const NullAccount: Account = {
+  id: '0' as EntityID,
+  entityIndex: 0 as EntityIndex,
+  index: 0,
+  operatorEOA: '',
+  ownerEOA: '',
+  fid: 0,
+  name: '',
+  pfpURI: '',
+
+  coin: 0,
+  roomIndex: 0,
+  level: 0,
+  reputation: {
+    agency: 0,
+  },
+  skillPoints: 0,
+  stamina: {} as Stat,
+  time: {
+    last: 0,
+    lastMove: 0,
+    creation: 0,
+  },
+  kamis: [],
+};
+
+export const getBareAccount = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): BareAccount => {
+  const { AccountIndex, MediaURI, Name, OperatorAddress, OwnerAddress } = components;
+
+  return {
+    id: world.entities[entityIndex],
+    entityIndex,
+    index: getComponentValue(AccountIndex, entityIndex)?.value as number,
+    operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+    ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
+    pfpURI: getComponentValue(MediaURI, entityIndex)?.value as string,
+    name: getComponentValue(Name, entityIndex)?.value as string,
+  };
+};
+
 // get an Account from its EnityIndex
 export const getAccount = (
   world: World,
@@ -100,31 +148,14 @@ export const getAccount = (
   entityIndex: EntityIndex,
   options?: AccountOptions
 ): Account => {
-  const {
-    AccountIndex,
-    FarcasterIndex,
-    LastActionTime,
-    LastTime,
-    MediaURI,
-    RoomIndex,
-    Name,
-    OperatorAddress,
-    OwnerAddress,
-    Stamina,
-    StartTime,
-  } = components;
+  const { FarcasterIndex, LastActionTime, LastTime, RoomIndex, Stamina, StartTime } = components;
 
-  const id = world.entities[entityIndex];
+  const bareAcc = getBareAccount(world, components, entityIndex);
+  const id = bareAcc.id;
 
   let account: Account = {
-    entityIndex,
-    id: id,
-    index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-    ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
-    operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+    ...bareAcc,
     fid: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
-    pfpURI: getComponentValue(MediaURI, entityIndex)?.value as string,
-    name: getComponentValue(Name, entityIndex)?.value as string,
     coin: getMusuBalance(world, components, id),
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     kamis: [], // placeholder

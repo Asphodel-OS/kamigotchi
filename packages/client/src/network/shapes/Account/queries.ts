@@ -1,7 +1,17 @@
 import { EntityID, EntityIndex, Has, HasValue, World, runQuery } from '@mud-classic/recs';
 
 import { Components, NetworkLayer } from 'network/';
-import { AccountOptions, getAccount } from './types';
+import { AccountOptions, NullAccount, getAccount, getBareAccount } from './types';
+
+export type QueryOptions = {
+  index?: number;
+  operator?: string;
+  owner?: string;
+  name?: string;
+};
+
+//////////////////
+// EXTERNAL
 
 // get an Account by its Username
 export const getAccountEntityIndexByName = (components: Components, name: string) => {
@@ -22,6 +32,23 @@ export const getAllAccounts = (world: World, components: Components, options?: A
     getAccount(world, components, entityIndex, options)
   );
 };
+
+export const getAllAccountsBare = (world: World, components: Components) => {
+  const { IsAccount } = components;
+  return Array.from(runQuery([Has(IsAccount)])).map((entityIndex) =>
+    getBareAccount(world, components, entityIndex)
+  );
+};
+
+// get an Account, assuming the currently connected burner is the Operator
+export const getAccountFromBurner = (network: NetworkLayer, options?: AccountOptions) => {
+  const { world, components } = network;
+  const connectedAddress = network.network.connectedAddress.get();
+  return getAccountByOperator(world, components, connectedAddress ?? '', options);
+};
+
+//////////////////
+// GETTERS
 
 // get an Account by its entityID
 export const getAccountByID = (
@@ -58,10 +85,11 @@ export const getAccountByOperator = (
   options?: AccountOptions
 ) => {
   const { IsAccount, OperatorAddress } = components;
-  const entityIndex = Array.from(
+  const entityIndices = Array.from(
     runQuery([HasValue(OperatorAddress, { value: operatorEOA }), Has(IsAccount)])
-  )[0];
-  return getAccount(world, components, entityIndex, options);
+  );
+  if (entityIndices.length === 0) return NullAccount;
+  return getAccount(world, components, entityIndices[0], options);
 };
 
 // get an Account by its Owner EOA
@@ -87,11 +115,4 @@ export const getAccountByName = (
   const { IsAccount, Name } = components;
   const entityIndex = Array.from(runQuery([HasValue(Name, { value: name }), Has(IsAccount)]))[0];
   return getAccount(world, components, entityIndex, options);
-};
-
-// get an Account, assuming the currently connected burner is the Operator
-export const getAccountFromBurner = (network: NetworkLayer, options?: AccountOptions) => {
-  const { world, components } = network;
-  const connectedAddress = network.network.connectedAddress.get();
-  return getAccountByOperator(world, components, connectedAddress ?? '', options);
 };
