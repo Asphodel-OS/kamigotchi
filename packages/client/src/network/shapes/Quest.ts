@@ -21,8 +21,10 @@ import {
   checkCurrent,
   checkLogicOperator,
   checkerSwitch,
-  getData,
-} from './utils';
+  getCondition,
+} from './Conditional';
+import { queryConditionsOf, queryConditionsOfEntityIndex } from './Conditional/queries';
+import { getData } from './utils';
 
 /////////////////
 // GETTERS
@@ -140,7 +142,7 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
     repeatable: hasComponent(IsRepeatable, registryIndex) || (false as boolean),
     requirements: queryQuestRequirements(world, components, questIndex),
     objectives: queryQuestObjectives(world, components, questIndex),
-    rewards: queryQuestRewards(world, components, questIndex, world.entities[entityIndex]),
+    rewards: queryQuestRewards(world, components, questIndex),
   };
 
   if (hasComponent(IsRepeatable, registryIndex)) {
@@ -150,55 +152,18 @@ const getQuest = (world: World, components: Components, entityIndex: EntityIndex
   return result;
 };
 
-// Get a Requirement Registry object
-const getRequirement = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex
-): Requirement => {
-  const { Value, Index, LogicType, Type } = components;
-
-  let requirement: Requirement = {
-    id: world.entities[entityIndex],
-    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
-    target: {
-      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-    },
-  };
-
-  const index = getComponentValue(Index, entityIndex)?.value;
-  if (index) requirement.target.index = index;
-
-  const value = getComponentValue(Value, entityIndex)?.value;
-  if (value) requirement.target.value = value;
-
-  return requirement;
-};
-
 // Get an Objective Registry object
 const getObjective = (
   world: World,
   components: Components,
   entityIndex: EntityIndex
 ): Objective => {
-  const { Value, Index, LogicType, Name, Type } = components;
+  const { Name } = components;
 
-  let objective: Objective = {
-    id: world.entities[entityIndex],
+  return {
+    ...getCondition(world, components, entityIndex),
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
-    target: {
-      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-    },
   };
-
-  const index = getComponentValue(Index, entityIndex)?.value;
-  if (index) objective.target.index = index;
-
-  const value = getComponentValue(Value, entityIndex)?.value;
-  if (value) objective.target.value = value;
-
-  return objective;
 };
 
 // Get a Reward Registry object
@@ -296,11 +261,7 @@ const queryQuestRequirements = (
   components: Components,
   questIndex: number
 ): Requirement[] => {
-  const { IsRegistry, IsRequirement, QuestIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), Has(IsRequirement), HasValue(QuestIndex, { value: questIndex })])
-  );
-  return entityIndices.map((entityIndex) => getRequirement(world, components, entityIndex));
+  return queryConditionsOf(world, components, 'registry.quest.requirement', questIndex);
 };
 
 // Get the Entity Indices of the Objectives of a Quest
@@ -309,25 +270,16 @@ const queryQuestObjectives = (
   components: Components,
   questIndex: number
 ): Objective[] => {
-  const { IsRegistry, IsObjective, QuestIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), Has(IsObjective), HasValue(QuestIndex, { value: questIndex })])
+  return queryConditionsOfEntityIndex(components, 'registry.quest.objective', questIndex).map(
+    (index) => getObjective(world, components, index)
   );
-  return entityIndices.map((index) => getObjective(world, components, index));
 };
 
 // Get the Entity Indices of the Rewards of a Quest
-const queryQuestRewards = (
-  world: World,
-  components: Components,
-  questIndex: number,
-  questID: EntityID
-): Reward[] => {
-  const { IsRegistry, IsReward, QuestIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), Has(IsReward), HasValue(QuestIndex, { value: questIndex })])
+const queryQuestRewards = (world: World, components: Components, questIndex: number): Reward[] => {
+  return queryConditionsOfEntityIndex(components, 'registry.quest.reward', questIndex).map(
+    (entityIndex) => getReward(world, components, entityIndex)
   );
-  return entityIndices.map((entityIndex) => getReward(world, components, entityIndex));
 };
 
 const querySnapshotObjective = (

@@ -1,6 +1,7 @@
 import { EntityID, Has, HasValue, QueryFragment, World, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { Effect, Options, Requirement, Skill, getEffect, getRequirement, getSkill } from './types';
+import { queryConditionsOf } from '../Conditional/queries';
+import { Effect, Options, Requirement, Skill, getEffect, getSkill } from './types';
 
 /////////////////
 // GETTERS
@@ -79,9 +80,5 @@ export const querySkillRequirements = (
   components: Components,
   skillIndex: number
 ): Requirement[] => {
-  const { IsRegistry, IsRequirement, SkillIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), Has(IsRequirement), HasValue(SkillIndex, { value: skillIndex })])
-  );
-  return entityIndices.map((entityIndex) => getRequirement(world, components, entityIndex));
+  return queryConditionsOf(world, components, 'registry.skill.requirement', skillIndex);
 };

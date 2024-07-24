@@ -1,0 +1,64 @@
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { formatEntityID } from 'engine/utils';
+import { utils } from 'ethers';
+import { Components } from 'network/';
+
+const IDStore = new Map<string, string>();
+
+/**
+ * A client equivalent to Conditionals. For supporting other shapes
+ */
+
+export interface Condition {
+  id: EntityID;
+  logic: string;
+  target: Target;
+  status?: Status;
+}
+
+// the Target of a Condition (eg Objective, Requirement, Reward)
+export interface Target {
+  type: string;
+  index?: number;
+  value?: number;
+}
+
+export interface Status {
+  target?: number;
+  current?: number;
+  completable: boolean;
+}
+
+export type HANDLER = 'CURR' | 'INC' | 'DEC' | 'BOOL';
+export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
+
+export const getCondition = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex | undefined
+): Condition => {
+  const { Value, Index, LogicType, Type } = components;
+
+  if (!entityIndex)
+    return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
+
+  return {
+    id: world.entities[entityIndex],
+    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
+    target: {
+      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
+      index: getComponentValue(Index, entityIndex)?.value,
+      value: getComponentValue(Value, entityIndex)?.value,
+    },
+  };
+};
+
+export const genConditionPtr = (field: string, index: number): EntityID => {
+  let id = '';
+  const key = field + index.toString();
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else id = utils.solidityKeccak256(['string', 'uint32'], [field, index]) as EntityID;
+
+  return formatEntityID(id);
+};

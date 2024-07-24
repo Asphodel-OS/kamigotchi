@@ -2,9 +2,10 @@ import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
+import { checkCondition } from '../Conditional';
 import { getConfigFieldValueArray } from '../Config';
 import { Kami, isDead, isHarvesting, isOffWorld, isStarving } from '../Kami';
-import { checkCondition, getData } from '../utils';
+import { getData } from '../utils';
 import { Effect, Requirement, Skill } from './types';
 
 export const getInstance = (target: Account | Kami, rSkill: Skill) => {

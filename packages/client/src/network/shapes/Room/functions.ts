@@ -1,7 +1,7 @@
 import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Condition } from '../utils';
+import { Condition } from '../Conditional';
 import { queryGates, queryRoomsEntitiesX, queryRoomsX } from './queries';
 import { Room, RoomOptions, getRoom } from './types';
 

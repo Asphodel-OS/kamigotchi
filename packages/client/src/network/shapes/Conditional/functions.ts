@@ -1,67 +1,11 @@
-import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
+import { World } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/indices';
-import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { numberToHex } from 'utils/hex';
+import { getBalance, getBool } from 'network/shapes/utils/getter';
 import { Account } from '../Account';
-import { getReputationValue } from '../Faction';
-import { getInventoryByHolderItem } from '../Item';
 import { Kami } from '../Kami';
-import { hasCompletedQuest } from '../Quest';
-import { getData } from './data';
-import { getCurrPhase } from './phase';
-
-/**
- * A client equivalent to Conditionals. For supporting other shapes
- */
-
-export interface Condition {
-  id: EntityID;
-  logic: string;
-  target: Target;
-  status?: Status;
-}
-
-// the Target of a Condition (eg Objective, Requirement, Reward)
-export interface Target {
-  type: string;
-  index?: number;
-  value?: number;
-}
-
-export interface Status {
-  target?: number;
-  current?: number;
-  completable: boolean;
-}
-
-export type HANDLER = 'CURR' | 'INC' | 'DEC' | 'BOOL';
-export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
-
-export const getCondition = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex | undefined
-): Condition => {
-  const { Value, Index, LogicType, Type } = components;
-
-  if (!entityIndex)
-    return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
-
-  return {
-    id: world.entities[entityIndex],
-    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
-    target: {
-      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-      index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Value, entityIndex)?.value,
-    },
-  };
-};
-
-///////////////////
-// CHECKERS
+import { Condition, HANDLER, OPERATOR, Status, Target } from './types';
 
 export const passesConditions = (
   world: World,
@@ -129,95 +73,6 @@ export const checkBoolean = (
       completable: opt === 'IS' ? result : !result,
     };
   };
-};
-
-///////////////////
-// GETTERS
-
-export const getBalance = (
-  world: World,
-  components: Components,
-  holder: Account | Kami,
-  index: number | undefined,
-  type: string
-): number => {
-  // universal gets - account and kami shape compatible
-  if (type === 'SKILL') {
-    const skill = holder.skills?.find((s) => s.index === index);
-    return skill?.points.current || 0;
-  } else if (type === 'REPUTATION') {
-    return getReputationValue(world, components, holder.id, index ?? 0);
-  }
-
-  // account specific, check if holder is account shaped
-  if ('kamis' in holder) {
-    if (type === 'ITEM') {
-      return getInventoryBalance(world, components, holder, index ?? 0);
-    } else if (type === 'KAMI') {
-      return holder.kamis?.length || 0;
-    } else if (type === 'KAMI_LEVEL_HIGHEST') {
-      let top = 0;
-      holder.kamis?.forEach((kami) => {
-        if (kami.level > top) top = kami.level;
-      });
-      return top;
-    } else if (type === 'ROOM') {
-      return holder.roomIndex || 0;
-    }
-  }
-
-  // kami specific, check if holder is kami shaped (nothing here rn)
-  if ('account' in holder) {
-  }
-
-  // if everything else doesnt match, get from dataEntity (returns 0 if not found)
-  return getData(world, components, holder.id, type, index ?? 0);
-};
-
-export const getBool = (
-  world: World,
-  components: Components,
-  holder: Account | Kami,
-  index: number | undefined,
-  value: number | undefined,
-  type: string
-): boolean => {
-  const { IsComplete } = components;
-
-  // universal gets - account and kami shape compatible
-  if (type === 'COMPLETE_COMP') {
-    // converted
-    const rawEntityID = formatEntityID(numberToHex(value ?? 0));
-    const entityIndex = world.entityToIndex.get(rawEntityID);
-    return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
-  } else if (type === 'PHASE') {
-    return getCurrPhase() == index;
-  }
-
-  // account specific, check if holder is account shaped
-  if ('kamis' in holder) {
-    if (type === 'QUEST') {
-      return hasCompletedQuest(world, components, index as number, holder);
-    } else if (type === 'ROOM') {
-      return holder.roomIndex == index;
-    }
-  }
-
-  // kami specific, check if holder is kami shaped (nothing here rn)
-  if ('account' in holder) {
-  }
-
-  // if nothing else doesnt match, return false (should not reach here)
-  return false;
-};
-
-const getInventoryBalance = (
-  world: World,
-  components: Components,
-  account: Account,
-  index: number
-): number => {
-  return getInventoryByHolderItem(world, components, account.id, index).balance ?? 0;
 };
 
 //////////////

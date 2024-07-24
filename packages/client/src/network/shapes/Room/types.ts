@@ -12,7 +12,7 @@ import { utils } from 'ethers';
 import { Components } from 'network/';
 
 import { Account, getAccount } from '../Account';
-import { Condition, passesConditions } from '../utils';
+import { Condition, passesConditions } from '../Conditional';
 
 import { formatEntityID } from 'engine/utils';
 import { getGatesBetween } from './functions';

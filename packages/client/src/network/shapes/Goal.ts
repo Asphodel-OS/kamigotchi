@@ -2,7 +2,6 @@ import {
   EntityID,
   EntityIndex,
   Has,
-  HasValue,
   World,
   getComponentValue,
   hasComponent,
@@ -13,8 +12,9 @@ import { formatEntityID } from 'engine/utils';
 import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Account } from './Account';
+import { Condition, getCondition, passesConditions } from './Conditional';
+import { queryConditionsOf, queryConditionsOfEntityIndex } from './Conditional/queries';
 import { Score, getScoresByType } from './Score';
-import { Condition, getCondition, passesConditions } from './utils';
 
 /////////////////
 // SHAPES
@@ -198,24 +198,13 @@ const queryGoalRequirements = (
   components: Components,
   goalIndex: number
 ): Condition[] => {
-  const { PointerID } = components;
-
-  const pointerID = getReqPtr(goalIndex);
-  const queryFragments = [HasValue(PointerID, { value: pointerID })];
-  const raw = Array.from(runQuery(queryFragments));
-
-  return raw.map((index): Condition => getCondition(world, components, index));
+  return queryConditionsOf(world, components, 'goal.requirement', goalIndex);
 };
 
 const queryGoalRewards = (world: World, components: Components, goalIndex: number): Reward[] => {
-  const { PointerID } = components;
-
-  const pointerID = getRwdPtr(goalIndex);
-
-  const queryFragments = [HasValue(PointerID, { value: pointerID })];
-  const raw = Array.from(runQuery(queryFragments));
-
-  return raw.map((index): Reward => getReward(world, components, index));
+  return queryConditionsOfEntityIndex(components, 'goal.reward', goalIndex).map(
+    (index): Reward => getReward(world, components, index)
+  );
 };
 
 /////////////////
@@ -245,14 +234,4 @@ const getContributionEntityIndex = (
 const getObjEntityIndex = (world: World, goalID: EntityID): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'uint256'], ['goal.objective', goalID]);
   return world.entityToIndex.get(formatEntityID(id));
-};
-
-const getReqPtr = (goalIndex: number): EntityID => {
-  const id = utils.solidityKeccak256(['string', 'uint32'], ['goal.requirement', goalIndex]);
-  return formatEntityID(id);
-};
-
-const getRwdPtr = (goalIndex: number): EntityID => {
-  const id = utils.solidityKeccak256(['string', 'uint32'], ['goal.reward', goalIndex]);
-  return formatEntityID(id);
 };

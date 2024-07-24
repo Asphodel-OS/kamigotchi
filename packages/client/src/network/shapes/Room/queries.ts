@@ -1,7 +1,7 @@
 import { EntityIndex, Has, HasValue, QueryFragment, World, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
 
-import { Condition, getCondition } from 'network/shapes/utils';
+import { Condition, getCondition } from 'network/shapes/Conditional';
 import {
   Coord,
   Room,
