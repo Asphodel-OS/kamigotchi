@@ -211,7 +211,8 @@ library LibPet {
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
     uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);
-    return (amt * core * boost + (precision * harmony - 1)) / (precision * harmony);
+    uint256 divisor = precision * (harmony + 10);
+    return (amt * core * boost + (divisor - 1)) / divisor;
   }
 
   // Calculate the max musu a kami can farm based on its hp at the last
