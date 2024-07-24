@@ -2,7 +2,7 @@ import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
 import { Goal } from 'network/shapes/Goal';
@@ -17,6 +17,7 @@ interface Props {
 export const Room = (props: Props) => {
   const { index, goals } = props;
   const { modals, setModals } = useVisibility();
+  const { setNode } = useSelected();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
 
@@ -38,6 +39,7 @@ export const Room = (props: Props) => {
     }
 
     setRoom(newRoom);
+    setNode(index);
     closeModals();
   }, [index]);
 
@@ -55,7 +57,6 @@ export const Room = (props: Props) => {
       lootboxes: false,
       merchant: false,
       nameKami: false,
-      node: false,
       operatorFund: false,
       dialogue: false,
     });
