@@ -30,7 +30,11 @@ export const Root: React.FC<{
   // show boot screen until network is loaded
   if (!mounted || !layers) return <BootScreen />;
   return (
-    <PrivyProvider appId={import.meta.env.VITE_PRIVY_APP_ID} config={privyConfig}>
+    <PrivyProvider
+      appId={import.meta.env.VITE_PRIVY_APP_ID}
+      clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
+      config={privyConfig}
+    >
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={tanstackClient}>
           <NetworkContext.Provider value={layers}>
