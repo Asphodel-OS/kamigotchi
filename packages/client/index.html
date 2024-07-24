@@ -1,41 +1,25 @@
 <html>
   <head>
     <title>Kamigotchi</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org"
+      content="
+        default-src 'self'; 
+        child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
+        connect-src 'self' https://api.neynar.com https://auth.privy.io https://*.rpc.privy.systems https://privy.kamigotchi.io https://yominet.rpc.caldera.xyz/http/ wss://yominet.rpc.caldera.xyz/ws/ https://explorer-api.walletconnect.com wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org; 
+        frame-src 'self' https://auth.privy.io https://privy.kamigotchi.io https://verify.walletconnect.com https://verify.walletconnect.org;
+        img-src 'self' https://image.asphodel.io https://kamigotchi.nyc3.digitaloceanspaces.com https://explorer-api.walletconnect.com https://miladymaker.net https://imagedelivery.net https://i.imgur.com https://i.test.asphodel.io https://remilio.org;
+        object-src 'none';
+        script-src 'report-sample' 'self' https://challenges.cloudflare.com wasm-eval;
+        style-src 'report-sample' 'self' 'unsafe-inline';
+        report-to https://664cf648a52bdea0f50de7ab.endpoint.csper.io/?v=0;
+        base-uri 'self';
+        font-src 'self';
+        manifest-src 'self';
+        media-src 'self';
+        worker-src 'self';
+      "
     />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="connect-src 'self' https://privy.kamigotchi.io https://api.neynar.com https://auth.privy.io https://*.rpc.privy.systems https://yominet.rpc.caldera.xyz/http/ wss://yominet.rpc.caldera.xyz/ws/ https://explorer-api.walletconnect.com wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org"
-    />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="frame-src 'self' https://privy.kamigotchi.io https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org"
-    />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="img-src 'self' https://image.asphodel.io https://kamigotchi.nyc3.digitaloceanspaces.com https://explorer-api.walletconnect.com https://miladymaker.net https://imagedelivery.net https://i.imgur.com https://i.test.asphodel.io https://remilio.org"
-    />
-    <meta http-equiv="Content-Security-Policy" content="object-src 'none'" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="script-src 'report-sample' 'self' https://challenges.cloudflare.com wasm-eval"
-    />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="style-src 'report-sample' 'self' 'unsafe-inline'"
-    />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="report-to https://664cf648a52bdea0f50de7ab.endpoint.csper.io/?v=0"
-    />
-    <meta http-equiv="Content-Security-Policy" content="base-uri 'self'" />
-    <meta http-equiv="Content-Security-Policy" content="font-src 'self'" />
-    <meta http-equiv="Content-Security-Policy" content="manifest-src 'self'" />
-    <meta http-equiv="Content-Security-Policy" content="media-src 'self'" />
-    <meta http-equiv="Content-Security-Policy" content="worker-src 'self'" />
     <style>
       * {
         margin: 0;
