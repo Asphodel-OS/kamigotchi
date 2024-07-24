@@ -1,6 +1,8 @@
 import { Has, HasValue, World, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { Condition } from '../Conditional';
+import { queryConditionsOf } from '../Conditional/queries';
 import { Node, Options, getNode } from './types';
 
 export const getNodeByIndex = (
@@ -23,4 +25,12 @@ export const getAllNodes = (world: World, components: Components, options?: Opti
   return entityIndices.map((entityIndex) => {
     return getNode(world, components, entityIndex, options);
   });
+};
+
+export const getNodeRequirements = (
+  world: World,
+  components: Components,
+  nodeIndex: number
+): Condition[] => {
+  return queryConditionsOf(world, components, 'node.requirement', nodeIndex, { for: true });
 };

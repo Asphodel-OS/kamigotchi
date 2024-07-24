@@ -2,14 +2,11 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
-import { MUSU_INDEX } from 'constants/indices';
 import moment from 'moment';
 import { Account } from 'network/shapes/Account';
-import { Objective, Quest, Requirement, Reward } from 'network/shapes/Quest';
-import { Room } from 'network/shapes/Room';
-import { Condition } from 'network/shapes/utils';
+import { parseConditionalTracking } from 'network/shapes/Conditional';
+import { Objective, Quest, Reward } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
-import { getPhaseName } from 'network/shapes/utils/phase';
 
 interface Props {
   account: Account;
@@ -21,15 +18,13 @@ interface Props {
   };
   utils: {
     setNumAvail: (num: number) => void;
-    getRoom: (roomIndex: number) => Room;
-    getQuestByIndex: (index: number) => Quest | undefined;
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
 }
 
 export const List = (props: Props) => {
   const { account, registryQuests, mode, actions, utils } = props;
-  const { getQuestByIndex, getRoom, getDescribedEntity } = utils;
+  const { getDescribedEntity } = utils;
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -140,10 +135,6 @@ export const List = (props: Props) => {
     else return '';
   };
 
-  const getRequirementText = (requirement: Requirement): string => {
-    return parseConditionalText(requirement);
-  };
-
   const getRewardText = (reward: Reward): string => {
     // not all types use getDescribedEntity
     const name = getDescribedEntity(reward.target.type, reward.target.index || 0).name;
@@ -176,56 +167,6 @@ export const List = (props: Props) => {
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective, showTracking: boolean): string => {
     return objective.name + (showTracking ? parseConditionalTracking(objective) : '');
-  };
-
-  const parseConditionalUnits = (con: Condition): [string, string] => {
-    let tar = ((con.target.value ?? 0) * 1).toString();
-    let curr = ((con.status?.current ?? 0) * 1).toString();
-
-    if (con.target.type.includes('TIME')) {
-      tar = moment.duration((con.target.value ?? 0) * 1000).humanize();
-      curr = moment.duration((con.status?.current ?? 0) * 1000).humanize();
-    } else if (con.target.type.includes('ITEM') && con.target.index === MUSU_INDEX) {
-      tar = tar + ' MUSU';
-      curr = curr + ' MUSU';
-    }
-
-    return [tar, curr];
-  };
-
-  const parseConditionalTracking = (con: any): string => {
-    const [tar, curr] = parseConditionalUnits(con);
-
-    if (con.status?.completable) return ` ✅`;
-    const hideProgress = con.target.type == 'QUEST' || con.target.type == 'ROOM';
-    return hideProgress ? '' : ` [${curr}/${tar}]`;
-  };
-
-  // converts machine condition text to something more human readable
-  const parseConditionalText = (con: Condition): string => {
-    const [targetVal, currVal] = parseConditionalUnits(con);
-
-    let text = '';
-    if (con.target.type == 'ITEM')
-      text = `${targetVal} ${getDescribedEntity(con.target.type, con.target.index!).name}`;
-    else if (con.target.type == 'HARVEST_TIME') text = `Harvest for more than ${targetVal}`;
-    else if (con.target.type == 'LIQUIDATE_TOTAL') text = `Liquidate at least ${targetVal} Kami`;
-    else if (con.target.type == 'LIQUIDATED_VICTIM') text = `Been liquidated ${targetVal} times`;
-    else if (con.target.type == 'KAMI_LEVEL_HIGHEST') text = `Have a Kami of at least ${targetVal}`;
-    else if (con.target.type == 'KAMI') text = `Have at least ${targetVal} Kami`;
-    else if (con.target.type == 'QUEST')
-      text = `Complete Quest [${getQuestByIndex(con.target.index!)?.name || `Quest ${targetVal}`}]`;
-    else if (con.target.type == 'QUEST_REPEATABLE_COMPLETE')
-      text = `Complete ${targetVal} daily quests`;
-    else if (con.target.type == 'ROOM')
-      text = `Move to ${getRoom(con.target.index!)?.name || `Room ${targetVal}`}`;
-    else if (con.target.type == 'COMPLETE_COMP')
-      text = 'Gate at Scrap Paths unlocked'; // hardcoded - only goals use this. change in future
-    else if (con.target.type == 'REPUTATION') text = `Have ${targetVal} Reputation Points`;
-    else if (con.target.type == 'PHASE') text = `Accepted at ${getPhaseName(con.target.index!)}`;
-    else text = '???';
-
-    return text + parseConditionalTracking(con);
   };
 
   ///////////////////
@@ -292,19 +233,20 @@ export const List = (props: Props) => {
     );
   };
 
-  const RequirementDisplay = (requirements: Requirement[]) => {
-    if (requirements.length == 0) return <div />;
-    return (
-      <ConditionContainer key='requirements'>
-        <ConditionName>Requirements</ConditionName>
-        {requirements.map((requirement) => (
-          <ConditionDescription key={requirement.id}>
-            - {`${getRequirementText(requirement)}`}
-          </ConditionDescription>
-        ))}
-      </ConditionContainer>
-    );
-  };
+  // not in use
+  // const RequirementDisplay = (requirements: Requirement[]) => {
+  //   if (requirements.length == 0) return <div />;
+  //   return (
+  //     <ConditionContainer key='requirements'>
+  //       <ConditionName>Requirements</ConditionName>
+  //       {requirements.map((requirement) => (
+  //         <ConditionDescription key={requirement.id}>
+  //           - {`${parseCondText(requirement)}`}
+  //         </ConditionDescription>
+  //       ))}
+  //     </ConditionContainer>
+  //   );
+  // };
 
   const ObjectiveDisplay = (objectives: Objective[], showTracking: boolean) => {
     if (objectives.length == 0) return <div />;

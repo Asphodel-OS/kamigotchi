@@ -204,6 +204,24 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
+  async function createNodeRequirement(
+    index: number,
+    for_: string,
+    type: string,
+    logic: string,
+    index_: number,
+    value: number
+  ) {
+    genCall('system.node.registry', [index, for_, type, logic, index_, value], 'addRequirement', [
+      'uint32',
+      'string',
+      'string',
+      'string',
+      'uint32',
+      'uint256',
+    ]);
+  }
+
   // @dev deletes node
   async function deleteNode(index: number) {
     genCall('system.node.registry', [index], 'remove');
@@ -554,6 +572,9 @@ export function createAdminAPI(compiledCalls: string[]) {
     },
     node: {
       create: createNode,
+      add: {
+        requirement: createNodeRequirement,
+      },
       delete: deleteNode,
     },
     npc: {

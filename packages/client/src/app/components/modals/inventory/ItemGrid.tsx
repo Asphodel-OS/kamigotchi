@@ -31,9 +31,9 @@ export const ItemGrid = (props: Props) => {
 
     if (item.is.lootbox) {
       options = [{ text: 'Open', onClick: () => setModals({ ...modals, lootboxes: true }) }];
-    } else if (item.for && item.for.account) {
+    } else if (item.for && item.for === 'ACCOUNT') {
       options = [{ text: 'Consume', onClick: () => feedAccount(inv.item) }];
-    } else if (item.for && item.for.kami) {
+    } else if (item.for && item.for === 'KAMI') {
       let kamis = getAccessibleKamis(account);
       if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
       if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');

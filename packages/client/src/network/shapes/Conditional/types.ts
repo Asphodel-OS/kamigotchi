@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { formatEntityID } from 'engine/utils';
 import { utils } from 'ethers';
 import { Components } from 'network/';
+import { For, getFor } from '../utils';
 
 const IDStore = new Map<string, string>();
 
@@ -14,6 +15,7 @@ export interface Condition {
   logic: string;
   target: Target;
   status?: Status;
+  for?: For;
 }
 
 // the Target of a Condition (eg Objective, Requirement, Reward)
@@ -29,20 +31,25 @@ export interface Status {
   completable: boolean;
 }
 
+export interface Options {
+  for?: boolean;
+}
+
 export type HANDLER = 'CURR' | 'INC' | 'DEC' | 'BOOL';
 export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
 
 export const getCondition = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex | undefined
+  entityIndex: EntityIndex | undefined,
+  options?: Options
 ): Condition => {
   const { Value, Index, LogicType, Type } = components;
 
   if (!entityIndex)
     return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
 
-  return {
+  let result: Condition = {
     id: world.entities[entityIndex],
     logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
     target: {
@@ -51,9 +58,13 @@ export const getCondition = (
       value: getComponentValue(Value, entityIndex)?.value,
     },
   };
+
+  if (options?.for) result.for = getFor(components, entityIndex);
+
+  return result;
 };
 
-export const genConditionPtr = (field: string, index: number): EntityID => {
+export const genConditionID = (field: string, index: number): EntityID => {
   let id = '';
   const key = field + index.toString();
 

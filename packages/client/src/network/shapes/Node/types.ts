@@ -10,8 +10,10 @@ import {
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { Condition } from '../Conditional';
 import { Item, getItemByIndex } from '../Item';
 import { Kami, getKami } from '../Kami';
+import { getNodeRequirements } from './queries';
 
 export const NullNode: Node = {
   id: '0' as EntityID,
@@ -23,6 +25,7 @@ export const NullNode: Node = {
   description: 'There is no node in this room.',
   affinity: '' as string,
   drops: [],
+  requirements: [],
   kamis: {
     allies: [],
     enemies: [],
@@ -39,6 +42,7 @@ export interface Node {
   name: string;
   description: string;
   drops: Item[];
+  requirements: Condition[];
   affinity?: string;
   kamis?: NodeKamis;
 }
@@ -73,9 +77,11 @@ export const getNode = (
     Type,
   } = components;
 
+  const nodeIndex = getComponentValue(NodeIndex, entityIndex)?.value as number;
+
   let node: Node = {
     id: world.entities[entityIndex],
-    index: getComponentValue(NodeIndex, entityIndex)?.value as number,
+    index: nodeIndex,
     entityIndex,
     type: getComponentValue(Type, entityIndex)?.value as string,
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
@@ -83,6 +89,7 @@ export const getNode = (
     description: getComponentValue(Description, entityIndex)?.value as string,
     affinity: getComponentValue(Affinity, entityIndex)?.value as string, // does this break if there's no affinity?
     drops: [getItemByIndex(world, components, 1)],
+    requirements: getNodeRequirements(world, components, nodeIndex),
   };
 
   // (option) get the kamis on this node

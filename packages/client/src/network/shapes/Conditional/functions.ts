@@ -5,7 +5,11 @@ import { Components } from 'network/';
 import { getBalance, getBool } from 'network/shapes/utils/getter';
 import { Account } from '../Account';
 import { Kami } from '../Kami';
+import { ForShapeOptions, ForType } from '../utils';
 import { Condition, HANDLER, OPERATOR, Status, Target } from './types';
+
+////////////
+// CHECKS
 
 export const passesConditions = (
   world: World,
@@ -18,6 +22,17 @@ export const passesConditions = (
   );
 };
 
+export const passesConditionsByFor = (
+  world: World,
+  components: Components,
+  conditions: Condition[],
+  holders: ForShapeOptions
+): boolean => {
+  return checkConditionsByFor(world, components, conditions, holders).every(
+    (val: Status) => val.completable
+  );
+};
+
 export const checkConditions = (
   world: World,
   components: Components,
@@ -25,6 +40,23 @@ export const checkConditions = (
   holder: Account | Kami
 ): Status[] => {
   return conditions.map((condition) => checkCondition(world, components, condition, holder));
+};
+
+export const checkConditionsByFor = (
+  world: World,
+  components: Components,
+  conditions: Condition[],
+  holders: ForShapeOptions
+): Status[] => {
+  const conds = splitCondByFor(conditions);
+  const result: Status[] = [];
+
+  if (holders.account)
+    result.push(...checkConditions(world, components, conds.get('ACCOUNT')!, holders.account));
+  if (holders.kami)
+    result.push(...checkConditions(world, components, conds.get('KAMI')!, holders.kami));
+
+  return result;
 };
 
 export const checkCondition = (
@@ -75,9 +107,6 @@ export const checkBoolean = (
   };
 };
 
-//////////////
-// UTILS
-
 export const checkerSwitch = (
   logic: string,
   curr: (opt: OPERATOR) => any,
@@ -106,6 +135,27 @@ export const checkLogicOperator = (
   else if (logic == 'MAX') return a <= b;
   else if (logic == 'EQUAL') return a == b;
   else return false; // should not reach here
+};
+
+//////////////
+// PARSERS
+
+// splits an array of conditions into entities its for
+// @dev calling func expected to handle For types
+export const splitCondByFor = (
+  conds: Condition[],
+  fallbackType?: ForType
+): Map<ForType, Condition[]> => {
+  const result = new Map<ForType, Condition[]>();
+  const fallback = fallbackType ?? '';
+
+  for (let i = 0; i < conds.length; i++) {
+    const forEntity = conds[i].for ?? fallback;
+    if (!result.has(forEntity)) result.set(forEntity, []);
+    result.get(forEntity)!.push(conds[i]);
+  }
+
+  return result;
 };
 
 // parses common human readable conditions into machine types for init

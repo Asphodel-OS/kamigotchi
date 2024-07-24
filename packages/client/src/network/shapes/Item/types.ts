@@ -11,8 +11,7 @@ import {
 
 import { Components } from 'network/components';
 import { Stats, getStats } from '../Stats';
-import { Commit, DetailedEntity, getItemImage } from '../utils';
-import { For, getFor } from './utils';
+import { Commit, DetailedEntity, ForType, getFor, getItemImage } from '../utils';
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
@@ -20,7 +19,7 @@ export interface Item extends DetailedEntity {
   entityIndex: EntityIndex;
   index: number;
   is: Is;
-  for: For;
+  for: ForType;
   type: string;
   stats?: Stats;
   experience?: number; // maybe merge in Stats in future?

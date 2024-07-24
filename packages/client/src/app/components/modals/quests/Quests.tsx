@@ -6,8 +6,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'network/shapes/Quest';
-import { getRoomByIndex } from 'network/shapes/Room';
+import { Quest, getRegistryQuests, parseQuestsStatus } from 'network/shapes/Quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
 import { Footer } from './Footer';
 import { List } from './List';
@@ -117,8 +116,6 @@ export function registerQuestsModal() {
             actions={{ acceptQuest, completeQuest }}
             utils={{
               setNumAvail: (num: number) => setNumAvail(num),
-              getRoom: (roomIndex: number) => getRoomByIndex(world, components, roomIndex),
-              getQuestByIndex: (index: number) => getQuestByIndex(world, components, index),
               getDescribedEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
             }}

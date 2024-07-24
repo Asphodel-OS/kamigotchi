@@ -1,14 +1,11 @@
-import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
 import { MUSU_INDEX } from 'constants/indices';
 import { formatEntityID } from 'engine/utils';
-import { Components } from 'network/components';
 import { Inventory } from './types';
 
 const IDStore = new Map<string, string>();
-const forAccount = utils.solidityKeccak256(['string'], ['component.is.account']);
-const forKami = utils.solidityKeccak256(['string'], ['component.is.pet']);
 
 // removes MUSU, filters out empty, sorts
 export const cleanInventories = (inventories: Inventory[]): Inventory[] => {
@@ -36,22 +33,4 @@ export const getInventoryEntityIndex = (
     );
   }
   return world.entityToIndex.get(formatEntityID(id));
-};
-
-export interface For {
-  account: boolean;
-  kami: boolean;
-}
-
-export const getFor = (components: Components, entityIndex: EntityIndex): For => {
-  const { For } = components;
-
-  const rawValue = getComponentValue(For, entityIndex)?.value;
-  if (!rawValue) return { account: false, kami: false };
-  const value = rawValue.toString();
-
-  return {
-    account: value === forAccount,
-    kami: value === forKami,
-  };
 };
