@@ -18,7 +18,7 @@ import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/sto
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { GACHA_ID, calcRerollCost } from 'network/shapes/Gacha';
 import { Kami } from 'network/shapes/Kami';
-import { filterRevealable } from 'network/shapes/utils';
+import { Commit, filterRevealable } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
 import { erc20Abi, formatUnits } from 'viem';
 import { Commits } from './Commits';
@@ -37,7 +37,7 @@ export function registerGachaModal() {
       rowEnd: 90,
     },
     (layers) =>
-      interval(1000).pipe(
+      interval(3333).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
