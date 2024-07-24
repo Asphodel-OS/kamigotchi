@@ -33,8 +33,8 @@ export function registerMenuLeft() {
       return (
         <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <AccountMenuButton />
-          <MapMenuButton />
           <PartyMenuButton />
+          <MapMenuButton />
           <NodeMenuButton disabled={!node} />
         </Wrapper>
       );

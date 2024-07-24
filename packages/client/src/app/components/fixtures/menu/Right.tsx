@@ -26,9 +26,9 @@ export function registerMenuRight() {
       const { fixtures } = useVisibility();
       return (
         <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <ChatMenuButton />
-          <QuestMenuButton />
           <InventoryMenuButton />
+          <QuestMenuButton />
+          <ChatMenuButton />
           <SettingsMenuButton />
           <HelpMenuButton />
           <LogoutMenuButton />
