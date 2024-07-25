@@ -157,7 +157,7 @@ const calcStrainBountyCap = (kami: Kami): number => {
   const ratio = strainConfig.ratio.value;
   const boost = strainConfig.boost.value + kami.bonuses.harvest.strain.boost;
   const harmony = kami.stats.harmony.total;
-  return Math.floor((healthBudget * harmony) / ratio / boost);
+  return Math.floor((healthBudget * (harmony + 10)) / ratio / boost);
 };
 
 ////////////////////

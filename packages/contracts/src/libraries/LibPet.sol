@@ -225,7 +225,7 @@ library LibPet {
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
     uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);
-    return (healthBudget * precision * harmony) / (core * boost);
+    return (healthBudget * precision * (harmony + 10)) / (core * boost);
   }
 
   /////////////////
