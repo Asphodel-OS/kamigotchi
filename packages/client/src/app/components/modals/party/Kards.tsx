@@ -81,7 +81,7 @@ export const Kards = (props: Props) => {
     } else if (isDead(kami)) {
       description = [`Murdered`];
       if (kami.deaths && kami.deaths.length > 0) {
-        description.push(`by ${kami.deaths[0].source}`);
+        description.push(`by ${kami.deaths[0].source!.name}`);
         description.push(`on ${kami.deaths[0].node.name} `);
       }
     } else if (isHarvesting(kami) && kami.production) {

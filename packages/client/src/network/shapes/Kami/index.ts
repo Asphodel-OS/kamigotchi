@@ -17,13 +17,7 @@ export {
   isWithAccount,
   onCooldown,
 } from './functions';
-export {
-  getAllKamis,
-  getKamiByIndex,
-  getKamiName,
-  queryKamiEntitiesX,
-  queryKamisX,
-} from './queries';
+export { getAllKamis, getKamiByIndex, queryKamiEntitiesX, queryKamisX } from './queries';
 export type { QueryOptions } from './queries';
 export { getKami } from './types';
 export type { Kami, Options as KamiOptions } from './types';

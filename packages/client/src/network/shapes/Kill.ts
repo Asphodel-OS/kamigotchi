@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { getKamiName } from './Kami';
+import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
 import { getDataArray } from './utils';
 
@@ -10,8 +10,8 @@ import { getDataArray } from './utils';
 export interface Kill {
   id: EntityID;
   entityIndex: EntityIndex;
-  source?: string; // source name
-  target?: string; // target name
+  source?: Kami;
+  target?: Kami;
   node: Node;
   balance: number;
   bounty: number;
@@ -56,14 +56,14 @@ export const getKill = (
   if (options?.source) {
     const sourceID = formatEntityID(getComponentValue(SourceID, entityIndex)?.value ?? '');
     const sourceEntityIndex = world.entityToIndex.get(sourceID) as EntityIndex;
-    killLog.source = getKamiName(components, sourceEntityIndex);
+    killLog.source = getKami(world, components, sourceEntityIndex);
   }
 
   // populate the target kami
   if (options?.target) {
     const targetID = formatEntityID(getComponentValue(TargetID, entityIndex)?.value ?? '');
     const targetEntityIndex = world.entityToIndex.get(targetID) as EntityIndex;
-    killLog.target = getKamiName(components, targetEntityIndex);
+    killLog.target = getKami(world, components, targetEntityIndex);
   }
 
   return killLog;
