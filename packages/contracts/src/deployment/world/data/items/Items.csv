@@ -7,9 +7,9 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/large_xp_candy_native.png,104,XP Candy 
 Items%201b9894152b7f4649a68169aa3a6bcffe/medium_xp_candy_native.png,105,XP Candy (Medium),Ingame,Consumable,FOOD,Kami,"Provides a decent amount of XP when fed to a Kami. ",,,,,,,100,,,,,No,5
 Items%201b9894152b7f4649a68169aa3a6bcffe/small_xp_candy_native.png,106,XP Candy (Small),Ingame,Consumable,FOOD,Kami,"Feed this to a Kamigotchi to give them a little bit of experience. ",,,,,,,25,,,,,No,6
 Items%201b9894152b7f4649a68169aa3a6bcffe/cheeseburger_native.png,,Cheeseburger,Not Implemented,Consumable,FOOD,,,,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,107,Ice Cream (Large),Ingame,Consumable,FOOD,Account,,,,,,,,,16,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_medium_native.png,108,Ice Cream (Medium),Ingame,Consumable,FOOD,Account,,,,,,,,,8,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_small_native.png,109,Ice Cream (Small),Ingame,Consumable,FOOD,Account,,,,,,,,,4,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,107,Best Ice Cream,Ingame,Consumable,FOOD,Account,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. ",,,,,,,,16,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_medium_native.png,108,Better Ice Cream,Ingame,Consumable,FOOD,Account,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. ",,,,,,,,8,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_small_native.png,109,Ice Cream,Ingame,Consumable,FOOD,Account,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina.",,,,,,,,4,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,110,Red Gakki Ribbon,Ingame,Consumable,REVIVE,Kami,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. ",10,,,,,,,,,,,No,1
