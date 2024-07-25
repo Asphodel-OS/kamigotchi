@@ -141,23 +141,7 @@ const calcRestingHealthRate = (kami: Kami): number => {
 // calculate the expected output from a pet production based on start time
 export const calcOutput = (kami: Kami): number => {
   if (!isHarvesting(kami) || !kami.production) return 0;
-  else {
-    const maxNetHarvest = calcStrainBountyCap(kami); // max harvest based on hp drain
-    const rawNetHarvest = calcHarvestNetBounty(kami.production);
-    const netHarvest = Math.min(rawNetHarvest, maxNetHarvest);
-    return kami.production.balance + netHarvest;
-  }
-};
-
-// calculate maximum additional output from a pet production based on current
-// harvest rate and remaining health at last harvest
-const calcStrainBountyCap = (kami: Kami): number => {
-  const healthBudget = kami.stats.health.sync;
-  const strainConfig = kami.config.harvest.strain;
-  const ratio = strainConfig.ratio.value;
-  const boost = strainConfig.boost.value + kami.bonuses.harvest.strain.boost;
-  const harmony = kami.stats.harmony.total;
-  return Math.floor((healthBudget * (harmony + 10)) / ratio / boost);
+  return kami.production.balance + calcHarvestNetBounty(kami.production);
 };
 
 ////////////////////

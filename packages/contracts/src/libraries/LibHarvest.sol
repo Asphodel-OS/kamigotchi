@@ -87,14 +87,9 @@ library LibHarvest {
 
   // snapshot a production's balance and time. return the balance gained
   // also logs the harvest time since the last sync
-  function sync(
-    IUintComp components,
-    uint256 id,
-    uint256 maxGain
-  ) public returns (uint256 netBounty) {
+  function sync(IUintComp components, uint256 id) public returns (uint256 netBounty) {
     if (isActive(components, id)) {
       netBounty = calcBounty(components, id);
-      if (netBounty > maxGain) netBounty = maxGain;
       LibInventory.incFor(components, id, MUSU_INDEX, netBounty);
 
       uint256 timeDelta = block.timestamp - getLastTs(components, id);

@@ -147,8 +147,7 @@ library LibPet {
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
-      uint256 maxFarm = calcStrainBountyCap(components, id);
-      uint256 deltaBalance = LibHarvest.sync(components, productionID, maxFarm);
+      uint256 deltaBalance = LibHarvest.sync(components, productionID);
       uint256 damage = calcStrain(components, id, deltaBalance);
 
       drain(components, id, damage.toInt32());
@@ -213,19 +212,6 @@ library LibPet {
     uint256 precision = 10 ** uint(config[3] + config[7]);
     uint256 divisor = precision * (harmony + 10);
     return (amt * core * boost + (divisor - 1)) / divisor;
-  }
-
-  // Calculate the max musu a kami can farm based on its hp at the last
-  // harvest sync against its rate of strain per musu. Round down.
-  function calcStrainBountyCap(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
-    int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
-    uint256 healthBudget = LibStat.getHealth(components, id).sync.toUint256();
-    uint256 core = config[2];
-    uint256 boost = uint(config[6].toInt256() + bonusBoost);
-    uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
-    uint256 precision = 10 ** uint(config[3] + config[7]);
-    return (healthBudget * precision * (harmony + 10)) / (core * boost);
   }
 
   /////////////////
