@@ -52,8 +52,9 @@ const Wrapper = styled.div<Wrapper>`
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
 
-  justify-content: center;
+  margin: 0.2vw;
   align-items: center;
+  justify-content: center;
 `;
 
 const Content = styled.div<{ truncate?: boolean }>`
@@ -62,8 +63,8 @@ const Content = styled.div<{ truncate?: boolean }>`
   border: solid black 0.15vw;
   border-radius: 0.6vw;
 
-  width: 99%;
-  ${({ truncate }) => (truncate ? `max-height: 99%;` : `height: 99%;`)}
+  width: 100%;
+  ${({ truncate }) => (truncate ? `max-height: 100%;` : `height: 100%;`)}
 
   display: flex;
   flex-flow: column nowrap;

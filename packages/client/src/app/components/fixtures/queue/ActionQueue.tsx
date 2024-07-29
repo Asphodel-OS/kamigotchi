@@ -67,7 +67,7 @@ const Content = styled.div`
   width: 32.66vw;
   max-width: 32.66vw;
 
-  bottom: 3vh;
+  bottom: 1.7vh;
   max-height: 23vh;
 
   border: solid black 0.15vw;
