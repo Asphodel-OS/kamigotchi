@@ -123,7 +123,7 @@ library LibConditional {
     IUintComp components,
     uint256 targetID,
     Condition memory data
-  ) internal view returns (bool) {
+  ) internal view returns (bool foo) {
     (HANDLER handler, LOGIC logic) = parseLogic(data);
     if (handler == HANDLER.CURRENT) return checkCurr(components, targetID, data, logic);
     else if (handler == HANDLER.BOOLEAN) return checkBool(components, targetID, data, logic);
@@ -251,7 +251,7 @@ library LibConditional {
     return (handler, operator);
   }
 
-  function _checkLogicOperator(uint256 a, uint256 b, LOGIC logic) internal pure returns (bool) {
+  function _checkLogicOperator(uint256 a, uint256 b, LOGIC logic) internal pure returns (bool foo) {
     if (logic == LOGIC.MIN) {
       return a >= b;
     } else if (logic == LOGIC.MAX) {

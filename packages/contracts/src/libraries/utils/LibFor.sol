@@ -81,7 +81,7 @@ library LibFor {
   }
 
   function setFromString(IUintComp components, uint256 id, string memory for_) internal {
-    ForComponent(getAddressById(components, ForCompID)).set(id, fromString(components, for_));
+    ForComponent(getAddressById(components, ForCompID)).set(id, fromString(for_));
   }
 
   function unset(IUintComp components, uint256 id) internal {
@@ -111,10 +111,7 @@ library LibFor {
     return (LibArray.resize(accs, numAccs), LibArray.resize(pets, numPets));
   }
 
-  function fromString(
-    IUintComp components,
-    string memory for_
-  ) internal view returns (uint256 value) {
+  function fromString(string memory for_) internal pure returns (uint256 value) {
     if (for_.eq("KAMI")) value = IsPetCompID;
     else if (for_.eq("ACCOUNT")) value = IsAccountCompID;
     else revert("LibFor: invalid type");
