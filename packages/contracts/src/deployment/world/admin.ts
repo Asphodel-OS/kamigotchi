@@ -18,14 +18,16 @@ export function createAdminAPI(compiledCalls: string[]) {
   ) {
     // if execute or has typed args, encode args
     const encode = func === undefined || encodedTypes !== undefined;
-
     const call = createCall(systemID, args, encode, encodedTypes);
-    compiledCalls.push(`    {
-      "system": "${call.system}",
-      "id": "${call.id}",
-      "func": "${func ? func : 'execute'}",
-      "args": "${call.args}"
-    }`);
+
+    const callData = `{
+"system": "${call.system}",
+"id": "${call.id}",
+"func": "${func ? func : 'execute'}",
+"args": "${call.args}"
+}`;
+
+    compiledCalls.push(callData);
   }
 
   /////////////////
