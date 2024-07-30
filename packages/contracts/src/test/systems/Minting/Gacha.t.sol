@@ -123,58 +123,6 @@ contract GachaTest is SetupTemplate {
     _assertOutGacha(outputs[1], 0, 2);
   }
 
-  // commented to test faster - it takes a few minutes
-  // function testMultiple(uint256 mint1, uint256 mint2, uint256 mint3) public {
-  //   vm.assume(mint1 < 256 && mint1 > 0);
-  //   vm.assume(mint2 < 256 && mint2 > 0);
-  //   vm.assume(mint3 < 256 && mint3 > 0);
-
-  //   uint256[] memory ogPool = _batchMint(1000);
-
-  //   uint256[] memory commits = new uint256[](mint1 + mint2 + mint3);
-
-  //   // creating commits
-  //   vm.roll(++_currBlock);
-  //   _giveMint20(1, mint1);
-  //   vm.prank(_owners[1]);
-  //   uint256[] memory petMint1 = abi.decode(_PetGachaMintSystem.executeTyped(mint1), (uint256[]));
-  //   vm.roll(++_currBlock);
-  //   _giveMint20(2, mint2);
-  //   vm.prank(_owners[2]);
-  //   uint256[] memory petMint2 = abi.decode(_PetGachaMintSystem.executeTyped(mint2), (uint256[]));
-  //   vm.roll(++_currBlock);
-  //   _giveMint20(3, mint3);
-  //   vm.prank(_owners[3]);
-  //   uint256[] memory petMint3 = abi.decode(_PetGachaMintSystem.executeTyped(mint3), (uint256[]));
-  //   for (uint256 i = 0; i < mint1; i++) commits[i] = petMint1[i];
-  //   for (uint256 i = 0; i < mint2; i++) commits[i + mint1] = petMint2[i];
-  //   for (uint256 i = 0; i < mint3; i++) commits[i + mint1 + mint2] = petMint3[i];
-
-  //   // mixing commits - actual sorting is tested below, no need to test heavily here
-  //   uint256[] memory randCommits = new uint256[](commits.length);
-  //   for (uint256 i = 0; i < commits.length; i++) {
-  //     randCommits[i] = commits[i];
-  //   }
-  //   // uint256 swap = randCommits[1000 % randCommits.length];
-  //   // randCommits[1000 % randCommits.length] = randCommits[randCommits.length - 1];
-  //   // randCommits[randCommits.length - 1] = swap;
-
-  //   // revealing
-  //   vm.roll(++_currBlock);
-  //   uint256[] memory results = _PetGachaRevealSystem.reveal(randCommits);
-
-  //   // checking results
-  //   for (uint256 i; i < mint1; i++) {
-  //     assertEq(_IdAccountComponent.get(results[i]), _getAccount(1));
-  //   }
-  //   for (uint256 i = mint1; i < mint1 + mint2; i++) {
-  //     assertEq(_IdAccountComponent.get(results[i]), _getAccount(2));
-  //   }
-  //   for (uint256 i = mint1 + mint2; i < mint1 + mint2 + mint3; i++) {
-  //     assertEq(_IdAccountComponent.get(results[i]), _getAccount(3));
-  //   }
-  // }
-
   function testDistribution() public {
     uint256 length = 33;
     uint256[] memory ogPool = _batchMint(length);
@@ -201,39 +149,6 @@ contract GachaTest is SetupTemplate {
 
     for (uint256 i = 0; i < length; i++) {
       console.log("pet %s: %s", i + 1, counts[i]);
-    }
-  }
-
-  ///////////////
-  // LIB TESTS //
-  ///////////////
-
-  function testSort(uint256 seed, uint256 length) public {
-    length = (length % 100) + 1; // limit sort test :( otherwise is too long
-
-    _batchMint(200);
-
-    // fill array with random numbers
-    uint256[] memory ogIDs = new uint256[](length);
-    uint256[] memory ogIndices = new uint256[](length);
-    for (uint256 i = 0; i < length; i++) {
-      uint256 id = world.getUniqueEntityId();
-      ogIDs[i] = id;
-      ogIndices[i] = uint256(keccak256(abi.encode(id, seed)));
-
-      vm.prank(deployer);
-      _ValueComponent.set(id, ogIndices[i]);
-    }
-
-    // sort
-    uint256[] memory sortedIDs = LibGacha.sortCommits(components, ogIDs);
-
-    // check sort
-    uint256 curr;
-    for (uint256 i = 0; i < length; i++) {
-      uint256 val = _ValueComponent.get(sortedIDs[i]);
-      assertTrue(val >= curr);
-      curr = val;
     }
   }
 
@@ -294,7 +209,6 @@ contract GachaTest is SetupTemplate {
   ) internal {
     account = _getAccount(account);
     assertTrue(rerolls == 0 ? !_RerollComponent.has(id) : _RerollComponent.get(id) == rerolls);
-    assertTrue(_ValueComponent.has(id));
     assertEq(_IdAccountComponent.get(id), account);
     assertEq(_BlockRevealComponent.get(id), revealBlock);
     assertEq(_TypeComponent.get(id), "GACHA_COMMIT");

@@ -37,19 +37,6 @@
     },
     {
       "type": "function",
-      "name": "init",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "owner",
       "inputs": [],
       "outputs": [
@@ -125,7 +112,6 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "init(bytes)": "4ddf47d4",
     "owner()": "8da5cb5b",
     "reroll(uint256[])": "c32ffe1b",
     "transferOwnership(address)": "f2fde38b"

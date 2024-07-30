@@ -36,8 +36,4 @@ contract PetGachaMintSystem is System {
   function executeTyped(uint256 amount) public returns (bytes memory) {
     return execute(abi.encode(amount));
   }
-
-  function init() external onlyOwner {
-    LibGacha.initIncrement(components);
-  }
 }

@@ -45,10 +45,10 @@ contract PetGachaRevealSystem is System, AuthRoles {
     }
 
     // generate new seeds
-    uint256[] memory seeds = LibGacha.extractIncrementBatch(components, commitIDs);
+    uint256[] memory seeds = new uint256[](commitIDs.length);
     uint256 bhash = uint256(blockhash(block.number - 1));
     for (uint256 i; i < seeds.length; i++)
-      seeds[i] = uint256(keccak256(abi.encodePacked(seeds[i], bhash)));
+      seeds[i] = uint256(keccak256(abi.encodePacked(commitIDs[i], bhash)));
 
     // select and send pets
     uint256[] memory petIDs = LibGacha.selectPets(components, seeds);

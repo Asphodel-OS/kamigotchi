@@ -54,8 +54,4 @@ contract PetGachaRerollSystem is System {
     require(false, "not implemented");
     return "";
   }
-
-  function init(bytes memory arguments) external onlyOwner {
-    LibGacha.initIncrement(components);
-  }
 }

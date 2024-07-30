@@ -56,13 +56,6 @@
     },
     {
       "type": "function",
-      "name": "init",
-      "inputs": [],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "owner",
       "inputs": [],
       "outputs": [
@@ -120,7 +113,6 @@
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
-    "init()": "e1c7392a",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

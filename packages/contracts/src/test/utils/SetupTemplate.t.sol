@@ -46,9 +46,6 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpTime();
     _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
 
-    vm.prank(deployer);
-    _PetGachaMintSystem.init(); // todo: make deploy script call `init()`
-
     setUpAccounts();
     setUpAuthRoles();
     setUpMint();

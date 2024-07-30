@@ -164,10 +164,6 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.Pet721.BatchMint', [amount], 'batchMint');
   }
 
-  async function initGachaIncrement() {
-    genCall('system.Pet.Gacha.Mint', [], 'init');
-  }
-
   // sets the prices for the merchant at the specified roomIndex
   async function setListing(
     merchantIndex: number,
@@ -588,9 +584,6 @@ export function createAdminAPI(compiledCalls: string[]) {
       batchMinter: {
         init: initBatchMinter,
         mint: batchMint,
-      },
-      gacha: {
-        init: initGachaIncrement,
       },
     },
     registry: {

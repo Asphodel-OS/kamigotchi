@@ -1,7 +1,6 @@
 import { AdminAPI } from '../admin';
 
 export async function initGachaPool(api: AdminAPI, numToMint: number) {
-  await api.mint.gacha.init();
   await api.mint.batchMinter.init();
 
   const batchSize = 8;
