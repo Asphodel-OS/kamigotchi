@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Listing, getListing } from './listing';
+import { Listing, getListing, sortListings } from './listing';
 
 // standardized shape of a FE Merchant Entity
 export interface Merchant {
@@ -43,9 +43,8 @@ export const getMerchant = (
     runQuery([Has(IsListing), HasValue(NPCIndex, { value: merchant.index })])
   );
 
-  let listings = listingResults.map((entityIndex) => getListing(world, components, entityIndex));
-  merchant.listings = listings.sort((a, b) => a.buyPrice - b.buyPrice);
-
+  const listings = listingResults.map((entityIndex) => getListing(world, components, entityIndex));
+  merchant.listings = sortListings(listings);
   return merchant;
 };
 
