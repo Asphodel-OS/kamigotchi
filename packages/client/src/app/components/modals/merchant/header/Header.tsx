@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { objectMinaRed } from 'assets/images/rooms/13_giftshop';
 import { Account } from 'network/shapes/Account';
-import { Merchant } from 'network/shapes/Npc/Merchant';
+import { Merchant } from 'network/shapes/Npc/merchant';
 
 export interface Props {
   merchant: Merchant;

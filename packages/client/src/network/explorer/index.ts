@@ -14,7 +14,7 @@ import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
-import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Npc/Merchant';
+import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Npc/merchant';
 import { getQuestByIndex, getRegistryQuests } from 'network/shapes/Quest';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { getRegistrySkills, getSkillByIndex } from 'network/shapes/Skill';

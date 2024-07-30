@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Listing, getListing } from './Listing';
+import { Listing, getListing } from './listing';
 
 // standardized shape of a FE Merchant Entity
 export interface Merchant {

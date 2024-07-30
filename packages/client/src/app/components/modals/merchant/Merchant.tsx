@@ -6,7 +6,7 @@ import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Merchant, getMerchantByIndex } from 'network/shapes/Npc/Merchant';
+import { Merchant, getMerchantByIndex } from 'network/shapes/Npc/merchant';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
 import { Header } from './header';
