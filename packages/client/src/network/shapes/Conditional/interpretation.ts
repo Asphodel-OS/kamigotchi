@@ -37,7 +37,8 @@ export const parseConditionalTracking = (con: any): string => {
 export const parseConditionalText = (
   world: World,
   components: Components,
-  con: Condition
+  con: Condition,
+  tracking?: boolean
 ): string => {
   const [targetVal, currVal] = parseConditionalUnits(con);
   const deltaText = parseDeltaText(con);
@@ -70,15 +71,18 @@ export const parseConditionalText = (
 
   // kami specific text
   if (con.for && con.for == 'KAMI') {
-    if (con.target.type == 'LEVEL') text = `Kamis of ${deltaText} level ${targetVal}`;
+    if (con.target.type == 'LEVEL') text = `${deltaText} level ${targetVal} kami`;
   }
 
-  return text + parseConditionalTracking(con);
+  // tracking
+  if (tracking) text += parseConditionalTracking(con);
+
+  return text;
 };
 
 const parseDeltaText = (con: Condition): string => {
-  if (con.logic.includes('MIN')) return `at least`;
-  else if (con.logic.includes('MAX')) return `at most`;
+  if (con.logic.includes('MIN')) return `minimum`;
+  else if (con.logic.includes('MAX')) return `maximum`;
   else if (con.logic.includes('EQUAL')) return `exactly`;
   else return '';
 };

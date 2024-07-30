@@ -5,6 +5,7 @@ import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
 import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
+import { Condition } from 'network/shapes/Conditional';
 import { Kami, canHarvest, isResting, onCooldown } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
 import { getAffinityImage } from 'network/shapes/utils';
@@ -14,13 +15,17 @@ interface Props {
   node: Node | undefined;
   kamis: Kami[];
   addKami: (kami: Kami) => void;
+  utils: {
+    passesNodeReqs: (kami: Kami) => boolean;
+    parseConditionalText: (condition: Condition, tracking?: boolean) => string;
+  };
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
   const [_, setLastRefresh] = useState(Date.now());
-  const { account, node: rawNode, kamis } = props;
+  const { account, node: rawNode, kamis, utils } = props;
   const [node, setNode] = useState<Node>(NullNode);
 
   /////////////////
@@ -48,25 +53,23 @@ export const Banner = (props: Props) => {
     let reason = '';
     let available = [...kamis];
 
-    if (account.roomIndex !== node.roomIndex) {
-      reason = 'node too far!';
-    }
-
-    if (available.length == 0) {
-      reason = 'you have no kamis!';
-    }
+    if (account.roomIndex !== node.roomIndex) reason = 'node too far!';
+    if (available.length == 0) reason = 'you have no kamis!';
 
     available = available.filter((kami) => isResting(kami));
-    if (available.length == 0 && reason === '') {
-      reason = 'you have no resting kami!';
-    }
+    if (available.length == 0 && reason === '') reason = 'you have no resting kami!';
 
     available = available.filter((kami) => !onCooldown(kami));
-    if (available.length == 0 && reason === '') {
-      reason = 'your kami are on cooldown!';
-    }
+    if (available.length == 0 && reason === '') reason = 'your kami are on cooldown!';
+
+    available = available.filter((kami) => utils.passesNodeReqs(kami));
+    if (available.length == 0 && reason === '') reason = 'your kami do not meet node requirements!';
 
     return reason;
+  };
+
+  const canAdd = (kami: Kami) => {
+    return canHarvest(kami) && utils.passesNodeReqs(kami);
   };
 
   /////////////////
@@ -74,7 +77,7 @@ export const Banner = (props: Props) => {
 
   // button for adding Kami to node
   const AddButton = (kamis: Kami[]) => {
-    const options = kamis.filter((kami) => canHarvest(kami));
+    const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
       return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
     });
@@ -100,6 +103,16 @@ export const Banner = (props: Props) => {
     return <Image src={url} />;
   };
 
+  // expected max 1 requirement for now
+  const RequirementText = () => {
+    if (node.requirements.length == 0) return <div />;
+    return (
+      <Footer>
+        <FooterText>{utils.parseConditionalText(node.requirements[0], false)}</FooterText>
+      </Footer>
+    );
+  };
+
   return (
     <Container key={node.name}>
       <Content>
@@ -118,6 +131,7 @@ export const Banner = (props: Props) => {
           </Row>
           <Description>{node.description}</Description>
         </Details>
+        {RequirementText()}
       </Content>
       <ButtonRow>{AddButton(kamis)}</ButtonRow>
     </Container>
@@ -126,7 +140,6 @@ export const Banner = (props: Props) => {
 
 const Container = styled.div`
   color: black;
-  position: relative;
   padding: 0.3vw;
   gap: 0.3vw;
   display: flex;
@@ -134,6 +147,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
+  position: relative;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -194,4 +208,21 @@ const ButtonRow = styled.div`
 
   display: flex;
   flex-flow: row nowrap;
+`;
+
+const Footer = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.1vw;
+
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const FooterText = styled.div`
+  font-family: Pixel;
+  font-size: 0.6vw;
+  text-align: right;
+  color: #666;
 `;

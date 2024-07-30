@@ -13,5 +13,8 @@ export const passesNodeReqs = (
   account: Account,
   kami: Kami
 ): boolean => {
-  return passesConditionsByFor(world, components, node.requirements, { account, kami });
+  return passesConditionsByFor(world, components, node.requirements, {
+    account: account,
+    kami: kami,
+  });
 };

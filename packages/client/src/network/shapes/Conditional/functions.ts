@@ -17,6 +17,7 @@ export const passesConditions = (
   conditions: Condition[],
   holder: Account | Kami
 ): boolean => {
+  if (conditions.length == 0) return true;
   return checkConditions(world, components, conditions, holder).every(
     (val: Status) => val.completable
   );
@@ -28,6 +29,7 @@ export const passesConditionsByFor = (
   conditions: Condition[],
   holders: ForShapeOptions
 ): boolean => {
+  if (conditions.length == 0) return true;
   return checkConditionsByFor(world, components, conditions, holders).every(
     (val: Status) => val.completable
   );
@@ -52,9 +54,9 @@ export const checkConditionsByFor = (
   const result: Status[] = [];
 
   if (holders.account)
-    result.push(...checkConditions(world, components, conds.get('ACCOUNT')!, holders.account));
+    result.push(...checkConditions(world, components, conds.get('ACCOUNT') ?? [], holders.account));
   if (holders.kami)
-    result.push(...checkConditions(world, components, conds.get('KAMI')!, holders.kami));
+    result.push(...checkConditions(world, components, conds.get('KAMI') ?? [], holders.kami));
 
   return result;
 };

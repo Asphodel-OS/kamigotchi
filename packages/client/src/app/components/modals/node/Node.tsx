@@ -6,8 +6,10 @@ import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { parseConditionalText } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode, getNodeByIndex } from 'network/shapes/Node';
+import { passesNodeReqs } from 'network/shapes/Node/functions';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 
@@ -148,6 +150,12 @@ export function registerNodeModal() {
               node={node}
               kamis={account.kamis}
               addKami={(kami) => start(kami, node)}
+              utils={{
+                passesNodeReqs: (kami: Kami) =>
+                  passesNodeReqs(world, components, node, account, kami),
+                parseConditionalText: (condition, tracking?) =>
+                  parseConditionalText(world, components, condition, tracking),
+              }}
             />,
           ]}
           canExit

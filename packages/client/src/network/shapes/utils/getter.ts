@@ -24,6 +24,8 @@ export const getBalance = (
     return skill?.points.current || 0;
   } else if (type === 'REPUTATION') {
     return getReputationValue(world, components, holder.id, index ?? 0);
+  } else if (type === 'LEVEL') {
+    return holder.level;
   }
 
   // account specific, check if holder is account shaped
