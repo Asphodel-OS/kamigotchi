@@ -11,8 +11,10 @@ export const FeedButton = (kami: Kami, account: Account, triggerAction: Function
   let tooltip = getDisabledTooltip(kami, account);
 
   const disabled = !!tooltip;
-  if (!disabled) tooltip = `Feed Kami`;
-  else options = getFeedOptions(kami, account, triggerAction);
+  if (!disabled) {
+    tooltip = `Feed Kami`;
+    options = getFeedOptions(kami, account, triggerAction);
+  }
 
   return (
     <Tooltip key='feed-tooltip' text={[tooltip]}>
@@ -36,10 +38,11 @@ const getDisabledTooltip = (kami: Kami, account: Account): string => {
 
 // gets the list of IconListButton Options for feeding a kami
 const getFeedOptions = (kami: Kami, account: Account, triggerAction: Function) => {
-  let inventory = filterInventories(account.inventories ?? [], 'consumable', 'kami');
-  inventory = inventory.filter((inv: Inventory) => inv?.item.index !== 110) ?? [];
+  let inventories = account.inventories ?? [];
+  inventories = filterInventories(inventories, 'consumable', 'KAMI');
+  inventories = inventories.filter((inv: Inventory) => inv?.item.index !== 110) ?? [];
 
-  const options = inventory.map((inv: Inventory) => {
+  const options = inventories.map((inv: Inventory) => {
     const feedAction = () => triggerAction(kami, inv.item.index);
     return getFeedOption(kami, inv, feedAction);
   });
