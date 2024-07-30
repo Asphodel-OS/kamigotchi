@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
-import { Option } from 'app/components/library/IconListButton';
+import { FeedButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
-import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
+import { collectIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import {
   calcLiqKarma,
@@ -13,14 +13,11 @@ import {
   canLiquidate,
   canMog,
 } from 'network/shapes/Harvest';
-import { Inventory, filterInventories } from 'network/shapes/Item';
 import {
   Kami,
   calcCooldown,
   calcHealth,
   calcOutput,
-  isFull,
-  isHarvesting,
   isStarving,
   onCooldown,
 } from 'network/shapes/Kami';
@@ -58,13 +55,6 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  const hasFood = (account: Account): boolean => {
-    const foods = account.inventories?.filter((inv) => inv.item.type === 'FOOD');
-    if (!foods || foods.length == 0) return false;
-    const total = foods.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
-    return total > 0;
-  };
-
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
     const health = calcHealth(kami);
@@ -86,26 +76,6 @@ export const Kards = (props: Props) => {
       reason = 'starving :(';
     }
     return reason;
-  };
-
-  // get a IconListButton option for feeding a Kami
-  const getFeedOption = (kami: Kami, inv: Inventory): Option => {
-    if (!inv || !inv.item) return { text: '', onClick: () => {} };
-
-    const healAmt = inv.item.stats?.health.sync ?? 0;
-    const expAmt = inv.item.experience ?? 0;
-    const canEat = () => !isFull(kami) || healAmt == 0;
-
-    let text = `${inv.item.name}`;
-    if (healAmt > 0) text += ` (+${healAmt}hp)`;
-    if (expAmt > 0) text += ` (+${expAmt}xp)`;
-
-    return {
-      text,
-      onClick: () => actions.feed(kami, inv.item.index),
-      image: inv.item.image,
-      disabled: !canEat(),
-    };
   };
 
   // evaluate tooltip for allied kami Collect button
@@ -188,37 +158,12 @@ export const Kards = (props: Props) => {
     );
   };
 
-  // Feed Button display evaluation
-  const FeedButton = (kami: Kami, account: Account) => {
-    // filter down to available food items
-    let inventory = filterInventories(account.inventories ?? [], 'consumable', 'kami');
-    inventory = inventory.filter((inv: Inventory) => inv?.item.index !== 110) ?? [];
-
-    let options = inventory.map((inv: Inventory) => getFeedOption(kami, inv));
-    options = options.filter((option) => !!option.text);
-
-    // check whether the kami can be fed and generate a tooltip for the reason
-    let tooltip = 'Feed Kami';
-    if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
-      tooltip = `too far away`;
-    } else if (!hasFood(account)) {
-      tooltip = `buy food, poore`;
-    } else if (onCooldown(kami)) {
-      tooltip = `can't eat, on cooldown`;
-    }
-
-    return (
-      <Tooltip key='feed-tooltip' text={[tooltip]}>
-        <IconListButton img={feedIcon} options={options} disabled={tooltip !== 'Feed Kami'} />
-      </Tooltip>
-    );
-  };
-
   // button for stopping production
   const StopButton = (kami: Kami) => {
     return (
       <Tooltip key='stop-tooltip' text={[getStopTooltip(kami)]}>
         <IconButton
+          key='stop-button'
           img={stopIcon}
           onClick={() => actions.stop(kami)}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
@@ -245,7 +190,7 @@ export const Kards = (props: Props) => {
     return (
       <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
         <IconListButton
-          key={`harvest-liquidate`}
+          key='liquidate-button'
           img={liquidateIcon}
           options={actionOptions}
           disabled={actionOptions.length == 0}
@@ -267,7 +212,7 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        actions={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
+        actions={[FeedButton(kami, account, actions.feed), CollectButton(kami), StopButton(kami)]}
         showBattery
         showCooldown
       />

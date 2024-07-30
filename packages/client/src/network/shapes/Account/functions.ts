@@ -1,3 +1,4 @@
+import { Inventory } from '../Item';
 import { Kami, isDead, isOffWorld, isResting, isUnrevealed } from '../Kami';
 import { Account } from './types';
 
@@ -40,4 +41,14 @@ export const getAccessibleKamis = (account: Account): Kami[] => {
     const kamiLoc = kami.production?.node?.roomIndex ?? 0;
     return accLoc === kamiLoc;
   });
+};
+
+//////////////////
+// INVENTORIES
+
+export const hasFood = (account: Account): boolean => {
+  const foods = account.inventories?.filter((inv) => inv.item.type === 'FOOD');
+  if (!foods || foods.length == 0) return false;
+  const total = foods.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
+  return total > 0;
 };

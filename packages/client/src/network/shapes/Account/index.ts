@@ -1,4 +1,4 @@
-export { calcStamina, calcStaminaPercent, getAccessibleKamis } from './functions';
+export { calcStamina, calcStaminaPercent, getAccessibleKamis, hasFood } from './functions';
 export {
   getAccountByID,
   getAccountByIndex,

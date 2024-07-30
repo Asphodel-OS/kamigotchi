@@ -22,3 +22,5 @@ export { ModalWrapper } from './ModalWrapper';
 export { ProgressBar } from './ProgressBar';
 export { Tooltip } from './Tooltip';
 export { ValidatorWrapper } from './ValidatorWrapper';
+
+export type { Option as IconListButtonOption } from './IconListButton';
