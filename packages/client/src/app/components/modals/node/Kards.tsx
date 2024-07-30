@@ -3,8 +3,9 @@ import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
 import { FeedButton } from 'app/components/library/actions';
+import { StopButton } from 'app/components/library/actions/StopButton';
 import { useSelected, useVisibility } from 'app/stores';
-import { collectIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
+import { collectIcon, liquidateIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import {
   calcLiqKarma,
@@ -85,13 +86,6 @@ export const Kards = (props: Props) => {
     return text;
   };
 
-  // evaluate tooltip for allied kami Stop button
-  const getStopTooltip = (kami: Kami): string => {
-    let text = getDisabledReason(kami);
-    if (text === '') text = 'Stop Harvest';
-    return text;
-  };
-
   const getLiquidateTooltip = (target: Kami, allies: Kami[]): string => {
     let reason = '';
     let available = [...allies];
@@ -158,21 +152,6 @@ export const Kards = (props: Props) => {
     );
   };
 
-  // button for stopping production
-  const StopButton = (kami: Kami) => {
-    return (
-      <Tooltip key='stop-tooltip' text={[getStopTooltip(kami)]}>
-        <IconButton
-          key='stop-button'
-          img={stopIcon}
-          onClick={() => actions.stop(kami)}
-          disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
-          noMargin
-        />
-      </Tooltip>
-    );
-  };
-
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
     const options = allies.filter((ally) => canLiquidate(ally, target));
@@ -212,7 +191,11 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        actions={[FeedButton(kami, account, actions.feed), CollectButton(kami), StopButton(kami)]}
+        actions={[
+          FeedButton(kami, account, actions.feed),
+          CollectButton(kami),
+          StopButton(kami, account, actions.stop),
+        ]}
         showBattery
         showCooldown
       />

@@ -2,21 +2,14 @@ import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { feedIcon } from 'assets/images/icons/actions';
 import { Account, hasFood } from 'network/shapes/Account';
 import { filterInventories, Inventory } from 'network/shapes/Item';
-import { isFull, isHarvesting, Kami, onCooldown } from 'network/shapes/Kami';
+import { calcCooldown, isFull, isHarvesting, Kami } from 'network/shapes/Kami';
 import { Tooltip } from '../Tooltip';
 
 // Feed Button display evaluation
 export const FeedButton = (kami: Kami, account: Account, triggerFeed: Function) => {
-  let tooltip = '';
   let options: IconListButtonOption[] = [];
+  let tooltip = getDisabledTooltip(kami, account);
 
-  // check whether the kami can be fed and generate a tooltip for the reason
-  const inRoom = kami.production?.node?.roomIndex == account.roomIndex;
-  if (isHarvesting(kami) && !inRoom) tooltip = `too far away`;
-  else if (!hasFood(account)) tooltip = `buy food, poore`;
-  else if (onCooldown(kami)) tooltip = `can't eat, on cooldown`;
-
-  // determine whether disabled and if not, filter down to available food items
   const disabled = !!tooltip;
   if (!disabled) tooltip = `Feed Kami`;
   else options = getFeedOptions(kami, account, triggerFeed);
@@ -26,6 +19,19 @@ export const FeedButton = (kami: Kami, account: Account, triggerFeed: Function) 
       <IconListButton img={feedIcon} options={options} disabled={disabled} />
     </Tooltip>
   );
+};
+
+// generate a tooltip for any reason the kami cannot be fed
+const getDisabledTooltip = (kami: Kami, account: Account): string => {
+  const cooldown = calcCooldown(kami);
+  const inRoom = kami.production?.node?.roomIndex == account.roomIndex;
+
+  let tooltip = '';
+  if (isHarvesting(kami) && !inRoom) tooltip = `too far away`;
+  else if (!hasFood(account)) tooltip = `buy food, poore`;
+  else if (cooldown > 0) tooltip = `on cooldown (${cooldown.toFixed(0)}s)`;
+
+  return tooltip;
 };
 
 // gets the list of IconListButton Options for feeding a kami

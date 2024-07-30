@@ -1,0 +1,38 @@
+import { stopIcon } from 'assets/images/icons/actions';
+import { Account } from 'network/shapes/Account';
+import { calcCooldown, isHarvesting, isStarving, Kami } from 'network/shapes/Kami';
+import { IconButton } from '../IconButton';
+import { Tooltip } from '../Tooltip';
+
+// button for stopping production
+export const StopButton = (kami: Kami, account: Account, triggerStop: Function) => {
+  let tooltip = getDisabledTooltip(kami, account);
+
+  const disabled = !!tooltip;
+  if (!disabled) tooltip = `Stop Harvest`;
+
+  return (
+    <Tooltip key='stop-tooltip' text={[tooltip]}>
+      <IconButton
+        key='stop-button'
+        img={stopIcon}
+        onClick={() => triggerStop(kami)}
+        disabled={disabled}
+        noMargin
+      />
+    </Tooltip>
+  );
+};
+
+// generate a tooltip for any reason the kami cannot be fed
+const getDisabledTooltip = (kami: Kami, account: Account): string => {
+  const cooldown = calcCooldown(kami);
+  const inRoom = kami.production?.node?.roomIndex == account.roomIndex;
+
+  let tooltip = '';
+  if (isHarvesting(kami) && !inRoom) tooltip = `too far away`;
+  else if (isStarving(kami)) tooltip = 'starving :(';
+  else if (cooldown > 0) tooltip = `on cooldown (${cooldown.toFixed(0)}s)`;
+
+  return tooltip;
+};
