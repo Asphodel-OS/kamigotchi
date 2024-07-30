@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconListButton, KamiCard, Tooltip } from 'app/components/library';
-import { CollectButton, FeedButton, StopButton } from 'app/components/library/actions';
-import { useSelected, useVisibility } from 'app/stores';
-import { liquidateIcon } from 'assets/images/icons/actions';
-import { Account } from 'network/shapes/Account';
+import { KamiCard } from 'app/components/library';
 import {
-  calcLiqKarma,
-  calcLiqStrain,
-  calcLiqThreshold,
-  canLiquidate,
-  canMog,
-} from 'network/shapes/Harvest';
-import { Kami, calcHealth, calcOutput, isStarving, onCooldown } from 'network/shapes/Kami';
+  CollectButton,
+  FeedButton,
+  LiquidateButton,
+  StopButton,
+} from 'app/components/library/actions';
+import { useSelected, useVisibility } from 'app/stores';
+import { Account } from 'network/shapes/Account';
+import { Kami, calcHealth, calcOutput } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -60,46 +57,12 @@ export const Kards = (props: Props) => {
     return description;
   };
 
-  const getLiquidateTooltip = (target: Kami, allies: Kami[]): string => {
-    let reason = '';
-    let available = [...allies];
-    if (available.length == 0) {
-      reason = "your kamis aren't on this node";
-    }
-
-    available = available.filter((kami) => !isStarving(kami));
-    if (available.length == 0 && reason === '') {
-      reason = 'your kamis are starving';
-    }
-
-    available = available.filter((kami) => !onCooldown(kami));
-    if (available.length == 0 && reason === '') {
-      reason = 'your kamis are on cooldown';
-    }
-
-    // check what the liquidation threshold is for any kamis that have made it to
-    const valid = available.filter((kami) => canMog(kami, target));
-    if (valid.length == 0 && reason === '') {
-      // get the details of the highest cap liquidation
-      const thresholds = available.map((ally) => calcLiqThreshold(ally, target));
-      const [threshold, index] = thresholds.reduce(
-        (a, b, i) => (a[0] < b ? [b, i] : a),
-        [Number.MIN_VALUE, -1]
-      );
-      const champion = available[index];
-      reason = `${champion?.name} can liquidate below ${Math.round(threshold)} Health`;
-    }
-
-    if (reason === '') reason = 'Liquidate this Kami';
-    return reason;
-  };
-
   /////////////////
   // INTERACTION
 
   // toggle the node modal to the selected one
   const selectAccount = (index: number) => {
-    if (!modals.account) setModals({ ...modals, account: true });
+    if (!modals.account) setModals({ ...modals, account: true, party: false, map: false });
     if (accountIndex !== index) setAccount(index);
     playClick();
   };
@@ -111,32 +74,6 @@ export const Kards = (props: Props) => {
 
   ///////////////////
   // DISPLAY
-
-  // button for liquidating production
-  const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options = allies.filter((ally) => canLiquidate(ally, target));
-    const actionOptions = options.map((myKami) => {
-      const karma = calcLiqKarma(myKami, target);
-      const strain = calcLiqStrain(myKami, target);
-
-      return {
-        text: `${myKami.name} (recoil: ${karma} + ${strain})`,
-        onClick: () => actions.liquidate(myKami, target),
-      };
-    });
-
-    let tooltipText = getLiquidateTooltip(target, allies);
-    return (
-      <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
-        <IconListButton
-          key='liquidate-button'
-          img={liquidateIcon}
-          options={actionOptions}
-          disabled={actionOptions.length == 0}
-        />
-      </Tooltip>
-    );
-  };
 
   // rendering of an ally kami on this node
   const MyKard = (kami: Kami) => {
@@ -167,7 +104,7 @@ export const Kards = (props: Props) => {
         kami={kami}
         subtext={`${kami.account?.name} (\$${calcOutput(kami)})`}
         subtextOnClick={getSubtextOnClick(kami)}
-        actions={LiquidateButton(kami, myKamis)}
+        actions={LiquidateButton(kami, myKamis, actions.liquidate)}
         description={getDescription(kami)}
         showBattery
         showCooldown

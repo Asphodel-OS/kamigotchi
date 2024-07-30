@@ -25,7 +25,7 @@ export function registerKamiModal() {
   registerUIComponent(
     'KamiDetails',
     {
-      colStart: 12,
+      colStart: 11,
       colEnd: 67,
       rowStart: 8,
       rowEnd: 99,

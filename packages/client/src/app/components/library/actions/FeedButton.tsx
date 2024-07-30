@@ -5,7 +5,7 @@ import { filterInventories, Inventory } from 'network/shapes/Item';
 import { calcCooldown, isFull, isHarvesting, Kami } from 'network/shapes/Kami';
 import { Tooltip } from '../Tooltip';
 
-// Feed Button display evaluation
+// button for feeding a kami
 export const FeedButton = (kami: Kami, account: Account, triggerAction: Function) => {
   let options: IconListButtonOption[] = [];
   let tooltip = getDisabledTooltip(kami, account);
