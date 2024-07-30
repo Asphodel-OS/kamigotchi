@@ -50,7 +50,6 @@ export function registerNodeModal() {
       // console.log('Node Modal Data', data);
       const { account } = data;
       const { actions, api, components, world } = network;
-      const [tab, setTab] = useState('allies');
       const { nodeIndex } = useSelected();
       const { modals, setModals } = useVisibility();
       const [node, setNode] = useState<Node>(data.node);
@@ -165,7 +164,6 @@ export function registerNodeModal() {
               allies={node.kamis?.allies!}
               enemies={node.kamis?.enemies!}
               actions={{ collect, feed, liquidate, stop }}
-              tab={tab}
             />
           ) : (
             <EmptyText>

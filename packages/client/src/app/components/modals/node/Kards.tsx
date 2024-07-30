@@ -36,7 +36,6 @@ interface Props {
   };
   allies: Kami[];
   enemies: Kami[];
-  tab: string;
 }
 
 export const Kards = (props: Props) => {
