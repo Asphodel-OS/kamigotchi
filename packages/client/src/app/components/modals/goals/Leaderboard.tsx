@@ -41,7 +41,7 @@ export const Leaderboard = (props: Props) => {
 };
 
 const Container = styled.div`
-  margin: 2vh 3vw;
+  margin: 3.5vh 3vw;
   border: solid black 0.15vw;
   border-radius: 0.75vw;
 

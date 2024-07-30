@@ -56,7 +56,7 @@ export const Details = (props: Props) => {
         ? `Have a contribution score of at least ${tier.cutoff}`
         : 'Everyone gets this';
     return (
-      <Box key={tier.name} style={{ margin: '0 0.1vw 0 0' }}>
+      <Box key={tier.name} style={{ padding: '0 0.4vw' }}>
         <Row>
           <SmallTitleText>{tier.name}</SmallTitleText>
           <HelpIcon tooltip={[helpText]} />
@@ -90,7 +90,7 @@ export const Details = (props: Props) => {
   const RewardsBox = (
     <div>
       <SubTitleText>Rewards</SubTitleText>
-      <Row style={{ justifyContent: 'flex-start' }}>
+      <Row style={{ justifyContent: 'flex-start', padding: '1vh 1vw' }}>
         {displayRwds.map((tier) => {
           return TierBox(tier);
         })}
@@ -155,6 +155,7 @@ const Row = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+  row-gap: 0.75vh;
 
   max-width: 100%;
 `;

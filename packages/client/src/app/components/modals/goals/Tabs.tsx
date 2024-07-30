@@ -34,9 +34,11 @@ export const Tabs = (props: Props) => {
 };
 
 const Container = styled.div`
+  position: absolute;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
 
   margin: 1vh 1vw 0vh 1vw;
+  right: 0;
 `;

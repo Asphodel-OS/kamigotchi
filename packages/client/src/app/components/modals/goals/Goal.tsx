@@ -21,7 +21,6 @@ import {
 import { Score } from 'network/shapes/Score';
 import { getBalance, getDescribedEntity } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
-import { ActionBar } from './ActionBar';
 import { Details } from './Details';
 import { Leaderboard } from './Leaderboard';
 import { Progress } from './Progress';
@@ -133,16 +132,9 @@ export function registerGoalModal() {
               }
             />
             <Progress
-              goal={currGoal}
-              accContribution={accContribution!}
-              getDescribedEntity={(type, index) =>
-                getDescribedEntity(world, components, type, index)
-              }
-            />
-            <ActionBar
               actions={{ contributeTx, claimTx }}
               account={data.account}
-              contribution={accContribution}
+              accContribution={accContribution}
               goal={currGoal}
               utils={{
                 canContribute: () => canContribute(world, components, currGoal, data.account),
@@ -167,7 +159,7 @@ export function registerGoalModal() {
           overlay
         >
           <Tabs tab={tab} setTab={setTab} />
-          {tab === 'GOAL' ? MainBox() : LeaderboardBox}
+          <Content>{tab === 'GOAL' ? MainBox() : LeaderboardBox}</Content>
         </ModalWrapper>
       );
     }
@@ -180,4 +172,8 @@ const Header = styled.div`
   text-align: flex-start;
   color: black;
   padding: 0 1.5vw;
+`;
+
+const Content = styled.div`
+  padding: 1vh 0.1vw;
 `;

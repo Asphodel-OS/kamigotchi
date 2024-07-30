@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
-import { Contribution, Goal } from 'network/shapes/Goal';
+import { Goal } from 'network/shapes/Goal';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 
 interface Props {
@@ -12,7 +12,6 @@ interface Props {
     claimTx: (index: number) => void;
   };
   account: Account;
-  contribution: Contribution | undefined;
   goal: Goal;
   utils: {
     canContribute: () => [boolean, string];
@@ -23,7 +22,7 @@ interface Props {
 }
 
 export const ActionBar = (props: Props) => {
-  const { actions, account, contribution, goal, utils } = props;
+  const { actions, account, goal, utils } = props;
 
   const [contributeAmount, setContributeAmount] = useState(0);
 
@@ -102,7 +101,7 @@ export const ActionBar = (props: Props) => {
 };
 
 const Container = styled.div`
-  margin: 2vh 1vw;
+  margin: 2vh 1vw 1vh;
 `;
 
 const Column = styled.div`
@@ -111,7 +110,7 @@ const Column = styled.div`
   align-items: center;
 `;
 
-const SubText = styled.h2`
+const SubText = styled.p`
   font-size: 0.8vw;
   font-family: Pixel;
   text-align: center;
