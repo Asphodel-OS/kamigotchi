@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
-import PlaceholderIcon from 'assets/images/icons/placeholder.png';
+import { kamigotchi_tourism_agency } from 'assets/images/icons/factions';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { DetailedEntity } from './utils';
@@ -50,7 +50,7 @@ export const getReputationItem = (
     faction: faction,
     name: 'REPUTATION',
     description: 'Your relationship with the Kamigotchi Tourism Agency.',
-    image: PlaceholderIcon, // placeholder - no reputation image yet
+    image: kamigotchi_tourism_agency,
   };
 };
 

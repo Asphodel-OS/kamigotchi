@@ -28,7 +28,7 @@ export const GachaTicketInventory: Inventory = {
     index: 0,
     type: 'GACHA_TICKET',
     is: { consumable: false, lootbox: false },
-    for: { account: false, kami: false },
+    for: 'ACCOUNT',
   },
   balance: 0,
 };
