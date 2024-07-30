@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, KamiCard, Tooltip } from 'app/components/library';
-import { FeedButton } from 'app/components/library/actions';
+import { KamiCard } from 'app/components/library';
+import { FeedButton, ReviveButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
-import { reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { Inventory } from 'network/shapes/Item';
 import {
   Kami,
   calcHealth,
@@ -16,7 +14,6 @@ import {
   isOffWorld,
   isResting,
   isUnrevealed,
-  onCooldown,
 } from 'network/shapes/Kami';
 import { getRateDisplay } from 'utils/rates';
 import { playClick } from 'utils/sounds';
@@ -49,20 +46,6 @@ export const Kards = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
-
-  const hasFood = (account: Account): boolean => {
-    const foods = account.inventories?.filter((inv) => inv?.item.type === 'FOOD');
-    if (!foods || foods.length == 0) return false;
-    const total = foods.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
-    return total > 0;
-  };
-
-  const hasRevive = (account: Account): boolean => {
-    const revives = account.inventories?.filter((inv) => inv?.item.type === 'REVIVE');
-    if (!revives || revives.length == 0) return false;
-    const total = revives.reduce((tot: number, inv: Inventory) => tot + (inv.balance || 0), 0);
-    return total > 0;
-  };
 
   // get the description of the kami as a list of lines
   // TODO: clean this up
@@ -117,33 +100,11 @@ export const Kards = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  // Revive Button display evaluation
-  const ReviveButton = (kami: Kami, account: Account) => {
-    let tooltipText = 'Revive your Kami';
-    if (!hasRevive(account)) tooltipText = 'no revives in inventory';
-    else if (onCooldown(kami)) tooltipText = 'on cooldown';
-
-    const stockedInventories =
-      account.inventories?.filter((inv: Inventory) => inv.item.type === 'REVIVE') ?? [];
-    const reviveIndex = stockedInventories.length > 0 ? stockedInventories[0].item.index : 110;
-
-    return (
-      <Tooltip text={[tooltipText]}>
-        <IconButton
-          img={reviveIcon}
-          onClick={() => actions.feed(kami, reviveIndex)}
-          disabled={!hasRevive(account) || onCooldown(kami)}
-          noMargin
-        />
-      </Tooltip>
-    );
-  };
-
   // Choose and return the action button to display
   const DisplayedAction = (kami: Kami, account: Account) => {
     if (isResting(kami)) return FeedButton(kami, account, actions.feed);
     if (isHarvesting(kami)) return FeedButton(kami, account, actions.feed);
-    if (isDead(kami)) return ReviveButton(kami, account);
+    if (isDead(kami)) return ReviveButton(kami, account, actions.feed);
   };
 
   // Rendering of Individual Kami Cards in the Party Modal

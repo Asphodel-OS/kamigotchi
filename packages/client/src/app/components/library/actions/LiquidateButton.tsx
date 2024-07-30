@@ -10,8 +10,8 @@ import {
 import { isStarving, Kami, onCooldown } from 'network/shapes/Kami';
 import { Tooltip } from '../Tooltip';
 
-// button for liquidating harvest
-// TODO: simplify and optimize the below
+// button for liquidating a harvest
+// TODO: clean this up
 export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Function) => {
   const options = allies.filter((ally) => canLiquidate(ally, target));
   const actionOptions = options.map((myKami) => {

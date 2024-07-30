@@ -4,7 +4,7 @@ import { calcCooldown, isHarvesting, isStarving, Kami } from 'network/shapes/Kam
 import { IconButton } from '../IconButton';
 import { Tooltip } from '../Tooltip';
 
-// button for collecting on production
+// button for collecting a harvest
 export const CollectButton = (kami: Kami, account: Account, triggerAction: Function) => {
   let tooltip = getDisabledTooltip(kami, account);
 
