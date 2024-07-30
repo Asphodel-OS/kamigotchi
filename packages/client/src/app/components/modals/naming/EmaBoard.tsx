@@ -34,7 +34,7 @@ export function registerEMABoardModal() {
             network,
             data: {
               account: account,
-              dustAmt: getInventoryByHolderItem(world, components, account.id, 9001).balance,
+              dustAmt: getInventoryByHolderItem(world, components, account.id, 111).balance,
             },
           };
         })
@@ -42,6 +42,7 @@ export function registerEMABoardModal() {
 
     // Render
     ({ network, data }) => {
+      const { account, dustAmt } = data;
       const { actions, api } = network;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
@@ -58,7 +59,7 @@ export function registerEMABoardModal() {
           params: [kami.id, itemIndex],
           description: `Using holy dust on ${kami.name}`,
           execute: async () => {
-            return api.player.pet.use(kami.id, itemIndex);
+            return api.player.pet.feed(kami.id, itemIndex);
           },
         });
       };
@@ -73,49 +74,42 @@ export function registerEMABoardModal() {
       };
 
       const canName = (kami: Kami): boolean => {
-        return kami.can.name ? kami.can.name : false;
+        return !!kami.can.name;
       };
 
       // set the button based on whether
       const RenameButton = (kami: Kami) => {
-        let button = (
-          <ActionButton
-            onClick={() => promptRename(kami)}
-            text='Rename'
-            disabled={!canName(kami) || isHarvesting(kami) || isDead(kami)}
-          />
+        let tooltipText = '';
+        if (isHarvesting(kami)) tooltipText = 'too far away';
+        else if (isDead(kami)) tooltipText = 'the dead cannot hear you';
+        else if (!canName(kami)) tooltipText = 'cannot rename. use some holy dust!';
+
+        const disabled = !!tooltipText;
+        if (!disabled) tooltipText = `a holy pact..`;
+
+        const button = (
+          <ActionButton onClick={() => promptRename(kami)} text='Rename' disabled={disabled} />
         );
 
-        if (isHarvesting(kami)) {
-          return <Tooltip text={['too far away']}>{button}</Tooltip>;
-        } else if (isDead(kami)) {
-          return <Tooltip text={['cannot hear you (dead)']}>{button}</Tooltip>;
-        } else if (!canName(kami)) {
-          return <Tooltip text={['cannot rename;', 'use some holy dust!']}>{button}</Tooltip>;
-        }
-        return button;
+        return <Tooltip text={[tooltipText]}>{button}</Tooltip>;
       };
 
       // button to use holy dust (rename potion)
       const UseDustButton = (kami: Kami) => {
-        if (canName(kami)) return <div></div>;
+        let tooltipText = '';
+        if (canName(kami)) tooltipText = 'this kami can already be renamed';
+        else if (isHarvesting(kami)) tooltipText = 'too far away';
+        else if (isDead(kami)) tooltipText = 'the dead cannot hear you';
+        else if (dustAmt == 0) tooltipText = 'you have no holy dust';
 
-        let button = (
-          <IconButton
-            img={useIcon}
-            onClick={() => useRenamePotion(kami)}
-            disabled={data.dustAmt == 0 || isHarvesting(kami) || isDead(kami)}
-          />
+        const disabled = !!tooltipText;
+        if (!disabled) tooltipText = `use holy dust (${dustAmt})`;
+
+        const button = (
+          <IconButton img={useIcon} onClick={() => useRenamePotion(kami)} disabled={disabled} />
         );
 
-        if (isHarvesting(kami)) {
-          return <Tooltip text={['too far away']}>{button}</Tooltip>;
-        } else if (isDead(kami)) {
-          return <Tooltip text={['cannot hear you (dead)']}>{button}</Tooltip>;
-        } else if (data.dustAmt == 0) {
-          return <Tooltip text={['you have no holy dust']}>{button}</Tooltip>;
-        }
-        return <Tooltip text={[`use holy dust (have ${data.dustAmt})`]}>{button}</Tooltip>;
+        return <Tooltip text={[tooltipText]}>{button}</Tooltip>;
       };
 
       const CombinedButton = (kami: Kami) => {
@@ -152,7 +146,7 @@ export function registerEMABoardModal() {
 
       return (
         <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
-          <List>{KamiList(data.account.kamis)}</List>
+          <List>{KamiList(account.kamis)}</List>
         </ModalWrapper>
       );
     }
