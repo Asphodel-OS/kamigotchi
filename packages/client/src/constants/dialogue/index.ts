@@ -16,6 +16,8 @@ import dialogues15 from './15_temple-cave';
 import dialogues16 from './16_techno-temple';
 import dialogues18 from './18_cave-crossroads';
 import dialogues19 from './19_violence-temple';
+import dialogues52 from './52_airplane_crash';
+import dialogues54 from './54_plane_interior';
 import { DialogueNode } from './types';
 
 const dialogues00: DialogueNode[] = [
@@ -48,13 +50,18 @@ const dialogueList = dialogues00.concat(
   dialogues15,
   dialogues16,
   dialogues18,
-  dialogues19
+  dialogues19,
+  dialogues52,
+  dialogues54
 );
 
 // aggregated map of all dialogue nodes, referenced by index
-export const dialogues = dialogueList.reduce(function (map, node: DialogueNode) {
-  map[node.index] = node;
-  return map;
-}, {} as { [key: number]: DialogueNode });
+export const dialogues = dialogueList.reduce(
+  function (map, node: DialogueNode) {
+    map[node.index] = node;
+    return map;
+  },
+  {} as { [key: number]: DialogueNode }
+);
 
 export type { DialogueNode } from './types';

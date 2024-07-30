@@ -1,4 +1,5 @@
 import agency_giftbox from './agency_giftbox.png';
+import astrolabe_disk from './astrolabe_disk.png';
 import best_ice_cream from './best_ice_cream.png';
 import better_ice_cream from './better_ice_cream.png';
 import gacha_ticket from './gacha_ticket.png';
@@ -10,6 +11,8 @@ import kami_mochi from './kami_mochi.png';
 import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import musu from './musu.png';
+import pine_cone from './pine_cone.png';
+import pine_pollen from './pine_pollen.png';
 import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
@@ -24,6 +27,7 @@ import xp_candy_small from './xp_candy_small.png';
 
 export const ItemImages = {
   agency_giftbox: agency_giftbox,
+  astrolabe_disk: astrolabe_disk,
   better_ice_cream: better_ice_cream,
   best_ice_cream: best_ice_cream,
   gacha_ticket: gacha_ticket,
@@ -38,6 +42,8 @@ export const ItemImages = {
   red_gakki_ribbon: red_gakki_ribbon,
   ring_of_spirits: ring_of_spirits,
   ring_of_water_breathing: ring_of_water_breathing,
+  pine_cone: pine_cone,
+  pine_pollen: pine_pollen,
   plastic_bottle: plastic_bottle,
   pom_pom_fruit_candy: pom_pom_fruit_candy,
   stone: stone,

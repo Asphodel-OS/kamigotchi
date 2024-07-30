@@ -6,7 +6,7 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   const itemsCSV = await readFile('items/items.csv');
 
   const ignoreTypes = ['OTHER', 'NFT'];
-  const baseTypes = ['MISC', 'MATERIAL', 'RING'];
+  const baseTypes = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM'];
   for (let i = 0; i < itemsCSV.length; i++) {
     const item = itemsCSV[i];
     if (

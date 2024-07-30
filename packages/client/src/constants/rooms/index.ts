@@ -47,6 +47,10 @@ import { room46 } from './46_parking-lot';
 import { room47 } from './47_scrap-paths';
 import { room48 } from './48_forest-road-iv';
 import { room49 } from './49_clearing';
+import { room50 } from './50_ancient_forest_entrance';
+import { room51 } from './51_scrap_littered_undergrowth';
+import { room52 } from './52_airplane_crash';
+import { room54 } from './54_plane_interior';
 
 // represents a room in all its glory
 export interface Room {
@@ -131,4 +135,9 @@ export const rooms: Room[] = [
   room47,
   room48,
   room49,
+  room50,
+  room51,
+  room52,
+  { index: 53, backgrounds: [''], objects: [] },
+  room54,
 ];
