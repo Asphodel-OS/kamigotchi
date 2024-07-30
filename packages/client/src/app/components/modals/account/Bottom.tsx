@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import { useVisibility } from 'app/stores';
 import { Account, BareAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Blocked } from './blocked/Blocked';
@@ -24,13 +23,6 @@ interface Props {
 
 export const Bottom = (props: Props) => {
   const { tab, data, actions } = props;
-  const { modals } = useVisibility();
-
-  // only update account list if modal is open
-  const allAccs = () => {
-    if (modals.account) return data.getAllAccs();
-    else return [];
-  };
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
   // re-render and persist their state, rather than remounting
@@ -51,7 +43,7 @@ export const Bottom = (props: Props) => {
         <Requests
           key='requests'
           account={data.account}
-          accounts={allAccs()}
+          accounts={data.getAllAccs()}
           requests={{
             inbound: data.account.friends?.incomingReqs ?? [],
             outbound: data.account.friends?.outgoingReqs ?? [],
