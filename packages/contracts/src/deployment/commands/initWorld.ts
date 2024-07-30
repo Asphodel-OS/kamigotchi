@@ -29,7 +29,7 @@ const run = async () => {
         .toString()
         .split(',') // ensure array
         .map((a: string) => Number(a)) // cast to number
-    : [];
+    : undefined;
 
   if (mode === 'DEV') setAutoMine(true);
 

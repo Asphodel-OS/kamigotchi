@@ -14,7 +14,7 @@ export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
     if (entry['Enabled'] !== 'true') continue;
     if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
-      await initNode(api, entry);
+      // await initNode(api, entry);
       if (entry['Level Limit'] !== '') await initRequirement(api, entry);
     } catch {
       console.error('Could not create node', entry['Index']);
@@ -59,6 +59,11 @@ async function initNode(api: AdminAPI, entry: any) {
 
 // hardcoded to only allow max levels rn
 async function initRequirement(api: AdminAPI, entry: any) {
+  if (Number(entry['Index']) === 2) {
+    console.log(Number(entry['Index']));
+    console.log('Skipping requirement for node 2');
+    return;
+  }
   await api.node.add.requirement(
     Number(entry['Index']),
     'KAMI',
