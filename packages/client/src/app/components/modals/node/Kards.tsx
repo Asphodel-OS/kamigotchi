@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, KamiCard, Tooltip } from 'app/components/library';
-import { FeedButton } from 'app/components/library/actions';
-import { StopButton } from 'app/components/library/actions/StopButton';
+import { IconListButton, KamiCard, Tooltip } from 'app/components/library';
+import { CollectButton, FeedButton, StopButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
-import { collectIcon, liquidateIcon } from 'assets/images/icons/actions';
+import { liquidateIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import {
   calcLiqKarma,
@@ -14,14 +13,7 @@ import {
   canLiquidate,
   canMog,
 } from 'network/shapes/Harvest';
-import {
-  Kami,
-  calcCooldown,
-  calcHealth,
-  calcOutput,
-  isStarving,
-  onCooldown,
-} from 'network/shapes/Kami';
+import { Kami, calcHealth, calcOutput, isStarving, onCooldown } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -66,24 +58,6 @@ export const Kards = (props: Props) => {
       `Violence: ${kami.stats.violence.total}`,
     ];
     return description;
-  };
-
-  // derive general disabled reason for allied kami
-  const getDisabledReason = (kami: Kami): string => {
-    let reason = '';
-    if (onCooldown(kami)) {
-      reason = 'On cooldown (' + calcCooldown(kami).toFixed(0) + 's left)';
-    } else if (isStarving(kami)) {
-      reason = 'starving :(';
-    }
-    return reason;
-  };
-
-  // evaluate tooltip for allied kami Collect button
-  const getCollectTooltip = (kami: Kami): string => {
-    let text = getDisabledReason(kami);
-    if (text === '') text = 'Collect Harvest';
-    return text;
   };
 
   const getLiquidateTooltip = (target: Kami, allies: Kami[]): string => {
@@ -136,21 +110,7 @@ export const Kards = (props: Props) => {
   };
 
   ///////////////////
-  // DISPLAY (buttons)
-
-  // button for collecting on production
-  const CollectButton = (kami: Kami) => {
-    return (
-      <Tooltip key='collect-tooltip' text={[getCollectTooltip(kami)]}>
-        <IconButton
-          onClick={() => actions.collect(kami)}
-          img={collectIcon}
-          disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
-          noMargin
-        />
-      </Tooltip>
-    );
-  };
+  // DISPLAY
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
@@ -178,9 +138,6 @@ export const Kards = (props: Props) => {
     );
   };
 
-  ///////////////////
-  // DISPLAY (kards)
-
   // rendering of an ally kami on this node
   const MyKard = (kami: Kami) => {
     const output = calcOutput(kami);
@@ -193,7 +150,7 @@ export const Kards = (props: Props) => {
         subtext={`yours (\$${output})`}
         actions={[
           FeedButton(kami, account, actions.feed),
-          CollectButton(kami),
+          CollectButton(kami, account, actions.collect),
           StopButton(kami, account, actions.stop),
         ]}
         showBattery

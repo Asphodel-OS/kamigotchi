@@ -6,13 +6,13 @@ import { calcCooldown, isFull, isHarvesting, Kami } from 'network/shapes/Kami';
 import { Tooltip } from '../Tooltip';
 
 // Feed Button display evaluation
-export const FeedButton = (kami: Kami, account: Account, triggerFeed: Function) => {
+export const FeedButton = (kami: Kami, account: Account, triggerAction: Function) => {
   let options: IconListButtonOption[] = [];
   let tooltip = getDisabledTooltip(kami, account);
 
   const disabled = !!tooltip;
   if (!disabled) tooltip = `Feed Kami`;
-  else options = getFeedOptions(kami, account, triggerFeed);
+  else options = getFeedOptions(kami, account, triggerAction);
 
   return (
     <Tooltip key='feed-tooltip' text={[tooltip]}>
@@ -35,12 +35,12 @@ const getDisabledTooltip = (kami: Kami, account: Account): string => {
 };
 
 // gets the list of IconListButton Options for feeding a kami
-const getFeedOptions = (kami: Kami, account: Account, triggerFeed: Function) => {
+const getFeedOptions = (kami: Kami, account: Account, triggerAction: Function) => {
   let inventory = filterInventories(account.inventories ?? [], 'consumable', 'kami');
   inventory = inventory.filter((inv: Inventory) => inv?.item.index !== 110) ?? [];
 
   const options = inventory.map((inv: Inventory) => {
-    const feedAction = () => triggerFeed(kami, inv.item.index);
+    const feedAction = () => triggerAction(kami, inv.item.index);
     return getFeedOption(kami, inv, feedAction);
   });
 
@@ -48,7 +48,7 @@ const getFeedOptions = (kami: Kami, account: Account, triggerFeed: Function) => 
 };
 
 // get a single IconListButton Option for feeding a Kami
-const getFeedOption = (kami: Kami, inv: Inventory, triggerFeed: Function) => {
+const getFeedOption = (kami: Kami, inv: Inventory, triggerAction: Function) => {
   if (!inv || !inv.item) return { text: '', onClick: () => {} };
 
   const healAmt = inv.item.stats?.health.sync ?? 0;
@@ -61,7 +61,7 @@ const getFeedOption = (kami: Kami, inv: Inventory, triggerFeed: Function) => {
 
   return {
     text,
-    onClick: () => triggerFeed(),
+    onClick: () => triggerAction(),
     image: inv.item.image,
     disabled: !canEat(),
   };
