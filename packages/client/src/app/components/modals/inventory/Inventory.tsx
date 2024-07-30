@@ -28,7 +28,10 @@ export function registerInventoryModal() {
       return interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const account = getAccountFromBurner(network, { kamis: true, inventory: true });
+          const account = getAccountFromBurner(network, {
+            kamis: { flags: true, production: true },
+            inventory: true,
+          });
           return { network, data: { account } };
         })
       );

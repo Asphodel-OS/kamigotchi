@@ -57,5 +57,5 @@ export const calcRerollCost = (world: World, components: Components, kami: Kami)
   const baseCost = getConfigFieldValueWei(world, components, 'GACHA_REROLL_PRICE');
 
   // placeholder linear function
-  return baseCost * BigInt(kami.rerolls + 1);
+  return baseCost * BigInt((kami.rerolls || 0) + 1);
 };

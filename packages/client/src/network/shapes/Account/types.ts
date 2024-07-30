@@ -21,7 +21,7 @@ import {
   queryLootboxLogsByHolder as queryAccLBLogs,
   queryInventoriesByAccount,
 } from '../Item';
-import { Kami, queryKamisX } from '../Kami';
+import { Kami, KamiOptions, queryKamisX } from '../Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
@@ -41,7 +41,6 @@ export interface BareAccount {
 // standardized shape of an Account Entity
 export interface Account extends BareAccount {
   fid: number;
-
   coin: number;
   roomIndex: number;
   level: number;
@@ -77,7 +76,7 @@ export interface Account extends BareAccount {
 }
 
 export interface AccountOptions {
-  kamis?: boolean;
+  kamis?: boolean | KamiOptions;
   friends?: boolean;
   gacha?: boolean;
   inventory?: boolean;
@@ -190,12 +189,8 @@ export const getAccount = (
 
   // populate Kamis
   if (options?.kamis) {
-    account.kamis = queryKamisX(
-      world,
-      components,
-      { account: account.id },
-      { deaths: true, production: true, traits: true }
-    );
+    const kamiOptions = typeof options.kamis === 'boolean' ? {} : options.kamis;
+    account.kamis = queryKamisX(world, components, { account: account.id }, kamiOptions);
   }
 
   // populate Friends

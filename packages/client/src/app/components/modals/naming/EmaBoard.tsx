@@ -27,7 +27,7 @@ export function registerEMABoardModal() {
           const { world, components } = network;
           const account = getAccountFromBurner(network, {
             inventory: true,
-            kamis: true,
+            kamis: { flags: true },
           });
 
           return {
@@ -74,7 +74,7 @@ export function registerEMABoardModal() {
       };
 
       const canName = (kami: Kami): boolean => {
-        return !!kami.can.name;
+        return !!kami.flags?.namable;
       };
 
       // set the button based on whether

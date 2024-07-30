@@ -35,7 +35,6 @@ export interface Kami extends DetailedEntity {
   entityIndex: EntityIndex;
   level: number;
   experience: KamiExperience;
-  rerolls: number;
   state: string;
   skillPoints: number;
   stats: Stats;
@@ -51,13 +50,14 @@ export interface Kami extends DetailedEntity {
   };
   account?: Account;
   deaths?: Kill[];
+  flags?: {
+    namable: boolean;
+  };
   kills?: Kill[];
   production?: Harvest;
   skills?: Skill[];
   traits?: Traits;
-  can: {
-    name: boolean;
-  };
+  rerolls?: number;
 }
 
 interface KamiExperience {
@@ -69,10 +69,12 @@ interface KamiExperience {
 export interface Options {
   account?: boolean;
   deaths?: boolean;
+  flags?: boolean;
   kills?: boolean;
   production?: boolean;
   skills?: boolean;
   traits?: boolean;
+  rerolls?: boolean;
 }
 
 // get a Kami from its EnityIndex. includes options for which data to include
@@ -124,9 +126,6 @@ export const getKami = (
       threshold: 0,
     },
     state: getComponentValue(State, entityIndex)?.value as string,
-    can: {
-      name: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
-    },
     time: {
       cooldown: {
         last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
@@ -135,7 +134,6 @@ export const getKami = (
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
-    rerolls: (getComponentValue(Reroll, entityIndex)?.value ?? (0 as number)) * 1,
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
     stats: getStats(components, entityIndex),
     bonuses: getKamiBonuses(world, components, entityIndex),
@@ -165,6 +163,12 @@ export const getKami = (
     deaths.sort((a, b) => b.time - a.time);
 
     kami.deaths = deaths;
+  }
+
+  if (options?.flags) {
+    kami.flags = {
+      namable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
+    };
   }
 
   // populate Kills where our kami is the aggressor
@@ -222,6 +226,11 @@ export const getKami = (
     if (productionIndex)
       kami.production = getHarvest(world, components, productionIndex, { node: true }, kami);
   }
+
+  if (options?.rerolls) {
+    kami.rerolls = (getComponentValue(Reroll, entityIndex)?.value ?? (0 as number)) * 1;
+  }
+
   /////////////////
   // ADJUSTMENTS
 

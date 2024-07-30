@@ -37,7 +37,7 @@ export const ItemGrid = (props: Props) => {
       let kamis = getAccessibleKamis(account);
       if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
       if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
-      if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.can.name);
+      if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
       options = kamis.map((kami) => ({ text: kami.name, onClick: () => feedKami(kami, inv.item) }));
     }
 
