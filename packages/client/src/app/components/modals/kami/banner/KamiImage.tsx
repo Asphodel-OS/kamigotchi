@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
+import { Overlay } from 'app/components/library/styles';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { Account } from 'network/shapes/Account';
 import { isResting, Kami } from 'network/shapes/Kami';
 import { getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
-import { Overlay } from '../../../library/styles/Overlay';
 
 interface Props {
   account: Account;
@@ -90,7 +90,7 @@ const Container = styled.div`
 
 const Image = styled.img`
   border-radius: 0.45vw 0 0 0;
-  height: 14vw;
+  height: 18vw;
 `;
 
 const Grouping = styled.div`

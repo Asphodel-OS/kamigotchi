@@ -1,32 +1,39 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-
-import { TraitIcons } from 'assets/images/icons/traits';
+import { StatIcons } from 'assets/images/icons/stats';
+import { StatDescriptions } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
-import { Trait } from 'network/shapes/Trait';
+import { Stat } from 'network/shapes/Stats';
 
 interface Props {
   kami: Kami;
 }
 
-export const Traits = (Props: Props) => {
+export const Stats = (Props: Props) => {
   const { kami } = Props;
 
   return (
     <Container>
       {/* <Title size={0.9}>Stats</Title> */}
-      {Object.entries(kami.traits!).map(([key, value]) => {
-        const icon = TraitIcons[key as keyof typeof TraitIcons];
-        const trait = value as Trait;
-        const name = trait.name;
+      {Object.entries(kami.stats).map(([key, value]) => {
+        if (key === 'stamina') return null;
+        const description = StatDescriptions[key as keyof typeof StatDescriptions];
+        const icon = StatIcons[key as keyof typeof StatIcons];
+        const v = value as Stat;
 
-        const tooltipText = [key, '', name];
+        const total = v.base + v.shift;
+        const tooltipText = [key, '', description];
         return (
           <Tooltip key={key} text={tooltipText}>
             <Grouping>
-              <Text size={0.75}>{name}</Text>
+              <Text size={0.75}>{total}</Text>
               <Icon size={1.3} src={icon} />
+              {/* <Overlay right={0} translateX={100}>
+                <Text size={0.5}>
+                  ({v.base} + {v.shift})
+                </Text>
+              </Overlay> */}
             </Grouping>
           </Tooltip>
         );
@@ -36,13 +43,13 @@ export const Traits = (Props: Props) => {
 };
 
 const Container = styled.div`
-  height: 70%;
-  margin-left: 7vw;
+  height: 80%;
+  margin-left: 1.8vw;
 
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-end;
-  justify-content: flex-start;
+  justify-content: flex-end;
 `;
 
 const Grouping = styled.div`

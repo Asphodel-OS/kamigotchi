@@ -6,8 +6,6 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiImage } from './KamiImage';
-import { Stats } from './Stats';
-import { Traits } from './Traits';
 
 interface Props {
   data: {
@@ -19,7 +17,6 @@ interface Props {
   };
 }
 
-// TODO: disable level-up when kami is too far or not urs
 export const Banner = (props: Props) => {
   const { account, kami } = props.data;
 
@@ -52,8 +49,6 @@ export const Banner = (props: Props) => {
     <Container>
       <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
-        <Stats kami={kami} />
-        <Traits kami={kami} />
         <Overlay bottom={0.6} right={0.6}>
           <Footer onClick={handleAccountClick()}>
             {isMine(kami) ? 'yours' : kami.account?.name}
