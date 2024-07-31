@@ -44,21 +44,28 @@ export const KamiImage = (props: Props) => {
   return (
     <Container>
       <Image src={kami.image} />
-      <Row top>
-        <Grouping>
-          <Text size={0.7}>Lvl</Text>
-          <Text size={1}>{kami.level}</Text>
-        </Grouping>
-        <Grouping>
+      <Overlay top={0.6} left={0.45}>
+        <HorGroup>
+          <Text size={0.7}>{kami.name}</Text>
+        </HorGroup>
+      </Overlay>
+      <Overlay top={0.3} right={0.3}>
+        <HorGroup>
           <Tooltip text={[`${'Body'}: ${bodyAffintiy}`]}>
             <Icon key={'Body'} src={getAffinityImage(bodyAffintiy)} />
           </Tooltip>
           <Tooltip text={[`${'Hand'}: ${handAffintiy}`]}>
             <Icon key={'Hand'} src={getAffinityImage(handAffintiy)} />
           </Tooltip>
-        </Grouping>
-      </Row>
-      <Row bottom>
+        </HorGroup>
+      </Overlay>
+      <Overlay bottom={1.75} left={0.3}>
+        <HorGroup>
+          <Text size={0.6}>Lvl</Text>
+          <Text size={0.75}>{kami.level}</Text>
+        </HorGroup>
+      </Overlay>
+      <Overlay bottom={0} fullWidth>
         <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
         <Tooltip text={[`${expCurr}/${expLimit}`]} grow>
           <ExperienceBar>
@@ -70,7 +77,7 @@ export const KamiImage = (props: Props) => {
             <Text size={0.7}>↑</Text>
           </Button>
         </Tooltip>
-      </Row>
+      </Overlay>
     </Container>
   );
 };
@@ -85,25 +92,36 @@ const Image = styled.img`
   height: 14vw;
 `;
 
-const Row = styled.div<{ bottom?: boolean; top?: boolean }>`
+interface OverlayProps {
+  bottom?: number;
+  top?: number;
+  right?: number;
+  left?: number;
+  fullWidth?: boolean;
+}
+
+const Overlay = styled.div<OverlayProps>`
   position: absolute;
-  width: 100%;
+  ${({ fullWidth }) => fullWidth && 'width: 100%;'}
 
-  ${(props) => props.bottom && 'bottom: 0'};
-  ${(props) => props.top && 'top: 0'};
-
+  ${({ bottom }) => bottom !== undefined && `bottom: ${bottom}vw;`}
+  ${({ top }) => top !== undefined && `top: ${top}vw;`}
+  ${({ right }) => right !== undefined && `right: ${right}vw;`}
+  ${({ left }) => left !== undefined && `left: ${left}vw;`}
+  
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 `;
 
-const Grouping = styled.div`
+const HorGroup = styled.div`
+  position: relative;
+  height: 100%;
+
   display: flex;
-  padding: 0.3vw;
   flex-flow: row nowrap;
   align-items: flex-end;
-  height: 100%;
 `;
 
 const Text = styled.div<{ size: number }>`
@@ -112,7 +130,7 @@ const Text = styled.div<{ size: number }>`
 `;
 
 const Icon = styled.img`
-  height: 2vw;
+  height: 1.5vw;
 `;
 
 const Percentage = styled.div`

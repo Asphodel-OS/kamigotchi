@@ -58,10 +58,9 @@ export const Banner = (props: Props) => {
     <Container>
       <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
-        <Title size={1.5}>{kami.name}</Title>
         <Middle>
           <Paragraph>
-            <Title size={0.75}>Stats</Title>
+            <Title size={1.1}>Stats</Title>
             {Object.entries(kami.stats).map(([key, value]) => {
               if (key === 'stamina') return null;
               const description = StatDescriptions[key as keyof typeof StatDescriptions];
@@ -72,13 +71,13 @@ export const Banner = (props: Props) => {
               const tooltipText = [key, '', description];
               return (
                 <Tooltip key={key} text={tooltipText} grow>
-                  <InfoGroup>
-                    <Icon src={icon} />
-                    <Text size={0.6}>{total}</Text>
-                    <Text size={0.45}>
+                  <Grouping>
+                    <Icon size={1.5} src={icon} />
+                    <Text size={0.75}>{total}</Text>
+                    <Text size={0.6}>
                       ({v.base} + {v.shift})
                     </Text>
-                  </InfoGroup>
+                  </Grouping>
                 </Tooltip>
               );
             })}
@@ -103,9 +102,9 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  flex-grow: 1;
   padding: 0.7vw;
 
+  flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -113,30 +112,31 @@ const Content = styled.div`
 `;
 
 const Middle = styled.div`
-  flex-grow: 1;
   width: 80%;
+
+  flex-grow: 1;
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
 `;
 
 const Paragraph = styled.div`
-  padding: 0.3vw 1vw;
+  padding: 0.3vw 1.2vw;
+  height: 100%;
+
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  justify-content:
-  gap: .1vw 
-  height: 100%;
 `;
 
-const InfoGroup = styled.div`
+const Grouping = styled.div`
   border-radius: 0.3vw;
-  padding: 0.1vw 0.45vw;
-  gap: 0.3vw;
+  padding: 0.15vw 0.45vw;
+  gap: 0.45vw;
 
   display: flex;
-  flex-direction: row;
+  flex-flow: row nowrap;
+  align-items: center;
   &:hover {
     background-color: #ddd;
   }
@@ -144,7 +144,7 @@ const InfoGroup = styled.div`
 
 const Title = styled.div<{ size: number }>`
   font-size: ${({ size }) => size}vw;
-  padding: ${({ size }) => `${size * 0.4}vw ${size * 0.2}vw`};
+  padding: ${({ size }) => `${size * 0.4}vw ${size * 0}vw`};
 `;
 
 const Text = styled.div<{ size: number }>`
@@ -152,8 +152,8 @@ const Text = styled.div<{ size: number }>`
   margin: auto;
 `;
 
-const Icon = styled.img`
-  height: 1.2vw;
+const Icon = styled.img<{ size: number }>`
+  height: ${({ size }) => size}vw;
 `;
 
 const Footer = styled.div`
