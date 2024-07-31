@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 import moment from 'moment';
 
-import { MUSU_INDEX } from 'constants/indices';
+import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { getQuestByIndex } from '../Quest';

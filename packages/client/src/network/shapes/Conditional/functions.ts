@@ -1,6 +1,6 @@
 import { World } from '@mud-classic/recs';
 
-import { MUSU_INDEX } from 'constants/indices';
+import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { getBalance, getBool } from 'network/shapes/utils/getter';
 import { Account } from '../Account';

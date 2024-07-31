@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { MUSU_INDEX } from 'constants/indices';
+import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';

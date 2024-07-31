@@ -5,6 +5,7 @@ import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/c
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
+import { HOLY_DUST_INDEX } from 'constants/items';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { getInventoryByHolderItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
@@ -29,12 +30,13 @@ export function registerEMABoardModal() {
             inventory: true,
             kamis: { flags: true },
           });
+          const dust = getInventoryByHolderItem(world, components, account.id, HOLY_DUST_INDEX);
 
           return {
             network,
             data: {
               account: account,
-              dustAmt: getInventoryByHolderItem(world, components, account.id, 111).balance,
+              dustAmt: dust.balance,
             },
           };
         })
@@ -53,7 +55,7 @@ export function registerEMABoardModal() {
       };
 
       const useRenamePotion = (kami: Kami) => {
-        const itemIndex = 111;
+        const itemIndex = HOLY_DUST_INDEX;
         actions.add({
           action: 'KamiFeed',
           params: [kami.id, itemIndex],

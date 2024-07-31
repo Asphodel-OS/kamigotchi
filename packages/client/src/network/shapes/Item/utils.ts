@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
-import { MUSU_INDEX } from 'constants/indices';
+import { MUSU_INDEX } from 'constants/items';
 import { formatEntityID } from 'engine/utils';
 import { Inventory } from './types';
 

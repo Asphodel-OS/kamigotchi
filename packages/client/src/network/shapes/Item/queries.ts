@@ -9,7 +9,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
-import { MUSU_INDEX } from 'constants/indices';
+import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/components';
 import { Inventory, Item, LootboxLog, getInventory, getItem, getLootboxLog } from './types';
 import { getInventoryEntityIndex } from './utils';
