@@ -58,30 +58,32 @@ export const Banner = (props: Props) => {
     <Container>
       <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
-        <ContentTop>
-          <TitleRow>
-            <Title>{kami.name}</Title>
-          </TitleRow>
-        </ContentTop>
-        <ContentMiddle>
-          {Object.entries(kami.stats).map(([key, value]) => {
-            if (key === 'stamina') return null;
-            const description = StatDescriptions[key as keyof typeof StatDescriptions];
-            const icon = StatIcons[key as keyof typeof StatIcons];
-            const v = value as Stat;
+        <Title size={1.5}>{kami.name}</Title>
+        <Middle>
+          <Paragraph>
+            <Title size={0.75}>Stats</Title>
+            {Object.entries(kami.stats).map(([key, value]) => {
+              if (key === 'stamina') return null;
+              const description = StatDescriptions[key as keyof typeof StatDescriptions];
+              const icon = StatIcons[key as keyof typeof StatIcons];
+              const v = value as Stat;
 
-            const total = v.base + v.shift;
-            const tooltipText = [`${key} (${v.base} + ${v.shift})`, '', description];
-            return (
-              <Tooltip key={key} text={tooltipText} grow>
-                <InfoBox>
-                  <Icon src={icon} />
-                  <InfoContent>{total}</InfoContent>
-                </InfoBox>
-              </Tooltip>
-            );
-          })}
-        </ContentMiddle>
+              const total = v.base + v.shift;
+              const tooltipText = [key, '', description];
+              return (
+                <Tooltip key={key} text={tooltipText} grow>
+                  <InfoGroup>
+                    <Icon src={icon} />
+                    <Text size={0.6}>{total}</Text>
+                    <Text size={0.45}>
+                      ({v.base} + {v.shift})
+                    </Text>
+                  </InfoGroup>
+                </Tooltip>
+              );
+            })}
+          </Paragraph>
+        </Middle>
         <Footer>
           <FooterText onClick={handleAccountClick()}>
             {isMine(kami) ? 'yours' : kami.account?.name}
@@ -100,9 +102,6 @@ const Container = styled.div`
   flex-flow: row nowrap;
 `;
 
-const Icon = styled.img`
-  height: 2vw;
-`;
 const Content = styled.div`
   flex-grow: 1;
   padding: 0.7vw;
@@ -113,40 +112,28 @@ const Content = styled.div`
   position: relative;
 `;
 
-const ContentTop = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-end;
-  margin: 1vw 0.3vw 0.5vw 0.3vw;
-`;
-
-const Title = styled.div`
-  background-color: #ffffff;
-  color: black;
-  font-family: Pixel;
-  font-size: 2vw;
-`;
-
-const ContentMiddle = styled.div`
+const Middle = styled.div`
   flex-grow: 1;
   width: 80%;
   display: flex;
-  flex-direction: row wrap;
-  align-items: center;
-  justify-content: flex-start;
+  flex-flow: row wrap;
+  align-items: flex-start;
 `;
 
-const InfoBox = styled.div`
-  border: solid black 0.12vw;
-  border-radius: 5px;
-  margin: 0.3vw;
-  padding: 0.3vw;
+const Paragraph = styled.div`
+  padding: 0.3vw 1vw;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  justify-content:
+  gap: .1vw 
+  height: 100%;
+`;
+
+const InfoGroup = styled.div`
+  border-radius: 0.3vw;
+  padding: 0.1vw 0.45vw;
+  gap: 0.3vw;
 
   display: flex;
   flex-direction: row;
@@ -155,15 +142,18 @@ const InfoBox = styled.div`
   }
 `;
 
-const InfoContent = styled.div`
-  color: black;
-  padding: 0.3vw;
-  align-self: center;
+const Title = styled.div<{ size: number }>`
+  font-size: ${({ size }) => size}vw;
+  padding: ${({ size }) => `${size * 0.4}vw ${size * 0.2}vw`};
+`;
 
-  font-family: Pixel;
-  font-size: 0.8vw;
-  font-weight: 600;
+const Text = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
   margin: auto;
+`;
+
+const Icon = styled.img`
+  height: 1.2vw;
 `;
 
 const Footer = styled.div`
@@ -178,18 +168,15 @@ const Footer = styled.div`
 `;
 
 const FooterText = styled.div`
-  font-family: Pixel;
   font-size: 0.6vw;
   text-align: right;
   color: #666;
 
-  ${({ onClick }) =>
-    onClick &&
-    `
-    &:hover {
-      opacity: 0.6;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  `}
+  ${({ onClick }) => !onClick && 'pointer-events: none;'}
+
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+    text-decoration: underline;
+  }
 `;
