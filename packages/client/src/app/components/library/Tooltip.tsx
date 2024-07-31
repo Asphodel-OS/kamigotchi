@@ -15,8 +15,7 @@ export const Tooltip = (props: Props) => {
   return (
     <MUITooltip
       title={conjoinedText}
-      followCursor
-      enterDelay={500}
+      enterDelay={1000}
       leaveTouchDelay={0}
       style={{
         flexGrow: flexGrow,
@@ -27,14 +26,15 @@ export const Tooltip = (props: Props) => {
       componentsProps={{
         tooltip: {
           sx: {
-            zIndex: '2',
-            borderStyle: 'solid',
-            borderWidth: '.15vw',
-            borderColor: 'black',
-            backgroundColor: '#fff',
-            padding: '10px',
+            zIndex: '3',
+            border: 'solid black .15vw',
+            borderRadius: '0.6vw',
+            opacity: '0.1',
+            padding: '.6vw',
 
             color: 'black',
+            textShadow: '0 0 0.3vw white',
+
             fontSize: '.7vw',
             fontFamily: 'Pixel',
             lineHeight: '1vw',

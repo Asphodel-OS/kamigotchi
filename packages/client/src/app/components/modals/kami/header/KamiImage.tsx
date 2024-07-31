@@ -6,6 +6,7 @@ import { Account } from 'network/shapes/Account';
 import { isResting, Kami } from 'network/shapes/Kami';
 import { getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
+import { Overlay } from '../../../library/styles/Overlay';
 
 interface Props {
   account: Account;
@@ -90,29 +91,6 @@ const Container = styled.div`
 const Image = styled.img`
   border-radius: 0.45vw 0 0 0;
   height: 14vw;
-`;
-
-interface OverlayProps {
-  bottom?: number;
-  top?: number;
-  right?: number;
-  left?: number;
-  fullWidth?: boolean;
-}
-
-const Overlay = styled.div<OverlayProps>`
-  position: absolute;
-  ${({ fullWidth }) => fullWidth && 'width: 100%;'}
-
-  ${({ bottom }) => bottom !== undefined && `bottom: ${bottom}vw;`}
-  ${({ top }) => top !== undefined && `top: ${top}vw;`}
-  ${({ right }) => right !== undefined && `right: ${right}vw;`}
-  ${({ left }) => left !== undefined && `left: ${left}vw;`}
-  
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
 `;
 
 const HorGroup = styled.div`

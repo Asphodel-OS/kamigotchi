@@ -1,4 +1,4 @@
-import { Kami, isResting } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
@@ -8,6 +8,7 @@ import { StatDescriptions } from 'constants/stats';
 import { Account } from 'network/shapes/Account';
 import { Stat } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
+import { Overlay } from '../../../library/styles/Overlay';
 import { KamiImage } from './KamiImage';
 
 interface Props {
@@ -29,11 +30,6 @@ export const Banner = (props: Props) => {
 
   const isMine = (kami: Kami) => {
     return kami.account?.index === account.index;
-  };
-
-  const getLevelUpDisabledReason = () => {
-    if (!isMine(kami)) return 'not ur kami';
-    if (!isResting(kami)) return 'kami must be resting';
   };
 
   const handleAccountClick = () => {
@@ -58,36 +54,36 @@ export const Banner = (props: Props) => {
     <Container>
       <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
-        <Middle>
-          <Paragraph>
-            <Title size={1.1}>Stats</Title>
-            {Object.entries(kami.stats).map(([key, value]) => {
-              if (key === 'stamina') return null;
-              const description = StatDescriptions[key as keyof typeof StatDescriptions];
-              const icon = StatIcons[key as keyof typeof StatIcons];
-              const v = value as Stat;
+        <Paragraph>
+          {/* <Title size={0.9}>Stats</Title> */}
+          {Object.entries(kami.stats).map(([key, value]) => {
+            if (key === 'stamina') return null;
+            const description = StatDescriptions[key as keyof typeof StatDescriptions];
+            const icon = StatIcons[key as keyof typeof StatIcons];
+            const v = value as Stat;
 
-              const total = v.base + v.shift;
-              const tooltipText = [key, '', description];
-              return (
-                <Tooltip key={key} text={tooltipText} grow>
-                  <Grouping>
-                    <Icon size={1.5} src={icon} />
-                    <Text size={0.75}>{total}</Text>
-                    <Text size={0.6}>
-                      ({v.base} + {v.shift})
+            const total = v.base + v.shift;
+            const tooltipText = [key, '', description];
+            return (
+              <Tooltip key={key} text={tooltipText}>
+                <Grouping>
+                  <Text size={0.75}>{total}</Text>
+                  <Icon size={1.3} src={icon} />
+                  <Overlay right={0} translateX={100}>
+                    <Text size={0.5}>
+                      ({v.base} + {v.shift})
                     </Text>
-                  </Grouping>
-                </Tooltip>
-              );
-            })}
-          </Paragraph>
-        </Middle>
-        <Footer>
-          <FooterText onClick={handleAccountClick()}>
+                  </Overlay>
+                </Grouping>
+              </Tooltip>
+            );
+          })}
+        </Paragraph>
+        <Overlay bottom={0.6} right={0.6}>
+          <Footer onClick={handleAccountClick()}>
             {isMine(kami) ? 'yours' : kami.account?.name}
-          </FooterText>
-        </Footer>
+          </Footer>
+        </Overlay>
       </Content>
     </Container>
   );
@@ -102,36 +98,28 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 0.7vw;
-
-  flex-grow: 1;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
   position: relative;
-`;
-
-const Middle = styled.div`
-  width: 80%;
 
   flex-grow: 1;
   display: flex;
-  flex-flow: row wrap;
-  align-items: flex-start;
+  flex-flow: row nowrap;
+  align-items: center;
 `;
 
 const Paragraph = styled.div`
-  padding: 0.3vw 1.2vw;
-  height: 100%;
+  height: 70%;
+  margin-left: 1.8vw;
 
   display: flex;
   flex-flow: column nowrap;
-  align-items: flex-start;
+  align-items: flex-end;
+  justify-content: flex-start;
 `;
 
 const Grouping = styled.div`
+  position: relative;
   border-radius: 0.3vw;
-  padding: 0.15vw 0.45vw;
+  padding: 0.3vw 0.45vw;
   gap: 0.45vw;
 
   display: flex;
@@ -157,17 +145,6 @@ const Icon = styled.img<{ size: number }>`
 `;
 
 const Footer = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 0.7vw;
-
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const FooterText = styled.div`
   font-size: 0.6vw;
   text-align: right;
   color: #666;
