@@ -49,6 +49,7 @@ export const Banner = (props: Props) => {
     <Container>
       <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
+        <Title size={2.4}>{kami.name}</Title>
         <Overlay bottom={0.6} right={0.6}>
           <Footer onClick={handleAccountClick()}>
             {isMine(kami) ? 'yours' : kami.account?.name}
@@ -72,8 +73,22 @@ const Content = styled.div`
 
   flex-grow: 1;
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+`;
+
+const Title = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
+  padding: ${(props) => `${props.size * 0.9}vw ${props.size * 0.3}vw`};
+`;
+
+const Text = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
+  text-shadow: ${(props) => `0 0 ${props.size * 0.4}vw white`};
+`;
+
+const Icon = styled.img`
+  height: 1.5vw;
 `;
 
 const Footer = styled.div`

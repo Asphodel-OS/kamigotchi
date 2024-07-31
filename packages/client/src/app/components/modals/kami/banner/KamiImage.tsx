@@ -5,8 +5,9 @@ import { Overlay } from 'app/components/library/styles';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { Account } from 'network/shapes/Account';
 import { isResting, Kami } from 'network/shapes/Kami';
-import { getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
+
+const LEVEL_UP_STRING = 'Level Up!!';
 
 interface Props {
   account: Account;
@@ -18,12 +19,9 @@ interface Props {
 
 export const KamiImage = (props: Props) => {
   const { account, kami, actions } = props;
-  const { traits, experience } = kami;
-
-  const handAffintiy = traits?.hand.affinity ?? 'NORMAL';
-  const bodyAffintiy = traits?.body.affinity ?? 'NORMAL';
-  const expLimit = experience.threshold;
+  const { experience } = kami;
   const expCurr = experience.current;
+  const expLimit = experience.threshold;
   const percentage = Math.round((expCurr / expLimit) * 1000) / 10;
 
   const isMine = (kami: Kami) => {
@@ -34,7 +32,7 @@ export const KamiImage = (props: Props) => {
     if (!isMine(kami)) return 'not ur kami';
     if (expCurr < expLimit) return 'not enough experience';
     if (!isResting(kami)) return 'kami must be resting';
-    return 'Level Up!!';
+    return LEVEL_UP_STRING;
   };
 
   const handleLevelUp = () => {
@@ -42,42 +40,31 @@ export const KamiImage = (props: Props) => {
     playClick();
   };
 
+  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
   return (
     <Container>
       <Image src={kami.image} />
-      <Overlay top={0.6} left={0.45}>
-        <Grouping>
-          <Text size={0.7}>{kami.name}</Text>
-        </Grouping>
-      </Overlay>
-      <Overlay top={0.3} right={0.3}>
-        <Grouping>
-          <Tooltip text={[`${'Body'}: ${bodyAffintiy}`]}>
-            <Icon key={'Body'} src={getAffinityImage(bodyAffintiy)} />
-          </Tooltip>
-          <Tooltip text={[`${'Hand'}: ${handAffintiy}`]}>
-            <Icon key={'Hand'} src={getAffinityImage(handAffintiy)} />
-          </Tooltip>
-        </Grouping>
-      </Overlay>
-      <Overlay bottom={1.75} left={0.3}>
+      <Overlay top={0.9} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
-          <Text size={0.75}>{kami.level}</Text>
+          <Text size={0.9}>{kami.level}</Text>
         </Grouping>
       </Overlay>
+      <Overlay top={0.9} right={0.7}>
+        <Text size={0.9}>{kami.index}</Text>
+      </Overlay>
       <Overlay bottom={0} fullWidth>
-        <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
         <Tooltip text={[`${expCurr}/${expLimit}`]} grow>
-          <ExperienceBar>
-            <FilledBar percentage={percentage} />
-          </ExperienceBar>
+          <ExperienceBar percent={percentage}></ExperienceBar>
         </Tooltip>
-        <Tooltip text={[getLevelTooltip()]}>
-          <Button disabled={getLevelTooltip() !== 'Level Up!!'} onClick={() => handleLevelUp()}>
-            <Text size={0.7}>↑</Text>
-          </Button>
-        </Tooltip>
+        <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
+        <Overlay bottom={0} right={0}>
+          <Tooltip text={[getLevelTooltip()]}>
+            <Button disabled={!canLevel} onClick={() => handleLevelUp()}>
+              ↑
+            </Button>
+          </Tooltip>
+        </Overlay>
       </Overlay>
     </Container>
   );
@@ -85,11 +72,12 @@ export const KamiImage = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  border-right: solid black 0.15vw;
+  margin: 0.6vw;
 `;
 
 const Image = styled.img`
-  border-radius: 0.45vw 0 0 0;
+  border: solid black 0.15vw;
+  border-radius: 0.6vw;
   height: 18vw;
 `;
 
@@ -103,12 +91,9 @@ const Grouping = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
+  color: white;
   font-size: ${(props) => props.size}vw;
-  text-shadow: ${(props) => `0 0 ${props.size * 0.4}vw white`};
-`;
-
-const Icon = styled.img`
-  height: 1.5vw;
+  text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
 `;
 
 const Percentage = styled.div`
@@ -117,27 +102,25 @@ const Percentage = styled.div`
   padding-top: 0.15vw;
   pointer-events: none;
 
-  font-size: 0.6vw;
+  font-size: 0.75vw;
   text-align: center;
-  text-shadow: 0 0 0.2vw white;
+  text-shadow: 0 0 0.5vw white;
 `;
 
-const ExperienceBar = styled.div`
+const ExperienceBar = styled.div<{ percent: number }>`
   position: relative;
-  border-top: solid black 0.15vw;
-  opacity: 0.5;
+  border: solid black 0.15vw;
+  border-radius: 0 0 0.6vw 0.6vw;
+  opacity: 0.6;
   background-color: #bbb;
-  height: 1.5vw;
+  height: 1.8vw;
   width: 100%;
+
+  background: ${({ percent }) =>
+    `linear-gradient(90deg, #11ee11, 0%, #11ee11, ${percent * 0.95}%, #bbb, ${percent * 1.05}%, #bbb 100%)`};
 
   display: flex;
   align-items: center;
-`;
-
-const FilledBar = styled.div<{ percentage: number }>`
-  background-color: #11ee11;
-  height: 100%;
-  width: ${(props) => props.percentage}%;
 `;
 
 interface ButtonProps {
@@ -146,11 +129,11 @@ interface ButtonProps {
 }
 
 const Button = styled.div<ButtonProps>`
-  border-top: solid black 0.15vw;
-  border-left: solid black 0.15vw;
-  opacity: 0.5;
-  width: 1.5vw;
-  height: 1.5vw;
+  border: solid black 0.15vw;
+  border-radius: 0 0 0.6vw 0;
+  opacity: 0.8;
+  height: 1.8vw;
+  width: 1.8vw;
 
   display: flex;
   justify-content: center;
@@ -168,4 +151,8 @@ const Button = styled.div<ButtonProps>`
   &:active {
     animation: ${() => clickFx(1.1)} 0.3s;
   }
+
+  color: black;
+  font-size: 0.8vw;
+  text-align: center;
 `;
