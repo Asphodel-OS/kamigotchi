@@ -213,7 +213,7 @@ export const getKami = (
       faceIndex,
       handIndex,
     };
-    kami.traits = getTraits(world, components, traitIndices);
+    kami.traits = getTraits(components, traitIndices);
   }
 
   // populate Harvest
