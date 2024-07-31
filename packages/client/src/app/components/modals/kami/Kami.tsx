@@ -15,9 +15,9 @@ import {
   getTreePointsRequirement,
 } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
+import { Banner } from './banner/Banner';
+import { Tabs } from './banner/Tabs';
 import { KillLogs } from './battles/KillLogs';
-import { Banner } from './header/Banner';
-import { Tabs } from './header/Tabs';
 import { Skills } from './skills/Skills';
 import { Traits } from './traits/Traits';
 
