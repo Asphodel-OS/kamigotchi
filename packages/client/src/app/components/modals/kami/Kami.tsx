@@ -77,7 +77,6 @@ export function registerKamiModal() {
           account: true,
           deaths: true,
           kills: true,
-          production: true,
           skills: true,
           traits: true,
         });

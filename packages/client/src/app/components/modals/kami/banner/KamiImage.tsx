@@ -46,25 +46,25 @@ export const KamiImage = (props: Props) => {
     <Container>
       <Image src={kami.image} />
       <Overlay top={0.6} left={0.45}>
-        <HorGroup>
+        <Grouping>
           <Text size={0.7}>{kami.name}</Text>
-        </HorGroup>
+        </Grouping>
       </Overlay>
       <Overlay top={0.3} right={0.3}>
-        <HorGroup>
+        <Grouping>
           <Tooltip text={[`${'Body'}: ${bodyAffintiy}`]}>
             <Icon key={'Body'} src={getAffinityImage(bodyAffintiy)} />
           </Tooltip>
           <Tooltip text={[`${'Hand'}: ${handAffintiy}`]}>
             <Icon key={'Hand'} src={getAffinityImage(handAffintiy)} />
           </Tooltip>
-        </HorGroup>
+        </Grouping>
       </Overlay>
       <Overlay bottom={1.75} left={0.3}>
-        <HorGroup>
+        <Grouping>
           <Text size={0.6}>Lvl</Text>
           <Text size={0.75}>{kami.level}</Text>
-        </HorGroup>
+        </Grouping>
       </Overlay>
       <Overlay bottom={0} fullWidth>
         <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
@@ -93,7 +93,7 @@ const Image = styled.img`
   height: 14vw;
 `;
 
-const HorGroup = styled.div`
+const Grouping = styled.div`
   position: relative;
   height: 100%;
 

@@ -7,6 +7,7 @@ import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiImage } from './KamiImage';
 import { Stats } from './Stats';
+import { Traits } from './Traits';
 
 interface Props {
   data: {
@@ -52,6 +53,7 @@ export const Banner = (props: Props) => {
       <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
         <Stats kami={kami} />
+        <Traits kami={kami} />
         <Overlay bottom={0.6} right={0.6}>
           <Footer onClick={handleAccountClick()}>
             {isMine(kami) ? 'yours' : kami.account?.name}
