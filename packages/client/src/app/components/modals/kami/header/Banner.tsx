@@ -1,14 +1,14 @@
 import { Kami, isResting } from 'network/shapes/Kami';
 import styled from 'styled-components';
 
-import { ExperienceBar, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { StatIcons } from 'assets/images/icons/stats';
 import { StatDescriptions } from 'constants/stats';
 import { Account } from 'network/shapes/Account';
 import { Stat } from 'network/shapes/Stats';
-import { getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
+import { KamiImage } from './KamiImage';
 
 interface Props {
   data: {
@@ -51,38 +51,16 @@ export const Banner = (props: Props) => {
       };
   };
 
-  const AffinityIcon = (trait: string, affinity = 'NORMAL') => {
-    return (
-      <Tooltip text={[`${trait}: ${affinity}`]}>
-        <Icon key={trait} src={getAffinityImage(affinity)} />
-      </Tooltip>
-    );
-  };
-
   ///////////////////
   // DISPLAY
 
   return (
     <Container>
-      <Image src={kami.image} />
+      <KamiImage account={account} kami={kami} actions={props.actions} />
       <Content>
         <ContentTop>
           <TitleRow>
             <Title>{kami.name}</Title>
-            <AffinityBox>
-              {AffinityIcon('Body', kami.traits?.body?.affinity)}
-              {AffinityIcon('Hand', kami.traits?.hand?.affinity)}
-            </AffinityBox>
-          </TitleRow>
-          <TitleRow>
-            <ExperienceBar
-              level={kami.level}
-              current={kami.experience.current}
-              total={kami.experience.threshold}
-              triggerLevelUp={() => props.actions.levelUp(kami)}
-              disabled={!!getLevelUpDisabledReason()}
-              disabledReason={getLevelUpDisabledReason()}
-            />
           </TitleRow>
         </ContentTop>
         <ContentMiddle>
@@ -122,23 +100,9 @@ const Container = styled.div`
   flex-flow: row nowrap;
 `;
 
-const AffinityBox = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-
-  margin: 0.3vw 0.5vw;
-`;
-
-const Image = styled.img`
-  border-radius: 8px 0px 0px 0px;
-  border-right: solid black 0.15vw;
-  height: 14vw;
-`;
-
 const Icon = styled.img`
   height: 2vw;
 `;
-
 const Content = styled.div`
   flex-grow: 1;
   padding: 0.7vw;
@@ -167,10 +131,6 @@ const Title = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 2vw;
-`;
-
-const SubImage = styled.img`
-  height: 1vw;
 `;
 
 const ContentMiddle = styled.div`
