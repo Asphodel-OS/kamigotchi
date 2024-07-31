@@ -107,13 +107,10 @@ export const Kards = (props: Props) => {
     if (isDead(kami)) return ReviveButton(kami, account, actions.feed);
   };
 
-  // Rendering of Individual Kami Cards in the Party Modal
-  // TODO: consider ideal ordering here
-  const KamiCards = (kamis: Kami[]) => {
-    let myKamis = [...kamis];
-    return (
-      <>
-        {myKamis.reverse().map((kami) => {
+  return (
+    <Container>
+      {kamis.length > 0 ? (
+        kamis.map((kami) => {
           return (
             <KamiCard
               key={kami.entityIndex}
@@ -126,20 +123,19 @@ export const Kards = (props: Props) => {
               showCooldown
             />
           );
-        })}
-      </>
-    );
-  };
-
-  ///////////////////
-  // EMPTY TEXT
-
-  if (kamis.length === 0) {
-    return <EmptyText>You have no kamis. Get some.</EmptyText>;
-  }
-
-  return KamiCards(kamis);
+        })
+      ) : (
+        <EmptyText>You have no kamis. Get some.</EmptyText>
+      )}
+    </Container>
+  );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.45vw;
+`;
 
 const EmptyText = styled.div`
   font-family: Pixel;

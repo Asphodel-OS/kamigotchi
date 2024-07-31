@@ -36,7 +36,6 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
   border: 0.15vw solid black;
   border-radius: 0.6vw;
   color: black;
-  margin: 0.15vw;
 
   display: flex;
   flex-flow: row nowrap;

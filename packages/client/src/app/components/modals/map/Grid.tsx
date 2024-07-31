@@ -41,7 +41,7 @@ export const Grid = (props: Props) => {
     }
 
     // create each row
-    const width = maxX - minX + 3;
+    const width = maxX - minX + 2;
     const height = maxY - minY + 3;
     const grid = new Array<Room[]>();
     for (let i = 0; i < height; i++) {
@@ -144,7 +144,7 @@ const Container = styled.div`
 const Background = styled.img`
   width: 100%;
   height: 100%;
-  border-radius: 0px 0px 0.45vw 0.45vw;
+  border-radius: 0px 0px 1.05vw 1.05vw;
   image-rendering: pixelated;
 `;
 

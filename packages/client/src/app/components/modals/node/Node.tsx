@@ -163,7 +163,6 @@ export function registerNodeModal() {
             />,
           ]}
           canExit
-          noPadding
           truncate
         >
           {getTotalKamis() > 0 ? (

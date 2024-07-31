@@ -72,11 +72,11 @@ export const Bottom = (props: Props) => {
 
 const Container = styled.div`
   border: solid 0.15vw black;
-  border-radius: 0 0 0.3vw 0.3vw;
+  border-radius: 0 0 0.6vw 0.6vw;
   width: 100%;
   height: 100%;
   background-color: white;
-  padding: 0.3vw;
+  padding: 0.45vw;
 
   display: flex;
   flex-flow: column nowrap;

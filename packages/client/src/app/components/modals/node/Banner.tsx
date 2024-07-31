@@ -140,7 +140,7 @@ export const Banner = (props: Props) => {
 
 const Container = styled.div`
   color: black;
-  padding: 0.3vw;
+  padding: 0.6vw;
   gap: 0.3vw;
   display: flex;
   flex-flow: column nowrap;
@@ -154,7 +154,7 @@ const Content = styled.div`
 `;
 
 const Image = styled.img`
-  border-radius: 0.3vw;
+  border-radius: 0.6vw;
   border: solid black 0.15vw;
   height: 11vw;
   width: 11vw;

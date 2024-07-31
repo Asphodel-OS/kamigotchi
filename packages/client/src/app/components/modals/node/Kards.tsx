@@ -123,8 +123,7 @@ export const Kards = (props: Props) => {
 };
 
 const Container = styled.div`
-  padding: 0.4vw;
-  gap: 0.3vw;
+  gap: 0.45vw;
   display: flex;
   flex-flow: column nowrap;
 `;
