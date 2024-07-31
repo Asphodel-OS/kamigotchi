@@ -1,4 +1,4 @@
-import { AffinityIcons } from 'assets/images/icons/stats';
+import { AffinityIcons } from 'assets/images/icons/affinities';
 import { ItemImages } from 'assets/images/items';
 
 export const getAffinityImage = (name: string | undefined) => {
