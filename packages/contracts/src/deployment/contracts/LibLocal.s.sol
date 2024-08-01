@@ -3,7 +3,6 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Script.sol";
 import "forge-std/Vm.sol";
-import { console } from "forge-std/console.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import "./Imports.sol";
@@ -57,7 +56,6 @@ library LibLocal {
       LibHarvest.start(components, prodID);
       LibPet.setState(components, petIDs[i], "HARVESTING");
       LibPet.setLastActionTs(components, petIDs[i], block.timestamp);
-      console.log("pet", petIDs[i], "harvesting", prodID);
     }
   }
 }

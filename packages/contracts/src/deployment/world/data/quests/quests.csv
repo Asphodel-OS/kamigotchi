@@ -1,313 +1,317 @@
-﻿Author,Index,Title,Status,Class,SubType,Operator,DeltaType,ConditionDescription,IndexFor,ValueFor,Daily,REPUTATION,LOYALTY,Introduction text,Resolution text,Requirements,Objectives,Rewards,Tags,Lethe Notes,Mina Rep
+﻿Author,Index,Title,Status,Class,SubType,Operator,DeltaType,ConditionDescription,IndexFor,ValueFor,Daily,REPUTATION,LOYALTY,Introduction text,Resolution text,Requirements,Objectives,Rewards,Tags
 "Lethe Asphodel, vaitarna, Nedu",1,An Unknown World,Ingame,Quest,,,,,,,No,5,,"Welcome to Kamigotchi World. I’ll be your guide. 
 
 Start by exploring your surroundings. You can move around by using the Map Menu - try clicking the buttons in the top left of your screen. 
 
-Work out how to move, and then move 3 times. Afterwards, I’ll have a reward for you! ",Well done. You’ll be rewarded for each Quest you complete - complements of the Kamigotchi World Tourism Association.,None.,Move 3 times,1 Gacha Ticket,,,
-,1,,Ingame,Objective,MOVE,MIN,INC,Move 3 times,,3,No,,,,,,,,,,
-,1,,Ingame,Reward,MINT20,,,1 Gacha Ticket,0,1,No,,,,,,,,,,
+Work out how to move, and then move 3 times. Afterwards, I’ll have a reward for you! ",Well done. You’ll be rewarded for each Quest you complete - complements of the Kamigotchi World Tourism Association.,None.,Move 3 times,1 Gacha Ticket,
+,1,,Ingame,Objective,MOVE,MIN,INC,Move 3 times,,3,No,,,,,,,,
+,1,,Ingame,Reward,MINT20,,,1 Gacha Ticket,0,1,No,,,,,,,,
 "Lethe Asphodel, vaitarna, Nedu",2,An ode to MUSU,Ingame,Quest,,,,,,,No,5,,"Your Kamigotchi can be used to harvest resources from this world. Open the harvesting menu in the top left bar and take a look. 
 
-You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 11 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),,,
-,2,,Ingame,Requirement,QUEST,COMPLETE,,Quest 11,11,,No,,,,,,,,,,
-,2,,Ingame,Objective,HARVEST_TIME,MIN,CURR,Harvest for > 5 minutes,,300,No,,,,,,,,,,
-,2,,Ingame,Reward,ITEM,,,1 XP Candy (small),106,1,No,,,,,,,,,,
+You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 11 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),
+,2,,Ingame,Requirement,QUEST,COMPLETE,,Quest 11,11,,No,,,,,,,,
+,2,,Ingame,Objective,HARVEST_TIME,MIN,CURR,Harvest for > 5 minutes,,300,No,,,,,,,,
+,2,,Ingame,Reward,ITEM,,,1 XP Candy (small),106,1,No,,,,,,,,
 "torngarsuk, vaitarna, Nedu",3,There are levels to this,Ingame,Quest,,,,,,,No,5,,"Unlike humans, Kamigotchi have the potential to grow and change.  The simplest way to do this is by using XP, which is generated as a byproduct of Harvesting, to level them up.  
 
-Try it.  ","Good job! One other way to increase your XP is by using XP Candies - while these are normally rare, you can occasionally get them from these quests…",Quest 2 Completed (An ode to MUSU),Level up a Kamigotchi,x2 Pom-Pom Fruit Candy,,,
-,3,,Ingame,Requirement,QUEST,COMPLETE,,Quest 2,2,,No,,,,,,,,,,
-,3,,Ingame,Objective,KAMI_LEVELS_TOTAL,MIN,CURR,Level up a Kamigotchi,,1,No,,,,,,,,,,
-,3,,Ingame,Reward,ITEM,,,x2 Pom-Pom Fruit Candy,102,2,No,,,,,,,,,,
+Try it.  ","Good job! One other way to increase your XP is by using XP Candies - while these are normally rare, you can occasionally get them from these quests…",Quest 2 Completed (An ode to MUSU),Level up a Kamigotchi,x2 Pom-Pom Fruit Candy,
+,3,,Ingame,Requirement,QUEST,COMPLETE,,Quest 2,2,,No,,,,,,,,
+,3,,Ingame,Objective,KAMI_LEVELS_TOTAL,MIN,CURR,Level up a Kamigotchi,,1,No,,,,,,,,
+,3,,Ingame,Reward,ITEM,,,x2 Pom-Pom Fruit Candy,102,2,No,,,,,,,,
 "Lethe Asphodel, vaitarna, Nedu",4,Skill issue,Ingame,Quest,,,,,,,No,5,,"Each time a Kami levels up, they gain a skill point. Spending skill points empowers your Kamigotchi. 
 
 Try spending one now. But choose carefully - it’s permanent. ","I’m sure that was a good choice. 
 
-Right?",Quest 3 completed (There are levels to this),Spend a Skill Point,1 XP Candy (Small),,,
-,4,,Ingame,Requirement,QUEST,COMPLETE,,Quest 3,3,,No,,,,,,,,,,
-,4,,Ingame,Objective,SKILL_POINTS_USE,MIN,CURR,Spend a Skill Point,,1,No,,,,,,,,,,
-,4,,Ingame,Reward,ITEM,,,1 XP Candy (Medium),105,1,No,,,,,,,,,,
-"torngarsuk, vaitarna, Nedu",5,Back to the mines,Ingame,Quest,,,,,,,No,5,,"As your Kamigotchi harvest, they produce Musu. Musu is a universal form of energy in this world. You’ll need it. Gather some.  ","Well done. Now you need to learn how to use MUSU. ",Quest 2 Completed (An ode to MUSU),Collect 100 $MUSU,1 Small XP Candy,,,
-,5,,Ingame,Requirement,QUEST,COMPLETE,,Quest 2,2,,No,,,,,,,,,,
-,5,,Ingame,Objective,COIN_TOTAL,MIN,INC,Collect 100 $MUSU,,100,No,,,,,,,,,,
-,5,,Ingame,Reward,ITEM,,,1 Ribbon,110,1,No,,,,,,,,,,
-,5,,Ingame,Reward,ITEM,,,1 Small XP Candy,106,1,No,,,,,,,,,,
+Right?",Quest 3 completed (There are levels to this),Spend a Skill Point,1 XP Candy (Small),
+,4,,Ingame,Requirement,QUEST,COMPLETE,,Quest 3,3,,No,,,,,,,,
+,4,,Ingame,Objective,SKILL_POINTS_USE,MIN,CURR,Spend a Skill Point,,1,No,,,,,,,,
+,4,,Ingame,Reward,ITEM,,,1 XP Candy (Medium),105,1,No,,,,,,,,
+"torngarsuk, vaitarna, Nedu",5,Back to the mines,Ingame,Quest,,,,,,,No,5,,"As your Kamigotchi harvest, they produce Musu. Musu is a universal form of energy in this world. You’ll need it. Gather some.  ","Well done. Now you need to learn how to use MUSU. ",Quest 2 Completed (An ode to MUSU),Collect 100 $MUSU,1 Small XP Candy,
+,5,,Ingame,Requirement,QUEST,COMPLETE,,Quest 2,2,,No,,,,,,,,
+,5,,Ingame,Objective,COIN_TOTAL,MIN,INC,Collect 100 $MUSU,,100,No,,,,,,,,
+,5,,Ingame,Reward,ITEM,,,1 Ribbon,110,1,No,,,,,,,,
+,5,,Ingame,Reward,ITEM,,,1 Small XP Candy,106,1,No,,,,,,,,
 "Nedu, Lethe Asphodel",6,There are more levels to this,Ingame,Quest,,,,,,,No,5,,"Your Kamigotchi is getting stronger. Good!
 
 Each level takes more XP than the last. It’ll take a lot of time to reach level 100…. 
 
 For now, just get to level 10. That much is easy.","Now we’re getting started. 
 
-I wonder how you’re specializing your Kamigotchi….",Have completed There are levels to this (3),Raise a Kamigotchi to level 10,"2 Gakki ",,,
-,6,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are levels to this (3),3,,No,,,,,,,,,,
-,6,,Ingame,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 10,,10,No,,,,,,,,,,
-,6,,Ingame,Reward,ITEM,,,2 Gakki,103,2,No,,,,,,,,,,
+I wonder how you’re specializing your Kamigotchi….",Have completed There are levels to this (3),Raise a Kamigotchi to level 10,"2 Gakki ",
+,6,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are levels to this (3),3,,No,,,,,,,,
+,6,,Ingame,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 10,,10,No,,,,,,,,
+,6,,Ingame,Reward,ITEM,,,2 Gakki,103,2,No,,,,,,,,
 "Nedu, Lethe Asphodel",7,There are even more levels to this,Ingame,Quest,,,,,,,No,20,,"It seems you’re a real Kamigotchi trainer. I appreciate the dedication. 
 
-I want to see a level 20 Kamigotchi, now. I’ve got a few XP candies here as a reward. ","Isn’t it beautiful, to see your Kamigotchi grow? ",Have completed There are more levels to this (6),Raise a Kamigotchi to level 20,3 Medium XP Candy,,,
-,7,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are levels to this II (6),6,,No,,,,,,,,,,
-,7,,Ingame,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 20,,20,No,,,,,,,,,,
-,7,,Ingame,Reward,ITEM,,,2 Medium XP Candy,105,2,No,,,,,,,,,,
+I want to see a level 20 Kamigotchi, now. I’ve got a few XP candies here as a reward. ","Isn’t it beautiful, to see your Kamigotchi grow? ",Have completed There are more levels to this (6),Raise a Kamigotchi to level 20,3 Medium XP Candy,
+,7,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are levels to this II (6),6,,No,,,,,,,,
+,7,,Ingame,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 20,,20,No,,,,,,,,
+,7,,Ingame,Reward,ITEM,,,2 Medium XP Candy,105,2,No,,,,,,,,
 "Lethe Asphodel, torngarsuk, vaitarna",8,Spring Rites,Ingame,Quest,,,,,,,No,5,,"Your first Kamigotchi has fallen. But Death is not permanent in this world. 
 
 You can resurrect your Kamigotchi by using a Ribbon. This one is free. The rest will not be. 
 
-Be careful. ",Here’s a freebie. Try to be more careful next time.,Have 1 Kamigotchi Liquidated,"None - Free item ",Ribbon,,,
-,8,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,,,
-,8,,Ingame,Requirement,LIQUIDATED_VICTIM,MIN,,Have a kami liquidated,,1,No,,,,,,,,,,
-,8,,Ingame,Reward,ITEM,,,Ribbon,110,1,No,,,,,,,,,,
+Be careful. ",Here’s a freebie. Try to be more careful next time.,Have 1 Kamigotchi Liquidated,"None - Free item ",Ribbon,
+,8,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,
+,8,,Ingame,Requirement,LIQUIDATED_VICTIM,MIN,,Have a kami liquidated,,1,No,,,,,,,,
+,8,,Ingame,Reward,ITEM,,,Ribbon,110,1,No,,,,,,,,
 Nedu,,"Another day, another quest I",Shelved,,,,,,,,No,5,,"Have you noticed you now have access to Daily Quests? Completing these quests is your way to get official, Kamigotchi World Tourism Association approved Giftboxes. 
 
 These boxes contain, well, gifts. Give them a try. 
 
-Complete 3 daily quests to earn an extra reward! ",Your persistence has been duly noted. Enjoy.,Have completed Back to the mines (5),"Complete 3 daily quests ",Giftbox,,,
+Complete 3 daily quests to earn an extra reward! ",Your persistence has been duly noted. Enjoy.,Have completed Back to the mines (5),"Complete 3 daily quests ",Giftbox,
 Nedu,16,"Another day, another quest II",Shelved,,,,,,,,No,20,,"Did you know there are some super-rare items to be found in Giftboxes? Because there are. Good luck. 
 
-Collect another 7 and we’ll give you more bonus boxes. Maybe it’ll help! ","This is the dedication we're looking for. Enjoy your reward, you deserve it.","Have completed Another day, another quest I (9)","Complete 7daily quests ",Giftbox x3,,,
+Collect another 7 and we’ll give you more bonus boxes. Maybe it’ll help! ","This is the dedication we're looking for. Enjoy your reward, you deserve it.","Have completed Another day, another quest I (9)","Complete 7daily quests ",Giftbox x3,
 Nedu,11,"Another day, another quest III",Shelved,,,,,,,,No,50,,"Want to know a secret? We’ll probably be adding more items to the Giftboxes over time. It’s up to you, but holding on to them is also a viable option. 
 
 Ok, you know the drill. See you in three weeks. ","A whole 7 boxes this time!
 
-Honestly, we hope you got some of the rares by now. If not, keep going….","Have completed Another day, another quest II (10)","Complete 21 daily quests ",Giftbox x7,,,
+Honestly, we hope you got some of the rares by now. If not, keep going….","Have completed Another day, another quest II (10)","Complete 21 daily quests ",Giftbox x7,
 Nedu,9,Supporting local businesses,Ingame,Quest,,,,,,,No,5,,"Now you have MUSU. 
 
 MUSU is a form of energy that exists within this world. It can, sometimes, be used to purchase things. 
 
-There’s a shop located somewhere nearby. I don’t approve of the owner, but you should seek it out and try trading with her. ",Mina is very thankful that you bought something from her. She’s so thankful that she gave you Holy Dust. You might want to accept the next quest before using it…,Have completed Back to the mines (5),Buy something from the store,"Holy Dust, 1x Giftbox",,,
-,9,,Ingame,Requirement,QUEST,COMPLETE,,Have completed quest 5,5,,No,,,,,,,,,,
-,9,,Ingame,Objective,ITEM_BUY_TOTAL,MIN,INC,Buy something from the store,,1,No,,,,,,,,,,
-,9,,Ingame,Reward,ITEM,,,1 holy dust,111,1,No,,,,,,,,,,
-,9,,Ingame,Reward,ITEM,,,1 gift box,10001,1,No,,,,,,,,,,
+There’s a shop located somewhere nearby. I don’t approve of the owner, but you should seek it out and try trading with her. ",Mina is very thankful that you bought something from her. She’s so thankful that she gave you Holy Dust. You might want to accept the next quest before using it…,Have completed Back to the mines (5),Buy something from the store,"Holy Dust, 1x Giftbox",
+,9,,Ingame,Requirement,QUEST,COMPLETE,,Have completed quest 5,5,,No,,,,,,,,
+,9,,Ingame,Objective,ITEM_BUY_TOTAL,MIN,INC,Buy something from the store,,1,No,,,,,,,,
+,9,,Ingame,Reward,ITEM,,,1 holy dust,111,1,No,,,,,,,,
+,9,,Ingame,Reward,ITEM,,,1 gift box,10001,1,No,,,,,,,,
 "Lethe Asphodel, torngarsuk, vaitarna",10,An Unforgiving World,Ingame,Quest,,,,,,,No,10,,"It seems you understand how to harvest. 
 
 There is another way to gain MUSU - from other Kamigotchi. Kamigotchi left with low Health while harvesting are open to liquidation. 
 
-Try it out. Gather some MUSU from a Kamigotchi using one of your own Kamigotchi.","Congratulations. You’re a murderer now. ",Have completed Back to the mines (5),Liquidate 1 Kamigotchi,"Medium XP Candy, 1x Giftbox",,,
-,10,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,,,
-,10,,Ingame,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 1 Kamigotchi,,1,No,,,,,,,,,,
-,10,,Ingame,Reward,ITEM,,,Medium XP Candy,105,1,No,,,,,,,,,,
-,10,,Ingame,Reward,ITEM,,,1 gift box,10001,1,No,,,,,,,,,,
+Try it out. Gather some MUSU from a Kamigotchi using one of your own Kamigotchi.","Congratulations. You’re a murderer now. ",Have completed Back to the mines (5),Liquidate 1 Kamigotchi,"Medium XP Candy, 1x Giftbox",
+,10,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,
+,10,,Ingame,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 1 Kamigotchi,,1,No,,,,,,,,
+,10,,Ingame,Reward,ITEM,,,Medium XP Candy,105,1,No,,,,,,,,
+,10,,Ingame,Reward,ITEM,,,1 gift box,10001,1,No,,,,,,,,
 Lethe Asphodel,11,Your First Kamigotchi,Ingame,Quest,,,,,,,No,5,,"You got a Gacha Ticket as a reward for the last quest. Good job. 
 
 These tickets can be used to mint Kamigotchi on this testnet. These are testnet-only Kami, so don’t get too attached. It’s not like there’s a way to save them…
 
-Seek out the vending machine and get yourself a Kamigotchi. ",,Quest 1 Completed (An Unknown World),Have 1 Kamigotchi,"1x Ghost Gum ",,,
-,11,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,,,
-,11,,Ingame,Objective,PET721_MINT,MIN,CURR,Mint 1 Kami,,1,No,,,,,,,,,,
-,11,,Ingame,Reward,ITEM,,,1 Gum,101,1,No,,,,,,,,,,
+Seek out the vending machine and get yourself a Kamigotchi. ",,Quest 1 Completed (An Unknown World),Have 1 Kamigotchi,"1x Ghost Gum ",
+,11,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,
+,11,,Ingame,Objective,PET721_MINT,MIN,CURR,Mint 1 Kami,,1,No,,,,,,,,
+,11,,Ingame,Reward,ITEM,,,1 Gum,101,1,No,,,,,,,,
 Lethe Asphodel,12,Proving Yourself,Ingame,Quest,,,,,,,No,0,,"You’re doing well. 
 
 Completing quests for me will raise your REPUTATION. As your REPUTATION grows, you’ll be able to claim rewards that manifest both within and outside of this world. 
 
-For now, raise your REPUTATION to 25 if you want a second testnet Kamigotchi. ",,Have 10 Reputation,Have 25 Reputation,1 Gacha Ticket,,,
-,12,,Ingame,Requirement,REPUTATION,MIN,,Have 10 REPUTATION,1,10,No,,,,,,,,,,
-,12,,Ingame,Objective,REPUTATION,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,,,
-,12,,Ingame,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
+For now, raise your REPUTATION to 25 if you want a second testnet Kamigotchi. ",,Have 10 Reputation,Have 25 Reputation,1 Gacha Ticket,
+,12,,Ingame,Requirement,REPUTATION,MIN,,Have 10 REPUTATION,1,10,No,,,,,,,,
+,12,,Ingame,Objective,REPUTATION,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,
+,12,,Ingame,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,
 Lethe Asphodel,13,Further Progression,Ingame,Quest,,,,,,,No,0,,"You’re getting started. 
 
 There are things to come for those with sufficient REPUTATION. Quests are one thing, but if you explore this world you’ll find other ways to raise your REPUTATION. 
 
-Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 12 Completed (Proving Yourself),Have 100 Reputation,1 Gacha Ticket,,,
-,13,,Ingame,Requirement,QUEST,COMPLETE,,Quest 12,12,,No,,,,,,,,,,
-,13,,Ingame,Objective,REPUTATION,MIN,CURR,Have 100 REPUTATION,1,100,No,,,,,,,,,,
-,13,,Ingame,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
+Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 12 Completed (Proving Yourself),Have 100 Reputation,1 Gacha Ticket,
+,13,,Ingame,Requirement,QUEST,COMPLETE,,Quest 12,12,,No,,,,,,,,
+,13,,Ingame,Objective,REPUTATION,MIN,CURR,Have 100 REPUTATION,1,100,No,,,,,,,,
+,13,,Ingame,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,
 Nedu,14,The Kamigotchi Who Shall Be Named,Ingame,Quest,,,,,,,No,5,,"Deep within the forest lies a shrine - beside it is a board capable of renaming your Kamigotchi. Seek it out and bless one of your Kamigotchi with a new name. 
 
-",,Have completed Supporting local businesses (9),Name a Kamigotchi using Holy Dust,Giftbox,,,
-,14,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (9),9,,No,,,,,,,,,,
-,14,,Ingame,Requirement,GOAL,COMPLETE,,Complete Goal 1,1,,No,,,,,,,,,,
-,14,,Ingame,Objective,KAMI_NAME,MIN,INC,Name a Kamigotchi using Holy Dust,,1,No,,,,,,,,,,
-,14,,Ingame,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,,,
-Nedu,,Becoming a niche Kamigotchi micro-celebrity,Shelved,,,,,,,,No,,,You know what's better than one friend? Five of them. Collect your reward once you have 5 friends in your friend list.,"You're kinda famous now, congrats! Use your social powers for good.",Have completed Onchain friends (?),Have 5 friends,XP Candy (Medium),,nedu note: same as above,
-Nedu,,The Chatroom,Shelved,,,,,,,,No,,,Looks like these people are having fun… Why not join them? Connect your Farcaster account to start chatting.,Please be kind when using the chat! Remember a [REDACTED//gibberish] is sitting behind the screen. <3,Have completed Onchain friends (19),Connect your Farcaster account,XP Candy (Medium),,,
+",,Have completed Supporting local businesses (9),Name a Kamigotchi using Holy Dust,Giftbox,
+,14,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (9),9,,No,,,,,,,,
+,14,,Ingame,Requirement,GOAL,COMPLETE,,Complete Goal 1,1,,No,,,,,,,,
+,14,,Ingame,Objective,KAMI_NAME,MIN,INC,Name a Kamigotchi using Holy Dust,,1,No,,,,,,,,
+,14,,Ingame,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,
+Nedu,,Becoming a niche Kamigotchi micro-celebrity,Shelved,,,,,,,,No,,,You know what's better than one friend? Five of them. Collect your reward once you have 5 friends in your friend list.,"You're kinda famous now, congrats! Use your social powers for good.",Have completed Onchain friends (?),Have 5 friends,XP Candy (Medium),
+Nedu,,The Chatroom,Shelved,,,,,,,,No,,,Looks like these people are having fun… Why not join them? Connect your Farcaster account to start chatting.,Please be kind when using the chat! Remember a [REDACTED//gibberish] is sitting behind the screen. <3,Have completed Onchain friends (19),Connect your Farcaster account,XP Candy (Medium),
 Nedu,15,Got MUSU?,Ingame,Quest,,,,,,,No,10,,"This world relies on MUSU to function. 
 
 You’ll need MUSU to repair broken parts of this world, as well as to purchase items at the shop, and, well…. you’ll see. 
 
-You’ll need to start gathering it seriously. Get 1000 MUSU and come back to me. ",,Have completed Back to the mines (5),Harvest 1000 MUSU,Giftbox x 2,,,
-,15,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,,,
-,15,,Ingame,Objective,COIN_TOTAL,MIN,INC,Harvest 1000 MUSU,,1000,No,,,,,,,,,,
-,15,,Ingame,Reward,ITEM,,,Giftbox x 2,10001,2,No,,,,,,,,,,
+You’ll need to start gathering it seriously. Get 1000 MUSU and come back to me. ",,Have completed Back to the mines (5),Harvest 1000 MUSU,Giftbox x 2,
+,15,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,
+,15,,Ingame,Objective,COIN_TOTAL,MIN,INC,Harvest 1000 MUSU,,1000,No,,,,,,,,
+,15,,Ingame,Reward,ITEM,,,Giftbox x 2,10001,2,No,,,,,,,,
 "Lethe Asphodel, torngarsuk, vaitarna",16,Harden Your Heart,Ingame,Quest,,,,,,,No,10,,"Liquidating Kamigotchi can be a very easy way to get MUSU. 
 
 Did you know that liquidating Kamigotchi is much easier if the attacker has the right Type? Well, it is. 
 
-Go hunt down another 5 Kami. I’ll have something very special for you once you’re done. You’ll like it. ",,Quest 10 Completed (An Unforgiving World),Liquidate 5 Kamigotchi,Kami Mochi,,"I rlly like the idea of using dark-souls style covenants and would like to touch on this, but putting this one on hold until we develop that more",
-,16,,Ingame,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,,,
-,16,,Ingame,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 5 Kamigotchi,,5,No,,,,,,,,,,
-,16,,Ingame,Reward,ITEM,,,Kami Mochi,113,1,No,,,,,,,,,,
+Go hunt down another 5 Kami. I’ll have something very special for you once you’re done. You’ll like it. ",,Quest 10 Completed (An Unforgiving World),Liquidate 5 Kamigotchi,Kami Mochi,
+,16,,Ingame,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,
+,16,,Ingame,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 5 Kamigotchi,,5,No,,,,,,,,
+,16,,Ingame,Reward,ITEM,,,Kami Mochi,113,1,No,,,,,,,,
 ,17,Part-Time Work,Holding back - DNI,Quest,,,,,,,No,,10,"Interested in an opportunity? Well, I pay well… and I reward LOYALTY.
 
-I’m gathering materials to help me restock. Bring me a stone and a wooden stick. You might be able to find them in those giftboxes…",,Present in Mina’s Shop,Give 1 Stone and one Wooden Stick to Mina,3x Pom Pom,,,
-,17,,Holding back - DNI,Requirement,ROOM,IS,,Mina’s Shop,13,,No,,,,,,,,,,
-,17,,Holding back - DNI,Objective,,,,,,,No,,,,,,,,,,
-,17,,Holding back - DNI,Reward,ITEM,,,3 pom pom,102,3,No,,,,,,,,,,
+I’m gathering materials to help me restock. Bring me a stone and a wooden stick. You might be able to find them in those giftboxes…",,Present in Mina’s Shop,Give 1 Stone and one Wooden Stick to Mina,3x Pom Pom,
+,17,,Holding back - DNI,Requirement,ROOM,IS,,Mina’s Shop,13,,No,,,,,,,,
+,17,,Holding back - DNI,Objective,,,,,,,No,,,,,,,,
+,17,,Holding back - DNI,Reward,ITEM,,,3 pom pom,102,3,No,,,,,,,,
 ,18,The way of MUSU,Holding back - DNI,Quest,,,,,,,No,25,,"It seems like you’re starting to get the hang of this. 
 
-Time to get serious. Harvest ten thousand MUSU before this testnet ends. In exchange, I’ll give you an item on mainnet when it’s ready. Sounds fair? ",,Completed Ode To Musu,Harvest 10000 Musu,Kamigotchi Beta Tester Badge,,,
-,18,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Got MUSU? (15) ",15,,No,,,,,,,,,,
-,18,,Holding back - DNI,Objective,COIN_TOTAL,MIN,CURR,Harvest 10000 Musu,,10000,No,,,,,,,,,,
-,18,,Holding back - DNI,Reward,ITEM,,,,,,No,,,,,,,,,,
+Time to get serious. Harvest ten thousand MUSU before this testnet ends. In exchange, I’ll give you an item on mainnet when it’s ready. Sounds fair? ",,Completed Ode To Musu,Harvest 10000 Musu,Kamigotchi Beta Tester Badge,
+,18,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Got MUSU? (15) ",15,,No,,,,,,,,
+,18,,Holding back - DNI,Objective,COIN_TOTAL,MIN,CURR,Harvest 10000 Musu,,10000,No,,,,,,,,
+,18,,Holding back - DNI,Reward,ITEM,,,,,,No,,,,,,,,
 ,19,Moving Forward,Holding back - DNI,Quest,,,,,,,No,10,,"Parts of this world are severely damaged. 
 
 Right now, the southern parts of this world are sealed off - there’s some sort of strange gate south of the vending machine preventing further progress. 
 
-Why don’t you try and fix it? ",,"Goal 1 Has Not Been Completed, Ode To Musu (2) Completed","Contribute at least Bronze level to Goal 1 ",3x Giftbox,,,
-,19,,Holding back - DNI,Requirement,GOAL,NOT,,Goal 1 Has Not Been Completed,1,,No,,,,,,,,,,
-,19,,Holding back - DNI,Requirement,QUEST,COMPLETE,,Ode To Musu (2) Completed,2,,No,,,,,,,,,,
-,19,,Holding back - DNI,Objective,,,,Clear Goal 1,,,No,,,,,,,,,,
-,19,,Holding back - DNI,Reward,ITEM,,,3x Giftbox,10001,3,No,,,,,,,,,,
+Why don’t you try and fix it? ",,"Goal 1 Has Not Been Completed, Ode To Musu (2) Completed","Contribute at least Bronze level to Goal 1 ",3x Giftbox,
+,19,,Holding back - DNI,Requirement,GOAL,NOT,,Goal 1 Has Not Been Completed,1,,No,,,,,,,,
+,19,,Holding back - DNI,Requirement,QUEST,COMPLETE,,Ode To Musu (2) Completed,2,,No,,,,,,,,
+,19,,Holding back - DNI,Objective,,,,Clear Goal 1,,,No,,,,,,,,
+,19,,Holding back - DNI,Reward,ITEM,,,3x Giftbox,10001,3,No,,,,,,,,
 ,20,Kamigotchi Citizenship,Ingame,Quest,,,,,,,No,,,"You’ve truly proven yourself. 
 
 This world won’t last…….. but I can give you something that will. I need help here….. so work your reputation up to 300 and I’ll give you an NFT. We’ve got plans for this baby, but for now….. 
 
-This NFT won’t be available after the testnet period ends. Good luck.",,At least 50 Reputation,Have 300 Reputation,"Kamigotchi World Passport (NFT) ",,,
-,20,,Ingame,Requirement,REPUTATION,MIN,,"50 Reputation ",1,50,No,,,,,,,,,,
-,20,,Ingame,Objective,REPUTATION,MIN,CURR,Have 300 Reputation,1,300,No,,,,,,,,,,
-,20,,Ingame,Reward,NFT,,,"Kamigotchi World Passport (NFT) ",,,No,,,,,,,,,,
+This NFT won’t be available after the testnet period ends. Good luck.",,At least 50 Reputation,Have 300 Reputation,"Kamigotchi World Passport (NFT) ",
+,20,,Ingame,Requirement,REPUTATION,MIN,,"50 Reputation ",1,50,No,,,,,,,,
+,20,,Ingame,Objective,REPUTATION,MIN,CURR,Have 300 Reputation,1,300,No,,,,,,,,
+,20,,Ingame,Reward,NFT,,,"Kamigotchi World Passport (NFT) ",,,No,,,,,,,,
 "Nedu, Lethe Asphodel",21,Daily Grind,Ingame,Quest,,,,,,,No,5,,"This world follows its own cycles. The calendar here isn't quite the same as in your world.... for example, things here run on a 36 hour day. Have you noticed?
 
-Now, Harvest 300 Musu during the daytime. Show me you understand the purpose of those waking hours!",,Have completed The Kamigotchi Who Shall Be Named (14),Harvest 300 Musu during daytime,1x Giftbox,,,
-Lethe Asphodel,21,,Ingame,Requirement,QUEST,COMPLETE,,Have completed “The Kamigotchi who shall be named” (14),14,,No,,,,,,,,,,
-Lethe Asphodel,21,,Ingame,Objective,HARVEST_WHEN_DAYLIGHT,MIN,INC,Harvest 300 Musu during daytime,1,300,No,,,,,,,,,,
-Lethe Asphodel,21,,Ingame,Reward,ITEM,,,1x Giftbox,10001,1,No,,,,,,,,,,
+Now, Harvest 300 Musu during the daytime. Show me you understand the purpose of those waking hours!",,Have completed The Kamigotchi Who Shall Be Named (14),Harvest 300 Musu during daytime,1x Giftbox,
+Lethe Asphodel,21,,Ingame,Requirement,QUEST,COMPLETE,,Have completed “The Kamigotchi who shall be named” (14),14,,No,,,,,,,,
+Lethe Asphodel,21,,Ingame,Objective,HARVEST_WHEN_DAYLIGHT,MIN,INC,Harvest 300 Musu during daytime,1,300,No,,,,,,,,
+Lethe Asphodel,21,,Ingame,Reward,ITEM,,,1x Giftbox,10001,1,No,,,,,,,,
 Lethe Asphodel,22,A place of tranquility,Ingame,Quest,,,,,,,No,5,,"Kamigotchi world has three times of day - Daylight, Evenfall, and Moonside. Maybe that's a little different to your home world?
 
-Visit the riverside during Evenfall and meditate for a moment…",,Have completed Daily Grind (21),Visit Misty Riverside during the Evenfall,1x Medium XP Candy,,,
-Lethe Asphodel,22,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Daily Grind (21),21,,No,,,,,,,,,,
-Lethe Asphodel,22,,Ingame,Objective,ROOM,IS,BOOL,Visit Misty Riverside,1,,No,,,,,,,,,,
-Lethe Asphodel,22,,Ingame,Objective,PHASE,IS,BOOL,During Evenfall,2,,No,,,,,,,,,,
-Lethe Asphodel,22,,Ingame,Reward,ITEM,,,1x Medium XP Candy,105,1,No,,,,,,,,,,
-Lethe Asphodel,23,A dark forest…,Ingame,Quest,,,,,,,No,10,,Moonside is the time to hunt. Seek out and slay a Kamigotchi under the cover of darkness.... embrace the call of the night...,,Have completed A place of tranquility (22),Liquidate a Kamigotchi during nighttime,1x Kami Mochi,,,
-Lethe Asphodel,23,,Ingame,Requirement,QUEST,COMPLETE,,Have completed A place of tranquility (22),22,,No,,,,,,,,,,
-Lethe Asphodel,23,,Ingame,Objective,LIQ_WHEN_MOONSIDE,MIN,INC,Liquidate 1 Kamigotchi during moonside,,1,No,,,,,,,,,,
-Lethe Asphodel,23,,Ingame,Reward,ITEM,,,1x Kami Mochi,113,1,No,,,,,,,,,,
+Visit the riverside during Evenfall and meditate for a moment…",,Have completed Daily Grind (21),Visit Misty Riverside during the Evenfall,1x Medium XP Candy,
+Lethe Asphodel,22,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Daily Grind (21),21,,No,,,,,,,,
+Lethe Asphodel,22,,Ingame,Objective,ROOM,IS,BOOL,Visit Misty Riverside,1,,No,,,,,,,,
+Lethe Asphodel,22,,Ingame,Objective,PHASE,IS,BOOL,During Evenfall,2,,No,,,,,,,,
+Lethe Asphodel,22,,Ingame,Reward,ITEM,,,1x Medium XP Candy,105,1,No,,,,,,,,
+Lethe Asphodel,23,A dark forest…,Ingame,Quest,,,,,,,No,10,,Moonside is the time to hunt. Seek out and slay a Kamigotchi under the cover of darkness.... embrace the call of the night...,,Have completed A place of tranquility (22),Liquidate a Kamigotchi during nighttime,1x Kami Mochi,
+Lethe Asphodel,23,,Ingame,Requirement,QUEST,COMPLETE,,Have completed A place of tranquility (22),22,,No,,,,,,,,
+Lethe Asphodel,23,,Ingame,Objective,LIQ_WHEN_MOONSIDE,MIN,INC,Liquidate 1 Kamigotchi during moonside,,1,No,,,,,,,,
+Lethe Asphodel,23,,Ingame,Reward,ITEM,,,1x Kami Mochi,113,1,No,,,,,,,,
 Lethe Asphodel,24,Feeding them up…,Ingame,Quest,,,,,,,No,5,,"As you've probably noticed, use of food is key to efficient Harvesting. The more you spend, the more you can earn.....
 
-Now you're getting into the groove of it. Feed Kamigotchi one hundred times in total to show me you understand how eating works.",,Have completed Got MUSU? (15),Feed a Kamigotchi 100 times,2x Giftbox,,,
-Lethe Asphodel,24,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (15),15,,No,,,,,,,,,,
-Lethe Asphodel,24,,Ingame,Objective,PET_FEED,MIN,INC,Feed a Kamigotchi 100 times,,100,No,,,,,,,,,,
-Lethe Asphodel,24,,Ingame,Reward,ITEM,,,2x Giftbox,10001,2,No,,,,,,,,,,
+Now you're getting into the groove of it. Feed Kamigotchi one hundred times in total to show me you understand how eating works.",,Have completed Got MUSU? (15),Feed a Kamigotchi 100 times,2x Giftbox,
+Lethe Asphodel,24,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (15),15,,No,,,,,,,,
+Lethe Asphodel,24,,Ingame,Objective,PET_FEED,MIN,INC,Feed a Kamigotchi 100 times,,100,No,,,,,,,,
+Lethe Asphodel,24,,Ingame,Reward,ITEM,,,2x Giftbox,10001,2,No,,,,,,,,
 Lethe Asphodel,25,A Serious Hiker,For Implementation,Quest,,,,,,,No,5,,"Exploration is a key part of mastering this world. Have you taken the time to really look around?
 
-I need you to put in your ten thousand steps for me. Move 100 times and I'll consider you a proven explorer. ",,Have completed There are more levels to this (6),Move 200 times,2x Medium XP Candy,,,
-Lethe Asphodel,25,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed There are more levels to this (6),6,,No,,,,,,,,,,
-Lethe Asphodel,25,,For Implementation,Objective,MOVE,MIN,INC,Move 100 times,,100,No,,,,,,,,,,
-Lethe Asphodel,25,,For Implementation,Reward,ITEM,,,2x Medium XP Candy,105,2,No,,,,,,,,,,
-Lethe Asphodel,26,Searching for somebody,For Implementation,Quest,,,,Reroll 10 times,,10,No,5,,"Seems like you're struggling to find the right Kamigotchi. Well, here's a consolation prize at least....",,Rerolled at least 10 times,Reroll 100 times,1x Giftbox,,,
-Lethe Asphodel,26,,For Implementation,Requirement,PET_REROLL,MIN,,Have rerolled at least 3 times,,3,No,,,,,,,,,,
-Lethe Asphodel,26,,For Implementation,Objective,PET_REROLL,MIN,INC,Reroll 10 times,,10,No,,,,,,,,,,
-Lethe Asphodel,26,,For Implementation,Reward,ITEM,,,2x Giftbox,10001,2,No,,,,,,,,,,
-Lethe Asphodel,27,,In progress,Quest,,,,,,,No,5,,,,,,,,,
-Lethe Asphodel,27,,In progress,Requirement,,,,,,,No,,,,,,,,,,
-Lethe Asphodel,27,,In progress,Objective,,,,,,,No,,,,,,,,,,
-Lethe Asphodel,27,,In progress,Reward,,,,,,,No,,,,,,,,,,
+I need you to put in your ten thousand steps for me. Move 100 times and I'll consider you a proven explorer. ",,Have completed There are more levels to this (6),Move 200 times,2x Medium XP Candy,
+Lethe Asphodel,25,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed There are more levels to this (6),6,,No,,,,,,,,
+Lethe Asphodel,25,,For Implementation,Objective,MOVE,MIN,INC,Move 100 times,,100,No,,,,,,,,
+Lethe Asphodel,25,,For Implementation,Reward,ITEM,,,2x Medium XP Candy,105,2,No,,,,,,,,
+Lethe Asphodel,26,Searching for somebody,For Implementation,Quest,,,,Reroll 10 times,,10,No,5,,"Seems like you're struggling to find the right Kamigotchi. Well, here's a consolation prize at least....",,Rerolled at least 10 times,Reroll 100 times,1x Giftbox,
+Lethe Asphodel,26,,For Implementation,Requirement,PET_REROLL,MIN,,Have rerolled at least 3 times,,3,No,,,,,,,,
+Lethe Asphodel,26,,For Implementation,Objective,PET_REROLL,MIN,INC,Reroll 10 times,,10,No,,,,,,,,
+Lethe Asphodel,26,,For Implementation,Reward,ITEM,,,2x Giftbox,10001,2,No,,,,,,,,
+Lethe Asphodel,27,,In progress,Quest,,,,,,,No,5,,,,,,,
+Lethe Asphodel,27,,In progress,Requirement,,,,,,,No,,,,,,,,
+Lethe Asphodel,27,,In progress,Objective,,,,,,,No,,,,,,,,
+Lethe Asphodel,27,,In progress,Reward,,,,,,,No,,,,,,,,
 "Nedu, Lethe Asphodel",10001,Desperate Measures,Ingame,Quest,,,,,,,No,15,,"Nice to see you again.
 
-We've had a lot of complaints about a specific individual recently. We'd appreciate it if you could help us... do something about this. The rewards will be good.",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",,,
-"Nedu, Lethe Asphodel",10001,,Ingame,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,,,
-"Nedu, Lethe Asphodel",10001,,Ingame,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,,,
-"Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,5x Giftbox,10001,5,No,,,,,,,,,,
-"Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,1x Large XP Candy,104,1,No,,,,,,,,,,
+We've had a lot of complaints about a specific individual recently. We'd appreciate it if you could help us... do something about this. The rewards will be good.",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",
+"Nedu, Lethe Asphodel",10001,,Ingame,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,5x Giftbox,10001,5,No,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,1x Large XP Candy,104,1,No,,,,,,,,
 ,10002,Fountain of Revival [Daily],Ingame,Quest,,,,,,,Yes,,,"Kamigotchi rise, fall, and rise again......
 
-Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",,,
-,10002,,Ingame,Requirement,ROOM,IS,,At room 11,11,,No,,,,,,,,,,
-,10002,,Ingame,Reward,ITEM,,,1 Revive,110,1,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 3 daily quests ",,3,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Holding back - DNI,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,,,
-,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Another day, another quest I (9)",9,,No,,,,,,,,,,
-,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 7 daily quests ",,7,No,,,,,,,,,,
-,,,Holding back - DNI,Reward,ITEM,,,3 Giftbox,10001,3,No,,,,,,,,,,
-,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Another day, another quest II (10)",10,,No,,,,,,,,,,
-,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 21 daily quests ",,21,No,,,,,,,,,,
-,,,Holding back - DNI,Reward,ITEM,,,3 Giftbox,10001,7,No,,,,,,,,,,
-Nedu,,Supporting local businesses II,Idea,,,,,,,,No,5,,Mina's shop is currently going through hard times (or so she says). Spend a cumulative 500 MUSU on her shop to help her out and complete this quest.,"Mina has given you a Large XP Candy as a reward for your continuous support. Use it wisely, these are hard to come by.",Have completed Supporting local businesses (9),Spend a cumulative 500 MUSU,XP Candy (Large),,,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (12),12,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,COIN_SPEND,MIN,INC,Spend a cumulative 500 MUSU,,500,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 XP Candy (Large),104,1,No,,,,,,,,,,
-Nedu,,Got MUSU? II,Needs Revision Work,,,,,,,,No,20,,"Scientists have just concluded that harvesting MUSU is beneficial for Kamigotchi long-term, per new studies. Prove the scientists right by harvesting 1000 MUSU.","We have been fooled once again. The studies were not true, at all. Well, at least you can enjoy these Gakki Cookie Sticks.",Have completed Got MUSU? (74),Harvest 5000 MUSU,Gakki Cookie Sticks,,,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (17),27,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,COIN_TOTAL,MIN,INC,Harvest 1000 MUSU,,1000,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,2 Gakki Cookie Sticks,103,2,No,,,,,,,,,,
-Nedu,,Onchain Friends,Shelved,,,,,,,,No,,,"The world is vast and danger is everywhere, but you don't have to go through this journey alone. Add a friend using the account menu to complete this quest.",You have a friend now! We're so proud of you.,Have completed An ode to MUSU (2),Have 1 friend,XP Candy (Small),,nedu note: should track all-time friends in case user has already added a friend and for some reason can’t add more,
+Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",
+,10002,,Ingame,Requirement,ROOM,IS,,At room 11,11,,No,,,,,,,,
+,10002,,Ingame,Reward,ITEM,,,1 Revive,110,1,No,,,,,,,,
+,10003,A disturbance…,Ingame,Quest,,,,,,,No,,,"The balance of this world has changed... Kamigotchi now Strain themselves more as they Harvest. Some Kamigotchi that were already Harvesting may have been hurt as a result. Our condolences if you were affected by this unforeseeable natural disaster, but this world is still taking shape…",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",
+,10003,,Ingame,Requirement,BLOCKTIME,MAX,,Before 0000 3rd Aug,0,1722643200,No,,,,,,,,
+,10003,,Ingame,Reward,ITEM,,,3 Revives,110,3,No,,,,,,,,
+,10003,,Ingame,Reward,ITEM,,,1 Medium XP candy,105,1,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,Have completed Back to the mines (5),5,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 3 daily quests ",,3,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Holding back - DNI,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,
+,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Another day, another quest I (9)",9,,No,,,,,,,,
+,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 7 daily quests ",,7,No,,,,,,,,
+,,,Holding back - DNI,Reward,ITEM,,,3 Giftbox,10001,3,No,,,,,,,,
+,,,Holding back - DNI,Requirement,QUEST,COMPLETE,,"Have completed Another day, another quest II (10)",10,,No,,,,,,,,
+,,,Holding back - DNI,Objective,QUEST_REPEATABLE_COMPLETE,MIN,INC,"Complete 21 daily quests ",,21,No,,,,,,,,
+,,,Holding back - DNI,Reward,ITEM,,,3 Giftbox,10001,7,No,,,,,,,,
+Nedu,,Supporting local businesses II,Idea,,,,,,,,No,5,,Mina's shop is currently going through hard times (or so she says). Spend a cumulative 500 MUSU on her shop to help her out and complete this quest.,"Mina has given you a Large XP Candy as a reward for your continuous support. Use it wisely, these are hard to come by.",Have completed Supporting local businesses (9),Spend a cumulative 500 MUSU,XP Candy (Large),
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Supporting local businesses (12),12,,No,,,,,,,,
+,,,Needs Revision Work,Objective,COIN_SPEND,MIN,INC,Spend a cumulative 500 MUSU,,500,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 XP Candy (Large),104,1,No,,,,,,,,
+Nedu,,Got MUSU? II,Needs Revision Work,,,,,,,,No,20,,"Scientists have just concluded that harvesting MUSU is beneficial for Kamigotchi long-term, per new studies. Prove the scientists right by harvesting 1000 MUSU.","We have been fooled once again. The studies were not true, at all. Well, at least you can enjoy these Gakki Cookie Sticks.",Have completed Got MUSU? (74),Harvest 5000 MUSU,Gakki Cookie Sticks,
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (17),27,,No,,,,,,,,
+,,,Needs Revision Work,Objective,COIN_TOTAL,MIN,INC,Harvest 1000 MUSU,,1000,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,2 Gakki Cookie Sticks,103,2,No,,,,,,,,
+Nedu,,Onchain Friends,Shelved,,,,,,,,No,,,"The world is vast and danger is everywhere, but you don't have to go through this journey alone. Add a friend using the account menu to complete this quest.",You have a friend now! We're so proud of you.,Have completed An ode to MUSU (2),Have 1 friend,XP Candy (Small),
 "torngarsuk, Nedu",,"Normal, but not really.",Needs Revision Work,,,,,,,,No,5,,"Did you know that Nodes, like Kamigotchi, have Types? Your Kamigotchi will gather faster on nodes that match their type - even more if the Kami is a pure-type. 
 
-Head to the Torii Gate near the Vending Machine and harvest 100 MUSU — if you have any Normal-type Kamigotchi, they will appreciate it.","The Torii Gate has been located near the centre of Kamigotchi World for as long as anyone can remember. According to our Kamiscientists, the gate is responsible for keeping the areas nearby stable. ",Quest 2 completed (An ode to MUSU),Gather 100 MUSU,1 Red Gakki Ribbon,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 2 completed (An ode to MUSU),2,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,HARVEST_NODE_NORMAL,MIN,INC,Gather 100 MUSU from Normal nodes,,100,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,110,1,No,,,,,,,,,,
+Head to the Torii Gate near the Vending Machine and harvest 100 MUSU — if you have any Normal-type Kamigotchi, they will appreciate it.","The Torii Gate has been located near the centre of Kamigotchi World for as long as anyone can remember. According to our Kamiscientists, the gate is responsible for keeping the areas nearby stable. ",Quest 2 completed (An ode to MUSU),Gather 100 MUSU,1 Red Gakki Ribbon,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 2 completed (An ode to MUSU),2,,No,,,,,,,,
+,,,Needs Revision Work,Objective,HARVEST_NODE_NORMAL,MIN,INC,Gather 100 MUSU from Normal nodes,,100,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,110,1,No,,,,,,,,
 "torngarsuk, Nedu",,"Nuts, bolts and Scrap.",Needs Revision Work,,,,,,,,No,5,,"You can learn a lot from a Kamigotchi just by observing them. For example, Scrap Kamigotchi usually hang out near the Monolith at the heart of the scrapyard, near the Vending Machine.
 
-Go there and harvest 100 MUSU. Maybe you'll learn a thing or two.","That monolith is an unusual structure. Although it’s definitely associated with the accumulation of scrap in this area, nobody knows when it first appeared….","Quest 23 completed (Normal, but not really)",Gather 100 MUSU,1 Pom-Pom Fruit Candy,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,"Quest 23 completed (Normal, but not really)",23,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,HARVEST_NODE_SCRAP,MIN,INC,Gather 100 MUSU from Scrap nodes,,100,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Pom-Pom Fruit Candy,102,1,No,,,,,,,,,,
+Go there and harvest 100 MUSU. Maybe you'll learn a thing or two.","That monolith is an unusual structure. Although it’s definitely associated with the accumulation of scrap in this area, nobody knows when it first appeared….","Quest 23 completed (Normal, but not really)",Gather 100 MUSU,1 Pom-Pom Fruit Candy,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,"Quest 23 completed (Normal, but not really)",23,,No,,,,,,,,
+,,,Needs Revision Work,Objective,HARVEST_NODE_SCRAP,MIN,INC,Gather 100 MUSU from Scrap nodes,,100,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Pom-Pom Fruit Candy,102,1,No,,,,,,,,
 "torngarsuk, Nedu",,Into the forest's heart.,Needs Revision Work,,,,,,,,No,5,,"At the heart of the forest, there’s a giant mound that consists of bugs and insects: a natural congregation point for Insect-type Kamigotchi.
 
-Explore the forest, find the Insect Node and harvest 100 MUSU. Don't get lost on the way out…","The insects and bugs seen here are some of the only animals seen in Kamigotchi world. We think they’re extensions of the Node itself, you know. ","Quest 24 completed (Nuts, bolts and Scrap)",Gather 100 MUSU,2x Pom-Pom Fruit Candy,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,"Quest 24 completed (Nuts, bolts and Scrap)",24,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,HARVEST_NODE_INSECT,MIN,INC,Gather 100 MUSU,,100,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,2 Pom-Pom Fruit Candy,102,2,No,,,,,,,,,,
+Explore the forest, find the Insect Node and harvest 100 MUSU. Don't get lost on the way out…","The insects and bugs seen here are some of the only animals seen in Kamigotchi world. We think they’re extensions of the Node itself, you know. ","Quest 24 completed (Nuts, bolts and Scrap)",Gather 100 MUSU,2x Pom-Pom Fruit Candy,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,"Quest 24 completed (Nuts, bolts and Scrap)",24,,No,,,,,,,,
+,,,Needs Revision Work,Objective,HARVEST_NODE_INSECT,MIN,INC,Gather 100 MUSU,,100,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,2 Pom-Pom Fruit Candy,102,2,No,,,,,,,,
 "torngarsuk, Nedu",,A morning commute to the Office,Needs Revision Work,,,,,,,,No,5,,"The office buildings to the south are a little different from the rest of the area. You’ll have to work out how to get through the doors to enter…. but there’s an Eerie type node in there, we think. 
 
-Find it and harvest $100 MUSU. ",This node was definitely a much more recent addition. I’m not sure who created this…,Quest 25 completed (Into the forest’s heart),Gather 100 MUSU,"1 Red Gakki Ribbon, 1 Gakki Cookie Stick","Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 25 completed (Into the forest’s heart),25,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,HARVEST_NODE_EERIE,MIN,INC,Gather 100 MUSU from Eerie nodes,,100,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,110,1,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Gakki Cookie Stick,103,1,No,,,,,,,,,,
+Find it and harvest $100 MUSU. ",This node was definitely a much more recent addition. I’m not sure who created this…,Quest 25 completed (Into the forest’s heart),Gather 100 MUSU,"1 Red Gakki Ribbon, 1 Gakki Cookie Stick","Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 25 completed (Into the forest’s heart),25,,No,,,,,,,,
+,,,Needs Revision Work,Objective,HARVEST_NODE_EERIE,MIN,INC,Gather 100 MUSU from Eerie nodes,,100,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Red Gakki Ribbon,110,1,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Gakki Cookie Stick,103,1,No,,,,,,,,
 Lethe Asphodel,,The Suffering Continues,Needs Revision Work,,,,,,,,No,20,,"Well, you’ve proven yourself happy to bring down other Kamigotchi. 
 
-Let’s be blunt. Kill another 15 and I’ll give you a bunch of XP Candies. ","Great job. ",Quest 21 Completed (Harden Your Heart),Liquidate 15 Kamigotchi,3 Large XP Candy,,,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 21 Completed (Harden Your Heart),21,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 15 Kamigotchi,,15,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,3 Large XP Candy,104,3,No,,,,,,,,,,
-Nedu,,Not a fan of the normals,Needs Revision Work,,,,,,,,No,,,"Liquidating a Kamigotchi requires careful planning and execution, and while the risk is high, the rewards are even higher. To start, liquidate 5 Normal-type Kamigotchi — it doesn’t have to be all in the same harvest, so take your time!","Well done. Enjoy this XP candy. ",Quest 22 completed (Harden Your Heart),Liquidate 5 Normal-type Kamigotchi,1 Large XP Candy,,,
-Nedu,,Squash it! Squash it!,Needs Revision Work,,,,,,,,No,,,"Insect types are aggressive, but often also fragile. It should, as a result, be fairly easy for you to find and liquidate 5 of them!","The violence continues. ",Quest 27 completed (Not a fan of the normals),Liquidate 5 Insect-type Kamigotchi,1 Large XP Candy,,,
-Nedu,,Have you tried using protons?,Needs Revision Work,,,,,,,,No,,,"Eerie types, like Insects, tend to be on the more fragile side of things. If you have a particularly violent Insect type Kami, this one should be easy! ",,Quest 28 completed (Squash it! Squash it!),Liquidate 5 Eerie-type Kamigotchi,1 Large XP Candy,,,
-Nedu,,Recycling the scrap,Needs Revision Work,,,,,,,,No,,,"Scrap types can sometimes be the toughest of all Kamigotchi. I’ve decided to increase the rewards for this quest a little, just for you, to keep things fair.",,Quest 29 completed (Have you tried using protons?),Liquidate 5 Scrap-type Kamigotchi,2 Large XP Candy,,,
-Nedu,,Back from the dead!,Needs Revision Work,,,,,,,,No,5,,"Experiencing a close one’s death is one of the hardest parts of life. For better or for worse, you seem to keep experiencing your Kamigotchi’s death. Revive a Kamigotchi 5 times to complete this quest. ","Maybe you should pay a little more attention when you’re harvesting? ",Quest 8 completed (Spring Rites),Revive 5 Kamigotchi,XP Candy (Medium),,,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 8 completed (Spring Rites),8,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,KAMI_REVIVE,MIN,INC,Revive 5 Kamigotchi,,5,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 Large XP Candy,104,1,No,,,,,,,,,,
-Nedu,,Have you considered not dying?,Needs Revision Work,,,,,,,,No,20,,"The cycle continues. They die, you resurrect them. We give you XP Candy as a consolation prize. When will the warfare end? ","Please, take better care of your Kamigotchi. Signed, the devs.",Quest 31 completed (Back from the dead!),Revive 10 Kamigotchi,x2 XP Candy (Large),,,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 31 completed (Back from the dead!),31,,No,,,,,,,,,,
-,,,Needs Revision Work,Objective,KAMI_REVIVE,MIN,INC,Revive 10 Kamigotchi,,10,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,2 Large XP Candy,104,2,No,,,,,,,,,,
-,33,Daily quest: Harvesting,Shelved,Quest,,,,,,,Yes,0,,Harvest 200 $MUSU,,,,,,,
-,33,,Shelved,Requirement,QUEST,COMPLETE,,Complete Back to the mines (5),5,,No,,,,,,,,,,
-,33,,Shelved,Objective,COIN_TOTAL,MIN,INC,Harvest 200 $MUSU,,200,No,,,,,,,,,,
-,33,,Shelved,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,,,
-Lethe Asphodel,,Fountain of Revival,Needs Revision Work,Quest,,,,,,,No,5,,"We know it’s tough to survive out there. Take this Ribbon. You’ll be able to collect one each week for free as long as you’re holding a Kamigotchi. ",Enjoy.,"Own At Least 1 Kamigotchi, Completed Quest 8 (Spring Rites)",None,1 Ribbon,,REPEATS ONCE PER WEEK,
-,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Completed Quest 8 (Spring Rites),8,,No,,,,,,,,,,
-,,,Needs Revision Work,Requirement,KAMI,MIN,CURR,Own At Least 1 Kamigotchi,,1,No,,,,,,,,,,
-,,,Needs Revision Work,Reward,ITEM,,,1 ribbon,110,1,No,,,,,,,,,,
+Let’s be blunt. Kill another 15 and I’ll give you a bunch of XP Candies. ","Great job. ",Quest 21 Completed (Harden Your Heart),Liquidate 15 Kamigotchi,3 Large XP Candy,
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 21 Completed (Harden Your Heart),21,,No,,,,,,,,
+,,,Needs Revision Work,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 15 Kamigotchi,,15,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,3 Large XP Candy,104,3,No,,,,,,,,
+Nedu,,Not a fan of the normals,Needs Revision Work,,,,,,,,No,,,"Liquidating a Kamigotchi requires careful planning and execution, and while the risk is high, the rewards are even higher. To start, liquidate 5 Normal-type Kamigotchi — it doesn’t have to be all in the same harvest, so take your time!","Well done. Enjoy this XP candy. ",Quest 22 completed (Harden Your Heart),Liquidate 5 Normal-type Kamigotchi,1 Large XP Candy,
+Nedu,,Squash it! Squash it!,Needs Revision Work,,,,,,,,No,,,"Insect types are aggressive, but often also fragile. It should, as a result, be fairly easy for you to find and liquidate 5 of them!","The violence continues. ",Quest 27 completed (Not a fan of the normals),Liquidate 5 Insect-type Kamigotchi,1 Large XP Candy,
+Nedu,,Have you tried using protons?,Needs Revision Work,,,,,,,,No,,,"Eerie types, like Insects, tend to be on the more fragile side of things. If you have a particularly violent Insect type Kami, this one should be easy! ",,Quest 28 completed (Squash it! Squash it!),Liquidate 5 Eerie-type Kamigotchi,1 Large XP Candy,
+Nedu,,Recycling the scrap,Needs Revision Work,,,,,,,,No,,,"Scrap types can sometimes be the toughest of all Kamigotchi. I’ve decided to increase the rewards for this quest a little, just for you, to keep things fair.",,Quest 29 completed (Have you tried using protons?),Liquidate 5 Scrap-type Kamigotchi,2 Large XP Candy,
+Nedu,,Back from the dead!,Needs Revision Work,,,,,,,,No,5,,"Experiencing a close one’s death is one of the hardest parts of life. For better or for worse, you seem to keep experiencing your Kamigotchi’s death. Revive a Kamigotchi 5 times to complete this quest. ","Maybe you should pay a little more attention when you’re harvesting? ",Quest 8 completed (Spring Rites),Revive 5 Kamigotchi,XP Candy (Medium),
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 8 completed (Spring Rites),8,,No,,,,,,,,
+,,,Needs Revision Work,Objective,KAMI_REVIVE,MIN,INC,Revive 5 Kamigotchi,,5,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 Large XP Candy,104,1,No,,,,,,,,
+Nedu,,Have you considered not dying?,Needs Revision Work,,,,,,,,No,20,,"The cycle continues. They die, you resurrect them. We give you XP Candy as a consolation prize. When will the warfare end? ","Please, take better care of your Kamigotchi. Signed, the devs.",Quest 31 completed (Back from the dead!),Revive 10 Kamigotchi,x2 XP Candy (Large),
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 31 completed (Back from the dead!),31,,No,,,,,,,,
+,,,Needs Revision Work,Objective,KAMI_REVIVE,MIN,INC,Revive 10 Kamigotchi,,10,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,2 Large XP Candy,104,2,No,,,,,,,,
+,33,Daily quest: Harvesting,Shelved,Quest,,,,,,,Yes,0,,Harvest 200 $MUSU,,,,,
+,33,,Shelved,Requirement,QUEST,COMPLETE,,Complete Back to the mines (5),5,,No,,,,,,,,
+,33,,Shelved,Objective,COIN_TOTAL,MIN,INC,Harvest 200 $MUSU,,200,No,,,,,,,,
+,33,,Shelved,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,
+Lethe Asphodel,,Fountain of Revival,Needs Revision Work,Quest,,,,,,,No,5,,"We know it’s tough to survive out there. Take this Ribbon. You’ll be able to collect one each week for free as long as you’re holding a Kamigotchi. ",Enjoy.,"Own At Least 1 Kamigotchi, Completed Quest 8 (Spring Rites)",None,1 Ribbon,
+,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Completed Quest 8 (Spring Rites),8,,No,,,,,,,,
+,,,Needs Revision Work,Requirement,KAMI,MIN,CURR,Own At Least 1 Kamigotchi,,1,No,,,,,,,,
+,,,Needs Revision Work,Reward,ITEM,,,1 ribbon,110,1,No,,,,,,,,
 "torngarsuk, vaitarna",,Farming 3: Accumulating $MUSU,Rebuild,,,,,,,,No,,,"Great, you're really taking this seriously. You seem to be developing a good relationship with your Kamigotchi. 
 
 Try to get five thousand $MUSU from harvesting. Believe me, this can happen faster than you might think.
 
-You’ll have to be comfortable with the interplay of Power, Harmony, and Violence and effectively keep all your Kami in good Health.",,Quest 5 Completed,Harvest 5000 $MUSU,"3 Cherry, quest item? ",,,
+You’ll have to be comfortable with the interplay of Power, Harmony, and Violence and effectively keep all your Kami in good Health.",,Quest 5 Completed,Harvest 5000 $MUSU,"3 Cherry, quest item? ",
 torngarsuk,,Harvest Speed Run (Battery Body Kamigotchi Harvesting): A Little Worker Bee,Idea,,,,,,,,No,,,"You may have noticed that some Kamigotchi have a bit more in the tank than others. Your newly acquired Kamigotchi is literally running on batteries!
 
 This little cyborg is both persistent and quick. But you should still be mindful of enemy Kamigotchi circling the nodes for easy prey.
 
-It's when you're having the most fun you often forget to eat, and Kamigotchi need more help remembering than most. Try to always carry sweets to make sure their HP doesn't drop too much.",,Quest 3 Completed and having one battery body Kamigotchi,Harvest [amount] MUSU in four hours,?,,,
+It's when you're having the most fun you often forget to eat, and Kamigotchi need more help remembering than most. Try to always carry sweets to make sure their HP doesn't drop too much.",,Quest 3 Completed and having one battery body Kamigotchi,Harvest [amount] MUSU in four hours,?,
 ,,A MUSU injection: Big Spender,Shelved,,,,,,,,No,,,"You've somehow run out of $MUSU. If you haven't figured it out yet, it's cheaper to throw your Kamigotchi a few sweets than to revive them.
 
 Take care of your Kamigotchi and they’ll pay for themselves by harvesting and pillaging.
 
-When worse comes to worst you can swap for $MUSU with your ERC-20 wallet. Find the bridge and transfer at least one $MUSU into the game.",Good job! Now you have a surefire way of bouncing back if you fall on hard times in Kamigotchi world.,0 $MUSU in game,Bridge at least 1 MUSU from ERC-20 Wallet to the game world,?,,,
+When worse comes to worst you can swap for $MUSU with your ERC-20 wallet. Find the bridge and transfer at least one $MUSU into the game.",Good job! Now you have a surefire way of bouncing back if you fall on hard times in Kamigotchi world.,0 $MUSU in game,Bridge at least 1 MUSU from ERC-20 Wallet to the game world,?,
 torngarsuk,,"Unused $KAMI: Get
 a Party Going/",Shelved,,,,,,,,No,,,"Is that $KAMI in your pocket... Head back to the vending machine and use it up. A diverse team is key in the early game. You might even get a rare type!
 
 Kamigotchi can gain experience from performing actions. Levelling up you can specialise them. Turning your innocent Kamigotchi into a dedicated and fearsome liquidator.
 
-Making your Kamigotchi strong can increase your income and deter preying enemies in busy nodes.",,Have unused $KAMI in wallet,Mint new Kamigotchi for all unused $KAMI,? New friends 🙂 Item to speed up experience gains? (like temporary 2x xp gain),,,
+Making your Kamigotchi strong can increase your income and deter preying enemies in busy nodes.",,Have unused $KAMI in wallet,Mint new Kamigotchi for all unused $KAMI,? New friends 🙂 Item to speed up experience gains? (like temporary 2x xp gain),
 torngarsuk,,Poking around: At Arm’s Length,Review,,,,,,,,No,,,"You've found a wooden stick! They're great for poking at things from a distance. Now you can find out if the purple liquid is as corrosive as it looks.
 
 Try it out on the trashbags in the scrapyard. Finders keepers. But be careful, wooden sticks break easily.
@@ -315,44 +319,44 @@ Try it out on the trashbags in the scrapyard. Finders keepers. But be careful, w
 Most limited use items can be replaced. Others only give you a few attempts to get it right. Take a moment before you set out.",You're getting close to mastery in wooden stick!,Have wooden stick and have clicked on trashbag in Restricted Area,"Poke around in other trashbags to find a hidden item
 (stick breaks after five uses, maybe possible to acquire a new one? hidden item could be something that leads to another quest, say a power cable)","The hidden item, possibly something more?
 
-","Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+","Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,Mina Fetch Quest: Restocking Mina’s Shop/A Favour for Mina,Review,,,,,,,,No,,,"You've bought so much that Mina's running low on items. Now she's asking you for help. Yes, she finally noticed you.
 
 Mina's busy manning the shop and wants you to bring her three flowers [naming them here?]. Try searching the forest for them. Bring a Kamigotchi with you to be safe.
 
 She might not show it, but she'll probably be very grateful.",,"Have purchased for x amount of $MANA, triggers the next time you interact with Mina","Find three flowers and bring them to Mina 
 (could receive a picture of the flowers? rather than having them described)
-(Could have PvE interactions? or check against a Kami you have with you)",Cheaper items?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+(Could have PvE interactions? or check against a Kami you have with you)",Cheaper items?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,Harvesting Kamigotchi out of HP: Feeding Hungry Kamigotchi/Knocked Out,Review,,,,,,,,No,,,"Your Kamigotchi is exhausted and has stopped harvesting. The node is full of hungry eyes looking at them.
 
 Letting your Kamigotchi’s HP drain too much is dangerous, so hurry to the shop and buy sweets to restore it to full health. Pick up a few extra for later.
 
-Remember, whenever you'd want a break or a bite your Kamigotchi could probably use one too.",,Have Kamigotchi harvesting and out of HP,Purchase sweets and use them to restore your Kamigotchi to full HP,?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Remember, whenever you'd want a break or a bite your Kamigotchi could probably use one too.",,Have Kamigotchi harvesting and out of HP,Purchase sweets and use them to restore your Kamigotchi to full HP,?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,Stake 1 Kamigotchi,Idea,,,,,,,,No,,,"You're not fooled by the Kamigotchi cute appearances any more. The rat race has caught up to you. Every gain has a potential cost.
 
-Try letting some weight off your shoulders by staking your Kamigotchi. (question, are they safe from enemies while staked? Does HP drain apply here?)",,Have completed Farming 3 and Liquidation 1,Stake 1 Kamigotchi,?,,,
+Try letting some weight off your shoulders by staking your Kamigotchi. (question, are they safe from enemies while staked? Does HP drain apply here?)",,Have completed Farming 3 and Liquidation 1,Stake 1 Kamigotchi,?,
 torngarsuk,,Have and use 10 ribbons: Consume 10 Ribbons,Review,,,,,,,,No,,,"Good job, you've figured out ribbons are essential to success in a Kami-eat-Kami world.
 
 With more $MUSU you can buy more sweets - Kamigotchi are happiest when alive and well-fed.
 
 When you've brought your Kamigotchi back ten times we've got a reward for you.",,Have 10 ribbons in inventory,Consume 10 ribbons,"? 
 
-A boost of some kind maybe?","Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) ",,
+A boost of some kind maybe?","Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) "
 torngarsuk,,Equip basic helmet and/or win a battle with helmet equipped: Arms race/Equip helmet/Trying it on for size,Review,,,,,,,,No,,,"You've found a basic helmet. Use it to protect your Kamigotchi's little head and save $MUSU otherwise spent reviving them.
 
 Items boost stats when equipped. A helmet helps your Kamigotchi stay safe while harvesting.
 
-But beware, your enemies could have swords to cut through it. It's an arms race for the latest tech.",,Equip basic helmet OR have basic helmet,Win/survive a fight you otherwise wouldn’t have OR equip basic helmet,?,"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) ",,
+But beware, your enemies could have swords to cut through it. It's an arms race for the latest tech.",,Equip basic helmet OR have basic helmet,Win/survive a fight you otherwise wouldn’t have OR equip basic helmet,?,"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) "
 torngarsuk,,Have and drink XP boost drink,Idea,,,,,,,,No,,,"Kamigotchi usually get their fill of water on their own. Too much and they go hyper.
 
 In a pinch you can give them a drink to level up faster. There's a cooldown so they don't overindulge.
 
-Kamis have a very sensitive bodily system. You don't want them to…",,Have XP boost drink,Drink XP boost drink,?,,,
+Kamis have a very sensitive bodily system. You don't want them to…",,Have XP boost drink,Drink XP boost drink,?,
 torngarsuk,,Have Kami with lvl 3 Warmonger: On the War Path,Review,,,,,,,,No,,,"Your Kamigotchi's turned into a hardened warrior, killing to quench their thirst. Your enemies flee before you.
 
 Catch up to them and let your Kamigotchi loose. Cut them down and claim their $MUSU.
 
-Liquidate five enemies in a row [or in half an hour?] and we'll reward you with even greater strength.",,Have lvl 3 Warmonger Kami,"Kill 5 enemies in a row/without dying/losing OR kill 5 enemies within a certain amount of time, say half an hour, whatever is more or less killing off cooldown",? An offensive item?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Liquidate five enemies in a row [or in half an hour?] and we'll reward you with even greater strength.",,Have lvl 3 Warmonger Kami,"Kill 5 enemies in a row/without dying/losing OR kill 5 enemies within a certain amount of time, say half an hour, whatever is more or less killing off cooldown",? An offensive item?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,"Have wooden stick
 and what looks like a Wizard's hat (+ harmony?): A little Wizardry",Review,,,,,,,,No,,,"You've found a hat which looks a like a wizard's hat. With some imagination the wooden stick in your pocket could be mistaken for a wand.
 
@@ -360,38 +364,38 @@ Put on the hat and give the stick a whirl. Say a few words. Close your eyes and 
 
 Try it out in different places. Some nodes might be more conducive to magic. Maybe you have to channel their inate energy.",,"Have wooden stick (hope you didn’t break it poking at trashbags!!!)
 and what looks like a wizard's hat","Try to cast a spell at four different locations (Mooring post,
-Penthouse, Basement, Restricted area), but fail. After last attempt an explosion can be heard from somewhere",?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Penthouse, Basement, Restricted area), but fail. After last attempt an explosion can be heard from somewhere",?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,Purchase Basic Helmet,Review,,,,,,,,No,,,"Did you know there's a gacha machine in Mina's shop? They spit out a variety of useful items for your Kamigotchi.
 
 They come in three different rarities with increasing benefit and cost. Start off by purchasing a basic helmet.
 
-You'll find it can come in handy in many situations. If it seems useless to you, you can sell it to some schmuck on an NFT marketplace.",,Have Kamigotchi at lvl 10,Purchase Basic Helmet,?,"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) ",,
+You'll find it can come in handy in many situations. If it seems useless to you, you can sell it to some schmuck on an NFT marketplace.",,Have Kamigotchi at lvl 10,Purchase Basic Helmet,?,"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) "
 torngarsuk,,Have 1 eerie Kami and beat your counter in battle: Defeat Your Counter,Review,,,,,,,,No,,,"You've minted an eerie Kamigotchi. Naturally less aggressive than other types, they're ethereal beings in harmony with the energies of this world.
 
 One type will usually counter another, but body and hand types give different benefits in battles. You can improve your chances by equipping an item.
 
-For this quest we want you to search the counter to your eerie Kamigotchi, an insect Kamigotchi, and beat it in battle.",,"Have 1 Eerie Kamigotchi and has completed Liquidation quest 1 (perhaps also have Basic Sword, or at least to have completed Basic Helmet Quest and thus having the Basic Sword Quest, knowledge of items in any case seems reasonable, to overcome the disadvantage of the challenge (I’ll put this stuff in comments from now on))","Use an eerie Kami to battle and win against an insect type Kamigotchi ",?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
-vaitarna,,Quest Objectives,Idea,,,,,,,,No,,,"It’s a little like spinning plates, but you can Harvest and Liquidate more efficiently with a full party of Kami.",,Quest 1 Completed,Mint a full party of Kamigotchi,"6 Gum, enough for the whole class.",,,
+For this quest we want you to search the counter to your eerie Kamigotchi, an insect Kamigotchi, and beat it in battle.",,"Have 1 Eerie Kamigotchi and has completed Liquidation quest 1 (perhaps also have Basic Sword, or at least to have completed Basic Helmet Quest and thus having the Basic Sword Quest, knowledge of items in any case seems reasonable, to overcome the disadvantage of the challenge (I’ll put this stuff in comments from now on))","Use an eerie Kami to battle and win against an insect type Kamigotchi ",?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
+vaitarna,,Quest Objectives,Idea,,,,,,,,No,,,"It’s a little like spinning plates, but you can Harvest and Liquidate more efficiently with a full party of Kami.",,Quest 1 Completed,Mint a full party of Kamigotchi,"6 Gum, enough for the whole class.",
 torngarsuk,,Purchase basic sword (or whatever item we’re using for offense here),Idea,,,,,,,,No,,,"Now that you've seen what a helmet can do, you might wanna get yourself a basic sword. Mina will be, ermm, happy to see you return.
 
 Swords are great for penetrating even the thickest skins. Just make sure to direct the pointy end away from you.
 
-While your Kamigotchi are perfect as they are, you'll notice they need all the help they can get. Going up naked against kitted out enemies can easily spell disaster.",,Purchase Basic Helmet Quest Completed,Purchase Basic Sword,?,,,
+While your Kamigotchi are perfect as they are, you'll notice they need all the help they can get. Going up naked against kitted out enemies can easily spell disaster.",,Purchase Basic Helmet Quest Completed,Purchase Basic Sword,?,
 torngarsuk,,Purchase a mod from the junk vendor in the Junk Shop,Idea,,,,,,,,No,,,"If you're disappointed by your items you can kit them out with mods. Take a gamble at the Mod Gacha in the Junk Shop.
 
-Mods come in several tiers. If you hit it big you'll know. They're only tradeable within Kamigotchi World.",,Sword purchase Quest Completed,Purchase 1 Mod,?,,,
+Mods come in several tiers. If you hit it big you'll know. They're only tradeable within Kamigotchi World.",,Sword purchase Quest Completed,Purchase 1 Mod,?,
 torngarsuk,,"Write down a message and drop it in the hollow tree-trunk: ",Review,,,,,,,,No,,,"Paper and pens go together like Kamigotchi and Gakki. Write something down and find a hole to drop your message in.
 
 Whatever comes to mind. Question reality, write a new one. Dechiper the indechiperable. Maybe you've a theory about beetles or trees you need to tell.
 
-Someone might read it, so try not to curse.",,Have scrap of paper and a pen,Write a message and put it in the hollow tree-trunk,"Possibility of having it posted on Twitter (the team reads the messages and makes a choice, could make a new Twitter account solely for this function), finding other people’s messages… and in the future you can continue to write messages, as long as you have paper",,,
-torngarsuk,,Retrieve someone else’s message and write another,Idea,,,,,,,,No,,,,,Have completed Message writing quest,Retrieve another message and write a new one (a response?),"Knowledge, ",,,
+Someone might read it, so try not to curse.",,Have scrap of paper and a pen,Write a message and put it in the hollow tree-trunk,"Possibility of having it posted on Twitter (the team reads the messages and makes a choice, could make a new Twitter account solely for this function), finding other people’s messages… and in the future you can continue to write messages, as long as you have paper",
+torngarsuk,,Retrieve someone else’s message and write another,Idea,,,,,,,,No,,,,,Have completed Message writing quest,Retrieve another message and write a new one (a response?),"Knowledge, ",
 torngarsuk,,Restoring a node pt 1,Review,,,,,,,,No,,,"Sometimes the energies in Kamigotchi world wane and a place falls in disrepair.
 
 If you could harvest some of the energy emitting from the night sky comet, you might be able to help restore a place like that.
 
 You'll need something to catch that energy in.",,Has seen comet in Vending Machine (make it clickable?),Find a jar,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 torngarsuk,,Restoring a node pt 2,Review,,,,,,,,No,,,"The comet is falling across the sky, glitching out and rubber-banding back to where it started out. Again and again.
 
 Try holding the jar up toward the end of the comet's journey, like in a photo where you pretend to hold the moon in your hand.","Success: Light appears in your jar. It’s almost cool to the touch.
@@ -404,125 +408,125 @@ EITHER you succeed because you had a battery body Kamigotchi with you (which was
 
 OR you fail because you didn’t, which takes you to part 2.5, which can be accomplished in two different ways.",,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 torngarsuk,,Restoring a node pt 2.5 (FAILED pt 2),Review,,,,,,,,No,,,"The comet's immense, untamed energy broke your jar. Find a need a new one and try again.
 
 You need a way to calm the energy or harden your jar. A coating of some kind might do the trick…",,Failed pt 2,"Get another jar and either find a way to harden it (by coating it with something, like the purple liquid in Monolith or maybe you can find some Warhammer paint in the basement/Junk Shop room) or bring a battery body Kamigotchi with you, and catch the energy in your jar, same way as in pt 2.",,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 torngarsuk,,Restoring a node pt 3,Review,,,,,,,,No,,,Don't take too long to release the energy you caught. Even a hardened jar can only hold this power for so long. Find a place to let it out.,,Completed pt 2 or pt 2.5,Release the energy by the shrine in Waterfall basin,A boost for harvesting in the new node? (for a certain amount of time),"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
 
 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 torngarsuk,,Equip the underwater ring and visit an underwater room: Deep Diving,Review,,,,,,,,No,,,"There are many hidden rooms in Kamigotchi World. Some open up in time, others can be forced by solving puzzles or with the help of special equipment.
 
-The ring you've just found lets you breath under water. Equip it and find a body of water to dive into. You'll probably be fine.",,Has underwater ring,Visit an underwater room,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+The ring you've just found lets you breath under water. Equip it and find a body of water to dive into. You'll probably be fine.",,Has underwater ring,Visit an underwater room,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,Retrieve the Wallet from the pond: Something Lost,Review,,,,,,,,No,,,"The wallet's just out of reach. If you could get past the algae somehow, you might be able to yank it loose.","The wallet is empty except for a laminated photograph of a curly-haired woman, wearing a smile that wouldn't look out of place in a magazine.
 
-Some water has seeped in, distorting her chest.",Has visited the Pond and clicked on the chain wallet,Retrieve wallet,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
-torngarsuk,,Consume Stamina Potion,In progress,,,,,,,,No,,,,,Has completed [quest which rewards 1 stamina pot] and has 0% stamina,Consume stamina potion,? (starts the daily stamina potion questline),"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) ",,
+Some water has seeped in, distorting her chest.",Has visited the Pond and clicked on the chain wallet,Retrieve wallet,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
+torngarsuk,,Consume Stamina Potion,In progress,,,,,,,,No,,,,,Has completed [quest which rewards 1 stamina pot] and has 0% stamina,Consume stamina potion,? (starts the daily stamina potion questline),"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) "
 "torngarsuk, Lethe Asphodel",,Get a Node specific drop (plastic bottle?): Can’t Slow Down,Review,,,,,,,,No,,,"Kamigotchi are multitaskers, while harvesting they're always on the lookout. They can't help themselves. 
 
-Every node is a little different. Study them to figure out their specialities.",,Has completed Harvest quest 3?,Forage a node specific item: plastic bottle?,"Gets the random daily node quest, which directs players to different nodes","Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
-"torngarsuk, Lethe Asphodel",,"Daily Forage Quest (random), Forage at Torii Gate, find incense: Through Darkness",Review,,,,,,,,No,,,The smell of incense gets Kamigotchi in the zone. Put your nose to the test and see if you can find some.,,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Incense,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Every node is a little different. Study them to figure out their specialities.",,Has completed Harvest quest 3?,Forage a node specific item: plastic bottle?,"Gets the random daily node quest, which directs players to different nodes","Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
+"torngarsuk, Lethe Asphodel",,"Daily Forage Quest (random), Forage at Torii Gate, find incense: Through Darkness",Review,,,,,,,,No,,,The smell of incense gets Kamigotchi in the zone. Put your nose to the test and see if you can find some.,,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Incense,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 "torngarsuk, Lethe Asphodel",,"Daily Forage Quest (random), Forage at Machine Node, find plastic bottle (?): ",Review,,,,,,,,No,,,"Water is essential to life, and many of the rituals of Kamigotchi World. With a bottle you could always be on the ready. 
 
-Point your Kamigotchi in the right direction and they might find one for you.",,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Plastic Bottle,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
-"torngarsuk, Lethe Asphodel",,"Daily Forage Quest (random), Forage at Insect Node, find pine cones: ",Review,,,,,,,,No,,,Cuteness and aggression goes hand in hand. Certain pollens induce violence in Kamigotchi. You can find pine somewhere in the forest.,,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Pine Cone,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Point your Kamigotchi in the right direction and they might find one for you.",,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Plastic Bottle,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
+"torngarsuk, Lethe Asphodel",,"Daily Forage Quest (random), Forage at Insect Node, find pine cones: ",Review,,,,,,,,No,,,Cuteness and aggression goes hand in hand. Certain pollens induce violence in Kamigotchi. You can find pine somewhere in the forest.,,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Pine Cone,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 "torngarsuk, Lethe Asphodel",,"Daily Forage Quest (random), Forage at Manager’s Office, find matchsticks? : Tinderbox",In progress,,,,,,,,No,,,"Fire is the circle of life, and it keeps you warm in the cold nights of Kamigotchi World.
 
-Foraging some matchsticks could help light a path for you.",,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Matchstick,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
-"torngarsuk, Lethe Asphodel",,Send a Kami to grimace at the frog door: A Wicked Smile,Review,,,,,,,,No,,,This door is wearing an angry frown and looking straight at you. If you dare you could walk up to it.,"Your Kamigotchi sticks out its tongue. The door glides apart just enough for an item to slip through. ",Has visited the corridor room with the wide door,Place a Kami at the door for it to stick out its tongue,An item of some kind,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Foraging some matchsticks could help light a path for you.",,Has completed Node Specific Drop Quest and has not completed Daily Forage Quest,Forage 1 Matchstick,Temporary harvest boost?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
+"torngarsuk, Lethe Asphodel",,Send a Kami to grimace at the frog door: A Wicked Smile,Review,,,,,,,,No,,,This door is wearing an angry frown and looking straight at you. If you dare you could walk up to it.,"Your Kamigotchi sticks out its tongue. The door glides apart just enough for an item to slip through. ",Has visited the corridor room with the wide door,Place a Kami at the door for it to stick out its tongue,An item of some kind,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 "torngarsuk, Lethe Asphodel",,Water the Graveyard: Kissing the Ground,Review,,,,,,,,No,,,"Puffs of dust rise from cracks in the graveyard ground. Heavy, laboured breaths from something deep down below. 
 
 They end in a hiss. Could there be a way to ease its pain?",,Has visited Graveyard,Water the ground (combine watering can + water),?,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 "torngarsuk, Lethe Asphodel",,Quest to find the Underwater Ring?: In the Wire,Review,,,,,,,,No,,,"The wiring is twisting like a nest of snakes. Something's buried in there. Did they mean to cover it up?
 
-Watch out for frayed wires if you decide to reach down.",,"Have visited Corridor 1, plus a set timer (global?)?",Use a wooden stick to retrieve the ring,The Underwater Ring,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Watch out for frayed wires if you decide to reach down.",,"Have visited Corridor 1, plus a set timer (global?)?",Use a wooden stick to retrieve the ring,The Underwater Ring,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 "torngarsuk, Lethe Asphodel",,Liquidate a Kamigotchi with at least 2000 (?) $MUSU: Burned in Heaven,Review,,,,,,,,No,,,"Some Operators leave their tired Kami to amass massive amounts of $MUSU, making them ripe for picking.
 
-Keep an eye out for a defenseless Kamigotchi that's accumulated 2000 $MUSU and liquidate it.",,Has completed Liquidation Quest 2 + x amount of time has passed?,Liquidate a Kamigotchi with 5000 $MUSU,?,"Challenge/Rare/Time Consuming Quests (https://www.notion.so/Challenge-Rare-Time-Consuming-Quests-7567d60e514b46bab12d9bd25f44466a?pvs=21) ",,
+Keep an eye out for a defenseless Kamigotchi that's accumulated 2000 $MUSU and liquidate it.",,Has completed Liquidation Quest 2 + x amount of time has passed?,Liquidate a Kamigotchi with 5000 $MUSU,?,"Challenge/Rare/Time Consuming Quests (https://www.notion.so/Challenge-Rare-Time-Consuming-Quests-7567d60e514b46bab12d9bd25f44466a?pvs=21) "
 "torngarsuk, Lethe Asphodel",,MEMBERS QUEST: Add Three Friends,Review,,,,,,,,No,,,"Kamigotchi World is competitive. If you add some friends they could have your back when you set out.
 
 Together you can coordinate strikes against your enemies. Stake out nodes. And down the line even get access to special resources and effects.
 
-Go to the Social tab and add three friends to complete the quest.",,Has completed Mint (2),Add three friends,,"Members Quests (https://www.notion.so/Members-Quests-e35a40cfa0564299803e523787446c5e?pvs=21) Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
-"torngarsuk, Lethe Asphodel",,TUTORIAL: Check Out the Help Menu,Review,,,,,,,,No,,,To get started we suggest you take a look at the Help menu. Press complete when you’ve read it. We're trusting you here.,,Has created an account,To read the Help menu,None,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
+Go to the Social tab and add three friends to complete the quest.",,Has completed Mint (2),Add three friends,,"Members Quests (https://www.notion.so/Members-Quests-e35a40cfa0564299803e523787446c5e?pvs=21) Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
+"torngarsuk, Lethe Asphodel",,TUTORIAL: Check Out the Help Menu,Review,,,,,,,,No,,,To get started we suggest you take a look at the Help menu. Press complete when you’ve read it. We're trusting you here.,,Has created an account,To read the Help menu,None,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 "torngarsuk, Lethe Asphodel",,TUTORIAL: Reminder to Fund Your Operator,Review,,,,,,,,No,,,"Looks like you're stuck. Remember how you funded your burner wallet before you entered Kamigotchi World? It's that time again.
 
-Click the cogwheel in the upper right corner, then fund and choose how much ETH you wanna move from your wallet to your burner wallet.","Good job, now you can move again!",Has created an account,Funding your operator,None,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
+Click the cogwheel in the upper right corner, then fund and choose how much ETH you wanna move from your wallet to your burner wallet.","Good job, now you can move again!",Has created an account,Funding your operator,None,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 "torngarsuk, Lethe Asphodel",,Members Quest: Referral Quest 1 (1 friend),Review,,,,,,,,No,,,"If you don't know anyone playing yet, you should probably make use of your referral link.
 
-Anyone who registers with a referral link starts out with a Ribbon and a couple of treats. Refer one person to complete the quest.",,Has completed Mint (2). Possibly something more.,Have 1 person create an account after following your ref link,,"Members Quests (https://www.notion.so/Members-Quests-e35a40cfa0564299803e523787446c5e?pvs=21) Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
-torngarsuk,,Members Quest: Referral Quest 2 (5 friends):,In progress,,,,,,,,No,,,,,Has completed Mint (2) and Referral Quest 1. Possibly something more.,Have 5 persons create an account after following your ref link,,"Members Quests (https://www.notion.so/Members-Quests-e35a40cfa0564299803e523787446c5e?pvs=21) Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
+Anyone who registers with a referral link starts out with a Ribbon and a couple of treats. Refer one person to complete the quest.",,Has completed Mint (2). Possibly something more.,Have 1 person create an account after following your ref link,,"Members Quests (https://www.notion.so/Members-Quests-e35a40cfa0564299803e523787446c5e?pvs=21) Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
+torngarsuk,,Members Quest: Referral Quest 2 (5 friends):,In progress,,,,,,,,No,,,,,Has completed Mint (2) and Referral Quest 1. Possibly something more.,Have 5 persons create an account after following your ref link,,"Members Quests (https://www.notion.so/Members-Quests-e35a40cfa0564299803e523787446c5e?pvs=21) Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 torngarsuk,,Exploring and Exhausting Your Stamina: Running Yourself Ragged,Review,,,,,,,,No,,,"Your Operator is funded and ready to explore. Use the map icon to move between rooms. Choose a path to follow to its end.
 
 Many things in Kamigotchi World are clickable and could reveal something about where you’ve ended up.
 
-Really exert yourself to complete the quest. ",,Has Completed Funding Quest (47),Exhaust all your stamina,,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
+Really exert yourself to complete the quest. ",,Has Completed Funding Quest (47),Exhaust all your stamina,,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 torngarsuk,,Finding the Leaderboards,Shelved,,,,,,,,No,,,"Nothing goes unnoticed in Kamigotchi World, every action by your Kamigotchi is tracked. There are leaderboards harvesters and liquidators alike.
 
-Reaching the top might grant your Kami a boost or a title. Find them to keep tabs on your progress.",,Has Completed Funding Quest (47),Find the leaderboards and click on them,,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
+Reaching the top might grant your Kami a boost or a title. Find them to keep tabs on your progress.",,Has Completed Funding Quest (47),Find the leaderboards and click on them,,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 "torngarsuk, Lethe Asphodel",,Reveal a Ticket Drop (item),Review,,,,,,,,No,,,"Your Kamigotchi found something while harvesting. The thing’s covered in mud and it's impossible to tell what it is.
 
-If you clean it up, it’ll reveal itself to you.",,Has foraged 1 ticket/item,"Reveal ticket/item at gacha machine?? or vending machine?? ",,"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) ",,
+If you clean it up, it’ll reveal itself to you.",,Has foraged 1 ticket/item,"Reveal ticket/item at gacha machine?? or vending machine?? ",,"Consume/Equip/Reveal/Buy X/Y/Z Quests (https://www.notion.so/Consume-Equip-Reveal-Buy-X-Y-Z-Quests-1d665392fc654d4f8691065bbdb3eafa?pvs=21) "
 torngarsuk,,Forage 50 Incense,Review,,,,,,,,No,,,"Stockpiling incense is especially handy if you're a peace-loving farmer.
 
-By now you've hopefully noticed your Kami forage at different paces. Strap in, this quest could take a while. We want you to forage 50 incense. ",,Has completed (52) and (37),Forage 50 Incense,,"Challenge/Rare/Time Consuming Quests (https://www.notion.so/Challenge-Rare-Time-Consuming-Quests-7567d60e514b46bab12d9bd25f44466a?pvs=21) ",,
+By now you've hopefully noticed your Kami forage at different paces. Strap in, this quest could take a while. We want you to forage 50 incense. ",,Has completed (52) and (37),Forage 50 Incense,,"Challenge/Rare/Time Consuming Quests (https://www.notion.so/Challenge-Rare-Time-Consuming-Quests-7567d60e514b46bab12d9bd25f44466a?pvs=21) "
 torngarsuk,,Forage 50 Pine Cones,Review,,,,,,,,No,,,"If you're a fighter who prefer to claim what others have harvested you'd do well to have a stock of pine cones. Refined they give your Kami an offensive boost.
 
-But they can only be found through foraging. It'll take a while, so get started.",,Has completed (52) and (39),Forage 50 Pine Cones,,"Challenge/Rare/Time Consuming Quests (https://www.notion.so/Challenge-Rare-Time-Consuming-Quests-7567d60e514b46bab12d9bd25f44466a?pvs=21) ",,
+But they can only be found through foraging. It'll take a while, so get started.",,Has completed (52) and (39),Forage 50 Pine Cones,,"Challenge/Rare/Time Consuming Quests (https://www.notion.so/Challenge-Rare-Time-Consuming-Quests-7567d60e514b46bab12d9bd25f44466a?pvs=21) "
 torngarsuk,,Mina’s snake is hungry,Review,,,,,,,,No,,,"Mina's snake coils restlessly around her. Its head rearing from behind her neck, wagging back and forth. 
 
 The snake is staring menacingly at your Kami. You should probably return later. Bring a tribute just to be safe…",,"Has Kami above lvl 20, has a Kami in the party, has completed Mina fetch quest (14)",Feed Mina’s snake a rat. When enough Operators have completed the quest Mina might open up to you.,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 torngarsuk,,Attempting to salvage the ancient statue,Review,,,,,,,,No,,,"The statue looks much too heavy for you to lift. In any case it'd be impossible to swim while cradling it.
 
-Some rope and a strong Kamigotchi might do the trick.",,"Has visited Underwater River, a Kami with at least 25 Power","Find rope and attempt to salvage the statue. When enough Operators have completed the quest, the statue will move to land.",,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
-torngarsuk,,Forage to create fire,Review,,,,,,,,No,,,Certain items can be combined in your inventory into something new. Two wooden sticks and a stone equals a little fire burning in your backpack.,,Has completed every daily forage quest. Has completed (13).,Combine 2 Wooden Sticks and 1 Stone to create a fire,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+Some rope and a strong Kamigotchi might do the trick.",,"Has visited Underwater River, a Kami with at least 25 Power","Find rope and attempt to salvage the statue. When enough Operators have completed the quest, the statue will move to land.",,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
+torngarsuk,,Forage to create fire,Review,,,,,,,,No,,,Certain items can be combined in your inventory into something new. Two wooden sticks and a stone equals a little fire burning in your backpack.,,Has completed every daily forage quest. Has completed (13).,Combine 2 Wooden Sticks and 1 Stone to create a fire,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,Forage and craft a glowstick,Review,,,,,,,,No,,,"Some things are too dangerous to handle on your own two hands. That's where a vending machine is helpful. 
 
 No one's figured out exactly how they work, but when you input two items that go together it transforms them. 
 
-With a stick of light you could venture into the dark.",,Has Underwater Ring. Has visited Underwater River (underneath Room 1). Has completed (52). Has completed (57).,Craft a glowstick. Let’s you venture further up the river.,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) ",,
+With a stick of light you could venture into the dark.",,Has Underwater Ring. Has visited Underwater River (underneath Room 1). Has completed (52). Has completed (57).,Craft a glowstick. Let’s you venture further up the river.,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) "
 torngarsuk,,"Harvest 3000 $MUSU in one go: ",Review,,,,,,,,No,,,"The more $MUSU your Kami accumulates on a node, the bigger the target on its back grows. But as they get into a groove their output increases.
 
-Let your Kami do its thing and claim their harvest when it's reached 3000 $MUSU. But don't leave it unattended, or you'll invite raiders.",,,Harvest 3000 $MUSU in one go,Temporary harvest output boost,,,
+Let your Kami do its thing and claim their harvest when it's reached 3000 $MUSU. But don't leave it unattended, or you'll invite raiders.",,,Harvest 3000 $MUSU in one go,Temporary harvest output boost,
 torngarsuk,,Opening the Caves: Doors of Perception,Review,,,,,,,,No,,,"The shrine is rumbling. It seems to call out to you. There's a fog in front of it, twisting itself into a cone. An offering of some kind might sate its hunger. 
 
 Pay attention to the progress screen associated with this quest. When enough contributions have been made Kamigotchi world changes.",You hear the sound of rocks tumbling down and splashing into the water as the fog drifts away. Stale air wafts toward you. It seems you can now peak behind the curtain.,Has visited Temple by the Waterfall. Has completed Farming 3.,Contribute X amount of MUSU to open the caves.,,"Goal Oriented Quests: Do X/Y/Z (https://www.notion.so/Goal-Oriented-Quests-Do-X-Y-Z-d0c44b0b90bf4c95b5b85270816aefe3?pvs=21) 
-Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) ",,
+Collaborative, World-Changing Quests (https://www.notion.so/Collaborative-World-Changing-Quests-deac640c9b344d38b977f4b2e32e632d?pvs=21) "
 torngarsuk,,Find the Shop: Late Night Shopping,Review,,,,,,,,No,,,"Your Kamigotchi's tummy's rumbling loudly and the coins overflowing your pockets are making clinking when you walk.
 
-It's attracting attention from eyes peering hiding in the shadows. Hurry along to the shop near the Torii Gate and buy your Kamigotchi a treat.","Look at that smile. Remember to take care of your Kamigotchi. Mina gave you a candle, she must’ve thought you looked lost.",Have completed all gather 100 MUSU quests,Buy a treat for your Kamigotchi,,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) ",,
+It's attracting attention from eyes peering hiding in the shadows. Hurry along to the shop near the Torii Gate and buy your Kamigotchi a treat.","Look at that smile. Remember to take care of your Kamigotchi. Mina gave you a candle, she must’ve thought you looked lost.",Have completed all gather 100 MUSU quests,Buy a treat for your Kamigotchi,,"Tutorial Quests (https://www.notion.so/dd1a8124b9914e3183dbd86a513d74bc?pvs=21) "
 torngarsuk,,Catch A Breath,Review,,,,,,,,No,,,"Even experienced Kamigotchi tire from too much work and when exhausted they're an easy mark for preying enemies.
 
 There's a shrine by a waterfall in the Old Forest, which should exude intense spiritual energies -  allowing your Kamigotchi a nice rest.
 
-Your candle will come in handy here.","The candle lights up the shrine for a few seconds, before a gust of wind comes out of nowhere and snuffs it out.",Have completed Find the Shop (66),Place a candle by the shrine,,,,
-Nedu,8,Apex form,Shelved,,,,,,,,No,,,It’s time you take your Kamigotchi to it’s full potential. Fully upgrade every skill of one of the skill trees to complete this quest — you will be rewarded handsomely.,The Apex form. Hope it was worth it. Enjoy your reward.,Have completed There are levels to this III (7),Fully upgrade a skill tree,"Red Gakki Ribbon, Gakki Cookie Sticks, XP Candy (Large)",,,
+Your candle will come in handy here.","The candle lights up the shrine for a few seconds, before a gust of wind comes out of nowhere and snuffs it out.",Have completed Find the Shop (66),Place a candle by the shrine,,
+Nedu,8,Apex form,Shelved,,,,,,,,No,,,It’s time you take your Kamigotchi to it’s full potential. Fully upgrade every skill of one of the skill trees to complete this quest — you will be rewarded handsomely.,The Apex form. Hope it was worth it. Enjoy your reward.,Have completed There are levels to this III (7),Fully upgrade a skill tree,"Red Gakki Ribbon, Gakki Cookie Sticks, XP Candy (Large)",
 Nedu,,In the exploration business,Review,,,,,,,,No,,,Your presence in this world has made ripples across the ecosystem. Get acquainted with every room in this world — you'll never know when you will need a place to hide.,"The land you walk upon is no longer strange to you. You've become accustomed to this world. Do you feel like... you belong here?
-",Have completed Back to the mines (5),Pass through every accessible room of Z1,Red Gakki Ribbon,,,
+",Have completed Back to the mines (5),Pass through every accessible room of Z1,Red Gakki Ribbon,
 Nedu,,The resurrection Ribbon,Review,,,,,,,,No,,,"You put your Kamigotchi to harvest, they die, you revive them. It happens. Revive a Kamigotchi to complete this quest.","Please take better care of your Kamigotchi.
-",Have completed Got MUSU? (75),Have used 1 Red Gakki Ribbon,Maple Flavored Ghost Gum,,nedu note: should track all-time red gakki ribbons used,
-Nedu,,Liquidation cascade,Review,,,,,,,,No,,,It’s said that only a few Kamigotchi are able to liquidate 3 or more Kamigotchi in one single harvest. Let’s put that theory to the test. Liquidate 3 Kamigotchi without stopping your Harvest to complete this quest.,"That was reckless, but effective. Enjoy the reward, you degen.",Have completed The resurrection Ribbon (83),Liquidate 3 Kamigotchi in a single harvest,XP Candy (Large),,,
-Lethe Asphodel,,,In progress,,,,,,,,No,,,,,"Quest 1 Completed (An Unknown World) ",None,1 Kami Mint Ticket,,,
+",Have completed Got MUSU? (75),Have used 1 Red Gakki Ribbon,Maple Flavored Ghost Gum,
+Nedu,,Liquidation cascade,Review,,,,,,,,No,,,It’s said that only a few Kamigotchi are able to liquidate 3 or more Kamigotchi in one single harvest. Let’s put that theory to the test. Liquidate 3 Kamigotchi without stopping your Harvest to complete this quest.,"That was reckless, but effective. Enjoy the reward, you degen.",Have completed The resurrection Ribbon (83),Liquidate 3 Kamigotchi in a single harvest,XP Candy (Large),
+Lethe Asphodel,,,In progress,,,,,,,,No,,,,,"Quest 1 Completed (An Unknown World) ",None,1 Kami Mint Ticket,
 Lethe Asphodel,,Food Tutorial Quest,In progress,,,,,,,,No,,,"See how you got a gum for completing your first quest? 
 
-This is food for Kamigotchi. ",,,,,,,
-,,Working for the Agency,In progress,,,,,,,,No,,,,,xx Quest Points,yy Quest Points,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-,,,Idea,,,,,,,,No,,,,,,,,,,
-vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
-vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
-vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
+This is food for Kamigotchi. ",,,,,
+,,Working for the Agency,In progress,,,,,,,,No,,,,,xx Quest Points,yy Quest Points,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+,,,Idea,,,,,,,,No,,,,,,,,
+vaitarna,,,Idea,,,,,,,,No,,,,,,,,
+vaitarna,,,Idea,,,,,,,,No,,,,,,,,
+vaitarna,,,Idea,,,,,,,,No,,,,,,,,

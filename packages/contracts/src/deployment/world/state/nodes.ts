@@ -14,7 +14,7 @@ export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
     if (entry['Enabled'] !== 'true') continue;
     if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
-      // await initNode(api, entry);
+      await initNode(api, entry);
       if (entry['Level Limit'] !== '') await initRequirement(api, entry);
     } catch {
       console.error('Could not create node', entry['Index']);

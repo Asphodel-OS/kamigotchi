@@ -49,6 +49,8 @@ library LibGetter {
       balance = LibSkill.getPointsOf(components, id, index);
     } else if (_type.eq("REPUTATION")) {
       balance = LibFactions.getRep(components, id, index);
+    } else if (_type.eq("BLOCKTIME")) {
+      balance = block.timestamp;
     } else {
       balance = LibData.get(components, id, index, _type);
     }

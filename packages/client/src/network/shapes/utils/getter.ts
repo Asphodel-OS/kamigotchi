@@ -26,6 +26,8 @@ export const getBalance = (
     return getReputationValue(world, components, holder.id, index ?? 0);
   } else if (type === 'LEVEL') {
     return holder.level;
+  } else if (type === 'BLOCKTIME') {
+    return Date.now() / 1000;
   }
 
   // account specific, check if holder is account shaped

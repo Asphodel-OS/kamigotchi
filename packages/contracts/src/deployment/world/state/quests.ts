@@ -77,7 +77,6 @@ async function initQuest(api: AdminAPI, entry: any) {
   );
 
   const agencyRep = Number(entry['REPUTATION']);
-  console.log('AGENCY REP', agencyRep);
   if (agencyRep || agencyRep > 0) {
     await api.registry.quest.add.reward(Number(entry['Index']), 'REPUTATION', 1, agencyRep);
   }
