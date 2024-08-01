@@ -132,12 +132,12 @@ library LibGoals {
 
     // remove objective
     uint256 objID = genObjID(goalID);
-    LibConditional.unsetAll(components, objID);
+    LibConditional.unset(components, objID);
 
     // remove requirements
     uint256[] memory reqIDs = getRequirements(components, index);
     for (uint256 i = 0; i < reqIDs.length; i++) {
-      LibConditional.unsetAll(components, reqIDs[i]);
+      LibConditional.unset(components, reqIDs[i]);
       IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(reqIDs[i]);
       NameComponent(getAddressById(components, NameCompID)).remove(reqIDs[i]);
       LevelComponent(getAddressById(components, LevelCompID)).remove(reqIDs[i]);
@@ -146,7 +146,7 @@ library LibGoals {
     // remove rewards
     uint256[] memory rewIDs = getRewards(components, index);
     for (uint256 i = 0; i < rewIDs.length; i++) {
-      LibConditional.unsetAll(components, rewIDs[i]);
+      LibConditional.unset(components, rewIDs[i]);
       IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(rewIDs[i]);
     }
   }

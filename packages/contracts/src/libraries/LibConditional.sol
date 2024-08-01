@@ -98,6 +98,7 @@ library LibConditional {
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
     IndexComponent(getAddressById(components, IndexCompID)).remove(id);
     ValueComponent(getAddressById(components, ValueCompID)).remove(id);
+    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
   }
 
   ///////////////////////
@@ -151,16 +152,6 @@ library LibConditional {
     result = LibGetter.getBool(components, targetID, data.type_, data.index, data.value);
     if (logic == LOGIC.NOT) result = !result;
     else require(logic == LOGIC.IS, "Unknown bool logic operator");
-  }
-
-  //////////////
-  // SETTERS
-
-  function unsetAll(IUintComp components, uint256 id) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   ///////////////////////
