@@ -150,6 +150,7 @@ const AffinityPairing = styled.div<{ color?: string }>`
   width: 12vw;
   padding: 0.9vw;
   gap: 0.6vw;
+  filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
 
   flex-grow: 1;
   display: flex;
@@ -161,6 +162,7 @@ const StatsContainer = styled.div`
   background-color: #888;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
+  filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
 
   height: 100%;
   width: 19.3vw;
@@ -177,6 +179,7 @@ const StatPairing = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? '#fff'};
   border: solid black 0.15vw;
   border-radius: 0.6vw;
+  filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
 
   padding: 0.75vw;
   gap: 0.45vw;
