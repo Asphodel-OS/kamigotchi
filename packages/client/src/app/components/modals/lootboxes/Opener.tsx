@@ -41,7 +41,7 @@ export const Opener = (props: Props) => {
       <ItemIcon item={data.lootbox} balance={currBal} size='large' />
       <ButtonBox>
         {OpenButton(1)}
-        {OpenButton(10)}
+        {OpenButton(Math.min(Math.max(currBal, 3), 10))}
       </ButtonBox>
     </Container>
   );

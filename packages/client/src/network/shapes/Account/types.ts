@@ -12,20 +12,12 @@ import {
   getAccIncomingRequests,
   getAccOutgoingRequests,
 } from '../Friendship';
-import { queryAccCommits } from '../Gacha';
-import {
-  Inventory,
-  LootboxLog,
-  cleanInventories,
-  getMusuBalance,
-  queryLootboxLogsByHolder as queryAccLBLogs,
-  queryInventoriesByAccount,
-} from '../Item';
+import { Inventory, cleanInventories, getMusuBalance, queryInventoriesByAccount } from '../Item';
 import { Kami, KamiOptions, queryKamisX } from '../Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
-import { Commit, getData } from '../utils';
+import { getData } from '../utils';
 
 // account shape with minimal fields
 export interface BareAccount {
@@ -56,14 +48,7 @@ export interface Account extends BareAccount {
   };
   kamis: Kami[];
   friends?: Friends;
-  gacha?: {
-    commits: Commit[];
-  };
   inventories?: Inventory[];
-  lootboxLogs?: {
-    unrevealed: LootboxLog[];
-    revealed: LootboxLog[];
-  };
   quests?: {
     ongoing: Quest[];
     completed: Quest[];
@@ -78,10 +63,8 @@ export interface Account extends BareAccount {
 export interface AccountOptions {
   kamis?: boolean | KamiOptions;
   friends?: boolean;
-  gacha?: boolean;
   inventory?: boolean;
   quests?: boolean;
-  lootboxLogs?: boolean;
   stats?: boolean;
 }
 
@@ -209,11 +192,6 @@ export const getAccount = (
     };
   }
 
-  // populate Gacha
-  if (options?.gacha) {
-    account.gacha = { commits: queryAccCommits(world, components, account.id) };
-  }
-
   // populate Quests
   if (options?.quests) {
     account.quests = {
@@ -232,13 +210,6 @@ export const getAccount = (
     };
   }
 
-  if (options?.lootboxLogs) {
-    account.lootboxLogs = {
-      unrevealed: queryAccLBLogs(world, components, account.id, false),
-      revealed: queryAccLBLogs(world, components, account.id, true),
-    };
-  }
-
   // populate Stats
   if (options?.stats) {
     account.stats = {
@@ -246,9 +217,6 @@ export const getAccount = (
       coin: getData(world, components, account.id, 'ITEM_TOTAL', MUSU_INDEX),
     };
   }
-
-  // adjustments
-  if (isNaN(account.coin)) account.coin = 0;
 
   return account;
 };

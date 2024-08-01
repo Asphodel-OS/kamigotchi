@@ -9,38 +9,20 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
 import { BlockRevealComponent as BlockRevealComp, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
+import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
+import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
 
 library LibRandom {
   //////////////////
-  // SEED GEN
+  // DROPTABLES
 
-  // gets seed from future blockhash. blockhash needs to be revealed within 256 blocks
-  function getSeedBlockhash(uint256 blocknumber) internal view returns (uint256 result) {
-    // require(block.number - blocknumber <= 256, "LibRandom: blockhash too old");
-    result = uint256(blockhash(blocknumber));
-    require(result != 0, "LibRandom: blockhash unavailable. Contact admin");
-  }
-
-  //////////////////
-  // SETTERS
-
-  function setRevealBlock(IUintComp components, uint256 id, uint256 revealBlock) internal {
-    BlockRevealComp(getAddressById(components, BlockRevealCompID)).set(id, revealBlock);
-  }
-
-  function removeRevealBlock(IUintComp components, uint256 id) internal {
-    BlockRevealComp(getAddressById(components, BlockRevealCompID)).remove(id);
-  }
-
-  /////////////////
-  // GETTERS
-
-  function getRevealBlock(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BlockRevealComp(getAddressById(components, BlockRevealCompID)).get(id);
-  }
-
-  function hasRevealBlock(IUintComp components, uint256 id) internal view returns (bool) {
-    return BlockRevealComp(getAddressById(components, BlockRevealCompID)).has(id);
+  function getDroptable(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (uint32[] memory, uint256[] memory) {
+    uint32[] memory keys = KeysComponent(getAddressById(components, KeysCompID)).get(id);
+    uint256[] memory weights = WeightsComponent(getAddressById(components, WeightsCompID)).get(id);
+    return (keys, weights);
   }
 
   //////////////////
@@ -224,12 +206,9 @@ library LibRandom {
     uint256 count
   ) internal pure returns (uint256[] memory) {
     uint256 totalWeight;
-    for (uint256 i; i < weights.length; i++) {
-      totalWeight += weights[i];
-    }
+    for (uint256 i; i < weights.length; i++) totalWeight += weights[i];
 
     uint256[] memory results = new uint256[](weights.length);
-
     for (uint256 i; i < count; i++) {
       uint256 pos = _positionFromWeighted(
         weights,
@@ -260,9 +239,7 @@ library LibRandom {
     uint256 currentWeight;
     for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
-      if (roll < currentWeight) {
-        return (i);
-      }
+      if (roll < currentWeight) return (i);
     }
 
     // should never get here

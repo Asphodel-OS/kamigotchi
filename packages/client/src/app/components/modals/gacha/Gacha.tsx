@@ -127,9 +127,8 @@ export function registerGachaModal() {
           const filtered = filterRevealable(data.commits, Number(blockNumber));
           if (!triedReveal && filtered.length > 0) {
             try {
-              // wait to give buffer for OP rpc
+              // wait to give buffer for rpc
               await new Promise((resolve) => setTimeout(resolve, 500));
-
               revealTx(filtered);
               setTriedReveal(true);
             } catch (e) {

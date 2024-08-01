@@ -9,9 +9,13 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
+import { utils } from 'ethers';
 import { Components } from 'network/components';
 import { Stats, getStats } from '../Stats';
-import { Commit, DetailedEntity, ForType, getFor, getItemImage } from '../utils';
+import { DetailedEntity, ForType, getFor, getItemImage } from '../utils';
+
+const IDStore = new Map<string, string>();
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
@@ -23,7 +27,6 @@ export interface Item extends DetailedEntity {
   type: string;
   stats?: Stats;
   experience?: number; // maybe merge in Stats in future?
-  droptable?: Droptable;
 }
 
 export interface Is {
@@ -31,15 +34,17 @@ export interface Is {
   lootbox: boolean;
 }
 
-export interface Lootbox extends Item {
-  droptable: Droptable;
-}
-
-export interface Droptable {
-  keys: number[];
-  weights: number[];
-  results?: number[];
-}
+export const NullItem: Item = {
+  ObjectType: 'ITEM',
+  id: '0' as EntityID,
+  entityIndex: 0 as EntityIndex,
+  index: 0,
+  type: '',
+  is: { consumable: false, lootbox: false },
+  for: '',
+  image: '',
+  name: '',
+};
 
 /**
  * Gets info about an item from an SC item registry
@@ -52,16 +57,12 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
   const { IsConsumable, IsLootbox, Description, Experience, ItemIndex, Keys, Name, Type, Weights } =
     components;
 
-  const name = (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item';
   let item: Item = {
-    ObjectType: 'ITEM',
+    ...getItemDetails(components, entityIndex),
     entityIndex,
     id: world.entities[entityIndex],
     index: getComponentValue(ItemIndex, entityIndex)?.value as number,
     type: getComponentValue(Type, entityIndex)?.value as string,
-    name: name,
-    description: getComponentValue(Description, entityIndex)?.value as string,
-    image: getItemImage(name),
     for: getFor(components, entityIndex),
     stats: getStats(components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
@@ -71,17 +72,23 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     },
   };
 
-  // check if we want to process this item as a lootbox
-  if (hasComponent(IsLootbox, entityIndex)) {
-    item.type = 'LOOTBOX';
-    const droptable: Droptable = {
-      keys: getComponentValue(Keys, entityIndex)?.value as number[],
-      weights: getComponentValue(Weights, entityIndex)?.value as number[],
-    };
-    item.droptable = droptable;
-  }
-
   return item;
+};
+
+export const getItemDetails = (
+  components: Components,
+  entityIndex: EntityIndex
+): DetailedEntity => {
+  const { Name, Description } = components;
+
+  const name = (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item';
+
+  return {
+    ObjectType: 'ITEM',
+    image: getItemImage(name),
+    name: name,
+    description: getComponentValue(Description, entityIndex)?.value as string,
+  };
 };
 
 /////////////////
@@ -119,46 +126,16 @@ export const getInventory = (
   return inventory;
 };
 
-/////////////////
-// LOOTBOX LOGS
+export const getRegEntityIndex = (world: World, itemIndex: number): EntityIndex | undefined => {
+  let id = '';
+  const key = 'registry.item' + itemIndex.toString();
 
-export interface LootboxLog extends Commit {
-  id: EntityID;
-  entityIndex: EntityIndex;
-  isRevealed: boolean;
-  balance: number;
-  index: number;
-  time: number;
-  revealBlock: number;
-  droptable: Droptable;
-}
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = formatEntityID(
+      utils.solidityKeccak256(['string', 'uint32'], ['registry.item', itemIndex])
+    );
+  }
 
-// gets a lootbox log entity
-export const getLootboxLog = (
-  world: World,
-  components: Components,
-  index: EntityIndex
-): LootboxLog => {
-  const { Value, Values, IsRegistry, ItemIndex, RevealBlock, Keys, Time, Weights } = components;
-
-  const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
-  const regID = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
-  )[0];
-  const isRevealed = !hasComponent(RevealBlock, index);
-
-  return {
-    id: world.entities[index],
-    entityIndex: index,
-    isRevealed: isRevealed,
-    balance: getComponentValue(Value, index)?.value as number,
-    index: itemIndex,
-    time: getComponentValue(Time, index)?.value as number,
-    droptable: {
-      keys: getComponentValue(Keys, regID)?.value as number[],
-      weights: getComponentValue(Weights, regID)?.value as number[],
-      results: isRevealed ? (getComponentValue(Values, index)?.value as number[]) : undefined,
-    },
-    revealBlock: isRevealed ? 0 : (getComponentValue(RevealBlock, index)?.value as number) * 1,
-  };
+  return world.entityToIndex.get(id as EntityID);
 };

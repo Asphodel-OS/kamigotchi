@@ -1,13 +1,4 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  QueryFragment,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, World } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
@@ -15,34 +6,16 @@ import { Components } from 'network/';
 import { getConfigFieldValueWei } from './Config';
 import { Kami, KamiOptions, queryKamisX } from './Kami';
 import { Commit } from './utils';
+import { queryHolderCommits } from './utils/commits';
 
 export const GACHA_ID = formatEntityID(utils.solidityKeccak256(['string'], ['gacha.id']));
 
-export const getCommit = (world: World, components: Components, index: EntityIndex): Commit => {
-  const { RevealBlock } = components;
-
-  return {
-    id: world.entities[index],
-    revealBlock: (getComponentValue(RevealBlock, index)?.value as number) * 1,
-  };
-};
-
-export const queryAccCommits = (
+export const queryGachaCommits = (
   world: World,
   components: Components,
   accountID: EntityID
 ): Commit[] => {
-  const { AccountID, Type, RevealBlock } = components;
-
-  const toQuery: QueryFragment[] = [
-    HasValue(AccountID, { value: accountID }),
-    HasValue(Type, { value: 'GACHA_COMMIT' }),
-    Has(RevealBlock),
-  ];
-
-  const raw = Array.from(runQuery(toQuery));
-
-  return raw.map((index): Commit => getCommit(world, components, index));
+  return queryHolderCommits(world, components, 'GACHA_COMMIT', accountID);
 };
 
 export const queryGachaKamis = (

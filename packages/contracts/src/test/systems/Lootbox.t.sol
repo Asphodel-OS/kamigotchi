@@ -18,52 +18,174 @@ contract LootboxTest is SetupTemplate {
     _createGenericItem(4);
   }
 
-  function testLootboxSingleDT(uint256 startAmt, uint256 useAmt) public {
+  /////////////////
+  // TESTS
+
+  function testLootboxSingle(uint256 startAmt, uint256 useAmt) public {
+    uint32 lootboxIndex = 10;
+    _createBlankLootbox(lootboxIndex);
+
+    _giveLootbox(alice, lootboxIndex, startAmt);
+    assertEq(_getItemBal(alice, lootboxIndex), startAmt);
+
+    if (useAmt > 10) {
+      vm.startPrank(alice.operator);
+      vm.expectRevert("LootboxStartReveal: max 10");
+      _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt);
+
+      assertEq(_getItemBal(alice, lootboxIndex), startAmt);
+    } else if (useAmt > startAmt) {
+      vm.startPrank(alice.operator);
+      vm.expectRevert("Inventory: insufficient balance");
+      _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt);
+
+      assertEq(_getItemBal(alice, lootboxIndex), startAmt);
+    } else {
+      vm.roll(_currBlock);
+      vm.prank(alice.operator);
+      uint256 revealID = abi.decode(
+        _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt),
+        (uint256)
+      );
+      _assertCommit(revealID, alice.id, lootboxIndex, _currBlock, useAmt);
+
+      vm.roll(++_currBlock);
+      uint256[] memory revealIDs = new uint256[](1);
+      revealIDs[0] = revealID;
+      vm.prank(alice.operator);
+      _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+
+      assertEq(_getItemBal(0, 1), useAmt);
+      assertEq(_getItemBal(0, lootboxIndex), startAmt - useAmt);
+    }
+  }
+
+  function testLootboxSingleDT() public {
+    uint32 lootboxIndex = 10;
+    uint32[] memory keys = new uint32[](4);
+    uint256[] memory weights = new uint256[](4);
+    for (uint i = 0; i < 4; i++) {
+      keys[i] = uint32(i + 1);
+      weights[i] = 9;
+    }
+    _createLootbox(lootboxIndex, "LOOTBOX", keys, weights);
+
+    uint256[] memory revealIDs = new uint256[](1);
+    _giveLootbox(alice, lootboxIndex, 5);
+    revealIDs[0] = _openLootbox(alice, lootboxIndex, 5);
+
+    console.log(uint256(blockhash(block.number - 1)));
+    vm.prank(alice.operator);
+    _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+
+    // total items = 5
+    assertEq(
+      _getItemBal(alice, 1) + _getItemBal(alice, 2) + _getItemBal(alice, 3) + _getItemBal(alice, 4),
+      5
+    );
+  }
+
+  function testLootboxMultiple() public {
+    uint32 lootboxIndex = 10;
+    _createBlankLootbox(lootboxIndex);
+    uint256[] memory revealIDs = new uint256[](5);
+    _giveLootbox(alice, lootboxIndex, 25);
+
+    revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
+    revealIDs[1] = _openLootbox(alice, lootboxIndex, 2);
+    revealIDs[2] = _openLootbox(alice, lootboxIndex, 4);
+    revealIDs[3] = _openLootbox(alice, lootboxIndex, 8);
+    revealIDs[4] = _openLootbox(alice, lootboxIndex, 10);
+
+    vm.prank(alice.operator);
+    _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+
+    assertEq(_getItemBal(alice, 1), 25);
+  }
+
+  function testLootboxExpired() public {
+    uint32 lootboxIndex = 10;
+    _createBlankLootbox(lootboxIndex);
+    uint256[] memory revealIDs = new uint256[](1);
+    _giveLootbox(alice, lootboxIndex, 1);
+
+    revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
+    vm.roll(_currBlock += 300);
+
+    vm.prank(alice.operator);
+    vm.expectRevert("Blockhash unavailable. Contact admin");
+    _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+  }
+
+  function testLootboxForceReveal() public {
+    uint32 lootboxIndex = 10;
+    _createBlankLootbox(lootboxIndex);
+    _giveLootbox(alice, lootboxIndex, 1);
+    uint256 revealID = _openLootbox(alice, lootboxIndex, 1);
+
+    // try while still valid
+    vm.prank(deployer);
+    vm.expectRevert("LootboxExeRev: commit still available");
+    _LootboxExecuteRevealSystem.forceReveal(revealID);
+
+    // roll
+    vm.roll(_currBlock += 300);
+
+    // try unauthorized
+    vm.prank(alice.operator);
+    vm.expectRevert("Auth: not a community manager");
+    _LootboxExecuteRevealSystem.forceReveal(revealID);
+
+    // authorized call
+    vm.prank(deployer);
+    _LootboxExecuteRevealSystem.forceReveal(revealID);
+
+    assertEq(_getItemBal(alice, 1), 1);
+  }
+
+  /////////////////
+  // FUNCTIONS
+
+  function _createBlankLootbox(uint32 index) public {
     uint32[] memory keys = new uint32[](1);
     keys[0] = 1;
     uint256[] memory weights = new uint256[](1);
     weights[0] = 1;
 
-    uint32 lootboxIndex = 10;
-    _createLootbox(lootboxIndex, "Lootbox", keys, weights);
+    _createLootbox(index, "Lootbox", keys, weights);
+  }
 
-    _giveLootbox(0, lootboxIndex, startAmt);
-    assertEq(_getItemBalance(0, lootboxIndex), startAmt);
+  function _giveLootbox(PlayerAccount memory player, uint32 index, uint256 amt) internal {
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, player.id, index, amt);
+    LibInventory.logIncItemTotal(components, player.id, index, amt);
+    vm.stopPrank();
+  }
 
-    if (useAmt > 10) {
-      address operator = _getOperator(0);
-      vm.startPrank(operator);
-      vm.expectRevert("LootboxStartReveal: max 10");
-      _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt);
+  function _openLootbox(
+    PlayerAccount memory player,
+    uint32 index,
+    uint256 amt
+  ) internal returns (uint256 id) {
+    vm.startPrank(player.operator);
+    id = abi.decode(_LootboxStartRevealSystem.executeTyped(index, amt), (uint256));
+    vm.roll(_currBlock++);
+    vm.stopPrank();
+  }
 
-      assertEq(_getItemBalance(0, lootboxIndex), startAmt);
-    } else if (useAmt > startAmt) {
-      address operator = _getOperator(0);
-      vm.startPrank(operator);
-      vm.expectRevert("Inventory: insufficient balance");
-      _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt);
+  /////////////////
+  // ASSERTIONS
 
-      assertEq(_getItemBalance(0, lootboxIndex), startAmt);
-    } else {
-      address operator = _getOperator(0);
-
-      vm.roll(_currBlock);
-      vm.prank(operator);
-      uint256 revealID = abi.decode(
-        _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt),
-        (uint256)
-      );
-      assertEq(_IndexItemComponent.get(revealID), lootboxIndex);
-      assertEq(_ValueComponent.get(revealID), useAmt);
-      assertEq(_IdHolderComponent.get(revealID), _getAccount(0));
-      assertEq(_BlockRevealComponent.get(revealID), _currBlock);
-
-      vm.roll(++_currBlock);
-      vm.prank(operator);
-      _LootboxExecuteRevealSystem.executeTyped(revealID);
-
-      assertEq(_getItemBalance(0, 1), useAmt);
-      assertEq(_getItemBalance(0, lootboxIndex), startAmt - useAmt);
-    }
+  function _assertCommit(
+    uint256 id,
+    uint256 holderID,
+    uint32 index,
+    uint256 revealBlock,
+    uint256 count
+  ) internal {
+    assertEq(_IndexItemComponent.get(id), index);
+    assertEq(_ValueComponent.get(id), count);
+    assertEq(_IdHolderComponent.get(id), holderID);
+    assertEq(_BlockRevealComponent.get(id), revealBlock);
   }
 }

@@ -94,30 +94,30 @@ contract GoalsTest is SetupTemplate {
     // not-even-bronze claims, gets nothing
     vm.prank(accSlacker.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(0, _getItemBalance(accSlacker.index, 100));
-    assertEq(0, _getItemBalance(accSlacker.index, 200));
-    assertEq(0, _getItemBalance(accSlacker.index, 300));
+    assertEq(0, _getItemBal(accSlacker.index, 100));
+    assertEq(0, _getItemBal(accSlacker.index, 200));
+    assertEq(0, _getItemBal(accSlacker.index, 300));
 
     // bronze claims, gets bronze tier
     vm.prank(accBronze.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(accBronze.index, 100));
-    assertEq(0, _getItemBalance(accBronze.index, 200));
-    assertEq(0, _getItemBalance(accBronze.index, 300));
+    assertEq(1, _getItemBal(accBronze.index, 100));
+    assertEq(0, _getItemBal(accBronze.index, 200));
+    assertEq(0, _getItemBal(accBronze.index, 300));
 
     // silver claims, gets silver tier
     vm.prank(accSilver.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(accSilver.index, 100));
-    assertEq(1, _getItemBalance(accSilver.index, 200));
-    assertEq(0, _getItemBalance(accSilver.index, 300));
+    assertEq(1, _getItemBal(accSilver.index, 100));
+    assertEq(1, _getItemBal(accSilver.index, 200));
+    assertEq(0, _getItemBal(accSilver.index, 300));
 
     // gold claims, gets gold tier
     vm.prank(accGold.operator);
     _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBalance(accGold.index, 100));
-    assertEq(1, _getItemBalance(accGold.index, 200));
-    assertEq(1, _getItemBalance(accGold.index, 300));
+    assertEq(1, _getItemBal(accGold.index, 100));
+    assertEq(1, _getItemBal(accGold.index, 200));
+    assertEq(1, _getItemBal(accGold.index, 300));
   }
 
   //////////////////

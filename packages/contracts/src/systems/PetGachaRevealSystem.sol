@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCommit } from "libraries/LibCommit.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
@@ -19,14 +20,12 @@ contract PetGachaRevealSystem is System, AuthRoles {
 
   function reveal(uint256[] memory rawCommitIDs) external returns (uint256[] memory) {
     require(rawCommitIDs.length > 0, "need commits to reveal");
-    _checkTypes(rawCommitIDs);
+    require(LibGacha.extractIsCommits(components, rawCommitIDs), "not gacha commit");
 
-    // sorts commits by cronological order via increment
+    // sorts commits by cronological order via entityID
     uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
-
-    uint256[] memory seeds = LibGacha.extractSeeds(components, commitIDs);
-    uint256[] memory petIDs = LibGacha.selectPets(components, seeds);
-    _transferPets(commitIDs, petIDs);
+    uint256[] memory petIDs = LibGacha.selectPets(components, commitIDs);
+    LibGacha.withdrawPets(components, petIDs, commitIDs);
 
     return petIDs;
   }
@@ -36,23 +35,17 @@ contract PetGachaRevealSystem is System, AuthRoles {
     uint256[] memory commitIDs
   ) external onlyCommManager(components) returns (uint256[] memory) {
     require(commitIDs.length > 0, "need commits to reveal");
-    _checkTypes(commitIDs);
+    require(LibGacha.extractIsCommits(components, commitIDs), "not gacha commit");
 
     // checks if blockhash is not available
-    uint256[] memory revealBlocks = LibGacha.extractRevealBlockBatch(components, commitIDs);
-    for (uint256 i; i < revealBlocks.length; i++) {
-      require(uint256(blockhash(revealBlocks[i])) == 0, "no need for force reveal");
-    }
+    require(!LibCommit.isAvailable(components, commitIDs), "no need for force reveal");
 
     // generate new seeds
-    uint256[] memory seeds = new uint256[](commitIDs.length);
-    uint256 bhash = uint256(blockhash(block.number - 1));
-    for (uint256 i; i < seeds.length; i++)
-      seeds[i] = uint256(keccak256(abi.encodePacked(commitIDs[i], bhash)));
+    LibCommit.resetBlocks(components, commitIDs);
 
-    // select and send pets
-    uint256[] memory petIDs = LibGacha.selectPets(components, seeds);
-    _transferPets(commitIDs, petIDs);
+    // regular flow
+    uint256[] memory petIDs = LibGacha.selectPets(components, commitIDs);
+    LibGacha.withdrawPets(components, petIDs, commitIDs);
 
     return petIDs;
   }
@@ -60,17 +53,5 @@ contract PetGachaRevealSystem is System, AuthRoles {
   function execute(bytes memory arguments) public returns (bytes memory) {
     require(false, "not implemented");
     return "";
-  }
-
-  function _checkTypes(uint256[] memory commitIDs) internal {
-    string[] memory types = LibGacha.extractTypeBatch(components, commitIDs);
-    for (uint256 i; i < commitIDs.length; i++)
-      require(LibString.eq(types[i], "GACHA_COMMIT"), "not gacha commit");
-  }
-
-  function _transferPets(uint256[] memory commitIDs, uint256[] memory petIDs) internal {
-    uint256[] memory accountIDs = LibGacha.extractAccountBatch(components, commitIDs);
-    uint256[] memory rerollCounts = LibGacha.extractRerollBatch(components, commitIDs);
-    LibGacha.withdrawPets(components, petIDs, accountIDs, rerollCounts);
   }
 }

@@ -43,7 +43,7 @@ contract InventoryTest is SetupTemplate {
     // ensure inventory doesn't exist
     assertEq(LibInventory.get(components, defaultAccID, index), 0);
     assertInvExistence(LibInventory.get(components, defaultAccID, index), false);
-    assertEq(_getItemBalance(defaultAccIndex, index), 0);
+    assertEq(_getItemBal(defaultAccIndex, index), 0);
 
     // setting balance
     vm.startPrank(deployer);

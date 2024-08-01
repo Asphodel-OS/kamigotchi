@@ -9,8 +9,10 @@ import { v4 as uuid } from 'uuid';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { getItemByIndex, getLootboxLog } from 'network/shapes/Item';
+import { getItemByIndex } from 'network/shapes/Item';
+import { getLootboxLogByHash, queryLootboxCommits } from 'network/shapes/Lootbox';
 import { Commit, filterRevealable } from 'network/shapes/utils/commits';
+import { playClick } from 'utils/sounds';
 import { useAccount, useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
 import { Opener } from './Opener';
@@ -34,17 +36,24 @@ export function registerLootboxesModal() {
           const { network } = layers;
           const { world, components } = network;
           const account = getAccountFromBurner(network, {
-            lootboxLogs: true,
             inventory: true,
           });
           const accLootboxes = (account.inventories || []).filter(
             (inv) => inv.item.type === 'LOOTBOX'
           );
+          const commits = queryLootboxCommits(world, components, account.id);
+          // only one lootbox for now
           const selectedBox = getItemByIndex(world, components, 10001);
+          const lootboxLog = getLootboxLogByHash(
+            world,
+            components,
+            account.id,
+            selectedBox?.index!
+          );
 
           return {
             network: layers.network,
-            data: { account, accLootboxes, selectedBox },
+            data: { account, accLootboxes, commits, lootboxLog, selectedBox },
           };
         })
       ),
@@ -52,12 +61,13 @@ export function registerLootboxesModal() {
     // Render
     ({ network, data }) => {
       const { isConnected } = useAccount();
-      const { account, accLootboxes, selectedBox } = data;
-      const { actions, api, components, world } = network;
+      const { account, accLootboxes, commits, lootboxLog, selectedBox } = data;
+      const { actions, api, world } = network;
 
       const { modals } = useVisibility();
       const [state, setState] = useState('OPEN');
       const [blockNumber, setBlockNumber] = useState(BigInt(0));
+      const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
 
       /////////////////
@@ -81,32 +91,26 @@ export function registerLootboxesModal() {
       // (AUTO) REVEAL latest box
       useEffect(() => {
         const tx = async () => {
-          if (waitingToReveal) {
-            if (!isConnected) return;
+          if (!isConnected) return;
 
-            // wait to give buffer for OP rpc
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            const raw = [...account.lootboxLogs?.unrevealed!];
-            const reversed = filterRevealable(raw.reverse(), Number(blockNumber));
-
-            reversed.forEach(async (LootboxLog) => {
-              try {
-                setWaitingToReveal(false);
-                await revealTx(LootboxLog);
-                setState('REWARDS');
-              } catch (e) {
-                console.log(e);
-              }
-            });
+          const filtered = filterRevealable(commits, Number(blockNumber));
+          if (!triedReveal && filtered.length > 0) {
+            try {
+              // wait to give buffer for rpc
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              handleReveal(filtered);
+              setTriedReveal(true);
+            } catch (e) {
+              console.log('Lootbox.tsx: reveal failed', e);
+            }
+            if (waitingToReveal) setWaitingToReveal(false);
           }
         };
 
         tx();
-      }, [account.lootboxLogs?.unrevealed, waitingToReveal]);
+      }, [commits]);
 
       const openTx = async (index: number, amount: number) => {
-        setState('REVEALING');
-
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
@@ -121,20 +125,19 @@ export function registerLootboxesModal() {
           actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
-        setWaitingToReveal(true);
-        return;
+        return actionID;
       };
 
-      const revealTx = async (commit: Commit) => {
-        const id = commit.id;
+      const revealTx = async (commits: Commit[]) => {
+        const ids = commits.map((commit) => commit.id);
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
           action: 'LootboxReveal',
-          params: [id],
+          params: [ids],
           description: `Inspecting lootbox contents`,
           execute: async () => {
-            return api.player.lootbox.executeReveal(id);
+            return api.player.lootbox.executeReveal(ids);
           },
         });
         await waitForActionCompletion(
@@ -144,18 +147,28 @@ export function registerLootboxesModal() {
         return;
       };
 
-      ///////////////
-      // UTILS
+      const handleOpen = async (index: number, amount: number) => {
+        playClick();
+        try {
+          setState('REVEALING');
+          await openTx(index, amount);
 
-      const getLog = (index: EntityIndex) => {
-        return getLootboxLog(world, components, index);
+          setWaitingToReveal(true);
+          setTriedReveal(false);
+        } catch (e) {
+          console.log('Lootbox.tsx: handleOpen() open failed', e);
+        }
       };
 
-      const getItem = (index: number) => {
-        return getItemByIndex(world, components, index);
+      const handleReveal = async (commits: Commit[]) => {
+        await revealTx(commits);
+
+        // wait to give buffer for rpc
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setState('REWARDS');
       };
 
-      ///////////////
+      /////////////
       // DISPLAY
 
       const BackButton = () => {
@@ -166,9 +179,7 @@ export function registerLootboxesModal() {
       };
 
       const ExpiredButton = () => {
-        const hasExpired = account.lootboxLogs?.unrevealed
-          ? account.lootboxLogs.unrevealed.length > 0
-          : true;
+        const hasExpired = commits.length > 0;
         if (state !== 'OPEN' || !hasExpired) return <div></div>;
 
         return (
@@ -195,7 +206,7 @@ export function registerLootboxesModal() {
         if (state === 'OPEN') {
           return (
             <Opener
-              actions={{ open: async (amount: number) => openTx(selectedBox?.index!, amount) }}
+              actions={{ open: async (amount: number) => handleOpen(selectedBox?.index!, amount) }}
               data={{
                 inventory: accLootboxes[0],
                 lootbox: selectedBox,
@@ -205,12 +216,12 @@ export function registerLootboxesModal() {
         } else if (state === 'REVEALING') {
           return <Revealing />;
         } else if (state === 'REWARDS') {
-          return <Rewards account={account} utils={{ getItem, getLog }} />;
+          return <Rewards account={account} log={lootboxLog} />;
         } else if (state === 'COMMITS') {
           return (
             <Commits
-              data={{ commits: account.lootboxLogs?.unrevealed!, blockNumber: Number(blockNumber) }}
-              actions={{ revealTx }}
+              data={{ commits: commits, blockNumber: Number(blockNumber) }}
+              actions={{ handleReveal }}
             />
           );
         }

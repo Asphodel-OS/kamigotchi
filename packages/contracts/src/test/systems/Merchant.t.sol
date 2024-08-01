@@ -397,7 +397,7 @@ contract NPCTest is SetupTemplate {
       listing = listings[randN % listings.length];
       testData.playerIndex = uint8(randN % testData.numAccounts);
       testData.itemIndex = uint8(LibListing.getItemIndex(components, listingID));
-      testData.stockInitial = uint24(_getItemBalance(testData.playerIndex, testData.itemIndex)); // item balance
+      testData.stockInitial = uint24(_getItemBal(testData.playerIndex, testData.itemIndex)); // item balance
       testData.stockChange = uint24((randN % 100) + 1); // 1-100
       testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $MUSU balance
 
@@ -421,7 +421,7 @@ contract NPCTest is SetupTemplate {
             testData.balanceInitial - testData.balanceChange
           );
           assertEq(
-            _getItemBalance(testData.playerIndex, testData.itemIndex),
+            _getItemBal(testData.playerIndex, testData.itemIndex),
             testData.stockInitial + testData.stockChange
           );
         }
@@ -429,7 +429,7 @@ contract NPCTest is SetupTemplate {
         // sell case
         testData.sellPrice = uint24(LibListing.getSellPrice(components, listingID));
         testData.balanceChange = testData.stockChange * testData.sellPrice;
-        if (testData.stockChange > _getItemBalance(testData.playerIndex, testData.itemIndex)) {
+        if (testData.stockChange > _getItemBal(testData.playerIndex, testData.itemIndex)) {
           uint32[] memory itemIndices = new uint32[](1);
           itemIndices[0] = listing.itemIndex;
           uint32[] memory amts = new uint32[](1);
@@ -445,7 +445,7 @@ contract NPCTest is SetupTemplate {
             testData.balanceInitial + testData.balanceChange
           );
           assertEq(
-            _getItemBalance(testData.playerIndex, testData.itemIndex),
+            _getItemBal(testData.playerIndex, testData.itemIndex),
             testData.stockInitial - testData.stockChange
           );
         }

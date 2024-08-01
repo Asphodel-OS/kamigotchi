@@ -165,8 +165,9 @@ export function createPlayerAPI(systems: any) {
 
   // @dev executes a lootbox reveal (reveal)
   // @param id    entityID of reveal entity
-  function lootboxExecuteReveal(id: BigNumberish) {
-    return systems['system.Lootbox.Reveal.Execute'].executeTyped(id);
+  function lootboxExecuteReveal(ids: BigNumberish[]) {
+    console.log('lootboxExecuteReveal', ids);
+    return systems['system.Lootbox.Reveal.Execute'].executeTyped(ids);
   }
 
   /////////////////

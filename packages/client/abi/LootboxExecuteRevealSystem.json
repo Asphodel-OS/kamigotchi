@@ -40,9 +40,9 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "id",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "ids",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
         }
       ],
       "outputs": [
@@ -125,7 +125,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(uint256[])": "72de78c2",
     "forceReveal(uint256)": "265ab676",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"

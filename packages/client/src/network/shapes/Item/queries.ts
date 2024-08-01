@@ -11,7 +11,7 @@ import {
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/components';
-import { Inventory, Item, LootboxLog, getInventory, getItem, getLootboxLog } from './types';
+import { Inventory, Item, NullItem, getInventory, getItem, getRegEntityIndex } from './types';
 import { getInventoryEntityIndex } from './utils';
 
 /////////////////
@@ -25,11 +25,14 @@ import { getInventoryEntityIndex } from './utils';
  */
 
 export const getItemByIndex = (world: World, components: Components, index: number): Item => {
-  const { IsRegistry, ItemIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
-  );
-  return getItem(world, components, entityIndices[0]);
+  const entityIndex = getItemRegEntity(world, index);
+  return entityIndex ? getItem(world, components, entityIndex) : NullItem;
+};
+
+export const getItemRegEntity = (world: World, index: number): EntityIndex | undefined => {
+  const entityIndex = getRegEntityIndex(world, index);
+  if (!entityIndex) console.warn('Item registry not found');
+  return entityIndex;
 };
 
 // get all items in the registry
@@ -104,29 +107,4 @@ export const queryInventories = (
 
   const raw = Array.from(runQuery(toQuery));
   return raw.map((index): Inventory => getInventory(world, components, index));
-};
-
-/////////////////
-// LOOTBOX LOGS
-
-export const queryLootboxLogsByHolder = (
-  world: World,
-  components: Components,
-  holderID: EntityID,
-  revealed: boolean
-): LootboxLog[] => {
-  const { IsLootbox, IsLog, HolderID, RevealBlock } = components;
-
-  const toQuery: QueryFragment[] = [
-    Has(IsLootbox),
-    Has(IsLog),
-    HasValue(HolderID, { value: holderID }),
-  ];
-
-  if (revealed) toQuery.push(Not(RevealBlock));
-  else toQuery.push(Has(RevealBlock));
-
-  const entityIndices = Array.from(runQuery(toQuery));
-
-  return entityIndices.map((index) => getLootboxLog(world, components, index));
 };

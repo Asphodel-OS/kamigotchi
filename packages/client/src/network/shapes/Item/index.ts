@@ -3,12 +3,12 @@ export {
   getAllItems,
   getInventoryByHolderItem,
   getItemByIndex,
+  getItemRegEntity,
   getMusuBalance,
   queryInventories,
   queryInventoriesByAccount,
-  queryLootboxLogsByHolder,
 } from './queries';
-export { getInventory, getItem, getLootboxLog } from './types';
+export { getInventory, getItem, getItemDetails } from './types';
 export { cleanInventories } from './utils';
 
-export type { Inventory, Item, LootboxLog } from './types';
+export type { Inventory, Item } from './types';

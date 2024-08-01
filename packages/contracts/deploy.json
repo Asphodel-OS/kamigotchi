@@ -1,5 +1,6 @@
 {
   "components": [
+    { "comp": "IsLogComponent", "name": "_DepreciatedIsLog", "type": "bool" },
     { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
     { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
     { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
@@ -59,7 +60,6 @@
     { "comp": "IsGoalComponent", "name": "IsGoal", "type": "bool" },
     { "comp": "IsKillComponent", "name": "IsKill", "type": "bool" },
     { "comp": "IsListingComponent", "name": "IsListing", "type": "bool" },
-    { "comp": "IsLogComponent", "name": "IsLog", "type": "bool" },
     { "comp": "IsLootboxComponent", "name": "IsLootbox", "type": "bool" },
     { "comp": "IsNodeComponent", "name": "IsNode", "type": "bool" },
     { "comp": "IsNPCComponent", "name": "IsNPC", "type": "bool" },
@@ -426,11 +426,8 @@
         "IDOwnsInventoryComponent",
         "IndexItemComponent",
         "IndexComponent",
-        "IsLootboxComponent",
-        "IsLogComponent",
         "IsInventoryComponent",
         "TypeComponent",
-        "TimeComponent",
         "TimeLastComponent",
         "ValueComponent",
         "ValuesComponent"
@@ -443,8 +440,8 @@
         "IdHolderComponent",
         "IndexItemComponent",
         "IsLootboxComponent",
-        "IsLogComponent",
         "TimeLastComponent",
+        "TypeComponent",
         "ValueComponent"
       ]
     },
@@ -721,6 +718,7 @@
     "LibAffinity",
     "LibBonus",
     "LibConditional",
+    "LibCommit",
     "LibConfig",
     "LibData",
     "LibExperience",

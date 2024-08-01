@@ -326,16 +326,6 @@ abstract contract SetupTemplate is TestSetupImports {
     _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
   }
 
-  /* LOOTBOXES */
-
-  function _openLootbox(uint playerIndex, uint32 index, uint amount) internal virtual {
-    vm.startPrank(_getOperator(playerIndex));
-    uint256 id = abi.decode(_LootboxStartRevealSystem.executeTyped(index, amount), (uint256));
-    vm.roll(_currBlock++);
-    _LootboxExecuteRevealSystem.executeTyped(id);
-    vm.stopPrank();
-  }
-
   /* QUESTS */
 
   function _acceptQuest(PlayerAccount memory account, uint32 questIndex) internal returns (uint) {
@@ -383,7 +373,11 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // GETTERS
 
-  function _getItemBalance(uint playerIndex, uint32 itemIndex) internal view returns (uint) {
+  function _getItemBal(PlayerAccount memory player, uint32 index) internal view returns (uint256) {
+    return _getItemBal(player.index, index);
+  }
+
+  function _getItemBal(uint playerIndex, uint32 itemIndex) internal view returns (uint) {
     uint accID = _getAccount(playerIndex);
     uint inventoryID = LibInventory.get(components, accID, itemIndex);
     return inventoryID == 0 ? 0 : LibInventory.getBalance(components, inventoryID);
@@ -395,17 +389,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function _giveMint20(uint playerIndex, uint amount) internal {
     vm.prank(deployer);
     _Mint20.adminMint(_getOwner(playerIndex), amount);
-  }
-
-  function _giveLootbox(uint256 playerIndex, uint32 index, uint256 amt) internal {
-    uint256 accID = _getAccount(playerIndex);
-
-    vm.startPrank(deployer);
-    uint256 invID = LibInventory.get(components, accID, index);
-    if (invID == 0) invID = LibInventory.create(components, accID, index);
-    LibInventory.inc(components, invID, amt);
-    LibInventory.logIncItemTotal(components, accID, index, amt);
-    vm.stopPrank();
   }
 
   function _giveSkillPoint(uint id, uint amt) internal {

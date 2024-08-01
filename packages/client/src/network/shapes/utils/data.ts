@@ -68,15 +68,17 @@ const getEntityIndex = (
   field: string
 ): EntityIndex | undefined => {
   let id = '';
-  const key = 'idData' + holderID + index.toString() + field;
+  const key = 'is.data' + holderID + index.toString() + field;
 
   if (IDStore.has(key)) id = IDStore.get(key)!;
   else {
-    id = utils.solidityKeccak256(
-      ['string', 'uint256', 'uint32', 'string'],
-      ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
-    ) as EntityID;
+    id = formatEntityID(
+      utils.solidityKeccak256(
+        ['string', 'uint256', 'uint32', 'string'],
+        ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
+      )
+    );
   }
 
-  return world.entityToIndex.get(formatEntityID(id));
+  return world.entityToIndex.get(id);
 };

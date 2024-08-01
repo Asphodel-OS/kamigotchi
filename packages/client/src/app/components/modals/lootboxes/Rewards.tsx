@@ -1,56 +1,39 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { ItemIcon } from 'app/components/library';
 import { getRarities } from 'constants/rarities';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import { Item, LootboxLog } from 'network/shapes/Item';
+import { DTResult } from 'network/shapes/Droptable';
+import { LootboxLog } from 'network/shapes/Lootbox';
 
 interface Props {
   account: Account;
-  utils: {
-    getItem: (index: number) => Item;
-    getLog: (index: EntityIndex) => LootboxLog;
-  };
+  log: LootboxLog;
 }
 
 export const Rewards = (props: Props) => {
   ///////////////
   // DISPLAY
 
-  const parseItem = (index: number, rarity: number, amount: number) => {
-    const item = props.utils.getItem(Number(index));
+  const parseItem = (entry: DTResult) => {
+    const item = entry.object;
     return (
-      <ItemBox key={index.toString()}>
-        <ItemIcon item={item} size='small' glow={getRarities(rarity).color} hoverText={true} />
-        <ItemText>x{Number(amount)}</ItemText>
+      <ItemBox key={item.name.toString()}>
+        <ItemIcon
+          item={item}
+          size='small'
+          glow={getRarities(entry.rarity).color}
+          hoverText={true}
+        />
+        <ItemText>x{Number(entry.amount)}</ItemText>
       </ItemBox>
     );
-  };
-
-  const ItemsList = () => {
-    let list = [];
-    // display the latest log for account
-    // TODO: display all logs
-    const logs = props.account.lootboxLogs?.revealed;
-    if (logs && logs.length > 0) {
-      const log = props.utils.getLog(logs[logs.length - 1].entityIndex);
-      const items = log.droptable.keys;
-      const rarities = log.droptable.weights;
-      const amounts = log.droptable.results!;
-
-      for (let i = 0; i < items.length; i++) {
-        if (amounts[i] > 0) list.push(parseItem(items[i], rarities[i], amounts[i]));
-      }
-    }
-
-    return <ResultBox>{list}</ResultBox>;
   };
 
   return (
     <Bound>
       <SubText>You received:</SubText>
-      {ItemsList()}
+      <ResultBox>{props.log.results.map(parseItem)}</ResultBox>
     </Bound>
   );
 };

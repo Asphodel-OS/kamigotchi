@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { Item } from 'network/shapes/Item';
+import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  item: Item;
+  item: DetailedEntity;
   size: 'small' | 'large';
   hoverText?: boolean | string[];
   balance?: number;

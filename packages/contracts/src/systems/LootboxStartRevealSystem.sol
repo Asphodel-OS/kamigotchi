@@ -17,21 +17,19 @@ contract LootboxStartRevealSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 index, uint256 amt) = abi.decode(arguments, (uint32, uint256));
+    require(amt <= 10, "LootboxStartReveal: max 10");
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    uint256 invID = LibInventory.get(components, accID, index);
-    require(invID != 0, "no lootboxes");
-
-    require(amt <= 10, "LootboxStartReveal: max 10");
-
-    uint256 regID = LibItemRegistry.getByInstance(components, invID);
+    uint256 regID = LibItemRegistry.getByIndex(components, index);
     require(LibLootbox.isLootbox(components, regID), "LootboxStartReveal: not lootbox");
 
-    uint256 revealID = LibLootbox.startReveal(world, components, invID, amt);
+    uint256 revealID = LibLootbox.commit(world, components, accID, index, amt);
 
     // standard logging and tracking
+    LibLootbox.logIncOpened(components, accID, index, amt);
     LibAccount.updateLastTs(components, accID);
+
     return abi.encode(revealID);
   }
 

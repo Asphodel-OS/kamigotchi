@@ -209,7 +209,7 @@ contract GachaTest is SetupTemplate {
   ) internal {
     account = _getAccount(account);
     assertTrue(rerolls == 0 ? !_RerollComponent.has(id) : _RerollComponent.get(id) == rerolls);
-    assertEq(_IdAccountComponent.get(id), account);
+    assertEq(_IdHolderComponent.get(id), account);
     assertEq(_BlockRevealComponent.get(id), revealBlock);
     assertEq(_TypeComponent.get(id), "GACHA_COMMIT");
   }

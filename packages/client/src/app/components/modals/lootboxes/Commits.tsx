@@ -6,7 +6,7 @@ import { Commit, canReveal } from 'network/shapes/utils';
 
 interface Props {
   actions: {
-    revealTx: (commits: Commit) => Promise<void>;
+    handleReveal: (commits: Commit[]) => Promise<void>;
   };
   data: {
     commits: Commit[];
@@ -47,7 +47,7 @@ export const Commits = (props: Props) => {
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName>
         <Row>
-          <ActionButton onClick={() => props.actions.revealTx(commit)} text='Reveal' />
+          <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
         </Row>
       </CellContainer>
     );

@@ -15,6 +15,7 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
+    _DepreciatedIsLog: defineBoolComponent(world, '_DepreciatedIsLog', 'component.is.log'),
     OperatorAddress: defineStringComponent(world, 'OperatorAddress', 'component.address.operator'),
     OwnerAddress: defineStringComponent(world, 'OwnerAddress', 'component.address.owner'),
     Affinity: defineStringComponent(world, 'Affinity', 'component.affiinity'),
@@ -74,7 +75,6 @@ export function createComponents(world: World) {
     IsGoal: defineBoolComponent(world, 'IsGoal', 'component.is.goal'),
     IsKill: defineBoolComponent(world, 'IsKill', 'component.is.kill'),
     IsListing: defineBoolComponent(world, 'IsListing', 'component.is.listing'),
-    IsLog: defineBoolComponent(world, 'IsLog', 'component.is.log'),
     IsLootbox: defineBoolComponent(world, 'IsLootbox', 'component.is.lootbox'),
     IsNode: defineBoolComponent(world, 'IsNode', 'component.is.node'),
     IsNPC: defineBoolComponent(world, 'IsNPC', 'component.is.npc'),

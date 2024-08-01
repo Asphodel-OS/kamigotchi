@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { LibString } from "solady/utils/LibString.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
@@ -15,6 +16,8 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibCommit } from "libraries/LibCommit.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
@@ -25,103 +28,102 @@ library LibLootbox {
    * @notice creates a reveal entity for a lootbox
    *   Lootbox reveal entities are an intemediate step to store pre-reveal data
    *   and are identified by
-   *     - IsLootbox
+   *     - type = "LOOTBOX_COMMIT"
    *     - RevealBlock
    **/
-  /// @param world       The world contract
-  /// @param components  The components contract
-  /// @param invID       EntityID of the lootbox inventory
-  /// @param count       The amount of items to reveal
-  function startReveal(
+  function commit(
     IWorld world,
     IUintComp components,
-    uint256 invID,
+    uint256 accID,
+    uint32 itemIndex,
     uint256 count
   ) internal returns (uint256 id) {
-    LibInventory.dec(components, invID, count);
+    LibInventory.decFor(components, accID, itemIndex, count); // implicit balance check
 
     // creating reveal entity
-    id = world.getUniqueEntityId();
-    setIsLootbox(components, id);
-    setIsLog(components, id);
-    setBalance(components, id, count);
-    setHolder(components, id, LibInventory.getOwner(components, invID));
-    setIndex(components, id, LibInventory.getItemIndex(components, invID));
-    LibRandom.setRevealBlock(components, id, block.number);
+    id = LibCommit.commit(world, components, accID, block.number, "LOOTBOX_COMMIT");
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, count);
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
   }
 
-  /** @notice
-   * executes a reveal for a lootbox, leaving a result log
-   * result logs are identified by
-   *   - IsLootbox
-   *   - IsLog
-   */
-  /// @param components  The components contract
-  /// @param revealID    The entity ID of the lootbox reveal
-  function executeReveal(
-    IWorld world,
+  /// @notice logs the latest reveal result, overwriting previous values
+  /// @dev only one exists per account+lootbox. a crutch for FE to show latest result
+  function log(IUintComp components, uint256 accID, uint32 index, uint256[] memory amts) internal {
+    uint256 logID = genLogID(accID, index);
+    ValuesComponent(getAddressById(components, ValuesCompID)).set(logID, amts);
+  }
+
+  function reveal(
     IUintComp components,
-    uint256 revealID,
-    uint256 holderID
-  ) internal {
-    uint256 count = getBalance(components, revealID);
-    uint256 regID = LibItemRegistry.getByIndex(components, getIndex(components, revealID));
-    uint32[] memory keys = getKeys(components, regID);
-    uint256[] memory weights = getWeights(components, regID);
-    uint256 seed = uint256(
-      keccak256(
-        abi.encode(
-          LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, revealID)),
-          holderID
-        )
-      )
-    );
+    uint256 holderID,
+    uint32 boxIndex,
+    uint256[] memory revealIDs
+  ) internal returns (uint256[] memory) {
+    ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
+    uint256 regID = LibItemRegistry.getByIndex(components, boxIndex);
 
-    uint256[] memory results = LibRandom.selectMultipleFromWeighted(weights, seed, count);
-    for (uint256 i; i < results.length; i++) {
-      distribute(world, components, holderID, keys[i], results[i]);
-    }
+    (uint32[] memory keys, uint256[] memory weights) = LibRandom.getDroptable(components, regID);
+    uint256[] memory seeds = LibCommit.extractSeeds(components, revealIDs);
+    uint256[] memory counts = valComp.extractBatch(revealIDs);
 
-    logReveal(components, revealID, results);
+    // uint256[] memory amounts = new uint256[](keys.length);
+    uint256[] memory amounts = LibRandom.selectMultipleFromWeighted(weights, seeds[0], counts[0]);
+    for (uint256 i = 1; i < revealIDs.length; i++)
+      LibArray.add(amounts, LibRandom.selectMultipleFromWeighted(weights, seeds[i], counts[i]));
+
+    distribute(components, holderID, keys, amounts);
+    log(components, holderID, boxIndex, amounts);
   }
 
   /// @notice distributes item(s) to holder
-  /// @param world      The world contract
-  /// @param components The components contract
-  /// @param holderID  The entityID of the holder
-  /// @param index     The index of the item to distribute
-  /// @param count       The amount of items to distribute
   function distribute(
-    IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint32 index,
-    uint256 count
+    uint32[] memory indices,
+    uint256[] memory amounts
   ) internal {
-    if (count == 0) return;
-    else LibInventory.incFor(components, holderID, index, count);
-  }
-
-  /// @notice logs the reveal result, deleting unessary fields
-  /// @param components The components contract
-  /// @param id         The entityID of the lootbox reveal
-  /// @param amounts    resultant amounts
-  function logReveal(IUintComp components, uint256 id, uint256[] memory amounts) internal {
-    setBalances(components, id, amounts);
-    setTime(components, id, block.timestamp);
-
-    LibRandom.removeRevealBlock(components, id);
+    for (uint256 i; i < indices.length; i++)
+      if (amounts[i] > 0) LibInventory.incFor(components, holderID, indices[i], amounts[i]);
   }
 
   ///////////////////
-  // GETTERS
+  // CHECKERS
 
   function isLootbox(IUintComp components, uint256 id) internal view returns (bool) {
     return IsLootboxComponent(getAddressById(components, IsLootboxCompID)).has(id);
   }
 
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
+  function extractAreCommits(IUintComp components, uint256[] memory ids) internal returns (bool) {
+    for (uint256 i; i < ids.length; i++)
+      if (!LibString.eq(LibCommit.extractType(components, ids[i]), "LOOTBOX_COMMIT")) return false;
+    return true;
+  }
+
+  function isSameHolder(uint256[] memory ids) internal returns (bool) {
+    for (uint256 i = 1; i < ids.length; i++) if (ids[i] != ids[0]) return false;
+    return true;
+  }
+
+  function isSameBox(uint32[] memory arr) internal pure returns (bool) {
+    for (uint256 i = 1; i < arr.length; i++) if (arr[i] != arr[0]) return false;
+    return true;
+  }
+
+  ///////////////////
+  // GETTERS
+
+  function extractHolders(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal returns (uint256[] memory) {
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).extractBatch(ids);
+  }
+
+  function extractIndices(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal returns (uint32[] memory) {
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).extractBatch(ids);
   }
 
   function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -132,71 +134,22 @@ library LibLootbox {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
-  function getKeys(IUintComp components, uint256 id) internal view returns (uint32[] memory) {
-    return KeysComponent(getAddressById(components, KeysCompID)).get(id);
-  }
-
-  function getWeights(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    return WeightsComponent(getAddressById(components, WeightsCompID)).get(id);
-  }
-
-  //////////////////
-  // SETTERS
-
-  function setBalance(IUintComp components, uint256 id, uint256 balance) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, balance);
-  }
-
-  function setBalances(IUintComp components, uint256 id, uint256[] memory balances) internal {
-    ValuesComponent(getAddressById(components, ValuesCompID)).set(id, balances);
-  }
-
-  function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
-  }
-
-  function setIsLog(IUintComp components, uint256 id) internal {
-    IsLogComponent(getAddressById(components, IsLogCompID)).set(id);
-  }
-
-  function setIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
-  }
-
-  function setTime(IUintComp components, uint256 id, uint256 time) internal {
-    TimeComponent(getAddressById(components, TimeCompID)).set(id, time);
-  }
-
-  function unsetBalance(IUintComp components, uint256 id) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
-  }
-
-  function unsetHolder(IUintComp components, uint256 id) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).remove(id);
-  }
-
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
-  }
-
-  function unsetIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).remove(id);
-  }
-
   //////////////////
   // DATA LOGGING
 
   function logIncOpened(
-    IWorld world,
     IUintComp components,
     uint256 holderID,
     uint32 index,
     uint256 count
   ) internal {
     LibData.inc(components, holderID, index, "LOOTBOX_OPENED", count);
+  }
+
+  /////////////////
+  // UTILS
+
+  function genLogID(uint256 accID, uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("lootbox.log", accID, index)));
   }
 }
