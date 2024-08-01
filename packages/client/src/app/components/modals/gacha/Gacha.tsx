@@ -36,7 +36,7 @@ export function registerGachaModal() {
       rowEnd: 90,
     },
     (layers) =>
-      interval(3333).pipe(
+      interval(1000).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
