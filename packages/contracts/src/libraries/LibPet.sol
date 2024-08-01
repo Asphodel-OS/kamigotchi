@@ -208,9 +208,11 @@ library LibPet {
     int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
+
     uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);
-    uint256 divisor = precision * (harmony + 10);
+    uint256 divisor = precision * (harmony + config[0]); // config[0] is hijacked
+
     return (amt * core * boost + (divisor - 1)) / divisor;
   }
 

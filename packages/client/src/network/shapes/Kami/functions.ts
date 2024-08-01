@@ -152,7 +152,8 @@ export const calcStrainFromBalance = (kami: Kami, balance: number, roundUp = tru
   const strainConfig = kami.config.harvest.strain;
   const ratio = strainConfig.ratio.value;
   const harmony = kami.stats.harmony.total;
+  const baseHarmony = strainConfig.nudge.value;
   const boost = strainConfig.boost.value + kami.bonuses.harvest.strain.boost;
-  const strain = (balance * ratio * boost) / (harmony + 10);
+  const strain = (balance * ratio * boost) / (harmony + baseHarmony);
   return roundUp ? Math.ceil(strain) : strain;
 };
