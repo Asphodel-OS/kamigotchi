@@ -73,6 +73,7 @@ const Content = styled.div<{ truncate?: boolean }>`
 
 const ButtonRow = styled.div`
   position: absolute;
+  padding: 0.6vw;
 
   display: inline-flex;
   flex-flow: row nowrap;

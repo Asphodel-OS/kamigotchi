@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { StatIcons } from 'assets/images/icons/stats';
@@ -10,10 +11,17 @@ import { playClick } from 'utils/sounds';
 import { KamiImage } from './KamiImage';
 
 const AffinityColors = {
-  normal: '#bbb',
-  eerie: '#b575d0',
+  normal: '#F2F4FF',
+  eerie: '#B575D0',
   insect: '#A1C181',
-  scrap: '#d38d50',
+  scrap: '#D38D50',
+};
+
+const StatColors = {
+  health: '#D7BCE8',
+  power: '#F9DB6D',
+  violence: '#BD4F6C',
+  harmony: '#9CBCD2',
 };
 
 interface Props {
@@ -28,12 +36,13 @@ interface Props {
 
 export const Banner = (props: Props) => {
   const { account, kami } = props.data;
+  const { setAccount } = useSelected();
+  const { modals, setModals } = useVisibility();
+
   const traits = kami.traits!;
   const bodyAffinity = traits.body.affinity.toLowerCase() as keyof typeof AffinityColors;
   const handAffinity = traits.hand.affinity.toLowerCase() as keyof typeof AffinityColors;
-
-  const { setAccount } = useSelected();
-  const { modals, setModals } = useVisibility();
+  const invalidStats = ['stamina', 'slots'];
 
   const isMine = (kami: Kami) => {
     return kami.account?.index === account.index;
@@ -65,27 +74,28 @@ export const Banner = (props: Props) => {
         <Row>
           <AffinityContainer>
             <AffinityPairing color={AffinityColors[bodyAffinity]}>
-              <Icon src={TraitIcons.body} />
-              <Text size={1.2}>{bodyAffinity}</Text>
+              <Icon size={2.4} src={TraitIcons.body} />
+              <Text size={1.4}>{bodyAffinity}</Text>
             </AffinityPairing>
             <AffinityPairing color={AffinityColors[handAffinity]}>
-              <Icon src={TraitIcons.hand} />
-              <Text size={1.2}>{handAffinity}</Text>
+              <Icon size={2.4} src={TraitIcons.hand} />
+              <Text size={1.4}>{handAffinity}</Text>
             </AffinityPairing>
           </AffinityContainer>
           <StatsContainer>
-            <Text size={1.4}>Stats</Text>
             {Object.entries(kami.stats)
-              .filter(([key]) => key !== 'stamina')
+              .filter(([key]) => !invalidStats.includes(key))
               .map(([key, value]) => (
-                <StatPairing key={key}>
-                  <Icon src={StatIcons[key as keyof typeof StatIcons]} />
-                  <Text size={1.1}>{value.total}</Text>
-                </StatPairing>
+                <Tooltip key={key} text={[`${key}: ${value.total}`]} grow>
+                  <StatPairing key={key} color={StatColors[key as keyof typeof StatColors]}>
+                    <Icon size={2.1} src={StatIcons[key as keyof typeof StatIcons]} />
+                    <Text size={1.1}>{value.total}</Text>
+                  </StatPairing>
+                </Tooltip>
               ))}
           </StatsContainer>
         </Row>
-        <Overlay bottom={0.3} right={0.3}>
+        <Overlay bottom={0.75} right={0.75}>
           <Footer onClick={handleAccountClick()}>
             {isMine(kami) ? 'yours' : kami.account?.name}
           </Footer>
@@ -97,8 +107,6 @@ export const Banner = (props: Props) => {
 
 const Container = styled.div`
   border-bottom: solid black 0.15vw;
-  color: black;
-  padding-bottom: 0.9vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -107,30 +115,32 @@ const Container = styled.div`
 const Content = styled.div`
   position: relative;
   height: 100%;
-  margin: 0.6vw;
+  padding: 0.75vw 0vw;
 
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-between;
 `;
 
 const Title = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
-  padding: ${(props) => `${props.size * 0.9}vw ${props.size * 0.3}vw`};
+  padding: ${(props) => `${props.size * 0.75}vw ${props.size * 0.45}vw`};
 `;
 
 const Row = styled.div`
-  margin: 0 1.2vw 1.2vw 0.6vw;
-  gap: 0.45vw;
+  height: 10vw;
+  margin: 0vw 1.2vw;
+  gap: 0.9vw;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
+  justify-content: center;
 `;
 
 const AffinityContainer = styled.div`
   height: 100%;
+  width: 12w;
   gap: 0.6vw;
 
   display: flex;
@@ -141,40 +151,43 @@ const AffinityContainer = styled.div`
 const AffinityPairing = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? '#fff'};
   border: solid black 0.15vw;
-  border-radius: 0.6vw;
+  border-radius: 1.2vw;
 
   padding: 0.9vw;
-  gap: 0.5vw;
-  width: 10.5vw;
+  gap: 0.6vw;
+  width: 12vw;
 
+  flex-grow: 1;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 `;
 
 const StatsContainer = styled.div`
+  background-color: #888;
   border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  padding: 0.9vw;
-  margin-left: 0.3vw;
-  gap: 0.45vw;
+  border-radius: 1.2vw;
 
-  width: 100%;
   height: 100%;
+  width: 19.3vw;
+  padding: 0.6vw;
+  gap: 0.6vw;
 
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: stretch;
 `;
 
-const StatPairing = styled.div`
+const StatPairing = styled.div<{ color?: string }>`
+  background-color: ${({ color }) => color ?? '#fff'};
   border: solid black 0.15vw;
   border-radius: 0.6vw;
 
-  padding: 0.45vw;
+  padding: 0.75vw;
   gap: 0.45vw;
-  width: 6.3vw;
+  min-width: 7.5vw;
+  min-height: 4vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -187,9 +200,10 @@ const Text = styled.div<{ size: number }>`
   text-shadow: ${(props) => `0 0 ${props.size * 0.4}vw white`};
 `;
 
-const Icon = styled.img`
-  height: 100%;
-  width: auto;
+const Icon = styled.img<{ size: number }>`
+  height: ${(props) => props.size}vw;
+  width: ${(props) => props.size}vw;
+  filter: drop-shadow(0 0 0.2vw #bbb);
 `;
 
 const Footer = styled.div`

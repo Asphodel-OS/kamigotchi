@@ -27,16 +27,11 @@ const Button = styled.button`
   border-radius: 0.6vw;
 
   color: black;
-  justify-self: right;
   padding: 0.3vw 0.4vw;
-  margin: 0.6vw;
   z-index: 1;
 
-  font-family: Pixel;
   font-size: 0.9vw;
-
   cursor: pointer;
-  pointer-events: auto;
 
   &:hover {
     background-color: #e8e8e8;

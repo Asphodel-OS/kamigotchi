@@ -72,13 +72,15 @@ export const KamiImage = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  margin: 0.6vw;
+  height: 18vw;
+  margin: 0.6vw 0 0.6vw 0.6vw;
 `;
 
 const Image = styled.img`
   border: solid black 0.15vw;
   border-radius: 0.6vw;
-  height: 18vw;
+  height: 100%;
+  image-rendering: pixelated;
 `;
 
 const Grouping = styled.div`
