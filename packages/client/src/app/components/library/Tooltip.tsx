@@ -16,7 +16,7 @@ export const Tooltip = (props: Props) => {
     <MUITooltip
       title={conjoinedText}
       followCursor
-      enterDelay={500}
+      enterDelay={1000}
       leaveTouchDelay={0}
       style={{
         flexGrow: flexGrow,
