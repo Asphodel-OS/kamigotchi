@@ -48,7 +48,7 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 1500, 3, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 25, 0, 0, 0, 480, 0]); // inversed boost
   await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
-  await api.config.set.array('KAMI_HARV_STRAIN', [10, 0, 4000, 3, 0, 0, 1000, 3]); // hijacking nudge here for denominator base value
+  await api.config.set.array('KAMI_HARV_STRAIN', [20, 0, 7500, 3, 0, 0, 1000, 3]); // hijacking nudge here for denominator base value
 
   // Liquidation Effects
   await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
