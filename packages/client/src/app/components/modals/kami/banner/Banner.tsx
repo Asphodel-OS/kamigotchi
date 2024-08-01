@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
+import { depressFx } from 'app/styles/effects';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { AffinityColors } from 'constants/affinities';
 import { StatColors, StatDescriptions, StatIcons } from 'constants/stats';
@@ -53,6 +54,24 @@ export const Banner = (props: Props) => {
   ///////////////////
   // DISPLAY
 
+  interface AffinityProps {
+    trait: 'body' | 'hand';
+  }
+
+  const AffinityCard = (props: AffinityProps) => {
+    const { trait } = props;
+    const icon = TraitIcons[trait as keyof typeof TraitIcons];
+    const affinity = kami.traits?.[trait as keyof typeof kami.traits].affinity.toLowerCase();
+    const color = AffinityColors[affinity as keyof typeof AffinityColors];
+
+    return (
+      <AffinityPairing onMouseDown={playClick} color={color}>
+        <Icon size={2.4} src={icon} />
+        <Text size={1.4}>{affinity}</Text>
+      </AffinityPairing>
+    );
+  };
+
   return (
     <Container>
       <KamiImage account={account} kami={kami} actions={props.actions} />
@@ -60,34 +79,30 @@ export const Banner = (props: Props) => {
         <Title size={2.4}>{kami.name}</Title>
         <Row>
           <AffinityContainer>
-            <AffinityPairing color={AffinityColors[bodyAffinity]}>
-              <Icon size={2.4} src={TraitIcons.body} />
-              <Text size={1.4}>{bodyAffinity}</Text>
-            </AffinityPairing>
-            <AffinityPairing color={AffinityColors[handAffinity]}>
-              <Icon size={2.4} src={TraitIcons.hand} />
-              <Text size={1.4}>{handAffinity}</Text>
-            </AffinityPairing>
+            <AffinityCard trait='body' />
+            <AffinityCard trait='hand' />
           </AffinityContainer>
-          <StatsContainer>
+          <StatsContainer onMouseDown={playClick}>
             {Object.entries(kami.stats)
               .filter(([key]) => !excludedStats.includes(key))
-              .map(([key, value]) => (
-                <Tooltip
-                  key={key}
-                  text={[
-                    `${key} (${value.base} + ${value.shift})`,
-                    '',
-                    StatDescriptions[key as keyof typeof StatDescriptions],
-                  ]}
-                  grow
-                >
-                  <StatPairing key={key} color={StatColors[key as keyof typeof StatColors]}>
-                    <Icon size={2.1} src={StatIcons[key as keyof typeof StatIcons]} />
-                    <Text size={1.1}>{value.total}</Text>
-                  </StatPairing>
-                </Tooltip>
-              ))}
+              .map(([name, value]) => {
+                const description = StatDescriptions[name as keyof typeof StatDescriptions];
+                const color = StatColors[name as keyof typeof StatColors];
+                const icon = StatIcons[name as keyof typeof StatIcons];
+
+                return (
+                  <Tooltip
+                    key={name}
+                    text={[`${name} (${value.base} + ${value.shift})`, '', description]}
+                    grow
+                  >
+                    <StatPairing key={name} color={color}>
+                      <Icon size={2.1} src={icon} />
+                      <Text size={1.1}>{value.total}</Text>
+                    </StatPairing>
+                  </Tooltip>
+                );
+              })}
           </StatsContainer>
         </Row>
         <Overlay bottom={0.75} right={0.75}>
@@ -155,10 +170,16 @@ const AffinityPairing = styled.div<{ color?: string }>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+
+  cursor: pointer;
+  user-select: none;
+  &:active {
+    animation: ${() => depressFx(0.1)} 0.2s;
+  }
 `;
 
 const StatsContainer = styled.div`
-  background-color: #888;
+  background-color: #999;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
   filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
@@ -189,11 +210,21 @@ const StatPairing = styled.div<{ color?: string }>`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
+
+  user-select: none;
+  pointer-events: auto;
+  &:hover {
+    opacity: 0.6;
+  }
+  &:active {
+    animation: ${() => depressFx(0.1)} 0.2s;
+  }
 `;
 
 const Text = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
   text-shadow: ${(props) => `0 0 ${props.size * 0.4}vw white`};
+  pointer-events: none;
 `;
 
 const Icon = styled.img<{ size: number }>`
@@ -207,8 +238,8 @@ const Footer = styled.div`
   text-align: right;
   color: #666;
 
+  user-select: none;
   ${({ onClick }) => !onClick && 'pointer-events: none;'}
-
   &:hover {
     opacity: 0.6;
     cursor: pointer;

@@ -11,6 +11,19 @@ export const hoverFx = (upscale = 1.05) => keyframes`
   100% { transform: scale(${upscale}); }
 `;
 
+export const depressFx = (shift = 1, scale = 1) => keyframes`
+  0% { 
+    transform: scale(1); 
+  }
+  30% { 
+    transform: scale(${scale}) translateY(${shift}vw);
+    filter: drop-shadow(0 0 0 #bbb);
+  }
+  100% { 
+    transform: scale(1); 
+  }
+`;
+
 export const pulseFx = keyframes`
   0%, 80%, 90%, 100% {
     background-color: #ffffff;
