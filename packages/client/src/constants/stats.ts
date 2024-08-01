@@ -5,3 +5,10 @@ export const StatDescriptions = {
   harmony: 'divines resting recovery rate and defends against violence',
   slots: 'room for upgrades ^_^',
 };
+
+export const StatColors = {
+  health: '#D7BCE8',
+  power: '#F9DB6D',
+  violence: '#BD4F6C',
+  harmony: '#9CBCD2',
+};

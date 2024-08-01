@@ -5,24 +5,12 @@ import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { StatIcons } from 'assets/images/icons/stats';
 import { TraitIcons } from 'assets/images/icons/traits';
+import { AffinityColors } from 'constants/affinities';
+import { StatColors, StatDescriptions } from 'constants/stats';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiImage } from './KamiImage';
-
-const AffinityColors = {
-  normal: '#F2F4FF',
-  eerie: '#B575D0',
-  insect: '#A1C181',
-  scrap: '#D38D50',
-};
-
-const StatColors = {
-  health: '#D7BCE8',
-  power: '#F9DB6D',
-  violence: '#BD4F6C',
-  harmony: '#9CBCD2',
-};
 
 interface Props {
   data: {
@@ -42,7 +30,7 @@ export const Banner = (props: Props) => {
   const traits = kami.traits!;
   const bodyAffinity = traits.body.affinity.toLowerCase() as keyof typeof AffinityColors;
   const handAffinity = traits.hand.affinity.toLowerCase() as keyof typeof AffinityColors;
-  const invalidStats = ['stamina', 'slots'];
+  const excludedStats = ['stamina', 'slots'];
 
   const isMine = (kami: Kami) => {
     return kami.account?.index === account.index;
@@ -84,9 +72,17 @@ export const Banner = (props: Props) => {
           </AffinityContainer>
           <StatsContainer>
             {Object.entries(kami.stats)
-              .filter(([key]) => !invalidStats.includes(key))
+              .filter(([key]) => !excludedStats.includes(key))
               .map(([key, value]) => (
-                <Tooltip key={key} text={[`${key}: ${value.total}`]} grow>
+                <Tooltip
+                  key={key}
+                  text={[
+                    `${key} (${value.base} + ${value.shift})`,
+                    '',
+                    StatDescriptions[key as keyof typeof StatDescriptions],
+                  ]}
+                  grow
+                >
                   <StatPairing key={key} color={StatColors[key as keyof typeof StatColors]}>
                     <Icon size={2.1} src={StatIcons[key as keyof typeof StatIcons]} />
                     <Text size={1.1}>{value.total}</Text>
@@ -107,7 +103,6 @@ export const Banner = (props: Props) => {
 
 const Container = styled.div`
   border-bottom: solid black 0.15vw;
-
   display: flex;
   flex-flow: row nowrap;
 `;
@@ -129,7 +124,6 @@ const Title = styled.div<{ size: number }>`
 
 const Row = styled.div`
   height: 10vw;
-  margin: 0vw 1.2vw;
   gap: 0.9vw;
 
   display: flex;
@@ -140,7 +134,6 @@ const Row = styled.div`
 
 const AffinityContainer = styled.div`
   height: 100%;
-  width: 12w;
   gap: 0.6vw;
 
   display: flex;
@@ -149,13 +142,14 @@ const AffinityContainer = styled.div`
 `;
 
 const AffinityPairing = styled.div<{ color?: string }>`
+  position: relative;
   background-color: ${({ color }) => color ?? '#fff'};
   border: solid black 0.15vw;
   border-radius: 1.2vw;
 
+  width: 12vw;
   padding: 0.9vw;
   gap: 0.6vw;
-  width: 12vw;
 
   flex-grow: 1;
   display: flex;
