@@ -1,3 +1,11 @@
+import {
+  harmonyIcon,
+  healthIcon,
+  powerIcon,
+  slotsIcon,
+  violenceIcon,
+} from 'assets/images/icons/stats';
+
 export const StatDescriptions = {
   health: 'defines how resilient a Kami is to accumulated damage',
   power: 'determines the potential rate at which MUSU can be farmed',
@@ -11,4 +19,12 @@ export const StatColors = {
   power: '#F9DB6D',
   violence: '#BD4F6C',
   harmony: '#9CBCD2',
+};
+
+export const StatIcons = {
+  health: healthIcon,
+  power: powerIcon,
+  violence: violenceIcon,
+  harmony: harmonyIcon,
+  slots: slotsIcon,
 };

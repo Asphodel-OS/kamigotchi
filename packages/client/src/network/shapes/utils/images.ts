@@ -1,5 +1,5 @@
-import { AffinityIcons } from 'assets/images/icons/affinities';
 import { ItemImages } from 'assets/images/items';
+import { AffinityIcons } from 'constants/affinities';
 
 export const getAffinityImage = (name: string | undefined) => {
   if (!name) return '';

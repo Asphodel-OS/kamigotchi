@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { StatIcons } from 'assets/images/icons/stats';
+import { StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
 import { Trait } from 'network/shapes/Trait';
 

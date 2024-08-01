@@ -4,10 +4,4 @@ import powerIcon from './power.png';
 import slotsIcon from './slots.png';
 import violenceIcon from './violence.png';
 
-export const StatIcons = {
-  health: healthIcon,
-  power: powerIcon,
-  violence: violenceIcon,
-  harmony: harmonyIcon,
-  slots: slotsIcon,
-};
+export { harmonyIcon, healthIcon, powerIcon, slotsIcon, violenceIcon };
