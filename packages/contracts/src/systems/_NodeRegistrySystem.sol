@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibNode } from "libraries/LibNode.sol";
+import { LibScavenge } from "libraries/LibScavenge.sol";
 import { Condition } from "libraries/LibConditional.sol";
 
 uint256 constant ID = uint256(keccak256("system.node.registry"));
@@ -28,9 +29,7 @@ contract _NodeRegistrySystem is System {
 
     require(id == 0, "Node: already exists");
 
-    id = LibNode.create(components, index, nodeType, roomIndex);
-    LibNode.setName(components, id, name);
-    LibNode.setDescription(components, id, description);
+    id = LibNode.create(components, index, nodeType, roomIndex, name, description);
     if (!LibString.eq(affinity, "")) {
       LibNode.setAffinity(components, id, affinity);
     }
@@ -52,7 +51,7 @@ contract _NodeRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Requirement type cannot be empty");
 
     return
-      LibNode.createReq(
+      LibNode.addRequirement(
         world,
         components,
         nodeIndex,
@@ -61,14 +60,32 @@ contract _NodeRegistrySystem is System {
       );
   }
 
+  function addScavBar(uint32 nodeIndex, uint256 tierCost) public onlyOwner {
+    require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
+    LibScavenge.create(components, "node", nodeIndex, tierCost);
+  }
+
+  function addScavReward(
+    uint32 nodeIndex,
+    string memory rwdType,
+    uint32 rwdIndex,
+    uint32[] memory keys,
+    uint256[] memory weights,
+    uint256 value
+  ) public onlyOwner {
+    require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
+
+    uint256 scavID = LibNode.getScavBar(components, nodeIndex);
+    require(scavID != 0, "Node: scav bar does not exist");
+
+    LibScavenge.addReward(world, components, scavID, rwdType, rwdIndex, keys, weights, value);
+  }
+
   function remove(uint32 index) public onlyOwner {
     uint256 id = LibNode.getByIndex(components, index);
     require(id != 0, "Node: does not exist");
 
-    uint256[] memory requirements = LibNode.getReqs(components, index);
-    for (uint256 i; i < requirements.length; i++) LibNode.unsetReq(components, requirements[i]);
-
-    LibNode.remove(components, id);
+    LibNode.remove(components, id, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

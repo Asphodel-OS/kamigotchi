@@ -18,106 +18,36 @@
     },
     {
       "type": "function",
-      "name": "addRequirement",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "addScavBar",
-      "inputs": [
-        {
-          "name": "nodeIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "tierCost",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "addScavReward",
-      "inputs": [
-        {
-          "name": "nodeIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "rwdType",
-          "type": "string",
-          "internalType": "string"
-        },
-        {
-          "name": "rwdIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "keys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "weights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        },
-        {
-          "name": "value",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "create",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "execute",
       "inputs": [
         {
           "name": "arguments",
           "type": "bytes",
           "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "executeTyped",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
         }
       ],
       "outputs": [
@@ -141,19 +71,6 @@
         }
       ],
       "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "remove",
-      "inputs": [
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -199,13 +116,9 @@
     }
   ],
   "methodIdentifiers": {
-    "addRequirement(bytes)": "7e534103",
-    "addScavBar(uint32,uint256)": "7ddddb19",
-    "addScavReward(uint32,string,uint32,uint32[],uint256[],uint256)": "f8c04bb5",
-    "create(bytes)": "cf5ba53f",
     "execute(bytes)": "09c5eabe",
+    "executeTyped(uint256,string)": "68c47df2",
     "owner()": "8da5cb5b",
-    "remove(uint32)": "00d84fd8",
     "transferOwnership(address)": "f2fde38b"
   }
 }

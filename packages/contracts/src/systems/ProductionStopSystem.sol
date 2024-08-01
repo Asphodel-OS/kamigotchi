@@ -48,19 +48,23 @@ contract ProductionStopSystem is System {
     uint256 output = LibHarvest.claim(components, id);
     LibExperience.inc(components, petID, output);
 
+    // scavenge
+    uint256 nodeID = LibHarvest.getNode(components, id);
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+    LibNode.scavenge(components, nodeIndex, output, accID); // implicit existance check
+
     // process harvest stop
     LibHarvest.stop(components, id);
     LibPet.setState(components, petID, "RESTING");
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
-    uint256 nodeID = LibHarvest.getNode(components, id);
     LibScore.incFor(components, accID, "COLLECT", output);
     LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logAmounts(
       components,
       accID,
-      LibNode.getIndex(components, nodeID),
+      nodeIndex,
       LibNode.getAffinity(components, nodeID),
       MUSU_INDEX,
       output

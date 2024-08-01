@@ -76,7 +76,7 @@ library LibSkillRegistry {
     LibFor.setFromString(components, id, for_);
   }
 
-  function createEffect(
+  function addEffect(
     IWorld world,
     IUintComp components,
     uint32 skillIndex,
@@ -93,7 +93,7 @@ library LibSkillRegistry {
     ValueSignedComponent(getAddressById(components, ValueSignedCompID)).set(id, value);
   }
 
-  function createRequirement(
+  function addRequirement(
     IWorld world,
     IUintComp components,
     uint32 skillIndex,

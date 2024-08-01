@@ -61,7 +61,7 @@ contract _SkillRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
     // create an empty Skill and set any non-zero fields
-    uint256 id = LibSkillRegistry.createEffect(world, components, skillIndex, type_, value);
+    uint256 id = LibSkillRegistry.addEffect(world, components, skillIndex, type_, value);
     if (!LibString.eq(subtype, "")) LibSkillRegistry.setSubtype(components, id, subtype);
 
     return id;
@@ -79,13 +79,7 @@ contract _SkillRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
     // create an empty Skill and set any non-zero fields
-    uint256 id = LibSkillRegistry.createRequirement(
-      world,
-      components,
-      skillIndex,
-      type_,
-      logicType
-    );
+    uint256 id = LibSkillRegistry.addRequirement(world, components, skillIndex, type_, logicType);
     if (index != 0) LibSkillRegistry.setIndex(components, id, index);
     if (value != 0) LibSkillRegistry.setBalance(components, id, value);
 

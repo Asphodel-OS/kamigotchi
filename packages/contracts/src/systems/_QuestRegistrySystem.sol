@@ -68,7 +68,7 @@ contract _QuestRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
     return
-      LibQuestRegistry.createRequirement(
+      LibQuestRegistry.addRequirement(
         world,
         components,
         questIndex,

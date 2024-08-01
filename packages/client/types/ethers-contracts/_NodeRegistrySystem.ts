@@ -30,6 +30,8 @@ import type {
 export interface _NodeRegistrySystemInterface extends utils.Interface {
   functions: {
     "addRequirement(bytes)": FunctionFragment;
+    "addScavBar(uint32,uint256)": FunctionFragment;
+    "addScavReward(uint32,string,uint32,uint32[],uint256[],uint256)": FunctionFragment;
     "create(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -40,6 +42,8 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addRequirement"
+      | "addScavBar"
+      | "addScavReward"
       | "create"
       | "execute"
       | "owner"
@@ -50,6 +54,21 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "addRequirement",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addScavBar",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addScavReward",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "create",
@@ -71,6 +90,11 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "addRequirement",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "addScavBar", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addScavReward",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
@@ -133,6 +157,22 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addScavBar(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addScavReward(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      rwdType: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      keys: PromiseOrValue<BigNumberish>[],
+      weights: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -158,6 +198,22 @@ export interface _NodeRegistrySystem extends BaseContract {
 
   addRequirement(
     arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addScavBar(
+    nodeIndex: PromiseOrValue<BigNumberish>,
+    tierCost: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addScavReward(
+    nodeIndex: PromiseOrValue<BigNumberish>,
+    rwdType: PromiseOrValue<string>,
+    rwdIndex: PromiseOrValue<BigNumberish>,
+    keys: PromiseOrValue<BigNumberish>[],
+    weights: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -188,6 +244,22 @@ export interface _NodeRegistrySystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    addScavBar(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addScavReward(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      rwdType: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      keys: PromiseOrValue<BigNumberish>[],
+      weights: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     create(
       arguments: PromiseOrValue<BytesLike>,
@@ -229,6 +301,22 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addScavBar(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addScavReward(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      rwdType: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      keys: PromiseOrValue<BigNumberish>[],
+      weights: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -255,6 +343,22 @@ export interface _NodeRegistrySystem extends BaseContract {
   populateTransaction: {
     addRequirement(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addScavBar(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addScavReward(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      rwdType: PromiseOrValue<string>,
+      rwdIndex: PromiseOrValue<BigNumberish>,
+      keys: PromiseOrValue<BigNumberish>[],
+      weights: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

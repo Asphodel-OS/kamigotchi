@@ -686,6 +686,10 @@
       ]
     },
     {
+      "name": "ScavengeClaimSystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
         "IdHolderComponent",
@@ -743,6 +747,7 @@
     "LibRelationship",
     "LibReward",
     "LibRoom",
+    "LibScavenge",
     "LibScore",
     "LibSkillRegistry",
     "LibSkill",

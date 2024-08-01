@@ -44,14 +44,18 @@ contract ProductionCollectSystem is System {
     LibExperience.inc(components, petID, output);
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
-    // standard logging and tracking
+    // scavenge
     uint256 nodeID = LibHarvest.getNode(components, id);
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+    LibNode.scavenge(components, nodeIndex, output, accID); // implicit existance check
+
+    // standard logging and tracking
     LibScore.incFor(components, accID, "COLLECT", output);
     LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logAmounts(
       components,
       accID,
-      LibNode.getIndex(components, nodeID),
+      nodeIndex,
       LibNode.getAffinity(components, nodeID),
       MUSU_INDEX,
       output

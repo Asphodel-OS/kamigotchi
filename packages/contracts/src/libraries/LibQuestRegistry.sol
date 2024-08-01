@@ -74,7 +74,7 @@ library LibQuestRegistry {
     LibHash.set(components, id, abi.encode("Quest.Objective", data.logic, data.type_, data.index));
   }
 
-  function createRequirement(
+  function addRequirement(
     IWorld world,
     IUintComp components,
     uint32 questIndex,
