@@ -12,9 +12,10 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { Reward } from '../rewards';
 import { Objective, queryQuestObjectives } from './objective';
 import { Requirement, queryQuestRequirements } from './requirement';
-import { Reward, queryQuestRewards } from './reward';
+import { queryQuestRewards } from './reward';
 
 /////////////////
 // SHAPES

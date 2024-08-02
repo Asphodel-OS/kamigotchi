@@ -60,15 +60,32 @@ contract _GoalRegistrySystem is System {
       string memory rwdType,
       string memory rwdLogic,
       uint32 rwdIndex,
+      uint32[] memory keys,
+      uint256[] memory weights,
       uint256 rwdValue
-    ) = abi.decode(arguments, (uint32, string, uint256, string, string, uint32, uint256));
-    Condition memory reward = Condition(rwdType, rwdLogic, rwdIndex, rwdValue);
+    ) = abi.decode(
+        arguments,
+        (uint32, string, uint256, string, string, uint32, uint32[], uint256[], uint256)
+      );
     // check that the goal exists
     require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
-    require(!LibString.eq(reward.type_, ""), "Req type cannot be empty");
-    require(!LibString.eq(reward.logic, ""), "Req logic cannot be empty");
+    require(!LibString.eq(rwdType, ""), "Rwd type cannot be empty");
+    require(!LibString.eq(rwdLogic, ""), "Rwd logic cannot be empty");
 
-    return LibGoals.addReward(world, components, goalIndex, name, cutoff, reward);
+    return
+      LibGoals.addReward(
+        world,
+        components,
+        goalIndex,
+        name,
+        cutoff,
+        rwdLogic,
+        rwdType,
+        rwdIndex,
+        keys,
+        weights,
+        rwdValue
+      );
   }
 
   function remove(uint32 goalIndex) public onlyOwner {

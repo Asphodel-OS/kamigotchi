@@ -28,9 +28,9 @@ library LibDroptable {
   function commit(
     IWorld world,
     IUintComp components,
-    uint256 accID,
     uint256 dtID,
-    uint256 count
+    uint256 count,
+    uint256 accID
   ) internal returns (uint256 id) {
     id = LibCommit.commit(world, components, accID, block.number, "ITEM_DROPTABLE_COMMIT");
     ForComponent(getAddressById(components, ForCompID)).set(id, dtID);
@@ -117,6 +117,24 @@ library LibDroptable {
     for (uint256 i; i < ids.length; i++)
       if (!LibString.eq(types[i], "ITEM_DROPTABLE_COMMIT")) return false;
     return true;
+  }
+
+  /////////////////
+  // SETTERS
+
+  function set(
+    IUintComp components,
+    uint256 id,
+    uint32[] memory keys,
+    uint256[] memory weights
+  ) internal {
+    KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
+    WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
+  }
+
+  function unset(IUintComp components, uint256 id) internal {
+    KeysComponent(getAddressById(components, KeysCompID)).remove(id);
+    WeightsComponent(getAddressById(components, WeightsCompID)).remove(id);
   }
 
   /////////////////

@@ -1,4 +1,5 @@
 export { GachaTicket, GachaTicketInventory } from './EntityTypes';
+export { genID, queryChildrenOfEntityIndex } from './children';
 export { canReveal, filterRevealable } from './commits';
 export { getData, getDataArray, unpackArray32 } from './data';
 export { getFor } from './for';

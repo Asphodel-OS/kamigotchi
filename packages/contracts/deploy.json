@@ -142,9 +142,11 @@
         "IndexRoomComponent",
         "LevelComponent",
         "LogicTypeComponent",
+        "KeysComponent",
         "NameComponent",
         "TypeComponent",
-        "ValueComponent"
+        "ValueComponent",
+        "WeightsComponent"
       ]
     },
     {
@@ -743,6 +745,7 @@
     "LibRarity",
     "LibRelationshipRegistry",
     "LibRelationship",
+    "LibReward",
     "LibRoom",
     "LibScore",
     "LibSkillRegistry",

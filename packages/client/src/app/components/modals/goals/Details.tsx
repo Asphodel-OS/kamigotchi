@@ -37,9 +37,9 @@ export const Details = (props: Props) => {
       rewards.push({
         name: key,
         rewards: value.map((rwd) => ({
-          entity: getDescribedEntity(rwd.Reward.target.type, rwd.Reward.target.index ?? 0),
+          entity: getDescribedEntity(rwd.target.type, rwd.target.index ?? 0),
           tier: key,
-          balance: (rwd.Reward.target.value ?? 0) * 1,
+          balance: (rwd.target.value ?? 0) * 1,
         })),
         cutoff: value[0].cutoff * 1,
       });

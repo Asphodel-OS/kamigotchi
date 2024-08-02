@@ -29,6 +29,7 @@ import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditio
 import { LibData } from "libraries/LibData.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
+import { LibReward } from "libraries/LibReward.sol";
 
 /**
  * @notice LibQuests handles quests!
@@ -217,13 +218,7 @@ library LibQuests {
     uint256 accID
   ) internal {
     uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, questIndex);
-
-    for (uint256 i = 0; i < rewards.length; i++) {
-      string memory _type = getType(components, rewards[i]);
-      uint32 index = getIndex(components, rewards[i]);
-      uint256 amount = getBalance(components, rewards[i]);
-      LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
-    }
+    LibReward.distribute(world, components, rewards, accID);
   }
 
   function checkIncrease(

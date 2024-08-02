@@ -5,7 +5,8 @@ import { ActionButton, Tooltip } from 'app/components/library';
 import moment from 'moment';
 import { Account } from 'network/shapes/Account';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
-import { Objective, Quest, Reward } from 'network/shapes/Quest';
+import { Objective, Quest } from 'network/shapes/Quest';
+import { Reward } from 'network/shapes/rewards';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 
 interface Props {

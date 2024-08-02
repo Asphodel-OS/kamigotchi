@@ -15,12 +15,11 @@ import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
 
+import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -95,8 +94,7 @@ library LibItemRegistry {
     id = createItem(components, index, "LOOTBOX", name, description, mediaURI);
     setIsConsumable(components, id);
 
-    setKeys(components, id, keys);
-    setWeights(components, id, weights);
+    LibDroptable.set(components, id, keys, weights);
   }
 
   /// @notice adds a stat to an item
@@ -124,6 +122,8 @@ library LibItemRegistry {
     unsetType(components, id);
     unsetMediaURI(components, id);
 
+    LibDroptable.unset(components, id);
+
     LibStat.unsetHealth(components, id);
     LibStat.unsetPower(components, id);
     LibStat.unsetViolence(components, id);
@@ -131,9 +131,6 @@ library LibItemRegistry {
     LibStat.unsetSlots(components, id);
     LibStat.unsetStamina(components, id);
     unsetExperience(components, id);
-
-    unsetKeys(components, id);
-    unsetWeights(components, id);
   }
 
   /////////////////
@@ -226,10 +223,6 @@ library LibItemRegistry {
     ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
   }
 
-  function setKeys(IUintComp components, uint256 id, uint32[] memory keys) internal {
-    KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
-  }
-
   function setMediaURI(IUintComp components, uint256 id, string memory mediaURI) internal {
     MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
   }
@@ -240,10 +233,6 @@ library LibItemRegistry {
 
   function setType(IUintComp components, uint256 id, string memory type_) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-  }
-
-  function setWeights(IUintComp components, uint256 id, uint256[] memory weights) internal {
-    WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
   }
 
   /////////////////
@@ -276,11 +265,6 @@ library LibItemRegistry {
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetKeys(IUintComp components, uint256 id) internal {
-    KeysComponent comp = KeysComponent(getAddressById(components, KeysCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
   function unsetMediaURI(IUintComp components, uint256 id) internal {
     MediaURIComponent comp = MediaURIComponent(getAddressById(components, MediaURICompID));
     if (comp.has(id)) comp.remove(id);
@@ -293,11 +277,6 @@ library LibItemRegistry {
 
   function unsetType(IUintComp components, uint256 id) internal {
     TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetWeights(IUintComp components, uint256 id) internal {
-    WeightsComponent comp = WeightsComponent(getAddressById(components, WeightsCompID));
     if (comp.has(id)) comp.remove(id);
   }
 

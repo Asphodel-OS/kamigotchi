@@ -463,6 +463,11 @@ abstract contract SetupTemplate is TestSetupImports {
     uint256 minCont,
     Condition memory condition
   ) internal returns (uint256) {
+    uint32[] memory keys = new uint32[](1);
+    keys[0] = 1;
+    uint256[] memory weights = new uint256[](1);
+    weights[0] = 1;
+
     vm.prank(deployer);
     return
       __GoalRegistrySystem.addReward(
@@ -473,6 +478,8 @@ abstract contract SetupTemplate is TestSetupImports {
           condition.type_,
           condition.logic,
           condition.index,
+          keys,
+          weights,
           condition.value
         )
       );
@@ -689,8 +696,15 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32 itemIndex, // can be empty
     uint value // can be empty
   ) public returns (uint256) {
+    uint32[] memory keys = new uint32[](1);
+    keys[0] = 1;
+    uint256[] memory weights = new uint256[](1);
+    weights[0] = 1;
     vm.prank(deployer);
-    return __QuestRegistrySystem.addReward(abi.encode(questIndex, _type, itemIndex, value));
+    return
+      __QuestRegistrySystem.addReward(
+        abi.encode(questIndex, _type, itemIndex, keys, weights, value)
+      );
   }
 
   /* RELATIONSHIP */

@@ -10,7 +10,7 @@ import {
 
 import { Components } from 'network/';
 import { Condition, getCondition } from '../Conditional';
-import { queryConditionsOfEntityIndex } from '../Conditional/queries';
+import { queryChildrenOfEntityIndex } from '../utils';
 
 /////////////////
 // SHAPES
@@ -42,7 +42,7 @@ export const queryQuestObjectives = (
   components: Components,
   questIndex: number
 ): Objective[] => {
-  return queryConditionsOfEntityIndex(components, 'registry.quest.objective', questIndex).map(
+  return queryChildrenOfEntityIndex(components, 'registry.quest.objective', questIndex).map(
     (index) => getObjective(world, components, index)
   );
 };

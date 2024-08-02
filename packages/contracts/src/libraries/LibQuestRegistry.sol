@@ -28,6 +28,7 @@ import { LibArray } from "libraries/utils/LibArray.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibReward } from "libraries/LibReward.sol";
 
 // A registry for Quest related entities
 // Quest is copied to an Account, the rest are referenced
@@ -93,19 +94,27 @@ library LibQuestRegistry {
     setQuestIndex(components, id, questIndex);
   }
 
-  function createEmptyReward(
+  /// @notice creates a basic reward entity
+  function createReward(
     IWorld world,
     IUintComp components,
     uint32 questIndex,
-    string memory type_
+    string memory type_,
+    uint32 index,
+    uint32[] memory keys,
+    uint256[] memory weights,
+    uint256 value
   ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genRwdPtr(questIndex));
-
-    setIsRegistry(components, id);
-    setIsReward(components, id);
-    setQuestIndex(components, id, questIndex);
-    setType(components, id, type_);
+    id = LibReward.create(
+      world,
+      components,
+      genRwdPtr(questIndex),
+      type_,
+      index,
+      keys,
+      weights,
+      value
+    );
   }
 
   function deleteQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
@@ -333,7 +342,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genRwdPtr(index));
+    return LibReward.queryFor(components, genRwdPtr(index));
   }
 
   /////////////////

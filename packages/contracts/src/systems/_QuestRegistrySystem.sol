@@ -77,10 +77,14 @@ contract _QuestRegistrySystem is System {
   }
 
   function addReward(bytes memory arguments) public onlyOwner returns (uint256) {
-    (uint32 questIndex, string memory type_, uint32 index, uint256 value) = abi.decode(
-      arguments,
-      (uint32, string, uint32, uint256)
-    );
+    (
+      uint32 questIndex,
+      string memory type_,
+      uint32 index,
+      uint32[] memory keys,
+      uint256[] memory weights,
+      uint256 value
+    ) = abi.decode(arguments, (uint32, string, uint32, uint32[], uint256[], uint256));
 
     // check that the quest exists
     uint256 questID = LibQuestRegistry.getByQuestIndex(components, questIndex);
@@ -88,9 +92,16 @@ contract _QuestRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Quest Reward type cannot be empty");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 id = LibQuestRegistry.createEmptyReward(world, components, questIndex, type_);
-    if (index != 0) LibQuestRegistry.setIndex(components, id, index);
-    if (value != 0) LibQuestRegistry.setBalance(components, id, value);
+    uint256 id = LibQuestRegistry.createReward(
+      world,
+      components,
+      questIndex,
+      type_,
+      index,
+      keys,
+      weights,
+      value
+    );
 
     return id;
   }

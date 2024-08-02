@@ -13,8 +13,10 @@ import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Account } from './Account';
 import { Condition, getCondition, passesConditions } from './Conditional';
-import { queryConditionsOf, queryConditionsOfEntityIndex } from './Conditional/queries';
+import { queryConditionsOf } from './Conditional/queries';
+import { Reward, getReward } from './Rewards';
 import { Score, getScoresByType } from './Score';
+import { queryChildrenOfEntityIndex } from './utils';
 
 /////////////////
 // SHAPES
@@ -28,7 +30,7 @@ export interface Goal {
   currBalance: number;
   objective: Condition;
   requirements: Condition[];
-  rewards: Reward[];
+  rewards: GoalReward[];
   complete: boolean;
 }
 
@@ -37,11 +39,11 @@ export interface Contribution extends Score {
   claimed?: boolean;
 }
 
-export interface Reward {
+export interface GoalReward extends Reward {
   id: EntityID;
   cutoff: number;
   name: string;
-  Reward: Condition;
+  logic: string;
 }
 
 ///////////////////
@@ -76,12 +78,12 @@ export const getGoalByIndex = (world: World, components: Components, index: numb
 };
 
 // sorts rewards by tier
-export const sortRewards = (rewards: Reward[]): Map<string, Reward[]> => {
+export const sortRewards = (rewards: GoalReward[]): Map<string, GoalReward[]> => {
   rewards.sort((a, b) => a.cutoff - b.cutoff);
 
-  const tiers = new Map<string, Reward[]>();
+  const tiers = new Map<string, GoalReward[]>();
   for (let i = 0; i < rewards.length; i++) {
-    if (rewards[i].Reward.logic === 'DISPLAY_ONLY') {
+    if (rewards[i].logic === 'DISPLAY_ONLY') {
       // set display only rewards to the front
       // because their cutoff is 0, will be brought front during sort
       tiers.set(rewards[i].name, [rewards[i]]);
@@ -140,18 +142,18 @@ export const getGoal = (world: World, components: Components, entityIndex: Entit
   };
 };
 
-export const getReward = (
+export const getGoalReward = (
   world: World,
   components: Components,
   entityIndex: EntityIndex
-): Reward => {
-  const { Level, Name } = components;
+): GoalReward => {
+  const { Level, LogicType, Name } = components;
 
   return {
-    id: world.entities[entityIndex],
+    ...getReward(world, components, entityIndex),
     cutoff: getComponentValue(Level, entityIndex)?.value || (0 as number),
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    Reward: getCondition(world, components, entityIndex),
+    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
   };
 };
 
@@ -201,9 +203,13 @@ const queryGoalRequirements = (
   return queryConditionsOf(world, components, 'goal.requirement', goalIndex);
 };
 
-const queryGoalRewards = (world: World, components: Components, goalIndex: number): Reward[] => {
-  return queryConditionsOfEntityIndex(components, 'goal.reward', goalIndex).map(
-    (index): Reward => getReward(world, components, index)
+const queryGoalRewards = (
+  world: World,
+  components: Components,
+  goalIndex: number
+): GoalReward[] => {
+  return queryChildrenOfEntityIndex(components, 'goal.reward', goalIndex).map(
+    (index): GoalReward => getGoalReward(world, components, index)
   );
 };
 

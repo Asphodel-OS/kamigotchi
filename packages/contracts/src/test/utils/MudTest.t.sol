@@ -50,6 +50,19 @@ contract MudTest is Test {
     return getAddressById(systems, id);
   }
 
+  function getWorldNonce() public view returns (uint256) {
+    // world nonce is private, in first slot
+    return uint256(vm.load(address(world), bytes32(uint256(0))));
+  }
+
+  function simGetUniqueEntityId() public view returns (uint256) {
+    return simGetUniqueEntityId(getWorldNonce() + 1);
+  }
+
+  function simGetUniqueEntityId(uint256 nonce) public view returns (uint256) {
+    return uint256(keccak256(abi.encodePacked(nonce)));
+  }
+
   function _randomUints(uint256 n) internal returns (uint256[] memory a) {
     unchecked {
       _misalignFreeMemoryPointer();

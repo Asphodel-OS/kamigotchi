@@ -119,13 +119,25 @@ export function createAdminAPI(compiledCalls: string[]) {
     type: string,
     logic: string,
     conIndex: number,
+    keys: number[],
+    weights: number[],
     conValue: number
   ) {
     genCall(
       'system.goal.registry',
-      [goalIndex, name, cutoff, type, logic, conIndex, conValue],
+      [goalIndex, name, cutoff, type, logic, conIndex, keys, weights, conValue],
       'addReward',
-      ['uint32', 'string', 'uint256', 'string', 'string', 'uint32', 'uint256']
+      [
+        'uint32',
+        'string',
+        'uint256',
+        'string',
+        'string',
+        'uint32',
+        'uint32[]',
+        'uint256[]',
+        'uint256',
+      ]
     );
   }
 
@@ -288,12 +300,16 @@ export function createAdminAPI(compiledCalls: string[]) {
     questIndex: number,
     type: string,
     index: number,
+    keys: number[],
+    weights: number[],
     value: BigNumberish
   ) {
-    genCall('system.quest.registry', [questIndex, type, index, value], 'addReward', [
+    genCall('system.quest.registry', [questIndex, type, index, keys, weights, value], 'addReward', [
       'uint32',
       'string',
       'uint32',
+      'uint32[]',
+      'uint256[]',
       'uint256',
     ]);
   }

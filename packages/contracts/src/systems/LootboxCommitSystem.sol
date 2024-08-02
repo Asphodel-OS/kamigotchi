@@ -26,7 +26,7 @@ contract LootboxCommitSystem is System {
     uint256 regID = LibItemRegistry.getByIndex(components, index);
     require(LibItemRegistry.isLootbox(components, index), "LootboxStartReveal: not lootbox");
 
-    uint256 revealID = LibDroptable.commit(world, components, accID, regID, amt);
+    uint256 revealID = LibDroptable.commit(world, components, regID, amt, accID);
 
     // standard logging and tracking
     LibData.inc(components, accID, index, "LOOTBOX_OPENED", amt);

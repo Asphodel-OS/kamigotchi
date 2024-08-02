@@ -22,6 +22,11 @@ export interface DTLog {
   results: DTResult[];
 }
 
+export const NullDT: Droptable = {
+  keys: [],
+  weights: [],
+};
+
 export const NullDTLog: DTLog = {
   id: '0' as EntityID,
   results: [],

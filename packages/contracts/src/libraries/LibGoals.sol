@@ -14,6 +14,7 @@ import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsComple
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
+import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -22,6 +23,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibReward } from "libraries/LibReward.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /**
@@ -107,17 +109,32 @@ library LibGoals {
     uint32 goalIndex,
     string memory name,
     uint256 minContribution,
-    Condition memory reward
+    string memory logic,
+    string memory type_,
+    uint32 index,
+    uint32[] memory keys,
+    uint256[] memory weights,
+    uint256 value
   ) internal returns (uint256 id) {
-    // piggybacking on LibConditional for rewards
-    id = LibConditional.createFor(world, components, reward, genRwdPtr(goalIndex));
+    id = LibReward.create(
+      world,
+      components,
+      genRwdPtr(goalIndex),
+      type_,
+      index,
+      keys,
+      weights,
+      value
+    );
 
+    // custom touchs for goal rewards
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logic);
     require(
-      reward.logic.eq("REWARD") || reward.logic.eq("DISPLAY_ONLY"),
+      logic.eq("REWARD") || logic.eq("DISPLAY_ONLY"),
       "LibGoals: invalid reward distribution"
     );
-    if (!reward.logic.eq("DISPLAY_ONLY"))
+    if (!logic.eq("DISPLAY_ONLY"))
       LevelComponent(getAddressById(components, LevelCompID)).set(id, minContribution);
   }
 
@@ -136,19 +153,24 @@ library LibGoals {
 
     // remove requirements
     uint256[] memory reqIDs = getRequirements(components, index);
-    for (uint256 i = 0; i < reqIDs.length; i++) {
-      LibConditional.unset(components, reqIDs[i]);
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(reqIDs[i]);
-      NameComponent(getAddressById(components, NameCompID)).remove(reqIDs[i]);
-      LevelComponent(getAddressById(components, LevelCompID)).remove(reqIDs[i]);
-    }
+    for (uint256 i = 0; i < reqIDs.length; i++) removeRequirement(components, reqIDs[i]);
 
     // remove rewards
     uint256[] memory rewIDs = getRewards(components, index);
-    for (uint256 i = 0; i < rewIDs.length; i++) {
-      LibConditional.unset(components, rewIDs[i]);
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(rewIDs[i]);
-    }
+    for (uint256 i = 0; i < rewIDs.length; i++) removeReward(components, rewIDs[i]);
+  }
+
+  function removeRequirement(IUintComp components, uint256 id) internal {
+    LibConditional.unset(components, id);
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    LevelComponent(getAddressById(components, LevelCompID)).remove(id);
+  }
+
+  function removeReward(IUintComp components, uint256 id) internal {
+    LibReward.remove(components, id);
+    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    LevelComponent(getAddressById(components, LevelCompID)).remove(id);
   }
 
   /////////////////
@@ -192,41 +214,10 @@ library LibGoals {
     uint256 goalID,
     uint256 accID
   ) internal {
-    // filters out DISPLAY_ONLY rewards via Level check
-    uint256[] memory rewardIDs = queryActiveRewards(components, goalIndex);
+    uint256[] memory rwdIDs = queryActiveRewards(components, goalIndex); // non DISPLAY_ONLY rewards
+    filterRewardTiers(components, goalID, accID, rwdIDs); // filter out unqualified tiers
 
-    ValueComponent balComp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 accCont = balComp.get(genContributionID(goalID, accID));
-
-    _distributeRewards(world, components, balComp, accCont, accID, rewardIDs);
-  }
-
-  /// @notice internal helper make it a little more readable
-  function _distributeRewards(
-    IWorld world,
-    IUintComp components,
-    ValueComponent balComp,
-    uint256 accCont,
-    uint256 accID,
-    uint256[] memory rewardIDs
-  ) internal {
-    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
-    IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
-
-    for (uint256 i; i < rewardIDs.length; i++) {
-      // check tier qualification; skip if unqualified
-      if (levelComp.get(rewardIDs[i]) > accCont) continue;
-
-      LibAccount.incBalanceOf(
-        world,
-        components,
-        accID,
-        typeComp.get(rewardIDs[i]),
-        indexComp.has(rewardIDs[i]) ? indexComp.get(rewardIDs[i]) : 0,
-        balComp.has(rewardIDs[i]) ? balComp.get(rewardIDs[i]) : 0
-      );
-    }
+    LibReward.distribute(world, components, rwdIDs, accID);
   }
 
   ////////////////////
@@ -287,6 +278,21 @@ library LibGoals {
     return comp.get(goalID) == comp.get(accID);
   }
 
+  /// @notice gets rewards from tiers an account can qualify for
+  /// @dev filters directly on rwdIDs, unqualified returns 0
+  function filterRewardTiers(
+    IUintComp components,
+    uint256 goalID,
+    uint256 accID,
+    uint256[] memory rwdIDs
+  ) internal view {
+    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+
+    uint256 contribution = getContributionAmt(components, goalID, accID);
+    for (uint256 i; i < rwdIDs.length; i++)
+      if (contribution < levelComp.get(rwdIDs[i])) rwdIDs[i] = 0;
+  }
+
   function isComplete(IUintComp components, uint256 id) internal view returns (bool) {
     return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(id);
   }
@@ -322,6 +328,16 @@ library LibGoals {
     return IsGoalComponent(getAddressById(components, IsGoalCompID)).has(id) ? id : 0;
   }
 
+  function getContributionAmt(
+    IUintComp components,
+    uint256 goalID,
+    uint256 accID
+  ) internal view returns (uint256) {
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    uint256 id = genContributionID(goalID, accID);
+    return comp.has(id) ? comp.get(id) : 0;
+  }
+
   function getRequirements(
     IUintComp components,
     uint32 goalIndex
@@ -347,7 +363,7 @@ library LibGoals {
   ////////////////////
   // QUERIES
 
-  /// @notice gets rewards that arent only for display
+  /// @notice gets rewards that arent only for display using Level check
   /// @dev only active rewards have a level component (minimum contribution)
   function queryActiveRewards(
     IUintComp components,

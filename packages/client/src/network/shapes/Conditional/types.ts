@@ -1,10 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
-import { For, getFor } from '../utils';
-
-const IDStore = new Map<string, string>();
+import { ForType, getFor } from '../utils';
 
 /**
  * A client equivalent to Conditionals. For supporting other shapes
@@ -15,7 +11,7 @@ export interface Condition {
   logic: string;
   target: Target;
   status?: Status;
-  for?: For;
+  for?: ForType;
 }
 
 // the Target of a Condition (eg Objective, Requirement, Reward)
@@ -62,14 +58,4 @@ export const getCondition = (
   if (options?.for) result.for = getFor(components, entityIndex);
 
   return result;
-};
-
-export const genConditionID = (field: string, index: number): EntityID => {
-  let id = '';
-  const key = field + index.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else id = utils.solidityKeccak256(['string', 'uint32'], [field, index]) as EntityID;
-
-  return formatEntityID(id);
 };
