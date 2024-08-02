@@ -66,16 +66,20 @@ library LibCommit {
   ///////////////
   // CHECKERS
 
+  function isAvailable(uint256 blockNum) internal view returns (bool) {
+    return blockNum + 256 >= block.number;
+  }
+
   /// @notice checks if a blockhash is available
   function isAvailable(IUintComp components, uint256 id) internal returns (bool) {
     uint256 revBlock = BlockRevComponent(getAddressById(components, BlockRevealCompID)).get(id);
-    return revBlock + 256 < block.number;
+    return isAvailable(revBlock);
   }
 
   function isAvailable(IUintComp components, uint256[] memory ids) internal returns (bool) {
     uint256[] memory blocks = BlockRevComponent(getAddressById(components, BlockRevealCompID))
       .getBatch(ids);
-    for (uint256 i; i < ids.length; i++) if (blocks[i] + 256 < block.number) return false;
+    for (uint256 i; i < ids.length; i++) if (!isAvailable(blocks[i])) return false;
     return true;
   }
 
@@ -86,6 +90,11 @@ library LibCommit {
   function extractSeed(IUintComp components, uint256 id) internal returns (uint256) {
     uint256 revBlock = BlockRevComponent(getAddressById(components, BlockRevealCompID)).extract(id);
     return getBlockhash(revBlock);
+  }
+
+  /// @notice bypasses component registry to extract seed
+  function extractSeedDirect(BlockRevComponent blockComp, uint256 id) internal returns (uint256) {
+    return getBlockhash(blockComp.extract(id));
   }
 
   function extractSeeds(
@@ -144,5 +153,15 @@ library LibCommit {
 
   function unsetHolders(IUintComp components, uint256[] memory ids) internal {
     IdHolderComponent(getAddressById(components, IdHolderCompID)).removeBatch(ids);
+  }
+
+  /////////////////
+  // UTILS
+
+  /// @notice filters out missing commits, replaces its ID with 0
+  /// @dev designed for unintentionally double revealing a commit on FE
+  function filterInvalid(IUintComp components, uint256[] memory ids) internal view {
+    BlockRevComponent blockComp = BlockRevComponent(getAddressById(components, BlockRevealCompID));
+    for (uint256 i; i < ids.length; i++) if (!blockComp.has(ids[i])) ids[i] = 0;
   }
 }

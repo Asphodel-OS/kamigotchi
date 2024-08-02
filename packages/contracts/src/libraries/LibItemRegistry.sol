@@ -14,7 +14,6 @@ import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceCompo
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
-import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
@@ -95,7 +94,6 @@ library LibItemRegistry {
   ) internal returns (uint256 id) {
     id = createItem(components, index, "LOOTBOX", name, description, mediaURI);
     setIsConsumable(components, id);
-    setIsLootbox(components, id);
 
     setKeys(components, id, keys);
     setWeights(components, id, weights);
@@ -119,7 +117,6 @@ library LibItemRegistry {
     unsetIndex(components, id);
     unsetIsRegistry(components, id);
     unsetIsConsumable(components, id);
-    unsetIsLootbox(components, id);
     LibFor.unset(components, id);
 
     unsetName(components, id);
@@ -174,6 +171,12 @@ library LibItemRegistry {
     return LibString.eq(type_, "REVIVE");
   }
 
+  function isLootbox(IUintComp components, uint32 index) internal view returns (bool) {
+    uint256 id = genID(index);
+    string memory type_ = getType(components, id);
+    return LibString.eq(type_, "LOOTBOX");
+  }
+
   // check whether an entity is an Item Registry instance
   function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
     return isRegistry(components, id) && isItem(components, id);
@@ -209,10 +212,6 @@ library LibItemRegistry {
 
   function setIsConsumable(IUintComp components, uint256 id) internal {
     IsConsumableComponent(getAddressById(components, IsConsumableCompID)).set(id);
-  }
-
-  function setIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
@@ -264,11 +263,6 @@ library LibItemRegistry {
     IsConsumableComponent comp = IsConsumableComponent(
       getAddressById(components, IsConsumableCompID)
     );
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
     if (comp.has(id)) comp.remove(id);
   }
 

@@ -5,17 +5,17 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibCommit } from "libraries/LibCommit.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibLootbox } from "libraries/LibLootbox.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 
-uint256 constant ID = uint256(keccak256("system.Lootbox.Reveal.Execute"));
+uint256 constant ID = uint256(keccak256("system.droptable.item.reveal"));
 
 // @notice reveals lootbox and distributes items
-contract LootboxExecuteRevealSystem is System, AuthRoles {
+contract DroptableRevealSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -23,20 +23,11 @@ contract LootboxExecuteRevealSystem is System, AuthRoles {
 
     // checks
     require(ids.length > 0, "LootboxExeRev: no reveals");
-    uint256[] memory holderIDs = LibLootbox.extractHolders(components, ids);
-    uint32[] memory boxIndices = LibLootbox.extractIndices(components, ids);
-    require(LibLootbox.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
-    require(LibLootbox.isSameHolder(holderIDs), "LootboxExeRev: not same holder");
-    require(LibLootbox.isSameBox(boxIndices), "LootboxExeRev: not same box");
-
-    uint256 accID = holderIDs[0];
-    uint32 boxIndex = boxIndices[0];
+    require(LibDroptable.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
 
     // revealing
-    LibLootbox.reveal(components, accID, boxIndex, ids);
-
-    // standard logging and tracking
-    LibAccount.updateLastTs(components, accID);
+    LibCommit.filterInvalid(components, ids);
+    LibDroptable.reveal(components, ids);
     return "";
   }
 
@@ -46,12 +37,10 @@ contract LootboxExecuteRevealSystem is System, AuthRoles {
     ids[0] = id;
 
     require(!LibCommit.isAvailable(components, ids), "LootboxExeRev: commit still available");
-    require(LibLootbox.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
-    uint256 accID = LibLootbox.extractHolders(components, ids)[0];
-    uint32 boxIndex = LibLootbox.extractIndices(components, ids)[0];
+    require(LibDroptable.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
 
     LibCommit.resetBlocks(components, ids);
-    LibLootbox.reveal(components, accID, boxIndex, ids);
+    LibDroptable.reveal(components, ids);
   }
 
   function executeTyped(uint256[] memory ids) public returns (bytes memory) {

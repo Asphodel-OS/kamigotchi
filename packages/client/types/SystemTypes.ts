@@ -21,6 +21,7 @@ import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem"
 import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
+import { DroptableRevealSystem } from "./ethers-contracts/DroptableRevealSystem";
 import { Farm20DepositSystem } from "./ethers-contracts/Farm20DepositSystem";
 import { Farm20ProxySystem } from "./ethers-contracts/Farm20ProxySystem";
 import { Farm20WithdrawSystem } from "./ethers-contracts/Farm20WithdrawSystem";
@@ -32,8 +33,7 @@ import { GoalClaimSystem } from "./ethers-contracts/GoalClaimSystem";
 import { GoalContributeSystem } from "./ethers-contracts/GoalContributeSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
-import { LootboxExecuteRevealSystem } from "./ethers-contracts/LootboxExecuteRevealSystem";
-import { LootboxStartRevealSystem } from "./ethers-contracts/LootboxStartRevealSystem";
+import { LootboxCommitSystem } from "./ethers-contracts/LootboxCommitSystem";
 import { Mint20ProxySystem } from "./ethers-contracts/Mint20ProxySystem";
 import { Pet721IsInWorldSystem } from "./ethers-contracts/Pet721IsInWorldSystem";
 import { Pet721MetadataSystem } from "./ethers-contracts/Pet721MetadataSystem";
@@ -86,6 +86,7 @@ export type SystemTypes = {
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem;
   "system.Account.Set.Name": AccountSetNameSystem;
   "system.Account.Set.Operator": AccountSetOperatorSystem;
+  "system.droptable.item.reveal": DroptableRevealSystem;
   "system.Farm20.Deposit": Farm20DepositSystem;
   "system.Farm20.Proxy": Farm20ProxySystem;
   "system.Farm20.Withdraw": Farm20WithdrawSystem;
@@ -97,8 +98,7 @@ export type SystemTypes = {
   "system.Goal.Contribute": GoalContributeSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
-  "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem;
-  "system.Lootbox.Reveal.Start": LootboxStartRevealSystem;
+  "system.Lootbox.Commit": LootboxCommitSystem;
   "system.Mint20.Proxy": Mint20ProxySystem;
   "system.Pet721.IsInWorld": Pet721IsInWorldSystem;
   "system.Pet721.Metadata": Pet721MetadataSystem;

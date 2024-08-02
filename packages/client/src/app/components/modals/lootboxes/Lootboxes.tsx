@@ -9,8 +9,8 @@ import { v4 as uuid } from 'uuid';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getDTLogByHash, queryDTCommits } from 'network/shapes/Droptable';
 import { getItemByIndex } from 'network/shapes/Item';
-import { getLootboxLogByHash, queryLootboxCommits } from 'network/shapes/Lootbox';
 import { Commit, filterRevealable } from 'network/shapes/utils/commits';
 import { playClick } from 'utils/sounds';
 import { useAccount, useWatchBlockNumber } from 'wagmi';
@@ -41,14 +41,14 @@ export function registerLootboxesModal() {
           const accLootboxes = (account.inventories || []).filter(
             (inv) => inv.item.type === 'LOOTBOX'
           );
-          const commits = queryLootboxCommits(world, components, account.id);
-          // only one lootbox for now
+          const commits = queryDTCommits(world, components, account.id);
+          // only one lootbox for now. TODO: unhardcode this for separate reveal modal
           const selectedBox = getItemByIndex(world, components, 10001);
-          const lootboxLog = getLootboxLogByHash(
+          const lootboxLog = getDTLogByHash(
             world,
             components,
             account.id,
-            selectedBox?.index!
+            getItemByIndex(world, components, 10001)?.id!
           );
 
           return {
@@ -118,7 +118,7 @@ export function registerLootboxesModal() {
           params: [index, amount],
           description: `Opening ${amount} of lootbox ${index}`,
           execute: async () => {
-            return api.player.lootbox.startReveal(index, amount);
+            return api.player.lootbox.commit(index, amount);
           },
         });
         await waitForActionCompletion(
@@ -137,7 +137,7 @@ export function registerLootboxesModal() {
           params: [ids],
           description: `Inspecting lootbox contents`,
           execute: async () => {
-            return api.player.lootbox.executeReveal(ids);
+            return api.player.droptable.reveal(ids);
           },
         });
         await waitForActionCompletion(
@@ -213,6 +213,7 @@ export function registerLootboxesModal() {
               }}
             />
           );
+          // TODO: split reveal into its own modal for all droptables
         } else if (state === 'REVEALING') {
           return <Revealing />;
         } else if (state === 'REWARDS') {

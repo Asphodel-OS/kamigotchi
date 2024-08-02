@@ -11,7 +11,16 @@ import {
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/components';
-import { Inventory, Item, NullItem, getInventory, getItem, getRegEntityIndex } from './types';
+import { DetailedEntity } from '../utils';
+import {
+  Inventory,
+  Item,
+  NullItem,
+  getInventory,
+  getItem,
+  getItemDetails,
+  getRegEntityIndex,
+} from './types';
 import { getInventoryEntityIndex } from './utils';
 
 /////////////////
@@ -27,6 +36,15 @@ import { getInventoryEntityIndex } from './utils';
 export const getItemByIndex = (world: World, components: Components, index: number): Item => {
   const entityIndex = getItemRegEntity(world, index);
   return entityIndex ? getItem(world, components, entityIndex) : NullItem;
+};
+
+export const getItemDetailsByIndex = (
+  world: World,
+  components: Components,
+  index: number
+): DetailedEntity => {
+  const entityIndex = getItemRegEntity(world, index);
+  return entityIndex ? getItemDetails(components, entityIndex) : NullItem;
 };
 
 export const getItemRegEntity = (world: World, index: number): EntityIndex | undefined => {

@@ -21,6 +21,7 @@ import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSyst
 import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
+import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
 import Farm20DepositSystem from "../../../../../client/abi/Farm20DepositSystem.json";
 import Farm20ProxySystem from "../../../../../client/abi/Farm20ProxySystem.json";
 import Farm20WithdrawSystem from "../../../../../client/abi/Farm20WithdrawSystem.json";
@@ -32,8 +33,7 @@ import GoalClaimSystem from "../../../../../client/abi/GoalClaimSystem.json";
 import GoalContributeSystem from "../../../../../client/abi/GoalContributeSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
-import LootboxExecuteRevealSystem from "../../../../../client/abi/LootboxExecuteRevealSystem.json";
-import LootboxStartRevealSystem from "../../../../../client/abi/LootboxStartRevealSystem.json";
+import LootboxCommitSystem from "../../../../../client/abi/LootboxCommitSystem.json";
 import Mint20ProxySystem from "../../../../../client/abi/Mint20ProxySystem.json";
 import Pet721IsInWorldSystem from "../../../../../client/abi/Pet721IsInWorldSystem.json";
 import Pet721MetadataSystem from "../../../../../client/abi/Pet721MetadataSystem.json";
@@ -86,6 +86,7 @@ export const SystemAbis = {
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
+  "system.droptable.item.reveal": DroptableRevealSystem.abi,
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
   "system.Farm20.Proxy": Farm20ProxySystem.abi,
   "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
@@ -97,8 +98,7 @@ export const SystemAbis = {
   "system.Goal.Contribute": GoalContributeSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
-  "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem.abi,
-  "system.Lootbox.Reveal.Start": LootboxStartRevealSystem.abi,
+  "system.Lootbox.Commit": LootboxCommitSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Pet721.IsInWorld": Pet721IsInWorldSystem.abi,
   "system.Pet721.Metadata": Pet721MetadataSystem.abi,

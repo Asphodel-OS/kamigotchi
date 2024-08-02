@@ -5,14 +5,15 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibData } from "libraries/LibData.sol";
+import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
-import { LibLootbox } from "libraries/LibLootbox.sol";
 
-uint256 constant ID = uint256(keccak256("system.Lootbox.Reveal.Start"));
+uint256 constant ID = uint256(keccak256("system.Lootbox.Commit"));
 
 // @notice start the reveal process for a lootbox
-contract LootboxStartRevealSystem is System {
+contract LootboxCommitSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -20,14 +21,15 @@ contract LootboxStartRevealSystem is System {
     require(amt <= 10, "LootboxStartReveal: max 10");
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    LibInventory.decFor(components, accID, index, amt); // implicit balance check
 
     uint256 regID = LibItemRegistry.getByIndex(components, index);
-    require(LibLootbox.isLootbox(components, regID), "LootboxStartReveal: not lootbox");
+    require(LibItemRegistry.isLootbox(components, index), "LootboxStartReveal: not lootbox");
 
-    uint256 revealID = LibLootbox.commit(world, components, accID, index, amt);
+    uint256 revealID = LibDroptable.commit(world, components, accID, regID, amt);
 
     // standard logging and tracking
-    LibLootbox.logIncOpened(components, accID, index, amt);
+    LibData.inc(components, accID, index, "LOOTBOX_OPENED", amt);
     LibAccount.updateLastTs(components, accID);
 
     return abi.encode(revealID);

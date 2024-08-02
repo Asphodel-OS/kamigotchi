@@ -47,7 +47,7 @@ export const Commits = (props: Props) => {
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName>
         <Row>
-          <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
+          <ActionButton onClick={() => props.actions.handleReveal([commit])} text='Reveal' />
         </Row>
       </CellContainer>
     );

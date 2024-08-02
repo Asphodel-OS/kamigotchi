@@ -16,6 +16,7 @@ export type Components = ReturnType<typeof createComponents>;
 export function createComponents(world: World) {
   return {
     _DepreciatedIsLog: defineBoolComponent(world, '_DepreciatedIsLog', 'component.is.log'),
+    _DepreciatedIsLootbox: defineBoolComponent(world, '_DepreciatedIsLootbox', 'component.is.lootbox'),
     OperatorAddress: defineStringComponent(world, 'OperatorAddress', 'component.address.operator'),
     OwnerAddress: defineStringComponent(world, 'OwnerAddress', 'component.address.owner'),
     Affinity: defineStringComponent(world, 'Affinity', 'component.affiinity'),
@@ -75,7 +76,6 @@ export function createComponents(world: World) {
     IsGoal: defineBoolComponent(world, 'IsGoal', 'component.is.goal'),
     IsKill: defineBoolComponent(world, 'IsKill', 'component.is.kill'),
     IsListing: defineBoolComponent(world, 'IsListing', 'component.is.listing'),
-    IsLootbox: defineBoolComponent(world, 'IsLootbox', 'component.is.lootbox'),
     IsNode: defineBoolComponent(world, 'IsNode', 'component.is.node'),
     IsNPC: defineBoolComponent(world, 'IsNPC', 'component.is.npc'),
     IsPet: defineBoolComponent(world, 'IsPet', 'component.is.pet'),

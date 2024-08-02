@@ -3,6 +3,7 @@ export {
   getAllItems,
   getInventoryByHolderItem,
   getItemByIndex,
+  getItemDetailsByIndex,
   getItemRegEntity,
   getMusuBalance,
   queryInventories,

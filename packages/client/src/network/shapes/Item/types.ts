@@ -54,21 +54,22 @@ export const NullItem: Item = {
  * @param entityIndex - the entity index of the item in the registry
  */
 export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
-  const { IsConsumable, IsLootbox, Description, Experience, ItemIndex, Keys, Name, Type, Weights } =
-    components;
+  const { IsConsumable, Experience, ItemIndex, Type } = components;
+
+  const type = getComponentValue(Type, entityIndex)?.value as string;
 
   let item: Item = {
     ...getItemDetails(components, entityIndex),
     entityIndex,
     id: world.entities[entityIndex],
     index: getComponentValue(ItemIndex, entityIndex)?.value as number,
-    type: getComponentValue(Type, entityIndex)?.value as string,
+    type: type,
     for: getFor(components, entityIndex),
     stats: getStats(components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
     is: {
       consumable: hasComponent(IsConsumable, entityIndex),
-      lootbox: hasComponent(IsLootbox, entityIndex),
+      lootbox: type === 'LOOTBOX',
     },
   };
 

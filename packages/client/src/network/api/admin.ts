@@ -12,7 +12,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev admin reveal for lootbox if blockhash has lapsed
   async function lootboxForceReveal(entityID: string) {
-    return systems['system.Lootbox.Reveal.Execute'].forceReveal(entityID);
+    return systems['system.droptable.item.reveal'].forceReveal(entityID);
   }
 
   // @dev cancels outgoing bridge tx

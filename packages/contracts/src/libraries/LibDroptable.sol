@@ -1,0 +1,124 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { getAddressById } from "solecs/utils.sol";
+import { LibString } from "solady/utils/LibString.sol";
+
+import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
+import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
+
+import { LibCommit } from "libraries/LibCommit.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
+
+library LibDroptable {
+  /**
+   * @notice creates a reveal entity for an item droptable
+   *   used for all item droptables, including lootboxes.
+   *   Parent context may choose to add a "subType" for FE distinction
+   **/
+  function commit(
+    IWorld world,
+    IUintComp components,
+    uint256 accID,
+    uint256 dtID,
+    uint256 count
+  ) internal returns (uint256 id) {
+    id = LibCommit.commit(world, components, accID, block.number, "ITEM_DROPTABLE_COMMIT");
+    ForComponent(getAddressById(components, ForCompID)).set(id, dtID);
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, count);
+  }
+
+  ///////////////////
+  // INTERACTIONS
+
+  /// @notice reveals and distributes items
+  /// @dev avoid big array for memory's sake
+  function reveal(IUintComp components, uint256[] memory commitIDs) internal {
+    // sorted in order of stack depth
+    ForComponent forComp = ForComponent(getAddressById(components, ForCompID));
+    IdHolderComponent holderComp = IdHolderComponent(getAddressById(components, IdHolderCompID));
+    BlockRevComponent blockComp = BlockRevComponent(getAddressById(components, BlockRevealCompID));
+    WeightsComponent weightsComp = WeightsComponent(getAddressById(components, WeightsCompID));
+    ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
+    KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
+    ValuesComponent logComp = ValuesComponent(getAddressById(components, ValuesCompID));
+
+    for (uint256 i; i < commitIDs.length; i++) {
+      uint256 commitID = commitIDs[i];
+      if (commitID == 0) continue;
+
+      uint256 dtID = forComp.extract(commitID);
+      uint256 holderID = holderComp.extract(commitID);
+
+      uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
+      _distribute(components, keysComp, holderID, dtID, amts);
+      log(logComp, holderID, dtID, amts);
+    }
+  }
+
+  /// @notice selects a single droptable result
+  /// @dev raw component use for puter efficiency
+  function _select(
+    BlockRevComponent blockComp,
+    WeightsComponent weightsComp,
+    ValueComponent valComp,
+    uint256 dtID,
+    uint256 commitID
+  ) internal returns (uint256[] memory) {
+    uint256[] memory weights = weightsComp.get(dtID);
+    uint256 seed = LibCommit.extractSeedDirect(blockComp, commitID);
+    uint256 count = valComp.extract(commitID);
+
+    return LibRandom.selectMultipleFromWeighted(weights, seed, count);
+  }
+
+  /// @notice distributes item(s) to holder (single)
+  function _distribute(
+    IUintComp components,
+    KeysComponent keysComp,
+    uint256 holderID,
+    uint256 dtID,
+    uint256[] memory amts
+  ) internal {
+    uint32[] memory indices = keysComp.get(dtID);
+    for (uint256 i; i < indices.length; i++)
+      if (amts[i] > 0) LibInventory.incFor(components, holderID, indices[i], amts[i]);
+  }
+
+  /// @notice logs the latest reveal result, overwriting previous values
+  /// @dev only one exists per account+droptable. a crutch for FE to show latest result
+  function log(
+    ValuesComponent valuesComp,
+    uint256 holderID,
+    uint256 dtID,
+    uint256[] memory amts
+  ) internal {
+    uint256 logID = genLogID(holderID, dtID);
+    valuesComp.set(logID, amts);
+  }
+
+  ///////////////////
+  // CHECKERS
+
+  function extractAreCommits(IUintComp components, uint256[] memory ids) internal returns (bool) {
+    string[] memory types = LibCommit.extractTypes(components, ids);
+    for (uint256 i; i < ids.length; i++)
+      if (!LibString.eq(types[i], "ITEM_DROPTABLE_COMMIT")) return false;
+    return true;
+  }
+
+  /////////////////
+  // UTILS
+
+  function genLogID(uint256 holderID, uint256 dtID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("droptable.item.log", holderID, dtID)));
+  }
+}

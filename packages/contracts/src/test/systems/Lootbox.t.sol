@@ -31,20 +31,20 @@ contract LootboxTest is SetupTemplate {
     if (useAmt > 10) {
       vm.startPrank(alice.operator);
       vm.expectRevert("LootboxStartReveal: max 10");
-      _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt);
+      _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt);
 
       assertEq(_getItemBal(alice, lootboxIndex), startAmt);
     } else if (useAmt > startAmt) {
       vm.startPrank(alice.operator);
       vm.expectRevert("Inventory: insufficient balance");
-      _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt);
+      _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt);
 
       assertEq(_getItemBal(alice, lootboxIndex), startAmt);
     } else {
       vm.roll(_currBlock);
       vm.prank(alice.operator);
       uint256 revealID = abi.decode(
-        _LootboxStartRevealSystem.executeTyped(lootboxIndex, useAmt),
+        _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt),
         (uint256)
       );
       _assertCommit(revealID, alice.id, lootboxIndex, _currBlock, useAmt);
@@ -53,7 +53,7 @@ contract LootboxTest is SetupTemplate {
       uint256[] memory revealIDs = new uint256[](1);
       revealIDs[0] = revealID;
       vm.prank(alice.operator);
-      _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+      _DroptableRevealSystem.executeTyped(revealIDs);
 
       assertEq(_getItemBal(0, 1), useAmt);
       assertEq(_getItemBal(0, lootboxIndex), startAmt - useAmt);
@@ -76,7 +76,7 @@ contract LootboxTest is SetupTemplate {
 
     console.log(uint256(blockhash(block.number - 1)));
     vm.prank(alice.operator);
-    _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+    _DroptableRevealSystem.executeTyped(revealIDs);
 
     // total items = 5
     assertEq(
@@ -98,7 +98,7 @@ contract LootboxTest is SetupTemplate {
     revealIDs[4] = _openLootbox(alice, lootboxIndex, 10);
 
     vm.prank(alice.operator);
-    _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+    _DroptableRevealSystem.executeTyped(revealIDs);
 
     assertEq(_getItemBal(alice, 1), 25);
   }
@@ -114,7 +114,7 @@ contract LootboxTest is SetupTemplate {
 
     vm.prank(alice.operator);
     vm.expectRevert("Blockhash unavailable. Contact admin");
-    _LootboxExecuteRevealSystem.executeTyped(revealIDs);
+    _DroptableRevealSystem.executeTyped(revealIDs);
   }
 
   function testLootboxForceReveal() public {
@@ -126,7 +126,7 @@ contract LootboxTest is SetupTemplate {
     // try while still valid
     vm.prank(deployer);
     vm.expectRevert("LootboxExeRev: commit still available");
-    _LootboxExecuteRevealSystem.forceReveal(revealID);
+    _DroptableRevealSystem.forceReveal(revealID);
 
     // roll
     vm.roll(_currBlock += 300);
@@ -134,11 +134,11 @@ contract LootboxTest is SetupTemplate {
     // try unauthorized
     vm.prank(alice.operator);
     vm.expectRevert("Auth: not a community manager");
-    _LootboxExecuteRevealSystem.forceReveal(revealID);
+    _DroptableRevealSystem.forceReveal(revealID);
 
     // authorized call
     vm.prank(deployer);
-    _LootboxExecuteRevealSystem.forceReveal(revealID);
+    _DroptableRevealSystem.forceReveal(revealID);
 
     assertEq(_getItemBal(alice, 1), 1);
   }
@@ -168,7 +168,7 @@ contract LootboxTest is SetupTemplate {
     uint256 amt
   ) internal returns (uint256 id) {
     vm.startPrank(player.operator);
-    id = abi.decode(_LootboxStartRevealSystem.executeTyped(index, amt), (uint256));
+    id = abi.decode(_LootboxCommitSystem.executeTyped(index, amt), (uint256));
     vm.roll(_currBlock++);
     vm.stopPrank();
   }
@@ -183,7 +183,7 @@ contract LootboxTest is SetupTemplate {
     uint256 revealBlock,
     uint256 count
   ) internal {
-    assertEq(_IndexItemComponent.get(id), index);
+    assertEq(_ForComponent.get(id), LibItemRegistry.getByIndex(components, index));
     assertEq(_ValueComponent.get(id), count);
     assertEq(_IdHolderComponent.get(id), holderID);
     assertEq(_BlockRevealComponent.get(id), revealBlock);

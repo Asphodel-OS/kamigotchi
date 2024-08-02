@@ -3,12 +3,11 @@ import { getRarities } from 'constants/rarities';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import { DTResult } from 'network/shapes/Droptable';
-import { LootboxLog } from 'network/shapes/Lootbox';
+import { DTLog, DTResult } from 'network/shapes/Droptable';
 
 interface Props {
   account: Account;
-  log: LootboxLog;
+  log: DTLog;
 }
 
 export const Rewards = (props: Props) => {

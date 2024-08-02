@@ -94,17 +94,11 @@ export function createPlayerAPI(systems: any) {
     return systems['system.Account.Skill.Upgrade'].executeTyped(skillIndex);
   }
 
-  /////////////////
-  //  GOALS
+  ////////////////
+  // DROPTABLES
 
-  // @dev contributes to a goal
-  function goalContribute(goalIndex: number, amt: number) {
-    return systems['system.Goal.Contribute'].executeTyped(goalIndex, amt);
-  }
-
-  // @dev claims a reward from a goal
-  function goalClaim(goalIndex: number) {
-    return systems['system.Goal.Claim'].executeTyped(goalIndex);
+  function droptableReveal(ids: BigNumberish[]) {
+    return systems['system.droptable.item.reveal'].executeTyped(ids);
   }
 
   /////////////////
@@ -135,6 +129,19 @@ export function createPlayerAPI(systems: any) {
   }
 
   /////////////////
+  //  GOALS
+
+  // @dev contributes to a goal
+  function goalContribute(goalIndex: number, amt: number) {
+    return systems['system.Goal.Contribute'].executeTyped(goalIndex, amt);
+  }
+
+  // @dev claims a reward from a goal
+  function goalClaim(goalIndex: number) {
+    return systems['system.Goal.Claim'].executeTyped(goalIndex);
+  }
+
+  /////////////////
   //   LISTINGS
 
   // @dev allows a character to buy an item through a merchant listing entity
@@ -159,15 +166,8 @@ export function createPlayerAPI(systems: any) {
   // @dev starts a lootbox reveal (commit)
   // @param index   item index of lootbox
   // @param amount  amount of lootboxes to open
-  function lootboxStartReveal(index: number, amount: number) {
-    return systems['system.Lootbox.Reveal.Start'].executeTyped(index, amount);
-  }
-
-  // @dev executes a lootbox reveal (reveal)
-  // @param id    entityID of reveal entity
-  function lootboxExecuteReveal(ids: BigNumberish[]) {
-    console.log('lootboxExecuteReveal', ids);
-    return systems['system.Lootbox.Reveal.Execute'].executeTyped(ids);
+  function lootboxCommit(index: number, amount: number) {
+    return systems['system.Lootbox.Commit'].executeTyped(index, amount);
   }
 
   /////////////////
@@ -365,6 +365,9 @@ export function createPlayerAPI(systems: any) {
         request: sendFriendRequest,
       },
     },
+    droptable: {
+      reveal: droptableReveal,
+    },
     goal: {
       contribute: goalContribute,
       claim: goalClaim,
@@ -374,8 +377,7 @@ export function createPlayerAPI(systems: any) {
       sell: sellToListing,
     },
     lootbox: {
-      startReveal: lootboxStartReveal,
-      executeReveal: lootboxExecuteReveal,
+      commit: lootboxCommit,
     },
     node: {
       collect: collectAllFromNode,

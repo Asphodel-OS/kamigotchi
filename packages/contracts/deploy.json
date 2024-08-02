@@ -1,6 +1,7 @@
 {
   "components": [
     { "comp": "IsLogComponent", "name": "_DepreciatedIsLog", "type": "bool" },
+    { "comp": "IsLootboxComponent", "name": "_DepreciatedIsLootbox", "type": "bool" },
     { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
     { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
     { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
@@ -60,7 +61,6 @@
     { "comp": "IsGoalComponent", "name": "IsGoal", "type": "bool" },
     { "comp": "IsKillComponent", "name": "IsKill", "type": "bool" },
     { "comp": "IsListingComponent", "name": "IsListing", "type": "bool" },
-    { "comp": "IsLootboxComponent", "name": "IsLootbox", "type": "bool" },
     { "comp": "IsNodeComponent", "name": "IsNode", "type": "bool" },
     { "comp": "IsNPCComponent", "name": "IsNPC", "type": "bool" },
     { "comp": "IsPetComponent", "name": "IsPet", "type": "bool" },
@@ -155,7 +155,6 @@
         "ForComponent",
         "IsRegistryComponent",
         "IsConsumableComponent",
-        "IsLootboxComponent",
         "IndexItemComponent",
         "HealthComponent",
         "HarmonyComponent",
@@ -310,6 +309,21 @@
       "writeAccess": ["FarcasterIndexComponent", "MediaURIComponent", "TimeLastComponent"]
     },
     {
+      "name": "DroptableRevealSystem",
+      "writeAccess": [
+        "BlockRevealComponent",
+        "ForComponent",
+        "IdHolderComponent",
+        "IDOwnsInventoryComponent",
+        "IndexItemComponent",
+        "IndexComponent",
+        "IsInventoryComponent",
+        "TypeComponent",
+        "ValueComponent",
+        "ValuesComponent"
+      ]
+    },
+    {
       "name": "Farm20ProxySystem",
       "writeAccess": []
     },
@@ -419,27 +433,12 @@
       "writeAccess": ["IdHolderComponent", "IndexComponent", "TimeLastComponent", "TypeComponent", "ValueComponent"]
     },
     {
-      "name": "LootboxExecuteRevealSystem",
+      "name": "LootboxCommitSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdHolderComponent",
-        "IDOwnsInventoryComponent",
-        "IndexItemComponent",
-        "IndexComponent",
-        "IsInventoryComponent",
-        "TypeComponent",
-        "TimeLastComponent",
-        "ValueComponent",
-        "ValuesComponent"
-      ]
-    },
-    {
-      "name": "LootboxStartRevealSystem",
-      "writeAccess": [
-        "BlockRevealComponent",
+        "ForComponent",
         "IdHolderComponent",
         "IndexItemComponent",
-        "IsLootboxComponent",
         "TimeLastComponent",
         "TypeComponent",
         "ValueComponent"
@@ -721,6 +720,7 @@
     "LibCommit",
     "LibConfig",
     "LibData",
+    "LibDroptable",
     "LibExperience",
     "LibFactions",
     "LibFlag",
@@ -732,7 +732,6 @@
     "LibItemRegistry",
     "LibKill",
     "LibListing",
-    "LibLootbox",
     "LibMint20",
     "LibNode",
     "LibNPC",
