@@ -22,7 +22,7 @@ export const room54: Room = {
     },
     {
       name: 'plane exit',
-      coordinates: { x1: 52, y1: 90, x2: 76, y2: 110 },
+      coordinates: { x1: 52, y1: 110, x2: 76, y2: 130 },
       dialogue: 541,
     },
   ],
