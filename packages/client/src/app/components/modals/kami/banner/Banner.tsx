@@ -82,7 +82,7 @@ export const Banner = (props: Props) => {
             <AffinityCard trait='body' />
             <AffinityCard trait='hand' />
           </AffinityContainer>
-          <StatsContainer onMouseDown={playClick}>
+          <StatsContainer>
             {Object.entries(kami.stats)
               .filter(([key]) => !excludedStats.includes(key))
               .map(([name, value]) => {
@@ -96,7 +96,7 @@ export const Banner = (props: Props) => {
                     text={[`${name} (${value.base} + ${value.shift})`, '', description]}
                     grow
                   >
-                    <StatPairing key={name} color={color}>
+                    <StatPairing key={name} color={color} onMouseDown={playClick}>
                       <Icon size={2.1} src={icon} />
                       <Text size={1.1}>{value.total}</Text>
                     </StatPairing>
@@ -134,6 +134,7 @@ const Content = styled.div`
 const Title = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
   padding: ${(props) => `${props.size * 0.75}vw ${props.size * 0.45}vw`};
+  text-shadow: ${(props) => `5vw .4vw ${props.size * 0.3}vw gray`};
 `;
 
 const Row = styled.div`
@@ -164,7 +165,7 @@ const AffinityPairing = styled.div<{ color?: string }>`
   width: 12vw;
   padding: 0.9vw;
   gap: 0.6vw;
-  filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
+  filter: drop-shadow(0.5vw 0.1vw 0.15vw black);
 
   flex-grow: 1;
   display: flex;
@@ -182,7 +183,7 @@ const StatsContainer = styled.div`
   background-color: #999;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
-  filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
+  filter: drop-shadow(0.5vw 0.1vw 0.15vw black);
 
   height: 100%;
   width: 19.3vw;
@@ -199,7 +200,7 @@ const StatPairing = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? '#fff'};
   border: solid black 0.15vw;
   border-radius: 0.6vw;
-  filter: drop-shadow(-0.05vw 0.1vw 0.15vw black);
+  filter: drop-shadow(0.5vw 0.1vw 0.15vw black);
 
   padding: 0.75vw;
   gap: 0.45vw;
