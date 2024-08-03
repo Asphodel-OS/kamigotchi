@@ -32,3 +32,20 @@ export const pulseFx = keyframes`
     background-color: #e8e8e8;
   }
 `;
+
+export const glimmerFx = keyframes`
+  0% {
+    background-position: -100vw;
+ 
+  }
+  70% {
+    background-position: 100vw;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  100% {
+    background-position: 100vw;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;

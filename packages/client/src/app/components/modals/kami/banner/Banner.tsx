@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
-import { depressFx } from 'app/styles/effects';
+import { depressFx, glimmerFx } from 'app/styles/effects';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { AffinityColors } from 'constants/affinities';
 import { StatColors, StatDescriptions, StatIcons } from 'constants/stats';
@@ -134,7 +134,16 @@ const Content = styled.div`
 const Title = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
   padding: ${(props) => `${props.size * 0.75}vw ${props.size * 0.45}vw`};
-  text-shadow: ${(props) => `5vw .4vw ${props.size * 0.3}vw gray`};
+  text-shadow: ${(props) => `3vw .4vw ${props.size * 0.3}vw gray`};
+
+  cursor: pointer;
+  user-select: none;
+  &:active {
+    background: linear-gradient(to right, black 0, white 10%, black 20%, white 30%, black 40%);
+    animation: ${glimmerFx} 0.9s linear infinite;
+
+    text-shadow: ${(props) => `2vw 1.2vw ${props.size * 0.2}vw gray`};
+  }
 `;
 
 const Row = styled.div`
@@ -183,7 +192,7 @@ const StatsContainer = styled.div`
   background-color: #999;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
-  filter: drop-shadow(0.5vw 0.1vw 0.15vw black);
+  filter: drop-shadow(0.6vw 0.12vw 0.15vw black);
 
   height: 100%;
   width: 19.3vw;
@@ -200,7 +209,7 @@ const StatPairing = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? '#fff'};
   border: solid black 0.15vw;
   border-radius: 0.6vw;
-  filter: drop-shadow(0.5vw 0.1vw 0.15vw black);
+  filter: drop-shadow(0.4vw 0.08vw 0.14vw black);
 
   padding: 0.75vw;
   gap: 0.45vw;
@@ -215,7 +224,7 @@ const StatPairing = styled.div<{ color?: string }>`
   user-select: none;
   pointer-events: auto;
   &:hover {
-    opacity: 0.6;
+    opacity: 0.8;
   }
   &:active {
     animation: ${() => depressFx(0.1)} 0.2s;
