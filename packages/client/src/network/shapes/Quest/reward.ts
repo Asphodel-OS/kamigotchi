@@ -11,3 +11,21 @@ export const queryQuestRewards = (
 ): Reward[] => {
   return queryRewardsOf(world, components, 'registry.quest.reward', questIndex);
 };
+
+export const getRewardText = (reward: Reward, name = ''): string => {
+  const value = (reward.target.value ?? 0) * 1;
+
+  if (reward.target.type === 'ITEM') {
+    return `${value} ${name}`;
+  } else if (reward.target.type === 'EXPERIENCE') {
+    return `${value} Experience`;
+  } else if (reward.target.type === 'MINT20') {
+    return `${value} ${name}`;
+  } else if (reward.target.type === 'REPUTATION') {
+    return `${value} REPUTATION`;
+  } else if (reward.target.type === 'NFT') {
+    return `Kamigotchi World Passport`;
+  } else {
+    return '???';
+  }
+};

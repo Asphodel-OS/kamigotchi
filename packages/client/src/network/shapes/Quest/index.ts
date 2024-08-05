@@ -1,4 +1,14 @@
-export { checkObjective, hasCompletedQuest, parseQuestsStatus } from './functions';
+export {
+  canAccept as canAcceptQuest,
+  checkObjective,
+  hasCompleted as hasCompletedQuest,
+  isOngoing,
+  meetsMax,
+  meetsObjectives,
+  meetsRepeat,
+  meetsRequirements,
+  parseQuestsStatus,
+} from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';
 export { getCompletedQuests, getOngoingQuests, getQuestByIndex, getRegistryQuests } from './quest';
 export { checkRequirement, queryQuestRequirements } from './requirement';
