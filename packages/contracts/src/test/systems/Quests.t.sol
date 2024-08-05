@@ -155,9 +155,8 @@ contract QuestsTest is SetupTemplate {
     // check that snapshots are correctly stored
     vm.prank(deployer); // load bearing entity lol
     _IDOwnsQuestComponent.set(1, 1); // load bearing entity lol
-    uint256[] memory snapshots = _getQuestObjSnapshots(questID);
+    uint256[] memory snapshots = LibQuests.querySnapshottedObjectives(components, questID);
     assertEq(snapshots.length, 1);
-    assertTrue(_IsObjectiveComponent.has(snapshots[0]));
     assertEq(_IDOwnsQuestComponent.get(snapshots[0]), questID);
     assertEq(_ValueComponent.get(snapshots[0]), startAmt);
 
@@ -170,7 +169,7 @@ contract QuestsTest is SetupTemplate {
 
     // complete, check snapshots deleted
     _completeQuest(0, questID);
-    assertEq(_getQuestObjSnapshots(questID).length, 0);
+    assertEq(LibQuests.querySnapshottedObjectives(components, questID).length, 0);
   }
 
   function testQuestCoinHave() public {

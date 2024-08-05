@@ -110,23 +110,7 @@ contract _QuestRegistrySystem is System {
     uint256 registryQuestID = LibQuestRegistry.getByQuestIndex(components, index);
     require(registryQuestID != 0, "Quest does not exist");
 
-    // delete its requirements
-    uint256[] memory requirements = LibQuestRegistry.getReqsByQuestIndex(components, index);
-    for (uint256 i = 0; i < requirements.length; i++)
-      LibQuestRegistry.deleteRequirement(components, requirements[i]);
-
-    // delete its objectives
-    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, index);
-    for (uint256 i = 0; i < objectives.length; i++)
-      LibQuestRegistry.deleteObjective(components, objectives[i]);
-
-    // delete its rewards
-    uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, index);
-    for (uint256 i = 0; i < rewards.length; i++)
-      LibQuestRegistry.deleteReward(components, rewards[i]);
-
-    // delete it
-    LibQuestRegistry.deleteQuest(components, registryQuestID, index);
+    LibQuestRegistry.removeQuest(components, registryQuestID, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

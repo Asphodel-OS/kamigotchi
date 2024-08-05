@@ -12,10 +12,7 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
-import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
-import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
@@ -45,38 +42,33 @@ library LibQuestRegistry {
     string memory name,
     string memory description,
     string memory endText
-  ) internal returns (uint256) {
-    uint256 id = genQuestID(index);
+  ) internal returns (uint256 id) {
+    id = genQuestID(index);
     IsQuestComponent isQuestComp = IsQuestComponent(getAddressById(components, IsQuestCompID));
     require(!isQuestComp.has(id), "LibRegQ.createQ: index used");
 
     isQuestComp.set(id);
-    setIsRegistry(components, id);
-    setQuestIndex(components, id, index);
-    setName(components, id, name);
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
     DescriptionAltComponent(getAddressById(components, DescAltCompID)).set(id, endText);
-
-    return id;
   }
 
   function setRepeatable(IUintComp components, uint256 regID, uint256 duration) internal {
-    setIsRepeatable(components, regID);
-    setTime(components, regID, duration);
+    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(regID);
+    TimeComponent(getAddressById(components, TimeCompID)).set(regID, duration);
   }
 
   function createObjective(
     IWorld world,
     IUintComp components,
     uint32 questIndex,
-    string memory name, // this is a crutch to help FE, ideally we drop this
+    string memory name, // this is a crutch to help FE
     Condition memory data
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, data, genObjPtr(questIndex));
-    setQuestIndex(components, id, questIndex);
-    setIsRegistry(components, id);
-    setIsObjective(components, id);
-    setName(components, id, name);
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
 
     // reversable hash for easy objective lookup
     LibHash.set(components, id, abi.encode("Quest.Objective", data.logic, data.type_, data.index));
@@ -89,9 +81,6 @@ library LibQuestRegistry {
     Condition memory data
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, data, genReqPtr(questIndex));
-    setIsRegistry(components, id);
-    setIsRequirement(components, id);
-    setQuestIndex(components, id, questIndex);
   }
 
   /// @notice creates a basic reward entity
@@ -117,196 +106,38 @@ library LibQuestRegistry {
     );
   }
 
-  function deleteQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
-    unsetIsRegistry(components, questID);
-    unsetIsQuest(components, questID);
-    unsetQuestIndex(components, questID);
-    unsetName(components, questID);
+  function removeQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(questID);
+    IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(questID);
+    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(questID);
+    NameComponent(getAddressById(components, NameCompID)).remove(questID);
     DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
 
-    unsetIsRepeatable(components, questID);
-    unsetTime(components, questID);
+    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(questID);
+    TimeComponent(getAddressById(components, TimeCompID)).remove(questID);
+
+    uint256[] memory objs = getObjsByQuestIndex(components, questIndex);
+    for (uint256 i; i < objs.length; i++) removeObjective(components, objs[i]);
+
+    uint256[] memory reqs = getReqsByQuestIndex(components, questIndex);
+    for (uint256 i; i < reqs.length; i++) LibConditional.remove(components, reqs[i]);
+
+    uint256[] memory rwds = getRwdsByQuestIndex(components, questIndex);
+    for (uint256 i; i < rwds.length; i++) LibReward.remove(components, rwds[i]);
   }
 
-  function deleteObjective(IUintComp components, uint256 objectiveID) internal {
-    unsetConditionOwner(components, objectiveID);
-    unsetIsRegistry(components, objectiveID);
-    unsetIsObjective(components, objectiveID);
-    unsetQuestIndex(components, objectiveID);
-    unsetName(components, objectiveID);
-    unsetLogicType(components, objectiveID);
-    unsetType(components, objectiveID);
-    unsetIndex(components, objectiveID);
-    unsetBalance(components, objectiveID);
-
+  function removeObjective(IUintComp components, uint256 objectiveID) internal {
+    LibConditional.remove(components, objectiveID);
+    NameComponent(getAddressById(components, NameCompID)).remove(objectiveID);
     LibHash.remove(components, objectiveID);
-  }
-
-  function deleteRequirement(IUintComp components, uint256 requirementID) internal {
-    unsetConditionOwner(components, requirementID);
-    unsetIsRegistry(components, requirementID);
-    unsetIsRequirement(components, requirementID);
-    unsetQuestIndex(components, requirementID);
-    unsetLogicType(components, requirementID);
-    unsetType(components, requirementID);
-    unsetIndex(components, requirementID);
-    unsetBalance(components, requirementID);
-  }
-
-  function deleteReward(IUintComp components, uint256 rewardID) internal {
-    unsetConditionOwner(components, rewardID);
-    unsetIsRegistry(components, rewardID);
-    unsetIsReward(components, rewardID);
-    unsetQuestIndex(components, rewardID);
-    unsetType(components, rewardID);
-    unsetIndex(components, rewardID);
-    unsetBalance(components, rewardID);
-  }
-
-  /////////////////
-  // CHECKERS
-
-  function hasType(IUintComp components, uint256 id) internal view returns (bool) {
-    return TypeComponent(getAddressById(components, TypeCompID)).has(id);
-  }
-
-  function isType(
-    IUintComp components,
-    uint256 id,
-    string memory _type
-  ) internal view returns (bool) {
-    return TypeComponent(getAddressById(components, TypeCompID)).hasValue(id, _type);
-  }
-
-  function isLogicType(
-    IUintComp components,
-    uint256 id,
-    string memory _type
-  ) internal view returns (bool) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).hasValue(id, _type);
-  }
-
-  function isRepeatable(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).has(id);
   }
 
   /////////////////
   // SETTERS
 
-  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
-  function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, ownerID);
-  }
-
-  function setIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-  }
-
   function setIsRepeatable(IUintComp components, uint256 id) internal {
     IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(id);
-  }
-
-  function setIsQuest(IUintComp components, uint256 id) internal {
-    IsQuestComponent(getAddressById(components, IsQuestCompID)).set(id);
-  }
-
-  function setIsObjective(IUintComp components, uint256 id) internal {
-    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).set(id);
-  }
-
-  function setIsRequirement(IUintComp components, uint256 id) internal {
-    IsRequirementComponent(getAddressById(components, IsRequirementCompID)).set(id);
-  }
-
-  function setIsReward(IUintComp components, uint256 id) internal {
-    IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-  }
-
-  function setQuestIndex(IUintComp components, uint256 id, uint32 questIndex) internal {
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
-  }
-
-  function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
-  }
-
-  function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-  }
-
-  function setTime(IUintComp components, uint256 id, uint256 time) internal {
-    TimeComponent(getAddressById(components, TimeCompID)).set(id, time);
-  }
-
-  function setType(IUintComp components, uint256 id, string memory _type) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
-  }
-
-  /////////////////
-  // UNSETTERS
-
-  function unsetBalance(IUintComp components, uint256 id) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
-  }
-
-  function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-  }
-
-  function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-  }
-
-  function unsetIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(id);
-  }
-
-  function unsetIsQuest(IUintComp components, uint256 id) internal {
-    IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(id);
-  }
-
-  function unsetIsObjective(IUintComp components, uint256 id) internal {
-    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).remove(id);
-  }
-
-  function unsetIsRequirement(IUintComp components, uint256 id) internal {
-    IsRequirementComponent(getAddressById(components, IsRequirementCompID)).remove(id);
-  }
-
-  function unsetIsReward(IUintComp components, uint256 id) internal {
-    IsRewardComponent(getAddressById(components, IsRewardCompID)).remove(id);
-  }
-
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
-  }
-
-  function unsetQuestIndex(IUintComp components, uint256 id) internal {
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(id);
-  }
-
-  function unsetLogicType(IUintComp components, uint256 id) internal {
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-  }
-
-  function unsetName(IUintComp components, uint256 id) internal {
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
-  }
-
-  function unsetTime(IUintComp components, uint256 id) internal {
-    TimeComponent(getAddressById(components, TimeCompID)).remove(id);
-  }
-
-  function unsetType(IUintComp components, uint256 id) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
   }
 
   /////////////////

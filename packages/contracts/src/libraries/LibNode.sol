@@ -66,7 +66,7 @@ library LibNode {
   }
 
   function unsetReq(IUintComp components, uint256 id) internal {
-    LibConditional.unset(components, id);
+    LibConditional.remove(components, id);
     LibFor.unset(components, id);
   }
 

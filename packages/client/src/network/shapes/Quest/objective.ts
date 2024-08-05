@@ -1,7 +1,6 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
   HasValue,
   World,
   getComponentValue,
@@ -52,9 +51,7 @@ export const querySnapshotObjective = (
   components: Components,
   questID: EntityID
 ): Objective => {
-  const { IsObjective, OwnsQuestID } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsObjective), HasValue(OwnsQuestID, { value: questID })])
-  );
+  const { OwnsQuestID } = components;
+  const entityIndices = Array.from(runQuery([HasValue(OwnsQuestID, { value: questID })]));
   return getObjective(world, components, entityIndices[0]); // should only be one
 };

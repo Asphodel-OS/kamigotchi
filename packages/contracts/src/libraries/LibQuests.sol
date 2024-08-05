@@ -11,9 +11,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
-import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
-import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
@@ -25,6 +23,7 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
@@ -38,6 +37,8 @@ import { LibReward } from "libraries/LibReward.sol";
  * Only Quest is copied to an Account, the rest are referenced to a registry
  */
 library LibQuests {
+  using LibComp for IComp;
+
   /////////////////
   // INTERACTIONS
 
@@ -56,20 +57,12 @@ library LibQuests {
   ) internal returns (uint256 id) {
     id = genQuestID(questIndex, accID);
 
-    setOwner(components, id, accID);
+    setOwner(components, id, accID); // TODO: change to holderID
     setIsQuest(components, id);
     setQuestIndex(components, id, questIndex);
     setTimeStart(components, id, block.timestamp);
 
-    // snapshot objectives values if logic type needs it
-    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
-    for (uint256 i; i < objectives.length; i++) {
-      string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, ) = LibConditional.parseLogic(logicType);
-      if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
-        snapshotObjective(components, id, objectives[i], accID);
-      }
-    }
+    snapshotObjectives(components, questIndex, id, accID);
   }
 
   function assignRepeatable(
@@ -83,22 +76,14 @@ library LibQuests {
     if (repeatQuestID != 0) {
       id = repeatQuestID;
 
-      // previous objective snapshot are unset during quest completion
       unsetCompleted(components, id);
       setTimeStart(components, id, block.timestamp);
+
+      // previous objective snapshot are unset during quest completion
+      snapshotObjectives(components, questIndex, id, accID);
     } else {
       id = assign(world, components, questIndex, accID);
       setIsRepeatable(components, id);
-    }
-
-    // snapshot objectives values if logic type needs it
-    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
-    for (uint256 i; i < objectives.length; i++) {
-      string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, ) = LibConditional.parseLogic(logicType);
-      if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
-        snapshotObjective(components, id, objectives[i], accID);
-      }
     }
   }
 
@@ -116,9 +101,27 @@ library LibQuests {
     unsetTimeStart(components, questID);
     unsetOwner(components, questID);
 
-    if (isRepeatable(components, questID)) unsetIsRepeatable(components, questID);
+    unsetIsRepeatable(components, questID);
 
     removeSnapshottedObjectives(components, questID);
+  }
+
+  function snapshotObjectives(
+    IUintComp components,
+    uint32 questIndex,
+    uint256 questID,
+    uint256 accID
+  ) internal {
+    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
+
+    for (uint256 i; i < objectives.length; i++) {
+      string memory logicType = getLogicType(components, objectives[i]);
+      (HANDLER handler, ) = LibConditional.parseLogic(logicType);
+
+      // snapshot objectives values if logic type needs it
+      if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE)
+        snapshotObjective(components, questID, objectives[i], accID);
+    }
   }
 
   // snapshots current state of an account for required fields, if needed
@@ -131,27 +134,21 @@ library LibQuests {
   ) internal returns (uint256) {
     string memory _type = getType(components, conditionID);
     uint32 index = getIndex(components, conditionID);
-
     uint256 amount = LibData.get(components, accID, index, _type);
 
     // copy an objective
     uint256 id = genObjSnapshotID(questID, LibHash.get(components, conditionID));
-    setBalance(components, id, amount);
-
-    setIsObjective(components, id); // deterministic id suppliment - could be removed
-    setOwner(components, id, questID); // deterministic id suppliment - could be removed
-
+    setOwner(components, id, questID); // TODO: change to pointerID (world2)
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, amount);
     return id;
   }
 
   function removeSnapshottedObjectives(IUintComp components, uint256 questID) internal {
     uint256[] memory objectives = querySnapshottedObjectives(components, questID);
-    for (uint256 i; i < objectives.length; i++) {
-      unsetIsObjective(components, objectives[i]);
-      unsetOwner(components, objectives[i]);
-      unsetBalance(components, objectives[i]);
-      LibHash.remove(components, objectives[i]);
-    }
+
+    IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).removeBatch(objectives);
+    ValueComponent(getAddressById(components, ValueCompID)).removeBatch(objectives);
+    LibHash.removeBatch(components, objectives);
   }
 
   function checkRepeat(
@@ -236,7 +233,7 @@ library LibQuests {
     ); // longtext >< for a user call to action
 
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
-    uint256 prevValue = getBalance(components, snapshotID);
+    uint256 prevValue = ValueComponent(getAddressById(components, ValueCompID)).get(snapshotID);
 
     // overall value decreased - condition not be met, will overflow if checked
     if (prevValue > currValue) return false;
@@ -259,7 +256,7 @@ library LibQuests {
     ); // longtext >< for a user call to action
 
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
-    uint256 prevValue = getBalance(components, snapshotID);
+    uint256 prevValue = ValueComponent(getAddressById(components, ValueCompID)).get(snapshotID);
 
     // overall value increased - condition not be met, will overflow if checked
     if (currValue > prevValue) return false;
@@ -288,18 +285,6 @@ library LibQuests {
     return IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).has(id);
   }
 
-  function isObjective(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).has(id);
-  }
-
-  function isType(
-    IUintComp components,
-    uint256 id,
-    string memory _type
-  ) internal view returns (bool) {
-    return TypeComponent(getAddressById(components, TypeCompID)).hasValue(id, _type);
-  }
-
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
     return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(id);
   }
@@ -307,7 +292,7 @@ library LibQuests {
   /////////////////
   // SETTERS
 
-  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
+  function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
@@ -315,6 +300,7 @@ library LibQuests {
     IsCompleteComponent(getAddressById(components, IsCompleteCompID)).set(id);
   }
 
+  // TODO: IDOwnsQuestComponent is probalmentic, should change to HolderID or PointerID for world2
   function setOwner(IUintComp components, uint256 id, uint256 value) internal {
     IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).set(id, value);
   }
@@ -327,32 +313,12 @@ library LibQuests {
     IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(id);
   }
 
-  function setIsObjective(IUintComp components, uint256 id) internal {
-    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).set(id);
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-  }
-
-  function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
-  }
-
   function setQuestIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
   }
 
   function setTimeStart(IUintComp components, uint256 id, uint256 time) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, time);
-  }
-
-  function setType(IUintComp components, uint256 id, string memory type_) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-  }
-
-  function unsetBalance(IUintComp components, uint256 id) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
   }
 
   function unsetCompleted(IUintComp components, uint256 id) internal {
@@ -365,10 +331,6 @@ library LibQuests {
 
   function unsetIsRepeatable(IUintComp components, uint256 id) internal {
     IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(id);
-  }
-
-  function unsetIsObjective(IUintComp components, uint256 id) internal {
-    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).remove(id);
   }
 
   function unsetOwner(IUintComp components, uint256 id) internal {
@@ -395,9 +357,8 @@ library LibQuests {
     return isQuest(components, id) ? id : 0;
   }
 
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    return comp.has(id) ? comp.get(id) : 0;
+  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
+    return getComponentById(components, ValueCompID).safeGetUint256(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -425,8 +386,7 @@ library LibQuests {
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
-    return comp.has(id) ? comp.get(id) : 0;
+    return getComponentById(components, IndexCompID).safeGetUint32(id);
   }
 
   ////////////////
@@ -437,8 +397,7 @@ library LibQuests {
     uint256 questID,
     uint256 regConID
   ) internal view returns (uint256) {
-    uint256 id = genObjSnapshotID(questID, LibHash.get(components, regConID));
-    return isObjective(components, id) ? id : 0;
+    return genObjSnapshotID(questID, LibHash.get(components, regConID));
   }
 
   /////////////////
@@ -449,10 +408,8 @@ library LibQuests {
     uint256 questID
   ) internal view returns (uint256[] memory) {
     return
-      LibQuery.getIsWithValue(
-        getComponentById(components, OwnQuestCompID),
-        getComponentById(components, IsObjectiveCompID),
-        abi.encode(questID)
+      IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).getEntitiesWithValue(
+        questID
       );
   }
 

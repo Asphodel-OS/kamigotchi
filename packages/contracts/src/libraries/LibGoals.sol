@@ -149,7 +149,7 @@ library LibGoals {
 
     // remove objective
     uint256 objID = genObjID(goalID);
-    LibConditional.unset(components, objID);
+    LibConditional.remove(components, objID);
 
     // remove requirements
     uint256[] memory reqIDs = getRequirements(components, index);
@@ -161,7 +161,7 @@ library LibGoals {
   }
 
   function removeRequirement(IUintComp components, uint256 id) internal {
-    LibConditional.unset(components, id);
+    LibConditional.remove(components, id);
     NameComponent(getAddressById(components, NameCompID)).remove(id);
     LevelComponent(getAddressById(components, LevelCompID)).remove(id);
   }

@@ -25,6 +25,10 @@ library LibHash {
     HashComponent(getAddressById(components, HashCompID)).remove(id);
   }
 
+  function removeBatch(IUintComp components, uint256[] memory ids) internal {
+    HashComponent(getAddressById(components, HashCompID)).removeBatch(ids);
+  }
+
   /////////////////
   // GETTERS
 
