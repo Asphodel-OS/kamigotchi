@@ -11,6 +11,7 @@ import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
+import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
@@ -50,6 +51,7 @@ library LibDroptable {
     ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
     KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
     ValuesComponent logComp = ValuesComponent(getAddressById(components, ValuesCompID));
+    TimeComponent timeComp = TimeComponent(getAddressById(components, TimeCompID));
 
     for (uint256 i; i < commitIDs.length; i++) {
       uint256 commitID = commitIDs[i];
@@ -59,8 +61,8 @@ library LibDroptable {
       uint256 holderID = holderComp.extract(commitID);
 
       uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
-      _distribute(components, keysComp, holderID, dtID, amts);
-      log(logComp, holderID, dtID, amts);
+      _distribute(components, keysComp, dtID, amts, holderID);
+      log(timeComp, logComp, holderID, dtID, amts);
     }
   }
 
@@ -84,9 +86,9 @@ library LibDroptable {
   function _distribute(
     IUintComp components,
     KeysComponent keysComp,
-    uint256 holderID,
     uint256 dtID,
-    uint256[] memory amts
+    uint256[] memory amts,
+    uint256 holderID
   ) internal {
     uint32[] memory indices = keysComp.get(dtID);
     for (uint256 i; i < indices.length; i++)
@@ -96,12 +98,14 @@ library LibDroptable {
   /// @notice logs the latest reveal result, overwriting previous values
   /// @dev only one exists per account+droptable. a crutch for FE to show latest result
   function log(
+    TimeComponent timeComp,
     ValuesComponent valuesComp,
     uint256 holderID,
     uint256 dtID,
     uint256[] memory amts
   ) internal {
     uint256 logID = genLogID(holderID, dtID);
+    timeComp.set(logID, block.timestamp);
     valuesComp.set(logID, amts);
   }
 

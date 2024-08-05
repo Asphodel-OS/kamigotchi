@@ -319,6 +319,7 @@
         "IndexComponent",
         "IsInventoryComponent",
         "TypeComponent",
+        "TimeComponent",
         "ValueComponent",
         "ValuesComponent"
       ]
