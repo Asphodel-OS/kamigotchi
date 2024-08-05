@@ -16,7 +16,7 @@ import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { GACHA_ID, calcRerollCost } from 'network/shapes/Gacha';
+import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { Kami, getLazyKamis } from 'network/shapes/Kami';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
@@ -41,11 +41,10 @@ export function registerGachaModal() {
           const { network } = layers;
           const { world, components } = network;
           const account = getAccountFromBurner(network, {
-            gacha: true,
             kamis: { traits: true, rerolls: true },
           });
 
-          const commits = [...(account.gacha ? account.gacha.commits : [])].reverse();
+          const commits = queryGachaCommits(world, components, account.id);
 
           return {
             network,

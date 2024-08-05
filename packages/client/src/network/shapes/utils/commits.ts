@@ -61,6 +61,6 @@ export const queryHolderCommits = (
     Has(RevealBlock),
   ];
 
-  const raw = Array.from(runQuery(toQuery));
+  const raw = Array.from(runQuery(toQuery)).reverse(); // reversed for descending time order
   return raw.map((index): Commit => getCommit(world, components, index));
 };
