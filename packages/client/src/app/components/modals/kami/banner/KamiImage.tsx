@@ -71,7 +71,7 @@ export const KamiImage = (props: Props) => {
 };
 
 const Container = styled.div`
-  filter: drop-shadow(0.45vw 0.2vw 0.3vw black);
+  filter: drop-shadow(0.5vw 0.1vw 0.15vw black);
   position: relative;
   height: 18vw;
   margin: 0.6vw 0 0.6vw 0.6vw;
