@@ -88,7 +88,6 @@ export function registerLootboxesModal() {
       /////////////////
       // ACTIONS
 
-      // (AUTO) REVEAL latest box
       useEffect(() => {
         const tx = async () => {
           if (!isConnected) return;

@@ -232,6 +232,14 @@ export function createPlayerAPI(systems: any) {
   }
 
   /////////////////
+  //   SCAVENGE
+
+  // @dev claim scavenge points
+  function claimScavenge(scavBarID: BigNumberish) {
+    return systems['system.Scavenge.Claim'].executeTyped(scavBarID);
+  }
+
+  /////////////////
   //   TRADE
 
   // @dev Updates Trade to ACCEPTED, removes IsRequest Component, creates ACTIVE Registers
@@ -397,6 +405,9 @@ export function createPlayerAPI(systems: any) {
     quests: {
       accept: acceptQuest,
       complete: completeQuest,
+    },
+    scavenge: {
+      claim: claimScavenge,
     },
     skill: {
       upgrade: upgradeSkill,

@@ -58,34 +58,9 @@
       "name": "addScavReward",
       "inputs": [
         {
-          "name": "nodeIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "rwdType",
-          "type": "string",
-          "internalType": "string"
-        },
-        {
-          "name": "rwdIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "keys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "weights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        },
-        {
-          "name": "value",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "outputs": [],
@@ -201,7 +176,7 @@
   "methodIdentifiers": {
     "addRequirement(bytes)": "7e534103",
     "addScavBar(uint32,uint256)": "7ddddb19",
-    "addScavReward(uint32,string,uint32,uint32[],uint256[],uint256)": "f8c04bb5",
+    "addScavReward(bytes)": "6d8ca511",
     "create(bytes)": "cf5ba53f",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",

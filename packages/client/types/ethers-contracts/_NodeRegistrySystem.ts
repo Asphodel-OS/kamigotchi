@@ -31,7 +31,7 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   functions: {
     "addRequirement(bytes)": FunctionFragment;
     "addScavBar(uint32,uint256)": FunctionFragment;
-    "addScavReward(uint32,string,uint32,uint32[],uint256[],uint256)": FunctionFragment;
+    "addScavReward(bytes)": FunctionFragment;
     "create(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -61,14 +61,7 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addScavReward",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "create",
@@ -164,12 +157,7 @@ export interface _NodeRegistrySystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     addScavReward(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      rwdType: PromiseOrValue<string>,
-      rwdIndex: PromiseOrValue<BigNumberish>,
-      keys: PromiseOrValue<BigNumberish>[],
-      weights: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -208,12 +196,7 @@ export interface _NodeRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   addScavReward(
-    nodeIndex: PromiseOrValue<BigNumberish>,
-    rwdType: PromiseOrValue<string>,
-    rwdIndex: PromiseOrValue<BigNumberish>,
-    keys: PromiseOrValue<BigNumberish>[],
-    weights: PromiseOrValue<BigNumberish>[],
-    value: PromiseOrValue<BigNumberish>,
+    arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -252,12 +235,7 @@ export interface _NodeRegistrySystem extends BaseContract {
     ): Promise<void>;
 
     addScavReward(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      rwdType: PromiseOrValue<string>,
-      rwdIndex: PromiseOrValue<BigNumberish>,
-      keys: PromiseOrValue<BigNumberish>[],
-      weights: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -308,12 +286,7 @@ export interface _NodeRegistrySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     addScavReward(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      rwdType: PromiseOrValue<string>,
-      rwdIndex: PromiseOrValue<BigNumberish>,
-      keys: PromiseOrValue<BigNumberish>[],
-      weights: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -353,12 +326,7 @@ export interface _NodeRegistrySystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     addScavReward(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      rwdType: PromiseOrValue<string>,
-      rwdIndex: PromiseOrValue<BigNumberish>,
-      keys: PromiseOrValue<BigNumberish>[],
-      weights: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -43,11 +43,6 @@
           "name": "id",
           "type": "uint256",
           "internalType": "uint256"
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "internalType": "string"
         }
       ],
       "outputs": [
@@ -117,7 +112,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string)": "68c47df2",
+    "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

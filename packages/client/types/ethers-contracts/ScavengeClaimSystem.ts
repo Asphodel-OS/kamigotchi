@@ -30,7 +30,7 @@ import type {
 export interface ScavengeClaimSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string)": FunctionFragment;
+    "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -49,7 +49,7 @@ export interface ScavengeClaimSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -121,7 +121,6 @@ export interface ScavengeClaimSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -140,7 +139,6 @@ export interface ScavengeClaimSystem extends BaseContract {
 
   executeTyped(
     id: PromiseOrValue<BigNumberish>,
-    name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -159,7 +157,6 @@ export interface ScavengeClaimSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -190,7 +187,6 @@ export interface ScavengeClaimSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -210,7 +206,6 @@ export interface ScavengeClaimSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

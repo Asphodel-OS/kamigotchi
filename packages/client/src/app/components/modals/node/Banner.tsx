@@ -3,15 +3,22 @@ import styled from 'styled-components';
 
 import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
+import { getRarities } from 'constants/rarities';
 import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
+import { DTDetails } from 'network/shapes/Droptable';
+import { Item } from 'network/shapes/Item';
 import { Kami, canHarvest, isResting, onCooldown } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
 import { getAffinityImage } from 'network/shapes/utils';
 
 interface Props {
   account: Account;
+  drops: {
+    node: Item[];
+    scavenge: DTDetails[];
+  };
   node: Node | undefined;
   kamis: Kami[];
   addKami: (kami: Kami) => void;
@@ -19,13 +26,14 @@ interface Props {
     passesNodeReqs: (kami: Kami) => boolean;
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
   };
+  scavBarDisplay: React.JSX.Element;
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
   const [_, setLastRefresh] = useState(Date.now());
-  const { account, node: rawNode, kamis, utils } = props;
+  const { account, drops, node: rawNode, kamis, utils } = props;
   const [node, setNode] = useState<Node>(NullNode);
 
   /////////////////
@@ -113,6 +121,30 @@ export const Banner = (props: Props) => {
     );
   };
 
+  const ItemDrops = () => {
+    const DTtext = [
+      'Potential scavenge drops:',
+      '',
+      ...drops.scavenge.map((entry) => `${entry.object.name} [${getRarities(entry.rarity).title}]`),
+    ];
+    return (
+      <Row>
+        <Label>Drops: </Label>
+        <Tooltip text={[drops.node[0]?.name ?? '']}>
+          <Icon key={'node-' + drops.node[0]?.name ?? ''} src={drops.node[0]?.image ?? ''} />
+        </Tooltip>
+
+        <Tooltip text={DTtext}>
+          <Row style={{ borderLeft: 'solid #666 1px', paddingLeft: '0.3vw' }}>
+            {drops.scavenge.map((entry) => (
+              <Icon key={'scav-' + entry.object.name ?? ''} src={entry.object.image} />
+            ))}
+          </Row>
+        </Tooltip>
+      </Row>
+    );
+  };
+
   return (
     <Container key={node.name}>
       <Content>
@@ -124,16 +156,14 @@ export const Banner = (props: Props) => {
             <Tooltip text={[node.affinity ?? '']}>
               <Icon src={getAffinityImage(node.affinity)} />
             </Tooltip>
-            <Label>Drops: </Label>
-            <Tooltip text={[node.drops[0]?.name ?? '']}>
-              <Icon src={node.drops[0]?.image ?? ''} />
-            </Tooltip>
+            {ItemDrops()}
           </Row>
           <Description>{node.description}</Description>
         </Details>
         {RequirementText()}
       </Content>
       <ButtonRow>{AddButton(kamis)}</ButtonRow>
+      {props.scavBarDisplay}
     </Container>
   );
 };

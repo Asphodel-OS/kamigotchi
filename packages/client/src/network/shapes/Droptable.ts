@@ -11,10 +11,13 @@ export interface Droptable {
   weights: number[];
 }
 
-export interface DTResult {
-  amount: number;
+export interface DTDetails {
   rarity: number;
   object: DetailedEntity;
+}
+
+export interface DTResult extends DTDetails {
+  amount: number;
 }
 
 export interface DTLog {
@@ -60,6 +63,21 @@ export const getDTLogByHash = (
     id: world.entities[entityIndex],
     results: getDTResults(world, components, droptable, amounts),
   };
+};
+
+// returns in a gronkable item format
+export const getDTDetails = (
+  world: World,
+  components: Components,
+  droptable: Droptable
+): DTDetails[] => {
+  const details: DTDetails[] = [];
+  for (let i = 0; i < droptable.keys.length; i++)
+    details.push({
+      rarity: droptable.weights[i],
+      object: getItemDetailsByIndex(world, components, droptable.keys[i]),
+    });
+  return details;
 };
 
 export const getDTResults = (

@@ -49,7 +49,7 @@ export const getItemDetailsByIndex = (
 
 export const getItemRegEntity = (world: World, index: number): EntityIndex | undefined => {
   const entityIndex = getRegEntityIndex(world, index);
-  if (!entityIndex) console.warn('Item registry not found');
+  // if (!entityIndex) console.warn('Item registry not found');
   return entityIndex;
 };
 

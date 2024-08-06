@@ -2,16 +2,25 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { parseConditionalText } from 'network/shapes/Conditional';
+import { NullDT, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
 import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode, getNodeByIndex } from 'network/shapes/Node';
 import { passesNodeReqs } from 'network/shapes/Node/functions';
+import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
+import { Commit, filterRevealable } from 'network/shapes/utils';
+import { waitForActionCompletion } from 'network/utils';
+import { playClick } from 'utils/sounds';
+import { useAccount, useWatchBlockNumber } from 'wagmi';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
+import { ScavengeBar } from './ScavengeBar';
 
 export function registerNodeModal() {
   registerUIComponent(
@@ -40,9 +49,12 @@ export function registerNodeModal() {
           });
           if (!node) node = NullNode;
 
+          // reveal flow
+          const commits = queryDTCommits(world, components, account.id);
+
           return {
             network,
-            data: { account, node },
+            data: { account, node, commits },
           };
         })
       ),
@@ -55,6 +67,7 @@ export function registerNodeModal() {
       const { nodeIndex } = useSelected();
       const { modals, setModals } = useVisibility();
       const [node, setNode] = useState<Node>(data.node);
+      const [scavBar, setScavBar] = useState<ScavBar | undefined>(undefined);
 
       // updates from selected Node updates
       useEffect(() => {
@@ -65,6 +78,9 @@ export function registerNodeModal() {
           setModals({ ...modals, node: false });
         }
 
+        const scav = getScavBarFromHash(world, components, 'node', node.index);
+
+        setScavBar(scav);
         setNode(node);
       }, [nodeIndex]);
 
@@ -75,6 +91,86 @@ export function registerNodeModal() {
 
       const getTotalKamis = () => {
         return (node.kamis?.allies ?? []).length + (node.kamis?.enemies ?? []).length;
+      };
+
+      const getDrops = () => {
+        return {
+          node: node.drops ?? [],
+          scavenge: getDTDetails(world, components, scavBar?.rewards[0].droptable ?? NullDT),
+        };
+      };
+
+      ///////////////////
+      // REVEAL FLOW
+
+      const { isConnected } = useAccount();
+      const [blockNumber, setBlockNumber] = useState(BigInt(0));
+      const [triedReveal, setTriedReveal] = useState(true);
+      const [waitingToReveal, setWaitingToReveal] = useState(false);
+
+      useWatchBlockNumber({
+        onBlockNumber: (n) => {
+          setBlockNumber(n);
+        },
+      });
+
+      useEffect(() => {
+        const tx = async () => {
+          if (!isConnected) return;
+
+          const filtered = filterRevealable(data.commits, Number(blockNumber));
+          if (!triedReveal && filtered.length > 0) {
+            try {
+              // wait to give buffer for rpc
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              handleReveal(filtered);
+              setTriedReveal(true);
+            } catch (e) {
+              console.log('Lootbox.tsx: reveal failed', e);
+            }
+            if (waitingToReveal) setWaitingToReveal(false);
+          }
+        };
+
+        tx();
+      }, [data.commits]);
+
+      const revealTx = async (commits: Commit[]) => {
+        const ids = commits.map((commit) => commit.id);
+        const actionID = uuid() as EntityID;
+        actions.add({
+          id: actionID,
+          action: 'LootboxReveal',
+          params: [ids],
+          description: `Inspecting lootbox contents`,
+          execute: async () => {
+            return api.player.droptable.reveal(ids);
+          },
+        });
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(actionID) as EntityIndex
+        );
+        return;
+      };
+
+      const handleCommit = async (scavBar: ScavBar) => {
+        playClick();
+        try {
+          await scavClaim(scavBar);
+
+          setWaitingToReveal(true);
+          setTriedReveal(false);
+        } catch (e) {
+          console.log('Node.tsx: handleOpen() open failed', e);
+        }
+      };
+
+      const handleReveal = async (commits: Commit[]) => {
+        await revealTx(commits);
+
+        // wait to give buffer for rpc
+        await new Promise((resolve) => setTimeout(resolve, 500));
       };
 
       ///////////////////
@@ -141,6 +237,24 @@ export function registerNodeModal() {
         });
       };
 
+      const scavClaim = async (scavBar: ScavBar) => {
+        const actionID = uuid() as EntityID;
+        actions.add({
+          id: actionID,
+          action: 'ScavengeClaim',
+          params: [scavBar.field, scavBar.index], // actual param: scavBar.id
+          description: `Claiming scavenge at node ${scavBar.index}`,
+          execute: async () => {
+            return api.player.scavenge.claim(scavBar.id);
+          },
+        });
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(actionID) as EntityIndex
+        );
+        return actionID;
+      };
+
       /////////////////
       // DISPLAY
 
@@ -151,6 +265,7 @@ export function registerNodeModal() {
             <Banner
               key='banner'
               account={account}
+              drops={getDrops()}
               node={node}
               kamis={account.kamis}
               addKami={(kami) => start(kami, node)}
@@ -160,6 +275,13 @@ export function registerNodeModal() {
                 parseConditionalText: (condition, tracking?) =>
                   parseConditionalText(world, components, condition, tracking),
               }}
+              scavBarDisplay={
+                <ScavengeBar
+                  scavBar={scavBar}
+                  currPoints={getScavPoints(world, components, 'node', node.index, account.id)}
+                  actions={{ claim: handleCommit }}
+                />
+              }
             />,
           ]}
           canExit

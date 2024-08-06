@@ -8,18 +8,18 @@ import { Components } from 'network/';
 /////////////////
 // QUERIES
 
+export const queryChildrenOf = (components: Components, parentID: EntityID): EntityIndex[] => {
+  const { PointerID } = components;
+  const toQuery: QueryFragment[] = [HasValue(PointerID, { value: parentID })];
+  return Array.from(runQuery(toQuery));
+};
+
 export const queryChildrenOfEntityIndex = (
   components: Components,
   field: string,
   index: number
 ): EntityIndex[] => {
-  const { PointerID } = components;
-  const toQuery: QueryFragment[] = [
-    HasValue(PointerID, {
-      value: genID(field, index),
-    }),
-  ];
-  return Array.from(runQuery(toQuery));
+  return queryChildrenOf(components, genID(field, index));
 };
 
 /////////////////
