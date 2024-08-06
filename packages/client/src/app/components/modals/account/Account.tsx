@@ -7,7 +7,7 @@ import { useSelected } from 'app/stores';
 import { operatorIcon } from 'assets/images/icons/menu';
 import {
   Account,
-  BareAccount,
+  BaseAccount,
   getAccountByIndex,
   getAccountFromBurner,
 } from 'network/shapes/Account';
@@ -92,7 +92,7 @@ export function registerAccountModal() {
       };
 
       // block an account
-      const blockFren = (account: BareAccount) => {
+      const blockFren = (account: BaseAccount) => {
         actions.add({
           action: 'BlockFriend',
           params: [account.ownerEOA],
@@ -116,7 +116,7 @@ export function registerAccountModal() {
       };
 
       // send a friend request
-      const requestFren = (account: BareAccount) => {
+      const requestFren = (account: BaseAccount) => {
         actions.add({
           action: 'RequestFriend',
           params: [account.ownerEOA],

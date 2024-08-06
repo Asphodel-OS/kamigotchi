@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Account, BareAccount } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Blocked } from './blocked/Blocked';
 import { Friends } from './friends/Friends';
@@ -11,13 +11,13 @@ interface Props {
   tab: string;
   data: {
     account: Account;
-    getAllAccs: () => BareAccount[];
+    getAllAccs: () => BaseAccount[];
   };
   actions: {
     acceptFren: (friendship: Friendship) => void;
-    blockFren: (account: BareAccount) => void;
+    blockFren: (account: BaseAccount) => void;
     cancelFren: (friendship: Friendship) => void;
-    requestFren: (account: BareAccount) => void;
+    requestFren: (account: BaseAccount) => void;
   };
 }
 

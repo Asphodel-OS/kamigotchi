@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, Has, HasValue, World, runQuery } from '@mud-classic/recs';
 
 import { Components, NetworkLayer } from 'network/';
-import { AccountOptions, NullAccount, getAccount, getBareAccount } from './types';
+import { AccountOptions, NullAccount, getAccount, getBaseAccount } from './types';
 
 export type QueryOptions = {
   index?: number;
@@ -36,7 +36,7 @@ export const getAllAccounts = (world: World, components: Components, options?: A
 export const getAllAccountsBare = (world: World, components: Components) => {
   const { IsAccount } = components;
   return Array.from(runQuery([Has(IsAccount)])).map((entityIndex) =>
-    getBareAccount(world, components, entityIndex)
+    getBaseAccount(world, components, entityIndex)
   );
 };
 

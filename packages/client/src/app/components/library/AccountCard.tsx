@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
-import { BareAccount } from 'network/shapes/Account';
+import { BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 import { Card } from './Card';
 import { Tooltip } from './Tooltip';
 
 interface Props {
-  account: BareAccount;
+  account: BaseAccount;
   description: string[];
   descriptionOnClick?: () => void;
   subtext?: string;

@@ -1,19 +1,19 @@
 import { AccountCard, ActionListButton } from 'app/components/library';
-import { BareAccount } from 'network/shapes/Account';
+import { BaseAccount } from 'network/shapes/Account';
 import styled from 'styled-components';
 
 interface Props {
-  accounts: BareAccount[];
+  accounts: BaseAccount[];
   actions: {
-    blockFren: (account: BareAccount) => void;
-    requestFren: (account: BareAccount) => void;
+    blockFren: (account: BaseAccount) => void;
+    requestFren: (account: BaseAccount) => void;
   };
 }
 
 export const Searched = (props: Props) => {
   const { accounts, actions } = props;
 
-  const Actions = (account: BareAccount) => {
+  const Actions = (account: BaseAccount) => {
     return (
       <ActionListButton
         id={`options-${account.entityIndex}`}

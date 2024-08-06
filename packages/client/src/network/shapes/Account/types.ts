@@ -13,14 +13,14 @@ import {
   getAccOutgoingRequests,
 } from '../Friendship';
 import { Inventory, cleanInventories, getMusuBalance, queryInventoriesByAccount } from '../Item';
-import { Kami, KamiOptions, queryKamisX } from '../Kami';
+import { Kami, KamiOptions, queryKamis } from '../Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
 import { getData } from '../utils';
 
 // account shape with minimal fields
-export interface BareAccount {
+export interface BaseAccount {
   id: EntityID;
   index: number;
   entityIndex: EntityIndex;
@@ -31,7 +31,7 @@ export interface BareAccount {
 }
 
 // standardized shape of an Account Entity
-export interface Account extends BareAccount {
+export interface Account extends BaseAccount {
   fid: number;
   coin: number;
   roomIndex: number;
@@ -61,9 +61,9 @@ export interface Account extends BareAccount {
 }
 
 export interface AccountOptions {
-  kamis?: boolean | KamiOptions;
   friends?: boolean;
   inventory?: boolean;
+  kamis?: boolean | KamiOptions;
   quests?: boolean;
   stats?: boolean;
 }
@@ -105,11 +105,11 @@ export const NullAccount: Account = {
   kamis: [],
 };
 
-export const getBareAccount = (
+export const getBaseAccount = (
   world: World,
   components: Components,
   entityIndex: EntityIndex
-): BareAccount => {
+): BaseAccount => {
   const { AccountIndex, MediaURI, Name, OperatorAddress, OwnerAddress } = components;
 
   return {
@@ -132,7 +132,7 @@ export const getAccount = (
 ): Account => {
   const { FarcasterIndex, LastActionTime, LastTime, RoomIndex, Stamina, StartTime } = components;
 
-  const bareAcc = getBareAccount(world, components, entityIndex);
+  const bareAcc = getBaseAccount(world, components, entityIndex);
   const id = bareAcc.id;
 
   let account: Account = {
@@ -173,7 +173,7 @@ export const getAccount = (
   // populate Kamis
   if (options?.kamis) {
     const kamiOptions = typeof options.kamis === 'boolean' ? {} : options.kamis;
-    account.kamis = queryKamisX(world, components, { account: account.id }, kamiOptions);
+    account.kamis = queryKamis(world, components, { account: account.id }, kamiOptions);
   }
 
   // populate Friends

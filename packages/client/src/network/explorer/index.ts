@@ -155,9 +155,7 @@ export const initExplorer = (world: World, components: Components) => {
 const fullAccountOptions: AccountOptions = {
   kamis: true,
   friends: true,
-  gacha: true,
   inventory: true,
   quests: true,
-  lootboxLogs: true,
   stats: true,
 };

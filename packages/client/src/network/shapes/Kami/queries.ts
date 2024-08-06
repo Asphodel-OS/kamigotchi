@@ -25,7 +25,7 @@ export type QueryOptions = {
 //   index: number,
 //   options?: KamiOptions
 // ) => {
-//   return queryKamisX(world, components, { index: index }, options)[0];
+//   return queryKamis(world, components, { index: index }, options)[0];
 // };
 // get a kami by its index (token ID)
 export const getKamiByIndex = (
@@ -42,7 +42,7 @@ export const getKamiByIndex = (
 };
 
 export const getAllKamis = (world: World, components: Components, options?: KamiOptions) => {
-  return queryKamisX(world, components, {}, options);
+  return queryKamis(world, components, {}, options);
 };
 
 export const getLazyKamis = (
@@ -53,7 +53,7 @@ export const getLazyKamis = (
     _getLazyKamis(world, components, queryOpts, options);
 };
 
-export const queryKamisX = (
+export const queryKamis = (
   world: World,
   components: Components,
   queryOptions: QueryOptions,

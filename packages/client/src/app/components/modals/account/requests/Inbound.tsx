@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
 import { AccountCard, ActionListButton } from 'app/components/library';
-import { BareAccount } from 'network/shapes/Account';
+import { BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 
 interface Props {
   requests: Friendship[];
   actions: {
     acceptFren: (friendship: Friendship) => void;
-    blockFren: (account: BareAccount) => void;
+    blockFren: (account: BaseAccount) => void;
     cancelFren: (friendship: Friendship) => void;
   };
 }

@@ -4,7 +4,7 @@ import { utils } from 'ethers';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getConfigFieldValueWei } from './Config';
-import { Kami, KamiOptions, queryKamisX } from './Kami';
+import { Kami, KamiOptions, queryKamis } from './Kami';
 import { Commit } from './utils';
 import { queryHolderCommits } from './utils/commits';
 
@@ -23,7 +23,7 @@ export const queryGachaKamis = (
   components: Components,
   kamiOptions?: KamiOptions
 ): Kami[] => {
-  return queryKamisX(world, components, { account: GACHA_ID }, kamiOptions);
+  return queryKamis(world, components, { account: GACHA_ID }, kamiOptions);
 };
 
 export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {

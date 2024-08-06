@@ -45,7 +45,8 @@ export const List = (props: Props) => {
     };
   }, []);
 
-  // set the number of available quests whenever the registry or account quests are updated
+  // set the number of available quests in the notification bar
+  // do this whenever the registry or account quests are updated
   useEffect(() => {
     setNumAvail(getAvailableQuests(registryQuests, account).length);
   }, [registryQuests.length, account.quests?.ongoing.length]);

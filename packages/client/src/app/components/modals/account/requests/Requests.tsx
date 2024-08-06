@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
-import { Account, BareAccount } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Inbound } from './Inbound';
 import { Outbound } from './Outbound';
@@ -10,16 +10,16 @@ import { Searched } from './Searched';
 
 interface Props {
   account: Account;
-  accounts: BareAccount[];
+  accounts: BaseAccount[];
   requests: {
     inbound: Friendship[];
     outbound: Friendship[];
   };
   actions: {
     acceptFren: (friendship: Friendship) => void;
-    blockFren: (account: BareAccount) => void;
+    blockFren: (account: BaseAccount) => void;
     cancelFren: (friendship: Friendship) => void;
-    requestFren: (account: BareAccount) => void;
+    requestFren: (account: BaseAccount) => void;
   };
 }
 
@@ -27,7 +27,7 @@ export const Requests = (props: Props) => {
   const { account, requests, actions } = props;
   const [mode, setMode] = useState('inbound');
   const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState([] as BareAccount[]);
+  const [searchResults, setSearchResults] = useState([] as BaseAccount[]);
   const [knownAccIndices, setKnownAccIndices] = useState([] as number[]);
 
   // keep track of which accounts are already friends, requested or blocked

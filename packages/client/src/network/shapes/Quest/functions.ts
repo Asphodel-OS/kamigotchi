@@ -11,7 +11,7 @@ import {
 } from '../Conditional';
 import { getData } from '../utils';
 import { Objective, querySnapshotObjective } from './objective';
-import { Quest, queryQuestsX } from './quest';
+import { Quest, queryQuests } from './quest';
 import { checkRequirement } from './requirement';
 
 /////////////////
@@ -29,7 +29,7 @@ export const hasCompleted = (
   questIndex: number,
   account: Account
 ): boolean => {
-  const quests = queryQuestsX(world, components, {
+  const quests = queryQuests(world, components, {
     account: account.id,
     index: questIndex,
     completed: true,
@@ -139,6 +139,7 @@ export const parseQuestsStatus = (
 
 // these are a bit odd as we ideally can just retrieve the quest from the registry
 // q: should these be organized as objective.ts functions ?
+
 export const checkObjective = (
   world: World,
   components: Components,

@@ -22,7 +22,7 @@ export {
   getKamiByIndex,
   getLazyKamis,
   queryKamiEntitiesX,
-  queryKamisX,
+  queryKamis,
 } from './queries';
 export type { QueryOptions } from './queries';
 export { getKami } from './types';
