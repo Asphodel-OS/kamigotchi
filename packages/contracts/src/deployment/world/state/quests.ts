@@ -39,7 +39,7 @@ export async function initLocalQuests(api: AdminAPI) {
     'Was it really worth it?',
     0
   );
-  api.registry.quest.add.reward(1000000, 'MINT20', 0, 111);
+  api.registry.quest.add.reward(1000000, 'MINT20', 0, [], [], 111);
 }
 
 export async function deleteQuests(api: AdminAPI, indices: number[]) {
@@ -78,7 +78,7 @@ async function initQuest(api: AdminAPI, entry: any) {
 
   const agencyRep = Number(entry['REPUTATION']);
   if (agencyRep || agencyRep > 0) {
-    await api.registry.quest.add.reward(Number(entry['Index']), 'REPUTATION', 1, agencyRep);
+    await api.registry.quest.add.reward(Number(entry['Index']), 'REPUTATION', 1, [], [], agencyRep);
   }
 }
 
@@ -122,5 +122,12 @@ async function initQuestReward(api: AdminAPI, entry: any) {
     Number(entry['IndexFor'] ?? 0),
     Number(entry['ValueFor'] ?? 0)
   );
-  await api.registry.quest.add.reward(Number(entry['Index']), cond.type, cond.index, cond.value);
+  await api.registry.quest.add.reward(
+    Number(entry['Index']),
+    cond.type,
+    cond.index,
+    [],
+    [],
+    cond.value
+  );
 }
