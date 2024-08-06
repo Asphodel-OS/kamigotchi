@@ -11,6 +11,7 @@ export {
 } from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';
 export {
+  filterAvailable as filterAvailableQuests,
   getCompleted as getCompletedQuests,
   getOngoing as getOngoingQuests,
   getByIndex as getQuestByIndex,

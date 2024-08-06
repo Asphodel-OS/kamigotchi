@@ -6,7 +6,12 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Quest, getRegistryQuests, parseQuestStatuses } from 'network/shapes/Quest';
+import {
+  Quest,
+  filterAvailableQuests,
+  getRegistryQuests,
+  parseQuestStatuses,
+} from 'network/shapes/Quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
 import { Footer } from './Footer';
 import { List } from './List';
@@ -32,24 +37,33 @@ export function registerQuestsModal() {
             kamis: true,
             inventory: true,
           });
-          const quests = parseQuestStatuses(
-            world,
-            components,
-            account,
-            getRegistryQuests(world, components)
-          );
 
           return {
             network,
-            data: { account, quests },
+            data: {
+              account,
+              registry: getRegistryQuests(world, components),
+            },
           };
         })
       ),
     ({ network, data }) => {
       const { actions, api, components, notifications, world } = network;
-      const [tab, setTab] = useState<TabType>('AVAILABLE');
+      const [tab, setTab] = useState<TabType>('ONGOING');
+      const [registry, setRegistry] = useState<Quest[]>([]);
       const [numAvail, setNumAvail] = useState(0);
 
+      // update the State-based (Parsed) Quest Registry when we detect a change
+      // in the Props-based (UnParsed) Quest Registry. recheck the number of
+      // available quests for the Notification bar as well
+      useEffect(() => {
+        const parsedRegistry = parseQuestStatuses(world, components, data.account, data.registry);
+        const availableQuests = filterAvailableQuests(parsedRegistry, data.account);
+        setRegistry(parsedRegistry);
+        setNumAvail(availableQuests.length);
+      }, [data.registry.length]);
+
+      // update the Notifications when the number of available quests changes
       useEffect(() => {
         const id = 'Available Quests';
         if (notifications.has(id as EntityID)) {
@@ -111,11 +125,10 @@ export function registerQuestsModal() {
         >
           <List
             account={data.account}
-            registryQuests={data.quests}
+            registry={registry}
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{
-              setNumAvail: (num: number) => setNumAvail(num),
               getDescribedEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
             }}

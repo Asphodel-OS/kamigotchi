@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
@@ -34,26 +33,6 @@ export const QuestCard = (props: Props) => {
   const { account, quest, actions, utils } = props;
   const { accept, complete } = actions;
   const { getDescribedEntity } = utils;
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-
-  // ticking
-  useEffect(() => {
-    const refreshClock = () => {
-      setLastRefresh(Date.now());
-    };
-    const timerId = setInterval(refreshClock, 1000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
-  }, []);
-
-  const getNumCompleted = (account: Account, questIndex: number): number => {
-    let ongoing = 0;
-    account.quests?.completed.forEach((q: Quest) => {
-      if (q.index === questIndex) ongoing++;
-    });
-    return ongoing;
-  };
 
   const getRepeatText = (quest: Quest): string => {
     const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
@@ -63,7 +42,7 @@ export const QuestCard = (props: Props) => {
     if (!quest.repeatable) return 'not repeatable'; // not repeatable (mistake)
     if (!curr.complete) return 'already ongoing'; // already ongoing
 
-    const now = lastRefresh / 1000;
+    const now = Date.now() / 1000;
     const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
     if (Number(curr.startTime) + Number(wait) > Number(now))
       return `repeats in ${moment.duration((curr.startTime + wait - now) * 1000).humanize()}`;
@@ -88,7 +67,7 @@ export const QuestCard = (props: Props) => {
     let tooltipText = '';
 
     if (quest.repeatable) {
-      const result = meetsRepeat(quest, account, lastRefresh / 1000);
+      const result = meetsRepeat(quest, account);
       if (!result) {
         tooltipText = getRepeatText(quest);
       }
@@ -104,7 +83,7 @@ export const QuestCard = (props: Props) => {
           <ActionButton
             onClick={() => accept(quest)}
             text='Accept'
-            disabled={!canAcceptQuest(quest, account, lastRefresh / 1000)}
+            disabled={!canAcceptQuest(quest, account)}
           />
         </Tooltip>
       </div>

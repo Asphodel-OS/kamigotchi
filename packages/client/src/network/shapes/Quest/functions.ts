@@ -17,9 +17,9 @@ import { checkRequirement } from './requirement';
 /////////////////
 // CHECKERS
 
-export const canAccept = (quest: Quest, account: Account, now: number): boolean => {
+export const canAccept = (quest: Quest, account: Account, ts?: number): boolean => {
   if (!meetsRequirements(quest)) return false;
-  if (quest.repeatable && !meetsRepeat(quest, account, now)) return false;
+  if (quest.repeatable && !meetsRepeat(quest, account, ts)) return false;
   return meetsMax(account, quest);
 };
 
@@ -43,14 +43,15 @@ export const isOngoing = (account: Account, questIndex: number): boolean => {
 };
 
 export const meetsMax = (account: Account, quest: Quest): boolean => {
-  let totCompletes = getNumCompleted(account, quest.index);
+  let totCompletes = getCompletionCount(account, quest.index);
   totCompletes += isOngoing(account, quest.index) ? 1 : 0;
-  return (isOngoing(account, quest.index) ? 1 : 0) + getNumCompleted(account, quest.index) < 1;
+  return (isOngoing(account, quest.index) ? 1 : 0) + getCompletionCount(account, quest.index) < 1;
 };
 
-export const meetsRepeat = (quest: Quest, account: Account, now: number): boolean => {
+export const meetsRepeat = (quest: Quest, account: Account, ts?: number): boolean => {
   const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
   const curr = allQuests?.find((x) => x.index == quest.index);
+  const now = ts ?? Date.now() / 1000;
 
   // has not accepted repeatable before
   if (curr === undefined) return true;
@@ -65,6 +66,7 @@ export const meetsRepeat = (quest: Quest, account: Account, now: number): boolea
   return Number(curr.startTime) + Number(wait) <= Number(now);
 };
 
+// check whether a Parsed Quest has its Objectives met
 export const meetsObjectives = (quest: Quest): boolean => {
   for (const objective of quest.objectives) {
     if (!objective.status?.completable) {
@@ -74,6 +76,7 @@ export const meetsObjectives = (quest: Quest): boolean => {
   return true;
 };
 
+// check whether a Parsed Quest has its Requirements met
 export const meetsRequirements = (quest: Quest): boolean => {
   for (const requirement of quest.requirements) {
     if (!requirement.status?.completable) {
@@ -83,7 +86,8 @@ export const meetsRequirements = (quest: Quest): boolean => {
   return true;
 };
 
-const getNumCompleted = (account: Account, questIndex: number): number => {
+//
+const getCompletionCount = (account: Account, questIndex: number): number => {
   let ongoing = 0;
   account.quests?.completed.forEach((q: Quest) => {
     if (q.index === questIndex) ongoing++;

@@ -1,80 +1,41 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import {
-  meetsMax,
-  meetsObjectives,
-  meetsRepeat,
-  meetsRequirements,
-  Quest,
-} from 'network/shapes/Quest';
+import { filterAvailableQuests, meetsObjectives, Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
 interface Props {
   account: Account;
-  registryQuests: Quest[];
+  registry: Quest[];
   mode: TabType;
   actions: {
     acceptQuest: (quest: Quest) => void;
     completeQuest: (quest: Quest) => void;
   };
   utils: {
-    setNumAvail: (num: number) => void;
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
 }
 
 export const List = (props: Props) => {
-  const { account, registryQuests, mode, actions, utils } = props;
+  const { account, registry, mode, actions, utils } = props;
   const { acceptQuest, completeQuest } = actions;
-  const { getDescribedEntity, setNumAvail } = utils;
+  const { getDescribedEntity } = utils;
 
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-
-  // ticking
-  useEffect(() => {
-    const refreshClock = () => {
-      setLastRefresh(Date.now());
-    };
-    const timerId = setInterval(refreshClock, 1000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
-  }, []);
-
-  // set the number of available quests in the notification bar
-  // do this whenever the registry or account quests are updated
-  useEffect(() => {
-    setNumAvail(getAvailableQuests(registryQuests, account).length);
-  }, [registryQuests.length, account.quests?.ongoing.length]);
 
   ///////////////////
   // DISPLAY
 
-  const getAvailableQuests = (registry: Quest[], account: Account) => {
-    // get available, non-repeatable quests from registry
-    const oneTimes = registry.filter((q: Quest) => {
-      return meetsRequirements(q) && meetsMax(account, q) && !q.repeatable;
-    });
-
-    // get available, repeatable quests from registry
-    const repeats = registry.filter((q: Quest) => {
-      return meetsRequirements(q) && q.repeatable && meetsRepeat(q, account, lastRefresh);
-    });
-
-    return repeats.concat(oneTimes);
-  };
-
   const getQuestsToDisplay = () => {
-    const quests = getAvailableQuests(registryQuests, account);
+    const quests = filterAvailableQuests(registry, account);
     return quests.filter((q: Quest) => !q.complete);
   };
 
   const AvailableQuests = () => {
-    const quests = getAvailableQuests(registryQuests, account);
+    const quests = filterAvailableQuests(registry, account);
 
     if (quests.length == 0)
       return (
@@ -126,7 +87,7 @@ export const List = (props: Props) => {
   };
 
   const OngoingQuests = () => {
-    getAvailableQuests(registryQuests, account);
+    filterAvailableQuests(registry, account);
     const rawQuests = [...(account.quests?.ongoing ?? [])];
 
     if (rawQuests.length == 0)

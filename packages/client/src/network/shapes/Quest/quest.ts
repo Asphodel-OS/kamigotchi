@@ -12,7 +12,9 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { Account } from '../Account';
 import { Reward } from '../Rewards';
+import { meetsMax, meetsRepeat, meetsRequirements } from './functions';
 import { Objective, queryQuestObjectives } from './objective';
 import { Requirement, queryQuestRequirements } from './requirement';
 import { queryQuestRewards } from './reward';
@@ -76,34 +78,40 @@ export const getQuest = (world: World, components: Components, entityIndex: Enti
 /////////////////
 // GETTERS
 
-export const getRegistry = (world: World, components: Components): Quest[] => {
-  return query(world, components, { registry: true });
-};
-
-// get the ongoing quests for an account
-export const getOngoing = (
-  world: World,
-  components: Components,
-  accountEntityID: EntityID
-): Quest[] => {
-  return query(world, components, { account: accountEntityID, completed: false });
-};
-
-// get the completed quests for an account
-export const getCompleted = (
-  world: World,
-  components: Components,
-  accountEntityID: EntityID
-): Quest[] => {
-  return query(world, components, { account: accountEntityID, completed: true });
-};
-
 export const getByIndex = (
   world: World,
   components: Components,
   index: number
 ): Quest | undefined => {
   return query(world, components, { index: index, registry: true })[0];
+};
+
+export const getRegistry = (world: World, components: Components): Quest[] => {
+  return query(world, components, { registry: true });
+};
+
+// get the list of Completed Quests for an Account
+export const getCompleted = (
+  world: World,
+  components: Components,
+  accountID: EntityID
+): Quest[] => {
+  return query(world, components, { account: accountID, completed: true });
+};
+
+// get the list of Ongoing Quests for an Account
+export const getOngoing = (world: World, components: Components, accountID: EntityID): Quest[] => {
+  return query(world, components, { account: accountID, completed: false });
+};
+
+// filters a list of Parsed Quests to just the ones available to an Account
+export const filterAvailable = (quests: Quest[], account: Account) => {
+  return quests.filter((q: Quest) => {
+    let meetsCount = false;
+    if (q.repeatable) meetsCount = meetsRepeat(q, account, Date.now() / 1000);
+    else meetsCount = meetsMax(account, q);
+    return meetsCount && meetsRequirements(q);
+  });
 };
 
 /////////////////
