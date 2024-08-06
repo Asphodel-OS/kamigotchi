@@ -10,6 +10,7 @@ import {
   Quest,
 } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
+import { QuestCard } from './QuestCard';
 
 interface Props {
   account: Account;
@@ -27,6 +28,7 @@ interface Props {
 
 export const List = (props: Props) => {
   const { account, registryQuests, mode, actions, utils } = props;
+  const { acceptQuest, completeQuest } = actions;
   const { getDescribedEntity, setNumAvail } = utils;
 
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -65,6 +67,11 @@ export const List = (props: Props) => {
     return repeats.concat(oneTimes);
   };
 
+  const getQuestsToDisplay = () => {
+    const quests = getAvailableQuests(registryQuests, account);
+    return quests.filter((q: Quest) => !q.complete);
+  };
+
   const AvailableQuests = () => {
     const quests = getAvailableQuests(registryQuests, account);
 
@@ -77,14 +84,13 @@ export const List = (props: Props) => {
       );
 
     return quests.map((q: Quest) => (
-      <QuestContainer key={q.id}>
-        <QuestName>{q.name}</QuestName>
-        <QuestDescription>{q.description}</QuestDescription>
-        {/* {RequirementDisplay(q.requirements)} */}
-        {ObjectiveDisplay(q.objectives, false)}
-        {RewardDisplay(q.rewards)}
-        {AcceptButton(q)}
-      </QuestContainer>
+      <QuestCard
+        key={q.id}
+        account={account}
+        quest={q}
+        actions={{ accept: acceptQuest, complete: completeQuest }}
+        utils={{ getDescribedEntity }}
+      />
     ));
   };
 
@@ -101,12 +107,13 @@ export const List = (props: Props) => {
       );
 
     const dones = quests.map((q: Quest) => (
-      <DoneContainer key={q.id}>
-        <QuestName>{q.name}</QuestName>
-        <QuestDescription>{q.description}</QuestDescription>
-        {ObjectiveDisplay(q.objectives, false)}
-        {RewardDisplay(q.rewards)}
-      </DoneContainer>
+      <QuestCard
+        key={q.id}
+        account={account}
+        quest={q}
+        actions={{ accept: acceptQuest, complete: completeQuest }}
+        utils={{ getDescribedEntity }}
+      />
     ));
 
     return (
@@ -142,13 +149,13 @@ export const List = (props: Props) => {
     return (
       <div>
         {quests.map((q: Quest) => (
-          <QuestContainer key={q.id}>
-            <QuestName>{q.name}</QuestName>
-            <QuestDescription>{q.description}</QuestDescription>
-            {ObjectiveDisplay(q.objectives, true)}
-            {RewardDisplay(q.rewards)}
-            {CompleteButton(q)}
-          </QuestContainer>
+          <QuestCard
+            key={q.id}
+            account={account}
+            quest={q}
+            actions={{ accept: acceptQuest, complete: completeQuest }}
+            utils={{ getDescribedEntity }}
+          />
         ))}
         {CompletedQuests()}
       </div>
