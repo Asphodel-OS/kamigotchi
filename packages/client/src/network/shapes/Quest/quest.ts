@@ -76,34 +76,34 @@ export const getQuest = (world: World, components: Components, entityIndex: Enti
 /////////////////
 // GETTERS
 
-export const getRegistryQuests = (world: World, components: Components): Quest[] => {
-  return queryQuests(world, components, { registry: true });
+export const getRegistry = (world: World, components: Components): Quest[] => {
+  return query(world, components, { registry: true });
 };
 
 // get the ongoing quests for an account
-export const getOngoingQuests = (
+export const getOngoing = (
   world: World,
   components: Components,
   accountEntityID: EntityID
 ): Quest[] => {
-  return queryQuests(world, components, { account: accountEntityID, completed: false });
+  return query(world, components, { account: accountEntityID, completed: false });
 };
 
 // get the completed quests for an account
-export const getCompletedQuests = (
+export const getCompleted = (
   world: World,
   components: Components,
   accountEntityID: EntityID
 ): Quest[] => {
-  return queryQuests(world, components, { account: accountEntityID, completed: true });
+  return query(world, components, { account: accountEntityID, completed: true });
 };
 
-export const getQuestByIndex = (
+export const getByIndex = (
   world: World,
   components: Components,
   index: number
 ): Quest | undefined => {
-  return queryQuests(world, components, { index: index, registry: true })[0];
+  return query(world, components, { index: index, registry: true })[0];
 };
 
 /////////////////
@@ -117,11 +117,7 @@ export interface QueryOptions {
 }
 
 // Query for Entity Indices of Quests, depending on the options provided
-export const queryQuests = (
-  world: World,
-  components: Components,
-  options: QueryOptions
-): Quest[] => {
+export const query = (world: World, components: Components, options: QueryOptions): Quest[] => {
   const { OwnsQuestID, IsComplete, IsQuest, IsRegistry, QuestIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsQuest)];

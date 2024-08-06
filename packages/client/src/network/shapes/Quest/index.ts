@@ -7,10 +7,15 @@ export {
   meetsObjectives,
   meetsRepeat,
   meetsRequirements,
-  parseQuestsStatus,
+  parseStatuses as parseQuestStatuses,
 } from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';
-export { getCompletedQuests, getOngoingQuests, getQuestByIndex, getRegistryQuests } from './quest';
+export {
+  getCompleted as getCompletedQuests,
+  getOngoing as getOngoingQuests,
+  getByIndex as getQuestByIndex,
+  getRegistry as getRegistryQuests,
+} from './quest';
 export { checkRequirement, queryQuestRequirements } from './requirement';
 export { queryQuestRewards } from './reward';
 

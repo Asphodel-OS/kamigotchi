@@ -14,7 +14,7 @@ import {
 } from '../Friendship';
 import { Inventory, cleanInventories, getMusuBalance, queryInventoriesByAccount } from '../Item';
 import { Kami, KamiOptions, queryKamis } from '../Kami';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
+import { Quest, getCompletedQuests, getOngoingQuests, parseQuestStatuses } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
 import { getData } from '../utils';
@@ -195,13 +195,13 @@ export const getAccount = (
   // populate Quests
   if (options?.quests) {
     account.quests = {
-      ongoing: parseQuestsStatus(
+      ongoing: parseQuestStatuses(
         world,
         components,
         account,
         getOngoingQuests(world, components, account.id)
       ),
-      completed: parseQuestsStatus(
+      completed: parseQuestStatuses(
         world,
         components,
         account,

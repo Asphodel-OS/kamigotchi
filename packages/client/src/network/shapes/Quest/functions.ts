@@ -11,7 +11,7 @@ import {
 } from '../Conditional';
 import { getData } from '../utils';
 import { Objective, querySnapshotObjective } from './objective';
-import { Quest, queryQuests } from './quest';
+import { Quest, query } from './quest';
 import { checkRequirement } from './requirement';
 
 /////////////////
@@ -29,7 +29,7 @@ export const hasCompleted = (
   questIndex: number,
   account: Account
 ): boolean => {
-  const quests = queryQuests(world, components, {
+  const quests = query(world, components, {
     account: account.id,
     index: questIndex,
     completed: true,
@@ -94,7 +94,7 @@ const getNumCompleted = (account: Account, questIndex: number): number => {
 /////////////////
 // GETTERS
 
-export const parseQuestStatus = (
+export const parseStatus = (
   world: World,
   components: Components,
   account: Account,
@@ -123,14 +123,14 @@ export const parseQuestStatus = (
 };
 
 // parse detailed quest status
-export const parseQuestsStatus = (
+export const parseStatuses = (
   world: World,
   components: Components,
   account: Account,
   quests: Quest[]
 ): Quest[] => {
   return quests.map((quest: Quest) => {
-    return parseQuestStatus(world, components, account, quest);
+    return parseStatus(world, components, account, quest);
   });
 };
 
