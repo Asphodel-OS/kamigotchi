@@ -6,7 +6,7 @@ import { Commit, canReveal } from 'network/shapes/utils';
 
 interface Props {
   actions: {
-    handleReveal: (commits: Commit[]) => Promise<void>;
+    revealTx: (commits: Commit[]) => Promise<void>;
   };
   data: {
     commits: Commit[];
@@ -45,9 +45,9 @@ export const Commits = (props: Props) => {
   const ActiveCell = (commit: Commit) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
-        <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName>
+        <ActiveName>{getCommitTimeFrom(commit)} [Available]</ActiveName>
         <Row>
-          <ActionButton onClick={() => props.actions.handleReveal([commit])} text='Reveal' />
+          <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
         </Row>
       </CellContainer>
     );
@@ -56,9 +56,9 @@ export const Commits = (props: Props) => {
   const ExpiredCell = (commit: Commit) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
-        <ExpiredName>Expired Commit, {getCommitTimeFrom(commit)}</ExpiredName>
-        <Description>Your lootbox is stuck, but can be retrieved.</Description>
-        <Description> Please send this commit's ID to support on discord.</Description>
+        <ExpiredName>{getCommitTimeFrom(commit)} [Expired]</ExpiredName>
+        <Description>Your item is stuck, but can be retrieved.</Description>
+        <Description> Please create a support ticket on discord with this commit's ID.</Description>
         <Row>
           <ActionButton
             onClick={() => {
@@ -71,46 +71,27 @@ export const Commits = (props: Props) => {
     );
   };
 
-  return (
-    <OuterBox key='grid'>
-      <InnerBox>{props.data.commits.map((commit) => Cell(commit))}</InnerBox>
-    </OuterBox>
-  );
+  return <Container>{props.data.commits.map((commit) => Cell(commit))}</Container>;
 };
 
-const OuterBox = styled.div`
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
   width: 100%;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  height: 100%;
-`;
 
-const InnerBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-
-  flex: 1;
-  border: solid 0.15vw black;
-  border-radius: 0.75vw;
-  height: 80%;
-  padding: 1vw;
-  margin: 1vw;
+  padding: 0.6vw 0.4vw;
   overflow-y: scroll;
 
-  gap: 1.2vw;
+  gap: 0.6vh 0.4vw;
 `;
 
 const CellContainer = styled.div`
   border: solid 0.15vw black;
-  border-radius: 1vw;
+  border-radius: 0.4vw;
 
-  margin: 0.3vh 0.4vw;
-  padding: 1.4vh 0.8vw;
-  position: relative;
+  padding: 1.2vh 0.8vw;
 `;
 
 const ActiveName = styled.div`
@@ -136,6 +117,7 @@ const Description = styled.div`
   text-align: left;
   font-size: 0.8vw;
   padding: 0.4vh 0.5vw;
+  line-height: 1.2vw;
   color: black;
 `;
 

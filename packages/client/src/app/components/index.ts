@@ -15,13 +15,13 @@ import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
 import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
-import { registerLootboxesModal } from './modals/lootboxes/Lootboxes';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
+import { registerRevealModal } from './modals/reveal/Reveal';
 import { registerSettingsModal } from './modals/settings';
 
 // unused
@@ -61,7 +61,7 @@ export function registerUIComponents() {
   registerGachaModal();
   registerKamiModal();
   registerLeaderboardModal();
-  registerLootboxesModal();
+  registerRevealModal();
   registerMerchantModal();
   registerNameKamiModal();
   registerNodeModal();

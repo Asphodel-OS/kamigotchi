@@ -2,14 +2,18 @@ import { interval, map } from 'rxjs';
 import { erc20Abi, formatUnits } from 'viem';
 import { useReadContract, useReadContracts } from 'wagmi';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
+import { useVisibility } from 'app/stores';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { GachaTicketInventory } from 'network/shapes/utils';
+import { waitForActionCompletion } from 'network/utils';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 
@@ -39,8 +43,9 @@ export function registerInventoryModal() {
 
     // Render
     ({ network, data }) => {
-      const { actions, api, systems } = network;
+      const { actions, api, systems, world } = network;
       const { account } = data;
+      const { modals, setModals } = useVisibility();
 
       /////////////////
       // SUBSCRIPTIONS
@@ -96,6 +101,24 @@ export function registerInventoryModal() {
         });
       };
 
+      const openLootbox = async (index: number, amount: number) => {
+        const actionID = uuid() as EntityID;
+        actions.add({
+          id: actionID,
+          action: 'LootboxCommit',
+          params: [index, amount],
+          description: `Opening ${amount} of lootbox ${index}`,
+          execute: async () => {
+            return api.player.lootbox.commit(index, amount);
+          },
+        });
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(actionID) as EntityIndex
+        );
+        setModals({ ...modals, reveal: true });
+      };
+
       /////////////////
       // INTERPRETATION
 
@@ -129,7 +152,7 @@ export function registerInventoryModal() {
             key='grid'
             account={account}
             inventories={getInventories()}
-            actions={{ feedKami, feedAccount }}
+            actions={{ feedKami, feedAccount, openLootbox }}
           />
         </ModalWrapper>
       );

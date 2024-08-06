@@ -51,7 +51,6 @@ export interface Modals {
   inventory: boolean;
   kami: boolean;
   leaderboard: boolean;
-  lootboxes: boolean;
   map: boolean;
   merchant: boolean;
   nameKami: boolean;
@@ -59,6 +58,7 @@ export interface Modals {
   operatorFund: boolean;
   party: boolean;
   quests: boolean;
+  reveal: boolean;
   settings: boolean;
 }
 
@@ -76,7 +76,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   inventory: isOn,
   kami: isOn,
   leaderboard: isOn,
-  lootboxes: isOn,
   map: isOn,
   merchant: isOn,
   nameKami: isOn,
@@ -84,6 +83,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   operatorFund: isOn,
   party: isOn,
   quests: isOn,
+  reveal: isOn,
   settings: isOn,
 });
 
@@ -122,7 +122,6 @@ export const useVisibility = create<State & Actions>((set) => {
       inventory: false,
       kami: false,
       leaderboard: false,
-      lootboxes: false,
       map: false,
       merchant: false,
       nameKami: false,
@@ -130,6 +129,7 @@ export const useVisibility = create<State & Actions>((set) => {
       operatorFund: false,
       party: false,
       quests: false,
+      reveal: false,
       settings: false,
     },
     validators: {

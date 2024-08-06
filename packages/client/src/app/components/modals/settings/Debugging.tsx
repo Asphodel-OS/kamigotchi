@@ -23,7 +23,7 @@ export const Debugging = () => {
         <Header>Testnet debugging</Header>
       </HeaderRow>
       <Section key='lootbox'>
-        {FieldRow('Lootbox Modal', 'Open', () => setModals({ ...modals, lootboxes: true }))}
+        {FieldRow('Lootbox Modal', 'Open', () => setModals({ ...modals, reveal: true }))}
       </Section>
     </Container>
   );
