@@ -65,14 +65,15 @@ contract _NodeRegistrySystem is System {
     LibScavenge.create(components, "node", nodeIndex, tierCost);
   }
 
-  function addScavReward(
-    uint32 nodeIndex,
-    string memory rwdType,
-    uint32 rwdIndex,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    uint256 value
-  ) public onlyOwner {
+  function addScavReward(bytes memory arguments) public onlyOwner {
+    (
+      uint32 nodeIndex,
+      string memory rwdType,
+      uint32 rwdIndex,
+      uint32[] memory keys,
+      uint256[] memory weights,
+      uint256 value
+    ) = abi.decode(arguments, (uint32, string, uint32, uint32[], uint256[], uint256));
     require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
 
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);

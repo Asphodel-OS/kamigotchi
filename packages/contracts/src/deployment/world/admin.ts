@@ -230,6 +230,26 @@ export function createAdminAPI(compiledCalls: string[]) {
     ]);
   }
 
+  async function createNodeScav(index: number, tierCost: number) {
+    genCall('system.node.registry', [index, tierCost], 'addScavBar');
+  }
+
+  async function addNodeScavReward(
+    nodeIndex: number,
+    type: string,
+    index: number,
+    keys: number[],
+    weights: number[],
+    value: number
+  ) {
+    genCall(
+      'system.node.registry',
+      [nodeIndex, type, index, keys, weights, value],
+      'addScavReward',
+      ['uint32', 'string', 'uint32', 'uint32[]', 'uint256[]', 'uint256']
+    );
+  }
+
   // @dev deletes node
   async function deleteNode(index: number) {
     genCall('system.node.registry', [index], 'remove');
@@ -586,6 +606,8 @@ export function createAdminAPI(compiledCalls: string[]) {
       create: createNode,
       add: {
         requirement: createNodeRequirement,
+        scav: createNodeScav,
+        scavReward: addNodeScavReward,
       },
       delete: deleteNode,
     },

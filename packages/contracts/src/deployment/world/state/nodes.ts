@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { readFile } from './utils';
+import { readFile, textToNumberArray } from './utils';
 
 export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
   // nodes data are stored in rooms csv
@@ -15,6 +15,7 @@ export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
     if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
       await initNode(api, entry);
+      if (entry['Scav Cost'] !== '') await initScavBar(api, entry);
       if (entry['Level Limit'] !== '') await initRequirement(api, entry);
     } catch {
       console.error('Could not create node', entry['Index']);
@@ -66,5 +67,18 @@ async function initRequirement(api: AdminAPI, entry: any) {
     'CURR_MAX',
     0,
     Number(entry['Level Limit'])
+  );
+}
+
+// creates both scavBar and its reward at once. assumes each scav bar only has one reward, a DT
+async function initScavBar(api: AdminAPI, entry: any) {
+  await api.node.add.scav(Number(entry['Index']), Number(entry['Scav Cost']));
+  await api.node.add.scavReward(
+    Number(entry['Index']),
+    'ITEM_DROPTABLE',
+    0,
+    textToNumberArray(entry['Item Drop Indices']),
+    textToNumberArray(entry['Item Drop Weights']),
+    1
   );
 }

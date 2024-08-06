@@ -16,6 +16,12 @@ export const getGoalID = (index: number) => {
 ///////////////
 // PROCESSORS
 
+export const textToNumberArray = (text: string): number[] => {
+  text = text.replaceAll('[', '');
+  text = text.replaceAll(']', '');
+  return text.split(',').map((n) => Number(n.trim()));
+};
+
 // parses common human readable conditions into machine types for init
 export const parseToInitCon = (
   logicType: string,

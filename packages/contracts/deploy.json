@@ -190,10 +190,13 @@
         "IndexNodeComponent",
         "IndexRoomComponent",
         "IsNodeComponent",
+        "IsRegistryComponent",
         "LogicTypeComponent",
+        "KeysComponent",
         "NameComponent",
         "TypeComponent",
-        "ValueComponent"
+        "ValueComponent",
+        "WeightsComponent"
       ]
     },
     {
