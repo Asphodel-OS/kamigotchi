@@ -89,12 +89,12 @@ library LibCommit {
   /// @notice gets seed from a commit, and remove it
   function extractSeed(IUintComp components, uint256 id) internal returns (uint256) {
     uint256 revBlock = BlockRevComponent(getAddressById(components, BlockRevealCompID)).extract(id);
-    return getBlockhash(revBlock);
+    return hashSeed(revBlock, id);
   }
 
   /// @notice bypasses component registry to extract seed
   function extractSeedDirect(BlockRevComponent blockComp, uint256 id) internal returns (uint256) {
-    return getBlockhash(blockComp.extract(id));
+    return hashSeed(blockComp.extract(id), id);
   }
 
   function extractSeeds(
@@ -102,7 +102,7 @@ library LibCommit {
     uint256[] memory ids
   ) internal returns (uint256[] memory seeds) {
     seeds = BlockRevComponent(getAddressById(components, BlockRevealCompID)).extractBatch(ids);
-    for (uint256 i; i < ids.length; i++) seeds[i] = getBlockhash(seeds[i]);
+    for (uint256 i; i < ids.length; i++) seeds[i] = hashSeed(seeds[i], ids[i]);
   }
 
   function extractHolder(IUintComp components, uint256 id) internal returns (uint256) {
@@ -130,10 +130,11 @@ library LibCommit {
   /////////////////
   // GETTERS
 
-  // gets seed from future blockhash. blockhash needs to be revealed within 256 blocks
-  function getBlockhash(uint256 blocknumber) internal view returns (uint256 result) {
-    result = uint256(blockhash(blocknumber));
-    require(result != 0, "Blockhash unavailable. Contact admin");
+  // gets seed from future blockhash and entityID. blockhash needs to be revealed within 256 blocks
+  function hashSeed(uint256 blocknumber, uint256 entityID) internal view returns (uint256) {
+    uint256 bhash = uint256(blockhash(blocknumber));
+    require(bhash != 0, "Blockhash unavailable. Contact admin");
+    return uint256(keccak256(abi.encodePacked(bhash, entityID)));
   }
 
   /////////////////
