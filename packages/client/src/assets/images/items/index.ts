@@ -8,6 +8,7 @@ import gaokerena_mochi from './gaokerena_mochi.png';
 import holy_dust from './holy_dust.png';
 import ice_cream from './ice_cream.png';
 import kami_mochi from './kami_mochi.png';
+import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import musu from './musu.png';
@@ -18,6 +19,7 @@ import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import ring_of_spirits from './ring_of_spirits.png';
 import ring_of_water_breathing from './ring_of_water_breathing.png';
+import scrap_metal from './scrap_metal.png';
 import stone from './stone.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
 import wooden_stick from './wooden_stick.png';
@@ -36,6 +38,7 @@ export const ItemImages = {
   holy_dust: holy_dust,
   ice_cream: ice_cream,
   kami_mochi: kami_mochi,
+  kamigotchi_world_passport: kamigotchi_world_passport,
   mana_mochi: mana_mochi,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   musu: musu,
@@ -46,6 +49,7 @@ export const ItemImages = {
   pine_pollen: pine_pollen,
   plastic_bottle: plastic_bottle,
   pom_pom_fruit_candy: pom_pom_fruit_candy,
+  scrap_metal: scrap_metal,
   stone: stone,
   sunset_apple_mochi: sunset_apple_mochi,
   wooden_stick: wooden_stick,

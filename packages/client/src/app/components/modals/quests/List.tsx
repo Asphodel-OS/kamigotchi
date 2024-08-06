@@ -149,8 +149,6 @@ export const List = (props: Props) => {
       return `${value} ${name}`;
     } else if (reward.target.type === 'REPUTATION') {
       return `${value} REPUTATION`;
-    } else if (reward.target.type === 'NFT') {
-      return `Kamigotchi World Passport`;
     } else {
       return '???';
     }
