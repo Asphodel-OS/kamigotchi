@@ -67,7 +67,7 @@ export function registerNotificationFixture() {
 
       return (
         <Wrapper style={{ display: isVisible() ? 'block' : 'none' }}>
-          {list.map((id) => SingleNotif(id))}
+          <Contents>{list.map((id) => SingleNotif(id))}</Contents>
         </Wrapper>
       );
     }
@@ -75,32 +75,32 @@ export function registerNotificationFixture() {
 }
 
 const Wrapper = styled.div`
-  background-color: #fff;
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
-
-  width: 99%;
-  padding: 0.2vw;
-
+  margin: 0.2vw;
   display: block;
-  align-items: left;
-
   overflow-y: scroll;
+`;
+
+const Contents = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+
+  gap: 0.4vh 0.2vw;
 `;
 
 const Card = styled.button`
   background-color: #fff;
-  border: 0.15vw solid #333;
-  border-radius: 0.4vw;
-  padding: 0.7vh 0.7vw;
+  border: 0.2vw solid #333;
+  border-radius: 0.8vw;
+  padding: 0.7vh 1vw;
   width: 100%;
+  opacity: 0.9;
 
   display: flex;
   flex-flow: column nowrap;
 
   &:hover {
-    opacity: 0.8;
-    background-color: #ddd;
+    opacity: 1;
   }
 
   pointer-events: auto;
