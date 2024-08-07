@@ -81,6 +81,23 @@ const isAvailableByCount = (quest: Quest, completed: Quest[], ongoing: Quest[]) 
 };
 
 /////////////////
+// SORTERS
+
+// sorts Ongoing Quests by their completability
+export const sortOngoing = (quests: Quest[]): Quest[] => {
+  const completionStatus = new Map<number, boolean>();
+  quests.forEach((q: Quest) => completionStatus.set(q.index, meetsObjectives(q)));
+
+  return quests.reverse().sort((a: Quest, b: Quest) => {
+    const aCompletable = completionStatus.get(a.index);
+    const bCompletable = completionStatus.get(b.index);
+    if (aCompletable && !bCompletable) return -1;
+    else if (!aCompletable && bCompletable) return 1;
+    else return 0;
+  });
+};
+
+/////////////////
 // PARSERS
 
 export const parseStatus = (

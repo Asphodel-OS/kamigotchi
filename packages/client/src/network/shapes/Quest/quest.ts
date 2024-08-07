@@ -13,7 +13,6 @@ import {
 
 import { Components } from 'network/';
 import { Reward } from '../Rewards';
-import { meetsObjectives } from './functions';
 import { Objective, queryQuestObjectives } from './objective';
 import { Requirement, queryQuestRequirements } from './requirement';
 import { queryQuestRewards } from './reward';
@@ -99,23 +98,8 @@ export const getCompleted = (
 };
 
 // get the list of Ongoing Quests for an Account
-export const getOngoing = (
-  world: World,
-  components: Components,
-  accountID: EntityID,
-  sort = true
-): Quest[] => {
-  let results = query(world, components, { account: accountID, completed: false });
-  if (sort) {
-    results = results.reverse().sort((a: Quest, b: Quest) => {
-      const aCompletable = meetsObjectives(a); // probably want to do this outside of the sort
-      const bCompletable = meetsObjectives(b);
-      if (aCompletable && !bCompletable) return -1;
-      else if (!aCompletable && bCompletable) return 1;
-      else return 0;
-    });
-  }
-  return results;
+export const getOngoing = (world: World, components: Components, accountID: EntityID): Quest[] => {
+  return query(world, components, { account: accountID, completed: false });
 };
 
 /////////////////

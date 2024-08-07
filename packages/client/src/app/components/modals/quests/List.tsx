@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Quest } from 'network/shapes/Quest';
+import { Quest, sortOngoingQuests } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
@@ -77,7 +77,7 @@ export const List = (props: Props) => {
           />
         ))}
       {mode === 'ONGOING' &&
-        quests.ongoing.map((q: Quest) => (
+        sortOngoingQuests(quests.ongoing).map((q: Quest) => (
           <QuestCard
             key={q.id}
             quest={q}

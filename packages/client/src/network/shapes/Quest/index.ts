@@ -5,6 +5,7 @@ export {
   meetsObjectives,
   meetsRequirements,
   parseStatuses as parseQuestStatuses,
+  sortOngoing as sortOngoingQuests,
 } from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';
 export {

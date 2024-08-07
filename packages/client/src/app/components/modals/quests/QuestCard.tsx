@@ -165,6 +165,7 @@ const Row = styled.div`
 const ConditionText = styled.div`
   font-size: 0.75vw;
   padding: 0.3vw;
+  padding-left: 0.6vw;
   gap: 0.15vw;
 
   display: flex;
