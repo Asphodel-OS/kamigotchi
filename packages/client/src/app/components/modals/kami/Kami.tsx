@@ -15,9 +15,9 @@ import {
   getTreePointsRequirement,
 } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
-import { Banner } from './banner/Banner';
-import { Tabs } from './banner/Tabs';
 import { KillLogs } from './battles/KillLogs';
+import { Header } from './header/Header';
+import { Tabs } from './header/Tabs';
 import { Skills } from './skills/Skills';
 import { Traits } from './traits/Traits';
 
@@ -123,7 +123,7 @@ export function registerKamiModal() {
         <ModalWrapper
           id='kami'
           header={[
-            <Banner key='banner' data={{ account, kami: kami }} actions={{ levelUp }} />,
+            <Header key='banner' data={{ account, kami: kami }} actions={{ levelUp }} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit

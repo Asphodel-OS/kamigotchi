@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
-import { depressFx, glimmerFx } from 'app/styles/effects';
+import { depressFx } from 'app/styles/effects';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { AffinityColors } from 'constants/affinities';
 import { StatColors, StatDescriptions, StatIcons } from 'constants/stats';
@@ -11,6 +11,8 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiImage } from './KamiImage';
+
+const excludedStats = ['stamina', 'slots'];
 
 interface Props {
   data: {
@@ -22,15 +24,10 @@ interface Props {
   };
 }
 
-export const Banner = (props: Props) => {
+export const Header = (props: Props) => {
   const { account, kami } = props.data;
   const { setAccount } = useSelected();
   const { modals, setModals } = useVisibility();
-
-  const traits = kami.traits!;
-  const bodyAffinity = traits.body.affinity.toLowerCase() as keyof typeof AffinityColors;
-  const handAffinity = traits.hand.affinity.toLowerCase() as keyof typeof AffinityColors;
-  const excludedStats = ['stamina', 'slots'];
 
   const isMine = (kami: Kami) => {
     return kami.account?.index === account.index;
@@ -134,17 +131,36 @@ const Content = styled.div`
 const Title = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
   padding: ${(props) => `${props.size * 0.75}vw ${props.size * 0.45}vw`};
-  text-shadow: ${(props) => `3vw .4vw ${props.size * 0.3}vw gray`};
+  text-shadow: ${(props) => `1.2vw .3vw ${props.size * 0.2}vw gray`};
 
-  cursor: pointer;
+  align-self: flex-start;
   user-select: none;
+  cursor: pointer;
   &:active {
-    background: linear-gradient(to right, black 0, white 10%, black 20%, white 30%, black 40%);
-    animation: ${glimmerFx} 0.9s linear infinite;
-
-    text-shadow: ${(props) => `2vw 1.2vw ${props.size * 0.2}vw gray`};
+    text-shadow: ${(props) => `1vw 1vw ${props.size * 0.05}vw gray`};
   }
 `;
+
+// // an attempt to trigger random shadow/glimmer effect
+// const glimmerAnim = css(['', ' 0.9s linear infinite'] as any as TemplateStringsArray, glimmerFx);
+// const Title = styled.div<{ size: number; rand: number }>`
+//   font-size: ${(props) => props.size}vw;
+//   padding: ${(props) => `${props.size * 0.75}vw ${props.size * 0.45}vw`};
+//   text-shadow: ${(props) => `3vw .4vw ${props.size * 0.3}vw gray`};
+
+//   cursor: pointer;
+//   user-select: none;
+//   &:active {
+//     text-shadow: ${(props) => `2vw 1.2vw ${props.size * 0.2}vw gray`};
+
+//     ${({ rand }) =>
+//       (rand * 1000) % 1000 < 100 &&
+//       `
+//       background: linear-gradient(to right, black 0, white 10%, black 20%, white 30%, black 40%);
+//       animation: ${glimmerFx} 0.9s linear infinite;
+//       animation: ${glimmerAnim};
+//       `}
+// `;
 
 const Row = styled.div`
   height: 10vw;
