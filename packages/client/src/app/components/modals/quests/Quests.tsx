@@ -43,6 +43,7 @@ export function registerQuestsModal() {
           // NOTE(jb): ideally we only update when these shapes change but for
           // the time being we'll update on every tick to force a re-render.
           // just separating these out to flatten our Account shapes
+          // TODO (jb): move inside effect hook once we have proper subscriptions
           const ongoingQuests = getOngoingQuests(world, components, account.id);
           const completedQuests = getCompletedQuests(world, components, account.id);
           const ongoingParsed = parseQuestStatuses(world, components, account, ongoingQuests);
@@ -64,8 +65,6 @@ export function registerQuestsModal() {
       const [tab, setTab] = useState<TabType>('ONGOING');
       const { modals } = useVisibility();
       const [available, setAvailable] = useState<Quest[]>([]);
-      const [ongoing, setOngoing] = useState<Quest[]>([]);
-      const [completed, setCompleted] = useState<Quest[]>([]);
 
       /////////////////
       // SUBSCRIPTIONS

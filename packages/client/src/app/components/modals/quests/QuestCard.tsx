@@ -49,8 +49,7 @@ export const QuestCard = (props: Props) => {
 
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective): string => {
-    let prefix = '•';
-    if (status !== 'AVAILABLE') prefix = parseConditionalTracking(objective);
+    const prefix = status !== 'AVAILABLE' ? parseConditionalTracking(objective) : '•';
     return `${prefix} ${objective.name}`;
   };
 
