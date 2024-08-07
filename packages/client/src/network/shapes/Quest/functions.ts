@@ -97,6 +97,13 @@ export const sortOngoing = (quests: Quest[]): Quest[] => {
   });
 };
 
+// filters out onwanted ongoing quests
+export const filterOngoing = (quests: Quest[]) => {
+  if (quests.length === 0) return [];
+
+  return quests.filter((quest: Quest) => quest.index !== 10001);
+};
+
 /////////////////
 // PARSERS
 

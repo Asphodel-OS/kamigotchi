@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Quest, sortOngoingQuests } from 'network/shapes/Quest';
+import { filterOngoingQuests, Quest, sortOngoingQuests } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
@@ -31,6 +31,10 @@ export const List = (props: Props) => {
   ///////////////////
   // DISPLAY
 
+  const cleanOngoing = (quests: Quest[]) => {
+    const ongoing = [...quests];
+    return sortOngoingQuests(filterOngoingQuests(ongoing));
+  };
   // TODO: format this more elegantly
   const EmptyText = () => {
     if (mode === 'AVAILABLE') {
@@ -77,7 +81,7 @@ export const List = (props: Props) => {
           />
         ))}
       {mode === 'ONGOING' &&
-        sortOngoingQuests(quests.ongoing).map((q: Quest) => (
+        cleanOngoing(quests.ongoing).map((q: Quest) => (
           <QuestCard
             key={q.id}
             quest={q}
