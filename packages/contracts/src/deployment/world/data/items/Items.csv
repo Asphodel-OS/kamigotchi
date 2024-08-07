@@ -6,7 +6,7 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,103,Gakki Cookie S
 Items%201b9894152b7f4649a68169aa3a6bcffe/large_xp_candy_native.png,104,XP Candy (Large),Ingame,Consumable,FOOD,Kami,"This gives a lot of XP when fed to a Kamigotchi. ",,,,,,,200,,,,,No,4
 Items%201b9894152b7f4649a68169aa3a6bcffe/medium_xp_candy_native.png,105,XP Candy (Medium),Ingame,Consumable,FOOD,Kami,"Provides a decent amount of XP when fed to a Kami. ",,,,,,,100,,,,,No,5
 Items%201b9894152b7f4649a68169aa3a6bcffe/small_xp_candy_native.png,106,XP Candy (Small),Ingame,Consumable,FOOD,Kami,"Feed this to a Kamigotchi to give them a little bit of experience. ",,,,,,,25,,,,,No,6
-Items%201b9894152b7f4649a68169aa3a6bcffe/cheeseburger_native.png,112,Cheeseburger,Not Implemented,Consumable,FOOD,Kami,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. ",50,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/cheeseburger_native.png,116,Cheeseburger,For Implementation,Consumable,FOOD,Kami,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. ",50,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,107,Best Ice Cream,Ingame,Consumable,FOOD,Account,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. ",,,,,,,,16,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_medium_native.png,108,Better Ice Cream,Ingame,Consumable,FOOD,Account,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. ",,,,,,,,8,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_small_native.png,109,Ice Cream,Ingame,Consumable,FOOD,Account,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina.",,,,,,,,4,,,,No,
@@ -19,7 +19,7 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/plastic_bottle_native.png,11001,Plastic
 Items%201b9894152b7f4649a68169aa3a6bcffe/stone_native.png,11002,Stone,Ingame,Material,,,"It’s just a stone. Can be used to get Stone. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/screwdriver_native.png,11003,Screwdriver,For Implementation,Material,,,For driving screws. May be of practical use….,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/glass_jar_native.png,11004,Glass Jar,For Implementation,Material,,,"A somehow-unbroken jar of clear glass. ",,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/pine_pollen_native.png,11005,Pine Pollen,For Implementation,Material,,,"Apparently some people think this is very good for you. There’s some sort of Trapezoid on the label. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/pine_pollen_native.png,11005,Pine Pollen,Ingame,Material,,,"Apparently some people think this is very good for you. There’s some sort of Trapezoid on the label. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/wooden_stick_native.png,11006,Wooden Stick,For Implementation,Material,,,"Wood in its unprocessed form. Grows on trees. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/mint_native.png,11007,Mint,For Implementation,Material,,,A herb with many applications. Not often found here….,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/pine_cone_native.png,11008,Pine Cone,For Implementation,Material,,,"It’s a pine cone. 
