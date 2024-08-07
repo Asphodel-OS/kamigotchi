@@ -2,13 +2,17 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import { filterAvailableQuests, meetsObjectives, Quest } from 'network/shapes/Quest';
+import { meetsObjectives, Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
 interface Props {
   account: Account;
-  registry: Quest[];
+  quests: {
+    available: Quest[];
+    ongoing: Quest[];
+    completed: Quest[];
+  };
   mode: TabType;
   actions: {
     acceptQuest: (quest: Quest) => void;
@@ -20,7 +24,7 @@ interface Props {
 }
 
 export const List = (props: Props) => {
-  const { account, registry, mode, actions, utils } = props;
+  const { account, quests, mode, actions, utils } = props;
   const { acceptQuest, completeQuest } = actions;
   const { getDescribedEntity } = utils;
 
@@ -29,27 +33,26 @@ export const List = (props: Props) => {
   ///////////////////
   // DISPLAY
 
-  const getQuestsToDisplay = () => {
-    const quests = filterAvailableQuests(registry, account);
-    return quests.filter((q: Quest) => !q.complete);
-  };
+  // const getQuestsToDisplay = () => {
+  //   const quests = filterAvailableQuests(registry, quests.completed, quests.ongoing );
+  //   return quests.filter((q: Quest) => !q.complete);
+  // };
 
   const AvailableQuests = () => {
-    const quests = filterAvailableQuests(registry, account);
-
-    if (quests.length == 0)
+    if (quests.available.length == 0)
       return (
         <EmptyText>
-          No available quests.
+          No available available.
           <br /> Do something else?
         </EmptyText>
       );
 
-    return quests.map((q: Quest) => (
+    return quests.available.map((q: Quest) => (
       <QuestCard
         key={q.id}
         account={account}
         quest={q}
+        status={'AVAILABLE'}
         actions={{ accept: acceptQuest, complete: completeQuest }}
         utils={{ getDescribedEntity }}
       />
@@ -57,10 +60,8 @@ export const List = (props: Props) => {
   };
 
   const CompletedQuests = () => {
-    let quests = [...(account.quests?.completed ?? [])];
-
     const line =
-      quests.length > 0 ? (
+      quests.completed.length > 0 ? (
         <CollapseText onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? '- Completed (collapsed) -' : '- Completed -'}
         </CollapseText>
@@ -68,11 +69,12 @@ export const List = (props: Props) => {
         <div />
       );
 
-    const dones = quests.map((q: Quest) => (
+    const dones = quests.completed.map((q: Quest) => (
       <QuestCard
         key={q.id}
         account={account}
         quest={q}
+        status={'COMPLETED'}
         actions={{ accept: acceptQuest, complete: completeQuest }}
         utils={{ getDescribedEntity }}
       />
@@ -87,10 +89,9 @@ export const List = (props: Props) => {
   };
 
   const OngoingQuests = () => {
-    filterAvailableQuests(registry, account);
-    const rawQuests = [...(account.quests?.ongoing ?? [])];
+    const ongoing = [...quests.ongoing];
 
-    if (rawQuests.length == 0)
+    if (ongoing.length == 0)
       return (
         <EmptyText>
           No ongoing quests.
@@ -98,23 +99,23 @@ export const List = (props: Props) => {
         </EmptyText>
       );
 
-    rawQuests.reverse();
-
-    const completable: Quest[] = [];
-    const uncompletable: Quest[] = [];
-    rawQuests.forEach((q: Quest) => {
-      if (meetsObjectives(q)) completable.push(q);
-      else uncompletable.push(q);
+    ongoing.reverse();
+    ongoing.reverse().sort((a: Quest, b: Quest) => {
+      const aCompletable = meetsObjectives(a); // probably want to do this outside of the sort
+      const bCompletable = meetsObjectives(b);
+      if (aCompletable && !bCompletable) return -1;
+      else if (!aCompletable && bCompletable) return 1;
+      else return 0;
     });
-    const quests = completable.concat(uncompletable);
 
     return (
       <div>
-        {quests.map((q: Quest) => (
+        {ongoing.map((q: Quest) => (
           <QuestCard
             key={q.id}
             account={account}
             quest={q}
+            status={'ONGOING'}
             actions={{ accept: acceptQuest, complete: completeQuest }}
             utils={{ getDescribedEntity }}
           />

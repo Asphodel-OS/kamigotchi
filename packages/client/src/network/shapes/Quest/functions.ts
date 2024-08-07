@@ -17,12 +17,6 @@ import { checkRequirement } from './requirement';
 /////////////////
 // CHECKERS
 
-export const canAccept = (quest: Quest, account: Account, ts?: number): boolean => {
-  if (!meetsRequirements(quest)) return false;
-  if (quest.repeatable && !meetsRepeat(quest, account, ts)) return false;
-  return meetsMax(account, quest);
-};
-
 export const hasCompleted = (
   world: World,
   components: Components,
@@ -36,34 +30,6 @@ export const hasCompleted = (
   });
 
   return quests.length > 0;
-};
-
-export const isOngoing = (account: Account, questIndex: number): boolean => {
-  return account.quests?.ongoing.some((q: Quest) => q.index === questIndex) ?? false;
-};
-
-export const meetsMax = (account: Account, quest: Quest): boolean => {
-  let totCompletes = getCompletionCount(account, quest.index);
-  totCompletes += isOngoing(account, quest.index) ? 1 : 0;
-  return (isOngoing(account, quest.index) ? 1 : 0) + getCompletionCount(account, quest.index) < 1;
-};
-
-export const meetsRepeat = (quest: Quest, account: Account, ts?: number): boolean => {
-  const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
-  const curr = allQuests?.find((x) => x.index == quest.index);
-  const now = ts ?? Date.now() / 1000;
-
-  // has not accepted repeatable before
-  if (curr === undefined) return true;
-
-  // must be repeatable (should not get here)
-  if (!quest.repeatable) return false;
-
-  // must be completed
-  if (!curr.complete) return false;
-
-  const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
-  return Number(curr.startTime) + Number(wait) <= Number(now);
 };
 
 // check whether a Parsed Quest has its Objectives met
@@ -86,17 +52,36 @@ export const meetsRequirements = (quest: Quest): boolean => {
   return true;
 };
 
-//
-const getCompletionCount = (account: Account, questIndex: number): number => {
-  let ongoing = 0;
-  account.quests?.completed.forEach((q: Quest) => {
-    if (q.index === questIndex) ongoing++;
+/////////////////
+// FILTERS
+
+// filters a list of Parsed Quests to just the ones available to an Account
+export const filterAvailable = (parsedRegistry: Quest[], completed: Quest[], ongoing: Quest[]) => {
+  return parsedRegistry.filter((q: Quest) => {
+    if (!meetsRequirements(q)) return false;
+    return isAvailableByCount(q, completed, ongoing);
   });
-  return ongoing;
+};
+
+// check whether a Parsed Quest is Available to accept based on the list of an
+// Account's completed and ongoing Quests
+const isAvailableByCount = (quest: Quest, completed: Quest[], ongoing: Quest[]) => {
+  const ongoingInstance = ongoing.find((q: Quest) => q.index === quest.index);
+  const completedInstance = completed.find((q: Quest) => q.index === quest.index);
+  const now = Date.now() / 1000;
+
+  if (ongoingInstance) return false;
+  if (!completedInstance) return true;
+  if (!quest.repeatable) return false; // assume attempt limit for all other quests is 1
+
+  // assumed repeatable quest with no ongoing instance
+  const waitRequirement = completedInstance.repeatDuration ?? 0;
+  const startTime = completedInstance.startTime;
+  return Number(startTime) + Number(waitRequirement) <= Number(now);
 };
 
 /////////////////
-// GETTERS
+// PARSERS
 
 export const parseStatus = (
   world: World,

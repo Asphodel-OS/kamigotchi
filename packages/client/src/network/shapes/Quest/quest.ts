@@ -12,9 +12,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Account } from '../Account';
 import { Reward } from '../Rewards';
-import { meetsMax, meetsRepeat, meetsRequirements } from './functions';
 import { Objective, queryQuestObjectives } from './objective';
 import { Requirement, queryQuestRequirements } from './requirement';
 import { queryQuestRewards } from './reward';
@@ -102,16 +100,6 @@ export const getCompleted = (
 // get the list of Ongoing Quests for an Account
 export const getOngoing = (world: World, components: Components, accountID: EntityID): Quest[] => {
   return query(world, components, { account: accountID, completed: false });
-};
-
-// filters a list of Parsed Quests to just the ones available to an Account
-export const filterAvailable = (quests: Quest[], account: Account) => {
-  return quests.filter((q: Quest) => {
-    let meetsCount = false;
-    if (q.repeatable) meetsCount = meetsRepeat(q, account, Date.now() / 1000);
-    else meetsCount = meetsMax(account, q);
-    return meetsCount && meetsRequirements(q);
-  });
 };
 
 /////////////////

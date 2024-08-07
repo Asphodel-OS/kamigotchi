@@ -1,17 +1,9 @@
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
-import {
-  canAcceptQuest,
-  meetsObjectives,
-  meetsRepeat,
-  meetsRequirements,
-  Objective,
-  Quest,
-} from 'network/shapes/Quest';
+import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { getRewardText } from 'network/shapes/Quest/reward';
 import { Reward } from 'network/shapes/Rewards';
 import { DetailedEntity } from 'network/shapes/utils';
@@ -19,6 +11,7 @@ import { DetailedEntity } from 'network/shapes/utils';
 interface Props {
   account: Account;
   quest: Quest;
+  status: QuestStatus;
   actions: {
     accept: (quest: Quest) => void;
     complete: (quest: Quest) => void;
@@ -30,24 +23,24 @@ interface Props {
 
 // Quest Card
 export const QuestCard = (props: Props) => {
-  const { account, quest, actions, utils } = props;
+  const { account, quest, status, actions, utils } = props;
   const { accept, complete } = actions;
   const { getDescribedEntity } = utils;
 
-  const getRepeatText = (quest: Quest): string => {
-    const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
-    const curr = allQuests?.find((x) => x.index == quest.index);
+  // const getRepeatText = (quest: Quest): string => {
+  //   const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
+  //   const curr = allQuests?.find((x) => x.index == quest.index);
 
-    if (curr === undefined) return ''; // never accepted
-    if (!quest.repeatable) return 'not repeatable'; // not repeatable (mistake)
-    if (!curr.complete) return 'already ongoing'; // already ongoing
+  //   if (curr === undefined) return ''; // never accepted
+  //   if (!quest.repeatable) return 'not repeatable'; // not repeatable (mistake)
+  //   if (!curr.complete) return 'already ongoing'; // already ongoing
 
-    const now = Date.now() / 1000;
-    const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
-    if (Number(curr.startTime) + Number(wait) > Number(now))
-      return `repeats in ${moment.duration((curr.startTime + wait - now) * 1000).humanize()}`;
-    else return '';
-  };
+  //   const now = Date.now() / 1000;
+  //   const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
+  //   if (Number(curr.startTime) + Number(wait) > Number(now))
+  //     return `repeats in ${moment.duration((curr.startTime + wait - now) * 1000).humanize()}`;
+  //   else return '';
+  // };
 
   const getRewardImage = (reward: Reward) => {
     if (reward.target.type === 'REPUTATION' || reward.target.type === 'NFT') return <div />;
@@ -63,28 +56,25 @@ export const QuestCard = (props: Props) => {
     return objective.name + (showTracking ? parseConditionalTracking(objective) : '');
   };
 
+  // NOTE(jb): tooltip is probably unnecessary as we filter out unacceptable quests
   const AcceptButton = (quest: Quest) => {
     let tooltipText = '';
 
-    if (quest.repeatable) {
-      const result = meetsRepeat(quest, account);
-      if (!result) {
-        tooltipText = getRepeatText(quest);
-      }
-    }
+    // if (quest.repeatable) {
+    //   const result = meetsRepeat(quest, account);
+    //   if (!result) {
+    //     tooltipText = getRepeatText(quest);
+    //   }
+    // }
 
-    if (!meetsRequirements(quest)) {
-      tooltipText = 'Unmet requirements';
-    }
+    // if (!meetsRequirements(quest)) {
+    //   tooltipText = 'Unmet requirements';
+    // }
 
     return (
       <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
         <Tooltip text={[tooltipText]}>
-          <ActionButton
-            onClick={() => accept(quest)}
-            text='Accept'
-            disabled={!canAcceptQuest(quest, account)}
-          />
+          <ActionButton onClick={() => accept(quest)} text='Accept' />
         </Tooltip>
       </div>
     );
@@ -169,8 +159,8 @@ export const QuestCard = (props: Props) => {
       <Description>{quest.description}</Description>
       {ObjectiveDisplay(quest.objectives, false)}
       {RewardDisplay(quest.rewards)}
-      {AcceptButton(quest)}
-      {CompleteButton(quest)}
+      {status === 'AVAILABLE' && AcceptButton(quest)}
+      {status === 'ONGOING' && CompleteButton(quest)}
     </Container>
   );
 };

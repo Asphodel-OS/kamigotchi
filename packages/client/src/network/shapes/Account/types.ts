@@ -14,7 +14,6 @@ import {
 } from '../Friendship';
 import { Inventory, cleanInventories, getMusuBalance, queryInventoriesByAccount } from '../Item';
 import { Kami, KamiOptions, queryKamis } from '../Kami';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestStatuses } from '../Quest';
 import { Skill } from '../Skill';
 import { Stat, getStat } from '../Stats';
 import { getData } from '../utils';
@@ -49,10 +48,6 @@ export interface Account extends BaseAccount {
   kamis: Kami[];
   friends?: Friends;
   inventories?: Inventory[];
-  quests?: {
-    ongoing: Quest[];
-    completed: Quest[];
-  };
   skills?: Skill[]; // unimplemented for now
   stats?: {
     kills: number;
@@ -189,24 +184,6 @@ export const getAccount = (
           (getBonusValue(world, components, account.id, 'FRIENDS_LIMIT') ?? 0),
         requests: getConfigFieldValue(world, components, 'FRIENDS_REQUEST_LIMIT') * 1,
       },
-    };
-  }
-
-  // populate Quests
-  if (options?.quests) {
-    account.quests = {
-      ongoing: parseQuestStatuses(
-        world,
-        components,
-        account,
-        getOngoingQuests(world, components, account.id)
-      ),
-      completed: parseQuestStatuses(
-        world,
-        components,
-        account,
-        getCompletedQuests(world, components, account.id)
-      ),
     };
   }
 

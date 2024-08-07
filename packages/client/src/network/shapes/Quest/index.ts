@@ -1,17 +1,13 @@
 export {
-  canAccept as canAcceptQuest,
   checkObjective,
+  filterAvailable as filterAvailableQuests,
   hasCompleted as hasCompletedQuest,
-  isOngoing,
-  meetsMax,
   meetsObjectives,
-  meetsRepeat,
   meetsRequirements,
   parseStatuses as parseQuestStatuses,
 } from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';
 export {
-  filterAvailable as filterAvailableQuests,
   getCompleted as getCompletedQuests,
   getOngoing as getOngoingQuests,
   getByIndex as getQuestByIndex,

@@ -4,11 +4,14 @@ import { interval, map } from 'rxjs';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
+import { useVisibility } from 'app/stores';
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Quest,
   filterAvailableQuests,
+  getCompletedQuests,
+  getOngoingQuests,
   getRegistryQuests,
   parseQuestStatuses,
 } from 'network/shapes/Quest';
@@ -33,15 +36,24 @@ export function registerQuestsModal() {
           const { network } = layers;
           const { world, components } = network;
           const account = getAccountFromBurner(network, {
-            quests: true,
             kamis: true,
             inventory: true,
           });
+
+          // NOTE(jb): ideally we only update when these shapes change but for
+          // the time being we'll update on every tick to force a re-render.
+          // just separating these out to flatten our Account shapes
+          const ongoingQuests = getOngoingQuests(world, components, account.id);
+          const completedQuests = getCompletedQuests(world, components, account.id);
+          const ongoingParsed = parseQuestStatuses(world, components, account, ongoingQuests);
+          const completedParsed = parseQuestStatuses(world, components, account, completedQuests);
 
           return {
             network,
             data: {
               account,
+              ongoing: ongoingParsed,
+              completed: completedParsed,
               registry: getRegistryQuests(world, components),
             },
           };
@@ -50,22 +62,28 @@ export function registerQuestsModal() {
     ({ network, data }) => {
       const { actions, api, components, notifications, world } = network;
       const [tab, setTab] = useState<TabType>('ONGOING');
-      const [registry, setRegistry] = useState<Quest[]>([]);
-      const [numAvail, setNumAvail] = useState(0);
+      const { modals } = useVisibility();
+      const [available, setAvailable] = useState<Quest[]>([]);
+
+      /////////////////
+      // SUBSCRIPTIONS
 
       // update the State-based (Parsed) Quest Registry when we detect a change
       // in the Props-based (UnParsed) Quest Registry. recheck the number of
       // available quests for the Notification bar as well
       useEffect(() => {
         const parsedRegistry = parseQuestStatuses(world, components, data.account, data.registry);
-        const availableQuests = filterAvailableQuests(parsedRegistry, data.account);
-        setRegistry(parsedRegistry);
-        setNumAvail(availableQuests.length);
-      }, [data.registry.length]);
+        const availableQuests = filterAvailableQuests(parsedRegistry, data.completed, data.ongoing);
+
+        if (availableQuests.length > 0) setTab('AVAILABLE');
+        setAvailable(availableQuests);
+      }, [data.registry.length, modals.quests]);
 
       // update the Notifications when the number of available quests changes
       useEffect(() => {
         const id = 'Available Quests';
+        const numAvail = available.length;
+
         if (notifications.has(id as EntityID)) {
           if (numAvail == 0) notifications.remove(id as EntityID);
           notifications.update(id as EntityID, {
@@ -85,10 +103,10 @@ export function registerQuestsModal() {
               modal: 'quests',
             });
         }
-      }, [numAvail]);
+      }, [available.length]);
 
-      ///////////////////
-      // INTERACTIONS
+      /////////////////
+      // ACTIONS
 
       const acceptQuest = async (quest: Quest) => {
         actions.add({
@@ -125,7 +143,7 @@ export function registerQuestsModal() {
         >
           <List
             account={data.account}
-            registry={registry}
+            quests={{ available, ongoing: data.ongoing, completed: data.completed }}
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{
