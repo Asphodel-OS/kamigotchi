@@ -64,6 +64,8 @@ export function registerQuestsModal() {
       const [tab, setTab] = useState<TabType>('ONGOING');
       const { modals } = useVisibility();
       const [available, setAvailable] = useState<Quest[]>([]);
+      const [ongoing, setOngoing] = useState<Quest[]>([]);
+      const [completed, setCompleted] = useState<Quest[]>([]);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -140,9 +142,9 @@ export function registerQuestsModal() {
           footer={<Footer balance={data.account.reputation.agency} />}
           canExit
           truncate
+          noPadding
         >
           <List
-            account={data.account}
             quests={{ available, ongoing: data.ongoing, completed: data.completed }}
             mode={tab}
             actions={{ acceptQuest, completeQuest }}

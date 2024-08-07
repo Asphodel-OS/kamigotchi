@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
-import { Account } from 'network/shapes/Account';
+import { Overlay } from 'app/components/library/styles';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { getRewardText } from 'network/shapes/Quest/reward';
@@ -9,7 +9,6 @@ import { Reward } from 'network/shapes/Rewards';
 import { DetailedEntity } from 'network/shapes/utils';
 
 interface Props {
-  account: Account;
   quest: Quest;
   status: QuestStatus;
   actions: {
@@ -23,60 +22,27 @@ interface Props {
 
 // Quest Card
 export const QuestCard = (props: Props) => {
-  const { account, quest, status, actions, utils } = props;
+  const { quest, status, actions, utils } = props;
   const { accept, complete } = actions;
   const { getDescribedEntity } = utils;
 
-  // const getRepeatText = (quest: Quest): string => {
-  //   const allQuests = account.quests?.ongoing.concat(account.quests?.completed);
-  //   const curr = allQuests?.find((x) => x.index == quest.index);
-
-  //   if (curr === undefined) return ''; // never accepted
-  //   if (!quest.repeatable) return 'not repeatable'; // not repeatable (mistake)
-  //   if (!curr.complete) return 'already ongoing'; // already ongoing
-
-  //   const now = Date.now() / 1000;
-  //   const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
-  //   if (Number(curr.startTime) + Number(wait) > Number(now))
-  //     return `repeats in ${moment.duration((curr.startTime + wait - now) * 1000).humanize()}`;
-  //   else return '';
-  // };
-
   const getRewardImage = (reward: Reward) => {
     if (reward.target.type === 'REPUTATION' || reward.target.type === 'NFT') return <div />;
-    return (
-      <ConditionImage
-        src={getDescribedEntity(reward.target.type, reward.target.index || 0).image}
-      />
-    );
+    return <Image src={getDescribedEntity(reward.target.type, reward.target.index || 0).image} />;
   };
 
   // idea: room objectives should state the number of rooms away you are on the grid map
-  const getObjectiveText = (objective: Objective, showTracking: boolean): string => {
-    return objective.name + (showTracking ? parseConditionalTracking(objective) : '');
+  const getObjectiveText = (objective: Objective): string => {
+    let prefix = '•';
+    if (status !== 'AVAILABLE') prefix = parseConditionalTracking(objective);
+    return `${prefix} ${objective.name}`;
   };
 
-  // NOTE(jb): tooltip is probably unnecessary as we filter out unacceptable quests
   const AcceptButton = (quest: Quest) => {
-    let tooltipText = '';
-
-    // if (quest.repeatable) {
-    //   const result = meetsRepeat(quest, account);
-    //   if (!result) {
-    //     tooltipText = getRepeatText(quest);
-    //   }
-    // }
-
-    // if (!meetsRequirements(quest)) {
-    //   tooltipText = 'Unmet requirements';
-    // }
-
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-        <Tooltip text={[tooltipText]}>
-          <ActionButton onClick={() => accept(quest)} text='Accept' />
-        </Tooltip>
-      </div>
+      <Overlay bottom={0.8} right={0.8}>
+        <ActionButton onClick={() => accept(quest)} text='Accept' />
+      </Overlay>
     );
   };
 
@@ -87,7 +53,7 @@ export const QuestCard = (props: Props) => {
     }
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+      <Overlay bottom={0.8} right={0.8}>
         <Tooltip text={[tooltipText]}>
           <ActionButton
             onClick={() => complete(quest)}
@@ -95,69 +61,42 @@ export const QuestCard = (props: Props) => {
             disabled={!meetsObjectives(quest)}
           />
         </Tooltip>
-      </div>
+      </Overlay>
     );
   };
 
-  // not in use
-  // const RequirementDisplay = (requirements: Requirement[]) => {
-  //   if (requirements.length == 0) return <div />;
-  //   return (
-  //     <ConditionContainer key='requirements'>
-  //       <ConditionName>Requirements</ConditionName>
-  //       {requirements.map((requirement) => (
-  //         <ConditionDescription key={requirement.id}>
-  //           - {`${parseCondText(requirement)}`}
-  //         </ConditionDescription>
-  //       ))}
-  //     </ConditionContainer>
-  //   );
-  // };
-
-  const ObjectiveDisplay = (objectives: Objective[], showTracking: boolean) => {
-    if (objectives.length == 0) return <div />;
+  const ObjectiveDisplay = (objectives: Objective[]) => {
     return (
-      <ConditionContainer key='objectives'>
-        <ConditionName>Objectives</ConditionName>
+      <Section key='objectives'>
+        <SubTitle>Objectives</SubTitle>
         {objectives.map((objective) => (
-          <ConditionDescription key={objective.id}>
-            - {`${getObjectiveText(objective, showTracking)}`}
-          </ConditionDescription>
+          <ConditionText key={objective.id}>{`${getObjectiveText(objective)}`}</ConditionText>
         ))}
-      </ConditionContainer>
+      </Section>
     );
   };
 
   const RewardDisplay = (rewards: Reward[]) => {
-    if (rewards.length == 0) return <div />;
-
-    // sort rewards so reputation are always first
-    const first = 'REPUTATION';
-    rewards.sort((x, y) => {
-      return x.target.type == first ? -1 : y.target.type == first ? 1 : 0;
-    });
     return (
-      <ConditionContainer key='rewards'>
-        <ConditionName>Rewards</ConditionName>
+      <Section key='rewards'>
+        <SubTitle>Rewards</SubTitle>
         {rewards.map((reward) => (
           <Row key={reward.id}>
-            <ConditionDescription key={reward.id}>
-              - {`${getRewardText(reward)}`}
-            </ConditionDescription>
-            {getRewardImage(reward)}
+            <ConditionText key={reward.id}>
+              {getRewardImage(reward)}
+              {`${getRewardText(reward)}`}
+            </ConditionText>
           </Row>
         ))}
-      </ConditionContainer>
+      </Section>
     );
   };
 
-  // available, ongoing, completed
-
   return (
-    <Container key={quest.id}>
-      <Name>{quest.name}</Name>
+    <Container key={quest.id} completed={status === 'COMPLETED'}>
+      <Title>{quest.name}</Title>
       <Description>{quest.description}</Description>
-      {ObjectiveDisplay(quest.objectives, false)}
+      {ObjectiveDisplay(quest.objectives)}
       {RewardDisplay(quest.rewards)}
       {status === 'AVAILABLE' && AcceptButton(quest)}
       {status === 'ONGOING' && CompleteButton(quest)}
@@ -165,58 +104,47 @@ export const QuestCard = (props: Props) => {
   );
 };
 
-const Container = styled.div`
-  border-color: black;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  display: flex;
-  justify-content: start;
-  align-items: start;
-  flex-direction: column;
-  padding: 1vw;
-  margin: 0.8vw;
+const Container = styled.div<{ completed?: boolean }>`
+  position: relative;
+  border: solid black 0.15vw;
+  border-radius: 1.2vw;
+  padding: 1.2vw;
+  margin: 0.9vw;
 
-  color: #333;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  ${({ completed }) => completed && 'opacity: 0.3;'}
 `;
 
-const Name = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: left;
-  justify-content: flex-start;
+const Title = styled.div`
+  font-size: 1.2vw;
+  line-height: 1.8vw;
   padding: 0.7vh 0vw;
 `;
 
 const Description = styled.div`
-  font-family: Pixel;
-  text-align: left;
-  line-height: 1.2vw;
-  font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
+  line-height: 1.4vw;
+  font-size: 0.75vw;
+  padding: 0.45vw;
 `;
 
-const ConditionContainer = styled.div`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 0.4vw 0.5vw;
+  margin: 0.6vw 0.45vw;
 `;
 
-const ConditionName = styled.div`
-  font-family: Pixel;
-  font-size: 0.85vw;
+const SubTitle = styled.div`
+  font-size: 0.9vw;
+  line-height: 1.2vw;
   text-align: left;
   justify-content: flex-start;
   padding: 0vw 0vw 0.3vw 0vw;
-`;
-
-const ConditionDescription = styled.div`
-  font-family: Pixel;
-  text-align: left;
-  font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
 `;
 
 const Row = styled.div`
@@ -226,6 +154,11 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const ConditionImage = styled.img`
+const ConditionText = styled.div`
+  font-size: 0.7vw;
+  padding: 0.4vh 0.5vw;
+`;
+
+const Image = styled.img`
   height: 1.5vw;
 `;

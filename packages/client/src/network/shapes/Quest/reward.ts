@@ -9,7 +9,14 @@ export const queryQuestRewards = (
   components: Components,
   questIndex: number
 ): Reward[] => {
-  return queryRewardsOf(world, components, 'registry.quest.reward', questIndex);
+  let results = queryRewardsOf(world, components, 'registry.quest.reward', questIndex);
+  // sort rewards so reputation are always first
+  results.sort((x, y) => {
+    if (x.target.type === 'REPUTATION') return -1;
+    if (y.target.type === 'REPUTATION') return 1;
+    return 0;
+  });
+  return results;
 };
 
 export const getRewardText = (reward: Reward, name = ''): string => {

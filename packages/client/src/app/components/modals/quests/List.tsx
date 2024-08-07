@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
 interface Props {
-  account: Account;
   quests: {
     available: Quest[];
     ongoing: Quest[];
@@ -24,10 +22,10 @@ interface Props {
 }
 
 export const List = (props: Props) => {
-  const { account, quests, mode, actions, utils } = props;
+  const { quests, mode, actions, utils } = props;
   const { acceptQuest, completeQuest } = actions;
   const { getDescribedEntity } = utils;
-  const [showCompleted, setShowCompleted] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   ///////////////////
   // DISPLAY
