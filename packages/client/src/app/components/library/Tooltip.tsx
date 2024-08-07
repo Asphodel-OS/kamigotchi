@@ -5,10 +5,11 @@ interface Props {
   text: string[];
   children: React.ReactNode;
   grow?: boolean;
+  direction?: 'row' | 'column';
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, text } = props;
+  const { children, text, direction } = props;
   const flexGrow = props.grow ? '1' : '0';
   const conjoinedText = text.join('\n');
 
@@ -22,7 +23,7 @@ export const Tooltip = (props: Props) => {
         flexGrow: flexGrow,
         display: 'flex',
         cursor: 'help',
-        flexDirection: 'column',
+        flexDirection: direction ?? 'column',
       }}
       componentsProps={{
         tooltip: {

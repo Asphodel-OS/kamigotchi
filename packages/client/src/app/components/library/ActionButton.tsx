@@ -12,6 +12,7 @@ interface Props {
   size?: 'small' | 'medium' | 'large' | 'vending' | 'menu' | 'validator';
   pulse?: boolean;
   tooltip?: string[];
+  noMargin?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -75,7 +76,7 @@ export const ActionButton = (props: Props) => {
     }
 
     if (props.fill) styles.flexGrow = '1';
-
+    if (props.noMargin) styles.margin = '0vw';
     return styles;
   };
 

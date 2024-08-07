@@ -25,10 +25,26 @@ export const QuestCard = (props: Props) => {
   const { quest, status, actions, utils } = props;
   const { accept, complete } = actions;
   const { getDescribedEntity } = utils;
+  const imageCache = new Map<string, JSX.Element>();
+
+  /////////////////
+  // INTERPRETATION
 
   const getRewardImage = (reward: Reward) => {
     if (reward.target.type === 'REPUTATION' || reward.target.type === 'NFT') return <div />;
-    return <Image src={getDescribedEntity(reward.target.type, reward.target.index || 0).image} />;
+
+    const key = `reward-${reward.target.type}-${reward.target.index}`;
+    if (imageCache.has(key)) return imageCache.get(key);
+
+    const entity = getDescribedEntity(reward.target.type, reward.target.index || 0);
+    const component = (
+      <Tooltip key={key} text={[entity.name]} direction='row'>
+        <Image src={entity.image} />
+      </Tooltip>
+    );
+    imageCache.set(key, component);
+
+    return component;
   };
 
   // idea: room objectives should state the number of rooms away you are on the grid map
@@ -38,20 +54,19 @@ export const QuestCard = (props: Props) => {
     return `${prefix} ${objective.name}`;
   };
 
+  /////////////////
+  // DISPLAY
+
   const AcceptButton = (quest: Quest) => {
     return (
       <Overlay bottom={0.8} right={0.8}>
-        <ActionButton onClick={() => accept(quest)} text='Accept' />
+        <ActionButton onClick={() => accept(quest)} text='Accept' noMargin />
       </Overlay>
     );
   };
 
   const CompleteButton = (quest: Quest) => {
-    let tooltipText = '';
-    if (!meetsObjectives(quest)) {
-      tooltipText = 'Unmet objectives';
-    }
-
+    const tooltipText = meetsObjectives(quest) ? '' : 'Unmet objectives';
     return (
       <Overlay bottom={0.8} right={0.8}>
         <Tooltip text={[tooltipText]}>
@@ -59,36 +74,10 @@ export const QuestCard = (props: Props) => {
             onClick={() => complete(quest)}
             text='Complete'
             disabled={!meetsObjectives(quest)}
+            noMargin
           />
         </Tooltip>
       </Overlay>
-    );
-  };
-
-  const ObjectiveDisplay = (objectives: Objective[]) => {
-    return (
-      <Section key='objectives'>
-        <SubTitle>Objectives</SubTitle>
-        {objectives.map((objective) => (
-          <ConditionText key={objective.id}>{`${getObjectiveText(objective)}`}</ConditionText>
-        ))}
-      </Section>
-    );
-  };
-
-  const RewardDisplay = (rewards: Reward[]) => {
-    return (
-      <Section key='rewards'>
-        <SubTitle>Rewards</SubTitle>
-        {rewards.map((reward) => (
-          <Row key={reward.id}>
-            <ConditionText key={reward.id}>
-              {getRewardImage(reward)}
-              {`${getRewardText(reward)}`}
-            </ConditionText>
-          </Row>
-        ))}
-      </Section>
     );
   };
 
@@ -96,8 +85,29 @@ export const QuestCard = (props: Props) => {
     <Container key={quest.id} completed={status === 'COMPLETED'}>
       <Title>{quest.name}</Title>
       <Description>{quest.description}</Description>
-      {ObjectiveDisplay(quest.objectives)}
-      {RewardDisplay(quest.rewards)}
+      {quest.objectives.length > 0 && (
+        <Section key='objectives'>
+          <SubTitle>Objectives</SubTitle>
+          {quest.objectives.map((objective) => (
+            <ConditionText key={objective.id}>{`${getObjectiveText(objective)}`}</ConditionText>
+          ))}
+        </Section>
+      )}
+      {quest.rewards.length > 0 && (
+        <Section key='rewards'>
+          <SubTitle>Rewards</SubTitle>
+          <Row>
+            {quest.rewards.map((reward) => (
+              <Row key={reward.id}>
+                <ConditionText key={reward.id}>
+                  {getRewardImage(reward)}
+                  {`${getRewardText(reward)}`}
+                </ConditionText>
+              </Row>
+            ))}
+          </Row>
+        </Section>
+      )}
       {status === 'AVAILABLE' && AcceptButton(quest)}
       {status === 'ONGOING' && CompleteButton(quest)}
     </Container>
@@ -122,12 +132,12 @@ const Container = styled.div<{ completed?: boolean }>`
 const Title = styled.div`
   font-size: 1.2vw;
   line-height: 1.8vw;
-  padding: 0.7vh 0vw;
+  padding: 0.45vw 0vw;
 `;
 
 const Description = styled.div`
-  line-height: 1.4vw;
   font-size: 0.75vw;
+  line-height: 1.4vw;
   padding: 0.45vw;
 `;
 
@@ -155,8 +165,14 @@ const Row = styled.div`
 `;
 
 const ConditionText = styled.div`
-  font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
+  font-size: 0.75vw;
+  padding: 0.3vw;
+  gap: 0.15vw;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 const Image = styled.img`
