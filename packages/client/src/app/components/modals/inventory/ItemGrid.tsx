@@ -13,7 +13,7 @@ interface Props {
   actions: {
     feedKami: (kami: Kami, item: Item) => void;
     feedAccount: (item: Item) => void;
-    openLootbox: (index: number, amount: number) => void;
+    openLootbox: (item: Item, amount: number) => void;
   };
 }
 
@@ -31,7 +31,11 @@ export const ItemGrid = (props: Props) => {
     let options: Option[] = [];
 
     if (item.is.lootbox) {
-      options = [{ text: 'Open', onClick: () => openLootbox(item.index, 1) }];
+      const count = Math.min(Math.max(inv.balance, 3), 10);
+      options = [
+        { text: 'Open', onClick: () => openLootbox(item, 1) },
+        { text: `Open ${count}`, onClick: () => openLootbox(item, count) },
+      ];
     } else if (item.for && item.for === 'ACCOUNT') {
       options = [{ text: 'Consume', onClick: () => feedAccount(inv.item) }];
     } else if (item.for && item.for === 'KAMI') {

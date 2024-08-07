@@ -57,8 +57,10 @@ export const Commits = (props: Props) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ExpiredName>{getCommitTimeFrom(commit)} [Expired]</ExpiredName>
-        <Description>Your item is stuck, but can be retrieved.</Description>
-        <Description> Please create a support ticket on discord with this commit's ID.</Description>
+        <Description>
+          Your item is stuck, but can be retrieved. <br />
+          Please create a support ticket on discord with this commit's ID.
+        </Description>
         <Row>
           <ActionButton
             onClick={() => {

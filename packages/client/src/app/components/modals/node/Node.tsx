@@ -14,10 +14,7 @@ import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode, getNodeByIndex } from 'network/shapes/Node';
 import { passesNodeReqs } from 'network/shapes/Node/functions';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
-import { Commit, filterRevealable } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
-import { playClick } from 'utils/sounds';
-import { useAccount, useWatchBlockNumber } from 'wagmi';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { ScavengeBar } from './ScavengeBar';
@@ -63,7 +60,13 @@ export function registerNodeModal() {
     ({ data, network }) => {
       // console.log('Node Modal Data', data);
       const { account } = data;
-      const { actions, api, components, world } = network;
+      const {
+        actions,
+        api,
+        components,
+        world,
+        localSystems: { DTRevealer },
+      } = network;
       const { nodeIndex } = useSelected();
       const { modals, setModals } = useVisibility();
       const [node, setNode] = useState<Node>(data.node);
@@ -98,79 +101,6 @@ export function registerNodeModal() {
           node: node.drops ?? [],
           scavenge: getDTDetails(world, components, scavBar?.rewards[0].droptable ?? NullDT),
         };
-      };
-
-      ///////////////////
-      // REVEAL FLOW
-
-      const { isConnected } = useAccount();
-      const [blockNumber, setBlockNumber] = useState(BigInt(0));
-      const [triedReveal, setTriedReveal] = useState(true);
-      const [waitingToReveal, setWaitingToReveal] = useState(false);
-
-      useWatchBlockNumber({
-        onBlockNumber: (n) => {
-          setBlockNumber(n);
-        },
-      });
-
-      useEffect(() => {
-        const tx = async () => {
-          if (!isConnected) return;
-
-          const filtered = filterRevealable(data.commits, Number(blockNumber));
-          if (!triedReveal && filtered.length > 0) {
-            try {
-              // wait to give buffer for rpc
-              await new Promise((resolve) => setTimeout(resolve, 500));
-              handleReveal(filtered);
-              setTriedReveal(true);
-            } catch (e) {
-              console.log('Lootbox.tsx: reveal failed', e);
-            }
-            if (waitingToReveal) setWaitingToReveal(false);
-          }
-        };
-
-        tx();
-      }, [data.commits]);
-
-      const revealTx = async (commits: Commit[]) => {
-        const ids = commits.map((commit) => commit.id);
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'LootboxReveal',
-          params: [ids],
-          description: `Inspecting lootbox contents`,
-          execute: async () => {
-            return api.player.droptable.reveal(ids);
-          },
-        });
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-        return;
-      };
-
-      const handleCommit = async (scavBar: ScavBar) => {
-        playClick();
-        try {
-          await scavClaim(scavBar);
-
-          setWaitingToReveal(true);
-          setTriedReveal(false);
-        } catch (e) {
-          console.log('Node.tsx: handleOpen() open failed', e);
-        }
-      };
-
-      const handleReveal = async (commits: Commit[]) => {
-        await revealTx(commits);
-
-        // wait to give buffer for rpc
-        await new Promise((resolve) => setTimeout(resolve, 500));
       };
 
       ///////////////////
@@ -238,6 +168,7 @@ export function registerNodeModal() {
       };
 
       const scavClaim = async (scavBar: ScavBar) => {
+        DTRevealer.nameEntity('scavenge', scavBar.id);
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
@@ -279,7 +210,7 @@ export function registerNodeModal() {
                 <ScavengeBar
                   scavBar={scavBar}
                   currPoints={getScavPoints(world, components, 'node', node.index, account.id)}
-                  actions={{ claim: handleCommit }}
+                  actions={{ claim: scavClaim }}
                 />
               }
             />,

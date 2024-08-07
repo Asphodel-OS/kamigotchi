@@ -13,6 +13,7 @@ import { Components } from 'network/';
 
 export interface Commit {
   id: EntityID;
+  entityIndex: EntityIndex;
   revealBlock: number;
   holder: EntityID;
   type: string;
@@ -33,13 +34,19 @@ export const canReveal = (commit: Commit, currBlock: number): boolean => {
 /////////////////
 // SHAPES
 
-export const getCommit = (world: World, components: Components, index: EntityIndex): Commit => {
+export const getCommit = (
+  world: World,
+  components: Components,
+  index: EntityIndex,
+  holderID?: EntityID
+): Commit => {
   const { HolderID, RevealBlock, Type } = components;
 
   return {
     id: world.entities[index],
+    entityIndex: index,
     revealBlock: (getComponentValue(RevealBlock, index)?.value as number) * 1,
-    holder: formatEntityID(getComponentValue(HolderID, index)?.value ?? ''),
+    holder: holderID ?? formatEntityID(getComponentValue(HolderID, index)?.value ?? ''),
     type: getComponentValue(Type, index)?.value as string,
   };
 };
@@ -62,5 +69,5 @@ export const queryHolderCommits = (
   ];
 
   const raw = Array.from(runQuery(toQuery)).reverse(); // reversed for descending time order
-  return raw.map((index): Commit => getCommit(world, components, index));
+  return raw.map((index): Commit => getCommit(world, components, index, holderID));
 };

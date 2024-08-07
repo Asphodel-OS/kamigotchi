@@ -11,6 +11,7 @@ import { initExplorer } from './explorer';
 import { initPlayground } from './playground';
 import { SetupContractConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
+import { createDTRevealerSystem } from './systems/DTRevealerSystem';
 
 export type NetworkLayer = Awaited<ReturnType<typeof createNetworkLayer>>;
 
@@ -31,16 +32,29 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const notifications = createNotificationSystem(world);
   const api = { admin: createAdminAPI(systems), player: createPlayerAPI(systems) };
 
+  // local systems
+  const DTRevealer = createDTRevealerSystem(
+    world,
+    components,
+    network.blockNumber$,
+    actions,
+    notifications,
+    api.player
+  );
+
   let networkLayer = {
     world,
     network,
-    actions,
+    actions, // global system
+    notifications, // global system
     components,
-    notifications,
     startSync,
     systems, // SystemExecutor
     createSystems, // SystemExecutor factory function
     api: api,
+    localSystems: {
+      DTRevealer,
+    },
     updates: {
       components: {
         Network: defineComponent(world, { value: Type.Boolean }), // local comp to tiggers updates

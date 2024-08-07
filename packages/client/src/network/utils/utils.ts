@@ -238,6 +238,23 @@ export function getStringColor(address: string) {
   return randomColor(keccak256(address).substring(2));
 }
 
+export function waitForComponentValueUpdate<S extends Schema, T>(
+  component: Component<S, Metadata, T>,
+  entity: EntityIndex
+): Promise<void> {
+  const [resolve, , promise] = deferred<void>();
+
+  let dispose = resolve;
+  const subscription = component.update$.pipe(filter((e) => e.entity === entity)).subscribe(() => {
+    resolve();
+    dispose();
+  });
+
+  dispose = () => subscription?.unsubscribe();
+
+  return promise;
+}
+
 export function waitForComponentValueIn<S extends Schema, T>(
   component: Component<S, Metadata, T>,
   entity: EntityIndex,

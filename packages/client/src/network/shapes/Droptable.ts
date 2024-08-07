@@ -11,6 +11,11 @@ export interface Droptable {
   weights: number[];
 }
 
+export interface DTCommit extends Commit {
+  parentID: EntityID;
+  rolls: number;
+}
+
 export interface DTDetails {
   rarity: number;
   object: DetailedEntity;
@@ -91,7 +96,7 @@ export const getDTResults = (
     if (amounts[i] > 0) {
       const rarity = droptable.weights[i];
       const object = getItemDetailsByIndex(world, components, droptable.keys[i]);
-      results.push({ amount: amounts[i], rarity, object });
+      results.push({ amount: amounts[i] * 1, rarity, object });
     }
   }
   return results;
@@ -101,8 +106,17 @@ export const queryDTCommits = (
   world: World,
   components: Components,
   holderID: EntityID
-): Commit[] => {
-  return queryHolderCommits(world, components, 'ITEM_DROPTABLE_COMMIT', holderID);
+): DTCommit[] => {
+  const { For, Value } = components;
+
+  const commits = queryHolderCommits(world, components, 'ITEM_DROPTABLE_COMMIT', holderID);
+  return commits.map((commit) => {
+    return {
+      ...commit,
+      parentID: formatEntityID((getComponentValue(For, commit.entityIndex)?.value || 0).toString()),
+      rolls: (getComponentValue(Value, commit.entityIndex)?.value as number) * 1,
+    };
+  });
 };
 
 const getLogEntityIndex = (

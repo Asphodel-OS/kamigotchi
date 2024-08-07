@@ -43,7 +43,13 @@ export function registerInventoryModal() {
 
     // Render
     ({ network, data }) => {
-      const { actions, api, systems, world } = network;
+      const {
+        actions,
+        api,
+        systems,
+        world,
+        localSystems: { DTRevealer },
+      } = network;
       const { account } = data;
       const { modals, setModals } = useVisibility();
 
@@ -101,22 +107,23 @@ export function registerInventoryModal() {
         });
       };
 
-      const openLootbox = async (index: number, amount: number) => {
+      const openLootbox = async (item: Item, amount: number) => {
+        DTRevealer.nameEntity(item.id, item.name); // name for commits
+
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
           action: 'LootboxCommit',
-          params: [index, amount],
-          description: `Opening ${amount} of lootbox ${index}`,
+          params: [item.index, amount],
+          description: `Opening ${amount} ${item.name}`,
           execute: async () => {
-            return api.player.lootbox.commit(index, amount);
+            return api.player.lootbox.commit(item.index, amount);
           },
         });
         await waitForActionCompletion(
           actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
-        setModals({ ...modals, reveal: true });
       };
 
       /////////////////

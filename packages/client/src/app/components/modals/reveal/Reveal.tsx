@@ -6,15 +6,13 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { settingsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { queryDTCommits } from 'network/shapes/Droptable';
-import { Commit, filterRevealable } from 'network/shapes/utils/commits';
-import { useAccount, useWatchBlockNumber } from 'wagmi';
+import { Commit } from 'network/shapes/utils/commits';
+import { useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
-import { Revealing } from './Revealing';
 
 export function registerRevealModal() {
   registerUIComponent(
@@ -34,12 +32,6 @@ export function registerRevealModal() {
           const { world, components } = network;
           const account = getAccountFromBurner(network);
           const commits = queryDTCommits(world, components, account.id);
-          // const lootboxLog = getDTLogByHash(
-          //   world,
-          //   components,
-          //   account.id,
-          //   getItemByIndex(world, components, 10001)?.id!
-          // );
 
           return {
             network: layers.network,
@@ -50,16 +42,15 @@ export function registerRevealModal() {
 
     // Render
     ({ network, data }) => {
-      const { isConnected } = useAccount();
       const { commits } = data;
-      const { actions, api, world } = network;
+      const {
+        actions,
+        api,
+        world,
+        localSystems: { DTRevealer },
+      } = network;
 
-      const { modals } = useVisibility();
-      const [tab, setTab] = useState('COMMITS');
       const [blockNumber, setBlockNumber] = useState(BigInt(0));
-
-      /////////////////
-      // SUBSCRIPTIONS
 
       useWatchBlockNumber({
         onBlockNumber: (n) => {
@@ -67,34 +58,10 @@ export function registerRevealModal() {
         },
       });
 
-      // Refresh modal upon closure
       useEffect(() => {
-        if (!modals.reveal) {
-          setTab('COMMITS');
-        }
-      }, [modals.reveal]);
-
-      /////////////////
-      // ACTIONS
-
-      useEffect(() => {
-        const tx = async () => {
-          if (!isConnected) return;
-
-          const filtered = filterRevealable(commits, Number(blockNumber));
-          if (filtered.length > 0) {
-            try {
-              // wait to give buffer for rpc
-              // await new Promise((resolve) => setTimeout(resolve, 500));
-              revealTx(filtered);
-            } catch (e) {
-              console.log('Lootbox.tsx: reveal failed', e);
-            }
-          }
-        };
-
-        tx();
-      }, [commits]);
+        commits.map((commit) => DTRevealer.add(commit));
+        DTRevealer.execute();
+      }, [commits, blockNumber]);
 
       const revealTx = async (commits: Commit[]) => {
         const ids = commits.map((commit) => commit.id);
@@ -112,42 +79,6 @@ export function registerRevealModal() {
           actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
-
-        // wait to give buffer for rpc
-        // await new Promise((resolve) => setTimeout(resolve, 500));
-        setTab('REWARDS');
-      };
-
-      /////////////
-      // DISPLAY
-
-      const BackButton = () => {
-        if (tab === 'COMMITS') return <div></div>;
-        return (
-          <BackWrapper>
-            <ActionButton
-              key='button-back'
-              text='<'
-              size='medium'
-              onClick={() => setTab('COMMITS')}
-            />
-          </BackWrapper>
-        );
-      };
-
-      const SelectScreen = () => {
-        if (tab === 'REVEALING') {
-          return <Revealing />;
-          // } else if (tab === 'RESULTS') {
-          //   return <Rewards account={account} log={lootboxLog} />;
-        } else if (tab === 'COMMITS') {
-          return (
-            <Commits
-              data={{ commits: commits, blockNumber: Number(blockNumber) }}
-              actions={{ revealTx }}
-            />
-          );
-        }
       };
 
       return (
@@ -158,8 +89,10 @@ export function registerRevealModal() {
           canExit
         >
           <Container>
-            {BackButton()}
-            {SelectScreen()}
+            <Commits
+              data={{ commits: commits, blockNumber: Number(blockNumber) }}
+              actions={{ revealTx }}
+            />
           </Container>
         </ModalWrapper>
       );
