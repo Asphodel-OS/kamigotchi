@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import { meetsObjectives, Quest } from 'network/shapes/Quest';
+import { Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
@@ -27,111 +27,79 @@ export const List = (props: Props) => {
   const { account, quests, mode, actions, utils } = props;
   const { acceptQuest, completeQuest } = actions;
   const { getDescribedEntity } = utils;
-
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
 
   ///////////////////
   // DISPLAY
 
-  // const getQuestsToDisplay = () => {
-  //   const quests = filterAvailableQuests(registry, quests.completed, quests.ongoing );
-  //   return quests.filter((q: Quest) => !q.complete);
-  // };
-
-  const AvailableQuests = () => {
-    if (quests.available.length == 0)
-      return (
-        <EmptyText>
+  // TODO: format this more elegantly
+  const EmptyText = () => {
+    if (mode === 'AVAILABLE') {
+      return quests.available.length > 0 ? (
+        <div />
+      ) : (
+        <BigText>
           No available available.
           <br /> Do something else?
-        </EmptyText>
+        </BigText>
       );
-
-    return quests.available.map((q: Quest) => (
-      <QuestCard
-        key={q.id}
-        account={account}
-        quest={q}
-        status={'AVAILABLE'}
-        actions={{ accept: acceptQuest, complete: completeQuest }}
-        utils={{ getDescribedEntity }}
-      />
-    ));
+    } else {
+      return quests.ongoing.length > 0 ? (
+        <div />
+      ) : (
+        <BigText>
+          No ongoing quests.
+          <br /> Get a job?
+        </BigText>
+      );
+    }
   };
 
-  const CompletedQuests = () => {
-    const line =
-      quests.completed.length > 0 ? (
-        <CollapseText onClick={() => setIsCollapsed(!isCollapsed)}>
-          {isCollapsed ? '- Completed (collapsed) -' : '- Completed -'}
-        </CollapseText>
-      ) : (
-        <div />
-      );
-
-    const dones = quests.completed.map((q: Quest) => (
-      <QuestCard
-        key={q.id}
-        account={account}
-        quest={q}
-        status={'COMPLETED'}
-        actions={{ accept: acceptQuest, complete: completeQuest }}
-        utils={{ getDescribedEntity }}
-      />
-    ));
-
+  const CompletedToggle = () => {
     return (
-      <div>
-        {line}
-        {isCollapsed ? <div /> : dones}
-      </div>
+      <CollapseText onClick={() => setShowCompleted(!showCompleted)}>
+        {showCompleted ? '- Completed -' : '- Completed (collapsed) -'}
+      </CollapseText>
     );
   };
 
-  const OngoingQuests = () => {
-    const ongoing = [...quests.ongoing];
-
-    if (ongoing.length == 0)
-      return (
-        <EmptyText>
-          No ongoing quests.
-          <br /> Get a job?
-        </EmptyText>
-      );
-
-    ongoing.reverse();
-    ongoing.reverse().sort((a: Quest, b: Quest) => {
-      const aCompletable = meetsObjectives(a); // probably want to do this outside of the sort
-      const bCompletable = meetsObjectives(b);
-      if (aCompletable && !bCompletable) return -1;
-      else if (!aCompletable && bCompletable) return 1;
-      else return 0;
-    });
-
-    return (
-      <div>
-        {ongoing.map((q: Quest) => (
+  return (
+    <Container>
+      <EmptyText />
+      {mode === 'AVAILABLE' &&
+        quests.available.map((q: Quest) => (
           <QuestCard
             key={q.id}
-            account={account}
+            quest={q}
+            status={'AVAILABLE'}
+            utils={{ getDescribedEntity }}
+            actions={{ accept: acceptQuest, complete: completeQuest }}
+          />
+        ))}
+      {mode === 'ONGOING' &&
+        quests.ongoing.map((q: Quest) => (
+          <QuestCard
+            key={q.id}
             quest={q}
             status={'ONGOING'}
             actions={{ accept: acceptQuest, complete: completeQuest }}
             utils={{ getDescribedEntity }}
           />
         ))}
-        {CompletedQuests()}
-      </div>
-    );
-  };
-
-  const QuestsDisplay = () => {
-    if (mode == 'AVAILABLE') return AvailableQuests();
-    else if (mode == 'ONGOING') return OngoingQuests();
-    else return <div />;
-  };
-
-  return <Container>{QuestsDisplay()}</Container>;
+      {mode === 'ONGOING' && <CompletedToggle />}
+      {mode === 'ONGOING' &&
+        showCompleted &&
+        quests.completed.map((q: Quest) => (
+          <QuestCard
+            key={q.id}
+            quest={q}
+            status={'COMPLETED'}
+            actions={{ accept: acceptQuest, complete: completeQuest }}
+            utils={{ getDescribedEntity }}
+          />
+        ))}
+    </Container>
+  );
 };
 
 const Container = styled.div`
@@ -139,7 +107,7 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const EmptyText = styled.div`
+const BigText = styled.div`
   height: 100%;
   margin: 1.5vh;
   padding: 1.2vh 0vw;
@@ -168,40 +136,4 @@ const CollapseText = styled.button`
     color: #666;
     cursor: pointer;
   }
-`;
-const QuestContainer = styled.div`
-  border-color: black;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  display: flex;
-  justify-content: start;
-  align-items: start;
-  flex-direction: column;
-  padding: 1vw;
-  margin: 0.8vw;
-
-  color: #333;
-`;
-
-const QuestName = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: left;
-  justify-content: flex-start;
-  padding: 0.7vh 0vw;
-`;
-
-const QuestDescription = styled.div`
-  font-family: Pixel;
-  text-align: left;
-  line-height: 1.2vw;
-  font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
-`;
-
-const DoneContainer = styled(QuestContainer)`
-  border-color: #999;
-  border-width: 1.5px;
-  color: #bbb;
 `;

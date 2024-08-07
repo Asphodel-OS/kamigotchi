@@ -13,6 +13,7 @@ import {
 
 import { Components } from 'network/';
 import { Reward } from '../Rewards';
+import { meetsObjectives } from './functions';
 import { Objective, queryQuestObjectives } from './objective';
 import { Requirement, queryQuestRequirements } from './requirement';
 import { queryQuestRewards } from './reward';
@@ -98,8 +99,23 @@ export const getCompleted = (
 };
 
 // get the list of Ongoing Quests for an Account
-export const getOngoing = (world: World, components: Components, accountID: EntityID): Quest[] => {
-  return query(world, components, { account: accountID, completed: false });
+export const getOngoing = (
+  world: World,
+  components: Components,
+  accountID: EntityID,
+  sort = true
+): Quest[] => {
+  let results = query(world, components, { account: accountID, completed: false });
+  if (sort) {
+    results = results.reverse().sort((a: Quest, b: Quest) => {
+      const aCompletable = meetsObjectives(a); // probably want to do this outside of the sort
+      const bCompletable = meetsObjectives(b);
+      if (aCompletable && !bCompletable) return -1;
+      else if (!aCompletable && bCompletable) return 1;
+      else return 0;
+    });
+  }
+  return results;
 };
 
 /////////////////
@@ -117,28 +133,14 @@ export const query = (world: World, components: Components, options: QueryOption
   const { OwnsQuestID, IsComplete, IsQuest, IsRegistry, QuestIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsQuest)];
-
-  if (options?.account) {
-    toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
-  }
-
-  if (options?.registry) {
-    toQuery.push(Has(IsRegistry));
-  }
-
-  if (options?.index) {
-    toQuery.push(HasValue(QuestIndex, { value: options.index }));
-  }
-
+  if (options?.registry) toQuery.push(Has(IsRegistry));
+  if (options?.account) toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
+  if (options?.index) toQuery.push(HasValue(QuestIndex, { value: options.index }));
   if (options?.completed !== undefined) {
-    if (options?.completed) {
-      toQuery.push(Has(IsComplete));
-    } else {
-      toQuery.push(Not(IsComplete));
-    }
+    if (options?.completed) toQuery.push(Has(IsComplete));
+    else toQuery.push(Not(IsComplete));
   }
 
   const raw = Array.from(runQuery(toQuery));
-
   return raw.map((index): Quest => getQuest(world, components, index));
 };
