@@ -1,12 +1,11 @@
-import { EntityID, EntityIndex, World, hasComponent } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
+import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
 import { PlayerAPI } from 'network/api';
 import { Components } from 'network/components';
 import { DTCommit, getDTLogByHash } from 'network/shapes/Droptable';
 import { canReveal } from 'network/shapes/utils/commits';
 import { waitForActionCompletion, waitForComponentValueUpdate } from 'network/utils';
 import { Observable } from 'rxjs';
-import { ActionSystem } from '../ActionSystem';
+import { ActionState, ActionSystem } from '../ActionSystem';
 import { NotificationSystem } from '../NotificationSystem';
 import { sendKeepAliveNotif, sendResultNotif } from './functions';
 import { CommitData } from './types';
@@ -58,28 +57,24 @@ export function createDTRevealerSystem(
       revealingCommits.add(id);
     });
 
-    try {
-      const actionID = uuid() as EntityID;
-      Actions.add({
-        id: actionID,
-        action: 'Droptable reveal',
-        params: [commits],
-        description: `Inspecting item contents`,
-        execute: async () => {
-          return api.droptable.reveal(commits);
-        },
-      });
-      await waitForActionCompletion(
-        Actions.Action,
-        world.entityToIndex.get(actionID) as EntityIndex
-      );
+    const actionIndex = Actions.add({
+      action: 'Droptable reveal',
+      params: [commits],
+      description: `Inspecting item contents`,
+      execute: async () => {
+        return api.droptable.reveal(commits);
+      },
+    });
+    await waitForActionCompletion(Actions.Action, actionIndex);
 
+    if (getComponentValue(Actions.Action, actionIndex)?.state === ActionState.Complete) {
+      // upon reveal success
       for (let i = 0; i < commits.length; i++) {
         notifyResult(commits[i]);
         revealingCommits.delete(commits[i]);
       }
-    } catch (e) {
-      console.log('revealer: reveal failed', e);
+    } else {
+      console.log('revealer: reveal failed');
 
       // increment failure count, remove from queue after 3 tries
       for (let i = 0; i < commits.length; i++) {
