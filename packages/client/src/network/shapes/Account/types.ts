@@ -59,7 +59,6 @@ export interface AccountOptions {
   friends?: boolean;
   inventory?: boolean;
   kamis?: boolean | KamiOptions;
-  quests?: boolean;
   stats?: boolean;
 }
 
