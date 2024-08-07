@@ -60,8 +60,11 @@ export function registerRevealModal() {
 
       useEffect(() => {
         commits.map((commit) => DTRevealer.add(commit));
-        DTRevealer.execute();
       }, [commits, blockNumber]);
+
+      useEffect(() => {
+        DTRevealer.execute();
+      }, [blockNumber]);
 
       const revealTx = async (commits: Commit[]) => {
         const ids = commits.map((commit) => commit.id);
