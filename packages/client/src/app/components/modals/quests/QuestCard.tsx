@@ -18,21 +18,20 @@ interface Props {
   utils: {
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
+  imageCache: Map<string, JSX.Element>;
 }
 
 // Quest Card
 export const QuestCard = (props: Props) => {
-  const { quest, status, actions, utils } = props;
+  const { quest, status, actions, utils, imageCache } = props;
   const { accept, complete } = actions;
   const { getDescribedEntity } = utils;
-  const imageCache = new Map<string, JSX.Element>();
 
   /////////////////
   // INTERPRETATION
 
   const getRewardImage = (reward: Reward) => {
     if (reward.target.type === 'REPUTATION' || reward.target.type === 'NFT') return <div />;
-
     const key = `reward-${reward.target.type}-${reward.target.index}`;
     if (imageCache.has(key)) return imageCache.get(key);
 

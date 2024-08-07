@@ -26,6 +26,7 @@ export const List = (props: Props) => {
   const { acceptQuest, completeQuest } = actions;
   const { getDescribedEntity } = utils;
   const [showCompleted, setShowCompleted] = useState(false);
+  const [imageCache, _] = useState(new Map<string, JSX.Element>());
 
   ///////////////////
   // DISPLAY
@@ -72,6 +73,7 @@ export const List = (props: Props) => {
             status={'AVAILABLE'}
             utils={{ getDescribedEntity }}
             actions={{ accept: acceptQuest, complete: completeQuest }}
+            imageCache={imageCache}
           />
         ))}
       {mode === 'ONGOING' &&
@@ -80,8 +82,9 @@ export const List = (props: Props) => {
             key={q.id}
             quest={q}
             status={'ONGOING'}
-            actions={{ accept: acceptQuest, complete: completeQuest }}
             utils={{ getDescribedEntity }}
+            actions={{ accept: acceptQuest, complete: completeQuest }}
+            imageCache={imageCache}
           />
         ))}
       {mode === 'ONGOING' && <CompletedToggle />}
@@ -92,8 +95,9 @@ export const List = (props: Props) => {
             key={q.id}
             quest={q}
             status={'COMPLETED'}
-            actions={{ accept: acceptQuest, complete: completeQuest }}
             utils={{ getDescribedEntity }}
+            actions={{ accept: acceptQuest, complete: completeQuest }}
+            imageCache={imageCache}
           />
         ))}
     </Container>
