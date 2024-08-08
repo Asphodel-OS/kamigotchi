@@ -27,7 +27,12 @@ export const getKamiTime = (epochTime?: number, precision = 3): string => {
 
 // figures out 1, 2, or 3, which time of day it is
 export const getCurrPhase = (): number => {
-  const hours = Math.floor(Date.now() / 3600000) % 36;
+  return getPhaseOf(Date.now());
+};
+
+export const getPhaseOf = (epochTime: number, precision = 3): number => {
+  epochTime = epochTime / 10 ** precision;
+  const hours = Math.floor(epochTime / 3600) % 36;
   return Math.floor(hours / 12) + 1;
 };
 

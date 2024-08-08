@@ -1,4 +1,4 @@
-import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
@@ -8,6 +8,10 @@ import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kami, KillLog } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
+import { getDateString, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
+
+const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
+const headerStyle = { ...cellStyle, fontSize: '1vw' };
 
 interface Props {
   kami: Kami;
@@ -20,16 +24,13 @@ interface Props {
 // TODO: redo this whole thing from scratch.. this is fucking horrendous
 export const Battles = (props: Props) => {
   const { kami, utils } = props;
-  const { setKami, setNode } = useSelected();
+  const { setKami, setNode, kamiIndex } = useSelected();
   const { modals, setModals } = useVisibility();
   const [logs, setLogs] = useState<KillLog[]>([]);
 
-  const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
-  const headerStyle = { ...cellStyle, fontSize: '1vw' };
-
   useEffect(() => {
     setLogs(utils.getBattles(kami));
-  }, [kami]);
+  }, [modals.kami, kamiIndex]);
 
   /////////////////
   // INTERPRETATION
@@ -62,49 +63,66 @@ export const Battles = (props: Props) => {
     </TableHead>
   );
 
-  const Entry = (log: KillLog, index: number) => {
+  // display the result of the battle
+  const ResultCell = (log: KillLog) => {
     const type = isKill(log) ? 'kill' : 'death';
-    const adversary = isKill(log) ? log.target : log.source;
-    const date = new Date(log.time * 1000);
-    const dateString = date.toLocaleString('default', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    });
-
     return (
-      <TableRow key={index}>
-        <TableCell sx={cellStyle}>
-          <Cell>
-            <Tooltip text={[type]}>
-              <Icon src={isKill(log) ? KillIcon : DeathIcon} />
-            </Tooltip>
-            <Text color={isKill(log) ? 'green' : 'red'}>{getPnLString(log)}</Text>
-          </Cell>
-        </TableCell>
-        <TableCell sx={cellStyle}>{dateString}</TableCell>
+      <TableCell sx={cellStyle}>
+        <Cell>
+          <Tooltip text={[type]}>
+            <Icon src={isKill(log) ? KillIcon : DeathIcon} />
+          </Tooltip>
+          <Text color={isKill(log) ? 'green' : 'red'}>{getPnLString(log)}</Text>
+        </Cell>
+      </TableCell>
+    );
+  };
 
-        <TableCell
-          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
-          onClick={() => {
-            setKami(adversary?.index!);
-            playClick();
-          }}
-        >
-          {adversary?.name}
-        </TableCell>
-        <TableCell
-          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
-          onClick={() => {
-            setNode(log.node.index);
-            setModals({ ...modals, kami: false, node: true });
-            playClick();
-          }}
-        >
-          {log.node.name}
-        </TableCell>
-      </TableRow>
+  // display the time when it happened
+  const TimeCell = (log: KillLog) => {
+    const date = getDateString(log.time, 0);
+    const kamiTime = getKamiTime(log.time, 0);
+    return (
+      <TableCell sx={cellStyle}>
+        <Tooltip text={[`${date}`, `on your plebeian calendar`]}>
+          <Cell>
+            <Icon src={getPhaseIcon(getPhaseOf(log.time, 0))} />
+            {kamiTime}
+          </Cell>
+        </Tooltip>
+      </TableCell>
+    );
+  };
+
+  // display the details of the adversary
+  const AdversaryCell = (log: KillLog) => {
+    const adversary = isKill(log) ? log.target : log.source;
+    return (
+      <TableCell
+        sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
+        onClick={() => {
+          setKami(adversary.index);
+          playClick();
+        }}
+      >
+        {adversary?.name}
+      </TableCell>
+    );
+  };
+
+  // display the details of the node
+  const NodeCell = (log: KillLog) => {
+    return (
+      <TableCell
+        sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
+        onClick={() => {
+          setNode(log.node.index);
+          setModals({ ...modals, kami: false, node: true });
+          playClick();
+        }}
+      >
+        {log.node.name}
+      </TableCell>
     );
   };
 
@@ -122,7 +140,18 @@ export const Battles = (props: Props) => {
       <TableContainer>
         <Table>
           <Head />
-          <tbody>{logs.map((log, index) => Entry(log, index))}</tbody>
+          <TableBody>
+            {logs.map((log) => {
+              return (
+                <TableRow key={log.id}>
+                  {ResultCell(log)}
+                  {TimeCell(log)}
+                  {AdversaryCell(log)}
+                  {NodeCell(log)}
+                </TableRow>
+              );
+            })}
+          </TableBody>
         </Table>
       </TableContainer>
     </Container>
