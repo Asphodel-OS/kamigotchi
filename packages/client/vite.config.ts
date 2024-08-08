@@ -24,6 +24,7 @@ export default defineConfig({
       utils: path.resolve(__dirname, './src/utils'),
       workers: path.resolve(__dirname, './src/workers'),
     },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
   },
   server: {
     headers: {

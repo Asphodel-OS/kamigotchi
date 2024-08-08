@@ -2,7 +2,7 @@ import { ExternalProvider } from '@ethersproject/providers';
 import { Type, createWorld, defineComponent } from '@mud-classic/recs';
 
 import { createNetwork } from 'engine/executors';
-import { SystemAbis } from 'types/SystemAbis.mjs';
+import { SystemAbis } from 'types/SystemAbis';
 import { SystemTypes } from 'types/SystemTypes';
 import { createAdminAPI, createPlayerAPI } from './api';
 import { createComponents } from './components';
