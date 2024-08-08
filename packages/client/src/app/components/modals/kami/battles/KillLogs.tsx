@@ -1,7 +1,9 @@
 import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kami } from 'network/shapes/Kami';
 import { Kill } from 'network/shapes/Kill';
 import { playClick } from 'utils/sounds';
@@ -31,18 +33,15 @@ export const KillLogs = (props: Props) => {
   const Head = () => (
     <TableHead>
       <TableRow key='header'>
+        <TableCell sx={headerStyle}>Event</TableCell>
         <TableCell sx={headerStyle}>Time</TableCell>
-        <TableCell sx={headerStyle}>Place</TableCell>
         <TableCell sx={headerStyle}>Adversary</TableCell>
-        <TableCell sx={headerStyle}>Outcome</TableCell>
-        <TableCell sx={headerStyle}>PnL (MUSU)</TableCell>
+        <TableCell sx={headerStyle}>Location</TableCell>
       </TableRow>
     </TableHead>
   );
 
-  const Row = (log: Kill, index: number) => {
-    const killStyle = { ...cellStyle, color: 'green' };
-    const deathStyle = { ...cellStyle, color: 'red' };
+  const Entry = (log: Kill, index: number) => {
     const type = log.source?.index === undefined ? 'kill' : 'death';
     const adversary = log.source?.index === undefined ? log.target : log.source;
     const date = new Date(log.time * 1000);
@@ -55,7 +54,25 @@ export const KillLogs = (props: Props) => {
 
     return (
       <TableRow key={index}>
+        <TableCell sx={cellStyle}>
+          <Cell>
+            <Tooltip text={[type]}>
+              <Icon src={type === 'kill' ? KillIcon : DeathIcon} />
+            </Tooltip>
+            <Text color={type === 'kill' ? 'green' : 'red'}>{getPnLString(log)}</Text>
+          </Cell>
+        </TableCell>
         <TableCell sx={cellStyle}>{dateString}</TableCell>
+
+        <TableCell
+          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
+          onClick={() => {
+            setKami(adversary?.index!);
+            playClick();
+          }}
+        >
+          {adversary?.name}
+        </TableCell>
         <TableCell
           sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
           onClick={() => {
@@ -66,17 +83,6 @@ export const KillLogs = (props: Props) => {
         >
           {log.node.name}
         </TableCell>
-        <TableCell
-          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
-          onClick={() => {
-            setKami(adversary?.index!);
-            playClick();
-          }}
-        >
-          {adversary?.name}
-        </TableCell>
-        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>{type}</TableCell>
-        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>{getPnLString(log)}</TableCell>
       </TableRow>
     );
   };
@@ -86,7 +92,7 @@ export const KillLogs = (props: Props) => {
       <TableContainer>
         <Table>
           <Head />
-          <tbody>{logs.map((log, index) => Row(log, index))}</tbody>
+          <tbody>{logs.map((log, index) => Entry(log, index))}</tbody>
         </Table>
       </TableContainer>
     </Container>
@@ -101,4 +107,23 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
+`;
+
+const Cell = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6vw;
+`;
+
+const Text = styled.div<{ color?: string }>`
+  font-family: Pixel;
+  font-size: 0.8vw;
+  color: ${({ color }) => color ?? 'black'};
+`;
+
+const Icon = styled.img`
+  height: 1.5vw;
+  width: 1.5vw;
 `;
