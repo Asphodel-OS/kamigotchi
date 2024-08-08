@@ -21,16 +21,15 @@ interface Props {
 }
 
 // Rendering of the Kami's Kill/Death Logs
-// TODO: redo this whole thing from scratch.. this is fucking horrendous
 export const Battles = (props: Props) => {
   const { kami, utils } = props;
-  const { setKami, setNode, kamiIndex } = useSelected();
+  const { setKami, setNode } = useSelected();
   const { modals, setModals } = useVisibility();
   const [logs, setLogs] = useState<KillLog[]>([]);
 
   useEffect(() => {
     setLogs(utils.getBattles(kami));
-  }, [modals.kami, kamiIndex]);
+  }, [modals.kami, kami.index]);
 
   /////////////////
   // INTERPRETATION
