@@ -3,11 +3,11 @@ import moment from 'moment';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
+import { getPhaseName } from 'utils/time';
 import { Condition } from '../Conditional';
 import { getQuestByIndex } from '../Quest';
 import { getRoom } from '../Room';
 import { getDescribedEntity } from '../utils';
-import { getPhaseName } from '../utils/phase';
 
 export const parseConditionalUnits = (con: Condition): [string, string] => {
   let tar = ((con.target.value ?? 0) * 1).toString();

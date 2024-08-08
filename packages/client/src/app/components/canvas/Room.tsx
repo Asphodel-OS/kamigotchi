@@ -6,7 +6,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
 import { Goal } from 'network/shapes/Goal';
-import { getCurrPhase } from 'network/shapes/utils/phase';
+import { getCurrPhase } from 'utils/time';
 
 interface Props {
   index: number;
@@ -54,7 +54,6 @@ export const Room = (props: Props) => {
       goal: false,
       kami: false,
       leaderboard: false,
-      lootboxes: false,
       merchant: false,
       nameKami: false,
       operatorFund: false,

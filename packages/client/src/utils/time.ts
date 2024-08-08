@@ -1,95 +1,53 @@
-import { makeAutoObservable, reaction } from 'mobx';
+/////////////////
+// KAMITIME
+
+// parse an epoch time to KamiWorld Military Time (36h days)
+export const getKamiTime = (epochTime?: number, precision = 3): string => {
+  let time = (epochTime ?? Date.now()) / 10 ** precision;
+  time = Math.floor(time);
+  const seconds = time % 60;
+  time = Math.floor(time / 60);
+  const minutes = time % 60;
+  time = Math.floor(time / 60);
+  const hours = time % 36;
+
+  const hourString = hours.toString().padStart(2, '0');
+  const minuteString = minutes.toString().padStart(2, '0');
+  const secondString = seconds.toString().padStart(2, '0');
+
+  return `${hourString}:${minuteString}:${secondString}`;
+};
 
 /**
- * A static time class that allows us to play time in the speed we want to.
- * Using this instead of setTimeout allows us to synchronize the system loops with the phaser time
- * (eg. don't run the strolling system when the window is inactive) and simplifies testing systems as we
- * have control over the time.
+ * DAYLIGHT [1]
+ * EVENFALL [2]
+ * MOONSIDE [3]
  */
-export class Time {
-  private static instance: Time;
-  private nonce = 0;
-  timestamp = 0;
 
-  constructor() {
-    makeAutoObservable(this);
-  }
+// figures out 1, 2, or 3, which time of day it is
+export const getCurrPhase = (): number => {
+  const hours = Math.floor(Date.now() / 3600000) % 36;
+  return Math.floor(hours / 12) + 1;
+};
 
-  public static get time(): Time {
-    if (!this.instance) this.instance = new Time();
-    return this.instance;
-  }
+export const getPhaseName = (index: number): string => {
+  if (index == 1) return 'DAYLIGHT';
+  else if (index == 2) return 'EVENFALL';
+  else if (index == 3) return 'MOONSIDE';
+  else return '';
+};
 
-  /**
-   * Sets the internal timestamp to the given number.
-   * Use with caution, should not be called directly in most cases.
-   * Use setPacemaker instead.
-   * @param timestamp
-   */
-  public setTimestamp(timestamp: number) {
-    this.timestamp = timestamp;
-  }
+/////////////////
+// IRL TIME
 
-  /**
-   * Allows to register a function that sets the current timestamp in regular intervals.
-   * Makes sure only the last call to setPacemaker actually sets the time.
-   * @param pacemaker Callback with a reference to setTimestamp
-   */
-  public setPacemaker(pacemaker: (setTimestamp: (timestamp: number) => void) => void) {
-    this.nonce++;
-    const currentNonce = this.nonce;
-    pacemaker((timestamp: number) => {
-      // Only the most recent pacemaker actually sets the timestamp
-      if (this.nonce === currentNonce) this.setTimestamp(timestamp);
-    });
-  }
-
-  /**
-   * Use as a replacement of the native setTimeout
-   * @param callback Callback to be called after delay
-   * @param delay Delay after which to call thecallback
-   * @returns
-   */
-  public setTimeout(callback: () => unknown, delay: number) {
-    if (delay === 0) return callback();
-
-    const dueTime = this.timestamp + delay;
-    const dispose = reaction(
-      () => this.timestamp,
-      (currentTime) => {
-        if (currentTime >= dueTime) {
-          // Calling the callback in a setTimeout makes it be executed in the next event loop,
-          // so exactly the same behavior as when calling the native setTimeout
-          setTimeout(callback);
-          dispose();
-        }
-      }
-    );
-  }
-
-  /**
-   * Use as a replacement of the native setInterval
-   * @param callback Callback to be called once in every interval
-   * @param interval Interval in which to call the callback
-   * @returns Disposer to stop the interval
-   */
-  public setInterval(callback: () => unknown, interval: number) {
-    if (interval === 0) throw new Error('Interval must be greater than 0');
-
-    let lastInvocation = this.timestamp;
-
-    const dispose = reaction(
-      () => this.timestamp,
-      (currentTime) => {
-        if (currentTime >= lastInvocation + interval) {
-          // Calling the callback in a setTimeout makes it be executed in the next event loop,
-          // so exactly the same behavior as when calling the native setInterval
-          setTimeout(callback);
-          lastInvocation = currentTime;
-        }
-      }
-    );
-
-    return dispose;
-  }
-}
+// parse an epoch time into a date string
+export const getDateString = (epochTime?: number, precision = 3): string => {
+  const time = epochTime ? epochTime * 10 ** (3 - precision) : Date.now();
+  const date = new Date(time);
+  return date.toLocaleString('default', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+};

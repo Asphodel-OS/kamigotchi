@@ -13,6 +13,7 @@ import {
   getAccountFromBurner,
 } from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room';
+import { getKamiTime } from 'utils/time';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -53,22 +54,6 @@ export function registerAccountHeader() {
         return `${staminaCurr}/${staminaTotal * 1}`;
       };
 
-      // parses and input epoch time in seconds to KamiWorld Military Time (36h days)
-      const parseTimeString = (time: number) => {
-        time = Math.floor(time);
-        const seconds = time % 60;
-        time = Math.floor(time / 60);
-        const minutes = time % 60;
-        time = Math.floor(time / 60);
-        const hours = time % 36;
-
-        const hourString = hours.toString().padStart(2, '0');
-        const minuteString = minutes.toString().padStart(2, '0');
-        const secondString = seconds.toString().padStart(2, '0');
-
-        return `${hourString}:${minuteString}:${secondString}`;
-      };
-
       /////////////////
       // CONTENT
 
@@ -107,7 +92,7 @@ export function registerAccountHeader() {
             </Cell>
             <Cell>
               <Tooltip text={getTimeTooltip()}>
-                <TextBox>{parseTimeString(Date.now() / 1000)}</TextBox>
+                <TextBox>{getKamiTime(Date.now())}</TextBox>
               </Tooltip>
             </Cell>
             <Cell style={{ borderWidth: 0 }}>
