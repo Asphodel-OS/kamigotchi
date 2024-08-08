@@ -1,3 +1,4 @@
+import { DaylightIcon, EvenfallIcon, MoonsideIcon } from 'assets/images/icons/phases';
 /////////////////
 // KAMITIME
 
@@ -34,6 +35,13 @@ export const getPhaseName = (index: number): string => {
   if (index == 1) return 'DAYLIGHT';
   else if (index == 2) return 'EVENFALL';
   else if (index == 3) return 'MOONSIDE';
+  else return '';
+};
+
+export const getPhaseIcon = (index: number): string => {
+  if (index == 1) return DaylightIcon;
+  else if (index == 2) return EvenfallIcon;
+  else if (index == 3) return MoonsideIcon;
   else return '';
 };
 

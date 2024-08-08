@@ -12,8 +12,7 @@ import {
   calcStaminaPercent,
   getAccountFromBurner,
 } from 'network/shapes/Account';
-import { getRoomByIndex } from 'network/shapes/Room';
-import { getKamiTime } from 'utils/time';
+import { getCurrPhase, getKamiTime, getPhaseIcon, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -26,15 +25,12 @@ export function registerAccountHeader() {
     },
     (layers) => {
       const { network } = layers;
-      const { world, components } = network;
 
       return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(network);
           return {
             data: {
-              account,
-              room: getRoomByIndex(world, components, account.roomIndex),
+              account: getAccountFromBurner(network),
             },
           };
         })
@@ -42,23 +38,16 @@ export function registerAccountHeader() {
     },
     ({ data }) => {
       // console.log('mAccountInfo:', data);
-      const { account, room } = data;
+      const { account } = data;
       const { fixtures } = useVisibility();
 
       /////////////////
       // INTERPRETATION
 
-      const parseStaminaString = (account: Account) => {
+      const getStaminaTooltip = (account: Account) => {
         const staminaCurr = calcStamina(account);
         const staminaTotal = account.stamina.total;
-        return `${staminaCurr}/${staminaTotal * 1}`;
-      };
-
-      /////////////////
-      // CONTENT
-
-      const getStaminaTooltip = (account: Account) => {
-        const staminaString = parseStaminaString(account);
+        const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
         const recoveryPeriod = Math.round(1 / account.stamina.rate);
         return [
           `Account Stamina (${staminaString})`,
@@ -67,8 +56,13 @@ export function registerAccountHeader() {
         ];
       };
 
-      const getTimeTooltip = () => {
-        return [`Kami World Clock`, '', `Kamigotchi World operates on a 36h day.`];
+      const getClockTooltip = () => {
+        const phase = getPhaseName(getCurrPhase());
+        return [
+          `Kami World Clock (${phase})`,
+          '',
+          `Kamigotchi World operates on a 36h day with three distinct phases: Daylight, Evenfall, and Moonside.`,
+        ];
       };
 
       const getMusuTooltip = () => {
@@ -91,8 +85,11 @@ export function registerAccountHeader() {
               </Tooltip>
             </Cell>
             <Cell>
-              <Tooltip text={getTimeTooltip()}>
-                <TextBox>{getKamiTime(Date.now())}</TextBox>
+              <Tooltip text={getClockTooltip()}>
+                <TextBox>
+                  <Icon src={getPhaseIcon(getCurrPhase())} />
+                  {getKamiTime(Date.now())}
+                </TextBox>
               </Tooltip>
             </Cell>
             <Cell style={{ borderWidth: 0 }}>
@@ -133,11 +130,6 @@ const Row = styled.div`
   justify-content: space-evenly;
 
   flex-grow: 1;
-`;
-
-const Line = styled.div`
-  border-top: 0.15vw solid black;
-  width: 100%;
 `;
 
 const Cell = styled.div`
