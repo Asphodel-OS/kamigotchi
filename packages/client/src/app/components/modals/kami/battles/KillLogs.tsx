@@ -4,31 +4,47 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
-import { Kami } from 'network/shapes/Kami';
-import { Kill } from 'network/shapes/Kill';
+import { Kami, KillLog } from 'network/shapes/Kami';
+import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   kami: Kami;
+  utils: {
+    getBattles: (kami: Kami) => KillLog[];
+  };
 }
 
 // Rendering of the Kami's Kill/Death Logs
+// TODO: redo this whole thing from scratch.. this is fucking horrendous
 export const KillLogs = (props: Props) => {
+  const { kami, utils } = props;
   const { setKami, setNode } = useSelected();
   const { modals, setModals } = useVisibility();
+  const [logs, setLogs] = useState<KillLog[]>([]);
+
   const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
   const headerStyle = { ...cellStyle, fontSize: '1vw' };
 
-  let logs = props.kami.kills!.concat(props.kami.deaths!);
-  logs = logs.sort((a, b) => b.time - a.time);
+  useEffect(() => {
+    setLogs(utils.getBattles(kami));
+  }, [kami]);
 
-  const getPnLString = (log: Kill): string => {
-    if (log.target?.index) {
-      return `+${log.bounty}`;
-    } else {
-      return `-${log.balance}`;
-    }
+  /////////////////
+  // INTERPRETATION
+
+  const isKill = (log: KillLog): boolean => {
+    return log.source.index === kami.index;
   };
+
+  // assume death if not kill
+  const getPnLString = (log: KillLog): string => {
+    if (isKill(log)) return `+${log.bounty}`;
+    return `-${log.balance}`;
+  };
+
+  /////////////////
+  // DISPLAY
 
   const Head = () => (
     <TableHead>
@@ -41,9 +57,9 @@ export const KillLogs = (props: Props) => {
     </TableHead>
   );
 
-  const Entry = (log: Kill, index: number) => {
-    const type = log.source?.index === undefined ? 'kill' : 'death';
-    const adversary = log.source?.index === undefined ? log.target : log.source;
+  const Entry = (log: KillLog, index: number) => {
+    const type = isKill(log) ? 'kill' : 'death';
+    const adversary = isKill(log) ? log.target : log.source;
     const date = new Date(log.time * 1000);
     const dateString = date.toLocaleString('default', {
       month: 'short',
@@ -57,9 +73,9 @@ export const KillLogs = (props: Props) => {
         <TableCell sx={cellStyle}>
           <Cell>
             <Tooltip text={[type]}>
-              <Icon src={type === 'kill' ? KillIcon : DeathIcon} />
+              <Icon src={isKill(log) ? KillIcon : DeathIcon} />
             </Tooltip>
-            <Text color={type === 'kill' ? 'green' : 'red'}>{getPnLString(log)}</Text>
+            <Text color={isKill(log) ? 'green' : 'red'}>{getPnLString(log)}</Text>
           </Cell>
         </TableCell>
         <TableCell sx={cellStyle}>{dateString}</TableCell>
@@ -86,6 +102,9 @@ export const KillLogs = (props: Props) => {
       </TableRow>
     );
   };
+
+  /////////////////
+  // RENDERING
 
   return (
     <Container style={{ overflowY: 'scroll' }}>

@@ -1,0 +1,111 @@
+import {
+  EntityID,
+  EntityIndex,
+  Has,
+  HasValue,
+  World,
+  getComponentValue,
+  runQuery,
+} from '@mud-classic/recs';
+
+import { formatEntityID } from 'engine/utils';
+import { Components } from 'network/';
+import { Node, getNode } from '../Node';
+import { getDataArray } from '../utils';
+import { BareKami, getBareKami } from './types';
+
+// standardized Object shape of a KillLog Entity
+export interface KillLog {
+  id: EntityID;
+  entityIndex: EntityIndex;
+  source: BareKami;
+  target: BareKami;
+  node: Node;
+  balance: number;
+  bounty: number;
+  time: number;
+}
+
+// get a KillLog object from its EnityIndex
+export const getKill = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): KillLog => {
+  const { NodeID, SourceID, TargetID, Time } = components;
+
+  const id = world.entities[entityIndex];
+  const bounties = getDataArray(world, components, id, 'KILL_BOUNTIES');
+
+  // identify the Node
+  const nodeID = formatEntityID(getComponentValue(NodeID, entityIndex)?.value ?? '');
+  const nodeEntityIndex = world.entityToIndex.get(nodeID) as EntityIndex;
+
+  // identify the Source and Target Kamis
+  const sourceID = formatEntityID(getComponentValue(SourceID, entityIndex)?.value ?? '');
+  const targetID = formatEntityID(getComponentValue(TargetID, entityIndex)?.value ?? '');
+  const sourceEntityIndex = world.entityToIndex.get(sourceID) as EntityIndex;
+  const targetEntityIndex = world.entityToIndex.get(targetID) as EntityIndex;
+
+  const killLog: KillLog = {
+    id,
+    entityIndex,
+    node: getNode(world, components, nodeEntityIndex), // update to bare
+    balance: bounties[0],
+    bounty: bounties[1],
+    time: (getComponentValue(Time, entityIndex)?.value as number) * 1,
+    source: getBareKami(world, components, sourceEntityIndex),
+    target: getBareKami(world, components, targetEntityIndex),
+  };
+
+  return killLog;
+};
+
+/////////////////
+// GETTERS
+
+// get all kill logs featuring a Kami (by its entityIndex)
+export const getKamiBattles = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): KillLog[] => {
+  const kills = getKamiKills(world, components, entityIndex);
+  const deaths = getKamiDeaths(world, components, entityIndex);
+  return [...kills, ...deaths].sort((a, b) => b.time - a.time);
+};
+
+export const getKamiKills = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): KillLog[] => {
+  const kami = getBareKami(world, components, entityIndex);
+  const results = queryKamiKills(components, kami);
+  return results.map((index) => getKill(world, components, index));
+};
+
+export const getKamiDeaths = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): KillLog[] => {
+  const kami = getBareKami(world, components, entityIndex);
+  const results = queryKamiDeaths(components, kami);
+  return results.map((index) => getKill(world, components, index));
+};
+
+/////////////////
+// QUERIES
+
+// query kill logs where a input Kamiis the victim
+export const queryKamiDeaths = (components: Components, kami: BareKami): EntityIndex[] => {
+  const { IsKill, TargetID } = components;
+  return Array.from(runQuery([Has(IsKill), HasValue(TargetID, { value: kami.id })]));
+};
+
+// query kill logs where the input Kami is the aggressor
+export const queryKamiKills = (components: Components, kami: BareKami): EntityIndex[] => {
+  const { IsKill, SourceID } = components;
+  return Array.from(runQuery([Has(IsKill), HasValue(SourceID, { value: kami.id })]));
+};

@@ -21,7 +21,6 @@ import {
 } from '../Config';
 import { hasFlag } from '../Flag';
 import { Harvest, getHarvest } from '../Harvest';
-import { Kill, getKill } from '../Kill';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
@@ -52,11 +51,9 @@ export interface Kami extends BareKami {
     start: number;
   };
   account?: Account;
-  deaths?: Kill[];
   flags?: {
     namable: boolean;
   };
-  kills?: Kill[];
   production?: Harvest;
   skills?: Skill[];
   traits?: Traits;
@@ -71,9 +68,7 @@ interface KamiExperience {
 // optional data to populate for a Kami Entity
 export interface Options {
   account?: boolean;
-  deaths?: boolean;
   flags?: boolean;
-  kills?: boolean;
   production?: boolean;
   skills?: boolean;
   traits?: boolean;
@@ -111,7 +106,6 @@ export const getKami = (
     Experience,
     FaceIndex,
     HandIndex,
-    IsKill,
     IsProduction,
     IsRegistry,
     LastTime,
@@ -121,10 +115,8 @@ export const getKami = (
     PetID,
     Reroll,
     SkillPoint,
-    SourceID,
     StartTime,
     State,
-    TargetID,
     OwnsPetID,
   } = components;
 
@@ -164,40 +156,10 @@ export const getKami = (
     if (accountIndex) kami.account = getAccount(world, components, accountIndex);
   }
 
-  // populate Kills where our kami is the victim
-  if (options?.deaths) {
-    const deaths: Kill[] = [];
-    const killEntityIndices = Array.from(
-      runQuery([Has(IsKill), HasValue(TargetID, { value: kami.id })])
-    );
-
-    for (let i = 0; i < killEntityIndices.length; i++) {
-      deaths.push(getKill(world, components, killEntityIndices[i], { source: true }));
-    }
-    deaths.sort((a, b) => b.time - a.time);
-
-    kami.deaths = deaths;
-  }
-
   if (options?.flags) {
     kami.flags = {
       namable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
     };
-  }
-
-  // populate Kills where our kami is the aggressor
-  if (options?.kills) {
-    const kills: Kill[] = [];
-    const killEntityIndices = Array.from(
-      runQuery([Has(IsKill), HasValue(SourceID, { value: kami.id })])
-    );
-
-    for (let i = 0; i < killEntityIndices.length; i++) {
-      kills.push(getKill(world, components, killEntityIndices[i], { target: true }));
-    }
-    kills.sort((a, b) => b.time - a.time);
-
-    kami.kills = kills;
   }
 
   // populate Skills

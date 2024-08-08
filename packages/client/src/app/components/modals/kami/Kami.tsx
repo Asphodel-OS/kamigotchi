@@ -6,7 +6,7 @@ import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Kami, getKamiByIndex } from 'network/shapes/Kami';
+import { Kami, getKamiBattles, getKamiByIndex } from 'network/shapes/Kami';
 import {
   Skill,
   getRegistrySkills,
@@ -56,7 +56,8 @@ export function registerKamiModal() {
       /////////////////
       // SUBSCRIPTION
 
-      // ticking kami data updaes every second
+      // refresh kami data every second
+      // Q: should we check whether the modal is open?
       useEffect(() => {
         const updateKami = () => {
           setKami(getSelectedKami(kamiIndex));
@@ -75,8 +76,6 @@ export function registerKamiModal() {
       const getSelectedKami = (index: number) => {
         return getKamiByIndex(world, components, index, {
           account: true,
-          deaths: true,
-          kills: true,
           skills: true,
           traits: true,
         });
@@ -130,7 +129,6 @@ export function registerKamiModal() {
           overlay
           noPadding
         >
-          {tab === 'battles' && <KillLogs kami={kami} />}
           {tab === 'traits' && <Traits kami={kami} />}
           {tab === 'skills' && (
             <Skills
@@ -144,6 +142,14 @@ export function registerKamiModal() {
                 getTreePoints: (tree: string) => getTreePoints(world, components, kami, tree),
                 getTreeRequirement: (skill: Skill) =>
                   getTreePointsRequirement(world, components, skill),
+              }}
+            />
+          )}
+          {tab === 'battles' && (
+            <KillLogs
+              kami={kami}
+              utils={{
+                getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entityIndex),
               }}
             />
           )}
