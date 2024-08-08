@@ -43,7 +43,7 @@ export interface Node {
   description: string;
   drops: Item[];
   requirements: Condition[];
-  affinity?: string;
+  affinity: string;
   kamis?: NodeKamis;
 }
 

@@ -6,6 +6,7 @@ import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kami, KillLog } from 'network/shapes/Kami';
+import { getAffinityImage } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { getDateString, getKamiDate, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
@@ -113,16 +114,21 @@ export const Battles = (props: Props) => {
 
   // display the details of the node
   const NodeCell = (log: KillLog) => {
+    const node = log.node;
+    const affinityIcon = getAffinityImage(node.affinity);
     return (
       <TableCell
         sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
         onClick={() => {
-          setNode(log.node.index);
+          setNode(node.index);
           setModals({ ...modals, kami: false, node: true });
           playClick();
         }}
       >
-        {log.node.name}
+        <Cell>
+          <Icon src={affinityIcon} />
+          {node.name}
+        </Cell>
       </TableCell>
     );
   };
@@ -175,7 +181,7 @@ const Cell = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.6vw;
+  gap: 0.3vw;
 `;
 
 const Text = styled.div<{ color?: string }>`

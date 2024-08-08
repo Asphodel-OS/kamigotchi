@@ -4,8 +4,6 @@ import { AffinityIcons } from 'constants/affinities';
 export const getAffinityImage = (name: string | undefined) => {
   if (!name) return '';
   name = name.toLowerCase();
-  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '');
   const key = name as keyof typeof AffinityIcons;
   if (!key) throw new Error(`No image found for ${name}`);
 
