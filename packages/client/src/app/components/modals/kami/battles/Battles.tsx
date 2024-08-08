@@ -2,6 +2,7 @@ import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/mate
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
+import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kami, KillLog } from 'network/shapes/Kami';
@@ -17,7 +18,7 @@ interface Props {
 
 // Rendering of the Kami's Kill/Death Logs
 // TODO: redo this whole thing from scratch.. this is fucking horrendous
-export const KillLogs = (props: Props) => {
+export const Battles = (props: Props) => {
   const { kami, utils } = props;
   const { setKami, setNode } = useSelected();
   const { modals, setModals } = useVisibility();
@@ -35,6 +36,10 @@ export const KillLogs = (props: Props) => {
 
   const isKill = (log: KillLog): boolean => {
     return log.source.index === kami.index;
+  };
+
+  const isDeath = (log: KillLog): boolean => {
+    return log.target.index === kami.index;
   };
 
   // assume death if not kill
@@ -108,6 +113,12 @@ export const KillLogs = (props: Props) => {
 
   return (
     <Container style={{ overflowY: 'scroll' }}>
+      <Overlay top={0.7} right={0.75}>
+        <Text>Kills: {logs.filter(isKill).length}</Text>
+      </Overlay>
+      <Overlay top={2} right={0.75}>
+        <Text>Deaths: {logs.filter(isDeath).length}</Text>
+      </Overlay>
       <TableContainer>
         <Table>
           <Head />
@@ -119,6 +130,7 @@ export const KillLogs = (props: Props) => {
 };
 
 const Container = styled.div`
+  position: relative;
   border: solid black 0.15vw;
   border-radius: 0.5vw;
   margin: 0.7vw;

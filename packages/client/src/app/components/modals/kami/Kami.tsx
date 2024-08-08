@@ -15,7 +15,7 @@ import {
   getTreePointsRequirement,
 } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
-import { KillLogs } from './battles/KillLogs';
+import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
 import { Skills } from './skills/Skills';
@@ -146,7 +146,7 @@ export function registerKamiModal() {
             />
           )}
           {tab === 'battles' && (
-            <KillLogs
+            <Battles
               kami={kami}
               utils={{
                 getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entityIndex),
