@@ -33,4 +33,7 @@ export default defineConfig({
       'X-XSS-Protection': '1; mode=block', // Gives XSS protection to legacy browsers
     },
   },
+  optimizeDeps: {
+    exclude: ['js-big-decimal'],
+  },
 });
