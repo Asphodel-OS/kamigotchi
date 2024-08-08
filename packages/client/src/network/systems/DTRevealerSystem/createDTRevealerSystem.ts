@@ -57,6 +57,9 @@ export function createDTRevealerSystem(
       revealingCommits.add(id);
     });
 
+    // hardcode wait
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     const actionIndex = Actions.add({
       action: 'Droptable reveal',
       params: [commits],
