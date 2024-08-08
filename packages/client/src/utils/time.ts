@@ -1,4 +1,5 @@
 import { DaylightIcon, EvenfallIcon, MoonsideIcon } from 'assets/images/icons/phases';
+
 /////////////////
 // KAMITIME
 
@@ -17,6 +18,40 @@ export const getKamiTime = (epochTime?: number, precision = 3): string => {
   const secondString = seconds.toString().padStart(2, '0');
 
   return `${hourString}:${minuteString}:${secondString}`;
+};
+
+export const getKamiDate = (epochTime?: number, precision = 3): string => {
+  let time = (epochTime ?? Date.now()) / 10 ** precision;
+  time = Math.floor(time / 60 / 60 / 44);
+  const days = (time % 44) + 1;
+  time = Math.floor(time / 18);
+  const months = (time % 18) + 1;
+
+  const monthString = months.toString().padStart(2, '0');
+  const dayString = days.toString().padStart(2, '0');
+  return `${monthString}å${dayString}`;
+};
+
+export const getKamiDT = (epochTime?: number, precision = 3): string => {
+  let time = (epochTime ?? Date.now()) / 10 ** precision;
+  time = Math.floor(time);
+  const seconds = time % 60;
+  time = Math.floor(time / 60);
+  const minutes = time % 60;
+  time = Math.floor(time / 60);
+  const hours = time % 36;
+  time = Math.floor(time / 44);
+  const days = (time % 44) + 1;
+  time = Math.floor(time / 18);
+  const months = (time % 18) + 1;
+
+  const monthString = months.toString().padStart(2, '0');
+  const dayString = days.toString().padStart(2, '0');
+  const hourString = hours.toString().padStart(2, '0');
+  const minuteString = minutes.toString().padStart(2, '0');
+  const secondString = seconds.toString().padStart(2, '0');
+
+  return `${monthString}◆${dayString} ${hourString}:${minuteString}:${secondString}`;
 };
 
 /**

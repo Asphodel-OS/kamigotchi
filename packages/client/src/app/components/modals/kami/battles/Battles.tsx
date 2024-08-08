@@ -8,10 +8,10 @@ import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kami, KillLog } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
-import { getDateString, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
+import { getDateString, getKamiDate, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
 
-const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
-const headerStyle = { ...cellStyle, fontSize: '1vw' };
+const cellStyle = { fontFamily: 'Pixel', fontSize: '.75vw', padding: '0.5vw', border: 0 };
+const headerStyle = { ...cellStyle, fontSize: '.9vw' };
 
 interface Props {
   kami: Kami;
@@ -53,9 +53,9 @@ export const Battles = (props: Props) => {
 
   const Head = () => (
     <TableHead>
-      <TableRow key='header'>
+      <TableRow key='header' sx={{ padding: '5vw' }}>
         <TableCell sx={headerStyle}>Event</TableCell>
-        <TableCell sx={headerStyle}>Time</TableCell>
+        <TableCell sx={headerStyle}>Occurrence</TableCell>
         <TableCell sx={headerStyle}>Adversary</TableCell>
         <TableCell sx={headerStyle}>Location</TableCell>
       </TableRow>
@@ -80,11 +80,13 @@ export const Battles = (props: Props) => {
   // display the time when it happened
   const TimeCell = (log: KillLog) => {
     const date = getDateString(log.time, 0);
+    const kamiDate = getKamiDate(log.time, 0);
     const kamiTime = getKamiTime(log.time, 0);
     return (
       <TableCell sx={cellStyle}>
         <Tooltip text={[`${date}`, `on your plebeian calendar`]}>
           <Cell>
+            {kamiDate}
             <Icon src={getPhaseIcon(getPhaseOf(log.time, 0))} />
             {kamiTime}
           </Cell>
