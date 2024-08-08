@@ -25,5 +25,5 @@ export {
   queryKamis,
 } from './queries';
 export type { QueryOptions } from './queries';
-export { getKami } from './types';
+export { getBareKami, getKami } from './types';
 export type { Kami, Options as KamiOptions } from './types';

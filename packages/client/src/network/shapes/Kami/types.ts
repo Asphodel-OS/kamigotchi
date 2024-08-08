@@ -28,11 +28,14 @@ import { TraitIndices, Traits, getTraits } from '../Trait';
 import { DetailedEntity } from '../utils/EntityTypes';
 import { calcHealthRate } from './functions';
 
-// standardized shape of a Kami Entity
-export interface Kami extends DetailedEntity {
+export interface BareKami extends DetailedEntity {
   id: EntityID;
   index: number;
   entityIndex: EntityIndex;
+}
+
+// standardized shape of a Kami Entity
+export interface Kami extends BareKami {
   level: number;
   experience: KamiExperience;
   state: string;
@@ -77,6 +80,23 @@ export interface Options {
   rerolls?: boolean;
 }
 
+// gets a Kami from EntityIndex with just the bare minimum of data
+export const getBareKami = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): BareKami => {
+  const { PetIndex, Name, MediaURI } = components;
+  return {
+    ObjectType: 'KAMI',
+    entityIndex,
+    id: world.entities[entityIndex],
+    index: getComponentValue(PetIndex, entityIndex)?.value as number,
+    name: getComponentValue(Name, entityIndex)?.value as string,
+    image: getComponentValue(MediaURI, entityIndex)?.value as string,
+  };
+};
+
 // get a Kami from its EnityIndex. includes options for which data to include
 export const getKami = (
   world: World,
@@ -98,9 +118,7 @@ export const getKami = (
     LastActionTime,
     Level,
     MediaURI,
-    Name,
     PetID,
-    PetIndex,
     Reroll,
     SkillPoint,
     SourceID,
@@ -113,12 +131,8 @@ export const getKami = (
   const id = world.entities[entityIndex];
 
   // populate the base Kami data
-  let kami: Kami = {
-    ObjectType: 'KAMI',
-    id: id,
-    index: getComponentValue(PetIndex, entityIndex)?.value as number,
-    entityIndex,
-    name: getComponentValue(Name, entityIndex)?.value as string,
+  const kami: Kami = {
+    ...getBareKami(world, components, entityIndex),
     image: getComponentValue(MediaURI, entityIndex)?.value as string,
     level: (getComponentValue(Level, entityIndex)?.value ?? (1 as number)) * 1,
     experience: {
