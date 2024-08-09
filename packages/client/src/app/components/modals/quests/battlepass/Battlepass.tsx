@@ -2,12 +2,15 @@ import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
+import { useEffect, useState } from 'react';
 import { Milestone } from './Milestone';
 import { ProgressBar } from './ProgressBar';
+import { getPercentCompletion } from './utils';
 
-const DefaultColors = {
-  background: '#bbb',
-  foreground: '#1ae',
+const Colors = {
+  bg: '#bbb',
+  fg: '#1581ec',
+  accent: '#dc241a',
 };
 
 interface Props {
@@ -21,44 +24,93 @@ interface Props {
 
 export const Battlepass = (props: Props) => {
   const { account, quests } = props;
+  const [maxRep, setMaxRep] = useState(0);
+  const [currRep, setCurrRep] = useState(0);
+
+  useEffect(() => {
+    const newMaxRep = Math.max(...quests.agency.map((q) => getReputationNeeded(q)));
+    if (newMaxRep !== maxRep) setMaxRep(newMaxRep);
+
+    const newCurrRep = account.reputation.agency;
+    if (newCurrRep !== currRep) setCurrRep(newCurrRep);
+  }, [quests.agency]);
+
+  const handleMilestoneClick = (quest: Quest) => {
+    //
+  };
+
+  //////////////////
+  // INTERPRETATION
+
+  const isAvailable = (quest: Quest) => {
+    return !isComplete(quest) && !isOngoing(quest);
+  };
+
+  const isComplete = (quest: Quest) => {
+    return quests.completed.some((q) => q.index === quest.index);
+  };
+
+  const isOngoing = (quest: Quest) => {
+    return quests.ongoing.some((q) => q.index === quest.index);
+  };
+
+  const isCompletable = (quest: Quest) => {
+    if (!isOngoing(quest)) return false;
+    const need = getReputationNeeded(quest);
+    return currRep >= need;
+  };
+
+  const meetsReputation = (quest: Quest) => {
+    const need = getReputationNeeded(quest);
+    return currRep >= need;
+  };
 
   // scan a Quest's Objectives to get the REPUTATION needed to complete it
   const getReputationNeeded = (quest: Quest) => {
     const objective = quest.objectives.find((o) => o.target.type === 'REPUTATION');
-    return objective?.target.value ?? 0;
+    return (objective?.target.value ?? 0) * 1;
   };
 
-  const getMaxReputation = (quests: Quest[]) => {
-    return Math.max(...quests.map((q) => getReputationNeeded(q)));
+  const getMilestonePosition = (quest: Quest) => {
+    const needed = getReputationNeeded(quest);
+    return getPercentCompletion(needed, maxRep);
   };
 
-  const getMilestonePosition = (quests: Quest[]) => {
-    return Math.min(getMaxReputation(quests), account.reputation.agency);
+  // get a registry Quest and check its completion status against the
+  const getStatus = (quest: Quest) => {
+    if (isComplete(quest)) return 'Completed';
+    else if (isOngoing(quest)) return `${currRep}/${maxRep}`;
+    else return 'Not Started';
   };
+
+  //////////////////
+  // RENDER
 
   return (
     <Container>
       <ProgressBar
-        total={getMaxReputation(quests.agency)}
+        total={maxRep}
         current={account.reputation.agency}
         height={0.9}
         colors={{
-          progress: DefaultColors.foreground,
-          background: DefaultColors.background,
+          progress: Colors.fg,
+          background: Colors.bg,
         }}
       />
-      <Milestone
-        onClick={getMaxReputation}
-        size={1.5}
-        position={0}
-        color={DefaultColors.foreground}
-      />
-      <Milestone
-        onClick={getMaxReputation}
-        size={1.5}
-        position={50}
-        color={DefaultColors.background}
-      />
+      {quests.agency.map((q) => (
+        <Milestone
+          key={q.index}
+          onClick={() => handleMilestoneClick(q)}
+          size={1.5}
+          position={getMilestonePosition(q)}
+          colors={{
+            bg: meetsReputation(q) ? Colors.fg : Colors.bg,
+            ring: meetsReputation(q) ? Colors.accent : 'black',
+          }}
+          tooltip={[`${q.name} [${getStatus(q)}]`, '', q.description]}
+          is={{ accepted: isOngoing(q) || isComplete(q), complete: isComplete(q) }}
+        />
+      ))}
     </Container>
   );
 };
@@ -72,12 +124,4 @@ const Container = styled.div`
   flex-flow: row no-wrap;
   justify-content: center;
   align-items: center;
-`;
-
-const Milestones = styled.div`
-  position: absolute;
-  pointer-events: none;
-
-  display: flex;
-  width: 100%;
 `;

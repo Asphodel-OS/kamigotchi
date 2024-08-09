@@ -48,6 +48,7 @@ const Container = styled.div`
 `;
 
 const Icon = styled.img`
-  height: 2.1vw;
+  height: 2.4vw;
   width: auto;
+  image-rendering: pixelated;
 `;

@@ -33,7 +33,9 @@ export const Tooltip = (props: Props) => {
             borderWidth: '.15vw',
             borderColor: 'black',
             backgroundColor: '#fff',
-            padding: '10px',
+            borderRadius: '0.6vw',
+            padding: '0.9vw',
+            maxWidth: '36vw',
 
             color: 'black',
             fontSize: '.7vw',
