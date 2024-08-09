@@ -9,6 +9,7 @@ import {
   checkLogicOperator,
   checkerSwitch,
 } from '../Conditional';
+import { Reward } from '../Rewards';
 import { getData } from '../utils';
 import { Objective, querySnapshotObjective } from './objective';
 import { Quest, query } from './quest';
@@ -30,6 +31,24 @@ export const hasCompleted = (
   });
 
   return quests.length > 0;
+};
+
+// check whether a Parsed Quest is Available to accept based on the list of an
+// Account's completed and ongoing Quests
+const isAvailable = (quest: Quest, completed: Quest[], ongoing: Quest[]) => {
+  if (!meetsRequirements(quest)) return false;
+  const ongoingInstance = ongoing.find((q: Quest) => q.index === quest.index);
+  const completedInstance = completed.find((q: Quest) => q.index === quest.index);
+  const now = Date.now() / 1000;
+
+  if (ongoingInstance) return false;
+  if (!completedInstance) return true;
+  if (!quest.repeatable) return false; // assume attempt limit for all other quests is 1
+
+  // assumed repeatable quest with no ongoing instance
+  const waitRequirement = completedInstance.repeatDuration ?? 0;
+  const startTime = completedInstance.startTime;
+  return Number(startTime) + Number(waitRequirement) <= Number(now);
 };
 
 // check whether a Parsed Quest has its Objectives met
@@ -55,29 +74,45 @@ export const meetsRequirements = (quest: Quest): boolean => {
 /////////////////
 // FILTERS
 
-// filters a list of Parsed Quests to just the ones available to an Account
-export const filterAvailable = (parsedRegistry: Quest[], completed: Quest[], ongoing: Quest[]) => {
-  return parsedRegistry.filter((q: Quest) => {
-    if (!meetsRequirements(q)) return false;
-    return isAvailableByCount(q, completed, ongoing);
+// filter a list of Parsed Quests to just the ones available to an Account
+export const filterByAvailable = (
+  parsedRegistry: Quest[],
+  completed: Quest[],
+  ongoing: Quest[]
+) => {
+  return parsedRegistry.filter((q: Quest) => isAvailable(q, completed, ongoing));
+};
+
+// filter a list of Quests (parsed or not) to ones with an Objective matching certain conditions
+export const filterByObjective = (quests: Quest[], faction?: number) => {
+  return quests.filter((q: Quest) => {
+    let result = true;
+    if (faction && result) {
+      result = q.objectives.some(
+        (o: Objective) => o.target.type === 'REPUTATION' && o.target.index === faction
+      );
+    }
+    return result;
   });
 };
 
-// check whether a Parsed Quest is Available to accept based on the list of an
-// Account's completed and ongoing Quests
-const isAvailableByCount = (quest: Quest, completed: Quest[], ongoing: Quest[]) => {
-  const ongoingInstance = ongoing.find((q: Quest) => q.index === quest.index);
-  const completedInstance = completed.find((q: Quest) => q.index === quest.index);
-  const now = Date.now() / 1000;
+// filter a list of Quests (parsed or not) to ones with a Reward matching certain conditions
+export const filterByReward = (quests: Quest[], faction?: number) => {
+  return quests.filter((q: Quest) => {
+    let result = true;
+    if (faction && result) {
+      result = q.rewards.some(
+        (r: Reward) => r.target.type === 'REPUTATION' && r.target.index === faction
+      );
+    }
+    return result;
+  });
+};
 
-  if (ongoingInstance) return false;
-  if (!completedInstance) return true;
-  if (!quest.repeatable) return false; // assume attempt limit for all other quests is 1
-
-  // assumed repeatable quest with no ongoing instance
-  const waitRequirement = completedInstance.repeatDuration ?? 0;
-  const startTime = completedInstance.startTime;
-  return Number(startTime) + Number(waitRequirement) <= Number(now);
+// filter out onwanted ongoing quests
+export const filterOngoing = (quests: Quest[]) => {
+  if (quests.length === 0) return [];
+  return quests.filter((quest: Quest) => quest.index !== 10001);
 };
 
 /////////////////
@@ -95,13 +130,6 @@ export const sortOngoing = (quests: Quest[]): Quest[] => {
     else if (!aCompletable && bCompletable) return 1;
     else return 0;
   });
-};
-
-// filters out onwanted ongoing quests
-export const filterOngoing = (quests: Quest[]) => {
-  if (quests.length === 0) return [];
-
-  return quests.filter((quest: Quest) => quest.index !== 10001);
 };
 
 /////////////////

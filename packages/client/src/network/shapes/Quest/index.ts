@@ -1,7 +1,9 @@
 export {
   checkObjective,
-  filterAvailable as filterAvailableQuests,
   filterOngoing as filterOngoingQuests,
+  filterByAvailable as filterQuestsByAvailable,
+  filterByObjective as filterQuestsByObjective,
+  filterByReward as filterQuestsByReward,
   hasCompleted as hasCompletedQuest,
   meetsObjectives,
   meetsRequirements,
