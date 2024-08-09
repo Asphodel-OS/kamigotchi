@@ -35,6 +35,7 @@ export const List = (props: Props) => {
     const ongoing = [...quests];
     return sortOngoingQuests(filterOngoingQuests(ongoing));
   };
+
   // TODO: format this more elegantly
   const EmptyText = () => {
     if (mode === 'AVAILABLE') {

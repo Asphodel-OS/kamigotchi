@@ -152,6 +152,7 @@ export function registerQuestsModal() {
                 ongoing: filterQuestsByObjective(data.ongoing, 1),
                 completed: filterQuestsByObjective(data.completed, 1),
               }}
+              actions={{ acceptQuest, completeQuest }}
             />
           }
           canExit

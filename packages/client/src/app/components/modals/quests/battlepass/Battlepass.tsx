@@ -20,10 +20,14 @@ interface Props {
     ongoing: Quest[];
     completed: Quest[];
   };
+  actions: {
+    acceptQuest: (quest: Quest) => void;
+    completeQuest: (quest: Quest) => void;
+  };
 }
 
 export const Battlepass = (props: Props) => {
-  const { account, quests } = props;
+  const { account, quests, actions } = props;
   const [maxRep, setMaxRep] = useState(0);
   const [currRep, setCurrRep] = useState(0);
 
@@ -35,12 +39,12 @@ export const Battlepass = (props: Props) => {
     if (newCurrRep !== currRep) setCurrRep(newCurrRep);
   }, [quests.agency]);
 
-  const handleMilestoneClick = (quest: Quest) => {
-    //
-  };
-
   //////////////////
-  // INTERPRETATION
+  // CHECKS
+
+  const hasAction = (quest: Quest) => {
+    return getAction(quest) !== undefined;
+  };
 
   const isAvailable = (quest: Quest) => {
     return !isComplete(quest) && !isOngoing(quest);
@@ -63,6 +67,18 @@ export const Battlepass = (props: Props) => {
   const meetsReputation = (quest: Quest) => {
     const need = getReputationNeeded(quest);
     return currRep >= need;
+  };
+
+  //////////////////
+  // INTERPRETATION
+
+  // get the available action on a Milestone Quest
+  const getAction = (quest: Quest) => {
+    if (isAvailable(quest)) return actions.acceptQuest(quest);
+    if (isCompletable(quest)) {
+      const playerQuest = quests.ongoing.find((q) => q.index === quest.index);
+      return actions.completeQuest(playerQuest!);
+    }
   };
 
   // scan a Quest's Objectives to get the REPUTATION needed to complete it
@@ -100,15 +116,18 @@ export const Battlepass = (props: Props) => {
       {quests.agency.map((q) => (
         <Milestone
           key={q.index}
-          onClick={() => handleMilestoneClick(q)}
-          size={1.5}
+          onClick={() => getAction(q)}
           position={getMilestonePosition(q)}
           colors={{
             bg: meetsReputation(q) ? Colors.fg : Colors.bg,
             ring: meetsReputation(q) ? Colors.accent : 'black',
           }}
           tooltip={[`${q.name} [${getStatus(q)}]`, '', q.description]}
-          is={{ accepted: isOngoing(q) || isComplete(q), complete: isComplete(q) }}
+          is={{
+            accepted: isOngoing(q) || isComplete(q),
+            complete: isComplete(q),
+            disabled: !hasAction(q),
+          }}
         />
       ))}
     </Container>

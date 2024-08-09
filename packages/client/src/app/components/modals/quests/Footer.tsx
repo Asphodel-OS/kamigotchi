@@ -13,13 +13,14 @@ interface Props {
     ongoing: Quest[];
     completed: Quest[];
   };
+  actions: {
+    acceptQuest: (quest: Quest) => void;
+    completeQuest: (quest: Quest) => void;
+  };
 }
 
 export const Footer = (props: Props) => {
-  const { account, quests } = props;
-  const reputation = account.reputation.agency;
-
-  console.log(quests);
+  const { account, quests, actions } = props;
 
   return (
     <Container>
@@ -32,7 +33,7 @@ export const Footer = (props: Props) => {
       >
         <Icon src={getFactionImage('agency')} />
       </Tooltip>
-      <Battlepass account={account} quests={quests} />
+      <Battlepass account={account} quests={quests} actions={actions} />
     </Container>
   );
 };

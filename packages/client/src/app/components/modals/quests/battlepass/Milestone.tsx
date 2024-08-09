@@ -1,11 +1,10 @@
-import { Tooltip } from 'app/components/library';
-import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
+import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  size: number; // vw of diameter
   position: number; // as 0-100% from the left of the bar it's placed on
   onClick: Function;
   tooltip: string[];
@@ -16,14 +15,15 @@ interface Props {
   is: {
     accepted: boolean;
     complete: boolean;
+    disabled: boolean;
   };
-  disabled?: boolean;
+  size?: number; // vw of diameter
   pulse?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
 export const Milestone = (props: Props) => {
-  const { size, position, onClick, tooltip, disabled, colors, pulse, is } = props;
+  const { size, position, colors, onClick, tooltip, pulse, is } = props;
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -35,13 +35,13 @@ export const Milestone = (props: Props) => {
     <Container>
       <Tooltip text={tooltip}>
         <Button
-          size={size}
+          size={size ?? 1.5}
           position={position}
           scale={0.25}
           shift={-0.5}
-          onClick={!disabled ? handleClick : () => {}}
+          onClick={handleClick}
           color={colors.bg}
-          disabled={disabled}
+          disabled={is.disabled}
           pulse={pulse}
         >
           <InnerRing scale={0.85} color={colors.ring} isVisible={is.accepted} />
@@ -71,7 +71,7 @@ interface ButtonProps {
 const Button = styled.div<ButtonProps>`
   position: relative;
   left: ${({ position }) => position}%;
-  transform: translateX(-50%);
+  transform: translateX(${({ shift }) => 100 * shift}%);
 
   border: solid black 0.15vw;
   border-radius: ${({ size }) => size * 0.5}vw;
@@ -82,18 +82,21 @@ const Button = styled.div<ButtonProps>`
   align-items: center;
   justify-content: center;
 
+  pointer-events: auto;
   background-color: ${({ color }) => color};
-  cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  &:hover {
-    animation: ${({ scale, shift }) => hoverFx(scale, shift)} 0.2s;
-    transform: ${({ scale, shift }) =>
-      `scale(${1 + scale}) translateX(${100 * shift * (1 - scale)}%)`};
-  }
-  &:active {
-    animation: ${({ scale, shift }) => clickFx(scale, shift)} 0.2s;
-  }
+  ${({ disabled }) => !disabled && 'cursor: pointer;'}
+  ${({ disabled, scale, shift }) =>
+    !disabled &&
+    `
+    &:hover {
+      animation: ${hoverFx(scale, shift)} 0.2s;
+      transform: scale(${1 + scale}) translateX(${100 * shift * (1 - scale)}%);
+    }
+    &:active {
+      animation: ${clickFx(scale, shift)} 0.2s;
+    }
+  `}
 
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
 `;
