@@ -1,11 +1,24 @@
-import { Tooltip } from 'app/components/library';
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
+import { Account } from 'network/shapes/Account';
+import { Quest } from 'network/shapes/Quest';
+import { getFactionImage } from 'network/shapes/utils/images';
+
 interface Props {
-  balance: number;
+  account: Account;
+  quests: {
+    agency: Quest[];
+    ongoing: Quest[];
+    completed: Quest[];
+  };
 }
 
-export const Footer = (props: Props) => {
+export const Battlepass = (props: Props) => {
+  const { account, quests } = props;
+
+  console.log(quests);
+
   return (
     <Container>
       <Tooltip
@@ -15,10 +28,10 @@ export const Footer = (props: Props) => {
           `This is what you'll need for more, uh, permanent rewards....`,
         ]}
       >
-        <Text>REPUTATION: </Text>
+        <Icon src={getFactionImage('agency')} />
       </Tooltip>
 
-      <Balance>{Number(props.balance)}</Balance>
+      <Balance>{Number(account.reputation.agency)}</Balance>
     </Container>
   );
 };
@@ -52,4 +65,9 @@ const Balance = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 1vw;
+`;
+
+const Icon = styled.img`
+  height: 1.5vw;
+  width: 1.5vw;
 `;

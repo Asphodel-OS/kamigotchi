@@ -9,14 +9,15 @@ import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Quest,
-  filterAvailableQuests,
+  filterQuestsByAvailable,
+  filterQuestsByObjective,
   getCompletedQuests,
   getOngoingQuests,
   getRegistryQuests,
   parseQuestStatuses,
 } from 'network/shapes/Quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
-import { Footer } from './Footer';
+import { Battlepass } from './Battlepass';
 import { List } from './List';
 import { Tabs } from './Tabs';
 
@@ -74,13 +75,18 @@ export function registerQuestsModal() {
       // available quests for the Notification bar as well
       useEffect(() => {
         const parsedRegistry = parseQuestStatuses(world, components, data.account, data.registry);
-        const availableQuests = filterAvailableQuests(parsedRegistry, data.completed, data.ongoing);
+        const availableQuests = filterQuestsByAvailable(
+          parsedRegistry,
+          data.completed,
+          data.ongoing
+        );
 
         if (availableQuests.length > 0) setTab('AVAILABLE');
         setAvailable(availableQuests);
       }, [data.registry.length, modals.quests]);
 
       // update the Notifications when the number of available quests changes
+      // Q(jb): do we want this in a react component or on an independent hook?
       useEffect(() => {
         const id = 'Available Quests';
         const numAvail = available.length;
@@ -138,7 +144,16 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
-          footer={<Footer balance={data.account.reputation.agency} />}
+          footer={[
+            <Battlepass
+              account={data.account}
+              quests={{
+                agency: filterQuestsByObjective(data.registry, 1),
+                ongoing: filterQuestsByObjective(data.ongoing, 1),
+                completed: filterQuestsByObjective(data.completed, 1),
+              }}
+            />,
+          ]}
           canExit
           truncate
           noPadding
