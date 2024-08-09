@@ -99,7 +99,7 @@ export function registerNodeModal() {
       const getDrops = () => {
         return {
           node: node.drops ?? [],
-          scavenge: getDTDetails(world, components, scavBar?.rewards[0].droptable ?? NullDT),
+          scavenge: getDTDetails(world, components, scavBar?.rewards[0]?.droptable ?? NullDT),
         };
       };
 
@@ -168,7 +168,7 @@ export function registerNodeModal() {
       };
 
       const scavClaim = async (scavBar: ScavBar) => {
-        DTRevealer.nameEntity('scavenge', scavBar.id);
+        DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
