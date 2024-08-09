@@ -1,25 +1,19 @@
-import { Tooltip } from 'app/components/library';
 import styled from 'styled-components';
 
-const DefaultColors = {
-  background: '#bbb',
-  foreground: '#1e1',
-};
+import { Tooltip } from 'app/components/library';
 
 interface Props {
   total: number;
   current: number;
   height?: number;
-  colors?: {
-    background?: string;
-    progress?: string;
+  colors: {
+    background: string;
+    progress: string;
   };
 }
 
 export const ProgressBar = (props: Props) => {
   const { total, current, height, colors } = props;
-  const bgColor = colors?.background ?? DefaultColors.background;
-  const fgColor = colors?.progress ?? DefaultColors.foreground;
 
   const getPercent = (curr: number, tot: number) => {
     if (total === 0) return 0;
@@ -34,8 +28,8 @@ export const ProgressBar = (props: Props) => {
         <Bar
           percent={getPercent(current, total)}
           height={height ?? 1.2}
-          bgColor={bgColor}
-          fgColor={fgColor}
+          bgColor={colors.background}
+          fgColor={colors.progress}
         />
       </Tooltip>
     </Container>
@@ -43,13 +37,12 @@ export const ProgressBar = (props: Props) => {
 };
 
 const Container = styled.div`
-  padding: 0.7vh 0.8vw;
+  width: 100%;
+  opacity: 0.9;
 
   display: flex;
-  flex-flow: column no-wrap;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
 `;
 
 interface BarProps {

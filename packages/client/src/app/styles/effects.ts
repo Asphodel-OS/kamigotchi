@@ -1,14 +1,14 @@
 import { keyframes } from 'styled-components';
 
-export const clickFx = (upscale = 1.05, downscale = 0.95) => keyframes`
-  0% { transform: scale(${upscale}); }
-  50% { transform: scale(${downscale}); }
-  100% { transform: scale(${upscale}); }
+export const clickFx = (upscale = 1.05, downscale = 0.95, translate = 0) => keyframes`
+  0% { transform: scale(${upscale}) translateX(${100 * translate}%); }
+  50% { transform: scale(${downscale} translateX(${100 * translate}%); }
+  100% { transform: scale(${upscale}) translateX(${100 * translate}%; }
 `;
 
-export const hoverFx = (upscale = 1.05) => keyframes`
-  0% { transform: scale(1); }
-  100% { transform: scale(${upscale}); }
+export const hoverFx = (upscale = 1.05, translate = 0) => keyframes`
+  0% { transform: scale(1) translateX(${100 * translate}%); }
+  100% { transform: scale(${upscale}) translateX(${100 * translate}%); }
 `;
 
 export const depressFx = (shift = 1, scale = 1) => keyframes`

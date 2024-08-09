@@ -39,12 +39,12 @@ export const Footer = (props: Props) => {
 
 const Container = styled.div`
   padding: 0.9vw;
+  gap: 0.6vw;
 
   display: flex;
   flex-flow: column no-wrap;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
 `;
 
 const Icon = styled.img`
