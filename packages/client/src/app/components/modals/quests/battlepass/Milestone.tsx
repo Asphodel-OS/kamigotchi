@@ -41,6 +41,7 @@ export const Milestone = (props: Props) => {
 const Container = styled.div`
   position: absolute;
   width: 100%;
+  pointer-events: none;
 `;
 
 interface ButtonProps {
@@ -68,11 +69,12 @@ const Button = styled.div<ButtonProps>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    animation: ${({ scale, shift }) => hoverFx(1 + scale, shift)} 0.2s;
-    transform: scale(1.1) translateX(-50%);
+    animation: ${({ scale, shift }) => hoverFx(scale, shift)} 0.2s;
+    transform: ${({ scale, shift }) =>
+      `scale(${1 + scale}) translateX(${100 * shift * (1 - scale)}%)`};
   }
   &:active {
-    animation: ${({ scale, shift }) => clickFx(1 + scale, 1 - scale, shift)} 0.2s;
+    animation: ${({ scale, shift }) => clickFx(scale, shift)} 0.2s;
   }
 
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;

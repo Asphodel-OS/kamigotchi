@@ -24,7 +24,7 @@ export const GasGauge = (props: GaugeProps) => {
   };
 
   return (
-    <Container onClick={handleClick} effectScale={1.15}>
+    <Container onClick={handleClick} effectScale={0.15}>
       <Meter>
         <Arrow angle={levelToAngle(level)}>
           <Tip />
@@ -45,7 +45,7 @@ const Container = styled.div<{ effectScale: number }>`
 
   &:hover {
     animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    transform: scale(${({ effectScale }) => 1 + effectScale});
   }
   &:active {
     animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;

@@ -35,7 +35,7 @@ export const MenuButton = (props: Props) => {
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>
-        <Button onClick={handleToggle} effectScale={1.1} disabled={disabled}>
+        <Button onClick={handleToggle} effectScale={0.1} disabled={disabled}>
           <Image src={image} alt={id} />
         </Button>
       </div>
@@ -57,7 +57,7 @@ const Button = styled.button<ButtonProps>`
 
   &:hover {
     animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    transform: scale(${({ effectScale }) => 1 + effectScale});
   }
   &:active {
     animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
