@@ -1,7 +1,8 @@
 import { Component, Components, EntityIndex, Schema, Type } from '@mud-classic/recs';
 import { Contract } from 'ethers';
 
-import { NetworkComponentUpdate, NetworkConfig, SyncWorkerConfig, SystemCall } from 'engine/types';
+import { NetworkConfig } from 'engine/types';
+import { NetworkComponentUpdate, SyncWorkerConfig, SystemCall } from 'workers/types';
 
 export type SetupContractConfig = NetworkConfig &
   Omit<SyncWorkerConfig, 'worldContract' | 'mappings'> & {
