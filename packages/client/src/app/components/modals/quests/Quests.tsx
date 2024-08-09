@@ -17,7 +17,7 @@ import {
   parseQuestStatuses,
 } from 'network/shapes/Quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
-import { Battlepass } from './Battlepass';
+import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';
 
@@ -144,16 +144,16 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
-          footer={[
-            <Battlepass
+          footer={
+            <Footer
               account={data.account}
               quests={{
                 agency: filterQuestsByObjective(data.registry, 1),
                 ongoing: filterQuestsByObjective(data.ongoing, 1),
                 completed: filterQuestsByObjective(data.completed, 1),
               }}
-            />,
-          ]}
+            />
+          }
           canExit
           truncate
           noPadding

@@ -4,6 +4,7 @@ import { Tooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
 import { getFactionImage } from 'network/shapes/utils/images';
+import { Battlepass } from './battlepass/Battlepass';
 
 interface Props {
   account: Account;
@@ -14,8 +15,9 @@ interface Props {
   };
 }
 
-export const Battlepass = (props: Props) => {
+export const Footer = (props: Props) => {
   const { account, quests } = props;
+  const reputation = account.reputation.agency;
 
   console.log(quests);
 
@@ -30,14 +32,13 @@ export const Battlepass = (props: Props) => {
       >
         <Icon src={getFactionImage('agency')} />
       </Tooltip>
-
-      <Balance>{Number(account.reputation.agency)}</Balance>
+      <Battlepass account={account} quests={quests} />
     </Container>
   );
 };
 
 const Container = styled.div`
-  padding: 0.7vh 0.8vw;
+  padding: 0.9vw;
 
   display: flex;
   flex-flow: column no-wrap;
@@ -46,28 +47,7 @@ const Container = styled.div`
   width: 100%;
 `;
 
-const Text = styled.p`
-  color: black;
-  font-family: Pixel;
-  font-size: 1vw;
-`;
-
-const Balance = styled.div`
-  border: solid #666 0.15vw;
-  border-radius: 0.3vw;
-  padding: 0.5vw;
-  width: 50%;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 1vw;
-`;
-
 const Icon = styled.img`
-  height: 1.5vw;
-  width: 1.5vw;
+  height: 2.1vw;
+  width: auto;
 `;
