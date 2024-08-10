@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
-import { Listing } from 'network/shapes/Listing';
+import { Listing } from 'network/shapes/Npc';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
 
@@ -28,7 +28,7 @@ export const CatalogRow = (props: Props) => {
       key={listing.item.index}
       onClick={() => handleClick()}
       isInCart={isInCart}
-      effectScale={1.02}
+      effectScale={0.02}
     >
       <Tooltip text={[listing.item.description ?? '']}>
         <Image src={listing.item.image} isInCart={isInCart} />
@@ -63,7 +63,7 @@ const Container = styled.div<ContainerProps>`
   cursor: pointer;
   &:hover {
     animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => effectScale});
+    transform: scale(${({ effectScale }) => 1 + effectScale});
   }
   &:active {
     animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
