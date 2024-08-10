@@ -1,15 +1,15 @@
 import {
+  EntityID,
+  EntityIndex,
   World,
   createEntity,
   getComponentValue,
-  updateComponent,
-  EntityID,
-  EntityIndex,
   removeComponent,
   setComponent,
-} from "@mud-classic/recs";
-import { NotificationData } from "./types";
-import { defineNotificationComponent } from "./NotificationComponent";
+  updateComponent,
+} from '@mud-classic/recs';
+import { defineNotificationComponent } from './NotificationComponent';
+import { NotificationData } from './types';
 
 export type NotificationSystem = ReturnType<typeof createNotificationSystem>;
 
@@ -18,7 +18,7 @@ export function createNotificationSystem<M = undefined>(world: World) {
   const Notification = defineNotificationComponent<M>(world);
 
   /**
-   * Adds a notification 
+   * Adds a notification
    * @param notification notification to be added
    * @returns index of the entity created for the action
    */
@@ -43,13 +43,13 @@ export function createNotificationSystem<M = undefined>(world: World) {
    * @param id ID of notification to be removed
    * @returns void
    */
-  function remove(id: EntityID): boolean {
-    const index = world.entityToIndex.get(id);
+  function remove(id: EntityID | EntityIndex): boolean {
+    const index = typeof id === 'string' ? world.entityToIndex.get(id) : id;
     if (index == undefined || getComponentValue(Notification, index) == undefined) {
       console.warn(`Notification ${id} was not found`);
       return false;
     }
-    removeComponent(Notification, world.entityToIndex.get(id)!);
+    removeComponent(Notification, index!);
     return true;
   }
 
@@ -58,8 +58,8 @@ export function createNotificationSystem<M = undefined>(world: World) {
    * @param id ID of notification to be updated
    * @returns void
    */
-  function update(id: EntityID, toUpdate: Partial<NotificationData>) {
-    const index = world.entityToIndex.get(id);
+  function update(id: EntityID | EntityIndex, toUpdate: Partial<NotificationData>) {
+    const index = typeof id === 'string' ? world.entityToIndex.get(id) : id;
     if (index == undefined || getComponentValue(Notification, index) == undefined) {
       console.warn(`Notification ${id} was not found`);
       return;

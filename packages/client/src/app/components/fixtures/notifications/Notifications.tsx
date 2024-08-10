@@ -1,6 +1,6 @@
 import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-classic/recs';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { registerUIComponent } from 'app/root';
 import { Modals, useVisibility } from 'app/stores';
@@ -46,14 +46,17 @@ export function registerNotificationFixture() {
       /////////////////
       // VISUALIZATION
 
-      const SingleNotif = (id: EntityIndex) => {
-        const notification = getComponentValue(notifications.Notification, id);
+      const SingleNotif = (entityIndex: EntityIndex) => {
+        const notification = getComponentValue(notifications.Notification, entityIndex);
         if (!notification) return null;
 
         return (
-          <Card key={id.toString()} onClick={() => handleClick(notification.modal)}>
-            <Title>{notification.title}</Title>
-            <Description>{notification.description}</Description>
+          <Card key={entityIndex.toString()}>
+            <ExitButton onClick={() => notifications.remove(entityIndex)}>X</ExitButton>
+            <div onClick={() => handleClick(notification.modal)}>
+              <Title>{notification.title}</Title>
+              <Description>{notification.description}</Description>
+            </div>
           </Card>
         );
       };
@@ -84,11 +87,16 @@ const Contents = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
+  padding: 0.6vw;
 
   gap: 0.4vh 0.2vw;
+
+  overflow: show;
 `;
 
 const Card = styled.button`
+  position: relative;
+
   background-color: #fff;
   border: 0.2vw solid #333;
   border-radius: 0.8vw;
@@ -130,4 +138,37 @@ const Description = styled.div`
   padding: 0.4vh 0.5vw;
 
   max-width: 100%;
+`;
+
+const ExitButton = styled.button`
+  position: absolute;
+  right: -0.6vw;
+  top: -0.6vw;
+
+  background-color: #ffffff;
+  border: 0.15vw solid black;
+  border-radius: 0.6vw;
+  opacity: 0;
+
+  color: black;
+  padding: 0.3vw 0.4vw;
+
+  font-size: 0.9vw;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e8e8e8;
+    opacity: 1;
+    animation: ${() => fadeIn} 0.1s ease-in-out;
+  }
+
+  &:active {
+    background-color: #c4c4c4;
+    opacity: 1;
+  }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;

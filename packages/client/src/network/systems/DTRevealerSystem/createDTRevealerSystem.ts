@@ -108,7 +108,7 @@ export function createDTRevealerSystem(
       }
     }
 
-    if (revealingCommits.size > 0) sendKeepAliveNotif(notifications, false);
+    if (revealingCommits.size === 0) sendKeepAliveNotif(notifications, false);
   }
 
   return {
