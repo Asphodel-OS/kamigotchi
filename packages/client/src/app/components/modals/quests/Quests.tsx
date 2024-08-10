@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -6,7 +6,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { questsIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { Account, getAccountFromBurner } from 'network/shapes/Account';
 import {
   Quest,
   filterQuestsByAvailable,
@@ -17,9 +17,12 @@ import {
   parseQuestStatuses,
 } from 'network/shapes/Quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
+import { waitForActionCompletion } from 'network/utils';
 import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';
+
+const REFRESH_PERIOD = 1000;
 
 export function registerQuestsModal() {
   registerUIComponent(
@@ -32,7 +35,7 @@ export function registerQuestsModal() {
     },
 
     (layers) =>
-      interval(1000).pipe(
+      interval(REFRESH_PERIOD).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
@@ -44,7 +47,7 @@ export function registerQuestsModal() {
           // NOTE(jb): ideally we only update when these shapes change but for
           // the time being we'll update on every tick to force a re-render.
           // just separating these out to flatten our Account shapes
-          // TODO (jb): move inside effect hook once we have proper subscriptions
+          // TODO (jb): move inside effect hook once we have proper Objective/Requirements tracking
           const ongoingQuests = getOngoingQuests(world, components, account.id);
           const completedQuests = getCompletedQuests(world, components, account.id);
           const ongoingParsed = parseQuestStatuses(world, components, account, ongoingQuests);
@@ -63,6 +66,7 @@ export function registerQuestsModal() {
       ),
     ({ network, data }) => {
       const { actions, api, components, notifications, world } = network;
+      const { account, completed, ongoing, registry } = data;
       const [tab, setTab] = useState<TabType>('ONGOING');
       const { modals } = useVisibility();
       const [available, setAvailable] = useState<Quest[]>([]);
@@ -74,16 +78,8 @@ export function registerQuestsModal() {
       // in the Props-based (UnParsed) Quest Registry. recheck the number of
       // available quests for the Notification bar as well
       useEffect(() => {
-        const parsedRegistry = parseQuestStatuses(world, components, data.account, data.registry);
-        const availableQuests = filterQuestsByAvailable(
-          parsedRegistry,
-          data.completed,
-          data.ongoing
-        );
-
-        if (availableQuests.length > 0) setTab('AVAILABLE');
-        setAvailable(availableQuests);
-      }, [data.registry.length, modals.quests]);
+        refreshAvailable(account, registry, completed, ongoing);
+      }, [registry.length, modals.quests]);
 
       // update the Notifications when the number of available quests changes
       // Q(jb): do we want this in a react component or on an independent hook?
@@ -112,11 +108,30 @@ export function registerQuestsModal() {
         }
       }, [available.length]);
 
+      const refreshAvailable = (
+        account: Account,
+        registry: Quest[],
+        completed: Quest[],
+        ongoing: Quest[]
+      ) => {
+        const parsedRegistry = parseQuestStatuses(world, components, account, registry);
+        const availableQuests = filterQuestsByAvailable(parsedRegistry, completed, ongoing);
+        if (availableQuests.length > 0) setTab('AVAILABLE');
+        setAvailable(availableQuests);
+      };
+
+      const refreshAfterAction = async (actionIndex: EntityIndex) => {
+        await waitForActionCompletion(actions!.Action, actionIndex);
+        setTimeout(() => {
+          refreshAvailable(account, registry, completed, ongoing);
+        }, REFRESH_PERIOD + 500);
+      };
+
       /////////////////
       // ACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        actions.add({
+        const actionIndex = actions.add({
           action: 'QuestAccept',
           params: [quest.index * 1],
           description: `Accepting Quest ${quest.index * 1}`,
@@ -124,10 +139,11 @@ export function registerQuestsModal() {
             return api.player.quests.accept(quest.index);
           },
         });
+        refreshAfterAction(actionIndex);
       };
 
       const completeQuest = async (quest: Quest) => {
-        actions.add({
+        const actionIndex = actions.add({
           action: 'QuestComplete',
           params: [quest.id],
           description: `Completing Quest ${quest.index * 1}`,
@@ -135,6 +151,7 @@ export function registerQuestsModal() {
             return api.player.quests.complete(quest.id);
           },
         });
+        refreshAfterAction(actionIndex);
       };
 
       if (!modals.quests) return <></>;
@@ -147,11 +164,11 @@ export function registerQuestsModal() {
           ]}
           footer={
             <Footer
-              account={data.account}
+              account={account}
               quests={{
-                agency: filterQuestsByObjective(data.registry, 1),
-                ongoing: filterQuestsByObjective(data.ongoing, 1),
-                completed: filterQuestsByObjective(data.completed, 1),
+                agency: filterQuestsByObjective(registry, 1),
+                ongoing: filterQuestsByObjective(ongoing, 1),
+                completed: filterQuestsByObjective(completed, 1),
               }}
               actions={{ acceptQuest, completeQuest }}
             />
@@ -161,7 +178,7 @@ export function registerQuestsModal() {
           noPadding
         >
           <List
-            quests={{ available, ongoing: data.ongoing, completed: data.completed }}
+            quests={{ available, ongoing: ongoing, completed: completed }}
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{
