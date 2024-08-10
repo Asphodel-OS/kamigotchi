@@ -10,6 +10,14 @@ export interface DetailedEntity {
   description?: string;
 }
 
+export interface Descriptor {
+  type: string;
+  name?: string;
+  subtype?: string;
+  index?: number;
+  value?: string;
+}
+
 // TODO: move Gacha ticket shapes to Item/
 export const GachaTicket: DetailedEntity = {
   ObjectType: 'GACHA_TICKET',

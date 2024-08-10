@@ -47,15 +47,15 @@ export const getCondition = (
 
   let result: Condition = {
     id: world.entities[entityIndex],
-    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
+    logic: (getComponentValue(LogicType, entityIndex)?.value || '') as string,
     target: {
-      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-      index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Value, entityIndex)?.value,
+      type: (getComponentValue(Type, entityIndex)?.value || '') as string,
+      index: getComponentValue(Index, entityIndex)?.value as number,
+      value: getComponentValue(Value, entityIndex)?.value as number,
     },
   };
 
-  if (options?.for) result.for = getFor(components, entityIndex);
+  if (options?.for) result.for = getFor(world, components, entityIndex);
 
   return result;
 };

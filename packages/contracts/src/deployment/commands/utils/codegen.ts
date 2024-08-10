@@ -12,7 +12,7 @@ const baseContractsDir = path.join(deploymentDir, '../../');
 const clientDir = path.join(deploymentDir, '../../../client/');
 const deployConfigPath = path.join('./deploy.json');
 
-const componentRegisterPath = path.join(clientDir, 'src/network/components/register.ts');
+const componentRegisterPath = path.join(clientDir, 'src/network/components/register/contracts.ts');
 const componentSchemaPath = path.join(clientDir, 'types/ComponentsSchema.ts');
 
 export async function generateImports(out: string) {
@@ -231,8 +231,6 @@ ${components
       `    ${comp.name}: ${parseCompTypeDef(comp.type, comp.FEtype)}(world, '${comp.name}', '${comp.id}'),`
   )
   .join('\n')}
-
-LoadingState: defineLoadingStateComponent(world),
   }
 }`;
 

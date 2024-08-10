@@ -1,4 +1,5 @@
 export { defineBoolComponent } from './BoolComponent';
+export { defineDescriptorComponent } from './DescriptorComponent';
 export { defineDevHighlightComponent } from './DevHighlight';
 export { defineLoadingStateComponent } from './LoadingStateComponent';
 export { defineNumberArrayComponent } from './NumberArrayComponent';

@@ -17,7 +17,7 @@
     { "comp": "ExitsComponent", "name": "Exits", "type": "uint32[]" },
     { "comp": "ExperienceComponent", "name": "Experience", "type": "uint256" },
     { "comp": "FarcasterIndexComponent", "name": "FarcasterIndex", "type": "uint32" },
-    { "comp": "ForComponent", "name": "For", "type": "uint256" },
+    { "comp": "ForComponent", "name": "ForID", "type": "uint256" },
     { "comp": "HasFlagComponent", "name": "HasFlag", "type": "bool" },
     { "comp": "HashComponent", "name": "Hash", "type": "uint256", "FEtype": "string" },
     { "comp": "HarmonyComponent", "name": "Harmony", "type": "Stat" },

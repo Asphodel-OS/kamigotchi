@@ -64,7 +64,7 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     id: world.entities[entityIndex],
     index: getComponentValue(ItemIndex, entityIndex)?.value as number,
     type: type,
-    for: getFor(components, entityIndex),
+    for: getFor(world, components, entityIndex),
     stats: getStats(components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
     is: {

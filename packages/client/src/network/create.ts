@@ -12,6 +12,7 @@ import { initPlayground } from './playground';
 import { SetupContractConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
 import { createDTRevealerSystem } from './systems/DTRevealerSystem';
+import { createForSystem } from './systems/ForSystem';
 
 export type NetworkLayer = Awaited<ReturnType<typeof createNetworkLayer>>;
 
@@ -41,6 +42,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     notifications,
     api.player
   );
+  const For = createForSystem(world, components);
 
   let networkLayer = {
     world,
@@ -54,6 +56,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     api: api,
     localSystems: {
       DTRevealer,
+      For,
     },
     updates: {
       components: {

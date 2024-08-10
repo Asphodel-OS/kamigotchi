@@ -1,10 +1,6 @@
-import { Components, EntityIndex, getComponentValue } from '@mud-classic/recs';
-import { utils } from 'ethers';
+import { Components, EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 import { Account } from '../Account';
 import { Kami } from '../Kami';
-
-const forAccount = utils.solidityKeccak256(['string'], ['component.is.account']);
-const forKami = utils.solidityKeccak256(['string'], ['component.is.pet']);
 
 export type ForType = '' | 'ACCOUNT' | 'KAMI';
 
@@ -14,14 +10,14 @@ export interface ForShapeOptions {
   kami?: Kami;
 }
 
-export const getFor = (components: Components, entityIndex: EntityIndex): ForType => {
-  const { For } = components;
+export const getFor = (world: World, components: Components, entityIndex: EntityIndex): ForType => {
+  const { ForID, For } = components;
 
-  const rawValue = getComponentValue(For, entityIndex)?.value;
+  const rawValue = getComponentValue(ForID, entityIndex)?.value;
   if (!rawValue) return '';
 
-  const value = rawValue.toString();
-  if (value === forAccount) return 'ACCOUNT';
-  else if (value === forKami) return 'KAMI';
-  else return '';
+  const regIndex = world.entityToIndex.get(rawValue as EntityID);
+  if (!regIndex) return '';
+
+  return getComponentValue(For, regIndex)?.type as ForType;
 };
