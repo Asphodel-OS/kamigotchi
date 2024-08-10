@@ -28,8 +28,9 @@ interface Props {
 
 export const Battlepass = (props: Props) => {
   const { account, quests, actions } = props;
-  const [maxRep, setMaxRep] = useState(0);
+  const [maxRep, setMaxRep] = useState(1);
   const [currRep, setCurrRep] = useState(0);
+  console.log(account.reputation, quests);
 
   useEffect(() => {
     const newMaxRep = Math.max(...quests.agency.map((q) => getReputationNeeded(q)));
@@ -74,10 +75,10 @@ export const Battlepass = (props: Props) => {
 
   // get the available action on a Milestone Quest
   const getAction = (quest: Quest) => {
-    if (isAvailable(quest)) return actions.acceptQuest(quest);
+    if (isAvailable(quest)) return () => actions.acceptQuest(quest);
     if (isCompletable(quest)) {
       const playerQuest = quests.ongoing.find((q) => q.index === quest.index);
-      return actions.completeQuest(playerQuest!);
+      return () => actions.completeQuest(playerQuest!);
     }
   };
 
@@ -117,7 +118,7 @@ export const Battlepass = (props: Props) => {
         <Milestone
           key={q.index}
           onClick={() => getAction(q)}
-          position={getMilestonePosition(q)}
+          position={50}
           colors={{
             bg: meetsReputation(q) ? Colors.fg : Colors.bg,
             ring: meetsReputation(q) ? Colors.accent : 'black',
