@@ -1,13 +1,19 @@
-import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
-import { PlayerAPI } from 'network/api';
+import {
+  EntityID,
+  EntityIndex,
+  World,
+  createEntity,
+  getComponentValue,
+  removeComponent,
+  setComponent,
+} from '@mud-classic/recs';
 import { Components } from 'network/components';
-import { DTCommit, getDTLogByHash } from 'network/shapes/Droptable';
+import { DTCommit } from 'network/shapes/Droptable';
 import { canReveal } from 'network/shapes/utils/commits';
-import { waitForActionCompletion, waitForComponentValueUpdate } from 'network/utils';
 import { Observable } from 'rxjs';
 import { ActionState, ActionSystem } from '../ActionSystem';
 import { NotificationSystem } from '../NotificationSystem';
-import { sendKeepAliveNotif, sendResultNotif } from './functions';
+import { notifyResult, sendKeepAliveNotif } from './functions';
 import { CommitData } from './types';
 
 export type DTRevealerSystem = ReturnType<typeof createDTRevealerSystem>;
@@ -17,9 +23,8 @@ export function createDTRevealerSystem(
   world: World,
   components: Components,
   blockNumber$: Observable<number>,
-  Actions: ActionSystem,
-  Notifications: NotificationSystem,
-  api: PlayerAPI
+  actions: ActionSystem,
+  notifications: NotificationSystem
 ) {
   let blockNumber = 0;
   blockNumber$.subscribe((num) => (blockNumber = num));
@@ -44,84 +49,73 @@ export function createDTRevealerSystem(
     if (canReveal(commit, blockNumber)) queuedCommits.add(commit.id);
   }
 
-  async function execute() {
-    if (queuedCommits.size === 0) return;
+  function extractQueue(): EntityID[] {
+    const { State } = components;
+
+    if (queuedCommits.size === 0) return [];
 
     // notification: keep alive
-    sendKeepAliveNotif(Notifications, true);
+    sendKeepAliveNotif(notifications, true);
 
     const commits: EntityID[] = [];
     queuedCommits.forEach((id) => {
       queuedCommits.delete(id);
       commits.push(id);
       revealingCommits.add(id);
+
+      let entityIndex = world.entityToIndex.get(id) as EntityIndex;
+      if (!entityIndex) entityIndex = createEntity(world, undefined, { id: id });
+      setComponent(State, entityIndex, { value: 'REVEALING' });
     });
 
-    // hardcode wait
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    return commits;
+  }
 
-    const actionIndex = Actions.add({
-      action: 'Droptable reveal',
-      params: [commits],
-      description: `Inspecting item contents`,
-      execute: async () => {
-        return api.droptable.reveal(commits);
-      },
-    });
-    await waitForActionCompletion(Actions.Action, actionIndex);
+  function forceQueue(commits: EntityID[]) {
+    const { State } = components;
 
-    if (getComponentValue(Actions.Action, actionIndex)?.state === ActionState.Complete) {
+    for (let i = 0; i < commits.length; i++) {
+      queuedCommits.delete(commits[i]);
+      revealingCommits.add(commits[0]);
+
+      let entityIndex = world.entityToIndex.get(commits[i]) as EntityIndex;
+      if (!entityIndex) entityIndex = createEntity(world, undefined, { id: commits[i] });
+      setComponent(State, entityIndex, { value: 'REVEALING' });
+    }
+  }
+
+  function finishReveal(actionIndex: EntityIndex, commits: EntityID[]) {
+    const { State } = components;
+
+    for (let i = 0; i < commits.length; i++) revealingCommits.delete(commits[i]);
+    if (getComponentValue(actions.Action, actionIndex)?.state === ActionState.Complete) {
       // upon reveal success
       for (let i = 0; i < commits.length; i++) {
-        notifyResult(commits[i]);
-        revealingCommits.delete(commits[i]);
+        removeComponent(State, world.entityToIndex.get(commits[i])!);
+        notifyResult(world, components, notifications, allCommits.get(commits[i]));
       }
     } else {
       console.log('revealer: reveal failed');
-
       // increment failure count, remove from queue after 3 tries
       for (let i = 0; i < commits.length; i++) {
         const curr = allCommits.get(commits[i]);
         if (curr) {
           if (curr.failures < 3) queuedCommits.add(commits[i]);
+          else setComponent(State, world.entityToIndex.get(commits[i])!, { value: 'FAILED' });
           curr.failures++;
           allCommits.set(commits[i], curr);
         }
       }
     }
 
-    // notification:
-    // remove keep alive (if none in progress - global revealingCommits accounts for consecutive reveals)
-    if (revealingCommits.size == 0) sendKeepAliveNotif(Notifications, false);
-  }
-
-  async function notifyResult(id: EntityID) {
-    const commit = allCommits.get(id);
-    if (!commit) return;
-
-    await waitForRevealed(commit.entityIndex);
-
-    const resultLog = getDTLogByHash(world, components, commit.holder, commit.parentID);
-
-    sendResultNotif(
-      Notifications,
-      commit.parentID,
-      commit.rolls,
-      resultLog,
-      entityNameMap.get(commit.parentID)
-    );
-  }
-
-  // waits for component values to be updated via revealblock getting removed
-  async function waitForRevealed(entity: EntityIndex) {
-    const { RevealBlock } = components;
-    if (!hasComponent(RevealBlock, entity)) return;
-    await waitForComponentValueUpdate(RevealBlock, entity);
+    if (revealingCommits.size > 0) sendKeepAliveNotif(notifications, false);
   }
 
   return {
     add,
-    execute,
     nameEntity: (id: EntityID, name: string) => entityNameMap.set(id, name),
+    extractQueue,
+    forceQueue,
+    finishReveal,
   };
 }

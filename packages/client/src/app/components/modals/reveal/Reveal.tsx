@@ -1,16 +1,14 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { registerUIComponent } from 'app/root';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
-import { v4 as uuid } from 'uuid';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { settingsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { queryDTCommits } from 'network/shapes/Droptable';
-import { Commit } from 'network/shapes/utils/commits';
 import { useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
 
@@ -46,6 +44,7 @@ export function registerRevealModal() {
       const {
         actions,
         api,
+        components: { State },
         world,
         localSystems: { DTRevealer },
       } = network;
@@ -63,25 +62,52 @@ export function registerRevealModal() {
       }, [commits, blockNumber]);
 
       useEffect(() => {
-        DTRevealer.execute();
+        execute();
       }, [blockNumber]);
 
-      const revealTx = async (commits: Commit[]) => {
-        const ids = commits.map((commit) => commit.id);
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'LootboxReveal',
-          params: [ids],
-          description: `Inspecting lootbox contents`,
+      /////////////////
+      // REVEAL LOGIC
+
+      async function execute() {
+        const commits = DTRevealer.extractQueue();
+        if (commits.length === 0) return;
+
+        const actionIndex = await revealTx(commits);
+        DTRevealer.finishReveal(actionIndex, commits);
+      }
+
+      async function overrideExecute(commits: EntityID[]) {
+        if (commits.length === 0) return;
+
+        DTRevealer.forceQueue(commits);
+        const actionIndex = await revealTx(commits);
+        DTRevealer.finishReveal(actionIndex, commits);
+      }
+
+      /////////////////
+      // TRANSACTIONS
+
+      const revealTx = async (commits: EntityID[]): Promise<EntityIndex> => {
+        const actionIndex = actions.add({
+          action: 'Droptable reveal',
+          params: [commits],
+          description: `Inspecting item contents`,
           execute: async () => {
-            return api.player.droptable.reveal(ids);
+            return api.player.droptable.reveal(commits);
           },
         });
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
+        await waitForActionCompletion(actions.Action, actionIndex);
+        return actionIndex;
+      };
+
+      /////////////////
+      // UTILS
+
+      const getCommitState = (id: EntityID): string => {
+        const entityIndex = world.entityToIndex.get(id);
+        if (!entityIndex) return 'EXPIRED';
+        const state = getComponentValue(State, entityIndex)?.value as string;
+        return state ?? '';
       };
 
       return (
@@ -94,7 +120,8 @@ export function registerRevealModal() {
           <Container>
             <Commits
               data={{ commits: commits, blockNumber: Number(blockNumber) }}
-              actions={{ revealTx }}
+              actions={{ revealTx: overrideExecute }}
+              utils={{ getCommitState }}
             />
           </Container>
         </ModalWrapper>
@@ -110,20 +137,4 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
   padding: 0.4vh 1.2vw;
-`;
-
-const SubHeader = styled.p`
-  color: #333;
-
-  font-family: Pixel;
-  font-size: 1.5vw;
-  text-align: center;
-
-  width: 100%;
-`;
-
-const BackWrapper = styled.div`
-  position: absolute;
-  top: 1vh;
-  left: 1vw;
 `;

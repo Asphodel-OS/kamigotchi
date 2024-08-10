@@ -2,24 +2,30 @@ import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
 
+import { EntityID } from '@mud-classic/recs';
 import { Commit, canReveal } from 'network/shapes/utils';
 
 interface Props {
   actions: {
-    revealTx: (commits: Commit[]) => Promise<void>;
+    revealTx: (commits: EntityID[]) => Promise<void>;
   };
   data: {
     commits: Commit[];
     blockNumber: number;
   };
+  utils: {
+    getCommitState: (id: EntityID) => string;
+  };
 }
 
 export const Commits = (props: Props) => {
+  const { actions, data, utils } = props;
+
   /////////////////
   // LOGIC
 
   const getCommitTimeFrom = (commit: Commit): string => {
-    const secDelta = (props.data.blockNumber - commit.revealBlock) * 2;
+    const secDelta = (data.blockNumber - commit.revealBlock) * 2;
 
     if (secDelta > 86400) {
       const days = Math.floor(secDelta / 86400);
@@ -39,16 +45,35 @@ export const Commits = (props: Props) => {
   // DISPLAY
 
   const Cell = (commit: Commit) => {
-    return canReveal(commit, props.data.blockNumber) ? ActiveCell(commit) : ExpiredCell(commit);
+    return canReveal(commit, data.blockNumber) ? ActiveCell(commit) : ExpiredCell(commit);
+  };
+
+  const BottomButton = (commit: Commit) => {
+    const state = utils.getCommitState(commit.id);
+    let text = 'Reveal';
+    if (state === 'REVEALING') text = 'Revealing...';
+    else if (state === 'Expired') text = 'Failed';
+
+    return (
+      <Row>
+        <ActionButton
+          onClick={
+            state === 'EXPIRED'
+              ? () => navigator.clipboard.writeText(commit.id)
+              : () => actions.revealTx([commit.id])
+          }
+          text={text}
+          disabled={state === 'REVEALING'}
+        />
+      </Row>
+    );
   };
 
   const ActiveCell = (commit: Commit) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ActiveName>{getCommitTimeFrom(commit)} [Available]</ActiveName>
-        <Row>
-          <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
-        </Row>
+        {BottomButton(commit)}
       </CellContainer>
     );
   };
@@ -61,19 +86,12 @@ export const Commits = (props: Props) => {
           Your item is stuck, but can be retrieved. <br />
           Please create a support ticket on discord with this commit's ID.
         </Description>
-        <Row>
-          <ActionButton
-            onClick={() => {
-              navigator.clipboard.writeText(commit.id);
-            }}
-            text='Copy ID'
-          />
-        </Row>
+        {BottomButton(commit)}
       </CellContainer>
     );
   };
 
-  return <Container>{props.data.commits.map((commit) => Cell(commit))}</Container>;
+  return <Container>{data.commits.map((commit) => Cell(commit))}</Container>;
 };
 
 const Container = styled.div`
