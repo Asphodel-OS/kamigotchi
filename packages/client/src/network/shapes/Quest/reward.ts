@@ -23,13 +23,13 @@ export const getRewardText = (reward: Reward, name = ''): string => {
   const value = (reward.target.value ?? 0) * 1;
 
   if (reward.target.type === 'ITEM') {
-    return `x${value} ${name}`;
+    return `x${value}`;
   } else if (reward.target.type === 'EXPERIENCE') {
     return `${value} Experience`;
   } else if (reward.target.type === 'MINT20') {
     return `${value} ${name}`;
   } else if (reward.target.type === 'REPUTATION') {
-    return `${value} REP`;
+    return `x${value}`;
   } else if (reward.target.type === 'NFT') {
     return `Kamigotchi World Passport`;
   } else {

@@ -137,6 +137,7 @@ export function registerQuestsModal() {
         });
       };
 
+      if (!modals.quests) return <></>;
       return (
         <ModalWrapper
           id='quests'

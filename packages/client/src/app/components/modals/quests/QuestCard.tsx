@@ -4,9 +4,9 @@ import { ActionButton, Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
-import { getRewardText } from 'network/shapes/Quest/reward';
 import { Reward } from 'network/shapes/Rewards';
 import { DetailedEntity } from 'network/shapes/utils';
+import { getFactionImage } from 'network/shapes/utils/images';
 
 interface Props {
   quest: Quest;
@@ -29,22 +29,6 @@ export const QuestCard = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
-
-  const getRewardImage = (reward: Reward) => {
-    if (reward.target.type === 'REPUTATION' || reward.target.type === 'NFT') return <div />;
-    const key = `reward-${reward.target.type}-${reward.target.index}`;
-    if (imageCache.has(key)) return imageCache.get(key);
-
-    const entity = getDescribedEntity(reward.target.type, reward.target.index || 0);
-    const component = (
-      <Tooltip key={key} text={[entity.name]} direction='row'>
-        <Image src={entity.image} />
-      </Tooltip>
-    );
-    imageCache.set(key, component);
-
-    return component;
-  };
 
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective): string => {
@@ -79,8 +63,40 @@ export const QuestCard = (props: Props) => {
     );
   };
 
+  // get the Faction image of the Quest based on whether it has a REPUTATION reward
+  // hardcoded to agency for now
+  const FactionImage = (quest: Quest) => {
+    const reward = quest.rewards.find((r) => r.target.type === 'REPUTATION');
+    if (!reward) return <></>;
+
+    const key = `faction-${reward.target.type}-${reward.target.index}`;
+    if (imageCache.has(key)) return imageCache.get(key);
+
+    const icon = getFactionImage('agency');
+    return <Image src={icon} size={1.8} />;
+  };
+
+  const RewardImage = (reward: Reward) => {
+    if (reward.target.type === 'NFT') return <div />;
+    const key = `reward-${reward.target.type}-${reward.target.index}`;
+    if (imageCache.has(key)) return imageCache.get(key);
+
+    const entity = getDescribedEntity(reward.target.type, reward.target.index || 0);
+    const component = (
+      <Tooltip key={key} text={[entity.name]} direction='row'>
+        <Image src={entity.image} size={1.5} />
+      </Tooltip>
+    );
+    imageCache.set(key, component);
+
+    return component;
+  };
+
   return (
     <Container key={quest.id} completed={status === 'COMPLETED'}>
+      <Overlay top={0.6} right={0.6}>
+        {FactionImage(quest)}
+      </Overlay>
       <Title>{quest.name}</Title>
       <Description>{quest.description}</Description>
       {quest.objectives.length > 0 && (
@@ -98,8 +114,7 @@ export const QuestCard = (props: Props) => {
             {quest.rewards.map((reward) => (
               <Row key={reward.id}>
                 <ConditionText key={reward.id}>
-                  {getRewardImage(reward)}
-                  {`${getRewardText(reward)}`}
+                  {RewardImage(reward)}x{(reward.target.value ?? 0) * 1}
                 </ConditionText>
               </Row>
             ))}
@@ -128,15 +143,15 @@ const Container = styled.div<{ completed?: boolean }>`
 `;
 
 const Title = styled.div`
-  font-size: 1.2vw;
-  line-height: 1.8vw;
-  padding: 0.45vw 0vw;
+  font-size: 0.9vw;
+  line-height: 1.2vw;
+  padding: 0.3vw;
 `;
 
 const Description = styled.div`
-  font-size: 0.75vw;
+  font-size: 0.6vw;
   line-height: 1.4vw;
-  padding: 0.45vw;
+  padding: 0.3vw 0.6vw;
 `;
 
 const Section = styled.div`
@@ -144,29 +159,27 @@ const Section = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 0.6vw 0.45vw;
+  margin: 0.3vw 0.45vw;
 `;
 
 const SubTitle = styled.div`
-  font-size: 0.9vw;
-  line-height: 1.2vw;
+  font-size: 0.8vw;
+  line-height: 1.5vw;
   text-align: left;
   justify-content: flex-start;
-  padding: 0vw 0vw 0.3vw 0vw;
 `;
 
 const Row = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-flow: row nowrap;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const ConditionText = styled.div`
-  font-size: 0.75vw;
+  font-size: 0.7vw;
   padding: 0.3vw;
   padding-left: 0.6vw;
-  gap: 0.15vw;
 
   display: flex;
   flex-direction: row;
@@ -174,6 +187,8 @@ const ConditionText = styled.div`
   align-items: center;
 `;
 
-const Image = styled.img`
-  height: 1.5vw;
+const Image = styled.img<{ size: number }>`
+  height: ${({ size }) => size}vw;
+  width: ${({ size }) => size}vw;
+  margin-right: ${({ size }) => size * 0.2}vw;
 `;
