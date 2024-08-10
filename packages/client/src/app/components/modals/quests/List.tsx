@@ -36,19 +36,6 @@ export const List = (props: Props) => {
   ///////////////////
   // DISPLAY
 
-  // filter and sort a list of completed Quests
-  // lean on the ongoing Quests for this filter
-  const cleanCompleted = (quests: Quest[]) => {
-    const completed = [...quests];
-    return sortCompletedQuests(filterOngoingQuests(completed));
-  };
-
-  // filter and sort a list of ongoing Quests
-  const cleanOngoing = (quests: Quest[]) => {
-    const ongoing = [...quests];
-    return sortOngoingQuests(filterOngoingQuests(ongoing));
-  };
-
   // TODO: format this more elegantly
   const EmptyText = () => {
     if (mode === 'AVAILABLE') {
@@ -74,28 +61,41 @@ export const List = (props: Props) => {
 
   const CompletedToggle = () => {
     return (
-      <CollapseText onClick={() => setShowCompleted(!showCompleted)}>
+      <CollapseText
+        onClick={() => setShowCompleted(!showCompleted)}
+        style={{ display: mode === 'ONGOING' ? 'block' : 'none' }}
+      >
         {showCompleted ? '- Completed -' : '- Completed (collapsed) -'}
       </CollapseText>
     );
   };
 
-  return (
-    <Container>
-      <EmptyText />
-      {mode === 'AVAILABLE' &&
-        quests.available.map((q: Quest) => (
-          <QuestCard
-            key={q.id}
-            quest={q}
-            status={'AVAILABLE'}
-            utils={{ getDescribedEntity }}
-            actions={{ accept: acceptQuest, complete: completeQuest }}
-            imageCache={imageCache}
-          />
-        ))}
-      {mode === 'ONGOING' &&
-        cleanOngoing(quests.ongoing).map((q: Quest) => (
+  const AvailableQuests = () => {
+    const isVisible = mode === 'AVAILABLE';
+    const display = isVisible ? 'block' : 'none';
+
+    <div style={{ display }}>
+      {quests.available.map((q: Quest) => (
+        <QuestCard
+          key={q.id}
+          quest={q}
+          status={'AVAILABLE'}
+          utils={{ getDescribedEntity }}
+          actions={{ accept: acceptQuest, complete: completeQuest }}
+          imageCache={imageCache}
+        />
+      ))}
+    </div>;
+  };
+
+  const OngoingQuests = () => {
+    const cleaned = sortOngoingQuests(filterOngoingQuests(quests.ongoing));
+    const isVisible = mode === 'ONGOING';
+    const display = isVisible ? 'block' : 'none';
+
+    return (
+      <div style={{ display }}>
+        {cleaned.map((q: Quest) => (
           <QuestCard
             key={q.id}
             quest={q}
@@ -105,10 +105,18 @@ export const List = (props: Props) => {
             imageCache={imageCache}
           />
         ))}
-      {mode === 'ONGOING' && <CompletedToggle />}
-      {mode === 'ONGOING' &&
-        showCompleted &&
-        cleanCompleted(quests.completed).map((q: Quest) => (
+      </div>
+    );
+  };
+
+  const CompletedQuests = () => {
+    const cleaned = sortCompletedQuests(filterOngoingQuests(quests.completed));
+    const isVisible = mode === 'ONGOING' && showCompleted;
+    const display = isVisible ? 'block' : 'none';
+
+    return (
+      <div style={{ display }}>
+        {cleaned.map((q: Quest) => (
           <QuestCard
             key={q.id}
             quest={q}
@@ -118,6 +126,17 @@ export const List = (props: Props) => {
             imageCache={imageCache}
           />
         ))}
+      </div>
+    );
+  };
+
+  return (
+    <Container>
+      <EmptyText />
+      {AvailableQuests()}
+      {OngoingQuests()}
+      {CompletedToggle()}
+      {CompletedQuests()}
     </Container>
   );
 };
