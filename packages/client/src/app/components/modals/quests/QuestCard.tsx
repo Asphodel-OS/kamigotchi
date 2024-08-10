@@ -63,8 +63,8 @@ export const QuestCard = (props: Props) => {
     );
   };
 
-  // get the Faction image of the Quest based on whether it has a REPUTATION reward
-  // hardcoded to agency for now
+  // get the Faction image of a Quest based on whether it has a REPUTATION reward
+  // NOTE: hardcoded to agency for now
   const FactionImage = (quest: Quest) => {
     const reward = quest.rewards.find((r) => r.target.type === 'REPUTATION');
     if (!reward) return <></>;
@@ -73,9 +73,13 @@ export const QuestCard = (props: Props) => {
     if (imageCache.has(key)) return imageCache.get(key);
 
     const icon = getFactionImage('agency');
-    return <Image src={icon} size={1.8} />;
+    const component = <Image src={icon} size={1.8} />;
+
+    imageCache.set(key, component);
+    return component;
   };
 
+  // get the Reward image component of a Quest
   const RewardImage = (reward: Reward) => {
     if (reward.target.type === 'NFT') return <div />;
     const key = `reward-${reward.target.type}-${reward.target.index}`;
@@ -87,8 +91,8 @@ export const QuestCard = (props: Props) => {
         <Image src={entity.image} size={1.5} />
       </Tooltip>
     );
-    imageCache.set(key, component);
 
+    imageCache.set(key, component);
     return component;
   };
 
@@ -133,6 +137,8 @@ const Container = styled.div<{ completed?: boolean }>`
   border-radius: 1.2vw;
   padding: 1.2vw;
   margin: 0.9vw;
+  filter: drop-shadow(0.1vw 0.1vw 0.1vw black);
+  background-color: #fff;
 
   display: flex;
   flex-flow: column nowrap;
@@ -145,7 +151,6 @@ const Container = styled.div<{ completed?: boolean }>`
 const Title = styled.div`
   font-size: 0.9vw;
   line-height: 1.2vw;
-  padding: 0.3vw;
 `;
 
 const Description = styled.div`
@@ -159,7 +164,7 @@ const Section = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 0.3vw 0.45vw;
+  margin: 0.3vw 0.3vw;
 `;
 
 const SubTitle = styled.div`
@@ -179,7 +184,7 @@ const Row = styled.div`
 const ConditionText = styled.div`
   font-size: 0.7vw;
   padding: 0.3vw;
-  padding-left: 0.6vw;
+  padding-left: 0.3vw;
 
   display: flex;
   flex-direction: row;

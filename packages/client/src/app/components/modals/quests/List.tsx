@@ -43,7 +43,7 @@ export const List = (props: Props) => {
         <div />
       ) : (
         <BigText>
-          No available available.
+          No quests available.
           <br /> Do something else?
         </BigText>
       );
