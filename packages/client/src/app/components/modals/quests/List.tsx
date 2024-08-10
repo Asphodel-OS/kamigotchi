@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { filterOngoingQuests, Quest, sortOngoingQuests } from 'network/shapes/Quest';
+import {
+  filterOngoingQuests,
+  Quest,
+  sortCompletedQuests,
+  sortOngoingQuests,
+} from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
 import { QuestCard } from './QuestCard';
 
@@ -31,6 +36,14 @@ export const List = (props: Props) => {
   ///////////////////
   // DISPLAY
 
+  // filter and sort a list of completed Quests
+  // lean on the ongoing Quests for this filter
+  const cleanCompleted = (quests: Quest[]) => {
+    const completed = [...quests];
+    return sortCompletedQuests(filterOngoingQuests(completed));
+  };
+
+  // filter and sort a list of ongoing Quests
   const cleanOngoing = (quests: Quest[]) => {
     const ongoing = [...quests];
     return sortOngoingQuests(filterOngoingQuests(ongoing));
@@ -95,7 +108,7 @@ export const List = (props: Props) => {
       {mode === 'ONGOING' && <CompletedToggle />}
       {mode === 'ONGOING' &&
         showCompleted &&
-        quests.completed.map((q: Quest) => (
+        cleanCompleted(quests.completed).map((q: Quest) => (
           <QuestCard
             key={q.id}
             quest={q}

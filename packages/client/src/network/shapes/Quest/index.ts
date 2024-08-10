@@ -2,12 +2,14 @@ export {
   checkObjective,
   filterOngoing as filterOngoingQuests,
   filterByAvailable as filterQuestsByAvailable,
+  filterByNotObjective as filterQuestsByNotObjective,
   filterByObjective as filterQuestsByObjective,
   filterByReward as filterQuestsByReward,
   hasCompleted as hasCompletedQuest,
   meetsObjectives,
   meetsRequirements,
   parseStatuses as parseQuestStatuses,
+  sortCompleted as sortCompletedQuests,
   sortOngoing as sortOngoingQuests,
 } from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';

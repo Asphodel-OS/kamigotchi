@@ -96,6 +96,18 @@ export const filterByObjective = (quests: Quest[], faction?: number) => {
   });
 };
 
+export const filterByNotObjective = (quests: Quest[], faction?: number) => {
+  return quests.filter((q: Quest) => {
+    let result = true;
+    if (faction && result) {
+      result = !q.objectives.some(
+        (o: Objective) => o.target.type === 'REPUTATION' && o.target.index === faction
+      );
+    }
+    return result;
+  });
+};
+
 // filter a list of Quests (parsed or not) to ones with a Reward matching certain conditions
 export const filterByReward = (quests: Quest[], faction?: number) => {
   return quests.filter((q: Quest) => {
@@ -112,6 +124,7 @@ export const filterByReward = (quests: Quest[], faction?: number) => {
 // filter out onwanted ongoing quests
 export const filterOngoing = (quests: Quest[]) => {
   if (quests.length === 0) return [];
+  quests = filterByNotObjective(quests, 1);
   return quests.filter((quest: Quest) => quest.index !== 10001);
 };
 
@@ -130,6 +143,11 @@ export const sortOngoing = (quests: Quest[]): Quest[] => {
     else if (!aCompletable && bCompletable) return 1;
     else return 0;
   });
+};
+
+// sorts Completed Quests by their index
+export const sortCompleted = (quests: Quest[]): Quest[] => {
+  return quests.sort((a: Quest, b: Quest) => a.index - b.index);
 };
 
 /////////////////
