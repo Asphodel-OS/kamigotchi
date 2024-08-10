@@ -137,7 +137,6 @@ const Container = styled.div<{ completed?: boolean }>`
   border-radius: 1.2vw;
   padding: 1.2vw;
   margin: 0.9vw;
-  filter: drop-shadow(0.1vw 0.1vw 0.1vw black);
   background-color: #fff;
 
   display: flex;
