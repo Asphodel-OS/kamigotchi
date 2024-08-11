@@ -8,14 +8,10 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { DescriptionAltComponent, ID as DescAltCompID } from "components/DescriptionAltComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
-import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
-import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";

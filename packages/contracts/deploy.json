@@ -720,7 +720,6 @@
   ],
   "libraries": [
     "LibAccount",
-    "LibAffinity",
     "LibBonus",
     "LibConditional",
     "LibCommit",

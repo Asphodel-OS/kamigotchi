@@ -6,20 +6,17 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
-import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
-
 import { ValueSignedComponent, ID as ValueSignedCompID } from "components/ValueSignedComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
-import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
@@ -105,7 +102,6 @@ library LibSkillRegistry {
     LibConditional.create(components, id, type_, logicType);
 
     setIsRegistry(components, id);
-    setIsRequirement(components, id);
     setSkillIndex(components, id, skillIndex);
   }
 
@@ -136,7 +132,6 @@ library LibSkillRegistry {
 
   function deleteRequirement(IUintComp components, uint256 id) internal {
     unsetIsRegistry(components, id);
-    unsetIsRequirement(components, id);
     unsetSkillIndex(components, id);
     unsetType(components, id);
     unsetIndex(components, id);
@@ -157,10 +152,6 @@ library LibSkillRegistry {
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-  }
-
-  function setIsRequirement(IUintComp components, uint256 id) internal {
-    IsRequirementComponent(getAddressById(components, IsReqCompID)).set(id);
   }
 
   function setIsSkill(IUintComp components, uint256 id) internal {
@@ -231,10 +222,6 @@ library LibSkillRegistry {
 
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-  }
-
-  function unsetIsRequirement(IUintComp components, uint256 id) internal {
-    IsRequirementComponent(getAddressById(components, IsReqCompID)).remove(id);
   }
 
   function unsetIsSkill(IUintComp components, uint256 id) internal {

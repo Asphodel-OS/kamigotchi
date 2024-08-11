@@ -17,7 +17,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibAffinity } from "libraries/LibAffinity.sol";
+import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";

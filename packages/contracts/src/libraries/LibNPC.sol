@@ -3,14 +3,12 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsNPCComponent, ID as IsNPCCompID } from "components/IsNPCComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { Strings } from "utils/Strings.sol";
 
 /*
  * LibNPC handles all operations interacting with NPCs

@@ -5,11 +5,9 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";

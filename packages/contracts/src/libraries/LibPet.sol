@@ -9,12 +9,11 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
-import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
+import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
-import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -24,11 +23,10 @@ import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComp
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibAffinity } from "libraries/LibAffinity.sol";
+import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
-import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -37,7 +35,6 @@ import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { Gaussian } from "utils/Gaussian.sol";
 
 // placeholders for config values
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";

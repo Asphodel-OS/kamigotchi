@@ -18,7 +18,7 @@ import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComp
 import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
-import { LibAffinity } from "libraries/LibAffinity.sol";
+import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";

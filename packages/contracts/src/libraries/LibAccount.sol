@@ -16,7 +16,6 @@ import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/Address
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { CacheOperatorComponent, ID as CacheOperatorCompID } from "components/CacheOperatorComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
-import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";

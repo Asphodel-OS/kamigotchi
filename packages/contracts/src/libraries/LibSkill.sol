@@ -10,7 +10,6 @@ import { LibString } from "solady/utils/LibString.sol";
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
-import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
@@ -176,10 +175,6 @@ library LibSkill {
 
   /////////////////
   // GETTERS
-
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddressById(components, IndexCompID)).get(id);
-  }
 
   function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
     return LevelComponent(getAddressById(components, LevelCompID)).get(id);

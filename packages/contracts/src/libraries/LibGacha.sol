@@ -8,11 +8,8 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibSort } from "solady/utils/LibSort.sol";
 
-import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
-import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibCommit } from "libraries/LibCommit.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
