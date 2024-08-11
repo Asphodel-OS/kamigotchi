@@ -14,15 +14,11 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 
 library LibRandom {
   //////////////////
-  // DROPTABLES
+  // RARITIES
 
-  function getDroptable(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint32[] memory, uint256[] memory) {
-    uint32[] memory keys = KeysComponent(getAddressById(components, KeysCompID)).get(id);
-    uint256[] memory weights = WeightsComponent(getAddressById(components, WeightsCompID)).get(id);
-    return (keys, weights);
+  /// @notice squares an unprocessed weights array to distribute rarities
+  function processWeightedRarity(uint256[] memory weights) internal pure {
+    for (uint256 i; i < weights.length; i++) if (weights[i] > 0) weights[i] = 1 << (weights[i] - 1);
   }
 
   //////////////////

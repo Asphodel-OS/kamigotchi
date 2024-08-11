@@ -128,6 +128,7 @@ library LibDroptable {
     uint32[] memory keys,
     uint256[] memory weights
   ) internal {
+    LibRandom.processWeightedRarity(weights);
     KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
     WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
   }

@@ -17,9 +17,9 @@ import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceC
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 
 import { LibRandom } from "libraries/utils/LibRandom.sol";
-import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // LibTraitRegistry is based heavily off LibItemRegistry, but is used for traits.
@@ -137,7 +137,8 @@ library LibTraitRegistry {
     if (values.violence > 0) setViolence(components, id, values.violence);
     if (values.harmony > 0) setHarmony(components, id, values.harmony);
     if (values.slots > 0) setSlots(components, id, values.slots);
-    if (values.rarity > 0) LibRarity.set(components, id, values.rarity);
+    if (values.rarity > 0)
+      RarityComponent(getAddressById(components, RarityCompID)).set(id, values.rarity);
     if (!LibString.eq(values.affinity, "")) setAffinity(components, id, values.affinity);
   }
 
@@ -161,7 +162,7 @@ library LibTraitRegistry {
     LibStat.unsetViolence(components, id);
     LibStat.unsetHarmony(components, id);
     LibStat.unsetSlots(components, id);
-    LibRarity.unset(components, id);
+    RarityComponent(getAddressById(components, RarityCompID)).remove(id);
     unsetAffinity(components, id);
   }
 
@@ -310,6 +311,17 @@ library LibTraitRegistry {
     return getName(components, getHandOf(components, id));
   }
 
+  function getWeights(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (uint256[] memory) {
+    uint256[] memory weights = RarityComponent(getAddressById(components, RarityCompID)).getBatch(
+      ids
+    );
+    LibRandom.processWeightedRarity(weights);
+    return weights;
+  }
+
   /////////////////
   // RARITY WEIGHTS
 
@@ -322,7 +334,7 @@ library LibTraitRegistry {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getBackgroundIndex(components, ids[i]);
     }
-    weights = LibRarity.getWeights(components, ids);
+    weights = getWeights(components, ids);
   }
 
   // Get body rarities as key value pair arrays
@@ -334,7 +346,7 @@ library LibTraitRegistry {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getBodyIndex(components, ids[i]);
     }
-    weights = LibRarity.getWeights(components, ids);
+    weights = getWeights(components, ids);
   }
 
   // Get color rarities as key value pair arrays
@@ -346,7 +358,7 @@ library LibTraitRegistry {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getColorIndex(components, ids[i]);
     }
-    weights = LibRarity.getWeights(components, ids);
+    weights = getWeights(components, ids);
   }
 
   // Get face rarities as key value pair arrays
@@ -358,7 +370,7 @@ library LibTraitRegistry {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getFaceIndex(components, ids[i]);
     }
-    weights = LibRarity.getWeights(components, ids);
+    weights = getWeights(components, ids);
   }
 
   // Get hand rarities as key value pair arrays
@@ -370,7 +382,7 @@ library LibTraitRegistry {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getHandIndex(components, ids[i]);
     }
-    weights = LibRarity.getWeights(components, ids);
+    weights = getWeights(components, ids);
   }
 
   /////////////////
