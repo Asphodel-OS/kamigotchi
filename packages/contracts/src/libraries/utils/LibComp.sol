@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { Uint256BareComponent as UintBareComp } from "components/base/Uint256BareComponent.sol";
 
 /// @notice a library for useful component operations
 library LibComp {
@@ -62,6 +63,31 @@ library LibComp {
 
   /////////////////
   // GETS
+
+  function hasBatch(
+    IComp component,
+    uint256[] memory entities
+  ) internal view returns (bool[] memory) {
+    bytes[] memory values = component.getRawBatch(entities);
+    bool[] memory result = new bool[](values.length);
+    for (uint256 i = 0; i < entities.length; i++) result[i] = values[i].length > 0;
+    return result;
+  }
+
+  /// @notice returns a bool array of existence, and a bool indicating if all exists
+  function hasBatchWithAggregate(
+    IComp component,
+    uint256[] memory entities
+  ) internal view returns (bool[] memory, bool) {
+    bytes[] memory values = component.getRawBatch(entities);
+    bool[] memory result = new bool[](values.length);
+    bool allExist = true;
+    for (uint256 i = 0; i < entities.length; i++) {
+      result[i] = values[i].length > 0;
+      if (!result[i]) allExist = false;
+    }
+    return (result, allExist);
+  }
 
   function safeGetUint256(IComp component, uint256 entity) internal view returns (uint256) {
     bytes memory value = component.getRaw(entity);
@@ -160,13 +186,37 @@ library LibComp {
   /////////////////
   // CALCS
 
-  function inc(IUintComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
+  function inc(UintBareComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
     val = safeGetUint256(component, id) + amt;
     component.set(id, val);
   }
 
-  function dec(IUintComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
+  function incBatch(UintBareComp component, uint256[] memory ids, uint256 amt) internal {
+    uint256[] memory values = safeGetBatchUint256(component, ids);
+    for (uint256 i; i < ids.length; i++) values[i] += amt;
+    component.setBatch(ids, values);
+  }
+
+  function incBatch(UintBareComp component, uint256[] memory ids, uint256[] memory amts) internal {
+    uint256[] memory values = safeGetBatchUint256(component, ids);
+    for (uint256 i; i < ids.length; i++) values[i] += amts[i];
+    component.setBatch(ids, values);
+  }
+
+  function dec(UintBareComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
     val = safeGetUint256(component, id) - amt;
     component.set(id, val);
+  }
+
+  function decBatch(UintBareComp component, uint256[] memory ids, uint256 amt) internal {
+    uint256[] memory values = safeGetBatchUint256(component, ids);
+    for (uint256 i; i < ids.length; i++) values[i] -= amt;
+    component.setBatch(ids, values);
+  }
+
+  function decBatch(UintBareComp component, uint256[] memory ids, uint256[] memory amts) internal {
+    uint256[] memory values = safeGetBatchUint256(component, ids);
+    for (uint256 i; i < ids.length; i++) values[i] -= amts[i];
+    component.setBatch(ids, values);
   }
 }

@@ -33,7 +33,7 @@ contract LibConditionalTest is SetupTemplate {
 
     vm.startPrank(deployer);
     uint256 invID = LibInventory.create(components, defaultAccID, index);
-    LibInventory.inc(components, invID, amt);
+    LibInventory.incFor(components, defaultAccID, index, amt);
     vm.stopPrank();
 
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", index), amt);

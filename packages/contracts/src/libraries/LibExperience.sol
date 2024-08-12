@@ -5,8 +5,11 @@ import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.s
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
+import { Uint256BareComponent as UintComp } from "components/base/Uint256BareComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
+
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 
@@ -15,21 +18,19 @@ import { LibData } from "libraries/LibData.sol";
 //
 library LibExperience {
   using LibFPMath for int256;
+  using LibComp for UintComp;
 
   /////////////////
   // INTERACTIONS
 
   // increase experience by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 experience = get(components, id);
-    set(components, id, experience + value);
+    UintComp(getAddressById(components, ExpCompID)).inc(id, value);
   }
 
   // decrease experience by a specified value
   function dec(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 currExp = get(components, id);
-    uint256 diff = (currExp > value) ? currExp - value : 0;
-    set(components, id, diff);
+    UintComp(getAddressById(components, ExpCompID)).dec(id, value);
   }
 
   // increase level by a specified value
@@ -90,9 +91,7 @@ library LibExperience {
 
   // get the Experience of an entity, defaults to 0 if not found
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    ExperienceComponent comp = ExperienceComponent(getAddressById(components, ExpCompID));
-    if (!comp.has(id)) return 0;
-    return comp.get(id);
+    return UintComp(getAddressById(components, ExpCompID)).safeGetUint256(id);
   }
 
   // get the Level of an entity, defaults to 1 if not found

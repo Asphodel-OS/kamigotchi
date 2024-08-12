@@ -26,19 +26,24 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 // Balance: Score balance
 
 library LibScore {
-  using LibComp for IUintComp;
+  using LibComp for ValueComponent;
 
   /////////////////
   // INTERACTIONS
 
-  function create(
-    IUintComp components,
-    uint256 id,
-    uint256 holderID,
-    uint256 typeID
-  ) internal returns (uint256) {
+  function create(IUintComp components, uint256 id, uint256 holderID, uint256 typeID) internal {
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
     IDScoreTypeComponent(getAddressById(components, IDScoreTypeCompID)).set(id, typeID);
+  }
+
+  function createFor(IUintComp components, uint256 id, uint256 holderID, uint256 typeID) internal {
+    IDScoreTypeComponent typeComp = IDScoreTypeComponent(
+      getAddressById(components, IDScoreTypeCompID)
+    );
+    if (!typeComp.has(id)) {
+      typeComp.set(id, typeID);
+      IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
+    }
   }
 
   /// @notice increments score balance, creates score if needed
@@ -49,9 +54,8 @@ library LibScore {
     uint256 typeID,
     uint256 amt
   ) internal {
-    if (!getComponentById(components, IDScoreTypeCompID).has(id))
-      create(components, id, holderID, typeID);
-    IUintComp(getAddressById(components, ValueCompID)).inc(id, amt);
+    createFor(components, id, holderID, typeID);
+    ValueComponent(getAddressById(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice adds score based on current epoch.
@@ -75,9 +79,8 @@ library LibScore {
     uint256 typeID,
     uint256 amt
   ) internal {
-    if (!getComponentById(components, IDScoreTypeCompID).has(id))
-      create(components, id, holderID, typeID);
-    IUintComp(getAddressById(components, ValueCompID)).dec(id, amt);
+    createFor(components, id, holderID, typeID);
+    ValueComponent(getAddressById(components, ValueCompID)).dec(id, amt);
   }
 
   /// @notice decs score based on current epoch.
@@ -97,8 +100,7 @@ library LibScore {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    return comp.has(id) ? comp.get(id) : 0;
+    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(id);
   }
 
   // get current epoch for leaderboard

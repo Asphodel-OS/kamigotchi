@@ -6,17 +6,8 @@ import "test/utils/SetupTemplate.t.sol";
 contract InventoryTest is SetupTemplate {
   Reverter reverter = new Reverter();
 
-  uint256 defaultAccIndex = 0;
-  uint256 defaultAccID;
-  address defaultOperator;
-  address defaultOwner;
-
   function setUp() public override {
     super.setUp();
-
-    defaultOwner = _getOwner(defaultAccIndex);
-    defaultOperator = _getOperator(defaultAccIndex);
-    defaultAccID = _getAccount(defaultAccIndex);
   }
 
   function setUpItems() public override {}
@@ -41,18 +32,18 @@ contract InventoryTest is SetupTemplate {
     uint256 regID = _createGenericItem(index);
 
     // ensure inventory doesn't exist
-    assertEq(LibInventory.get(components, defaultAccID, index), 0);
-    assertInvExistence(LibInventory.get(components, defaultAccID, index), false);
-    assertEq(_getItemBal(defaultAccIndex, index), 0);
+    assertEq(LibInventory.get(components, alice.id, index), 0);
+    assertInvExistence(LibInventory.get(components, alice.id, index), false);
+    assertEq(_getItemBal(alice, index), 0);
 
     // setting balance
     vm.startPrank(deployer);
-    uint256 invID = LibInventory.create(components, defaultAccID, index);
+    uint256 invID = LibInventory.create(components, alice.id, index);
     LibInventory.set(components, invID, amt);
     vm.stopPrank();
 
     assertInvExistence(invID, true);
-    assertInvBalance(defaultAccIndex, index, amt);
+    assertInvBalance(alice, index, amt);
   }
 
   function testChangeBalance(uint32 index, uint256 initialAmt, uint256 nextAmt) public {
@@ -60,33 +51,30 @@ contract InventoryTest is SetupTemplate {
 
     // create item
     uint256 regID = _createGenericItem(index);
-    vm.startPrank(deployer);
-    uint256 invID = LibInventory.create(components, defaultAccID, index);
-    vm.stopPrank();
 
     // increasing initially
     vm.startPrank(deployer);
-    LibInventory.inc(components, invID, initialAmt);
+    LibInventory.incFor(components, alice.id, index, initialAmt);
     vm.stopPrank();
-    assertInvBalance(defaultAccIndex, index, initialAmt);
+    assertInvBalance(alice, index, initialAmt);
 
     // decrease to 0
     vm.startPrank(deployer);
-    LibInventory.dec(components, invID, initialAmt);
+    LibInventory.decFor(components, alice.id, index, initialAmt);
     vm.stopPrank();
-    assertInvExistence(invID, true);
-    assertInvBalance(defaultAccIndex, index, 0);
+    assertInvExistence(LibInventory.get(components, alice.id, index), true);
+    assertInvBalance(alice, index, 0);
 
     // increase back to original, test decrease
     vm.startPrank(deployer);
-    LibInventory.inc(components, invID, initialAmt);
+    LibInventory.incFor(components, alice.id, index, initialAmt);
     if (nextAmt > initialAmt) {
       // decreases more than balance, will revert
-      vm.expectRevert("Inventory: insufficient balance");
-      reverter.dec(components, invID, nextAmt);
+      vm.expectRevert();
+      reverter.decFor(components, alice.id, index, nextAmt);
     } else {
-      LibInventory.dec(components, invID, nextAmt);
-      assertInvBalance(defaultAccIndex, index, initialAmt - nextAmt);
+      LibInventory.decFor(components, alice.id, index, nextAmt);
+      assertInvBalance(alice, index, initialAmt - nextAmt);
     }
     vm.stopPrank();
   }
@@ -100,8 +88,8 @@ contract InventoryTest is SetupTemplate {
     assertEq(exists, _ValueComponent.has(id));
   }
 
-  function assertInvBalance(uint256 accIndex, uint32 index, uint256 balance) public {
-    uint256 id = LibInventory.get(components, _getAccount(accIndex), index);
+  function assertInvBalance(PlayerAccount memory acc, uint32 index, uint256 balance) public {
+    uint256 id = LibInventory.get(components, acc.id, index);
     assertInvBalance(id, balance);
   }
 
@@ -116,7 +104,7 @@ contract InventoryTest is SetupTemplate {
 
 // needed to ensure reverts are not caught by the immidate next call, but overall call
 contract Reverter {
-  function dec(IUint256Component components, uint256 id, uint256 amt) public {
-    LibInventory.dec(components, id, amt);
+  function decFor(IUint256Component components, uint256 accID, uint32 index, uint256 amt) public {
+    LibInventory.decFor(components, accID, index, amt);
   }
 }

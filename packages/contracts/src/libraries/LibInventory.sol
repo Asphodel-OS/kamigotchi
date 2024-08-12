@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
@@ -11,6 +12,7 @@ import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemC
 import { IsInventoryComponent as IsInvComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -22,6 +24,8 @@ uint32 constant MUSU_INDEX = 1;
 
 // handles nonfungible inventory instances
 library LibInventory {
+  using LibComp for ValueComponent;
+
   /////////////////
   // SHAPES
 
@@ -67,8 +71,33 @@ library LibInventory {
       isComp.set(id);
       IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
       OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
-      ValueComponent(getAddressById(components, ValueCompID)).set(id, 0);
     }
+  }
+
+  function createForBatch(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory itemIndices
+  ) internal returns (uint256[] memory) {
+    uint256[] memory ids = new uint256[](itemIndices.length);
+    for (uint256 i; i < itemIndices.length; i++) ids[i] = genID(holderID, itemIndices[i]);
+
+    IsInvComponent isComp = IsInvComponent(getAddressById(components, IsInvCompID));
+    (bool[] memory haveIDs, bool allExist) = LibComp.hasBatchWithAggregate(isComp, ids);
+    if (allExist) return ids; // all exist, nothing to create
+
+    // create new instances
+    IndexItemComponent indexComp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    OwnerComponent ownerComp = OwnerComponent(getAddressById(components, OwnerCompID));
+    for (uint256 i; i < itemIndices.length; i++) {
+      uint256 id = ids[i];
+      if (!haveIDs[i]) {
+        isComp.set(id);
+        indexComp.set(id, itemIndices[i]);
+        ownerComp.set(id, holderID);
+      }
+    }
+    return ids;
   }
 
   /// @notice Delete the inventory instance
@@ -85,13 +114,33 @@ library LibInventory {
   /// @notice increase, and creates new inventory if needed
   function incFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     uint256 id = createFor(components, holderID, itemIndex);
-    inc(components, id, amt);
+    ValueComponent(getAddressById(components, ValueCompID)).inc(id, amt);
+  }
+
+  function incForBatch(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory itemIndices,
+    uint256[] memory amts
+  ) internal {
+    uint256[] memory ids = createForBatch(components, holderID, itemIndices);
+    ValueComponent(getAddressById(components, ValueCompID)).incBatch(ids, amts);
   }
 
   /// @notice decrease, and creates new inventory if needed
   function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     uint256 id = createFor(components, holderID, itemIndex);
-    dec(components, id, amt);
+    ValueComponent(getAddressById(components, ValueCompID)).dec(id, amt);
+  }
+
+  function decForBatch(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory itemIndices,
+    uint256[] memory amts
+  ) internal {
+    uint256[] memory ids = createForBatch(components, holderID, itemIndices);
+    ValueComponent(getAddressById(components, ValueCompID)).decBatch(ids, amts);
   }
 
   /// @notice sets, and creates new inventory if needed
@@ -119,21 +168,6 @@ library LibInventory {
     transfer(components, fromID, toID, amt);
   }
 
-  /// @notice Increase a inventory balance by the specified amount
-  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 val) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    val = comp.get(id);
-    comp.set(id, val += amt);
-  }
-
-  /// @notice Decrease a inventory balance by the specified amount
-  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 val) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    val = comp.get(id);
-    require(val >= amt, "Inventory: insufficient balance"); // for user error feedback
-    comp.set(id, val -= amt);
-  }
-
   /// @notice sets the balance of an inventory instance
   function set(IUintComp components, uint256 id, uint256 amt) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, amt);
@@ -153,13 +187,6 @@ library LibInventory {
   }
 
   /////////////////
-  // CHECKERS
-
-  function hasBalance(IUintComp components, uint256 id) internal view returns (bool) {
-    return ValueComponent(getAddressById(components, ValueCompID)).has(id);
-  }
-
-  /////////////////
   // GETTERS
 
   function getBalanceOf(
@@ -167,8 +194,8 @@ library LibInventory {
     uint256 holderID,
     uint32 itemIndex
   ) internal view returns (uint256) {
-    uint256 id = get(components, holderID, itemIndex);
-    return id > 0 ? getBalance(components, id) : 0;
+    uint256 id = genID(holderID, itemIndex);
+    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(id);
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {

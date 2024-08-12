@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -18,6 +18,8 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
  * heavily influenced by LibConfig
  */
 library LibData {
+  using LibComp for ValueComponent;
+
   function getID(
     uint256 holderID,
     uint32 index,
@@ -30,17 +32,11 @@ library LibData {
   // INTERACTIONS
 
   function inc(IUintComp components, uint256 dataID, uint256 amt) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
-    comp.set(dataID, value + amt);
+    ValueComponent(getAddressById(components, ValueCompID)).inc(dataID, amt);
   }
 
   function inc(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    for (uint256 i; i < dataIDs.length; i++) {
-      uint256 value = comp.has(dataIDs[i]) ? comp.get(dataIDs[i]) : 0;
-      comp.set(dataIDs[i], value + amt);
-    }
+    ValueComponent(getAddressById(components, ValueCompID)).incBatch(dataIDs, amt);
   }
 
   function inc(
@@ -68,17 +64,11 @@ library LibData {
   }
 
   function dec(IUintComp components, uint256 dataID, uint256 amt) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
-    comp.set(dataID, value - amt);
+    ValueComponent(getAddressById(components, ValueCompID)).dec(dataID, amt);
   }
 
   function dec(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    for (uint256 i; i < dataIDs.length; i++) {
-      uint256 value = comp.has(dataIDs[i]) ? comp.get(dataIDs[i]) : 0;
-      comp.set(dataIDs[i], value - amt);
-    }
+    ValueComponent(getAddressById(components, ValueCompID)).decBatch(dataIDs, amt);
   }
 
   function dec(
@@ -135,8 +125,7 @@ library LibData {
   // GETTERS
 
   function get(IUintComp components, uint256 dataID) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    return comp.has(dataID) ? comp.get(dataID) : 0;
+    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(dataID);
   }
 
   function get(
