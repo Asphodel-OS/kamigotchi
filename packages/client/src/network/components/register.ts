@@ -67,6 +67,7 @@ export function createComponents(world: World) {
     NPCIndex: defineNumberComponent(world, 'NPCIndex', 'component.index.npc'),
     PetIndex: defineNumberComponent(world, 'PetIndex', 'component.index.pet'),
     QuestIndex: defineNumberComponent(world, 'QuestIndex', 'component.index.quest'),
+    RecipeIndex: defineNumberComponent(world, 'RecipeIndex', 'component.index.recipe'),
     RelationshipIndex: defineNumberComponent(world, 'RelationshipIndex', 'component.index.relationship'),
     RoomIndex: defineNumberComponent(world, 'RoomIndex', 'component.index.room'),
     SkillIndex: defineNumberComponent(world, 'SkillIndex', 'component.index.skill'),

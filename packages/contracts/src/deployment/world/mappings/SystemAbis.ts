@@ -10,6 +10,7 @@ import _ListingSetSystem from "../../../../../client/abi/_ListingSetSystem.json"
 import _NodeRegistrySystem from "../../../../../client/abi/_NodeRegistrySystem.json";
 import _NPCRegistrySystem from "../../../../../client/abi/_NPCRegistrySystem.json";
 import _QuestRegistrySystem from "../../../../../client/abi/_QuestRegistrySystem.json";
+import _RecipeRegistrySystem from "../../../../../client/abi/_RecipeRegistrySystem.json";
 import _RelationshipRegistrySystem from "../../../../../client/abi/_RelationshipRegistrySystem.json";
 import _RoomRegistrySystem from "../../../../../client/abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../../../../../client/abi/_SkillRegistrySystem.json";
@@ -21,6 +22,7 @@ import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSyst
 import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
+import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
 import Farm20DepositSystem from "../../../../../client/abi/Farm20DepositSystem.json";
 import Farm20ProxySystem from "../../../../../client/abi/Farm20ProxySystem.json";
@@ -77,6 +79,7 @@ export const SystemAbis = {
   "system.node.registry": _NodeRegistrySystem.abi,
   "system.npc.registry": _NPCRegistrySystem.abi,
   "system.quest.registry": _QuestRegistrySystem.abi,
+  "system.recipe.registry": _RecipeRegistrySystem.abi,
   "system.relationship.registry": _RelationshipRegistrySystem.abi,
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
@@ -88,6 +91,7 @@ export const SystemAbis = {
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
+  "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
   "system.Farm20.Proxy": Farm20ProxySystem.abi,

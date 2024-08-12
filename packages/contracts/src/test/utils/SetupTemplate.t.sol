@@ -408,17 +408,6 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  function _setPetTrait(uint petID, string memory trait, uint32 traitIndex) internal {
-    vm.startPrank(deployer);
-    if (trait.eq("BODY")) LibTraitRegistry.setBodyIndex(components, petID, traitIndex);
-    else if (trait.eq("HAND")) LibTraitRegistry.setHandIndex(components, petID, traitIndex);
-    else if (trait.eq("FACE")) LibTraitRegistry.setFaceIndex(components, petID, traitIndex);
-    else if (trait.eq("COLOR")) LibTraitRegistry.setColorIndex(components, petID, traitIndex);
-    else if (trait.eq("BACKGROUND"))
-      LibTraitRegistry.setBackgroundIndex(components, petID, traitIndex);
-    vm.stopPrank();
-  }
-
   function _setLevel(uint256 id, uint256 level) internal {
     vm.startPrank(deployer);
     LibExperience.setLevel(components, id, level);
@@ -1126,7 +1115,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   ///////////////////////
-  // UTILS
+  // ASSERTIONS
 
   function assertEq(Coord memory a, Coord memory b) public {
     assertTrue(a.x == b.x && a.y == b.y && a.z == b.z);

@@ -1,0 +1,196 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddressById, getComponentById } from "solecs/utils.sol";
+
+import { Stat } from "components/types/Stat.sol";
+import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
+import { IndexRecipeComponent, ID as IndexRecipeCompID } from "components/IndexRecipeComponent.sol";
+import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
+import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
+import { StaminaComponent, ID as StamCompID } from "components/StaminaComponent.sol";
+import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
+
+import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibAssigner } from "libraries/LibAssigner.sol";
+import { LibData } from "libraries/LibData.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
+import { LibStat } from "libraries/LibStat.sol";
+
+struct Table {
+  uint32[] indices;
+  uint256[] amts;
+}
+
+/** @notice
+ * Library for crafting recipes.
+ * [inputs] -> [outputs] (basic crafting flow)
+ * can be bounded by NPCs (assigners)
+ *
+ * Shape: id = hash(registryIndex)
+ * - IsRegistry
+ * - IndexRecipe
+ * - Inputs (ID = hash('recipe.inputs', registryIndex))
+ *   - Keys (Input indices)
+ *   - Values (Input quantities)
+ * - Outputs (ID = hash('recipe.outputs', registryIndex))
+ *   - Keys (Output indices)
+ *   - Values (Output quantities)
+ */
+library LibRecipe {
+  /////////////////
+  // SHAPES
+
+  function create(
+    IUintComp components,
+    uint32 recipeIndex,
+    uint32[] memory inputIndices,
+    uint256[] memory inputAmts,
+    uint32[] memory outputIndices,
+    uint256[] memory outputAmts,
+    uint256 experience
+    int32 staminaCost
+  ) internal returns (uint256 id) {
+    id = genID(recipeIndex);
+    KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
+    ValuesComponent valsComp = ValuesComponent(getAddressById(components, ValuesCompID));
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IndexRecipeComponent(getAddressById(components, IndexRecipeCompID)).set(id, recipeIndex);
+    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
+    StaminaComponent(getAddressById(components, StamCompID)).set(id, Stat(0, 0, 0, staminaCost * -1));
+
+    // set inputs
+    uint256 inputID = genInputID(recipeIndex);
+    keysComp.set(inputID, inputIndices);
+    valsComp.set(inputID, inputAmts);
+
+    // set outputs
+    uint256 outputID = genOutputID(recipeIndex);
+    keysComp.set(outputID, outputIndices);
+    valsComp.set(outputID, outputAmts);
+  }
+
+  function addAssigner(
+    IUintComp components,
+    uint256 recipeID,
+    uint32 recipeIndex,
+    uint256 assignerID
+  ) internal returns (uint256 id) {
+    id = LibAssigner.create(components, assignerID, recipeID);
+    LibAssigner.addIndex(
+      IndexRecipeComponent(getAddressById(components, IndexRecipeCompID)),
+      recipeIndex,
+      id
+    );
+  }
+
+  function remove(IUintComp components, uint32 recipeIndex, uint256 id) internal {
+    IndexRecipeComponent indexComp = IndexRecipeComponent(
+      getAddressById(components, IndexRecipeCompID)
+    );
+    KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
+    ValuesComponent valsComp = ValuesComponent(getAddressById(components, ValuesCompID));
+
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    indexComp.remove(id);
+
+    uint256 inputID = genInputID(recipeIndex);
+    keysComp.remove(inputID);
+    valsComp.remove(inputID);
+
+    uint256 outputID = genOutputID(recipeIndex);
+    keysComp.remove(outputID);
+    valsComp.remove(outputID);
+
+    uint256[] memory assigners = LibAssigner.getAll(components, id);
+    for (uint256 i; i < assigners.length; i++)
+      LibAssigner.remove(components, indexComp, assigners[i]);
+  }
+
+  /////////////////
+  // INTERACTIONS
+
+  function beforeCraft(IUintComp components, uint256 recipeID, uint256 accID) internal {
+    // pay stamina cost
+    LibStat.applySingle(StaminaComponent(getAddressById(components, StamCompID)), recipeID, accID);
+  }
+
+
+  function craft(
+    IUintComp components,
+    uint32 recipeIndex,
+    uint256 rolls,
+    uint256 accID
+  ) internal returns (uint32[] memory, uint256[] memory) {
+    (Table memory input, Table memory output) = getIO(components, recipeIndex, rolls);
+
+    // use inputs (balance implicitly checked)
+    LibInventory.decForBatch(components, accID, input.indices, input.amts);
+
+    // send outputs
+    LibInventory.incForBatch(components, accID, output.indices, output.amts);
+
+    return (output.indices, output.amts);
+  }
+
+  function afterCraft(IUintComp components, uint256 recipeID, uint256 accID) internal {
+    // add experience
+    LibExperience.add(components, accID, recipeID);
+
+  /////////////////
+  // GETTERS
+
+  function getIO(
+    IUintComp components,
+    uint32 recipeIndex,
+    uint256 rolls
+  ) internal view returns (Table memory, Table memory) {
+    uint256[] memory ioIDs = new uint256[](2);
+    ioIDs[0] = genInputID(recipeIndex);
+    ioIDs[1] = genOutputID(recipeIndex);
+    uint32[][] memory indices = KeysComponent(getAddressById(components, KeysCompID)).getBatch(
+      ioIDs
+    );
+    uint256[][] memory amts = ValuesComponent(getAddressById(components, ValuesCompID)).getBatch(
+      ioIDs
+    );
+
+    // multiply by amount
+    LibArray.multiply(amts[0], rolls);
+    LibArray.multiply(amts[1], rolls);
+
+    return (Table(indices[0], amts[0]), Table(indices[1], amts[1]));
+  }
+
+  function get(IUintComp components, uint32 recipeIndex) internal view returns (uint256) {
+    IndexRecipeComponent indexComp = IndexRecipeComponent(
+      getAddressById(components, IndexRecipeCompID)
+    );
+    uint256 id = genID(recipeIndex);
+    return indexComp.has(id) ? id : 0;
+  }
+
+  /////////////////
+  // UTILS
+
+  function genID(uint32 recipeIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("registry.recipe", recipeIndex)));
+  }
+
+  function genInputID(uint32 recipeIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("recipe.input", recipeIndex)));
+  }
+
+  function genOutputID(uint32 recipeIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("recipe.output", recipeIndex)));
+  }
+
+  /////////////////
+  // LOGGING
+
+  function logCraft(IUintComp components, uint256 accID, uint32 recipeIndex, uint256 amt) internal {
+    LibData.inc(components, accID, recipeIndex, "CRAFT_TOTAL", amt);
+  }
+}

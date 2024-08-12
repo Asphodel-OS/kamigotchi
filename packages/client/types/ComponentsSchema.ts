@@ -52,6 +52,7 @@ export const ComponentsSchema = {
   '0xb29f21e001e93877c0ca9ea2483697e386afbf8bced0360395102afa8c793eea': { keys: ['value'], values: [10] },
   '0x42b6fd0902474fcca75f2a82b79b0a96b5bb13232fac424a7ba48eb1e10077a3': { keys: ['value'], values: [10] },
   '0x3879d04bcdb27da7a4f7f7e8a6eb6b202b0f5e22dc66fb53ce3b2fc3d9ed63d4': { keys: ['value'], values: [10] },
+  '0xc549816d6c3e6a568535a0df56aff099272d447c7526e27e4b6fcbd3cc7df5ab': { keys: ['value'], values: [10] },
   '0xc2b7d171254fab709835248d31a7d20c430c60ac71e67f09970923fa584b9291': { keys: ['value'], values: [10] },
   '0x3be9611062b8582cf4b9a4eafe577dbde7dcd7779a1efb46d73e212026c4b0cc': { keys: ['value'], values: [10] },
   '0x1535e90af6f338896509b09caa109db4f5869e9c19245517da2f1d80a47832a2': { keys: ['value'], values: [10] },

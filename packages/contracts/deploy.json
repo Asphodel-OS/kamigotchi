@@ -52,6 +52,7 @@
     { "comp": "IndexNPCComponent", "name": "NPCIndex", "type": "uint32" },
     { "comp": "IndexPetComponent", "name": "PetIndex", "type": "uint32" },
     { "comp": "IndexQuestComponent", "name": "QuestIndex", "type": "uint32" },
+    { "comp": "IndexRecipeComponent", "name": "RecipeIndex", "type": "uint32" },
     { "comp": "IndexRelationshipComponent", "name": "RelationshipIndex", "type": "uint32" },
     { "comp": "IndexRoomComponent", "name": "RoomIndex", "type": "uint32" },
     { "comp": "IndexSkillComponent", "name": "SkillIndex", "type": "uint32" },
@@ -214,6 +215,17 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "_RecipeRegistrySystem",
+      "writeAccess": [
+        "IDFromComponent",
+        "IDToComponent",
+        "IndexRecipeComponent",
+        "IsRegistryComponent",
+        "KeysComponent",
+        "ValuesComponent"
+      ]
+    },
+    {
       "name": "_RelationshipRegistrySystem",
       "writeAccess": [
         "IsRegistryComponent",
@@ -316,6 +328,16 @@
     {
       "name": "AccountSetFarcasterDataSystem",
       "writeAccess": ["FarcasterIndexComponent", "MediaURIComponent", "TimeLastComponent"]
+    },
+    {
+      "name": "CraftSystem",
+      "writeAccess": [
+        "IsInventoryComponent",
+        "IndexItemComponent",
+        "IDOwnsInventoryComponent",
+        "ValueComponent",
+        "TimeLastComponent"
+      ]
     },
     {
       "name": "DroptableRevealSystem",

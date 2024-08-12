@@ -25,7 +25,7 @@ contract LootboxTest is SetupTemplate {
     uint32 lootboxIndex = 10;
     _createBlankLootbox(lootboxIndex);
 
-    _giveLootbox(alice, lootboxIndex, startAmt);
+    _giveItem(alice, lootboxIndex, startAmt);
     assertEq(_getItemBal(alice, lootboxIndex), startAmt);
 
     if (useAmt > 10) {
@@ -72,7 +72,7 @@ contract LootboxTest is SetupTemplate {
     _createLootbox(lootboxIndex, "LOOTBOX", keys, weights);
 
     uint256[] memory revealIDs = new uint256[](1);
-    _giveLootbox(alice, lootboxIndex, 5);
+    _giveItem(alice, lootboxIndex, 5);
     revealIDs[0] = _openLootbox(alice, lootboxIndex, 5);
 
     console.log(uint256(blockhash(block.number - 1)));
@@ -90,7 +90,7 @@ contract LootboxTest is SetupTemplate {
     uint32 lootboxIndex = 10;
     _createBlankLootbox(lootboxIndex);
     uint256[] memory revealIDs = new uint256[](5);
-    _giveLootbox(alice, lootboxIndex, 25);
+    _giveItem(alice, lootboxIndex, 25);
 
     revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
     revealIDs[1] = _openLootbox(alice, lootboxIndex, 2);
@@ -108,7 +108,7 @@ contract LootboxTest is SetupTemplate {
     uint32 lootboxIndex = 10;
     _createBlankLootbox(lootboxIndex);
     uint256[] memory revealIDs = new uint256[](1);
-    _giveLootbox(alice, lootboxIndex, 1);
+    _giveItem(alice, lootboxIndex, 1);
 
     revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
     vm.roll(_currBlock += 300);
@@ -121,7 +121,7 @@ contract LootboxTest is SetupTemplate {
   function testLootboxForceReveal() public {
     uint32 lootboxIndex = 10;
     _createBlankLootbox(lootboxIndex);
-    _giveLootbox(alice, lootboxIndex, 1);
+    _giveItem(alice, lootboxIndex, 1);
     uint256 revealID = _openLootbox(alice, lootboxIndex, 1);
 
     // try while still valid
@@ -154,13 +154,6 @@ contract LootboxTest is SetupTemplate {
     weights[0] = 1;
 
     _createLootbox(index, "Lootbox", keys, weights);
-  }
-
-  function _giveLootbox(PlayerAccount memory player, uint32 index, uint256 amt) internal {
-    vm.startPrank(deployer);
-    LibInventory.incFor(components, player.id, index, amt);
-    LibInventory.logItemTotal(components, player.id, index, amt);
-    vm.stopPrank();
   }
 
   function _openLootbox(

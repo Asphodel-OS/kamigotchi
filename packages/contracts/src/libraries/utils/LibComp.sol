@@ -272,16 +272,14 @@ library LibComp {
     component.set(id, val);
   }
 
+  /// @dev needs to get individually in case of repeated indices
   function incBatch(UintBareComp component, uint256[] memory ids, uint256 amt) internal {
-    uint256[] memory values = safeGetBatchUint256(component, ids);
-    for (uint256 i; i < ids.length; i++) values[i] += amt;
-    component.setBatch(ids, values);
+    for (uint256 i; i < ids.length; i++) inc(component, ids[i], amt);
   }
 
+  /// @dev needs to get individually in case of repeated indices
   function incBatch(UintBareComp component, uint256[] memory ids, uint256[] memory amts) internal {
-    uint256[] memory values = safeGetBatchUint256(component, ids);
-    for (uint256 i; i < ids.length; i++) values[i] += amts[i];
-    component.setBatch(ids, values);
+    for (uint256 i; i < ids.length; i++) inc(component, ids[i], amts[i]);
   }
 
   function dec(UintBareComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
@@ -289,15 +287,13 @@ library LibComp {
     component.set(id, val);
   }
 
+  /// @dev needs to get individually in case of repeated indices
   function decBatch(UintBareComp component, uint256[] memory ids, uint256 amt) internal {
-    uint256[] memory values = safeGetBatchUint256(component, ids);
-    for (uint256 i; i < ids.length; i++) values[i] -= amt;
-    component.setBatch(ids, values);
+    for (uint256 i; i < ids.length; i++) dec(component, ids[i], amt);
   }
 
+  /// @dev needs to get individually in case of repeated indices
   function decBatch(UintBareComp component, uint256[] memory ids, uint256[] memory amts) internal {
-    uint256[] memory values = safeGetBatchUint256(component, ids);
-    for (uint256 i; i < ids.length; i++) values[i] -= amts[i];
-    component.setBatch(ids, values);
+    for (uint256 i; i < ids.length; i++) dec(component, ids[i], amts[i]);
   }
 }

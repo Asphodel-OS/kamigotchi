@@ -10,6 +10,7 @@ import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
 import { _NodeRegistrySystem } from "./ethers-contracts/_NodeRegistrySystem";
 import { _NPCRegistrySystem } from "./ethers-contracts/_NPCRegistrySystem";
 import { _QuestRegistrySystem } from "./ethers-contracts/_QuestRegistrySystem";
+import { _RecipeRegistrySystem } from "./ethers-contracts/_RecipeRegistrySystem";
 import { _RelationshipRegistrySystem } from "./ethers-contracts/_RelationshipRegistrySystem";
 import { _RoomRegistrySystem } from "./ethers-contracts/_RoomRegistrySystem";
 import { _SkillRegistrySystem } from "./ethers-contracts/_SkillRegistrySystem";
@@ -21,6 +22,7 @@ import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem"
 import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
+import { CraftSystem } from "./ethers-contracts/CraftSystem";
 import { DroptableRevealSystem } from "./ethers-contracts/DroptableRevealSystem";
 import { Farm20DepositSystem } from "./ethers-contracts/Farm20DepositSystem";
 import { Farm20ProxySystem } from "./ethers-contracts/Farm20ProxySystem";
@@ -77,6 +79,7 @@ export type SystemTypes = {
   "system.node.registry": _NodeRegistrySystem;
   "system.npc.registry": _NPCRegistrySystem;
   "system.quest.registry": _QuestRegistrySystem;
+  "system.recipe.registry": _RecipeRegistrySystem;
   "system.relationship.registry": _RelationshipRegistrySystem;
   "system.room.registry": _RoomRegistrySystem;
   "system.skill.registry": _SkillRegistrySystem;
@@ -88,6 +91,7 @@ export type SystemTypes = {
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem;
   "system.Account.Set.Name": AccountSetNameSystem;
   "system.Account.Set.Operator": AccountSetOperatorSystem;
+  "system.craft": CraftSystem;
   "system.droptable.item.reveal": DroptableRevealSystem;
   "system.Farm20.Deposit": Farm20DepositSystem;
   "system.Farm20.Proxy": Farm20ProxySystem;

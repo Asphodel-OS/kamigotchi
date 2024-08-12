@@ -621,4 +621,15 @@ pragma solidity ^0.8.0;
 //   function _handlePercentBonus(int256 bonus) internal pure returns (uint256) {
 //     return bonus > -1000 ? uint256(bonus + 1000) : 1;
 //   }
+
+// function _setPetTrait(uint petID, string memory trait, uint32 traitIndex) internal {
+//   vm.startPrank(deployer);
+//   if (trait.eq("BODY")) LibTraitRegistry.setBodyIndex(components, petID, traitIndex);
+//   else if (trait.eq("HAND")) LibTraitRegistry.setHandIndex(components, petID, traitIndex);
+//   else if (trait.eq("FACE")) LibTraitRegistry.setFaceIndex(components, petID, traitIndex);
+//   else if (trait.eq("COLOR")) LibTraitRegistry.setColorIndex(components, petID, traitIndex);
+//   else if (trait.eq("BACKGROUND"))
+//     LibTraitRegistry.setBackgroundIndex(components, petID, traitIndex);
+//   vm.stopPrank();
+// }
 // }
