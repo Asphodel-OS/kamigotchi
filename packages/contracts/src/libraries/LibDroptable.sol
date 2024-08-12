@@ -76,6 +76,7 @@ library LibDroptable {
     uint256 commitID
   ) internal returns (uint256[] memory) {
     uint256[] memory weights = weightsComp.get(dtID);
+    LibRandom.processWeightedRarityInPlace(weights);
     uint256 seed = LibCommit.extractSeedDirect(blockComp, commitID);
     uint256 count = valComp.extract(commitID);
 
@@ -128,7 +129,6 @@ library LibDroptable {
     uint32[] memory keys,
     uint256[] memory weights
   ) internal {
-    LibRandom.processWeightedRarity(weights);
     KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
     WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
   }

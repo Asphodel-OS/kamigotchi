@@ -1,6 +1,6 @@
 export const getRarities = (tier: number) => {
-  tier = Math.log2(tier);
-  return rarities[tier - 1];
+  const result = rarities[tier - 1];
+  return result ?? unknownRarity;
 };
 
 const rarities = [
@@ -50,3 +50,8 @@ const rarities = [
     color: '#F2F3F4',
   },
 ];
+
+const unknownRarity = {
+  title: 'Unknown',
+  color: '#F2F3F4',
+};

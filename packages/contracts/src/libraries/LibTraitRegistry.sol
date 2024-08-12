@@ -318,8 +318,7 @@ library LibTraitRegistry {
     uint256[] memory weights = RarityComponent(getAddressById(components, RarityCompID)).getBatch(
       ids
     );
-    LibRandom.processWeightedRarity(weights);
-    return weights;
+    return LibRandom.processWeightedRarity(weights);
   }
 
   /////////////////

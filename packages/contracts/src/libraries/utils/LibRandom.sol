@@ -17,8 +17,20 @@ library LibRandom {
   // RARITIES
 
   /// @notice squares an unprocessed weights array to distribute rarities
-  function processWeightedRarity(uint256[] memory weights) internal pure {
-    for (uint256 i; i < weights.length; i++) if (weights[i] > 0) weights[i] = 1 << (weights[i] - 1);
+  function processWeightedRarity(
+    uint256[] memory weights
+  ) internal pure returns (uint256[] memory result) {
+    result = new uint256[](weights.length);
+    for (uint256 i; i < weights.length; i++) result[i] = calcRarityWeight(weights[i]);
+  }
+
+  /// @notice squares an unprocessed weights array to distribute rarities
+  function processWeightedRarityInPlace(uint256[] memory weights) internal pure {
+    for (uint256 i; i < weights.length; i++) weights[i] = calcRarityWeight(weights[i]);
+  }
+
+  function calcRarityWeight(uint256 rarity) internal pure returns (uint256) {
+    return rarity == 0 ? 0 : 1 << (rarity - 1);
   }
 
   //////////////////
