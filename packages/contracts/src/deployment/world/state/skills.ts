@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { readFile } from './utils';
+import { readFile, toRevise } from './utils';
 
 // inits all skills or by optional indices parameter
 export async function initSkills(api: AdminAPI, indices?: number[]) {
@@ -38,8 +38,7 @@ export async function reviseSkills(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const skillsCSV = await readFile('skills/skills.csv');
     for (let i = 0; i < skillsCSV.length; i++) {
-      if (skillsCSV[i]['Status'] === 'Revise Deployment')
-        indices.push(Number(skillsCSV[i]['Index']));
+      if (toRevise(skillsCSV[i])) indices.push(Number(skillsCSV[i]['Index']));
     }
   }
 

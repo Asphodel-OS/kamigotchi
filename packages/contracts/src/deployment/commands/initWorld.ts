@@ -10,6 +10,7 @@ const argv = yargs(hideBin(process.argv))
   .usage(
     'Usage: $0 -mode <mode> -world <address> -categories <string | string[]> -action <string>  -args <number[]>'
   )
+  .alias('categories', 'c')
   .demandOption(['mode'])
   .parse();
 dotenv.config();
@@ -20,7 +21,7 @@ const run = async () => {
   const world = argv.world ? argv.world : getWorld(mode);
   const categories: (keyof WorldAPI)[] = argv.categories
     ? argv.categories.split(',').map((cat: string) => cat.trim() as keyof WorldAPI)
-    : ['global'];
+    : ['init'];
   const action = argv.action ? (argv.action as keyof SubFunc) : 'init';
   if (action !== 'init' && categories.length > 1)
     throw new Error('Only one category allowed for non-init actions');

@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { getItemImage, readFile } from './utils';
+import { getItemImage, readFile, toRevise } from './utils';
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   const droptablesCSV = await readFile('items/droptables.csv');
@@ -48,7 +48,7 @@ export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const itemsCSV = await readFile('items/items.csv');
     for (let i = 0; i < itemsCSV.length; i++) {
-      if (itemsCSV[i]['Status'] === 'Revise Deployment') indices.push(Number(itemsCSV[i]['Index']));
+      if (toRevise(itemsCSV[i])) indices.push(Number(itemsCSV[i]['Index']));
     }
   }
 

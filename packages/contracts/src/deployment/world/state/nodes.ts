@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { readFile, textToNumberArray } from './utils';
+import { readFile, textToNumberArray, toRevise } from './utils';
 
 export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
   // nodes data are stored in rooms csv
@@ -39,7 +39,12 @@ export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const nodesCSV = await readFile('rooms/rooms.csv');
     for (let i = 0; i < nodesCSV.length; i++) {
-      if (nodesCSV[i]['Status'] === 'Revise Deployment') indices.push(Number(nodesCSV[i]['Index']));
+      if (
+        toRevise(nodesCSV[i]) &&
+        nodesCSV[i]['Enabled'] === 'true' &&
+        nodesCSV[i]['Node'] !== 'NONE'
+      )
+        indices.push(Number(nodesCSV[i]['Index']));
     }
   }
 

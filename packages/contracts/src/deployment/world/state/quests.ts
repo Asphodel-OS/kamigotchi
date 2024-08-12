@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { parseToInitCon, readFile } from './utils';
+import { parseToInitCon, readFile, toRevise } from './utils';
 
 export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
   const questCSV = await readFile('quests/quests.csv');
@@ -58,8 +58,7 @@ export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const questsCSV = await readFile('quests/quests.csv');
     for (let i = 0; i < questsCSV.length; i++) {
-      if (questsCSV[i]['Status'] === 'Revise Deployment')
-        indices.push(Number(questsCSV[i]['Index']));
+      if (toRevise(questsCSV[i])) indices.push(Number(questsCSV[i]['Index']));
     }
   }
 

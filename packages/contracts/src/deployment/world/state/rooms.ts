@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { getGoalID, readFile } from './utils';
+import { getGoalID, readFile, toRevise } from './utils';
 
 // hardcoded gates - placeholder until notion is up
 const gates = {
@@ -39,7 +39,7 @@ export async function reviseRooms(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const roomsCSV = await readFile('rooms/rooms.csv');
     for (let i = 0; i < roomsCSV.length; i++) {
-      if (roomsCSV[i]['Status'] === 'Revise Deployment') indices.push(Number(roomsCSV[i]['Index']));
+      if (toRevise(roomsCSV[i])) indices.push(Number(roomsCSV[i]['Index']));
     }
   }
 

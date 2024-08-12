@@ -1,4 +1,5 @@
 export const getRarities = (tier: number) => {
+  tier = Math.log2(tier);
   return rarities[tier - 1];
 };
 

@@ -7,6 +7,18 @@ import { BigNumberish, utils } from 'ethers';
 export const MUSU_INDEX = 1;
 
 ///////////////
+// GENERAL
+
+/// @dev check if entry should be revised. assume all entries that are valid should be revised
+export const toRevise = (entry: any): boolean => {
+  return (
+    entry['Status'] === 'Revise Deployment' ||
+    entry['Status'] === 'Ingame' ||
+    entry['Status'] === 'For Implementation'
+  );
+};
+
+///////////////
 // GETTERS
 
 export const getGoalID = (index: number) => {
