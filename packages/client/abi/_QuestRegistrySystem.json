@@ -26,9 +26,14 @@
           "internalType": "uint32"
         },
         {
-          "name": "assignerID",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "assignerType",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "assignerIndex",
+          "type": "uint32",
+          "internalType": "uint32"
         }
       ],
       "outputs": [
@@ -205,7 +210,7 @@
     }
   ],
   "methodIdentifiers": {
-    "addAssigner(uint32,uint256)": "32a3075b",
+    "addAssigner(uint32,string,uint32)": "50465872",
     "addObjective(bytes)": "796c272f",
     "addRequirement(bytes)": "7e534103",
     "addReward(bytes)": "32007bd4",
