@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { LibGetter } from "libraries/utils/LibGetter.sol";
 import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.registry"));
@@ -68,7 +69,7 @@ contract _QuestRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
     return
-      LibQuestRegistry.addRequirement(
+      LibQuestRegistry.createRequirement(
         world,
         components,
         questIndex,
@@ -104,6 +105,19 @@ contract _QuestRegistrySystem is System {
     );
 
     return id;
+  }
+
+  function addAssigner(
+    uint32 questIndex,
+    string memory assignerType,
+    uint32 assignerIndex
+  ) public onlyOwner returns (uint256 id) {
+    uint256 regID = LibQuestRegistry.getByIndex(components, questIndex);
+    require(regID != 0, "Quest does not exist");
+
+    uint256 assignerID = LibGetter.getRegID(components, assignerType, assignerIndex);
+    require(assignerID != 0, "Assigner does not exist");
+    return LibQuestRegistry.addAssigner(components, regID, questIndex, assignerID);
   }
 
   function remove(uint32 index) public onlyOwner {

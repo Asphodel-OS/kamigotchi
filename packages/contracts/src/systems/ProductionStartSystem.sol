@@ -10,6 +10,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Start"));
 
@@ -32,7 +33,7 @@ contract ProductionStartSystem is System {
     // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmStart: pet starving..");
-    require(LibAccount.sharesRoom(components, accID, nodeID), "FarmStart: node too far");
+    require(LibRoom.sharesRoom(components, accID, nodeID), "FarmStart: node too far");
 
     // check node requirements (if any)
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);

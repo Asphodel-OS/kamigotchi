@@ -15,6 +15,7 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
@@ -44,7 +45,7 @@ contract ProductionLiquidateSystem is System {
     uint256 nodeID = LibHarvest.getNode(components, productionID);
     uint256 targetNodeID = LibHarvest.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "FarmLiquidate: target too far");
-    require(LibAccount.sharesRoom(components, accID, nodeID), "FarmLiquidate: node too far");
+    require(LibRoom.sharesRoom(components, accID, nodeID), "FarmLiquidate: node too far");
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibHarvest.getPet(components, targetProductionID);

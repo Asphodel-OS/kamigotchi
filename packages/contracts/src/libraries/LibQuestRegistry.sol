@@ -18,6 +18,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibAssigner } from "libraries/LibAssigner.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -70,7 +71,7 @@ library LibQuestRegistry {
     LibHash.set(components, id, abi.encode("Quest.Objective", data.logic, data.type_, data.index));
   }
 
-  function addRequirement(
+  function createRequirement(
     IWorld world,
     IUintComp components,
     uint32 questIndex,
@@ -102,10 +103,27 @@ library LibQuestRegistry {
     );
   }
 
+  function addAssigner(
+    IUintComp components,
+    uint256 questID,
+    uint32 questIndex,
+    uint256 assignerID
+  ) internal returns (uint256 id) {
+    id = LibAssigner.create(components, assignerID, questID);
+    LibAssigner.addIndex(
+      IndexQuestComponent(getAddressById(components, IndexQuestCompID)),
+      questIndex,
+      id
+    );
+  }
+
   function removeQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
+    IndexQuestComponent indexQuestComp = IndexQuestComponent(
+      getAddressById(components, IndexQuestCompID)
+    );
+    indexQuestComp.remove(questID);
     IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(questID);
     IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(questID);
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(questID);
     NameComponent(getAddressById(components, NameCompID)).remove(questID);
     DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
@@ -121,6 +139,10 @@ library LibQuestRegistry {
 
     uint256[] memory rwds = getRwdsByQuestIndex(components, questIndex);
     for (uint256 i; i < rwds.length; i++) LibReward.remove(components, rwds[i]);
+
+    uint256[] memory assigners = LibAssigner.getAll(components, questID);
+    for (uint256 i; i < assigners.length; i++)
+      LibAssigner.remove(components, indexQuestComp, assigners[i]);
   }
 
   function removeObjective(IUintComp components, uint256 objectiveID) internal {

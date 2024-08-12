@@ -17,6 +17,7 @@ import { LocationComponent, ID as LocationCompID } from "components/LocationComp
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -125,6 +126,16 @@ library LibRoom {
     }
 
     return false;
+  }
+
+  /// @notice Checks if two entities share a room
+  function sharesRoom(IUintComp components, uint256 aID, uint256 bID) internal view returns (bool) {
+    (uint32 roomA, uint32 roomB) = LibComp.safeGetTwoUint32(
+      getComponentById(components, IndexRoomCompID),
+      aID,
+      bID
+    );
+    return roomA == roomB;
   }
 
   /////////////////

@@ -112,15 +112,16 @@ library LibItemRegistry {
 
   /// @notice delete a Registry entry for an item.
   function deleteItem(IUintComp components, uint256 id) internal {
-    unsetIndex(components, id);
-    unsetIsRegistry(components, id);
-    unsetIsConsumable(components, id);
+    IndexItemComponent indexComp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    indexComp.remove(id);
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IsConsumableComponent(getAddressById(components, IsConsumableCompID)).remove(id);
     LibFor.unset(components, id);
 
-    unsetName(components, id);
-    unsetDescription(components, id);
-    unsetType(components, id);
-    unsetMediaURI(components, id);
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    DescriptionComponent(getAddressById(components, DescriptionCompID)).remove(id);
+    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
+    MediaURIComponent(getAddressById(components, MediaURICompID)).remove(id);
 
     LibDroptable.unset(components, id);
 
@@ -130,7 +131,7 @@ library LibItemRegistry {
     LibStat.unsetHarmony(components, id);
     LibStat.unsetSlots(components, id);
     LibStat.unsetStamina(components, id);
-    unsetExperience(components, id);
+    ExperienceComponent(getAddressById(components, ExpCompID)).remove(id);
   }
 
   /////////////////
@@ -140,12 +141,6 @@ library LibItemRegistry {
   function isItem(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id);
   }
-
-  // // check whether an entity is consumable by its ID
-  // // NOTE: collides with index-based override due to auto type-conversion from uint32->uint256
-  // function isConsumable(IUintComp components, uint256 id) internal view returns (bool) {
-  //   return getComponentById(components, IsConsumableCompID).has(id);
-  // }
 
   // check whether an entity is consumable by its index
   function isConsumable(IUintComp components, uint32 index) internal view returns (bool) {
@@ -233,51 +228,6 @@ library LibItemRegistry {
 
   function setType(IUintComp components, uint256 id, string memory type_) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-  }
-
-  /////////////////
-  // UNSETTERS
-
-  function unsetExperience(IUintComp components, uint256 id) internal {
-    ExperienceComponent comp = ExperienceComponent(getAddressById(components, ExpCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetDescription(IUintComp components, uint256 id) internal {
-    DescriptionComponent comp = DescriptionComponent(getAddressById(components, DescriptionCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetIsConsumable(IUintComp components, uint256 id) internal {
-    IsConsumableComponent comp = IsConsumableComponent(
-      getAddressById(components, IsConsumableCompID)
-    );
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent comp = IsRegistryComponent(getAddressById(components, IsRegCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetMediaURI(IUintComp components, uint256 id) internal {
-    MediaURIComponent comp = MediaURIComponent(getAddressById(components, MediaURICompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetName(IUintComp components, uint256 id) internal {
-    NameComponent comp = NameComponent(getAddressById(components, NameCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetType(IUintComp components, uint256 id) internal {
-    TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
-    if (comp.has(id)) comp.remove(id);
   }
 
   /////////////////

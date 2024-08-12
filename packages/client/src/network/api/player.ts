@@ -207,8 +207,8 @@ export function createPlayerAPI(systems: any) {
 
   // @dev accept a quest for an account
   // @param index   index of the quest
-  function acceptQuest(index: number) {
-    return systems['system.Quest.Accept'].executeTyped(index);
+  function acceptQuest(assignerID: BigNumberish, index: number) {
+    return systems['system.Quest.Accept'].executeTyped(assignerID, index);
   }
 
   // @dev complete a quest for an account

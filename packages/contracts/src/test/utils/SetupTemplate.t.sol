@@ -334,7 +334,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _acceptQuest(uint playerIndex, uint32 questIndex) internal virtual returns (uint) {
     vm.prank(_getOperator(playerIndex));
-    return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
+    return abi.decode(_QuestAcceptSystem.executeTyped(0, questIndex), (uint));
   }
 
   function _completeQuest(PlayerAccount memory account, uint32 questIndex) internal {
@@ -354,6 +354,10 @@ abstract contract SetupTemplate is TestSetupImports {
   function _dropQuest(uint playerIndex, uint questID) internal virtual {
     vm.prank(_getOperator(playerIndex));
     _QuestDropSystem.executeTyped(questID);
+  }
+
+  function _hasQuest(PlayerAccount memory account, uint32 questIndex) internal view returns (bool) {
+    return LibQuests.getAccQuestIndex(components, account.id, questIndex) != 0;
   }
 
   /* RELATIONSHIP */
@@ -412,6 +416,16 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(deployer);
     LibExperience.setLevel(components, id, level);
     vm.stopPrank();
+  }
+
+  function _setUint256(IComponent component, uint256 id, uint256 value) internal {
+    vm.prank(deployer);
+    component.set(id, abi.encode(value));
+  }
+
+  function _setUint32(IComponent component, uint256 id, uint32 value) internal {
+    vm.prank(deployer);
+    component.set(id, abi.encode(value));
   }
 
   /////////////////

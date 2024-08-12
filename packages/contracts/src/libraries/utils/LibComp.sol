@@ -140,6 +140,42 @@ library LibComp {
     return result;
   }
 
+  function safeGetTwoUint256(
+    IComp component,
+    uint256 aID,
+    uint256 bID
+  ) internal view returns (uint256, uint256) {
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = aID;
+    ids[1] = bID;
+    uint256[] memory values = safeGetBatchUint256(component, ids);
+    return (values[0], values[1]);
+  }
+
+  function safeGetTwoUint32(
+    IComp component,
+    uint256 aID,
+    uint256 bID
+  ) internal view returns (uint32, uint32) {
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = aID;
+    ids[1] = bID;
+    uint32[] memory values = safeGetBatchUint32(component, ids);
+    return (values[0], values[1]);
+  }
+
+  function safeGetTwoString(
+    IComp component,
+    uint256 aID,
+    uint256 bID
+  ) internal view returns (string memory, string memory) {
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = aID;
+    ids[1] = bID;
+    string[] memory values = safeGetBatchString(component, ids);
+    return (values[0], values[1]);
+  }
+
   /////////////////
   // SETS
 

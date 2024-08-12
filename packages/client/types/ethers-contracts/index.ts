@@ -44,6 +44,7 @@ export type { HarmonyComponent } from "./HarmonyComponent";
 export type { HasFlagComponent } from "./HasFlagComponent";
 export type { HashComponent } from "./HashComponent";
 export type { HealthComponent } from "./HealthComponent";
+export type { IDFromComponent } from "./IDFromComponent";
 export type { IDOwnsInventoryComponent } from "./IDOwnsInventoryComponent";
 export type { IDOwnsPetComponent } from "./IDOwnsPetComponent";
 export type { IDOwnsQuestComponent } from "./IDOwnsQuestComponent";
@@ -51,6 +52,7 @@ export type { IDOwnsRelationshipComponent } from "./IDOwnsRelationshipComponent"
 export type { IDPointerComponent } from "./IDPointerComponent";
 export type { IDRoomComponent } from "./IDRoomComponent";
 export type { IDScoreTypeComponent } from "./IDScoreTypeComponent";
+export type { IDToComponent } from "./IDToComponent";
 export type { IPayableSystem } from "./IPayableSystem";
 export type { IdAccountComponent } from "./IdAccountComponent";
 export type { IdDelegateeComponent } from "./IdDelegateeComponent";
@@ -257,6 +259,7 @@ export { HarmonyComponent__factory } from "./factories/HarmonyComponent__factory
 export { HasFlagComponent__factory } from "./factories/HasFlagComponent__factory";
 export { HashComponent__factory } from "./factories/HashComponent__factory";
 export { HealthComponent__factory } from "./factories/HealthComponent__factory";
+export { IDFromComponent__factory } from "./factories/IDFromComponent__factory";
 export { IDOwnsInventoryComponent__factory } from "./factories/IDOwnsInventoryComponent__factory";
 export { IDOwnsPetComponent__factory } from "./factories/IDOwnsPetComponent__factory";
 export { IDOwnsQuestComponent__factory } from "./factories/IDOwnsQuestComponent__factory";
@@ -264,6 +267,7 @@ export { IDOwnsRelationshipComponent__factory } from "./factories/IDOwnsRelation
 export { IDPointerComponent__factory } from "./factories/IDPointerComponent__factory";
 export { IDRoomComponent__factory } from "./factories/IDRoomComponent__factory";
 export { IDScoreTypeComponent__factory } from "./factories/IDScoreTypeComponent__factory";
+export { IDToComponent__factory } from "./factories/IDToComponent__factory";
 export { IPayableSystem__factory } from "./factories/IPayableSystem__factory";
 export { IdAccountComponent__factory } from "./factories/IdAccountComponent__factory";
 export { IdDelegateeComponent__factory } from "./factories/IdDelegateeComponent__factory";

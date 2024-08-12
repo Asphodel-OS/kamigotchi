@@ -120,7 +120,7 @@ export interface PetUseItemSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -139,7 +139,7 @@ export interface PetUseItemSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    id: PromiseOrValue<BigNumberish>,
+    petID: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -158,7 +158,7 @@ export interface PetUseItemSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -189,7 +189,7 @@ export interface PetUseItemSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -209,7 +209,7 @@ export interface PetUseItemSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

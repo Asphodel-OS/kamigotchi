@@ -40,6 +40,11 @@
       "name": "executeTyped",
       "inputs": [
         {
+          "name": "assignerID",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
           "name": "index",
           "type": "uint32",
           "internalType": "uint32"
@@ -112,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32)": "09c90324",
+    "executeTyped(uint256,uint32)": "e60f3a76",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

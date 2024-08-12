@@ -17,17 +17,19 @@ contract PetUseItemSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
+    (uint256 petID, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    uint256 regID = LibItemRegistry.getByIndex(components, itemIndex);
 
-    require(LibPet.isPet(components, id), "not a pet");
-    require(LibPet.getAccount(components, id) == accID, "Pet not urs");
+    require(LibPet.isPet(components, petID), "not a pet");
+    require(LibPet.getAccount(components, petID) == accID, "Pet not urs");
+    require(LibPet.isResting(components, petID), "Pet not resting");
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check
 
     /// NOTE: might separate into different systems later, or better generalised handling
-    string memory type_ = LibInventory.getTypeByIndex(components, itemIndex);
+    string memory type_ = LibItemRegistry.getType(components, regID);
     if (LibString.eq(type_, "RENAME_POTION")) {
-      LibPet.setNameable(components, id, true);
+      LibPet.setNameable(components, petID, true);
     } else {
       require(false, "ItemUse: unknown item type");
     }
@@ -37,7 +39,7 @@ contract PetUseItemSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 id, uint32 itemIndex) public returns (bytes memory) {
-    return execute(abi.encode(id, itemIndex));
+  function executeTyped(uint256 petID, uint32 itemIndex) public returns (bytes memory) {
+    return execute(abi.encode(petID, itemIndex));
   }
 }

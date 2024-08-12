@@ -188,16 +188,6 @@ library LibAccount {
       );
   }
 
-  // Check whether an Account shares RoomIndex with another entity.
-  function sharesRoom(
-    IUintComp components,
-    uint256 id,
-    uint256 entityID
-  ) internal view returns (bool) {
-    IndexRoomComponent locComp = IndexRoomComponent(getAddressById(components, RoomCompID));
-    return locComp.get(id) == locComp.get(entityID);
-  }
-
   /////////////////
   // GETTERS
 
