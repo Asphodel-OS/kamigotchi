@@ -15,7 +15,7 @@ import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Npc/merchant';
-import { getQuestByIndex, getRegistryQuests } from 'network/shapes/Quest';
+import { getQuest, getQuestByIndex, queryRegistryQuests } from 'network/shapes/Quest';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { getRegistrySkills, getSkillByIndex } from 'network/shapes/Skill';
 import { getRegistryTraits, getTraitByIndex } from 'network/shapes/Trait';
@@ -114,7 +114,10 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     quests: {
-      all: () => getRegistryQuests(world, components),
+      all: () => {
+        const entities = queryRegistryQuests(components);
+        return entities.map((entity) => getQuest(world, components, entity));
+      },
       get: (index: number) => getQuestByIndex(world, components, index),
       indices: () => [...new Set(Array.from(components.QuestIndex.values.value.values()))],
     },
@@ -156,6 +159,5 @@ const fullAccountOptions: AccountOptions = {
   kamis: true,
   friends: true,
   inventory: true,
-  quests: true,
   stats: true,
 };

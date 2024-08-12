@@ -1,14 +1,7 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { ItemImages } from 'assets/images/items';
 import { Inventory } from '../Item';
-
-// base shape of an entity with basic details
-export interface DetailedEntity {
-  ObjectType: string;
-  image: string;
-  name: string;
-  description?: string;
-}
+import { DetailedEntity } from './parse';
 
 // TODO: move Gacha ticket shapes to Item/
 export const GachaTicket: DetailedEntity = {

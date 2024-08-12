@@ -7,7 +7,15 @@ import { getFactionByIndex, getReputationItem } from '../Faction';
 import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
-import { DetailedEntity, GachaTicket } from './EntityTypes';
+import { GachaTicket } from './EntityTypes';
+
+// base shape of an entity with basic details
+export interface DetailedEntity {
+  ObjectType: string;
+  image: string;
+  name: string;
+  description?: string;
+}
 
 /**
  * Gets an entity from a description (TYPE, INDEX)

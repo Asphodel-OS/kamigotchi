@@ -12,75 +12,118 @@ import {
 import { Reward } from '../Rewards';
 import { getData } from '../utils';
 import { Objective, querySnapshotObjective } from './objective';
-import { Quest, query } from './quest';
+import { query } from './queries';
+import { BaseQuest, Quest, populate } from './quest';
 import { checkRequirement } from './requirement';
 
 /////////////////
 // CHECKERS
 
+// check whethter a Repeatable Quest is Available to be repeated now
+const canRepeat = (completed: Quest) => {
+  if (!completed.repeatable) return false;
+  const now = Date.now() / 1000;
+  const cooldown = completed.repeatDuration ?? 0;
+  const startTime = completed.startTime;
+  return Number(startTime) + Number(cooldown) <= Number(now);
+};
+
 export const hasCompleted = (
-  world: World,
   components: Components,
   questIndex: number,
   account: Account
 ): boolean => {
-  const quests = query(world, components, {
+  const results = query(components, {
     account: account.id,
     index: questIndex,
     completed: true,
   });
 
-  return quests.length > 0;
+  return results.length > 0;
 };
 
-// check whether a Parsed Quest is Available to accept based on the list of an
-// Account's completed and ongoing Quests
-const isAvailable = (quest: Quest, completed: Quest[], ongoing: Quest[]) => {
-  if (!meetsRequirements(quest)) return false;
-  const ongoingInstance = ongoing.find((q: Quest) => q.index === quest.index);
-  const completedInstance = completed.find((q: Quest) => q.index === quest.index);
-  const now = Date.now() / 1000;
-
-  if (ongoingInstance) return false;
-  if (!completedInstance) return true;
-  if (!quest.repeatable) return false; // assume attempt limit for all other quests is 1
-
-  // assumed repeatable quest with no ongoing instance
-  const waitRequirement = completedInstance.repeatDuration ?? 0;
-  const startTime = completedInstance.startTime;
-  return Number(startTime) + Number(waitRequirement) <= Number(now);
+// find a Quest in a list of other Quests by its index
+const find = (quest: BaseQuest, list: BaseQuest[]) => {
+  return list.find((q: BaseQuest) => q.index === quest.index);
 };
 
-// check whether a Parsed Quest has its Objectives met
-export const meetsObjectives = (quest: Quest): boolean => {
-  for (const objective of quest.objectives) {
-    if (!objective.status?.completable) {
-      return false;
-    }
-  }
-  return true;
+// // assumed repeatable quest with no ongoing instance
+// const now = Date.now() / 1000;
+// const waitRequirement = completedInstance.repeatDuration ?? 0;
+// const startTime = completedInstance.startTime;
+// return Number(startTime) + Number(waitRequirement) <= Number(now);
+
+// // check whether a Parsed Quest has its Objectives met
+// export const meetsObjectives = (quest: Quest): boolean => {
+//   for (const objective of quest.objectives) {
+//     const status = objective.status;
+//     if (!status?.completable) return false;
+//   }
+//   return true;
+// };
+
+// // check whether a Parsed Quest has its Requirements met
+// export const meetsRequirements = (quest: Quest): boolean => {
+//   for (const requirement of quest.requirements) {
+//     const status = requirement.status;
+//     if (!status?.completable) return false;
+//   }
+//   return true;
+// };
+
+// check whether an Account meets the requirements of a Quest
+export const meetsRequirements = (
+  world: World,
+  components: Components,
+  quest: Quest,
+  account: Account
+): boolean => {
+  return !quest.requirements.some((r) => !checkRequirement(world, components, r, account));
 };
 
-// check whether a Parsed Quest has its Requirements met
-export const meetsRequirements = (quest: Quest): boolean => {
-  for (const requirement of quest.requirements) {
-    if (!requirement.status?.completable) {
-      return false;
-    }
-  }
-  return true;
+// check whether an Account meets the Objectives of a Quest
+export const meetsObjectives = (
+  world: World,
+  components: Components,
+  quest: Quest,
+  account: Account
+): boolean => {
+  return !quest.objectives.some((o) => !checkObjective(world, components, o, quest, account));
 };
 
 /////////////////
 // FILTERS
 
-// filter a list of Parsed Quests to just the ones available to an Account
+// filter a list of Registry Quests to just the ones available to an Account
+// - Ongoing is autofail
+// - Completed and nonrepeatable is fail
+// - Completed and repeatable is pass based on cooldown
+// - otherwise Available and needs to check against requirements
+// TODO: return populated Quests rather than the BaseQuests
 export const filterByAvailable = (
-  parsedRegistry: Quest[],
-  completed: Quest[],
-  ongoing: Quest[]
+  world: World,
+  components: Components,
+  account: Account,
+  registry: BaseQuest[],
+  ongoing: BaseQuest[],
+  completed: BaseQuest[]
 ) => {
-  return parsedRegistry.filter((q: Quest) => isAvailable(q, completed, ongoing));
+  return registry.filter((q) => {
+    const ongoingBase = find(q, ongoing);
+    const completedBase = find(q, completed);
+
+    if (!!ongoingBase) return false;
+    if (!!completedBase) {
+      if (!q.repeatable) return false;
+      else {
+        const completedFull = populate(world, components, completedBase);
+        return canRepeat(completedFull);
+      }
+    }
+
+    const fullQuest = populate(world, components, q);
+    return meetsRequirements(world, components, fullQuest, account);
+  });
 };
 
 // filter a list of Quests (parsed or not) to ones with an Objective matching certain conditions
@@ -131,19 +174,19 @@ export const filterOngoing = (quests: Quest[]) => {
 /////////////////
 // SORTERS
 
-// sorts Ongoing Quests by their completability
-export const sortOngoing = (quests: Quest[]): Quest[] => {
-  const completionStatus = new Map<number, boolean>();
-  quests.forEach((q: Quest) => completionStatus.set(q.index, meetsObjectives(q)));
+// // sorts Ongoing Quests by their completability
+// export const sortOngoing = (quests: Quest[]): Quest[] => {
+//   const completionStatus = new Map<number, boolean>();
+//   quests.forEach((q: Quest) => completionStatus.set(q.index, meetsObjectives(q)));
 
-  return quests.reverse().sort((a: Quest, b: Quest) => {
-    const aCompletable = completionStatus.get(a.index);
-    const bCompletable = completionStatus.get(b.index);
-    if (aCompletable && !bCompletable) return -1;
-    else if (!aCompletable && bCompletable) return 1;
-    else return 0;
-  });
-};
+//   return quests.reverse().sort((a: Quest, b: Quest) => {
+//     const aCompletable = completionStatus.get(a.index);
+//     const bCompletable = completionStatus.get(b.index);
+//     if (aCompletable && !bCompletable) return -1;
+//     else if (!aCompletable && bCompletable) return 1;
+//     else return 0;
+//   });
+// };
 
 // sorts Completed Quests by their index
 export const sortCompleted = (quests: Quest[]): Quest[] => {

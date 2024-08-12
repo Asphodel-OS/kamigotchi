@@ -8,16 +8,23 @@ export {
   hasCompleted as hasCompletedQuest,
   meetsObjectives,
   meetsRequirements,
+  parseStatus as parseQuestStatus,
   parseStatuses as parseQuestStatuses,
   sortCompleted as sortCompletedQuests,
-  sortOngoing as sortOngoingQuests,
 } from './functions';
 export { getObjective, queryQuestObjectives, querySnapshotObjective } from './objective';
 export {
-  getCompleted as getCompletedQuests,
-  getOngoing as getOngoingQuests,
+  queryCompleted as queryCompletedQuests,
+  queryOngoing as queryOngoingQuests,
+  queryRegistry as queryRegistryQuests,
+} from './queries';
+export {
+  getBase as getBaseQuest,
+  get as getQuest,
+  getByEntityIndex as getQuestByEntityIndex,
   getByIndex as getQuestByIndex,
-  getRegistry as getRegistryQuests,
+  getByEntityIndices as getQuestsByEntityIndices,
+  populate as populateQuest,
 } from './quest';
 export { checkRequirement, queryQuestRequirements } from './requirement';
 export { queryQuestRewards } from './reward';

@@ -1,13 +1,8 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import {
-  filterOngoingQuests,
-  Quest,
-  sortCompletedQuests,
-  sortOngoingQuests,
-} from 'network/shapes/Quest';
-import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
+import { filterOngoingQuests, Quest, sortCompletedQuests } from 'network/shapes/Quest';
+import { DetailedEntity } from 'network/shapes/utils';
 import { QuestCard } from './QuestCard';
 
 interface Props {
@@ -89,7 +84,8 @@ export const List = (props: Props) => {
   };
 
   const OngoingQuests = () => {
-    const cleaned = sortOngoingQuests(filterOngoingQuests(quests.ongoing));
+    // const cleaned = sortOngoingQuests(filterOngoingQuests(quests.ongoing));
+    const cleaned = filterOngoingQuests(quests.ongoing);
     const isVisible = mode === 'ONGOING';
     const display = isVisible ? 'block' : 'none';
 

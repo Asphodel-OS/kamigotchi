@@ -1,22 +1,25 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
+import { useVisibility } from 'app/stores';
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Quest,
   filterQuestsByAvailable,
-  filterQuestsByObjective,
-  getCompletedQuests,
-  getOngoingQuests,
-  getRegistryQuests,
-  parseQuestStatuses,
+  getBaseQuest,
+  getQuest,
+  parseQuestStatus,
+  populateQuest,
+  queryCompletedQuests,
+  queryOngoingQuests,
+  queryRegistryQuests,
 } from 'network/shapes/Quest';
+import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
-import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';
 
@@ -46,37 +49,71 @@ export function registerQuestsModal() {
           // the time being we'll update on every tick to force a re-render.
           // just separating these out to flatten our Account shapes
           // TODO: move inside effect hook once we have proper Objective/Requirements tracking
-          const registryQuests = getRegistryQuests(world, components);
-          const registryParsed = parseQuestStatuses(world, components, account, registryQuests);
-          const ongoingQuests = getOngoingQuests(world, components, account.id);
-          const completedQuests = getCompletedQuests(world, components, account.id);
-          const ongoingParsed = parseQuestStatuses(world, components, account, ongoingQuests);
-          const completedParsed = parseQuestStatuses(world, components, account, completedQuests);
-          const availableQuests = filterQuestsByAvailable(
-            registryParsed,
-            completedParsed,
-            ongoingParsed
+
+          const registryEntities = queryRegistryQuests(components);
+          const completed = queryCompletedQuests(components, account.id).map((entityIndex) =>
+            getQuest(world, components, entityIndex)
+          );
+          const ongoing = queryOngoingQuests(components, account.id).map((entityIndex) =>
+            getQuest(world, components, entityIndex)
           );
 
           return {
             network,
             data: {
               account,
-              registry: registryParsed,
-              available: availableQuests,
-              ongoing: ongoingParsed,
-              completed: completedParsed,
+              quests: {
+                registryEntities,
+                ongoing,
+                completed,
+              },
+            },
+            utils: {
+              getBase: (entityIndex: EntityIndex) => getBaseQuest(world, components, entityIndex),
+              filterByAvailable: (
+                registry: BaseQuest[],
+                ongoing: BaseQuest[],
+                completed: BaseQuest[]
+              ) =>
+                filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
+              parseStatus: (quest: Quest) => parseQuestStatus(world, components, account, quest),
+              populate: (base: BaseQuest) => populateQuest(world, components, base),
             },
           };
         })
       ),
-    ({ network, data }) => {
+    ({ network, data, utils }) => {
       const { actions, api, components, notifications, world } = network;
-      const { account, available, completed, ongoing, registry } = data;
+      const { ongoing, completed, registryEntities } = data.quests;
+      const { modals } = useVisibility();
       const [tab, setTab] = useState<TabType>('ONGOING');
+      const [registry, setRegistry] = useState<BaseQuest[]>([]); // no parsing unless needed
+      const [available, setAvailable] = useState<Quest[]>([]);
 
       /////////////////
       // SUBSCRIPTIONS
+
+      // update the registry whenever we detect changes
+      // NOTE: this only updates when a quest is added/removed or modal opens
+      useEffect(() => {
+        if (!modals.quests) return;
+        if (registry.length != registryEntities.length) {
+          const registry = registryEntities.map((entityIndex) =>
+            getBaseQuest(world, components, entityIndex)
+          );
+          setRegistry(registry);
+        }
+      }, [registryEntities.length, modals.quests]);
+
+      // update the Available Quests whenever we detect changes to the Registry
+      // or Ongoing/Completed Quests. process repeatable quests in parallel
+      useEffect(() => {
+        // process available quests
+        const newAvailable = utils.filterByAvailable(registry, ongoing, completed);
+        if (available.length != newAvailable.length) {
+          setAvailable(newAvailable.map((q) => utils.populate(q)));
+        }
+      }, [registry, completed.length, ongoing.length]);
 
       // update the Notifications when the number of available quests changes
       // Q(jb): do we want this in a react component or on an independent hook?
@@ -156,23 +193,23 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
-          footer={
-            <Footer
-              account={account}
-              quests={{
-                agency: filterQuestsByObjective(registry, 1),
-                ongoing: filterQuestsByObjective(ongoing, 1),
-                completed: filterQuestsByObjective(completed, 1),
-              }}
-              actions={{ acceptQuest, completeQuest }}
-            />
-          }
+          // footer={
+          //   <Footer
+          //     account={account}
+          //     quests={{
+          //       agency: filterQuestsByObjective(registry, 1),
+          //       ongoing: filterQuestsByObjective(ongoing, 1),
+          //       completed: filterQuestsByObjective(completed, 1),
+          //     }}
+          //     actions={{ acceptQuest, completeQuest }}
+          //   />
+          // }
           canExit
           truncate
           noPadding
         >
           <List
-            quests={{ available, ongoing: ongoing, completed: completed }}
+            quests={{ available, ongoing, completed }}
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{

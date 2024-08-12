@@ -12,7 +12,7 @@ import { BigNumber } from 'ethers';
 import { baseURI } from 'constants/media';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
-import { DetailedEntity } from '../utils/EntityTypes';
+import { DetailedEntity } from '../utils';
 import { querySkillEffects, querySkillRequirements } from './queries';
 
 /////////////////

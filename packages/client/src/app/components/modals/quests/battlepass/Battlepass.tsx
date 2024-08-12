@@ -30,7 +30,6 @@ export const Battlepass = (props: Props) => {
   const { account, quests, actions } = props;
   const [maxRep, setMaxRep] = useState(1);
   const [currRep, setCurrRep] = useState(0);
-  console.log(account.reputation, quests);
 
   useEffect(() => {
     const newMaxRep = Math.max(...quests.agency.map((q) => getReputationNeeded(q)));
@@ -118,7 +117,7 @@ export const Battlepass = (props: Props) => {
         <Milestone
           key={q.index}
           onClick={() => getAction(q)}
-          position={50}
+          position={getMilestonePosition(q)}
           colors={{
             bg: meetsReputation(q) ? Colors.fg : Colors.bg,
             ring: meetsReputation(q) ? Colors.accent : 'black',
