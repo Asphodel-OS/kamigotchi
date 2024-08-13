@@ -107,7 +107,7 @@ export function registerRevealModal() {
         const entityIndex = world.entityToIndex.get(id);
         if (!entityIndex) return 'EXPIRED';
         const state = getComponentValue(State, entityIndex)?.value as string;
-        return state ?? '';
+        return state ?? 'EXPIRED';
       };
 
       return (

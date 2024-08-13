@@ -52,7 +52,7 @@ export const Commits = (props: Props) => {
     const state = utils.getCommitState(commit.id);
     let text = 'Reveal';
     if (state === 'REVEALING') text = 'Revealing...';
-    else if (state === 'Expired') text = 'Failed';
+    else if (state === 'EXPIRED') text = 'Copy ID';
 
     return (
       <Row>
