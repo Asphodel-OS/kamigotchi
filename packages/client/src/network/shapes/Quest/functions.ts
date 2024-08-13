@@ -190,7 +190,7 @@ export const filterOngoing = (quests: Quest[]) => {
 
 // sorts Completed Quests by their index
 export const sortCompleted = (quests: Quest[]): Quest[] => {
-  return quests.sort((a: Quest, b: Quest) => a.index - b.index);
+  return [...quests].sort((a: Quest, b: Quest) => a.index - b.index);
 };
 
 /////////////////

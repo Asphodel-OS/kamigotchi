@@ -94,7 +94,7 @@ const Contents = styled.div`
   overflow: show;
 `;
 
-const Card = styled.button`
+const Card = styled.div`
   position: relative;
 
   background-color: #fff;

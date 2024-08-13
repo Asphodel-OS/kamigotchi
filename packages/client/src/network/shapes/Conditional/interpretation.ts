@@ -27,7 +27,7 @@ export const parseConditionalUnits = (con: Condition): [string, string] => {
 export const parseConditionalTracking = (con: any): string => {
   const [tar, curr] = parseConditionalUnits(con);
 
-  if (con.status?.completable) return ` ✅`;
+  if (con.status?.completable) return ` ✓`;
   const hideProgress = con.target.type == 'QUEST' || con.target.type == 'ROOM';
   return hideProgress ? '' : ` [${curr}/${tar}]`;
 };

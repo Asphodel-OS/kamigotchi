@@ -20,7 +20,7 @@ import {
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
-import { List } from './List';
+import { List } from './list/List';
 import { Tabs } from './Tabs';
 
 const REFRESH_PERIOD = 1000;
@@ -44,11 +44,6 @@ export function registerQuestsModal() {
             kamis: true,
             inventory: true,
           });
-
-          // NOTE(jb): ideally we only update when these shapes change but for
-          // the time being we'll update on every tick to force a re-render.
-          // just separating these out to flatten our Account shapes
-          // TODO: move inside effect hook once we have proper Objective/Requirements tracking
 
           const registryEntities = queryRegistryQuests(components);
           const completed = queryCompletedQuests(components, account.id).map((entityIndex) =>
@@ -85,6 +80,7 @@ export function registerQuestsModal() {
     ({ network, data, utils }) => {
       const { actions, api, components, notifications, world } = network;
       const { ongoing, completed, registryEntities } = data.quests;
+      const { parseStatus, populate, filterByAvailable } = utils;
       const { modals } = useVisibility();
       const [tab, setTab] = useState<TabType>('ONGOING');
       const [registry, setRegistry] = useState<BaseQuest[]>([]); // no parsing unless needed
@@ -93,31 +89,45 @@ export function registerQuestsModal() {
       /////////////////
       // SUBSCRIPTIONS
 
-      // update the registry whenever we detect changes
-      // NOTE: this only updates when a quest is added/removed or modal opens
+      // update the registry whenever we open the modal
       useEffect(() => {
         if (!modals.quests) return;
-        if (registry.length != registryEntities.length) {
-          const registry = registryEntities.map((entityIndex) =>
-            getBaseQuest(world, components, entityIndex)
-          );
-          setRegistry(registry);
-        }
-      }, [registryEntities.length, modals.quests]);
+        if (registry.length == registryEntities.length) return;
+        refreshRegistry(registryEntities);
+      }, [modals.quests]);
+
+      // update the registry whenever quests are added/removed
+      useEffect(() => {
+        refreshRegistry(registryEntities);
+      }, [registryEntities.length]);
 
       // update the Available Quests whenever we detect changes to the Registry
       // or Ongoing/Completed Quests. process repeatable quests in parallel
       useEffect(() => {
-        // process available quests
-        const newAvailable = utils.filterByAvailable(registry, ongoing, completed);
+        const newAvailable = filterByAvailable(registry, ongoing, completed);
         if (available.length != newAvailable.length) {
-          setAvailable(newAvailable.map((q) => utils.populate(q)));
+          setAvailable(newAvailable.map((q) => populate(q)));
         }
       }, [registry, completed.length, ongoing.length]);
 
       // update the Notifications when the number of available quests changes
-      // Q(jb): do we want this in a react component or on an independent hook?
       useEffect(() => {
+        updateNotifications();
+      }, [available.length]);
+
+      /////////////////
+      // HELPERS
+
+      const refreshRegistry = (entities: EntityIndex[]) => {
+        const newRegistry = entities.map((entityIndex) =>
+          getBaseQuest(world, components, entityIndex)
+        );
+        setRegistry(newRegistry);
+        console.log(`updating quest modal with ${newRegistry.length} quests`);
+      };
+
+      // Q(jb): do we want this in a react component or on an independent hook?
+      const updateNotifications = () => {
         const id = 'Available Quests';
         const numAvail = available.length;
         if (available.length > 0) setTab('AVAILABLE');
@@ -141,25 +151,7 @@ export function registerQuestsModal() {
               modal: 'quests',
             });
         }
-      }, [available.length]);
-
-      // const refreshAvailable = (
-      //   account: Account,
-      //   registry: Quest[],
-      //   completed: Quest[],
-      //   ongoing: Quest[]
-      // ) => {
-      //   const parsedRegistry = parseQuestStatuses(world, components, account, registry);
-      //   const availableQuests = filterQuestsByAvailable(parsedRegistry, completed, ongoing);
-      //   setAvailable(availableQuests);
-      // };
-
-      // const refreshAfterAction = async (actionIndex: EntityIndex) => {
-      //   await waitForActionCompletion(actions!.Action, actionIndex);
-      //   setTimeout(() => {
-      //     refreshAvailable(account, registry, completed, ongoing);
-      //   }, REFRESH_PERIOD + 500);
-      // };
+      };
 
       /////////////////
       // ACTIONS
@@ -213,6 +205,7 @@ export function registerQuestsModal() {
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{
+              parseStatus,
               getDescribedEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
             }}

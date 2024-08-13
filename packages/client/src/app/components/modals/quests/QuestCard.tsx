@@ -32,7 +32,10 @@ export const QuestCard = (props: Props) => {
 
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective): string => {
-    const prefix = status !== 'AVAILABLE' ? parseConditionalTracking(objective) : '•';
+    let prefix = '';
+    if (status === 'AVAILABLE') prefix = '•';
+    else if (status === 'ONGOING') prefix = parseConditionalTracking(objective);
+    else if (status === 'COMPLETED') prefix = '✓';
     return `${prefix} ${objective.name}`;
   };
 
@@ -97,6 +100,38 @@ export const QuestCard = (props: Props) => {
     return component;
   };
 
+  const Objectives = (quest: Quest) => {
+    if (quest.objectives.length === 0) return null;
+    return (
+      <Section key='objectives'>
+        <SubTitle>Objectives</SubTitle>
+        {quest.objectives.map((o) => {
+          const text = getObjectiveText(o);
+          return <ConditionText key={o.id}>{text}</ConditionText>;
+        })}
+      </Section>
+    );
+  };
+
+  const Rewards = (quest: Quest) => {
+    if (quest.rewards.length === 0) return null;
+    return (
+      <Section key='rewards'>
+        <SubTitle>Rewards</SubTitle>
+        <Row>
+          {quest.rewards.map((r) => (
+            <Row key={r.id}>
+              <ConditionText key={r.id}>
+                {RewardImage(r)}
+                {`x${(r.target.value ?? 0) * 1}`}
+              </ConditionText>
+            </Row>
+          ))}
+        </Row>
+      </Section>
+    );
+  };
+
   return (
     <Container key={quest.id} completed={status === 'COMPLETED'}>
       <Overlay top={0.6} right={0.6}>
@@ -104,28 +139,8 @@ export const QuestCard = (props: Props) => {
       </Overlay>
       <Title>{quest.name}</Title>
       <Description>{quest.description}</Description>
-      {quest.objectives.length > 0 && (
-        <Section key='objectives'>
-          <SubTitle>Objectives</SubTitle>
-          {quest.objectives.map((objective) => (
-            <ConditionText key={objective.id}>{`${getObjectiveText(objective)}`}</ConditionText>
-          ))}
-        </Section>
-      )}
-      {quest.rewards.length > 0 && (
-        <Section key='rewards'>
-          <SubTitle>Rewards</SubTitle>
-          <Row>
-            {quest.rewards.map((reward) => (
-              <Row key={reward.id}>
-                <ConditionText key={reward.id}>
-                  {RewardImage(reward)}x{(reward.target.value ?? 0) * 1}
-                </ConditionText>
-              </Row>
-            ))}
-          </Row>
-        </Section>
-      )}
+      {Objectives(quest)}
+      {Rewards(quest)}
       {status === 'AVAILABLE' && AcceptButton(quest)}
       {status === 'ONGOING' && CompleteButton(quest)}
     </Container>
