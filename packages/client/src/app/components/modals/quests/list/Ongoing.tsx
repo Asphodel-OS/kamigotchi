@@ -1,18 +1,23 @@
-import { useVisibility } from 'app/stores';
-import { filterOngoingQuests, Quest } from 'network/shapes/Quest';
-import { DetailedEntity } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
+
+import { useVisibility } from 'app/stores';
+import { filterOngoingQuests, Quest, sortOngoingQuests } from 'network/shapes/Quest';
+import { BaseQuest } from 'network/shapes/Quest/quest';
+import { DetailedEntity } from 'network/shapes/utils';
 import { QuestCard } from '../QuestCard';
 
 interface Props {
-  quests: Quest[];
+  quests: BaseQuest[];
   actions: {
     accept: (quest: Quest) => void;
     complete: (quest: Quest) => void;
   };
   utils: {
+    populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    parseRequirements: (quest: Quest) => Quest;
+    parseObjectives: (quest: Quest) => Quest;
+    describeEntity: (type: string, index: number) => DetailedEntity;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -20,39 +25,31 @@ interface Props {
 
 export const OngoingQuests = (props: Props) => {
   const { quests, utils, actions, imageCache, isVisible } = props;
-  const { getDescribedEntity, parseStatus } = utils;
+  const { describeEntity, parseStatus, populate, parseRequirements, parseObjectives } = utils;
   const { modals } = useVisibility();
   const [cleaned, setCleaned] = useState<Quest[]>([]);
-  console.log('ongoing quests', quests);
 
+  // TODO: Include more dependencies
   useEffect(() => {
-    // Set up the interval when modals.quests is true
-    const timerId = setInterval(() => {
-      console.log(`refreshing List. modal is..`);
-      if (modals.quests) {
-        const filtered = filterOngoingQuests(quests);
-        console.log('filtered', filtered);
+    update();
+  }, [modals.quests, quests.length]);
 
-        const parsed = filtered.map((q: Quest) => parseStatus(q));
-        console.log('parsed', parsed);
-        setCleaned(parsed);
-        console.log('open');
-      } else {
-        console.log('closed');
-      }
-    }, 2000);
-
-    return () => clearInterval(timerId);
-  }, [modals.quests, quests]); // Include all dependencies
+  const update = () => {
+    const fullQuests = quests.map((q) => populate(q));
+    const filtered = filterOngoingQuests(fullQuests);
+    const parsed = filtered.map((q: Quest) => parseObjectives(q));
+    const sorted = sortOngoingQuests(parsed);
+    setCleaned(sorted);
+  };
 
   return (
     <div style={{ display: isVisible ? 'block' : 'none' }}>
-      {quests.map((q: Quest) => (
+      {cleaned.map((q: Quest) => (
         <QuestCard
           key={q.id}
           quest={q}
           status={'ONGOING'}
-          utils={{ getDescribedEntity }}
+          utils={{ describeEntity }}
           actions={actions}
           imageCache={imageCache}
         />

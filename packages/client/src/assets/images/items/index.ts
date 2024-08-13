@@ -31,7 +31,7 @@ import xp_candy_medium from './xp_candy_medium.png';
 import xp_candy_small from './xp_candy_small.png';
 
 export const ItemImages = {
-  agency_giftbox: agency_giftbox,
+  giftbox: agency_giftbox,
   astrolabe_disk: astrolabe_disk,
   better_ice_cream: better_ice_cream,
   best_ice_cream: best_ice_cream,

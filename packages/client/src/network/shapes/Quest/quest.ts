@@ -2,10 +2,10 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 
 import { Components } from 'network/';
 import { Reward } from '../Rewards';
-import { Objective, queryQuestObjectives } from './objective';
+import { Objective, getObjectives } from './objective';
 import { query } from './queries';
-import { Requirement, queryQuestRequirements } from './requirement';
-import { queryQuestRewards } from './reward';
+import { Requirement, getRequirements } from './requirement';
+import { getRewards } from './reward';
 
 /////////////////
 // SHAPES
@@ -18,13 +18,13 @@ export interface BaseQuest {
   name: string;
   description: string;
   repeatable: boolean;
+  repeatDuration?: number;
 }
 
 export interface Quest extends BaseQuest {
   startTime: number;
   complete: boolean;
   repeatable: boolean;
-  repeatDuration?: number;
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Reward[];
@@ -42,8 +42,8 @@ export const getBase = (
   components: Components,
   entityIndex: EntityIndex
 ): BaseQuest => {
-  const { IsRepeatable, Description, Name, QuestIndex } = components;
-  const index = (getComponentValue(QuestIndex, entityIndex)?.value || 0) as number;
+  const { IsRepeatable, Description, Name, QuestIndex, Time } = components;
+  const index = (getComponentValue(QuestIndex, entityIndex)?.value ?? 0) as number;
   const registryEntityIndex = query(components, { index: index, registry: true })[0];
 
   return {
@@ -51,32 +51,26 @@ export const getBase = (
     index,
     entityIndex,
     registryEntityIndex,
-    name: getComponentValue(Name, registryEntityIndex)?.value || '',
-    description: getComponentValue(Description, registryEntityIndex)?.value || '',
+    name: getComponentValue(Name, registryEntityIndex)?.value ?? '',
+    description: getComponentValue(Description, registryEntityIndex)?.value ?? '',
     repeatable: hasComponent(IsRepeatable, registryEntityIndex),
+    repeatDuration: getComponentValue(Time, registryEntityIndex)?.value ?? 0,
   };
 };
 
 // populate a BareQuest with all the details of a full Quest
-export const populate = (world: World, components: Components, base: BaseQuest) => {
-  const { IsComplete, IsRepeatable, Time, StartTime } = components;
+export const populate = (world: World, components: Components, base: BaseQuest): Quest => {
+  const { IsComplete, StartTime } = components;
   const entityIndex = base.entityIndex;
-  const regEntityIndex = base.registryEntityIndex;
 
-  let result: Quest = {
+  return {
     ...base,
-    startTime: (getComponentValue(StartTime, entityIndex)?.value || 0) as number,
+    startTime: (getComponentValue(StartTime, entityIndex)?.value ?? 0) as number,
     complete: hasComponent(IsComplete, entityIndex),
-    requirements: queryQuestRequirements(world, components, base.index),
-    objectives: queryQuestObjectives(world, components, base.index),
-    rewards: queryQuestRewards(world, components, base.index),
+    requirements: getRequirements(world, components, base.index),
+    objectives: getObjectives(world, components, base.index),
+    rewards: getRewards(world, components, base.index),
   };
-
-  if (hasComponent(IsRepeatable, regEntityIndex)) {
-    result.repeatDuration = getComponentValue(Time, regEntityIndex)?.value || 0;
-  }
-
-  return result;
 };
 
 /////////////////
@@ -116,48 +110,3 @@ export const getByIndex = (
   if (!entityIndex) return;
   return get(world, components, entityIndex);
 };
-
-// export const getRegistry = (world: World, components: Components): Quest[] => {
-//   return query(world, components, { registry: true });
-// };
-
-// // get the list of Completed Quests for an Account
-// export const getCompleted = (
-//   world: World,
-//   components: Components,
-//   accountID: EntityID
-// ): Quest[] => {
-//   return query(world, components, { account: accountID, completed: true });
-// };
-
-// // get the list of Ongoing Quests for an Account
-// export const getOngoing = (world: World, components: Components, accountID: EntityID): Quest[] => {
-//   return query(world, components, { account: accountID, completed: false });
-// };
-
-// /////////////////
-// // QUERIES
-
-// export interface QueryOptions {
-//   account?: EntityID;
-//   completed?: boolean;
-//   index?: number;
-//   registry?: boolean;
-// }
-
-// // Query for Entity Indices of Quests, depending on the options provided
-// export const query = (world: World, components: Components, options: QueryOptions): Quest[] => {
-//   const { OwnsQuestID, IsComplete, IsQuest, IsRegistry, QuestIndex } = components;
-
-//   const toQuery: QueryFragment[] = [Has(IsQuest)];
-//   if (options?.registry) toQuery.push(Has(IsRegistry));
-//   if (options?.account) toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
-//   if (options?.index) toQuery.push(HasValue(QuestIndex, { value: options.index }));
-//   if (options?.completed !== undefined) {
-//     if (options?.completed) toQuery.push(Has(IsComplete));
-//     else toQuery.push(Not(IsComplete));
-//   }
-
-//   const raw = Array.from(runQuery(toQuery));
-//   return raw.map((index): Quest => get(world, components, index));
-// };

@@ -9,7 +9,7 @@ export const EmptyText = (props: Props) => {
   return (
     <Container>
       {text.map((t: string) => (
-        <Text>{t}</Text>
+        <Text key={t}>{t}</Text>
       ))}
     </Container>
   );

@@ -10,20 +10,6 @@ import {
 
 import { Components } from 'network/';
 
-// get the list of Completed Quest EntityIndices for an Account
-export const queryCompleted = (components: Components, accountID: EntityID): EntityIndex[] => {
-  return query(components, { account: accountID, completed: true });
-};
-
-// get the list of Ongoing Quest EntityIndices for an Account
-export const queryOngoing = (components: Components, accountID: EntityID): EntityIndex[] => {
-  return query(components, { account: accountID, completed: false });
-};
-
-export const queryRegistry = (components: Components): EntityIndex[] => {
-  return query(components, { registry: true });
-};
-
 export interface QueryOptions {
   account?: EntityID;
   completed?: boolean;
@@ -45,4 +31,18 @@ export const query = (components: Components, options: QueryOptions): EntityInde
   }
 
   return Array.from(runQuery(toQuery));
+};
+
+// get the list of Completed Quest EntityIndices for an Account
+export const queryCompleted = (components: Components, accountID: EntityID): EntityIndex[] => {
+  return query(components, { account: accountID, completed: true });
+};
+
+// get the list of Ongoing Quest EntityIndices for an Account
+export const queryOngoing = (components: Components, accountID: EntityID): EntityIndex[] => {
+  return query(components, { account: accountID, completed: false });
+};
+
+export const queryRegistry = (components: Components): EntityIndex[] => {
+  return query(components, { registry: true });
 };

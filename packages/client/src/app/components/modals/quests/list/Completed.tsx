@@ -1,16 +1,19 @@
-import { Quest, sortCompletedQuests } from 'network/shapes/Quest';
-import { DetailedEntity } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
+
+import { Quest, sortCompletedQuests } from 'network/shapes/Quest';
+import { BaseQuest } from 'network/shapes/Quest/quest';
+import { DetailedEntity } from 'network/shapes/utils';
 import { QuestCard } from '../QuestCard';
 
 interface Props {
-  quests: Quest[];
+  quests: BaseQuest[];
   actions: {
     accept: (quest: Quest) => void;
     complete: (quest: Quest) => void;
   };
   utils: {
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    populate: (quest: BaseQuest) => Quest;
+    describeEntity: (type: string, index: number) => DetailedEntity;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -18,13 +21,15 @@ interface Props {
 
 export const CompletedQuests = (props: Props) => {
   const { quests, actions, utils, imageCache, isVisible } = props;
-  const { getDescribedEntity } = utils;
+  const { describeEntity, populate } = utils;
   const [cleaned, setCleaned] = useState<Quest[]>([]);
 
   useEffect(() => {
-    console.log('updating completed quests');
-    setCleaned(sortCompletedQuests(quests));
-  }, [quests.length]);
+    if (!isVisible) return;
+    const fullQuests = quests.map((q) => populate(q));
+    const sorted = sortCompletedQuests(fullQuests);
+    setCleaned(sortCompletedQuests(sorted));
+  }, [quests.length, isVisible]);
 
   return (
     <div style={{ display: isVisible ? 'block' : 'none' }}>
@@ -33,7 +38,7 @@ export const CompletedQuests = (props: Props) => {
           key={q.id}
           quest={q}
           status={'COMPLETED'}
-          utils={{ getDescribedEntity }}
+          utils={{ describeEntity }}
           actions={actions}
           imageCache={imageCache}
         />

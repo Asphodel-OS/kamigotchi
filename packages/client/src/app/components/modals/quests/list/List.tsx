@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Quest } from 'network/shapes/Quest';
+import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { AcceptedTab } from './AcceptedTab';
 import { AvailableTab } from './AvailableTab';
@@ -9,8 +10,8 @@ import { AvailableTab } from './AvailableTab';
 interface Props {
   quests: {
     available: Quest[];
-    ongoing: Quest[];
-    completed: Quest[];
+    ongoing: BaseQuest[];
+    completed: BaseQuest[];
   };
   mode: TabType;
   actions: {
@@ -18,8 +19,11 @@ interface Props {
     completeQuest: (quest: Quest) => void;
   };
   utils: {
+    populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    parseObjectives: (quest: Quest) => Quest;
+    parseRequirements: (quest: Quest) => Quest;
+    describeEntity: (type: string, index: number) => DetailedEntity;
   };
 }
 

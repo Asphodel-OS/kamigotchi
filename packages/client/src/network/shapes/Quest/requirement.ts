@@ -8,7 +8,7 @@ import { queryConditionsOf } from '../Conditional/queries';
 export interface Requirement extends Condition {}
 
 // Get the Entity Indices of the Requirements of a Quest
-export const queryQuestRequirements = (
+export const getRequirements = (
   world: World,
   components: Components,
   questIndex: number

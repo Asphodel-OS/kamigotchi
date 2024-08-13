@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Quest } from 'network/shapes/Quest';
+import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { CompletedQuests } from './Completed';
 import { EmptyText } from './EmptyText';
@@ -9,16 +10,19 @@ import { OngoingQuests } from './Ongoing';
 
 interface Props {
   quests: {
-    ongoing: Quest[];
-    completed: Quest[];
+    ongoing: BaseQuest[];
+    completed: BaseQuest[];
   };
   actions: {
     accept: (quest: Quest) => void;
     complete: (quest: Quest) => void;
   };
   utils: {
+    populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    parseRequirements: (quest: Quest) => Quest;
+    parseObjectives: (quest: Quest) => Quest;
+    describeEntity: (type: string, index: number) => DetailedEntity;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;

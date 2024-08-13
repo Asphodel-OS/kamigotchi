@@ -5,6 +5,8 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { QuestCard } from '../QuestCard';
 import { EmptyText } from './EmptyText';
 
+const emptyText = ['No quests available.', 'Do something else?'];
+
 interface Props {
   quests: Quest[];
   actions: {
@@ -12,7 +14,7 @@ interface Props {
     complete: (quest: Quest) => void;
   };
   utils: {
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    describeEntity: (type: string, index: number) => DetailedEntity;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -20,7 +22,6 @@ interface Props {
 
 export const AvailableTab = (props: Props) => {
   const { quests, actions, utils, imageCache, isVisible } = props;
-  const emptyText = ['No quests available.', 'Do something else?'];
   const display = isVisible ? 'block' : 'none';
 
   return (

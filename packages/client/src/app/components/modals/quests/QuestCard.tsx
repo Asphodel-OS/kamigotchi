@@ -16,7 +16,7 @@ interface Props {
     complete: (quest: Quest) => void;
   };
   utils: {
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    describeEntity: (type: string, index: number) => DetailedEntity;
   };
   imageCache: Map<string, JSX.Element>;
 }
@@ -25,7 +25,7 @@ interface Props {
 export const QuestCard = (props: Props) => {
   const { quest, status, actions, utils, imageCache } = props;
   const { accept, complete } = actions;
-  const { getDescribedEntity } = utils;
+  const { describeEntity } = utils;
 
   /////////////////
   // INTERPRETATION
@@ -89,7 +89,7 @@ export const QuestCard = (props: Props) => {
     const key = `reward-${reward.target.type}-${reward.target.index}`;
     if (imageCache.has(key)) return imageCache.get(key);
 
-    const entity = getDescribedEntity(reward.target.type, reward.target.index || 0);
+    const entity = describeEntity(reward.target.type, reward.target.index || 0);
     const component = (
       <Tooltip key={key} text={[entity.name]} direction='row'>
         <Image src={entity.image} size={1.5} />
