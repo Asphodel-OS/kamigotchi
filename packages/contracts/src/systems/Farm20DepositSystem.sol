@@ -37,7 +37,7 @@ contract Farm20DepositSystem is System {
     LibInventory.incFor(components, accID, MUSU_INDEX, amount);
 
     // standard logging and tracking
-    LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, amount);
+    LibInventory.logItemTotal(components, accID, MUSU_INDEX, amount);
     // LibData.inc(components, accID, 0, "COIN_TOTAL", amount);
     LibData.inc(components, accID, 0, "COIN_DEPOSIT", amount);
     LibAccount.updateLastTs(components, accID);

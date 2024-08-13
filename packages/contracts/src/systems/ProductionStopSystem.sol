@@ -60,7 +60,7 @@ contract ProductionStopSystem is System {
 
     // standard logging and tracking
     LibScore.incFor(components, accID, "COLLECT", output);
-    LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, output);
+    LibInventory.logItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logAmounts(
       components,
       accID,

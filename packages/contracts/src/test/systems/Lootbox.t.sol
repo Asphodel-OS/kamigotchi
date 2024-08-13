@@ -159,7 +159,7 @@ contract LootboxTest is SetupTemplate {
   function _giveLootbox(PlayerAccount memory player, uint32 index, uint256 amt) internal {
     vm.startPrank(deployer);
     LibInventory.incFor(components, player.id, index, amt);
-    LibInventory.logIncItemTotal(components, player.id, index, amt);
+    LibInventory.logItemTotal(components, player.id, index, amt);
     vm.stopPrank();
   }
 

@@ -39,6 +39,10 @@ library LibData {
     ValueComponent(getAddressById(components, ValueCompID)).incBatch(dataIDs, amt);
   }
 
+  function inc(IUintComp components, uint256[] memory dataIDs, uint256[] memory amts) internal {
+    ValueComponent(getAddressById(components, ValueCompID)).incBatch(dataIDs, amts);
+  }
+
   function inc(
     IUintComp components,
     uint256 holderID,
@@ -59,8 +63,31 @@ library LibData {
   ) internal {
     uint256[] memory dataIDs = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], types[i]);
-
     return inc(components, dataIDs, amt);
+  }
+
+  function inc(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
+    string memory type_,
+    uint256[] memory amts
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], type_);
+    return inc(components, dataIDs, amts);
+  }
+
+  function inc(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
+    string[] memory types,
+    uint256[] memory amts
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], types[i]);
+    return inc(components, dataIDs, amts);
   }
 
   function dec(IUintComp components, uint256 dataID, uint256 amt) internal {
@@ -69,6 +96,10 @@ library LibData {
 
   function dec(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
     ValueComponent(getAddressById(components, ValueCompID)).decBatch(dataIDs, amt);
+  }
+
+  function dec(IUintComp components, uint256[] memory dataIDs, uint256[] memory amts) internal {
+    ValueComponent(getAddressById(components, ValueCompID)).decBatch(dataIDs, amts);
   }
 
   function dec(
@@ -91,8 +122,31 @@ library LibData {
   ) internal {
     uint256[] memory dataIDs = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], types[i]);
-
     return dec(components, dataIDs, amt);
+  }
+
+  function dec(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
+    string memory type_,
+    uint256[] memory amts
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], type_);
+    return dec(components, dataIDs, amts);
+  }
+
+  function dec(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
+    string[] memory types,
+    uint256[] memory amts
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], types[i]);
+    return dec(components, dataIDs, amts);
   }
 
   function set(IUintComp components, uint256 dataID, uint256 value) internal {
