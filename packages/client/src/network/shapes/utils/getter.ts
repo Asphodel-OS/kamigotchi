@@ -78,7 +78,7 @@ export const getBool = (
   // account specific, check if holder is account shaped
   if ('kamis' in holder) {
     if (type === 'QUEST') {
-      return hasCompletedQuest(world, components, index as number, holder);
+      return hasCompletedQuest(components, index as number, holder);
     } else if (type === 'ROOM') {
       return holder.roomIndex == index;
     }
