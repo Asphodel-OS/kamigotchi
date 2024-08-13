@@ -42,7 +42,7 @@ export const AcceptedTab = (props: Props) => {
         actions={actions}
         utils={utils}
         imageCache={imageCache}
-        isVisible
+        isVisible={isVisible}
       />
       <CollapseText onClick={() => setShowCompleted(!showCompleted)}>
         {showCompleted ? '- Completed -' : '- Completed (collapsed) -'}

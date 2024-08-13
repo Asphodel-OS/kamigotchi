@@ -25,11 +25,10 @@ export const CompletedQuests = (props: Props) => {
   const [cleaned, setCleaned] = useState<Quest[]>([]);
 
   useEffect(() => {
-    if (!isVisible) return;
     const fullQuests = quests.map((q) => populate(q));
     const sorted = sortCompletedQuests(fullQuests);
     setCleaned(sortCompletedQuests(sorted));
-  }, [quests.length, isVisible]);
+  }, [quests.length]);
 
   return (
     <div style={{ display: isVisible ? 'block' : 'none' }}>

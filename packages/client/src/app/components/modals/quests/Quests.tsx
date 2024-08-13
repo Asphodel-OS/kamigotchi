@@ -91,7 +91,6 @@ export function registerQuestsModal() {
       const { modals } = useVisibility();
 
       const [tab, setTab] = useState<TabType>('ONGOING');
-      // const [registry, setRegistry] = useState<BaseQuest[]>([]); // no parsing unless needed
       const [available, setAvailable] = useState<Quest[]>([]);
 
       /////////////////
@@ -101,7 +100,6 @@ export function registerQuestsModal() {
       // added/removed. also respond to updates in Ongoing/Completed Quests
       // TODO: figure out a trigger for repeatable quests
       useEffect(() => {
-        // update the availble quests based on what
         const newAvailable = filterByAvailable(registry, ongoing, completed);
         if (available.length != newAvailable.length) {
           setAvailable(newAvailable.map((q) => populate(q)));
@@ -115,14 +113,6 @@ export function registerQuestsModal() {
 
       /////////////////
       // HELPERS
-
-      // const refreshRegistry = (entities: EntityIndex[]) => {
-      //   const newRegistry = entities.map((entityIndex) =>
-      //     getBaseQuest(world, components, entityIndex)
-      //   );
-      //   setRegistry(newRegistry);
-      //   console.log(`updating quest modal with ${newRegistry.length} quests`);
-      // };
 
       // Q(jb): do we want this in a react component or on an independent hook?
       const updateNotifications = () => {

@@ -25,14 +25,21 @@ interface Props {
 
 export const OngoingQuests = (props: Props) => {
   const { quests, utils, actions, imageCache, isVisible } = props;
-  const { describeEntity, parseStatus, populate, parseRequirements, parseObjectives } = utils;
+  const { describeEntity, populate, parseObjectives } = utils;
   const { modals } = useVisibility();
   const [cleaned, setCleaned] = useState<Quest[]>([]);
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-  // TODO: Include more dependencies
   useEffect(() => {
-    update();
-  }, [modals.quests, quests.length]);
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 2222);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (modals.quests && isVisible) update();
+  }, [lastRefresh, modals.quests]);
 
   const update = () => {
     const fullQuests = quests.map((q) => populate(q));
@@ -43,7 +50,7 @@ export const OngoingQuests = (props: Props) => {
   };
 
   return (
-    <div style={{ display: isVisible ? 'block' : 'none' }}>
+    <div>
       {cleaned.map((q: Quest) => (
         <QuestCard
           key={q.id}

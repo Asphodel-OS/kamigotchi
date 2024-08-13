@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ActionButton, Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
-import { Objective, Quest } from 'network/shapes/Quest';
+import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { Reward } from 'network/shapes/Rewards';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
@@ -59,7 +59,7 @@ export const QuestCard = (props: Props) => {
           <ActionButton
             onClick={() => complete(quest)}
             text='Complete'
-            // disabled={!meetsObjectives(quest)}
+            disabled={!meetsObjectives(quest)}
             noMargin
           />
         </Tooltip>
