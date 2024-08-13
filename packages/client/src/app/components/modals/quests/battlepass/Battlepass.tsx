@@ -1,9 +1,9 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
-import { useEffect, useState } from 'react';
-import { Milestone } from './Milestone';
+import { BaseQuest } from 'network/shapes/Quest/quest';
 import { ProgressBar } from './ProgressBar';
 import { getPercentCompletion } from './utils';
 
@@ -16,28 +16,51 @@ const Colors = {
 interface Props {
   account: Account;
   quests: {
-    agency: Quest[];
-    ongoing: Quest[];
-    completed: Quest[];
+    registry: BaseQuest[];
+    ongoing: BaseQuest[];
+    completed: BaseQuest[];
   };
   actions: {
-    acceptQuest: (quest: Quest) => void;
-    completeQuest: (quest: Quest) => void;
+    acceptQuest: (quest: BaseQuest) => void;
+    completeQuest: (quest: BaseQuest) => void;
+  };
+  utils: {
+    filterByObjective: (quests: Quest[]) => Quest[];
+    populate: (base: BaseQuest) => Quest;
+    parseObjectives: (quest: Quest) => Quest;
+    parseRequirements: (quest: Quest) => Quest;
   };
 }
 
+// TODO: organize list of quests
+// QUEST STATES: unaccepted, Ongoing, completed (actively triggered)
+// TRANSITION STATES: available, completable (passively detected)
 export const Battlepass = (props: Props) => {
-  const { account, quests, actions } = props;
+  const { account, quests, actions, utils } = props;
   const [maxRep, setMaxRep] = useState(1);
   const [currRep, setCurrRep] = useState(0);
+  const [agency, setAgency] = useState<Quest[]>([]); // aggregate list of quests from the agency
 
+  // update the list of agency quests when the number of registry quests changes
   useEffect(() => {
-    const newMaxRep = Math.max(...quests.agency.map((q) => getReputationNeeded(q)));
-    if (newMaxRep !== maxRep) setMaxRep(newMaxRep);
+    const registry = quests.registry.map((q) => utils.populate(q));
+    const newAgency = utils.filterByObjective(registry);
+    if (newAgency.length !== agency.length) {
+      setAgency(newAgency.map((q) => utils.populate(q)));
+      console.log('newAgency', newAgency);
+    }
+  }, [quests.registry.length]);
 
-    const newCurrRep = account.reputation.agency;
-    if (newCurrRep !== currRep) setCurrRep(newCurrRep);
-  }, [quests.agency]);
+  // update the max reputation when the number of agency quests changes
+  useEffect(() => {
+    const newMaxRep = Math.max(...agency.map((q) => getReputationNeeded(q)));
+    if (newMaxRep !== maxRep) setMaxRep(newMaxRep);
+  }, [agency.length]);
+
+  // update the current reputation when that changes
+  useEffect(() => {
+    setCurrRep(account.reputation.agency);
+  }, [account.reputation.agency]);
 
   //////////////////
   // CHECKS
@@ -113,7 +136,7 @@ export const Battlepass = (props: Props) => {
           background: Colors.bg,
         }}
       />
-      {quests.agency.map((q) => (
+      {/* {quests.agency.map((q) => (
         <Milestone
           key={q.index}
           onClick={() => getAction(q)}
@@ -129,7 +152,7 @@ export const Battlepass = (props: Props) => {
             disabled: !hasAction(q),
           }}
         />
-      ))}
+      ))} */}
     </Container>
   );
 };

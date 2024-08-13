@@ -4,7 +4,7 @@ import { useVisibility } from 'app/stores';
 import { filterOngoingQuests, Quest, sortOngoingQuests } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
-import { QuestCard } from '../QuestCard';
+import { QuestCard } from './QuestCard';
 
 interface Props {
   quests: BaseQuest[];

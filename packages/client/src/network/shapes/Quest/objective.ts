@@ -42,9 +42,6 @@ export const getObjective = (
   };
 };
 
-/////////////////
-// QUERIES
-
 // Get the Entity Indices of the Objectives of a Quest
 export const getObjectives = (
   world: World,
@@ -55,6 +52,9 @@ export const getObjectives = (
     (index) => getObjective(world, components, index)
   );
 };
+
+/////////////////
+// QUERIES
 
 export const querySnapshotObjective = (
   world: World,

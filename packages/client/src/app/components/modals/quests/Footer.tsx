@@ -3,24 +3,31 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
+import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getFactionImage } from 'network/shapes/utils/images';
 import { Battlepass } from './battlepass/Battlepass';
 
 interface Props {
   account: Account;
   quests: {
-    agency: Quest[];
-    ongoing: Quest[];
-    completed: Quest[];
+    registry: BaseQuest[];
+    ongoing: BaseQuest[];
+    completed: BaseQuest[];
   };
   actions: {
-    acceptQuest: (quest: Quest) => void;
-    completeQuest: (quest: Quest) => void;
+    acceptQuest: (quest: BaseQuest) => void;
+    completeQuest: (quest: BaseQuest) => void;
+  };
+  utils: {
+    filterByObjective: (quests: Quest[]) => Quest[];
+    populate: (base: BaseQuest) => Quest;
+    parseObjectives: (quest: Quest) => Quest;
+    parseRequirements: (quest: Quest) => Quest;
   };
 }
 
 export const Footer = (props: Props) => {
-  const { account, quests, actions } = props;
+  const { account, quests, actions, utils } = props;
 
   return (
     <Container>
@@ -33,7 +40,7 @@ export const Footer = (props: Props) => {
       >
         <Icon src={getFactionImage('agency')} />
       </Tooltip>
-      <Battlepass account={account} quests={quests} actions={actions} />
+      <Battlepass account={account} quests={quests} actions={actions} utils={utils} />
     </Container>
   );
 };

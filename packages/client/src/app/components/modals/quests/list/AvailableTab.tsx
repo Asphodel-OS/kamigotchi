@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 import { Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils';
-import { QuestCard } from '../QuestCard';
 import { EmptyText } from './EmptyText';
+import { QuestCard } from './QuestCard';
 
 const emptyText = ['No quests available.', 'Do something else?'];
 

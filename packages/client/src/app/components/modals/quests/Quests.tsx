@@ -10,6 +10,7 @@ import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Quest,
   filterQuestsByAvailable,
+  filterQuestsByObjective,
   getBaseQuest,
   parseQuestObjectives,
   parseQuestRequirements,
@@ -21,6 +22,7 @@ import {
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
+import { Footer } from './Footer';
 import { List } from './list/List';
 import { Tabs } from './Tabs';
 
@@ -74,6 +76,7 @@ export function registerQuestsModal() {
                 completed: BaseQuest[]
               ) =>
                 filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
+              filterByObjective: (quests: Quest[]) => filterQuestsByObjective(quests, 1),
               parseObjectives: (quest: Quest) =>
                 parseQuestObjectives(world, components, account, quest),
               parseRequirements: (quest: Quest) =>
@@ -85,9 +88,10 @@ export function registerQuestsModal() {
         })
       ),
     ({ network, data, utils }) => {
-      const { actions, api, components, notifications, world } = network;
-      const { ongoing, completed, registry } = data.quests;
-      const { parseStatus, populate, filterByAvailable } = utils;
+      const { actions, api, notifications } = network;
+      const { account, quests } = data;
+      const { ongoing, completed, registry } = quests;
+      const { populate, filterByAvailable } = utils;
       const { modals } = useVisibility();
 
       const [tab, setTab] = useState<TabType>('ONGOING');
@@ -144,7 +148,7 @@ export function registerQuestsModal() {
       /////////////////
       // ACTIONS
 
-      const acceptQuest = async (quest: Quest) => {
+      const acceptQuest = async (quest: BaseQuest) => {
         actions.add({
           action: 'QuestAccept',
           params: [quest.index * 1],
@@ -155,7 +159,7 @@ export function registerQuestsModal() {
         });
       };
 
-      const completeQuest = async (quest: Quest) => {
+      const completeQuest = async (quest: BaseQuest) => {
         actions.add({
           action: 'QuestComplete',
           params: [quest.id],
@@ -173,17 +177,18 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
-          // footer={
-          //   <Footer
-          //     account={account}
-          //     quests={{
-          //       agency: filterQuestsByObjective(registry, 1),
-          //       ongoing: filterQuestsByObjective(ongoing, 1),
-          //       completed: filterQuestsByObjective(completed, 1),
-          //     }}
-          //     actions={{ acceptQuest, completeQuest }}
-          //   />
-          // }
+          footer={
+            <Footer
+              account={account}
+              quests={{
+                registry: registry,
+                ongoing: ongoing,
+                completed: completed,
+              }}
+              actions={{ acceptQuest, completeQuest }}
+              utils={utils}
+            />
+          }
           canExit
           truncate
           noPadding
