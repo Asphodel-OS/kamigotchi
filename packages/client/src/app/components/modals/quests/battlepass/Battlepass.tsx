@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
-import { Quest } from 'network/shapes/Quest';
+import { meetsRequirements, Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { DetailedEntity } from 'network/shapes/utils';
+import { Milestone } from './Milestone';
 import { ProgressBar } from './ProgressBar';
 import { getPercentCompletion } from './utils';
 
@@ -25,7 +28,8 @@ interface Props {
     completeQuest: (quest: BaseQuest) => void;
   };
   utils: {
-    filterByObjective: (quests: Quest[]) => Quest[];
+    describeEntity: (type: string, index: number) => DetailedEntity;
+    filterForBattlePass: (quests: Quest[]) => Quest[];
     populate: (base: BaseQuest) => Quest;
     parseObjectives: (quest: Quest) => Quest;
     parseRequirements: (quest: Quest) => Quest;
@@ -33,27 +37,26 @@ interface Props {
 }
 
 // TODO: organize list of quests
-// QUEST STATES: unaccepted, Ongoing, completed (actively triggered)
-// TRANSITION STATES: available, completable (passively detected)
+// QUEST STATES: Unaccepted, Ongoing, Completed (explicitly detected)
+// TRANSITION STATES: available, completable (implicitly detected)
 export const Battlepass = (props: Props) => {
   const { account, quests, actions, utils } = props;
+  const { describeEntity, populate, filterForBattlePass, parseRequirements } = utils;
+  const { modals } = useVisibility();
   const [maxRep, setMaxRep] = useState(1);
   const [currRep, setCurrRep] = useState(0);
   const [agency, setAgency] = useState<Quest[]>([]); // aggregate list of quests from the agency
 
   // update the list of agency quests when the number of registry quests changes
   useEffect(() => {
-    const registry = quests.registry.map((q) => utils.populate(q));
-    const newAgency = utils.filterByObjective(registry);
-    if (newAgency.length !== agency.length) {
-      setAgency(newAgency.map((q) => utils.populate(q)));
-      console.log('newAgency', newAgency);
-    }
+    const registry = quests.registry.map((q) => parseRequirements(populate(q)));
+    const newAgency = filterForBattlePass(registry);
+    if (newAgency.length !== agency.length) setAgency(newAgency);
   }, [quests.registry.length]);
 
   // update the max reputation when the number of agency quests changes
   useEffect(() => {
-    const newMaxRep = Math.max(...agency.map((q) => getReputationNeeded(q)));
+    const newMaxRep = Math.max(...agency.map((q) => getRepObjective(q)));
     if (newMaxRep !== maxRep) setMaxRep(newMaxRep);
   }, [agency.length]);
 
@@ -65,30 +68,28 @@ export const Battlepass = (props: Props) => {
   //////////////////
   // CHECKS
 
-  const hasAction = (quest: Quest) => {
-    return getAction(quest) !== undefined;
-  };
-
-  const isAvailable = (quest: Quest) => {
-    return !isComplete(quest) && !isOngoing(quest);
+  const isOngoing = (quest: Quest) => {
+    return quests.ongoing.some((q) => q.index === quest.index);
   };
 
   const isComplete = (quest: Quest) => {
     return quests.completed.some((q) => q.index === quest.index);
   };
 
-  const isOngoing = (quest: Quest) => {
-    return quests.ongoing.some((q) => q.index === quest.index);
+  const isAvailable = (quest: Quest) => {
+    if (isComplete(quest) || isOngoing(quest)) return false;
+    const need = getRepRequirement(quest);
+    return currRep >= need && meetsRequirements(quest);
   };
 
   const isCompletable = (quest: Quest) => {
     if (!isOngoing(quest)) return false;
-    const need = getReputationNeeded(quest);
+    const need = getRepObjective(quest);
     return currRep >= need;
   };
 
   const meetsReputation = (quest: Quest) => {
-    const need = getReputationNeeded(quest);
+    const need = getRepObjective(quest);
     return currRep >= need;
   };
 
@@ -104,22 +105,48 @@ export const Battlepass = (props: Props) => {
     }
   };
 
-  // scan a Quest's Objectives to get the REPUTATION needed to complete it
-  const getReputationNeeded = (quest: Quest) => {
-    const objective = quest.objectives.find((o) => o.target.type === 'REPUTATION');
-    return (objective?.target.value ?? 0) * 1;
-  };
-
   const getMilestonePosition = (quest: Quest) => {
-    const needed = getReputationNeeded(quest);
+    const needed = getRepObjective(quest);
     return getPercentCompletion(needed, maxRep);
   };
 
   // get a registry Quest and check its completion status against the
   const getStatus = (quest: Quest) => {
     if (isComplete(quest)) return 'Completed';
-    else if (isOngoing(quest)) return `${currRep}/${maxRep}`;
-    else return 'Not Started';
+    else if (isOngoing(quest)) {
+      const need = getRepObjective(quest);
+      return isCompletable(quest) ? 'Completable!' : `${currRep}/${need}`;
+    } else {
+      return isAvailable(quest) ? 'Acceptable!' : `Not Yet Available`;
+    }
+  };
+
+  const getTooltip = (quest: Quest) => {
+    const tooltip = [`${quest.name} [${getStatus(quest)}]`, ''];
+    let hasDetails = false;
+    if (isComplete(quest) || isOngoing(quest) || isAvailable(quest)) hasDetails = true;
+
+    if (hasDetails) {
+      tooltip.push(quest.description, '', 'Rewards:');
+      quest.rewards.forEach((r) => {
+        const entity = describeEntity(r.target.type, r.target.index || 0);
+        const value = (r.target.value ?? 0) * 1;
+        tooltip.push(`• ${entity.name} x${value}`);
+      });
+    }
+
+    return tooltip;
+  };
+
+  // scan a Quest's Objectives to get the REPUTATION needed to complete it
+  const getRepObjective = (quest: Quest) => {
+    const objective = quest.objectives.find((o) => o.target.type === 'REPUTATION');
+    return (objective?.target.value ?? 0) * 1;
+  };
+
+  const getRepRequirement = (quest: Quest) => {
+    const requirements = quest.requirements.find((o) => o.target.type === 'REPUTATION');
+    return (requirements?.target.value ?? 0) * 1;
   };
 
   //////////////////
@@ -136,23 +163,23 @@ export const Battlepass = (props: Props) => {
           background: Colors.bg,
         }}
       />
-      {/* {quests.agency.map((q) => (
+      {agency.map((q) => (
         <Milestone
           key={q.index}
-          onClick={() => getAction(q)}
+          onClick={getAction(q)}
           position={getMilestonePosition(q)}
+          tooltip={getTooltip(q)}
           colors={{
             bg: meetsReputation(q) ? Colors.fg : Colors.bg,
             ring: meetsReputation(q) ? Colors.accent : 'black',
           }}
-          tooltip={[`${q.name} [${getStatus(q)}]`, '', q.description]}
           is={{
             accepted: isOngoing(q) || isComplete(q),
             complete: isComplete(q),
-            disabled: !hasAction(q),
+            disabled: !getAction(q),
           }}
         />
-      ))} */}
+      ))}
     </Container>
   );
 };

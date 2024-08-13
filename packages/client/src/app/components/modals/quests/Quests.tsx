@@ -10,6 +10,7 @@ import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Quest,
   filterQuestsByAvailable,
+  filterQuestsByNotObjective,
   filterQuestsByObjective,
   getBaseQuest,
   parseQuestObjectives,
@@ -76,7 +77,8 @@ export function registerQuestsModal() {
                 completed: BaseQuest[]
               ) =>
                 filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
-              filterByObjective: (quests: Quest[]) => filterQuestsByObjective(quests, 1),
+              filterForBattlePass: (quests: Quest[]) => filterQuestsByObjective(quests, 1),
+              filterOutBattlePass: (quests: Quest[]) => filterQuestsByNotObjective(quests, 1),
               parseObjectives: (quest: Quest) =>
                 parseQuestObjectives(world, components, account, quest),
               parseRequirements: (quest: Quest) =>
@@ -91,7 +93,7 @@ export function registerQuestsModal() {
       const { actions, api, notifications } = network;
       const { account, quests } = data;
       const { ongoing, completed, registry } = quests;
-      const { populate, filterByAvailable } = utils;
+      const { populate, filterByAvailable, filterOutBattlePass } = utils;
       const { modals } = useVisibility();
 
       const [tab, setTab] = useState<TabType>('ONGOING');
@@ -105,9 +107,8 @@ export function registerQuestsModal() {
       // TODO: figure out a trigger for repeatable quests
       useEffect(() => {
         const newAvailable = filterByAvailable(registry, ongoing, completed);
-        if (available.length != newAvailable.length) {
-          setAvailable(newAvailable.map((q) => populate(q)));
-        }
+        const populated = newAvailable.map((q) => populate(q));
+        setAvailable(populated);
       }, [modals.quests, registry.length, completed.length, ongoing.length]);
 
       // update the Notifications when the number of available quests changes
@@ -194,7 +195,7 @@ export function registerQuestsModal() {
           noPadding
         >
           <List
-            quests={{ available, ongoing, completed }}
+            quests={{ available: filterOutBattlePass(available), ongoing, completed }}
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={utils}

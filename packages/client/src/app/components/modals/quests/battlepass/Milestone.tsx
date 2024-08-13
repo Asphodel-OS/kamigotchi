@@ -6,7 +6,7 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   position: number; // as 0-100% from the left of the bar it's placed on
-  onClick: Function;
+  onClick: Function | undefined;
   tooltip: string[];
   colors: {
     bg: string;
@@ -28,25 +28,44 @@ export const Milestone = (props: Props) => {
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
-    await onClick();
+    if (onClick) onClick();
   };
 
-  return (
-    <Container>
-      <Tooltip text={tooltip}>
-        <Button
+  const Node = () => {
+    if (!is.disabled)
+      return (
+        <ActiveButton
           size={size ?? 1.5}
           position={position}
           scale={0.25}
           shift={-0.5}
           onClick={handleClick}
           color={colors.bg}
-          disabled={is.disabled}
           pulse={pulse}
         >
           <InnerRing scale={0.85} color={colors.ring} isVisible={is.accepted} />
           <InnerRing scale={0.5} color={colors.ring} isVisible={is.complete} />
-        </Button>
+        </ActiveButton>
+      );
+    return (
+      <BaseButton
+        size={size ?? 1.5}
+        position={position}
+        scale={0.25}
+        shift={-0.5}
+        color={colors.bg}
+        pulse={pulse}
+      >
+        <InnerRing scale={0.85} color={colors.ring} isVisible={is.accepted} />
+        <InnerRing scale={0.5} color={colors.ring} isVisible={is.complete} />
+      </BaseButton>
+    );
+  };
+
+  return (
+    <Container>
+      <Tooltip text={tooltip}>
+        <Node />
       </Tooltip>
     </Container>
   );
@@ -64,14 +83,14 @@ interface ButtonProps {
   scale: number;
   shift: number;
   color: string;
-  disabled?: boolean;
   pulse?: boolean;
 }
 
-const Button = styled.div<ButtonProps>`
+const BaseButton = styled.div<ButtonProps>`
   position: relative;
   left: ${({ position }) => position}%;
   transform: translateX(${({ shift }) => 100 * shift}%);
+  background-color: ${({ color }) => color};
 
   border: solid black 0.15vw;
   border-radius: ${({ size }) => size * 0.5}vw;
@@ -83,22 +102,20 @@ const Button = styled.div<ButtonProps>`
   justify-content: center;
 
   pointer-events: auto;
-  background-color: ${({ color }) => color};
+`;
 
-  ${({ disabled }) => !disabled && 'cursor: pointer;'}
-  ${({ disabled, scale, shift }) =>
-    !disabled &&
-    `
-    &:hover {
-      animation: ${hoverFx(scale, shift)} 0.2s;
-      transform: scale(${1 + scale}) translateX(${100 * shift * (1 - scale)}%);
-    }
-    &:active {
-      animation: ${clickFx(scale, shift)} 0.2s;
-    }
-  `}
-
+const ActiveButton = styled(BaseButton)`
+  cursor: pointer;
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
+
+  &:hover {
+    animation: ${({ scale, shift }) => hoverFx(scale, shift)} 0.2s;
+    transform: ${({ scale, shift }) =>
+      `scale(${1 + scale}) translateX(${100 * shift * (1 - scale)}%)`};
+  }
+  &:active {
+    animation: ${({ scale, shift }) => clickFx(scale, shift)} 0.2s;
+  }
 `;
 
 const InnerRing = styled.div<{ scale: number; color: string; isVisible?: boolean }>`

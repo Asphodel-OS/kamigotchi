@@ -30,6 +30,7 @@ export const OngoingQuests = (props: Props) => {
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
+  // time trigger to use for periodic refreshes
   useEffect(() => {
     const timerId = setInterval(() => setLastRefresh(Date.now()), 2222);
     return function cleanup() {
@@ -37,9 +38,10 @@ export const OngoingQuests = (props: Props) => {
     };
   }, []);
 
+  // updates data every 2222ms when this list is visible
   useEffect(() => {
     if (modals.quests && isVisible) update();
-  }, [lastRefresh, modals.quests]);
+  }, [lastRefresh, modals.quests, quests.length]);
 
   const update = () => {
     const fullQuests = quests.map((q) => populate(q));

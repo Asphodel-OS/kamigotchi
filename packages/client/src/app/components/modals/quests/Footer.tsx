@@ -4,6 +4,7 @@ import { Tooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
 import { Battlepass } from './battlepass/Battlepass';
 
@@ -19,7 +20,8 @@ interface Props {
     completeQuest: (quest: BaseQuest) => void;
   };
   utils: {
-    filterByObjective: (quests: Quest[]) => Quest[];
+    describeEntity: (type: string, index: number) => DetailedEntity;
+    filterForBattlePass: (quests: Quest[]) => Quest[];
     populate: (base: BaseQuest) => Quest;
     parseObjectives: (quest: Quest) => Quest;
     parseRequirements: (quest: Quest) => Quest;
