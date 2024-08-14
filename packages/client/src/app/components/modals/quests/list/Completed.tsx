@@ -23,12 +23,25 @@ export const CompletedQuests = (props: Props) => {
   const { quests, actions, utils, imageCache, isVisible } = props;
   const { describeEntity, populate } = utils;
   const [cleaned, setCleaned] = useState<Quest[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
+  // load up the data the first time this section is opened
   useEffect(() => {
+    if (hasLoaded) return;
+    update();
+    setHasLoaded(true);
+  }, [isVisible]);
+
+  // reload the data whenever the lists of completed quests is updated
+  useEffect(() => {
+    update();
+  }, [quests.length]);
+
+  const update = async () => {
     const fullQuests = quests.map((q) => populate(q));
     const sorted = sortCompletedQuests(fullQuests);
     setCleaned(sortCompletedQuests(sorted));
-  }, [quests.length]);
+  };
 
   return (
     <div style={{ display: isVisible ? 'block' : 'none' }}>

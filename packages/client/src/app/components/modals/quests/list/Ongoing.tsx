@@ -29,21 +29,29 @@ export const OngoingQuests = (props: Props) => {
   const { modals } = useVisibility();
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   // time trigger to use for periodic refreshes
   useEffect(() => {
-    const timerId = setInterval(() => setLastRefresh(Date.now()), 2222);
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 3000);
     return function cleanup() {
       clearInterval(timerId);
     };
   }, []);
 
-  // updates data every 2222ms when this list is visible
+  // load up the data the first time this section is opened
+  useEffect(() => {
+    if (hasLoaded) return;
+    update();
+    setHasLoaded(true);
+  }, [modals.quests, isVisible]);
+
+  // updates data every cycle when this list is visible
   useEffect(() => {
     if (modals.quests && isVisible) update();
   }, [lastRefresh, modals.quests, quests.length]);
 
-  const update = () => {
+  const update = async () => {
     const fullQuests = quests.map((q) => populate(q));
     const filtered = filterOngoingQuests(fullQuests);
     const parsed = filtered.map((q: Quest) => parseObjectives(q));

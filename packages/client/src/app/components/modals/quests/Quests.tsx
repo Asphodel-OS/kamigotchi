@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -38,7 +38,7 @@ export function registerQuestsModal() {
     },
 
     (layers) =>
-      interval(3000).pipe(
+      interval(2000).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
@@ -96,19 +96,24 @@ export function registerQuestsModal() {
       const { populate, filterByAvailable, filterOutBattlePass } = utils;
       const { modals } = useVisibility();
 
+      const isUpdating = useRef(false);
       const [tab, setTab] = useState<TabType>('ONGOING');
       const [available, setAvailable] = useState<Quest[]>([]);
 
       /////////////////
       // SUBSCRIPTIONS
 
-      // update Available Quests alongside the Registry whenever quests are
-      // added/removed. also respond to updates in Ongoing/Completed Quests
+      // update Available Quests whenever quests change state
       // TODO: figure out a trigger for repeatable quests
       useEffect(() => {
+        if (isUpdating.current) return;
+        isUpdating.current = true;
+
         const newAvailable = filterByAvailable(registry, ongoing, completed);
         const populated = newAvailable.map((q) => populate(q));
         setAvailable(populated);
+
+        isUpdating.current = false;
       }, [modals.quests, registry.length, completed.length, ongoing.length]);
 
       // update the Notifications when the number of available quests changes
@@ -120,7 +125,7 @@ export function registerQuestsModal() {
       // HELPERS
 
       // Q(jb): do we want this in a react component or on an independent hook?
-      const updateNotifications = () => {
+      const updateNotifications = async () => {
         const id = 'Available Quests';
         const numAvail = available.length;
         if (available.length > 0) setTab('AVAILABLE');

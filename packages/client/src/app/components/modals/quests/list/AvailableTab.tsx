@@ -42,6 +42,5 @@ export const AvailableTab = (props: Props) => {
 };
 
 const Container = styled.div`
-  overflow-y: scroll;
   height: 100%;
 `;

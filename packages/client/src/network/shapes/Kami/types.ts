@@ -24,7 +24,7 @@ import { Harvest, getHarvest } from '../Harvest';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
-import { DetailedEntity } from '../utils/EntityTypes';
+import { DetailedEntity } from '../utils';
 import { calcHealthRate } from './functions';
 
 export interface BareKami extends DetailedEntity {

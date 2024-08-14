@@ -116,7 +116,8 @@ export const initExplorer = (world: World, components: Components) => {
     quests: {
       all: () => {
         const entities = queryRegistryQuests(components);
-        return entities.map((entity) => getQuest(world, components, entity));
+        const quests = entities.map((entity) => getQuest(world, components, entity));
+        return quests.sort((a, b) => a.index - b.index);
       },
       get: (index: number) => getQuestByIndex(world, components, index),
       indices: () => [...new Set(Array.from(components.QuestIndex.values.value.values()))],

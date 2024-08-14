@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Goal } from 'network/shapes/Goal';
-import { DetailedEntity } from 'network/shapes/utils/EntityTypes';
+import { DetailedEntity } from 'network/shapes/utils';
 
 interface Props {
   actions: {
