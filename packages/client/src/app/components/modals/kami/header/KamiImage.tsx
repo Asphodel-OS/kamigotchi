@@ -148,11 +148,11 @@ const Button = styled.div<ButtonProps>`
 
   &:hover {
     opacity: 0.9;
-    animation: ${() => hoverFx(1.1)} 0.2s;
+    animation: ${() => hoverFx(0.1)} 0.2s;
     transform: scale(1.1);
   }
   &:active {
-    animation: ${() => clickFx(1.1)} 0.3s;
+    animation: ${() => clickFx(0.1)} 0.3s;
   }
 
   color: black;
