@@ -19,8 +19,8 @@ contract AccountMoveSystem is System {
 
     uint32 toIndex = abi.decode(arguments, (uint32));
     uint32 currIndex = LibAccount.getRoom(components, accID);
-    uint256 currRoomID = LibRoom.queryByIndex(components, currIndex);
-    uint256 toRoomID = LibRoom.queryByIndex(components, toIndex);
+    uint256 currRoomID = LibRoom.getByIndex(components, currIndex);
+    uint256 toRoomID = LibRoom.getByIndex(components, toIndex);
 
     require(
       LibRoom.isReachable(components, toIndex, currRoomID, toRoomID),

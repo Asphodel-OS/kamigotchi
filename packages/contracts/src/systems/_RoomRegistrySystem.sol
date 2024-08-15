@@ -26,7 +26,7 @@ contract _RoomRegistrySystem is System {
     Coord memory location = Coord(x, y, z);
 
     require(LibRoom.queryByLocation(components, location) == 0, "Room: already exists at location");
-    require(LibRoom.queryByIndex(components, index) == 0, "Room: already exists at index");
+    require(LibRoom.getByIndex(components, index) == 0, "Room: already exists at index");
     require(bytes(name).length > 0, "Room: name cannot be empty");
 
     uint256 id = LibRoom.create(components, location, index, name, description);
@@ -45,9 +45,9 @@ contract _RoomRegistrySystem is System {
       string memory logicType
     ) = abi.decode(arguments, (uint32, uint32, uint32, uint256, string, string));
 
-    require(LibRoom.queryByIndex(components, roomIndex) != 0, "Room: does not exist");
+    require(LibRoom.getByIndex(components, roomIndex) != 0, "Room: does not exist");
     require(
-      sourceIndex == 0 || LibRoom.queryByIndex(components, sourceIndex) != 0,
+      sourceIndex == 0 || LibRoom.getByIndex(components, sourceIndex) != 0,
       "Room: source does not exists"
     );
 
@@ -65,7 +65,7 @@ contract _RoomRegistrySystem is System {
   }
 
   function remove(uint32 index) public onlyOwner {
-    uint256 roomID = LibRoom.queryByIndex(components, index);
+    uint256 roomID = LibRoom.getByIndex(components, index);
     require(roomID != 0, "Room: does not exist");
 
     LibRoom.remove(components, roomID);

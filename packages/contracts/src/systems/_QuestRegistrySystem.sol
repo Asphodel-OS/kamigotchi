@@ -40,7 +40,7 @@ contract _QuestRegistrySystem is System {
       uint256 value
     ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
 
-    uint256 questID = LibQuestRegistry.getByQuestIndex(components, questIndex);
+    uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Objective type cannot be empty");
 
@@ -63,7 +63,7 @@ contract _QuestRegistrySystem is System {
       uint256 value
     ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
 
-    uint256 questID = LibQuestRegistry.getByQuestIndex(components, questIndex);
+    uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
@@ -87,7 +87,7 @@ contract _QuestRegistrySystem is System {
     ) = abi.decode(arguments, (uint32, string, uint32, uint32[], uint256[], uint256));
 
     // check that the quest exists
-    uint256 questID = LibQuestRegistry.getByQuestIndex(components, questIndex);
+    uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
     require(!LibString.eq(type_, ""), "Quest Reward type cannot be empty");
 
@@ -107,7 +107,7 @@ contract _QuestRegistrySystem is System {
   }
 
   function remove(uint32 index) public onlyOwner {
-    uint256 registryQuestID = LibQuestRegistry.getByQuestIndex(components, index);
+    uint256 registryQuestID = LibQuestRegistry.getByIndex(components, index);
     require(registryQuestID != 0, "Quest does not exist");
 
     LibQuestRegistry.removeQuest(components, registryQuestID, index);

@@ -140,10 +140,7 @@ library LibQuestRegistry {
   // QUERIES
 
   // get registry entry by Quest index
-  function getByQuestIndex(
-    IUintComp components,
-    uint32 index
-  ) internal view returns (uint256 result) {
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     result = genQuestID(index);
     return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(result) ? result : 0;
   }

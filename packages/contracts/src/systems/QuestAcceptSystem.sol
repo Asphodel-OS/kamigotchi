@@ -15,7 +15,7 @@ contract QuestAcceptSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint32 index = abi.decode(arguments, (uint32));
-    uint256 regID = LibQuestRegistry.getByQuestIndex(components, index);
+    uint256 regID = LibQuestRegistry.getByIndex(components, index);
     require(regID != 0, "Quest not found");
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);

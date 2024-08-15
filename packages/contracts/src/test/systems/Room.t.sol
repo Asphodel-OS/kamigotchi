@@ -58,7 +58,7 @@ contract RoomTest is SetupTemplate {
 
     vm.prank(deployer);
     __RoomRegistrySystem.remove(1);
-    assertEq(LibRoom.queryByIndex(components, 1), 0);
+    assertEq(LibRoom.getByIndex(components, 1), 0);
     allGates = LibRoom.queryAllGates(components, 1);
     assertEq(allGates.length, 0);
     spGates = LibRoom.queryGates(components, 2, 1);
@@ -338,8 +338,8 @@ contract RoomTest is SetupTemplate {
       LibRoom.isReachable(
         components,
         to,
-        LibRoom.queryByIndex(components, from),
-        LibRoom.queryByIndex(components, to)
+        LibRoom.getByIndex(components, from),
+        LibRoom.getByIndex(components, to)
       ) == state
     );
   }
@@ -349,7 +349,7 @@ contract RoomTest is SetupTemplate {
   }
 
   function _locFromIndex(uint32 index) internal view returns (Coord memory) {
-    return LibRoom.getLocation(components, LibRoom.queryByIndex(components, index));
+    return LibRoom.getLocation(components, LibRoom.getByIndex(components, index));
   }
 
   function _uncheckedAdjacent(Coord memory a, Coord memory b) internal view returns (bool) {

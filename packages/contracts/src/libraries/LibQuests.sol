@@ -162,7 +162,7 @@ library LibQuests {
 
     // can accept if time passed
     uint256 timeStart = getTimeStart(components, repeatQuestID);
-    uint256 regID = LibQuestRegistry.getByQuestIndex(components, questIndex);
+    uint256 regID = LibQuestRegistry.getByIndex(components, questIndex);
     uint256 duration = getTime(components, regID);
     return block.timestamp > timeStart + duration;
   }

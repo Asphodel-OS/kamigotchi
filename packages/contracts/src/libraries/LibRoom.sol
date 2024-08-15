@@ -166,7 +166,7 @@ library LibRoom {
   /////////////////
   // QUERIES
 
-  function queryByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
     return isRoom(components, id) ? id : 0;
   }
