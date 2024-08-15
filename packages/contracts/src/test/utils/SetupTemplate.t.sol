@@ -158,7 +158,7 @@ abstract contract SetupTemplate is TestSetupImports {
     uint256 accID = _getAccount(playerIndex);
     vm.startPrank(deployer);
     LibInventory.incFor(components, accID, MUSU_INDEX, amount);
-    LibInventory.logIncItemTotal(components, accID, MUSU_INDEX, amount);
+    LibInventory.logItemTotal(components, accID, MUSU_INDEX, amount);
     vm.stopPrank();
   }
 

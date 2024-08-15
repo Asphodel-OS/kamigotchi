@@ -4,6 +4,9 @@ pragma solidity ^0.8.0;
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { Uint256BareComponent as UintBareComp } from "components/base/Uint256BareComponent.sol";
+import { StatComponent } from "components/base/StatComponent.sol";
+
+import { Stat, StatLib } from "components/types/Stat.sol";
 
 /// @notice a library for useful component operations
 library LibComp {
@@ -107,6 +110,12 @@ library LibComp {
     return abi.decode(value, (string));
   }
 
+  function safeGetStat(StatComponent statComp, uint256 entity) internal view returns (Stat memory) {
+    bytes memory value = statComp.getRaw(entity);
+    if (value.length == 0) return Stat(0, 0, 0, 0);
+    return StatLib.decode(value);
+  }
+
   function safeGetBatchUint256(
     IComp component,
     uint256[] memory entities
@@ -137,6 +146,17 @@ library LibComp {
     string[] memory result = new string[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (string)) : "";
+    return result;
+  }
+
+  function safeGetBatchStat(
+    StatComponent statComp,
+    uint256[] memory entities
+  ) internal view returns (Stat[] memory) {
+    bytes[] memory values = statComp.getRawBatch(entities);
+    Stat[] memory result = new Stat[](values.length);
+    for (uint256 i = 0; i < values.length; i++)
+      result[i] = values[i].length > 0 ? StatLib.decode(values[i]) : Stat(0, 0, 0, 0);
     return result;
   }
 
@@ -173,6 +193,18 @@ library LibComp {
     ids[0] = aID;
     ids[1] = bID;
     string[] memory values = safeGetBatchString(component, ids);
+    return (values[0], values[1]);
+  }
+
+  function safeGetTwoStat(
+    StatComponent statComp,
+    uint256 aID,
+    uint256 bID
+  ) internal view returns (Stat memory, Stat memory) {
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = aID;
+    ids[1] = bID;
+    Stat[] memory values = safeGetBatchStat(statComp, ids);
     return (values[0], values[1]);
   }
 

@@ -50,6 +50,17 @@ library StatLib {
   }
 
   ///////////////
+  // CHECKS
+
+  function isEqual(Stat memory a, Stat memory b) internal pure returns (bool) {
+    return a.base == b.base && a.shift == b.shift && a.boost == b.boost && a.sync == b.sync;
+  }
+
+  function isZero(Stat memory value) internal pure returns (bool) {
+    return value.base == 0 && value.shift == 0 && value.boost == 0 && value.sync == 0;
+  }
+
+  ///////////////
   // ENCODING
 
   function encode(Stat memory stat) internal pure returns (bytes memory) {

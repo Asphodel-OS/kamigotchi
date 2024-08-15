@@ -117,7 +117,7 @@ library LibPet {
       LibExperience.inc(components, id, LibExperience.get(components, registryID));
     }
 
-    LibStat.applyy(components, registryID, id);
+    LibStat.applyAll(components, registryID, id);
   }
 
   // heal the pet by a given amount

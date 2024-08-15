@@ -68,7 +68,7 @@ library LibAccount {
 
   function consume(IUintComp components, uint256 id, uint32 itemIndex) internal {
     uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
-    LibStat.applyy(components, registryID, id);
+    LibStat.applyAll(components, registryID, id);
   }
 
   // Move the Account to a room
