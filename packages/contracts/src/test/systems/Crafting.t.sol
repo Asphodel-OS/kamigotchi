@@ -22,7 +22,7 @@ contract CraftingTest is SetupTemplate {
     oAmounts[0] = 1;
 
     vm.prank(deployer);
-    __RecipeRegistrySystem.create(abi.encode(1, iIndices, iAmounts, oIndices, oAmounts));
+    __RecipeRegistrySystem.create(abi.encode(1, iIndices, iAmounts, oIndices, oAmounts, 1, 1));
 
     vm.prank(deployer);
     __RecipeRegistrySystem.addAssigner(1, 1);
@@ -43,7 +43,9 @@ contract CraftingTest is SetupTemplate {
     oAmounts[0] = 5;
 
     vm.prank(deployer);
-    __RecipeRegistrySystem.create(abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts));
+    __RecipeRegistrySystem.create(
+      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 1, 1)
+    );
 
     // not enough ingredients
     vm.prank(alice.operator);
@@ -74,7 +76,9 @@ contract CraftingTest is SetupTemplate {
     oAmounts[0] = 11;
 
     vm.prank(deployer);
-    __RecipeRegistrySystem.create(abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts));
+    __RecipeRegistrySystem.create(
+      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 0, 0)
+    );
 
     // not enough ingredients (all missing)
     vm.prank(alice.operator);
@@ -112,7 +116,9 @@ contract CraftingTest is SetupTemplate {
     oAmounts[2] = 5;
 
     vm.prank(deployer);
-    __RecipeRegistrySystem.create(abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts));
+    __RecipeRegistrySystem.create(
+      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 0, 0)
+    );
 
     // not enough ingredients
     vm.prank(alice.operator);
@@ -147,7 +153,9 @@ contract CraftingTest is SetupTemplate {
     }
 
     vm.prank(deployer);
-    __RecipeRegistrySystem.create(abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts));
+    __RecipeRegistrySystem.create(
+      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 0, 0)
+    );
 
     // give ingredients
     for (uint i = 0; i < startBal.length; i++) _giveItem(alice, uint32(i), startBal[i]);

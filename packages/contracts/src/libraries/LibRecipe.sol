@@ -16,6 +16,7 @@ import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibAssigner } from "libraries/LibAssigner.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -50,7 +51,7 @@ library LibRecipe {
     uint256[] memory inputAmts,
     uint32[] memory outputIndices,
     uint256[] memory outputAmts,
-    uint256 experience
+    uint256 experience,
     int32 staminaCost
   ) internal returns (uint256 id) {
     id = genID(recipeIndex);
@@ -59,7 +60,10 @@ library LibRecipe {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IndexRecipeComponent(getAddressById(components, IndexRecipeCompID)).set(id, recipeIndex);
     ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
-    StaminaComponent(getAddressById(components, StamCompID)).set(id, Stat(0, 0, 0, staminaCost * -1));
+    StaminaComponent(getAddressById(components, StamCompID)).set(
+      id,
+      Stat(0, 0, 0, staminaCost * -1)
+    );
 
     // set inputs
     uint256 inputID = genInputID(recipeIndex);
@@ -117,7 +121,6 @@ library LibRecipe {
     LibStat.applySingle(StaminaComponent(getAddressById(components, StamCompID)), recipeID, accID);
   }
 
-
   function craft(
     IUintComp components,
     uint32 recipeIndex,
@@ -136,8 +139,9 @@ library LibRecipe {
   }
 
   function afterCraft(IUintComp components, uint256 recipeID, uint256 accID) internal {
-    // add experience
-    LibExperience.add(components, accID, recipeID);
+    // add account experience
+    LibExperience.incBy(components, recipeID, accID);
+  }
 
   /////////////////
   // GETTERS

@@ -18,12 +18,14 @@ contract _RecipeRegistrySystem is System {
       uint32[] memory iIndices,
       uint256[] memory iAmts,
       uint32[] memory oIndices,
-      uint256[] memory oAmts
-    ) = abi.decode(arguments, (uint32, uint32[], uint256[], uint32[], uint256[]));
+      uint256[] memory oAmts,
+      uint256 xp,
+      int32 stCost
+    ) = abi.decode(arguments, (uint32, uint32[], uint256[], uint32[], uint256[], uint256, int32));
 
     require(LibRecipe.get(components, index) == 0, "Recipe: index already exists");
 
-    uint256 id = LibRecipe.create(components, index, iIndices, iAmts, oIndices, oAmts);
+    uint256 id = LibRecipe.create(components, index, iIndices, iAmts, oIndices, oAmts, xp, stCost);
     return id;
   }
 
