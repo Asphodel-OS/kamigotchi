@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { Stat } from "components/types/Stat.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
@@ -13,10 +14,11 @@ import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { StaminaComponent, ID as StamCompID } from "components/StaminaComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibAssigner } from "libraries/LibAssigner.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -41,6 +43,8 @@ struct Table {
  *   - Values (Output quantities)
  */
 library LibRecipe {
+  using SafeCastLib for uint256;
+
   /////////////////
   // SHAPES
 
@@ -116,9 +120,15 @@ library LibRecipe {
   /////////////////
   // INTERACTIONS
 
-  function beforeCraft(IUintComp components, uint256 recipeID, uint256 accID) internal {
+  function beforeCraft(
+    IUintComp components,
+    uint256 recipeID,
+    uint256 amt,
+    uint256 accID
+  ) internal {
     // pay stamina cost
-    LibStat.applySingle(StaminaComponent(getAddressById(components, StamCompID)), recipeID, accID);
+    int32 stCost = StaminaComponent(getAddressById(components, StamCompID)).get(recipeID).sync;
+    LibAccount.syncAndUseStamina(components, accID, stCost * amt.toInt32());
   }
 
   function craft(
@@ -138,9 +148,11 @@ library LibRecipe {
     return (output.indices, output.amts);
   }
 
-  function afterCraft(IUintComp components, uint256 recipeID, uint256 accID) internal {
+  function afterCraft(IUintComp components, uint256 recipeID, uint256 amt, uint256 accID) internal {
     // add account experience
-    LibExperience.incBy(components, recipeID, accID);
+    ExperienceComponent expComp = ExperienceComponent(getAddressById(components, ExpCompID));
+    uint256 xp = LibComp.safeGetUint256(expComp, recipeID);
+    if (xp > 0) LibComp.inc(expComp, accID, amt * xp);
   }
 
   /////////////////

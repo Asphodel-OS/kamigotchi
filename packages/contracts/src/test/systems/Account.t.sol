@@ -66,7 +66,11 @@ contract AccountTest is SetupTemplate {
           uint32(uint256(timeDelta) / LibConfig.get(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD"))
         );
     }
-    vm.assume(overflowCheck >= amt);
+    vm.assume(overflowCheck > amt);
+    unchecked {
+      overflowCheck = amt + int32(int(base));
+    }
+    vm.assume(overflowCheck > amt);
 
     // setup
     vm.startPrank(deployer);

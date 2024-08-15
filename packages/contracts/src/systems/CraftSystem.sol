@@ -27,12 +27,14 @@ contract CraftSystem is System {
     // check requirements
     require(LibAssigner.check(components, assignerID, regID, accID), "not assigner");
 
+    LibRecipe.beforeCraft(components, regID, amt, accID);
     (uint32[] memory itemIndices, uint256[] memory amts) = LibRecipe.craft(
       components,
       index,
       amt,
       accID
     );
+    LibRecipe.afterCraft(components, regID, amt, accID);
 
     // standard logging and tracking
     LibInventory.logItemTotals(components, accID, itemIndices, amts);

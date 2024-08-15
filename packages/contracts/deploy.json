@@ -217,11 +217,13 @@
     {
       "name": "_RecipeRegistrySystem",
       "writeAccess": [
+        "ExperienceComponent",
         "IDFromComponent",
         "IDToComponent",
         "IndexRecipeComponent",
         "IsRegistryComponent",
         "KeysComponent",
+        "StaminaComponent",
         "ValuesComponent"
       ]
     },
@@ -332,10 +334,13 @@
     {
       "name": "CraftSystem",
       "writeAccess": [
+        "ExperienceComponent",
         "IsInventoryComponent",
         "IndexItemComponent",
         "IDOwnsInventoryComponent",
         "ValueComponent",
+        "StaminaComponent",
+        "TimeLastActionComponent",
         "TimeLastComponent"
       ]
     },

@@ -52,8 +52,21 @@ contract CraftingTest is SetupTemplate {
     vm.expectRevert();
     _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
 
-    // valid craft (enough ingredients)
+    // give enough ingredients
     _giveItem(alice, 1, 3);
+
+    // not enough stamina
+    vm.startPrank(deployer);
+    _StaminaComponent.sync(alice.id, -9999);
+    _TimeLastActionComponent.set(alice.id, block.timestamp);
+    vm.stopPrank();
+    vm.prank(alice.operator);
+    vm.expectRevert("Account: insufficient stamina");
+    _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
+
+    // valid craft
+    vm.prank(deployer);
+    _StaminaComponent.sync(alice.id, 1000);
     _craft(alice, recipeIndex, 1);
     assertEq(_getItemBal(alice, 2), 5);
   }
@@ -133,22 +146,24 @@ contract CraftingTest is SetupTemplate {
     assertEq(_getItemBal(alice, 13), 5);
   }
 
-  function testCraftFuzz(uint, uint8 amtToCraft) public {
+  function testCraftInputFuzz(uint, uint8 amtToCraft) public {
     uint32 recipeIndex = 1;
     uint256[] memory startBal = new uint256[](21); // corresponds to indices 0-20
     for (uint i = 0; i < startBal.length; i++) startBal[i] = _random() / 2;
-    uint256 inputLength = _randomArrayLength();
-    uint256 outputLength = _randomArrayLength();
+    uint256 inputLength = (_randomArrayLength() % 11) + 1;
+    uint256 outputLength = (_randomArrayLength() % 19) + 1;
     uint32[] memory iIndices = new uint32[](inputLength);
     uint256[] memory iAmounts = new uint256[](inputLength);
     for (uint i = 0; i < inputLength; i++) {
-      iIndices[i] = uint32((_random() % 11) + 1);
+      // iIndices[i] = uint32((_random() % 11) + 1);
+      iIndices[i] = uint32(i + 1);
       iAmounts[i] = _random() % 11;
     }
     uint32[] memory oIndices = new uint32[](outputLength);
     uint256[] memory oAmounts = new uint256[](outputLength);
     for (uint i = 0; i < outputLength; i++) {
-      oIndices[i] = uint32((_random() % 19) + 1);
+      // oIndices[i] = uint32((_random() % 19) + 1);
+      oIndices[i] = uint32(i + 1);
       oAmounts[i] = _random() % 19;
     }
 
@@ -184,6 +199,44 @@ contract CraftingTest is SetupTemplate {
         startBal[i],
         LibString.concat("bal mismatch for ", LibString.toString(i))
       );
+  }
+
+  function testCraftCostFuzz(uint8 amtToCraft, int8 stCost, int8 initialSt) public {
+    vm.assume(stCost > 0);
+
+    uint32 recipeIndex = 1;
+    uint32[] memory iIndices = new uint32[](1);
+    iIndices[0] = 1;
+    uint32[] memory oIndices = new uint32[](1);
+    oIndices[0] = 2;
+    uint256[] memory iAmounts = new uint256[](1);
+    iAmounts[0] = 3;
+    uint256[] memory oAmounts = new uint256[](1);
+    oAmounts[0] = 5;
+
+    vm.startPrank(deployer);
+    __RecipeRegistrySystem.create(
+      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 1, int32(int(stCost)))
+    );
+    _StaminaComponent.sync(alice.id, -9999);
+    int32 currSt = _StaminaComponent.sync(alice.id, initialSt);
+    vm.stopPrank();
+    _giveItem(alice, 1, 3 * uint256(amtToCraft));
+
+    // expected values
+    uint256 expectedAmt = amtToCraft * oAmounts[0];
+    int32 expectedStCost = int32(int(stCost)) * int32(int(uint256(amtToCraft)));
+
+    if (expectedStCost > currSt) {
+      vm.prank(alice.operator);
+      vm.expectRevert("Account: insufficient stamina");
+      _CraftSystem.executeTyped(alice.id, recipeIndex, amtToCraft);
+    } else {
+      // valid craft
+      _craft(alice, recipeIndex, amtToCraft);
+      assertEq(_getItemBal(alice, 2), expectedAmt);
+      assertEq(_StaminaComponent.get(alice.id).sync, currSt - expectedStCost);
+    }
   }
 
   /////////////////
