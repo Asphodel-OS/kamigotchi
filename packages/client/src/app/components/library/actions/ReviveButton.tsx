@@ -2,8 +2,7 @@ import { reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Inventory } from 'network/shapes/Item';
 import { Kami, onCooldown } from 'network/shapes/Kami';
-import { IconButton } from '../IconButton';
-import { Tooltip } from '../Tooltip';
+import { IconButton, Tooltip } from '../base';
 
 // button for reviving kami
 // TOOD: clean this up

@@ -1,8 +1,7 @@
 import { collectIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { calcCooldown, isHarvesting, isStarving, Kami } from 'network/shapes/Kami';
-import { IconButton } from '../IconButton';
-import { Tooltip } from '../Tooltip';
+import { IconButton, Tooltip } from '../base';
 
 // button for collecting a harvest
 export const CollectButton = (kami: Kami, account: Account, triggerAction: Function) => {

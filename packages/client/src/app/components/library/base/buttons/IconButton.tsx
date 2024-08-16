@@ -33,21 +33,18 @@ export const IconButton = (props: Props) => {
       styles.height = '1.5vw';
       styles.padding = '.1vw';
       styles.borderRadius = '.3vw';
-      styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
       styles.width = '2.5vw';
       styles.height = '2.5vw';
       styles.margin = '.2vw';
       styles.padding = '.2vw';
       styles.borderRadius = '.4vw';
-      styles.borderWidth = '.15vw';
     } else if (size === 'large') {
       styles.width = '4vw';
       styles.height = '4vw';
       styles.margin = '.35vw';
       styles.padding = '.7vw';
       styles.borderRadius = '.7vw';
-      styles.borderWidth = '.2vw';
     }
 
     if (noMargin) styles.margin = '0vw';
@@ -77,7 +74,7 @@ interface ButtonProps {
 }
 
 const Button = styled.div<ButtonProps>`
-  border: solid black;
+  border: solid black 0.15vw;
   justify-content: center;
 
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};

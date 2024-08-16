@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { ProgressBar } from 'app/components/library/base/measures/ProgressBar';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { meetsRequirements, Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
+import { getPercentCompletion } from 'utils/math';
 import { Milestone } from './Milestone';
-import { ProgressBar } from './ProgressBar';
-import { getPercentCompletion } from './utils';
 
 const Colors = {
   bg: '#bbb',

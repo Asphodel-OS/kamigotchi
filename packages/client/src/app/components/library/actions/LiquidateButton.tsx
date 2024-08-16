@@ -8,7 +8,7 @@ import {
   canMog,
 } from 'network/shapes/Harvest';
 import { isStarving, Kami, onCooldown } from 'network/shapes/Kami';
-import { Tooltip } from '../Tooltip';
+import { Tooltip } from '../base';
 
 // button for liquidating a harvest
 // TODO: clean this up

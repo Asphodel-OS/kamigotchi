@@ -1,8 +1,7 @@
 import { stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { calcCooldown, isHarvesting, isStarving, Kami } from 'network/shapes/Kami';
-import { IconButton } from '../IconButton';
-import { Tooltip } from '../Tooltip';
+import { IconButton, Tooltip } from '../base';
 
 // button for stopping a harvest
 export const StopButton = (kami: Kami, account: Account, triggerAction: Function) => {

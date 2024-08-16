@@ -4,10 +4,7 @@ import styled from 'styled-components';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami, calcCooldown, calcHealth, isUnrevealed } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { Battery } from './Battery';
-import { Card } from './Card';
-import { Countdown } from './Countdown';
-import { Tooltip } from './Tooltip';
+import { Battery, Card, Countdown, Tooltip } from './base';
 
 interface Props {
   kami: Kami;

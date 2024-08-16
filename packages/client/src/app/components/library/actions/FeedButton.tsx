@@ -4,7 +4,7 @@ import { HOLY_DUST_INDEX, REVIVE_INDEX } from 'constants/items';
 import { Account, hasFood } from 'network/shapes/Account';
 import { filterInventories, Inventory } from 'network/shapes/Item';
 import { calcCooldown, isFull, isHarvesting, Kami } from 'network/shapes/Kami';
-import { Tooltip } from '../Tooltip';
+import { Tooltip } from '../base';
 
 // button for feeding a kami
 export const FeedButton = (kami: Kami, account: Account, triggerAction: Function) => {

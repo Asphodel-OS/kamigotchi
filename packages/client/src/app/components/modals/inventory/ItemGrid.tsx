@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { IconListButton, Tooltip } from 'app/components/library';
-import { Option } from 'app/components/library/IconListButton';
+import { Option } from 'app/components/library/base/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
 import { Account, getAccessibleKamis } from 'network/shapes/Account';
 import { Inventory, Item } from 'network/shapes/Item';

@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 import PlaceholderIcon from 'assets/images/icons/placeholder.png';
 import { playClick } from 'utils/sounds';
-import { IconButton } from './IconButton';
-import { Tooltip } from './Tooltip';
+import { IconButton, Tooltip } from './base';
 
 interface Props {
   fullWidth?: boolean; // whether the input should take up the full width of its container
