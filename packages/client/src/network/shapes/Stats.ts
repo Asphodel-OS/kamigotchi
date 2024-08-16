@@ -54,3 +54,9 @@ export const getStat = (index: EntityIndex, type: StatComponent): Stat => {
     total: (1 + boost / 1000) * (base + shift),
   };
 };
+
+export const sync = (stat: Stat, amt: number): number => {
+  stat.sync = Math.max(0, stat.sync + amt);
+  stat.sync = Math.min(stat.total, stat.sync + amt);
+  return stat.sync;
+};

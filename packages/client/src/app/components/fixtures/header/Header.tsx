@@ -6,12 +6,9 @@ import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
-import {
-  Account,
-  calcStamina,
-  calcStaminaPercent,
-  getAccountFromBurner,
-} from 'network/shapes/Account';
+import { calcStaminaPercent, getAccountEntityFromBurner, getStamina } from 'network/shapes/Account';
+import { getMusuBalance } from 'network/shapes/Item';
+import { Stat } from 'network/shapes/Stats';
 import { getCurrPhase, getKamiTime, getPhaseIcon, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
@@ -24,31 +21,33 @@ export function registerAccountHeader() {
       rowEnd: 30,
     },
     (layers) => {
-      const { network } = layers;
-
       return interval(1000).pipe(
         map(() => {
+          const { network } = layers;
+          const { world, components } = network;
+          const accountEntity = getAccountEntityFromBurner(network);
+
           return {
             data: {
-              account: getAccountFromBurner(network),
+              stamina: getStamina(world, components, accountEntity),
+              musu: getMusuBalance(world, components, world.entities[accountEntity]),
             },
           };
         })
       );
     },
     ({ data }) => {
-      // console.log('mAccountInfo:', data);
-      const { account } = data;
+      const { stamina, musu } = data;
       const { fixtures } = useVisibility();
 
       /////////////////
       // INTERPRETATION
 
-      const getStaminaTooltip = (account: Account) => {
-        const staminaCurr = calcStamina(account);
-        const staminaTotal = account.stamina.total;
+      const getStaminaTooltip = (stamina: Stat) => {
+        const staminaCurr = stamina.sync;
+        const staminaTotal = stamina.total;
         const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
-        const recoveryPeriod = Math.round(1 / account.stamina.rate);
+        const recoveryPeriod = Math.round(1 / stamina.rate);
         return [
           `Account Stamina (${staminaString})`,
           '',
@@ -77,10 +76,10 @@ export function registerAccountHeader() {
         <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
           <Row>
             <Cell>
-              <Tooltip text={getStaminaTooltip(account)}>
+              <Tooltip text={getStaminaTooltip(stamina)}>
                 <TextBox>
-                  {`${calcStaminaPercent(account)}%`}
-                  <Battery level={calcStaminaPercent(account)} />
+                  {`${calcStaminaPercent(stamina)}%`}
+                  <Battery level={calcStaminaPercent(stamina)} />
                 </TextBox>
               </Tooltip>
             </Cell>
@@ -96,7 +95,7 @@ export function registerAccountHeader() {
               <Tooltip text={getMusuTooltip()}>
                 <TextBox>
                   <Icon src={ItemImages.musu} />
-                  {account.coin.toLocaleString()}
+                  {musu}
                 </TextBox>
               </Tooltip>
             </Cell>

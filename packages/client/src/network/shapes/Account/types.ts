@@ -15,7 +15,6 @@ import {
 import { Inventory, cleanInventories, getMusuBalance, queryInventoriesByAccount } from '../Item';
 import { Kami, KamiOptions, queryKamis } from '../Kami';
 import { Skill } from '../Skill';
-import { Stat, getStat } from '../Stats';
 import { getData } from '../utils';
 
 // account shape with minimal fields
@@ -39,10 +38,8 @@ export interface Account extends BaseAccount {
     agency: number;
   };
   skillPoints: number;
-  stamina: Stat;
   time: {
     last: number;
-    lastMove: number;
     creation: number;
   };
   kamis: Kami[];
@@ -90,10 +87,8 @@ export const NullAccount: Account = {
     agency: 0,
   },
   skillPoints: 0,
-  stamina: {} as Stat,
   time: {
     last: 0,
-    lastMove: 0,
     creation: 0,
   },
   kamis: [],
@@ -125,7 +120,7 @@ export const getAccount = (
   entity: EntityIndex,
   options?: Options
 ): Account => {
-  const { FarcasterIndex, LastActionTime, LastTime, RoomIndex, Stamina, StartTime } = components;
+  const { FarcasterIndex, LastTime, RoomIndex, StartTime } = components;
 
   const bareAcc = getBaseAccount(world, components, entity);
   const id = bareAcc.id;
@@ -141,19 +136,14 @@ export const getAccount = (
       agency: getReputationValue(world, components, id, 1), // get agency rep
     },
     skillPoints: 0, // placeholder
-    stamina: getStat(entity, Stamina),
     time: {
       last: (getComponentValue(LastTime, entity)?.value as number) * 1,
-      lastMove: (getComponentValue(LastActionTime, entity)?.value as number) * 1,
       creation: (getComponentValue(StartTime, entity)?.value as number) * 1,
     },
   };
 
   // prevent further queries if account hasnt loaded yet
   if (!account.ownerEOA) return account;
-
-  const recoveryPeriod = getConfigFieldValue(world, components, 'ACCOUNT_STAMINA_RECOVERY_PERIOD');
-  account.stamina.rate = (1 / (recoveryPeriod ?? 300)) * 1;
 
   /////////////////
   // OPTIONAL DATA

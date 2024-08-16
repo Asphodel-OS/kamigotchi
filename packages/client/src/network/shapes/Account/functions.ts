@@ -1,6 +1,30 @@
+import { EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { Components } from 'network/components';
+import { getConfigFieldValue } from '../Config';
 import { Inventory } from '../Item';
 import { Kami, isDead, isOffWorld, isResting, isUnrevealed } from '../Kami';
+import { Stat, getStat, sync } from '../Stats';
 import { Account } from './types';
+
+/////////////////
+// GETTERS
+
+export const getStamina = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): Stat => {
+  const { Stamina } = components;
+  const recoveryPeriod = getConfigFieldValue(world, components, 'ACCOUNT_STAMINA_RECOVERY_PERIOD');
+
+  const stamina = getStat(entityIndex, Stamina);
+  stamina.rate = (1 / (recoveryPeriod ?? 300)) * 1;
+
+  // sync
+  const recovered = Math.floor(calcStandardIdleTime(components, entityIndex) * stamina.rate!);
+  stamina.sync = sync(stamina, recovered);
+  return stamina;
+};
 
 /////////////////
 // TIME
@@ -9,24 +33,17 @@ export const calcIdleTime = (account: Account) => {
   return Date.now() / 1000 - account.time.last;
 };
 
-export const calcStandardIdleTime = (account: Account) => {
-  return Date.now() / 1000 - account.time.lastMove;
+export const calcStandardIdleTime = (components: Components, entityIndex: EntityIndex) => {
+  const { LastActionTime } = components;
+  return Date.now() / 1000 - (getComponentValue(LastActionTime, entityIndex)?.value ?? 0) * 1;
 };
 
 /////////////////
 // STAMINA
 
-// calculate the current stamina on an account
-export const calcStamina = (account: Account) => {
-  const recovered = Math.floor(calcStandardIdleTime(account) * account.stamina.rate!);
-  const current = account.stamina.sync + recovered;
-  return Math.min(account.stamina.base, current);
-};
-
 // calculate the current stamina on an account as a percentage of total stamina
-export const calcStaminaPercent = (account: Account) => {
-  const stamina = calcStamina(account);
-  return Math.floor((100 * stamina) / account.stamina.base);
+export const calcStaminaPercent = (stamina: Stat) => {
+  return Math.floor((100 * stamina.sync) / stamina.total);
 };
 
 //////////////////

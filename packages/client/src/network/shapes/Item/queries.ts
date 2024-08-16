@@ -9,7 +9,6 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
-import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/components';
 import { DetailedEntity } from '../utils';
 import {
@@ -81,16 +80,6 @@ export const getInventoryByHolderItem = (
       balance: 0,
     };
   else return getInventory(world, components, entityIndex);
-};
-
-// gets the musu balance of a holding account
-export const getMusuBalance = (
-  world: World,
-  components: Components,
-  holderID: EntityID
-): number => {
-  const inv = getInventoryByHolderItem(world, components, holderID, MUSU_INDEX);
-  return inv.balance ?? 0;
 };
 
 // get all inventories owned by an account

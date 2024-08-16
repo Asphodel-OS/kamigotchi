@@ -1,11 +1,10 @@
-export { filterInventories } from './functions';
+export { filterInventories, getItemBalance, getMusuBalance } from './functions';
 export {
   getAllItems,
   getInventoryByHolderItem,
   getItemByIndex,
   getItemDetailsByIndex,
   getItemRegEntity,
-  getMusuBalance,
   queryInventories,
   queryInventoriesByAccount,
 } from './queries';
