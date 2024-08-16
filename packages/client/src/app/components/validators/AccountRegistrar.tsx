@@ -25,8 +25,8 @@ import {
 import {
   Account,
   getAccount,
-  getAccountEntityIndexByName,
-  getAccountEntityIndexByOwner,
+  queryAccountByName,
+  queryAccountByOwner,
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
 import { getAbbrevAddr } from 'utils/address';
@@ -148,7 +148,7 @@ export function registerAccountRegistrar() {
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
-        const accountEntityIndex = getAccountEntityIndexByOwner(components, selectedAddress);
+        const accountEntityIndex = queryAccountByOwner(components, selectedAddress);
         if (!!accountEntityIndex == validations.accountExists) return; // no change
         if (!!accountEntityIndex) {
           const account = getAccount(world, components, accountEntityIndex);
@@ -241,7 +241,7 @@ export function registerAccountRegistrar() {
       // INTERPRETATION
 
       const isNameTaken = () => {
-        const account = getAccountEntityIndexByName(components, name);
+        const account = queryAccountByName(components, name);
         return !!account;
       };
 

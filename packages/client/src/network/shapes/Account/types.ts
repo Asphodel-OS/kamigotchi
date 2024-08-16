@@ -55,7 +55,7 @@ export interface Account extends BaseAccount {
   };
 }
 
-export interface AccountOptions {
+export interface Options {
   friends?: boolean;
   inventory?: boolean;
   kamis?: boolean | KamiOptions;
@@ -122,7 +122,7 @@ export const getAccount = (
   world: World,
   components: Components,
   entityIndex: EntityIndex,
-  options?: AccountOptions
+  options?: Options
 ): Account => {
   const { FarcasterIndex, LastActionTime, LastTime, RoomIndex, Stamina, StartTime } = components;
 

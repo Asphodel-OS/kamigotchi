@@ -10,8 +10,8 @@ import {
   BaseAccount,
   getAccountByIndex,
   getAccountFromBurner,
+  getAllBaseAccounts,
 } from 'network/shapes/Account';
-import { getAllAccountsBare } from 'network/shapes/Account/queries';
 import { Friendship } from 'network/shapes/Friendship';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
@@ -153,7 +153,7 @@ export function registerAccountModal() {
             tab={tab}
             data={{
               account,
-              getAllAccs: () => getAllAccountsBare(world, components),
+              getAllAccs: () => getAllBaseAccounts(world, components),
             }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
           />
