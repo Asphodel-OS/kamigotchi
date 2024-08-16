@@ -9,6 +9,7 @@ export type QueryOptions = {
   name?: string;
 };
 
+// query Account entities generally with query options. return matching entity indices
 const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
   const { IsAccount, AccountIndex, Name, OwnerAddress, OperatorAddress } = components;
   const toQuery: QueryFragment[] = [Has(IsAccount)];

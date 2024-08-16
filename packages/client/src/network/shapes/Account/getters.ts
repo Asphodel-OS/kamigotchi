@@ -7,12 +7,13 @@ import { NullAccount, Options, getAccount, getBaseAccount } from './types';
 // get all accounts
 export const getAll = (world: World, components: Components, options?: Options) => {
   const entities = queryAll(components);
-  return entities.map((entityIndex) => getAccount(world, components, entityIndex, options));
+  return entities.map((entity) => getAccount(world, components, entity, options));
 };
 
+// get all Base Accounts
 export const getAllBase = (world: World, components: Components) => {
   const entities = queryAll(components);
-  return entities.map((entityIndex) => getBaseAccount(world, components, entityIndex));
+  return entities.map((entity) => getBaseAccount(world, components, entity));
 };
 
 // get an Account, assuming the currently connected burner is the Operator
@@ -66,6 +67,7 @@ export const getByOwner = (
   return getAccount(world, components, entity, options);
 };
 
+// get an Account by its name
 export const getByName = (
   world: World,
   components: Components,

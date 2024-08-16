@@ -99,21 +99,22 @@ export const NullAccount: Account = {
   kamis: [],
 };
 
+// get a BaseAccount from its EntityIndex
 export const getBaseAccount = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex
+  entity: EntityIndex
 ): BaseAccount => {
   const { AccountIndex, MediaURI, Name, OperatorAddress, OwnerAddress } = components;
 
   return {
-    id: world.entities[entityIndex],
-    entityIndex,
-    index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-    operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
-    ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
-    pfpURI: getComponentValue(MediaURI, entityIndex)?.value as string,
-    name: getComponentValue(Name, entityIndex)?.value as string,
+    id: world.entities[entity],
+    entityIndex: entity,
+    index: getComponentValue(AccountIndex, entity)?.value as number,
+    operatorEOA: getComponentValue(OperatorAddress, entity)?.value as string,
+    ownerEOA: getComponentValue(OwnerAddress, entity)?.value as string,
+    pfpURI: getComponentValue(MediaURI, entity)?.value as string,
+    name: getComponentValue(Name, entity)?.value as string,
   };
 };
 
@@ -121,30 +122,30 @@ export const getBaseAccount = (
 export const getAccount = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex,
+  entity: EntityIndex,
   options?: Options
 ): Account => {
   const { FarcasterIndex, LastActionTime, LastTime, RoomIndex, Stamina, StartTime } = components;
 
-  const bareAcc = getBaseAccount(world, components, entityIndex);
+  const bareAcc = getBaseAccount(world, components, entity);
   const id = bareAcc.id;
 
   let account: Account = {
     ...bareAcc,
-    fid: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
+    fid: getComponentValue(FarcasterIndex, entity)?.value as number,
     coin: getMusuBalance(world, components, id),
-    roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
+    roomIndex: getComponentValue(RoomIndex, entity)?.value as number,
     kamis: [], // placeholder
     level: 0, // placeholder
     reputation: {
       agency: getReputationValue(world, components, id, 1), // get agency rep
     },
     skillPoints: 0, // placeholder
-    stamina: getStat(entityIndex, Stamina),
+    stamina: getStat(entity, Stamina),
     time: {
-      last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
-      lastMove: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
-      creation: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
+      last: (getComponentValue(LastTime, entity)?.value as number) * 1,
+      lastMove: (getComponentValue(LastActionTime, entity)?.value as number) * 1,
+      creation: (getComponentValue(StartTime, entity)?.value as number) * 1,
     },
   };
 
