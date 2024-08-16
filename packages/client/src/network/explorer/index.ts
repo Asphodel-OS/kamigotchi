@@ -7,6 +7,8 @@ import {
   getAccountByIndex,
   getAccountByName,
   getAccountByOwner,
+  getAccountMusuRankings,
+  getAccountRepRankings,
   getAllAccounts,
 } from 'network/shapes/Account';
 import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
@@ -55,6 +57,10 @@ export const initExplorer = (world: World, components: Components) => {
       getByName: (name: string) => getAccountByName(world, components, name, fullAccountOptions),
       entities: () => Array.from(components.IsAccount.entities()),
       indices: () => Array.from(components.AccountIndex.values.value.values()),
+      rankings: {
+        musu: (limit?: number) => getAccountMusuRankings(world, components, limit),
+        reputation: (limit?: number) => getAccountRepRankings(world, components, limit),
+      },
     },
 
     goals: {
