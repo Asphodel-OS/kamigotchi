@@ -73,7 +73,7 @@ library LibAccount {
 
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint32 to) internal {
-    StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, -1);
+    syncAndUseStamina(components, id, -1);
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, to);
   }
 
@@ -82,11 +82,19 @@ library LibAccount {
     return StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, amt);
   }
 
+  function syncAndUseStamina(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
+    StaminaComponent stComp = StaminaComponent(getAddressById(components, StaminaCompID));
+    int32 delta = amt + calcStaminaRecovery(components, id); // add recovery in amt change
+    int32 expected = LibStat.syncSigned(stComp.get(id), delta); // sync with negative possible
+
+    require(expected >= 0, "Account: insufficient stamina");
+    updateLastActionTs(components, id);
+    return stComp.sync(id, delta);
+  }
+
   // syncs the stamina of an account. rounds down, ruthlessly
   function syncStamina(IUintComp components, uint256 id) internal returns (int32) {
-    uint256 timePassed = block.timestamp - getLastActionTs(components, id);
-    uint256 recoveryPeriod = LibConfig.get(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
-    int32 recoveredAmt = int32(uint32(timePassed / recoveryPeriod));
+    int32 recoveredAmt = calcStaminaRecovery(components, id);
     updateLastActionTs(components, id);
     return recover(components, id, recoveredAmt);
   }
@@ -133,6 +141,15 @@ library LibAccount {
     } else {
       require(false, "LibAccount: unknown type");
     }
+  }
+
+  /////////////////
+  // CALCS
+
+  function calcStaminaRecovery(IUintComp components, uint256 id) internal view returns (int32) {
+    uint256 timePassed = block.timestamp - getLastActionTs(components, id);
+    uint256 recoveryPeriod = LibConfig.get(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
+    return int32(uint32(timePassed / recoveryPeriod));
   }
 
   /////////////////

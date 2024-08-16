@@ -94,6 +94,15 @@ library LibStat {
     return result;
   }
 
+  /// @notice syncs a Stat, but allow for negative value
+  /// @dev used for 0 check; do add 0 check for write
+  function syncSigned(Stat memory stat, int32 amt) internal pure returns (int32) {
+    int32 result = stat.sync + amt;
+    int32 max = StatLib.calcTotal(stat);
+    if (result > max) return max;
+    return result;
+  }
+
   /////////////////
   // GETTERS
 

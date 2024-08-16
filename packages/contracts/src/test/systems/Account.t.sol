@@ -5,8 +5,16 @@ import "test/utils/SetupTemplate.t.sol";
 
 // this test experience gain, leveling and all expected effects due to leveling
 contract AccountTest is SetupTemplate {
+  Reverter reverter;
+
   function setUp() public override {
     super.setUp();
+
+    reverter = new Reverter();
+    vm.startPrank(deployer);
+    _StaminaComponent.authorizeWriter(address(reverter));
+    _TimeLastActionComponent.authorizeWriter(address(reverter));
+    vm.stopPrank();
   }
 
   function setUpAccounts() public override {
@@ -16,7 +24,6 @@ contract AccountTest is SetupTemplate {
   function testOperator() public {
     address owner = _getOwner(0);
     address operator = _getOperator(0);
-    Reverter reverter = new Reverter();
 
     // creating account
     vm.prank(owner);
@@ -47,6 +54,45 @@ contract AccountTest is SetupTemplate {
     reverter.getByOperator(components, prevOperator);
   }
 
+  function testStaminaUse(int32 amt, uint16 rawBase, uint16 start, uint32 timeDelta) public {
+    uint256 base = uint256(rawBase);
+    // check overflows
+    vm.assume(amt > -2147483648);
+    int32 overflowCheck;
+    unchecked {
+      overflowCheck =
+        amt +
+        int32(
+          uint32(uint256(timeDelta) / LibConfig.get(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD"))
+        );
+    }
+    vm.assume(overflowCheck >= amt);
+
+    // setup
+    vm.startPrank(deployer);
+    Stat memory baseStat = Stat(int32(int(base)), 0, 0, int32(int(uint256(start))));
+    LibStat.setStamina(components, alice.id, baseStat);
+    LibStat.setStamina(components, bob.id, baseStat);
+    LibAccount.setLastActionTs(components, alice.id, block.timestamp);
+    LibAccount.setLastActionTs(components, bob.id, block.timestamp);
+    vm.stopPrank();
+
+    // sync control (bob)
+    _fastForward(timeDelta);
+    vm.startPrank(deployer);
+    int32 expected = LibAccount.syncStamina(components, bob.id); // expected synced value
+    vm.stopPrank();
+
+    // alice syncs
+    vm.startPrank(deployer);
+    if (amt * -1 > expected) vm.expectRevert("Account: insufficient stamina");
+    reverter.syncAndUseStamina(components, alice.id, amt);
+    vm.stopPrank();
+  }
+
+  ////////////////
+  // ASSERTIONS
+
   function assertAddresses(uint256 id, address owner, address operator) public {
     assertEq(_AddressOwnerComponent.get(id), owner);
     assertEq(_AddressOperatorComponent.get(id), operator);
@@ -62,5 +108,13 @@ contract AccountTest is SetupTemplate {
 contract Reverter {
   function getByOperator(IUint256Component components, address addr) public returns (uint256) {
     return LibAccount.getByOperator(components, addr);
+  }
+
+  function syncAndUseStamina(
+    IUint256Component components,
+    uint256 id,
+    int32 amt
+  ) public returns (int32) {
+    return LibAccount.syncAndUseStamina(components, id, amt);
   }
 }

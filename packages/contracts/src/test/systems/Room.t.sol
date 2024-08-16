@@ -22,7 +22,7 @@ contract RoomTest is SetupTemplate {
   ///////////////
   // TESTS
 
-  function testRegistryRoom() public {
+  function testRoomShape() public {
     uint256 roomID = _createRoom("1", Coord(1, 1, 0), 1);
     assertTrue(_IsRoomComponent.has(roomID));
     assertTrue(_isSameLocation(Coord(1, 1, 0), _locFromIndex(1)));
@@ -67,7 +67,29 @@ contract RoomTest is SetupTemplate {
     assertTrue(!_IDRoomComponent.has(gate2));
   }
 
-  function testAdjacency() public {
+  function testMoveStamina(uint8 rawNumMove) public {
+    initBasicRooms();
+
+    vm.startPrank(deployer);
+    uint256 baseStamina = 11;
+    uint256 numMove = uint256(rawNumMove) % (baseStamina * 2); // limit fuzz
+    LibStat.setStamina(
+      components,
+      alice.id,
+      Stat(int32(int(baseStamina)), 0, 0, int32(int(baseStamina)))
+    );
+    vm.stopPrank();
+
+    // move
+    vm.startPrank(alice.operator);
+    for (uint i = 0; i < numMove; i++) {
+      uint32 nextRoom = LibRoom.getIndex(components, alice.id) == 1 ? 2 : 1;
+      if (i >= baseStamina) vm.expectRevert("Account: insufficient stamina");
+      _AccountMoveSystem.executeTyped(nextRoom);
+    }
+  }
+
+  function testRoomAdjacency() public {
     /*
     z0:
     | 1 | 2 |

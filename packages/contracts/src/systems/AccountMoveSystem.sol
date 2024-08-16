@@ -15,7 +15,6 @@ contract AccountMoveSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    require(LibAccount.syncStamina(components, accID) > 0, "AccMove: out of stamina");
 
     uint32 toIndex = abi.decode(arguments, (uint32));
     uint32 currIndex = LibAccount.getRoom(components, accID);
@@ -31,6 +30,7 @@ contract AccountMoveSystem is System {
       "AccMove: inaccessible room"
     );
 
+    // implicit stamina check
     LibAccount.move(components, accID, toIndex);
 
     // standard logging and tracking
