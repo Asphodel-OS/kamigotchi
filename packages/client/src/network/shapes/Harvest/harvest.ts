@@ -90,6 +90,10 @@ export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
   const nudge = Math.floor(calcIntensityTime(harvest) / 60);
   const ratio = config.ratio.value; // Intensity Core (Period * scaling to accomodate skill balancing)
   const intensity = ((base + nudge) * boost) / (ratio * 3600);
+
+  if (kami.index == 80) {
+    console.log('intensity', intensity, base, nudge, ratio, boost);
+  }
   return intensity;
 };
 
