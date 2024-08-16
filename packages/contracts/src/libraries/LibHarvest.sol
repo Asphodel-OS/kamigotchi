@@ -192,12 +192,12 @@ library LibHarvest {
   function calcIntensity(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
-    uint256 boost = LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
-    if (boost == 0) return 0; // no need for calcs here
 
     uint256 base = config[0] * LibPet.calcTotalViolence(components, petID).toUint256(); // odd application of nudge slot
     uint256 nudge = calcIntensityDuration(components, id) / 60; // minutes, rounded down
     uint256 ratio = config[2]; // period, in minutes. scaled to accomodate current skill balancing
+    uint256 boost = config[6];
+    boost += LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
     uint256 precision = 10 ** (RATE_PREC - config[7] + config[3]); // ratio is inverted
     return (precision * (base + nudge) * boost) / (ratio * 3600);
   }
