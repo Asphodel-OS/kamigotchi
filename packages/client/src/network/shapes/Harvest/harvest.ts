@@ -79,13 +79,17 @@ export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
   return shift;
 };
 
+// calculate the intensity rate of a harvest, measured in musu/s
+// NOTE: lots of fuckery in this one
 export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
   const config = kami.config.harvest.intensity;
-  const base = Math.floor(calcIntensityTime(harvest));
-  const nudge = 60 * kami.bonuses.harvest.intensity.nudge;
-  const ratio = config.ratio.value; // Intensity Core
-  const boost = 60 * config.boost.value; // Intensity Period
-  const intensity = Math.floor(((base + nudge) * ratio) / boost) / 3600;
+  const boost = kami.bonuses.harvest.intensity.nudge;
+  if (boost == 0) return 0; // no need for calcs if no investment
+
+  const base = config.nudge.value * kami.stats.violence.total; // commandeering nudge field for this scaling
+  const nudge = Math.floor(calcIntensityTime(harvest) / 60);
+  const ratio = config.ratio.value; // Intensity Core (Period * scaling to accomodate skill balancing)
+  const intensity = ((base + nudge) * boost) / (ratio * 3600);
   return intensity;
 };
 

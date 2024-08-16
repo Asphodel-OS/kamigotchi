@@ -29,7 +29,7 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-uint256 constant RATE_PREC = 9;
+uint256 constant RATE_PREC = 6;
 
 /*
  * LibHarvest handles all retrieval and manipulation of mining nodes/productions
@@ -188,16 +188,18 @@ library LibHarvest {
   }
 
   // Calculate the intensity of a production, measured in musu/s (1e9 precision)
+  // NOTE: this is a bit of a hack, with an idiosyncratic use of the violence-scaled nudge
   function calcIntensity(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
+    uint256 boost = LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
+    if (boost == 0) return 0; // no need for calcs here
 
-    uint256 base = calcIntensityDuration(components, id);
-    uint256 nudge = 60 * LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
-    uint256 ratio = config[2]; // intensity core (musu/s)
-    uint256 boost = 60 * config[6]; // period, converted to seconds. apply as inverted boost
-    uint256 precision = 10 ** (RATE_PREC - config[3] + config[7]); // boost is inverted
-    return (precision * (base + nudge) * ratio) / boost / 3600;
+    uint256 base = config[0] * LibPet.calcTotalViolence(components, petID).toUint256(); // odd application of nudge slot
+    uint256 nudge = calcIntensityDuration(components, id) / 60; // minutes, rounded down
+    uint256 ratio = config[2]; // period, in minutes. scaled to accomodate current skill balancing
+    uint256 precision = 10 ** (RATE_PREC - config[7] + config[3]); // ratio is inverted
+    return (precision * (base + nudge) * boost) / (ratio * 3600);
   }
 
   /////////////////

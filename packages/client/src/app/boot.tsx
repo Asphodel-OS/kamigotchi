@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client';
 
 import 'app/styles/font.css';
 import { Layers } from 'network/';
-import { registerLoadingState, registerUIComponents } from './components';
+import { registerLoadingState } from './components';
 import { Root } from './root/Root';
 
 export const mountReact: { current: (mount: boolean) => void } = {
@@ -21,5 +21,5 @@ export function boot() {
   const root = ReactDOM.createRoot(rootElement);
   root.render(<Root setLayers={setLayers} mountReact={mountReact} />);
   registerLoadingState();
-  registerUIComponents(); // possibly should run this on a delayed callback once fully booted
+  // possibly should run this on a delayed callback once fully booted
 }

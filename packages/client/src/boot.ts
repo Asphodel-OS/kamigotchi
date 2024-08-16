@@ -4,6 +4,10 @@ import { getComponentValue, removeComponent, setComponent } from '@mud-classic/r
 import { boot as bootReact, mountReact, setLayers } from 'app/boot';
 import { Layers, createNetworkConfig, createNetworkLayer } from 'network/';
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // boot the whole thing
 export async function boot() {
   bootReact();
