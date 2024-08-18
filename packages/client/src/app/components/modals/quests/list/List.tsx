@@ -14,11 +14,9 @@ interface Props {
     completed: BaseQuest[];
   };
   mode: TabType;
-  actions: {
-    acceptQuest: (quest: Quest) => void;
-    completeQuest: (quest: Quest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
+    getItemBalance: (index: number) => number;
     populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
     parseObjectives: (quest: Quest) => Quest;
@@ -31,21 +29,20 @@ interface Props {
 export const List = (props: Props) => {
   const { quests, mode, actions, utils } = props;
   const { available, ongoing, completed } = quests;
-  const { acceptQuest, completeQuest } = actions;
   const [imageCache, _] = useState(new Map<string, JSX.Element>());
 
   return (
     <Container>
       <AvailableTab
         quests={available}
-        actions={{ accept: acceptQuest, complete: completeQuest }}
+        actions={actions}
         utils={utils}
         imageCache={imageCache}
         isVisible={mode === 'AVAILABLE'}
       />
       <AcceptedTab
         quests={{ ongoing, completed }}
-        actions={{ accept: acceptQuest, complete: completeQuest }}
+        actions={actions}
         utils={utils}
         imageCache={imageCache}
         isVisible={mode === 'ONGOING'}

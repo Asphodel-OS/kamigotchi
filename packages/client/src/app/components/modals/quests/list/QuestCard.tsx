@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { ActionButton, ActionListButton, Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
@@ -11,12 +11,10 @@ import { getFactionImage } from 'network/shapes/utils/images';
 interface Props {
   quest: Quest;
   status: QuestStatus;
-  actions: {
-    accept: (quest: Quest) => void;
-    complete: (quest: Quest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
+    getItemBalance: (index: number) => number;
   };
   imageCache: Map<string, JSX.Element>;
 }
@@ -24,8 +22,8 @@ interface Props {
 // Quest Card
 export const QuestCard = (props: Props) => {
   const { quest, status, actions, utils, imageCache } = props;
-  const { accept, complete } = actions;
-  const { describeEntity } = utils;
+  const { accept, complete, burnItems } = actions;
+  const { describeEntity, getItemBalance } = utils;
 
   /////////////////
   // INTERPRETATION
@@ -51,19 +49,50 @@ export const QuestCard = (props: Props) => {
   };
 
   const CompleteButton = (quest: Quest) => {
-    // const tooltipText = meetsObjectives(quest) ? '' : 'Unmet objectives';
-    const tooltipText = '';
     return (
       <Overlay bottom={0.8} right={0.8}>
-        <Tooltip text={[tooltipText]}>
-          <ActionButton
-            onClick={() => complete(quest)}
-            text='Complete'
-            disabled={!meetsObjectives(quest)}
-            noMargin
-          />
-        </Tooltip>
+        <ActionButton
+          onClick={() => complete(quest)}
+          text='Complete'
+          disabled={!meetsObjectives(quest)}
+          noMargin
+        />
       </Overlay>
+    );
+  };
+
+  const ItemBurnButton = (objective: Objective) => {
+    const show = status === 'ONGOING' && objective.target.type === 'ITEM_BURN';
+    if (!show) return <></>;
+
+    const index = objective.target.index ?? 0;
+    const need = (objective.status?.target ?? 0) - (objective.status?.current ?? 0);
+    if (need <= 0) return <></>;
+
+    const have = getItemBalance(index);
+    const options = [];
+    if (need > 0) {
+      options.push({
+        text: 'Give 1',
+        onClick: () => burnItems([index], [1]),
+        disabled: have < 1,
+      });
+    }
+    if (need > 1) {
+      options.push({
+        text: `Give all (${need})`,
+        onClick: () => burnItems([index], [need]),
+        disabled: have < need,
+      });
+    }
+
+    return (
+      <ActionListButton
+        id={`quest-item-burn-${objective.id}`}
+        text=''
+        options={options}
+        size='small'
+      />
     );
   };
 
@@ -100,15 +129,23 @@ export const QuestCard = (props: Props) => {
     return component;
   };
 
+  const ObjectiveRow = (objective: Objective) => {
+    const text = getObjectiveText(objective);
+
+    return (
+      <Row>
+        <ConditionText key={objective.id}>{text}</ConditionText>
+        {ItemBurnButton(objective)}
+      </Row>
+    );
+  };
+
   const Objectives = (quest: Quest) => {
     if (quest.objectives.length === 0) return null;
     return (
       <Section key='objectives'>
         <SubTitle>Objectives</SubTitle>
-        {quest.objectives.map((o) => {
-          const text = getObjectiveText(o);
-          return <ConditionText key={o.id}>{text}</ConditionText>;
-        })}
+        {quest.objectives.map((o) => ObjectiveRow(o))}
       </Section>
     );
   };

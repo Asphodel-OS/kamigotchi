@@ -62,7 +62,7 @@ contract PetFeedSystem is System {
     // standard logging and tracking
     LibScore.incFor(components, accID, "FEED", 1);
     LibData.inc(components, accID, 0, "PET_FEED", 1);
-    LibData.inc(components, accID, itemIndex, "INV_USE", 1);
+    LibData.inc(components, accID, itemIndex, "ITEM_USE", 1);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

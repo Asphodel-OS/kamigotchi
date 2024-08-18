@@ -117,7 +117,7 @@ export function registerInventoryModal() {
           params: [item.index, amount],
           description: `Opening ${amount} ${item.name}`,
           execute: async () => {
-            return api.player.lootbox.commit(item.index, amount);
+            return api.player.item.lootbox.commit(item.index, amount);
           },
         });
         await waitForActionCompletion(

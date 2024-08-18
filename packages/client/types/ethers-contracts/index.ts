@@ -113,6 +113,7 @@ export type { IsRewardComponent } from "./IsRewardComponent";
 export type { IsRoomComponent } from "./IsRoomComponent";
 export type { IsSkillComponent } from "./IsSkillComponent";
 export type { IsTradeComponent } from "./IsTradeComponent";
+export type { ItemBurnSystem } from "./ItemBurnSystem";
 export type { KeysComponent } from "./KeysComponent";
 export type { LevelComponent } from "./LevelComponent";
 export type { ListingBuySystem } from "./ListingBuySystem";
@@ -328,6 +329,7 @@ export { IsRewardComponent__factory } from "./factories/IsRewardComponent__facto
 export { IsRoomComponent__factory } from "./factories/IsRoomComponent__factory";
 export { IsSkillComponent__factory } from "./factories/IsSkillComponent__factory";
 export { IsTradeComponent__factory } from "./factories/IsTradeComponent__factory";
+export { ItemBurnSystem__factory } from "./factories/ItemBurnSystem__factory";
 export { KeysComponent__factory } from "./factories/KeysComponent__factory";
 export { LevelComponent__factory } from "./factories/LevelComponent__factory";
 export { ListingBuySystem__factory } from "./factories/ListingBuySystem__factory";

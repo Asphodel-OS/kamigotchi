@@ -15,10 +15,7 @@ interface Props {
     ongoing: BaseQuest[];
     completed: BaseQuest[];
   };
-  actions: {
-    acceptQuest: (quest: BaseQuest) => void;
-    completeQuest: (quest: BaseQuest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
     filterForBattlePass: (quests: Quest[]) => Quest[];

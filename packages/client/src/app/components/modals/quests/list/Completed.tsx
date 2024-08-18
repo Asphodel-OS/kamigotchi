@@ -7,13 +7,11 @@ import { QuestCard } from './QuestCard';
 
 interface Props {
   quests: BaseQuest[];
-  actions: {
-    accept: (quest: Quest) => void;
-    complete: (quest: Quest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     populate: (quest: BaseQuest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
+    getItemBalance: (index: number) => number;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -21,7 +19,7 @@ interface Props {
 
 export const CompletedQuests = (props: Props) => {
   const { quests, actions, utils, imageCache, isVisible } = props;
-  const { describeEntity, populate } = utils;
+  const { describeEntity, populate, getItemBalance } = utils;
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -50,7 +48,7 @@ export const CompletedQuests = (props: Props) => {
           key={q.id}
           quest={q}
           status={'COMPLETED'}
-          utils={{ describeEntity }}
+          utils={{ describeEntity, getItemBalance }}
           actions={actions}
           imageCache={imageCache}
         />

@@ -9,12 +9,10 @@ const emptyText = ['No quests available.', 'Do something else?'];
 
 interface Props {
   quests: Quest[];
-  actions: {
-    accept: (quest: Quest) => void;
-    complete: (quest: Quest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
+    getItemBalance: (index: number) => number;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;

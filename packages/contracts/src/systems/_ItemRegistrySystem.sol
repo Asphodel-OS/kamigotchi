@@ -68,6 +68,13 @@ contract _ItemRegistrySystem is System {
     LibItemRegistry.addStat(components, registryID, type_, value);
   }
 
+  function setUnburnable(uint32 index) public onlyOwner {
+    uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    require(registryID != 0, "ItemReg: item does not exist");
+
+    LibItemRegistry.setUnburnable(components, registryID);
+  }
+
   function remove(uint32 index) public onlyOwner {
     uint256 registryID = LibItemRegistry.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");

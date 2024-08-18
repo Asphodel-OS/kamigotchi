@@ -29,7 +29,7 @@ contract AccountConsumeSystem is System {
     LibAccount.consume(components, id, itemIndex);
 
     // standard logging and tracking
-    LibData.inc(components, id, itemIndex, "INV_USE", 1);
+    LibData.inc(components, id, itemIndex, "ITEM_USE", 1);
     LibAccount.updateLastTs(components, id);
     return "";
   }

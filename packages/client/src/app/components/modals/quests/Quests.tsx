@@ -7,6 +7,7 @@ import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
   filterQuestsByAvailable,
@@ -71,6 +72,8 @@ export function registerQuestsModal() {
               describeEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
               getBase: (entityIndex: EntityIndex) => getBaseQuest(world, components, entityIndex),
+              getItemBalance: (index: number) =>
+                getItemBalance(world, components, account.id, index),
               filterByAvailable: (
                 registry: BaseQuest[],
                 ongoing: BaseQuest[],
@@ -158,7 +161,7 @@ export function registerQuestsModal() {
         actions.add({
           action: 'QuestAccept',
           params: [quest.index * 1],
-          description: `Accepting Quest ${quest.index * 1}`,
+          description: `Accepting Quest ${quest.name}`,
           execute: async () => {
             return api.player.quests.accept(0, quest.index);
           },
@@ -169,11 +172,28 @@ export function registerQuestsModal() {
         actions.add({
           action: 'QuestComplete',
           params: [quest.id],
-          description: `Completing Quest ${quest.index * 1}`,
+          description: `Completing Quest ${quest.name}`,
           execute: async () => {
             return api.player.quests.complete(quest.id);
           },
         });
+      };
+
+      const burnQuestItems = async (indices: number[], amts: number[]) => {
+        actions.add({
+          action: 'ItemBurn',
+          params: [indices, amts],
+          description: `Burning ${indices.length} items`,
+          execute: async () => {
+            return api.player.item.burn(indices, amts);
+          },
+        });
+      };
+
+      const transactions: QuestModalActions = {
+        accept: acceptQuest,
+        complete: completeQuest,
+        burnItems: burnQuestItems,
       };
 
       return (
@@ -191,7 +211,7 @@ export function registerQuestsModal() {
                 ongoing: ongoing,
                 completed: completed,
               }}
-              actions={{ acceptQuest, completeQuest }}
+              actions={transactions}
               utils={utils}
             />
           }
@@ -202,7 +222,7 @@ export function registerQuestsModal() {
           <List
             quests={{ available: filterOutBattlePass(available), ongoing, completed }}
             mode={tab}
-            actions={{ acceptQuest, completeQuest }}
+            actions={transactions}
             utils={utils}
           />
         </ModalWrapper>

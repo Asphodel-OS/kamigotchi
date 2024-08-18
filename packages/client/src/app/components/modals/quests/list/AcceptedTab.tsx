@@ -13,16 +13,14 @@ interface Props {
     ongoing: BaseQuest[];
     completed: BaseQuest[];
   };
-  actions: {
-    accept: (quest: Quest) => void;
-    complete: (quest: Quest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
     parseRequirements: (quest: Quest) => Quest;
     parseObjectives: (quest: Quest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
+    getItemBalance: (index: number) => number;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;

@@ -401,6 +401,13 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
+  function _giveItem(PlayerAccount memory acc, uint32 itemIndex, uint256 amt) internal {
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, acc.id, itemIndex, amt);
+    LibInventory.logItemTotal(components, acc.id, itemIndex, amt);
+    vm.stopPrank();
+  }
+
   function _setPetTrait(uint petID, string memory trait, uint32 traitIndex) internal {
     vm.startPrank(deployer);
     if (trait.eq("BODY")) LibTraitRegistry.setBodyIndex(components, petID, traitIndex);

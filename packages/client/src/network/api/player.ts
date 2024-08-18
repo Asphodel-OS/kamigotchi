@@ -101,6 +101,13 @@ export function createPlayerAPI(systems: any) {
     return systems['system.droptable.item.reveal'].executeTyped(ids);
   }
 
+  ////////////////
+  // ITEMS
+
+  function burnItems(indices: BigNumberish[], amts: BigNumberish[]) {
+    return systems['system.item.burn'].executeTyped(indices, amts);
+  }
+
   /////////////////
   //  FRIENDS
 
@@ -376,6 +383,12 @@ export function createPlayerAPI(systems: any) {
     droptable: {
       reveal: droptableReveal,
     },
+    item: {
+      burn: burnItems,
+      lootbox: {
+        commit: lootboxCommit,
+      },
+    },
     goal: {
       contribute: goalContribute,
       claim: goalClaim,
@@ -383,9 +396,6 @@ export function createPlayerAPI(systems: any) {
     listing: {
       buy: buyFromListing,
       sell: sellToListing,
-    },
-    lootbox: {
-      commit: lootboxCommit,
     },
     node: {
       collect: collectAllFromNode,

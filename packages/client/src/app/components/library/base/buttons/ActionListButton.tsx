@@ -8,12 +8,14 @@ interface Props {
   id: string;
   text: string;
   options: Option[];
+  size?: 'small' | 'medium';
   disabled?: boolean;
 }
 
 export interface Option {
   text: string;
   onClick: Function;
+  disabled?: boolean;
 }
 
 export function ActionListButton(props: Props) {
@@ -35,10 +37,59 @@ export function ActionListButton(props: Props) {
     handleClose();
   };
 
-  const setStyles = () => {
+  const setButtonStyles = () => {
     var styles: any = {};
     if (props.disabled) styles.backgroundColor = '#bbb';
+
+    const size = props.size ?? 'medium';
+    if (size === 'small') {
+      styles.fontSize = '.6vw';
+      styles.margin = '0vw .12vw';
+      styles.padding = '.2vw .5vw';
+      styles.borderRadius = '.3vw';
+      styles.borderWidth = '.1vw';
+    } else if (size === 'medium') {
+      styles.fontSize = '.8vw';
+      styles.margin = '0vw .16vw';
+      styles.padding = '.35vw .7vw';
+      styles.borderRadius = '.4vw';
+      styles.borderWidth = '.15vw';
+    }
+
     return styles;
+  };
+
+  const setMenuStyles = () => {
+    var styles: any = {};
+
+    const size = props.size ?? 'medium';
+    if (size === 'small') {
+      styles.fontSize = '.6vw';
+      styles.borderRadius = '.3vw';
+      styles.borderWidth = '.1vw';
+    } else if (size === 'medium') {
+      styles.fontSize = '.8vw';
+      styles.borderRadius = '.4vw';
+      styles.borderWidth = '.15vw';
+    }
+
+    return styles;
+  };
+
+  const MenuEntry = (option: Option, key: number) => {
+    let styles: any = {};
+    if (option.disabled) {
+      styles.backgroundColor = '#bbb';
+      styles.pointerEvents = 'none';
+    }
+
+    const onClick = option.disabled ? () => {} : () => option.onClick();
+
+    return (
+      <Item key={`MenuEntry-${key}`} onClick={onClick} style={styles}>
+        {option.text}
+      </Item>
+    );
   };
 
   const open = Boolean(anchorEl);
@@ -46,7 +97,7 @@ export function ActionListButton(props: Props) {
 
   return (
     <div>
-      <Button ref={toggleRef} id={props.id} onClick={handleClick} style={setStyles()}>
+      <Button ref={toggleRef} id={props.id} onClick={handleClick} style={setButtonStyles()}>
         {props.text + ' ▾'}
       </Button>
       <Popover
@@ -56,12 +107,8 @@ export function ActionListButton(props: Props) {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Menu>
-          {props.options.map((option, i) => (
-            <Item key={i} onClick={() => onSelect(option)}>
-              {option.text}
-            </Item>
-          ))}
+        <Menu style={setMenuStyles()}>
+          {props.options.map((option, i) => MenuEntry(option, i))}
         </Menu>
       </Popover>
     </div>
@@ -70,15 +117,11 @@ export function ActionListButton(props: Props) {
 
 const Button = styled.button`
   background-color: #fff;
-  border: solid black 0.15vw;
-  border-radius: 0.4vw;
   color: black;
   display: flex;
 
   font-family: Pixel;
-  font-size: 0.8vw;
   justify-content: center;
-  padding: 0.35vw 0.7vw;
   text-align: center;
   text-decoration: none;
 
@@ -105,7 +148,6 @@ const Item = styled.div`
   justify-content: left;
 
   font-family: Pixel;
-  font-size: 0.8vw;
 
   cursor: pointer;
   pointer-events: auto;

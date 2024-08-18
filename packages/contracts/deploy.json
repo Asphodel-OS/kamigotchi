@@ -155,7 +155,9 @@
         "DescriptionComponent",
         "ExperienceComponent",
         "ForComponent",
+        "HasFlagComponent",
         "IDFromComponent",
+        "IdHolderComponent",
         "IDToComponent",
         "IsRegistryComponent",
         "IsConsumableComponent",
@@ -330,6 +332,10 @@
         "ValueComponent",
         "ValuesComponent"
       ]
+    },
+    {
+      "name": "ItemBurnSystem",
+      "writeAccess": ["TimeLastComponent", "ValueComponent"]
     },
     {
       "name": "Farm20ProxySystem",

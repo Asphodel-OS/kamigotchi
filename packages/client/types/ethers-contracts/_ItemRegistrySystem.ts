@@ -36,6 +36,7 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "remove(uint32)": FunctionFragment;
+    "setUnburnable(uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -48,6 +49,7 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
       | "execute"
       | "owner"
       | "remove"
+      | "setUnburnable"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -81,6 +83,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setUnburnable",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -98,6 +104,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setUnburnable",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -183,6 +193,11 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setUnburnable(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -223,6 +238,11 @@ export interface _ItemRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setUnburnable(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -259,6 +279,11 @@ export interface _ItemRegistrySystem extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     remove(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setUnburnable(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -315,6 +340,11 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setUnburnable(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -352,6 +382,11 @@ export interface _ItemRegistrySystem extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     remove(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setUnburnable(
       index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

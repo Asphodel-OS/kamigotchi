@@ -23,10 +23,7 @@ interface Props {
     ongoing: BaseQuest[];
     completed: BaseQuest[];
   };
-  actions: {
-    acceptQuest: (quest: BaseQuest) => void;
-    completeQuest: (quest: BaseQuest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
     filterForBattlePass: (quests: Quest[]) => Quest[];
@@ -98,10 +95,10 @@ export const Battlepass = (props: Props) => {
 
   // get the available action on a Milestone Quest
   const getAction = (quest: Quest) => {
-    if (isAvailable(quest)) return () => actions.acceptQuest(quest);
+    if (isAvailable(quest)) return () => actions.accept(quest);
     if (isCompletable(quest)) {
       const playerQuest = quests.ongoing.find((q) => q.index === quest.index);
-      return () => actions.completeQuest(playerQuest!);
+      return () => actions.complete(playerQuest!);
     }
   };
 

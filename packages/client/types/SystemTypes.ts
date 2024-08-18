@@ -31,6 +31,7 @@ import { FriendCancelSystem } from "./ethers-contracts/FriendCancelSystem";
 import { FriendRequestSystem } from "./ethers-contracts/FriendRequestSystem";
 import { GoalClaimSystem } from "./ethers-contracts/GoalClaimSystem";
 import { GoalContributeSystem } from "./ethers-contracts/GoalContributeSystem";
+import { ItemBurnSystem } from "./ethers-contracts/ItemBurnSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
 import { LootboxCommitSystem } from "./ethers-contracts/LootboxCommitSystem";
@@ -97,6 +98,7 @@ export type SystemTypes = {
   "system.Friend.Request": FriendRequestSystem;
   "system.Goal.Claim": GoalClaimSystem;
   "system.Goal.Contribute": GoalContributeSystem;
+  "system.item.burn": ItemBurnSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
   "system.Lootbox.Commit": LootboxCommitSystem;

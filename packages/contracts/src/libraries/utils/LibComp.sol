@@ -11,6 +11,19 @@ import { Stat, StatLib } from "components/types/Stat.sol";
 /// @notice a library for useful component operations
 library LibComp {
   /////////////////
+  // CHECKS
+
+  function allHave(IComp component, uint256[] memory ids) internal view returns (bool) {
+    return allHave(component, ids, true);
+  }
+
+  function allHave(IComp component, uint256[] memory ids, bool has) internal view returns (bool) {
+    bool[] memory results = hasBatch(component, ids);
+    for (uint256 i; i < ids.length; i++) if (results[i] == !has) return false;
+    return true;
+  }
+
+  /////////////////
   // EXTRACTS
 
   function safeExtractUint256(IComp component, uint256 entity) internal returns (uint256) {

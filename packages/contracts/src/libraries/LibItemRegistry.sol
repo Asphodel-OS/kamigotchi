@@ -21,6 +21,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // Registries hold shared information on individual entity instances in the world.
@@ -132,6 +133,8 @@ library LibItemRegistry {
     LibStat.unsetSlots(components, id);
     LibStat.unsetStamina(components, id);
     ExperienceComponent(getAddressById(components, ExpCompID)).remove(id);
+
+    LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
   }
 
   /////////////////
@@ -140,6 +143,17 @@ library LibItemRegistry {
   // check whether an entity is an item
   function isItem(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id);
+  }
+
+  function isBurnable(IUintComp components, uint32 index) internal view returns (bool) {
+    uint256 id = genID(index);
+    return !LibFlag.has(components, id, "ITEM_UNBURNABLE");
+  }
+
+  function isBurnable(IUintComp components, uint32[] memory indices) internal view returns (bool) {
+    uint256[] memory ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+    return LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false);
   }
 
   // check whether an entity is consumable by its index
@@ -197,6 +211,10 @@ library LibItemRegistry {
 
   /////////////////
   // SETTERS
+
+  function setUnburnable(IUintComp components, uint256 id) internal {
+    LibFlag.setFull(components, id, "ITEM_UNBURNABLE");
+  }
 
   function setIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);

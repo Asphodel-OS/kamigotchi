@@ -58,11 +58,11 @@ library LibFlag {
   /// @notice sets a flag, with ID already generated
   function _set(IUintComp components, uint256 id, bool state) internal {
     if (state) HasFlagComponent(getAddressById(components, HasFlagCompID)).set(id);
-    else unset(components, id);
+    else remove(components, id);
   }
 
-  /// @notice unsets a flag. does not remove IdHolder or Type (if any)
-  function unset(IUintComp components, uint256 id) internal {
+  /// @notice removes a flag. does not remove IdHolder or Type (if any)
+  function remove(IUintComp components, uint256 id) internal {
     HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
   }
 
@@ -101,6 +101,32 @@ library LibFlag {
   ) internal view returns (bool) {
     uint256 id = genID(parentID, flagType);
     return HasFlagComponent(getAddressById(components, HasFlagCompID)).has(id);
+  }
+
+  /// @notice checks if all entities have/doesn't have a flag
+  /// @param state if true, checks if all entites have flag. opposite if false
+  function checkAll(
+    IUintComp components,
+    uint256[] memory parentIDs,
+    string memory flagType,
+    bool state
+  ) internal view returns (bool) {
+    uint256[] memory ids = new uint256[](parentIDs.length);
+    for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagType);
+    return getComponentById(components, HasFlagCompID).allHave(ids, state);
+  }
+
+  /// @notice checks if all entities have/doesn't have a flag
+  /// @param state if true, checks if all entites have flag. opposite if false
+  function checkAll(
+    IUintComp components,
+    uint256[] memory parentIDs,
+    string[] memory flagTypes,
+    bool state
+  ) internal view returns (bool) {
+    uint256[] memory ids = new uint256[](parentIDs.length);
+    for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagTypes[i]);
+    return getComponentById(components, HasFlagCompID).allHave(ids, state);
   }
 
   //////////////////

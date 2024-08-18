@@ -44,7 +44,7 @@ I wonder how you’re specializing your Kamigotchi….",Have completed There are
 "Nedu, Lethe Asphodel",7,There are even more levels to this,Ingame,Quest,,,,,,,No,20,,"It seems you’re a real Kamigotchi trainer. I appreciate the dedication. 
 
 I want to see a level 20 Kamigotchi, now. I’ve got a few XP candies here as a reward. ","Isn’t it beautiful, to see your Kamigotchi grow? ",Have completed There are more levels to this (6),Raise a Kamigotchi to level 20,3 Medium XP Candy,,,
-,7,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are levels to this II (6),6,,No,,,,,,,,,,
+,7,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are more levels to this (6),6,,No,,,,,,,,,,
 ,7,,Ingame,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Raise a Kamigotchi to level 20,,20,No,,,,,,,,,,
 ,7,,Ingame,Reward,ITEM,,,2 Medium XP Candy,105,2,No,,,,,,,,,,
 "Lethe Asphodel, torngarsuk, vaitarna",8,Spring Rites,Ingame,Quest,,,,,,,No,5,,"Your first Kamigotchi has fallen. But Death is not permanent in this world. 
@@ -99,7 +99,6 @@ Lethe Asphodel,12,Proving Yourself,Ingame,Quest,,,,,,,No,0,,"You’re doing well
 Completing quests for me will raise your REPUTATION. As your REPUTATION grows, you’ll be able to claim rewards that manifest both within and outside of this world. 
 
 For now, raise your REPUTATION to 25 if you want a second testnet Kamigotchi. ",,Have 10 Reputation,Have 25 Reputation,1 Gacha Ticket,,,
-,12,,Ingame,Requirement,REPUTATION,MIN,,Have 10 REPUTATION,1,10,No,,,,,,,,,,
 ,12,,Ingame,Objective,REPUTATION,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,,,
 ,12,,Ingame,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
 Lethe Asphodel,13,Further Progression,Ingame,Quest,,,,,,,No,0,,"You’re getting started. 
@@ -107,7 +106,6 @@ Lethe Asphodel,13,Further Progression,Ingame,Quest,,,,,,,No,0,,"You’re getting
 There are things to come for those with sufficient REPUTATION. Quests are one thing, but if you explore this world you’ll find other ways to raise your REPUTATION. 
 
 Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 12 Completed (Proving Yourself),Have 100 Reputation,1 Gacha Ticket,,,
-,13,,Ingame,Requirement,QUEST,COMPLETE,,Quest 12,12,,No,,,,,,,,,,
 ,13,,Ingame,Objective,REPUTATION,MIN,CURR,Have 100 REPUTATION,1,100,No,,,,,,,,,,
 ,13,,Ingame,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
 Nedu,14,The Kamigotchi Who Shall Be Named,Ingame,Quest,,,,,,,No,5,,"Deep within the forest lies a shrine - beside it is a board capable of renaming your Kamigotchi. Seek it out and bless one of your Kamigotchi with a new name. 
@@ -161,7 +159,6 @@ Why don’t you try and fix it? ",,"Goal 1 Has Not Been Completed, Ode To Musu (
 This world won’t last…….. but I can give you something that will. I need help here….. so work your reputation up to 300 and I’ll give you an NFT. We’ve got plans for this baby, but for now….. 
 
 This NFT won’t be available after the testnet period ends. Good luck.",,At least 50 Reputation,Have 300 Reputation,"Kamigotchi World Passport (NFT) ",,,
-,20,,Ingame,Requirement,REPUTATION,MIN,,"50 Reputation ",1,50,No,,,,,,,,,,
 ,20,,Ingame,Objective,REPUTATION,MIN,CURR,Have 300 Reputation,1,300,No,,,,,,,,,,
 ,20,,Ingame,Reward,ITEM,,,"Kamigotchi World Passport (NFT) ",2,1,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",21,Daily Grind,Ingame,Quest,,,,,,,No,5,,"This world follows its own cycles. The calendar here isn't quite the same as in your world.... for example, things here run on a 36 hour day. Have you noticed?
@@ -197,10 +194,78 @@ Lethe Asphodel,26,Searching for somebody,For Implementation,Quest,,,,Reroll 10 t
 Lethe Asphodel,26,,For Implementation,Requirement,PET_REROLL,MIN,,Have rerolled at least 3 times,,3,No,,,,,,,,,,
 Lethe Asphodel,26,,For Implementation,Objective,PET_REROLL,MIN,INC,Reroll 10 times,,10,No,,,,,,,,,,
 Lethe Asphodel,26,,For Implementation,Reward,ITEM,,,2x Giftbox,10001,2,No,,,,,,,,,,
-Lethe Asphodel,27,,In progress,Quest,,,,,,,No,5,,,,,,,,,
-Lethe Asphodel,27,,In progress,Requirement,,,,,,,No,,,,,,,,,,
-Lethe Asphodel,27,,In progress,Objective,,,,,,,No,,,,,,,,,,
-Lethe Asphodel,27,,In progress,Reward,,,,,,,No,,,,,,,,,,
+Lethe Asphodel,27,Expanding Your Team,For Implementation,Quest,,,,Have 150 REPUTATION,,,No,,,"If you can make it to 150 REPUTATION, I'm comfortable giving you access to another Kamigotchi. It just makes sense to support you more as you help the community.…",,,Have 150 REPUTATION,Gacha Ticket,,,
+,27,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 150 REPUTATION,1,150,No,,,,,,,,,,
+,27,,For Implementation,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
+Lethe Asphodel,28," Another One",For Implementation,Quest,,,,Have 200 REPUTATION,,,No,,,"You'll really need to dedicate yourself to completing Quests if if you want your fifth Kami. But of course, this is only a step on the road to 300 REPUTATION… That's the real reward, trust us. ",,,Have 150 REPUTATION,Gacha Ticket,,,
+,28,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 200 REPUTATION,1,200,No,,,,,,,,,,
+,28,,For Implementation,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
+Lethe Asphodel,29,"A Full House ",For Implementation,Quest,,,,Have 250 REPUTATION,,,No,,,"This is the last Ticket it'll be possible to get within this world. If you can make it this far, you're very close to snatching that Passport… you can do this.",,,Have 150 REPUTATION,Gacha Ticket,,,
+,29,,For Implementation,Objective,REPUTATION,MIN,CURR,Have 250 REPUTATION,1,250,No,,,,,,,,,,
+,29,,For Implementation,Reward,MINT20,,,1 Gacha Ticket,,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",31,Kamigotchi Development 301,For Implementation,Quest,,,,Have a level 30 Kamigotchi,,30,No,10,,"You're really getting into the rhythm of managing your Kamigotchi. I hope by now you've started to pay careful attention to the choices you make when developing your Kami.... It can be difficult to decide whether to focus on one tree or spread your attention across all of them.
+
+Anyway: Now for a Level 30 Kami. You can do it.",,"Have completed ""There are even more levels to this"" (7)",Have a level 30 Kamigotchi,2x Huge XP Candy,,,
+"Lethe Asphodel, Nedu",31,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""There are even more levels to this"" (7)",7,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",31,,For Implementation,Objective,KAMI_LEVEL_HIGHEST,MIN,CURR,Have a level 30 Kamigotchi,,30,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",31,,For Implementation,Reward,ITEM,,,2x Huge XP Candy,117,2,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",32,Building Materials,For Implementation,Quest,,,,Give 5 Sticks and 5 Stones,,,No,5,,"You should have noticed by now that your Kami can also Scavenge while Harvesting. You build up the Scavenging bar by harvesting Musu; once it's full, you can claim additional items your Kami found while Harvesting. 
+
+I need to build up a stockpile of basic crafting materials right now... Can you take a look around and bring me some wood and stone?",,"Have completed ""Got MUSU?"" (15)",Give 5 Sticks and 5 Stones,2x Medium XP Candy,,,
+"Lethe Asphodel, Nedu",32,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Got MUSU?"" (15)",15,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",32,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 5 Sticks,11006,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",32,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 5 Stones,11002,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",32,,For Implementation,Reward,ITEM,,,2x Medium XP Candy,105,2,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",33,Recycling Duty,For Implementation,Quest,,,,Give 5 Plastic Bottles,,,No,5,,"The exact items your Kami can Harvest depend on the Tile you're in. Some tiles have much rarer and more interesting items to find..... Keep your eye out as you explore the world. 
+
+I crave Microplastics at this time. Find me some Plastic Bottles.",,"Have completed ""Building Materials"" (32)",Give 5 Plastic Bottles,2x Large XP Candy,,,
+"Lethe Asphodel, Nedu",33,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Building Materials"" (32)",32,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",33,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 5 Plastic Bottles,11001,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",33,,For Implementation,Reward,ITEM,,,2x Large XP Candy,104,2,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",34,Scrapyard Feast,For Implementation,Quest,,,,Feed 5 Cheeseburgers To Kamigotchi,,,No,5,,"Did you know it's possible to find edible Cheeseburgers in the scrapyard? Well, it totally is. If you're interested in saving your MUSU, that's one way to find food....
+
+Personally, I want to take samples. Find me 5 of them and try feeding them to your Kami.",,"Have completed ""Building Materials"" (32)",Feed 5 Cheeseburgers To Kamigotchi,1x Huge XP Candy,,,
+"Lethe Asphodel, Nedu",34,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Building Materials"" (32) ",32,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",34,,For Implementation,Objective,ITEM_USE,MIN,INC,Feed 5 Cheeseburgers To Kamigotchi,116,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",34,,For Implementation,Reward,ITEM,,,1x Huge XP Candy,117,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",35,Fruits Of The Forest,For Implementation,Quest,,,,Give 10 Pinecones,,,No,10,,"Have you ventured deeper into the Forest, yet? You can find Pinecones there. 
+
+Pinecones can be used to make Pine Pollen, which will be very important for Crafting various types of items....",,"Have completed ""Recycling Duty"" (33)",Give 10 Pinecones,2x Pine Pollen,,,
+"Lethe Asphodel, Nedu",35,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Recycling Duty"" (33)",33,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",35,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 10 Pinecones,11008,10,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",35,,For Implementation,Reward,ITEM,,,2x Pine Pollen,11005,2,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",36,Elusive Herbs,For Implementation,Quest,,,,"Give 3 Mint ",,,No,5,,"If you search very carefully, I believe there's one place in the world where it's possible to find Mint..... While elusive, I think it may be useful one day. 
+
+For now, bring me some and I'll give you a Mochi. Deal?",,"Have completed ""Scrapyard Feast"" (34)",Give 3 Mint,1x Mana Mochi,,,
+"Lethe Asphodel, Nedu",36,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Scrapyard Feast"" (34) ",34,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",36,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 3 Mint,11007,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",36,,For Implementation,Reward,ITEM,,,1x Mana Mochi,114,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",37,Scrap Metal Hunter,For Implementation,Quest,,,,"Give 10 Scrap Metal ",,,No,5,,"I need a very large quantity of tin cans for a project. Hanging out in the scrapyard seems like your thing. Bring me a whole pile of them.
+
+Yes, I know it's degrading. That's why I'm offering you a Mochi.",,"Have completed ""Building Materials"" (32)",Give 10 Scrap Metal,1x Sunset Apple Mochi,,,
+"Lethe Asphodel, Nedu",37,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Building Materials"" (32) ",32,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",37,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 10 Scrap Metal,11009,10,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",37,,For Implementation,Reward,ITEM,,,1x Sunset Apple Mochi,112,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",38,Research Samples,For Implementation,Quest,,,,Give 5 Better Ice Creams,,,No,5,,"I don't know if you trust Mina.... but I have no idea where Mina got those Ice Creams from, or how you're even able to eat them. 
+
+I need samples of the things, because I'm very interested in finding out. Bring me some. Fast. This is important to me...",,"Have completed ""Supporting Local Businesses"" (9) ",Give 5 Better Ice Creams,"1 Gaokerena Mochi ",,,
+"Lethe Asphodel, Nedu",38,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Supporting Local Businesses"" (9)",9,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",38,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 5 Better Ice Creams,108,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",38,,For Implementation,Reward,ITEM,,,1x Gaokerena Mochi,115,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",39,Industrial Quantities,For Implementation,Quest,,,,Give 20 Sticks and 20 Stones,,,No,10,,"You're really becoming a pro at this scavenging thing. 
+
+Well, time to practice the basics. Can you bring me uh, a ton of wood and stone? I need more. For that project of mine. We're almost there.....",,"Have completed ""Scrap Metal Hunter"" (37)",Give 20 Sticks and 20 Stones,3x Large XP Candy,,,
+"Lethe Asphodel, Nedu",39,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Scrap Metal Hunter"" (37)",37,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",39,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 20 Sticks,11006,20,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",39,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 20 Stones,11002,20,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",39,,For Implementation,Reward,ITEM,,,3x Large XP Candy,104,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",10001,Desperate Measures,Ingame,Quest,,,,,,,No,15,,"Nice to see you again.
+
+We've had a lot of complaints about a specific individual recently. We'd appreciate it if you could help us... do something about this. The rewards will be good.",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,5x Giftbox,10001,5,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",10001,,Ingame,Reward,ITEM,,,1x Large XP Candy,104,1,No,,,,,,,,,,
 ,10002,Fountain of Revival [Daily],Ingame,Quest,,,,,,,Yes,,,"Kamigotchi rise, fall, and rise again......
 
 Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",,,
@@ -279,10 +344,10 @@ Nedu,,Have you considered not dying?,Needs Revision Work,,,,,,,,No,20,,"The cycl
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Quest 31 completed (Back from the dead!),31,,No,,,,,,,,,,
 ,,,Needs Revision Work,Objective,KAMI_REVIVE,MIN,INC,Revive 10 Kamigotchi,,10,No,,,,,,,,,,
 ,,,Needs Revision Work,Reward,ITEM,,,2 Large XP Candy,104,2,No,,,,,,,,,,
-,33,Daily quest: Harvesting,Shelved,Quest,,,,,,,Yes,0,,Harvest 200 $MUSU,,,,,,,
-,33,,Shelved,Requirement,QUEST,COMPLETE,,Complete Back to the mines (5),5,,No,,,,,,,,,,
-,33,,Shelved,Objective,COIN_TOTAL,MIN,INC,Harvest 200 $MUSU,,200,No,,,,,,,,,,
-,33,,Shelved,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,,,
+,,Daily quest: Harvesting,Shelved,Quest,,,,,,,Yes,0,,Harvest 200 $MUSU,,,,,,,
+,,,Shelved,Requirement,QUEST,COMPLETE,,Complete Back to the mines (5),5,,No,,,,,,,,,,
+,,,Shelved,Objective,COIN_TOTAL,MIN,INC,Harvest 200 $MUSU,,200,No,,,,,,,,,,
+,,,Shelved,Reward,ITEM,,,1 Giftbox,10001,1,No,,,,,,,,,,
 Lethe Asphodel,,Fountain of Revival,Needs Revision Work,Quest,,,,,,,No,5,,"We know it’s tough to survive out there. Take this Ribbon. You’ll be able to collect one each week for free as long as you’re holding a Kamigotchi. ",Enjoy.,"Own At Least 1 Kamigotchi, Completed Quest 8 (Spring Rites)",None,1 Ribbon,,REPEATS ONCE PER WEEK,
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Completed Quest 8 (Spring Rites),8,,No,,,,,,,,,,
 ,,,Needs Revision Work,Requirement,KAMI,MIN,CURR,Own At Least 1 Kamigotchi,,1,No,,,,,,,,,,
@@ -526,3 +591,6 @@ This is food for Kamigotchi. ",,,,,,,
 vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
 vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
 vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
+torngarsuk,,Scavenge 10 Plastic Bottles,In progress,Quest,,,,,,,No,,,"Hopefully you’ve kept all those plastic bottles from your gift boxes. Scavenge ten of them to help clean up Kamigotchi World.
+A daunting task, but every little bit helps…",,,Scavenge 10 Plastic Bottles,,,,
+torngarsuk,,Flowers for Mina,In progress,Quest,,,,,,,No,,,"Mina wants you to forage Daffodils for her. She left out the why, but it’s probably be best to stay in her good graces and do what she asks.",,,Scavenge 5 Daffodils,,,,

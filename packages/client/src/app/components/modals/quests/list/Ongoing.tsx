@@ -8,16 +8,14 @@ import { QuestCard } from './QuestCard';
 
 interface Props {
   quests: BaseQuest[];
-  actions: {
-    accept: (quest: Quest) => void;
-    complete: (quest: Quest) => void;
-  };
+  actions: QuestModalActions;
   utils: {
     populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
     parseRequirements: (quest: Quest) => Quest;
     parseObjectives: (quest: Quest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
+    getItemBalance: (index: number) => number;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -66,7 +64,7 @@ export const OngoingQuests = (props: Props) => {
           key={q.id}
           quest={q}
           status={'ONGOING'}
-          utils={{ describeEntity }}
+          utils={utils}
           actions={actions}
           imageCache={imageCache}
         />

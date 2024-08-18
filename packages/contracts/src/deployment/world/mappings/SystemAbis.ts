@@ -31,6 +31,7 @@ import FriendCancelSystem from "../../../../../client/abi/FriendCancelSystem.jso
 import FriendRequestSystem from "../../../../../client/abi/FriendRequestSystem.json";
 import GoalClaimSystem from "../../../../../client/abi/GoalClaimSystem.json";
 import GoalContributeSystem from "../../../../../client/abi/GoalContributeSystem.json";
+import ItemBurnSystem from "../../../../../client/abi/ItemBurnSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
 import LootboxCommitSystem from "../../../../../client/abi/LootboxCommitSystem.json";
@@ -97,6 +98,7 @@ export const SystemAbis = {
   "system.Friend.Request": FriendRequestSystem.abi,
   "system.Goal.Claim": GoalClaimSystem.abi,
   "system.Goal.Contribute": GoalContributeSystem.abi,
+  "system.item.burn": ItemBurnSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Lootbox.Commit": LootboxCommitSystem.abi,
