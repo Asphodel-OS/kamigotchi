@@ -26,6 +26,7 @@ import screwdriver from './screwdriver.png';
 import stone from './stone.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
 import wooden_stick from './wooden_stick.png';
+import xp_candy_huge from './xp_candy_huge.png';
 import xp_candy_large from './xp_candy_large.png';
 import xp_candy_medium from './xp_candy_medium.png';
 import xp_candy_small from './xp_candy_small.png';
@@ -59,6 +60,7 @@ export const ItemImages = {
   stone: stone,
   sunset_apple_mochi: sunset_apple_mochi,
   wooden_stick: wooden_stick,
+  xp_candy_huge: xp_candy_huge,
   xp_candy_large: xp_candy_large,
   xp_candy_medium: xp_candy_medium,
   xp_candy_small: xp_candy_small,
