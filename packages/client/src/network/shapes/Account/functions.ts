@@ -33,7 +33,7 @@ export const calcIdleTime = (account: Account) => {
   return Date.now() / 1000 - account.time.last;
 };
 
-export const calcStandardIdleTime = (components: Components, entityIndex: EntityIndex) => {
+const calcStandardIdleTime = (components: Components, entityIndex: EntityIndex) => {
   const { LastActionTime } = components;
   return Date.now() / 1000 - (getComponentValue(LastActionTime, entityIndex)?.value ?? 0) * 1;
 };

@@ -1,12 +1,18 @@
 import { EntityIndex, Has, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
 
-import { Components } from 'network/';
+import { Components, NetworkLayer } from 'network/';
 
 export type QueryOptions = {
   index?: number;
   operator?: string;
   owner?: string;
   name?: string;
+};
+
+export const queryFromBurner = (network: NetworkLayer): EntityIndex => {
+  const { components } = network;
+  const connectedAddress = network.network.connectedAddress.get();
+  return (queryByOperator(components, connectedAddress ?? '') ?? 0) as EntityIndex;
 };
 
 // query Account entities generally with query options. return matching entity indices

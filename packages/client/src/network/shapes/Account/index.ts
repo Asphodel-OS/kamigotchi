@@ -1,4 +1,4 @@
-export { calcStamina, calcStaminaPercent, getAccessibleKamis, hasFood } from './functions';
+export { calcStaminaPercent, getAccessibleKamis, getStamina, hasFood } from './functions';
 export {
   getByID as getAccountByID,
   getByIndex as getAccountByIndex,
@@ -14,6 +14,7 @@ export {
   queryByName as queryAccountByName,
   queryByOperator as queryAccountByOperator,
   queryByOwner as queryAccountByOwner,
+  queryFromBurner as queryAccountFromBurner,
 } from './queries';
 export {
   getMusuRankings as getAccountMusuRankings,

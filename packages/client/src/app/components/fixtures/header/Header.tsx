@@ -6,7 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
-import { calcStaminaPercent, getAccountEntityFromBurner, getStamina } from 'network/shapes/Account';
+import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getMusuBalance } from 'network/shapes/Item';
 import { Stat } from 'network/shapes/Stats';
 import { getCurrPhase, getKamiTime, getPhaseIcon, getPhaseName } from 'utils/time';
@@ -25,7 +25,7 @@ export function registerAccountHeader() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const accountEntity = getAccountEntityFromBurner(network);
+          const accountEntity = queryAccountFromBurner(network);
 
           return {
             data: {
