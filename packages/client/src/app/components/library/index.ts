@@ -15,6 +15,7 @@ export {
 
 export { AccountCard } from './AccountCard';
 export { CopyButton } from './CopyButton';
+export { EmptyText } from './EmptyText';
 export { FarcasterConnect } from './FarcasterConnect';
 export { GasGauge } from './GasGauge';
 export { HelpIcon } from './HelpIcon';

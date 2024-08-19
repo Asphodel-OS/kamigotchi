@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
-import styled from 'styled-components';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
-import { ModalWrapper } from 'app/components/library';
+import { EmptyText, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
@@ -226,25 +225,13 @@ export function registerNodeModal() {
               actions={{ collect, feed, liquidate, stop }}
             />
           ) : (
-            <EmptyText>
-              There are no Kamis on this node. <br />
-              Maybe that's an opportunity..
-            </EmptyText>
+            <EmptyText
+              text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
+              size={1}
+            />
           )}
         </ModalWrapper>
       );
     }
   );
 }
-
-const EmptyText = styled.div`
-  height: 100%;
-  margin: 1.5vh;
-  padding: 1.2vh 0vw;
-
-  color: #333;
-  font-family: Pixel;
-  font-size: 1.8vh;
-  line-height: 4.5vh;
-  text-align: center;
-`;

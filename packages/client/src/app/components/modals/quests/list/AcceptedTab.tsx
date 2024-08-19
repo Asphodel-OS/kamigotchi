@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
+import { EmptyText } from '../../../library/EmptyText';
 import { CompletedQuests } from './Completed';
-import { EmptyText } from './EmptyText';
 import { OngoingQuests } from './Ongoing';
 
 interface Props {

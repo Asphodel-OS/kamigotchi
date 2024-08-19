@@ -2,14 +2,19 @@ import styled from 'styled-components';
 
 interface Props {
   text: string[];
+  size?: number;
 }
 
 export const EmptyText = (props: Props) => {
-  const { text } = props;
+  const { text, size } = props;
+  const scale = size ?? 1.2;
+
   return (
     <Container>
       {text.map((t: string) => (
-        <Text key={t}>{t}</Text>
+        <Text key={t} scale={scale}>
+          {t}
+        </Text>
       ))}
     </Container>
   );
@@ -26,8 +31,8 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Text = styled.div`
-  font-size: 1.2vw;
-  line-height: 3.6vw;
+const Text = styled.div<{ scale: number }>`
+  font-size: ${({ scale }) => scale}vw;
+  line-height: ${({ scale }) => 3 * scale}vw;
   text-align: center;
 `;
