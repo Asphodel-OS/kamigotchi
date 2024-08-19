@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { IconListButton, Tooltip } from 'app/components/library';
 import { Option } from 'app/components/library/base/buttons/IconListButton';
-import { useVisibility } from 'app/stores';
 import { Account, getAccessibleKamis } from 'network/shapes/Account';
 import { Inventory, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
@@ -21,7 +20,6 @@ interface Props {
 export const ItemGrid = (props: Props) => {
   const { account, inventories, actions } = props;
   const { feedKami, feedAccount, openLootbox } = actions;
-  const { modals, setModals } = useVisibility();
 
   /////////////////
   // DISPLAY

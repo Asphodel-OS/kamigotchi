@@ -7,7 +7,6 @@ import { uuid } from '@mud-classic/utils';
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/stores';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';
@@ -43,15 +42,9 @@ export function registerInventoryModal() {
 
     // Render
     ({ network, data }) => {
-      const {
-        actions,
-        api,
-        systems,
-        world,
-        localSystems: { DTRevealer },
-      } = network;
+      const { actions, api, systems, world, localSystems } = network;
+      const { DTRevealer } = localSystems;
       const { account } = data;
-      const { modals, setModals } = useVisibility();
 
       /////////////////
       // SUBSCRIPTIONS
@@ -130,7 +123,7 @@ export function registerInventoryModal() {
       // INTERPRETATION
 
       const getInventories = () => {
-        const inventories = account.inventories || [];
+        const inventories = [...(account.inventories ?? [])];
         if (ticketBal) {
           const numTicketsRaw = ticketBal[0].result ?? 0n;
           const numTicketsDecimals = ticketBal[1].result ?? 18;
