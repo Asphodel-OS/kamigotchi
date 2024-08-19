@@ -11,6 +11,7 @@ export const MapMenuButton = () => {
     emaBoard: false,
     kami: false,
     leaderboard: false,
+    merchant: false,
     nameKami: false,
     party: false,
   };

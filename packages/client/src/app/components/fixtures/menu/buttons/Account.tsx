@@ -14,6 +14,7 @@ export const AccountMenuButton = () => {
     kami: false,
     leaderboard: false,
     map: false,
+    merchant: false,
     nameKami: false,
     party: false,
   };
