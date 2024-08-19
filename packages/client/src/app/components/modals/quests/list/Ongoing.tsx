@@ -6,6 +6,9 @@ import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { QuestCard } from './QuestCard';
 
+const STALE_TIME = 1500;
+const REFRESH_TIME = 3333;
+
 interface Props {
   quests: BaseQuest[];
   actions: QuestModalActions;
@@ -23,31 +26,33 @@ interface Props {
 
 export const OngoingQuests = (props: Props) => {
   const { quests, utils, actions, imageCache, isVisible } = props;
-  const { describeEntity, populate, parseObjectives } = utils;
+  const { populate, parseObjectives } = utils;
   const { modals } = useVisibility();
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(0);
 
   // time trigger to use for periodic refreshes
   useEffect(() => {
-    const timerId = setInterval(() => setLastRefresh(Date.now()), 3000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
+    const timerId = setInterval(() => setLastRefresh(Date.now()), REFRESH_TIME);
+    return () => clearInterval(timerId);
   }, []);
 
-  // load up the data the first time this section is opened
+  // always update if the list of quests changes
   useEffect(() => {
-    if (hasLoaded) return;
     update();
-    setHasLoaded(true);
+  }, [quests.length]);
+
+  // update when this tab is opened or data changes if stale
+  useEffect(() => {
+    const isStale = Date.now() - lastUpdate > STALE_TIME;
+    if (modals.quests && isVisible && isStale) update();
   }, [modals.quests, isVisible]);
 
-  // updates data every cycle when this list is visible
+  // update data every cycle when this list is visible
   useEffect(() => {
     if (modals.quests && isVisible) update();
-  }, [lastRefresh, modals.quests, quests.length]);
+  }, [lastRefresh]);
 
   const update = async () => {
     const fullQuests = quests.map((q) => populate(q));
@@ -55,6 +60,7 @@ export const OngoingQuests = (props: Props) => {
     const parsed = filtered.map((q: Quest) => parseObjectives(q));
     const sorted = sortOngoingQuests(parsed);
     setCleaned(sorted);
+    setLastUpdate(Date.now());
   };
 
   return (
