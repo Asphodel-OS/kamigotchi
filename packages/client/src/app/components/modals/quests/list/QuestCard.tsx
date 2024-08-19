@@ -42,7 +42,7 @@ export const QuestCard = (props: Props) => {
 
   const AcceptButton = (quest: Quest) => {
     return (
-      <Overlay bottom={0.8} right={0.8}>
+      <Overlay key={'accept-button'} bottom={0.8} right={0.8}>
         <ActionButton onClick={() => accept(quest)} text='Accept' noMargin />
       </Overlay>
     );
@@ -50,7 +50,7 @@ export const QuestCard = (props: Props) => {
 
   const CompleteButton = (quest: Quest) => {
     return (
-      <Overlay bottom={0.8} right={0.8}>
+      <Overlay key={'complete-button'} bottom={0.8} right={0.8}>
         <ActionButton
           onClick={() => complete(quest)}
           text='Complete'
@@ -103,41 +103,31 @@ export const QuestCard = (props: Props) => {
     if (!reward) return <></>;
 
     const key = `faction-${reward.target.type}-${reward.target.index}`;
-    if (imageCache.has(key)) return imageCache.get(key);
+    if (!imageCache.has(key)) {
+      const icon = getFactionImage('agency');
+      const component = <Image src={icon} size={1.8} />;
+      imageCache.set(key, component);
+    }
 
-    const icon = getFactionImage('agency');
-    const component = <Image src={icon} size={1.8} />;
-
-    imageCache.set(key, component);
-    return component;
+    return imageCache.get(key);
   };
 
   // get the Reward image component of a Quest
   const RewardImage = (reward: Reward) => {
     if (reward.target.type === 'NFT') return <div />;
+
     const key = `reward-${reward.target.type}-${reward.target.index}`;
-    if (imageCache.has(key)) return imageCache.get(key);
+    if (!imageCache.has(key)) {
+      const entity = describeEntity(reward.target.type, reward.target.index || 0);
+      const component = (
+        <Tooltip key={key} text={[entity.name]} direction='row'>
+          <Image src={entity.image} size={1.5} />
+        </Tooltip>
+      );
+      imageCache.set(key, component);
+    }
 
-    const entity = describeEntity(reward.target.type, reward.target.index || 0);
-    const component = (
-      <Tooltip key={key} text={[entity.name]} direction='row'>
-        <Image src={entity.image} size={1.5} />
-      </Tooltip>
-    );
-
-    imageCache.set(key, component);
-    return component;
-  };
-
-  const ObjectiveRow = (objective: Objective) => {
-    const text = getObjectiveText(objective);
-
-    return (
-      <Row>
-        <ConditionText key={objective.id}>{text}</ConditionText>
-        {ItemBurnButton(objective)}
-      </Row>
-    );
+    return imageCache.get(key);
   };
 
   const Objectives = (quest: Quest) => {
@@ -145,7 +135,12 @@ export const QuestCard = (props: Props) => {
     return (
       <Section key='objectives'>
         <SubTitle>Objectives</SubTitle>
-        {quest.objectives.map((o) => ObjectiveRow(o))}
+        {quest.objectives.map((o) => (
+          <Row key={o.id}>
+            <ConditionText>{getObjectiveText(o)}</ConditionText>
+            {ItemBurnButton(o)}
+          </Row>
+        ))}
       </Section>
     );
   };
@@ -171,7 +166,7 @@ export const QuestCard = (props: Props) => {
 
   return (
     <Container key={quest.id} completed={status === 'COMPLETED'}>
-      <Overlay top={0.6} right={0.6}>
+      <Overlay key={'faction-image'} top={0.6} right={0.6}>
         {FactionImage(quest)}
       </Overlay>
       <Title>{quest.name}</Title>
