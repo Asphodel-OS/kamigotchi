@@ -46,7 +46,7 @@ export async function initConfigs(api: AdminAPI) {
   // Harvest Effects
   await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 1500, 3, 0, 0, 1000, 3]);
-  await api.config.set.array('KAMI_HARV_INTENSITY', [5, 0, 1920, 0, 0, 0, 40, 0]); // nudge is multiplier on base, ratio is inversed
+  await api.config.set.array('KAMI_HARV_INTENSITY', [5, 0, 1920, 0, 0, 0, 0, 0]); // nudge is multiplier on base, ratio is inversed
   await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_STRAIN', [20, 0, 7500, 3, 0, 0, 1000, 3]); // hijacking nudge here for denominator base value
 
