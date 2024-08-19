@@ -113,8 +113,10 @@ export function registerQuestsModal() {
         isUpdating.current = true;
 
         const newAvailable = filterByAvailable(registry, ongoing, completed);
+        if (newAvailable.length > available.length) setTab('AVAILABLE');
+
         const populated = newAvailable.map((q) => populate(q));
-        setAvailable(populated);
+        setAvailable(filterOutBattlePass(populated));
 
         isUpdating.current = false;
       }, [modals.quests, registry.length, completed.length, ongoing.length]);
@@ -129,28 +131,23 @@ export function registerQuestsModal() {
 
       // Q(jb): do we want this in a react component or on an independent hook?
       const updateNotifications = async () => {
-        const id = 'Available Quests';
-        const numAvail = available.length;
-        if (available.length > 0) setTab('AVAILABLE');
+        const id = 'Available Quests' as EntityID;
+        const n = available.length;
+        const auxVerb = n == 1 ? 'is' : 'are';
+        const questWord = n == 1 ? 'quest' : 'quests';
+        const description = `There ${auxVerb} ${n} ${questWord} you can accept.`;
 
-        if (notifications.has(id as EntityID)) {
-          if (numAvail == 0) notifications.remove(id as EntityID);
-          notifications.update(id as EntityID, {
-            description: `There ${numAvail == 1 ? 'is' : 'are'} ${numAvail} quest${
-              numAvail == 1 ? '' : 's'
-            } you can accept.`,
+        if (notifications.has(id)) {
+          if (n == 0) notifications.remove(id as EntityID);
+          else notifications.update(id as EntityID, { description });
+        } else if (n > 0) {
+          notifications.add({
+            id,
+            title: `Available Quests!`,
+            description,
+            time: Date.now().toString(),
+            modal: 'quests',
           });
-        } else {
-          if (numAvail > 0)
-            notifications.add({
-              id: id as EntityID,
-              title: `Available Quest${numAvail == 1 ? '' : 's'}!`,
-              description: `There ${numAvail == 1 ? 'is' : 'are'} ${numAvail} quest${
-                numAvail == 1 ? '' : 's'
-              } you can accept.`,
-              time: Date.now().toString(),
-              modal: 'quests',
-            });
         }
       };
 
@@ -220,7 +217,7 @@ export function registerQuestsModal() {
           noPadding
         >
           <List
-            quests={{ available: filterOutBattlePass(available), ongoing, completed }}
+            quests={{ available, ongoing, completed }}
             mode={tab}
             actions={transactions}
             utils={utils}
