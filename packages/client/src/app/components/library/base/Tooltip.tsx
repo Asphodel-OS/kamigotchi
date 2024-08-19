@@ -40,7 +40,7 @@ export const Tooltip = (props: Props) => {
             color: 'black',
             fontSize: '.7vw',
             fontFamily: 'Pixel',
-            lineHeight: '1vw',
+            lineHeight: '1.25vw',
             whiteSpace: 'pre-line',
           },
         },
