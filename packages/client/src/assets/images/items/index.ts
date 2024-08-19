@@ -13,6 +13,7 @@ import kami_mochi from './kami_mochi.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
+import mint from './mint.png';
 import musu from './musu.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
@@ -47,6 +48,7 @@ export const ItemImages = {
   kamigotchi_world_passport: kamigotchi_world_passport,
   mana_mochi: mana_mochi,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
+  mint: mint,
   musu: musu,
   red_gakki_ribbon: red_gakki_ribbon,
   ring_of_spirits: ring_of_spirits,
