@@ -1,3 +1,4 @@
+export { passesNodeReqs } from './functions';
 export { getAllNodes, getNodeByIndex, getNodeRequirements } from './queries';
 export { NullNode, getNode } from './types';
 

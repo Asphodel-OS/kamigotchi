@@ -7,16 +7,14 @@ import { EmptyText, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { parseConditionalText } from 'network/shapes/Conditional';
+import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { NullDT, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
 import { Kami, getKamiAccount } from 'network/shapes/Kami';
-import { Node, NullNode, getNodeByIndex } from 'network/shapes/Node';
-import { passesNodeReqs } from 'network/shapes/Node/functions';
+import { Node, NullNode, getNodeByIndex, passesNodeReqs } from 'network/shapes/Node';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
 import { waitForActionCompletion } from 'network/utils';
-import { Banner } from './Banner';
-import { Kards } from './Kards';
-import { ScavengeBar } from './ScavengeBar';
+import { Banner } from './header/Banner';
+import { Kards } from './kards/Kards';
 
 export function registerNodeModal() {
   registerUIComponent(
@@ -49,7 +47,13 @@ export function registerNodeModal() {
             network,
             data: { account, node, commits },
             utils: {
-              getOwner: (index: number) => getKamiAccount(world, components, index),
+              getOwner: (kamiIndex: number) => getKamiAccount(world, components, kamiIndex),
+              getScavPoints: (nodeIndex: number) =>
+                getScavPoints(world, components, 'node', nodeIndex, account.id),
+              passesNodeReqs: (kami: Kami) =>
+                passesNodeReqs(world, components, node, account, kami),
+              parseConditionalText: (condition: Condition, tracking?: boolean) =>
+                parseConditionalText(world, components, condition, tracking),
             },
           };
         })
@@ -196,21 +200,10 @@ export function registerNodeModal() {
               account={account}
               drops={getDrops()}
               node={node}
+              scavBar={scavBar}
               kamis={account.kamis}
-              addKami={(kami) => start(kami, node)}
-              utils={{
-                passesNodeReqs: (kami: Kami) =>
-                  passesNodeReqs(world, components, node, account, kami),
-                parseConditionalText: (condition, tracking?) =>
-                  parseConditionalText(world, components, condition, tracking),
-              }}
-              scavBarDisplay={
-                <ScavengeBar
-                  scavBar={scavBar}
-                  currPoints={getScavPoints(world, components, 'node', node.index, account.id)}
-                  actions={{ claim: scavClaim }}
-                />
-              }
+              actions={{ scavClaim, addKami: (kami) => start(kami, node) }}
+              utils={utils}
             />,
           ]}
           canExit

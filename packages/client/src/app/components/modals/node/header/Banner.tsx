@@ -11,29 +11,36 @@ import { DTDetails } from 'network/shapes/Droptable';
 import { Item } from 'network/shapes/Item';
 import { Kami, canHarvest, isResting, onCooldown } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
+import { ScavBar } from 'network/shapes/Scavenge';
 import { getAffinityImage } from 'network/shapes/utils';
+import { ScavengeBar } from './ScavengeBar';
 
 interface Props {
   account: Account;
+  node: Node | undefined;
+  kamis: Kami[];
   drops: {
     node: Item[];
     scavenge: DTDetails[];
   };
-  node: Node | undefined;
-  kamis: Kami[];
-  addKami: (kami: Kami) => void;
+  scavBar: ScavBar | undefined;
+  actions: {
+    scavClaim: (scavBar: ScavBar) => void;
+    addKami: (kami: Kami) => void;
+  };
   utils: {
     passesNodeReqs: (kami: Kami) => boolean;
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
+    getScavPoints: (nodeIndex: number) => number;
   };
-  scavBarDisplay: React.JSX.Element;
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
+  const { account, drops, scavBar, node: rawNode, kamis, utils, actions } = props;
+  const { scavClaim, addKami } = actions;
   const [_, setLastRefresh] = useState(Date.now());
-  const { account, drops, node: rawNode, kamis, utils } = props;
   const [node, setNode] = useState<Node>(NullNode);
 
   /////////////////
@@ -87,7 +94,7 @@ export const Banner = (props: Props) => {
   const AddButton = (kamis: Kami[]) => {
     const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
-      return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
+      return { text: `${kami.name}`, onClick: () => addKami(kami) };
     });
 
     return (
@@ -163,7 +170,11 @@ export const Banner = (props: Props) => {
         {RequirementText()}
       </Content>
       <ButtonRow>{AddButton(kamis)}</ButtonRow>
-      {props.scavBarDisplay}
+      <ScavengeBar
+        scavBar={scavBar}
+        currPoints={utils.getScavPoints(node.index)}
+        actions={{ claim: scavClaim }}
+      />
     </Container>
   );
 };
