@@ -40,10 +40,10 @@ export const getStats = (components: Components, index: EntityIndex): Stats => {
 export const getStat = (index: EntityIndex, type: StatComponent): Stat => {
   const raw = BigInt(getComponentValue(type, index)?.value || 0);
 
-  const base = Number((raw >> 192n) & 0xffffffffffffffffn);
-  const shift = Number((raw >> 128n) & 0xffffffffffffffffn);
-  const boost = Number((raw >> 64n) & 0xffffffffffffffffn);
-  const sync = Number(raw & 0xffffffffffffffffn);
+  const base = Number(BigInt.asIntN(32, (raw >> 192n) & 0xffffffffffffffffn));
+  const shift = Number(BigInt.asIntN(32, (raw >> 128n) & 0xffffffffffffffffn));
+  const boost = Number(BigInt.asIntN(32, (raw >> 64n) & 0xffffffffffffffffn));
+  const sync = Number(BigInt.asIntN(32, raw & 0xffffffffffffffffn));
 
   return {
     base: base,

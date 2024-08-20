@@ -12,9 +12,9 @@ import { utils } from 'ethers';
 import { Components } from 'network/';
 
 export interface QueryOptions {
-  item: boolean;
-  recipe: boolean;
-  quest: boolean;
+  item?: boolean;
+  recipe?: boolean;
+  quest?: boolean;
 }
 
 export const queryRelationsFrom = (
@@ -22,11 +22,11 @@ export const queryRelationsFrom = (
   fromID: EntityID,
   options?: QueryOptions
 ): EntityIndex[] => {
-  const { FromID, ItemIndex, QuestIndex } = components;
+  const { FromID, ItemIndex, QuestIndex, RecipeIndex } = components;
 
   const toQuery: QueryFragment[] = [HasValue(FromID, { value: fromID })];
   if (options?.item) toQuery.push(Has(ItemIndex));
-  // if (options?.recipe) toQuery.push(Has(RecipeIndex));
+  if (options?.recipe) toQuery.push(Has(RecipeIndex));
   if (options?.quest) toQuery.push(Has(QuestIndex));
 
   return Array.from(runQuery(toQuery));

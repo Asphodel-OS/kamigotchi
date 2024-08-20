@@ -28,6 +28,7 @@ import { registerSettingsModal } from './modals/settings';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
 
+import { registerCraftingModal } from './modals/crafting';
 import {
   registerAccountRegistrar,
   registerGasHarasser,
@@ -55,6 +56,7 @@ export function registerUIComponents() {
 
   // game modals
   registerDialogueModal();
+  registerCraftingModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
   registerFundOperatorModal();

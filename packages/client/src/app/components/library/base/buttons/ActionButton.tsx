@@ -13,6 +13,7 @@ interface Props {
   pulse?: boolean;
   tooltip?: string[];
   noMargin?: boolean;
+  noBorder?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -77,6 +78,10 @@ export const ActionButton = (props: Props) => {
 
     if (props.fill) styles.flexGrow = '1';
     if (props.noMargin) styles.margin = '0vw';
+    if (props.noBorder) {
+      styles.border = 'none';
+      styles.borderRadius = '0vw';
+    }
     return styles;
   };
 

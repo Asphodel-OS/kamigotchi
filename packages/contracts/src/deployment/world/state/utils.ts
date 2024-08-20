@@ -21,8 +21,24 @@ export const toRevise = (entry: any): boolean => {
 ///////////////
 // GETTERS
 
+export const getRegID = (index: number, type: string): string => {
+  if (type === 'FACTION') return generateRegID('faction', index);
+  else if (type === 'GOAL') return generateRegID('goal', index);
+  else if (type === 'ITEM') return generateRegID('registry.item', index);
+  else if (type === 'NPC') return generateRegID('NPC', index);
+  else if (type === 'NODE') return generateRegID('node', index);
+  else if (type === 'QUEST') return generateRegID('registry.quest', index);
+  else if (type === 'ROOM') return generateRegID('room', index);
+  else if (type === 'SKILL') return generateRegID('registry.skill', index);
+  else return '';
+};
+
 export const getGoalID = (index: number) => {
-  return utils.solidityKeccak256(['string', 'uint32'], ['goal', index]);
+  return generateRegID('goal', index);
+};
+
+const generateRegID = (field: string, index: number) => {
+  return utils.solidityKeccak256(['string', 'uint32'], [field, index]);
 };
 
 ///////////////

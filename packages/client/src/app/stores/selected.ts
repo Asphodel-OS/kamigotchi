@@ -5,6 +5,7 @@ import { LeaderboardKey } from 'constants/leaderboards/leaderboards';
 
 export interface State {
   accountIndex: number;
+  assignerID: string;
   dialogueIndex: number;
   goalIndex: number[];
   kamiIndex: number;
@@ -17,6 +18,7 @@ export interface State {
 
 interface Actions {
   setAccount: (accountIndex: number) => void;
+  setAssigner: (assignerID: string) => void;
   setDialogue: (dialogueIndex: number) => void;
   setGoal: (goalIndex: number[]) => void;
   setKami: (kamiIndex: number) => void;
@@ -30,6 +32,7 @@ interface Actions {
 export const useSelected = create<State & Actions>((set) => {
   const initialState: State = {
     accountIndex: 0 as number,
+    assignerID: '',
     dialogueIndex: 0 as number,
     goalIndex: [0] as number[],
     kamiIndex: 0 as number,
@@ -43,6 +46,7 @@ export const useSelected = create<State & Actions>((set) => {
   return {
     ...initialState,
     setAccount: (accountIndex: number) => set((state: State) => ({ ...state, accountIndex })),
+    setAssigner: (assignerID: string) => set((state: State) => ({ ...state, assignerID })),
     setDialogue: (dialogueIndex: number) => set((state: State) => ({ ...state, dialogueIndex })),
     setGoal: (goalIndex: number[]) => set((state: State) => ({ ...state, goalIndex })),
     setKami: (kamiIndex: number) => set((state: State) => ({ ...state, kamiIndex })),

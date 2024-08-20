@@ -31,6 +31,7 @@ import {
 } from './state';
 
 import { AdminAPI, createAdminAPI } from './admin';
+import { initRecipes } from './state/recipes';
 
 export type WorldAPI = typeof WorldState.prototype.api;
 
@@ -93,6 +94,9 @@ export class WorldState {
       delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices || [])),
       revise: (indices?: number[]) => this.genCalls((api) => reviseQuests(api, indices)),
     } as SubFunc,
+    recipes: {
+      init: (indices?: number[]) => this.genCalls((api) => initRecipes(api)),
+    },
     relationships: {
       init: () => this.genCalls(initRelationships),
       delete: (npcs: number[], indices?: number[]) =>

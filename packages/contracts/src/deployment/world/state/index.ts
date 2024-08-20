@@ -9,6 +9,7 @@ import { initItems } from './items';
 import { initNodes } from './nodes';
 import { initNpcs } from './npcs';
 import { initLocalQuests, initQuests } from './quests';
+import { initRecipes } from './recipes';
 import { initRelationships } from './relationships';
 import { initRooms } from './rooms';
 import { initSkills } from './skills';
@@ -25,6 +26,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initQuests(api);
   await initSkills(api);
   await initTraits(api);
+  await initRecipes(api);
   await initRelationships(api);
   await initGoals(api);
 

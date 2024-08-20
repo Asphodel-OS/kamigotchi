@@ -335,6 +335,44 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
+  //  RECIPES
+
+  async function createRecipe(
+    index: number,
+    inputs: number[],
+    inputAmounts: number[],
+    outputs: number[],
+    outputAmounts: number[],
+    xp: number,
+    stamina: number
+  ) {
+    genCall(
+      'system.recipe.registry',
+      [index, inputs, inputAmounts, outputs, outputAmounts, xp, stamina],
+      'create',
+      ['uint32', 'uint32[]', 'uint256[]', 'uint32[]', 'uint256[]', 'uint256', 'uint256']
+    );
+  }
+
+  async function addRecipeAssigner(index: number, assigner: string) {
+    genCall('system.recipe.registry', [index, assigner], 'addAssigner');
+  }
+
+  async function addRecipeRequirement(
+    index: number,
+    type: string,
+    logic: string,
+    index_: number,
+    value: number
+  ) {
+    genCall('system.recipe.registry', [index, type, logic, index_, value], 'addRequirement');
+  }
+
+  async function deleteRecipe(index: number) {
+    genCall('system.recipe.registry', [index], 'remove');
+  }
+
+  /////////////////
   //  ROOMS
 
   // @dev creates a room with name, roomIndex and exits. cannot overwrite room at roomIndex
@@ -648,6 +686,14 @@ export function createAdminAPI(compiledCalls: string[]) {
           requirement: addQuestRequirement,
           reward: addQuestReward,
         },
+      },
+      recipe: {
+        create: createRecipe,
+        add: {
+          assigner: addRecipeAssigner,
+          requirement: addRecipeRequirement,
+        },
+        delete: deleteRecipe,
       },
       relationship: {
         create: registerRelationship,

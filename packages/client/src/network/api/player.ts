@@ -94,6 +94,13 @@ export function createPlayerAPI(systems: any) {
     return systems['system.Account.Skill.Upgrade'].executeTyped(skillIndex);
   }
 
+  /////////////////
+  // CRAFTING
+
+  function craft(assignerID: BigNumberish, recipeIndex: number, amount: number) {
+    return systems['system.craft'].executeTyped(assignerID, recipeIndex, amount);
+  }
+
   ////////////////
   // DROPTABLES
 
@@ -372,6 +379,7 @@ export function createPlayerAPI(systems: any) {
       },
       skill: { upgrade: upgradeAccountSkill },
     },
+    crafting: { craft },
     social: {
       friend: {
         accept: acceptFriendRequest,

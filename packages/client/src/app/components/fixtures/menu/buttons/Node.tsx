@@ -11,6 +11,8 @@ export const NodeMenuButton = (props: Props) => {
   const { roomIndex, setNode } = useSelected(); // roomIndex == nodeIndex
 
   const modalsToHide: Partial<Modals> = {
+    goal: false,
+    crafting: false,
     bridgeERC20: false,
     bridgeERC721: false,
     dialogue: false,
