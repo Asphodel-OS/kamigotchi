@@ -77,14 +77,12 @@ export const Kards = (props: Props) => {
 
   // rendering of an ally kami on this node
   const MyKard = (kami: Kami) => {
-    const output = calcOutput(kami);
-
     return (
       <KamiCard
         key={kami.index}
         kami={kami}
         description={getDescription(kami)}
-        subtext={`yours (\$${output})`}
+        subtext={`yours (\$${calcOutput(kami)})`}
         actions={[
           FeedButton(kami, account, actions.feed),
           CollectButton(kami, account, actions.collect),

@@ -7,7 +7,7 @@ export {
   calcOutput,
   calcStrainFromBalance,
   canHarvest,
-  getRoomIndex,
+  getAccount as getKamiAccount,
   isDead,
   isFull,
   isHarvesting,

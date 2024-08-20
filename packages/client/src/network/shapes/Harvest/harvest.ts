@@ -92,12 +92,3 @@ export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
 
   return intensity;
 };
-
-/////////////////
-// MISCELLANEOUS
-
-// interpret the roomIndex of a harvest
-export const getRoomIndex = (harvest?: Harvest): number => {
-  if (!harvest || !harvest.node) return 0;
-  return harvest.node.roomIndex;
-};

@@ -5,7 +5,6 @@ export {
   calcLifeTime as calcHarvestLifeTime,
   calcNetBounty as calcHarvestNetBounty,
   calcRate as calcHarvestRate,
-  getRoomIndex as getHarvestRoomIndex,
 } from './harvest';
 
 export {

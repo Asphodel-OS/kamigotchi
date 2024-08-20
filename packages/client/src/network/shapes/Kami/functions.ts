@@ -1,18 +1,5 @@
-import { calcHarvestIdleTime, calcHarvestNetBounty, getHarvestRoomIndex } from '../Harvest';
+import { calcHarvestIdleTime, calcHarvestNetBounty } from '../Harvest';
 import { Kami } from './types';
-
-// interpret the roomIndex of the kami based on the kami's state (using Account and Harvest Node)
-// return 0 if the roomIndex cannot be determined from information provided
-export const getRoomIndex = (kami: Kami): number => {
-  let roomIndex = 0;
-  if (isOffWorld(kami)) roomIndex = 0;
-  else if (isHarvesting(kami)) return getHarvestRoomIndex(kami.production);
-  else {
-    if (!kami.account) roomIndex = 0;
-    else roomIndex = kami.account.roomIndex;
-  }
-  return roomIndex;
-};
 
 ////////////////
 // STATE CHECKS
