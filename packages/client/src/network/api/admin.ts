@@ -10,9 +10,14 @@ export function createAdminAPI(systems: any) {
     return systems['system.Pet.Gacha.Reveal'].forceReveal(commitIDs);
   }
 
-  // @dev admin reveal for lootbox if blockhash has lapsed
-  async function lootboxForceReveal(entityID: string) {
+  // @dev admin reveal for droptables if blockhash has lapsed
+  async function droptableForceReveal(entityID: string) {
     return systems['system.droptable.item.reveal'].forceReveal(entityID);
+  }
+
+  // @dev admin reveal for droptables if commit was broken by upgrades
+  async function droptableReplaceReveal(entityID: string) {
+    return systems['system.droptable.item.reveal'].replaceBrokenReveal(entityID);
   }
 
   // @dev cancels outgoing bridge tx
@@ -619,7 +624,8 @@ export function createAdminAPI(systems: any) {
     },
     forceReveal: {
       pet: petForceReveal,
-      lootbox: lootboxForceReveal,
+      droptable: droptableForceReveal,
+      replaceDroptable: droptableReplaceReveal,
     },
     registry: {
       item: {

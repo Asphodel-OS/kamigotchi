@@ -33,6 +33,7 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
     "executeTyped(uint256[])": FunctionFragment;
     "forceReveal(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "replaceBrokenReveal(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -42,6 +43,7 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
       | "executeTyped"
       | "forceReveal"
       | "owner"
+      | "replaceBrokenReveal"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -59,6 +61,10 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "replaceBrokenReveal",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -73,6 +79,10 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "replaceBrokenReveal",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -141,6 +151,11 @@ export interface DroptableRevealSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    replaceBrokenReveal(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -164,6 +179,11 @@ export interface DroptableRevealSystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  replaceBrokenReveal(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -186,6 +206,11 @@ export interface DroptableRevealSystem extends BaseContract {
     ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    replaceBrokenReveal(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -222,6 +247,11 @@ export interface DroptableRevealSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    replaceBrokenReveal(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -245,6 +275,11 @@ export interface DroptableRevealSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    replaceBrokenReveal(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

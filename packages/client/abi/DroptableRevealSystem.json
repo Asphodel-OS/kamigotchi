@@ -82,6 +82,19 @@
     },
     {
       "type": "function",
+      "name": "replaceBrokenReveal",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -128,6 +141,7 @@
     "executeTyped(uint256[])": "72de78c2",
     "forceReveal(uint256)": "265ab676",
     "owner()": "8da5cb5b",
+    "replaceBrokenReveal(uint256)": "32449564",
     "transferOwnership(address)": "f2fde38b"
   }
 }
