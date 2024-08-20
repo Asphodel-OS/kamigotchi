@@ -18,6 +18,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibAssigner } from "libraries/LibAssigner.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -94,6 +95,15 @@ library LibRecipe {
     );
   }
 
+  function createRequirement(
+    IWorld world,
+    IUintComp components,
+    uint32 recipeIndex,
+    Condition memory data
+  ) internal returns (uint256 id) {
+    id = LibConditional.createFor(world, components, data, genReqPtr(recipeIndex));
+  }
+
   function remove(IUintComp components, uint32 recipeIndex, uint256 id) internal {
     IndexRecipeComponent indexComp = IndexRecipeComponent(
       getAddressById(components, IndexRecipeCompID)
@@ -115,6 +125,10 @@ library LibRecipe {
     uint256[] memory assigners = LibAssigner.getAll(components, id);
     for (uint256 i; i < assigners.length; i++)
       LibAssigner.remove(components, indexComp, assigners[i]);
+
+    uint256[] memory requirements = getRequirements(components, recipeIndex);
+    for (uint256 i; i < requirements.length; i++)
+      LibConditional.remove(components, requirements[i]);
   }
 
   /////////////////
@@ -156,8 +170,29 @@ library LibRecipe {
   }
 
   /////////////////
+  // CHECKERS
+
+  function meetsRequirements(
+    IUintComp components,
+    uint32 recipeIndex,
+    uint256 accID
+  ) internal view returns (bool) {
+    uint256[] memory reqIDs = getRequirements(components, recipeIndex);
+    return LibConditional.checkConditions(components, reqIDs, accID);
+  }
+
+  /////////////////
   // GETTERS
 
+  function get(IUintComp components, uint32 recipeIndex) internal view returns (uint256) {
+    IndexRecipeComponent indexComp = IndexRecipeComponent(
+      getAddressById(components, IndexRecipeCompID)
+    );
+    uint256 id = genID(recipeIndex);
+    return indexComp.has(id) ? id : 0;
+  }
+
+  // input output ingredients
   function getIO(
     IUintComp components,
     uint32 recipeIndex,
@@ -180,12 +215,11 @@ library LibRecipe {
     return (Table(indices[0], amts[0]), Table(indices[1], amts[1]));
   }
 
-  function get(IUintComp components, uint32 recipeIndex) internal view returns (uint256) {
-    IndexRecipeComponent indexComp = IndexRecipeComponent(
-      getAddressById(components, IndexRecipeCompID)
-    );
-    uint256 id = genID(recipeIndex);
-    return indexComp.has(id) ? id : 0;
+  function getRequirements(
+    IUintComp components,
+    uint32 recipeIndex
+  ) internal view returns (uint256[] memory) {
+    return LibConditional.queryFor(components, genReqPtr(recipeIndex));
   }
 
   /////////////////
@@ -201,6 +235,10 @@ library LibRecipe {
 
   function genOutputID(uint32 recipeIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("recipe.output", recipeIndex)));
+  }
+
+  function genReqPtr(uint32 recipeIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("recipe.requirement", recipeIndex)));
   }
 
   /////////////////

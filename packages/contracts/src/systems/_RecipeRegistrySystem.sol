@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibRecipe } from "libraries/LibRecipe.sol";
+import { Condition } from "libraries/LibConditional.sol";
 
 uint256 constant ID = uint256(keccak256("system.recipe.registry"));
 
@@ -33,6 +34,22 @@ contract _RecipeRegistrySystem is System {
     uint256 regID = LibRecipe.get(components, index);
     require(regID != 0, "Recipe: does not exist");
     return LibRecipe.addAssigner(components, regID, index, assignerID);
+  }
+
+  function addRequirement(
+    uint32 recipeIndex,
+    string memory logicType,
+    string memory type_,
+    uint32 index, // can be empty
+    uint32 value // can be empty
+  ) public onlyOwner returns (uint256) {
+    return
+      LibRecipe.createRequirement(
+        world,
+        components,
+        recipeIndex,
+        Condition(logicType, type_, index, value)
+      );
   }
 
   function remove(uint32 index) public onlyOwner {

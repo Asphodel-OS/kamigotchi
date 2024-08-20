@@ -30,6 +30,7 @@ import type {
 export interface _RecipeRegistrySystemInterface extends utils.Interface {
   functions: {
     "addAssigner(uint32,uint256)": FunctionFragment;
+    "addRequirement(uint32,string,string,uint32,uint32)": FunctionFragment;
     "create(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -40,6 +41,7 @@ export interface _RecipeRegistrySystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addAssigner"
+      | "addRequirement"
       | "create"
       | "execute"
       | "owner"
@@ -50,6 +52,16 @@ export interface _RecipeRegistrySystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "addAssigner",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRequirement",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "create",
@@ -71,6 +83,10 @@ export interface _RecipeRegistrySystemInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "addAssigner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRequirement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
@@ -134,6 +150,15 @@ export interface _RecipeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addRequirement(
+      recipeIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -163,6 +188,15 @@ export interface _RecipeRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addRequirement(
+    recipeIndex: PromiseOrValue<BigNumberish>,
+    logicType: PromiseOrValue<string>,
+    type_: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   create(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -189,6 +223,15 @@ export interface _RecipeRegistrySystem extends BaseContract {
     addAssigner(
       index: PromiseOrValue<BigNumberish>,
       assignerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRequirement(
+      recipeIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -233,6 +276,15 @@ export interface _RecipeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addRequirement(
+      recipeIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     create(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -260,6 +312,15 @@ export interface _RecipeRegistrySystem extends BaseContract {
     addAssigner(
       index: PromiseOrValue<BigNumberish>,
       assignerID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRequirement(
+      recipeIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -21,12 +21,19 @@ contract CraftingTest is SetupTemplate {
     uint256[] memory oAmounts = new uint256[](1);
     oAmounts[0] = 1;
 
+    // base shape
     vm.prank(deployer);
     __RecipeRegistrySystem.create(abi.encode(1, iIndices, iAmounts, oIndices, oAmounts, 1, 1));
 
+    // assigner
     vm.prank(deployer);
     __RecipeRegistrySystem.addAssigner(1, 1);
 
+    // requirement
+    vm.prank(deployer);
+    __RecipeRegistrySystem.addRequirement(1, "CURR_MIN", "ITEM", 1, 1);
+
+    // removal
     vm.prank(deployer);
     __RecipeRegistrySystem.remove(1);
   }

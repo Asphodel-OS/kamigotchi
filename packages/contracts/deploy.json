@@ -219,12 +219,17 @@
       "writeAccess": [
         "ExperienceComponent",
         "IDFromComponent",
+        "IDPointerComponent",
         "IDToComponent",
         "IndexRecipeComponent",
+        "IndexComponent",
         "IsRegistryComponent",
+        "LogicTypeComponent",
         "KeysComponent",
         "StaminaComponent",
-        "ValuesComponent"
+        "ValuesComponent",
+        "ValueComponent",
+        "TypeComponent"
       ]
     },
     {
