@@ -90,14 +90,14 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: 'https://yominet.rpc.caldera.xyz/http/',
-    wsRpc: 'wss://yominet.rpc.caldera.xyz/ws/',
-    snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
+    jsonRpc: 'https://json-rpc.minievm-2.initia.xyz',
+    wsRpc: 'wss://json-rpc-websocket.minievm-2.initia.xyz',
+    // snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
-    chainId: 5264468217,
-    worldAddress: '0x441E13a25cAECaD50028E7623a39b91a507bca02',
-    initialBlockNumber: 1077451,
+    chainId: 3529424848629633,
+    worldAddress: '0xF4E29F8CaCD21aa2dD508a064076A3EbdF29e2Ca',
+    initialBlockNumber: 40633,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;
