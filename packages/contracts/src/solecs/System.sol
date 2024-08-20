@@ -4,8 +4,8 @@ pragma solidity >=0.8.0;
 import { ISystem } from "./interfaces/ISystem.sol";
 import { IUint256Component } from "./interfaces/IUint256Component.sol";
 import { IWorld } from "./interfaces/IWorld.sol";
-import { SystemStorage } from "./SystemStorage.sol";
 
+import { SystemStorage } from "./SystemStorage.sol";
 import { Ownable } from "./Ownable.sol";
 
 /**
@@ -21,5 +21,11 @@ abstract contract System is ISystem, Ownable {
     // @deprecated use SystemStorage.world() instead of world
     world = _world;
     SystemStorage.init(world, components);
+  }
+
+  /// @notice depreciates the system
+  /// @dev emits event for external devs to listen for; does not remove component permissions
+  function depreciate() external onlyOwner {
+    emit SystemDepreciated();
   }
 }

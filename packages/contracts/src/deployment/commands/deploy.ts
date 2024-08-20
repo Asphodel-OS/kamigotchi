@@ -15,14 +15,15 @@ const config = 'deploy.json';
 
 const run = async () => {
   const mode = argv.mode || 'DEV';
-  const partialDeployment = argv.components != undefined || argv.systems != undefined;
+  const partialDeployment =
+    argv.partial ?? (argv.components != undefined || argv.systems != undefined);
   const world = partialDeployment ? argv.world || getWorld(mode) : undefined;
   // assume world state init if deploying a fresh world, unless explicitly stated
   const init = !partialDeployment || !(argv.skipInit ?? true);
 
   if (mode === 'DEV') setAutoMine(true);
 
-  // geneate or clear world init script based on args
+  // generate or clear world init script based on args
   if (init) generateInitScript(mode, [], 'init');
   else clearInitWorld();
 
@@ -36,6 +37,7 @@ const run = async () => {
     initWorld: init,
     forgeOpts: argv.forgeOpts,
     mode: argv.mode,
+    reuseComponents: argv.reuseComps,
   });
 
   if (init) {

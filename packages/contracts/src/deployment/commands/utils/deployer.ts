@@ -73,12 +73,17 @@ export type DeployOptions = {
   initWorld?: boolean;
   forgeOpts?: string;
   mode?: string;
+  reuseComponents?: boolean;
 };
 
 export async function generateAndDeploy(args: DeployOptions) {
   let libDeployPath: string | undefined;
   let deployedWorldAddress: string | undefined;
   let startBlock: string | undefined;
+
+  // if reuseComp not specified, reuse if system upgrade
+  const reuseComps =
+    args.reuseComponents == undefined ? args.systems != undefined : args.reuseComponents;
 
   try {
     // Generate LibDeploy
@@ -93,7 +98,7 @@ export async function generateAndDeploy(args: DeployOptions) {
     const result = await deploy(
       args.deployerPriv,
       args.rpc,
-      args.systems != undefined,
+      reuseComps,
       args.worldAddress,
       args.forgeOpts,
       args.initWorld,

@@ -103,7 +103,6 @@ async function addStat(api: AdminAPI, item: any) {
 
   if (Number(item['XP']) > 0) await api.registry.item.add.stat(index, 'XP', Number(item['XP']));
   if (Number(item['Health']) > 0) {
-    console.log('setting health', item['Health'], Number(item['Health']));
     await api.registry.item.add.stat(index, 'HEALTH', Number(item['Health']));
   }
   if (Number(item['MaxHealth']) > 0)
