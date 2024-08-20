@@ -38,7 +38,7 @@ export const IconButton = (props: Props) => {
       styles.height = '2.5vw';
       styles.margin = '.2vw';
       styles.padding = '.2vw';
-      styles.borderRadius = '.4vw';
+      styles.borderRadius = '.45vw';
     } else if (size === 'large') {
       styles.width = '4vw';
       styles.height = '4vw';

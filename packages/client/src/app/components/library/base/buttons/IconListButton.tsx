@@ -90,17 +90,17 @@ interface ButtonProps {
   noBounce: boolean;
 }
 
-const Wrapper = styled.div`
-  width: 100%;
+const Wrapper = styled.div<{ fullWidth?: boolean }>`
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 const Button = styled.button<ButtonProps>`
   position: relative;
   border: solid black 0.15vw;
-  border-radius: 0.4vw;
+  border-radius: 0.45vw;
   color: black;
 
-  width: 100%;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
   padding: 0.4vw;
   gap: 0.4vw;
   display: flex;

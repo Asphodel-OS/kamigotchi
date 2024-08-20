@@ -21,3 +21,16 @@ export {
   stopIcon,
   useIcon,
 };
+
+export const ActionIcons = {
+  chat: chatIcon,
+  collect: collectIcon,
+  feed: feedIcon,
+  harvest: harvestIcon,
+  liquidate: liquidateIcon,
+  logout: logoutIcon,
+  revive: reviveIcon,
+  search: searchIcon,
+  stop: stopIcon,
+  use: useIcon,
+};

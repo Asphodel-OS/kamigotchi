@@ -107,6 +107,13 @@ export const calcHealth = (kami: Kami): number => {
   return health;
 };
 
+// calculate a kami's health as a percentage of total health
+export const calcHealthPercent = (kami: Kami): number => {
+  const health = calcHealth(kami);
+  const total = kami.stats.health.total;
+  return (health / total) * 100;
+};
+
 // calculate a kami's rate of health change based on its current state
 export const calcHealthRate = (kami: Kami): number => {
   if (isHarvesting(kami)) return calcHarvestingHealthRate(kami);

@@ -194,6 +194,7 @@ export function registerNodeModal() {
           ]}
           canExit
           truncate
+          noPadding
         >
           {node.kamis.length > 0 ? (
             <Kards

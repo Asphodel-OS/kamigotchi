@@ -26,6 +26,7 @@ export const Kards = (props: Props) => {
   const [allies, setAllies] = useState<Kami[]>([]);
   const [enemies, setEnemies] = useState<Kami[]>([]);
 
+  // identify ally vs enemy kamis whenever the list of kamis changes
   useEffect(() => {
     const allyKamis: Kami[] = [];
     const enemyKamis: Kami[] = [];
@@ -42,7 +43,7 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // cached owner lookups
+  // get and cache owner lookups
   const getOwner = (kami: Kami) => {
     if (!ownerCache.has(kami.index)) {
       const owner = utils.getOwner(kami.index);
@@ -63,7 +64,6 @@ export const Kards = (props: Props) => {
 };
 
 const Container = styled.div`
-  gap: 0.45vw;
   display: flex;
   flex-flow: column nowrap;
 `;
