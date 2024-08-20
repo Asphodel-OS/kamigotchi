@@ -1,14 +1,14 @@
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { EmptyText, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
-import { NullDT, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
+import { Droptable, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
 import { Kami, getKamiAccount } from 'network/shapes/Kami';
 import { Node, NullNode, getNodeByIndex, passesNodeReqs } from 'network/shapes/Node';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
@@ -54,6 +54,9 @@ export function registerNodeModal() {
                 passesNodeReqs(world, components, node, account, kami),
               parseConditionalText: (condition: Condition, tracking?: boolean) =>
                 parseConditionalText(world, components, condition, tracking),
+              getScavBarFromHash: (nodeIndex: number) =>
+                getScavBarFromHash(world, components, 'node', nodeIndex),
+              getDTDetails: (dt: Droptable) => getDTDetails(world, components, dt),
             },
           };
         })
@@ -73,20 +76,11 @@ export function registerNodeModal() {
       const { nodeIndex } = useSelected();
       const { modals, setModals } = useVisibility();
       const [node, setNode] = useState<Node>(data.node);
-      const [scavBar, setScavBar] = useState<ScavBar | undefined>(undefined);
 
       // updates from selected Node updates
       useEffect(() => {
-        const nodeOptions = { kamis: true, accountID: account.id };
-        let node = getNodeByIndex(world, components, nodeIndex, nodeOptions);
-        if (!node) {
-          node = NullNode;
-          setModals({ ...modals, node: false });
-        }
-
-        const scav = getScavBarFromHash(world, components, 'node', node.index);
-
-        setScavBar(scav);
+        let node = getNodeByIndex(world, components, nodeIndex, { kamis: true });
+        if (node.index == 0) setModals({ ...modals, node: false }); // NullNode
         setNode(node);
       }, [nodeIndex]);
 
@@ -97,13 +91,6 @@ export function registerNodeModal() {
 
       /////////////////
       // INTERPRETATION
-
-      const getDrops = () => {
-        return {
-          node: node.drops ?? [],
-          scavenge: getDTDetails(world, components, scavBar?.rewards[0]?.droptable ?? NullDT),
-        };
-      };
 
       /////////////////
       // ACTIONS
@@ -198,12 +185,14 @@ export function registerNodeModal() {
             <Banner
               key='banner'
               account={account}
-              drops={getDrops()}
               node={node}
-              scavBar={scavBar}
               kamis={account.kamis}
               actions={{ scavClaim, addKami: (kami) => start(kami, node) }}
-              utils={utils}
+              utils={{
+                ...utils,
+                getScavPoints: () => utils.getScavPoints(node.index),
+                getScavBar: () => utils.getScavBarFromHash(node.index),
+              }}
             />,
           ]}
           canExit

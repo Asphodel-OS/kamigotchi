@@ -35,7 +35,7 @@ export function registerMenuLeft() {
           <AccountMenuButton />
           <PartyMenuButton />
           <MapMenuButton />
-          <NodeMenuButton disabled={!node} />
+          <NodeMenuButton disabled={!node || node.index == 0} />
         </Wrapper>
       );
     }

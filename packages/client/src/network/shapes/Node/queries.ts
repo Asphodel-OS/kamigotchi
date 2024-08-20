@@ -3,17 +3,17 @@ import { Has, HasValue, World, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { queryConditionsOf } from '../Conditional/queries';
-import { Node, Options, getNode } from './types';
+import { Node, NullNode, Options, getNode } from './types';
 
 export const getNodeByIndex = (
   world: World,
   components: Components,
   index: number,
   options?: Options
-): Node | undefined => {
+): Node => {
   const { IsNode, NodeIndex } = components;
   const entityIndices = Array.from(runQuery([Has(IsNode), HasValue(NodeIndex, { value: index })]));
-  if (entityIndices.length === 0) return undefined;
+  if (entityIndices.length === 0) return NullNode;
 
   return getNode(world, components, entityIndices[0], options);
 };
