@@ -15,7 +15,6 @@ export {
   isResting,
   isStarving,
   isUnrevealed,
-  isWithAccount,
   onCooldown,
 } from './functions';
 export {

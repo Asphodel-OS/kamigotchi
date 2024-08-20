@@ -2,14 +2,17 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Skill, parseEffectText, parseRequirementText } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  account: Account;
-  kami: Kami;
+  data: {
+    account: Account;
+    kami: Kami;
+    owner: BaseAccount;
+  };
   index: number;
   skills: Map<number, Skill>; // registry skills
   upgradeError: string[] | undefined;
@@ -23,7 +26,8 @@ interface Props {
 
 // The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
-  const { index, account, kami, skills, upgradeError, actions, utils } = props;
+  const { index, data, skills, upgradeError, actions, utils } = props;
+  const { account, kami, owner } = data;
   const { getSkillImage, getTreePoints, getTreeRequirement } = utils;
   const [skill, setSkill] = useState<Skill | undefined>(skills.get(index)); // registry skill instance
   const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
@@ -34,7 +38,7 @@ export const Details = (props: Props) => {
     const skill = skills.get(index);
     setSkill(skill); // registry skill instance
     setKSkill(kami.skills?.find((s) => s.index * 1 === skill?.index)); // kami skill instance
-    setDisabledReason(kami.account?.index !== account.index ? ['not ur kami'] : upgradeError);
+    setDisabledReason(owner.index !== account.index ? ['not ur kami'] : upgradeError);
   }, [index, kami]);
 
   ////////////////////

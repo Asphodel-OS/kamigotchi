@@ -7,7 +7,7 @@ import { depressFx } from 'app/styles/effects';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { AffinityColors } from 'constants/affinities';
 import { StatColors, StatDescriptions, StatIcons } from 'constants/stats';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiImage } from './KamiImage';
@@ -17,6 +17,7 @@ const excludedStats = ['stamina', 'slots'];
 interface Props {
   data: {
     account: Account;
+    owner: BaseAccount;
     kami: Kami;
   };
   actions: {
@@ -25,18 +26,19 @@ interface Props {
 }
 
 export const Header = (props: Props) => {
-  const { account, kami } = props.data;
+  const { data } = props;
+  const { account, kami, owner } = data;
   const { setAccount } = useSelected();
   const { modals, setModals } = useVisibility();
 
-  const isMine = (kami: Kami) => {
-    return kami.account?.index === account.index;
+  const isMine = () => {
+    return owner.index == account.index;
   };
 
   const handleAccountClick = () => {
-    if (!isMine(kami))
+    if (!isMine())
       return () => {
-        setAccount(kami.account?.index || 0);
+        setAccount(owner.index || 0);
         setModals({
           ...modals,
           account: true,
@@ -71,7 +73,7 @@ export const Header = (props: Props) => {
 
   return (
     <Container>
-      <KamiImage account={account} kami={kami} actions={props.actions} />
+      <KamiImage data={data} actions={props.actions} />
       <Content>
         <Title size={2.4}>{kami.name}</Title>
         <Row>
@@ -103,9 +105,7 @@ export const Header = (props: Props) => {
           </StatsContainer>
         </Row>
         <Overlay bottom={0.75} right={0.75}>
-          <Footer onClick={handleAccountClick()}>
-            {isMine(kami) ? 'yours' : kami.account?.name}
-          </Footer>
+          <Footer onClick={handleAccountClick()}>{isMine() ? 'yours' : owner.name}</Footer>
         </Overlay>
       </Content>
     </Container>

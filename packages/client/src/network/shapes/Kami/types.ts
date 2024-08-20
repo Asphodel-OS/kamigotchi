@@ -9,9 +9,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
-import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { Account, getAccount } from '../Account';
 import { KamiBonuses, getKamiBonuses } from '../Bonus';
 import {
   KamiConfig,
@@ -50,7 +48,6 @@ export interface Kami extends BareKami {
     last: number;
     start: number;
   };
-  account?: Account;
   flags?: {
     namable: boolean;
   };
@@ -67,7 +64,6 @@ interface KamiExperience {
 
 // optional data to populate for a Kami Entity
 export interface Options {
-  account?: boolean;
   flags?: boolean;
   production?: boolean;
   skills?: boolean;
@@ -117,7 +113,6 @@ export const getKami = (
     SkillPoint,
     StartTime,
     State,
-    OwnsPetID,
   } = components;
 
   const id = world.entities[entityIndex];
@@ -148,13 +143,6 @@ export const getKami = (
 
   /////////////////
   // OPTIONAL DATA
-
-  // populate Account
-  if (options?.account) {
-    const accountID = formatEntityID(getComponentValue(OwnsPetID, entityIndex)?.value ?? '');
-    const accountIndex = world.entityToIndex.get(accountID);
-    if (accountIndex) kami.account = getAccount(world, components, accountIndex);
-  }
 
   if (options?.flags) {
     kami.flags = {

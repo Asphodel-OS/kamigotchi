@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SkillImages } from 'assets/images/skills';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { Details } from './Details';
 import { Matrix } from './matrix/Matrix';
 
 interface Props {
-  account: Account;
-  kami: Kami;
+  data: {
+    account: Account;
+    kami: Kami;
+    owner: BaseAccount;
+  };
   skills: Skill[]; // registry skills
   actions: {
     upgrade: (skill: Skill) => void;
@@ -24,7 +27,8 @@ interface Props {
 
 export const Skills = (props: Props) => {
   // console.log('mSkill:', props.kami);
-  const { account, kami, skills, actions, utils } = props;
+  const { data, skills, actions, utils } = props;
+  const { account, kami, owner } = data;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
@@ -51,8 +55,7 @@ export const Skills = (props: Props) => {
   return (
     <Wrapper>
       <Details
-        account={account}
-        kami={kami}
+        data={data}
         index={displayed}
         skills={skillMap}
         actions={{ upgrade: actions.upgrade }}

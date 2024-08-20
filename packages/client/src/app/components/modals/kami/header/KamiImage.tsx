@@ -3,40 +3,40 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { clickFx, hoverFx } from 'app/styles/effects';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { isResting, Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
 
 interface Props {
-  account: Account;
-  kami: Kami;
+  data: {
+    account: Account;
+    kami: Kami;
+    owner: BaseAccount;
+  };
   actions: {
     levelUp: (kami: Kami) => void;
   };
 }
 
 export const KamiImage = (props: Props) => {
-  const { account, kami, actions } = props;
+  const { account, kami, owner } = props.data;
+  const { levelUp } = props.actions;
   const { experience } = kami;
   const expCurr = experience.current;
   const expLimit = experience.threshold;
   const percentage = Math.round((expCurr / expLimit) * 1000) / 10;
 
-  const isMine = (kami: Kami) => {
-    return kami.account?.index === account.index;
-  };
-
   const getLevelTooltip = () => {
-    if (!isMine(kami)) return 'not ur kami';
+    if (owner.index != account.index) return 'not ur kami';
     if (expCurr < expLimit) return 'not enough experience';
     if (!isResting(kami)) return 'kami must be resting';
     return LEVEL_UP_STRING;
   };
 
   const handleLevelUp = () => {
-    actions.levelUp(kami);
+    levelUp(kami);
     playClick();
   };
 

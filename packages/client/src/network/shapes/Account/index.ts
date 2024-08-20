@@ -20,7 +20,8 @@ export {
   getMusuRankings as getAccountMusuRankings,
   getReputationRankings as getAccountRepRankings,
 } from './stats';
-export { getAccount, getBaseAccount } from './types';
+
+export { NullAccount, getAccount, getBaseAccount } from './types';
 
 export type {
   Account,

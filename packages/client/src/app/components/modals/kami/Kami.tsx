@@ -4,9 +4,9 @@ import { interval, map } from 'rxjs';
 
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/stores';
-import { getAccountFromBurner } from 'network/shapes/Account';
-import { Kami, getKamiBattles, getKamiByIndex } from 'network/shapes/Kami';
+import { useSelected, useVisibility } from 'app/stores';
+import { BaseAccount, NullAccount, getAccountFromBurner } from 'network/shapes/Account';
+import { Kami, getKamiAccount, getKamiBattles, getKamiByIndex } from 'network/shapes/Kami';
 import {
   Skill,
   getRegistrySkills,
@@ -21,6 +21,8 @@ import { Tabs } from './header/Tabs';
 import { Skills } from './skills/Skills';
 import { Traits } from './traits/Traits';
 
+const SYNC_TIME = 1000;
+
 export function registerKamiModal() {
   registerUIComponent(
     'KamiDetails',
@@ -34,48 +36,64 @@ export function registerKamiModal() {
     // Requirement
     (layers) => {
       const { network } = layers;
+      const { world, components } = network;
+
       return interval(5000).pipe(
         map(() => {
-          const account = getAccountFromBurner(network, { kamis: true });
+          const account = getAccountFromBurner(network);
           return {
             network,
             data: { account },
+            utils: {
+              getOwner: (index: number) => getKamiAccount(world, components, index),
+            },
           };
         })
       );
     },
 
     // Render
-    ({ data, network }) => {
+    ({ data, network, utils }) => {
       const { account } = data;
       const { actions, api, components, world } = network;
       const { kamiIndex } = useSelected();
+      const { modals } = useVisibility();
       const [tab, setTab] = useState('traits');
       const [kami, setKami] = useState<Kami>();
+      const [owner, setOwner] = useState<BaseAccount>(NullAccount);
+      const [lastSync, setLastSync] = useState(Date.now());
 
       /////////////////
-      // SUBSCRIPTION
+      // SUBSCRIPTIONS
+
+      // time trigger to use for periodic refreshes
+      useEffect(() => {
+        const updateSync = () => setLastSync(Date.now());
+        const timerId = setInterval(updateSync, SYNC_TIME);
+        return () => clearInterval(timerId);
+      }, []);
+
+      // update the Kami Entity whenever the index changes
+      useEffect(() => {
+        if (kamiIndex == kami?.index) return;
+        const newKami = getSelectedKami(kamiIndex);
+        setKami(newKami);
+
+        const newOwner = utils.getOwner(kamiIndex);
+        if (newOwner.index != owner.index) setOwner(newOwner);
+      }, [kamiIndex]);
 
       // refresh kami data every second
-      // Q: should we check whether the modal is open?
       useEffect(() => {
-        const updateKami = () => {
-          setKami(getSelectedKami(kamiIndex));
-        };
-
-        updateKami();
-        const timerId = setInterval(updateKami, 1000);
-        return function cleanup() {
-          clearInterval(timerId);
-        };
-      }, [kamiIndex]);
+        if (!modals.kami) return;
+        setKami(getSelectedKami(kamiIndex));
+      }, [lastSync]);
 
       /////////////////
       // DATA FETCHING
 
       const getSelectedKami = (index: number) => {
         return getKamiByIndex(world, components, index, {
-          account: true,
           skills: true,
           traits: true,
         });
@@ -122,7 +140,7 @@ export function registerKamiModal() {
         <ModalWrapper
           id='kami'
           header={[
-            <Header key='banner' data={{ account, kami: kami }} actions={{ levelUp }} />,
+            <Header key='banner' data={{ account, kami, owner }} actions={{ levelUp }} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
@@ -132,8 +150,7 @@ export function registerKamiModal() {
           {tab === 'traits' && <Traits kami={kami} />}
           {tab === 'skills' && (
             <Skills
-              account={account}
-              kami={kami}
+              data={{ account, kami, owner }}
               skills={getRegistrySkills(world, components)}
               actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill) }}
               utils={{

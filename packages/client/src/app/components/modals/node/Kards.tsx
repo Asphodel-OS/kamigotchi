@@ -9,24 +9,26 @@ import {
   StopButton,
 } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami, calcHealth, calcOutput } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;
+  kamis: Kami[];
   actions: {
     collect: (kami: Kami) => void;
     feed: (kami: Kami, itemIndex: number) => void;
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
     stop: (kami: Kami) => void;
   };
-  allies: Kami[];
-  enemies: Kami[];
+  utils: {
+    getOwner: (index: number) => BaseAccount;
+  };
 }
 
 export const Kards = (props: Props) => {
-  const { actions, account, allies, enemies } = props;
+  const { actions, kamis, account, utils } = props;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
 
@@ -67,11 +69,6 @@ export const Kards = (props: Props) => {
     playClick();
   };
 
-  // returns the onClick function for the description
-  const getSubtextOnClick = (kami: Kami) => {
-    return () => selectAccount(kami.account?.index ?? accountIndex);
-  };
-
   ///////////////////
   // DISPLAY
 
@@ -96,12 +93,13 @@ export const Kards = (props: Props) => {
 
   // rendering of an enemy kami on this node
   const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
+    const owner = utils.getOwner(kami.index);
     return (
       <KamiCard
         key={kami.index}
         kami={kami}
-        subtext={`${kami.account?.name} (\$${calcOutput(kami)})`}
-        subtextOnClick={getSubtextOnClick(kami)}
+        subtext={`${owner.name} (\$${calcOutput(kami)})`}
+        subtextOnClick={() => selectAccount(owner.index)}
         actions={LiquidateButton(kami, myKamis, actions.liquidate)}
         description={getDescription(kami)}
         showBattery
@@ -112,10 +110,10 @@ export const Kards = (props: Props) => {
 
   return (
     <Container>
-      {allies && allies.length > 0 && <Label>Allies</Label>}
-      {allies.map((ally: Kami) => MyKard(ally))}
-      {enemies && enemies.length > 0 && <Label>Enemies</Label>}
-      {enemies.map((enemy: Kami) => EnemyKard(enemy, allies))}
+      {/* {allies && allies.length > 0 && <Label>Allies</Label>}
+      {allies.map((ally: Kami) => MyKard(ally))} */}
+      {kamis && kamis.length > 0 && <Label>Enemies</Label>}
+      {kamis.map((enemy: Kami) => EnemyKard(enemy, kamis))}
     </Container>
   );
 };

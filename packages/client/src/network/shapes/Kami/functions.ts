@@ -1,5 +1,25 @@
+import { getComponentValue, Has, HasValue, runQuery, World } from '@mud-classic/recs';
+
+import { formatEntityID } from 'engine/utils';
+import { Components } from 'network/components';
+import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
 import { calcHarvestIdleTime, calcHarvestNetBounty } from '../Harvest';
 import { Kami } from './types';
+
+// get the BaseAccount entity that owns a Kami
+export const getAccount = (world: World, components: Components, index: number): BaseAccount => {
+  const { IsPet, PetIndex, OwnsPetID } = components;
+  const kamiEntity = Array.from(runQuery([HasValue(PetIndex, { value: index }), Has(IsPet)]))[0];
+
+  const rawAccID = getComponentValue(OwnsPetID, kamiEntity)?.value ?? '';
+  if (!rawAccID) return NullAccount;
+
+  const accID = formatEntityID(rawAccID);
+  const accEntity = world.entityToIndex.get(accID);
+  if (!accEntity) return NullAccount;
+
+  return getBaseAccount(world, components, accEntity);
+};
 
 ////////////////
 // STATE CHECKS
@@ -41,19 +61,6 @@ export const isUnrevealed = (kami: Kami): boolean => {
 // check whether the kami is captured by slave traders
 export const isOffWorld = (kami: Kami): boolean => {
   return kami.state === '721_EXTERNAL';
-};
-
-// checks whether a kami is with its owner
-export const isWithAccount = (kami: Kami): boolean => {
-  if (isDead(kami) || isResting(kami) || isUnrevealed(kami)) return true;
-  if (isOffWorld(kami)) return false;
-  if (isHarvesting(kami)) {
-    const accLoc = kami.account?.roomIndex ?? 0;
-    const kamiLoc = kami.production?.node?.roomIndex ?? 0;
-    return accLoc === kamiLoc;
-  }
-  console.warn(`Invalid State ${kami.state} for kami ${kami.index * 1}`);
-  return false;
 };
 
 // determine whether the kami is still on cooldown

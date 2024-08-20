@@ -15,23 +15,6 @@ import { Item, getItemByIndex } from '../Item';
 import { Kami, getKami } from '../Kami';
 import { getNodeRequirements } from './queries';
 
-export const NullNode: Node = {
-  id: '0' as EntityID,
-  index: 0,
-  entityIndex: 0 as EntityIndex,
-  type: '' as string,
-  roomIndex: 0,
-  name: 'Empty Node',
-  description: 'There is no node in this room.',
-  affinity: '' as string,
-  drops: [],
-  requirements: [],
-  kamis: {
-    allies: [],
-    enemies: [],
-  },
-};
-
 // standardized shape of a Node Entity
 export interface Node {
   id: EntityID;
@@ -44,17 +27,11 @@ export interface Node {
   drops: Item[];
   requirements: Condition[];
   affinity: string;
-  kamis?: NodeKamis;
-}
-
-interface NodeKamis {
-  allies: Kami[];
-  enemies: Kami[];
+  kamis: Kami[];
 }
 
 export interface Options {
   kamis?: boolean;
-  accountID?: EntityID;
 }
 
 // get a Node from its EntityIndex
@@ -90,13 +67,12 @@ export const getNode = (
     affinity: getComponentValue(Affinity, entityIndex)?.value as string, // does this break if there's no affinity?
     drops: [getItemByIndex(world, components, 1)],
     requirements: getNodeRequirements(world, components, nodeIndex),
+    kamis: [],
   };
 
   // (option) get the kamis on this node
   if (options?.kamis) {
     let kamis: Kami[] = [];
-    let kamisMine: Kami[] = [];
-    let kamisOthers: Kami[] = [];
 
     // get list of productions on this node
     const productionEntityIndices = Array.from(
@@ -116,31 +92,28 @@ export const getNode = (
       if (kamiEntityIndex) {
         kamis.push(
           getKami(world, components, kamiEntityIndex, {
-            account: true,
             production: true,
             traits: true,
           })
         );
       }
     }
-
-    // split node kamis between mine and others
-    if (kamis && options.accountID) {
-      kamisMine = kamis.filter((kami) => {
-        return kami.account?.id === options.accountID;
-      });
-      kamisOthers = kamis.filter((kami) => {
-        return kami.account?.id !== options.accountID;
-      });
-    } else {
-      kamisOthers = kamis;
-    }
-
-    node.kamis = {
-      allies: kamisMine,
-      enemies: kamisOthers,
-    };
+    node.kamis = kamis;
   }
 
   return node;
+};
+
+export const NullNode: Node = {
+  id: '0' as EntityID,
+  index: 0,
+  entityIndex: 0 as EntityIndex,
+  type: '' as string,
+  roomIndex: 0,
+  name: 'Empty Node',
+  description: 'There is no node in this room.',
+  affinity: '' as string,
+  drops: [],
+  requirements: [],
+  kamis: [],
 };

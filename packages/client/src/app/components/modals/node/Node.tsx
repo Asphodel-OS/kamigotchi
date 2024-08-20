@@ -9,7 +9,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { parseConditionalText } from 'network/shapes/Conditional';
 import { NullDT, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
-import { Kami } from 'network/shapes/Kami';
+import { Kami, getKamiAccount } from 'network/shapes/Kami';
 import { Node, NullNode, getNodeByIndex } from 'network/shapes/Node';
 import { passesNodeReqs } from 'network/shapes/Node/functions';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
@@ -39,10 +39,7 @@ export function registerNodeModal() {
           const { nodeIndex } = useSelected.getState();
 
           const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-          let node = getNodeByIndex(world, components, nodeIndex, {
-            kamis: true,
-            accountID: account?.id,
-          });
+          let node = getNodeByIndex(world, components, nodeIndex, { kamis: true });
           if (!node) node = NullNode;
 
           // reveal flow
@@ -51,12 +48,15 @@ export function registerNodeModal() {
           return {
             network,
             data: { account, node, commits },
+            utils: {
+              getOwner: (index: number) => getKamiAccount(world, components, index),
+            },
           };
         })
       ),
 
     // Render
-    ({ data, network }) => {
+    ({ data, network, utils }) => {
       // console.log('Node Modal Data', data);
       const { account } = data;
       const {
@@ -91,9 +91,8 @@ export function registerNodeModal() {
         setNode(data.node);
       }, [data.node]);
 
-      const getTotalKamis = () => {
-        return (node.kamis?.allies ?? []).length + (node.kamis?.enemies ?? []).length;
-      };
+      /////////////////
+      // INTERPRETATION
 
       const getDrops = () => {
         return {
@@ -102,7 +101,7 @@ export function registerNodeModal() {
         };
       };
 
-      ///////////////////
+      /////////////////
       // ACTIONS
 
       // collects on an existing harvest
@@ -217,12 +216,12 @@ export function registerNodeModal() {
           canExit
           truncate
         >
-          {getTotalKamis() > 0 ? (
+          {node.kamis.length > 0 ? (
             <Kards
               account={account}
-              allies={node.kamis?.allies!}
-              enemies={node.kamis?.enemies!}
+              kamis={node.kamis}
               actions={{ collect, feed, liquidate, stop }}
+              utils={utils}
             />
           ) : (
             <EmptyText
