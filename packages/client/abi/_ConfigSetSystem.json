@@ -18,6 +18,13 @@
     },
     {
       "type": "function",
+      "name": "deprecate",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "execute",
       "inputs": [
         {
@@ -159,6 +166,12 @@
       "anonymous": false
     },
     {
+      "type": "event",
+      "name": "SystemDeprecated",
+      "inputs": [],
+      "anonymous": false
+    },
+    {
       "type": "error",
       "name": "Ownable__NotOwner",
       "inputs": []
@@ -170,6 +183,7 @@
     }
   ],
   "methodIdentifiers": {
+    "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "executeTyped(string,uint256)": "92976665",
     "owner()": "8da5cb5b",

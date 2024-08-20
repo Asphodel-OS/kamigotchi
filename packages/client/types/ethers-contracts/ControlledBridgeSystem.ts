@@ -30,6 +30,7 @@ import type {
 export interface ControlledBridgeSystemInterface extends utils.Interface {
   functions: {
     "blacklist(address)": FunctionFragment;
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "getMinDelay()": FunctionFragment;
     "getOperationState(bytes32)": FunctionFragment;
@@ -51,6 +52,7 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "blacklist"
+      | "deprecate"
       | "execute"
       | "getMinDelay"
       | "getOperationState"
@@ -73,6 +75,7 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
     functionFragment: "blacklist",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -140,6 +143,7 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "blacklist", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMinDelay",
@@ -201,12 +205,14 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
     "CallExecuted(bytes32,address,uint256)": EventFragment;
     "CallScheduled(bytes32,address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "CallCancelled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CallExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CallScheduled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface CallCancelledEventObject {
@@ -253,6 +259,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
+
 export interface ControlledBridgeSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -282,6 +294,10 @@ export interface ControlledBridgeSystem extends BaseContract {
   functions: {
     blacklist(
       target: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -368,6 +384,10 @@ export interface ControlledBridgeSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  deprecate(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   execute(
     args: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -450,6 +470,8 @@ export interface ControlledBridgeSystem extends BaseContract {
       target: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    deprecate(overrides?: CallOverrides): Promise<void>;
 
     execute(
       args: PromiseOrValue<BytesLike>,
@@ -569,11 +591,18 @@ export interface ControlledBridgeSystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
     blacklist(
       target: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -658,6 +687,10 @@ export interface ControlledBridgeSystem extends BaseContract {
   populateTransaction: {
     blacklist(
       target: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

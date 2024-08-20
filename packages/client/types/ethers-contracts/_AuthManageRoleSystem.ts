@@ -29,6 +29,7 @@ import type {
 export interface _AuthManageRoleSystemInterface extends utils.Interface {
   functions: {
     "addRole(address,string)": FunctionFragment;
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "removeRole(address,string)": FunctionFragment;
@@ -38,6 +39,7 @@ export interface _AuthManageRoleSystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addRole"
+      | "deprecate"
       | "execute"
       | "owner"
       | "removeRole"
@@ -48,6 +50,7 @@ export interface _AuthManageRoleSystemInterface extends utils.Interface {
     functionFragment: "addRole",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -63,6 +66,7 @@ export interface _AuthManageRoleSystemInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "addRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "removeRole", data: BytesLike): Result;
@@ -73,9 +77,11 @@ export interface _AuthManageRoleSystemInterface extends utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface OwnershipTransferredEventObject {
@@ -89,6 +95,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
 
 export interface _AuthManageRoleSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -123,6 +135,10 @@ export interface _AuthManageRoleSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -145,6 +161,10 @@ export interface _AuthManageRoleSystem extends BaseContract {
   addRole(
     target: PromiseOrValue<string>,
     role: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  deprecate(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -172,6 +192,8 @@ export interface _AuthManageRoleSystem extends BaseContract {
       role: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    deprecate(overrides?: CallOverrides): Promise<void>;
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
@@ -201,12 +223,19 @@ export interface _AuthManageRoleSystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
     addRole(
       target: PromiseOrValue<string>,
       role: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -233,6 +262,10 @@ export interface _AuthManageRoleSystem extends BaseContract {
     addRole(
       target: PromiseOrValue<string>,
       role: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -29,6 +29,7 @@ import type {
 
 export interface Pet721ProxySystemInterface extends utils.Interface {
   functions: {
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
     "getToken()": FunctionFragment;
@@ -40,6 +41,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "deprecate"
       | "execute"
       | "executeTyped"
       | "getToken"
@@ -49,6 +51,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -69,6 +72,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
@@ -88,9 +92,11 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface OwnershipTransferredEventObject {
@@ -104,6 +110,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
 
 export interface Pet721ProxySystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -132,6 +144,10 @@ export interface Pet721ProxySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -155,6 +171,10 @@ export interface Pet721ProxySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  deprecate(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   execute(
     arguments: PromiseOrValue<BytesLike>,
@@ -180,6 +200,8 @@ export interface Pet721ProxySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    deprecate(overrides?: CallOverrides): Promise<void>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -213,9 +235,16 @@ export interface Pet721ProxySystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -241,6 +270,10 @@ export interface Pet721ProxySystem extends BaseContract {
   };
 
   populateTransaction: {
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides

@@ -30,6 +30,7 @@ import type {
 export interface _FactionRegistrySystemInterface extends utils.Interface {
   functions: {
     "create(bytes)": FunctionFragment;
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "remove(uint32)": FunctionFragment;
@@ -39,6 +40,7 @@ export interface _FactionRegistrySystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "create"
+      | "deprecate"
       | "execute"
       | "owner"
       | "remove"
@@ -49,6 +51,7 @@ export interface _FactionRegistrySystemInterface extends utils.Interface {
     functionFragment: "create",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -64,6 +67,7 @@ export interface _FactionRegistrySystemInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
@@ -74,9 +78,11 @@ export interface _FactionRegistrySystemInterface extends utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface OwnershipTransferredEventObject {
@@ -90,6 +96,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
 
 export interface _FactionRegistrySystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -123,6 +135,10 @@ export interface _FactionRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -143,6 +159,10 @@ export interface _FactionRegistrySystem extends BaseContract {
 
   create(
     arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  deprecate(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -168,6 +188,8 @@ export interface _FactionRegistrySystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    deprecate(overrides?: CallOverrides): Promise<void>;
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
@@ -196,11 +218,18 @@ export interface _FactionRegistrySystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
     create(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -225,6 +254,10 @@ export interface _FactionRegistrySystem extends BaseContract {
   populateTransaction: {
     create(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -29,6 +29,7 @@ import type {
 
 export interface RegisterSystemInterface extends utils.Interface {
   functions: {
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "execute(address,uint8,address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -38,6 +39,7 @@ export interface RegisterSystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "deprecate"
       | "execute(bytes)"
       | "execute(address,uint8,address,uint256)"
       | "owner"
@@ -45,6 +47,7 @@ export interface RegisterSystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute(bytes)",
     values: [PromiseOrValue<BytesLike>]
@@ -68,6 +71,7 @@ export interface RegisterSystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "execute(bytes)",
     data: BytesLike
@@ -88,9 +92,11 @@ export interface RegisterSystemInterface extends utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface OwnershipTransferredEventObject {
@@ -104,6 +110,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
 
 export interface RegisterSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -132,6 +144,10 @@ export interface RegisterSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "execute(bytes)"(
       args: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -157,6 +173,10 @@ export interface RegisterSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  deprecate(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   "execute(bytes)"(
     args: PromiseOrValue<BytesLike>,
@@ -184,6 +204,8 @@ export interface RegisterSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    deprecate(overrides?: CallOverrides): Promise<void>;
+
     "execute(bytes)"(
       args: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -219,9 +241,16 @@ export interface RegisterSystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "execute(bytes)"(
       args: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -249,6 +278,10 @@ export interface RegisterSystem extends BaseContract {
   };
 
   populateTransaction: {
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "execute(bytes)"(
       args: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

@@ -53,6 +53,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
   functions: {
     "_getTraitStats(uint256)": FunctionFragment;
     "batchMint(uint256)": FunctionFragment;
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "setTraits()": FunctionFragment;
@@ -63,6 +64,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "_getTraitStats"
       | "batchMint"
+      | "deprecate"
       | "execute"
       | "owner"
       | "setTraits"
@@ -77,6 +79,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
     functionFragment: "batchMint",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -93,6 +96,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setTraits", data: BytesLike): Result;
@@ -103,9 +107,11 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface OwnershipTransferredEventObject {
@@ -119,6 +125,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
 
 export interface _721BatchMinterSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -157,6 +169,10 @@ export interface _721BatchMinterSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -181,6 +197,10 @@ export interface _721BatchMinterSystem extends BaseContract {
 
   batchMint(
     amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  deprecate(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -211,6 +231,8 @@ export interface _721BatchMinterSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    deprecate(overrides?: CallOverrides): Promise<void>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -235,6 +257,9 @@ export interface _721BatchMinterSystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
@@ -245,6 +270,10 @@ export interface _721BatchMinterSystem extends BaseContract {
 
     batchMint(
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -273,6 +302,10 @@ export interface _721BatchMinterSystem extends BaseContract {
 
     batchMint(
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

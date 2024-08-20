@@ -32,6 +32,7 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     "ADMIN_ROLE()": FunctionFragment;
     "blacklist(address)": FunctionFragment;
     "cancelWithdraw(uint256)": FunctionFragment;
+    "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "executeWithdraw(uint256)": FunctionFragment;
     "getMinDelay()": FunctionFragment;
@@ -57,6 +58,7 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
       | "ADMIN_ROLE"
       | "blacklist"
       | "cancelWithdraw"
+      | "deprecate"
       | "execute"
       | "executeWithdraw"
       | "getMinDelay"
@@ -89,6 +91,7 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     functionFragment: "cancelWithdraw",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -169,6 +172,7 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     functionFragment: "cancelWithdraw",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeWithdraw",
@@ -238,12 +242,14 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     "CallExecuted(bytes32,address,uint256)": EventFragment;
     "CallScheduled(bytes32,address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SystemDeprecated()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "CallCancelled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CallExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CallScheduled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
 export interface CallCancelledEventObject {
@@ -290,6 +296,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
+export interface SystemDeprecatedEventObject {}
+export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
+
+export type SystemDeprecatedEventFilter =
+  TypedEventFilter<SystemDeprecatedEvent>;
+
 export interface Farm20WithdrawSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -326,6 +338,10 @@ export interface Farm20WithdrawSystem extends BaseContract {
 
     cancelWithdraw(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -429,6 +445,10 @@ export interface Farm20WithdrawSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  deprecate(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   execute(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -528,6 +548,8 @@ export interface Farm20WithdrawSystem extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    deprecate(overrides?: CallOverrides): Promise<void>;
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
@@ -657,6 +679,9 @@ export interface Farm20WithdrawSystem extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
+    SystemDeprecated(): SystemDeprecatedEventFilter;
   };
 
   estimateGas: {
@@ -669,6 +694,10 @@ export interface Farm20WithdrawSystem extends BaseContract {
 
     cancelWithdraw(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -770,6 +799,10 @@ export interface Farm20WithdrawSystem extends BaseContract {
 
     cancelWithdraw(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
