@@ -90,9 +90,6 @@ export function registerNodeModal() {
       }, [data.node]);
 
       /////////////////
-      // INTERPRETATION
-
-      /////////////////
       // ACTIONS
 
       // collects on an existing harvest
