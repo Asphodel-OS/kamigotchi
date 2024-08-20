@@ -62,8 +62,4 @@ export const sendResultNotif = async (
     time: Date.now().toString(),
     modal: 'inventory',
   });
-
-  // TODO: actual notif removal
-  await new Promise((resolve) => setTimeout(resolve, 30000));
-  notifications.remove(id as EntityID);
 };

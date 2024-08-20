@@ -22,6 +22,16 @@ export const ItemGrid = (props: Props) => {
   const { feedKami, feedAccount, openLootbox } = actions;
 
   /////////////////
+  // INTERPRETATION
+
+  const getLootboxActions = (item: Item, bal: number): Option[] => {
+    const count = Math.min(Math.max(bal, 2), 10);
+    const options = [{ text: 'Open', onClick: () => openLootbox(item, 1) }];
+    if (bal > 1) options.push({ text: `Open ${count}`, onClick: () => openLootbox(item, count) });
+    return options;
+  };
+
+  /////////////////
   // DISPLAY
 
   const ItemIcon = (inv: Inventory) => {
@@ -29,11 +39,7 @@ export const ItemGrid = (props: Props) => {
     let options: Option[] = [];
 
     if (item.is.lootbox) {
-      const count = Math.min(Math.max(inv.balance, 3), 10);
-      options = [
-        { text: 'Open', onClick: () => openLootbox(item, 1) },
-        { text: `Open ${count}`, onClick: () => openLootbox(item, count) },
-      ];
+      options = getLootboxActions(item, inv.balance);
     } else if (item.for && item.for === 'ACCOUNT') {
       options = [{ text: 'Consume', onClick: () => feedAccount(inv.item) }];
     } else if (item.for && item.for === 'KAMI') {
