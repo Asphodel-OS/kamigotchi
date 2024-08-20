@@ -23,9 +23,9 @@ abstract contract System is ISystem, Ownable {
     SystemStorage.init(world, components);
   }
 
-  /// @notice depreciates the system
+  /// @notice deprecates the system
   /// @dev emits event for external devs to listen for; does not remove component permissions
-  function depreciate() external onlyOwner {
-    emit SystemDepreciated();
+  function deprecate() external override onlyOwner {
+    emit SystemDeprecated();
   }
 }

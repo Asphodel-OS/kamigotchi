@@ -5,7 +5,9 @@ import { IERC173 } from "./IERC173.sol";
 
 interface ISystem is IERC173 {
   /// @notice emits when system is no longer supported
-  event SystemDepreciated();
+  event SystemDeprecated();
 
   function execute(bytes memory args) external returns (bytes memory);
+
+  function deprecate() external;
 }

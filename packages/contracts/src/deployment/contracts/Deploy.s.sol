@@ -21,6 +21,7 @@ contract Deploy is InitWorld {
 
     address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
     vm.startBroadcast(deployerPriv);
+
     DeployResult memory result = LibDeploy.deploy(deployer, worldAddr, reuseComps);
     world = worldAddr == address(0) ? result.world : IWorld(worldAddr);
 

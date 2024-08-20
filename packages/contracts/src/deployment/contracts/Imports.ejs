@@ -37,3 +37,14 @@ import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- syst
 import { Farm20 } from "tokens/Farm20.sol";
 import { Mint20 } from "tokens/Mint20.sol";
 import { Pet721 } from "tokens/Pet721.sol";
+
+// utils
+
+function getAllComponentIDs() pure returns (uint256[] memory) {
+  uint256[] memory ids = new uint256[](<%= components.length %>);
+  uint256 index;
+  <% components.forEach(component=> { -%>
+ids[index++] = <%= component.comp %>ID;
+  <% }); -%>
+  return ids;
+}
