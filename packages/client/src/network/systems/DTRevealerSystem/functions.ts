@@ -39,7 +39,7 @@ export const sendKeepAliveNotif = (notifications: NotificationSystem, status: bo
       title: 'Revealing items',
       description: `Don't close this page!`,
       time: Date.now().toString(),
-      modal: 'reveal',
+      // modal: 'reveal',
     });
   else notifications.remove(id as EntityID);
 };

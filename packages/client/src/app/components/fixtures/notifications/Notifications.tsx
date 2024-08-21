@@ -36,11 +36,16 @@ export function registerNotificationFixture() {
       /////////////////
       // INTERACTION
 
-      const handleClick = (targetModal: string | undefined) => {
+      const handleClick = (targetModal: string | undefined, entityIndex: EntityIndex) => {
         if (targetModal === undefined) return;
 
         const target = targetModal as keyof Modals;
         setModals({ ...modals, [target]: true });
+        dismiss(entityIndex);
+      };
+
+      const dismiss = (entityIndex: EntityIndex) => {
+        notifications.remove(entityIndex);
       };
 
       /////////////////
@@ -52,8 +57,8 @@ export function registerNotificationFixture() {
 
         return (
           <Card key={entityIndex.toString()}>
-            <ExitButton onClick={() => notifications.remove(entityIndex)}>X</ExitButton>
-            <div onClick={() => handleClick(notification.modal)}>
+            <ExitButton onClick={() => dismiss(entityIndex)}>X</ExitButton>
+            <div onClick={() => handleClick(notification.modal, entityIndex)}>
               <Title>{notification.title}</Title>
               <Description>{notification.description}</Description>
             </div>
