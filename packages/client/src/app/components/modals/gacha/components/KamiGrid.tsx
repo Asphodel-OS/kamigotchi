@@ -2,9 +2,8 @@ import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { playClick } from 'utils/sounds';
-
 import { Kami } from 'network/shapes/Kami';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   kamis: Kami[];

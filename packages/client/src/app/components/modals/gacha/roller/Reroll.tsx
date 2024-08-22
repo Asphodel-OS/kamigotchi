@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
-import { KamiGrid } from './components/KamiGrid';
-
 import { Kami } from 'network/shapes/Kami';
-import { SideBalance } from './components/SideBalance';
+import { KamiGrid } from '../components/KamiGrid';
+import { SideBalance } from '../components/SideBalance';
 
 interface Props {
   actions: {
@@ -51,7 +50,7 @@ export const Reroll = (props: Props) => {
 
     // stats
     text.push('Re-roll cost: ' + utils.formatEther(props.utils.getRerollCost(kami)) + 'Ξ');
-    text.push('Re-rolls done: ' + kami.rerolls.toString());
+    text.push('Re-rolls done: ' + kami.rerolls?.toString() ?? '0');
 
     return text;
   };

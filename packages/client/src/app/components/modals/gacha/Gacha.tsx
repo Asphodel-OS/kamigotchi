@@ -21,9 +21,9 @@ import { Kami, getLazyKamis } from 'network/shapes/Kami';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
 import { erc20Abi, formatUnits } from 'viem';
-import { Commits } from './Commits';
-import { Pool } from './Pool';
-import { Reroll } from './Reroll';
+import { Pool } from './pool/Pool';
+import { Commits } from './roller/Commits';
+import { Reroll } from './roller/Reroll';
 import { Tabs } from './Tabs';
 
 export function registerGachaModal() {

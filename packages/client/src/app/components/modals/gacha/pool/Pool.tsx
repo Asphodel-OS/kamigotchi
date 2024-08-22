@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
-import { KamiGrid } from './components/KamiGrid';
-
 import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { GachaTicket } from 'network/shapes/utils/EntityTypes';
-import { SideBalance } from './components/SideBalance';
+import { KamiGrid } from '../components/KamiGrid';
+import { SideBalance } from '../components/SideBalance';
 
 interface Props {
   actions: {
