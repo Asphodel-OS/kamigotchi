@@ -1,9 +1,10 @@
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { erc20Abi, formatUnits } from 'viem';
 import { useReadContract, useReadContracts } from 'wagmi';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -13,7 +14,6 @@ import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { GachaTicketInventory } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
-import { useEffect, useState } from 'react';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 
