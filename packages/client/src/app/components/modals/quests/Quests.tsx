@@ -112,11 +112,16 @@ export function registerQuestsModal() {
         if (isUpdating.current) return;
         isUpdating.current = true;
 
-        const newAvailable = filterByAvailable(registry, ongoing, completed);
-        if (newAvailable.length > available.length) setTab('AVAILABLE');
+        const raw = filterByAvailable(registry, ongoing, completed);
 
-        const populated = newAvailable.map((q) => populate(q));
-        setAvailable(filterOutBattlePass(populated));
+        const populated = raw.map((q) => populate(q));
+        const newAvailable = filterOutBattlePass(populated);
+        console.log('available', available);
+        console.log('raw', raw);
+        console.log('newAvailable', newAvailable);
+
+        setAvailable(newAvailable);
+        if (newAvailable.length > available.length) setTab('AVAILABLE');
 
         isUpdating.current = false;
       }, [modals.quests, registry.length, completed.length, ongoing.length]);
