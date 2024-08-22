@@ -21,6 +21,7 @@ export {
   querySnapshotObjective,
 } from './objective';
 export {
+  queryAccepted as queryAcceptedQuests,
   queryCompleted as queryCompletedQuests,
   queryOngoing as queryOngoingQuests,
   queryRegistry as queryRegistryQuests,

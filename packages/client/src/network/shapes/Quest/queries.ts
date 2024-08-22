@@ -33,6 +33,10 @@ export const query = (components: Components, options: QueryOptions): EntityInde
   return Array.from(runQuery(toQuery));
 };
 
+export const queryAccepted = (components: Components, accountID: EntityID): EntityIndex[] => {
+  return query(components, { account: accountID });
+};
+
 // get the list of Completed Quest EntityIndices for an Account
 export const queryCompleted = (components: Components, accountID: EntityID): EntityIndex[] => {
   return query(components, { account: accountID, completed: true });

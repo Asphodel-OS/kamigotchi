@@ -10,14 +10,21 @@ import {
   getAccountMusuRankings,
   getAccountRepRankings,
   getAllAccounts,
+  queryAccountByIndex,
 } from 'network/shapes/Account';
+import { getByOperator } from 'network/shapes/Account/getters';
 import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
 import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Npc/merchant';
-import { getQuest, getQuestByIndex, queryRegistryQuests } from 'network/shapes/Quest';
+import {
+  getQuest,
+  getQuestByIndex,
+  queryAcceptedQuests,
+  queryRegistryQuests,
+} from 'network/shapes/Quest';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { getRegistrySkills, getSkillByIndex } from 'network/shapes/Skill';
 import { getRegistryTraits, getTraitByIndex } from 'network/shapes/Trait';
@@ -54,6 +61,8 @@ export const initExplorer = (world: World, components: Components) => {
       getByID: (id: EntityID) => getAccountByID(world, components, id, fullAccountOptions),
       getByOwner: (owner: string) =>
         getAccountByOwner(world, components, owner.toLowerCase(), fullAccountOptions),
+      getByOperator: (operator: string) =>
+        getByOperator(world, components, operator.toLowerCase(), fullAccountOptions),
       getByName: (name: string) => getAccountByName(world, components, name, fullAccountOptions),
       entities: () => Array.from(components.IsAccount.entities()),
       indices: () => Array.from(components.AccountIndex.values.value.values()),
@@ -126,6 +135,13 @@ export const initExplorer = (world: World, components: Components) => {
         return quests.sort((a, b) => a.index - b.index);
       },
       get: (index: number) => getQuestByIndex(world, components, index),
+      getForAccount: (accountIndex: number) => {
+        const accEntity = queryAccountByIndex(components, accountIndex) as EntityIndex;
+        const accountID = world.entities[accEntity];
+        const entities = queryAcceptedQuests(components, accountID);
+        const quests = entities.map((entity) => getQuest(world, components, entity));
+        return quests.sort((a, b) => a.index - b.index);
+      },
       indices: () => [...new Set(Array.from(components.QuestIndex.values.value.values()))],
     },
 
