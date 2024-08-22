@@ -1,4 +1,4 @@
-import zone1 from './z1.png';
+import zone1 from './z1.webp';
 import zone2 from './z2.gif';
 
 export const mapBackgrounds = [
