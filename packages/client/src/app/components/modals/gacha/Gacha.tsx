@@ -4,13 +4,7 @@ import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import {
-  useAccount,
-  useBalance,
-  useReadContract,
-  useReadContracts,
-  useWatchBlockNumber,
-} from 'wagmi';
+import { useAccount, useBalance, useReadContract, useReadContracts } from 'wagmi';
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -19,8 +13,9 @@ import { getAccountFromBurner } from 'network/shapes/Account';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { Kami, getLazyKamis } from 'network/shapes/Kami';
 import { Commit, filterRevealable } from 'network/shapes/utils';
+import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
-import { erc20Abi, formatUnits } from 'viem';
+import { erc20Abi } from 'viem';
 import { Pool } from './pool/Pool';
 import { Commits } from './roller/Commits';
 import { Reroll } from './roller/Reroll';
@@ -75,20 +70,13 @@ export function registerGachaModal() {
       const [waitingToReveal, setWaitingToReveal] = useState(false);
       const [tab, setTab] = useState('MINT');
       const [blockNumber, setBlockNumber] = useState(BigInt(0));
+      const [gachaBalance, setGachaBalance] = useState(0);
 
       /////////////////
       // SUBSCRIPTIONS
 
-      useWatchBlockNumber({
-        onBlockNumber: (n) => {
-          refetchOwnerMint20Balance();
-          refetchOwnerEthBalance();
-          setBlockNumber(n);
-        },
-      });
-
       // Owner ETH Balance
-      const { data: ownerEthBalance, refetch: refetchOwnerEthBalance } = useBalance({
+      const { data: ownerEthBalance } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
       });
 
@@ -100,7 +88,7 @@ export function registerGachaModal() {
       });
 
       // $KAMI Balance of Owner EOA
-      const { data: ownerMint20Balance, refetch: refetchOwnerMint20Balance } = useReadContracts({
+      const { data: mint20Balance, refetch: refetchMint20Balance } = useReadContracts({
         contracts: [
           {
             abi: erc20Abi,
@@ -118,6 +106,22 @@ export function registerGachaModal() {
 
       //////////////
       // TRACKING
+
+      // refetch the mint20 balance whenever the wallet connects or contract address changes
+      useEffect(() => {
+        console.log('connected', isConnected, mint20Addy);
+        if (!isConnected || !mint20Addy) return;
+        refetchMint20Balance();
+      }, [isConnected, mint20Addy]);
+
+      // update the gacha balance whenever the mint20 balance changes
+      useEffect(() => {
+        if (!mint20Balance || !mint20Balance[0]) return;
+        const raw = mint20Balance[0]?.result ?? BigInt(0);
+        const decimals = mint20Balance[1]?.result ?? 18;
+        const balance = parseTokenBalance(raw, decimals);
+        if (balance != gachaBalance) setGachaBalance(balance);
+      }, [mint20Balance]);
 
       useEffect(() => {
         const tx = async () => {
@@ -148,12 +152,6 @@ export function registerGachaModal() {
 
       const getRerollCost = (kami: Kami) => {
         return calcRerollCost(world, components, kami);
-      };
-
-      // parses a wagmi FetchBalanceResult
-      const parseTokenBalance = (balance: bigint = BigInt(0), decimals: number = 18) => {
-        const formatted = formatUnits(balance, decimals);
-        return Number(formatted);
       };
 
       /////////////////
@@ -279,8 +277,8 @@ export function registerGachaModal() {
               data={{
                 account: {
                   balance: parseTokenBalance(
-                    ownerMint20Balance?.[0]?.result,
-                    ownerMint20Balance?.[1]?.result
+                    mint20Balance?.[0]?.result,
+                    mint20Balance?.[1]?.result
                   ),
                 },
                 lazyKamis: data.gachaKamis,
