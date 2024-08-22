@@ -113,12 +113,8 @@ export function registerQuestsModal() {
         isUpdating.current = true;
 
         const raw = filterByAvailable(registry, ongoing, completed);
-
         const populated = raw.map((q) => populate(q));
         const newAvailable = filterOutBattlePass(populated);
-        console.log('available', available);
-        console.log('raw', raw);
-        console.log('newAvailable', newAvailable);
 
         setAvailable(newAvailable);
         if (newAvailable.length > available.length) setTab('AVAILABLE');
