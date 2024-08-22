@@ -79,7 +79,7 @@ export function registerAccountHeader() {
               <Tooltip text={getStaminaTooltip(stamina)}>
                 <TextBox>
                   {`${calcStaminaPercent(stamina)}%`}
-                  <Battery level={calcStaminaPercent(stamina)} />
+                  <Battery level={calcStaminaPercent(stamina)} scale={1.2} />
                 </TextBox>
               </Tooltip>
             </Cell>

@@ -84,7 +84,7 @@ export const KamiCard = (props: Props) => {
         )}
         {showBattery && (
           <Tooltip key='battery' text={[batteryString]}>
-            <Battery level={(100 * calcHealth(kami)) / totalHealth} />
+            <Battery level={(100 * calcHealth(kami)) / totalHealth} scale={1.2} />
           </Tooltip>
         )}
       </TitleCorner>
