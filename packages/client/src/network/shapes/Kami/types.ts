@@ -25,18 +25,22 @@ import { TraitIndices, Traits, getTraits } from '../Trait';
 import { DetailedEntity } from '../utils';
 import { calcHealthRate } from './functions';
 
-export interface BareKami extends DetailedEntity {
+export interface BaseKami extends DetailedEntity {
   id: EntityID;
   index: number;
   entityIndex: EntityIndex;
 }
 
 // standardized shape of a Kami Entity
-export interface Kami extends BareKami {
+export interface Kami extends BaseKami {
   level: number;
-  experience: KamiExperience;
   state: string;
-  skillPoints: number;
+
+  // less necessary
+  experience: {
+    current: number;
+    threshold: number;
+  };
   stats: Stats;
   bonuses: KamiBonuses;
   config: KamiConfig;
@@ -48,6 +52,9 @@ export interface Kami extends BareKami {
     last: number;
     start: number;
   };
+
+  // much less necessary
+  skillPoints: number;
   flags?: {
     namable: boolean;
   };
@@ -55,11 +62,6 @@ export interface Kami extends BareKami {
   skills?: Skill[];
   traits?: Traits;
   rerolls?: number;
-}
-
-interface KamiExperience {
-  current: number;
-  threshold: number;
 }
 
 // optional data to populate for a Kami Entity
@@ -72,11 +74,11 @@ export interface Options {
 }
 
 // gets a Kami from EntityIndex with just the bare minimum of data
-export const getBareKami = (
+export const getBaseKami = (
   world: World,
   components: Components,
   entityIndex: EntityIndex
-): BareKami => {
+): BaseKami => {
   const { PetIndex, Name, MediaURI } = components;
   return {
     ObjectType: 'KAMI',
@@ -119,7 +121,7 @@ export const getKami = (
 
   // populate the base Kami data
   const kami: Kami = {
-    ...getBareKami(world, components, entityIndex),
+    ...getBaseKami(world, components, entityIndex),
     image: getComponentValue(MediaURI, entityIndex)?.value as string,
     level: (getComponentValue(Level, entityIndex)?.value ?? (1 as number)) * 1,
     experience: {

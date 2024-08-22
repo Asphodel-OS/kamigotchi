@@ -18,14 +18,18 @@ export {
   onCooldown,
 } from './functions';
 export {
-  getAllKamis,
-  getKamiByIndex,
+  getAll as getAllKamis,
+  getByIndex as getKamiByIndex,
+  getByAccount as getKamisByAccount,
+} from './getters';
+export {
   getLazyKamis,
-  queryKamiEntitiesX,
-  queryKamis,
+  queryByAccount as queryKamisByAccount,
+  queryByIndex as queryKamisByIndex,
+  queryByState as queryKamisByState,
 } from './queries';
 
 export type { KillLog } from './battle';
 export type { QueryOptions } from './queries';
-export { getBareKami, getKami } from './types';
+export { getBaseKami, getKami } from './types';
 export type { Kami, Options as KamiOptions } from './types';

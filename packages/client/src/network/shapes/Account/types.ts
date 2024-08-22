@@ -13,7 +13,7 @@ import {
   getAccOutgoingRequests,
 } from '../Friendship';
 import { Inventory, cleanInventories, getMusuBalance, queryInventoriesByAccount } from '../Item';
-import { Kami, KamiOptions, queryKamis } from '../Kami';
+import { Kami, KamiOptions, getKamisByAccount } from '../Kami';
 import { Skill } from '../Skill';
 import { getData } from '../utils';
 
@@ -158,7 +158,7 @@ export const getAccount = (
   // populate Kamis
   if (options?.kamis) {
     const kamiOptions = typeof options.kamis === 'boolean' ? {} : options.kamis;
-    account.kamis = queryKamis(world, components, { account: account.id }, kamiOptions);
+    account.kamis = getKamisByAccount(world, components, account.id, kamiOptions);
   }
 
   // populate Friends

@@ -18,32 +18,33 @@ export type QueryOptions = {
   state?: string;
 };
 
-// get a kami by its index (token ID)
-// export const getKamiByIndex = (
-//   world: World,
-//   components: Components,
-//   index: number,
-//   options?: KamiOptions
-// ) => {
-//   return queryKamis(world, components, { index: index }, options)[0];
-// };
-// get a kami by its index (token ID)
-export const getKamiByIndex = (
-  world: World,
-  components: Components,
-  index: number,
-  options?: KamiOptions
-) => {
-  const { IsPet, PetIndex } = components;
-  const kamiEntityIndex = Array.from(
-    runQuery([HasValue(PetIndex, { value: index }), Has(IsPet)])
-  )[0];
-  return getKami(world, components, kamiEntityIndex, options);
+// returns raw entity indices
+export const query = (components: Components, options: QueryOptions): EntityIndex[] => {
+  const { OwnsPetID, IsPet, State, PetIndex } = components;
+
+  const toQuery: QueryFragment[] = [Has(IsPet)];
+  if (options?.index) toQuery.push(HasValue(PetIndex, { value: options.index }));
+  if (options?.account) toQuery.push(HasValue(OwnsPetID, { value: options.account }));
+  if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
+
+  return Array.from(runQuery(toQuery));
 };
 
-export const getAllKamis = (world: World, components: Components, options?: KamiOptions) => {
-  return queryKamis(world, components, {}, options);
+export const queryByIndex = (components: Components, index: number): EntityIndex[] => {
+  return query(components, { index });
 };
+
+// query for all Kami entities owned by an Account based on its ID
+export const queryByAccount = (components: Components, accountID: EntityID): EntityIndex[] => {
+  return query(components, { account: accountID });
+};
+
+export const queryByState = (components: Components, state: string): EntityIndex[] => {
+  return query(components, { state });
+};
+
+//////////////////
+// INTERNAL
 
 export const getLazyKamis = (
   world: World,
@@ -53,43 +54,13 @@ export const getLazyKamis = (
     _getLazyKamis(world, components, queryOpts, options);
 };
 
-export const queryKamis = (
-  world: World,
-  components: Components,
-  queryOptions: QueryOptions,
-  options?: KamiOptions
-): Kami[] => {
-  const kamiIDs = queryKamiEntitiesX(components, queryOptions);
-  return kamiIDs.map((index): Kami => getKami(world, components, index, options));
-};
-
-// returns raw entity indices
-export const queryKamiEntitiesX = (
-  components: Components,
-  options: QueryOptions
-): EntityIndex[] => {
-  const { OwnsPetID, IsPet, State, PetIndex } = components;
-
-  const toQuery: QueryFragment[] = [];
-  if (options?.index) toQuery.push(HasValue(PetIndex, { value: options.index }));
-  if (options?.account) toQuery.push(HasValue(OwnsPetID, { value: options.account }));
-  if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
-  toQuery.push(Has(IsPet));
-
-  return Array.from(runQuery(toQuery));
-};
-
-//////////////////
-// INTERNAL
-
 const _getLazyKamis = (
   world: World,
   components: Components,
   queryOpts: QueryOptions,
   options?: KamiOptions
 ): Array<() => Kami> => {
-  const kamiIDs = queryKamiEntitiesX(components, queryOpts);
-
+  const kamiIDs = query(components, queryOpts);
   return kamiIDs.map(
     (index): (() => Kami) =>
       () =>
