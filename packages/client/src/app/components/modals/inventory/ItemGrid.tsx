@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 
-import { IconListButton, Tooltip } from 'app/components/library';
+import { EmptyText, IconListButton, Tooltip } from 'app/components/library';
 import { Option } from 'app/components/library/base/buttons/IconListButton';
 import { Account, getAccessibleKamis } from 'network/shapes/Account';
 import { Inventory, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
+
+const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 
 interface Props {
   account: Account;
@@ -63,11 +65,12 @@ export const ItemGrid = (props: Props) => {
     );
   };
 
-  if (inventories.length === 0) {
-    return <EmptyText>Inventory is empty. Go get something.</EmptyText>;
-  }
-
-  return <Container key='grid'>{inventories.map((inv) => ItemIcon(inv))}</Container>;
+  return (
+    <Container key='grid'>
+      {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
+      {inventories.map((inv) => ItemIcon(inv))}
+    </Container>
+  );
 };
 
 const Container = styled.div`
@@ -75,15 +78,4 @@ const Container = styled.div`
   flex-flow: row wrap;
   justify-content: flex-start;
   gap: 0.3vw;
-`;
-
-const EmptyText = styled.div`
-  color: #333;
-  padding: 0.7vh 0vw;
-  margin: 1.5vh;
-  height: 100%;
-
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: center;
 `;
