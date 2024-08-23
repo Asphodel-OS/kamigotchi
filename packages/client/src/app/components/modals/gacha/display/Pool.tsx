@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
+import { BaseKami } from 'network/shapes/Kami/types';
+import { playClick } from 'utils/sounds';
 import { KamiBlock } from './KamiBlock';
 
 interface Props {
@@ -13,7 +15,8 @@ interface Props {
 
 export const Pool = (props: Props) => {
   const { lazyKamis } = props;
-  const { modals } = useVisibility();
+  const { kamiIndex, setKami } = useSelected();
+  const { modals, setModals } = useVisibility();
   const [numShown, setNumShown] = useState<number>(0);
 
   useEffect(() => {
@@ -23,6 +26,15 @@ export const Pool = (props: Props) => {
 
   //////////////////
   // LOGIC
+
+  const kamiOnClick = (kami: BaseKami) => {
+    const sameKami = kamiIndex === kami.index;
+    setKami(kami.index);
+
+    if (modals.kami && sameKami) setModals({ ...modals, kami: false });
+    else setModals({ ...modals, kami: true });
+    playClick();
+  };
 
   const getKamiText = (kami: Kami): string[] => {
     return [
@@ -48,7 +60,7 @@ export const Pool = (props: Props) => {
     <OuterBox style={{ display: props.isVisible ? 'flex' : 'none' }}>
       {getTruncatedKamis().map((kami) => (
         <Tooltip key={kami.index} text={getKamiText(kami)}>
-          <KamiBlock key={kami.index} kami={kami} />
+          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
         </Tooltip>
       ))}
     </OuterBox>
@@ -56,7 +68,6 @@ export const Pool = (props: Props) => {
 };
 
 const OuterBox = styled.div`
-  background-color: white;
   width: 100%;
 
   display: flex;

@@ -5,6 +5,7 @@ import { Kami } from 'network/shapes/Kami';
 
 interface Props {
   kami: Kami;
+  onClick?: () => void;
 }
 
 export const KamiBlock = (props: Props) => {
@@ -13,7 +14,7 @@ export const KamiBlock = (props: Props) => {
 
   return (
     <Container>
-      <Image src={kami.image} />
+      <Image src={kami.image} onClick={props.onClick} />
       <Overlay top={0.9} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
@@ -38,11 +39,14 @@ const Container = styled.div`
   filter: drop-shadow(0.2vw 0.2vw 0.1vw black);
 `;
 
-const Image = styled.img`
+const Image = styled.img<{ onClick?: () => void }>`
   border: solid black 0.15vw;
   border-radius: 0.6vw;
   height: 100%;
   image-rendering: pixelated;
+
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'inherit')};
+  pointer-events: ${({ onClick }) => (onClick ? 'auto' : 'inherit')};
 `;
 
 const Grouping = styled.div`

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { EmptyText } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { GachaTicket } from 'network/shapes/utils';
@@ -25,6 +26,7 @@ export const ControlPanel = (props: Props) => {
     <Container>
       <Tabs tab={props.tab} setTab={props.setTab} />
       <Controls>
+        <EmptyText text={['Filters coming soon™']} size={1} />
         <Overlay right={0.2} bottom={0.5}>
           <SideBalance balance={gachaBalance.toFixed(1)} icon={GachaTicket.image} />
         </Overlay>
