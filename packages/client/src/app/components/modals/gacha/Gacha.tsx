@@ -12,14 +12,17 @@ import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/sto
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { Kami, getLazyKamis, queryAllKamis } from 'network/shapes/Kami';
+import { BaseKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
+import styled from 'styled-components';
 import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
 import { erc20Abi } from 'viem';
+import { ControlPanel } from './panel/ControlPanel';
 import { Pool } from './pool/Pool';
-import { Commits } from './roller/Commits';
-import { Reroll } from './roller/Reroll';
-import { Tabs } from './Tabs';
+import { Commits } from './reroll/Commits';
+import { Reroll } from './reroll/Reroll';
+import { TabType } from './types';
 
 const MINT20PROXY_KEY = 'system.Mint20.Proxy';
 
@@ -28,9 +31,9 @@ export function registerGachaModal() {
     'Gacha',
     {
       colStart: 11,
-      colEnd: 67,
+      colEnd: 100,
       rowStart: 8,
-      rowEnd: 99,
+      rowEnd: 75,
     },
     (layers) =>
       interval(2000).pipe(
@@ -70,7 +73,7 @@ export function registerGachaModal() {
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
 
-      const [tab, setTab] = useState('MINT');
+      const [tab, setTab] = useState<TabType>('MINT');
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
       const [gachaBalance, setGachaBalance] = useState(0);
@@ -186,7 +189,7 @@ export function registerGachaModal() {
       };
 
       // reroll a pet with eth payment
-      const rerollTx = (kamis: Kami[], price: bigint) => {
+      const rerollTx = (kamis: BaseKami[], price: bigint) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -246,7 +249,7 @@ export function registerGachaModal() {
         }
       };
 
-      const handleReroll = (kamis: Kami[], price: bigint) => async () => {
+      const handleReroll = (kamis: BaseKami[], price: bigint) => async () => {
         if (kamis.length === 0) return;
         try {
           setWaitingToReveal(true);
@@ -312,16 +315,26 @@ export function registerGachaModal() {
             />
           }
           canExit
+          noPadding
         >
-          <Tabs
-            tab={tab}
-            setTab={setTab}
-            commits={data.commits.length}
-            gachaBalance={data.gachaKamis.length}
-          />
-          {MainDisplay()}
+          <Container>
+            {MainDisplay()}
+            <ControlPanel
+              tab={tab}
+              setTab={setTab}
+              actions={{ mint: handleMint, reroll: handleReroll }}
+            />
+          </Container>
         </ModalWrapper>
       );
     }
   );
 }
+
+const Container = styled.div`
+  background-color: blue;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
