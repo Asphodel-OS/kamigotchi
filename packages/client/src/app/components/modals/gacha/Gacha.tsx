@@ -4,14 +4,14 @@ import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import { useAccount, useBalance, useReadContract, useReadContracts } from 'wagmi';
+import { useAccount, useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
-import { Kami, getLazyKamis } from 'network/shapes/Kami';
+import { Kami, getLazyKamis, queryAllKamis } from 'network/shapes/Kami';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
@@ -21,17 +21,19 @@ import { Commits } from './roller/Commits';
 import { Reroll } from './roller/Reroll';
 import { Tabs } from './Tabs';
 
+const MINT20PROXY_KEY = 'system.Mint20.Proxy';
+
 export function registerGachaModal() {
   registerUIComponent(
     'Gacha',
     {
-      colStart: 20,
-      colEnd: 80,
-      rowStart: 20,
-      rowEnd: 90,
+      colStart: 11,
+      colEnd: 67,
+      rowStart: 8,
+      rowEnd: 99,
     },
     (layers) =>
-      interval(1000).pipe(
+      interval(2000).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
@@ -49,7 +51,8 @@ export function registerGachaModal() {
                 { account: GACHA_ID as EntityID },
                 { traits: true }
               ),
-              commits: commits,
+              kamiEntities: queryAllKamis(components),
+              commits,
             },
           };
         })
@@ -62,14 +65,14 @@ export function registerGachaModal() {
         api: { player },
       } = network;
       const { isConnected } = useAccount();
+      const { account } = useKamiAccount();
       const { modals, setModals } = useVisibility();
-      const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, apis } = useNetwork();
+      const { data: blockNumber } = useBlockNumber({ watch: true });
 
+      const [tab, setTab] = useState('MINT');
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [tab, setTab] = useState('MINT');
-      const [blockNumber, setBlockNumber] = useState(BigInt(0));
       const [gachaBalance, setGachaBalance] = useState(0);
 
       /////////////////
@@ -77,12 +80,12 @@ export function registerGachaModal() {
 
       // Owner ETH Balance
       const { data: ownerEthBalance } = useBalance({
-        address: kamiAccount.ownerAddress as `0x${string}`,
+        address: account.ownerAddress as `0x${string}`,
       });
 
       // $KAMI Contract Address
       const { data: mint20Addy } = useReadContract({
-        address: network.systems['system.Mint20.Proxy']?.address as `0x${string}`,
+        address: network.systems[MINT20PROXY_KEY]?.address as `0x${string}`,
         abi: Mint20ProxySystemABI,
         functionName: 'getTokenAddy',
       });
@@ -94,7 +97,7 @@ export function registerGachaModal() {
             abi: erc20Abi,
             address: mint20Addy as `0x${string}`,
             functionName: 'balanceOf',
-            args: [kamiAccount.ownerAddress as `0x${string}`],
+            args: [account.ownerAddress as `0x${string}`],
           },
           {
             abi: erc20Abi,
@@ -104,25 +107,36 @@ export function registerGachaModal() {
         ],
       });
 
-      //////////////
-      // TRACKING
-
       // refetch the mint20 balance whenever the wallet connects or contract address changes
       useEffect(() => {
-        console.log('connected', isConnected, mint20Addy);
         if (!isConnected || !mint20Addy) return;
         refetchMint20Balance();
       }, [isConnected, mint20Addy]);
 
-      // update the gacha balance whenever the mint20 balance changes
+      // update the gacha balance whenever the result changes
       useEffect(() => {
         if (!mint20Balance || !mint20Balance[0]) return;
+        if (mint20Balance[0].error) {
+          const error = mint20Balance[0].error;
+          return console.warn(`${error.name} on Gacha Modal:\n${error.message}`);
+        }
+
         const raw = mint20Balance[0]?.result ?? BigInt(0);
         const decimals = mint20Balance[1]?.result ?? 18;
-        const balance = parseTokenBalance(raw, decimals);
-        if (balance != gachaBalance) setGachaBalance(balance);
+        const newBalance = parseTokenBalance(raw, decimals);
+
+        if (newBalance != gachaBalance) setGachaBalance(newBalance);
       }, [mint20Balance]);
 
+      // open the party modal when the reveal is triggered
+      useEffect(() => {
+        if (!waitingToReveal) return;
+        setModals({ ...modals, party: true });
+        setWaitingToReveal(false);
+      }, [waitingToReveal]);
+
+      // reveal gacha result(s) when the number of commits changes
+      // Q(jb): is it necessary to run this as an async
       useEffect(() => {
         const tx = async () => {
           if (!isConnected) return;
@@ -136,10 +150,6 @@ export function registerGachaModal() {
               setTriedReveal(true);
             } catch (e) {
               console.log('Gacha.tsx: handleMint() reveal failed', e);
-            }
-            if (waitingToReveal) {
-              setWaitingToReveal(false);
-              setModals({ ...modals, party: true });
             }
           }
         };
@@ -198,9 +208,6 @@ export function registerGachaModal() {
 
       // reveal gacha result(s)
       const revealTx = async (commits: Commit[]) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
         const toReveal = commits.map((n) => n.id);
         const actionID = uuid() as EntityID;
         actions!.add({
@@ -260,27 +267,13 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const TabsBar = (
-        <Tabs
-          tab={tab}
-          setTab={setTab}
-          commits={data.commits.length}
-          gachaBalance={data.gachaKamis.length}
-        />
-      );
-
       const MainDisplay = () => {
         if (tab === 'MINT')
           return (
             <Pool
               actions={{ handleMint }}
               data={{
-                account: {
-                  balance: parseTokenBalance(
-                    mint20Balance?.[0]?.result,
-                    mint20Balance?.[1]?.result
-                  ),
-                },
+                account: { balance: gachaBalance },
                 lazyKamis: data.gachaKamis,
               }}
             />
@@ -320,7 +313,12 @@ export function registerGachaModal() {
           }
           canExit
         >
-          {TabsBar}
+          <Tabs
+            tab={tab}
+            setTab={setTab}
+            commits={data.commits.length}
+            gachaBalance={data.gachaKamis.length}
+          />
           {MainDisplay()}
         </ModalWrapper>
       );
