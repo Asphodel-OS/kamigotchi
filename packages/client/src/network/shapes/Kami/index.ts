@@ -24,6 +24,7 @@ export {
 } from './getters';
 export {
   getLazyKamis,
+  queryAll as queryAllKamis,
   queryByAccount as queryKamisByAccount,
   queryByIndex as queryKamisByIndex,
   queryByState as queryKamisByState,

@@ -19,7 +19,7 @@ export type QueryOptions = {
 };
 
 // returns raw entity indices
-export const query = (components: Components, options: QueryOptions): EntityIndex[] => {
+export const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
   const { OwnsPetID, IsPet, State, PetIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsPet)];
@@ -28,6 +28,10 @@ export const query = (components: Components, options: QueryOptions): EntityInde
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
 
   return Array.from(runQuery(toQuery));
+};
+
+export const queryAll = (components: Components): EntityIndex[] => {
+  return query(components);
 };
 
 export const queryByIndex = (components: Components, index: number): EntityIndex[] => {
