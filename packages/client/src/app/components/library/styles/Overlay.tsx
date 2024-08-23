@@ -24,5 +24,5 @@ export const Overlay = styled.div<OverlayProps>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 `;

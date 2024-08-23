@@ -38,6 +38,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
+  border-bottom: 0.15vw solid black;
 `;
 
 const Button = styled.button`

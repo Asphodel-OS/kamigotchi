@@ -14,7 +14,6 @@ export const SideBalance = (props: Props) => {
         {props.icon && <Icon src={props.icon} />}
         <NumberText>{props.balance}</NumberText>
       </Row>
-      <TitleText>{props.title}</TitleText>
     </Container>
   );
 

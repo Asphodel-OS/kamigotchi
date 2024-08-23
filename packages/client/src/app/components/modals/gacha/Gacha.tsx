@@ -3,7 +3,9 @@ import { registerUIComponent } from 'app/root';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
+import { erc20Abi } from 'viem';
 import { useAccount, useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
@@ -14,12 +16,10 @@ import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gach
 import { Kami, getLazyKamis, queryAllKamis } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
-import styled from 'styled-components';
 import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
-import { erc20Abi } from 'viem';
+import { MainDisplay } from './display/MainDisplay';
 import { ControlPanel } from './panel/ControlPanel';
-import { Pool } from './pool/Pool';
 import { Commits } from './reroll/Commits';
 import { Reroll } from './reroll/Reroll';
 import { TabType } from './types';
@@ -33,7 +33,7 @@ export function registerGachaModal() {
       colStart: 11,
       colEnd: 100,
       rowStart: 8,
-      rowEnd: 75,
+      rowEnd: 85,
     },
     (layers) =>
       interval(2000).pipe(
@@ -232,7 +232,7 @@ export function registerGachaModal() {
       ///////////////
       // HANDLERS
 
-      const handleMint = (amount: number) => async () => {
+      const handleMint = async (amount: number) => {
         try {
           setWaitingToReveal(true);
           const mintActionID = mintTx(amount);
@@ -270,18 +270,8 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const MainDisplay = () => {
-        if (tab === 'MINT')
-          return (
-            <Pool
-              actions={{ handleMint }}
-              data={{
-                account: { balance: gachaBalance },
-                lazyKamis: data.gachaKamis,
-              }}
-            />
-          );
-        else if (tab === 'REROLL')
+      const MainDisplay1 = () => {
+        if (tab === 'REROLL')
           return (
             <Reroll
               actions={{ handleReroll }}
@@ -316,12 +306,19 @@ export function registerGachaModal() {
           }
           canExit
           noPadding
+          overlay
         >
           <Container>
-            {MainDisplay()}
+            <MainDisplay
+              tab={tab}
+              actions={{ handleMint }}
+              lazyKamis={data.gachaKamis}
+              data={{ kamiEntities: data.kamiEntities }}
+            />
             <ControlPanel
               tab={tab}
               setTab={setTab}
+              gachaBalance={gachaBalance}
               actions={{ mint: handleMint, reroll: handleReroll }}
             />
           </Container>
@@ -332,7 +329,9 @@ export function registerGachaModal() {
 }
 
 const Container = styled.div`
-  background-color: blue;
+  position: relative;
+  height: 100%;
+
   display: flex;
   flex-direction: row;
   justify-content: center;

@@ -83,19 +83,20 @@ const ButtonRow = styled.div`
 
 const Header = styled.div<{ noBorder?: boolean }>`
   ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15vw;')}
-  border-radius: 0.45vw 0.45vw 0 0;
+  border-radius: 1.2vw 1.2vw 0 0;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Footer = styled.div<{ noBorder?: boolean }>`
   ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15vw;')}
-  border-radius: 0 0 0.45vw 0.45vw;
+  border-radius: 0 0 1.2vw 1.2vw;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Children = styled.div<{ noPadding?: boolean }>`
+  position: relative;
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
