@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ActionButton } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { KamiGrid } from '../components/KamiGrid';
-import { SideBalance } from '../components/SideBalance';
+import { SideBalance } from '../panel/SideBalance';
 
 interface Props {
   actions: {

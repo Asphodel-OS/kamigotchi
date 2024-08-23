@@ -282,7 +282,7 @@ export function registerGachaModal() {
               utils={{ getRerollCost }}
             />
           );
-        else if (tab === 'COMMITS')
+        else if (tab === 'REVEAL')
           return (
             <Commits
               actions={{ revealTx }}
@@ -309,6 +309,7 @@ export function registerGachaModal() {
           overlay
         >
           <Container>
+            {MainDisplay1()}
             <MainDisplay
               tab={tab}
               actions={{ handleMint }}

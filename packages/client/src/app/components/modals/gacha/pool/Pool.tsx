@@ -6,7 +6,7 @@ import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { GachaTicket } from 'network/shapes/utils/EntityTypes';
 import { KamiGrid } from '../components/KamiGrid';
-import { SideBalance } from '../components/SideBalance';
+import { SideBalance } from '../panel/SideBalance';
 
 interface Props {
   actions: {

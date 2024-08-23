@@ -1,2 +1,2 @@
-export type TabType = 'MINT' | 'REROLL' | 'COMMITS';
-export const TABS: TabType[] = ['MINT', 'REROLL', 'COMMITS'];
+export type TabType = 'MINT' | 'REROLL' | 'REVEAL';
+export const TABS: TabType[] = ['MINT', 'REROLL', 'REVEAL'];

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 interface Props {
   balance: string;
   title: string;
+  description: string;
   icon?: string;
   onClick?: () => void;
 }
 
 export const SideBalance = (props: Props) => {
-  const Display = (
+  return (
     <Container>
       <Row>
         {props.icon && <Icon src={props.icon} />}
@@ -16,17 +17,7 @@ export const SideBalance = (props: Props) => {
       </Row>
     </Container>
   );
-
-  if (props.onClick) return <ClickableWrapper onClick={props.onClick}>{Display}</ClickableWrapper>;
-  else return Display;
 };
-
-const ClickableWrapper = styled.div`
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-  }
-`;
 
 const Container = styled.div`
   display: flex;
@@ -41,16 +32,6 @@ const Container = styled.div`
 const Icon = styled.img`
   height: 2.8vh;
   padding-right: 0.5vw;
-`;
-
-const TitleText = styled.div`
-  font-family: Pixel;
-  font-size: 1.2vh;
-  text-align: left;
-  padding: 0.5vh 0.2vw 0;
-  color: #666;
-
-  text-decoration: inherit;
 `;
 
 const Row = styled.div`

@@ -19,9 +19,10 @@ interface Props {
 export const MainDisplay = (props: Props) => {
   const { tab, actions, data } = props;
   const { kamiEntities } = data;
+  const display = tab === 'MINT' ? 'flex' : 'none';
 
   return (
-    <Container>
+    <Container style={{ display }}>
       <Pool lazyKamis={props.lazyKamis} isVisible={tab === 'MINT'} />
     </Container>
   );
