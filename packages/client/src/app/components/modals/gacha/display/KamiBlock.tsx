@@ -32,9 +32,7 @@ export const KamiBlock = (props: Props) => {
 };
 
 const Container = styled.div`
-  position: relative;
-  max-height: 12vw;
-  min-height: 10vw;
+  height: 10vw;
   margin: 0.9vw;
   filter: drop-shadow(0.2vw 0.2vw 0.1vw black);
 `;

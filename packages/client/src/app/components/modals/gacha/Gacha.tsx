@@ -31,7 +31,7 @@ export function registerGachaModal() {
     'Gacha',
     {
       colStart: 11,
-      colEnd: 100,
+      colEnd: 89,
       rowStart: 8,
       rowEnd: 85,
     },

@@ -57,18 +57,19 @@ export const Pool = (props: Props) => {
   // DISPLAY
 
   return (
-    <OuterBox style={{ display: props.isVisible ? 'flex' : 'none' }}>
+    <Container style={{ display: props.isVisible ? 'flex' : 'none' }}>
       {getTruncatedKamis().map((kami) => (
         <Tooltip key={kami.index} text={getKamiText(kami)}>
           <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
         </Tooltip>
       ))}
-    </OuterBox>
+    </Container>
   );
 };
 
-const OuterBox = styled.div`
+const Container = styled.div`
   width: 100%;
+  padding: 0.6vw;
 
   display: flex;
   flex-flow: row wrap;
