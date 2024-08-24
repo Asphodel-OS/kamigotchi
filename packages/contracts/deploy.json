@@ -177,13 +177,18 @@
       ]
     },
     {
-      "name": "_ListingSetSystem",
+      "name": "_ListingRegistrySystem",
       "writeAccess": [
+        "IDPointerComponent",
         "IsListingComponent",
+        "IndexComponent",
         "IndexItemComponent",
         "IndexNPCComponent",
+        "LogicTypeComponent",
         "PriceBuyComponent",
-        "PriceSellComponent"
+        "PriceSellComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {

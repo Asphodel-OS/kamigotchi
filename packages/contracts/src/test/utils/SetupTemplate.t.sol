@@ -254,8 +254,8 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32[] memory itemIndices = new uint32[](1);
 
     amts[0] = uint32(amt);
-    itemIndices[0] = LibListing.getItemIndex(components, listingID);
-    uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
+    itemIndices[0] = _IndexItemComponent.get(listingID);
+    uint32 npcIndex = _IndexNPCComponent.get(listingID);
 
     vm.prank(_getOperator(playerIndex));
     _ListingBuySystem.executeTyped(npcIndex, itemIndices, amts);
@@ -266,8 +266,8 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32[] memory itemIndices = new uint32[](1);
 
     amts[0] = uint32(amt);
-    itemIndices[0] = LibListing.getItemIndex(components, listingID);
-    uint32 npcIndex = LibListing.getNPCIndex(components, listingID);
+    itemIndices[0] = _IndexItemComponent.get(listingID);
+    uint32 npcIndex = _IndexNPCComponent.get(listingID);
 
     vm.prank(_getOperator(playerIndex));
     _ListingSellSystem.executeTyped(npcIndex, itemIndices, amts);
@@ -585,11 +585,8 @@ abstract contract SetupTemplate is TestSetupImports {
     uint priceSell
   ) public returns (uint) {
     vm.prank(deployer);
-    bytes memory listingID = __ListingSetSystem.executeTyped(
-      npcIndex,
-      itemIndex,
-      priceBuy,
-      priceSell
+    bytes memory listingID = __ListingRegistrySystem.create(
+      abi.encode(npcIndex, itemIndex, priceBuy, priceSell)
     );
     return abi.decode(listingID, (uint));
   }

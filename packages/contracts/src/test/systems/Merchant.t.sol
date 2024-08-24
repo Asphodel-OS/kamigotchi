@@ -113,122 +113,6 @@ contract NPCTest is SetupTemplate {
     }
   }
 
-  // test the creation of a listing and the setting of its fields
-  // listings work differently than npcs in that:
-  // - they don't have an index unto themselves
-  // - a listing is identified by NPCIndex and ItemIndex
-  // - there is a single EP for both creating and updating a listing
-  // - whether a listing is created or updated is autodetected based on its existence
-  function testListingSetting() public {
-    // create two npcs
-    _createNPC(1, 1, "npc1");
-    _createNPC(2, 2, "npc2");
-
-    // check that non deployer cannot create a listing
-    for (uint i = 0; i < 5; i++) {
-      vm.prank(_getOwner(0));
-      vm.expectRevert();
-      __ListingSetSystem.executeTyped(1, 1, 50, 50);
-
-      vm.prank(_getOperator(0));
-      vm.expectRevert();
-      __ListingSetSystem.executeTyped(2, 2, 50, 50);
-    }
-
-    // initial creation, check that item/npc indices and prices are correct
-    uint numListings = 4;
-    TestListingData[] memory listings = new TestListingData[](numListings);
-    listings[0] = TestListingData(1, 100, 100, 50);
-    listings[1] = TestListingData(1, 101, 80, 40);
-    listings[2] = TestListingData(1, 102, 60, 30);
-    listings[3] = TestListingData(1, 103, 40, 20);
-
-    uint[] memory listingIDs = new uint[](numListings);
-    for (uint i = 0; i < numListings; i++) {
-      listingIDs[i] = _setListing(
-        listings[i].npcIndex,
-        listings[i].itemIndex,
-        listings[i].priceBuy,
-        listings[i].priceSell
-      );
-      assertEq(listings[i].npcIndex, LibListing.getNPCIndex(components, listingIDs[i]));
-      assertEq(listings[i].itemIndex, LibListing.getItemIndex(components, listingIDs[i]));
-      assertEq(listings[i].priceBuy, LibListing.getBuyPrice(components, listingIDs[i]));
-      assertEq(listings[i].priceSell, LibListing.getSellPrice(components, listingIDs[i]));
-    }
-
-    // price update, check fields are updated correctly and listings are not duplicated
-    listings[0] = TestListingData(1, 100, 10, 5);
-    listings[1] = TestListingData(1, 101, 8, 4);
-    listings[2] = TestListingData(1, 102, 6, 3);
-    listings[3] = TestListingData(1, 103, 4, 2);
-
-    uint newListingID;
-    for (uint i = 0; i < numListings; i++) {
-      newListingID = _setListing(
-        listings[i].npcIndex,
-        listings[i].itemIndex,
-        listings[i].priceBuy,
-        listings[i].priceSell
-      );
-      assertEq(newListingID, listingIDs[i]);
-      assertEq(listings[i].npcIndex, LibListing.getNPCIndex(components, listingIDs[i]));
-      assertEq(listings[i].itemIndex, LibListing.getItemIndex(components, listingIDs[i]));
-      assertEq(listings[i].priceBuy, LibListing.getBuyPrice(components, listingIDs[i]));
-      assertEq(listings[i].priceSell, LibListing.getSellPrice(components, listingIDs[i]));
-    }
-
-    // check that pulling by npc/item index yields the correct listing, or 0 if none exists
-    // NOTE: this is somewhat of a given assumption of the test. but we should still verify
-    for (uint i = 0; i < numListings; i++) {
-      assertEq(
-        listingIDs[i],
-        LibListing.get(components, listings[i].npcIndex, listings[i].itemIndex)
-      );
-
-      // NOTE: this fails with an inexplicable OutOfGas error...
-      // assertEq(0, LibListing.get(components, 2, listings[i].itemIndex));
-    }
-
-    // check that listings cannot be created for nonexistent npcs
-    numListings = 4;
-    TestListingData[] memory invalidNPCListings = new TestListingData[](numListings);
-    invalidNPCListings[0] = TestListingData(3, 100, 100, 50);
-    invalidNPCListings[1] = TestListingData(3, 101, 80, 40);
-    invalidNPCListings[2] = TestListingData(3, 102, 60, 30);
-    invalidNPCListings[3] = TestListingData(3, 103, 40, 20);
-
-    for (uint i = 0; i < numListings; i++) {
-      vm.prank(deployer);
-      vm.expectRevert("NPC: does not exist");
-      __ListingSetSystem.executeTyped(
-        invalidNPCListings[i].npcIndex,
-        invalidNPCListings[i].itemIndex,
-        invalidNPCListings[i].priceBuy,
-        invalidNPCListings[i].priceSell
-      );
-    }
-
-    // check that listings cannot be created for nonexistent items
-    numListings = 4;
-    TestListingData[] memory invalidItemListings = new TestListingData[](numListings);
-    invalidItemListings[0] = TestListingData(1, 105, 100, 50);
-    invalidItemListings[1] = TestListingData(1, 105, 80, 40);
-    invalidItemListings[2] = TestListingData(1, 105, 60, 30);
-    invalidItemListings[3] = TestListingData(1, 105, 40, 20);
-
-    for (uint i = 0; i < numListings; i++) {
-      vm.prank(deployer);
-      vm.expectRevert("Item: does not exist");
-      __ListingSetSystem.executeTyped(
-        invalidItemListings[i].npcIndex,
-        invalidItemListings[i].itemIndex,
-        invalidItemListings[i].priceBuy,
-        invalidItemListings[i].priceSell
-      );
-    }
-  }
-
   function testListingInteractionConstraints() public {
     // create two npcs
     _createNPC(1, 1, "npc1");
@@ -396,7 +280,7 @@ contract NPCTest is SetupTemplate {
       listingID = listingIDs[randN % listingIDs.length];
       listing = listings[randN % listings.length];
       testData.playerIndex = uint8(randN % testData.numAccounts);
-      testData.itemIndex = uint8(LibListing.getItemIndex(components, listingID));
+      testData.itemIndex = uint8(_IndexItemComponent.get(listingID));
       testData.stockInitial = uint24(_getItemBal(testData.playerIndex, testData.itemIndex)); // item balance
       testData.stockChange = uint24((randN % 100) + 1); // 1-100
       testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $MUSU balance

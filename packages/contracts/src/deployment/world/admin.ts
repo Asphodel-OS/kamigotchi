@@ -176,6 +176,9 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.Pet721.BatchMint', [amount], 'batchMint');
   }
 
+  /////////////////
+  //  LISTINGS
+
   // sets the prices for the merchant at the specified roomIndex
   async function setListing(
     merchantIndex: number,
@@ -183,7 +186,32 @@ export function createAdminAPI(compiledCalls: string[]) {
     buyPrice: number,
     sellPrice: number
   ) {
-    genCall('system._Listing.Set', [merchantIndex, itemIndex, buyPrice, sellPrice]);
+    genCall('system.listing.registry', [merchantIndex, itemIndex, buyPrice, sellPrice], 'create', [
+      'uint32',
+      'uint32',
+      'uint256',
+      'uint256',
+    ]);
+  }
+
+  async function addListingRequirement(
+    merchantIndex: number,
+    itemIndex: number,
+    conditionType: string,
+    logicType: string,
+    index: number,
+    value: number
+  ) {
+    genCall(
+      'system.listing.registry',
+      [merchantIndex, itemIndex, conditionType, logicType, index, value],
+      'addRequirement',
+      ['uint32', 'uint32', 'string', 'string', 'uint32', 'uint256']
+    );
+  }
+
+  async function removeListing(merchantIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [merchantIndex, itemIndex], 'remove');
   }
 
   /////////////////
@@ -639,6 +667,10 @@ export function createAdminAPI(compiledCalls: string[]) {
     },
     listing: {
       set: setListing,
+      add: {
+        requirement: addListingRequirement,
+      },
+      remove: removeListing,
     },
     node: {
       create: createNode,

@@ -100,6 +100,13 @@
     },
     {
       "type": "function",
+      "name": "deprecate",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "execute",
       "inputs": [
         {
@@ -176,6 +183,12 @@
       "anonymous": false
     },
     {
+      "type": "event",
+      "name": "SystemDeprecated",
+      "inputs": [],
+      "anonymous": false
+    },
+    {
       "type": "error",
       "name": "Ownable__NotOwner",
       "inputs": []
@@ -190,6 +203,7 @@
     "addAssigner(uint32,uint256)": "32a3075b",
     "addRequirement(uint32,string,string,uint32,uint32)": "bc244f02",
     "create(bytes)": "cf5ba53f",
+    "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "remove(uint32)": "00d84fd8",

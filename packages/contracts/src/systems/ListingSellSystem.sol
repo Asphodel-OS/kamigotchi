@@ -33,6 +33,10 @@ contract ListingSellSystem is System {
     for (uint256 i; i < itemIndices.length; i++) {
       uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
       require(listingID != 0, "listing does not exist");
+      require(
+        LibListing.meetsRequirements(components, listingID, accID),
+        "Listing.Sell(): reqs not met"
+      );
 
       total += LibListing.sell(components, listingID, accID, itemIndices[i], amts[i]);
       LibListing.logIncItemSell(components, accID, itemIndices[i], amts[i]);

@@ -181,11 +181,11 @@ export function createAdminAPI(systems: any) {
     sellPrice: number
   ) {
     await sleepIf();
-    return systems['system._Listing.Set'].executeTyped(
-      merchantIndex,
-      itemIndex,
-      buyPrice,
-      sellPrice
+    return systems['system.listing.registry'].create(
+      defaultAbiCoder.encode(
+        ['uint32', 'uint32', 'uint256', 'uint256'],
+        [merchantIndex, itemIndex, buyPrice, sellPrice]
+      )
     );
   }
 

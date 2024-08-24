@@ -6,7 +6,7 @@ import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
 import _FactionRegistrySystem from "../abi/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../abi/_GoalRegistrySystem.json";
 import _ItemRegistrySystem from "../abi/_ItemRegistrySystem.json";
-import _ListingSetSystem from "../abi/_ListingSetSystem.json";
+import _ListingRegistrySystem from "../abi/_ListingRegistrySystem.json";
 import _NodeRegistrySystem from "../abi/_NodeRegistrySystem.json";
 import _NPCRegistrySystem from "../abi/_NPCRegistrySystem.json";
 import _QuestRegistrySystem from "../abi/_QuestRegistrySystem.json";
@@ -75,7 +75,7 @@ export const SystemAbis = {
   "system.faction.registry": _FactionRegistrySystem.abi,
   "system.goal.registry": _GoalRegistrySystem.abi,
   "system.item.registry": _ItemRegistrySystem.abi,
-  "system._Listing.Set": _ListingSetSystem.abi,
+  "system.listing.registry": _ListingRegistrySystem.abi,
   "system.node.registry": _NodeRegistrySystem.abi,
   "system.npc.registry": _NPCRegistrySystem.abi,
   "system.quest.registry": _QuestRegistrySystem.abi,

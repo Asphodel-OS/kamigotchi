@@ -27,51 +27,60 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _ListingSetSystemInterface extends utils.Interface {
+export interface _ListingRegistrySystemInterface extends utils.Interface {
   functions: {
+    "addRequirement(bytes)": FunctionFragment;
+    "create(bytes)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,uint32,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "remove(uint32,uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addRequirement"
+      | "create"
       | "deprecate"
       | "execute"
-      | "executeTyped"
       | "owner"
+      | "remove"
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addRequirement",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "executeTyped",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "remove",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "executeTyped",
+    functionFragment: "addRequirement",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -104,12 +113,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface _ListingSetSystem extends BaseContract {
+export interface _ListingRegistrySystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _ListingSetSystemInterface;
+  interface: _ListingRegistrySystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -131,6 +140,16 @@ export interface _ListingSetSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -140,21 +159,29 @@ export interface _ListingSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      buyPrice: PromiseOrValue<BigNumberish>,
-      sellPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addRequirement(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  create(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   deprecate(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -165,15 +192,13 @@ export interface _ListingSetSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  executeTyped(
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  remove(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
-    buyPrice: PromiseOrValue<BigNumberish>,
-    sellPrice: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     account: PromiseOrValue<string>,
@@ -181,6 +206,16 @@ export interface _ListingSetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     deprecate(overrides?: CallOverrides): Promise<void>;
 
     execute(
@@ -188,15 +223,13 @@ export interface _ListingSetSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      buyPrice: PromiseOrValue<BigNumberish>,
-      sellPrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
+    ): Promise<void>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -219,6 +252,16 @@ export interface _ListingSetSystem extends BaseContract {
   };
 
   estimateGas: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -228,15 +271,13 @@ export interface _ListingSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      buyPrice: PromiseOrValue<BigNumberish>,
-      sellPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -245,6 +286,16 @@ export interface _ListingSetSystem extends BaseContract {
   };
 
   populateTransaction: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    create(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     deprecate(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -254,15 +305,13 @@ export interface _ListingSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      buyPrice: PromiseOrValue<BigNumberish>,
-      sellPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

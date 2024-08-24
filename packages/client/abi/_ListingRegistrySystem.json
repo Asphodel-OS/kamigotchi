@@ -18,6 +18,38 @@
     },
     {
       "type": "function",
+      "name": "addRequirement",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "create",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "deprecate",
       "inputs": [],
       "outputs": [],
@@ -44,40 +76,6 @@
     },
     {
       "type": "function",
-      "name": "executeTyped",
-      "inputs": [
-        {
-          "name": "npcIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "itemIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "buyPrice",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "sellPrice",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "owner",
       "inputs": [],
       "outputs": [
@@ -88,6 +86,24 @@
         }
       ],
       "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "remove",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -139,10 +155,12 @@
     }
   ],
   "methodIdentifiers": {
+    "addRequirement(bytes)": "7e534103",
+    "create(bytes)": "cf5ba53f",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,uint32,uint256,uint256)": "7827e2de",
     "owner()": "8da5cb5b",
+    "remove(uint32,uint32)": "31f3666c",
     "transferOwnership(address)": "f2fde38b"
   }
 }

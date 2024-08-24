@@ -6,7 +6,7 @@ import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
 import { _FactionRegistrySystem } from "./ethers-contracts/_FactionRegistrySystem";
 import { _GoalRegistrySystem } from "./ethers-contracts/_GoalRegistrySystem";
 import { _ItemRegistrySystem } from "./ethers-contracts/_ItemRegistrySystem";
-import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
+import { _ListingRegistrySystem } from "./ethers-contracts/_ListingRegistrySystem";
 import { _NodeRegistrySystem } from "./ethers-contracts/_NodeRegistrySystem";
 import { _NPCRegistrySystem } from "./ethers-contracts/_NPCRegistrySystem";
 import { _QuestRegistrySystem } from "./ethers-contracts/_QuestRegistrySystem";
@@ -75,7 +75,7 @@ export type SystemTypes = {
   "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
   "system.item.registry": _ItemRegistrySystem;
-  "system._Listing.Set": _ListingSetSystem;
+  "system.listing.registry": _ListingRegistrySystem;
   "system.node.registry": _NodeRegistrySystem;
   "system.npc.registry": _NPCRegistrySystem;
   "system.quest.registry": _QuestRegistrySystem;

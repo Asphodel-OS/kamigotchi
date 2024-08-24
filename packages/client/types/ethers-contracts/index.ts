@@ -208,7 +208,7 @@ export type { _ConfigSetSystem } from "./_ConfigSetSystem";
 export type { _FactionRegistrySystem } from "./_FactionRegistrySystem";
 export type { _GoalRegistrySystem } from "./_GoalRegistrySystem";
 export type { _ItemRegistrySystem } from "./_ItemRegistrySystem";
-export type { _ListingSetSystem } from "./_ListingSetSystem";
+export type { _ListingRegistrySystem } from "./_ListingRegistrySystem";
 export type { _NPCRegistrySystem } from "./_NPCRegistrySystem";
 export type { _NodeRegistrySystem } from "./_NodeRegistrySystem";
 export type { _QuestRegistrySystem } from "./_QuestRegistrySystem";
@@ -425,7 +425,7 @@ export { _ConfigSetSystem__factory } from "./factories/_ConfigSetSystem__factory
 export { _FactionRegistrySystem__factory } from "./factories/_FactionRegistrySystem__factory";
 export { _GoalRegistrySystem__factory } from "./factories/_GoalRegistrySystem__factory";
 export { _ItemRegistrySystem__factory } from "./factories/_ItemRegistrySystem__factory";
-export { _ListingSetSystem__factory } from "./factories/_ListingSetSystem__factory";
+export { _ListingRegistrySystem__factory } from "./factories/_ListingRegistrySystem__factory";
 export { _NPCRegistrySystem__factory } from "./factories/_NPCRegistrySystem__factory";
 export { _NodeRegistrySystem__factory } from "./factories/_NodeRegistrySystem__factory";
 export { _QuestRegistrySystem__factory } from "./factories/_QuestRegistrySystem__factory";

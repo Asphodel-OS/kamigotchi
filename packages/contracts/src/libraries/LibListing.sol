@@ -13,6 +13,7 @@ import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComp
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
@@ -22,7 +23,7 @@ import { LibNPC } from "libraries/LibNPC.sol";
  */
 library LibListing {
   /////////////////
-  // INTERACTIONS
+  // SHAPES
 
   // creates a merchant listing with the specified parameters
   function create(
@@ -38,18 +39,39 @@ library LibListing {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
-    if (buyPrice != 0) setBuyPrice(components, id, buyPrice);
-    if (sellPrice != 0) setSellPrice(components, id, sellPrice);
+    if (buyPrice != 0)
+      PriceBuyComponent(getAddressById(components, PriceBuyCompID)).set(id, buyPrice);
+    if (sellPrice != 0)
+      PriceSellComponent(getAddressById(components, PriceSellCompID)).set(id, sellPrice);
     return id;
   }
 
-  // sets the prices of a listing. 0 values for price indicate no listing
-  function update(IUintComp components, uint256 id, uint256 buyPrice, uint256 sellPrice) internal {
-    if (buyPrice == 0) removeBuyPrice(components, id);
-    else setBuyPrice(components, id, buyPrice);
-    if (sellPrice == 0) removeSellPrice(components, id);
-    else setSellPrice(components, id, sellPrice);
+  /// @notice creates a requirement for a listing
+  /// @dev requirements apply equally to buy and sell
+  function createRequirement(
+    IWorld world,
+    IUintComp components,
+    uint256 regID,
+    Condition memory data
+  ) internal returns (uint256) {
+    return LibConditional.createFor(world, components, data, genReqPtr(regID));
   }
+
+  function remove(IUintComp components, uint256 id) internal {
+    IsListingComponent(getAddressById(components, IsListingCompID)).remove(id);
+    IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).remove(id);
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
+
+    PriceBuyComponent(getAddressById(components, PriceBuyCompID)).remove(id);
+    PriceSellComponent(getAddressById(components, PriceSellCompID)).remove(id);
+
+    uint256[] memory requirements = LibConditional.queryFor(components, genReqPtr(id));
+    for (uint256 i; i < requirements.length; i++)
+      LibConditional.remove(components, requirements[i]);
+  }
+
+  /////////////////
+  // INTERACTIONS
 
   // processes a buy for amt of item from a listing to an account. assumes the account already
   // has the appropriate inventory entity
@@ -85,39 +107,28 @@ library LibListing {
   }
 
   /////////////////
-  // SETTERS
+  // CHECKERS
 
-  function removeBuyPrice(IUintComp components, uint256 id) internal {
-    PriceBuyComponent(getAddressById(components, PriceBuyCompID)).remove(id);
-  }
-
-  function removeSellPrice(IUintComp components, uint256 id) internal {
-    PriceSellComponent(getAddressById(components, PriceSellCompID)).remove(id);
-  }
-
-  function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
-    PriceBuyComponent(getAddressById(components, PriceBuyCompID)).set(id, price);
-  }
-
-  function setSellPrice(IUintComp components, uint256 id, uint256 price) internal {
-    PriceSellComponent(getAddressById(components, PriceSellCompID)).set(id, price);
+  function meetsRequirements(
+    IUintComp components,
+    uint256 listingID,
+    uint256 accID
+  ) internal view returns (bool) {
+    uint256[] memory requirements = LibConditional.queryFor(components, genReqPtr(listingID));
+    return LibConditional.checkConditions(components, requirements, accID);
   }
 
   /////////////////
   // GETTERS
 
-  // return the ID of the merchant that hosts a listing
-  function getMerchant(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibNPC.get(components, getNPCIndex(components, id));
-  }
-
-  function getNPCIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).get(id);
-  }
-
-  // return the item index of a listing
-  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
+  // gets an item listing from a merchant by its indices
+  function get(
+    IUintComp components,
+    uint32 merchantIndex,
+    uint32 itemIndex
+  ) internal view returns (uint256 result) {
+    uint256 id = genID(merchantIndex, itemIndex);
+    return IsListingComponent(getAddressById(components, IsListingCompID)).has(id) ? id : 0;
   }
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
@@ -130,24 +141,15 @@ library LibListing {
     return comp.has(id) ? comp.get(id) : 0;
   }
 
-  /////////////////
-  // QUERIES
-
-  // gets an item listing from a merchant by its indices
-  function get(
-    IUintComp components,
-    uint32 merchantIndex,
-    uint32 itemIndex
-  ) internal view returns (uint256 result) {
-    uint256 id = genID(merchantIndex, itemIndex);
-    return IsListingComponent(getAddressById(components, IsListingCompID)).has(id) ? id : 0;
-  }
-
   //////////////////
   // UTILS
 
   function genID(uint32 merchantIndex, uint32 itemIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("listing", merchantIndex, itemIndex)));
+  }
+
+  function genReqPtr(uint256 regID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("listing.requirement", regID)));
   }
 
   //////////////////

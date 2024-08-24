@@ -34,6 +34,10 @@ contract ListingBuySystem is System {
     for (uint256 i; i < itemIndices.length; i++) {
       uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
       require(listingID != 0, "listing does not exist");
+      require(
+        LibListing.meetsRequirements(components, listingID, accID),
+        "Listing.Buy(): reqs not met"
+      );
 
       total += LibListing.buy(components, listingID, accID, itemIndices[i], amts[i]);
       LibListing.logIncItemBuy(components, accID, itemIndices[i], amts[i]);
