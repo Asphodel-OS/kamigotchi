@@ -9,7 +9,23 @@ import "./Imports.sol";
 
 /// @notice deprecates a system
 contract Deprecate is SystemCall {
-  function deprecate(
+  function deprecateByID(
+    uint256 deployerPriv,
+    address worldAddr,
+    string[] memory systemIDs
+  ) external {
+    _setUp(worldAddr);
+
+    address[] memory systemAddrs = new address[](systemIDs.length);
+    for (uint256 i; i < systemIDs.length; i++) systemAddrs[i] = _getSysAddr(systemIDs[i]);
+
+    address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
+    vm.startBroadcast(deployerPriv);
+
+    _deprecate(deployerPriv, worldAddr, systemAddrs);
+  }
+
+  function deprecateByAddress(
     uint256 deployerPriv,
     address worldAddr,
     address[] memory systemAddrs
@@ -19,6 +35,14 @@ contract Deprecate is SystemCall {
     address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
     vm.startBroadcast(deployerPriv);
 
+    _deprecate(deployerPriv, worldAddr, systemAddrs);
+  }
+
+  function _deprecate(
+    uint256 deployerPriv,
+    address worldAddr,
+    address[] memory systemAddrs
+  ) internal {
     // get all components
     Component[] memory comps = getAllComponents();
 
