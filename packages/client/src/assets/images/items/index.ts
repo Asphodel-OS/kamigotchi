@@ -2,7 +2,9 @@ import agency_giftbox from './agency_giftbox.png';
 import astrolabe_disk from './astrolabe_disk.png';
 import best_ice_cream from './best_ice_cream.png';
 import better_ice_cream from './better_ice_cream.png';
+import black_poppy from './black_poppy.png';
 import cheeseburger from './cheeseburger.png';
+import daffodil from './daffodil.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
 import gaokerena_mochi from './gaokerena_mochi.png';
@@ -19,11 +21,14 @@ import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
 import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
+import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
+import resin from './resin.png';
 import ring_of_spirits from './ring_of_spirits.png';
 import ring_of_water_breathing from './ring_of_water_breathing.png';
 import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
+import scroll_of_shop_teleportation from './scroll_of_shop_teleportation.png';
 import stone from './stone.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
 import wooden_stick from './wooden_stick.png';
@@ -37,7 +42,9 @@ export const ItemImages = {
   astrolabe_disk: astrolabe_disk,
   better_ice_cream: better_ice_cream,
   best_ice_cream: best_ice_cream,
+  black_poppy: black_poppy,
   cheeseburger: cheeseburger,
+  daffodil: daffodil,
   gacha_ticket: gacha_ticket,
   gakki_cookie_sticks: gakki_cookie_sticks,
   gaokerena_mochi: gaokerena_mochi,
@@ -50,15 +57,18 @@ export const ItemImages = {
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   mint: mint,
   musu: musu,
-  red_gakki_ribbon: red_gakki_ribbon,
-  ring_of_spirits: ring_of_spirits,
-  ring_of_water_breathing: ring_of_water_breathing,
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
   plastic_bottle: plastic_bottle,
   pom_pom_fruit_candy: pom_pom_fruit_candy,
+  red_amber_crystal: red_amber_crystal,
+  red_gakki_ribbon: red_gakki_ribbon,
+  resin: resin,
+  ring_of_spirits: ring_of_spirits,
+  ring_of_water_breathing: ring_of_water_breathing,
   scrap_metal: scrap_metal,
   screwdriver: screwdriver,
+  scroll_of_shop_teleportation: scroll_of_shop_teleportation,
   stone: stone,
   sunset_apple_mochi: sunset_apple_mochi,
   wooden_stick: wooden_stick,

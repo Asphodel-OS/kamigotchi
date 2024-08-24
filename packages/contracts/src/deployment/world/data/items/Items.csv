@@ -4,7 +4,7 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/ghost_gum_wip_native.png,101,Maple-Flav
 Items%201b9894152b7f4649a68169aa3a6bcffe/pom_poms_candy_wip_native.png,102,Pom-Pom Fruit Candy,Ingame,Consumable,FOOD,Kami,These fruit candies contain a huge amount of energy. Restores 100 Health to a Kamigotchi.,100,,,,,,,,,,,No,2
 Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,103,Gakki Cookie Sticks,Ingame,Consumable,FOOD,Kami,Heavy duty rations by a Kami’s standards.. Restores 200 Health to a Kamigotchi.,200,,,,,,,,,,,No,3
 Items%201b9894152b7f4649a68169aa3a6bcffe/large_xp_candy_native.png,104,XP Candy (Large),Ingame,Consumable,FOOD,Kami,"This gives a lot of XP when fed to a Kamigotchi. ",,,,,,,200,,,,,No,4
-Items%201b9894152b7f4649a68169aa3a6bcffe/huge_xp_candy_native.png,117,XP Candy (Huge),For Implementation,Consumable,FOOD,Kami,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.,,,,,,,1000,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/huge_xp_candy_native.png,117,XP Candy (Huge),Ingame,Consumable,FOOD,Kami,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.,,,,,,,1000,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/medium_xp_candy_native.png,105,XP Candy (Medium),Ingame,Consumable,FOOD,Kami,"Provides a decent amount of XP when fed to a Kami. ",,,,,,,100,,,,,No,5
 Items%201b9894152b7f4649a68169aa3a6bcffe/small_xp_candy_native.png,106,XP Candy (Small),Ingame,Consumable,FOOD,Kami,"Feed this to a Kamigotchi to give them a little bit of experience. ",,,,,,,25,,,,,No,6
 Items%201b9894152b7f4649a68169aa3a6bcffe/cheeseburger_native.png,116,Cheeseburger,Ingame,Consumable,FOOD,Kami,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. ",50,,,,,,,,,,,No,
@@ -20,7 +20,7 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/lootbox_native.png,10001,Giftbox,Ingame
 Items%201b9894152b7f4649a68169aa3a6bcffe/plastic_bottle_native.png,11001,Plastic Bottle,Ingame,Material,,,"Can be reprocessed into valuable raw Microplastics. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/stone_native.png,11002,Stone,Ingame,Material,,,"It’s just a stone. Can be used to get Stone. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/screwdriver_native.png,11003,Screwdriver,Ingame,Material,,,For driving screws. May be of practical use….,,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/glass_jar_native.png,11004,Glass Jar,For Implementation,Material,,,"A somehow-unbroken jar of clear glass. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/glass_jar_native.png,11004,Glass Jar,Ingame,Material,,,"A somehow-unbroken jar of clear glass. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/pine_pollen_native.png,11005,Pine Pollen,Ingame,Material,,,"Apparently some people think this is very good for you. There’s some sort of Trapezoid on the label. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/wooden_stick_native.png,11006,Wooden Stick,Ingame,Material,,,"Wood in its unprocessed form. Grows on trees. ",,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/mint_native.png,11007,Mint,Ingame,Material,,,A herb with many applications. Not often found here….,,,,,,,,,,,,No,
@@ -32,12 +32,17 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_water_breathing_native.png,1200
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,12002,Ring of Spirits,Not Implemented,Ring,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,13000,Badge,Not Implemented,Ring,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/kamigotchi_ticket_native.png,,Gacha Ticket,Ingame,Other,,,"Redeemable for one Kami. You should take this to the vending machine… ",,,,,,,,,,,,Yes,
-Items%201b9894152b7f4649a68169aa3a6bcffe/passport_yellow.png,2,Kamigotchi World Passport,For Implementation,NFT,,,,,,,,,,,,,,,Yes,
+Items%201b9894152b7f4649a68169aa3a6bcffe/passport_yellow.png,2,Kamigotchi World Passport,Ingame,NFT,,,,,,,,,,,,,,,Yes,
 ,,Land Deed,Not Implemented,NFT,,,,,,,,,,,,,,,Yes,
-Items%201b9894152b7f4649a68169aa3a6bcffe/sunset_apple_mochi_native.png,112,Sunset Apple Mochi,For Implementation,Consumable,,Kami,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power.",,,1,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/kami_mochi_native.png,113,Kami Mochi,For Implementation,Consumable,,Kami,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. ",,,,1,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/mana_mochi_native.png,114,Mana Mochi,For Implementation,Consumable,,Kami,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.,,,,,1,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/gaokerena_mochi_native.png,115,Gaokerena Mochi,For Implementation,Consumable,,Kami,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. ",,10,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/astrolabe_disk_native.png,20001,Astrolabe Disk,For Implementation,Key Item,,,"Some sort of golden disk. Purpose: completely unknown. 
+Items%201b9894152b7f4649a68169aa3a6bcffe/sunset_apple_mochi_native.png,112,Sunset Apple Mochi,Ingame,Consumable,,Kami,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power.",,,1,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/kami_mochi_native.png,113,Kami Mochi,Ingame,Consumable,,Kami,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. ",,,,1,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/mana_mochi_native.png,114,Mana Mochi,Ingame,Consumable,,Kami,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.,,,,,1,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/gaokerena_mochi_native.png,115,Gaokerena Mochi,Ingame,Consumable,,Kami,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. ",,10,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/astrolabe_disk_native.png,20001,Astrolabe Disk,Ingame,Key Item,,,"Some sort of golden disk. Purpose: completely unknown. 
 
 You feel like you should hold on to it. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/red_amber_crystal_native.png,11010,Red Amber Crystal,For Implementation,Material,,,"A crystal of pure red amber, formed deep in the forest.",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/resin_native.png,118,Resin,Not Implemented,Consumable,,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…",,35,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/scroll_of_shop_teleportation_native.png,119,Scroll of Shop Teleportation,For Implementation,Consumable,,Account,"Instantly transports the user to Mina’s Shop. Fully insured. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/black_poppy_native.png,11011,Black Poppy,For Implementation,Material,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. ",,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/daffodil_native.png,11012,Daffodil,For Implementation,Material,,,"A reflection of fallen Narcissus… Has its own uses and applications. ",,,,,,,,,,,,No,
