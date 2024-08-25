@@ -44,7 +44,7 @@ export interface Listing {
 
 // get an Listing from its EntityIndex
 export const getListing = (world: World, components: Components, index: EntityIndex): Listing => {
-  const { IsRegistry, ItemIndex, NPCIndex, PriceBuy } = components;
+  const { IsRegistry, ItemIndex, NPCIndex, Value } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
@@ -53,15 +53,25 @@ export const getListing = (world: World, components: Components, index: EntityIn
   )[0];
   const item = getItem(world, components, registryEntityIndex);
 
+  const id = world.entities[index];
   let listing: Listing = {
-    id: world.entities[index],
+    id: id,
     entityIndex: index,
-    buyPrice: (getComponentValue(PriceBuy, index)?.value as number) * 1,
+    buyPrice: getBuyPrice(world, components, id),
     item: item,
     NPCIndex: (getComponentValue(NPCIndex, index)?.value as number) * 1,
   };
 
   return listing;
+};
+
+const getBuyPrice = (world: World, components: Components, listingID: EntityID): number => {
+  const { Value } = components;
+
+  const entityIndex = getBuyPtrEntity(world, listingID);
+  if (!entityIndex) return 0;
+
+  return (getComponentValue(Value, entityIndex)?.value as number) * 1;
 };
 
 /////////////////
@@ -107,4 +117,15 @@ const getReqPtrID = (regID: EntityID): EntityID => {
     IDStore.set(key, id);
   }
   return id as EntityID; // ignore leading 0 pruning; for direct SC querying
+};
+
+const getBuyPtrEntity = (world: World, regID: EntityID): EntityIndex | undefined => {
+  let id = '';
+  const key = 'listing.buy' + regID;
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = utils.solidityKeccak256(['string', 'uint256'], ['listing.buy', regID]);
+    IDStore.set(key, id);
+  }
+  return world.entityToIndex.get(id as EntityID);
 };

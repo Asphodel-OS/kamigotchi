@@ -15,11 +15,13 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
-    _DepreciatedIsLog: defineBoolComponent(world, '_DepreciatedIsLog', 'component.is.log'),
-    _DepreciatedIsLootbox: defineBoolComponent(world, '_DepreciatedIsLootbox', 'component.is.lootbox'),
-    _DepreciatedIsObjective: defineBoolComponent(world, '_DepreciatedIsObjective', 'component.is.objective'),
-    _DepreciatedIsRequirement: defineBoolComponent(world, '_DepreciatedIsRequirement', 'component.is.requirement'),
+    _DeprecatedIsLog: defineBoolComponent(world, '_DeprecatedIsLog', 'component.is.log'),
+    _DeprecatedIsLootbox: defineBoolComponent(world, '_DeprecatedIsLootbox', 'component.is.lootbox'),
+    _DeprecatedIsObjective: defineBoolComponent(world, '_DeprecatedIsObjective', 'component.is.objective'),
+    _DeprecatedIsRequirement: defineBoolComponent(world, '_DeprecatedIsRequirement', 'component.is.requirement'),
     _DepreciatedIsReward: defineBoolComponent(world, '_DepreciatedIsReward', 'component.is.reward'),
+    _DeprecatedPriceBuy: defineNumberComponent(world, '_DeprecatedPriceBuy', 'component.price.buy'),
+    _DeprecatedPriceSell: defineNumberComponent(world, '_DeprecatedPriceSell', 'component.price.sell'),
     OperatorAddress: defineStringComponent(world, 'OperatorAddress', 'component.address.operator'),
     OwnerAddress: defineStringComponent(world, 'OwnerAddress', 'component.address.owner'),
     Affinity: defineStringComponent(world, 'Affinity', 'component.affiinity'),
@@ -100,8 +102,6 @@ export function createComponents(world: World) {
     MediaURI: defineStringComponent(world, 'MediaURI', 'component.mediaURI'),
     Name: defineStringComponent(world, 'Name', 'component.name'),
     Power: defineStatComponent(world, 'Power', 'component.stat.power'),
-    PriceBuy: defineNumberComponent(world, 'PriceBuy', 'component.price.buy'),
-    PriceSell: defineNumberComponent(world, 'PriceSell', 'component.price.sell'),
     ProxyPermissionsFarm20: defineBoolComponent(world, 'ProxyPermissionsFarm20', 'components.proxy.Permissions.Farm20'),
     ProxyPermissionsERC721: defineBoolComponent(world, 'ProxyPermissionsERC721', 'components.proxy.Permissions.ERC721'),
     ProxyPermissionsMint20: defineBoolComponent(world, 'ProxyPermissionsMint20', 'components.proxy.Permissions.Mint20'),

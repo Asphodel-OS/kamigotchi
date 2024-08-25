@@ -1,10 +1,12 @@
 {
   "components": [
-    { "comp": "IsLogComponent", "name": "_DepreciatedIsLog", "type": "bool" },
-    { "comp": "IsLootboxComponent", "name": "_DepreciatedIsLootbox", "type": "bool" },
-    { "comp": "IsObjectiveComponent", "name": "_DepreciatedIsObjective", "type": "bool" },
-    { "comp": "IsRequirementComponent", "name": "_DepreciatedIsRequirement", "type": "bool" },
+    { "comp": "IsLogComponent", "name": "_DeprecatedIsLog", "type": "bool" },
+    { "comp": "IsLootboxComponent", "name": "_DeprecatedIsLootbox", "type": "bool" },
+    { "comp": "IsObjectiveComponent", "name": "_DeprecatedIsObjective", "type": "bool" },
+    { "comp": "IsRequirementComponent", "name": "_DeprecatedIsRequirement", "type": "bool" },
     { "comp": "IsRewardComponent", "name": "_DepreciatedIsReward", "type": "bool" },
+    { "comp": "PriceBuyComponent", "name": "_DeprecatedPriceBuy", "type": "uint256" },
+    { "comp": "PriceSellComponent", "name": "_DeprecatedPriceSell", "type": "uint256" },
     { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
     { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
     { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
@@ -85,8 +87,6 @@
     { "comp": "MediaURIComponent", "name": "MediaURI", "type": "string" },
     { "comp": "NameComponent", "name": "Name", "type": "string" },
     { "comp": "PowerComponent", "name": "Power", "type": "Stat" },
-    { "comp": "PriceBuyComponent", "name": "PriceBuy", "type": "uint256" },
-    { "comp": "PriceSellComponent", "name": "PriceSell", "type": "uint256" },
     { "comp": "ProxyPermissionsFarm20Component", "name": "ProxyPermissionsFarm20", "type": "bool" },
     { "comp": "ProxyPermissionsERC721Component", "name": "ProxyPermissionsERC721", "type": "bool" },
     { "comp": "ProxyPermissionsMint20Component", "name": "ProxyPermissionsMint20", "type": "bool" },
@@ -185,8 +185,6 @@
         "IndexItemComponent",
         "IndexNPCComponent",
         "LogicTypeComponent",
-        "PriceBuyComponent",
-        "PriceSellComponent",
         "TypeComponent",
         "ValueComponent"
       ]

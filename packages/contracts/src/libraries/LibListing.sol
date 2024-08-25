@@ -9,11 +9,11 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { IsListingComponent, ID as IsListingCompID } from "components/IsListingComponent.sol";
-import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComponent.sol";
-import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
@@ -22,6 +22,8 @@ import { LibNPC } from "libraries/LibNPC.sol";
  * LibListing handles all operations interacting with Listings
  */
 library LibListing {
+  using LibComp for ValueComponent;
+
   /////////////////
   // SHAPES
 
@@ -32,18 +34,15 @@ library LibListing {
     uint32 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
-  ) internal returns (uint256) {
-    uint256 id = genID(npcIndex, itemIndex);
+  ) internal returns (uint256 id) {
+    id = genID(npcIndex, itemIndex);
     IsListingComponent(getAddressById(components, IsListingCompID)).set(id);
     IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, npcIndex);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
-    if (buyPrice != 0)
-      PriceBuyComponent(getAddressById(components, PriceBuyCompID)).set(id, buyPrice);
-    if (sellPrice != 0)
-      PriceSellComponent(getAddressById(components, PriceSellCompID)).set(id, sellPrice);
-    return id;
+    if (buyPrice != 0) setBuyPrice(components, id, buyPrice);
+    if (sellPrice != 0) setSellPrice(components, id, sellPrice);
   }
 
   /// @notice creates a requirement for a listing
@@ -62,8 +61,9 @@ library LibListing {
     IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).remove(id);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
 
-    PriceBuyComponent(getAddressById(components, PriceBuyCompID)).remove(id);
-    PriceSellComponent(getAddressById(components, PriceSellCompID)).remove(id);
+    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+    valueComp.remove(genBuyPtr(id));
+    valueComp.remove(genSellPtr(id));
 
     uint256[] memory requirements = LibConditional.queryFor(components, genReqPtr(id));
     for (uint256 i; i < requirements.length; i++)
@@ -132,13 +132,26 @@ library LibListing {
   }
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    PriceBuyComponent comp = PriceBuyComponent(getAddressById(components, PriceBuyCompID));
-    return comp.has(id) ? comp.get(id) : 0;
+    uint256 ptr = genBuyPtr(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    PriceSellComponent comp = PriceSellComponent(getAddressById(components, PriceSellCompID));
-    return comp.has(id) ? comp.get(id) : 0;
+    uint256 ptr = genSellPtr(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
+  }
+
+  //////////////////
+  // SETTERS
+
+  function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
+    uint256 ptr = genBuyPtr(id);
+    ValueComponent(getAddressById(components, ValueCompID)).set(ptr, price);
+  }
+
+  function setSellPrice(IUintComp components, uint256 id, uint256 price) internal {
+    uint256 ptr = genSellPtr(id);
+    ValueComponent(getAddressById(components, ValueCompID)).set(ptr, price);
   }
 
   //////////////////
@@ -150,6 +163,14 @@ library LibListing {
 
   function genReqPtr(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("listing.requirement", regID)));
+  }
+
+  function genBuyPtr(uint256 regID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("listing.buy", regID)));
+  }
+
+  function genSellPtr(uint256 regID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("listing.sell", regID)));
   }
 
   //////////////////
