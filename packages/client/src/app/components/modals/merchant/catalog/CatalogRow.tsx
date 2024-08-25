@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
-import { Listing } from 'network/shapes/Npc';
+import { Listing } from 'network/shapes/NPCs';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
 

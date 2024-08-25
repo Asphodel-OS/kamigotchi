@@ -6,7 +6,8 @@ import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { Merchant, getMerchantByIndex } from 'network/shapes/Npc/merchant';
+import { Listing, getNPCListingsFiltered } from 'network/shapes/Listings';
+import { NPC, getNPCByIndex } from 'network/shapes/NPCs';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
 import { Header } from './header';
@@ -31,11 +32,15 @@ export function registerMerchantModal() {
         map(() => {
           const { network } = layers;
           const { components, world } = network;
+
           const account = getAccountFromBurner(network, { inventory: true });
-          const getMerchant = (npcIndex: number) => getMerchantByIndex(world, components, npcIndex);
+          const getNPC = (npcIndex: number) => getNPCByIndex(world, components, npcIndex);
+          const getListings = (npcIndex: number) =>
+            getNPCListingsFiltered(world, components, npcIndex, account);
+
           return {
             data: { account },
-            functions: { getMerchant },
+            functions: { getNPC, getListings },
             network,
           };
         })
@@ -45,15 +50,17 @@ export function registerMerchantModal() {
     ({ data, functions, network }) => {
       // console.log('mMerchant: data', data);
       const { account } = data;
-      const { getMerchant } = functions;
+      const { getNPC, getListings } = functions;
       const { actions, api } = network;
       const { npcIndex } = useSelected();
-      const [merchant, setMerchant] = useState<Merchant>(getMerchant(npcIndex));
+      const [merchant, setMerchant] = useState<NPC>(getNPC(npcIndex));
+      const [listings, setListings] = useState<Listing[]>([]);
       const [cart, setCart] = useState<CartItem[]>([]);
 
       // updates from selected Merchant updates
       useEffect(() => {
-        setMerchant(getMerchant(npcIndex));
+        setMerchant(getNPC(npcIndex));
+        setListings(getListings(npcIndex));
       }, [npcIndex]);
 
       // buy from a listing
@@ -79,7 +86,7 @@ export function registerMerchantModal() {
         <ModalWrapper id='merchant' canExit overlay>
           <Header merchant={merchant} player={account} />
           <Body>
-            <Catalog listings={merchant.listings} cart={cart} setCart={setCart} />
+            <Catalog listings={listings} cart={cart} setCart={setCart} />
             <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
           </Body>
         </ModalWrapper>

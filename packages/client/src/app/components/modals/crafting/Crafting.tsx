@@ -8,7 +8,7 @@ import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
 import { getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getItemBalance } from 'network/shapes/Item';
-import { getMerchantByIndex } from 'network/shapes/Npc';
+import { getNPCByIndex } from 'network/shapes/NPCs';
 import { Ingredient, Recipe, getRecipesByAssigner } from 'network/shapes/Recipe';
 import styled from 'styled-components';
 import { Kard } from './components/Kard';
@@ -44,7 +44,7 @@ export function registerCraftingModal() {
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, world.entities[accountEntity], index),
             },
-            assignerID: getMerchantByIndex(world, components, 1).id, // temp placeholder
+            assignerID: getNPCByIndex(world, components, 1).id, // temp placeholder
           };
         })
       ),

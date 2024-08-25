@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Listing } from 'network/shapes/Npc';
+import { Listing } from 'network/shapes/NPCs';
 import { CartItem } from '../types';
 import { CatalogRow } from './CatalogRow';
 

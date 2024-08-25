@@ -18,7 +18,7 @@ import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
-import { getAllMerchants, getMerchantByIndex } from 'network/shapes/Npc/merchant';
+import { getAllNPCs, getNPCByIndex } from 'network/shapes/NPCs';
 import {
   getQuest,
   getQuestByIndex,
@@ -102,9 +102,9 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     npc: {
-      all: (options?: {}) => getAllMerchants(world, components),
+      all: (options?: {}) => getAllNPCs(world, components),
       get: (index: number, options?: {}) => {
-        return getMerchantByIndex(world, components, index);
+        return getNPCByIndex(world, components, index);
       },
       entities: () => Array.from(components.IsNPC.entities()),
       indices: () => Array.from(components.NPCIndex.values.value.values()),
