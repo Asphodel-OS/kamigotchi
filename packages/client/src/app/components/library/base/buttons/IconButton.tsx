@@ -78,7 +78,7 @@ const Button = styled.button<ButtonProps>`
   background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-
+  user-select: none;
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);

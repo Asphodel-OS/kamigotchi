@@ -17,6 +17,7 @@ interface Props {
   options: Option[];
   size?: 'small' | 'medium';
   disabled?: boolean;
+  persist?: boolean; // whether to persist menu on click
 }
 
 export function ActionListButton(props: Props) {
@@ -41,7 +42,7 @@ export function ActionListButton(props: Props) {
     if (option.disabled) return;
     playClick();
     option.onClick();
-    handleClose();
+    if (!props.persist || options.length < 2) handleClose();
   };
 
   const setButtonStyles = () => {
@@ -102,6 +103,7 @@ const Button = styled.button`
 
   cursor: pointer;
   pointer-events: auto;
+  user-select: none;
   &:hover {
     background-color: #ddd;
   }

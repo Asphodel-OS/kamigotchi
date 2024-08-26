@@ -39,6 +39,7 @@ export const Controls = (props: Props) => {
         }))}
         size='small'
         disabled={unusedFilters.length < 1}
+        persist
       />
     );
   };
@@ -73,6 +74,7 @@ export const Controls = (props: Props) => {
         }))}
         size='small'
         disabled={unusedSorts.length < 1}
+        persist
       />
     );
   };
@@ -87,6 +89,19 @@ export const Controls = (props: Props) => {
     setSorts(sorts.filter((x) => x.field !== field));
   };
 
+  const getEmptyText = () => {
+    const text = ['Do you seek..'];
+    const options = [
+      'more power?',
+      'more health?',
+      'more violence?',
+      'more harmony?',
+      'more slots?',
+    ];
+    const chosenIndex = Math.floor(Math.random() * options.length);
+    return text.concat(options[chosenIndex]);
+  };
+
   //////////////////
   // RENDER
 
@@ -96,7 +111,7 @@ export const Controls = (props: Props) => {
         {SortSelector()}
         {FilterSelector()}
       </Row>
-      {sorts.length < 1 && filters.length < 1 && <EmptyText text={['What do you seek?']} />}
+      {sorts.length < 1 && filters.length < 1 && <EmptyText text={getEmptyText()} />}
       <Section>
         {sorts.length > 0 && (
           <Row>

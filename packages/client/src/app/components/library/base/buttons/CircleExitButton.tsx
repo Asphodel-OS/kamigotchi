@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   scale?: number;
@@ -9,8 +10,13 @@ interface Props {
 export const CircleExitButton = (props: Props) => {
   const { scale, onClick, circle } = props;
 
+  const handleClick = () => {
+    playClick();
+    onClick?.();
+  };
+
   return (
-    <Container scale={scale ?? 1.2} onClick={onClick} circle={circle}>
+    <Container scale={scale ?? 1.2} onClick={handleClick} circle={circle}>
       X
     </Container>
   );
@@ -33,6 +39,7 @@ const Container = styled.div<{ scale: number; circle?: boolean }>`
   justify-content: center;
 
   cursor: pointer;
+  user-select: none;
   &:hover {
     background-color: #ddd;
   }

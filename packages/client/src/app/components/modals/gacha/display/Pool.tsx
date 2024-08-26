@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
@@ -75,23 +75,22 @@ export const Pool = (props: Props) => {
         if (filter.field === 'INDEX') return kami.index >= filter.min && kami.index <= filter.max;
         if (filter.field === 'LEVEL') return kami.level >= filter.min && kami.level <= filter.max;
         else {
-          const value = kami.stats[filter.field.toLowerCase() as keyof Stats].base;
+          const value = kami.stats[filter.field.toLowerCase() as keyof Stats].total;
           return value >= filter.min && value <= filter.max;
         }
       });
     });
 
-    console.log(`filtered: ${newFiltered.length}`);
     setFiltered(newFiltered);
   };
 
   const getKamiText = (kami: Kami): string[] => {
     return [
-      `Health: ${kami.stats.health.base}`,
-      `Power: ${kami.stats.power.base}`,
-      `Violence: ${kami.stats.violence.base}`,
-      `Harmony: ${kami.stats.harmony.base}`,
-      `Slots: ${kami.stats.slots.base}`,
+      `Health: ${kami.stats.health.total}`,
+      `Power: ${kami.stats.power.total}`,
+      `Violence: ${kami.stats.violence.total}`,
+      `Harmony: ${kami.stats.harmony.total}`,
+      `Slots: ${kami.stats.slots.total}`,
     ];
   };
 
@@ -152,18 +151,27 @@ export const Pool = (props: Props) => {
 
   return (
     <Container style={{ display: props.isVisible ? 'flex' : 'none' }}>
+      <Overlay top={0.6} left={0.6}>
+        <Text>
+          {filtered.length}/{entities.length}
+        </Text>
+      </Overlay>
       {getVisibleKamis().map((kami) => getKamiBlock(kami))}
     </Container>
   );
 };
 
 const Container = styled.div`
-  width: 100%;
+  position: relative;
   padding: 0.6vw;
+  width: 100%;
 
   display: flex;
   flex-flow: row wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  flex-grow: 1;
+`;
+
+const Text = styled.div`
+  font-size: 0.6vw;
 `;
