@@ -9,6 +9,7 @@ export {
   IconListButton,
   ModalHeader,
   ModalWrapper,
+  Pairing,
   Tooltip,
   ValidatorWrapper,
 } from './base';
