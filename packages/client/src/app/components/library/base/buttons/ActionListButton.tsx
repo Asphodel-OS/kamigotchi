@@ -4,6 +4,13 @@ import styled from 'styled-components';
 import { Popover } from '@mui/material';
 import { playClick } from 'utils/sounds';
 
+export interface Option {
+  text: string;
+  onClick: Function;
+  image?: string;
+  disabled?: boolean;
+}
+
 interface Props {
   id: string;
   text: string;
@@ -12,18 +19,17 @@ interface Props {
   disabled?: boolean;
 }
 
-export interface Option {
-  text: string;
-  onClick: Function;
-  disabled?: boolean;
-}
-
 export function ActionListButton(props: Props) {
+  const { id, text, options, disabled } = props;
+
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!props.disabled) setAnchorEl(event.currentTarget);
+    if (!disabled) {
+      setAnchorEl(event.currentTarget);
+      playClick();
+    }
   };
 
   const handleClose = () => {
@@ -40,7 +46,7 @@ export function ActionListButton(props: Props) {
 
   const setButtonStyles = () => {
     var styles: any = {};
-    if (props.disabled) styles.backgroundColor = '#bbb';
+    if (disabled) styles.backgroundColor = '#bbb';
 
     const size = props.size ?? 'medium';
     if (size === 'small') {
@@ -48,62 +54,35 @@ export function ActionListButton(props: Props) {
       styles.margin = '0vw .12vw';
       styles.padding = '.2vw .5vw';
       styles.borderRadius = '.3vw';
-      styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
       styles.fontSize = '.8vw';
       styles.margin = '0vw .16vw';
       styles.padding = '.35vw .7vw';
       styles.borderRadius = '.4vw';
-      styles.borderWidth = '.15vw';
     }
 
     return styles;
   };
-
-  const setMenuStyles = () => {
-    var styles: any = {};
-
-    const size = props.size ?? 'medium';
-    if (size === 'small') {
-      styles.fontSize = '.6vw';
-      styles.borderRadius = '.3vw';
-      styles.borderWidth = '.1vw';
-    } else if (size === 'medium') {
-      styles.fontSize = '.8vw';
-      styles.borderRadius = '.4vw';
-      styles.borderWidth = '.15vw';
-    }
-
-    return styles;
-  };
-
-  const MenuEntry = (option: Option, key: number) => {
-    const onClick = option.disabled ? () => {} : () => onSelect(option);
-
-    return (
-      <Item key={`MenuEntry-${key}`} onClick={onClick} disabled={option.disabled}>
-        {option.text}
-      </Item>
-    );
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
   return (
     <div>
-      <Button ref={toggleRef} id={props.id} onClick={handleClick} style={setButtonStyles()}>
-        {props.text + ' ▾'}
+      <Button ref={toggleRef} id={id} onClick={handleClick} style={setButtonStyles()}>
+        {text + ' ▾'}
       </Button>
       <Popover
-        id={id}
-        open={open}
+        id={Boolean(anchorEl) ? 'simple-popover' : undefined}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Menu style={setMenuStyles()}>
-          {props.options.map((option, i) => MenuEntry(option, i))}
+        <Menu>
+          {options.map((o, i) => (
+            <Entry key={`entry-${i}`} onClick={() => onSelect(o)} disabled={o.disabled}>
+              {o.image && <Icon src={o.image} />}
+              {o.text}
+            </Entry>
+          ))}
         </Menu>
       </Popover>
     </div>
@@ -112,6 +91,7 @@ export function ActionListButton(props: Props) {
 
 const Button = styled.button`
   background-color: #fff;
+  border: solid black 0.15vw;
   color: black;
   display: flex;
 
@@ -132,16 +112,20 @@ const Button = styled.button`
 
 const Menu = styled.div`
   border: solid black 0.15vw;
-  border-radius: 0.4vw;
-  color: black;
+  border-radius: 0.6vw;
   min-width: 7vw;
+  font-size: 0.6vw;
 `;
 
-const Item = styled.div<{ disabled?: boolean }>`
+const Entry = styled.div<{ disabled?: boolean }>`
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.4vw;
+  border-radius: 0.6vw;
   padding: 0.6vw;
-  justify-content: left;
+  gap: 0.3vw;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -151,4 +135,8 @@ const Item = styled.div<{ disabled?: boolean }>`
   &:active {
     background-color: #bbb;
   }
+`;
+
+const Icon = styled.img`
+  width: 1.4vw;
 `;

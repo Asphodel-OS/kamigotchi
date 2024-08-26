@@ -34,6 +34,7 @@ export const Controls = (props: Props) => {
         text='+filter'
         options={unusedFilters.map((f) => ({
           text: f.field,
+          image: f.icon,
           onClick: () => setFilters([...filters, { ...f }]),
         }))}
         size='small'
@@ -67,6 +68,7 @@ export const Controls = (props: Props) => {
         text='+sort'
         options={unusedSorts.map((s) => ({
           text: s.field,
+          image: s.icon,
           onClick: () => setSorts([...sorts, { ...s }]),
         }))}
         size='small'
