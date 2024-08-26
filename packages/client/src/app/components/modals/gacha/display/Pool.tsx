@@ -61,7 +61,7 @@ export const Pool = (props: Props) => {
     const sameKami = kamiIndex === kami.index;
     if (!sameKami) setKami(kami.index);
     if (modals.kami && sameKami) setModals({ ...modals, kami: false });
-    else setModals({ ...modals, kami: true });
+    else setModals({ ...modals, gacha: true, kami: true, party: true });
     playClick();
   };
 
@@ -119,7 +119,32 @@ export const Pool = (props: Props) => {
   // get the list of kamis that should be displayed
   const getVisibleKamis = () => {
     const count = Math.min(limit, filtered.length);
-    return filtered.slice(0, count);
+    const sorted = sortKamis(filtered);
+    return sorted.slice(0, count);
+  };
+
+  const sortKamis = (kamis: Kami[]) => {
+    const sorted = [...kamis].sort((a, b) => {
+      for (let i = 0; i < sorts.length; i++) {
+        const sort = sorts[i];
+        const field = sort.field.toLowerCase();
+        const direction = sort.ascending ? 1 : -1;
+
+        let aStat = 0;
+        let bStat = 0;
+        if (['INDEX', 'LEVEL'].includes(sort.field)) {
+          aStat = a[field as keyof Kami] as number;
+          bStat = b[field as keyof Kami] as number;
+        } else {
+          aStat = a.stats[field as keyof Stats].total;
+          bStat = b.stats[field as keyof Stats].total;
+        }
+        const diff = aStat - bStat;
+        if (diff != 0) return diff * direction;
+      }
+      return 0;
+    });
+    return sorted;
   };
 
   ///////////////////

@@ -27,14 +27,14 @@ export const Filter = (props: Props) => {
   }, []);
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valStr = e.target.value.replaceAll('[^\\d.]', '');
+    const valStr = e.target.value.replace(/[^\d]/g, '');
     const rawVal = parseInt(valStr || '0');
     const val = Math.min(max, rawVal);
     setMin(val);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valStr = e.target.value.replaceAll('[^\\d.]', '');
+    const valStr = e.target.value.replace(/[^\d]/g, '');
     const rawVal = parseInt(valStr || '0');
     const val = Math.max(min, rawVal);
     setMax(val);
