@@ -1,3 +1,6 @@
+import { Pairing } from 'app/components/library';
+import { Overlay } from 'app/components/library/styles';
+import { GachaTicket } from 'network/shapes/utils';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
@@ -40,6 +43,14 @@ export const Footer = (props: Props) => {
 
   return (
     <Container>
+      <Overlay right={0.75} top={-2.4}>
+        <Pairing
+          icon={GachaTicket.image}
+          text={balance.toFixed(1)}
+          tooltip={[GachaTicket.name]}
+          reverse
+        />
+      </Overlay>
       <Quantity type='string' value={quantity} onChange={(e) => handleChange(e)} />
       <Stepper>
         <StepperButton

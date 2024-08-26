@@ -112,13 +112,14 @@ const Text = styled.div<{ size: number }>`
 const Quantity = styled.input`
   border: solid black 0.15vw;
   border-radius: 0.4vw;
-  label: 'asdf';
   background-color: #eee;
-  cursor: text;
+
   width: 3vw;
-  padding: 0.3vw;
+  padding: 0.45vw 0.3vw;
 
   color: black;
-  font-size: 0.9vw;
+  font-size: 0.75vw;
   text-align: center;
+
+  cursor: text;
 `;
