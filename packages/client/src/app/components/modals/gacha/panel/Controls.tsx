@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ActionListButton, CircleExitButton } from 'app/components/library';
+import { ActionListButton, CircleExitButton, EmptyText } from 'app/components/library';
 import { DefaultFilters, DefaultSorts, Filter, Sort } from '../types';
 import { Filter as FilterComponent } from './Filter';
 import { Sort as SortComponent } from './Sort';
@@ -96,6 +96,7 @@ export const Controls = (props: Props) => {
         {SortSelector()}
         {FilterSelector()}
       </Row>
+      {sorts.length < 1 && filters.length < 1 && <EmptyText text={['What do you seek?']} />}
       <Section>
         {sorts.length > 0 && (
           <Row>

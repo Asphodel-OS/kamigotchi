@@ -81,11 +81,13 @@ export const Filter = (props: Props) => {
 };
 
 const Container = styled.div`
+  background-color: #eee;
   position: relative;
   border: solid black 0.15vw;
   border-radius: 0.6vw;
   padding: 0.6vw;
   margin: 0.3vw;
+  filter: drop-shadow(0.1vw 0.1vw 0.05vw black);
 
   display: flex;
   flex-flow: column nowrap;
@@ -123,7 +125,7 @@ const Text = styled.div<{ size: number }>`
 const Quantity = styled.input`
   border: solid black 0.15vw;
   border-radius: 0.4vw;
-  background-color: #eee;
+  background-color: #fff;
 
   width: 3vw;
   padding: 0.45vw 0.3vw;
@@ -133,4 +135,5 @@ const Quantity = styled.input`
   text-align: center;
 
   cursor: text;
+  box-shadow: inset 0.1vw 0.1vw 0.2vw rgba(0, 0, 0, 0.5);
 `;

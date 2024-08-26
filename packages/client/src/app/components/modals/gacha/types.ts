@@ -31,7 +31,7 @@ export interface Filter {
 
 export const DefaultFilters: Filter[] = [
   { field: 'LEVEL', icon: kamiIcon, min: 1, max: 30 },
-  { field: 'HEALTH', icon: StatIcons.health, min: 50, max: 400 },
+  { field: 'HEALTH', icon: StatIcons.health, min: 50, max: 300 },
   { field: 'POWER', icon: StatIcons.power, min: 10, max: 50 },
   { field: 'VIOLENCE', icon: StatIcons.violence, min: 10, max: 50 },
   { field: 'HARMONY', icon: StatIcons.harmony, min: 10, max: 50 },
