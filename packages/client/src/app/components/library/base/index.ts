@@ -1,4 +1,11 @@
-export { ActionButton, ActionListButton, ExitButton, IconButton, IconListButton } from './buttons';
+export {
+  ActionButton,
+  ActionListButton,
+  CircleExitButton,
+  ExitButton,
+  IconButton,
+  IconListButton,
+} from './buttons';
 export { Battery, Countdown, ProgressBar } from './measures';
 export { ModalHeader, ModalWrapper } from './modals';
 export { ValidatorWrapper } from './validators/ValidatorWrapper';

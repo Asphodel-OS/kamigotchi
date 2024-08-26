@@ -104,7 +104,6 @@ const Image = styled.img`
   padding: 0.3vw;
   font-family: Pixel;
   image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
 `;
 
 const Quantity = styled.input`

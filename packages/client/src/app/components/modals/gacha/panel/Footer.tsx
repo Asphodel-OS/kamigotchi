@@ -42,10 +42,16 @@ export const Footer = (props: Props) => {
     <Container>
       <Quantity type='string' value={quantity} onChange={(e) => handleChange(e)} />
       <Stepper>
-        <StepperButton onClick={handleInc} style={{ borderBottom: '0.15vw solid black' }}>
+        <StepperButton
+          onClick={handleInc}
+          style={{ borderBottom: '0.15vw solid black' }}
+          disabled={quantity >= balance}
+        >
           +
         </StepperButton>
-        <StepperButton onClick={handleDec}>-</StepperButton>
+        <StepperButton onClick={handleDec} disabled={quantity <= 0}>
+          -
+        </StepperButton>
       </Stepper>
       <Submit onClick={handleMint}>Mint</Submit>
     </Container>
@@ -89,7 +95,7 @@ const Stepper = styled.div`
   flex-flow: column nowrap;
 `;
 
-const StepperButton = styled.div`
+const StepperButton = styled.div<{ disabled?: boolean }>`
   background-color: #fff;
   height: 100%;
   width: 100%;
@@ -109,6 +115,12 @@ const StepperButton = styled.div`
   &:active {
     background-color: #bbb;
   }
+  ${({ disabled }) =>
+    disabled &&
+    `
+  background-color: #bbb; 
+  cursor: default; 
+  pointer-events: none;`}
 `;
 
 const Submit = styled.div<{ disabled?: boolean }>`

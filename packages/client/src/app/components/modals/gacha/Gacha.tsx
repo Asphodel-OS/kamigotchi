@@ -19,10 +19,10 @@ import { Commit, filterRevealable } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
 import { MainDisplay } from './display/MainDisplay';
-import { ControlPanel } from './panel/ControlPanel';
+import { Panel } from './panel/Panel';
 import { Commits } from './reroll/Commits';
 import { Reroll } from './reroll/Reroll';
-import { TabType } from './types';
+import { Filter, Sort, TabType } from './types';
 
 const MINT20PROXY_KEY = 'system.Mint20.Proxy';
 
@@ -73,10 +73,15 @@ export function registerGachaModal() {
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
 
-      const [tab, setTab] = useState<TabType>('MINT');
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
       const [gachaBalance, setGachaBalance] = useState(0);
+
+      const [tab, setTab] = useState<TabType>('MINT');
+      const [filters, setFilters] = useState<Filter[]>([]);
+      const [sorts, setSorts] = useState<Sort[]>([]);
+      const [limit, setLimit] = useState(20);
+      console.log(filters);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -112,9 +117,16 @@ export function registerGachaModal() {
 
       // refetch the mint20 balance whenever the wallet connects or contract address changes
       useEffect(() => {
-        if (!isConnected || !mint20Addy) return;
+        console.log(
+          `gacha state updated`,
+          `\n\t• connected: ${isConnected}`,
+          `\n\t• address: ${mint20Addy}`,
+          `\n\t• modal ${modals.gacha ? 'open' : 'closed'}`
+        );
+        if (!isConnected || !mint20Addy || !modals.gacha) return;
+        console.log('refetching gacha ticket balance..');
         refetchMint20Balance();
-      }, [isConnected, mint20Addy]);
+      }, [isConnected, mint20Addy, modals.gacha]);
 
       // update the gacha balance whenever the result changes
       useEffect(() => {
@@ -316,11 +328,19 @@ export function registerGachaModal() {
               lazyKamis={data.gachaKamis}
               data={{ kamiEntities: data.kamiEntities }}
             />
-            <ControlPanel
+            <Panel
               tab={tab}
               setTab={setTab}
               gachaBalance={gachaBalance}
               actions={{ mint: handleMint, reroll: handleReroll }}
+              controls={{
+                filters,
+                setFilters,
+                sorts,
+                setSorts,
+                limit,
+                setLimit,
+              }}
             />
           </Container>
         </ModalWrapper>
