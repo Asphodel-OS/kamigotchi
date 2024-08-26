@@ -14,14 +14,12 @@ export const clock: DialogueNode = {
 
 export const mina: DialogueNode = {
   index: 132,
-  text: [`I need your help. Interested in supporting new product development?`, LoyaltyText],
-  action: [
-    {
-      type: 'goal',
-      label: 'Support Mina',
-      input: 5,
-    },
-  ],
+  text: [LoyaltyText, `I need your help. Interested in supporting new product development?`],
+  action: {
+    type: 'goal',
+    label: 'Support Mina',
+    input: 5,
+  },
   args: [
     {
       type: 'REPUTATION',

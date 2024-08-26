@@ -44,7 +44,7 @@ export interface Listing {
 
 // get an Listing from its EntityIndex
 export const getListing = (world: World, components: Components, index: EntityIndex): Listing => {
-  const { IsRegistry, ItemIndex, NPCIndex, Value } = components;
+  const { IsRegistry, ItemIndex, NPCIndex } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;

@@ -2,6 +2,7 @@ import {
   deleteFactions,
   deleteGoals,
   deleteItems,
+  deleteListings,
   deleteNodes,
   deleteQuests,
   deleteRelationships,
@@ -15,6 +16,7 @@ import {
   initGachaPool,
   initGoals,
   initItems,
+  initListings,
   initNodes,
   initNpcs,
   initQuests,
@@ -78,6 +80,10 @@ export class WorldState {
       delete: (indices?: number[]) => this.genCalls((api) => deleteItems(api, indices || [])),
       revise: (indices?: number[]) => this.genCalls((api) => reviseItems(api, indices)),
     } as SubFunc,
+    listings: {
+      init: () => this.genCalls((api) => initListings(api)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteListings(api, indices || [])),
+    },
     npcs: {
       init: () => this.genCalls(initNpcs),
     } as SubFunc,

@@ -154,7 +154,7 @@ export function registerGoalModal() {
       return (
         <ModalWrapper
           id='goal'
-          header={<ModalHeader title='Collaborative Quest' icon={questsIcon} />}
+          header={<ModalHeader title='Co-op Quest' icon={questsIcon} />}
           canExit
           overlay
         >

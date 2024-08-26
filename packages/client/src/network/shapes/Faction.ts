@@ -31,6 +31,18 @@ export const getFactionByIndex = (world: World, components: Components, index: n
   return getFaction(world, components, entityIndex, index);
 };
 
+// reputation details override for faction shape (diff name style)
+export const getReputationDetailsByIndex = (
+  world: World,
+  components: Components,
+  index: number
+): Faction => {
+  const entityIndex = getEntityIndex(world, index);
+  if (!entityIndex) throw new Error('getFactionRepByIndex: index not found');
+
+  return getReputationDetails(world, components, entityIndex, index);
+};
+
 export const getAllFactions = (world: World, components: Components): Faction[] => {
   const { FactionIndex, IsRegistry } = components;
 
@@ -80,6 +92,18 @@ export const getFaction = (
   };
 };
 
+// reputation details override for faction shape (diff name style)
+export const getReputationDetails = (
+  world: World,
+  components: Components,
+  index: EntityIndex,
+  factionIndex?: number
+): Faction => {
+  const faction = getFaction(world, components, index, factionIndex);
+  faction.name = getReputationName(faction.index);
+  return faction;
+};
+
 ///////////////
 // IDs
 
@@ -116,4 +140,12 @@ const getRepEntityIndex = (
     IDStore.set(key, id);
   }
   return world.entityToIndex.get(id as EntityID);
+};
+
+////////////////
+// UTILS
+
+const getReputationName = (factionIndex: number): string => {
+  if (factionIndex === 1) return 'REPUTATION';
+  else return 'LOYALTY';
 };

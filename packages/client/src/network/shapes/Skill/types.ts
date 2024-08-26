@@ -12,6 +12,7 @@ import { BigNumber, utils } from 'ethers';
 import { baseURI } from 'constants/media';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { getSkillEffects } from '.';
 import { Condition, queryConditionsOf } from '../Conditional';
 import { DetailedEntity } from '../utils';
 

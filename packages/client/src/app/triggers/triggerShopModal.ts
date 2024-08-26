@@ -13,6 +13,9 @@ export const triggerShopModal = (npcIndex: number) => {
         ...modals,
         merchant: true,
         map: false,
+        goal: false,
+        dialogue: false,
+        kami: false,
       },
     });
   } else {
