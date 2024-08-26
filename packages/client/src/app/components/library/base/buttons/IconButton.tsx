@@ -4,18 +4,20 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  onClick: Function;
   img: string;
-  disabled?: boolean;
-  size?: 'small' | 'medium' | 'large';
+  onClick: Function;
+  text?: string;
+  size?: number;
   color?: string;
-  pulse?: boolean;
+  disabled?: boolean;
   noMargin?: boolean;
+  pulse?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
 export const IconButton = (props: Props) => {
-  const { onClick, img, disabled, color, pulse, noMargin } = props;
+  const { img, onClick, text, size, disabled, color, pulse, noMargin } = props;
+  const scale = size ?? 2.5;
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -26,28 +28,6 @@ export const IconButton = (props: Props) => {
   // override styles for sizes and disabling
   const setStyles = () => {
     let styles: any = {};
-
-    const size = props.size ?? 'medium';
-    if (size === 'small') {
-      styles.width = '1.5vw';
-      styles.height = '1.5vw';
-      styles.padding = '.1vw';
-      styles.borderRadius = '.3vw';
-    } else if (size === 'medium') {
-      styles.width = '2.5vw';
-      styles.height = '2.5vw';
-      styles.margin = '.2vw';
-      styles.padding = '.2vw';
-      styles.borderRadius = '.45vw';
-    } else if (size === 'large') {
-      styles.width = '4vw';
-      styles.height = '4vw';
-      styles.margin = '.35vw';
-      styles.padding = '.7vw';
-      styles.borderRadius = '.7vw';
-    }
-
-    if (noMargin) styles.margin = '0vw';
     if (color) styles.backgroundColor = color;
     if (disabled) styles.backgroundColor = '#b2b2b2';
 
@@ -56,28 +36,46 @@ export const IconButton = (props: Props) => {
 
   return (
     <Button
+      scale={scale}
       onClick={!disabled ? handleClick : () => {}}
       style={setStyles()}
-      color={color}
-      disabled={disabled}
+      color={color ?? '#fff'}
       pulse={pulse}
+      noMargin={noMargin}
+      disabled={disabled}
+      square={!text}
     >
-      <Image src={img} />
+      <Image src={img} scale={scale} />
+      {text && <Text scale={scale}>{text}</Text>}
     </Button>
   );
 };
 
 interface ButtonProps {
-  color?: string;
+  scale: number;
+  color: string;
   disabled?: boolean;
   pulse?: boolean;
+  noMargin?: boolean;
+  square?: boolean;
 }
 
-const Button = styled.div<ButtonProps>`
+const Button = styled.button<ButtonProps>`
   border: solid black 0.15vw;
-  justify-content: center;
+  border-radius: ${({ scale }) => scale * 0.2}vw;
+  height: ${({ scale }) => scale}vw;
+  ${({ square, scale }) => square && `width: ${scale}vw;`}
 
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  margin: ${({ scale, noMargin }) => (noMargin ? 0 : scale * 0.1)}vw;
+  padding: ${({ scale }) => scale * 0.1}vw;
+  gap: ${({ scale }) => scale * 0.1}vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+
+  background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
@@ -92,6 +90,10 @@ const Button = styled.div<ButtonProps>`
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
 `;
 
-const Image = styled.img`
-  width: 100%;
+const Image = styled.img<{ scale: number }>`
+  height: ${({ scale }) => scale * 0.75}vw;
+`;
+
+const Text = styled.div<{ scale: number }>`
+  font-size: ${({ scale }) => scale * 0.25}vw;
 `;

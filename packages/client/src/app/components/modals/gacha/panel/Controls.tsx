@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ActionListButton } from 'app/components/library';
+import { ActionListButton, CircleExitButton } from 'app/components/library';
 import { DefaultFilters, DefaultSorts, Filter, Sort } from '../types';
 import { Filter as FilterComponent } from './Filter';
 import { Sort as SortComponent } from './Sort';
@@ -77,14 +77,12 @@ export const Controls = (props: Props) => {
     );
   };
 
+  // flip's a sort field's ordering
   const flipSort = (field: string) => {
-    setSorts(
-      sorts.map((x) =>
-        x.field === field ? { ...x, order: x.order === 'ASC' ? 'DESC' : 'ASC' } : x
-      )
-    );
+    setSorts(sorts.map((x) => (x.field === field ? { ...x, ascending: !x.ascending } : x)));
   };
 
+  // unused atm
   const removeSort = (field: string) => {
     setSorts(sorts.filter((x) => x.field !== field));
   };
@@ -99,19 +97,25 @@ export const Controls = (props: Props) => {
         {FilterSelector()}
       </Row>
       <Section>
-        {sorts.length > 0 && <Text>Sorts:</Text>}
-        {sorts.map((s) => (
-          <SortComponent
-            key={s.field}
-            name={s.field}
-            icon={s.icon}
-            order={s.order}
-            actions={{
-              flip: () => flipSort(s.field),
-              remove: () => removeSort(s.field),
-            }}
-          />
-        ))}
+        {sorts.length > 0 && (
+          <Row>
+            <Text>Sorts:</Text>
+            <CircleExitButton onClick={() => setSorts([])} circle />
+          </Row>
+        )}
+        <Row>
+          {sorts.map((s) => (
+            <SortComponent
+              key={s.field}
+              name={s.field}
+              icon={s.icon}
+              ascending={s.ascending}
+              actions={{
+                flip: () => flipSort(s.field),
+              }}
+            />
+          ))}
+        </Row>
       </Section>
       <Section>
         {filters.length > 0 && <Text>Filters:</Text>}
@@ -163,8 +167,8 @@ const Row = styled.div`
   gap: 0.3vw;
 
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
+  flex-flow: row wrap;
+  justify-content: flex-start;
   align-items: center;
 `;
 

@@ -39,6 +39,7 @@ export const Panel = (props: Props) => {
 const Container = styled.div`
   border-left: solid black 0.15vw;
   height: 100%;
+  width: 25vw;
 
   display: flex;
   flex-flow: column nowrap;

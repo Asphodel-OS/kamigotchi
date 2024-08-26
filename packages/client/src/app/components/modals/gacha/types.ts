@@ -9,17 +9,17 @@ export type Stat = 'INDEX' | 'LEVEL' | 'HEALTH' | 'POWER' | 'VIOLENCE' | 'HARMON
 export interface Sort {
   field: Stat;
   icon: string;
-  order: 'ASC' | 'DESC';
+  ascending: boolean;
 }
 
 export const DefaultSorts: Sort[] = [
-  { field: 'INDEX', icon: kamiIcon, order: 'ASC' },
-  { field: 'LEVEL', icon: kamiIcon, order: 'ASC' },
-  { field: 'HEALTH', icon: StatIcons.health, order: 'DESC' },
-  { field: 'POWER', icon: StatIcons.power, order: 'DESC' },
-  { field: 'VIOLENCE', icon: StatIcons.violence, order: 'DESC' },
-  { field: 'HARMONY', icon: StatIcons.harmony, order: 'DESC' },
-  { field: 'SLOTS', icon: StatIcons.slots, order: 'DESC' },
+  { field: 'INDEX', icon: kamiIcon, ascending: true },
+  { field: 'LEVEL', icon: kamiIcon, ascending: true },
+  { field: 'HEALTH', icon: StatIcons.health, ascending: false },
+  { field: 'POWER', icon: StatIcons.power, ascending: false },
+  { field: 'VIOLENCE', icon: StatIcons.violence, ascending: false },
+  { field: 'HARMONY', icon: StatIcons.harmony, ascending: false },
+  { field: 'SLOTS', icon: StatIcons.slots, ascending: false },
 ];
 
 export interface Filter {
