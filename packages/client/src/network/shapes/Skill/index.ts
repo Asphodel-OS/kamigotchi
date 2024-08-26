@@ -8,6 +8,19 @@ export {
   parseEffectText,
   parseRequirementText,
 } from './functions';
-export { getHolderSkills, getRegistrySkills, getSkillByIndex } from './queries';
-export { getEffect, getRequirement, getSkill } from './types';
+export {
+  getHolderSkillByIndex,
+  getHolderSkillLevel,
+  getHolderSkills,
+  getRegistrySkills,
+  getSkillByIndex,
+  getSkillEffects,
+} from './getters';
+export { queryHolderSkills, queryRegistrySkills, querySkillByIndex, querySkillsX } from './queries';
+export {
+  getEffect,
+  getRequirement,
+  getSkill,
+  getInstanceEntity as getSkillInstanceEntity,
+} from './types';
 export type { Effect, Requirement, Skill } from './types';

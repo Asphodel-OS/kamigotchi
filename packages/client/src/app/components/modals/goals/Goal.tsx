@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { Account, getAccountFromBurner } from 'network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Contribution,
   Goal,
@@ -139,7 +139,7 @@ export function registerGoalModal() {
               utils={{
                 canContribute: () => canContribute(world, components, currGoal, data.account),
                 canClaim: () => canClaim(currGoal, accContribution),
-                getBalance: (holder: Account, index: number | undefined, type: string) =>
+                getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
                   getBalance(world, components, holder, index, type),
                 getDescribedEntity: (type: string, index: number) =>
                   getDescribedEntity(world, components, type, index),

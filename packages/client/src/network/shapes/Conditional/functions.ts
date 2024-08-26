@@ -83,7 +83,7 @@ export const checkCurrent = (
   target: Target,
   holder: Account | Kami
 ): ((opt: any) => Status) => {
-  const accVal = getBalance(world, components, holder, target.index, target.type) || 0;
+  const accVal = getBalance(world, components, holder.entityIndex, target.index, target.type) || 0;
 
   return (opt: any) => {
     return {

@@ -1,5 +1,12 @@
 import { DialogueNode } from '.';
 
+const LoyaltyText = (loyalty: number) => {
+  if (loyalty < 5)
+    return `I'm sorry, I don't know you. Please stop bothering me, and take a shower.`;
+  else if (loyalty < 10) return `Welcome back! Good to see you again.`;
+  else return `My favorite customer! You've been a good boy, haven't you?`;
+};
+
 export const clock: DialogueNode = {
   index: 131,
   text: ['*tik tok*'],
@@ -7,20 +14,25 @@ export const clock: DialogueNode = {
 
 export const mina: DialogueNode = {
   index: 132,
-  text: [
-    `You're early..... I'm still just setting up the shop.`,
-    `Interact with the cash register if you want to trade. And I have some tasks for you, if you're free....`,
+  text: [`You're early..... I'm still just setting up the shop.`, LoyaltyText],
+  args: [
+    {
+      type: 'ITEM',
+      index: 108,
+    },
   ],
 };
 
 const exit: DialogueNode = {
   index: 133,
   text: ['Do you want to leave this.... place?'],
-  action: {
-    type: 'move',
-    label: 'Leave',
-    input: 2,
-  },
+  action: [
+    {
+      type: 'move',
+      label: 'Leave',
+      input: 2,
+    },
+  ],
 };
 
 export default [clock, mina, exit];

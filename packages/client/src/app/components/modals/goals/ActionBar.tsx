@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Goal } from 'network/shapes/Goal';
@@ -16,7 +17,7 @@ interface Props {
   utils: {
     canContribute: () => [boolean, string];
     canClaim: () => [boolean, string];
-    getBalance: (holder: Account, index: number | undefined, type: string) => number;
+    getBalance: (holder: EntityIndex, index: number | undefined, type: string) => number;
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
 }
@@ -27,7 +28,11 @@ export const ActionBar = (props: Props) => {
   const [contributeAmount, setContributeAmount] = useState(0);
 
   const accBalance = () => {
-    return utils.getBalance(account, goal.objective.target.index, goal.objective.target.type);
+    return utils.getBalance(
+      account.entityIndex,
+      goal.objective.target.index,
+      goal.objective.target.type
+    );
   };
 
   const maxAmt = () => {

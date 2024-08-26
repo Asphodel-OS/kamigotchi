@@ -6,7 +6,10 @@ import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { DialogueNode, dialogues } from 'constants/dialogue';
+import { ActionParam } from 'constants/dialogue/types';
+import { queryAccountFromBurner } from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room';
+import { getBalance } from 'network/shapes/utils';
 
 export function registerDialogueModal() {
   registerUIComponent(
@@ -22,12 +25,20 @@ export function registerDialogueModal() {
     (layers) =>
       interval(1000).pipe(
         map(() => {
-          return { network: layers.network };
+          const { network } = layers;
+          const { world, components } = network;
+
+          const accountEntity = queryAccountFromBurner(network);
+
+          return {
+            network: layers.network,
+            data: { accEntity: accountEntity },
+          };
         })
       ),
 
     // Render
-    ({ network }) => {
+    ({ data, network }) => {
       const { actions, components, world } = network;
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
@@ -46,6 +57,26 @@ export function registerDialogueModal() {
         setDialogueNode(dialogues[dialogueIndex]);
         setDialogueLength(dialogues[dialogueIndex].text.length);
       }, [dialogueIndex]);
+
+      //////////////////
+      // INTERPRETATION
+
+      const getText = (raw: (typeof dialogueNode.text)[number]) => {
+        if (typeof raw === 'string') return raw;
+        else if (typeof raw === 'function') return raw(getArgs());
+        return '';
+      };
+
+      const getArgs = () => {
+        if (!dialogueNode.args) return [];
+
+        const result: any[] = [];
+        dialogueNode.args.forEach((param) => {
+          result.push(getBalance(world, components, data.accEntity, param.index, param.type));
+        });
+
+        return result;
+      };
 
       //////////////////
       // ACTIONS
@@ -91,28 +122,35 @@ export function registerDialogueModal() {
 
       const MiddleButton = () => {
         if (!dialogueNode.action) return <div />;
-        const action = dialogueNode.action;
-        const disabled = step !== dialogueLength - 1 && !!action;
+        let action: ActionParam;
+        let disabled = false;
+
+        // split by step if action is an array
+        if ('label' in dialogueNode.action) {
+          // only on last step
+          action = dialogueNode.action;
+          disabled = step !== dialogueLength - 1 && !!action;
+        } else {
+          // per step
+          action = dialogueNode.action[step];
+          disabled = action === undefined;
+        }
+
+        if (disabled) return <div />;
 
         return (
-          <div
-            style={{
-              visibility: disabled ? 'hidden' : 'visible',
-            }}
-          >
-            <ActionButton
-              text={action.label}
-              disabled={disabled}
-              onClick={() => move(action.input)} // hardcoded for now
-            />
-          </div>
+          <ActionButton
+            text={action.label}
+            disabled={disabled}
+            onClick={() => move(action.input)} // hardcoded for now
+          />
         );
       };
 
       return (
         <ModalWrapper id='dialogue' canExit overlay>
           <Text>
-            {dialogueNode.text[step]}
+            {getText(dialogueNode.text[step])}
             <ButtonRow>
               <BackButton />
               <MiddleButton />

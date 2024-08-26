@@ -7,13 +7,13 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 import { baseURI } from 'constants/media';
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { Condition } from '../Conditional';
+import { Condition, queryConditionsOf } from '../Conditional';
 import { DetailedEntity } from '../utils';
-import { querySkillEffects, querySkillRequirements } from './queries';
 
 /////////////////
 // SHAPES
@@ -45,6 +45,24 @@ export interface Options {
   requirements?: boolean;
   effects?: boolean;
 }
+
+export const NullSkill: Skill = {
+  ObjectType: 'SKILL',
+  id: '0' as EntityID,
+  index: 0,
+  name: '',
+  description: '',
+  image: '',
+  cost: 0,
+  points: {
+    current: 0,
+    max: 0,
+  },
+  treeTier: 0,
+  tree: 'NONE',
+  effects: [],
+  requirements: [],
+};
 
 // Get a Skill Registry object with effect and requirements
 export const getSkill = (
@@ -88,9 +106,14 @@ export const getSkill = (
     treeTier: Number(getComponentValue(Level, registryIndex)?.value || 0),
   };
 
-  if (options?.effects) skill.effects = querySkillEffects(world, components, skill.index);
+  if (options?.effects) skill.effects = getSkillEffects(world, components, skill.index);
   if (options?.requirements)
-    skill.requirements = querySkillRequirements(world, components, skill.index);
+    skill.requirements = queryConditionsOf(
+      world,
+      components,
+      'registry.skill.requirement',
+      skillIndex
+    );
   return skill;
 };
 
@@ -132,4 +155,28 @@ export const getRequirement = (
       value: getComponentValue(Value, entityIndex)?.value,
     },
   };
+};
+
+//////////////////
+// IDs
+
+const IDStore = new Map<string, string>();
+
+export const getInstanceEntity = (
+  world: World,
+  holderID: EntityID,
+  index: number
+): EntityIndex | undefined => {
+  let id = '';
+  const key = 'registry.item' + holderID + index.toString();
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = formatEntityID(
+      utils.solidityKeccak256(['string', 'uint256', 'uint32'], ['skill.instance', holderID, index])
+    );
+    IDStore.set(key, id);
+  }
+
+  return world.entityToIndex.get(id as EntityID);
 };

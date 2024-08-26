@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { ProgressBar } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Contribution, Goal } from 'network/shapes/Goal';
@@ -19,7 +20,7 @@ interface Props {
   utils: {
     canContribute: () => [boolean, string];
     canClaim: () => [boolean, string];
-    getBalance: (holder: Account, index: number | undefined, type: string) => number;
+    getBalance: (holder: EntityIndex, index: number | undefined, type: string) => number;
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
 }
