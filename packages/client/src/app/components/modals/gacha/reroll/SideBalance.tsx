@@ -3,7 +3,6 @@ import styled from 'styled-components';
 interface Props {
   balance: string;
   title: string;
-  description: string;
   icon?: string;
   onClick?: () => void;
 }
