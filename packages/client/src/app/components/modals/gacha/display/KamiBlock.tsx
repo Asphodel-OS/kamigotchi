@@ -32,6 +32,8 @@ export const KamiBlock = (props: Props) => {
 };
 
 const Container = styled.div`
+  background-color: white;
+  border-radius: 0.6vw;
   height: 10vw;
   margin: 0.9vw;
   filter: drop-shadow(0.2vw 0.2vw 0.1vw black);
@@ -44,7 +46,10 @@ const Image = styled.img<{ onClick?: () => void }>`
   image-rendering: pixelated;
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'inherit')};
-  pointer-events: ${({ onClick }) => (onClick ? 'auto' : 'inherit')};
+  pointer-events: ${({ onClick }) => (onClick ? 'auto' : 'none')};
+  &:hover {
+    opacity: 0.6;
+  }
 `;
 
 const Grouping = styled.div`

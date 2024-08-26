@@ -50,9 +50,9 @@ export const Controls = (props: Props) => {
           max={f.max}
           actions={{
             setMin: (min: number) =>
-              setFilters(filters.map((x) => (x.field === f.field ? { ...x, min } : x))),
+              setFilters(filters.map((f) => (f.field === f.field ? { ...f, min } : f))),
             setMax: (max: number) =>
-              setFilters(filters.map((x) => (x.field === f.field ? { ...x, max } : x))),
+              setFilters(filters.map((f) => (f.field === f.field ? { ...f, max } : f))),
             remove: () => setFilters(filters.filter((x) => x.field !== f.field)),
           }}
         />
@@ -71,22 +71,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-`;
-
-const Pairing = styled.div`
-  gap: 0.5vw;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  user-select: none;
-`;
-
-const Icon = styled.img`
-  height: 1.8vw;
-  image-rendering: pixelated;
 `;
 
 const Text = styled.div`

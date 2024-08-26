@@ -1,29 +1,44 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { Kami } from 'network/shapes/Kami';
-import { TabType } from '../types';
+import { Kami, KamiOptions } from 'network/shapes/Kami';
+import { BaseKami } from 'network/shapes/Kami/types';
+import { Filter, TabType } from '../types';
 import { Pool } from './Pool';
 
 interface Props {
   tab: TabType;
-  lazyKamis: Array<() => Kami>;
-  actions: {
-    handleMint: (amount: number) => Promise<void>;
+  limit: number;
+  filters: Filter[];
+  caches: {
+    kamis: Map<EntityIndex, Kami>;
+    kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
-    kamiEntities: EntityIndex[];
+    poolEntities: EntityIndex[];
+    partyEntities: EntityIndex[];
+  };
+  utils: {
+    getBaseKami: (entity: EntityIndex) => BaseKami;
+    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
   };
 }
 
 export const MainDisplay = (props: Props) => {
-  const { tab, actions, data } = props;
-  const { kamiEntities } = data;
+  const { tab, limit, filters, data, caches, utils } = props;
+  const { partyEntities, poolEntities } = data;
   const display = tab === 'MINT' ? 'flex' : 'none';
 
   return (
     <Container style={{ display }}>
-      <Pool lazyKamis={props.lazyKamis} isVisible={tab === 'MINT'} />
+      <Pool
+        limit={limit}
+        filters={filters}
+        caches={caches}
+        data={{ entities: poolEntities }}
+        utils={utils}
+        isVisible={tab === 'MINT'}
+      />
     </Container>
   );
 };

@@ -13,8 +13,8 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
-import { Kami, getLazyKamis, queryKamisByAccount } from 'network/shapes/Kami';
-import { BaseKami } from 'network/shapes/Kami/types';
+import { Kami, KamiOptions, getLazyKamis, queryKamisByAccount } from 'network/shapes/Kami';
+import { BaseKami, getKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
@@ -54,24 +54,26 @@ export function registerGachaModal() {
                 { account: GACHA_ID as EntityID },
                 { traits: true }
               ),
-              kamiEntities: queryKamisByAccount(components, GACHA_ID),
+              partyKamis: queryKamisByAccount(components, account.id),
+              poolKamis: queryKamisByAccount(components, GACHA_ID),
               commits,
+            },
+            utils: {
+              getKami: (entity: EntityIndex, options?: KamiOptions) =>
+                getKami(world, components, entity, options),
+              getBaseKami: (entity: EntityIndex) => getKami(world, components, entity),
             },
           };
         })
       ),
-    ({ network, data }) => {
+    ({ network, data, utils }) => {
       const { actions, components, world, api } = network;
-      const { accKamis, commits, gachaKamis, kamiEntities } = data;
+      const { accKamis, commits, gachaKamis, poolKamis, partyKamis } = data;
       const { isConnected } = useAccount();
       const { account } = useKamiAccount();
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
-
-      const [triedReveal, setTriedReveal] = useState(true);
-      const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [gachaBalance, setGachaBalance] = useState(0);
 
       // modal state controls
       const [tab, setTab] = useState<TabType>('MINT');
@@ -79,6 +81,12 @@ export function registerGachaModal() {
       const [sorts, setSorts] = useState<Sort[]>([]);
       const [limit, setLimit] = useState(20);
       console.log(filters);
+
+      const [triedReveal, setTriedReveal] = useState(true);
+      const [waitingToReveal, setWaitingToReveal] = useState(false);
+      const [gachaBalance, setGachaBalance] = useState(0);
+      const [kamiCache, _] = useState<Map<EntityIndex, Kami>>(new Map());
+      const [kamiBlockCache, __] = useState<Map<EntityIndex, JSX.Element>>(new Map());
 
       /////////////////
       // SUBSCRIPTIONS
@@ -309,7 +317,7 @@ export function registerGachaModal() {
           id='gacha'
           header={
             <ModalHeader
-              title={`Gacha (${kamiEntities.length} kamis in pool)`}
+              title={`Gacha (${poolKamis.length} kamis in pool)`}
               icon={MYSTERY_KAMI_GIF}
             />
           }
@@ -321,9 +329,11 @@ export function registerGachaModal() {
             {MainDisplay1()}
             <MainDisplay
               tab={tab}
-              actions={{ handleMint }}
-              lazyKamis={gachaKamis}
-              data={{ kamiEntities: kamiEntities }}
+              limit={limit}
+              filters={filters}
+              caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
+              data={{ poolEntities: poolKamis, partyEntities: partyKamis }}
+              utils={utils}
             />
             <Panel
               tab={tab}

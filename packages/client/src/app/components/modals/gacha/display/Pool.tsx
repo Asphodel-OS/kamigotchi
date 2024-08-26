@@ -1,31 +1,49 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Kami } from 'network/shapes/Kami';
+import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
+import { Stats } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
+import { Filter } from '../types';
 import { KamiBlock } from './KamiBlock';
 
 interface Props {
-  lazyKamis: Array<() => Kami>;
+  limit: number;
+  filters: Filter[];
+  caches: {
+    kamis: Map<EntityIndex, Kami>;
+    kamiBlocks: Map<EntityIndex, JSX.Element>;
+  };
+  data: {
+    entities: EntityIndex[];
+  };
+  utils: {
+    getBaseKami: (entity: EntityIndex) => BaseKami;
+    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
+  };
   isVisible: boolean;
 }
 
 export const Pool = (props: Props) => {
-  const { lazyKamis } = props;
+  const { limit, filters, caches, data, utils, isVisible } = props;
+  const { entities } = data;
+  const { kamiBlocks, kamis } = caches;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
-  const [numShown, setNumShown] = useState<number>(0);
 
+  const [filtered, setFiltered] = useState<Kami[]>([]);
+
+  // when the entities or filters change, update the list of filtered kamis
   useEffect(() => {
-    if (modals.gacha) setNumShown(49);
-    else setNumShown(0);
-  }, [modals.gacha]);
+    if (modals.gacha && isVisible && filters.length > 0) filterKamis();
+  }, [modals.gacha, isVisible, filters, entities.length]);
 
   //////////////////
-  // LOGIC
+  // INTERACTION
 
   const kamiOnClick = (kami: BaseKami) => {
     const sameKami = kamiIndex === kami.index;
@@ -34,6 +52,28 @@ export const Pool = (props: Props) => {
     if (modals.kami && sameKami) setModals({ ...modals, kami: false });
     else setModals({ ...modals, kami: true });
     playClick();
+  };
+
+  //////////////////
+  // INTERPRETATION
+
+  const filterKamis = () => {
+    const all = entities.map((entity) => getKami(entity));
+    const newFiltered = all.filter((kami) => {
+      return filters.every((filter) => {
+        if (filter.field === 'INDEX') return kami.index >= filter.min && kami.index <= filter.max;
+        if (filter.field === 'LEVEL') return kami.level >= filter.min && kami.level <= filter.max;
+        else {
+          const value = kami.stats[filter.field.toLowerCase() as keyof Stats].base;
+          return value >= filter.min && value <= filter.max;
+        }
+      });
+    });
+
+    console.log('all', all);
+    console.log('filtered', newFiltered);
+
+    setFiltered(newFiltered);
   };
 
   const getKamiText = (kami: Kami): string[] => {
@@ -46,11 +86,31 @@ export const Pool = (props: Props) => {
     ];
   };
 
-  const getTruncatedKamis = () => {
-    const amt = numShown < lazyKamis.length ? numShown : lazyKamis.length;
-    const shortLazies = [...lazyKamis].splice(0, amt);
+  // returns a kami from the cache, or creates a new one and sets it if not found
+  // NOTE: this is safe because we dont expect updates on kamis in the gacha pool
+  const getKami = (entity: EntityIndex) => {
+    if (!kamis.has(entity)) kamis.set(entity, utils.getKami(entity));
+    return kamis.get(entity)!;
+  };
 
-    return shortLazies.map((lazyKami) => lazyKami());
+  // get
+  const getKamiBlock = (kami: Kami) => {
+    const entity = kami.entityIndex;
+    if (!kamiBlocks.has(entity)) {
+      kamiBlocks.set(
+        entity,
+        <Tooltip key={kami.index} text={getKamiText(kami)}>
+          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
+        </Tooltip>
+      );
+    }
+    return kamiBlocks.get(entity)!;
+  };
+
+  // get the list of kamis that should be displayed
+  const getVisibleKamis = () => {
+    const count = Math.min(limit, filtered.length);
+    return filtered.slice(0, count);
   };
 
   ///////////////////
@@ -58,11 +118,7 @@ export const Pool = (props: Props) => {
 
   return (
     <Container style={{ display: props.isVisible ? 'flex' : 'none' }}>
-      {getTruncatedKamis().map((kami) => (
-        <Tooltip key={kami.index} text={getKamiText(kami)}>
-          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
-        </Tooltip>
-      ))}
+      {getVisibleKamis().map((kami) => getKamiBlock(kami))}
     </Container>
   );
 };
