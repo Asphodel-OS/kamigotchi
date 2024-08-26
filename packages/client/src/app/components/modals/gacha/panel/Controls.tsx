@@ -27,7 +27,7 @@ export const Controls = (props: Props) => {
     return (
       <ActionListButton
         id='filters'
-        text='Filters'
+        text='+filter'
         options={unusedFilters.map((f) => ({
           text: f.field,
           onClick: () => setFilters([...filters, { ...f }]),

@@ -24,5 +24,7 @@ export const DefaultFilters: Filter[] = [
   { field: 'POWER', icon: StatIcons.power, min: 10, max: 50 },
   { field: 'VIOLENCE', icon: StatIcons.violence, min: 10, max: 50 },
   { field: 'HARMONY', icon: StatIcons.harmony, min: 10, max: 50 },
-  { field: 'SLOTS', icon: StatIcons.slots, min: 10, max: 50 },
+  { field: 'SLOTS', icon: StatIcons.slots, min: 0, max: 2 },
 ];
+
+export const MYSTERY_KAMI_GIF = 'https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif';
