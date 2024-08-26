@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
+import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
 import { queryAccountFromBurner } from 'network/shapes/Account';
@@ -81,6 +82,11 @@ export function registerDialogueModal() {
       //////////////////
       // ACTIONS
 
+      const getAction = (type: string, input: number) => {
+        if (type === 'move') return move(input);
+        else if (type === 'goal') return triggerGoalModal([input]);
+      };
+
       const move = (roomIndex: number) => {
         const room = getRoomByIndex(world, components, roomIndex);
 
@@ -142,7 +148,7 @@ export function registerDialogueModal() {
           <ActionButton
             text={action.label}
             disabled={disabled}
-            onClick={() => move(action.input)} // hardcoded for now
+            onClick={() => getAction(action.type, action.input)} // hardcoded for now
           />
         );
       };

@@ -20,6 +20,7 @@ export const triggerGoalModal = (index: number[]) => {
         gacha: false,
         emaBoard: false,
         nameKami: false,
+        merchant: false,
       },
     });
   }

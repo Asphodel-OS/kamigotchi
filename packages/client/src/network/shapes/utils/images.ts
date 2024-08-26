@@ -15,6 +15,8 @@ export const getAffinityImage = (name: string) => {
 export const getFactionImage = (name: string) => {
   if (!name) return '';
   name = name.toLowerCase();
+  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
+  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
   const key = name as keyof typeof FactionIcons;
   if (!key) throw new Error(`No faction image found for ${name}`);
 
@@ -25,7 +27,7 @@ export const getFactionImage = (name: string) => {
 export const getItemImage = (name: string) => {
   name = name.toLowerCase();
   name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '');
+  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
   const key = name as keyof typeof ItemImages;
   if (!key) throw new Error(`No item image found for ${name}`);
 

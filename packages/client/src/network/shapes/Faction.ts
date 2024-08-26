@@ -9,10 +9,10 @@ import {
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
-import { kamigotchi_tourism_agency } from 'assets/images/icons/factions';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { DetailedEntity } from './utils';
+import { getFactionImage } from './utils/images';
 
 // standardized Object shape of a Score Entity
 export interface Faction extends DetailedEntity {
@@ -21,57 +21,30 @@ export interface Faction extends DetailedEntity {
   index: number;
 }
 
-export interface Reputation extends DetailedEntity {
-  id: EntityID;
-  entityIndex: EntityIndex;
-  faction: Faction;
-  value?: number;
-}
+///////////////
+// GETTERS
 
 export const getFactionByIndex = (world: World, components: Components, index: number): Faction => {
   const entityIndex = getEntityIndex(world, index);
   if (!entityIndex) throw new Error('getFactionByIndex: index not found');
 
-  return getFaction(world, components, entityIndex);
+  return getFaction(world, components, entityIndex, index);
 };
 
-// get a DetailedEntity entity of a Faction's reputation, similar to an item
-export const getReputationItem = (
-  world: World,
-  components: Components,
-  factionIndex: number
-): Reputation => {
-  const faction = getFactionByIndex(world, components, factionIndex);
+export const getAllFactions = (world: World, components: Components): Faction[] => {
+  const { FactionIndex, IsRegistry } = components;
 
-  return {
-    ObjectType: 'REPUTATION',
-    id: '' as EntityID,
-    entityIndex: 0 as EntityIndex,
-    faction: faction,
-    name: 'REPUTATION',
-    description: 'Your relationship with the Kamigotchi Tourism Agency.',
-    image: kamigotchi_tourism_agency,
-  };
+  const toQuery: QueryFragment[] = [Has(FactionIndex), Has(IsRegistry)];
+
+  // retrieve the relevant entities and their shapes
+  const entityIndices = Array.from(runQuery(toQuery));
+  return entityIndices.map((index) => getFaction(world, components, index));
 };
 
-// get a DetailedEntity entity of a Faction's reputation, similar to an inventory
+///////////////
+// SHAPES
+
 export const getReputation = (
-  world: World,
-  components: Components,
-  holderID: EntityID,
-  factionIndex: number
-): Reputation => {
-  const index = getRepEntityIndex(world, holderID, factionIndex);
-
-  return {
-    ...getReputationItem(world, components, factionIndex),
-    id: index ? world.entities[index] : ('' as EntityID),
-    entityIndex: index ?? (0 as EntityIndex),
-    value: getReputationValue(world, components, holderID, factionIndex),
-  };
-};
-
-export const getReputationValue = (
   world: World,
   components: Components,
   holderID: EntityID,
@@ -85,37 +58,42 @@ export const getReputationValue = (
   return (getComponentValue(Value, entityIndex)?.value as number) * 1;
 };
 
-export const getAllFactions = (world: World, components: Components): Faction[] => {
-  const { FactionIndex, IsRegistry } = components;
-
-  const toQuery: QueryFragment[] = [Has(FactionIndex), Has(IsRegistry)];
-
-  // retrieve the relevant entities and their shapes
-  const entityIndices = Array.from(runQuery(toQuery));
-  return entityIndices.map((index) => getFaction(world, components, index));
-};
-
 // get a Score object from its EnityIndex
-export const getFaction = (world: World, components: Components, index: EntityIndex): Faction => {
-  const { FactionIndex, Name, Description, MediaURI } = components;
+export const getFaction = (
+  world: World,
+  components: Components,
+  index: EntityIndex,
+  factionIndex?: number
+): Faction => {
+  const { FactionIndex, Name, Description } = components;
+
+  const name = getComponentValue(Name, index)?.value as string;
 
   return {
     ObjectType: 'FACTION',
     id: world.entities[index],
     entityIndex: index,
-    index: getComponentValue(FactionIndex, index)?.value as number,
-    name: getComponentValue(Name, index)?.value as string,
+    index: factionIndex ?? (getComponentValue(FactionIndex, index)?.value as number) * 1,
+    name: name,
     description: getComponentValue(Description, index)?.value as string,
-    image: getComponentValue(MediaURI, index)?.value as string,
+    image: getFactionImage(name),
   };
 };
 
 ///////////////
-// UTILS
+// IDs
+
+const IDStore = new Map<string, string>();
 
 const getEntityIndex = (world: any, index: number): EntityIndex | undefined => {
-  const id = utils.solidityKeccak256(['string', 'uint32'], ['faction', index]);
-  return world.entityToIndex.get(formatEntityID(id));
+  let id = '';
+  const key = 'faction' + index.toString();
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['faction', index]));
+    IDStore.set(key, id);
+  }
+  return world.entityToIndex.get(id as EntityID);
 };
 
 const getRepEntityIndex = (
@@ -124,9 +102,18 @@ const getRepEntityIndex = (
   index: number
 ): EntityIndex | undefined => {
   if (!holderID) return;
-  const id = utils.solidityKeccak256(
-    ['string', 'uint256', 'uint32'],
-    ['faction.reputation', holderID, index]
-  );
-  return world.entityToIndex.get(formatEntityID(id));
+
+  let id = '';
+  const key = 'faction.reputation' + holderID + index.toString();
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = formatEntityID(
+      utils.solidityKeccak256(
+        ['string', 'uint256', 'uint32'],
+        ['faction.reputation', holderID, index]
+      )
+    );
+    IDStore.set(key, id);
+  }
+  return world.entityToIndex.get(id as EntityID);
 };

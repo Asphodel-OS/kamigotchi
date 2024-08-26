@@ -200,7 +200,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     conditionType: string,
     logicType: string,
     index: number,
-    value: number
+    value: BigNumberish
   ) {
     genCall(
       'system.listing.registry',

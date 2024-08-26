@@ -9,8 +9,8 @@ import { DetailedEntity } from 'network/shapes/utils';
 
 interface Props {
   actions: {
-    contributeTx: (index: number, amount: number) => void;
-    claimTx: (index: number) => void;
+    contributeTx: (goal: Goal, amount: number) => void;
+    claimTx: (goal: Goal) => void;
   };
   account: Account;
   goal: Goal;
@@ -43,11 +43,11 @@ export const ActionBar = (props: Props) => {
   const txContribute = () => {
     const max = maxAmt();
     if (contributeAmount > max) setContributeAmount(max);
-    actions.contributeTx(goal.index, contributeAmount);
+    actions.contributeTx(goal, contributeAmount);
   };
 
   const txClaim = () => {
-    actions.claimTx(goal.index);
+    actions.claimTx(goal);
   };
 
   ////////////////////

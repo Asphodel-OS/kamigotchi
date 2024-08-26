@@ -1,7 +1,7 @@
 import { World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getReputationValue } from '../Faction';
+import { getReputation } from '../Faction';
 import { getMusuBalance } from '../Item';
 import { queryAll } from './queries';
 
@@ -19,7 +19,7 @@ export const getReputationRankings = (
     return {
       index: getComponentValue(AccountIndex, entityIndex)?.value as number,
       name: getComponentValue(Name, entityIndex)?.value as string,
-      reputation: getReputationValue(world, components, id, 1), // get agency rep
+      reputation: getReputation(world, components, id, 1), // get agency rep
     };
   });
 

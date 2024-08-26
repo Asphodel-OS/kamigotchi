@@ -4,7 +4,7 @@ import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
-import { getReputationValue } from '../Faction';
+import { getReputation } from '../Faction';
 import {
   Friendship,
   getAccBlocked,
@@ -133,7 +133,7 @@ export const getAccount = (
     kamis: [], // placeholder
     level: 0, // placeholder
     reputation: {
-      agency: getReputationValue(world, components, id, 1), // get agency rep
+      agency: getReputation(world, components, id, 1), // get agency rep
     },
     skillPoints: 0, // placeholder
     time: {

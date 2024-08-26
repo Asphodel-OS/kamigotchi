@@ -79,15 +79,15 @@ export function registerGoalModal() {
       /////////////////
       // INTERACTIONS
 
-      const contributeTx = async (index: number, amount: number) => {
+      const contributeTx = async (goal: Goal, amount: number) => {
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
           action: 'Contributing to goal',
-          params: [index, amount],
-          description: `Contributing ${amount} to  goal ${index}`,
+          params: [goal.index, amount],
+          description: `Contributing ${amount} to  goal [${goal.name}]`,
           execute: async () => {
-            return api.player.goal.contribute(index, amount);
+            return api.player.goal.contribute(goal.index, amount);
           },
         });
 
@@ -98,15 +98,15 @@ export function registerGoalModal() {
         setStep(step + 1);
       };
 
-      const claimTx = async (index: number) => {
+      const claimTx = async (goal: Goal) => {
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
           action: 'Claiming reward',
-          params: [index],
-          description: `Claiming reward for goal ${index}`,
+          params: [goal.index],
+          description: `Claiming reward for goal [${goal.name}]`,
           execute: async () => {
-            return api.player.goal.claim(index);
+            return api.player.goal.claim(goal.index);
           },
         });
 

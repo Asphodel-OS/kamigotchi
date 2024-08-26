@@ -4,8 +4,14 @@ import { AdminAPI } from '../admin';
 const factions = [
   {
     index: 1,
-    name: 'The Agency',
-    description: 'Responsible for the Kamigotchi World tourism rewards program.',
+    name: 'Kamigotchi Tourism Agency',
+    description: 'Your relationship with the Kamigotchi Tourism Agency.',
+    image: '',
+  },
+  {
+    index: 2,
+    name: "Mina's Shop",
+    description: 'Most visited shop in Kamigotchi World. Sells a variety of items.',
     image: '',
   },
 ];

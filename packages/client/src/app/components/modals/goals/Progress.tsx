@@ -11,8 +11,8 @@ import { ActionBar } from './ActionBar';
 
 interface Props {
   actions: {
-    contributeTx: (index: number, amount: number) => void;
-    claimTx: (index: number) => void;
+    contributeTx: (goal: Goal, amount: number) => void;
+    claimTx: (goal: Goal) => void;
   };
   account: Account;
   accContribution: Contribution | undefined;
@@ -23,13 +23,6 @@ interface Props {
     getBalance: (holder: EntityIndex, index: number | undefined, type: string) => number;
     getDescribedEntity: (type: string, index: number) => DetailedEntity;
   };
-}
-
-// type to store a process reward's DetailedEntity and balance
-interface Objective {
-  entity: DetailedEntity;
-  target: number;
-  current: number;
 }
 
 export const Progress = (props: Props) => {

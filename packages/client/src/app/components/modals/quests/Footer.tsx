@@ -37,7 +37,7 @@ export const Footer = (props: Props) => {
           `This is what you'll need for more, uh, permanent rewards....`,
         ]}
       >
-        <Icon src={getFactionImage('agency')} />
+        <Icon src={getFactionImage('kamigotchi_tourism_agency')} />
       </Tooltip>
       <Battlepass account={account} quests={quests} actions={actions} utils={utils} />
     </Container>

@@ -6,7 +6,7 @@ import { getData } from 'network/shapes/utils/data';
 import { numberToHex } from 'utils/hex';
 import { getCurrPhase } from 'utils/time';
 import { Account } from '../Account';
-import { getReputationValue } from '../Faction';
+import { getReputation } from '../Faction';
 import { getInventoryByHolderItem, getItemBalance } from '../Item';
 import { Kami, getKamisByAccount } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
@@ -26,7 +26,7 @@ export const getBalance = (
   if (type === 'ITEM') {
     return getItemBalance(world, components, holderID, index ?? 0);
   } else if (type === 'REPUTATION') {
-    return getReputationValue(world, components, holderID, index ?? 0);
+    return getReputation(world, components, holderID, index ?? 0);
   } else if (type === 'LEVEL') {
     return (getComponentValue(Level, holder)?.value ?? 0) * 1;
   } else if (type === 'BLOCKTIME') {

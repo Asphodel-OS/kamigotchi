@@ -1,7 +1,7 @@
 import { useSelected, useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
-export const triggerGoalModal = (assignerID: string) => {
+export const triggerCraftingModal = (assignerID: string) => {
   const { modals } = useVisibility.getState();
   const { setAssigner } = useSelected.getState();
 

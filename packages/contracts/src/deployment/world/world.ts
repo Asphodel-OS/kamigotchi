@@ -64,7 +64,7 @@ export class WorldState {
     config: {
       init: () => this.genCalls(initConfigs),
     } as SubFunc,
-    faction: {
+    factions: {
       init: () => this.genCalls(initFactions),
       delete: (indices: number[]) => this.genCalls((api) => deleteFactions(api, indices)),
       revise: (indices: number[]) => this.genCalls((api) => reviseFactions(api, indices)),
