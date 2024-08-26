@@ -72,7 +72,7 @@ if(systems.getEntitiesWithValue(<%= system.name %>ID).length > 0) {
   address prevSysAddr = getAddressById(systems, <%= system.name %>ID);
   console.log("unauthorizing writer for previous <%= system.name %> at address %s", prevSysAddr);
 
-  <%= system.name %>(prevSysAddr).deprecate();
+  //<%= system.name %>(prevSysAddr).deprecate();
   <% system.writeAccess?.forEach(component=> { -%>
     <% if(component==="*" ) { -%>
     <% components.forEach(comp=> { -%>

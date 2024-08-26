@@ -3,6 +3,7 @@ import moment from 'moment';
 
 import { helpIcon, questsIcon } from 'assets/images/icons/menu';
 import { Components } from 'network/';
+import pluralize from 'pluralize';
 import { getFactionByIndex, getReputationDetailsByIndex } from '../Faction';
 import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
@@ -50,7 +51,12 @@ export const parseQuantity = (entity: DetailedEntity, quantity?: number): string
     if (quantity && quantity > 0) return `level ${quantity * 1} ${entity.name}`;
     else return `cannot have ${entity.name}`;
   } else if (entity.ObjectType === 'LEVEL') return `level ${(quantity ?? 0) * 1}`;
+  if (entity.ObjectType === 'ITEM') {
+    // filter out musu from pluralization
+    if (entity.name.toLowerCase().includes('musu')) return `${(quantity ?? 0) * 1} ${entity.name}`;
+    return pluralize(entity.name, quantity ?? 0, true);
+  }
 
-  // default case - includes COIN, ITEM, QUEST
+  // default case - includes QUEST
   return quantity !== undefined ? `${quantity * 1} ${entity.name}` : `${entity.name}`;
 };

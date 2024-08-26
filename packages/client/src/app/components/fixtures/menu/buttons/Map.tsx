@@ -9,6 +9,7 @@ export const MapMenuButton = () => {
     bridgeERC721: false,
     dialogue: false,
     emaBoard: false,
+    goal: false,
     kami: false,
     leaderboard: false,
     merchant: false,

@@ -47,10 +47,14 @@ import { room46 } from './46_parking-lot';
 import { room47 } from './47_scrap-paths';
 import { room48 } from './48_forest-road-iv';
 import { room49 } from './49_clearing';
-import { room50 } from './50_ancient_forest_entrance';
-import { room51 } from './51_scrap_littered_undergrowth';
-import { room52 } from './52_airplane_crash';
-import { room54 } from './54_plane_interior';
+import { room50 } from './50_ancient-forest-entrance';
+import { room51 } from './51_scrap-littered-undergrowth';
+import { room52 } from './52_airplane-crash';
+import { room53 } from './53_blooming-tree';
+import { room54 } from './54_plane-interior';
+import { room55 } from './55_shady-path';
+import { room56 } from './56_butterfly-forest';
+import { room57 } from './57_river-crossing';
 
 // represents a room in all its glory
 export interface Room {
@@ -138,6 +142,9 @@ export const rooms: Room[] = [
   room50,
   room51,
   room52,
-  { index: 53, backgrounds: [''], objects: [] },
+  room53,
   room54,
+  room55,
+  room56,
+  room57,
 ];

@@ -7,7 +7,7 @@ export async function initGoals(api: AdminAPI) {
     'A hole in reality?',
     `The path beyond this point is blocked by some kind of…. glitched-out gate?
 
-    You won’t be able to pass without using MUSU to stabilize this hole in reality. Looks like this one is going to need to be a team effort…`,
+      You won’t be able to pass without using MUSU to stabilize this hole in reality. Looks like this one is going to need to be a team effort…`,
     47,
     'ITEM',
     'CURR_MIN',
@@ -27,7 +27,7 @@ export async function initGoals(api: AdminAPI) {
     'Void of Scrap',
     `Looks like you’d be able to get deeper into the scrapyard…. if it weren’t for this inconvenient hole in reality.
 
-    You’ll need to contribute MUSU to open this path forward.`,
+      You’ll need to contribute MUSU to open this path forward.`,
     34,
     'ITEM',
     'CURR_MIN',
@@ -44,7 +44,7 @@ export async function initGoals(api: AdminAPI) {
     'Deep-Forest Ritual',
     `The insect hive here has begun to take on a strange aura. Sacred sites like this demand tribute….
 
-  By contributing MUSU to the ritual, you will be rewarded. With enough MUSU, a new path will open for all of us.`,
+    By contributing MUSU to the ritual, you will be rewarded. With enough MUSU, a new path will open for all of us.`,
     10,
     'ITEM',
     'CURR_MIN',
@@ -64,7 +64,7 @@ export async function initGoals(api: AdminAPI) {
     'Shrine to Nature',
     `It’s unclear what this object is. It looks like…. some sort of idol has sprouted from the cockpit?
 
-  Once again, you sense this object needs… tribute. But its purpose is unclear. And for some reason, it needs Pine Cones. `,
+    Once again, you sense this object needs… tribute. But its purpose is unclear. And for some reason, it needs Pine Cones. `,
     54,
     'ITEM',
     'CURR_MIN',
@@ -81,9 +81,9 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.create(
     5,
     'Expanding Inventory',
-    `Hello…. I’ve discovered that, with enough MUSU, it should be possible for me to develop a new form of magic that allows teleportation directly to this shop. 
+    `Hello…. I’ve discovered that, with enough MUSU, it should be possible for me to develop a new form of magic that allows teleportation directly to this shop.
 
-I need your help to fund my R&D department so I can sell you this innovative new item! `,
+  I need your help to fund my R&D department so I can sell you this innovative new item! `,
     13,
     'ITEM',
     'CURR_MIN',
@@ -107,6 +107,23 @@ I need your help to fund my R&D department so I can sell you this innovative new
   await api.goal.add.reward(5, 'Silver', 7500, 'ITEM', 'REWARD', 117, [], [], 3);
   await api.goal.add.reward(5, 'Gold', 20000, 'REPUTATION', 'REWARD', 2, [], [], 10);
   await api.goal.add.reward(5, 'Gold', 20000, 'ITEM', 'REWARD', 115, [], [], 1);
+
+  await api.goal.create(
+    6,
+    'Holy Gate',
+    'The Gate here is glowing and ready to receive MUSU.  Giving proper tribute here will open a path. But it won’t be easy… Still, you should do your part.',
+    3,
+    'ITEM',
+    'CURR_MIN',
+    MUSU_INDEX,
+    1500000
+  );
+  await api.goal.add.reward(6, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
+  await api.goal.add.reward(6, 'Bronze', 2000, 'REPUTATION', 'REWARD', 1, [], [], 10);
+  await api.goal.add.reward(6, 'Bronze', 2000, 'ITEM', 'REWARD', 117, [], [], 1);
+  await api.goal.add.reward(6, 'Silver', 7500, 'REPUTATION', 'REWARD', 1, [], [], 10);
+  await api.goal.add.reward(6, 'Gold', 25000, 'REPUTATION', 'REWARD', 1, [], [], 5);
+  await api.goal.add.reward(6, 'Gold', 25000, 'ITEM', 'REWARD', 113, [], [], 1);
 }
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {

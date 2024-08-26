@@ -133,12 +133,12 @@ export const getGoal = (world: World, components: Components, entityIndex: Entit
     index: goalIndex,
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     description: getComponentValue(Description, entityIndex)?.value || ('' as string),
-    currBalance: getComponentValue(Value, entityIndex)?.value || (0 as number),
+    currBalance: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
     objective: getCondition(world, components, getObjEntityIndex(world, goalID)),
     requirements: queryGoalRequirements(world, components, goalIndex),
     rewards: queryGoalRewards(world, components, goalIndex),
     complete: hasComponent(IsComplete, entityIndex) || (false as boolean),
-    room: getComponentValue(RoomIndex, entityIndex)?.value || (0 as number),
+    room: (getComponentValue(RoomIndex, entityIndex)?.value || (0 as number)) * 1,
   };
 };
 
@@ -175,7 +175,7 @@ const getContribution = (
   return {
     account: account,
     claimed: getComponentValue(IsComplete, entityIndex)?.value || (false as boolean),
-    score: getComponentValue(Value, entityIndex)?.value || (0 as number),
+    score: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
   };
 };
 
