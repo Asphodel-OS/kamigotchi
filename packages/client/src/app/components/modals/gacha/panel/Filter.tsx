@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { CircleExitButton } from 'app/components/library/base';
 import { Overlay } from 'app/components/library/styles';
+import { useEffect, useState } from 'react';
 
 interface Props {
   name: string;
@@ -15,28 +16,39 @@ interface Props {
   };
 }
 
+// TODO (jb): fire these filter updates off on a debounce
 export const Filter = (props: Props) => {
   const { name, icon, min, max, actions } = props;
   const { setMin, setMax, remove } = actions;
+  const [stepSize, setStepSize] = useState(1);
+
+  // set step size on mount
+  useEffect(() => {
+    if (name === 'HEALTH') setStepSize(10);
+  }, []);
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const min = Number(e.target.value);
-    setMin(min);
+    const valStr = e.target.value.replaceAll('[^\\d.]', '');
+    const rawVal = parseInt(valStr || '0');
+    const val = Math.min(max, rawVal);
+    setMin(val);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const max = Number(e.target.value);
-    setMax(max);
+    const valStr = e.target.value.replaceAll('[^\\d.]', '');
+    const rawVal = parseInt(valStr || '0');
+    const val = Math.max(min, rawVal);
+    setMax(val);
   };
 
   const handleMinKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp') setMin(min + 1);
-    else if (e.key === 'ArrowDown') setMin(min - 1);
+    if (e.key === 'ArrowUp') setMin(Math.min(max, min + stepSize));
+    else if (e.key === 'ArrowDown') setMin(Math.max(0, min - stepSize));
   };
 
   const handleMaxKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp') setMax(max + 1);
-    else if (e.key === 'ArrowDown') setMax(max - 1);
+    if (e.key === 'ArrowUp') setMax(max + stepSize);
+    else if (e.key === 'ArrowDown') setMax(Math.max(min, max - stepSize));
   };
 
   return (

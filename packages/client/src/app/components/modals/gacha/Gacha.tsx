@@ -13,7 +13,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
-import { Kami, KamiOptions, getLazyKamis, queryKamisByAccount } from 'network/shapes/Kami';
+import { Kami, KamiOptions, queryKamisByAccount } from 'network/shapes/Kami';
 import { BaseKami, getKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/balances';
@@ -50,10 +50,6 @@ export function registerGachaModal() {
             network,
             data: {
               accKamis: account.kamis,
-              gachaKamis: getLazyKamis(world, components)(
-                { account: GACHA_ID as EntityID },
-                { traits: true }
-              ),
               partyKamis: queryKamisByAccount(components, account.id),
               poolKamis: queryKamisByAccount(components, GACHA_ID),
               commits,
@@ -68,7 +64,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, components, world, api } = network;
-      const { accKamis, commits, gachaKamis, poolKamis, partyKamis } = data;
+      const { accKamis, commits, poolKamis, partyKamis } = data;
       const { isConnected } = useAccount();
       const { account } = useKamiAccount();
       const { modals, setModals } = useVisibility();
@@ -80,7 +76,6 @@ export function registerGachaModal() {
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([]);
       const [limit, setLimit] = useState(20);
-      console.log(filters);
 
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);

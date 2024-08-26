@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
-import { Listing } from 'network/shapes/Npc';
+import { Listing } from 'network/shapes/Listings';
 import { playClick } from 'utils/sounds';
 
 export interface Props {

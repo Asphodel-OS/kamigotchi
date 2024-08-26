@@ -36,10 +36,17 @@ export const Pool = (props: Props) => {
   const { modals, setModals } = useVisibility();
 
   const [filtered, setFiltered] = useState<Kami[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   // when the entities or filters change, update the list of filtered kamis
+  // also update on first opening of the modal
   useEffect(() => {
-    if (modals.gacha && isVisible && filters.length > 0) filterKamis();
+    const isOpen = modals.gacha && isVisible;
+    if (isOpen) filterKamis();
+    if (isOpen && entities.length > 0 && !loaded) {
+      filterKamis();
+      setLoaded(true);
+    }
   }, [modals.gacha, isVisible, filters, entities.length]);
 
   //////////////////
@@ -47,8 +54,7 @@ export const Pool = (props: Props) => {
 
   const kamiOnClick = (kami: BaseKami) => {
     const sameKami = kamiIndex === kami.index;
-    setKami(kami.index);
-
+    if (!sameKami) setKami(kami.index);
     if (modals.kami && sameKami) setModals({ ...modals, kami: false });
     else setModals({ ...modals, kami: true });
     playClick();
@@ -70,9 +76,7 @@ export const Pool = (props: Props) => {
       });
     });
 
-    console.log('all', all);
     console.log('filtered', newFiltered);
-
     setFiltered(newFiltered);
   };
 
@@ -93,7 +97,7 @@ export const Pool = (props: Props) => {
     return kamis.get(entity)!;
   };
 
-  // get
+  // get the reach component of a Kami Block in the pool
   const getKamiBlock = (kami: Kami) => {
     const entity = kami.entityIndex;
     if (!kamiBlocks.has(entity)) {

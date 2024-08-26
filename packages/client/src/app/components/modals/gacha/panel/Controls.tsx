@@ -50,9 +50,9 @@ export const Controls = (props: Props) => {
           max={f.max}
           actions={{
             setMin: (min: number) =>
-              setFilters(filters.map((f) => (f.field === f.field ? { ...f, min } : f))),
+              setFilters(filters.map((x) => (x.field === f.field ? { ...f, min } : x))),
             setMax: (max: number) =>
-              setFilters(filters.map((f) => (f.field === f.field ? { ...f, max } : f))),
+              setFilters(filters.map((x) => (x.field === f.field ? { ...f, max } : x))),
             remove: () => setFilters(filters.filter((x) => x.field !== f.field)),
           }}
         />
