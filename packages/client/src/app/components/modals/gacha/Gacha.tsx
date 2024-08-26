@@ -22,7 +22,7 @@ import { MainDisplay } from './display/MainDisplay';
 import { Panel } from './panel/Panel';
 import { Commits } from './reroll/Commits';
 import { Reroll } from './reroll/Reroll';
-import { Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
+import { DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
 
 const MINT20PROXY_KEY = 'system.Mint20.Proxy';
 
@@ -44,15 +44,13 @@ export function registerGachaModal() {
             kamis: { traits: true, rerolls: true },
           });
 
-          const commits = queryGachaCommits(world, components, account.id);
-
           return {
             network,
             data: {
               accKamis: account.kamis,
               partyKamis: queryKamisByAccount(components, account.id),
               poolKamis: queryKamisByAccount(components, GACHA_ID),
-              commits,
+              commits: queryGachaCommits(world, components, account.id),
             },
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
@@ -74,7 +72,7 @@ export function registerGachaModal() {
       // modal state controls
       const [tab, setTab] = useState<TabType>('MINT');
       const [filters, setFilters] = useState<Filter[]>([]);
-      const [sorts, setSorts] = useState<Sort[]>([]);
+      const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
       const [limit, setLimit] = useState(20);
 
       const [triedReveal, setTriedReveal] = useState(true);
@@ -324,8 +322,7 @@ export function registerGachaModal() {
             {MainDisplay1()}
             <MainDisplay
               tab={tab}
-              limit={limit}
-              filters={filters}
+              controls={{ limit, filters, sorts }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
               data={{ poolEntities: poolKamis, partyEntities: partyKamis }}
               utils={utils}
@@ -336,12 +333,12 @@ export function registerGachaModal() {
               gachaBalance={gachaBalance}
               actions={{ mint: handleMint, reroll: handleReroll }}
               controls={{
+                limit,
+                setLimit,
                 filters,
                 setFilters,
                 sorts,
                 setSorts,
-                limit,
-                setLimit,
               }}
             />
           </Container>

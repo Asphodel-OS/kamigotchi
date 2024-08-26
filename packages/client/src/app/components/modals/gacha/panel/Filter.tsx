@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
-import { CircleExitButton } from 'app/components/library/base';
-import { Overlay } from 'app/components/library/styles';
+import { CircleExitButton, Overlay } from 'app/components/library';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -55,7 +54,7 @@ export const Filter = (props: Props) => {
     <Container>
       <Row>
         <Overlay top={-0.4} right={-0.4}>
-          <CircleExitButton onClick={remove} />
+          <CircleExitButton onClick={remove} circle />
         </Overlay>
         <Grouping>
           <Icon src={icon} />

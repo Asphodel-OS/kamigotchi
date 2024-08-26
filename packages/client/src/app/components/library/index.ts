@@ -3,8 +3,8 @@ export {
   ActionListButton,
   Battery,
   Card,
+  CircleExitButton,
   Countdown,
-  ExitButton,
   IconButton,
   IconListButton,
   ModalHeader,
@@ -13,6 +13,8 @@ export {
   Tooltip,
   ValidatorWrapper,
 } from './base';
+
+export { Overlay } from './styles';
 
 export { AccountCard } from './AccountCard';
 export { CopyButton } from './CopyButton';

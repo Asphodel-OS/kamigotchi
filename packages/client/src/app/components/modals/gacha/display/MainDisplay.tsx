@@ -3,13 +3,16 @@ import styled from 'styled-components';
 
 import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
-import { Filter, TabType } from '../types';
+import { Filter, Sort, TabType } from '../types';
 import { Pool } from './Pool';
 
 interface Props {
   tab: TabType;
-  limit: number;
-  filters: Filter[];
+  controls: {
+    limit: number;
+    filters: Filter[];
+    sorts: Sort[];
+  };
   caches: {
     kamis: Map<EntityIndex, Kami>;
     kamiBlocks: Map<EntityIndex, JSX.Element>;
@@ -25,15 +28,14 @@ interface Props {
 }
 
 export const MainDisplay = (props: Props) => {
-  const { tab, limit, filters, data, caches, utils } = props;
+  const { tab, controls, data, caches, utils } = props;
   const { partyEntities, poolEntities } = data;
   const display = tab === 'MINT' ? 'flex' : 'none';
 
   return (
     <Container style={{ display }}>
       <Pool
-        limit={limit}
-        filters={filters}
+        controls={controls}
         caches={caches}
         data={{ entities: poolEntities }}
         utils={utils}

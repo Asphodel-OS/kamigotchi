@@ -32,6 +32,7 @@ export function ActionListButton(props: Props) {
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
+    if (option.disabled) return;
     playClick();
     option.onClick();
     handleClose();
@@ -77,16 +78,10 @@ export function ActionListButton(props: Props) {
   };
 
   const MenuEntry = (option: Option, key: number) => {
-    let styles: any = {};
-    if (option.disabled) {
-      styles.backgroundColor = '#bbb';
-      styles.pointerEvents = 'none';
-    }
-
-    const onClick = option.disabled ? () => {} : () => option.onClick();
+    const onClick = option.disabled ? () => {} : () => onSelect(option);
 
     return (
-      <Item key={`MenuEntry-${key}`} onClick={onClick} style={styles}>
+      <Item key={`MenuEntry-${key}`} onClick={onClick} disabled={option.disabled}>
         {option.text}
       </Item>
     );
@@ -142,15 +137,14 @@ const Menu = styled.div`
   min-width: 7vw;
 `;
 
-const Item = styled.div`
+const Item = styled.div<{ disabled?: boolean }>`
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
   border-radius: 0.4vw;
   padding: 0.6vw;
   justify-content: left;
 
-  font-family: Pixel;
-
   cursor: pointer;
-  pointer-events: auto;
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   &:hover {
     background-color: #ddd;
   }

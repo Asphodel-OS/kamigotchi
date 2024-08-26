@@ -8,8 +8,19 @@ export type Stat = 'INDEX' | 'LEVEL' | 'HEALTH' | 'POWER' | 'VIOLENCE' | 'HARMON
 
 export interface Sort {
   field: Stat;
+  icon: string;
   order: 'ASC' | 'DESC';
 }
+
+export const DefaultSorts: Sort[] = [
+  { field: 'INDEX', icon: kamiIcon, order: 'ASC' },
+  { field: 'LEVEL', icon: kamiIcon, order: 'ASC' },
+  { field: 'HEALTH', icon: StatIcons.health, order: 'DESC' },
+  { field: 'POWER', icon: StatIcons.power, order: 'DESC' },
+  { field: 'VIOLENCE', icon: StatIcons.violence, order: 'DESC' },
+  { field: 'HARMONY', icon: StatIcons.harmony, order: 'DESC' },
+  { field: 'SLOTS', icon: StatIcons.slots, order: 'DESC' },
+];
 
 export interface Filter {
   field: Stat;

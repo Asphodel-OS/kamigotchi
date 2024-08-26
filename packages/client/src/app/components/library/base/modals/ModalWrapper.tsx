@@ -1,8 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { ExitButton } from 'app/components/library';
 import { Modals, useVisibility } from 'app/stores';
+import { ExitButton } from './ExitButton';
 
 interface Props {
   id: keyof Modals;

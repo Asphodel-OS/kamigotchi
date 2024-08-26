@@ -2,7 +2,6 @@ export {
   ActionButton,
   ActionListButton,
   CircleExitButton,
-  ExitButton,
   IconButton,
   IconListButton,
 } from './buttons';

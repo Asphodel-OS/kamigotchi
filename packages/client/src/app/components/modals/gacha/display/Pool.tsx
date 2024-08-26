@@ -8,12 +8,15 @@ import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Stats } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
-import { Filter } from '../types';
+import { Filter, Sort } from '../types';
 import { KamiBlock } from './KamiBlock';
 
 interface Props {
-  limit: number;
-  filters: Filter[];
+  controls: {
+    limit: number;
+    sorts: Sort[];
+    filters: Filter[];
+  };
   caches: {
     kamis: Map<EntityIndex, Kami>;
     kamiBlocks: Map<EntityIndex, JSX.Element>;
@@ -29,9 +32,10 @@ interface Props {
 }
 
 export const Pool = (props: Props) => {
-  const { limit, filters, caches, data, utils, isVisible } = props;
-  const { entities } = data;
+  const { controls, caches, data, utils, isVisible } = props;
+  const { limit, filters, sorts } = controls;
   const { kamiBlocks, kamis } = caches;
+  const { entities } = data;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
 
@@ -39,15 +43,16 @@ export const Pool = (props: Props) => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   // when the entities or filters change, update the list of filtered kamis
-  // also update on first opening of the modal
+  // also update on load with however many kamis are initially detected (doesnt matter how many)
   useEffect(() => {
     const isOpen = modals.gacha && isVisible;
     if (isOpen) filterKamis();
-    if (isOpen && entities.length > 0 && !loaded) {
+    if (!loaded && entities.length > 0) {
       filterKamis();
       setLoaded(true);
+      console.log(`gacha pool loaded: ${entities.length} initial kamis`);
     }
-  }, [modals.gacha, isVisible, filters, entities.length]);
+  }, [filters, entities.length]);
 
   //////////////////
   // INTERACTION
@@ -76,7 +81,7 @@ export const Pool = (props: Props) => {
       });
     });
 
-    console.log('filtered', newFiltered);
+    console.log(`filtered: ${newFiltered.length}`);
     setFiltered(newFiltered);
   };
 
@@ -97,7 +102,7 @@ export const Pool = (props: Props) => {
     return kamis.get(entity)!;
   };
 
-  // get the reach component of a Kami Block in the pool
+  // get the react component of a KamiBlock displayed in the pool
   const getKamiBlock = (kami: Kami) => {
     const entity = kami.entityIndex;
     if (!kamiBlocks.has(entity)) {
