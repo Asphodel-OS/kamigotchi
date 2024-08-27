@@ -110,7 +110,7 @@ export const InputRow = (props: Props) => {
         buttonIcon={chatIcon}
       />
       {!isAuthorized && (
-        <FarcasterConnect account={account} actionSystem={actionSystem} size='medium' />
+        <FarcasterConnect account={account} actionSystem={actionSystem} size={2.5} />
       )}
     </Container>
   );

@@ -102,7 +102,7 @@ export const Bio = (props: Props) => {
           <TitleRow>
             <Title>{account.name}</Title>
             {account.index === playerAccount.index && (
-              <FarcasterConnect account={account} actionSystem={actionSystem} />
+              <FarcasterConnect account={account} actionSystem={actionSystem} size={1.2} />
             )}
           </TitleRow>
           <AddressDisplay />

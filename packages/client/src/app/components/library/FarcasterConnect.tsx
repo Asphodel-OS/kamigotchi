@@ -11,7 +11,7 @@ import { FarcasterUser, emptyFaracasterUser, handleSignIn } from 'src/clients/ne
 interface Props {
   actionSystem: ActionSystem;
   account: Account;
-  size?: 'small' | 'medium' | 'large';
+  size?: number;
 }
 
 // This component populates the fid / neynar signer populated in the kami
@@ -108,7 +108,7 @@ export const FarcasterConnect = (props: Props) => {
   return (
     <Tooltip text={getTooltipText()}>
       <IconButton
-        size={size ?? 'small'}
+        size={size ?? 2.5}
         img={farcasterLogo}
         color={getColor()}
         onClick={getOnClick()}
