@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Overlay, Tooltip } from 'app/components/library';
+import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
@@ -10,6 +10,8 @@ import { Stats } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../types';
 import { KamiBlock } from './KamiBlock';
+
+const LOADING_TEXT = ['your gacha pool is loading', 'please be patient'];
 
 interface Props {
   controls: {
@@ -47,10 +49,14 @@ export const Pool = (props: Props) => {
   useEffect(() => {
     const isOpen = modals.gacha && isVisible;
     if (isOpen) filterKamis();
+
+    // inital load. waiting as a bit of a hackaround for complete data
     if (!loaded && entities.length > 0) {
-      filterKamis();
-      setLoaded(true);
-      console.log(`gacha pool loaded: ${entities.length} initial kamis`);
+      setTimeout(() => {
+        filterKamis();
+        setLoaded(true);
+        console.log(`gacha pool loaded: ${entities.length} initial kamis`);
+      }, 1500);
     }
   }, [filters, entities.length]);
 
@@ -156,6 +162,7 @@ export const Pool = (props: Props) => {
           {filtered.length}/{entities.length}
         </Text>
       </Overlay>
+      {!loaded && <EmptyText size={2.5} text={LOADING_TEXT} />}
       {getVisibleKamis().map((kami) => getKamiBlock(kami))}
     </Container>
   );
