@@ -43,11 +43,12 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // get and cache owner lookups
+  // get and cache owner lookups. if owner is null, update the cache
   const getOwner = (kami: Kami) => {
-    if (!ownerCache.has(kami.index)) {
-      const owner = utils.getOwner(kami.index);
-      ownerCache.set(kami.index, owner);
+    const owner = ownerCache.get(kami.index);
+    if (!owner || !owner.index) {
+      const updatedOwner = utils.getOwner(kami.index);
+      ownerCache.set(kami.index, updatedOwner);
     }
     return ownerCache.get(kami.index)!;
   };

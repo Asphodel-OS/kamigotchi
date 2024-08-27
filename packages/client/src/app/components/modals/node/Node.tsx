@@ -196,19 +196,18 @@ export function registerNodeModal() {
           truncate
           noPadding
         >
-          {node.kamis.length > 0 ? (
-            <Kards
-              account={account}
-              kamis={node.kamis}
-              actions={{ collect, feed, liquidate, stop }}
-              utils={utils}
-            />
-          ) : (
+          {node.kamis.length === 0 && (
             <EmptyText
               text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
               size={1}
             />
           )}
+          <Kards
+            account={account}
+            kamis={node.kamis}
+            actions={{ collect, feed, liquidate, stop }}
+            utils={utils}
+          />
         </ModalWrapper>
       );
     }
