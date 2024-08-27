@@ -123,7 +123,7 @@ export const getKami = (
   const kami: Kami = {
     ...getBaseKami(world, components, entityIndex),
     image: getComponentValue(MediaURI, entityIndex)?.value as string,
-    level: (getComponentValue(Level, entityIndex)?.value ?? (1 as number)) * 1,
+    level: (getComponentValue(Level, entityIndex)?.value ?? 0) * 1,
     experience: {
       current: (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) * 1,
       threshold: 0,
