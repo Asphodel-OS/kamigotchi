@@ -39,7 +39,7 @@ library LibFriend {
     string memory state // REQUEST | FRIEND | BLOCKED
   ) internal returns (uint256 id) {
     id = genID(accID, targetID);
-    IsFriendshipComponent(getAddressById(components, IsFriendCompID)).set(id);
+    IsFriendshipComponent(getAddressById(components, IsFriendCompID)).set(id); // TODO: change to EntityType
     IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
     IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
     StateComponent(getAddressById(components, StateCompID)).set(id, state);

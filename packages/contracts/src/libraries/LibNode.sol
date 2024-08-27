@@ -38,7 +38,7 @@ library LibNode {
     string memory description
   ) internal returns (uint256 id) {
     id = genID(index);
-    IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
+    IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id); // TODO: change to EntityType
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(id, index);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, roomIndex);

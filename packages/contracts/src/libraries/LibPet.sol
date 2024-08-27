@@ -53,7 +53,7 @@ library LibPet {
   /// @dev assumes index is not in use
   function create(IUintComp components, uint256 accID, uint32 index) internal returns (uint256) {
     uint256 id = genID(index);
-    IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
+    IsPetComponent(getAddressById(components, IsPetCompID)).set(id); // TODO: change to EntityType
     IndexPetComponent(getAddressById(components, IndexPetCompID)).set(id, index);
     setOwner(components, id, accID);
     setMediaURI(components, id, UNREVEALED_URI);

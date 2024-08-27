@@ -35,7 +35,7 @@ library LibRoom {
     string memory description
   ) internal returns (uint256 id) {
     id = genID(index);
-    IsRoomComponent(getAddressById(components, IsRoomCompID)).set(id);
+    IsRoomComponent(getAddressById(components, IsRoomCompID)).set(id); // TODO: change to EntityType
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, index);
     LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);

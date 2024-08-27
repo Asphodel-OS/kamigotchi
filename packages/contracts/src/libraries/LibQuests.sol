@@ -56,7 +56,7 @@ library LibQuests {
     id = genQuestID(questIndex, accID);
 
     setOwner(components, id, accID); // TODO: change to holderID
-    setIsQuest(components, id);
+    setIsQuest(components, id); // TODO: change to EntityType
     setQuestIndex(components, id, questIndex);
     setTimeStart(components, id, block.timestamp);
 

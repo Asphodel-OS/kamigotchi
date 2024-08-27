@@ -44,7 +44,7 @@ library LibQuestRegistry {
     IsQuestComponent isQuestComp = IsQuestComponent(getAddressById(components, IsQuestCompID));
     require(!isQuestComp.has(id), "LibRegQ.createQ: index used");
 
-    isQuestComp.set(id);
+    isQuestComp.set(id); // TODO: change to EntityType
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);

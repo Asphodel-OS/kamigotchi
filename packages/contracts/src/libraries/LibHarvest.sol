@@ -50,7 +50,7 @@ library LibHarvest {
     uint256 petID
   ) internal returns (uint256 id) {
     id = genID(petID);
-    IsProductionComponent(getAddressById(components, IsProdCompID)).set(id);
+    IsProductionComponent(getAddressById(components, IsProdCompID)).set(id); // TODO: change to EntityType
     IdPetComponent(getAddressById(components, IdPetCompID)).set(id, petID);
     IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(

@@ -22,7 +22,7 @@ library LibNPC {
     uint32 roomIndex
   ) internal returns (uint256) {
     uint256 id = genID(index);
-    IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id);
+    IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id); // TODO: change to EntityType
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, index);
     setName(components, id, name);
     setRoomIndex(components, id, roomIndex);

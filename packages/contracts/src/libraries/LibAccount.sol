@@ -44,7 +44,7 @@ library LibAccount {
     address operatorAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsAccountComponent(getAddressById(components, IsAccCompID)).set(id);
+    IsAccountComponent(getAddressById(components, IsAccCompID)).set(id); // TODO: change to EntityType
     IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(
       id,
       getAndUpdateTotalAccs(components)

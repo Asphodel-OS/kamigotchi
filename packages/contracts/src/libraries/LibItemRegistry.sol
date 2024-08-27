@@ -20,6 +20,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibDroptable } from "libraries/LibDroptable.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -51,6 +52,8 @@ library LibItemRegistry {
       !IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id),
       "item reg: item alr exists"
     );
+
+    LibEntityType.set(components, id, "ITEM");
 
     setIndex(components, id, index);
     setType(components, id, type_);
@@ -113,6 +116,8 @@ library LibItemRegistry {
 
   /// @notice delete a Registry entry for an item.
   function deleteItem(IUintComp components, uint256 id) internal {
+    LibEntityType.remove(components, id);
+
     IndexItemComponent indexComp = IndexItemComponent(getAddressById(components, IndexItemCompID));
     indexComp.remove(id);
     IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
@@ -142,7 +147,7 @@ library LibItemRegistry {
 
   // check whether an entity is an item
   function isItem(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id);
+    return LibEntityType.isShape(components, id, "ITEM");
   }
 
   function isBurnable(IUintComp components, uint32 index) internal view returns (bool) {

@@ -12,6 +12,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /** @notice
@@ -44,6 +45,8 @@ library LibFactions {
     string memory mediaURI
   ) internal returns (uint256 id) {
     id = genID(index);
+    LibEntityType.set(components, id, "FACTION");
+
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IndexFactionComponent(getAddressById(components, IndexFactionCompID)).set(id, index);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
@@ -52,6 +55,8 @@ library LibFactions {
   }
 
   function remove(IUintComp components, uint256 targetID) internal {
+    LibEntityType.remove(components, targetID);
+
     IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(targetID);
     IndexFactionComponent(getAddressById(components, IndexFactionCompID)).remove(targetID);
     NameComponent(getAddressById(components, NameCompID)).remove(targetID);

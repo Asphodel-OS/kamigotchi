@@ -41,7 +41,7 @@ library LibSkill {
     uint32 skillIndex
   ) internal returns (uint256) {
     uint256 id = genID(targetID, skillIndex);
-    setIsSkill(components, id);
+    setIsSkill(components, id); // TODO: change to EntityType
     setHolder(components, id, targetID);
     setSkillIndex(components, id, skillIndex);
     return id;

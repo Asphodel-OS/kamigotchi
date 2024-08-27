@@ -24,7 +24,7 @@ library LibRelationship {
     uint32 relIndex
   ) internal returns (uint256) {
     uint256 id = genID(accID, npcIndex, relIndex);
-    IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id);
+    IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id); // TODO: change to EntityType
     IDOwnsRelationshipComponent(getAddressById(components, IDOwnsRSCompID)).set(id, accID);
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, npcIndex);
     IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, relIndex);

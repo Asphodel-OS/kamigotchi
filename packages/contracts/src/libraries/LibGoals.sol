@@ -69,7 +69,7 @@ library LibGoals {
     Condition memory objective
   ) internal returns (uint256 id) {
     id = genGoalID(index);
-    IsGoalComponent(getAddressById(components, IsGoalCompID)).set(id);
+    IsGoalComponent(getAddressById(components, IsGoalCompID)).set(id); // TODO: change to EntityType
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);

@@ -20,6 +20,7 @@ import { LibAssigner } from "libraries/LibAssigner.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -60,6 +61,8 @@ library LibRecipe {
     int32 staminaCost
   ) internal returns (uint256 id) {
     id = genID(recipeIndex);
+    LibEntityType.set(components, id, "RECIPE");
+
     KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
     ValuesComponent valsComp = ValuesComponent(getAddressById(components, ValuesCompID));
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
@@ -105,6 +108,8 @@ library LibRecipe {
   }
 
   function remove(IUintComp components, uint32 recipeIndex, uint256 id) internal {
+    LibEntityType.remove(components, id);
+
     IndexRecipeComponent indexComp = IndexRecipeComponent(
       getAddressById(components, IndexRecipeCompID)
     );

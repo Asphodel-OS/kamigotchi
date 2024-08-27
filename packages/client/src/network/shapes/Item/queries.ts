@@ -54,8 +54,10 @@ export const getItemRegEntity = (world: World, index: number): EntityIndex | und
 
 // get all items in the registry
 export const getAllItems = (world: World, components: Components): Item[] => {
-  const { IsRegistry, ItemIndex } = components;
-  const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(ItemIndex)]));
+  const { IsRegistry, EntityType } = components;
+  const entityIndices = Array.from(
+    runQuery([Has(IsRegistry), HasValue(EntityType, { value: 'ITEM' })])
+  );
   return entityIndices.map((entityIndex) => getItem(world, components, entityIndex));
 };
 

@@ -16,6 +16,7 @@
     { "comp": "CostComponent", "name": "Cost", "type": "uint256" },
     { "comp": "DescriptionAltComponent", "name": "DescriptionAlt", "type": "string" },
     { "comp": "DescriptionComponent", "name": "Description", "type": "string" },
+    { "comp": "EntityTypeComponent", "name": "EntityType", "type": "string" },
     { "comp": "ExitsComponent", "name": "Exits", "type": "uint32[]" },
     { "comp": "ExperienceComponent", "name": "Experience", "type": "uint256" },
     { "comp": "FarcasterIndexComponent", "name": "FarcasterIndex", "type": "uint32" },
@@ -125,6 +126,7 @@
     {
       "name": "_FactionRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IsRegistryComponent",
         "IndexFactionComponent",
         "NameComponent",
@@ -135,6 +137,7 @@
     {
       "name": "_GoalRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "DescriptionComponent",
         "IDPointerComponent",
         "IsGoalComponent",
@@ -153,6 +156,7 @@
     {
       "name": "_ItemRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "DescriptionComponent",
         "ExperienceComponent",
         "ForComponent",
@@ -179,6 +183,7 @@
     {
       "name": "_ListingRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IDPointerComponent",
         "IsListingComponent",
         "IndexComponent",
@@ -220,6 +225,7 @@
     {
       "name": "_RecipeRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "ExperienceComponent",
         "IDFromComponent",
         "IDPointerComponent",

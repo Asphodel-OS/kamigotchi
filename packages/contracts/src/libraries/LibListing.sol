@@ -15,6 +15,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 
@@ -36,7 +37,9 @@ library LibListing {
     uint256 sellPrice
   ) internal returns (uint256 id) {
     id = genID(npcIndex, itemIndex);
-    IsListingComponent(getAddressById(components, IsListingCompID)).set(id);
+    LibEntityType.set(components, id, "LISTING");
+    IsListingComponent(getAddressById(components, IsListingCompID)).set(id); // deprecated
+
     IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, npcIndex);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
@@ -57,7 +60,9 @@ library LibListing {
   }
 
   function remove(IUintComp components, uint256 id) internal {
+    LibEntityType.remove(components, id);
     IsListingComponent(getAddressById(components, IsListingCompID)).remove(id);
+
     IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).remove(id);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
 
@@ -128,7 +133,7 @@ library LibListing {
     uint32 itemIndex
   ) internal view returns (uint256 result) {
     uint256 id = genID(merchantIndex, itemIndex);
-    return IsListingComponent(getAddressById(components, IsListingCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "LISTING") ? id : 0;
   }
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {

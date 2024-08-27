@@ -40,7 +40,7 @@ library LibInventory {
     uint256 holderID,
     uint32 itemIndex
   ) internal returns (uint256) {
-    IsInvComponent(getAddressById(components, IsInvCompID)).set(id);
+    IsInvComponent(getAddressById(components, IsInvCompID)).set(id); // TODO: change to EntityType
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
     OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
     ValueComponent(getAddressById(components, ValueCompID)).set(id, 0);

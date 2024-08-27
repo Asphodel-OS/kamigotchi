@@ -61,7 +61,7 @@ library LibSkillRegistry {
   ) internal returns (uint256 id) {
     id = genID(skillIndex);
     setIsRegistry(components, id);
-    setIsSkill(components, id);
+    setIsSkill(components, id); // TODO: change to EntityType
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
     setName(components, id, name);
