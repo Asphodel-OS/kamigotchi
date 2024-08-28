@@ -440,7 +440,7 @@ library LibPet {
 
   // get the last time a kami commited a Standard Action
   function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return getComponentById(components, TimeLastCompID).safeGetUint256(id);
+    return getComponentById(components, TimeLastActCompID).safeGetUint256(id);
   }
 
   // get the last time a kami commited a syncing Action
