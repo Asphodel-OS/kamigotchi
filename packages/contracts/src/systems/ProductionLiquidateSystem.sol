@@ -9,6 +9,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -20,7 +21,6 @@ import { LibRoom } from "libraries/LibRoom.sol";
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
 // liquidates a target production using a player's pet.
-// TODO: support kill logs
 contract ProductionLiquidateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -52,18 +52,26 @@ contract ProductionLiquidateSystem is System {
     LibPet.sync(components, targetPetID);
     require(LibKill.isLiquidatableBy(components, targetPetID, petID), "Pet: you lack violence");
 
-    // collect the money to the production. drain accordingly
+    // calculate musu/experience for victim
     uint256 bounty = LibHarvest.getBalance(components, targetProductionID);
     uint256 salvage = LibKill.calcSalvage(components, targetPetID, bounty);
-    uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
-    uint256 strain = LibPet.calcStrain(components, petID, spoils);
-    uint256 karma = LibKill.calcKarma(components, petID, targetPetID);
-
     if (salvage > 0) {
       uint256 victimAccountID = LibPet.getAccount(components, targetPetID);
       LibInventory.incFor(components, victimAccountID, MUSU_INDEX, salvage);
+      LibExperience.inc(components, targetPetID, salvage);
     }
+
+    // calculate musu for killer
+    uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
     LibInventory.incFor(components, productionID, MUSU_INDEX, spoils);
+
+    // calculate experience for killer
+    uint256 bonusExp = LibExperience.calcLevelCost(components, targetPetID) / 10;
+    LibExperience.inc(components, petID, bonusExp);
+
+    // calculate killer health
+    uint256 strain = LibPet.calcStrain(components, petID, spoils);
+    uint256 karma = LibKill.calcKarma(components, petID, targetPetID);
     LibPet.drain(components, petID, SafeCastLib.toInt32(strain + karma));
 
     // kill the target and shut off the production

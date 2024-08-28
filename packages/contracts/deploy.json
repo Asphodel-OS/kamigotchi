@@ -644,6 +644,7 @@
         "IndexNodeComponent",
         "IsInventoryComponent",
         "IsKillComponent",
+        "ExperienceComponent",
         "HealthComponent",
         "RateComponent",
         "StateComponent",
