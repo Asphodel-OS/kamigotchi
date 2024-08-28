@@ -74,6 +74,38 @@ export const Pool = (props: Props) => {
   //////////////////
   // INTERPRETATION
 
+  // returns a kami from the cache, or creates a new one and sets it if not found
+  // NOTE: this is safe because we dont expect updates on kamis in the gacha pool
+  const getKami = (entity: EntityIndex) => {
+    if (!kamis.has(entity)) kamis.set(entity, utils.getKami(entity));
+    return kamis.get(entity)!;
+  };
+
+  // get the react component of a KamiBlock displayed in the pool
+  const getKamiBlock = (kami: Kami) => {
+    const entity = kami.entityIndex;
+    if (!kamiBlocks.has(entity)) {
+      const tooltip = [
+        `Health: ${kami.stats.health.total}`,
+        `Power: ${kami.stats.power.total}`,
+        `Violence: ${kami.stats.violence.total}`,
+        `Harmony: ${kami.stats.harmony.total}`,
+        `Slots: ${kami.stats.slots.total}`,
+      ];
+
+      kamiBlocks.set(
+        entity,
+        <Tooltip key={kami.index} text={tooltip}>
+          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
+        </Tooltip>
+      );
+    }
+    return kamiBlocks.get(entity)!;
+  };
+
+  //////////////////
+  // ORGANIZATION
+
   const filterKamis = () => {
     const all = entities.map((entity) => getKami(entity));
     const newFiltered = all.filter((kami) => {
@@ -88,44 +120,6 @@ export const Pool = (props: Props) => {
     });
 
     setFiltered(newFiltered);
-  };
-
-  const getKamiText = (kami: Kami): string[] => {
-    return [
-      `Health: ${kami.stats.health.total}`,
-      `Power: ${kami.stats.power.total}`,
-      `Violence: ${kami.stats.violence.total}`,
-      `Harmony: ${kami.stats.harmony.total}`,
-      `Slots: ${kami.stats.slots.total}`,
-    ];
-  };
-
-  // returns a kami from the cache, or creates a new one and sets it if not found
-  // NOTE: this is safe because we dont expect updates on kamis in the gacha pool
-  const getKami = (entity: EntityIndex) => {
-    if (!kamis.has(entity)) kamis.set(entity, utils.getKami(entity));
-    return kamis.get(entity)!;
-  };
-
-  // get the react component of a KamiBlock displayed in the pool
-  const getKamiBlock = (kami: Kami) => {
-    const entity = kami.entityIndex;
-    if (!kamiBlocks.has(entity)) {
-      kamiBlocks.set(
-        entity,
-        <Tooltip key={kami.index} text={getKamiText(kami)}>
-          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
-        </Tooltip>
-      );
-    }
-    return kamiBlocks.get(entity)!;
-  };
-
-  // get the list of kamis that should be displayed
-  const getVisibleKamis = () => {
-    const count = Math.min(limit, filtered.length);
-    const sorted = sortKamis(filtered);
-    return sorted.slice(0, count);
   };
 
   const sortKamis = (kamis: Kami[]) => {
@@ -150,6 +144,13 @@ export const Pool = (props: Props) => {
       return 0;
     });
     return sorted;
+  };
+
+  // get the list of kamis that should be displayed
+  const getVisibleKamis = () => {
+    const count = Math.min(limit, filtered.length);
+    const sorted = sortKamis(filtered);
+    return sorted.slice(0, count);
   };
 
   ///////////////////
