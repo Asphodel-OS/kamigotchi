@@ -69,27 +69,31 @@ export const calcThreshold = (attacker: Kami, defender: Kami): number => {
 
 // calculate the salvage of a kami having its current production liquidated
 const calcSalvage = (kami: Kami, balance?: number): number => {
-  const salvageConfig = kami.config.liquidation.salvage;
-  const salvageBonus = kami.bonuses.defense.salvage;
-  const harvest = kami.production;
-  if (!harvest) return 0;
+  if (!kami.production) return 0;
+
+  const config = kami.config.liquidation.salvage;
+  const bonus = kami.bonuses.defense.salvage;
+  const power = kami.stats.power.total;
 
   if (!balance) balance = calcOutput(kami);
-  const salvageRatio = salvageConfig.ratio.value + salvageBonus.ratio;
+  const powerTuning = power / 100 + config.nudge.value;
+  const salvageRatio = config.ratio.value + powerTuning + bonus.ratio;
   const salvage = balance * salvageRatio;
   return Math.floor(salvage);
 };
 
 // calculate the spoils of one kami from liquidating another kami
 const calcSpoils = (attacker: Kami, defender: Kami): number => {
-  const spoilsConfig = attacker.config.liquidation.spoils;
-  const spoilsBonus = attacker.bonuses.attack.spoils;
-  const harvest = defender.production;
-  if (!harvest) return 0;
+  if (!defender.production) return 0;
+
+  const config = attacker.config.liquidation.spoils;
+  const bonus = attacker.bonuses.attack.spoils;
+  const power = attacker.stats.power.total;
 
   const balance = calcOutput(defender);
   const salvage = calcSalvage(defender, balance);
-  const spoilsRatio = spoilsConfig.ratio.value + spoilsBonus.ratio;
+  const powerTuning = power / 100 + config.nudge.value;
+  const spoilsRatio = config.ratio.value + powerTuning + bonus.ratio;
   const spoils = (balance - salvage) * spoilsRatio;
   return spoils;
 };

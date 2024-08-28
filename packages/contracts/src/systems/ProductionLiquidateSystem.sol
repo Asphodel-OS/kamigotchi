@@ -69,7 +69,7 @@ contract ProductionLiquidateSystem is System {
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);
     LibHarvest.stop(components, targetProductionID);
-    LibKill.create(world, components, petID, targetPetID, nodeID, bounty, spoils);
+    LibKill.create(world, components, petID, targetPetID, nodeID, bounty - salvage, spoils);
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking

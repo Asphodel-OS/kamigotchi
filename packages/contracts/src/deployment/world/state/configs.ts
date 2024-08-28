@@ -54,8 +54,8 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
   await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // nontraditional AST node
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
-  await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 0, 0, 3, 0, 0, 0, 0]);
-  await api.config.set.array('KAMI_LIQ_SPOILS', [0, 0, 500, 3, 0, 0, 0, 0]);
+  await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
+  await api.config.set.array('KAMI_LIQ_SPOILS', [35, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 300, 3, 0, 0, 0, 0]);
 }
 

@@ -56,7 +56,7 @@ export const AllyKards = (props: Props) => {
 };
 
 const Container = styled.div`
-  padding: 0.1vw 0.6vw;
+  padding: 0.6vw;
   gap: 0.45vw;
   display: flex;
   flex-flow: column nowrap;

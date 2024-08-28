@@ -82,6 +82,26 @@ library LibKill {
   /////////////////
   // CALCULATIONS
 
+  // Calculate the base liquidation threshold % for target pet when attacked by source pet.
+  // H = Φ(ln(v_s / h_t)) * ratio  as proportion of total health (1e6 precision).
+  function calcAnimosity(
+    IUintComp components,
+    uint256 sourceID,
+    uint256 targetID
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_ANIMOSITY");
+
+    uint256 sourceViolence = LibPet.calcTotalViolence(components, sourceID).toUint256();
+    uint256 targetHarmony = LibPet.calcTotalHarmony(components, targetID).toUint256();
+    int256 imbalance = ((1e18 * sourceViolence) / targetHarmony).toInt256();
+    uint256 base = Gaussian.cdf(LibFPMath.lnWad(imbalance)).toUint256();
+    uint256 ratio = config[2]; // core animosity baseline
+
+    // flipped precision as inputs are more precise than output
+    uint256 precision = 10 ** (18 + config[3] - ANIMOSITY_PREC);
+    return (base * ratio) / precision;
+  }
+
   // Calculate the affinity multiplier for attacks between two kamis.
   // We really need to overload the word 'base' a bit less..
   function calcEfficacy(
@@ -121,26 +141,6 @@ library LibKill {
     return (efficacy > 0) ? uint(efficacy) : 0;
   }
 
-  // Calculate the base liquidation threshold % for target pet when attacked by source pet.
-  // H = Φ(ln(v_s / h_t)) * ratio  as proportion of total health (1e6 precision).
-  function calcAnimosity(
-    IUintComp components,
-    uint256 sourceID,
-    uint256 targetID
-  ) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_ANIMOSITY");
-
-    uint256 sourceViolence = LibPet.calcTotalViolence(components, sourceID).toUint256();
-    uint256 targetHarmony = LibPet.calcTotalHarmony(components, targetID).toUint256();
-    int256 imbalance = ((1e18 * sourceViolence) / targetHarmony).toInt256();
-    uint256 base = Gaussian.cdf(LibFPMath.lnWad(imbalance)).toUint256();
-    uint256 ratio = config[2]; // core animosity baseline
-
-    // flipped precision as inputs are more precise than output
-    uint256 precision = 10 ** (18 + config[3] - ANIMOSITY_PREC);
-    return (base * ratio) / precision;
-  }
-
   // Calculate the liquidation HP threshold for target pet, attacked by the source pet.
   // This is measured as an absolute health value (1e0 precision).
   function calcThreshold(
@@ -166,32 +166,6 @@ library LibKill {
     return (uint(postShiftVal) * totalHealth) / precision;
   }
 
-  // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
-  function calcSalvage(
-    IUintComp components,
-    uint256 id, // unused atm, but will be used for skill multipliers
-    uint256 amt
-  ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
-    int256 ratioBonus = LibBonus.getRaw(components, id, "DEF_SALVAGE_RATIO");
-    uint256 ratio = configVals[2] + ratioBonus.toUint256();
-    uint256 precision = 10 ** uint256(configVals[3]);
-    return (amt * ratio) / precision;
-  }
-
-  // Calculate the reward for liquidating a specified Coin balance. Round down.
-  function calcSpoils(
-    IUintComp components,
-    uint256 id, // unused atm, but will be used for skill multipliers
-    uint256 amt
-  ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
-    int256 ratioBonus = LibBonus.getRaw(components, id, "ATK_SPOILS_RATIO");
-    uint256 ratio = configVals[2] + ratioBonus.toUint256();
-    uint256 precision = 10 ** uint256(configVals[3]);
-    return (amt * ratio) / precision;
-  }
-
   // Calculate the resulting negative karma (HP loss) from two kamis duking it out. Rounds down.
   function calcKarma(
     IUintComp components,
@@ -204,6 +178,38 @@ library LibKill {
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
     return ((violence1 + violence2) * ratio) / precision;
+  }
+
+  // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
+  // ASSUME: config[3] >= config[1]
+  function calcSalvage(
+    IUintComp components,
+    uint256 id, // unused atm, but will be used for skill multipliers
+    uint256 amt
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
+    int256 ratioBonus = LibBonus.getRaw(components, id, "DEF_SALVAGE_RATIO");
+    uint256 power = LibPet.calcTotalPower(components, id).toUint256();
+    uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
+    uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
+    uint256 precision = 10 ** uint256(config[3]);
+    return (amt * ratio) / precision;
+  }
+
+  // Calculate the reward for liquidating a specified Coin balance. Round down.
+  // ASSUME: config[3] >= config[1]
+  function calcSpoils(
+    IUintComp components,
+    uint256 id, // unused atm, but will be used for skill multipliers
+    uint256 amt
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
+    int256 ratioBonus = LibBonus.getRaw(components, id, "ATK_SPOILS_RATIO");
+    uint256 power = LibPet.calcTotalPower(components, id).toUint256();
+    uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
+    uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
+    uint256 precision = 10 ** uint256(config[3]);
+    return (amt * ratio) / precision;
   }
 
   /////////////////
