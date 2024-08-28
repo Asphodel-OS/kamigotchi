@@ -21,8 +21,7 @@ contract PetUseItemSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 regID = LibItemRegistry.getByIndex(components, itemIndex);
 
-    require(LibPet.isPet(components, petID), "not a pet");
-    require(LibPet.getAccount(components, petID) == accID, "Pet not urs");
+    LibPet.assertAccount(components, petID, accID);
     require(LibPet.isResting(components, petID), "Pet not resting");
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check
 

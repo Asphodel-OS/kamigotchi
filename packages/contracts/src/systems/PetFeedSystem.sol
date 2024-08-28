@@ -30,13 +30,9 @@ contract PetFeedSystem is System {
     require(LibItemRegistry.isForPet(components, itemIndex), "PetFeed: that's not for pets");
 
     // standard checks (ownership, state, roomIndex)
-    require(LibPet.isPet(components, id), "PetFeed: not a pet");
-    require(LibPet.getAccount(components, id) == accID, "PetFeed: pet not urs");
+    LibPet.assertAccount(components, id, accID);
+    LibPet.assertRoom(components, id, accID);
     require(!LibPet.onCooldown(components, id), "PetFeed: pet on cooldown");
-    require(
-      LibPet.getRoom(components, id) == LibAccount.getRoom(components, accID),
-      "PetFeed: pet too far"
-    );
 
     // item specific checks
     if (LibItemRegistry.isRevive(components, itemIndex)) {

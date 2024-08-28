@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { Uint256BareComponent as UintBareComp } from "components/base/Uint256BareComponent.sol";
@@ -10,6 +11,8 @@ import { Stat, StatLib } from "components/types/Stat.sol";
 
 /// @notice a library for useful component operations
 library LibComp {
+  using LibString for string;
+
   /////////////////
   // CHECKS
 
@@ -20,6 +23,48 @@ library LibComp {
   function allHave(IComp component, uint256[] memory ids, bool has) internal view returns (bool) {
     bool[] memory results = hasBatch(component, ids);
     for (uint256 i; i < ids.length; i++) if (results[i] == !has) return false;
+    return true;
+  }
+
+  function eqUint256(IComp component, uint256 id, uint256 value) internal view returns (bool) {
+    return safeGetUint256(component, id) == value;
+  }
+
+  function eqUint32(IComp component, uint256 id, uint32 value) internal view returns (bool) {
+    return safeGetUint32(component, id) == value;
+  }
+
+  function eqString(IComp component, uint256 id, string memory str) internal view returns (bool) {
+    return safeGetString(component, id).eq(str);
+  }
+
+  function eqUint256(
+    IComp component,
+    uint256[] memory ids,
+    uint256 value
+  ) internal view returns (bool) {
+    uint256[] memory values = safeGetBatchUint256(component, ids);
+    for (uint256 i; i < ids.length; i++) if (values[i] != value) return false;
+    return true;
+  }
+
+  function eqUint32(
+    IComp component,
+    uint256[] memory ids,
+    uint32 value
+  ) internal view returns (bool) {
+    uint32[] memory values = safeGetBatchUint32(component, ids);
+    for (uint256 i; i < ids.length; i++) if (values[i] != value) return false;
+    return true;
+  }
+
+  function eqString(
+    IComp component,
+    uint256[] memory ids,
+    string memory str
+  ) internal view returns (bool) {
+    string[] memory values = safeGetBatchString(component, ids);
+    for (uint256 i; i < ids.length; i++) if (!values[i].eq(str)) return false;
     return true;
   }
 

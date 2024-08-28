@@ -28,7 +28,7 @@ contract PetReviveSystem is System {
     require(LibString.eq(type_, "REVIVE"), "PetRevive: god can't save you");
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, id) == accID, "PetRevive: pet not urs");
+    LibPet.assertAccount(components, id, accID);
     require(LibPet.isDead(components, id), "PetRevive: pet not dead");
 
     // decrement item from inventory with implicit check for insufficient balance

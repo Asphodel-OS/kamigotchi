@@ -30,7 +30,7 @@ contract ProductionStopSystem is System {
     uint256 petID = LibHarvest.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, petID) == accID, "FarmStop: pet not urs");
+    LibPet.assertAccount(components, petID, accID);
     require(LibPet.isHarvesting(components, petID), "FarmStop: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmStop: pet on cooldown");
 
@@ -39,10 +39,7 @@ contract ProductionStopSystem is System {
     require(LibPet.isHealthy(components, petID), "FarmStop: pet starving..");
 
     // roomIndex check
-    require(
-      LibAccount.getRoom(components, accID) == LibPet.getRoom(components, petID),
-      "FarmStop: node too far"
-    );
+    LibPet.assertRoom(components, petID, accID);
 
     // claim balance and increase experience
     uint256 output = LibHarvest.claim(components, id);

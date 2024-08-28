@@ -29,7 +29,7 @@ contract ProductionLiquidateSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, petID) == accID, "FarmLiquidate: pet not urs");
+    LibPet.assertAccount(components, petID, accID);
     require(LibPet.isHarvesting(components, petID), "FarmLiquidate: pet must be harvesting");
 
     // basic requirements (state and idle time)

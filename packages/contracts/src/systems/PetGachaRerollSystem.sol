@@ -18,9 +18,8 @@ contract PetGachaRerollSystem is System {
   function reroll(uint256[] memory petIDs) external payable returns (uint256[] memory) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     require(accID != 0, "no account detected");
-    require(LibPet.isPetBatch(components, petIDs), "not a pet");
-    require(LibPet.assertAccountBatch(components, petIDs, accID), "not urs");
-    require(LibPet.assertStateBatch(components, petIDs, "RESTING"), "not resting");
+    LibPet.assertAccount(components, petIDs, accID);
+    require(LibPet.isResting(components, petIDs), "not resting");
 
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, petIDs);

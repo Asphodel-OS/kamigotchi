@@ -80,7 +80,7 @@ contract MurderTest is SetupTemplate {
     // check that we CANNOT liquidate the starved kamis from the wrong account
     for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("FarmLiquidate: pet not urs");
+        vm.expectRevert("pet not urs");
         vm.prank(_getOperator(i));
         _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[0][j]);
       }

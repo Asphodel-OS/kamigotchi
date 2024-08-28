@@ -21,8 +21,7 @@ contract PetLevelSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (type check, ownership, roomIndex)
-    require(LibPet.isPet(components, id), "PetLevel: not a pet");
-    require(LibPet.getAccount(components, id) == accID, "PetLevel: not urs");
+    LibPet.assertAccount(components, id, accID);
     require(LibPet.isResting(components, id), "PetLevel: pet not resting");
 
     // check that the pet meets the experience requirement

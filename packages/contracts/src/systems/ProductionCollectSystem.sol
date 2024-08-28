@@ -27,17 +27,14 @@ contract ProductionCollectSystem is System {
     uint256 petID = LibHarvest.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(LibPet.getAccount(components, petID) == accID, "FarmCollect: pet not urs");
+    LibPet.assertAccount(components, petID, accID);
     require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");
 
     // health check
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
-    require(
-      LibAccount.getRoom(components, accID) == LibPet.getRoom(components, petID),
-      "FarmCollect: node too far"
-    );
+    LibPet.assertRoom(components, petID, accID);
 
     // process collection
     uint256 output = LibHarvest.claim(components, id);

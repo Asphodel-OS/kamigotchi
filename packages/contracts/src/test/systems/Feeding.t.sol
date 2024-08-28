@@ -105,7 +105,7 @@ contract FeedingTest is SetupTemplate {
       for (uint j = 0; j < _listingIDs.length; j++) {
         itemIndex = _getListingItemIndex(_listingIDs[j]);
         for (uint k = 0; k < numPets; k++) {
-          vm.expectRevert("PetFeed: pet not urs");
+          vm.expectRevert("pet not urs");
           _PetFeedSystem.executeTyped(petIDs[k], itemIndex);
         }
       }
@@ -162,7 +162,7 @@ contract FeedingTest is SetupTemplate {
     // check we CANNOT revive pets from other accounts
     for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("PetRevive: pet not urs");
+        vm.expectRevert("pet not urs");
         vm.prank(_getOperator(i));
         _PetReviveSystem.executeTyped(petIDs[j], itemIndex);
       }
@@ -213,7 +213,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("PetFeed: pet too far");
+        vm.expectRevert("pet too far");
         _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
       }
     }
@@ -226,7 +226,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("PetFeed: pet too far");
+        vm.expectRevert("pet too far");
         _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
       }
     }

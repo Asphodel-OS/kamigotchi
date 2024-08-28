@@ -52,7 +52,7 @@ contract Pet721UnstakeSystem is System {
     require(LibAccount.getRoom(components, accID) == ROOM, "Pet721Stake: must be in room 12");
 
     // checks before action
-    require(LibPet.getAccount(components, petID) == accID, "Pet721Unstake: not urs");
+    LibPet.assertAccount(components, petID, accID);
     require(LibPet.isResting(components, petID), "Pet721Unstake: must be resting");
 
     // actions to be taken upon bridging out
