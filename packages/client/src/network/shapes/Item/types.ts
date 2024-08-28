@@ -5,7 +5,6 @@ import {
   HasValue,
   World,
   getComponentValue,
-  hasComponent,
   runQuery,
 } from '@mud-classic/recs';
 
@@ -22,16 +21,10 @@ export interface Item extends DetailedEntity {
   id: EntityID;
   entityIndex: EntityIndex;
   index: number;
-  is: Is;
   for: ForType;
   type: string;
   stats?: Stats;
   experience?: number; // maybe merge in Stats in future?
-}
-
-export interface Is {
-  consumable: boolean;
-  lootbox: boolean;
 }
 
 export const NullItem: Item = {
@@ -54,7 +47,7 @@ export const NullItem: Item = {
  * @param entityIndex - the entity index of the item in the registry
  */
 export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
-  const { IsConsumable, Experience, ItemIndex, Type } = components;
+  const { Experience, ItemIndex, Type } = components;
 
   const type = getComponentValue(Type, entityIndex)?.value as string;
 
@@ -67,10 +60,6 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     for: getFor(components, entityIndex),
     stats: getStats(components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
-    is: {
-      consumable: hasComponent(IsConsumable, entityIndex),
-      lootbox: type === 'LOOTBOX',
-    },
   };
 
   return item;

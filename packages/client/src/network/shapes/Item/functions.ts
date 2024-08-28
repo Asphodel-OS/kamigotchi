@@ -1,7 +1,7 @@
 import { EntityID, World, getComponentValue } from '@mud-classic/recs';
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/index';
-import { Inventory, Is } from './types';
+import { Inventory } from './types';
 import { getInventoryEntityIndex } from './utils';
 
 /////////////////
@@ -31,13 +31,13 @@ export const getItemBalance = (
 
 export const filterInventories = (
   inventories: Inventory[],
-  is_?: keyof Is,
+  type_?: string,
   for_?: string,
   min = 1
 ): Inventory[] => {
   return inventories.filter((inv) => {
     const forMatches = for_ ? inv.item.for === for_ : true;
-    const isMatches = is_ ? inv.item.is[is_] : true;
+    const isMatches = type_ ? inv.item.type === type_ : true;
     return forMatches && isMatches && inv.balance >= min;
   });
 };

@@ -94,7 +94,29 @@ export function registerInventoryModal() {
           params: [kami.id, item.index],
           description: `Feeding ${item.name} to ${kami.name}`,
           execute: async () => {
-            return api.player.pet.feed(kami.id, item.index);
+            return api.player.pet.use.food(kami.id, item.index);
+          },
+        });
+      };
+
+      const reviveKami = (kami: Kami, item: Item) => {
+        actions.add({
+          action: 'KamiRevive',
+          params: [kami.id, item.index],
+          description: `Reviving ${item.name} to ${kami.name}`,
+          execute: async () => {
+            return api.player.pet.use.revive(kami.id, item.index);
+          },
+        });
+      };
+
+      const renamePotionKami = (kami: Kami, item: Item) => {
+        actions.add({
+          action: 'KamiRenamePotion',
+          params: [kami.id, item.index],
+          description: `Allowing ${kami.name} to be renamed`,
+          execute: async () => {
+            return api.player.pet.use.renamePotion(kami.id, item.index);
           },
         });
       };
@@ -106,7 +128,18 @@ export function registerInventoryModal() {
           params: [item.index],
           description: `Consuming ${item.name}`,
           execute: async () => {
-            return api.player.account.consume(item.index);
+            return api.player.account.use.food(item.index);
+          },
+        });
+      };
+
+      const teleportAccount = (item: Item) => {
+        actions.add({
+          action: 'AccountTeleport',
+          params: [item.index],
+          description: `Consuming ${item.name}`,
+          execute: async () => {
+            return api.player.account.use.teleport(item.index);
           },
         });
       };
@@ -162,7 +195,14 @@ export function registerInventoryModal() {
             key='grid'
             account={account}
             inventories={getInventories()}
-            actions={{ feedKami, feedAccount, openLootbox }}
+            actions={{
+              feedKami,
+              reviveKami,
+              renamePotionKami,
+              feedAccount,
+              teleportAccount,
+              openLootbox,
+            }}
           />
         </ModalWrapper>
       );

@@ -49,7 +49,7 @@ export function registerPartyModal() {
           params: [kami.id, itemIndex],
           description: `Feeding ${kami.name}`,
           execute: async () => {
-            return api.player.pet.feed(kami.id, itemIndex);
+            return api.player.pet.use.food(kami.id, itemIndex);
           },
         });
       };
@@ -61,7 +61,7 @@ export function registerPartyModal() {
           params: [kami.id, itemIndex],
           description: `Reviving ${kami.name}`,
           execute: async () => {
-            return api.player.pet.revive(kami.id, itemIndex);
+            return api.player.pet.use.revive(kami.id, itemIndex);
           },
         });
       };

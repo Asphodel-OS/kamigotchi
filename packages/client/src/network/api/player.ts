@@ -6,11 +6,6 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   //     PET
 
-  // feed a pet using a Pet Item
-  function feedPet(petID: BigNumberish, itemIndex: number) {
-    return systems['system.pet.use.food'].executeTyped(petID, itemIndex);
-  }
-
   // level a pet, if it has enough experience
   function levelPet(petID: BigNumberish) {
     return systems['system.Pet.Level'].executeTyped(petID);
@@ -21,9 +16,18 @@ export function createPlayerAPI(systems: any) {
     return systems['system.Pet.Name'].executeTyped(petID, name);
   }
 
+  // feed a pet using a Pet Item
+  function useFoodPet(petID: BigNumberish, itemIndex: number) {
+    return systems['system.pet.use.food'].executeTyped(petID, itemIndex);
+  }
+
   // revive a pet using a Revive Item
-  function revivePet(petID: BigNumberish, reviveIndex: number) {
+  function useRevivePet(petID: BigNumberish, reviveIndex: number) {
     return systems['system.pet.use.revive'].executeTyped(petID, reviveIndex);
+  }
+
+  function useRenamePotionPet(petID: BigNumberish, itemIndex: number) {
+    return systems['system.pet.use.renamePotion'].executeTyped(petID, itemIndex);
   }
 
   // upgrade a pet's skill
@@ -55,8 +59,12 @@ export function createPlayerAPI(systems: any) {
     });
   }
 
-  function feedAccount(itemIndex: number) {
+  function useFoodAccount(itemIndex: number) {
     return systems['system.account.use.food'].executeTyped(itemIndex);
+  }
+
+  function useTeleportAccount(itemIndex: number) {
+    return systems['system.account.use.teleport'].executeTyped(itemIndex);
   }
 
   // @dev moves the account to another room from their current roomIndex
@@ -359,15 +367,17 @@ export function createPlayerAPI(systems: any) {
 
   return {
     pet: {
-      feed: feedPet,
       level: levelPet,
       name: namePet,
-      revive: revivePet,
-      use: usePetItem,
       skill: { upgrade: upgradePetSkill },
+      use: {
+        food: useFoodPet,
+        renamePotion: useRenamePotionPet,
+        revive: useRevivePet,
+      },
     },
     account: {
-      consume: feedAccount,
+      consume: useFoodAccount,
       fund: fundOperator,
       move: moveAccount,
       register: registerAccount,
@@ -378,6 +388,10 @@ export function createPlayerAPI(systems: any) {
         operator: setAccountOperator,
       },
       skill: { upgrade: upgradeAccountSkill },
+      use: {
+        food: useFoodAccount,
+        teleport: useTeleportAccount,
+      },
     },
     crafting: { craft },
     social: {

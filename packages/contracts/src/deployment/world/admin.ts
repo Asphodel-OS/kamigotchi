@@ -559,6 +559,10 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.item.registry', [index, type_, value], 'addStat');
   }
 
+  async function setItemRoom(index: number, roomIndex: number) {
+    genCall('system.item.registry', [index, roomIndex], 'setRoom');
+  }
+
   // @dev deletes an item registry
   async function deleteItem(index: number) {
     genCall('system.item.registry', [index], 'remove');
@@ -703,6 +707,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         },
         add: {
           stat: addStat,
+          room: setItemRoom,
         },
         delete: deleteItem,
       },

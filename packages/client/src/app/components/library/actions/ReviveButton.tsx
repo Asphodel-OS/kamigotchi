@@ -1,26 +1,24 @@
 import { reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { Inventory } from 'network/shapes/Item';
-import { Kami, onCooldown } from 'network/shapes/Kami';
+import { Inventory, filterInventories } from 'network/shapes/Item';
+import { Kami } from 'network/shapes/Kami';
 import { IconButton, Tooltip } from '../base';
 
 // button for reviving kami
-// TOOD: clean this up
 export const ReviveButton = (kami: Kami, account: Account, triggerAction: Function) => {
   let tooltipText = 'Revive your Kami';
   if (!hasRevive(account)) tooltipText = 'no revives in inventory';
-  else if (onCooldown(kami)) tooltipText = 'on cooldown';
 
-  const stockedInventories =
-    account.inventories?.filter((inv: Inventory) => inv.item.type === 'REVIVE') ?? [];
-  const reviveIndex = stockedInventories.length > 0 ? stockedInventories[0].item.index : 110;
+  let inventories = account.inventories ?? [];
+  inventories = filterInventories(inventories, 'FOOD', 'KAMI');
+  const reviveIndex = inventories.length > 0 ? inventories[0].item.index : 110;
 
   return (
     <Tooltip text={[tooltipText]}>
       <IconButton
         img={reviveIcon}
         onClick={() => triggerAction(kami, reviveIndex)}
-        disabled={!hasRevive(account) || onCooldown(kami)}
+        disabled={!hasRevive(account)}
         noMargin
       />
     </Tooltip>

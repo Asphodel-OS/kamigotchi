@@ -13,7 +13,10 @@ interface Props {
   inventories: Inventory[];
   actions: {
     feedKami: (kami: Kami, item: Item) => void;
+    reviveKami: (kami: Kami, item: Item) => void;
+    renamePotionKami: (kami: Kami, item: Item) => void;
     feedAccount: (item: Item) => void;
+    teleportAccount: (item: Item) => void;
     openLootbox: (item: Item, amount: number) => void;
   };
 }
@@ -21,15 +24,49 @@ interface Props {
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
   const { account, inventories, actions } = props;
-  const { feedKami, feedAccount, openLootbox } = actions;
 
   /////////////////
   // INTERPRETATION
 
+  const getActions = (item: Item, bal: number): Option[] => {
+    if (item.type === 'LOOTBOX') return getLootboxActions(item, bal);
+    else if (item.for && item.for === 'KAMI') return getKamiActions(item, bal);
+    else if (item.for && item.for === 'ACCOUNT') return getAccountActions(item, bal);
+    else return [];
+  };
+
+  const getAccountActions = (item: Item, bal: number): Option[] => {
+    if (item.type === 'FOOD') {
+      return [{ text: 'Eat (nom)', onClick: () => actions.feedAccount(item) }];
+    } else if (item.type === 'TELEPORT') {
+      return [{ text: 'Use', onClick: () => actions.teleportAccount(item) }];
+    } else return []; // should not reach here
+  };
+
+  const getKamiActions = (item: Item, bal: number): Option[] => {
+    const kamis = getAvailableKamis(item);
+
+    let action: (kami: Kami) => void;
+    if (item.type === 'FOOD') action = (kami) => actions.feedKami(kami, item);
+    else if (item.type === 'REVIVE') action = (kami) => actions.reviveKami(kami, item);
+    else if (item.type === 'RENAME_POTION') action = (kami) => actions.renamePotionKami(kami, item);
+
+    return kamis.map((kami) => ({ text: kami.name, onClick: () => action(kami) }));
+  };
+
+  const getAvailableKamis = (item: Item): Kami[] => {
+    let kamis = getAccessibleKamis(account);
+    if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
+    if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
+    if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
+    return kamis;
+  };
+
   const getLootboxActions = (item: Item, bal: number): Option[] => {
     const count = Math.min(Math.max(bal, 2), 10);
-    const options = [{ text: 'Open', onClick: () => openLootbox(item, 1) }];
-    if (bal > 1) options.push({ text: `Open ${count}`, onClick: () => openLootbox(item, count) });
+    const options = [{ text: 'Open', onClick: () => actions.openLootbox(item, 1) }];
+    if (bal > 1)
+      options.push({ text: `Open ${count}`, onClick: () => actions.openLootbox(item, count) });
     return options;
   };
 
@@ -38,19 +75,21 @@ export const ItemGrid = (props: Props) => {
 
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
-    let options: Option[] = [];
+    // let options: Option[] = [];
 
-    if (item.is.lootbox) {
-      options = getLootboxActions(item, inv.balance);
-    } else if (item.for && item.for === 'ACCOUNT') {
-      options = [{ text: 'Consume', onClick: () => feedAccount(inv.item) }];
-    } else if (item.for && item.for === 'KAMI') {
-      let kamis = getAccessibleKamis(account);
-      if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
-      if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
-      if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
-      options = kamis.map((kami) => ({ text: kami.name, onClick: () => feedKami(kami, inv.item) }));
-    }
+    // if (item.type === 'LOOTBOX') {
+    //   options = getLootboxActions(item, inv.balance);
+    // } else if (item.for && item.for === 'ACCOUNT') {
+    //   options = [{ text: 'Consume', onClick: () => feedAccount(inv.item) }];
+    // } else if (item.for && item.for === 'KAMI') {
+    //   let kamis = getAccessibleKamis(account);
+    //   if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
+    //   if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
+    //   if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
+    //   options = kamis.map((kami) => ({ text: kami.name, onClick: () => feedKami(kami, inv.item) }));
+    // }
+
+    const options = getActions(item, inv.balance);
 
     return (
       <Tooltip key={item.index} text={[item.name, '', item.description ?? '']}>

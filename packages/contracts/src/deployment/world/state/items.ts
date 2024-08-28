@@ -7,6 +7,7 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
 
   const ignoreTypes = ['OTHER'];
   const baseTypes = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT'];
+  const consumableTypes = ['FOOD', 'REVIVE', 'RENAME_POTION', 'TELEPORT'];
   for (let i = 0; i < itemsCSV.length; i++) {
     const item = itemsCSV[i];
     if (
@@ -23,7 +24,7 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
       if (ignoreTypes.includes(type)) continue;
 
       if (baseTypes.includes(type)) await setBase(api, item);
-      else if (type === 'CONSUMABLE') await setConsumable(api, item);
+      else if (consumableTypes.includes(type)) await setConsumable(api, item);
       else if (type === 'LOOTBOX') await setLootbox(api, item, droptablesCSV);
       else console.error('Item type not found: ' + type);
     } catch {
@@ -72,10 +73,11 @@ async function setConsumable(api: AdminAPI, item: any) {
     (item['For'] ?? 'KAMI').toUpperCase(),
     item['Name'].trim(),
     item['Description'],
-    item['ConsumableType'].toUpperCase(),
+    item['Type'].toUpperCase(),
     getItemImage(item['Name'])
   );
   await addStat(api, item);
+  await setRoom(api, item);
 }
 
 async function setLootbox(api: AdminAPI, item: any, droptables: any) {
@@ -115,4 +117,10 @@ async function addStat(api: AdminAPI, item: any) {
     await api.registry.item.add.stat(index, 'HARMONY', Number(item['Harmony']));
   if (Number(item['Stamina']) > 0)
     await api.registry.item.add.stat(index, 'STAMINA', Number(item['Stamina']));
+}
+
+async function setRoom(api: AdminAPI, item: any) {
+  const index = Number(item['Index']);
+
+  if (Number(item['Room']) > 0) await api.registry.item.add.room(index, Number(item['Room']));
 }

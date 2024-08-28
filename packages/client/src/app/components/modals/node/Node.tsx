@@ -111,7 +111,7 @@ export function registerNodeModal() {
           params: [kami.id, itemIndex],
           description: `Feeding ${kami.name}`,
           execute: async () => {
-            return api.player.pet.feed(kami.id, itemIndex);
+            return api.player.pet.use.food(kami.id, itemIndex);
           },
         });
       };

@@ -1,6 +1,5 @@
 import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { feedIcon } from 'assets/images/icons/actions';
-import { HOLY_DUST_INDEX, REVIVE_INDEX } from 'constants/items';
 import { Account, hasFood } from 'network/shapes/Account';
 import { filterInventories, Inventory } from 'network/shapes/Item';
 import { calcCooldown, isFull, isHarvesting, Kami } from 'network/shapes/Kami';
@@ -40,12 +39,7 @@ const getDisabledTooltip = (kami: Kami, account: Account): string => {
 // gets the list of IconListButton Options for feeding a kami
 const getFeedOptions = (kami: Kami, account: Account, triggerAction: Function) => {
   let inventories = account.inventories ?? [];
-  inventories = filterInventories(inventories, 'consumable', 'KAMI');
-  inventories = inventories.filter((inv: Inventory) => {
-    const notRevive = inv?.item.index !== REVIVE_INDEX;
-    const notHolyDust = inv?.item.index !== HOLY_DUST_INDEX;
-    return notRevive && notHolyDust;
-  });
+  inventories = filterInventories(inventories, 'FOOD', 'KAMI');
 
   const options = inventories.map((inv: Inventory) => {
     const feedAction = () => triggerAction(kami, inv.item.index);
