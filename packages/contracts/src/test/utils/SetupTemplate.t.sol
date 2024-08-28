@@ -1086,24 +1086,24 @@ abstract contract SetupTemplate is TestSetupImports {
   function _initHealthConfigs() internal virtual {
     // Kami Health Heal Rates
     // (prec, base, base_prec, mult_prec)
-    _setConfigArray("KAMI_REST_METABOLISM", [uint32(6), 1000, 3, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_REST_METABOLISM", [uint32(0), 0, 1200, 3, 0, 0, 1000, 3]);
   }
 
   function _initHarvestConfigs() internal virtual {
     // Harvest Rates
     _setConfigArray("KAMI_HARV_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]);
     _setConfigArray("KAMI_HARV_FERTILITY", [uint32(0), 0, 1500, 3, 0, 0, 1000, 3]);
-    _setConfigArray("KAMI_HARV_INTENSITY", [uint32(0), 0, 25, 0, 0, 0, 480, 0]); // inversed boost
+    _setConfigArray("KAMI_HARV_INTENSITY", [uint32(5), 0, 1920, 0, 0, 0, 40, 0]); // inversed boost
     _setConfigArray("KAMI_HARV_BOUNTY", [uint32(0), 9, 0, 0, 0, 0, 1000, 3]);
-    _setConfigArray("KAMI_HARV_STRAIN", [uint32(0), 0, 5000, 3, 0, 0, 1000, 3]);
+    _setConfigArray("KAMI_HARV_STRAIN", [uint32(20), 0, 7500, 3, 0, 0, 1000, 3]);
   }
 
   function _initLiquidationConfigs() internal virtual {
     _setConfigArray("KAMI_LIQ_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]); // [neut, up, down, prec]
     _setConfigArray("KAMI_LIQ_ANIMOSITY", [uint32(0), 0, 400, 3, 0, 0, 0, 0]); // nontraditional AST node
     _setConfigArray("KAMI_LIQ_THRESHOLD", [uint32(0), 3, 1000, 3, 0, 3, 0, 0]);
-    _setConfigArray("KAMI_LIQ_SALVAGE", [uint32(0), 0, 0, 3, 0, 0, 0, 0]);
-    _setConfigArray("KAMI_LIQ_SPOILS", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_LIQ_SALVAGE", [uint32(0), 2, 0, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_LIQ_SPOILS", [uint32(35), 2, 0, 3, 0, 0, 0, 0]);
     _setConfigArray("KAMI_LIQ_KARMA", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
   }
 
