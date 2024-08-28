@@ -40,7 +40,7 @@ abstract contract SetupTemplate is TestSetupImports {
   // SETUP
 
   function setUp() public virtual override {
-    super.setUp();
+    setUpWorld();
 
     setUpConfigs();
     setUpTime();
@@ -52,6 +52,10 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpItems();
     setUpRooms();
     setUpNodes();
+  }
+
+  function setUpWorld() public virtual {
+    super.setUp();
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed

@@ -28,6 +28,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -170,15 +171,6 @@ library LibPet {
 
   /////////////////
   // CALCULATIONS
-
-  // Calculate the full cooldown duration of a Kami's Standard Action
-  function calcCooldown(IUintComp components, uint256 id) internal view returns (uint256) {
-    int256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN").toInt256();
-    int256 shift = LibBonus.getRaw(components, id, "STND_COOLDOWN_SHIFT");
-    int256 cooldown = base + shift;
-    if (cooldown < 0) return 0;
-    return cooldown.toUint256();
-  }
 
   // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
   function calcMetabolism(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -333,9 +325,7 @@ library LibPet {
 
   // Check whether a pet is on cooldown after its last Standard Action
   function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = calcCooldown(components, id);
-    return idleTime <= idleRequirement;
+    return LibCooldown.isActive(components, id);
   }
 
   /// @notice Check if a pet can be named, rename
