@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibString } from "solady/utils/LibString.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibDroptable } from "libraries/LibDroptable.sol";
+import { LibItem } from "libraries/LibItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.item.registry"));
 
@@ -20,8 +20,9 @@ contract _ItemRegistrySystem is System {
       string memory description,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, string, string));
+    require(LibItem.getByIndex(components, index) == 0, "item reg: index used");
 
-    uint256 id = LibItemRegistry.createItem(components, index, type_, name, description, media);
+    uint256 id = LibItem.createItem(components, index, type_, name, description, media);
     return id;
   }
 
@@ -34,13 +35,11 @@ contract _ItemRegistrySystem is System {
       string memory type_,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, string, string, string));
+    require(LibItem.getByIndex(components, index) == 0, "item reg: index used");
 
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
-    require(registryID == 0, "ItemReg: item already exists");
-    require(!LibString.eq(name, ""), "ItemReg: name empty");
-
-    return
-      LibItemRegistry.createConsumable(components, index, for_, name, description, type_, media);
+    uint256 id = LibItem.createItem(components, index, type_, name, description, media);
+    LibItem.setFor(components, id, for_);
+    return id;
   }
 
   function createLootbox(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -52,34 +51,39 @@ contract _ItemRegistrySystem is System {
       uint256[] memory weights,
       string memory media
     ) = abi.decode(arguments, (uint32, string, string, uint32[], uint256[], string));
+    require(LibItem.getByIndex(components, index) == 0, "item reg: index used");
 
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
-    require(registryID == 0, "ItemReg: item already exists");
-    require(!LibString.eq(name, ""), "ItemReg: name empty");
-
-    return
-      LibItemRegistry.createLootbox(components, index, name, description, keys, weights, media);
+    uint256 id = LibItem.createItem(components, index, "LOOTBOX", name, description, media);
+    LibDroptable.set(components, id, keys, weights);
+    return id;
   }
 
   function addStat(uint32 index, string memory type_, int32 value) public onlyOwner {
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
 
-    LibItemRegistry.addStat(components, registryID, type_, value);
+    LibItem.addStat(components, registryID, type_, value);
+  }
+
+  function setRoom(uint32 index, uint32 roomIndex) public onlyOwner {
+    uint256 registryID = LibItem.getByIndex(components, index);
+    require(registryID != 0, "ItemReg: item does not exist");
+
+    LibItem.setRoom(components, registryID, roomIndex);
   }
 
   function setUnburnable(uint32 index) public onlyOwner {
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
 
-    LibItemRegistry.setUnburnable(components, registryID);
+    LibItem.setUnburnable(components, registryID);
   }
 
   function remove(uint32 index) public onlyOwner {
-    uint256 registryID = LibItemRegistry.getByIndex(components, index);
+    uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
 
-    LibItemRegistry.deleteItem(components, registryID);
+    LibItem.deleteItem(components, registryID);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

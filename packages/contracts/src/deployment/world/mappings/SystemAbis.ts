@@ -15,13 +15,14 @@ import _RelationshipRegistrySystem from "../../../../../client/abi/_Relationship
 import _RoomRegistrySystem from "../../../../../client/abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../../../../../client/abi/_SkillRegistrySystem.json";
 import _TraitRegistrySystem from "../../../../../client/abi/_TraitRegistrySystem.json";
-import AccountConsumeSystem from "../../../../../client/abi/AccountConsumeSystem.json";
 import AccountFundSystem from "../../../../../client/abi/AccountFundSystem.json";
 import AccountMoveSystem from "../../../../../client/abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSystem.json";
 import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
+import AccountUseFoodSystem from "../../../../../client/abi/AccountUseFoodSystem.json";
+import AccountUseTeleportSystem from "../../../../../client/abi/AccountUseTeleportSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
 import Farm20DepositSystem from "../../../../../client/abi/Farm20DepositSystem.json";
@@ -43,14 +44,14 @@ import Pet721MetadataSystem from "../../../../../client/abi/Pet721MetadataSystem
 import Pet721ProxySystem from "../../../../../client/abi/Pet721ProxySystem.json";
 import Pet721StakeSystem from "../../../../../client/abi/Pet721StakeSystem.json";
 import Pet721UnstakeSystem from "../../../../../client/abi/Pet721UnstakeSystem.json";
-import PetFeedSystem from "../../../../../client/abi/PetFeedSystem.json";
 import PetGachaMintSystem from "../../../../../client/abi/PetGachaMintSystem.json";
 import PetGachaRerollSystem from "../../../../../client/abi/PetGachaRerollSystem.json";
 import PetGachaRevealSystem from "../../../../../client/abi/PetGachaRevealSystem.json";
 import PetLevelSystem from "../../../../../client/abi/PetLevelSystem.json";
 import PetNameSystem from "../../../../../client/abi/PetNameSystem.json";
-import PetReviveSystem from "../../../../../client/abi/PetReviveSystem.json";
-import PetUseItemSystem from "../../../../../client/abi/PetUseItemSystem.json";
+import PetUseFoodSystem from "../../../../../client/abi/PetUseFoodSystem.json";
+import PetUseRenamePotionSystem from "../../../../../client/abi/PetUseRenamePotionSystem.json";
+import PetUseReviveSystem from "../../../../../client/abi/PetUseReviveSystem.json";
 import ProductionCollectSystem from "../../../../../client/abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../../../../../client/abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../../../../../client/abi/ProductionStartSystem.json";
@@ -84,13 +85,14 @@ export const SystemAbis = {
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
-  "system.Account.Consume": AccountConsumeSystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Register": AccountRegisterSystem.abi,
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
+  "system.account.use.food": AccountUseFoodSystem.abi,
+  "system.account.use.teleport": AccountUseTeleportSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
@@ -112,14 +114,14 @@ export const SystemAbis = {
   "system.Pet721.Proxy": Pet721ProxySystem.abi,
   "system.Pet721.Stake": Pet721StakeSystem.abi,
   "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
-  "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Gacha.Mint": PetGachaMintSystem.abi,
   "system.Pet.Gacha.Reroll": PetGachaRerollSystem.abi,
   "system.Pet.Gacha.Reveal": PetGachaRevealSystem.abi,
   "system.Pet.Level": PetLevelSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
-  "system.Pet.Revive": PetReviveSystem.abi,
-  "system.Pet.Use.Item": PetUseItemSystem.abi,
+  "system.pet.use.food": PetUseFoodSystem.abi,
+  "system.pet.use.renamePotion": PetUseRenamePotionSystem.abi,
+  "system.pet.use.revive": PetUseReviveSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,

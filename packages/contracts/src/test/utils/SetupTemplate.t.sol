@@ -283,7 +283,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _PetFeedSystem.executeTyped(petID, foodIndex);
+    _PetUseFoodSystem.executeTyped(petID, foodIndex);
   }
 
   // easy function for getting the proper inputs to revive a pet
@@ -292,7 +292,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _PetReviveSystem.executeTyped(petID, reviveIndex);
+    _PetUseReviveSystem.executeTyped(petID, reviveIndex);
   }
 
   function _startProduction(uint petID, uint nodeID) internal virtual returns (uint) {
@@ -604,7 +604,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createGenericItem(uint32 index) public returns (uint256 id) {
     vm.startPrank(deployer);
 
-    id = LibItemRegistry.genID(index);
+    id = LibItem.genID(index);
     _IsRegistryComponent.set(id);
     _IndexItemComponent.set(id, index);
 

@@ -35,7 +35,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -101,29 +101,6 @@ library LibPet {
   function drain(IUintComp components, uint256 id, int32 amt) internal {
     if (amt == 0) return;
     HealthComponent(getAddressById(components, HealthCompID)).sync(id, -1 * amt);
-  }
-
-  // apply the effects of a consumable item to the pet
-  // assume all requisite checks are run in advance
-  // TODO: add support for experience, revives and holy dust
-  function feed(IUintComp components, uint256 id, uint32 itemIndex) internal {
-    uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
-    string memory type_ = LibItemRegistry.getType(components, registryID);
-
-    // handle niche consumables
-    if (LibString.eq(type_, "REVIVE") && isDead(components, id)) {
-      revive(components, id);
-      logRevive(components, id);
-    } else if (LibString.eq(type_, "RENAME_POTION")) {
-      setNameable(components, id, true);
-    }
-
-    // handle experience boosts
-    if (LibExperience.has(components, registryID)) {
-      LibExperience.inc(components, id, LibExperience.get(components, registryID));
-    }
-
-    LibStat.applyAll(components, registryID, id);
   }
 
   // heal the pet by a given amount

@@ -6,38 +6,32 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 
-import { getAddressById, getComponentById } from "solecs/utils.sol";
-import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
-
-uint256 constant ID = uint256(keccak256("system.Account.Consume"));
+uint256 constant ID = uint256(keccak256("system.account.use.food"));
 
 // eat one snack
-contract AccountConsumeSystem is System {
+contract AccountUseFoodSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint32 itemIndex = abi.decode(arguments, (uint32));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    // check whether the specified item is consumable
-    require(LibItemRegistry.isConsumable(components, itemIndex), "AccountConsume: item not edible");
-    require(LibItemRegistry.isForAccount(components, itemIndex), "AccountConsume: beneath you");
+    // item checks
+    require(LibItem.isTypeOf(components, itemIndex, "FOOD"), "that's not food");
+    require(LibItem.isForAccount(components, itemIndex), "that's not for accounts");
 
+    // use items
     LibAccount.syncStamina(components, accID);
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
-
-    if (itemIndex == 119) {
-      // hardcode mina teleport scroll - to actually implement soon
-      IndexRoomComponent(getAddressById(components, RoomCompID)).set(accID, 13);
-    } else LibAccount.consume(components, accID, itemIndex);
+    LibItem.applyStats(components, itemIndex, accID);
 
     // standard logging and tracking
-    LibData.inc(components, accID, itemIndex, "ITEM_USE", 1);
+    LibItem.logUse(components, accID, itemIndex, 1);
     LibAccount.updateLastTs(components, accID);
+
     return "";
   }
 

@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface PetUseItemSystemInterface extends utils.Interface {
+export interface PetUseFoodSystemInterface extends utils.Interface {
   functions: {
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
@@ -99,12 +99,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface PetUseItemSystem extends BaseContract {
+export interface PetUseFoodSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PetUseItemSystemInterface;
+  interface: PetUseFoodSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

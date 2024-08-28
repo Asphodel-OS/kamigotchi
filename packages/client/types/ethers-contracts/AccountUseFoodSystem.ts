@@ -27,11 +27,11 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface PetReviveSystemInterface extends utils.Interface {
+export interface AccountUseFoodSystemInterface extends utils.Interface {
   functions: {
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint32)": FunctionFragment;
+    "executeTyped(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,7 +52,7 @@ export interface PetReviveSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -99,12 +99,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface PetReviveSystem extends BaseContract {
+export interface AccountUseFoodSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PetReviveSystemInterface;
+  interface: AccountUseFoodSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -136,7 +136,6 @@ export interface PetReviveSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -159,7 +158,6 @@ export interface PetReviveSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    id: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -180,7 +178,6 @@ export interface PetReviveSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -218,7 +215,6 @@ export interface PetReviveSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -242,7 +238,6 @@ export interface PetReviveSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

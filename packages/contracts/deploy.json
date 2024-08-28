@@ -1,5 +1,6 @@
 {
   "components": [
+    { "comp": "IsConsumableComponent", "name": "_DeprecatedIsConsumable", "type": "bool" },
     { "comp": "IsLogComponent", "name": "_DeprecatedIsLog", "type": "bool" },
     { "comp": "IsLootboxComponent", "name": "_DeprecatedIsLootbox", "type": "bool" },
     { "comp": "IsObjectiveComponent", "name": "_DeprecatedIsObjective", "type": "bool" },
@@ -62,7 +63,6 @@
     { "comp": "IsAccountComponent", "name": "IsAccount", "type": "bool" },
     { "comp": "IsBonusComponent", "name": "IsBonus", "type": "bool" },
     { "comp": "IsCompleteComponent", "name": "IsComplete", "type": "bool" },
-    { "comp": "IsConsumableComponent", "name": "IsConsumable", "type": "bool" },
     { "comp": "IsEffectComponent", "name": "IsEffect", "type": "bool" },
     { "comp": "IsEquippedComponent", "name": "IsEquipped", "type": "bool" },
     { "comp": "IsFriendshipComponent", "name": "IsFriendship", "type": "bool" },
@@ -165,8 +165,8 @@
         "IdHolderComponent",
         "IDToComponent",
         "IsRegistryComponent",
-        "IsConsumableComponent",
         "IndexItemComponent",
+        "IndexRoomComponent",
         "HealthComponent",
         "HarmonyComponent",
         "PowerComponent",
@@ -303,8 +303,12 @@
       "writeAccess": ["IdHolderComponent", "IDScoreTypeComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
-      "name": "AccountConsumeSystem",
-      "writeAccess": ["*"]
+      "name": "AccountUseFoodSystem",
+      "writeAccess": ["StaminaComponent", "TimeLastComponent", "TimeLastActionComponent", "ValueComponent"]
+    },
+    {
+      "name": "AccountUseTeleportSystem",
+      "writeAccess": ["IndexRoomComponent", "TimeLastComponent", "TimeLastActionComponent", "ValueComponent"]
     },
     {
       "name": "AccountMoveSystem",
@@ -515,28 +519,6 @@
       "writeAccess": []
     },
     {
-      "name": "PetFeedSystem",
-      "writeAccess": [
-        "IdHolderComponent",
-        "IDScoreTypeComponent",
-        "IndexComponent",
-        "ExperienceComponent",
-        "HarmonyComponent",
-        "HasFlagComponent",
-        "HealthComponent",
-        "PowerComponent",
-        "RateComponent",
-        "SlotsComponent",
-        "StateComponent",
-        "TypeComponent",
-        "ValueComponent",
-        "ViolenceComponent",
-        "TimeLastComponent",
-        "TimeResetComponent",
-        "TimeStartComponent"
-      ]
-    },
-    {
       "name": "PetGachaMintSystem",
       "writeAccess": [
         "BlockRevealComponent",
@@ -596,20 +578,31 @@
       "writeAccess": ["HasFlagComponent", "NameComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
-      "name": "PetReviveSystem",
+      "name": "PetUseFoodSystem",
       "writeAccess": [
         "IdHolderComponent",
-        "IndexComponent",
+        "IDScoreTypeComponent",
+        "ExperienceComponent",
+        "HarmonyComponent",
+        "HasFlagComponent",
         "HealthComponent",
-        "StateComponent",
+        "PowerComponent",
+        "RateComponent",
+        "SlotsComponent",
+        "ValueComponent",
+        "ViolenceComponent",
         "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeResetComponent",
+        "TimeStartComponent"
       ]
     },
     {
-      "name": "PetUseItemSystem",
+      "name": "PetUseRenamePotionSystem",
       "writeAccess": ["HasFlagComponent", "TimeLastComponent", "ValueComponent"]
+    },
+    {
+      "name": "PetUseReviveSystem",
+      "writeAccess": ["HealthComponent", "StateComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
       "name": "ProductionCollectSystem",
@@ -786,7 +779,7 @@
     "LibGoals",
     "LibHarvest",
     "LibInventory",
-    "LibItemRegistry",
+    "LibItem",
     "LibKill",
     "LibListing",
     "LibMint20",

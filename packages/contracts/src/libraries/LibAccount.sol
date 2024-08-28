@@ -27,7 +27,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -67,7 +67,7 @@ library LibAccount {
   }
 
   function consume(IUintComp components, uint256 id, uint32 itemIndex) internal {
-    uint256 registryID = LibItemRegistry.getByIndex(components, itemIndex);
+    uint256 registryID = LibItem.getByIndex(components, itemIndex);
     LibStat.applyAll(components, registryID, id);
   }
 

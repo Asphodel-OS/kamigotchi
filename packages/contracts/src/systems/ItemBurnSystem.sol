@@ -9,7 +9,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.item.burn"));
 
@@ -22,7 +22,7 @@ contract ItemBurnSystem is System {
     (uint32[] memory indices, uint256[] memory amts) = abi.decode(arguments, (uint32[], uint256[]));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    require(LibItemRegistry.isBurnable(components, indices), "ItemBurn: not burnable");
+    require(LibItem.isBurnable(components, indices), "ItemBurn: not burnable");
 
     // burning
     LibInventory.decForBatch(components, accID, indices, amts); // implicit inventory balance check

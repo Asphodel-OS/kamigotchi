@@ -15,13 +15,14 @@ import _RelationshipRegistrySystem from "../abi/_RelationshipRegistrySystem.json
 import _RoomRegistrySystem from "../abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../abi/_SkillRegistrySystem.json";
 import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
-import AccountConsumeSystem from "../abi/AccountConsumeSystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
 import AccountSetFarcasterDataSystem from "../abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
+import AccountUseFoodSystem from "../abi/AccountUseFoodSystem.json";
+import AccountUseTeleportSystem from "../abi/AccountUseTeleportSystem.json";
 import CraftSystem from "../abi/CraftSystem.json";
 import DroptableRevealSystem from "../abi/DroptableRevealSystem.json";
 import Farm20DepositSystem from "../abi/Farm20DepositSystem.json";
@@ -43,14 +44,14 @@ import Pet721MetadataSystem from "../abi/Pet721MetadataSystem.json";
 import Pet721ProxySystem from "../abi/Pet721ProxySystem.json";
 import Pet721StakeSystem from "../abi/Pet721StakeSystem.json";
 import Pet721UnstakeSystem from "../abi/Pet721UnstakeSystem.json";
-import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetGachaMintSystem from "../abi/PetGachaMintSystem.json";
 import PetGachaRerollSystem from "../abi/PetGachaRerollSystem.json";
 import PetGachaRevealSystem from "../abi/PetGachaRevealSystem.json";
 import PetLevelSystem from "../abi/PetLevelSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
-import PetReviveSystem from "../abi/PetReviveSystem.json";
-import PetUseItemSystem from "../abi/PetUseItemSystem.json";
+import PetUseFoodSystem from "../abi/PetUseFoodSystem.json";
+import PetUseRenamePotionSystem from "../abi/PetUseRenamePotionSystem.json";
+import PetUseReviveSystem from "../abi/PetUseReviveSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
@@ -84,13 +85,14 @@ export const SystemAbis = {
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
-  "system.Account.Consume": AccountConsumeSystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Register": AccountRegisterSystem.abi,
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
+  "system.account.use.food": AccountUseFoodSystem.abi,
+  "system.account.use.teleport": AccountUseTeleportSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
@@ -112,14 +114,14 @@ export const SystemAbis = {
   "system.Pet721.Proxy": Pet721ProxySystem.abi,
   "system.Pet721.Stake": Pet721StakeSystem.abi,
   "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
-  "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Gacha.Mint": PetGachaMintSystem.abi,
   "system.Pet.Gacha.Reroll": PetGachaRerollSystem.abi,
   "system.Pet.Gacha.Reveal": PetGachaRevealSystem.abi,
   "system.Pet.Level": PetLevelSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
-  "system.Pet.Revive": PetReviveSystem.abi,
-  "system.Pet.Use.Item": PetUseItemSystem.abi,
+  "system.pet.use.food": PetUseFoodSystem.abi,
+  "system.pet.use.renamePotion": PetUseRenamePotionSystem.abi,
+  "system.pet.use.revive": PetUseReviveSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,

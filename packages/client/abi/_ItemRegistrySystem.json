@@ -150,6 +150,24 @@
     },
     {
       "type": "function",
+      "name": "setRoom",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "roomIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "setUnburnable",
       "inputs": [
         {
@@ -219,6 +237,7 @@
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "remove(uint32)": "00d84fd8",
+    "setRoom(uint32,uint32)": "96a2c1d3",
     "setUnburnable(uint32)": "35727b4e",
     "transferOwnership(address)": "f2fde38b"
   }

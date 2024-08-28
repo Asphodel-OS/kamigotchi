@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.listing.registry"));
 
@@ -22,7 +22,7 @@ contract _ListingRegistrySystem is System {
     );
 
     require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
-    require(LibItemRegistry.getByIndex(components, itemIndex) != 0, "Item: does not exist");
+    require(LibItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
     uint256 id = LibListing.get(components, npcIndex, itemIndex);
     require(id == 0, "Listing already exists");
@@ -42,7 +42,7 @@ contract _ListingRegistrySystem is System {
     ) = abi.decode(arguments, (uint32, uint32, string, string, uint32, uint256));
 
     require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
-    require(LibItemRegistry.getByIndex(components, itemIndex) != 0, "Item: does not exist");
+    require(LibItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
     uint256 id = LibListing.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");

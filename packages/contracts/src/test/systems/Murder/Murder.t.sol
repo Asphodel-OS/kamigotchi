@@ -384,7 +384,7 @@ contract MurderTest is SetupTemplate {
     uint32 itemIndex;
     uint[] memory registryIDs = _foodRegistryIDs;
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
+      itemIndex = _IndexItemComponent.get(registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
@@ -393,7 +393,7 @@ contract MurderTest is SetupTemplate {
     uint32 itemIndex;
     uint[] memory registryIDs = _reviveRegistryIDs;
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
+      itemIndex = _IndexItemComponent.get(registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }

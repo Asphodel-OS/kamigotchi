@@ -15,13 +15,13 @@ contract InventoryTest is SetupTemplate {
   function testCreate(uint32 index) public {
     vm.assume(index != 0);
 
-    assertEq(LibItemRegistry.getByIndex(components, index), 0);
+    assertEq(LibItem.getByIndex(components, index), 0);
 
     uint256 id = _createGenericItem(index);
     assertEq(_IndexItemComponent.get(id), index);
-    assertEq(LibItemRegistry.getByIndex(components, index), id);
+    assertEq(LibItem.getByIndex(components, index), id);
 
-    uint256 expectedid = LibItemRegistry.genID(index);
+    uint256 expectedid = LibItem.genID(index);
     assertEq(expectedid, id);
   }
 

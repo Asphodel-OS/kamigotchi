@@ -17,7 +17,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
@@ -95,7 +95,7 @@ library LibGetter {
   ) internal view returns (uint256) {
     if (_type.eq("FACTION")) return LibFactions.getByIndex(components, index);
     else if (_type.eq("GOAL")) return LibGoals.getByIndex(components, index);
-    else if (_type.eq("ITEM")) return LibItemRegistry.getByIndex(components, index);
+    else if (_type.eq("ITEM")) return LibItem.getByIndex(components, index);
     else if (_type.eq("NODE")) return LibNode.getByIndex(components, index);
     else if (_type.eq("NPC")) return LibNPC.get(components, index);
     else if (_type.eq("QUEST")) return LibQuestRegistry.getByIndex(components, index);

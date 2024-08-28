@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface AccountConsumeSystemInterface extends utils.Interface {
+export interface AccountUseTeleportSystemInterface extends utils.Interface {
   functions: {
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
@@ -99,12 +99,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface AccountConsumeSystem extends BaseContract {
+export interface AccountUseTeleportSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: AccountConsumeSystemInterface;
+  interface: AccountUseTeleportSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

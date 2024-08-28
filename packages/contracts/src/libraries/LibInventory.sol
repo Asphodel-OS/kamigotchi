@@ -14,7 +14,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 ////////////////////
@@ -211,8 +211,8 @@ library LibInventory {
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory v) {
-    uint256 registryID = LibItemRegistry.getByInstance(components, id);
-    return LibItemRegistry.getType(components, registryID);
+    uint256 registryID = LibItem.getByInstance(components, id);
+    return LibItem.getType(components, registryID);
   }
 
   function getTypeByIndex(
@@ -220,8 +220,8 @@ library LibInventory {
     uint32 itemIndex
   ) internal view returns (string memory) {
     // skips registry existence check - its implicitly checked when getting type
-    uint256 registryID = LibItemRegistry.genID(itemIndex);
-    return LibItemRegistry.getType(components, registryID);
+    uint256 registryID = LibItem.genID(itemIndex);
+    return LibItem.getType(components, registryID);
   }
 
   /////////////////

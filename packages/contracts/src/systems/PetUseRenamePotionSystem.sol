@@ -7,34 +7,36 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
 
-uint256 constant ID = uint256(keccak256("system.Pet.Use.Item"));
+uint256 constant ID = uint256(keccak256("system.pet.use.renamePotion"));
 
-contract PetUseItemSystem is System {
+contract PetUseRenamePotionSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint256 regID = LibItemRegistry.getByIndex(components, itemIndex);
 
+    // item checks
+    require(LibItem.isTypeOf(components, itemIndex, "RENAME_POTION"), "that's not a rename potion");
+    require(LibItem.isForPet(components, itemIndex), "that's not for pets");
+
+    // pet checks
     LibPet.assertAccount(components, petID, accID);
-    require(LibPet.isResting(components, petID), "Pet not resting");
-    LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check
+    require(LibPet.isResting(components, petID), "Pet not resting"); // implicit location check
 
-    /// NOTE: might separate into different systems later, or better generalised handling
-    string memory type_ = LibItemRegistry.getType(components, regID);
-    if (LibString.eq(type_, "RENAME_POTION")) {
-      LibPet.setNameable(components, petID, true);
-    } else {
-      require(false, "ItemUse: unknown item type");
-    }
+    // use item
+    LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check
+    LibPet.setNameable(components, petID, true);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
+    LibItem.logUse(components, accID, itemIndex, 1);
+    LibAccount.updateLastTs(components, accID);
+
     return "";
   }
 

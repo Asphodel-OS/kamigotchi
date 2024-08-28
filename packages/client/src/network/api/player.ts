@@ -8,7 +8,7 @@ export function createPlayerAPI(systems: any) {
 
   // feed a pet using a Pet Item
   function feedPet(petID: BigNumberish, itemIndex: number) {
-    return systems['system.Pet.Feed'].executeTyped(petID, itemIndex);
+    return systems['system.pet.use.food'].executeTyped(petID, itemIndex);
   }
 
   // level a pet, if it has enough experience
@@ -23,7 +23,7 @@ export function createPlayerAPI(systems: any) {
 
   // revive a pet using a Revive Item
   function revivePet(petID: BigNumberish, reviveIndex: number) {
-    return systems['system.Pet.Revive'].executeTyped(petID, reviveIndex);
+    return systems['system.pet.use.revive'].executeTyped(petID, reviveIndex);
   }
 
   // upgrade a pet's skill
@@ -33,7 +33,7 @@ export function createPlayerAPI(systems: any) {
 
   // use a pet item
   function usePetItem(petID: BigNumberish, itemIndex: BigNumberish) {
-    return systems['system.Pet.Use.Item'].executeTyped(petID, itemIndex);
+    return systems['system.pet.use.renamePotion'].executeTyped(petID, itemIndex);
   }
 
   /////////////////
@@ -56,7 +56,7 @@ export function createPlayerAPI(systems: any) {
   }
 
   function feedAccount(itemIndex: number) {
-    return systems['system.Account.Consume'].executeTyped(itemIndex);
+    return systems['system.account.use.food'].executeTyped(itemIndex);
   }
 
   // @dev moves the account to another room from their current roomIndex

@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface PetFeedSystemInterface extends utils.Interface {
+export interface PetUseRenamePotionSystemInterface extends utils.Interface {
   functions: {
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
@@ -99,12 +99,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface PetFeedSystem extends BaseContract {
+export interface PetUseRenamePotionSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PetFeedSystemInterface;
+  interface: PetUseRenamePotionSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -136,7 +136,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -159,7 +159,7 @@ export interface PetFeedSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    id: PromiseOrValue<BigNumberish>,
+    petID: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -180,7 +180,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -218,7 +218,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -242,7 +242,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

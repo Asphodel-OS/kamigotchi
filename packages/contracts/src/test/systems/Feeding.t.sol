@@ -32,12 +32,12 @@ contract FeedingTest is SetupTemplate {
   // HELPER FUNCTIONS
 
   function _getListingItemIndex(uint listingID) internal view returns (uint32) {
-    uint registryID = LibItemRegistry.getByInstance(components, listingID);
-    return LibItemRegistry.getIndex(components, registryID);
+    uint registryID = LibItem.getByInstance(components, listingID);
+    return _IndexItemComponent.get(registryID);
   }
 
   function _getFoodHealAmount(uint32 index) internal view returns (int32) {
-    uint registryID = LibItemRegistry.getByIndex(components, index);
+    uint registryID = LibItem.getByIndex(components, index);
     return LibStat.getHealth(components, registryID).base;
   }
 
@@ -54,7 +54,7 @@ contract FeedingTest is SetupTemplate {
     uint32 itemIndex;
     uint[] memory registryIDs = _foodRegistryIDs;
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
+      itemIndex = _IndexItemComponent.get(registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
@@ -63,7 +63,7 @@ contract FeedingTest is SetupTemplate {
     uint32 itemIndex;
     uint[] memory registryIDs = _reviveRegistryIDs;
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibItemRegistry.getIndex(components, registryIDs[i]);
+      itemIndex = _IndexItemComponent.get(registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
@@ -106,7 +106,7 @@ contract FeedingTest is SetupTemplate {
         itemIndex = _getListingItemIndex(_listingIDs[j]);
         for (uint k = 0; k < numPets; k++) {
           vm.expectRevert("pet not urs");
-          _PetFeedSystem.executeTyped(petIDs[k], itemIndex);
+          _PetUseFoodSystem.executeTyped(petIDs[k], itemIndex);
         }
       }
       vm.stopPrank();
@@ -118,7 +118,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
+        _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -164,7 +164,7 @@ contract FeedingTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("pet not urs");
         vm.prank(_getOperator(i));
-        _PetReviveSystem.executeTyped(petIDs[j], itemIndex);
+        _PetUseReviveSystem.executeTyped(petIDs[j], itemIndex);
       }
     }
 
@@ -214,7 +214,7 @@ contract FeedingTest is SetupTemplate {
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("pet too far");
-        _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
+        _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -227,7 +227,7 @@ contract FeedingTest is SetupTemplate {
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("pet too far");
-        _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
+        _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -313,7 +313,7 @@ contract FeedingTest is SetupTemplate {
     //   for (uint j = 0; j < numPets; j++) {
     //     vm.expectRevert("Pet: already full");
     //     vm.prank(_getOperator(playerIndex));
-    //     _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
+    //     _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
     //   }
     // }
 
@@ -346,7 +346,7 @@ contract FeedingTest is SetupTemplate {
     //   for (uint j = 0; j < numPets; j++) {
     //     vm.expectRevert("Pet: must be resting|harvesting");
     //     vm.prank(_getOperator(playerIndex));
-    //     _PetFeedSystem.executeTyped(petIDs[j], itemIndex);
+    //     _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
     //   }
     // }
   }
@@ -369,8 +369,8 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("PetRevive: pet not dead");
-      _PetReviveSystem.executeTyped(petIDs[i], itemIndex);
+      vm.expectRevert("pet not dead");
+      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
     }
 
     // (harvesting, full hp) check that we CANNOT revive
@@ -379,24 +379,24 @@ contract FeedingTest is SetupTemplate {
       productionIDs[i] = _startProduction(petIDs[i], _nodeID);
       _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("PetRevive: pet not dead");
-      _PetReviveSystem.executeTyped(petIDs[i], itemIndex);
+      vm.expectRevert("pet not dead");
+      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
     }
 
     // (harvesting, partial hp) check that we CANNOT revive
     _fastForward(1 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("PetRevive: pet not dead");
-      _PetReviveSystem.executeTyped(petIDs[i], itemIndex);
+      vm.expectRevert("pet not dead");
+      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
     }
 
     // (harvesting, no hp) check that we CANNOT revive
     _fastForward(100 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("PetRevive: pet not dead");
-      _PetReviveSystem.executeTyped(petIDs[i], itemIndex);
+      vm.expectRevert("pet not dead");
+      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
     }
 
     // start production for our enemy kamis and kill off the originals
@@ -419,8 +419,8 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("PetRevive: pet not dead");
-      _PetReviveSystem.executeTyped(petIDs[i], itemIndex);
+      vm.expectRevert("pet not dead");
+      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
     }
   }
 

@@ -29,8 +29,7 @@ library LibEntityType {
     uint256 id,
     string memory type_
   ) internal view returns (bool) {
-    return
-      EntityTypeComponent(getAddressById(components, EntityTypeCompID)).safeGetString(id).eq(type_);
+    return EntityTypeComponent(getAddressById(components, EntityTypeCompID)).eqString(id, type_);
   }
 
   function isShape(
@@ -38,9 +37,6 @@ library LibEntityType {
     uint256[] memory ids,
     string memory type_
   ) internal view returns (bool) {
-    string[] memory types = EntityTypeComponent(getAddressById(components, EntityTypeCompID))
-      .safeGetBatchString(ids);
-    for (uint256 i; i < ids.length; i++) if (!types[i].eq(type_)) return false;
-    return true;
+    return EntityTypeComponent(getAddressById(components, EntityTypeCompID)).eqString(ids, type_);
   }
 }

@@ -22,7 +22,7 @@ import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-// LibTraitRegistry is based heavily off LibItemRegistry, but is used for traits.
+// LibTraitRegistry is based heavily off LibItem, but is used for traits.
 // IndexTrait is the automatically incremented domain index, but traits are
 // more commonly identified by the specific index (e.g. body, hand, color index)
 

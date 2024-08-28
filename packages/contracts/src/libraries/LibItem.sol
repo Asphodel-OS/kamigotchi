@@ -6,6 +6,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
@@ -13,23 +14,45 @@ import { DescriptionComponent, ID as DescriptionCompID } from "components/Descri
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
+import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
+import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
-// Registries hold shared information on individual entity instances in the world.
-// This can include attribute information such as capabilities, stats and effects.
-library LibItemRegistry {
+/** @notice
+ * Items are shapes that can be held by inventories. They are fungible.
+ *
+ * Item info is stored via a registry shape:
+ *  - EntityType: ITEM
+ *  - IsRegistry
+ *  - ItemIndex
+ *  - Type
+ *  - Name
+ *  - Description
+ *  - MediaURI
+ *
+ * Consumable items are a rough grouping of usable items (linked to a system).
+ * they follow this pattern (although does not strictly need to):
+ *  - Type: defines item behaviour. expected 1 system per type
+ *  - For: for kamis/accounts/others
+ *
+ * Notable item shapes (defined in _ItemRegistrySystem):
+ *  - lootbox: type LOOTBOX, LibDroptable for weights and keys
+ */
+library LibItem {
   using SafeCastLib for int32;
   using LibString for string;
+  using LibComp for IComponent;
 
   /////////////////
   // SHAPES
@@ -48,88 +71,40 @@ library LibItemRegistry {
     string memory mediaURI
   ) internal returns (uint256 id) {
     id = genID(index);
-    require(
-      !IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id),
-      "item reg: item alr exists"
-    );
-
     LibEntityType.set(components, id, "ITEM");
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
 
-    setIndex(components, id, index);
-    setType(components, id, type_);
-    setIsRegistry(components, id);
-
-    setName(components, id, name);
-    setDescription(components, id, description);
-    setMediaURI(components, id, mediaURI);
-  }
-
-  /// @notice Create a Registry entry for a Consumable Item.
-  function createConsumable(
-    IUintComp components,
-    uint32 index,
-    string memory for_,
-    string memory name,
-    string memory description,
-    string memory type_,
-    string memory mediaURI
-  ) internal returns (uint256 id) {
-    id = createItem(components, index, type_, name, description, mediaURI);
-    setIsConsumable(components, id);
-
-    LibFor.setFromString(components, id, for_);
-  }
-
-  /// @notice sets lootbox registry entity
-  /// @param components  The components contract
-  /// @param index   The index of the item to create an inventory for
-  /// @param keys    The keys of the items in lootbox's droptable
-  /// @param weights The weights of the items in lootbox's droptable
-  /// @dev intended for registry entry 10000-11000
-  function createLootbox(
-    IUintComp components,
-    uint32 index,
-    string memory name,
-    string memory description,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    string memory mediaURI
-  ) internal returns (uint256 id) {
-    id = createItem(components, index, "LOOTBOX", name, description, mediaURI);
-    setIsConsumable(components, id);
-
-    LibDroptable.set(components, id, keys, weights);
+    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
+    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
   }
 
   /// @notice adds a stat to an item
   function addStat(IUintComp components, uint256 id, string memory type_, int32 value) internal {
     if (type_.eq("XP"))
-      setExperience(components, id, value.toUint256()); // TODO: convert this to Stat shape
+      ExperienceComponent(getAddressById(components, ExpCompID)).set(id, value.toUint256());
     else if (type_.eq("HEALTH")) LibStat.setHealth(components, id, Stat(0, 0, 0, value));
     else if (type_.eq("MAXHEALTH")) LibStat.setHealth(components, id, Stat(0, value, 0, 0));
     else if (type_.eq("POWER")) LibStat.setPower(components, id, Stat(0, value, 0, 0));
     else if (type_.eq("VIOLENCE")) LibStat.setViolence(components, id, Stat(0, value, 0, 0));
     else if (type_.eq("HARMONY")) LibStat.setHarmony(components, id, Stat(0, value, 0, 0));
     else if (type_.eq("STAMINA")) LibStat.setStamina(components, id, Stat(0, 0, 0, value));
-    else revert("LibItemRegistry: invalid stat");
+    else revert("LibItem: invalid stat");
   }
 
   /// @notice delete a Registry entry for an item.
   function deleteItem(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
-
     IndexItemComponent indexComp = IndexItemComponent(getAddressById(components, IndexItemCompID));
     indexComp.remove(id);
     IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-    IsConsumableComponent(getAddressById(components, IsConsumableCompID)).remove(id);
-    LibFor.unset(components, id);
 
     NameComponent(getAddressById(components, NameCompID)).remove(id);
     DescriptionComponent(getAddressById(components, DescriptionCompID)).remove(id);
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
     MediaURIComponent(getAddressById(components, MediaURICompID)).remove(id);
-
-    LibDroptable.unset(components, id);
 
     LibStat.unsetHealth(components, id);
     LibStat.unsetPower(components, id);
@@ -139,15 +114,57 @@ library LibItemRegistry {
     LibStat.unsetStamina(components, id);
     ExperienceComponent(getAddressById(components, ExpCompID)).remove(id);
 
+    LibDroptable.unset(components, id);
+    LibFor.unset(components, id);
     LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
+    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(id);
+  }
+
+  /////////////////
+  // INTERACTIONS
+
+  /// @notice apply an item's stat to a target
+  function applyStats(IUintComp components, uint32 itemIndex, uint256 targetID) internal {
+    uint256 regID = genID(itemIndex);
+
+    ExperienceComponent xpComp = ExperienceComponent(getAddressById(components, ExpCompID));
+    uint256 xp = LibComp.safeGetUint256(xpComp, regID);
+    if (xp > 0) LibComp.inc(xpComp, targetID, xp);
+
+    LibStat.applyAll(components, regID, targetID);
+  }
+
+  function applyMove(IUintComp components, uint32 itemIndex, uint256 targetID) internal {
+    uint256 regID = genID(itemIndex);
+    IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
+    roomComp.set(targetID, roomComp.get(regID));
   }
 
   /////////////////
   // CHECKERS
 
-  // check whether an entity is an item
-  function isItem(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibEntityType.isShape(components, id, "ITEM");
+  /// @notice check if entity is an item of specific type
+  function isTypeOf(
+    IUintComp components,
+    uint32 index,
+    string memory type_
+  ) internal view returns (bool) {
+    uint256 id = genID(index);
+    return
+      LibEntityType.isShape(components, id, "ITEM") ||
+      getComponentById(components, TypeCompID).eqString(id, type_);
+  }
+
+  function isTypeOf(
+    IUintComp components,
+    uint32[] memory indices,
+    string memory type_
+  ) internal view returns (bool) {
+    uint256[] memory ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+    return
+      LibEntityType.isShape(components, ids, "ITEM") ||
+      LibComp.eqString(getComponentById(components, TypeCompID), ids, type_);
   }
 
   function isBurnable(IUintComp components, uint32 index) internal view returns (bool) {
@@ -164,7 +181,8 @@ library LibItemRegistry {
   // check whether an entity is consumable by its index
   function isConsumable(IUintComp components, uint32 index) internal view returns (bool) {
     uint256 id = genID(index);
-    return getComponentById(components, IsConsumableCompID).has(id);
+    // return getComponentById(components, IsConsumableCompID).has(id);
+    return true;
   }
 
   function isForAccount(IUintComp components, uint32 index) internal view returns (bool) {
@@ -188,11 +206,6 @@ library LibItemRegistry {
     return LibString.eq(type_, "LOOTBOX");
   }
 
-  // check whether an entity is an Item Registry instance
-  function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
-    return isRegistry(components, id) && isItem(components, id);
-  }
-
   // check whether an entity is part of a Registry
   function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
     return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id);
@@ -205,10 +218,6 @@ library LibItemRegistry {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).get(id);
-  }
-
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
     return comp.has(id) ? comp.get(id) : "";
@@ -217,40 +226,17 @@ library LibItemRegistry {
   /////////////////
   // SETTERS
 
+  function setFor(IUintComp components, uint256 id, string memory for_) internal {
+    LibFor.setFromString(components, id, for_);
+  }
+
+  function setRoom(IUintComp components, uint256 id, uint32 roomIndex) internal {
+    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
+  }
+
+  /// @notice prevent item from being burned via ItemBurnSystem
   function setUnburnable(IUintComp components, uint256 id) internal {
     LibFlag.setFull(components, id, "ITEM_UNBURNABLE");
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
-  }
-
-  function setIsConsumable(IUintComp components, uint256 id) internal {
-    IsConsumableComponent(getAddressById(components, IsConsumableCompID)).set(id);
-  }
-
-  function setIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-  }
-
-  function setDescription(IUintComp components, uint256 id, string memory description) internal {
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
-  }
-
-  function setExperience(IUintComp components, uint256 id, uint256 experience) internal {
-    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
-  }
-
-  function setMediaURI(IUintComp components, uint256 id, string memory mediaURI) internal {
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
-  }
-
-  function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-  }
-
-  function setType(IUintComp components, uint256 id, string memory type_) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
 
   /////////////////
@@ -277,5 +263,18 @@ library LibItemRegistry {
   /// @notice Retrieve the ID of a registry entry
   function genID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.item", index)));
+  }
+
+  /////////////////
+  // DATA LOGGING
+
+  function logUse(IUintComp components, uint256 accID, uint32 itemIndex, uint256 amt) internal {
+    LibData.inc(components, accID, itemIndex, "ITEM_USE", amt);
+  }
+
+  function logFeed(IUintComp components, uint256 accID, uint256 amt) internal {
+    // TODO: merge score and data entities?
+    LibScore.incFor(components, accID, "FEED", amt);
+    LibData.inc(components, accID, 0, "PET_FEED", amt); // world2: change to FEED
   }
 }

@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibItemRegistry } from "libraries/LibItemRegistry.sol";
+import { LibItem } from "libraries/LibItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.Lootbox.Commit"));
 
@@ -23,8 +23,8 @@ contract LootboxCommitSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     LibInventory.decFor(components, accID, index, amt); // implicit balance check
 
-    uint256 regID = LibItemRegistry.getByIndex(components, index);
-    require(LibItemRegistry.isLootbox(components, index), "LootboxStartReveal: not lootbox");
+    uint256 regID = LibItem.getByIndex(components, index);
+    require(LibItem.isLootbox(components, index), "LootboxStartReveal: not lootbox");
 
     uint256 revealID = LibDroptable.commit(world, components, regID, amt, accID);
 

@@ -15,6 +15,7 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
+    _DeprecatedIsConsumable: defineBoolComponent(world, '_DeprecatedIsConsumable', 'component.is.consumable'),
     _DeprecatedIsLog: defineBoolComponent(world, '_DeprecatedIsLog', 'component.is.log'),
     _DeprecatedIsLootbox: defineBoolComponent(world, '_DeprecatedIsLootbox', 'component.is.lootbox'),
     _DeprecatedIsObjective: defineBoolComponent(world, '_DeprecatedIsObjective', 'component.is.objective'),
@@ -77,7 +78,6 @@ export function createComponents(world: World) {
     IsAccount: defineBoolComponent(world, 'IsAccount', 'component.is.account'),
     IsBonus: defineBoolComponent(world, 'IsBonus', 'component.is.bonus'),
     IsComplete: defineBoolComponent(world, 'IsComplete', 'component.is.complete'),
-    IsConsumable: defineBoolComponent(world, 'IsConsumable', 'component.is.consumable'),
     IsEffect: defineBoolComponent(world, 'IsEffect', 'component.is.effect'),
     IsEquipped: defineBoolComponent(world, 'IsEquipped', 'component.is.equipped'),
     IsFriendship: defineBoolComponent(world, 'IsFriendship', 'component.is.friendship'),
