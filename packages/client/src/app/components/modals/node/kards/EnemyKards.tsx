@@ -66,7 +66,7 @@ export const EnemyCards = (props: Props) => {
       return 0;
     });
     setSorted(sorted);
-  }, [kamis.length, sort]);
+  }, [kamis, sort]);
 
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
