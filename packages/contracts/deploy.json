@@ -163,7 +163,8 @@
         "NameComponent",
         "TypeComponent",
         "ValueComponent",
-        "WeightsComponent"
+        "WeightsComponent",
+        "SubtypeComponent"
       ]
     },
     {
@@ -204,7 +205,8 @@
         "IndexNPCComponent",
         "LogicTypeComponent",
         "TypeComponent",
-        "ValueComponent"
+        "ValueComponent",
+        "SubtypeComponent"
       ]
     },
     {
@@ -224,7 +226,8 @@
         "NameComponent",
         "TypeComponent",
         "ValueComponent",
-        "WeightsComponent"
+        "WeightsComponent",
+        "SubtypeComponent"
       ]
     },
     {
@@ -249,6 +252,7 @@
         "LogicTypeComponent",
         "KeysComponent",
         "StaminaComponent",
+        "SubtypeComponent",
         "ValuesComponent",
         "ValueComponent",
         "TypeComponent"
@@ -280,6 +284,7 @@
         "LogicTypeComponent",
         "NameComponent",
         "TypeComponent",
+        "SubtypeComponent",
         "ValueComponent"
       ]
     },
