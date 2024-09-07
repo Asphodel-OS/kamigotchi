@@ -104,7 +104,7 @@ export const Kards = (props: Props) => {
   const DisplayedAction = (kami: Kami, account: Account) => {
     if (isResting(kami)) return FeedButton(kami, account, actions.feed);
     if (isHarvesting(kami)) return FeedButton(kami, account, actions.feed);
-    if (isDead(kami)) return ReviveButton(kami, account, actions.feed);
+    if (isDead(kami)) return ReviveButton(kami, account, actions.revive);
   };
 
   return (
