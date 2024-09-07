@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
@@ -13,6 +14,7 @@ import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsComple
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 
 import { LibGetter } from "libraries/utils/LibGetter.sol";
 
@@ -42,8 +44,10 @@ struct Condition {
  * Basic Condition structure:
  * - TypeComponent (key)
  * - LogicTypeComponent (key)
- * - IndexComponent (optional key)
+ * - IndexComponent (key)
  * - ValueComponent (value)
+ * - IDPointerComponent (optional): for reverse mapping
+ * - SubtypeComponent (optional): for additional context
  *
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
  * heavily inspired by Quest condition checks. Does not yet support increase/decrease checks, but can in future
@@ -93,12 +97,18 @@ library LibConditional {
     IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, pointerID);
   }
 
+  /// @notice adds an optional subtype to a condition
+  function addSubtype(IUintComp components, uint256 id, string memory subtype) internal {
+    SubtypeComponent(getAddressById(components, SubtypeCompID)).set(id, subtype);
+  }
+
   function remove(IUintComp components, uint256 id) internal {
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
     IndexComponent(getAddressById(components, IndexCompID)).remove(id);
     ValueComponent(getAddressById(components, ValueCompID)).remove(id);
     IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
+    SubtypeComponent(getAddressById(components, SubtypeCompID)).remove(id);
   }
 
   ///////////////////////
@@ -211,6 +221,26 @@ library LibConditional {
 
   function queryFor(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     return IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(id);
+  }
+
+  /// @notice queries for conditions with subtype
+  function queryFor(
+    IUintComp components,
+    uint256 id,
+    string memory subtype
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IDPointerCompID),
+      abi.encode(id)
+    );
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, SubtypeCompID),
+      abi.encode(subtype)
+    );
+    return LibQuery.query(fragments);
   }
 
   ///////////////////////
