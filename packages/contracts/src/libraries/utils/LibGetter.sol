@@ -12,7 +12,7 @@ import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsComple
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibPhase } from "libraries/utils/LibPhase.sol";
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
@@ -21,6 +21,7 @@ import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
@@ -79,6 +80,8 @@ library LibGetter {
       return LibRoom.getIndex(components, targetID) == index;
     } else if (_type.eq("PHASE")) {
       return LibPhase.get(block.timestamp) == index;
+    } else if (_type.eq("COOLDOWN")) {
+      return LibCooldown.isActive(components, targetID);
     } else {
       require(false, "Unknown bool condition type");
     }

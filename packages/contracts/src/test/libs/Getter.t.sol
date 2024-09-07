@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-contract LibConditionalTest is SetupTemplate {
+contract LibGetterTest is SetupTemplate {
   uint256 defaultAccIndex = 0;
   uint256 defaultAccID;
   address defaultOperator;
@@ -17,7 +17,25 @@ contract LibConditionalTest is SetupTemplate {
     defaultAccID = _getAccount(defaultAccIndex);
   }
 
-  function testGetBalanceOfData(uint256 amt, uint32 index) public {
+  function testGetCooldown() public {
+    uint256 entityID = uint256(keccak256(abi.encodePacked("test.entity")));
+    vm.startPrank(deployer);
+    LibCooldown.start(components, entityID);
+    vm.stopPrank();
+
+    // on cooldown
+    assertTrue(LibGetter.getBool(components, entityID, "COOLDOWN", 0, 0));
+
+    // still on cooldown
+    _fastForward(1);
+    assertTrue(LibGetter.getBool(components, entityID, "COOLDOWN", 0, 0));
+
+    // off cooldown
+    _fastForward(_idleRequirement);
+    assertFalse(LibGetter.getBool(components, entityID, "COOLDOWN", 0, 0));
+  }
+
+  function testGetDataBal(uint256 amt, uint32 index) public {
     string memory type_ = "BLAHBLAHBLAH";
 
     vm.startPrank(deployer);
@@ -28,7 +46,7 @@ contract LibConditionalTest is SetupTemplate {
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, type_, index), amt);
   }
 
-  function testGetBalanceOfItem(uint256 amt, uint32 index) public {
+  function testGetItemBal(uint256 amt, uint32 index) public {
     vm.assume(index != 0);
 
     vm.startPrank(deployer);
@@ -39,7 +57,7 @@ contract LibConditionalTest is SetupTemplate {
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", index), amt);
   }
 
-  function testGetBalanceOfCoin(uint256 amt) public {
+  function testGetCoinBal(uint256 amt) public {
     vm.startPrank(deployer);
     LibInventory.setFor(components, defaultAccID, MUSU_INDEX, amt);
     vm.stopPrank();
@@ -47,7 +65,7 @@ contract LibConditionalTest is SetupTemplate {
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
   }
 
-  function testGetBalanceOfLevel(uint256 amt) public {
+  function testGetLevel(uint256 amt) public {
     vm.startPrank(deployer);
     LibExperience.setLevel(components, defaultAccID, amt);
     vm.stopPrank();
@@ -55,7 +73,7 @@ contract LibConditionalTest is SetupTemplate {
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "LEVEL", 0), amt);
   }
 
-  function testGetBalanceOfKamis(uint256 amt) public {
+  function testGetNumKamis(uint256 amt) public {
     vm.assume(amt < 100);
 
     if (amt > 0) _mintPets(defaultAccIndex, amt);
@@ -63,7 +81,7 @@ contract LibConditionalTest is SetupTemplate {
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI", 0), amt);
   }
 
-  function testGetBalanceOfKamiHighestLevel() public {
+  function testGetKamiHighestLevel() public {
     uint256[] memory kamis = _mintPets(defaultAccIndex, 25);
     vm.startPrank(deployer);
     LibExperience.setLevel(components, kamis[0], 100);
@@ -77,7 +95,7 @@ contract LibConditionalTest is SetupTemplate {
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI_LEVEL_HIGHEST", 111), 111);
   }
 
-  function testGetBalanceOfSkill(uint32 index, uint256 holderID, uint256 amt) public {
+  function testGetSkillLevel(uint32 index, uint256 holderID, uint256 amt) public {
     vm.assume(index > 0);
     vm.assume(holderID > 0);
 
