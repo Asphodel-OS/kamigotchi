@@ -117,7 +117,7 @@
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
-      "writeAccess": ["HasFlagComponent", "IdHolderComponent", "TypeComponent"]
+      "writeAccess": ["HasFlagComponent", "IDPointerComponent", "TypeComponent", "SubtypeComponent"]
     },
     {
       "name": "_ConfigSetSystem",
@@ -163,7 +163,7 @@
         "ForComponent",
         "HasFlagComponent",
         "IDFromComponent",
-        "IdHolderComponent",
+        "IDPointerComponent",
         "IDToComponent",
         "IsRegistryComponent",
         "IndexItemComponent",
@@ -178,6 +178,7 @@
         "TypeComponent",
         "SlotsComponent",
         "StaminaComponent",
+        "SubtypeComponent",
         "ViolenceComponent"
       ]
     },

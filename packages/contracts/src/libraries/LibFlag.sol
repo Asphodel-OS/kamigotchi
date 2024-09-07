@@ -4,13 +4,15 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { HasFlagComponent, ID as HasFlagCompID } from "components/HasFlagComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 
 /** @notice
  * LibFlag handles Flags - meta-entities that indicate their parent Has a specific Flag.
@@ -21,8 +23,9 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
  * Entity Shape:
  *   - ID: hash(parentID, flagType)
  *   - HasFlag: bool
- *   - [optional] IdHolder: ID (for FE reverse mapping)
+ *   - [optional] IdHolder: ID (for reverse mapping)
  *   - [optional] Type: string (for FE reverse mapping)
+ *   - [optional] Subtype: string (for additional context)
  */
 library LibFlag {
   using LibComp for IComponent;
@@ -42,8 +45,7 @@ library LibFlag {
     _set(components, id, state);
   }
 
-  /// @notice sets a flag that can be reversed mapped on FE
-  /// @dev not needed for most flags - only those that are to be listed on FE
+  /// @notice sets a reverse queriable flag
   function setFull(
     IUintComp components,
     uint256 parentID,
@@ -51,8 +53,12 @@ library LibFlag {
   ) internal returns (uint256 id) {
     id = genID(parentID, flagType);
     _set(components, id, true);
-    getComponentById(components, IdHolderCompID).setIfEmpty(id, parentID);
+    getComponentById(components, IDPointerCompID).setIfEmpty(id, parentID);
     getComponentById(components, TypeCompID).setIfEmpty(id, flagType);
+  }
+
+  function addSubtype(IUintComp components, uint256 id, string memory subtype) internal {
+    SubtypeComponent(getAddressById(components, SubtypeCompID)).set(id, subtype);
   }
 
   /// @notice sets a flag, with ID already generated
@@ -70,8 +76,9 @@ library LibFlag {
   function removeFull(IUintComp components, uint256 parentID, string memory flag) internal {
     uint256 id = genID(parentID, flag);
     HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
-    getComponentById(components, IdHolderCompID).remove(id);
+    getComponentById(components, IDPointerCompID).remove(id);
     getComponentById(components, TypeCompID).remove(id);
+    getComponentById(components, SubtypeCompID).remove(id);
   }
 
   //////////////////
@@ -93,6 +100,58 @@ library LibFlag {
 
   //////////////////
   // GETTERS
+
+  /// @notice gets all flags on entity in string form
+  /// @dev only works for full flags
+  function getAll(IUintComp components, uint256 parentID) internal view returns (string[] memory) {
+    uint256[] memory ids = getAllIDs(components, parentID);
+    return TypeComponent(getAddressById(components, TypeCompID)).getBatch(ids);
+  }
+
+  /// @notice gets all flags on entity in string form
+  /// @dev only works for full flags; gets with addition subtype context
+  function getAll(
+    IUintComp components,
+    uint256 parentID,
+    string memory subtype
+  ) internal view returns (string[] memory) {
+    uint256[] memory ids = getAllIDs(components, parentID, subtype);
+    return TypeComponent(getAddressById(components, TypeCompID)).getBatch(ids);
+  }
+
+  /// @notice get all flagIDs for a given parentID
+  /// @dev only works for full flags
+  function getAllIDs(
+    IUintComp components,
+    uint256 parentID
+  ) internal view returns (uint256[] memory) {
+    IDPointerComponent idComp = IDPointerComponent(getAddressById(components, IDPointerCompID));
+    return idComp.getEntitiesWithValue(parentID);
+  }
+
+  /// @notice get all flagIDs for a given parentID and subtype
+  /// @dev only works for full flags; gets with addition subtype context
+  function getAllIDs(
+    IUintComp components,
+    uint256 parentID,
+    string memory subtype
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IDPointerCompID),
+      abi.encode(parentID)
+    );
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, SubtypeCompID),
+      abi.encode(subtype)
+    );
+    return LibQuery.query(fragments);
+  }
+
+  /////////////////
+  // CHECKERS
 
   function has(
     IUintComp components,
