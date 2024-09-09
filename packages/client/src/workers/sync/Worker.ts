@@ -225,10 +225,12 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       : -1;
     this.setLoadingState({ percentage: 50 });
     const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
+    console.log(snapshotBlockNumber);
+
     this.setLoadingState({ percentage: 100 });
     debug(`
-      cache block: ${cacheBlockNumber}, 
-      snapshot block: ${snapshotBlockNumber > 0 ? snapshotBlockNumber : 'Unavailable'}, 
+      cache block: ${cacheBlockNumber},
+      snapshot block: ${snapshotBlockNumber > 0 ? snapshotBlockNumber : 'Unavailable'},
       start sync at ${initialBlockNumber}
     `);
 
@@ -246,6 +248,12 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           msg: 'Fetching initial state from snapshot',
           percentage: 0,
         });
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
         initialState = await fetchSnapshotChunked(
           snapshotClient,
           worldContract.address,

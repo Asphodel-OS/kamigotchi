@@ -10,15 +10,15 @@ import { Observable, concatMap, from, map, of } from 'rxjs';
 
 import { createDecoder } from 'engine/encoders';
 import {
-  ECSStateReplyV2,
-  ECSStateSnapshotServiceClient,
-  ECSStateSnapshotServiceDefinition,
-} from 'engine/types/ecs-snapshot/ecs-snapshot';
-import {
   ECSStreamBlockBundleReply,
   ECSStreamServiceClient,
   ECSStreamServiceDefinition,
 } from 'engine/types/ecs-stream/ecs-stream';
+import {
+  StateReply,
+  StateSnapshotServiceClient,
+  StateSnapshotServiceDefinition,
+} from 'engine/types/snapshot/snapshot';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { ComponentsSchema } from 'types/ComponentsSchema';
 import { ContractConfig } from 'workers/types';
@@ -41,8 +41,8 @@ const debug = parentDebug.extend('syncUtils');
  * @param url ECSStateSnapshotService URL
  * @returns ECSStateSnapshotServiceClient
  */
-export function createSnapshotClient(url: string): ECSStateSnapshotServiceClient {
-  return createClient(ECSStateSnapshotServiceDefinition, createChannel(url));
+export function createSnapshotClient(url: string): StateSnapshotServiceClient {
+  return createClient(StateSnapshotServiceDefinition, createChannel(url));
 }
 
 /**
@@ -62,13 +62,13 @@ export function createStreamClient(url: string): ECSStreamServiceClient {
  * @returns Snapsot block number
  */
 export async function getSnapshotBlockNumber(
-  snapshotClient: ECSStateSnapshotServiceClient | undefined,
+  snapshotClient: StateSnapshotServiceClient | undefined,
   worldAddress: string
 ): Promise<number> {
   let blockNumber = -1;
   if (!snapshotClient) return blockNumber;
   try {
-    const response = await snapshotClient.getStateBlockLatest({ worldAddress });
+    const response = await snapshotClient.getStateBlock({ worldAddress });
     blockNumber = response.blockNumber;
   } catch (e) {
     console.error(e);
@@ -85,7 +85,7 @@ export async function getSnapshotBlockNumber(
  * @returns Promise resolving with {@link CacheStore} containing the snapshot state.
  */
 export async function fetchSnapshotChunked(
-  snapshotClient: ECSStateSnapshotServiceClient,
+  snapshotClient: StateSnapshotServiceClient,
   worldAddress: string,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
@@ -94,27 +94,30 @@ export async function fetchSnapshotChunked(
 ): Promise<CacheStore> {
   const cacheStore = createCacheStore();
   const chunkPercentage = Math.ceil(100 / numChunks);
-
-  try {
-    const response = pruneOptions
-      ? snapshotClient.getStateLatestStreamPrunedV2({
-          worldAddress,
-          chunkPercentage,
-          pruneAddress: pruneOptions?.playerAddress,
-          pruneComponentId: pruneOptions?.hashedComponentId,
-        })
-      : snapshotClient.getStateLatestStreamV2({
-          worldAddress,
-          chunkPercentage,
-        });
-
-    let i = 0;
-    for await (const responseChunk of response) {
-      await reduceFetchedState(responseChunk, cacheStore, decode);
-      setPercentage && setPercentage((i++ / numChunks) * 100);
-    }
-  } catch (e) {
-    console.error(e);
+  var numBlock = 0;
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+  var components = await snapshotClient.getComponents({
+    worldAddress,
+  });
+  console.log('Components');
+  console.log(components);
+  var entities = await snapshotClient.getEntities({
+    worldAddress,
+    numChunks,
+  });
+  console.log('Entities');
+  for await (const responseChunk of entities) {
+    console.log(responseChunk);
+  }
+  var state = await snapshotClient.getState({
+    worldAddress,
+    numChunks,
+  });
+  console.log('State');
+  for await (const responseChunk of state) {
+    console.log(responseChunk);
   }
 
   return cacheStore;
@@ -129,7 +132,7 @@ export async function fetchSnapshotChunked(
  * @returns Promise resolving once state is reduced into {@link CacheStore}.
  */
 export async function reduceFetchedState(
-  response: ECSStateReplyV2,
+  response: StateReply,
   cacheStore: CacheStore,
   decode: ReturnType<typeof createDecode>
 ): Promise<void> {

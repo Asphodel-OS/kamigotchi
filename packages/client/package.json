@@ -20,6 +20,7 @@
     "prettier:fix": "pnpm run prettier --write"
   },
   "devDependencies": {
+    "@bufbuild/protobuf": "^2.0.0",
     "@types/debug": "^4.1.12",
     "@types/howler": "^2.2.11",
     "@types/lodash": "^4.14.202",
