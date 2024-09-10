@@ -248,12 +248,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           msg: 'Fetching initial state from snapshot',
           percentage: 0,
         });
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA');
         initialState = await fetchSnapshotChunked(
           snapshotClient,
           worldContract.address,

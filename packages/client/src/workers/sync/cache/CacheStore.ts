@@ -1,7 +1,9 @@
 import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
 import { packTuple, transformIterator, unpackTuple } from '@mud-classic/utils';
 
+import { Uint8ArrayToHexString } from '@mud-classic/utils';
 import { ECSStateReply } from 'engine/types/ecs-snapshot/ecs-snapshot';
+import { ComponentReply, EntityReply } from 'engine/types/snapshot/snapshot';
 import { formatEntityID } from 'engine/utils';
 import { debug as parentDebug } from 'workers/debug';
 import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
@@ -22,6 +24,42 @@ export function createCacheStore() {
   const state: State = new Map<number, ComponentValue>();
 
   return { components, componentToIndex, entities, entityToIndex, blockNumber, state };
+}
+
+export function storeBlockNum(cacheStore: CacheStore, blockNum: number) {
+  cacheStore.blockNumber = blockNum;
+}
+
+export function storeComponents(cacheStore: CacheStore, componentReply: ComponentReply) {
+  componentReply.components.forEach(({ componentId, componentIdx }) => {
+    //console.log(`Component ID: ${componentId}, Index: ${componentIdx}`);
+    var hexComponentId = formatEntityID(componentId);
+    if (componentId != hexComponentId) {
+      //console.log('This ' + componentId + ' != ' + hexComponentId);
+      componentId = hexComponentId;
+    }
+    cacheStore.components.push(hexComponentId);
+    cacheStore.componentToIndex.set(hexComponentId, componentIdx);
+  });
+}
+
+export function storeEntities(cacheStore: CacheStore, entityReply: EntityReply) {
+  entityReply.entities.forEach(({ entityId, entityIdx }) => {
+    var hexEntityId = formatEntityID(Uint8ArrayToHexString(entityId));
+    //console.log(`Entity ID: ${hexEntityId}, Index: ${entityIdx}`);
+    cacheStore.entities.push(hexEntityId);
+    cacheStore.entityToIndex.set(hexEntityId, entityIdx);
+  });
+}
+export function storeEventCustom(
+  cacheStore: CacheStore,
+  componentIdx: number,
+  entityIdx: number,
+  value: any
+) {
+  const key = packTuple([componentIdx, entityIdx]);
+  if (value == null) cacheStore.state.delete(key);
+  else cacheStore.state.set(key, value);
 }
 
 export function storeEvent<Cm extends Components>(

@@ -31,7 +31,16 @@ import {
   SystemCallTransaction,
 } from '../types';
 import { fetchEventsInBlockRange } from './blocks';
-import { CacheStore, createCacheStore, storeEvent, storeEvents } from './cache';
+import {
+  CacheStore,
+  createCacheStore,
+  storeBlockNum,
+  storeComponents,
+  storeEntities,
+  storeEvent,
+  storeEventCustom,
+  storeEvents,
+} from './cache';
 import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
@@ -94,33 +103,58 @@ export async function fetchSnapshotChunked(
 ): Promise<CacheStore> {
   const cacheStore = createCacheStore();
   const chunkPercentage = Math.ceil(100 / numChunks);
+  var block = await snapshotClient.getStateBlock({
+    worldAddress,
+  });
+  storeBlockNum(cacheStore, block.blockNumber);
   var numBlock = 0;
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
   var components = await snapshotClient.getComponents({
     worldAddress,
   });
   console.log('Components');
-  console.log(components);
+  //console.log(components);
+  storeComponents(cacheStore, components);
   var entities = await snapshotClient.getEntities({
     worldAddress,
     numChunks,
   });
+
   console.log('Entities');
   for await (const responseChunk of entities) {
-    console.log(responseChunk);
+    //console.log(responseChunk);
+    storeEntities(cacheStore, responseChunk);
   }
-  var state = await snapshotClient.getState({
+  var states = await snapshotClient.getState({
     worldAddress,
     numChunks,
   });
   console.log('State');
-  for await (const responseChunk of state) {
-    console.log(responseChunk);
+  for (const component of cacheStore.components) {
+    //console.log(component);
   }
-
-  return cacheStore;
+  var i = 0;
+  for await (const responseChunk of states) {
+    console.log(i);
+    for (const state of responseChunk.state) {
+      // Process each State object
+      const { componentIdx, entityIdx, data, eventType } = state;
+      try {
+        const value = await decode(cacheStore.components[componentIdx], data);
+        storeEventCustom(cacheStore, componentIdx, entityIdx, value);
+      } catch (error) {
+        if (
+          '0x5d88ced8d8e079072bf73f49fc87661b519c50d79482941abb852ba2b10909cd' ==
+          cacheStore.components[componentIdx]
+        ) {
+          //console.log('failed: ', cacheStore.components[componentIdx]);
+          console.log('data: ', data);
+        }
+      }
+    }
+    setPercentage && setPercentage((i++ / numChunks) * 100);
+  }
+  return undefined;
+  cacheStore;
 }
 
 /**
@@ -343,7 +377,6 @@ export function createDecode() {
     // Decode the raw value
     return decoders[componentId]!(data);
   }
-
   return decode;
 }
 
