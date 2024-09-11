@@ -225,7 +225,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       : -1;
     this.setLoadingState({ percentage: 50 });
     const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
-    console.log(snapshotBlockNumber);
 
     this.setLoadingState({ percentage: 100 });
     debug(`
@@ -265,7 +264,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         initialState = await loadIndexDbCacheStore(indexDbCache);
         this.setLoadingState({ percentage: 100 });
       }
-
       debug(`got ${initialState.state.size} items from ${syncFromSnapshot ? 'snapshot' : 'cache'}`);
     }
 

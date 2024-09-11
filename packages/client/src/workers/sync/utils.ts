@@ -134,7 +134,6 @@ export async function fetchSnapshotChunked(
   }
   var i = 0;
   for await (const responseChunk of states) {
-    console.log(i);
     for (const state of responseChunk.state) {
       // Process each State object
       const { componentIdx, entityIdx, data, eventType } = state;
@@ -142,19 +141,12 @@ export async function fetchSnapshotChunked(
         const value = await decode(cacheStore.components[componentIdx], data);
         storeEventCustom(cacheStore, componentIdx, entityIdx, value);
       } catch (error) {
-        if (
-          '0x5d88ced8d8e079072bf73f49fc87661b519c50d79482941abb852ba2b10909cd' ==
-          cacheStore.components[componentIdx]
-        ) {
-          //console.log('failed: ', cacheStore.components[componentIdx]);
-          console.log('data: ', data);
-        }
+        console.log('failed: ', cacheStore.components[componentIdx]);
       }
     }
     setPercentage && setPercentage((i++ / numChunks) * 100);
   }
-  return undefined;
-  cacheStore;
+  return cacheStore;
 }
 
 /**

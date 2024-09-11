@@ -690,11 +690,6 @@ export const StateReply: MessageFns<StateReply> = {
       }
       reader.skip(tag & 7);
     }
-    message.state.forEach((param) => {
-      if (param.componentIdx == 118) {
-        console.log(param.data);
-      }
-    });
     return message;
   },
 

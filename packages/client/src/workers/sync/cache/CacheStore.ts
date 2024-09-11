@@ -16,9 +16,9 @@ export type CacheStore = ReturnType<typeof createCacheStore>;
 export type ECSCache = Awaited<ReturnType<typeof getIndexDbECSCache>>;
 
 export function createCacheStore() {
-  const components: string[] = [];
+  const components: string[] = ['0x'];
   const componentToIndex = new Map<string, number>();
-  const entities: string[] = [];
+  const entities: string[] = ['0x'];
   const entityToIndex = new Map<string, number>();
   const blockNumber = 0;
   const state: State = new Map<number, ComponentValue>();
@@ -122,6 +122,8 @@ export function getCacheStoreEntries<Cm extends Components>({
     const entity = entities[entityIndex];
 
     if (component == null || entity == null) {
+      console.log(`Unknown component / entity: ${componentIndex}, ${entityIndex}`);
+      console.log(`Unknown component / entity: ${component}, ${entity}`);
       throw new Error(`Unknown component / entity: ${component}, ${entity}`);
     }
 
