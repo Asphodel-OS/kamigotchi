@@ -357,6 +357,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     for (uint32 i; i < amount; i++) {
       uint32 index = startIndex + i;
       uint256 id = LibPet.genID(index);
+      require(!isPetComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
       ids[i] = id;
 
       idOwnsPetComp.set(id, GACHA_ID); // seed in gacha

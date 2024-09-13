@@ -160,7 +160,7 @@ export function createAdminAPI(systems: any) {
   }
 
   async function batchMint(amount: number) {
-    const perBatch = 10;
+    const perBatch = 7;
     for (let i = 0; i < amount; i += perBatch) {
       await systems['system.Pet721.BatchMint'].batchMint(perBatch);
       await sleepIf();
