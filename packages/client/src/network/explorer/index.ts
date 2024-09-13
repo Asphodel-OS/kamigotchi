@@ -84,7 +84,10 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     kamis: {
-      all: (options?: KamiOptions) => getAllKamis(world, components, options),
+      all: (options?: KamiOptions) => {
+        const kamis = getAllKamis(world, components, options);
+        return kamis.sort((a, b) => a.index - b.index);
+      },
       get: (index: number, options?: {}) => {
         return getKamiByIndex(world, components, index, options);
       },
