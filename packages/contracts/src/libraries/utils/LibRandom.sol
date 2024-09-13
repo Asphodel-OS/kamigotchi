@@ -37,12 +37,12 @@ library LibRandom {
   // UNWEIGHTED
 
   /// @notice gets a random number from a seed via modulo
-  function getRandom(uint256 randN, uint256 max) internal pure returns (uint256) {
+  function get(uint256 randN, uint256 max) internal pure returns (uint256) {
     return randN % max;
   }
 
   /// @notice gets a batch of random numbers from a seed via modulo, with replacement
-  function getRandomBatch(
+  function getBatch(
     uint256 randN,
     uint256 max,
     uint256 count
@@ -58,7 +58,7 @@ library LibRandom {
   }
 
   /// @notice gets a batch of random numbers from a seed via modulo, without replacement
-  function getRandomBatchNoReplacement(
+  function getBatchNoReplacement(
     uint256 randN,
     uint256 max,
     uint256 count
@@ -75,7 +75,7 @@ library LibRandom {
   }
 
   /// @notice gets a batch of random numbers from a seed via modulo, without replacement
-  function getRandomBatchNoReplacement(
+  function getBatchNoReplacement(
     uint256[] memory randNs,
     uint256 max
   ) internal pure returns (uint256[] memory) {

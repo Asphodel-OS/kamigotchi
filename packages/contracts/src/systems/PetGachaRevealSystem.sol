@@ -23,7 +23,7 @@ contract PetGachaRevealSystem is System, AuthRoles {
     require(LibGacha.extractIsCommits(components, rawCommitIDs), "not gacha commit");
 
     // sorts commits by cronological order via entityID
-    uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
+    uint256[] memory commitIDs = LibGacha.sortCommits(rawCommitIDs);
     uint256[] memory petIDs = LibGacha.selectPets(components, commitIDs);
     LibGacha.withdrawPets(components, petIDs, commitIDs);
 
