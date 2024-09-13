@@ -9,6 +9,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { LibSort } from "solady/utils/LibSort.sol";
 
 import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
+import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
 
 import { LibCommit } from "libraries/LibCommit.sol";
@@ -105,10 +106,7 @@ library LibGacha {
   }
 
   /// @notice sort based on entityID
-  function sortCommits(
-    IUintComp components,
-    uint256[] memory ids
-  ) internal view returns (uint256[] memory) {
+  function sortCommits(uint256[] memory ids) internal pure returns (uint256[] memory) {
     LibSort.insertionSort(ids);
     return ids;
   }
@@ -125,12 +123,13 @@ library LibGacha {
 
     // selects pets via their order in the gacha pool
     uint256 max = getNumInGacha(components);
-    uint256[] memory selectedIndex = LibRandom.getRandomBatchNoReplacement(seeds, max);
+    uint256[] memory selectedIndex = LibRandom.getBatchNoReplacement(seeds, max);
 
     return _extractPets(components, selectedIndex, max);
   }
 
   /// @notice remove pets from gacha pool order using a swap pop pattern
+  // PATCH: if rolled pet index is <= 909, increment gacha index by 1. very biased, ok temporarily
   function _extractPets(
     IUintComp components,
     uint256[] memory indices,
@@ -139,9 +138,15 @@ library LibGacha {
     uint256 count = indices.length;
     uint256[] memory results = new uint256[](count);
     IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
+    IndexPetComponent petIndexComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
 
+    uint256 petIndex;
+    uint256 selectedID;
     for (uint256 i; i < count; i++) {
-      uint256 selectedID = ownerComp.getAt(abi.encode(GACHA_ID), indices[i]);
+      do {
+        selectedID = ownerComp.getAt(abi.encode(GACHA_ID), indices[i]++ % max);
+        petIndex = petIndexComp.get(selectedID);
+      } while (petIndex <= 909);
 
       ownerComp.remove(selectedID);
       results[i] = selectedID;
