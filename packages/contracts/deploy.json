@@ -114,6 +114,18 @@
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
+    {
+      "name": "Farm20ProxySystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Mint20ProxySystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Pet721ProxySystem",
+      "writeAccess": []
+    },
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
@@ -384,10 +396,6 @@
       "writeAccess": ["TimeLastComponent", "ValueComponent"]
     },
     {
-      "name": "Farm20ProxySystem",
-      "writeAccess": []
-    },
-    {
       "name": "Farm20DepositSystem",
       "writeAccess": [
         "IdHolderComponent",
@@ -504,19 +512,11 @@
       ]
     },
     {
-      "name": "Mint20ProxySystem",
-      "writeAccess": []
-    },
-    {
       "name": "Pet721IsInWorldSystem",
       "writeAccess": []
     },
     {
       "name": "Pet721MetadataSystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Pet721ProxySystem",
       "writeAccess": []
     },
     {

@@ -207,6 +207,7 @@ export type { _721BatchMinterSystem } from "./_721BatchMinterSystem";
 export type { _AdminGiveSystem } from "./_AdminGiveSystem";
 export type { _AuthManageRoleSystem } from "./_AuthManageRoleSystem";
 export type { _ConfigSetSystem } from "./_ConfigSetSystem";
+export type { _CreatePetSystem } from "./_CreatePetSystem";
 export type { _FactionRegistrySystem } from "./_FactionRegistrySystem";
 export type { _GoalRegistrySystem } from "./_GoalRegistrySystem";
 export type { _ItemRegistrySystem } from "./_ItemRegistrySystem";
@@ -219,7 +220,6 @@ export type { _RelationshipRegistrySystem } from "./_RelationshipRegistrySystem"
 export type { _RoomRegistrySystem } from "./_RoomRegistrySystem";
 export type { _SkillRegistrySystem } from "./_SkillRegistrySystem";
 export type { _TraitRegistrySystem } from "./_TraitRegistrySystem";
-export type { __RestoreSystem } from "./__RestoreSystem";
 export * as factories from "./factories";
 export { AccountFundSystem__factory } from "./factories/AccountFundSystem__factory";
 export { AccountMoveSystem__factory } from "./factories/AccountMoveSystem__factory";
@@ -427,6 +427,7 @@ export { _721BatchMinterSystem__factory } from "./factories/_721BatchMinterSyste
 export { _AdminGiveSystem__factory } from "./factories/_AdminGiveSystem__factory";
 export { _AuthManageRoleSystem__factory } from "./factories/_AuthManageRoleSystem__factory";
 export { _ConfigSetSystem__factory } from "./factories/_ConfigSetSystem__factory";
+export { _CreatePetSystem__factory } from "./factories/_CreatePetSystem__factory";
 export { _FactionRegistrySystem__factory } from "./factories/_FactionRegistrySystem__factory";
 export { _GoalRegistrySystem__factory } from "./factories/_GoalRegistrySystem__factory";
 export { _ItemRegistrySystem__factory } from "./factories/_ItemRegistrySystem__factory";
@@ -439,4 +440,3 @@ export { _RelationshipRegistrySystem__factory } from "./factories/_RelationshipR
 export { _RoomRegistrySystem__factory } from "./factories/_RoomRegistrySystem__factory";
 export { _SkillRegistrySystem__factory } from "./factories/_SkillRegistrySystem__factory";
 export { _TraitRegistrySystem__factory } from "./factories/_TraitRegistrySystem__factory";
-export { __RestoreSystem__factory } from "./factories/__RestoreSystem__factory";

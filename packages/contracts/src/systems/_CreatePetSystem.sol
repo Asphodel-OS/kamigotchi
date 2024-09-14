@@ -145,7 +145,10 @@ contract _CreatePetSystem is System {
     harmonyComp = HarmonyComponent(getAddressById(components, HarmonyComponentID));
     slotsComp = SlotsComponent(getAddressById(components, SlotsComponentID));
     rarityComp = RarityComponent(getAddressById(components, RarityComponentID));
+  }
 
+  // needs to be called after world state init
+  function setTraits() external onlyOwner {
     _setUpTraits();
   }
 

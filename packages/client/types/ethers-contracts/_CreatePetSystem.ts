@@ -49,23 +49,23 @@ export type TraitStatsStructOutput = [
   slots: number;
 };
 
-export interface __RestoreSystemInterface extends utils.Interface {
+export interface _CreatePetSystemInterface extends utils.Interface {
   functions: {
     "_getTraitStats(uint256)": FunctionFragment;
+    "create(uint32,uint256,uint32,uint32,uint32,uint32,uint32,uint256)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "restore(uint32,uint256,uint32,uint32,uint32,uint32,uint32,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "_getTraitStats"
+      | "create"
       | "deprecate"
       | "execute"
       | "owner"
-      | "restore"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -73,14 +73,8 @@ export interface __RestoreSystemInterface extends utils.Interface {
     functionFragment: "_getTraitStats",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "execute",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "restore",
+    functionFragment: "create",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -92,6 +86,12 @@ export interface __RestoreSystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "execute",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
@@ -101,10 +101,10 @@ export interface __RestoreSystemInterface extends utils.Interface {
     functionFragment: "_getTraitStats",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "restore", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -137,12 +137,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface __RestoreSystem extends BaseContract {
+export interface _CreatePetSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: __RestoreSystemInterface;
+  interface: _CreatePetSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -169,18 +169,7 @@ export interface __RestoreSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TraitStatsStructOutput]>;
 
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    restore(
+    create(
       index: PromiseOrValue<BigNumberish>,
       accID: PromiseOrValue<BigNumberish>,
       background: PromiseOrValue<BigNumberish>,
@@ -191,6 +180,17 @@ export interface __RestoreSystem extends BaseContract {
       level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    execute(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -203,18 +203,7 @@ export interface __RestoreSystem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TraitStatsStructOutput>;
 
-  deprecate(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  execute(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  restore(
+  create(
     index: PromiseOrValue<BigNumberish>,
     accID: PromiseOrValue<BigNumberish>,
     background: PromiseOrValue<BigNumberish>,
@@ -225,6 +214,17 @@ export interface __RestoreSystem extends BaseContract {
     level: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  deprecate(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  execute(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     account: PromiseOrValue<string>,
@@ -237,16 +237,7 @@ export interface __RestoreSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TraitStatsStructOutput>;
 
-    deprecate(overrides?: CallOverrides): Promise<void>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    restore(
+    create(
       index: PromiseOrValue<BigNumberish>,
       accID: PromiseOrValue<BigNumberish>,
       background: PromiseOrValue<BigNumberish>,
@@ -257,6 +248,15 @@ export interface __RestoreSystem extends BaseContract {
       level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    deprecate(overrides?: CallOverrides): Promise<void>;
+
+    execute(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -284,18 +284,7 @@ export interface __RestoreSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    restore(
+    create(
       index: PromiseOrValue<BigNumberish>,
       accID: PromiseOrValue<BigNumberish>,
       background: PromiseOrValue<BigNumberish>,
@@ -306,6 +295,17 @@ export interface __RestoreSystem extends BaseContract {
       level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    execute(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -319,18 +319,7 @@ export interface __RestoreSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    restore(
+    create(
       index: PromiseOrValue<BigNumberish>,
       accID: PromiseOrValue<BigNumberish>,
       background: PromiseOrValue<BigNumberish>,
@@ -341,6 +330,17 @@ export interface __RestoreSystem extends BaseContract {
       level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    deprecate(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    execute(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
