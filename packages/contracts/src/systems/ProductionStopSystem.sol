@@ -28,6 +28,11 @@ contract ProductionStopSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 petID = LibHarvest.getPet(components, id);
+    uint256 nodeID = LibHarvest.getNode(components, id);
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+
+    // logging (sync sensitive logs)
+    LibHarvest.logHarvestTimes(components, accID, nodeIndex, id);
 
     // standard checks (ownership, cooldown, state)
     LibPet.assertAccount(components, petID, accID);
@@ -46,8 +51,6 @@ contract ProductionStopSystem is System {
     LibExperience.inc(components, petID, output);
 
     // scavenge
-    uint256 nodeID = LibHarvest.getNode(components, id);
-    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
     LibNode.scavenge(components, nodeIndex, output, accID); // implicit existance check
 
     // process harvest stop

@@ -97,7 +97,6 @@ library LibHarvest {
 
       uint256 timeDelta = block.timestamp - getLastTs(components, id);
       uint256 accID = LibPet.getAccount(components, getPet(components, id));
-      logHarvestTime(components, accID, timeDelta);
       setLastTs(components, id, block.timestamp);
     }
   }
@@ -286,8 +285,21 @@ library LibHarvest {
   /////////////////////
   // LOGGING
 
-  function logHarvestTime(IUintComp components, uint256 accID, uint256 value) internal {
-    LibData.inc(components, accID, 0, "HARVEST_TIME", value);
+  /// @notice logs total harvest time for all nodes (index 0) and current node
+  /// @dev called before syncing health
+  function logHarvestTimes(
+    IUintComp components,
+    uint256 accID,
+    uint32 nodeIndex,
+    uint256 prodID
+  ) internal {
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = 0;
+    indices[1] = nodeIndex;
+    string[] memory types = new string[](2);
+    types[0] = "HARVEST_TIME";
+    types[1] = "HARVEST_TIME";
+    LibData.inc(components, accID, indices, types, block.timestamp - getLastTs(components, prodID));
   }
 
   function logAmounts(

@@ -25,6 +25,11 @@ contract ProductionCollectSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 petID = LibHarvest.getPet(components, id);
+    uint256 nodeID = LibHarvest.getNode(components, id);
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+
+    // logging (sync sensitive logs)
+    LibHarvest.logHarvestTimes(components, accID, nodeIndex, id);
 
     // standard checks (ownership, cooldown, state)
     LibPet.assertAccount(components, petID, accID);
@@ -42,8 +47,6 @@ contract ProductionCollectSystem is System {
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // scavenge
-    uint256 nodeID = LibHarvest.getNode(components, id);
-    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
     LibNode.scavenge(components, nodeIndex, output, accID); // implicit existance check
 
     // standard logging and tracking
