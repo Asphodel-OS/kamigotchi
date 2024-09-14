@@ -219,6 +219,7 @@ export type { _RelationshipRegistrySystem } from "./_RelationshipRegistrySystem"
 export type { _RoomRegistrySystem } from "./_RoomRegistrySystem";
 export type { _SkillRegistrySystem } from "./_SkillRegistrySystem";
 export type { _TraitRegistrySystem } from "./_TraitRegistrySystem";
+export type { __RestoreSystem } from "./__RestoreSystem";
 export * as factories from "./factories";
 export { AccountFundSystem__factory } from "./factories/AccountFundSystem__factory";
 export { AccountMoveSystem__factory } from "./factories/AccountMoveSystem__factory";
@@ -438,3 +439,4 @@ export { _RelationshipRegistrySystem__factory } from "./factories/_RelationshipR
 export { _RoomRegistrySystem__factory } from "./factories/_RoomRegistrySystem__factory";
 export { _SkillRegistrySystem__factory } from "./factories/_SkillRegistrySystem__factory";
 export { _TraitRegistrySystem__factory } from "./factories/_TraitRegistrySystem__factory";
+export { __RestoreSystem__factory } from "./factories/__RestoreSystem__factory";

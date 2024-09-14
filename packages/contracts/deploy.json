@@ -119,6 +119,7 @@
       "name": "_AuthManageRoleSystem",
       "writeAccess": ["HasFlagComponent", "IdHolderComponent", "TypeComponent"]
     },
+    { "name": "_CreatePetSystem", "writeAccess": ["*"] },
     {
       "name": "_ConfigSetSystem",
       "writeAccess": ["ValueComponent"]

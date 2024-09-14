@@ -1,4 +1,10 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
+import { JsonRpcProvider, Provider } from '@ethersproject/providers';
+import { BigNumberish, ethers } from 'ethers';
+
+import { UintCompABI, WorldABI } from './abis';
+
+///////////////
+// .env UTILS
 
 export const getDeployerKey = (mode: string) => {
   if (mode === 'TEST') return process.env.TEST_DEPLOYER_PRIV;
@@ -26,6 +32,42 @@ export const setTimestamp = async (ts: number = Math.floor(Date.now() / 1000)) =
   const provider = new JsonRpcProvider(process.env.DEV_RPC!);
   await provider.send('evm_setNextBlockTimestamp', [ts]);
 };
+
+///////////////
+// SIGNERS AND PROVIDERS
+
+export const getProvider = (mode: string): Provider => {
+  return new JsonRpcProvider(getRpc(mode)!);
+};
+
+export const getSigner = async (mode: string): Promise<ethers.Wallet> => {
+  return new ethers.Wallet(getDeployerKey(mode)!, getProvider(mode));
+};
+
+///////////////
+// SOLECS
+
+export const getAddrByID = async (
+  provider: Provider,
+  compsAddr: string,
+  id: BigNumberish
+): Promise<string> => {
+  const comp = new ethers.Contract(compsAddr, UintCompABI, provider);
+  const values = await comp.getEntitiesWithValue(id);
+  return values.length > 0 ? values[0].toHexString() : '0x0000000000000000000000000000000000000000';
+};
+
+export const getSystemAddr = async (mode: string, strID: string): Promise<string> => {
+  const provider = getProvider(mode);
+  const world = new ethers.Contract(getWorld(mode)!, WorldABI, provider);
+  const systemRegistry = await world.systems();
+
+  const id = ethers.utils.solidityKeccak256(['string'], [strID]);
+  return await getAddrByID(provider, systemRegistry, id);
+};
+
+///////////////
+// FORGE CALLING
 
 export const ignoreSolcErrors = [
   '--ignored-error-codes',

@@ -52,7 +52,7 @@ contract SystemCall is Script {
   }
 
   /// sets up contract with world, components and system registry
-  function _setUp(address worldAddr) internal {
+  function _setUp(address worldAddr) internal virtual {
     world = IWorld(worldAddr);
     systems = world.systems();
     components = world.components();
