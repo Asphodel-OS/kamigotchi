@@ -295,7 +295,12 @@ abstract contract SetupTemplate is TestSetupImports {
     _PetUseReviveSystem.executeTyped(petID, reviveIndex);
   }
 
-  function _startProduction(uint petID, uint nodeID) internal virtual returns (uint) {
+  function _startProductionByIndex(uint petID, uint32 nodeIndex) internal virtual returns (uint) {
+    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
+    return _startProduction(petID, nodeID);
+  }
+
+  function _startProduction(uint petID, uint256 nodeID) internal virtual returns (uint) {
     uint accID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accID);
 

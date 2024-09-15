@@ -275,12 +275,12 @@ Eventually, it'll be possible to use MUSU to trade with other players. That's no
 "Lethe Asphodel, Nedu",42,,For Implementation,Reward,ITEM,,,5x Maple-Flavor Ghost Gum,101,5,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",43,Points of Importance,For Implementation,Quest,,,,Harvest for 5 hours at Scrap Confluence,,,No,5,,"Interesting. The office is still sealed for now.... but I have a sense that it'll be possible to enter later on.
 
-Next up, I need you to search the core of the scrapyard to the west. Maybe you'll find a screwdriver.…",,"Have completed ""The Kamigotchi Who Shall Be Named” (14)",Harvest for 5 hours at Scrap Confluence,3x Cheeseburger,,,
-"Lethe Asphodel, Nedu",43,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""The Kamigotchi Who Shall Be Named” (14)",14,,No,,,,,,,,,,
+Next up, I need you to search the core of the scrapyard to the west. Maybe you'll find a screwdriver.…",,"Have completed ""Scouting Out” (42)",Harvest for 5 hours at Scrap Confluence,3x Cheeseburger,,,
+"Lethe Asphodel, Nedu",43,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Scouting Out” (42)",42,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",43,,For Implementation,Objective,HARVEST_TIME,MIN,INC,Harvest for 5 Hours at Scrap Confluence,12,18000,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",43,,For Implementation,Reward,ITEM,,,3x Cheeseburger,116,3,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",44,A Moment of Peace.…,For Implementation,Quest,,,,Harvest for 10 hours at Clearing,,,No,10,,"Very interesting. In order to calibrate my readings, I need a neutral control for contrast..... can you have your Kamigotchi harvest in the Clearing for a while? I'm sure there's nothing special there…",,"Have completed ""The Kamigotchi Who Shall Be Named” (14)",Harvest for 10 hours at Clearing,1x Mint,,,
-"Lethe Asphodel, Nedu",44,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""The Kamigotchi Who Shall Be Named” (14)",14,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",44,A Moment of Peace.…,For Implementation,Quest,,,,Harvest for 10 hours at Clearing,,,No,10,,"Very interesting. In order to calibrate my readings, I need a neutral control for contrast..... can you have your Kamigotchi harvest in the Clearing for a while? I'm sure there's nothing special there…",,"Have completed ""Points of Importance” (43)",Harvest for 10 hours at Clearing,1x Mint,,,
+"Lethe Asphodel, Nedu",44,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Points of Importance” (43)",43,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",44,,For Implementation,Objective,HARVEST_TIME,MIN,INC,Harvest for 10 Hours at Clearing,49,36000,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",44,,For Implementation,Reward,ITEM,,,1x Mint,11007,1,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",10001,Desperate Measures,Ingame,Quest,,,,,,,No,15,,"Nice to see you again.

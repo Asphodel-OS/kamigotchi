@@ -299,7 +299,13 @@ library LibHarvest {
     string[] memory types = new string[](2);
     types[0] = "HARVEST_TIME";
     types[1] = "HARVEST_TIME";
-    LibData.inc(components, accID, indices, types, block.timestamp - getLastTs(components, prodID));
+    LibData.inc(
+      components,
+      accID,
+      indices,
+      types,
+      block.timestamp - getStartTs(components, prodID)
+    );
   }
 
   function logAmounts(

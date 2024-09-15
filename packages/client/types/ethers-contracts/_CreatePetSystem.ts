@@ -56,6 +56,7 @@ export interface _CreatePetSystemInterface extends utils.Interface {
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
+    "setTraits()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -66,6 +67,7 @@ export interface _CreatePetSystemInterface extends utils.Interface {
       | "deprecate"
       | "execute"
       | "owner"
+      | "setTraits"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -92,6 +94,7 @@ export interface _CreatePetSystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "setTraits", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
@@ -105,6 +108,7 @@ export interface _CreatePetSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setTraits", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -192,6 +196,10 @@ export interface _CreatePetSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    setTraits(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -226,6 +234,10 @@ export interface _CreatePetSystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  setTraits(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -257,6 +269,8 @@ export interface _CreatePetSystem extends BaseContract {
     ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    setTraits(overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -307,6 +321,10 @@ export interface _CreatePetSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setTraits(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -341,6 +359,10 @@ export interface _CreatePetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setTraits(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
