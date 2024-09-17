@@ -56,12 +56,12 @@ contract Pet721StakeSystem is System {
     require(LibAccount.getRoom(components, accID) == ROOM, "Pet721Stake: must be in room 12");
 
     // checks before action
-    require(LibPet721.getEOAOwner(world, tokenID) == msg.sender, "Pet721Stake: not urs");
+    require(LibPet721.getEOAOwner(components, tokenID) == msg.sender, "Pet721Stake: not urs");
     require(LibPet.getAccount(components, petID) == 0, "Pet721Stake: already linked");
     require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
     LibPet.stake(components, petID, accID);
-    LibPet721.stake(world, msg.sender, tokenID);
+    LibPet721.stake(components, msg.sender, tokenID);
 
     // standard logging and tracking
     LibAccount.logIncPetsStaked(world, components, accID, 1);

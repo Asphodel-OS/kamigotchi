@@ -20,11 +20,6 @@ export function createAdminAPI(systems: any) {
     return systems['system.droptable.item.reveal'].replaceBrokenReveal(entityID);
   }
 
-  // @dev cancels outgoing bridge tx
-  async function cancelBridgeTx(id: string) {
-    return systems['system.Farm20.Withdraw'].cancelWithdraw(id);
-  }
-
   /////////////////
   // AUTH
 
@@ -580,9 +575,6 @@ export function createAdminAPI(systems: any) {
         add: addRole,
         remove: removeRole,
       },
-    },
-    bridge: {
-      cancel: cancelBridgeTx,
     },
     config: {
       set: {

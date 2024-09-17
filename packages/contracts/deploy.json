@@ -8,6 +8,7 @@
     { "comp": "IsRewardComponent", "name": "_DepreciatedIsReward", "type": "bool" },
     { "comp": "PriceBuyComponent", "name": "_DeprecatedPriceBuy", "type": "uint256" },
     { "comp": "PriceSellComponent", "name": "_DeprecatedPriceSell", "type": "uint256" },
+    { "comp": "ProxyPermissionsFarm20Component", "name": "_DeprecatedProxyPermissionsFarm20", "type": "bool" },
     { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
     { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
     { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
@@ -88,7 +89,6 @@
     { "comp": "MediaURIComponent", "name": "MediaURI", "type": "string" },
     { "comp": "NameComponent", "name": "Name", "type": "string" },
     { "comp": "PowerComponent", "name": "Power", "type": "Stat" },
-    { "comp": "ProxyPermissionsFarm20Component", "name": "ProxyPermissionsFarm20", "type": "bool" },
     { "comp": "ProxyPermissionsERC721Component", "name": "ProxyPermissionsERC721", "type": "bool" },
     { "comp": "ProxyPermissionsMint20Component", "name": "ProxyPermissionsMint20", "type": "bool" },
     { "comp": "RarityComponent", "name": "Rarity", "type": "uint256" },
@@ -114,18 +114,6 @@
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
-    {
-      "name": "Farm20ProxySystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Mint20ProxySystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Pet721ProxySystem",
-      "writeAccess": []
-    },
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
@@ -399,31 +387,6 @@
     {
       "name": "ItemBurnSystem",
       "writeAccess": ["TimeLastComponent", "ValueComponent"]
-    },
-    {
-      "name": "Farm20DepositSystem",
-      "writeAccess": [
-        "IdHolderComponent",
-        "IDOwnsInventoryComponent",
-        "IndexItemComponent",
-        "IsInventoryComponent",
-        "ProxyPermissionsFarm20Component",
-        "TimeLastComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "Farm20WithdrawSystem",
-      "writeAccess": [
-        "IdHolderComponent",
-        "IDOwnsInventoryComponent",
-        "IsInventoryComponent",
-        "IndexItemComponent",
-        "ProxyPermissionsFarm20Component",
-        "TimeLastComponent",
-        "TimelockComponent",
-        "ValueComponent"
-      ]
     },
     {
       "name": "FriendAcceptSystem",

@@ -89,7 +89,6 @@ contract _CreatePetSystem is System {
   TraitStats[] internal traitStats;
   uint32[5] internal offsets;
 
-  Pet721 internal immutable pet721;
   IDOwnsPetComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
@@ -117,7 +116,6 @@ contract _CreatePetSystem is System {
   RarityComponent internal immutable rarityComp;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
-    pet721 = LibPet721.getContract(world);
     idOwnsPetComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetComponentID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetComponentID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetComponentID));
@@ -209,6 +207,7 @@ contract _CreatePetSystem is System {
     traits[4] = color;
     _setPetTraits(id, traits);
 
+    Pet721 pet721 = LibPet721.getContract(components);
     pet721.mint(address(pet721), uint256(index));
   }
 

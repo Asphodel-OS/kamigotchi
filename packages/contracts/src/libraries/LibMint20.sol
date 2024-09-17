@@ -5,9 +5,11 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { Mint20ProxySystem, ID as Mint20ProxyID } from "systems/Mint20ProxySystem.sol";
 import { Mint20 } from "tokens/Mint20.sol";
 
+import { LibConfig } from "libraries/LibConfig.sol";
+
+/// NOTE: world2 deprecated; Mint20 will be a regular item type
 library LibMint20 {
   ////////////////////////
   // INTERACTIONS
@@ -27,7 +29,9 @@ library LibMint20 {
 
   /// @notice get mint token contract
   function getContract(IWorld world) internal view returns (Mint20) {
-    return Mint20ProxySystem(getAddressById(world.systems(), Mint20ProxyID)).getToken();
+    // return Mint20(0xC35910787eD3309AA9FAA66299EfF37a94b0E713);
+    address addr = address(uint160(LibConfig.get(world.components(), "MINT20_ADDRESS")));
+    return Mint20(addr);
   }
 
   /// @notice DEPRECIATED get totalMinted of mint20 token

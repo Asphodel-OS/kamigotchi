@@ -5,6 +5,7 @@ import "forge-std/Script.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibDeploy, DeployResult } from "./LibDeploy.sol";
+import { LibDeployTokens } from "./LibDeployTokens.s.sol";
 
 import { InitWorld } from "./InitWorld.s.sol";
 import { LibLocal } from "./LibLocal.s.sol";
@@ -28,6 +29,11 @@ contract Deploy is InitWorld {
     // init world using init world script
     if (initWorld) {
       _setUp(address(world)); // set up global variables
+
+      // deploy tokens
+      LibDeployTokens.deployPet721(world, components);
+      LibDeployTokens.deployMint20(world, components);
+
       _initWorld(address(world));
 
       // custom local init script

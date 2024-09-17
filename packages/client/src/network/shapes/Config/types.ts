@@ -3,6 +3,7 @@ import { utils } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { numberToHex } from 'viem';
 import { unpackArray32 } from '../utils/data';
 
 const IDStore = new Map<string, string>();
@@ -18,6 +19,20 @@ export const getConfigFieldValue = (
   if (!entityIndex) return 0;
 
   return (getComponentValue(Value, entityIndex)?.value as number) * 1;
+};
+
+export const getConfigFieldValueAddress = (
+  world: World,
+  components: Components,
+  field: string
+): string => {
+  const { Value } = components;
+  const entityIndex = getEntityIndex(world, field);
+  if (!entityIndex) return '0x00';
+
+  const raw = getComponentValue(Value, entityIndex)?.value;
+  if (!raw) return '0x00';
+  return numberToHex(raw);
 };
 
 // get an Config from its EntityIndex

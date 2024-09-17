@@ -26,9 +26,6 @@ import AccountUseFoodSystem from "../../../../../client/abi/AccountUseFoodSystem
 import AccountUseTeleportSystem from "../../../../../client/abi/AccountUseTeleportSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
-import Farm20DepositSystem from "../../../../../client/abi/Farm20DepositSystem.json";
-import Farm20ProxySystem from "../../../../../client/abi/Farm20ProxySystem.json";
-import Farm20WithdrawSystem from "../../../../../client/abi/Farm20WithdrawSystem.json";
 import FriendAcceptSystem from "../../../../../client/abi/FriendAcceptSystem.json";
 import FriendBlockSystem from "../../../../../client/abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../../../../../client/abi/FriendCancelSystem.json";
@@ -39,10 +36,8 @@ import ItemBurnSystem from "../../../../../client/abi/ItemBurnSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
 import LootboxCommitSystem from "../../../../../client/abi/LootboxCommitSystem.json";
-import Mint20ProxySystem from "../../../../../client/abi/Mint20ProxySystem.json";
 import Pet721IsInWorldSystem from "../../../../../client/abi/Pet721IsInWorldSystem.json";
 import Pet721MetadataSystem from "../../../../../client/abi/Pet721MetadataSystem.json";
-import Pet721ProxySystem from "../../../../../client/abi/Pet721ProxySystem.json";
 import Pet721StakeSystem from "../../../../../client/abi/Pet721StakeSystem.json";
 import Pet721UnstakeSystem from "../../../../../client/abi/Pet721UnstakeSystem.json";
 import PetGachaMintSystem from "../../../../../client/abi/PetGachaMintSystem.json";
@@ -97,9 +92,6 @@ export const SystemAbis = {
   "system.account.use.teleport": AccountUseTeleportSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
-  "system.Farm20.Deposit": Farm20DepositSystem.abi,
-  "system.Farm20.Proxy": Farm20ProxySystem.abi,
-  "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
   "system.Friend.Accept": FriendAcceptSystem.abi,
   "system.Friend.Block": FriendBlockSystem.abi,
   "system.Friend.Cancel": FriendCancelSystem.abi,
@@ -110,10 +102,8 @@ export const SystemAbis = {
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Lootbox.Commit": LootboxCommitSystem.abi,
-  "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Pet721.IsInWorld": Pet721IsInWorldSystem.abi,
   "system.Pet721.Metadata": Pet721MetadataSystem.abi,
-  "system.Pet721.Proxy": Pet721ProxySystem.abi,
   "system.Pet721.Stake": Pet721StakeSystem.abi,
   "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
   "system.Pet.Gacha.Mint": PetGachaMintSystem.abi,

@@ -285,7 +285,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
   // MEMOIZED COMPS //
   ////////////////////
 
-  Pet721 internal immutable pet721;
   IDOwnsPetComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
@@ -305,7 +304,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
   ) System(_world, _components) TraitHandler(_components) {
     baseSeed = uint256(keccak256(abi.encode(blockhash(block.number == 0 ? 0 : block.number - 1))));
 
-    pet721 = LibPet721.getContract(world);
     idOwnsPetComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
@@ -324,7 +322,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   function batchMint(uint256 amount) external onlyOwner returns (uint256[] memory) {
     // require(colorWeights.keys != 0, "traits not set");
 
-    uint32 startIndex = uint32(pet721.totalSupply()) + 1; // starts from 1
+    uint32 startIndex = uint32(LibPet721.getContract(components).totalSupply()) + 1; // starts from 1
     uint256 startGacha = idOwnsPetComp.size(abi.encode(GACHA_ID)); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
@@ -402,6 +400,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   function mint721s(uint256 startIndex, uint256 amount) internal {
     uint256[] memory indices = new uint256[](amount);
     for (uint256 i; i < amount; i++) indices[i] = startIndex + i;
+    Pet721 pet721 = LibPet721.getContract(components);
     pet721.mintBatch(address(pet721), indices);
   }
 

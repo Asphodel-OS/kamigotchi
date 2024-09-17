@@ -18,11 +18,6 @@ abstract contract TestSetupImports is MudTest {
   <%= system.name %> _<%= system.name %>;
 <% }); -%>
 
-  // Token vars
-  Farm20 _Farm20;
-  Mint20 _Mint20;
-  Pet721 _Pet721;
-
   WrapCaller ExternalCaller;
 
   function setUp() public virtual override {
@@ -36,10 +31,6 @@ abstract contract TestSetupImports is MudTest {
 <% systems.forEach(system => { -%>
     _<%= system.name %> = <%= system.name %>(system(<%= system.name %>ID));
 <% }); -%>
-
-    _Farm20 = _Farm20ProxySystem.getToken();
-    _Pet721 = _Pet721ProxySystem.getToken();
-    _Mint20 = _Mint20ProxySystem.getToken();
 
     vm.startPrank(deployer);
 <% components.forEach(component => { -%>

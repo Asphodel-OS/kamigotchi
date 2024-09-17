@@ -57,7 +57,7 @@ contract Pet721UnstakeSystem is System {
 
     // actions to be taken upon bridging out
     LibPet.unstake(components, petID);
-    LibPet721.unstake(world, msg.sender, tokenID);
+    LibPet721.unstake(components, msg.sender, tokenID);
 
     // standard logging and tracking
     LibData.inc(components, accID, 0, "PET721_UNSTAKE", 1);

@@ -3,13 +3,13 @@ import { uuid } from '@mud-classic/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { erc20Abi, formatUnits } from 'viem';
-import { useReadContract, useReadContracts } from 'wagmi';
+import { useReadContracts } from 'wagmi';
 
-import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { GachaTicketInventory } from 'network/shapes/utils';
@@ -32,11 +32,19 @@ export function registerInventoryModal() {
       return interval(1000).pipe(
         map(() => {
           const { network } = layers;
+          const { world, components } = network;
+
           const account = getAccountFromBurner(network, {
             kamis: { flags: true, production: true },
             inventory: true,
           });
-          return { network, data: { account } };
+          return {
+            network,
+            data: {
+              mint20Addy: getConfigFieldValueAddress(world, components, 'MINT20_ADDRESS'),
+              account: account,
+            },
+          };
         })
       );
     },
@@ -45,18 +53,11 @@ export function registerInventoryModal() {
     ({ network, data }) => {
       const { actions, api, systems, world, localSystems } = network;
       const { DTRevealer } = localSystems;
-      const { account } = data;
+      const { mint20Addy, account } = data;
       const [numTickets, setNumTickets] = useState<number>(0);
 
       /////////////////
       // SUBSCRIPTIONS
-
-      // $KAMI Contract Address
-      const { data: mint20Addy } = useReadContract({
-        address: systems['system.Mint20.Proxy']?.address as `0x${string}`,
-        abi: Mint20ProxySystemABI,
-        functionName: 'getTokenAddy',
-      });
 
       // $KAMI Balance of Owner EOA
       const { data: ticketBal } = useReadContracts({

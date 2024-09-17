@@ -10,6 +10,7 @@ import { Coord } from "libraries/LibRoom.sol";
 import { MUSU_INDEX } from "libraries/LibInventory.sol";
 
 import "./TestSetupImports.sol";
+import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
@@ -34,6 +35,10 @@ abstract contract SetupTemplate is TestSetupImports {
   PlayerAccount bob;
   PlayerAccount charlie;
 
+  // Token vars
+  Mint20 _Mint20;
+  Pet721 _Pet721;
+
   constructor() MudTest() {}
 
   //////////////////
@@ -41,6 +46,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUp() public virtual override {
     setUpWorld();
+    setUpTokens();
 
     setUpConfigs();
     setUpTime();
@@ -56,6 +62,13 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUpWorld() public virtual {
     super.setUp();
+  }
+
+  function setUpTokens() public virtual {
+    vm.startPrank(deployer);
+    _Pet721 = Pet721(LibDeployTokens.deployPet721(world, components));
+    _Mint20 = Mint20(LibDeployTokens.deployMint20(world, components));
+    vm.stopPrank();
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed

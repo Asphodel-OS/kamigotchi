@@ -5,11 +5,11 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { useReadContract } from 'wagmi';
 
-import { abi } from 'abi/Pet721ProxySystem.json';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { Kami, getKami } from 'network/shapes/Kami';
 
 export function registerERC721BridgeModal() {
@@ -24,22 +24,24 @@ export function registerERC721BridgeModal() {
     // REQUIREMENT: serve network props, based on subscriptions
     (layers) => {
       const { network } = layers;
-      const { components, systems } = network;
+      const { world, components, systems } = network;
       const { AccountID, State } = components;
 
       return merge(AccountID.update$, State.update$).pipe(
         map(() => {
           return {
             network,
-            data: { account: getAccountFromBurner(network, { kamis: true }) },
-            proxyAddy: systems['system.Pet721.Proxy'].address,
+            data: {
+              erc721: getConfigFieldValueAddress(world, components, 'PET721_ADDRESS'),
+              account: getAccountFromBurner(network, { kamis: true }),
+            },
           };
         })
       );
     },
     // RENDER: draw the damn thing
-    ({ data, network, proxyAddy }) => {
-      const { account } = data;
+    ({ data, network }) => {
+      const { erc721, account } = data;
       const { actions, components, world } = network;
       const { IsPet, PetIndex } = components;
 
@@ -101,11 +103,6 @@ export function registerERC721BridgeModal() {
       };
 
       // External Kamis
-      const { data: erc721 } = useReadContract({
-        address: proxyAddy as `0x${string}`,
-        abi: abi,
-        functionName: 'getTokenAddy',
-      });
       const { data: erc721List } = useReadContract({
         address: erc721 as `0x${string}`,
         abi: [
@@ -153,7 +150,7 @@ export function registerERC721BridgeModal() {
 
               kamis.push(
                 getKami(world, components, entityID, {
-                  deaths: true,
+                  // deaths: true,
                   production: true,
                   traits: true,
                 })

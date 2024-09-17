@@ -6,12 +6,12 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { erc20Abi } from 'viem';
-import { useAccount, useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
+import { useAccount, useBalance, useBlockNumber, useReadContracts } from 'wagmi';
 
-import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { Kami, KamiOptions, queryKamisByAccount } from 'network/shapes/Kami';
 import { BaseKami, getKami } from 'network/shapes/Kami/types';
@@ -47,6 +47,7 @@ export function registerGachaModal() {
           return {
             network,
             data: {
+              mint20Addy: getConfigFieldValueAddress(world, components, 'MINT20_ADDRESS'),
               accKamis: account.kamis,
               partyKamis: queryKamisByAccount(components, account.id),
               poolKamis: queryKamisByAccount(components, GACHA_ID),
@@ -62,7 +63,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, components, world, api } = network;
-      const { accKamis, commits, poolKamis, partyKamis } = data;
+      const { mint20Addy, accKamis, commits, poolKamis, partyKamis } = data;
       const { isConnected } = useAccount();
       const { account } = useKamiAccount();
       const { modals, setModals } = useVisibility();
@@ -87,13 +88,6 @@ export function registerGachaModal() {
       // Owner ETH Balance
       const { data: ownerEthBalance } = useBalance({
         address: account.ownerAddress as `0x${string}`,
-      });
-
-      // $KAMI Contract Address
-      const { data: mint20Addy } = useReadContract({
-        address: network.systems[MINT20PROXY_KEY]?.address as `0x${string}`,
-        abi: Mint20ProxySystemABI,
-        functionName: 'getTokenAddy',
       });
 
       // $KAMI Balance of Owner EOA

@@ -344,27 +344,6 @@ export function createPlayerAPI(systems: any) {
     return systems['system.Pet721.Unstake'].executeTyped(tokenID);
   }
 
-  /////////////////
-  //    ERC20
-
-  // @dev bridges ERC20 tokens from outside -> game world
-  // @param amount  amount of ERC20 tokens to bridge
-  function depositERC20(amount: BigNumberish) {
-    return systems['system.Farm20.Deposit'].executeTyped(amount);
-  }
-
-  // @dev bridges ERC20 tokens from game world -> outside
-  // @param amount  amount of ERC20 tokens to bridge
-  function initWithdrawERC20(amount: BigNumberish) {
-    return systems['system.Farm20.Withdraw'].scheduleWithdraw(amount);
-  }
-
-  // @dev bridges ERC20 tokens from game world -> outside
-  // @param amount  amount of ERC20 tokens to bridge
-  function execWithdrawERC20(id: BigNumberish) {
-    return systems['system.Farm20.Withdraw'].executeWithdraw(id);
-  }
-
   return {
     pet: {
       level: levelPet,
@@ -457,13 +436,6 @@ export function createPlayerAPI(systems: any) {
     ERC721: {
       deposit: depositERC721,
       withdraw: withdrawERC721,
-    },
-    ERC20: {
-      deposit: depositERC20,
-      withdraw: {
-        start: initWithdrawERC20,
-        execute: execWithdrawERC20,
-      },
     },
   };
 }

@@ -26,6 +26,10 @@ library LibConfig {
   //////////////////
   // SETTERS
 
+  function set(IUintComp components, string memory field, uint256 value) internal {
+    setValue(components, getID(field), value);
+  }
+
   /// @notice Set a value of a global config field entity
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
@@ -41,6 +45,14 @@ library LibConfig {
     require(bytes(value).length < 32, "LibConfig: string too long");
     require(bytes(value).length > 0, "LibConfig: string too short");
     setValue(components, id, LibPack.stringToUint(value));
+  }
+
+  //////////////////
+  // CHECKERS
+
+  function has(IUintComp components, string memory name) internal view returns (bool) {
+    uint256 id = getID(name);
+    return ValueComponent(getAddressById(components, ValueCompID)).has(id);
   }
 
   //////////////////
