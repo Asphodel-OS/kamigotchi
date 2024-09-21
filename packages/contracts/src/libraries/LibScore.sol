@@ -26,7 +26,7 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 // Balance: Score balance
 
 library LibScore {
-  using LibComp for ValueComponent;
+  using LibComp for IUintComp;
 
   /////////////////
   // INTERACTIONS
@@ -55,7 +55,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    ValueComponent(getAddressById(components, ValueCompID)).inc(id, amt);
+    IUintComp(getAddressById(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice adds score based on current epoch.
@@ -80,7 +80,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    ValueComponent(getAddressById(components, ValueCompID)).dec(id, amt);
+    IUintComp(getAddressById(components, ValueCompID)).dec(id, amt);
   }
 
   /// @notice decs score based on current epoch.
@@ -100,7 +100,7 @@ library LibScore {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(id);
+    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(id);
   }
 
   // get current epoch for leaderboard

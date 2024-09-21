@@ -13,7 +13,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 
 library LibCooldown {
-  using LibComp for TimeLastActionComponent;
+  using LibComp for IUintComp;
   using SafeCastLib for int256;
   using SafeCastLib for uint256;
 
@@ -21,14 +21,12 @@ library LibCooldown {
   // INTERACTIONS
 
   function start(IUintComp components, uint256 id) internal {
-    TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, block.timestamp);
+    IUintComp(getAddressById(components, TimeLastActCompID)).set(id, block.timestamp);
   }
 
   // if delta positive, increase cooldown. vice versa
   function modify(IUintComp components, uint256 id, int256 delta) internal {
-    TimeLastActionComponent lastComp = TimeLastActionComponent(
-      getAddressById(components, TimeLastActCompID)
-    );
+    IUintComp lastComp = IUintComp(getAddressById(components, TimeLastActCompID));
     int256 idleTime = _getIdleTime(lastComp, id);
     int256 cooldown = getCooldown(components, id);
 
@@ -60,10 +58,10 @@ library LibCooldown {
   }
 
   function getIdleTime(IUintComp components, uint256 id) internal view returns (int256) {
-    return _getIdleTime(TimeLastActionComponent(getAddressById(components, TimeLastActCompID)), id);
+    return _getIdleTime(IUintComp(getAddressById(components, TimeLastActCompID)), id);
   }
 
-  function _getIdleTime(TimeLastActionComponent tsComp, uint256 id) internal view returns (int256) {
+  function _getIdleTime(IUintComp tsComp, uint256 id) internal view returns (int256) {
     // time safely remains in int256 bounds
     return block.timestamp.toInt256() - tsComp.safeGetUint256(id).toInt256();
   }

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "solecs/Component.sol";
+import "solecs/interfaces/IUint256Component.sol";
 import { TypeLib } from "components/types/standard.sol";
 
-contract Uint256Component is Component {
+contract Uint256Component is Component, IUint256Component {
   constructor(address world, uint256 id) Component(world, id) {}
 
   function set(uint256 entity, uint256 value) external virtual onlyWriter {

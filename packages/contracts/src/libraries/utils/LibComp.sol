@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { Uint256BareComponent as UintBareComp } from "components/base/Uint256BareComponent.sol";
 import { StatComponent } from "components/base/StatComponent.sol";
 
 import { Stat, StatLib } from "components/types/Stat.sol";
@@ -312,33 +311,33 @@ library LibComp {
   /////////////////
   // CALCS
 
-  function inc(UintBareComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
+  function inc(IUintComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
     val = safeGetUint256(component, id) + amt;
     component.set(id, val);
   }
 
   /// @dev needs to get individually in case of repeated indices
-  function incBatch(UintBareComp component, uint256[] memory ids, uint256 amt) internal {
+  function incBatch(IUintComp component, uint256[] memory ids, uint256 amt) internal {
     for (uint256 i; i < ids.length; i++) inc(component, ids[i], amt);
   }
 
   /// @dev needs to get individually in case of repeated indices
-  function incBatch(UintBareComp component, uint256[] memory ids, uint256[] memory amts) internal {
+  function incBatch(IUintComp component, uint256[] memory ids, uint256[] memory amts) internal {
     for (uint256 i; i < ids.length; i++) inc(component, ids[i], amts[i]);
   }
 
-  function dec(UintBareComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
+  function dec(IUintComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
     val = safeGetUint256(component, id) - amt;
     component.set(id, val);
   }
 
   /// @dev needs to get individually in case of repeated indices
-  function decBatch(UintBareComp component, uint256[] memory ids, uint256 amt) internal {
+  function decBatch(IUintComp component, uint256[] memory ids, uint256 amt) internal {
     for (uint256 i; i < ids.length; i++) dec(component, ids[i], amt);
   }
 
   /// @dev needs to get individually in case of repeated indices
-  function decBatch(UintBareComp component, uint256[] memory ids, uint256[] memory amts) internal {
+  function decBatch(IUintComp component, uint256[] memory ids, uint256[] memory amts) internal {
     for (uint256 i; i < ids.length; i++) dec(component, ids[i], amts[i]);
   }
 }

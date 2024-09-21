@@ -24,7 +24,7 @@ uint32 constant MUSU_INDEX = 1;
 
 // handles nonfungible inventory instances
 library LibInventory {
-  using LibComp for ValueComponent;
+  using LibComp for IUintComp;
 
   /////////////////
   // SHAPES
@@ -114,7 +114,7 @@ library LibInventory {
   /// @notice increase, and creates new inventory if needed
   function incFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     uint256 id = createFor(components, holderID, itemIndex);
-    ValueComponent(getAddressById(components, ValueCompID)).inc(id, amt);
+    IUintComp(getAddressById(components, ValueCompID)).inc(id, amt);
   }
 
   function incForBatch(
@@ -124,13 +124,13 @@ library LibInventory {
     uint256[] memory amts
   ) internal {
     uint256[] memory ids = createForBatch(components, holderID, itemIndices);
-    ValueComponent(getAddressById(components, ValueCompID)).incBatch(ids, amts);
+    IUintComp(getAddressById(components, ValueCompID)).incBatch(ids, amts);
   }
 
   /// @notice decrease, and creates new inventory if needed
   function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     uint256 id = createFor(components, holderID, itemIndex);
-    ValueComponent(getAddressById(components, ValueCompID)).dec(id, amt);
+    IUintComp(getAddressById(components, ValueCompID)).dec(id, amt);
   }
 
   function decForBatch(
@@ -140,7 +140,7 @@ library LibInventory {
     uint256[] memory amts
   ) internal {
     uint256[] memory ids = createForBatch(components, holderID, itemIndices);
-    ValueComponent(getAddressById(components, ValueCompID)).decBatch(ids, amts);
+    IUintComp(getAddressById(components, ValueCompID)).decBatch(ids, amts);
   }
 
   /// @notice sets, and creates new inventory if needed
@@ -195,7 +195,7 @@ library LibInventory {
     uint32 itemIndex
   ) internal view returns (uint256) {
     uint256 id = genID(holderID, itemIndex);
-    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(id);
+    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(id);
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {

@@ -22,7 +22,7 @@ import { LibNPC } from "libraries/LibNPC.sol";
  * LibListing handles all operations interacting with Listings
  */
 library LibListing {
-  using LibComp for ValueComponent;
+  using LibComp for IUintComp;
 
   /////////////////
   // SHAPES
@@ -137,12 +137,12 @@ library LibListing {
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genBuyPtr(id);
-    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genSellPtr(id);
-    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
   }
 
   //////////////////

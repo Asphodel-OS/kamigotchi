@@ -172,6 +172,25 @@
     },
     {
       "type": "function",
+      "name": "getEntitiesWithValue",
+      "inputs": [
+        {
+          "name": "value",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "getRaw",
       "inputs": [
         {
@@ -500,6 +519,7 @@
     "getBatch(uint256[])": "088dd0b9",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
+    "getEntitiesWithValue(uint256)": "fbdfa1ea",
     "getRaw(uint256)": "dd98e3c9",
     "getRawBatch(uint256[])": "4323c4ef",
     "has(uint256)": "cccf7a8e",
