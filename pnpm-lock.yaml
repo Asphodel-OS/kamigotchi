@@ -299,9 +299,6 @@ importers:
       '@openzeppelin/contracts':
         specifier: ^4.9.0
         version: 4.9.6
-      '@solidstate/contracts':
-        specifier: ^0.0.52
-        version: 0.0.52
       '@types/minimatch':
         specifier: ^5.1.2
         version: 5.1.2

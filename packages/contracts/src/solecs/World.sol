@@ -3,9 +3,11 @@ pragma solidity >=0.8.0;
 
 import { IWorld } from "./interfaces/IWorld.sol";
 import { IUint256Component } from "./interfaces/IUint256Component.sol";
-import { Uint256Component } from "./components/Uint256Component.sol";
+import { Ownable } from "solady/auth/Ownable.sol";
 import { addressToEntity, getIdByAddress } from "./utils.sol";
 import { componentsComponentId, systemsComponentId } from "./constants.sol";
+
+import { Uint256Component } from "./components/Uint256Component.sol";
 import { RegisterSystem, ID as registerSystemId, RegisterType } from "./systems/RegisterSystem.sol";
 
 /** @notice
@@ -18,7 +20,7 @@ import { RegisterSystem, ID as registerSystemId, RegisterType } from "./systems/
  * for every type of data. (Have a look at the MUD network package for a TypeScript
  * implementation of contract/client state sync.)
  */
-contract World is IWorld {
+contract World is IWorld, Ownable {
   uint256 private nonce;
 
   Uint256Component private _components;
@@ -39,6 +41,7 @@ contract World is IWorld {
   );
 
   constructor() {
+    _initializeOwner(msg.sender);
     _components = new Uint256Component(address(0), componentsComponentId);
     _systems = new Uint256Component(address(0), systemsComponentId);
     register = new RegisterSystem(this, address(_components));

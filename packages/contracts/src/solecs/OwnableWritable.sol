@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { IOwnableWritable } from "./interfaces/IOwnableWritable.sol";
 
-import { Ownable } from "./Ownable.sol";
+import { Ownable } from "solady/auth/Ownable.sol";
 import { OwnableWritableStorage } from "./OwnableWritableStorage.sol";
 
 /**
@@ -11,6 +11,10 @@ import { OwnableWritableStorage } from "./OwnableWritableStorage.sol";
  */
 abstract contract OwnableWritable is IOwnableWritable, Ownable {
   error OwnableWritable__NotWriter();
+
+  constructor() {
+    _initializeOwner(msg.sender);
+  }
 
   /** Whether given operator has write access */
   function writeAccess(address operator) public view virtual returns (bool) {

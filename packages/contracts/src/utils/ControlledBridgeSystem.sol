@@ -12,7 +12,7 @@ import { System } from "solecs/System.sol";
  * The Timelock contract heavily based off of OpenZeppelin's TimelockController.sol
  * Removed various roles, predecessor checks, calldata
  *
- * owner permission is based on SolidState's ownable, from System. Admin roles are manually implemented
+ * owner permission is based on solady's ownable, from System. Admin roles are manually implemented
  */
 abstract contract ControlledBridgeSystem is System {
   uint256 internal constant _DONE_TIMESTAMP = uint256(1);

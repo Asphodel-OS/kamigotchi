@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { IERC173 } from "./IERC173.sol";
-
-interface ISystem is IERC173 {
+interface ISystem {
   /// @notice emits when system is no longer supported
   event SystemDeprecated();
 

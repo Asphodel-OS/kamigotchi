@@ -81,7 +81,6 @@
     "@mud-classic/solecs": "^0.0.1",
     "@mud-classic/std-contracts": "^0.0.1",
     "@openzeppelin/contracts": "^4.9.0",
-    "@solidstate/contracts": "^0.0.52",
     "@types/minimatch": "^5.1.2",
     "csv-parse": "^5.5.6",
     "dotenv-cli": "^7.2.1",

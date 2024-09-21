@@ -29,7 +29,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
   /** Public identifier of this component */
   uint256 public id;
 
-  constructor(address _world, uint256 _id) {
+  constructor(address _world, uint256 _id) OwnableWritable() {
     id = _id;
     if (_world != address(0)) registerWorld(_world);
   }

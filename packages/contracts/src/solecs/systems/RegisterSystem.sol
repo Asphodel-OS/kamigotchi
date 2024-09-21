@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { ISystem } from "../interfaces/ISystem.sol";
 import { IWorld } from "../interfaces/IWorld.sol";
-import { IERC173 } from "../interfaces/IERC173.sol";
+import { Ownable } from "solady/auth/Ownable.sol";
 import { IUint256Component } from "../interfaces/IUint256Component.sol";
 import { addressToEntity, entityToAddress, getAddressById } from "../utils.sol";
 import { systemsComponentId } from "../constants.sol";
@@ -57,7 +57,7 @@ contract RegisterSystem is System {
     require(
       entitiesWithId.length == 0 ||
         (entitiesWithId.length == 1 &&
-          IERC173(entityToAddress(entitiesWithId[0])).owner() == msgSender),
+          Ownable(entityToAddress(entitiesWithId[0])).owner() == msgSender),
       "id already registered and caller not owner"
     );
 

@@ -26,6 +26,26 @@
     },
     {
       "type": "function",
+      "name": "cancelOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "completeOwnershipHandover",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
       "name": "extractRaw",
       "inputs": [
         {
@@ -266,9 +286,28 @@
       "inputs": [],
       "outputs": [
         {
-          "name": "",
+          "name": "result",
           "type": "address",
           "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "ownershipHandoverExpiresAt",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "stateMutability": "view"
@@ -311,6 +350,20 @@
       ],
       "outputs": [],
       "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "requestOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
     },
     {
       "type": "function",
@@ -407,13 +460,13 @@
       "name": "transferOwnership",
       "inputs": [
         {
-          "name": "account",
+          "name": "newOwner",
           "type": "address",
           "internalType": "address"
         }
       ],
       "outputs": [],
-      "stateMutability": "nonpayable"
+      "stateMutability": "payable"
     },
     {
       "type": "function",
@@ -462,10 +515,36 @@
     },
     {
       "type": "event",
+      "name": "OwnershipHandoverCanceled",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipHandoverRequested",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
       "name": "OwnershipTransferred",
       "inputs": [
         {
-          "name": "previousOwner",
+          "name": "oldOwner",
           "type": "address",
           "indexed": true,
           "internalType": "address"
@@ -481,6 +560,11 @@
     },
     {
       "type": "error",
+      "name": "AlreadyInitialized",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "BareComponent__NotImplemented",
       "inputs": []
     },
@@ -491,17 +575,22 @@
     },
     {
       "type": "error",
+      "name": "NewOwnerIsZeroAddress",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NoHandoverRequest",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "OwnableWritable__NotWriter",
       "inputs": []
     },
     {
       "type": "error",
-      "name": "Ownable__NotOwner",
-      "inputs": []
-    },
-    {
-      "type": "error",
-      "name": "Ownable__NotTransitiveOwner",
+      "name": "Unauthorized",
       "inputs": []
     },
     {
@@ -512,6 +601,8 @@
   ],
   "methodIdentifiers": {
     "authorizeWriter(address)": "4fef6a38",
+    "cancelOwnershipHandover()": "54d1f13d",
+    "completeOwnershipHandover(address)": "f04e283e",
     "extractRaw(uint256)": "e9ff6c76",
     "extractRawBatch(uint256[])": "12b11155",
     "get(uint256)": "9507d39a",
@@ -524,9 +615,12 @@
     "has(uint256)": "cccf7a8e",
     "id()": "af640d0f",
     "owner()": "8da5cb5b",
+    "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "removeBatch(uint256[])": "8482643e",
+    "renounceOwnership()": "715018a6",
+    "requestOwnershipHandover()": "25692962",
     "set(uint256,(address,uint256,uint256))": "01649c51",
     "set(uint256,bytes)": "8b282947",
     "setBatch(uint256[],bytes[])": "13ca8b6a",
