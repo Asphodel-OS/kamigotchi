@@ -64,7 +64,9 @@ export const Footer = (props: Props) => {
           -
         </StepperButton>
       </Stepper>
-      <Submit onClick={handleMint}>Mint</Submit>
+      <Submit onClick={handleMint} disabled={quantity <= 0}>
+        Mint
+      </Submit>
     </Container>
   );
 };
@@ -149,7 +151,14 @@ const Submit = styled.div<{ disabled?: boolean }>`
 
   cursor: pointer;
   user-select: none;
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+
+  ${({ disabled }) =>
+    disabled &&
+    `
+  background-color: #bbb; 
+  cursor: default; 
+  pointer-events: none;`}
+
   &:hover {
     background-color: #ddd;
   }
