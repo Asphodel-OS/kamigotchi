@@ -5,7 +5,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { Uint32BareComponent } from "components/base/Uint32BareComponent.sol";
 import { System } from "solecs/System.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
@@ -111,18 +111,18 @@ abstract contract TraitHandler {
 
   constructor(address _components) {
     components = IUintComp(_components);
-    indexBackgroundComp = IndexBackgroundComponent(getAddressById(components, IndexBgCompID));
-    indexBodyComp = IndexBodyComponent(getAddressById(components, IndexBodyCompID));
-    indexColorComp = IndexColorComponent(getAddressById(components, IndexColorCompID));
-    indexFaceComp = IndexFaceComponent(getAddressById(components, IndexFaceCompID));
-    indexHandComp = IndexHandComponent(getAddressById(components, IndexHandCompID));
+    indexBackgroundComp = IndexBackgroundComponent(getAddrByID(components, IndexBgCompID));
+    indexBodyComp = IndexBodyComponent(getAddrByID(components, IndexBodyCompID));
+    indexColorComp = IndexColorComponent(getAddrByID(components, IndexColorCompID));
+    indexFaceComp = IndexFaceComponent(getAddrByID(components, IndexFaceCompID));
+    indexHandComp = IndexHandComponent(getAddrByID(components, IndexHandCompID));
 
-    healthComp = HealthComponent(getAddressById(components, HealthCompID));
-    powerComp = PowerComponent(getAddressById(components, PowerCompID));
-    violenceComp = ViolenceComponent(getAddressById(components, ViolenceCompID));
-    harmonyComp = HarmonyComponent(getAddressById(components, HarmonyCompID));
-    slotsComp = SlotsComponent(getAddressById(components, SlotsCompID));
-    rarityComp = RarityComponent(getAddressById(components, RarityCompID));
+    healthComp = HealthComponent(getAddrByID(components, HealthCompID));
+    powerComp = PowerComponent(getAddrByID(components, PowerCompID));
+    violenceComp = ViolenceComponent(getAddrByID(components, ViolenceCompID));
+    harmonyComp = HarmonyComponent(getAddrByID(components, HarmonyCompID));
+    slotsComp = SlotsComponent(getAddrByID(components, SlotsCompID));
+    rarityComp = RarityComponent(getAddrByID(components, RarityCompID));
   }
 
   /////////////////////
@@ -304,18 +304,18 @@ contract _721BatchMinterSystem is System, TraitHandler {
   ) System(_world, _components) TraitHandler(_components) {
     baseSeed = uint256(keccak256(abi.encode(blockhash(block.number == 0 ? 0 : block.number - 1))));
 
-    idOwnsPetComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
-    isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
-    indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
-    mediaURIComp = MediaURIComponent(getAddressById(components, MediaURICompID));
-    nameComp = NameComponent(getAddressById(components, NameCompID));
-    stateComp = StateComponent(getAddressById(components, StateCompID));
-    timeStartComp = TimeStartComponent(getAddressById(components, TimeStartCompID));
-    timeLastComp = TimeLastComponent(getAddressById(components, TimeLastCompID));
-    levelComp = LevelComponent(getAddressById(components, LevelCompID));
-    expComp = ExperienceComponent(getAddressById(components, ExperienceCompID));
-    skillPointComp = SkillPointComponent(getAddressById(components, SkillPointCompID));
-    balanceComp = ValueComponent(getAddressById(components, ValueCompID));
+    idOwnsPetComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+    isPetComp = IsPetComponent(getAddrByID(components, IsPetCompID));
+    indexPetComp = IndexPetComponent(getAddrByID(components, IndexPetCompID));
+    mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURICompID));
+    nameComp = NameComponent(getAddrByID(components, NameCompID));
+    stateComp = StateComponent(getAddrByID(components, StateCompID));
+    timeStartComp = TimeStartComponent(getAddrByID(components, TimeStartCompID));
+    timeLastComp = TimeLastComponent(getAddrByID(components, TimeLastCompID));
+    levelComp = LevelComponent(getAddrByID(components, LevelCompID));
+    expComp = ExperienceComponent(getAddrByID(components, ExperienceCompID));
+    skillPointComp = SkillPointComponent(getAddrByID(components, SkillPointCompID));
+    balanceComp = ValueComponent(getAddrByID(components, ValueCompID));
   }
 
   /// @dev if calling many times, reduce call data by memozing address / bitpacking

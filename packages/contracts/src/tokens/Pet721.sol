@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { Pet721IsInWorldSystem as IsInWorldSystem, ID as IsInWorldSystemID } from "systems/Pet721IsInWorldSystem.sol";
 import { Pet721MetadataSystem as MetadataSystem, ID as MetadataSystemID } from "systems/Pet721MetadataSystem.sol";
 import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC721Component.sol";
@@ -45,9 +45,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
     require(
-      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
-        msg.sender
-      ),
+      PermissionsComp(getAddrByID(World.components(), PermissionsCompID)).writeAccess(msg.sender),
       "ERC721: not a writer"
     );
     _;
@@ -56,7 +54,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyOwner() {
     require(
-      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner() == msg.sender,
+      PermissionsComp(getAddrByID(World.components(), PermissionsCompID)).owner() == msg.sender,
       "ERC721: not owner"
     );
     _;
@@ -66,9 +64,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   /// @dev uses an external system call to allow for upgradability
   modifier isOutOfWorld(uint256 tokenID) {
     require(
-      !IsInWorldSystem(getAddressById(World.systems(), IsInWorldSystemID)).isInWorld(
-        uint32(tokenID)
-      ),
+      !IsInWorldSystem(getAddrByID(World.systems(), IsInWorldSystemID)).isInWorld(uint32(tokenID)),
       "721: not out of game world"
     );
     _;
@@ -79,7 +75,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
 
     // set royalties at 3.33% for the quirked up angel number gorls, to owner
     _setDefaultRoyalty(
-      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner(),
+      PermissionsComp(getAddrByID(World.components(), PermissionsCompID)).owner(),
       333 // 333 BPS
     );
   }
@@ -155,7 +151,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
 
   /// @notice retrives token metadata from Pet721MetadataSystem.
   function tokenURI(uint256 index) public view override returns (string memory) {
-    return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(index);
+    return MetadataSystem(getAddrByID(World.systems(), MetadataSystemID)).tokenURI(index);
   }
 
   ////////////////////

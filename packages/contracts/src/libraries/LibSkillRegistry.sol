@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -68,7 +68,7 @@ library LibSkillRegistry {
     setCost(components, id, cost);
     setMax(components, id, max);
     setMediaURI(components, id, media);
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
 
     LibFor.setFromString(components, id, for_);
   }
@@ -87,7 +87,7 @@ library LibSkillRegistry {
     setIsEffect(components, id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
-    ValueSignedComponent(getAddressById(components, ValueSignedCompID)).set(id, value);
+    ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).set(id, value);
   }
 
   function addRequirement(
@@ -115,7 +115,7 @@ library LibSkillRegistry {
     unsetMediaURI(components, id);
     unsetName(components, id);
     unsetType(components, id);
-    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
+    DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
   }
 
   function deleteEffect(IUintComp components, uint256 id) internal {
@@ -143,156 +143,156 @@ library LibSkillRegistry {
   // SETTERS
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, ownerID);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, ownerID);
   }
 
   function setIsEffect(IUintComp components, uint256 id) internal {
-    IsEffectComponent(getAddressById(components, IsEffectCompID)).set(id);
+    IsEffectComponent(getAddrByID(components, IsEffectCompID)).set(id);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
   }
 
   function setIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
+    IsSkillComponent(getAddrByID(components, IsSkillCompID)).set(id);
   }
 
   function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
   }
 
   function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, index);
+    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, index);
   }
 
   function setCost(IUintComp components, uint256 id, uint256 cost) internal {
-    CostComponent(getAddressById(components, CostCompID)).set(id, cost);
+    CostComponent(getAddrByID(components, CostCompID)).set(id, cost);
   }
 
   function setFor(IUintComp components, uint256 id, uint for_) internal {
-    ForComponent(getAddressById(components, ForCompID)).set(id, for_);
+    ForComponent(getAddrByID(components, ForCompID)).set(id, for_);
   }
 
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, logicType);
   }
 
   function setMax(IUintComp components, uint256 id, uint256 max) internal {
-    MaxComponent(getAddressById(components, MaxCompID)).set(id, max);
+    MaxComponent(getAddrByID(components, MaxCompID)).set(id, max);
   }
 
   function setMediaURI(IUintComp components, uint256 id, string memory mediaURI) internal {
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
   /// @notice set the skill tree for a skill (optional)
   /// @dev uses the subtype component
   function setTree(IUintComp components, uint256 id, string memory tree, uint256 level) internal {
     setSubtype(components, id, tree);
-    LevelComponent(getAddressById(components, LevelCompID)).set(id, level);
+    LevelComponent(getAddrByID(components, LevelCompID)).set(id, level);
   }
 
   function setSubtype(IUintComp components, uint256 id, string memory subtype) internal {
-    SubtypeComponent(getAddressById(components, SubtypeCompID)).set(id, subtype);
+    SubtypeComponent(getAddrByID(components, SubtypeCompID)).set(id, subtype);
   }
 
   function setType(IUintComp components, uint256 id, string memory _type) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, _type);
   }
 
   function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
 
   /////////////////
   // UNSETTERS
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
   }
 
   function unsetIsEffect(IUintComp components, uint256 id) internal {
-    IsEffectComponent(getAddressById(components, IsEffectCompID)).remove(id);
+    IsEffectComponent(getAddrByID(components, IsEffectCompID)).remove(id);
   }
 
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
   }
 
   function unsetIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddressById(components, IsSkillCompID)).remove(id);
+    IsSkillComponent(getAddrByID(components, IsSkillCompID)).remove(id);
   }
 
   function unsetIndex(IUintComp components, uint256 id) internal {
-    if (IndexComponent(getAddressById(components, IndexCompID)).has(id)) {
-      IndexComponent(getAddressById(components, IndexCompID)).remove(id);
+    if (IndexComponent(getAddrByID(components, IndexCompID)).has(id)) {
+      IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     }
   }
 
   function unsetSkillIndex(IUintComp components, uint256 id) internal {
-    IndexSkillComponent(getAddressById(components, IndexSkillCompID)).remove(id);
+    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).remove(id);
   }
 
   function unsetCost(IUintComp components, uint256 id) internal {
-    CostComponent(getAddressById(components, CostCompID)).remove(id);
+    CostComponent(getAddrByID(components, CostCompID)).remove(id);
   }
 
   function unsetFor(IUintComp components, uint256 id) internal {
-    ForComponent(getAddressById(components, ForCompID)).remove(id);
+    ForComponent(getAddrByID(components, ForCompID)).remove(id);
   }
 
   function unsetLogicType(IUintComp components, uint256 id) internal {
-    if (LogicTypeComponent(getAddressById(components, LogicTypeCompID)).has(id)) {
-      LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
+    if (LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).has(id)) {
+      LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
     }
   }
 
   function unsetMax(IUintComp components, uint256 id) internal {
-    MaxComponent(getAddressById(components, MaxCompID)).remove(id);
+    MaxComponent(getAddrByID(components, MaxCompID)).remove(id);
   }
 
   function unsetMediaURI(IUintComp components, uint256 id) internal {
-    if (MediaURIComponent(getAddressById(components, MediaURICompID)).has(id)) {
-      MediaURIComponent(getAddressById(components, MediaURICompID)).remove(id);
+    if (MediaURIComponent(getAddrByID(components, MediaURICompID)).has(id)) {
+      MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
     }
   }
 
   function unsetName(IUintComp components, uint256 id) internal {
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
   }
 
   function unsetSubtype(IUintComp components, uint256 id) internal {
-    if (SubtypeComponent(getAddressById(components, SubtypeCompID)).has(id)) {
-      SubtypeComponent(getAddressById(components, SubtypeCompID)).remove(id);
+    if (SubtypeComponent(getAddrByID(components, SubtypeCompID)).has(id)) {
+      SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(id);
     }
   }
 
   function unsetTree(IUintComp components, uint256 id) internal {
     unsetSubtype(components, id);
-    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+    LevelComponent levelComp = LevelComponent(getAddrByID(components, LevelCompID));
     if (levelComp.has(id)) levelComp.remove(id);
   }
 
   function unsetType(IUintComp components, uint256 id) internal {
-    if (TypeComponent(getAddressById(components, TypeCompID)).has(id)) {
-      TypeComponent(getAddressById(components, TypeCompID)).remove(id);
+    if (TypeComponent(getAddrByID(components, TypeCompID)).has(id)) {
+      TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     }
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {
-    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
-      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
+    if (ValueComponent(getAddrByID(components, ValueCompID)).has(id)) {
+      ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
     }
   }
 
   function unsetBalanceSigned(IUintComp components, uint256 id) internal {
-    if (ValueSignedComponent(getAddressById(components, ValueSignedCompID)).has(id)) {
-      ValueSignedComponent(getAddressById(components, ValueSignedCompID)).remove(id);
+    if (ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).has(id)) {
+      ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).remove(id);
     }
   }
 
@@ -300,35 +300,35 @@ library LibSkillRegistry {
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
+    return ValueComponent(getAddrByID(components, ValueCompID)).get(id);
   }
 
   function getBalanceSigned(IUintComp components, uint256 id) internal view returns (int256) {
-    return ValueSignedComponent(getAddressById(components, ValueSignedCompID)).get(id);
+    return ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddressById(components, IndexCompID)).get(id);
+    return IndexComponent(getAddrByID(components, IndexCompID)).get(id);
   }
 
   function getSkillIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexSkillComponent(getAddressById(components, IndexSkillCompID)).get(id);
+    return IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).get(id);
   }
 
   function getCost(IUintComp components, uint256 id) internal view returns (uint256) {
-    return CostComponent(getAddressById(components, CostCompID)).get(id);
+    return CostComponent(getAddrByID(components, CostCompID)).get(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).get(id);
+    return LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id);
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
-    return MaxComponent(getAddressById(components, MaxCompID)).get(id);
+    return MaxComponent(getAddrByID(components, MaxCompID)).get(id);
   }
 
   function getSubtype(IUintComp components, uint256 id) internal view returns (string memory) {
-    SubtypeComponent comp = SubtypeComponent(getAddressById(components, SubtypeCompID));
+    SubtypeComponent comp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
     return comp.has(id) ? comp.get(id) : "";
   }
 
@@ -336,17 +336,13 @@ library LibSkillRegistry {
     IUintComp components,
     uint256 id
   ) internal view returns (bool, string memory, uint256) {
-    SubtypeComponent treeComp = SubtypeComponent(getAddressById(components, SubtypeCompID));
+    SubtypeComponent treeComp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
     if (!treeComp.has(id)) return (false, "", 0);
-    return (
-      true,
-      treeComp.get(id),
-      LevelComponent(getAddressById(components, LevelCompID)).get(id)
-    );
+    return (true, treeComp.get(id), LevelComponent(getAddrByID(components, LevelCompID)).get(id));
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
+    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   /////////////////
@@ -355,7 +351,7 @@ library LibSkillRegistry {
   // get registry entry by Skill index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
-    return IsSkillComponent(getAddressById(components, IsSkillCompID)).has(id) ? id : 0;
+    return IsSkillComponent(getAddrByID(components, IsSkillCompID)).has(id) ? id : 0;
   }
 
   function getEffectsByIndex(
@@ -363,7 +359,7 @@ library LibSkillRegistry {
     uint32 index
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(
+      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(
         genEffectPtr(index)
       );
   }
@@ -374,7 +370,7 @@ library LibSkillRegistry {
     uint32 index
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(
+      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(
         genReqPtr(index)
       );
   }

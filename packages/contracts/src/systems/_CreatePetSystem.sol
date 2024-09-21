@@ -5,7 +5,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { Uint32BareComponent } from "components/base/Uint32BareComponent.sol";
 import { System } from "solecs/System.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
@@ -116,33 +116,33 @@ contract _CreatePetSystem is System {
   RarityComponent internal immutable rarityComp;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
-    idOwnsPetComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetComponentID));
-    isPetComp = IsPetComponent(getAddressById(components, IsPetComponentID));
-    indexPetComp = IndexPetComponent(getAddressById(components, IndexPetComponentID));
-    mediaURIComp = MediaURIComponent(getAddressById(components, MediaURIComponentID));
-    nameComp = NameComponent(getAddressById(components, NameComponentID));
-    stateComp = StateComponent(getAddressById(components, StateComponentID));
-    timeStartComp = TimeStartComponent(getAddressById(components, TimeStartComponentID));
-    timeLastComp = TimeLastComponent(getAddressById(components, TimeLastComponentID));
-    levelComp = LevelComponent(getAddressById(components, LevelComponentID));
-    expComp = ExperienceComponent(getAddressById(components, ExperienceComponentID));
-    skillPointComp = SkillPointComponent(getAddressById(components, SkillPointComponentID));
-    balanceComp = ValueComponent(getAddressById(components, ValueComponentID));
+    idOwnsPetComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetComponentID));
+    isPetComp = IsPetComponent(getAddrByID(components, IsPetComponentID));
+    indexPetComp = IndexPetComponent(getAddrByID(components, IndexPetComponentID));
+    mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURIComponentID));
+    nameComp = NameComponent(getAddrByID(components, NameComponentID));
+    stateComp = StateComponent(getAddrByID(components, StateComponentID));
+    timeStartComp = TimeStartComponent(getAddrByID(components, TimeStartComponentID));
+    timeLastComp = TimeLastComponent(getAddrByID(components, TimeLastComponentID));
+    levelComp = LevelComponent(getAddrByID(components, LevelComponentID));
+    expComp = ExperienceComponent(getAddrByID(components, ExperienceComponentID));
+    skillPointComp = SkillPointComponent(getAddrByID(components, SkillPointComponentID));
+    balanceComp = ValueComponent(getAddrByID(components, ValueComponentID));
 
     indexBackgroundComp = IndexBackgroundComponent(
-      getAddressById(components, IndexBackgroundComponentID)
+      getAddrByID(components, IndexBackgroundComponentID)
     );
-    indexBodyComp = IndexBodyComponent(getAddressById(components, IndexBodyComponentID));
-    indexColorComp = IndexColorComponent(getAddressById(components, IndexColorComponentID));
-    indexFaceComp = IndexFaceComponent(getAddressById(components, IndexFaceComponentID));
-    indexHandComp = IndexHandComponent(getAddressById(components, IndexHandComponentID));
+    indexBodyComp = IndexBodyComponent(getAddrByID(components, IndexBodyComponentID));
+    indexColorComp = IndexColorComponent(getAddrByID(components, IndexColorComponentID));
+    indexFaceComp = IndexFaceComponent(getAddrByID(components, IndexFaceComponentID));
+    indexHandComp = IndexHandComponent(getAddrByID(components, IndexHandComponentID));
 
-    healthComp = HealthComponent(getAddressById(components, HealthComponentID));
-    powerComp = PowerComponent(getAddressById(components, PowerComponentID));
-    violenceComp = ViolenceComponent(getAddressById(components, ViolenceComponentID));
-    harmonyComp = HarmonyComponent(getAddressById(components, HarmonyComponentID));
-    slotsComp = SlotsComponent(getAddressById(components, SlotsComponentID));
-    rarityComp = RarityComponent(getAddressById(components, RarityComponentID));
+    healthComp = HealthComponent(getAddrByID(components, HealthComponentID));
+    powerComp = PowerComponent(getAddrByID(components, PowerComponentID));
+    violenceComp = ViolenceComponent(getAddrByID(components, ViolenceComponentID));
+    harmonyComp = HarmonyComponent(getAddrByID(components, HarmonyComponentID));
+    slotsComp = SlotsComponent(getAddrByID(components, SlotsComponentID));
+    rarityComp = RarityComponent(getAddrByID(components, RarityComponentID));
   }
 
   // needs to be called after world state init

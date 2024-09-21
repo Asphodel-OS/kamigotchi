@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { EntityTypeComponent, ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
@@ -17,11 +17,11 @@ library LibEntityType {
   using LibComp for EntityTypeComponent;
 
   function set(IUintComp components, uint256 id, string memory type_) internal {
-    EntityTypeComponent(getAddressById(components, EntityTypeCompID)).set(id, type_);
+    EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).set(id, type_);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    EntityTypeComponent(getAddressById(components, EntityTypeCompID)).remove(id);
+    EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).remove(id);
   }
 
   function isShape(
@@ -29,7 +29,7 @@ library LibEntityType {
     uint256 id,
     string memory type_
   ) internal view returns (bool) {
-    return EntityTypeComponent(getAddressById(components, EntityTypeCompID)).eqString(id, type_);
+    return EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).eqString(id, type_);
   }
 
   function isShape(
@@ -37,6 +37,6 @@ library LibEntityType {
     uint256[] memory ids,
     string memory type_
   ) internal view returns (bool) {
-    return EntityTypeComponent(getAddressById(components, EntityTypeCompID)).eqString(ids, type_);
+    return EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).eqString(ids, type_);
   }
 }

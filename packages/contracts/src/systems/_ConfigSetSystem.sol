@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 

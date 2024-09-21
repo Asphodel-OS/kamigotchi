@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IndexFactionComponent, ID as IndexFactionCompID } from "components/IndexFactionComponent.sol";
@@ -47,21 +47,21 @@ library LibFactions {
     id = genID(index);
     LibEntityType.set(components, id, "FACTION");
 
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IndexFactionComponent(getAddressById(components, IndexFactionCompID)).set(id, index);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
+    IndexFactionComponent(getAddrByID(components, IndexFactionCompID)).set(id, index);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
   }
 
   function remove(IUintComp components, uint256 targetID) internal {
     LibEntityType.remove(components, targetID);
 
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(targetID);
-    IndexFactionComponent(getAddressById(components, IndexFactionCompID)).remove(targetID);
-    NameComponent(getAddressById(components, NameCompID)).remove(targetID);
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).remove(targetID);
-    MediaURIComponent(getAddressById(components, MediaURICompID)).remove(targetID);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(targetID);
+    IndexFactionComponent(getAddrByID(components, IndexFactionCompID)).remove(targetID);
+    NameComponent(getAddrByID(components, NameCompID)).remove(targetID);
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(targetID);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(targetID);
   }
 
   /////////////////
@@ -70,7 +70,7 @@ library LibFactions {
   /// @notice assign faction id to a target entity
   /// @dev only for NPCs now, but could be extended to any entity
   function assign(IUintComp components, uint256 targetID, uint32 index) internal {
-    IndexFactionComponent(getAddressById(components, IndexFactionCompID)).set(targetID, index);
+    IndexFactionComponent(getAddrByID(components, IndexFactionCompID)).set(targetID, index);
   }
 
   function incRep(IUintComp components, uint256 targetID, uint32 index, uint256 amt) internal {
@@ -99,7 +99,7 @@ library LibFactions {
 
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
     uint256 id = genID(index);
-    if (IndexFactionComponent(getAddressById(components, IndexFactionCompID)).has(id)) return id;
+    if (IndexFactionComponent(getAddrByID(components, IndexFactionCompID)).has(id)) return id;
   }
 
   /////////////////

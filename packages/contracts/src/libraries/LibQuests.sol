@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
@@ -137,15 +137,15 @@ library LibQuests {
     // copy an objective
     uint256 id = genObjSnapshotID(questID, LibHash.get(components, conditionID));
     setOwner(components, id, questID); // TODO: change to pointerID (world2)
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, amount);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, amount);
     return id;
   }
 
   function removeSnapshottedObjectives(IUintComp components, uint256 questID) internal {
     uint256[] memory objectives = querySnapshottedObjectives(components, questID);
 
-    IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).removeBatch(objectives);
-    ValueComponent(getAddressById(components, ValueCompID)).removeBatch(objectives);
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).removeBatch(objectives);
+    ValueComponent(getAddrByID(components, ValueCompID)).removeBatch(objectives);
     LibHash.removeBatch(components, objectives);
   }
 
@@ -231,7 +231,7 @@ library LibQuests {
     ); // longtext >< for a user call to action
 
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
-    uint256 prevValue = ValueComponent(getAddressById(components, ValueCompID)).get(snapshotID);
+    uint256 prevValue = ValueComponent(getAddrByID(components, ValueCompID)).get(snapshotID);
 
     // overall value decreased - condition not be met, will overflow if checked
     if (prevValue > currValue) return false;
@@ -254,7 +254,7 @@ library LibQuests {
     ); // longtext >< for a user call to action
 
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
-    uint256 prevValue = ValueComponent(getAddressById(components, ValueCompID)).get(snapshotID);
+    uint256 prevValue = ValueComponent(getAddrByID(components, ValueCompID)).get(snapshotID);
 
     // overall value increased - condition not be met, will overflow if checked
     if (currValue > prevValue) return false;
@@ -276,71 +276,71 @@ library LibQuests {
   // CHECKERS
 
   function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(id);
+    return IsQuestComponent(getAddrByID(components, IsQuestCompID)).has(id);
   }
 
   function isRepeatable(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).has(id);
+    return IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).has(id);
   }
 
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(id);
+    return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(id);
   }
 
   /////////////////
   // SETTERS
 
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
 
   function setCompleted(IUintComp components, uint256 id) internal {
-    IsCompleteComponent(getAddressById(components, IsCompleteCompID)).set(id);
+    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(id);
   }
 
   // TODO: IDOwnsQuestComponent is probalmentic, should change to HolderID or PointerID for world2
   function setOwner(IUintComp components, uint256 id, uint256 value) internal {
-    IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).set(id, value);
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, value);
   }
 
   function setIsQuest(IUintComp components, uint256 id) internal {
-    IsQuestComponent(getAddressById(components, IsQuestCompID)).set(id);
+    IsQuestComponent(getAddrByID(components, IsQuestCompID)).set(id);
   }
 
   function setIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(id);
+    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(id);
   }
 
   function setQuestIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
+    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).set(id, index);
   }
 
   function setTimeStart(IUintComp components, uint256 id, uint256 time) internal {
-    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, time);
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, time);
   }
 
   function unsetCompleted(IUintComp components, uint256 id) internal {
-    IsCompleteComponent(getAddressById(components, IsCompleteCompID)).remove(id);
+    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(id);
   }
 
   function unsetIsQuest(IUintComp components, uint256 id) internal {
-    IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(id);
+    IsQuestComponent(getAddrByID(components, IsQuestCompID)).remove(id);
   }
 
   function unsetIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(id);
+    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).remove(id);
   }
 
   function unsetOwner(IUintComp components, uint256 id) internal {
-    IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).remove(id);
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).remove(id);
   }
 
   function unsetQuestIndex(IUintComp components, uint256 id) internal {
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(id);
+    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).remove(id);
   }
 
   function unsetTimeStart(IUintComp components, uint256 id) internal {
-    TimeStartComponent(getAddressById(components, TimeStartCompID)).remove(id);
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).remove(id);
   }
 
   /////////////////
@@ -356,35 +356,35 @@ library LibQuests {
   }
 
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return getComponentById(components, ValueCompID).safeGetUint256(id);
+    return getCompByID(components, ValueCompID).safeGetUint256(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).get(id);
+    return LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id);
   }
 
   function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).get(id);
+    return IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(id);
   }
 
   function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).get(id);
+    return IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
+    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   function getTimeStart(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeStartComponent(getAddressById(components, TimeStartCompID)).get(id);
+    return TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(id);
   }
 
   function getTime(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeComponent(getAddressById(components, TimeCompID)).get(id);
+    return TimeComponent(getAddrByID(components, TimeCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return getComponentById(components, IndexCompID).safeGetUint32(id);
+    return getCompByID(components, IndexCompID).safeGetUint32(id);
   }
 
   ////////////////
@@ -406,9 +406,7 @@ library LibQuests {
     uint256 questID
   ) internal view returns (uint256[] memory) {
     return
-      IDOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).getEntitiesWithValue(
-        questID
-      );
+      IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).getEntitiesWithValue(questID);
   }
 
   ////////////////////

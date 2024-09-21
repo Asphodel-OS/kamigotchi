@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -69,8 +69,8 @@ library LibConditional {
     string memory type_,
     string memory logicType
   ) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, logicType);
   }
 
   /// @notice creates a condition entity owned by another entity
@@ -79,9 +79,9 @@ library LibConditional {
     create(components, id, details.type_, details.logic);
 
     if (details.index != 0)
-      IndexComponent(getAddressById(components, IndexCompID)).set(id, details.index);
+      IndexComponent(getAddrByID(components, IndexCompID)).set(id, details.index);
     if (details.value != 0)
-      ValueComponent(getAddressById(components, ValueCompID)).set(id, details.value);
+      ValueComponent(getAddrByID(components, ValueCompID)).set(id, details.value);
   }
 
   /// @notice creates a condition that points to another entity
@@ -94,21 +94,21 @@ library LibConditional {
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     create(components, id, details);
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, pointerID);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, pointerID);
   }
 
   /// @notice adds an optional subtype to a condition
   function addSubtype(IUintComp components, uint256 id, string memory subtype) internal {
-    SubtypeComponent(getAddressById(components, SubtypeCompID)).set(id, subtype);
+    SubtypeComponent(getAddrByID(components, SubtypeCompID)).set(id, subtype);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-    SubtypeComponent(getAddressById(components, SubtypeCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(id);
   }
 
   ///////////////////////
@@ -181,10 +181,10 @@ library LibConditional {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (Condition[] memory) {
-    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
-    LogicTypeComponent logicComp = LogicTypeComponent(getAddressById(components, LogicTypeCompID));
-    IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
+    LogicTypeComponent logicComp = LogicTypeComponent(getAddrByID(components, LogicTypeCompID));
+    IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
 
     Condition[] memory conditions = new Condition[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
@@ -199,28 +199,28 @@ library LibConditional {
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent comp = ValueComponent(getAddrByID(components, ValueCompID));
     return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
+    IndexComponent comp = IndexComponent(getAddrByID(components, IndexCompID));
     return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getLogic(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).get(id);
+    return LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
+    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   ///////////////////////
   // QUERIES
 
   function queryFor(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    return IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(id);
+    return IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(id);
   }
 
   /// @notice queries for conditions with subtype
@@ -232,12 +232,12 @@ library LibConditional {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IDPointerCompID),
+      getCompByID(components, IDPointerCompID),
       abi.encode(id)
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, SubtypeCompID),
+      getCompByID(components, SubtypeCompID),
       abi.encode(subtype)
     );
     return LibQuery.query(fragments);

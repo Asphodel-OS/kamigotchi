@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
@@ -59,12 +59,12 @@ contract DroptableRevealSystem is System, AuthRoles {
     require(LibDroptable.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
 
     // removing broken components
-    BlockRevealComponent(getAddressById(components, BlockRevealCompID)).remove(id);
-    ForComponent(getAddressById(components, ForCompID)).remove(id);
+    BlockRevealComponent(getAddrByID(components, BlockRevealCompID)).remove(id);
+    ForComponent(getAddrByID(components, ForCompID)).remove(id);
 
     // getting details
-    uint256 holderID = IdHolderComponent(getAddressById(components, IdHolderCompID)).extract(id);
-    uint256 amt = ValueComponent(getAddressById(components, ValueCompID)).extract(id);
+    uint256 holderID = IdHolderComponent(getAddrByID(components, IdHolderCompID)).extract(id);
+    uint256 amt = ValueComponent(getAddrByID(components, ValueCompID)).extract(id);
 
     // replacing with lootbox
     LibInventory.incFor(components, holderID, 10001, amt);

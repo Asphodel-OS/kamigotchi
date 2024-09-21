@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { Base64 } from "solady/utils/Base64.sol";
 import { LibString } from "solady/utils/LibString.sol";

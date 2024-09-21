@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Stat, StatLib } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
@@ -30,7 +30,7 @@ library LibStat {
   function applyAll(IUintComp components, uint256 fromID, uint256 toID) internal {
     uint256[] memory compIDs = getStatCompIDs();
     for (uint256 i = 0; i < compIDs.length; i++)
-      applySingle(StatComponent(getAddressById(components, compIDs[i])), fromID, toID);
+      applySingle(StatComponent(getAddrByID(components, compIDs[i])), fromID, toID);
   }
 
   function applySingle(StatComponent statComp, uint256 fromID, uint256 toID) internal {
@@ -45,7 +45,7 @@ library LibStat {
   function copy(IUintComp components, uint256 fromID, uint256 toID) internal {
     uint256[] memory compIDs = getStatCompIDs();
     for (uint256 i = 0; i < compIDs.length; i++) {
-      StatComponent statComp = StatComponent(getAddressById(components, compIDs[i]));
+      StatComponent statComp = StatComponent(getAddrByID(components, compIDs[i]));
       Stat memory fromStat = statComp.safeGetStat(fromID);
       if (!StatLib.isZero(fromStat)) statComp.set(toID, fromStat);
     }
@@ -54,8 +54,7 @@ library LibStat {
   // Wipe all set stats from an entity.
   function wipe(IUintComp components, uint256 id) internal {
     uint256[] memory compIDs = getStatCompIDs();
-    for (uint256 i = 0; i < compIDs.length; i++)
-      getComponentById(components, compIDs[i]).remove(id);
+    for (uint256 i = 0; i < compIDs.length; i++) getCompByID(components, compIDs[i]).remove(id);
   }
 
   // adjust the shift field of a specified stat type
@@ -107,51 +106,51 @@ library LibStat {
   // GETTERS
 
   function getHarmony(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddressById(components, HarmonyCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, HarmonyCompID)).safeGetStat(id);
   }
 
   function getHarmonyTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddressById(components, HarmonyCompID)).calcTotal(id);
+    return StatComponent(getAddrByID(components, HarmonyCompID)).calcTotal(id);
   }
 
   function getHealth(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddressById(components, HealthCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, HealthCompID)).safeGetStat(id);
   }
 
   function getHealthTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddressById(components, HealthCompID)).calcTotal(id);
+    return StatComponent(getAddrByID(components, HealthCompID)).calcTotal(id);
   }
 
   function getPower(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddressById(components, PowerCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, PowerCompID)).safeGetStat(id);
   }
 
   function getPowerTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddressById(components, PowerCompID)).calcTotal(id);
+    return StatComponent(getAddrByID(components, PowerCompID)).calcTotal(id);
   }
 
   function getSlots(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddressById(components, SlotsCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, SlotsCompID)).safeGetStat(id);
   }
 
   function getSlotsTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddressById(components, SlotsCompID)).calcTotal(id);
+    return StatComponent(getAddrByID(components, SlotsCompID)).calcTotal(id);
   }
 
   function getStamina(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddressById(components, StaminaCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, StaminaCompID)).safeGetStat(id);
   }
 
   function getStaminaTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddressById(components, StaminaCompID)).calcTotal(id);
+    return StatComponent(getAddrByID(components, StaminaCompID)).calcTotal(id);
   }
 
   function getViolence(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddressById(components, ViolenceCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, ViolenceCompID)).safeGetStat(id);
   }
 
   function getViolenceTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddressById(components, ViolenceCompID)).calcTotal(id);
+    return StatComponent(getAddrByID(components, ViolenceCompID)).calcTotal(id);
   }
 
   function getStatCompIDs() internal pure returns (uint256[] memory) {
@@ -170,59 +169,59 @@ library LibStat {
 
   // set the harmony stat struct of an entity
   function setHarmony(IUintComp components, uint256 id, Stat memory value) internal {
-    HarmonyComponent(getAddressById(components, HarmonyCompID)).set(id, value);
+    HarmonyComponent(getAddrByID(components, HarmonyCompID)).set(id, value);
   }
 
   // set the health stat struct of an entity
   function setHealth(IUintComp components, uint256 id, Stat memory value) internal {
-    HealthComponent(getAddressById(components, HealthCompID)).set(id, value);
+    HealthComponent(getAddrByID(components, HealthCompID)).set(id, value);
   }
 
   // set the power stat struct of an entity
   function setPower(IUintComp components, uint256 id, Stat memory value) internal {
-    PowerComponent(getAddressById(components, PowerCompID)).set(id, value);
+    PowerComponent(getAddrByID(components, PowerCompID)).set(id, value);
   }
 
   // set the slots stat struct of an entity
   function setSlots(IUintComp components, uint256 id, Stat memory value) internal {
-    SlotsComponent(getAddressById(components, SlotsCompID)).set(id, value);
+    SlotsComponent(getAddrByID(components, SlotsCompID)).set(id, value);
   }
 
   // set the stamina stat struct of an entity
   function setStamina(IUintComp components, uint256 id, Stat memory value) internal {
-    StaminaComponent(getAddressById(components, StaminaCompID)).set(id, value);
+    StaminaComponent(getAddrByID(components, StaminaCompID)).set(id, value);
   }
 
   // set the violence stat struct of an entity
   function setViolence(IUintComp components, uint256 id, Stat memory value) internal {
-    ViolenceComponent(getAddressById(components, ViolenceCompID)).set(id, value);
+    ViolenceComponent(getAddrByID(components, ViolenceCompID)).set(id, value);
   }
 
   /////////////////
   // UNSETTERS
 
   function unsetHarmony(IUintComp components, uint256 id) internal {
-    getComponentById(components, HarmonyCompID).remove(id);
+    getCompByID(components, HarmonyCompID).remove(id);
   }
 
   function unsetHealth(IUintComp components, uint256 id) internal {
-    getComponentById(components, HealthCompID).remove(id);
+    getCompByID(components, HealthCompID).remove(id);
   }
 
   function unsetPower(IUintComp components, uint256 id) internal {
-    getComponentById(components, PowerCompID).remove(id);
+    getCompByID(components, PowerCompID).remove(id);
   }
 
   function unsetSlots(IUintComp components, uint256 id) internal {
-    getComponentById(components, SlotsCompID).remove(id);
+    getCompByID(components, SlotsCompID).remove(id);
   }
 
   function unsetStamina(IUintComp components, uint256 id) internal {
-    getComponentById(components, StaminaCompID).remove(id);
+    getCompByID(components, StaminaCompID).remove(id);
   }
 
   function unsetViolence(IUintComp components, uint256 id) internal {
-    getComponentById(components, ViolenceCompID).remove(id);
+    getCompByID(components, ViolenceCompID).remove(id);
   }
 
   ////////////////////
@@ -233,17 +232,15 @@ library LibStat {
     string memory type_
   ) public view returns (StatComponent) {
     if (LibString.eq(type_, "HEALTH"))
-      return HealthComponent(getAddressById(components, HealthCompID));
-    if (LibString.eq(type_, "POWER"))
-      return PowerComponent(getAddressById(components, PowerCompID));
+      return HealthComponent(getAddrByID(components, HealthCompID));
+    if (LibString.eq(type_, "POWER")) return PowerComponent(getAddrByID(components, PowerCompID));
     if (LibString.eq(type_, "HARMONY"))
-      return HarmonyComponent(getAddressById(components, HarmonyCompID));
+      return HarmonyComponent(getAddrByID(components, HarmonyCompID));
     if (LibString.eq(type_, "VIOLENCE"))
-      return ViolenceComponent(getAddressById(components, ViolenceCompID));
-    if (LibString.eq(type_, "SLOTS"))
-      return SlotsComponent(getAddressById(components, SlotsCompID));
+      return ViolenceComponent(getAddrByID(components, ViolenceCompID));
+    if (LibString.eq(type_, "SLOTS")) return SlotsComponent(getAddrByID(components, SlotsCompID));
     if (LibString.eq(type_, "STAMINA"))
-      return StaminaComponent(getAddressById(components, StaminaCompID));
+      return StaminaComponent(getAddrByID(components, StaminaCompID));
     revert("LibStat: invalid stat type");
   }
 }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Coord, CoordLib } from "components/types/Coord.sol";
 
 import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.sol";
@@ -35,11 +35,11 @@ library LibRoom {
     string memory description
   ) internal returns (uint256 id) {
     id = genID(index);
-    IsRoomComponent(getAddressById(components, IsRoomCompID)).set(id); // TODO: change to EntityType
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, index);
-    LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    IsRoomComponent(getAddrByID(components, IsRoomCompID)).set(id); // TODO: change to EntityType
+    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, index);
+    LocationComponent(getAddrByID(components, LocationCompID)).set(id, location);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
   }
 
   /// @notice creates a room gating condition
@@ -56,26 +56,26 @@ library LibRoom {
     id = world.getUniqueEntityId();
     LibConditional.create(components, id, Condition(type_, logicType, condIndex, condValue));
 
-    IDRoomComponent(getAddressById(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
-    IDPointerComponent sourceComp = IDPointerComponent(getAddressById(components, IDPointerCompID));
+    IDRoomComponent(getAddrByID(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
+    IDPointerComponent sourceComp = IDPointerComponent(getAddrByID(components, IDPointerCompID));
     if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
     else sourceComp.set(id, 0);
   }
 
   function remove(IUintComp components, uint256 id) internal returns (uint256) {
-    IsRoomComponent(getAddressById(components, IsRoomCompID)).remove(id);
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(id);
-    LocationComponent(getAddressById(components, LocationCompID)).remove(id);
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
-    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
-    ExitsComponent exitComp = ExitsComponent(getAddressById(components, ExitsCompID));
+    IsRoomComponent(getAddrByID(components, IsRoomCompID)).remove(id);
+    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
+    LocationComponent(getAddrByID(components, LocationCompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
+    DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
+    ExitsComponent exitComp = ExitsComponent(getAddrByID(components, ExitsCompID));
     if (exitComp.has(id)) exitComp.remove(id);
     return id;
   }
 
   function removeGate(IUintComp components, uint256 id) internal {
-    IDRoomComponent(getAddressById(components, IDRoomCompID)).remove(id);
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
+    IDRoomComponent(getAddrByID(components, IDRoomCompID)).remove(id);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
     LibConditional.remove(components, id);
   }
 
@@ -83,7 +83,7 @@ library LibRoom {
   // CHECKERS
 
   function isRoom(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRoomComponent(getAddressById(components, IsRoomCompID)).has(id);
+    return IsRoomComponent(getAddrByID(components, IsRoomCompID)).has(id);
   }
 
   /// @notice Checks whether a path from Room A to Room B is valid
@@ -94,7 +94,7 @@ library LibRoom {
     uint256 fromID,
     uint256 toID
   ) internal view returns (bool) {
-    LocationComponent locationComp = LocationComponent(getAddressById(components, LocationCompID));
+    LocationComponent locationComp = LocationComponent(getAddrByID(components, LocationCompID));
     Coord memory fromLoc = locationComp.get(fromID);
     Coord memory toLoc = locationComp.get(toID);
     if (isAdjacent(fromLoc, toLoc)) return true;
@@ -131,7 +131,7 @@ library LibRoom {
   /// @notice Checks if two entities share a room
   function sharesRoom(IUintComp components, uint256 aID, uint256 bID) internal view returns (bool) {
     (uint32 roomA, uint32 roomB) = LibComp.safeGetTwoUint32(
-      getComponentById(components, IndexRoomCompID),
+      getCompByID(components, IndexRoomCompID),
       aID,
       bID
     );
@@ -147,31 +147,31 @@ library LibRoom {
     IUintComp components,
     uint256 id
   ) internal view returns (uint32[] memory) {
-    ExitsComponent comp = ExitsComponent(getAddressById(components, ExitsCompID));
+    ExitsComponent comp = ExitsComponent(getAddrByID(components, ExitsCompID));
     return comp.has(id) ? comp.get(id) : new uint32[](0);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).get(id);
+    return IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).get(id);
   }
 
   function getLocation(IUintComp components, uint256 id) internal view returns (Coord memory) {
-    return LocationComponent(getAddressById(components, LocationCompID)).get(id);
+    return LocationComponent(getAddrByID(components, LocationCompID)).get(id);
   }
 
   /////////////////
   // SETTERS
 
   function setDescription(IUintComp components, uint256 id, string memory description) internal {
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
   }
 
   function setExits(IUintComp components, uint256 id, uint32[] memory exits) internal {
-    ExitsComponent(getAddressById(components, ExitsCompID)).set(id, exits);
+    ExitsComponent(getAddrByID(components, ExitsCompID)).set(id, exits);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
   /////////////////
@@ -204,12 +204,12 @@ library LibRoom {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IDRoomCompID),
+      getCompByID(components, IDRoomCompID),
       abi.encode(genGateAtPtr(toIndex))
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IDPointerCompID),
+      getCompByID(components, IDPointerCompID),
       abi.encode(0)
     );
 
@@ -227,9 +227,9 @@ library LibRoom {
     IUintComp components,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    uint256[] memory gatesTo = IDRoomComponent(getAddressById(components, IDRoomCompID))
+    uint256[] memory gatesTo = IDRoomComponent(getAddrByID(components, IDRoomCompID))
       .getEntitiesWithValue(genGateAtPtr(toIndex));
-    uint256[] memory gatesFrom = IDPointerComponent(getAddressById(components, IDPointerCompID))
+    uint256[] memory gatesFrom = IDPointerComponent(getAddrByID(components, IDPointerCompID))
       .getEntitiesWithValue(genGateSourcePtr(toIndex));
     return LibArray.concat(gatesTo, gatesFrom);
   }

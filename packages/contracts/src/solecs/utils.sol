@@ -17,7 +17,7 @@ function addressToEntity(address addr) pure returns (uint256) {
 }
 
 /// @notice Get an Ethereum address from an address/id registry component (like _components/_systems in World.sol)
-function getAddressById(IUint256Component registry, uint256 id) view returns (address) {
+function getAddrByID(IUint256Component registry, uint256 id) view returns (address) {
   uint256[] memory entities = registry.getEntitiesWithValue(id);
   require(entities.length != 0, "id not registered");
   return entityToAddress(entities[0]);
@@ -30,8 +30,8 @@ function getIdByAddress(IUint256Component registry, address addr) view returns (
 }
 
 /// @notice Get a Component from an address/id registry component (like _components in World.sol)
-function getComponentById(IUint256Component components, uint256 id) view returns (IComponent) {
-  return IComponent(getAddressById(components, id));
+function getCompByID(IUint256Component components, uint256 id) view returns (IComponent) {
+  return IComponent(getAddrByID(components, id));
 }
 
 /** @notice
@@ -39,8 +39,8 @@ function getComponentById(IUint256Component components, uint256 id) view returns
  * System registry component is registered (like _components in World.sol)
  */
 function getSystemAddressById(IUint256Component components, uint256 id) view returns (address) {
-  IUint256Component systems = IUint256Component(getAddressById(components, systemsComponentId));
-  return getAddressById(systems, id);
+  IUint256Component systems = IUint256Component(getAddrByID(components, systemsComponentId));
+  return getAddrByID(systems, id);
 }
 
 /** @notice

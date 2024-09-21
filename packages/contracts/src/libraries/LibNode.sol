@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
@@ -37,12 +37,12 @@ library LibNode {
     string memory description
   ) internal returns (uint256 id) {
     id = genID(index);
-    IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id); // TODO: change to EntityType
-    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(id, index);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, roomIndex);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    IsNodeComponent(getAddrByID(components, IsNodeCompID)).set(id); // TODO: change to EntityType
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, index);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, nodeType);
+    IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, roomIndex);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
   }
 
   /// @notice requirements for kamis to be put on a node
@@ -67,13 +67,13 @@ library LibNode {
   }
 
   function remove(IUintComp components, uint256 id, uint32 nodeIndex) internal {
-    IsNodeComponent(getAddressById(components, IsNodeCompID)).remove(id);
-    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).remove(id);
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).remove(id);
-    AffinityComponent(getAddressById(components, AffCompID)).remove(id);
-    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    IsNodeComponent(getAddrByID(components, IsNodeCompID)).remove(id);
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
+    IndexRoomComponent(getAddrByID(components, RoomCompID)).remove(id);
+    AffinityComponent(getAddrByID(components, AffCompID)).remove(id);
+    DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
 
     uint256[] memory reqs = getReqs(components, nodeIndex);
     for (uint256 i; i < reqs.length; i++) removeRequirement(components, reqs[i]);
@@ -104,7 +104,7 @@ library LibNode {
   // SETTERS
 
   function setAffinity(IUintComp components, uint256 id, string memory affinity) internal {
-    AffinityComponent(getAddressById(components, AffCompID)).set(id, affinity);
+    AffinityComponent(getAddrByID(components, AffCompID)).set(id, affinity);
   }
 
   //////////////
@@ -138,21 +138,21 @@ library LibNode {
 
   // optional field for specific types of nodes, namely Harvesting Types
   function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    AffinityComponent comp = AffinityComponent(getAddressById(components, AffCompID));
+    AffinityComponent comp = AffinityComponent(getAddrByID(components, AffCompID));
     return comp.has(id) ? comp.get(id) : "";
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).get(id);
+    return IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).get(id);
   }
 
   function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddressById(components, RoomCompID)).get(id);
+    return IndexRoomComponent(getAddrByID(components, RoomCompID)).get(id);
   }
 
   // The type of node (e.g. Harvesting | Healing | etc)
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
+    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   function getScavBar(IUintComp components, uint32 nodeIndex) internal view returns (uint256) {
@@ -165,7 +165,7 @@ library LibNode {
   // Return the ID of a Node by its index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
-    return IsNodeComponent(getAddressById(components, IsNodeCompID)).has(id) ? id : 0;
+    return IsNodeComponent(getAddrByID(components, IsNodeCompID)).has(id) ? id : 0;
   }
 
   function getReqs(IUintComp components, uint32 index) internal view returns (uint256[] memory) {

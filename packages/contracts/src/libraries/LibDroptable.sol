@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
@@ -33,8 +33,8 @@ library LibDroptable {
     uint256 accID
   ) internal returns (uint256 id) {
     id = LibCommit.commit(world, components, accID, block.number, "ITEM_DROPTABLE_COMMIT");
-    ForComponent(getAddressById(components, ForCompID)).set(id, dtID);
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, count);
+    ForComponent(getAddrByID(components, ForCompID)).set(id, dtID);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, count);
   }
 
   ///////////////////
@@ -44,14 +44,14 @@ library LibDroptable {
   /// @dev avoid big array for memory's sake
   function reveal(IUintComp components, uint256[] memory commitIDs) internal {
     // sorted in order of stack depth
-    ForComponent forComp = ForComponent(getAddressById(components, ForCompID));
-    IdHolderComponent holderComp = IdHolderComponent(getAddressById(components, IdHolderCompID));
-    BlockRevComponent blockComp = BlockRevComponent(getAddressById(components, BlockRevealCompID));
-    WeightsComponent weightsComp = WeightsComponent(getAddressById(components, WeightsCompID));
-    ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
-    KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
-    ValuesComponent logComp = ValuesComponent(getAddressById(components, ValuesCompID));
-    TimeComponent timeComp = TimeComponent(getAddressById(components, TimeCompID));
+    ForComponent forComp = ForComponent(getAddrByID(components, ForCompID));
+    IdHolderComponent holderComp = IdHolderComponent(getAddrByID(components, IdHolderCompID));
+    BlockRevComponent blockComp = BlockRevComponent(getAddrByID(components, BlockRevealCompID));
+    WeightsComponent weightsComp = WeightsComponent(getAddrByID(components, WeightsCompID));
+    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+    KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
+    ValuesComponent logComp = ValuesComponent(getAddrByID(components, ValuesCompID));
+    TimeComponent timeComp = TimeComponent(getAddrByID(components, TimeCompID));
 
     for (uint256 i; i < commitIDs.length; i++) {
       uint256 commitID = commitIDs[i];
@@ -129,13 +129,13 @@ library LibDroptable {
     uint32[] memory keys,
     uint256[] memory weights
   ) internal {
-    KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
-    WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
+    KeysComponent(getAddrByID(components, KeysCompID)).set(id, keys);
+    WeightsComponent(getAddrByID(components, WeightsCompID)).set(id, weights);
   }
 
   function unset(IUintComp components, uint256 id) internal {
-    KeysComponent(getAddressById(components, KeysCompID)).remove(id);
-    WeightsComponent(getAddressById(components, WeightsCompID)).remove(id);
+    KeysComponent(getAddrByID(components, KeysCompID)).remove(id);
+    WeightsComponent(getAddrByID(components, WeightsCompID)).remove(id);
   }
 
   /////////////////

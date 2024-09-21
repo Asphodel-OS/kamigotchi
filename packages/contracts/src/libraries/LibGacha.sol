@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibSort } from "solady/utils/LibSort.sol";
 
@@ -49,8 +49,8 @@ library LibGacha {
   /// @notice deposits pets into the gacha pool
   /// @dev doesnt use LibPet for batch efficiency
   function depositPets(IUintComp components, uint256[] memory petIDs) internal {
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
-    RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+    RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
 
     for (uint256 i; i < petIDs.length; i++) {
       ownerComp.set(petIDs[i], GACHA_ID);
@@ -66,13 +66,13 @@ library LibGacha {
     uint256[] memory commitIDs
   ) internal {
     // update rerolls
-    RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
+    RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
     uint256[] memory rerolls = LibComp.safeExtractBatchUint256(rerollComp, commitIDs);
     for (uint256 i; i < petIDs.length; i++) rerolls[i]++;
     rerollComp.setBatch(petIDs, rerolls);
 
     // update pet ownership
-    IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).setBatch(
+    IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID)).setBatch(
       petIDs,
       LibCommit.extractHolders(components, commitIDs)
     );
@@ -138,7 +138,7 @@ library LibGacha {
   ) internal returns (uint256[] memory) {
     uint256 count = indices.length;
     uint256[] memory results = new uint256[](count);
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
 
     for (uint256 i; i < count; i++) {
       uint256 selectedID = ownerComp.getAt(abi.encode(GACHA_ID), indices[i]);
@@ -170,7 +170,7 @@ library LibGacha {
   }
 
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
     return ownerComp.size(abi.encode(GACHA_ID));
   }
 
@@ -182,7 +182,7 @@ library LibGacha {
     uint256[] memory ids,
     uint256[] memory rerolls
   ) internal {
-    RerollComponent(getAddressById(components, RerollCompID)).setBatch(ids, rerolls);
+    RerollComponent(getAddrByID(components, RerollCompID)).setBatch(ids, rerolls);
   }
 
   ///////////////////
@@ -192,14 +192,14 @@ library LibGacha {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    return getComponentById(components, RerollCompID).safeExtractBatchUint256(ids);
+    return getCompByID(components, RerollCompID).safeExtractBatchUint256(ids);
   }
 
   /////////////////
   // SCRIPTING
 
   function getAllInGacha(IUintComp components) internal view returns (uint256[] memory) {
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID));
+    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
     return ownerComp.getEntitiesWithValue(GACHA_ID);
   }
 }

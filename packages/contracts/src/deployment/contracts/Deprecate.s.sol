@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { SystemCall } from "./SystemCall.s.sol";
 
 import "forge-std/Script.sol";
@@ -58,7 +58,7 @@ contract Deprecate is SystemCall {
     Component[] memory comps = new Component[](componentIDs.length);
     for (uint256 i; i < componentIDs.length; i++) {
       console.log("Getting component %s", componentIDs[i]);
-      comps[i] = Component(getAddressById(components, componentIDs[i]));
+      comps[i] = Component(getAddrByID(components, componentIDs[i]));
     }
     return comps;
   }

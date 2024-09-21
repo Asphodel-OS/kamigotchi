@@ -5,7 +5,7 @@ import { ISystem } from "../interfaces/ISystem.sol";
 import { IWorld } from "../interfaces/IWorld.sol";
 import { Ownable } from "solady/auth/Ownable.sol";
 import { IUint256Component } from "../interfaces/IUint256Component.sol";
-import { addressToEntity, entityToAddress, getAddressById } from "../utils.sol";
+import { addressToEntity, entityToAddress, getAddrByID } from "../utils.sol";
 import { systemsComponentId } from "../constants.sol";
 import { System } from "../System.sol";
 
@@ -47,7 +47,7 @@ contract RegisterSystem is System {
 
     IUint256Component registry = registerType == RegisterType.Component
       ? components
-      : IUint256Component(getAddressById(components, systemsComponentId));
+      : IUint256Component(getAddrByID(components, systemsComponentId));
     uint256 entity = addressToEntity(addr);
 
     require(!registry.has(entity), "entity already registered");

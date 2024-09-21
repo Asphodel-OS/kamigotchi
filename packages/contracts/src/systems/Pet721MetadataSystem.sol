@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { System } from "solecs/System.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { LibPet721 } from "libraries/LibPet721.sol";
 

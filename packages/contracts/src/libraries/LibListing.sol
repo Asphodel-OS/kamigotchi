@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
@@ -37,10 +37,10 @@ library LibListing {
   ) internal returns (uint256 id) {
     id = genID(npcIndex, itemIndex);
     LibEntityType.set(components, id, "LISTING");
-    IsListingComponent(getAddressById(components, IsListingCompID)).set(id); // deprecated
+    IsListingComponent(getAddrByID(components, IsListingCompID)).set(id); // deprecated
 
-    IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, npcIndex);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
+    IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).set(id, npcIndex);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
     if (buyPrice != 0) setBuyPrice(components, id, buyPrice);
@@ -60,12 +60,12 @@ library LibListing {
 
   function remove(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
-    IsListingComponent(getAddressById(components, IsListingCompID)).remove(id);
+    IsListingComponent(getAddrByID(components, IsListingCompID)).remove(id);
 
-    IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).remove(id);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
+    IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).remove(id);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
 
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
     valueComp.remove(genBuyPtr(id));
     valueComp.remove(genSellPtr(id));
 
@@ -137,12 +137,12 @@ library LibListing {
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genBuyPtr(id);
-    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genSellPtr(id);
-    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
   }
 
   //////////////////
@@ -150,12 +150,12 @@ library LibListing {
 
   function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
     uint256 ptr = genBuyPtr(id);
-    ValueComponent(getAddressById(components, ValueCompID)).set(ptr, price);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(ptr, price);
   }
 
   function setSellPrice(IUintComp components, uint256 id, uint256 price) internal {
     uint256 ptr = genSellPtr(id);
-    ValueComponent(getAddressById(components, ValueCompID)).set(ptr, price);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(ptr, price);
   }
 
   //////////////////

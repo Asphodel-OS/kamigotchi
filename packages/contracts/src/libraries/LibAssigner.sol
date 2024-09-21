@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { Uint32BareComponent } from "components/base/Uint32BareComponent.sol"; // for index comps
 import { IDToComponent, ID as IDToCompID } from "components/IDToComponent.sol";
@@ -64,7 +64,7 @@ library LibAssigner {
     uint256 accID
   ) internal view returns (bool) {
     // universal action check
-    IDToComponent toComp = IDToComponent(getAddressById(components, IDToCompID));
+    IDToComponent toComp = IDToComponent(getAddrByID(components, IDToCompID));
     if (isUniversal(toComp, actionID)) return true;
 
     uint256 relationID = LibRelation.getViaComp(toComp, assignerID, actionID);

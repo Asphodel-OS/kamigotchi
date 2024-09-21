@@ -32,7 +32,7 @@ library LibLocal {
 
     // set pets to account
     IDOwnsPetComponent ownerComp = IDOwnsPetComponent(
-      getAddressById(components, IDOwnsPetComponentID)
+      getAddrByID(components, IDOwnsPetComponentID)
     );
     uint256[] memory petIDs = new uint256[](numPets);
     uint256[] memory accIDs = new uint256[](numPets);

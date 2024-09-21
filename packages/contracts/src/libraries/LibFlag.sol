@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 
@@ -51,27 +51,27 @@ library LibFlag {
   ) internal returns (uint256 id) {
     id = genID(parentID, flagType);
     _set(components, id, true);
-    getComponentById(components, IdHolderCompID).setIfEmpty(id, parentID);
-    getComponentById(components, TypeCompID).setIfEmpty(id, flagType);
+    getCompByID(components, IdHolderCompID).setIfEmpty(id, parentID);
+    getCompByID(components, TypeCompID).setIfEmpty(id, flagType);
   }
 
   /// @notice sets a flag, with ID already generated
   function _set(IUintComp components, uint256 id, bool state) internal {
-    if (state) HasFlagComponent(getAddressById(components, HasFlagCompID)).set(id);
+    if (state) HasFlagComponent(getAddrByID(components, HasFlagCompID)).set(id);
     else remove(components, id);
   }
 
   /// @notice removes a flag. does not remove IdHolder or Type (if any)
   function remove(IUintComp components, uint256 id) internal {
-    HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
+    HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
   }
 
   /// @notice deletes a full flag
   function removeFull(IUintComp components, uint256 parentID, string memory flag) internal {
     uint256 id = genID(parentID, flag);
-    HasFlagComponent(getAddressById(components, HasFlagCompID)).remove(id);
-    getComponentById(components, IdHolderCompID).remove(id);
-    getComponentById(components, TypeCompID).remove(id);
+    HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
+    getCompByID(components, IdHolderCompID).remove(id);
+    getCompByID(components, TypeCompID).remove(id);
   }
 
   //////////////////
@@ -86,7 +86,7 @@ library LibFlag {
   ) internal returns (bool prev) {
     uint256 id = genID(parentID, flagType);
 
-    HasFlagComponent flagComp = HasFlagComponent(getAddressById(components, HasFlagCompID));
+    HasFlagComponent flagComp = HasFlagComponent(getAddrByID(components, HasFlagCompID));
     prev = flagComp.has(id);
     state ? flagComp.set(id) : flagComp.remove(id);
   }
@@ -100,7 +100,7 @@ library LibFlag {
     string memory flagType
   ) internal view returns (bool) {
     uint256 id = genID(parentID, flagType);
-    return HasFlagComponent(getAddressById(components, HasFlagCompID)).has(id);
+    return HasFlagComponent(getAddrByID(components, HasFlagCompID)).has(id);
   }
 
   /// @notice checks if all entities have/doesn't have a flag
@@ -113,7 +113,7 @@ library LibFlag {
   ) internal view returns (bool) {
     uint256[] memory ids = new uint256[](parentIDs.length);
     for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagType);
-    return getComponentById(components, HasFlagCompID).allHave(ids, state);
+    return getCompByID(components, HasFlagCompID).allHave(ids, state);
   }
 
   /// @notice checks if all entities have/doesn't have a flag
@@ -126,7 +126,7 @@ library LibFlag {
   ) internal view returns (bool) {
     uint256[] memory ids = new uint256[](parentIDs.length);
     for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagTypes[i]);
-    return getComponentById(components, HasFlagCompID).allHave(ids, state);
+    return getCompByID(components, HasFlagCompID).allHave(ids, state);
   }
 
   //////////////////

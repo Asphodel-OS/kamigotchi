@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IdRequesteeComponent, ID as IdReqeeCompID } from "components/IdRequesteeComponent.sol";
 import { IdRequesterComponent, ID as IdReqerCompID } from "components/IdRequesterComponent.sol";
@@ -28,31 +28,31 @@ library LibTrade {
     uint256 bobID
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsTradeComponent(getAddressById(components, IsTradeCompID)).set(id);
-    IsRequestComponent(getAddressById(components, IsRequestCompID)).set(id);
-    IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).set(id, aliceID);
-    IdRequesterComponent(getAddressById(components, IdReqerCompID)).set(id, bobID);
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("INITIATED"));
+    IsTradeComponent(getAddrByID(components, IsTradeCompID)).set(id);
+    IsRequestComponent(getAddrByID(components, IsRequestCompID)).set(id);
+    IdRequesteeComponent(getAddrByID(components, IdReqeeCompID)).set(id, aliceID);
+    IdRequesterComponent(getAddrByID(components, IdReqerCompID)).set(id, bobID);
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("INITIATED"));
     return id;
   }
 
   // Accept the trade and create a register for both parties
   function accept(IWorld world, IUintComp components, uint256 id) internal {
-    IsRequestComponent(getAddressById(components, IsRequestCompID)).remove(id);
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("ACCEPTED"));
+    IsRequestComponent(getAddrByID(components, IsRequestCompID)).remove(id);
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("ACCEPTED"));
 
-    uint256 aliceID = IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
-    uint256 bobID = IdRequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
+    uint256 aliceID = IdRequesteeComponent(getAddrByID(components, IdReqeeCompID)).get(id);
+    uint256 bobID = IdRequesterComponent(getAddrByID(components, IdReqerCompID)).get(id);
     LibRegister.create(world, components, aliceID, id);
     LibRegister.create(world, components, bobID, id);
   }
 
   // Cancel an existing trade. World required bc LibRegister.reverse calls LibRegister.process
   function cancel(IUintComp components, uint256 id) internal {
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("CANCELED"));
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("CANCELED"));
 
     // Check whether it's just a request. If so, no registers have been created.
-    IsRequestComponent comp = IsRequestComponent(getAddressById(components, IsRequestCompID));
+    IsRequestComponent comp = IsRequestComponent(getAddrByID(components, IsRequestCompID));
     if (comp.has(id)) {
       comp.remove(id);
       return;
@@ -75,7 +75,7 @@ library LibTrade {
     uint256 requesteeRegisterID = LibRegister.get(components, requesteeID, id);
     LibRegister.process(components, requesterRegisterID, false);
     LibRegister.process(components, requesteeRegisterID, false);
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("COMPLETE"));
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("COMPLETE"));
     return true;
   }
 
@@ -102,7 +102,7 @@ library LibTrade {
     uint256 id,
     string memory state
   ) internal view returns (bool) {
-    return StateComponent(getAddressById(components, StateCompID)).hasValue(id, state);
+    return StateComponent(getAddrByID(components, StateCompID)).hasValue(id, state);
   }
 
   // Check whether a trade is confirmed by both parties. Assumes exactly 2 parties
@@ -114,22 +114,22 @@ library LibTrade {
   }
 
   function isRequest(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRequestComponent(getAddressById(components, IsRequestCompID)).has(id);
+    return IsRequestComponent(getAddrByID(components, IsRequestCompID)).has(id);
   }
 
   function isTrade(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsTradeComponent(getAddressById(components, IsTradeCompID)).has(id);
+    return IsTradeComponent(getAddrByID(components, IsTradeCompID)).has(id);
   }
 
   /////////////////
   // GETTERS
 
   function getRequestee(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
+    return IdRequesteeComponent(getAddrByID(components, IdReqeeCompID)).get(id);
   }
 
   function getRequester(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdRequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
+    return IdRequesterComponent(getAddrByID(components, IdReqerCompID)).get(id);
   }
 
   /////////////////
@@ -171,27 +171,27 @@ library LibTrade {
     if (aliceID != 0) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdReqerCompID),
+        getCompByID(components, IdReqerCompID),
         abi.encode(aliceID)
       );
     }
     if (bobID != 0) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdReqeeCompID),
+        getCompByID(components, IdReqeeCompID),
         abi.encode(bobID)
       );
     }
     if (!Strings.equal(state, "")) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, StateCompID),
+        getCompByID(components, StateCompID),
         abi.encode(state)
       );
     }
     fragments[filterCount] = QueryFragment(
       QueryType.Has,
-      getComponentById(components, IsTradeCompID),
+      getCompByID(components, IsTradeCompID),
       ""
     );
 

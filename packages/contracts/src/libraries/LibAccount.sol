@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
+import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
@@ -44,16 +44,16 @@ library LibAccount {
     address operatorAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsAccountComponent(getAddressById(components, IsAccCompID)).set(id); // TODO: change to EntityType
-    IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(
+    IsAccountComponent(getAddrByID(components, IsAccCompID)).set(id); // TODO: change to EntityType
+    IndexAccountComponent(getAddrByID(components, IndexAccCompID)).set(
       id,
       getAndUpdateTotalAccs(components)
     );
-    AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
-    AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 1);
-    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
-    CacheOperatorComponent(getAddressById(components, CacheOperatorCompID)).set(
+    AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).set(id, ownerAddr);
+    AddressOperatorComponent(getAddrByID(components, AddrOperatorCompID)).set(id, operatorAddr);
+    IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, 1);
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
+    CacheOperatorComponent(getAddrByID(components, CacheOperatorCompID)).set(
       uint256(uint160(operatorAddr)),
       id
     );
@@ -74,16 +74,16 @@ library LibAccount {
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint32 to) internal {
     syncAndUseStamina(components, id, -1);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, to);
+    IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, to);
   }
 
   // Recover's stamina to an account
   function recover(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
-    return StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, amt);
+    return StaminaComponent(getAddrByID(components, StaminaCompID)).sync(id, amt);
   }
 
   function syncAndUseStamina(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
-    StaminaComponent stComp = StaminaComponent(getAddressById(components, StaminaCompID));
+    StaminaComponent stComp = StaminaComponent(getAddrByID(components, StaminaCompID));
     int32 delta = amt + calcStaminaRecovery(components, id); // add recovery in amt change
     int32 expected = LibStat.syncSigned(stComp.get(id), delta); // sync with negative possible
 
@@ -157,50 +157,50 @@ library LibAccount {
 
   function setOperator(IUintComp components, uint256 id, address addr, address prevAddr) internal {
     CacheOperatorComponent cacheComp = CacheOperatorComponent(
-      getAddressById(components, CacheOperatorCompID)
+      getAddrByID(components, CacheOperatorCompID)
     );
     cacheComp.remove(uint256(uint160(prevAddr)));
     cacheComp.set(uint256(uint160(addr)), id);
-    AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
+    AddressOperatorComponent(getAddrByID(components, AddrOperatorCompID)).set(id, addr);
   }
 
   function setFarcasterIndex(IUintComp components, uint256 id, uint32 fid) internal {
-    FarcasterIndexComponent(getAddressById(components, FarcarsterIndexCompID)).set(id, fid);
+    FarcasterIndexComponent(getAddrByID(components, FarcarsterIndexCompID)).set(id, fid);
   }
 
   function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, uri);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, uri);
   }
 
   function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, ts);
+    TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).set(id, ts);
   }
 
   function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
+    TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, ts);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
   /////////////////
   // CHECKS
 
   function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsAccountComponent(getAddressById(components, IsAccCompID)).has(id);
+    return IsAccountComponent(getAddrByID(components, IsAccCompID)).has(id);
   }
 
   function ownerInUse(IUintComp components, address owner) internal view returns (bool) {
     return
-      AddressOwnerComponent(getAddressById(components, AddrOwnerCompID))
+      AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID))
         .getEntitiesWithValue(abi.encode(owner))
         .length > 0;
   }
 
   function operatorInUse(IUintComp components, address operator) internal view returns (bool) {
     return
-      CacheOperatorComponent(getAddressById(components, CacheOperatorCompID)).has(
+      CacheOperatorComponent(getAddrByID(components, CacheOperatorCompID)).has(
         uint256(uint160(operator))
       );
   }
@@ -209,33 +209,33 @@ library LibAccount {
   // GETTERS
 
   function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).get(id);
+    return TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).get(id);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastComponent(getAddressById(components, TimeLastCompID)).get(id);
+    return TimeLastComponent(getAddrByID(components, TimeLastCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexAccountComponent(getAddressById(components, IndexAccCompID)).get(id);
+    return IndexAccountComponent(getAddrByID(components, IndexAccCompID)).get(id);
   }
 
   function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddressById(components, RoomCompID)).get(id);
+    return IndexRoomComponent(getAddrByID(components, RoomCompID)).get(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).get(id);
+    return NameComponent(getAddrByID(components, NameCompID)).get(id);
   }
 
   // get the address of an Account Operator
   function getOperator(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).get(id);
+    return AddressOperatorComponent(getAddrByID(components, AddrOperatorCompID)).get(id);
   }
 
   // get the address of an Account Owner
   function getOwner(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).get(id);
+    return AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).get(id);
   }
 
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -248,8 +248,8 @@ library LibAccount {
   // retrieves the account with farcaster index
   function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
     uint256[] memory results = LibQuery.getIsWithValue(
-      getComponentById(components, FarcarsterIndexCompID),
-      getComponentById(components, IsAccCompID),
+      getCompByID(components, FarcarsterIndexCompID),
+      getCompByID(components, IsAccCompID),
       abi.encode(fid)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -258,8 +258,8 @@ library LibAccount {
   // retrieves the account with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
     uint256[] memory results = LibQuery.getIsWithValue(
-      getComponentById(components, NameCompID),
-      getComponentById(components, IsAccCompID),
+      getCompByID(components, NameCompID),
+      getCompByID(components, IsAccCompID),
       abi.encode(name)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -268,7 +268,7 @@ library LibAccount {
   // Get an account entity by Wallet address. Assume only 1.
   function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
     CacheOperatorComponent cacheComp = CacheOperatorComponent(
-      getAddressById(components, CacheOperatorCompID)
+      getAddrByID(components, CacheOperatorCompID)
     );
     uint256 id = uint256(uint160(operator));
     require(cacheComp.has(id), "Account: Operator not found");
@@ -278,8 +278,8 @@ library LibAccount {
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
     uint256[] memory results = LibQuery.getIsWithValue(
-      getComponentById(components, AddrOwnerCompID),
-      getComponentById(components, IsAccCompID),
+      getCompByID(components, AddrOwnerCompID),
+      getCompByID(components, IsAccCompID),
       abi.encode(owner)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -290,8 +290,7 @@ library LibAccount {
     IUintComp components,
     uint256 accID
   ) internal view returns (uint256[] memory) {
-    return
-      IDOwnsPetComponent(getAddressById(components, IDOwnsPetCompID)).getEntitiesWithValue(accID);
+    return IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID)).getEntitiesWithValue(accID);
   }
 
   //////////////////

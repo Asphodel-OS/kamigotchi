@@ -3,7 +3,7 @@ pragma solidity >=0.8.13;
 
 import { IComponent } from "./interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getComponentById } from "solecs/utils.sol";
+import { getCompByID } from "solecs/utils.sol";
 
 enum QueryType {
   Has,
@@ -44,8 +44,8 @@ library LibQuery {
   ) internal view returns (uint256[] memory) {
     return
       getIsWithValue(
-        getComponentById(components, compHasValue),
-        getComponentById(components, compHas),
+        getCompByID(components, compHasValue),
+        getCompByID(components, compHas),
         value
       );
   }

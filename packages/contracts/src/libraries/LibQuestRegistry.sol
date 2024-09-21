@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { DescriptionAltComponent, ID as DescAltCompID } from "components/DescriptionAltComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -41,20 +41,20 @@ library LibQuestRegistry {
     string memory endText
   ) internal returns (uint256 id) {
     id = genQuestID(index);
-    IsQuestComponent isQuestComp = IsQuestComponent(getAddressById(components, IsQuestCompID));
+    IsQuestComponent isQuestComp = IsQuestComponent(getAddrByID(components, IsQuestCompID));
     require(!isQuestComp.has(id), "LibRegQ.createQ: index used");
 
     isQuestComp.set(id); // TODO: change to EntityType
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
-    DescriptionAltComponent(getAddressById(components, DescAltCompID)).set(id, endText);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
+    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).set(id, index);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
+    DescriptionAltComponent(getAddrByID(components, DescAltCompID)).set(id, endText);
   }
 
   function setRepeatable(IUintComp components, uint256 regID, uint256 duration) internal {
-    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(regID);
-    TimeComponent(getAddressById(components, TimeCompID)).set(regID, duration);
+    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(regID);
+    TimeComponent(getAddrByID(components, TimeCompID)).set(regID, duration);
   }
 
   function createObjective(
@@ -65,7 +65,7 @@ library LibQuestRegistry {
     Condition memory data
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, data, genObjPtr(questIndex));
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
 
     // reversable hash for easy objective lookup
     LibHash.set(components, id, abi.encode("Quest.Objective", data.logic, data.type_, data.index));
@@ -111,7 +111,7 @@ library LibQuestRegistry {
   ) internal returns (uint256 id) {
     id = LibAssigner.create(components, assignerID, questID);
     LibAssigner.addIndex(
-      IndexQuestComponent(getAddressById(components, IndexQuestCompID)),
+      IndexQuestComponent(getAddrByID(components, IndexQuestCompID)),
       questIndex,
       id
     );
@@ -119,17 +119,17 @@ library LibQuestRegistry {
 
   function removeQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
     IndexQuestComponent indexQuestComp = IndexQuestComponent(
-      getAddressById(components, IndexQuestCompID)
+      getAddrByID(components, IndexQuestCompID)
     );
     indexQuestComp.remove(questID);
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(questID);
-    IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(questID);
-    NameComponent(getAddressById(components, NameCompID)).remove(questID);
-    DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
-    DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(questID);
+    IsQuestComponent(getAddrByID(components, IsQuestCompID)).remove(questID);
+    NameComponent(getAddrByID(components, NameCompID)).remove(questID);
+    DescriptionComponent(getAddrByID(components, DescCompID)).remove(questID);
+    DescriptionAltComponent(getAddrByID(components, DescAltCompID)).remove(questID);
 
-    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(questID);
-    TimeComponent(getAddressById(components, TimeCompID)).remove(questID);
+    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).remove(questID);
+    TimeComponent(getAddrByID(components, TimeCompID)).remove(questID);
 
     uint256[] memory objs = getObjsByQuestIndex(components, questIndex);
     for (uint256 i; i < objs.length; i++) removeObjective(components, objs[i]);
@@ -147,7 +147,7 @@ library LibQuestRegistry {
 
   function removeObjective(IUintComp components, uint256 objectiveID) internal {
     LibConditional.remove(components, objectiveID);
-    NameComponent(getAddressById(components, NameCompID)).remove(objectiveID);
+    NameComponent(getAddrByID(components, NameCompID)).remove(objectiveID);
     LibHash.remove(components, objectiveID);
   }
 
@@ -155,7 +155,7 @@ library LibQuestRegistry {
   // SETTERS
 
   function setIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(id);
+    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(id);
   }
 
   /////////////////
@@ -164,7 +164,7 @@ library LibQuestRegistry {
   // get registry entry by Quest index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     result = genQuestID(index);
-    return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(result) ? result : 0;
+    return IsQuestComponent(getAddrByID(components, IsQuestCompID)).has(result) ? result : 0;
   }
 
   // get Objectives by Quest index

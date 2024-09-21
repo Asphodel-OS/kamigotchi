@@ -6,7 +6,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
@@ -71,19 +71,19 @@ library LibItem {
   ) internal returns (uint256 id) {
     id = genID(index);
     LibEntityType.set(components, id, "ITEM");
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, index);
 
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
   }
 
   /// @notice adds a stat to an item
   function addStat(IUintComp components, uint256 id, string memory type_, int32 value) internal {
     if (type_.eq("XP"))
-      ExperienceComponent(getAddressById(components, ExpCompID)).set(id, value.toUint256());
+      ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, value.toUint256());
     else if (type_.eq("HEALTH")) LibStat.setHealth(components, id, Stat(0, 0, 0, value));
     else if (type_.eq("MAXHEALTH")) LibStat.setHealth(components, id, Stat(0, value, 0, 0));
     else if (type_.eq("POWER")) LibStat.setPower(components, id, Stat(0, value, 0, 0));
@@ -96,14 +96,14 @@ library LibItem {
   /// @notice delete a Registry entry for an item.
   function deleteItem(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
-    IndexItemComponent indexComp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    IndexItemComponent indexComp = IndexItemComponent(getAddrByID(components, IndexItemCompID));
     indexComp.remove(id);
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
 
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).remove(id);
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    MediaURIComponent(getAddressById(components, MediaURICompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
 
     LibStat.unsetHealth(components, id);
     LibStat.unsetPower(components, id);
@@ -111,12 +111,12 @@ library LibItem {
     LibStat.unsetHarmony(components, id);
     LibStat.unsetSlots(components, id);
     LibStat.unsetStamina(components, id);
-    ExperienceComponent(getAddressById(components, ExpCompID)).remove(id);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).remove(id);
 
     LibDroptable.unset(components, id);
     LibFor.unset(components, id);
     LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(id);
+    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
   }
 
   /////////////////
@@ -126,7 +126,7 @@ library LibItem {
   function applyStats(IUintComp components, uint32 itemIndex, uint256 targetID) internal {
     uint256 regID = genID(itemIndex);
 
-    ExperienceComponent xpComp = ExperienceComponent(getAddressById(components, ExpCompID));
+    ExperienceComponent xpComp = ExperienceComponent(getAddrByID(components, ExpCompID));
     uint256 xp = LibComp.safeGetUint256(xpComp, regID);
     if (xp > 0) LibComp.inc(xpComp, targetID, xp);
 
@@ -135,7 +135,7 @@ library LibItem {
 
   function applyMove(IUintComp components, uint32 itemIndex, uint256 targetID) internal {
     uint256 regID = genID(itemIndex);
-    IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
+    IndexRoomComponent roomComp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
     roomComp.set(targetID, roomComp.get(regID));
   }
 
@@ -151,7 +151,7 @@ library LibItem {
     uint256 id = genID(index);
     return
       LibEntityType.isShape(components, id, "ITEM") ||
-      getComponentById(components, TypeCompID).eqString(id, type_);
+      getCompByID(components, TypeCompID).eqString(id, type_);
   }
 
   function isTypeOf(
@@ -163,7 +163,7 @@ library LibItem {
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     return
       LibEntityType.isShape(components, ids, "ITEM") ||
-      LibComp.eqString(getComponentById(components, TypeCompID), ids, type_);
+      LibComp.eqString(getCompByID(components, TypeCompID), ids, type_);
   }
 
   function isBurnable(IUintComp components, uint32 index) internal view returns (bool) {
@@ -180,7 +180,7 @@ library LibItem {
   // check whether an entity is consumable by its index
   function isConsumable(IUintComp components, uint32 index) internal view returns (bool) {
     uint256 id = genID(index);
-    // return getComponentById(components, IsConsumableCompID).has(id);
+    // return getCompByID(components, IsConsumableCompID).has(id);
     return true;
   }
 
@@ -207,18 +207,18 @@ library LibItem {
 
   // check whether an entity is part of a Registry
   function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id);
+    return IsRegistryComponent(getAddrByID(components, IsRegCompID)).has(id);
   }
 
   /////////////////
   // GETTERS
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
+    return IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
+    TypeComponent comp = TypeComponent(getAddrByID(components, TypeCompID));
     return comp.has(id) ? comp.get(id) : "";
   }
 
@@ -230,7 +230,7 @@ library LibItem {
   }
 
   function setRoom(IUintComp components, uint256 id, uint32 roomIndex) internal {
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
+    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, roomIndex);
   }
 
   /// @notice prevent item from being burned via ItemBurnSystem
@@ -244,14 +244,14 @@ library LibItem {
   /// @notice get the associated item registry entry of a given instance entity
   /// @dev assumes instanceID is a valid inventory instance
   function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
-    IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    IndexItemComponent comp = IndexItemComponent(getAddrByID(components, IndexItemCompID));
     uint32 index = comp.get(instanceID);
     uint256 id = genID(index);
     return comp.has(id) ? id : 0;
   }
 
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
-    IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    IndexItemComponent comp = IndexItemComponent(getAddrByID(components, IndexItemCompID));
     uint256 id = genID(index);
     return comp.has(id) ? id : 0;
   }

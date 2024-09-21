@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.t.sol";
 
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 contract HiredHitmanTest is SetupTemplate {
   uint internal nodeID;

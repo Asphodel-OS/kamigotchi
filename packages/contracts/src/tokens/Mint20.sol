@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { ProxyPermissionsMint20Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsMint20Component.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -31,9 +31,7 @@ contract Mint20 is ERC20 {
   /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
     require(
-      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
-        msg.sender
-      ),
+      PermissionsComp(getAddrByID(World.components(), PermissionsCompID)).writeAccess(msg.sender),
       "ERC20: not a writer"
     );
     _;
@@ -42,7 +40,7 @@ contract Mint20 is ERC20 {
   /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyOwner() {
     require(
-      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner() == msg.sender,
+      PermissionsComp(getAddrByID(World.components(), PermissionsCompID)).owner() == msg.sender,
       "ERC20: not a writer"
     );
     _;

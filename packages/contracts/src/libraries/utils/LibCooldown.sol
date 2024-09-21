@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 
@@ -21,12 +21,12 @@ library LibCooldown {
   // INTERACTIONS
 
   function start(IUintComp components, uint256 id) internal {
-    IUintComp(getAddressById(components, TimeLastActCompID)).set(id, block.timestamp);
+    IUintComp(getAddrByID(components, TimeLastActCompID)).set(id, block.timestamp);
   }
 
   // if delta positive, increase cooldown. vice versa
   function modify(IUintComp components, uint256 id, int256 delta) internal {
-    IUintComp lastComp = IUintComp(getAddressById(components, TimeLastActCompID));
+    IUintComp lastComp = IUintComp(getAddrByID(components, TimeLastActCompID));
     int256 idleTime = _getIdleTime(lastComp, id);
     int256 cooldown = getCooldown(components, id);
 
@@ -58,7 +58,7 @@ library LibCooldown {
   }
 
   function getIdleTime(IUintComp components, uint256 id) internal view returns (int256) {
-    return _getIdleTime(IUintComp(getAddressById(components, TimeLastActCompID)), id);
+    return _getIdleTime(IUintComp(getAddrByID(components, TimeLastActCompID)), id);
   }
 
   function _getIdleTime(IUintComp tsComp, uint256 id) internal view returns (int256) {

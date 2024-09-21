@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
 import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
@@ -49,10 +49,10 @@ library LibHarvest {
     uint256 petID
   ) internal returns (uint256 id) {
     id = genID(petID);
-    IsProductionComponent(getAddressById(components, IsProdCompID)).set(id); // TODO: change to EntityType
-    IdPetComponent(getAddressById(components, IdPetCompID)).set(id, petID);
-    IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
-    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
+    IsProductionComponent(getAddrByID(components, IsProdCompID)).set(id); // TODO: change to EntityType
+    IdPetComponent(getAddrByID(components, IdPetCompID)).set(id, petID);
+    IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(
       id,
       LibNode.getIndex(components, nodeID)
     );
@@ -212,10 +212,10 @@ library LibHarvest {
 
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
-    IdNodeComponent comp = IdNodeComponent(getAddressById(components, IdNodeCompID));
+    IdNodeComponent comp = IdNodeComponent(getAddrByID(components, IdNodeCompID));
     if (comp.get(id) != nodeID) {
       comp.set(id, nodeID);
-      IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
+      IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(
         id,
         LibNode.getIndex(components, nodeID)
       );
@@ -223,19 +223,19 @@ library LibHarvest {
   }
 
   function setState(IUintComp components, uint256 id, string memory state) internal {
-    StateComponent(getAddressById(components, StateCompID)).set(id, state);
+    StateComponent(getAddrByID(components, StateCompID)).set(id, state);
   }
 
   function setLastTs(IUintComp components, uint256 id, uint256 timeStart) internal {
-    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, timeStart);
+    TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, timeStart);
   }
 
   function setResetTs(IUintComp components, uint256 id, uint256 timeReset) internal {
-    TimeResetComponent(getAddressById(components, TimeResetCompID)).set(id, timeReset);
+    TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, timeReset);
   }
 
   function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
-    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, timeStart);
   }
 
   /////////////////
@@ -246,30 +246,30 @@ library LibHarvest {
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {
-    return TimeLastComponent(getAddressById(components, TimeLastCompID)).get(id);
+    return TimeLastComponent(getAddrByID(components, TimeLastCompID)).get(id);
   }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdNodeComponent(getAddressById(components, IdNodeCompID)).get(id);
+    return IdNodeComponent(getAddrByID(components, IdNodeCompID)).get(id);
   }
 
   function getPet(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdPetComponent(getAddressById(components, IdPetCompID)).get(id);
+    return IdPetComponent(getAddrByID(components, IdPetCompID)).get(id);
   }
 
   // the check here is just a patch to address broken kamis in the current deployment
   function getResetTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    TimeResetComponent comp = TimeResetComponent(getAddressById(components, TimeResetCompID));
+    TimeResetComponent comp = TimeResetComponent(getAddrByID(components, TimeResetCompID));
     if (comp.has(id)) return comp.get(id);
     return block.timestamp; // if missing then we have no intensity
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
-    return StateComponent(getAddressById(components, StateCompID)).get(id);
+    return StateComponent(getAddrByID(components, StateCompID)).get(id);
   }
 
   function getStartTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeStartComponent(getAddressById(components, TimeStartCompID)).get(id);
+    return TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(id);
   }
 
   /////////////////
@@ -278,7 +278,7 @@ library LibHarvest {
   // get a production by a pet. assumed only 1
   function getForPet(IUintComp components, uint256 petID) internal view returns (uint256 result) {
     uint256 id = genID(petID);
-    return IsProductionComponent(getAddressById(components, IsProdCompID)).has(id) ? id : 0;
+    return IsProductionComponent(getAddrByID(components, IsProdCompID)).has(id) ? id : 0;
   }
 
   /////////////////////

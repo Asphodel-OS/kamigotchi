@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
@@ -52,7 +52,7 @@ library LibReward {
   }
 
   function addBasic(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
   }
 
   function addDT(
@@ -72,9 +72,9 @@ library LibReward {
     uint256 value
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).set(id, pointerID);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, pointerID);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
 
   function removeAll(IUintComp components, uint256[] memory ids) internal {
@@ -82,10 +82,10 @@ library LibReward {
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
     LibDroptable.unset(components, id);
   }
 
@@ -99,9 +99,9 @@ library LibReward {
     uint256 multiplier, // multiplies reward value, optional
     uint256 targetID
   ) internal {
-    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
-    IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
+    IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
 
     for (uint256 i; i < rwdIDs.length; i++) {
       uint256 rwdID = rwdIDs[i];
@@ -159,8 +159,6 @@ library LibReward {
     uint256 parentID
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(
-        parentID
-      );
+      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(parentID);
   }
 }

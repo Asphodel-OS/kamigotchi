@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -73,7 +73,7 @@ library LibGetter {
   ) internal view returns (bool result) {
     if (_type.eq("COMPLETE_COMP")) {
       // check if entity has isCompleteComp, with expectedValue acting as entityID
-      return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(value);
+      return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(value);
     } else if (_type.eq("QUEST")) {
       return LibQuests.checkAccQuestComplete(components, index, targetID);
     } else if (_type.eq("ROOM")) {
@@ -111,7 +111,7 @@ library LibGetter {
 
   function getTopLevel(IUintComp components, uint256[] memory ids) internal view returns (uint256) {
     uint256 highestLevel = 1;
-    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+    LevelComponent levelComp = LevelComponent(getAddrByID(components, LevelCompID));
     for (uint256 i = 0; i < ids.length; i++) {
       uint256 level = levelComp.get(ids[i]);
       if (level > highestLevel) highestLevel = level;

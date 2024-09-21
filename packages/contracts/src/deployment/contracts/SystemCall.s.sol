@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { ISystem } from "solecs/interfaces/ISystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 // import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
 
@@ -42,7 +42,7 @@ contract SystemCall is Script {
   function _getSysAddr(uint256 systemID) internal returns (address addr) {
     addr = systemAddrs[systemID];
     if (addr == address(0)) {
-      addr = getAddressById(systems, systemID);
+      addr = getAddrByID(systems, systemID);
       systemAddrs[systemID] = addr;
     }
   }

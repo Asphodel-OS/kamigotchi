@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
@@ -45,10 +45,10 @@ library LibScavenge {
     uint256 tierCost
   ) internal returns (uint256 id) {
     id = genRegID(field, index);
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, tierCost);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, field);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, tierCost);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, field);
   }
 
   /// @notice reward per tier
@@ -75,11 +75,11 @@ library LibScavenge {
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddressById(components, IDPointerCompID)).remove(id);
-    IndexComponent(getAddressById(components, IndexCompID)).remove(id);
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
+    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
 
     uint256[] memory rewards = getRewards(components, id);
     LibReward.removeAll(components, rewards);
@@ -97,7 +97,7 @@ library LibScavenge {
     uint256 holderID
   ) internal {
     uint256 id = genInstanceID(field, index, holderID);
-    LibComp.inc(ValueComponent(getAddressById(components, ValueCompID)), id, amt);
+    LibComp.inc(ValueComponent(getAddrByID(components, ValueCompID)), id, amt);
   }
 
   /// @notice reduces max number of claimable scavbar tiers, returns tiers removed
@@ -108,7 +108,7 @@ library LibScavenge {
     uint32 index,
     uint256 holderID
   ) internal returns (uint256) {
-    ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
 
     uint256 instanceID = genInstanceID(field, index, holderID);
     uint256 curr = LibComp.safeGetUint256(valComp, instanceID);
@@ -139,8 +139,8 @@ library LibScavenge {
     uint256 id
   ) internal view returns (string memory, uint32 index) {
     return (
-      TypeComponent(getAddressById(components, TypeCompID)).get(id),
-      IndexComponent(getAddressById(components, IndexCompID)).get(id)
+      TypeComponent(getAddrByID(components, TypeCompID)).get(id),
+      IndexComponent(getAddrByID(components, IndexCompID)).get(id)
     );
   }
 
@@ -150,7 +150,7 @@ library LibScavenge {
     uint32 index
   ) internal view returns (uint256) {
     uint256 id = genRegID(field, index);
-    return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id) ? id : 0;
+    return IsRegistryComponent(getAddrByID(components, IsRegCompID)).has(id) ? id : 0;
   }
 
   function getRewards(

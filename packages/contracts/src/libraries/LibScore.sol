@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
@@ -32,17 +32,17 @@ library LibScore {
   // INTERACTIONS
 
   function create(IUintComp components, uint256 id, uint256 holderID, uint256 typeID) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
-    IDScoreTypeComponent(getAddressById(components, IDScoreTypeCompID)).set(id, typeID);
+    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, holderID);
+    IDScoreTypeComponent(getAddrByID(components, IDScoreTypeCompID)).set(id, typeID);
   }
 
   function createFor(IUintComp components, uint256 id, uint256 holderID, uint256 typeID) internal {
     IDScoreTypeComponent typeComp = IDScoreTypeComponent(
-      getAddressById(components, IDScoreTypeCompID)
+      getAddrByID(components, IDScoreTypeCompID)
     );
     if (!typeComp.has(id)) {
       typeComp.set(id, typeID);
-      IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
+      IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, holderID);
     }
   }
 
@@ -55,7 +55,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    IUintComp(getAddressById(components, ValueCompID)).inc(id, amt);
+    IUintComp(getAddrByID(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice adds score based on current epoch.
@@ -80,7 +80,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    IUintComp(getAddressById(components, ValueCompID)).dec(id, amt);
+    IUintComp(getAddrByID(components, ValueCompID)).dec(id, amt);
   }
 
   /// @notice decs score based on current epoch.
@@ -100,7 +100,7 @@ library LibScore {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddressById(components, ValueCompID)).safeGetUint256(id);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(id);
   }
 
   // get current epoch for leaderboard

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IdDelegateeComponent, ID as IdDelegateeCompID } from "components/IdDelegateeComponent.sol";
 import { IdDelegatorComponent, ID as IdDelegatorCompID } from "components/IdDelegatorComponent.sol";
@@ -33,10 +33,10 @@ library LibRegister {
     uint256 delegateeID // assignee
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsRegisterComponent(getAddressById(components, IsRegisterCompID)).set(id);
-    IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).set(id, delegatorID);
-    IdDelegateeComponent(getAddressById(components, IdDelegateeCompID)).set(id, delegateeID);
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("ACTIVE"));
+    IsRegisterComponent(getAddrByID(components, IsRegisterCompID)).set(id);
+    IdDelegatorComponent(getAddrByID(components, IdDelegatorCompID)).set(id, delegatorID);
+    IdDelegateeComponent(getAddrByID(components, IdDelegateeCompID)).set(id, delegateeID);
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("ACTIVE"));
     return id;
   }
 
@@ -51,7 +51,7 @@ library LibRegister {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256) {
-    uint256 delegatorID = IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(
+    uint256 delegatorID = IdDelegatorComponent(getAddrByID(components, IdDelegatorCompID)).get(
       registerID
     );
 
@@ -110,22 +110,22 @@ library LibRegister {
   // COMPONENT SETTERS
 
   function confirm(IUintComp components, uint256 id) internal {
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("CONFIRMED"));
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("CONFIRMED"));
   }
 
   function cancel(IUintComp components, uint256 id) internal {
-    StateComponent(getAddressById(components, StateCompID)).set(id, string("CANCELED"));
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("CANCELED"));
   }
 
   /////////////////
   // COMPONENT RETRIEVAL
 
   function getDelegatee(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdDelegateeComponent(getAddressById(components, IdDelegateeCompID)).get(id);
+    return IdDelegateeComponent(getAddrByID(components, IdDelegateeCompID)).get(id);
   }
 
   function getDelegator(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(id);
+    return IdDelegatorComponent(getAddrByID(components, IdDelegatorCompID)).get(id);
   }
 
   /////////////////
@@ -161,28 +161,28 @@ library LibRegister {
     if (delegatorID != 0) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdDelegatorCompID),
+        getCompByID(components, IdDelegatorCompID),
         abi.encode(delegatorID)
       );
     }
     if (delegateeID != 0) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdDelegateeCompID),
+        getCompByID(components, IdDelegateeCompID),
         abi.encode(delegateeID)
       );
     }
     if (!Strings.equal(state, "")) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, StateCompID),
+        getCompByID(components, StateCompID),
         abi.encode(state)
       );
     }
 
     fragments[filterCount] = QueryFragment(
       QueryType.Has,
-      getComponentById(components, IsRegisterCompID),
+      getCompByID(components, IsRegisterCompID),
       ""
     );
 

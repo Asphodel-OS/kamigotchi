@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { Stat } from "components/types/Stat.sol";
@@ -63,15 +63,12 @@ library LibRecipe {
     id = genID(recipeIndex);
     LibEntityType.set(components, id, "RECIPE");
 
-    KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
-    ValuesComponent valsComp = ValuesComponent(getAddressById(components, ValuesCompID));
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IndexRecipeComponent(getAddressById(components, IndexRecipeCompID)).set(id, recipeIndex);
-    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
-    StaminaComponent(getAddressById(components, StamCompID)).set(
-      id,
-      Stat(0, 0, 0, staminaCost * -1)
-    );
+    KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
+    ValuesComponent valsComp = ValuesComponent(getAddrByID(components, ValuesCompID));
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
+    IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)).set(id, recipeIndex);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, experience);
+    StaminaComponent(getAddrByID(components, StamCompID)).set(id, Stat(0, 0, 0, staminaCost * -1));
 
     // set inputs
     uint256 inputID = genInputID(recipeIndex);
@@ -92,7 +89,7 @@ library LibRecipe {
   ) internal returns (uint256 id) {
     id = LibAssigner.create(components, assignerID, recipeID);
     LibAssigner.addIndex(
-      IndexRecipeComponent(getAddressById(components, IndexRecipeCompID)),
+      IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)),
       recipeIndex,
       id
     );
@@ -111,12 +108,12 @@ library LibRecipe {
     LibEntityType.remove(components, id);
 
     IndexRecipeComponent indexComp = IndexRecipeComponent(
-      getAddressById(components, IndexRecipeCompID)
+      getAddrByID(components, IndexRecipeCompID)
     );
-    KeysComponent keysComp = KeysComponent(getAddressById(components, KeysCompID));
-    ValuesComponent valsComp = ValuesComponent(getAddressById(components, ValuesCompID));
+    KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
+    ValuesComponent valsComp = ValuesComponent(getAddrByID(components, ValuesCompID));
 
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
     indexComp.remove(id);
 
     uint256 inputID = genInputID(recipeIndex);
@@ -146,7 +143,7 @@ library LibRecipe {
     uint256 accID
   ) internal {
     // pay stamina cost
-    int32 stCost = StaminaComponent(getAddressById(components, StamCompID)).get(recipeID).sync;
+    int32 stCost = StaminaComponent(getAddrByID(components, StamCompID)).get(recipeID).sync;
     LibAccount.syncAndUseStamina(components, accID, stCost * amt.toInt32());
   }
 
@@ -169,7 +166,7 @@ library LibRecipe {
 
   function afterCraft(IUintComp components, uint256 recipeID, uint256 amt, uint256 accID) internal {
     // add account experience
-    ExperienceComponent expComp = ExperienceComponent(getAddressById(components, ExpCompID));
+    ExperienceComponent expComp = ExperienceComponent(getAddrByID(components, ExpCompID));
     uint256 xp = LibComp.safeGetUint256(expComp, recipeID);
     if (xp > 0) LibComp.inc(expComp, accID, amt * xp);
   }
@@ -191,7 +188,7 @@ library LibRecipe {
 
   function get(IUintComp components, uint32 recipeIndex) internal view returns (uint256) {
     IndexRecipeComponent indexComp = IndexRecipeComponent(
-      getAddressById(components, IndexRecipeCompID)
+      getAddrByID(components, IndexRecipeCompID)
     );
     uint256 id = genID(recipeIndex);
     return indexComp.has(id) ? id : 0;
@@ -206,10 +203,8 @@ library LibRecipe {
     uint256[] memory ioIDs = new uint256[](2);
     ioIDs[0] = genInputID(recipeIndex);
     ioIDs[1] = genOutputID(recipeIndex);
-    uint32[][] memory indices = KeysComponent(getAddressById(components, KeysCompID)).getBatch(
-      ioIDs
-    );
-    uint256[][] memory amts = ValuesComponent(getAddressById(components, ValuesCompID)).getBatch(
+    uint32[][] memory indices = KeysComponent(getAddrByID(components, KeysCompID)).getBatch(ioIDs);
+    uint256[][] memory amts = ValuesComponent(getAddrByID(components, ValuesCompID)).getBatch(
       ioIDs
     );
 

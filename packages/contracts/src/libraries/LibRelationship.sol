@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IDOwnsRelationshipComponent, ID as IDOwnsRSCompID } from "components/IDOwnsRelationshipComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
@@ -24,10 +24,10 @@ library LibRelationship {
     uint32 relIndex
   ) internal returns (uint256) {
     uint256 id = genID(accID, npcIndex, relIndex);
-    IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id); // TODO: change to EntityType
-    IDOwnsRelationshipComponent(getAddressById(components, IDOwnsRSCompID)).set(id, accID);
-    IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, npcIndex);
-    IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, relIndex);
+    IsRelationshipComponent(getAddrByID(components, IsRelCompID)).set(id); // TODO: change to EntityType
+    IDOwnsRelationshipComponent(getAddrByID(components, IDOwnsRSCompID)).set(id, accID);
+    IndexNPCComponent(getAddrByID(components, IndexNPCCompID)).set(id, npcIndex);
+    IndexRelationshipComponent(getAddrByID(components, IndexRelCompID)).set(id, relIndex);
     return id;
   }
 

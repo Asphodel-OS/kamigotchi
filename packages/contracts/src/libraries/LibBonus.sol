@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { ValueSignedComponent as SignedValComp, ID as SignedValCompID } from "components/ValueSignedComponent.sol";
 import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
@@ -21,14 +21,14 @@ library LibBonus {
 
   function inc(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
     uint256 id = genID(holderID, type_);
-    SignedValComp comp = SignedValComp(getAddressById(components, SignedValCompID));
+    SignedValComp comp = SignedValComp(getAddrByID(components, SignedValCompID));
     int256 curr = comp.has(id) ? comp.get(id) : int256(0);
     comp.set(id, curr + amt);
   }
 
   function dec(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
     uint256 id = genID(holderID, type_);
-    SignedValComp comp = SignedValComp(getAddressById(components, SignedValCompID));
+    SignedValComp comp = SignedValComp(getAddrByID(components, SignedValCompID));
     int256 curr = comp.has(id) ? comp.get(id) : int256(0);
     comp.set(id, curr - amt);
   }
@@ -66,7 +66,7 @@ library LibBonus {
     string memory type_
   ) internal view returns (int256) {
     uint256 id = genID(holderID, type_);
-    SignedValComp comp = SignedValComp(getAddressById(components, SignedValCompID));
+    SignedValComp comp = SignedValComp(getAddrByID(components, SignedValCompID));
     return comp.has(id) ? comp.get(id) : int256(0);
   }
 

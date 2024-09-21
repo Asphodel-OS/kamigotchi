@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
@@ -50,7 +50,7 @@ library LibTraitRegistry {
     require(getByBodyIndex(components, bodyIndex) == 0, "LibRegTrait: body used");
 
     uint256 id = genID(bodyIndex, "BODY");
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setBodyIndex(components, id, bodyIndex);
     setReverseMappingPtr(components, id, "BODY");
 
@@ -67,7 +67,7 @@ library LibTraitRegistry {
     require(getByBackgroundIndex(components, backgroundIndex) == 0, "LibRegTrait: background used");
 
     uint256 id = genID(backgroundIndex, "BACKGROUND");
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setBackgroundIndex(components, id, backgroundIndex);
     setReverseMappingPtr(components, id, "BACKGROUND");
 
@@ -84,7 +84,7 @@ library LibTraitRegistry {
     require(getByColorIndex(components, colorIndex) == 0, "LibRegTrait: color used");
 
     uint256 id = genID(colorIndex, "COLOR");
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setColorIndex(components, id, colorIndex);
     setReverseMappingPtr(components, id, "COLOR");
 
@@ -101,7 +101,7 @@ library LibTraitRegistry {
     require(getByFaceIndex(components, faceIndex) == 0, "LibRegTrait: face used");
 
     uint256 id = genID(faceIndex, "FACE");
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setFaceIndex(components, id, faceIndex);
     setReverseMappingPtr(components, id, "FACE");
 
@@ -118,7 +118,7 @@ library LibTraitRegistry {
     require(getByHandIndex(components, handIndex) == 0, "LibRegTrait: hand used");
 
     uint256 id = genID(handIndex, "HAND");
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setHandIndex(components, id, handIndex);
     setReverseMappingPtr(components, id, "HAND");
 
@@ -138,31 +138,31 @@ library LibTraitRegistry {
     if (values.harmony > 0) setHarmony(components, id, values.harmony);
     if (values.slots > 0) setSlots(components, id, values.slots);
     if (values.rarity > 0)
-      RarityComponent(getAddressById(components, RarityCompID)).set(id, values.rarity);
+      RarityComponent(getAddrByID(components, RarityCompID)).set(id, values.rarity);
     if (!LibString.eq(values.affinity, "")) setAffinity(components, id, values.affinity);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
-    ForComponent(getAddressById(components, ForCompID)).remove(id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
+    ForComponent(getAddrByID(components, ForCompID)).remove(id);
     if (isBody(components, id))
-      IndexBodyComponent(getAddressById(components, IndexBodyCompID)).remove(id);
+      IndexBodyComponent(getAddrByID(components, IndexBodyCompID)).remove(id);
     if (isBackground(components, id))
-      IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).remove(id);
+      IndexBackgroundComponent(getAddrByID(components, IndexBackgroundCompID)).remove(id);
     if (isColor(components, id))
-      IndexColorComponent(getAddressById(components, IndexColorCompID)).remove(id);
+      IndexColorComponent(getAddrByID(components, IndexColorCompID)).remove(id);
     if (isFace(components, id))
-      IndexFaceComponent(getAddressById(components, IndexFaceCompID)).remove(id);
+      IndexFaceComponent(getAddrByID(components, IndexFaceCompID)).remove(id);
     if (isHand(components, id))
-      IndexHandComponent(getAddressById(components, IndexHandCompID)).remove(id);
+      IndexHandComponent(getAddrByID(components, IndexHandCompID)).remove(id);
 
     LibStat.unsetHealth(components, id);
     LibStat.unsetPower(components, id);
     LibStat.unsetViolence(components, id);
     LibStat.unsetHarmony(components, id);
     LibStat.unsetSlots(components, id);
-    RarityComponent(getAddressById(components, RarityCompID)).remove(id);
+    RarityComponent(getAddrByID(components, RarityCompID)).remove(id);
     unsetAffinity(components, id);
   }
 
@@ -170,61 +170,61 @@ library LibTraitRegistry {
   // CHECKERS
 
   function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id);
+    return IsRegistryComponent(getAddrByID(components, IsRegCompID)).has(id);
   }
 
   function isBody(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexBodyComponent(getAddressById(components, IndexBodyCompID)).has(id);
+    return IndexBodyComponent(getAddrByID(components, IndexBodyCompID)).has(id);
   }
 
   function isBackground(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).has(id);
+    return IndexBackgroundComponent(getAddrByID(components, IndexBackgroundCompID)).has(id);
   }
 
   function isColor(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexColorComponent(getAddressById(components, IndexColorCompID)).has(id);
+    return IndexColorComponent(getAddrByID(components, IndexColorCompID)).has(id);
   }
 
   function isFace(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexFaceComponent(getAddressById(components, IndexFaceCompID)).has(id);
+    return IndexFaceComponent(getAddrByID(components, IndexFaceCompID)).has(id);
   }
 
   function isHand(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexHandComponent(getAddressById(components, IndexHandCompID)).has(id);
+    return IndexHandComponent(getAddrByID(components, IndexHandCompID)).has(id);
   }
 
   /////////////////
   // SETTERS
 
   function setBodyIndex(IUintComp components, uint256 id, uint32 bodyIndex) internal {
-    IndexBodyComponent(getAddressById(components, IndexBodyCompID)).set(id, bodyIndex);
+    IndexBodyComponent(getAddrByID(components, IndexBodyCompID)).set(id, bodyIndex);
   }
 
   function setBackgroundIndex(IUintComp components, uint256 id, uint32 backgroundIndex) internal {
-    IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).set(
+    IndexBackgroundComponent(getAddrByID(components, IndexBackgroundCompID)).set(
       id,
       backgroundIndex
     );
   }
 
   function setColorIndex(IUintComp components, uint256 id, uint32 colorIndex) internal {
-    IndexColorComponent(getAddressById(components, IndexColorCompID)).set(id, colorIndex);
+    IndexColorComponent(getAddrByID(components, IndexColorCompID)).set(id, colorIndex);
   }
 
   function setFaceIndex(IUintComp components, uint256 id, uint32 faceIndex) internal {
-    IndexFaceComponent(getAddressById(components, IndexFaceCompID)).set(id, faceIndex);
+    IndexFaceComponent(getAddrByID(components, IndexFaceCompID)).set(id, faceIndex);
   }
 
   function setHandIndex(IUintComp components, uint256 id, uint32 handIndex) internal {
-    IndexHandComponent(getAddressById(components, IndexHandCompID)).set(id, handIndex);
+    IndexHandComponent(getAddrByID(components, IndexHandCompID)).set(id, handIndex);
   }
 
   function setAffinity(IUintComp components, uint256 id, string memory value) internal {
-    AffinityComponent(getAddressById(components, AffinityCompID)).set(id, value);
+    AffinityComponent(getAddrByID(components, AffinityCompID)).set(id, value);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
   function setHarmony(IUintComp components, uint256 id, int32 value) internal {
@@ -240,7 +240,7 @@ library LibTraitRegistry {
   }
 
   function setReverseMappingPtr(IUintComp components, uint256 id, string memory _type) internal {
-    ForComponent(getAddressById(components, ForCompID)).set(id, genReverseMappingPtr(_type));
+    ForComponent(getAddrByID(components, ForCompID)).set(id, genReverseMappingPtr(_type));
   }
 
   function setSlots(IUintComp components, uint256 id, int32 value) internal {
@@ -252,7 +252,7 @@ library LibTraitRegistry {
   }
 
   function unsetAffinity(IUintComp components, uint256 id) internal {
-    AffinityComponent comp = AffinityComponent(getAddressById(components, AffinityCompID));
+    AffinityComponent comp = AffinityComponent(getAddrByID(components, AffinityCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
@@ -260,27 +260,27 @@ library LibTraitRegistry {
   // GETTERS
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).get(id);
+    return NameComponent(getAddrByID(components, NameCompID)).get(id);
   }
 
   function getBodyIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexBodyComponent(getAddressById(components, IndexBodyCompID)).get(id);
+    return IndexBodyComponent(getAddrByID(components, IndexBodyCompID)).get(id);
   }
 
   function getBackgroundIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).get(id);
+    return IndexBackgroundComponent(getAddrByID(components, IndexBackgroundCompID)).get(id);
   }
 
   function getColorIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexColorComponent(getAddressById(components, IndexColorCompID)).get(id);
+    return IndexColorComponent(getAddrByID(components, IndexColorCompID)).get(id);
   }
 
   function getFaceIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexFaceComponent(getAddressById(components, IndexFaceCompID)).get(id);
+    return IndexFaceComponent(getAddrByID(components, IndexFaceCompID)).get(id);
   }
 
   function getHandIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexHandComponent(getAddressById(components, IndexHandCompID)).get(id);
+    return IndexHandComponent(getAddrByID(components, IndexHandCompID)).get(id);
   }
 
   // Get the name of an entity's set Background (identified by IndexBackground value)
@@ -315,9 +315,7 @@ library LibTraitRegistry {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    uint256[] memory weights = RarityComponent(getAddressById(components, RarityCompID)).getBatch(
-      ids
-    );
+    uint256[] memory weights = RarityComponent(getAddrByID(components, RarityCompID)).getBatch(ids);
     return LibRandom.processWeightedRarity(weights);
   }
 
@@ -423,7 +421,7 @@ library LibTraitRegistry {
     uint32 backgroundIndex
   ) internal view returns (uint256 result) {
     result = genID(backgroundIndex, "BACKGROUND");
-    if (!IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).has(result))
+    if (!IndexBackgroundComponent(getAddrByID(components, IndexBackgroundCompID)).has(result))
       result = 0;
   }
 
@@ -433,7 +431,7 @@ library LibTraitRegistry {
     uint32 bodyIndex
   ) internal view returns (uint256 result) {
     result = genID(bodyIndex, "BODY");
-    if (!IndexBodyComponent(getAddressById(components, IndexBodyCompID)).has(result)) result = 0;
+    if (!IndexBodyComponent(getAddrByID(components, IndexBodyCompID)).has(result)) result = 0;
   }
 
   // Get the registry entry by Color index
@@ -442,7 +440,7 @@ library LibTraitRegistry {
     uint32 colorIndex
   ) internal view returns (uint256 result) {
     result = genID(colorIndex, "COLOR");
-    if (!IndexColorComponent(getAddressById(components, IndexColorCompID)).has(result)) result = 0;
+    if (!IndexColorComponent(getAddrByID(components, IndexColorCompID)).has(result)) result = 0;
   }
 
   // Get the registry entry by Face index
@@ -451,7 +449,7 @@ library LibTraitRegistry {
     uint32 faceIndex
   ) internal view returns (uint256 result) {
     result = genID(faceIndex, "FACE");
-    if (!IndexFaceComponent(getAddressById(components, IndexFaceCompID)).has(result)) result = 0;
+    if (!IndexFaceComponent(getAddrByID(components, IndexFaceCompID)).has(result)) result = 0;
   }
 
   // Get the registry entry by Hand index
@@ -460,7 +458,7 @@ library LibTraitRegistry {
     uint32 handIndex
   ) internal view returns (uint256 result) {
     result = genID(handIndex, "HAND");
-    if (!IndexHandComponent(getAddressById(components, IndexHandCompID)).has(result)) result = 0;
+    if (!IndexHandComponent(getAddrByID(components, IndexHandCompID)).has(result)) result = 0;
   }
 
   // gets all registry entities of type. requires the indexComponent
@@ -472,8 +470,8 @@ library LibTraitRegistry {
     uint256 ptr = genReverseMappingPtr(_type);
     return
       LibQuery.getIsWithValue(
-        getComponentById(components, ForCompID),
-        getComponentById(components, IsRegCompID),
+        getCompByID(components, ForCompID),
+        getCompByID(components, IsRegCompID),
         abi.encode(ptr)
       );
   }

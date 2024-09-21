@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Uint256Component } from "components/base/Uint256Component.sol";
 
 import { IDFromComponent, ID as IDFromCompID } from "components/IDFromComponent.sol";
@@ -31,13 +31,13 @@ library LibRelation {
     uint256 toID
   ) internal returns (uint256 id) {
     id = genID(fromID, toID);
-    IDFromComponent(getAddressById(components, IDFromCompID)).set(id, fromID);
-    IDToComponent(getAddressById(components, IDToCompID)).set(id, toID);
+    IDFromComponent(getAddrByID(components, IDFromCompID)).set(id, fromID);
+    IDToComponent(getAddrByID(components, IDToCompID)).set(id, toID);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IDFromComponent(getAddressById(components, IDFromCompID)).remove(id);
-    IDToComponent(getAddressById(components, IDToCompID)).remove(id);
+    IDFromComponent(getAddrByID(components, IDFromCompID)).remove(id);
+    IDToComponent(getAddrByID(components, IDToCompID)).remove(id);
   }
 
   /////////////////
@@ -45,7 +45,7 @@ library LibRelation {
 
   function get(IUintComp components, uint256 fromID, uint256 toID) internal view returns (uint256) {
     uint256 id = genID(fromID, toID);
-    return IDFromComponent(getAddressById(components, IDFromCompID)).has(id) ? id : 0;
+    return IDFromComponent(getAddrByID(components, IDFromCompID)).has(id) ? id : 0;
   }
 
   /// @notice get, but with direct From/To components
@@ -69,11 +69,11 @@ library LibRelation {
     IUintComp components,
     uint256 fromID
   ) internal view returns (uint256[] memory) {
-    return IDFromComponent(getAddressById(components, IDFromCompID)).getEntitiesWithValue(fromID);
+    return IDFromComponent(getAddrByID(components, IDFromCompID)).getEntitiesWithValue(fromID);
   }
 
   function getAllTo(IUintComp components, uint256 toID) internal view returns (uint256[] memory) {
-    return IDToComponent(getAddressById(components, IDToCompID)).getEntitiesWithValue(toID);
+    return IDToComponent(getAddrByID(components, IDToCompID)).getEntitiesWithValue(toID);
   }
 
   /////////////////

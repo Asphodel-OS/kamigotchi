@@ -6,7 +6,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
@@ -50,11 +50,11 @@ library LibKill {
     uint256 bounty
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    IsKillComponent(getAddressById(components, IsKillCompID)).set(id);
-    IdSourceComponent(getAddressById(components, IdSourceCompID)).set(id, sourceID);
-    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
-    IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
-    TimeComponent(getAddressById(components, TimeCompID)).set(id, block.timestamp);
+    IsKillComponent(getAddrByID(components, IsKillCompID)).set(id);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, sourceID);
+    IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
+    IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
+    TimeComponent(getAddrByID(components, TimeCompID)).set(id, block.timestamp);
 
     // set bounties
     uint32[8] memory bounties;

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
+import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -24,12 +24,12 @@ library LibExperience {
 
   // increase experience by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddressById(components, ExpCompID)).inc(id, value);
+    IUintComp(getAddrByID(components, ExpCompID)).inc(id, value);
   }
 
   // decrease experience by a specified value
   function dec(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddressById(components, ExpCompID)).dec(id, value);
+    IUintComp(getAddrByID(components, ExpCompID)).dec(id, value);
   }
 
   // increase level by a specified value
@@ -64,12 +64,12 @@ library LibExperience {
 
   // check whether an entity has an Experience Component entry
   function has(IUintComp components, uint256 id) internal view returns (bool) {
-    return ExperienceComponent(getAddressById(components, ExpCompID)).has(id);
+    return ExperienceComponent(getAddrByID(components, ExpCompID)).has(id);
   }
 
   // check whether an entity has a Level Component entry
   function hasLevel(IUintComp components, uint256 id) internal view returns (bool) {
-    return LevelComponent(getAddressById(components, LevelCompID)).has(id);
+    return LevelComponent(getAddrByID(components, LevelCompID)).has(id);
   }
 
   /////////////////
@@ -77,12 +77,12 @@ library LibExperience {
 
   // set the Experience of an entity to the specified value
   function set(IUintComp components, uint256 id, uint256 value) internal {
-    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, value);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, value);
   }
 
   // set the Level of an entity to the specified value
   function setLevel(IUintComp components, uint256 id, uint256 value) internal {
-    LevelComponent(getAddressById(components, LevelCompID)).set(id, value);
+    LevelComponent(getAddrByID(components, LevelCompID)).set(id, value);
   }
 
   /////////////////
@@ -90,12 +90,12 @@ library LibExperience {
 
   // get the Experience of an entity, defaults to 0 if not found
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddressById(components, ExpCompID)).safeGetUint256(id);
+    return IUintComp(getAddrByID(components, ExpCompID)).safeGetUint256(id);
   }
 
   // get the Level of an entity, defaults to 1 if not found
   function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
-    LevelComponent comp = LevelComponent(getAddressById(components, LevelCompID));
+    LevelComponent comp = LevelComponent(getAddrByID(components, LevelCompID));
     if (!comp.has(id)) return 1;
     return comp.get(id);
   }

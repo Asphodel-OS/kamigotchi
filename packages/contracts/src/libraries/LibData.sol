@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
@@ -32,15 +32,15 @@ library LibData {
   // INTERACTIONS
 
   function inc(IUintComp components, uint256 dataID, uint256 amt) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).inc(dataID, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(dataID, amt);
   }
 
   function inc(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).incBatch(dataIDs, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).incBatch(dataIDs, amt);
   }
 
   function inc(IUintComp components, uint256[] memory dataIDs, uint256[] memory amts) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).incBatch(dataIDs, amts);
+    ValueComponent(getAddrByID(components, ValueCompID)).incBatch(dataIDs, amts);
   }
 
   function inc(
@@ -91,15 +91,15 @@ library LibData {
   }
 
   function dec(IUintComp components, uint256 dataID, uint256 amt) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).dec(dataID, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).dec(dataID, amt);
   }
 
   function dec(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).decBatch(dataIDs, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).decBatch(dataIDs, amt);
   }
 
   function dec(IUintComp components, uint256[] memory dataIDs, uint256[] memory amts) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).decBatch(dataIDs, amts);
+    ValueComponent(getAddrByID(components, ValueCompID)).decBatch(dataIDs, amts);
   }
 
   function dec(
@@ -150,7 +150,7 @@ library LibData {
   }
 
   function set(IUintComp components, uint256 dataID, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(dataID, value);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(dataID, value);
   }
 
   function set(
@@ -179,7 +179,7 @@ library LibData {
   // GETTERS
 
   function get(IUintComp components, uint256 dataID) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).safeGetUint256(dataID);
+    return ValueComponent(getAddrByID(components, ValueCompID)).safeGetUint256(dataID);
   }
 
   function get(

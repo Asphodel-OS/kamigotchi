@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { BoolComponent } from "components/base/BoolComponent.sol";
@@ -27,7 +27,7 @@ library LibFor {
     uint256 targetID,
     uint256 for_
   ) internal view returns (bool) {
-    return BoolComponent(getAddressById(components, for_)).has(targetID);
+    return BoolComponent(getAddrByID(components, for_)).has(targetID);
   }
 
   function isTargetFor(
@@ -42,7 +42,7 @@ library LibFor {
   // CHECKERS
 
   function isFor(IUintComp components, uint256 id, uint256 for_) internal view returns (bool) {
-    ForComponent comp = ForComponent(getAddressById(components, ForCompID));
+    ForComponent comp = ForComponent(getAddrByID(components, ForCompID));
     return comp.has(id) && comp.get(id) == for_;
   }
 
@@ -66,26 +66,26 @@ library LibFor {
   // GET + SET
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ForComponent(getAddressById(components, ForCompID)).get(id);
+    return ForComponent(getAddrByID(components, ForCompID)).get(id);
   }
 
   function getBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    return ForComponent(getAddressById(components, ForCompID)).getBatch(ids);
+    return ForComponent(getAddrByID(components, ForCompID)).getBatch(ids);
   }
 
   function set(IUintComp components, uint256 id, uint256 for_) internal {
-    ForComponent(getAddressById(components, ForCompID)).set(id, for_);
+    ForComponent(getAddrByID(components, ForCompID)).set(id, for_);
   }
 
   function setFromString(IUintComp components, uint256 id, string memory for_) internal {
-    ForComponent(getAddressById(components, ForCompID)).set(id, fromString(components, for_));
+    ForComponent(getAddrByID(components, ForCompID)).set(id, fromString(components, for_));
   }
 
   function unset(IUintComp components, uint256 id) internal {
-    ForComponent(getAddressById(components, ForCompID)).remove(id);
+    ForComponent(getAddrByID(components, ForCompID)).remove(id);
   }
 
   /////////////////

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
@@ -69,12 +69,12 @@ library LibGoals {
     Condition memory objective
   ) internal returns (uint256 id) {
     id = genGoalID(index);
-    IsGoalComponent(getAddressById(components, IsGoalCompID)).set(id); // TODO: change to EntityType
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
+    IsGoalComponent(getAddrByID(components, IsGoalCompID)).set(id); // TODO: change to EntityType
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
     if (roomIndex != 0)
-      IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
+      IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, roomIndex);
 
     // adding the objective
     uint256 objID = genObjID(id);
@@ -128,24 +128,24 @@ library LibGoals {
     );
 
     // custom touchs for goal rewards
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logic);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, logic);
     require(
       logic.eq("REWARD") || logic.eq("DISPLAY_ONLY"),
       "LibGoals: invalid reward distribution"
     );
     if (!logic.eq("DISPLAY_ONLY"))
-      LevelComponent(getAddressById(components, LevelCompID)).set(id, minContribution);
+      LevelComponent(getAddrByID(components, LevelCompID)).set(id, minContribution);
   }
 
   function remove(IUintComp components, uint32 index) internal {
     uint256 goalID = genGoalID(index);
-    IsGoalComponent(getAddressById(components, IsGoalCompID)).remove(goalID);
-    IndexComponent(getAddressById(components, IndexCompID)).remove(goalID);
-    NameComponent(getAddressById(components, NameCompID)).remove(goalID);
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).remove(goalID);
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(goalID);
-    IsCompleteComponent(getAddressById(components, IsCompleteCompID)).remove(goalID);
+    IsGoalComponent(getAddrByID(components, IsGoalCompID)).remove(goalID);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(goalID);
+    NameComponent(getAddrByID(components, NameCompID)).remove(goalID);
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(goalID);
+    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(goalID);
+    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(goalID);
 
     // remove objective
     uint256 objID = genObjID(goalID);
@@ -162,15 +162,15 @@ library LibGoals {
 
   function removeRequirement(IUintComp components, uint256 id) internal {
     LibConditional.remove(components, id);
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
-    LevelComponent(getAddressById(components, LevelCompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
+    LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
   }
 
   function removeReward(IUintComp components, uint256 id) internal {
     LibReward.remove(components, id);
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
-    LevelComponent(getAddressById(components, LevelCompID)).remove(id);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
+    NameComponent(getAddrByID(components, NameCompID)).remove(id);
+    LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
   }
 
   /////////////////
@@ -184,7 +184,7 @@ library LibGoals {
     uint256 amt
   ) internal returns (uint256) {
     uint256 objID = genObjID(goalID);
-    IUintComp balComp = IUintComp(getAddressById(components, ValueCompID));
+    IUintComp balComp = IUintComp(getAddrByID(components, ValueCompID));
     uint256 currBal = balComp.safeGetUint256(goalID);
     uint256 targetBal = balComp.safeGetUint256(objID);
 
@@ -232,14 +232,12 @@ library LibGoals {
 
     uint256 contributionID = genContributionID(goalID, accID);
     IsCompleteComponent completeComp = IsCompleteComponent(
-      getAddressById(components, IsCompleteCompID)
+      getAddrByID(components, IsCompleteCompID)
     );
     bool goalCompleted = completeComp.has(goalID);
     bool accClaimed = completeComp.has(contributionID);
 
-    bool accContributed = ValueComponent(getAddressById(components, ValueCompID)).has(
-      contributionID
-    );
+    bool accContributed = ValueComponent(getAddrByID(components, ValueCompID)).has(contributionID);
     // true if goal completed, account contributed, account hasnt claimed reward
     return goalCompleted && accContributed && !accClaimed;
   }
@@ -272,7 +270,7 @@ library LibGoals {
     uint256 goalID,
     uint256 accID
   ) internal view returns (bool) {
-    IndexRoomComponent comp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
+    IndexRoomComponent comp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
     if (!comp.has(goalID)) return true; // global goal, no room needed
 
     return comp.get(goalID) == comp.get(accID);
@@ -286,7 +284,7 @@ library LibGoals {
     uint256 accID,
     uint256[] memory rwdIDs
   ) internal view {
-    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+    LevelComponent levelComp = LevelComponent(getAddrByID(components, LevelCompID));
 
     uint256 contribution = getContributionAmt(components, goalID, accID);
     for (uint256 i; i < rwdIDs.length; i++)
@@ -294,7 +292,7 @@ library LibGoals {
   }
 
   function isComplete(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(id);
+    return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(id);
   }
 
   ///////////////////
@@ -311,11 +309,11 @@ library LibGoals {
   }
 
   function setComplete(IUintComp components, uint256 id) internal {
-    IsCompleteComponent(getAddressById(components, IsCompleteCompID)).set(id);
+    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(id);
   }
 
   function setClaimed(IUintComp components, uint256 goalID, uint256 accID) internal {
-    IsCompleteComponent(getAddressById(components, IsCompleteCompID)).set(
+    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(
       genContributionID(goalID, accID)
     );
   }
@@ -325,7 +323,7 @@ library LibGoals {
 
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
     uint256 id = genGoalID(index);
-    return IsGoalComponent(getAddressById(components, IsGoalCompID)).has(id) ? id : 0;
+    return IsGoalComponent(getAddrByID(components, IsGoalCompID)).has(id) ? id : 0;
   }
 
   function getContributionAmt(
@@ -333,7 +331,7 @@ library LibGoals {
     uint256 goalID,
     uint256 accID
   ) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    ValueComponent comp = ValueComponent(getAddrByID(components, ValueCompID));
     uint256 id = genContributionID(goalID, accID);
     return comp.has(id) ? comp.get(id) : 0;
   }
@@ -357,7 +355,7 @@ library LibGoals {
     uint256 pointer
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddressById(components, IDPointerCompID)).getEntitiesWithValue(pointer);
+      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(pointer);
   }
 
   ////////////////////
@@ -372,8 +370,8 @@ library LibGoals {
     uint256 pointer = genRwdPtr(goalIndex);
     return
       LibQuery.getIsWithValue(
-        getComponentById(components, IDPointerCompID),
-        getComponentById(components, LevelCompID),
+        getCompByID(components, IDPointerCompID),
+        getCompByID(components, LevelCompID),
         abi.encode(pointer)
       );
   }

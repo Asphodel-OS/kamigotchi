@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { IdHolderComponent, ID as HolderCompID } from "components/IdHolderComponent.sol";
 import { TimelockComponent, ID as TimelockCompID, TimelockOp } from "components/TimelockComponent.sol";
@@ -37,7 +37,7 @@ library LibTimelock {
   // SETTERS
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    IdHolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
+    IdHolderComponent(getAddrByID(components, HolderCompID)).set(id, holderID);
   }
 
   function setTimelock(
@@ -47,18 +47,18 @@ library LibTimelock {
     uint256 value,
     uint256 salt
   ) internal {
-    TimelockComponent(getAddressById(components, TimelockCompID)).set(
+    TimelockComponent(getAddrByID(components, TimelockCompID)).set(
       id,
       TimelockOp(target, value, salt)
     );
   }
 
   function unsetHolder(IUintComp components, uint256 id) internal {
-    IdHolderComponent(getAddressById(components, HolderCompID)).remove(id);
+    IdHolderComponent(getAddrByID(components, HolderCompID)).remove(id);
   }
 
   function unsetTimelock(IUintComp components, uint256 id) internal {
-    TimelockComponent(getAddressById(components, TimelockCompID)).remove(id);
+    TimelockComponent(getAddrByID(components, TimelockCompID)).remove(id);
   }
 
   ///////////////////////
@@ -68,7 +68,7 @@ library LibTimelock {
     IUintComp components,
     uint256 id
   ) internal view returns (address, uint256, uint256) {
-    TimelockOp memory tlo = TimelockComponent(getAddressById(components, TimelockCompID)).get(id);
+    TimelockOp memory tlo = TimelockComponent(getAddrByID(components, TimelockCompID)).get(id);
     return (tlo.target, tlo.value, tlo.salt);
   }
 }

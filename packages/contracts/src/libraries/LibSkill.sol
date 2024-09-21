@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
+import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
@@ -48,14 +48,14 @@ library LibSkill {
 
   // increase skill points of a skill by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
-    SkillPointComponent pointComp = SkillPointComponent(getAddressById(components, SPCompID));
+    SkillPointComponent pointComp = SkillPointComponent(getAddrByID(components, SPCompID));
     uint256 curr = pointComp.has(id) ? pointComp.get(id) : 0;
     pointComp.set(id, curr + value);
   }
 
   // decrease skillPoints by a specified value
   function dec(IUintComp components, uint256 id, uint256 value) internal {
-    SkillPointComponent pointComp = SkillPointComponent(getAddressById(components, SPCompID));
+    SkillPointComponent pointComp = SkillPointComponent(getAddrByID(components, SPCompID));
     uint256 curr = pointComp.has(id) ? pointComp.get(id) : 0;
     require(curr >= value, "LibSkill: not enough points");
     pointComp.set(id, curr - value);
@@ -103,7 +103,7 @@ library LibSkill {
   // CHECKERS
 
   function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
-    return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
+    return SkillPointComponent(getAddrByID(components, SPCompID)).has(id);
   }
 
   function isFor(IUintComp components, uint256 regID, uint256 id) internal view returns (bool) {
@@ -157,35 +157,35 @@ library LibSkill {
   // SETTERS
 
   function setIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
+    IsSkillComponent(getAddrByID(components, IsSkillCompID)).set(id);
   }
 
   function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, index);
+    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, index);
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 value) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, value);
+    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, value);
   }
 
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {
-    SkillPointComponent(getAddressById(components, SPCompID)).set(id, value);
+    SkillPointComponent(getAddrByID(components, SPCompID)).set(id, value);
   }
 
   /////////////////
   // GETTERS
 
   function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LevelComponent(getAddressById(components, LevelCompID)).get(id);
+    return LevelComponent(getAddrByID(components, LevelCompID)).get(id);
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    SkillPointComponent comp = SkillPointComponent(getAddressById(components, SPCompID));
+    SkillPointComponent comp = SkillPointComponent(getAddrByID(components, SPCompID));
     return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
-    return MaxComponent(getAddressById(components, MaxCompID)).get(id);
+    return MaxComponent(getAddrByID(components, MaxCompID)).get(id);
   }
 
   function getTreePoints(
@@ -202,7 +202,7 @@ library LibSkill {
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
+    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   // get the point value of a specific skill for a target
@@ -224,7 +224,7 @@ library LibSkill {
     uint32 index
   ) internal view returns (uint256) {
     uint256 id = genID(holderID, index);
-    return IsSkillComponent(getAddressById(components, IsSkillCompID)).has(id) ? id : 0;
+    return IsSkillComponent(getAddrByID(components, IsSkillCompID)).has(id) ? id : 0;
   }
 
   //////////////////////

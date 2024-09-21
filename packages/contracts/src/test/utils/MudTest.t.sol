@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { Test, console } from "forge-std/Test.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { LibDeploy, DeployResult } from "deployment/LibDeploy.sol";
 
 string constant mnemonic = "test test test test test test test test test test test junk";
@@ -41,11 +41,11 @@ contract MudTest is Test {
   }
 
   function component(uint256 id) public view returns (address) {
-    return getAddressById(components, id);
+    return getAddrByID(components, id);
   }
 
   function system(uint256 id) public view returns (address) {
-    return getAddressById(systems, id);
+    return getAddrByID(systems, id);
   }
 
   function getWorldNonce() public view returns (uint256) {
