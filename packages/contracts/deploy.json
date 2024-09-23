@@ -733,6 +733,7 @@
     "LibAccount",
     "LibAssigner",
     "LibBonus",
+    "LibBonusOld",
     "LibConditional",
     "LibCommit",
     "LibConfig",

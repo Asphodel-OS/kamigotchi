@@ -6,7 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 
 /*

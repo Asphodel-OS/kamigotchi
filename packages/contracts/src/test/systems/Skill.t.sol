@@ -170,9 +170,9 @@ contract SkillTest is SetupTemplate {
     uint256 regEffID = _createSkillEffect(1, "HARVEST", "DRAIN", 10);
     uint256 petID = _mintPet(alice.index);
 
-    int256 ogDrain = LibBonus.getRaw(components, petID, "HARVEST_DRAIN");
+    int256 ogDrain = LibBonusOld.getRaw(components, petID, "HARVEST_DRAIN");
     _upgradeSkill(alice.index, petID, 1);
-    int256 newDrain = LibBonus.getRaw(components, petID, "HARVEST_DRAIN");
+    int256 newDrain = LibBonusOld.getRaw(components, petID, "HARVEST_DRAIN");
 
     assertEq(ogDrain + 10, newDrain);
   }

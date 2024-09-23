@@ -26,7 +26,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -152,7 +152,7 @@ library LibPet {
   // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
   function calcMetabolism(IUintComp components, uint256 id) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
-    uint256 boostBonus = LibBonus.getRaw(components, id, "REST_METABOLISM_BOOST").toUint256();
+    uint256 boostBonus = LibBonusOld.getRaw(components, id, "REST_METABOLISM_BOOST").toUint256();
     uint256 base = calcTotalHarmony(components, id).toUint256();
     uint256 ratio = config[2]; // metabolism core
     uint256 boost = config[6] + boostBonus;
@@ -175,7 +175,7 @@ library LibPet {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
-    int256 bonusBoost = LibBonus.getRaw(components, id, "STND_STRAIN_BOOST");
+    int256 bonusBoost = LibBonusOld.getRaw(components, id, "STND_STRAIN_BOOST");
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
 

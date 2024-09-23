@@ -24,6 +24,14 @@ library LibEntityType {
     EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).remove(id);
   }
 
+  function has(IUintComp components, uint256 id) internal view returns (bool) {
+    return EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).has(id);
+  }
+
+  function get(IUintComp components, uint256 id) internal view returns (string memory) {
+    return EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).get(id);
+  }
+
   function isShape(
     IUintComp components,
     uint256 id,

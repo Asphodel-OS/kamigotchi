@@ -70,9 +70,9 @@ pragma solidity ^0.8.0;
 //     uint256 multAffinity = _calcAffinityMultiplier(
 //       prodID,
 //       petID,
-//       LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_MULT")
+//       LibBonusOld.getRaw(components, petID, "HARVEST_AFFINITY_MULT")
 //     );
-//     uint256 multBonus = _calcBonusMultiplier(LibBonus.getRaw(components, petID, "HARVEST_OUTPUT"));
+//     uint256 multBonus = _calcBonusMultiplier(LibBonusOld.getRaw(components, petID, "HARVEST_OUTPUT"));
 //     uint256 multPrec = 10 ** uint256(configs[3]);
 //     uint256 rfMultiplier = multAffinity * multBonus;
 //     precision *= multPrec;
@@ -234,7 +234,7 @@ pragma solidity ^0.8.0;
 //      *   normal & weak: 7 * 5 = 35
 //      */
 //     vm.startPrank(deployer);
-//     LibBonus.inc(components, petID, "HARVEST_AFFINITY_MULT", 2);
+//     LibBonusOld.inc(components, petID, "HARVEST_AFFINITY_MULT", 2);
 //     vm.stopPrank();
 //     if (nodeAff.eq("NORMAL") || nodeAff.eq("") || bodyAff.eq("NORMAL"))
 //       expected = 7; // mid

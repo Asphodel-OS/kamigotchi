@@ -7,7 +7,6 @@ import { getAddrByID } from "solecs/utils.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";

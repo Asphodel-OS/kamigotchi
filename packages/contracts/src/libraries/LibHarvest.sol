@@ -20,7 +20,7 @@ import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetC
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
@@ -122,7 +122,7 @@ library LibHarvest {
     if (!isActive(components, id)) return 0;
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
-    int256 boostBonus = LibBonus.getRaw(components, petID, "HARV_BOUNTY_BOOST");
+    int256 boostBonus = LibBonusOld.getRaw(components, petID, "HARV_BOUNTY_BOOST");
 
     uint256 base = calcFertility(components, id);
     uint256 nudge = calcIntensity(components, id);
@@ -156,7 +156,7 @@ library LibHarvest {
     // pull the bonus efficacy shifts from the pet
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
       base: int(0),
-      up: LibBonus.getRaw(components, petID, "HARV_FERTILITY_BOOST"),
+      up: LibBonusOld.getRaw(components, petID, "HARV_FERTILITY_BOOST"),
       down: int(0)
     });
 
@@ -197,7 +197,7 @@ library LibHarvest {
     uint256 nudge = calcIntensityDuration(components, id) / 60; // minutes, rounded down
     uint256 ratio = config[2]; // period, in minutes. scaled to accomodate current skill balancing
     uint256 boost = config[6];
-    boost += LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
+    boost += LibBonusOld.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
     uint256 precision = 10 ** (RATE_PREC - config[7] + config[3]); // ratio is inverted
     return (precision * (base + nudge) * boost) / (ratio * 3600);
   }

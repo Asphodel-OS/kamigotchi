@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFriend } from "libraries/LibFriend.sol";
 
@@ -30,7 +30,7 @@ contract FriendAcceptSystem is System {
     require(LibFriend.getTarget(components, requestID) == accID, "FriendAccept: not for you");
 
     // check number of friends limit
-    uint256 frenLimit = LibBonus.processBonus(
+    uint256 frenLimit = LibBonusOld.processBonus(
       components,
       accID,
       "FRIENDS_LIMIT",
@@ -38,7 +38,7 @@ contract FriendAcceptSystem is System {
     );
     require(LibFriend.getFriendCount(components, accID) < frenLimit, "Friend limit reached");
 
-    uint256 senderLimit = LibBonus.processBonus(
+    uint256 senderLimit = LibBonusOld.processBonus(
       components,
       accID,
       "FRIENDS_LIMIT",

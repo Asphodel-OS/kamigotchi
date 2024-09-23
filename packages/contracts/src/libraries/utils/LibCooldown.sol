@@ -8,7 +8,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 
@@ -52,7 +52,7 @@ library LibCooldown {
   /// @notice get cooldown for entity, including bonus
   function getCooldown(IUintComp components, uint256 id) internal view returns (int256) {
     int256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN").toInt256();
-    int256 shift = LibBonus.getRaw(components, id, "STND_COOLDOWN_SHIFT");
+    int256 shift = LibBonusOld.getRaw(components, id, "STND_COOLDOWN_SHIFT");
     int256 cooldown = base + shift;
     return cooldown < int256(0) ? int256(0) : cooldown;
   }

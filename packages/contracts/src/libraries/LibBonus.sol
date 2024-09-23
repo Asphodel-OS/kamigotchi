@@ -2,89 +2,271 @@
 pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
-import { ValueSignedComponent as SignedValComp, ID as SignedValCompID } from "components/ValueSignedComponent.sol";
-import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.sol";
+import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 /**
- * @notice Library for managing bonuses - modifiers that affect specific calcs
+ * @notice
+ * Bonuses consists of a registry entry and local instance.
+ *   - Ensures updatability via Registry pattern
+ *   - Allows removal for specific/all bonuses of type, eg. when respecing skill
+ * To get a bonus value for a given entity (acc/pet),
+ *   1. query all relevant bonus instances
+ *   2. get values from registry, sum
+ *
+ * Registry shape: ID = hash("registry.bonus", parentID, type)
+ * - IsRegistry
+ * - EntityType: BONUS
+ * - IDParent: for reverse map to parent registry (parentID)
+ * - Type (FE only)
+ * - Value (used as Int256, but stored as uint256)
+ *
+ * Instance shape: ID = hash("bonus.instance", registryID, holderID)
+ * - IdSource: relevant BonusRegistryID
+ * - IDParent: (optional - but assume have) for querying child bonuses from a parent (eg. skill) [hash("bonus.parent", parentID)]
+ * - IDType: type, used to query all bonuses of type [hash("bonus.type", type, holderID)]
+ * - Level: bonus level, acts as a multiplier
  */
 library LibBonus {
+  using LibComp for IUintComp;
+  using LibComp for IComponent;
+  using SafeCastLib for uint256;
+  using SafeCastLib for int256;
+
+  /////////////////
+  // SHAPES
+
+  /// @notice creates a registry entry
+  function registryCreate(
+    IUintComp components,
+    uint256 parentID,
+    string memory type_,
+    int256 value // can be negative, no safecast
+  ) internal returns (uint256 id) {
+    id = genRegID(parentID, type_);
+    require(!LibEntityType.has(components, id), "Bonus: already exists"); // no duplicate type for parent
+    LibEntityType.set(components, id, "BONUS");
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
+
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, genParentID(parentID));
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, uint256(value));
+  }
+
+  /// @notice assigns a bonus instance to an entity
+  function assign(
+    IUintComp components,
+    uint256 regID,
+    string memory type_,
+    uint256 holderID
+  ) internal returns (uint256 id) {
+    id = genInstanceID(regID, holderID);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, regID);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).set(id, genTypeID(type_, holderID));
+  }
+
+  /// @notice assigns a bonus instance to an entity, with parent
+  function assign(
+    IUintComp components,
+    uint256 regID,
+    string memory type_,
+    uint256 parentID,
+    uint256 holderID
+  ) internal returns (uint256 id) {
+    id = assign(components, regID, type_, holderID);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, genParentID(parentID));
+  }
+
+  /// @notice removes a registry entry
+  function registryRemove(IUintComp components, uint256 id) internal {
+    LibEntityType.remove(components, id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+  }
+
+  /// @notice removes a bonus instance
+  function unassign(IUintComp components, uint256 id) internal {
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(id);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
+    LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
+  }
+
+  /// @notice remove bonus instances
+  function unassign(IUintComp components, uint256[] memory ids) internal {
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).removeBatch(ids);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).removeBatch(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).removeBatch(ids);
+    LevelComponent(getAddrByID(components, LevelCompID)).removeBatch(ids);
+  }
+
   /////////////////
   // INTERACTIONS
 
-  function inc(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
-    uint256 id = genID(holderID, type_);
-    SignedValComp comp = SignedValComp(getAddrByID(components, SignedValCompID));
-    int256 curr = comp.has(id) ? comp.get(id) : int256(0);
-    comp.set(id, curr + amt);
+  /// @notice increases bonus based on registry entry (eg skill)
+  function incBy(
+    IUintComp components,
+    uint256 parentRegID,
+    uint256 holderID,
+    uint256 amt
+  ) internal returns (uint256[] memory) {
+    uint256[] memory instanceIDs = _assignFromRegistry(components, parentRegID, holderID);
+    IUintComp(getAddrByID(components, LevelCompID)).incBatch(instanceIDs, amt);
+    return instanceIDs;
   }
 
-  function dec(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
-    uint256 id = genID(holderID, type_);
-    SignedValComp comp = SignedValComp(getAddrByID(components, SignedValCompID));
-    int256 curr = comp.has(id) ? comp.get(id) : int256(0);
-    comp.set(id, curr - amt);
+  /// @notice increases bonus based on registry entry (eg skill)
+  function incBy(
+    IUintComp components,
+    uint256 parentRegID,
+    uint256 parentID,
+    uint256 holderID,
+    uint256 amt
+  ) internal returns (uint256[] memory) {
+    uint256[] memory instanceIDs = _assignFromRegistry(components, parentRegID, parentID, holderID);
+    IUintComp(getAddrByID(components, LevelCompID)).incBatch(instanceIDs, amt);
+    return instanceIDs;
+  }
+
+  /// @notice assigns bonus entity if not already assigned
+  function _assignFromRegistry(
+    IUintComp components,
+    uint256 parentRegID,
+    uint256 holderID
+  ) internal returns (uint256[] memory) {
+    IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
+    IDTypeComponent idTypeComp = IDTypeComponent(getAddrByID(components, IDTypeCompID));
+    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
+
+    uint256[] memory bonusRegIDs = queryByParent(components, parentRegID);
+    uint256[] memory instanceIDs = new uint256[](bonusRegIDs.length);
+    for (uint256 i; i < bonusRegIDs.length; i++) {
+      uint256 id = genInstanceID(bonusRegIDs[i], holderID);
+      instanceIDs[i] = id;
+      if (!idTypeComp.has(id)) {
+        idSourceComp.set(id, bonusRegIDs[i]);
+        idTypeComp.set(id, genTypeID(typeComp.get(bonusRegIDs[i]), holderID));
+      }
+    }
+    return instanceIDs;
+  }
+
+  function _assignFromRegistry(
+    IUintComp components,
+    uint256 parentRegID,
+    uint256 parentID,
+    uint256 holderID
+  ) internal returns (uint256[] memory) {
+    IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
+    IDTypeComponent idTypeComp = IDTypeComponent(getAddrByID(components, IDTypeCompID));
+    IDParentComponent idParentComp = IDParentComponent(getAddrByID(components, IDParentCompID));
+    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
+
+    uint256[] memory bonusRegIDs = queryByParent(components, parentRegID);
+    uint256[] memory instanceIDs = new uint256[](bonusRegIDs.length);
+    for (uint256 i; i < bonusRegIDs.length; i++) {
+      uint256 id = genInstanceID(bonusRegIDs[i], holderID);
+      instanceIDs[i] = id;
+      if (!idTypeComp.has(id)) {
+        idSourceComp.set(id, bonusRegIDs[i]);
+        idTypeComp.set(id, genTypeID(typeComp.get(bonusRegIDs[i]), holderID));
+        idParentComp.set(id, genParentID(parentID));
+      }
+    }
+    return instanceIDs;
+  }
+
+  /////////////////
+  // CALCS
+
+  /// @notice accepts uint256 value and returns signed int256
+  /// @param rawValue unsigned value. can be negative; do not safecast
+  /// @param level multiplier for bonus. Not expected to go out of bounds of uint128
+  function calcSingle(uint256 rawValue, uint256 level) internal pure returns (int256) {
+    return int256(rawValue) * level.toInt256();
   }
 
   /////////////////
   // GETTERS
 
-  /// @notice gets a bonus in percent form. default is 1000 (100.0%)
-  function getPercent(
-    IUintComp components,
-    uint256 holderID,
-    string memory type_
-  ) internal view returns (uint256) {
-    int256 bonus = getRaw(components, holderID, type_);
-    if (bonus == 0) return 1000;
-    // max change is 0.1%
-    else if (bonus <= -1000) return 1;
-    else return uint256(1000 + bonus); // overflow alr checked
+  function get(IUintComp components, uint256[] memory ids) internal view returns (int256 total) {
+    uint256[] memory sources = getCompByID(components, IdSourceCompID).safeGetBatchUint256(ids);
+    uint256[] memory levels = getCompByID(components, LevelCompID).safeGetBatchUint256(ids);
+    uint256[] memory values = getCompByID(components, ValueCompID).safeGetBatchUint256(sources);
+
+    for (uint256 i; i < ids.length; i++) total += calcSingle(values[i], levels[i]);
   }
 
-  /// @notice adjust base value based on bonus
-  function processBonus(
+  function getFor(
     IUintComp components,
-    uint256 holderID,
     string memory type_,
-    uint256 base
-  ) internal view returns (uint256) {
-    int256 bonus = getRaw(components, holderID, type_);
-    return calcSigned(base, bonus);
+    uint256 holderID
+  ) internal view returns (int256) {
+    uint256[] memory ids = queryByType(components, type_, holderID);
+    return get(components, ids);
   }
 
-  function getRaw(
+  function getForUint256(
     IUintComp components,
-    uint256 holderID,
-    string memory type_
-  ) internal view returns (int256) {
-    uint256 id = genID(holderID, type_);
-    SignedValComp comp = SignedValComp(getAddrByID(components, SignedValCompID));
-    return comp.has(id) ? comp.get(id) : int256(0);
+    string memory type_,
+    uint256 holderID
+  ) internal view returns (uint256) {
+    int256 raw = getFor(components, type_, holderID);
+    return raw > 0 ? uint256(raw) : 0;
+  }
+
+  /////////////////
+  // QUERIES
+
+  function queryByParent(
+    IUintComp components,
+    uint256 parentID
+  ) internal view returns (uint256[] memory) {
+    uint256 id = genParentID(parentID);
+    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(id);
+  }
+
+  function queryByType(
+    IUintComp components,
+    string memory type_,
+    uint256 holderID
+  ) internal view returns (uint256[] memory) {
+    uint256 id = genTypeID(type_, holderID);
+    return IUintComp(getAddrByID(components, IDTypeCompID)).getEntitiesWithValue(id);
   }
 
   //////////////
-  // UTILS
+  // IDs
 
-  function genID(uint256 holderID, string memory type_) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("bonus", holderID, type_)));
+  function genRegID(uint256 parentID, string memory type_) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("registry.bonus", parentID, type_)));
   }
 
-  /// @notice handles a custom signed/unsigned calculation
-  /// @dev recieves the signed bonus value, calculates, and spits out unsigned for other systems
-  function calcSigned(uint256 base, int256 bonus) internal pure returns (uint256) {
-    // avoid converting base in case of overflow
-    if (bonus == 0) return base;
-    if (bonus > 0) return base + uint256(bonus);
+  function genInstanceID(uint256 regID, uint256 holderID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("bonus.instance", regID, holderID)));
+  }
 
-    uint256 delta = uint256(-bonus);
-    return (delta >= base) ? 0 : base - delta;
+  function genParentID(uint256 parentID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("bonus.parent", parentID)));
+  }
+
+  function genTypeID(string memory type_, uint256 holderID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("bonus.type", type_, holderID)));
   }
 }

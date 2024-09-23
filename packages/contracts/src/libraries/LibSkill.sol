@@ -18,7 +18,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
+import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -83,7 +83,7 @@ library LibSkill {
     else bonusType = LibString.concat(LibString.concat(type_, "_"), subtype);
     int256 value = LibSkillRegistry.getBalanceSigned(components, effectID);
 
-    LibBonus.inc(components, holderID, bonusType, value);
+    LibBonusOld.inc(components, holderID, bonusType, value);
   }
 
   // processes the upgrade of a stat increment/decrement effect
