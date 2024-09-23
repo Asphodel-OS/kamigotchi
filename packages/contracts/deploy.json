@@ -41,7 +41,7 @@
     { "comp": "IdPetComponent", "name": "PetID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDRoomComponent", "name": "RoomID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdSourceComponent", "name": "SourceID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDScoreTypeComponent", "name": "ScoreTypeID", "type": "uint256", "FEtype": "string" },
+    { "comp": "IDTypeComponent", "name": "TypeID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdTargetComponent", "name": "TargetID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDToComponent", "name": "ToID", "type": "uint256", "FEtype": "string" },
     { "comp": "IndexComponent", "name": "Index", "type": "uint32" },
@@ -306,7 +306,7 @@
     },
     {
       "name": "AccountFundSystem",
-      "writeAccess": ["IdHolderComponent", "IDScoreTypeComponent", "TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["IdHolderComponent", "IDTypeComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
       "name": "AccountUseFoodSystem",
@@ -436,7 +436,7 @@
       "name": "GoalContributeSystem",
       "writeAccess": [
         "IdHolderComponent",
-        "IDScoreTypeComponent",
+        "IDTypeComponent",
         "IDOwnsInventoryComponent",
         "IndexItemComponent",
         "IsInventoryComponent",
@@ -454,7 +454,7 @@
       "writeAccess": [
         "IdHolderComponent",
         "IDOwnsInventoryComponent",
-        "IDScoreTypeComponent",
+        "IDTypeComponent",
         "IndexComponent",
         "IndexItemComponent",
         "IsInventoryComponent",
@@ -550,7 +550,7 @@
       "name": "PetUseFoodSystem",
       "writeAccess": [
         "IdHolderComponent",
-        "IDScoreTypeComponent",
+        "IDTypeComponent",
         "ExperienceComponent",
         "HarmonyComponent",
         "HasFlagComponent",
@@ -579,7 +579,7 @@
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
-        "IDScoreTypeComponent",
+        "IDTypeComponent",
         "IDOwnsInventoryComponent",
         "IsInventoryComponent",
         "IndexComponent",
@@ -598,7 +598,7 @@
         "IdHolderComponent",
         "IdNodeComponent",
         "IdSourceComponent",
-        "IDScoreTypeComponent",
+        "IDTypeComponent",
         "IDOwnsInventoryComponent",
         "IdTargetComponent",
         "IndexComponent",
@@ -645,7 +645,7 @@
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
-        "IDScoreTypeComponent",
+        "IDTypeComponent",
         "IndexComponent",
         "IndexItemComponent",
         "RateComponent",

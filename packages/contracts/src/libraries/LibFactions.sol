@@ -30,7 +30,7 @@ import { LibScore } from "libraries/LibScore.sol";
  * Entities can have Reputation with factions.
  *   - stored as a ScoreEntity (reverse map for FE leaderboards)
  *     - id = hash("faction.reputation", factionID)
- *     - scoreTypeID = factionID
+ *     - TypeID = factionID
  */
 library LibFactions {
   /////////////////

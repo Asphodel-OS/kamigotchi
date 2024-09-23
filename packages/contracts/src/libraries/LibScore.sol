@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
-import { IDScoreTypeComponent, ID as IDScoreTypeCompID } from "components/IDScoreTypeComponent.sol";
-import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+
+import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 
@@ -22,7 +22,7 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 
 // Components:
 // EntityID: hash(IdHolder, score type, epoch)
-// IdScoreType: reverse map to score type (e.g. hash(score type, epoch), goalID)
+// IdType: reverse map to score type (e.g. hash(score type, epoch), goalID)
 // Balance: Score balance
 
 library LibScore {
@@ -33,13 +33,11 @@ library LibScore {
 
   function create(IUintComp components, uint256 id, uint256 holderID, uint256 typeID) internal {
     IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, holderID);
-    IDScoreTypeComponent(getAddrByID(components, IDScoreTypeCompID)).set(id, typeID);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).set(id, typeID);
   }
 
   function createFor(IUintComp components, uint256 id, uint256 holderID, uint256 typeID) internal {
-    IDScoreTypeComponent typeComp = IDScoreTypeComponent(
-      getAddrByID(components, IDScoreTypeCompID)
-    );
+    IDTypeComponent typeComp = IDTypeComponent(getAddrByID(components, IDTypeCompID));
     if (!typeComp.has(id)) {
       typeComp.set(id, typeID);
       IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, holderID);

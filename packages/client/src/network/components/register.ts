@@ -56,7 +56,7 @@ export function createComponents(world: World) {
     PetID: defineStringComponent(world, 'PetID', 'component.id.pet'),
     RoomID: defineStringComponent(world, 'RoomID', 'component.id.room'),
     SourceID: defineStringComponent(world, 'SourceID', 'component.id.source'),
-    ScoreTypeID: defineStringComponent(world, 'ScoreTypeID', 'component.id.score.type'),
+    TypeID: defineStringComponent(world, 'TypeID', 'component.id.score.type'),
     TargetID: defineStringComponent(world, 'TargetID', 'component.id.target'),
     ToID: defineStringComponent(world, 'ToID', 'component.id.to'),
     Index: defineNumberComponent(world, 'Index', 'component.index'),
