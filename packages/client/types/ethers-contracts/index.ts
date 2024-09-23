@@ -49,7 +49,7 @@ export type { IDOwnsInventoryComponent } from "./IDOwnsInventoryComponent";
 export type { IDOwnsPetComponent } from "./IDOwnsPetComponent";
 export type { IDOwnsQuestComponent } from "./IDOwnsQuestComponent";
 export type { IDOwnsRelationshipComponent } from "./IDOwnsRelationshipComponent";
-export type { IDPointerComponent } from "./IDPointerComponent";
+export type { IDParentComponent } from "./IDParentComponent";
 export type { IDRoomComponent } from "./IDRoomComponent";
 export type { IDToComponent } from "./IDToComponent";
 export type { IDTypeComponent } from "./IDTypeComponent";
@@ -264,7 +264,7 @@ export { IDOwnsInventoryComponent__factory } from "./factories/IDOwnsInventoryCo
 export { IDOwnsPetComponent__factory } from "./factories/IDOwnsPetComponent__factory";
 export { IDOwnsQuestComponent__factory } from "./factories/IDOwnsQuestComponent__factory";
 export { IDOwnsRelationshipComponent__factory } from "./factories/IDOwnsRelationshipComponent__factory";
-export { IDPointerComponent__factory } from "./factories/IDPointerComponent__factory";
+export { IDParentComponent__factory } from "./factories/IDParentComponent__factory";
 export { IDRoomComponent__factory } from "./factories/IDRoomComponent__factory";
 export { IDToComponent__factory } from "./factories/IDToComponent__factory";
 export { IDTypeComponent__factory } from "./factories/IDTypeComponent__factory";

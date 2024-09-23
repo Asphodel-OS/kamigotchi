@@ -54,7 +54,7 @@ library LibNode {
     string memory for_,
     Condition memory req
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, req, genReqPtr(nodeIndex));
+    id = LibConditional.createFor(world, components, req, genReqParentID(nodeIndex));
     LibFor.setFromString(components, id, for_);
   }
 
@@ -169,7 +169,7 @@ library LibNode {
   }
 
   function getReqs(IUintComp components, uint32 index) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqPtr(index));
+    return LibConditional.queryFor(components, genReqParentID(index));
   }
 
   /////////////////////
@@ -179,7 +179,7 @@ library LibNode {
     return uint256(keccak256(abi.encodePacked("node", index)));
   }
 
-  function genReqPtr(uint32 index) internal pure returns (uint256) {
+  function genReqParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("node.requirement", index)));
   }
 }

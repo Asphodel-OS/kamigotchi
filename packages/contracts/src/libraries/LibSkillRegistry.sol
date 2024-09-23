@@ -11,7 +11,7 @@ import { DescriptionComponent, ID as DescCompID } from "components/DescriptionCo
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
@@ -81,7 +81,7 @@ library LibSkillRegistry {
     int256 value
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genEffectPtr(skillIndex));
+    setConditionOwner(components, id, genEffectParentID(skillIndex));
 
     setIsRegistry(components, id);
     setIsEffect(components, id);
@@ -98,7 +98,7 @@ library LibSkillRegistry {
     string memory logicType
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genReqPtr(skillIndex));
+    setConditionOwner(components, id, genReqParentID(skillIndex));
     LibConditional.create(components, id, type_, logicType);
 
     setIsRegistry(components, id);
@@ -143,7 +143,7 @@ library LibSkillRegistry {
   // SETTERS
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, ownerID);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, ownerID);
   }
 
   function setIsEffect(IUintComp components, uint256 id) internal {
@@ -213,7 +213,7 @@ library LibSkillRegistry {
   // UNSETTERS
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
   }
 
   function unsetIsEffect(IUintComp components, uint256 id) internal {
@@ -359,8 +359,8 @@ library LibSkillRegistry {
     uint32 index
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(
-        genEffectPtr(index)
+      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(
+        genEffectParentID(index)
       );
   }
 
@@ -370,8 +370,8 @@ library LibSkillRegistry {
     uint32 index
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(
-        genReqPtr(index)
+      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(
+        genReqParentID(index)
       );
   }
 
@@ -382,11 +382,11 @@ library LibSkillRegistry {
     return uint256(keccak256(abi.encodePacked("registry.skill", index)));
   }
 
-  function genReqPtr(uint32 index) internal pure returns (uint256) {
+  function genReqParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.skill.requirement", index)));
   }
 
-  function genEffectPtr(uint32 index) internal pure returns (uint256) {
+  function genEffectParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.skill.effect", index)));
   }
 }

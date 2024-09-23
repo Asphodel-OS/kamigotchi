@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -86,7 +86,7 @@ library LibReward {
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
     require(!valueComp.has(id), "Reward: already exists");
 
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, pointerID);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, pointerID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     IndexComponent(getAddrByID(components, IndexCompID)).set(id, index); // droptable index = num of DT in rwd
     valueComp.set(id, value);
@@ -97,7 +97,7 @@ library LibReward {
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
@@ -174,7 +174,7 @@ library LibReward {
     uint256 parentID
   ) internal view returns (uint256[] memory) {
     return
-      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(parentID);
+      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
   }
 
   function getNumOfType(
@@ -185,7 +185,7 @@ library LibReward {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDPointerCompID),
+      getCompByID(components, IDParentCompID),
       abi.encode(parentID)
     );
     fragments[1] = QueryFragment(

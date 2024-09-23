@@ -32,7 +32,7 @@
     { "comp": "IdDelegatorComponent", "name": "DelegatorID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDFromComponent", "name": "FromID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdHolderComponent", "name": "HolderID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDPointerComponent", "name": "PointerID", "type": "uint256", "FEtype": "string" },
+    { "comp": "IDParentComponent", "name": "ParentID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsInventoryComponent", "name": "OwnsInventoryID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsQuestComponent", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsRelationshipComponent", "name": "OwnsRelationshipID", "type": "uint256", "FEtype": "string" },
@@ -140,7 +140,7 @@
       "writeAccess": [
         "EntityTypeComponent",
         "DescriptionComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IsGoalComponent",
         "IsCompleteComponent",
         "IndexComponent",
@@ -186,7 +186,7 @@
       "name": "_ListingRegistrySystem",
       "writeAccess": [
         "EntityTypeComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IsListingComponent",
         "IndexComponent",
         "IndexItemComponent",
@@ -203,7 +203,7 @@
         "AffinityComponent",
         "DescriptionComponent",
         "ForComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IndexComponent",
         "IndexNodeComponent",
         "IndexRoomComponent",
@@ -232,7 +232,7 @@
         "EntityTypeComponent",
         "ExperienceComponent",
         "IDFromComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IDToComponent",
         "IndexRecipeComponent",
         "IndexComponent",
@@ -261,7 +261,7 @@
     {
       "name": "_RoomRegistrySystem",
       "writeAccess": [
-        "IDPointerComponent",
+        "IDParentComponent",
         "IDRoomComponent",
         "IndexRoomComponent",
         "IndexComponent",
@@ -279,7 +279,7 @@
     {
       "name": "_SkillRegistrySystem",
       "writeAccess": [
-        "IDPointerComponent",
+        "IDParentComponent",
         "IsRegistryComponent",
         "IsSkillComponent",
         "IsEffectComponent",
@@ -392,7 +392,7 @@
       "name": "FriendAcceptSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -403,7 +403,7 @@
       "name": "FriendBlockSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -414,7 +414,7 @@
       "name": "FriendCancelSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -425,7 +425,7 @@
       "name": "FriendRequestSystem",
       "writeAccess": [
         "IdAccountComponent",
-        "IDPointerComponent",
+        "IDParentComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",

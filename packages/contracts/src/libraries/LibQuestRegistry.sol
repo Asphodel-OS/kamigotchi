@@ -63,7 +63,7 @@ library LibQuestRegistry {
     string memory name, // this is a crutch to help FE
     Condition memory data
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, data, genObjPtr(questIndex));
+    id = LibConditional.createFor(world, components, data, genObjParentID(questIndex));
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
@@ -73,7 +73,7 @@ library LibQuestRegistry {
     uint32 questIndex,
     Condition memory data
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, data, genReqPtr(questIndex));
+    id = LibConditional.createFor(world, components, data, genReqParentID(questIndex));
   }
 
   /// @notice creates a basic reward entity
@@ -87,7 +87,15 @@ library LibQuestRegistry {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(components, genRwdPtr(questIndex), type_, index, keys, weights, value);
+    id = LibReward.create(
+      components,
+      genRwdParentID(questIndex),
+      type_,
+      index,
+      keys,
+      weights,
+      value
+    );
   }
 
   function addAssigner(
@@ -158,7 +166,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genObjPtr(index));
+    return LibConditional.queryFor(components, genObjParentID(index));
   }
 
   // get requirements by Quest index
@@ -166,7 +174,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqPtr(index));
+    return LibConditional.queryFor(components, genReqParentID(index));
   }
 
   // get reward by Quest index
@@ -174,7 +182,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibReward.queryFor(components, genRwdPtr(index));
+    return LibReward.queryFor(components, genRwdParentID(index));
   }
 
   /////////////////
@@ -186,17 +194,17 @@ library LibQuestRegistry {
   }
 
   /// @notice Retrieve the ID of a requirement array
-  function genReqPtr(uint32 index) internal pure returns (uint256) {
+  function genReqParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.requirement", index)));
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRwdPtr(uint32 index) internal pure returns (uint256) {
+  function genRwdParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.reward", index)));
   }
 
   /// @notice Retrieve the ID of a objective array
-  function genObjPtr(uint32 index) internal pure returns (uint256) {
+  function genObjParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.objective", index)));
   }
 }

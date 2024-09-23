@@ -8,7 +8,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IsGoalComponent, ID as IsGoalCompID } from "components/IsGoalComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
@@ -88,7 +88,7 @@ library LibGoals {
     uint32 goalIndex,
     Condition memory requirement
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, requirement, genReqPtr(goalIndex));
+    id = LibConditional.createFor(world, components, requirement, genReqParentID(goalIndex));
   }
 
   /// @notice adds a reward to a goal
@@ -116,7 +116,15 @@ library LibGoals {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(components, genRwdPtr(goalIndex), type_, index, keys, weights, value);
+    id = LibReward.create(
+      components,
+      genRwdParentID(goalIndex),
+      type_,
+      index,
+      keys,
+      weights,
+      value
+    );
 
     // custom touchs for goal rewards
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
@@ -331,22 +339,14 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return getConditions(components, genReqPtr(goalIndex));
+    return LibConditional.queryFor(components, genReqParentID(goalIndex));
   }
 
   function getRewards(
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return getConditions(components, genRwdPtr(goalIndex));
-  }
-
-  function getConditions(
-    IUintComp components,
-    uint256 pointer
-  ) internal view returns (uint256[] memory) {
-    return
-      IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(pointer);
+    return LibReward.queryFor(components, genRwdParentID(goalIndex));
   }
 
   ////////////////////
@@ -358,10 +358,10 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    uint256 pointer = genRwdPtr(goalIndex);
+    uint256 pointer = genRwdParentID(goalIndex);
     return
       LibQuery.getIsWithValue(
-        getCompByID(components, IDPointerCompID),
+        getCompByID(components, IDParentCompID),
         getCompByID(components, LevelCompID),
         abi.encode(pointer)
       );
@@ -391,12 +391,12 @@ library LibGoals {
   }
 
   /// @notice Retrieve the ID of a requirement array
-  function genReqPtr(uint32 index) internal pure returns (uint256) {
+  function genReqParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.requirement", index)));
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRwdPtr(uint32 index) internal pure returns (uint256) {
+  function genRwdParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.reward", index)));
   }
 }

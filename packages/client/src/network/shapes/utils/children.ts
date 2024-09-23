@@ -3,14 +3,14 @@ import { formatEntityID } from 'engine/utils';
 import { utils } from 'ethers';
 import { Components } from 'network/';
 
-// libraries for interactions with IDPointerComponent shapes (children)
+// libraries for interactions with IDParentComponent shapes (children)
 
 /////////////////
 // QUERIES
 
 export const queryChildrenOf = (components: Components, parentID: EntityID): EntityIndex[] => {
-  const { PointerID } = components;
-  const toQuery: QueryFragment[] = [HasValue(PointerID, { value: parentID })];
+  const { ParentID } = components;
+  const toQuery: QueryFragment[] = [HasValue(ParentID, { value: parentID })];
   return Array.from(runQuery(toQuery));
 };
 

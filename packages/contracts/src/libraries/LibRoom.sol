@@ -8,7 +8,8 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Coord, CoordLib } from "components/types/Coord.sol";
 
 import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.sol";
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
+// world2: (formally IDPointer) change to IDTarget or IDTo/From
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -56,8 +57,9 @@ library LibRoom {
     id = world.getUniqueEntityId();
     LibConditional.create(components, id, Condition(type_, logicType, condIndex, condValue));
 
+    // world2: change to LibRelation?
     IDRoomComponent(getAddrByID(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
-    IDPointerComponent sourceComp = IDPointerComponent(getAddrByID(components, IDPointerCompID));
+    IDParentComponent sourceComp = IDParentComponent(getAddrByID(components, IDParentCompID));
     if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
     else sourceComp.set(id, 0);
   }
@@ -75,7 +77,7 @@ library LibRoom {
 
   function removeGate(IUintComp components, uint256 id) internal {
     IDRoomComponent(getAddrByID(components, IDRoomCompID)).remove(id);
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
     LibConditional.remove(components, id);
   }
 
@@ -209,7 +211,7 @@ library LibRoom {
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDPointerCompID),
+      getCompByID(components, IDParentCompID),
       abi.encode(0)
     );
 
@@ -229,7 +231,7 @@ library LibRoom {
   ) internal view returns (uint256[] memory) {
     uint256[] memory gatesTo = IDRoomComponent(getAddrByID(components, IDRoomCompID))
       .getEntitiesWithValue(genGateAtPtr(toIndex));
-    uint256[] memory gatesFrom = IDPointerComponent(getAddrByID(components, IDPointerCompID))
+    uint256[] memory gatesFrom = IDParentComponent(getAddrByID(components, IDParentCompID))
       .getEntitiesWithValue(genGateSourcePtr(toIndex));
     return LibArray.concat(gatesTo, gatesFrom);
   }

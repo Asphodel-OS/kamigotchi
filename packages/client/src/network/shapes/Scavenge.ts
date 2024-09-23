@@ -40,7 +40,7 @@ export const getScavBar = (
     field: scavField ?? (getComponentValue(Type, index)?.value as string),
     index: scavIndex ?? (getComponentValue(Index, index)?.value as number) * 1,
     cost: (getComponentValue(Value, index)?.value as number) * 1,
-    rewards: queryChildrenOf(components, getRewardPointerID(id)).map((rwdIndex: EntityIndex) =>
+    rewards: queryChildrenOf(components, getRewardParentID(id)).map((rwdIndex: EntityIndex) =>
       getReward(world, components, rwdIndex)
     ),
   };
@@ -74,7 +74,7 @@ export const getScavPoints = (
 /////////////////
 // UTILS
 
-const getRewardPointerID = (regID: EntityID): EntityID => {
+const getRewardParentID = (regID: EntityID): EntityID => {
   let id = '';
   const key = 'scavenge.reward' + regID;
   if (IDStore.has(key)) id = IDStore.get(key)!;

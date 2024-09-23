@@ -7,7 +7,9 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
+// world2: deprecate IdNode, rely on nodeIndex
 import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
+// world2: deprecate IdPet, change to IdHolder of sorts
 import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { IsProductionComponent, ID as IsProdCompID } from "components/IsProductionComponent.sol";

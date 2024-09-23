@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 import "components/base/Uint256Component.sol";
 
+// world2: change to "component.id.parent"
 uint256 constant ID = uint256(keccak256("component.id.pointer"));
 
-contract IDPointerComponent is Uint256Component {
+contract IDParentComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

@@ -4,6 +4,7 @@ import "components/base/Uint256BareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.id.account"));
 
+// world2: deprecate
 /// @notice a reference to a Account entity's ID
 /// @dev could be deprecated; always can be replaced by HolderID or SourceID
 contract IdAccountComponent is Uint256BareComponent {

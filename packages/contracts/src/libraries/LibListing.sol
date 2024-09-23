@@ -55,7 +55,7 @@ library LibListing {
     uint256 regID,
     Condition memory data
   ) internal returns (uint256) {
-    return LibConditional.createFor(world, components, data, genReqPtr(regID));
+    return LibConditional.createFor(world, components, data, genReqParentID(regID));
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -66,10 +66,10 @@ library LibListing {
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
 
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
-    valueComp.remove(genBuyPtr(id));
-    valueComp.remove(genSellPtr(id));
+    valueComp.remove(genBuyParentID(id));
+    valueComp.remove(genSellParentID(id));
 
-    uint256[] memory requirements = LibConditional.queryFor(components, genReqPtr(id));
+    uint256[] memory requirements = LibConditional.queryFor(components, genReqParentID(id));
     for (uint256 i; i < requirements.length; i++)
       LibConditional.remove(components, requirements[i]);
   }
@@ -118,7 +118,7 @@ library LibListing {
     uint256 listingID,
     uint256 accID
   ) internal view returns (bool) {
-    uint256[] memory requirements = LibConditional.queryFor(components, genReqPtr(listingID));
+    uint256[] memory requirements = LibConditional.queryFor(components, genReqParentID(listingID));
     return LibConditional.checkConditions(components, requirements, accID);
   }
 
@@ -136,12 +136,12 @@ library LibListing {
   }
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    uint256 ptr = genBuyPtr(id);
+    uint256 ptr = genBuyParentID(id);
     return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    uint256 ptr = genSellPtr(id);
+    uint256 ptr = genSellParentID(id);
     return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
   }
 
@@ -149,12 +149,12 @@ library LibListing {
   // SETTERS
 
   function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
-    uint256 ptr = genBuyPtr(id);
+    uint256 ptr = genBuyParentID(id);
     ValueComponent(getAddrByID(components, ValueCompID)).set(ptr, price);
   }
 
   function setSellPrice(IUintComp components, uint256 id, uint256 price) internal {
-    uint256 ptr = genSellPtr(id);
+    uint256 ptr = genSellParentID(id);
     ValueComponent(getAddrByID(components, ValueCompID)).set(ptr, price);
   }
 
@@ -165,15 +165,15 @@ library LibListing {
     return uint256(keccak256(abi.encodePacked("listing", merchantIndex, itemIndex)));
   }
 
-  function genReqPtr(uint256 regID) internal pure returns (uint256) {
+  function genReqParentID(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("listing.requirement", regID)));
   }
 
-  function genBuyPtr(uint256 regID) internal pure returns (uint256) {
+  function genBuyParentID(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("listing.buy", regID)));
   }
 
-  function genSellPtr(uint256 regID) internal pure returns (uint256) {
+  function genSellParentID(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("listing.sell", regID)));
   }
 

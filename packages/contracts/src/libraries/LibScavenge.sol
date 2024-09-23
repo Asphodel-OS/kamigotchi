@@ -7,7 +7,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -62,11 +61,10 @@ library LibScavenge {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(components, genRwdPtr(regID), type_, rwdIndex, keys, weights, value);
+    id = LibReward.create(components, genRwdParentID(regID), type_, rwdIndex, keys, weights, value);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
@@ -148,7 +146,7 @@ library LibScavenge {
     IUintComp components,
     uint256 regID
   ) internal view returns (uint256[] memory) {
-    return LibReward.queryFor(components, genRwdPtr(regID));
+    return LibReward.queryFor(components, genRwdParentID(regID));
   }
 
   /////////////////
@@ -177,7 +175,7 @@ library LibScavenge {
     return uint256(keccak256(abi.encodePacked("registry.scavenge", field, index)));
   }
 
-  function genRwdPtr(uint256 regID) internal pure returns (uint256) {
+  function genRwdParentID(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("scavenge.reward", regID)));
   }
 

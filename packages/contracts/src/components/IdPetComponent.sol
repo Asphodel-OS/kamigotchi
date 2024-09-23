@@ -4,7 +4,7 @@ import "components/base/Uint256BareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.id.pet"));
 
-// a reference to a Pet entity's ID
+// world2: deprecate
 contract IdPetComponent is Uint256BareComponent {
   constructor(address world) Uint256BareComponent(world, ID) {}
 }

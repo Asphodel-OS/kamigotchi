@@ -8,7 +8,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -46,7 +46,7 @@ struct Condition {
  * - LogicTypeComponent (key)
  * - IndexComponent (key)
  * - ValueComponent (value)
- * - IDPointerComponent (optional): for reverse mapping
+ * - IDParentComponent (optional): for reverse mapping
  * - SubtypeComponent (optional): for additional context
  *
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
@@ -85,7 +85,7 @@ library LibConditional {
   }
 
   /// @notice creates a condition that points to another entity
-  /// @dev IDPointerComponent used for pointing
+  /// @dev IDParentComponent used for pointing
   function createFor(
     IWorld world,
     IUintComp components,
@@ -94,7 +94,7 @@ library LibConditional {
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     create(components, id, details);
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, pointerID);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, pointerID);
   }
 
   /// @notice adds an optional subtype to a condition
@@ -107,7 +107,7 @@ library LibConditional {
     LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
     SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(id);
   }
 
@@ -220,7 +220,7 @@ library LibConditional {
   // QUERIES
 
   function queryFor(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    return IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(id);
+    return IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(id);
   }
 
   /// @notice queries for conditions with subtype
@@ -232,7 +232,7 @@ library LibConditional {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDPointerCompID),
+      getCompByID(components, IDParentCompID),
       abi.encode(id)
     );
     fragments[1] = QueryFragment(

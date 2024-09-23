@@ -47,7 +47,7 @@ export function createComponents(world: World) {
     DelegatorID: defineStringComponent(world, 'DelegatorID', 'component.id.delegator'),
     FromID: defineStringComponent(world, 'FromID', 'component.id.from'),
     HolderID: defineStringComponent(world, 'HolderID', 'component.id.holder'),
-    PointerID: defineStringComponent(world, 'PointerID', 'component.id.pointer'),
+    ParentID: defineStringComponent(world, 'ParentID', 'component.id.pointer'),
     OwnsInventoryID: defineStringComponent(world, 'OwnsInventoryID', 'component.id.inventory.owns'),
     OwnsQuestID: defineStringComponent(world, 'OwnsQuestID', 'component.id.quest.owns'),
     OwnsRelationshipID: defineStringComponent(world, 'OwnsRelationshipID', 'component.id.relationship.owns'),

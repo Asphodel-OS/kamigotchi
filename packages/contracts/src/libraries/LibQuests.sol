@@ -297,7 +297,7 @@ library LibQuests {
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(id);
   }
 
-  // TODO: IDOwnsQuestComponent is probalmentic, should change to HolderID or PointerID for world2
+  // world2: TODO: IDOwnsQuestComponent is probalmentic, should change to HolderID
   function setOwner(IUintComp components, uint256 id, uint256 value) internal {
     IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, value);
   }

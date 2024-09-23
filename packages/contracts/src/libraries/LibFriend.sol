@@ -7,8 +7,12 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+/** world2: revamp friendship IDComponents
+ * IDParent (formally IDPointer): to split to something friendship specific (IDOwns?) or IDType is ok too
+ * IdAccount, IdTarget: deprecate, change to LibRelation
+ */
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
-import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { IsFriendshipComponent, ID as IsFriendCompID } from "components/IsFriendshipComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
@@ -38,13 +42,14 @@ library LibFriend {
     string memory state // REQUEST | FRIEND | BLOCKED
   ) internal returns (uint256 id) {
     id = genID(accID, targetID);
+    // world2: change to EntityType
     IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).set(id); // TODO: change to EntityType
     IdAccountComponent(getAddrByID(components, IdAccountCompID)).set(id, accID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
 
     if (state.eq("REQUEST")) updateInReqCounter(components, id, targetID);
-    else if (state.eq("BLOCKED")) getCompByID(components, IDPointerCompID).remove(id);
+    else if (state.eq("BLOCKED")) getCompByID(components, IDParentCompID).remove(id);
   }
 
   /// @notice Accepts a friend request from existing request. Updates request for bidirectional friendship.
@@ -84,13 +89,13 @@ library LibFriend {
     uint256[] memory pointers = new uint256[](2);
     pointers[0] = genCounterPtr(accID, "FRIEND");
     pointers[1] = genCounterPtr(targetID, "FRIEND");
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).setBatch(ids, pointers);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).setBatch(ids, pointers);
   }
 
   /// @notice update incoming request counter via pointer
   /// @dev used to track number of incoming requests
   function updateInReqCounter(IUintComp components, uint256 fsID, uint256 targetID) internal {
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(
       fsID,
       genCounterPtr(targetID, "REQUEST")
     );
@@ -103,7 +108,7 @@ library LibFriend {
     unsetAccount(components, id);
     unsetTarget(components, id);
     unsetState(components, id);
-    IDPointerComponent(getAddrByID(components, IDPointerCompID)).remove(id);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
   }
 
   /////////////////
@@ -187,12 +192,12 @@ library LibFriend {
 
   function getFriendCount(IUintComp components, uint256 accID) internal view returns (uint256) {
     uint256 id = genCounterPtr(accID, "FRIEND");
-    return IDPointerComponent(getAddrByID(components, IDPointerCompID)).size(abi.encode(id));
+    return IDParentComponent(getAddrByID(components, IDParentCompID)).size(abi.encode(id));
   }
 
   function getRequestCount(IUintComp components, uint256 accID) internal view returns (uint256) {
     uint256 id = genCounterPtr(accID, "REQUEST");
-    return IDPointerComponent(getAddrByID(components, IDPointerCompID)).size(abi.encode(id));
+    return IDParentComponent(getAddrByID(components, IDParentCompID)).size(abi.encode(id));
   }
 
   ////////////////////
