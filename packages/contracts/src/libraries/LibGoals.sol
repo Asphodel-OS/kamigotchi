@@ -116,16 +116,7 @@ library LibGoals {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(
-      world,
-      components,
-      genRwdPtr(goalIndex),
-      type_,
-      index,
-      keys,
-      weights,
-      value
-    );
+    id = LibReward.create(components, genRwdPtr(goalIndex), type_, index, keys, weights, value);
 
     // custom touchs for goal rewards
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);

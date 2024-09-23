@@ -62,16 +62,7 @@ library LibScavenge {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(
-      world,
-      components,
-      genRwdPtr(regID),
-      type_,
-      rwdIndex,
-      keys,
-      weights,
-      value
-    );
+    id = LibReward.create(components, genRwdPtr(regID), type_, rwdIndex, keys, weights, value);
   }
 
   function remove(IUintComp components, uint256 id) internal {

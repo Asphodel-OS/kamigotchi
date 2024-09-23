@@ -5,6 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
 import { IDPointerComponent, ID as IDPointerCompID } from "components/IDPointerComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
@@ -18,7 +19,7 @@ import { LibDroptable } from "libraries/LibDroptable.sol";
  * @notice
  * Rewards are similar to Conditionals in that it matches a DescribedEntity (type + index)
  *
- * Shape: non-fixed ID
+ * Shape: deterministicID: (hash("reward.instance", parentID, type, index))
  * - Pointer to parent
  * - Type
  * - Index
@@ -37,7 +38,6 @@ library LibReward {
 
   /// @notice catchall for both reward types
   function create(
-    IWorld world,
     IUintComp components,
     uint256 pointerID,
     string memory type_,
@@ -45,36 +45,51 @@ library LibReward {
     uint32[] memory keys, // optional, only for droptable
     uint256[] memory weights, // optional, only for droptable
     uint256 value
-  ) internal returns (uint256 id) {
-    id = _create(world, components, pointerID, type_, value);
-    if (type_.eq("ITEM_DROPTABLE")) addDT(components, id, keys, weights);
-    else addBasic(components, id, index);
+  ) internal returns (uint256) {
+    if (type_.eq("ITEM_DROPTABLE")) return createDT(components, pointerID, keys, weights, value);
+    else return createBasic(components, pointerID, type_, index, value);
   }
 
-  function addBasic(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
-  }
-
-  function addDT(
-    IUintComp components,
-    uint256 id,
-    uint32[] memory keys,
-    uint256[] memory weights
-  ) internal {
-    LibDroptable.set(components, id, keys, weights);
-  }
-
-  function _create(
-    IWorld world,
+  function createBasic(
     IUintComp components,
     uint256 pointerID,
     string memory type_,
+    uint32 index,
     uint256 value
   ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
+    id = _create(components, pointerID, type_, index, value);
+  }
+
+  function createDT(
+    IUintComp components,
+    uint256 pointerID,
+    uint32[] memory keys,
+    uint256[] memory weights,
+    uint256 value
+  ) internal returns (uint256 id) {
+    // expected to delete all droptables at once, no updating
+    uint256 DTCount = getNumOfType(components, pointerID, "ITEM_DROPTABLE") + 1;
+    id = _create(components, pointerID, "ITEM_DROPTABLE", uint32(DTCount), value);
+    LibDroptable.set(components, id, keys, weights);
+  }
+
+  /// @notice create the base reward entity
+  /// @dev IDs are deterministic, expected have a unique (type/index)
+  function _create(
+    IUintComp components,
+    uint256 pointerID,
+    string memory type_,
+    uint32 index,
+    uint256 value
+  ) internal returns (uint256 id) {
+    id = genID(pointerID, type_, index);
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
+    require(!valueComp.has(id), "Reward: already exists");
+
     IDPointerComponent(getAddrByID(components, IDPointerCompID)).set(id, pointerID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index); // droptable index = num of DT in rwd
+    valueComp.set(id, value);
   }
 
   function removeAll(IUintComp components, uint256[] memory ids) internal {
@@ -160,5 +175,36 @@ library LibReward {
   ) internal view returns (uint256[] memory) {
     return
       IDPointerComponent(getAddrByID(components, IDPointerCompID)).getEntitiesWithValue(parentID);
+  }
+
+  function getNumOfType(
+    IUintComp components,
+    uint256 parentID,
+    string memory type_
+  ) internal view returns (uint256) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getCompByID(components, IDPointerCompID),
+      abi.encode(parentID)
+    );
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getCompByID(components, TypeCompID),
+      abi.encode(type_)
+    );
+
+    return LibQuery.query(fragments).length;
+  }
+
+  /////////////////
+  // IDs
+
+  function genID(
+    uint256 parentID,
+    string memory type_,
+    uint32 index
+  ) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("reward.instance", parentID, type_, index)));
   }
 }

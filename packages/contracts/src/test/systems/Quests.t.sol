@@ -17,14 +17,14 @@ contract QuestsTest is SetupTemplate {
     super.setUp();
   }
 
-  function testRegistryCreation() public {
+  function testQuestShape() public {
     uint256 expectedID = LibQuestRegistry.genQuestID(1);
     uint256 regID = _createQuest(1, 0);
     assertEq(expectedID, regID);
 
     uint256[] memory reqsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
-      uint256 newID = _createQuestRequirement(1, "CURR_MIN", "ITEM", MUSU_INDEX, 1);
+      uint256 newID = _createQuestRequirement(1, "CURR_MIN", "ITEM", uint32(i), 1);
       reqsArr[i] = newID;
 
       uint256[] memory newArr = LibQuestRegistry.getReqsByQuestIndex(components, 1);
@@ -34,7 +34,7 @@ contract QuestsTest is SetupTemplate {
 
     uint256[] memory objsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
-      uint256 newID = _createQuestObjective(1, "Quest 1", "CURR_MIN", "ITEM_TOTAL", MUSU_INDEX, 10);
+      uint256 newID = _createQuestObjective(1, "Quest 1", "CURR_MIN", "ITEM_TOTAL", uint32(i), 10);
       objsArr[i] = newID;
 
       uint256[] memory newArr = LibQuestRegistry.getObjsByQuestIndex(components, 1);
@@ -44,7 +44,7 @@ contract QuestsTest is SetupTemplate {
 
     uint256[] memory rewsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
-      uint256 newID = _createQuestReward(1, "ITEM", MUSU_INDEX, 1);
+      uint256 newID = _createQuestReward(1, "ITEM", uint32(i), 1);
       rewsArr[i] = newID;
 
       uint256[] memory newArr = LibQuestRegistry.getRwdsByQuestIndex(components, 1);

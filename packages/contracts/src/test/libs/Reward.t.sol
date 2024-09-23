@@ -19,6 +19,38 @@ contract RewardTest is SetupTemplate {
     _createGenericItem(4);
   }
 
+  function testRewardShapeBasic() public {
+    uint256 rewardID = _createReward(parentID1, "ITEM", 1, 1);
+    assertEq(LibReward.genID(parentID1, "ITEM", 1), rewardID);
+    uint256 rewardID2 = _createReward(parentID1, "ITEM", 2, 2);
+    assertEq(LibReward.genID(parentID1, "ITEM", 2), rewardID2);
+
+    // test remove
+    vm.startPrank(deployer);
+    LibReward.remove(components, rewardID);
+    vm.stopPrank();
+
+    // test update
+    rewardID = _createReward(parentID1, "ITEM", 1, 2);
+    assertEq(LibReward.genID(parentID1, "ITEM", 1), rewardID);
+    assertEq(_ValueComponent.get(rewardID), 2);
+  }
+
+  function testRewardShapeDT() public {
+    uint32[] memory keys = new uint32[](1);
+    keys[0] = 1;
+    uint256[] memory weights = new uint256[](1);
+    weights[0] = 1;
+    uint256 rewardID = _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 1);
+    assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 1), rewardID);
+    uint256 rewardID2 = _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 2);
+    assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 2), rewardID2);
+    uint256 rewardID3 = _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 3);
+    assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 3), rewardID3);
+
+    // no test remove individually - expected to remove all at once
+  }
+
   function testDistributionBasicSingle() public {
     _createReward(parentID1, "ITEM", 1, 1);
 
@@ -162,7 +194,7 @@ contract RewardTest is SetupTemplate {
     uint32[] memory keys = new uint32[](0);
     uint256[] memory weights = new uint256[](0);
     vm.startPrank(deployer);
-    id = LibReward.create(world, components, parentID, type_, index, keys, weights, value);
+    id = LibReward.create(components, parentID, type_, index, keys, weights, value);
     vm.stopPrank();
   }
 
@@ -175,7 +207,7 @@ contract RewardTest is SetupTemplate {
     uint256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibReward.create(world, components, parentID, type_, 0, keys, weights, value);
+    id = LibReward.create(components, parentID, type_, 0, keys, weights, value);
     vm.stopPrank();
   }
 

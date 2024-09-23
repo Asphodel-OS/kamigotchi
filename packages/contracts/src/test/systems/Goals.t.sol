@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.t.sol";
 
 contract GoalsTest is SetupTemplate {
-  function testCreateGoal() public {
+  function testGoalShape() public {
     uint32 index = 1;
     uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0));
     uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 0, 0));
     uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 0, 0));
     uint256 rewardID1 = _createGoalReward(1, 0, Condition("type", "REWARD", 0, 0));
-    uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 0, 0));
+    uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 1, 0));
 
     vm.prank(deployer);
     __GoalRegistrySystem.remove(index);

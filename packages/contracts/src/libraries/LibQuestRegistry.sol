@@ -87,16 +87,7 @@ library LibQuestRegistry {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(
-      world,
-      components,
-      genRwdPtr(questIndex),
-      type_,
-      index,
-      keys,
-      weights,
-      value
-    );
+    id = LibReward.create(components, genRwdPtr(questIndex), type_, index, keys, weights, value);
   }
 
   function addAssigner(
