@@ -24,7 +24,6 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibReward } from "libraries/LibReward.sol";
 
@@ -118,7 +117,7 @@ library LibQuests {
 
       // snapshot objectives values if logic type needs it
       if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE)
-        snapshotObjective(components, questID, objectives[i], accID);
+        snapshotObjective(components, questID, objectives[i], logicType, accID);
     }
   }
 
@@ -128,6 +127,7 @@ library LibQuests {
     IUintComp components,
     uint256 questID,
     uint256 conditionID,
+    string memory logicType,
     uint256 accID
   ) internal returns (uint256) {
     string memory _type = getType(components, conditionID);
@@ -135,7 +135,7 @@ library LibQuests {
     uint256 amount = LibData.get(components, accID, index, _type);
 
     // copy an objective
-    uint256 id = genObjSnapshotID(questID, LibHash.get(components, conditionID));
+    uint256 id = genObjSnapshotID(questID, logicType, _type, index);
     setOwner(components, id, questID); // TODO: change to pointerID (world2)
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, amount);
     return id;
@@ -146,7 +146,6 @@ library LibQuests {
 
     IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).removeBatch(objectives);
     ValueComponent(getAddrByID(components, ValueCompID)).removeBatch(objectives);
-    LibHash.removeBatch(components, objectives);
   }
 
   function checkRepeat(
@@ -224,7 +223,7 @@ library LibQuests {
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
+    uint256 snapshotID = getSnapshotObjective(components, questID, data);
     require(
       snapshotID != 0,
       "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
@@ -247,7 +246,7 @@ library LibQuests {
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
+    uint256 snapshotID = getSnapshotObjective(components, questID, data);
     require(
       snapshotID != 0,
       "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
@@ -393,9 +392,9 @@ library LibQuests {
   function getSnapshotObjective(
     IUintComp components,
     uint256 questID,
-    uint256 regConID
+    Condition memory data
   ) internal view returns (uint256) {
-    return genObjSnapshotID(questID, LibHash.get(components, regConID));
+    return genObjSnapshotID(questID, data.logic, data.type_, data.index);
   }
 
   /////////////////
@@ -428,7 +427,22 @@ library LibQuests {
     return uint256(keccak256(abi.encodePacked("registry.quest", index, accID)));
   }
 
-  function genObjSnapshotID(uint256 questID, uint256 objHash) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("quest.objective.snapshot", questID, objHash)));
+  function genObjSnapshotID(
+    uint256 questID,
+    string memory logicType,
+    string memory _type,
+    uint32 index
+  ) internal pure returns (uint256) {
+    // world2: flatten naming (leftover from LibHash)
+    return
+      uint256(
+        keccak256(
+          abi.encodePacked(
+            "quest.objective.snapshot",
+            questID,
+            keccak256(abi.encode("Quest.Objective", logicType, _type, index)) // previously: objHash
+          )
+        )
+      );
   }
 }

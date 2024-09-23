@@ -6,6 +6,7 @@
     { "comp": "IsObjectiveComponent", "name": "_DeprecatedIsObjective", "type": "bool" },
     { "comp": "IsRequirementComponent", "name": "_DeprecatedIsRequirement", "type": "bool" },
     { "comp": "IsRewardComponent", "name": "_DepreciatedIsReward", "type": "bool" },
+    { "comp": "HashComponent", "name": "_DeprecatedHash", "type": "uint256", "FEtype": "string" },
     { "comp": "PriceBuyComponent", "name": "_DeprecatedPriceBuy", "type": "uint256" },
     { "comp": "PriceSellComponent", "name": "_DeprecatedPriceSell", "type": "uint256" },
     { "comp": "ProxyPermissionsFarm20Component", "name": "_DeprecatedProxyPermissionsFarm20", "type": "bool" },
@@ -24,7 +25,6 @@
     { "comp": "FarcasterIndexComponent", "name": "FarcasterIndex", "type": "uint32" },
     { "comp": "ForComponent", "name": "For", "type": "uint256" },
     { "comp": "HasFlagComponent", "name": "HasFlag", "type": "bool" },
-    { "comp": "HashComponent", "name": "Hash", "type": "uint256", "FEtype": "string" },
     { "comp": "HarmonyComponent", "name": "Harmony", "type": "Stat" },
     { "comp": "HealthComponent", "name": "Health", "type": "Stat" },
     { "comp": "IdAccountComponent", "name": "AccountID", "type": "uint256", "FEtype": "string" },
@@ -660,7 +660,6 @@
     {
       "name": "QuestAcceptSystem",
       "writeAccess": [
-        "HashComponent",
         "IDOwnsQuestComponent",
         "IndexQuestComponent",
         "IsCompleteComponent",
@@ -679,7 +678,6 @@
     {
       "name": "QuestDropSystem",
       "writeAccess": [
-        "HashComponent",
         "IDOwnsQuestComponent",
         "IndexQuestComponent",
         "IsCompleteComponent",

@@ -20,7 +20,6 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibAssigner } from "libraries/LibAssigner.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
-import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibReward } from "libraries/LibReward.sol";
 
@@ -66,9 +65,6 @@ library LibQuestRegistry {
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, data, genObjPtr(questIndex));
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-
-    // reversable hash for easy objective lookup
-    LibHash.set(components, id, abi.encode("Quest.Objective", data.logic, data.type_, data.index));
   }
 
   function createRequirement(
@@ -148,7 +144,6 @@ library LibQuestRegistry {
   function removeObjective(IUintComp components, uint256 objectiveID) internal {
     LibConditional.remove(components, objectiveID);
     NameComponent(getAddrByID(components, NameCompID)).remove(objectiveID);
-    LibHash.remove(components, objectiveID);
   }
 
   /////////////////

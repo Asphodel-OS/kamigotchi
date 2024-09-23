@@ -62,6 +62,7 @@ export const querySnapshotObjective = (
   questID: EntityID
 ): Objective => {
   const { OwnsQuestID } = components;
+  // world2: update snapshot to flattened ID
   const entityIndices = Array.from(runQuery([HasValue(OwnsQuestID, { value: questID })]));
   return getObjective(world, components, entityIndices[0]); // should only be one
 };

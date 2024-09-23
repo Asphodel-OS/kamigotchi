@@ -6,8 +6,6 @@ import "test/utils/SetupTemplate.t.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { LibHash } from "libraries/utils/LibHash.sol";
-
 struct DataEntity {
   uint256 holderID;
   uint32 index;
