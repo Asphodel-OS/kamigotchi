@@ -39,57 +39,46 @@ library LibReward {
   /// @notice catchall for both reward types
   function create(
     IUintComp components,
-    uint256 pointerID,
+    uint256 parentID,
     string memory type_,
     uint32 index, // optional, only for basic
     uint32[] memory keys, // optional, only for droptable
     uint256[] memory weights, // optional, only for droptable
     uint256 value
-  ) internal returns (uint256) {
-    if (type_.eq("ITEM_DROPTABLE")) return createDT(components, pointerID, keys, weights, value);
-    else return createBasic(components, pointerID, type_, index, value);
-  }
-
-  function createBasic(
-    IUintComp components,
-    uint256 pointerID,
-    string memory type_,
-    uint32 index,
-    uint256 value
   ) internal returns (uint256 id) {
-    id = _create(components, pointerID, type_, index, value);
+    if (index == 0) {
+      // override index for deterministic ID generation if no index provided
+      index = getIndexOverride(components, parentID, type_);
+    }
+    id = genID(parentID, type_, index);
+    _create(components, id, parentID, type_, index, keys, weights, value);
   }
 
-  function createDT(
-    IUintComp components,
-    uint256 pointerID,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    uint256 value
-  ) internal returns (uint256 id) {
-    // expected to delete all droptables at once, no updating
-    uint256 DTCount = getNumOfType(components, pointerID, "ITEM_DROPTABLE") + 1;
-    id = _create(components, pointerID, "ITEM_DROPTABLE", uint32(DTCount), value);
-    LibDroptable.set(components, id, keys, weights);
-  }
-
-  /// @notice create the base reward entity
-  /// @dev IDs are deterministic, expected have a unique (type/index)
+  /// @notice catchall for both reward types
+  /// @dev allow for ID override
   function _create(
     IUintComp components,
-    uint256 pointerID,
+    uint256 id,
+    uint256 parentID,
     string memory type_,
-    uint32 index,
+    uint32 index, // optional, only for basic
+    uint32[] memory keys, // optional, only for droptable
+    uint256[] memory weights, // optional, only for droptable
     uint256 value
-  ) internal returns (uint256 id) {
-    id = genID(pointerID, type_, index);
+  ) internal {
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
     require(!valueComp.has(id), "Reward: already exists");
 
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, pointerID);
+    // base components
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     IndexComponent(getAddrByID(components, IndexCompID)).set(id, index); // droptable index = num of DT in rwd
     valueComp.set(id, value);
+
+    // droptable components
+    if (type_.eq("ITEM_DROPTABLE")) {
+      LibDroptable.set(components, id, keys, weights);
+    }
   }
 
   function removeAll(IUintComp components, uint256[] memory ids) internal {
@@ -166,6 +155,26 @@ library LibReward {
   }
 
   ////////////////////
+  // GETTERS
+
+  /// @notice gets num of reward types attached to a parent entity, use as index override for ID generation
+  /** @dev
+   * Some reward types don't have indices, number of those entities are used instead
+   * - expected: droptables, DISPLAY_ONLY (for goals)
+   *
+   * all rewards on parent are expected to be deleted and reinitialized when updating,
+   * which keeps determinstic position
+   */
+  function getIndexOverride(
+    IUintComp components,
+    uint256 parentID,
+    string memory type_
+  ) internal view returns (uint32) {
+    uint256 length = queryByType(components, parentID, type_).length;
+    return uint32(length + 1);
+  }
+
+  ////////////////////
   // QUERIES
 
   /// @notice gets rewards attached to a parent entity
@@ -177,11 +186,11 @@ library LibReward {
       IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
   }
 
-  function getNumOfType(
+  function queryByType(
     IUintComp components,
     uint256 parentID,
     string memory type_
-  ) internal view returns (uint256) {
+  ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
@@ -194,7 +203,7 @@ library LibReward {
       abi.encode(type_)
     );
 
-    return LibQuery.query(fragments).length;
+    return LibQuery.query(fragments);
   }
 
   /////////////////

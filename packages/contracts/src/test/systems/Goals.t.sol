@@ -7,10 +7,13 @@ contract GoalsTest is SetupTemplate {
   function testGoalShape() public {
     uint32 index = 1;
     uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0));
-    uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 0, 0));
-    uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 0, 0));
-    uint256 rewardID1 = _createGoalReward(1, 0, Condition("type", "REWARD", 0, 0));
-    uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 1, 0));
+    uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 1, 0));
+    uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 2, 0));
+    uint256 rewardID1 = _createGoalReward(1, 0, Condition("type", "REWARD", 1, 0));
+    uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 2, 0));
+    uint256 rewardID3 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
+    uint256 rewardID4 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
+    uint256 rewardID5 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
 
     vm.prank(deployer);
     __GoalRegistrySystem.remove(index);

@@ -101,6 +101,8 @@ library LibGoals {
    *   - Shape: Condition + Level + Name
    *     - Condition shape handles reward type and quantity
    *     - Logic type is either "REWARD" or "DISPLAY_ONLY"
+   *
+   * RewardIDs override deterministic LibReward generation, to allow for differing reward levels
    */
   /// @param minContribution needed to qualify for tier; "DISPLAY_ONLY" do not have this
   function addReward(
@@ -108,7 +110,7 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex,
     string memory name,
-    uint256 minContribution,
+    uint256 minContribution, // level comp
     string memory logic,
     string memory type_,
     uint32 index,
@@ -116,8 +118,23 @@ library LibGoals {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    id = LibReward.create(
+    uint256 parentID = genRwdParentID(goalIndex);
+    if (index == 0) {
+      // override index for deterministic ID generation if no index provided
+      // for ITEM_DROPTABLE or DISPLAY_ONLY
+      id = genRwdID(
+        parentID,
+        type_,
+        LibReward.getIndexOverride(components, parentID, type_), // quantity of same type
+        minContribution
+      );
+    } else {
+      id = genRwdID(parentID, type_, index, minContribution);
+    }
+
+    LibReward._create(
       components,
+      id,
       genRwdParentID(goalIndex),
       type_,
       index,
@@ -398,5 +415,15 @@ library LibGoals {
   /// @notice Retrieve the ID of a reward array
   function genRwdParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.reward", index)));
+  }
+
+  /// @notice overrides LibReward's determinstic ID, to allow for differing reward levels
+  function genRwdID(
+    uint256 parentID,
+    string memory type_,
+    uint32 index,
+    uint256 level
+  ) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("reward.instance", parentID, type_, index, level)));
   }
 }
