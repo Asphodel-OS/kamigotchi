@@ -406,20 +406,12 @@ contract QuestsTest is SetupTemplate {
     return LibData.getID(data.holderID, data.index, data.type_);
   }
 
-  function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
-    return
-      LibQuery.getIsWithValue(
-        getCompByID(components, IDOwnsQuestComponentID),
-        getCompByID(components, IsObjectiveComponentID),
-        abi.encode(questID)
-      );
-  }
-
   function _getAccountQuests(uint256 accID) internal view returns (uint256[] memory) {
     return
-      LibQuery.getIsWithValue(
+      LibEntityType.queryWithValue(
+        components,
+        "QUEST",
         getCompByID(components, IDOwnsQuestComponentID),
-        getCompByID(components, IsQuestComponentID),
         abi.encode(accID)
       );
   }

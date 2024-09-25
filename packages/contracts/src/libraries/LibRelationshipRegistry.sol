@@ -9,10 +9,11 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { IndexRelationshipComponent, ID as IndexRelCompID } from "components/IndexRelationshipComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { IsRelationshipComponent, ID as IsRelCompID } from "components/IsRelationshipComponent.sol";
 import { BlacklistComponent, ID as BlacklistCompID } from "components/BlacklistComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { WhitelistComponent, ID as WhitelistCompID } from "components/WhitelistComponent.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 // This library contains functions for interacting with the Relationship Registry.
 // The registry determines how players can navigate relationships with NPCs.
@@ -28,8 +29,8 @@ library LibRelationshipRegistry {
     uint32 relIndex
   ) internal returns (uint256) {
     uint256 id = genID(npcIndex, relIndex);
+    LibEntityType.set(components, id, "RELATIONSHIP");
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-    IsRelationshipComponent(getAddrByID(components, IsRelCompID)).set(id);
     IndexNPCComponent(getAddrByID(components, IndexNPCCompID)).set(id, npcIndex);
     IndexRelationshipComponent(getAddrByID(components, IndexRelCompID)).set(id, relIndex);
     return id;
@@ -88,7 +89,7 @@ library LibRelationshipRegistry {
   // GETTERS
 
   function isRelationship(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRelationshipComponent(getAddrByID(components, IsRelCompID)).has(id);
+    return LibEntityType.isShape(components, id, "RELATIONSHIP");
   }
 
   function getNpcIndex(IUintComp components, uint256 id) internal view returns (uint32) {
@@ -122,7 +123,7 @@ library LibRelationshipRegistry {
   }
 
   function removeIsRelationship(IUintComp components, uint256 id) internal {
-    IsRelationshipComponent(getAddrByID(components, IsRelCompID)).remove(id);
+    LibEntityType.remove(components, id);
   }
 
   function removeRelationshipIndex(IUintComp components, uint256 id) internal {

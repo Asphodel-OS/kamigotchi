@@ -1,4 +1,4 @@
-import { EntityIndex, Has, HasValue, QueryFragment, World, runQuery } from '@mud-classic/recs';
+import { EntityIndex, HasValue, QueryFragment, World, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
 
 import { Condition, getCondition } from 'network/shapes/Conditional';
@@ -52,9 +52,9 @@ export const queryRoomsEntitiesX = (
   components: Components,
   options: QueryOptions
 ): EntityIndex[] => {
-  const { Location, IsRoom, RoomIndex } = components;
+  const { Location, EntityType, RoomIndex } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsRoom)];
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'ROOM' })];
 
   if (options?.index) toQuery.push(HasValue(RoomIndex, { value: options.index }));
 

@@ -1,4 +1,4 @@
-import { EntityIndex, Has, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
+import { EntityIndex, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
 
 import { Components, NetworkLayer } from 'network/';
 
@@ -17,8 +17,8 @@ export const queryFromBurner = (network: NetworkLayer): EntityIndex => {
 
 // query Account entities generally with query options. return matching entity indices
 const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
-  const { IsAccount, AccountIndex, Name, OwnerAddress, OperatorAddress } = components;
-  const toQuery: QueryFragment[] = [Has(IsAccount)];
+  const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress } = components;
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'ACCOUNT' })];
   if (options?.index) toQuery.push(HasValue(AccountIndex, { value: options.index }));
   if (options?.name) toQuery.push(HasValue(Name, { value: options.name }));
   if (options?.owner) toQuery.push(HasValue(OwnerAddress, { value: options.owner }));

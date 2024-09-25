@@ -54,9 +54,9 @@ export const querySkillsX = (
   filters: Filters,
   options?: Options
 ): EntityIndex[] => {
-  const { HolderID, IsRegistry, IsSkill, SkillIndex } = components;
+  const { EntityType, HolderID, IsRegistry, SkillIndex } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsSkill)];
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'SKILL' })];
   if (filters?.registry) toQuery.push(Has(IsRegistry));
   if (filters?.holder) toQuery.push(HasValue(HolderID, { value: filters.holder }));
   if (filters?.index) toQuery.push(HasValue(SkillIndex, { value: filters.index }));
@@ -70,9 +70,13 @@ export const querySkillEffects = (
   components: Components,
   skillIndex: number
 ): EntityIndex[] => {
-  const { IsRegistry, IsEffect, SkillIndex } = components;
+  const { IsRegistry, EntityType, SkillIndex } = components;
   const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), Has(IsEffect), HasValue(SkillIndex, { value: skillIndex })])
+    runQuery([
+      Has(IsRegistry),
+      HasValue(EntityType, { value: 'EFFECT' }),
+      HasValue(SkillIndex, { value: skillIndex }),
+    ])
   );
   return entityIndices;
 };

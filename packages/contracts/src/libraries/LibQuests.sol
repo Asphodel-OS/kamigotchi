@@ -10,7 +10,6 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
-import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
@@ -20,8 +19,10 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
@@ -54,10 +55,10 @@ library LibQuests {
   ) internal returns (uint256 id) {
     id = genQuestID(questIndex, accID);
 
-    setOwner(components, id, accID); // TODO: change to holderID
-    setIsQuest(components, id); // TODO: change to EntityType
-    setQuestIndex(components, id, questIndex);
-    setTimeStart(components, id, block.timestamp);
+    LibEntityType.set(components, id, "QUEST");
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, accID); // TODO: change to holderID
+    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).set(id, questIndex);
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
 
     snapshotObjectives(components, questIndex, id, accID);
   }
@@ -74,7 +75,7 @@ library LibQuests {
       id = repeatQuestID;
 
       unsetCompleted(components, id);
-      setTimeStart(components, id, block.timestamp);
+      LibEntityType.set(components, id, "QUEST");
 
       // previous objective snapshot are unset during quest completion
       snapshotObjectives(components, questIndex, id, accID);
@@ -93,10 +94,10 @@ library LibQuests {
   }
 
   function drop(IUintComp components, uint256 questID) internal {
-    unsetIsQuest(components, questID);
-    unsetQuestIndex(components, questID);
-    unsetTimeStart(components, questID);
-    unsetOwner(components, questID);
+    LibEntityType.remove(components, questID);
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).remove(questID); // TODO: change to holderID
+    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).remove(questID);
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).remove(questID);
 
     unsetIsRepeatable(components, questID);
 
@@ -136,7 +137,7 @@ library LibQuests {
 
     // copy an objective
     uint256 id = genObjSnapshotID(questID, logicType, _type, index);
-    setOwner(components, id, questID); // TODO: change to pointerID (world2)
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, questID); // TODO: change to pointerID (world2)
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, amount);
     return id;
   }
@@ -275,7 +276,7 @@ library LibQuests {
   // CHECKERS
 
   function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsQuestComponent(getAddrByID(components, IsQuestCompID)).has(id);
+    return LibEntityType.isShape(components, id, "QUEST");
   }
 
   function isRepeatable(IUintComp components, uint256 id) internal view returns (bool) {
@@ -289,57 +290,20 @@ library LibQuests {
   /////////////////
   // SETTERS
 
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
-  }
-
   function setCompleted(IUintComp components, uint256 id) internal {
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(id);
-  }
-
-  // world2: TODO: IDOwnsQuestComponent is probalmentic, should change to HolderID
-  function setOwner(IUintComp components, uint256 id, uint256 value) internal {
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, value);
-  }
-
-  function setIsQuest(IUintComp components, uint256 id) internal {
-    IsQuestComponent(getAddrByID(components, IsQuestCompID)).set(id);
   }
 
   function setIsRepeatable(IUintComp components, uint256 id) internal {
     IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(id);
   }
 
-  function setQuestIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).set(id, index);
-  }
-
-  function setTimeStart(IUintComp components, uint256 id, uint256 time) internal {
-    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, time);
-  }
-
   function unsetCompleted(IUintComp components, uint256 id) internal {
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(id);
   }
 
-  function unsetIsQuest(IUintComp components, uint256 id) internal {
-    IsQuestComponent(getAddrByID(components, IsQuestCompID)).remove(id);
-  }
-
   function unsetIsRepeatable(IUintComp components, uint256 id) internal {
     IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).remove(id);
-  }
-
-  function unsetOwner(IUintComp components, uint256 id) internal {
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).remove(id);
-  }
-
-  function unsetQuestIndex(IUintComp components, uint256 id) internal {
-    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).remove(id);
-  }
-
-  function unsetTimeStart(IUintComp components, uint256 id) internal {
-    TimeStartComponent(getAddrByID(components, TimeStartCompID)).remove(id);
   }
 
   /////////////////
