@@ -13,6 +13,8 @@ import {
   queryAccountByIndex,
 } from 'network/shapes/Account';
 import { getByOperator } from 'network/shapes/Account/getters';
+import { getConfigFieldValue, getConfigFieldValueArray } from 'network/shapes/Config';
+import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
 import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
@@ -70,6 +72,12 @@ export const initExplorer = (world: World, components: Components) => {
         musu: (limit?: number) => getAccountMusuRankings(world, components, limit),
         reputation: (limit?: number) => getAccountRepRankings(world, components, limit),
       },
+    },
+
+    config: {
+      get: (name: string) => getConfigFieldValue(world, components, name),
+      getArray: (name: string) => getConfigFieldValueArray(world, components, name),
+      getAddress: (name: string) => getConfigFieldValueAddress(world, components, name),
     },
 
     goals: {
