@@ -169,11 +169,11 @@ export function createAdminAPI(compiledCalls: string[]) {
   // MINT
 
   async function initBatchMinter() {
-    genCall('system.Pet721.BatchMint', [], 'setTraits');
+    genCall('system.Kami721.BatchMint', [], 'setTraits');
   }
 
   async function batchMint(amount: number) {
-    genCall('system.Pet721.BatchMint', [amount], 'batchMint');
+    genCall('system.Kami721.BatchMint', [amount], 'batchMint');
   }
 
   /////////////////

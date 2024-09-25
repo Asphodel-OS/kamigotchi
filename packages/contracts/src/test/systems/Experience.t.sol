@@ -7,7 +7,7 @@ import "test/utils/SetupTemplate.t.sol";
 contract ExperienceTest is SetupTemplate {
   uint internal _nodeID;
   uint internal _numPets;
-  uint[] internal _petIDs;
+  uint[] internal _kamiIDs;
   uint[] internal _experienceLast;
 
   function setUp() public override {
@@ -16,7 +16,7 @@ contract ExperienceTest is SetupTemplate {
     _nodeID = LibNode.getByIndex(components, 1);
 
     _numPets = 5;
-    _petIDs = _mintPets(0, _numPets);
+    _kamiIDs = _mintKamis(0, _numPets);
     _experienceLast = new uint[](_numPets);
   }
 
@@ -26,7 +26,7 @@ contract ExperienceTest is SetupTemplate {
     // start all productions
     _fastForward(_idleRequirement);
     for (uint i = 0; i < _numPets; i++) {
-      _startProduction(_petIDs[i], _nodeID);
+      _startProduction(_kamiIDs[i], _nodeID);
     }
 
     // fast forward an hour a number of times and each time check that the resulting
@@ -39,12 +39,12 @@ contract ExperienceTest is SetupTemplate {
     for (uint i = 0; i < numLoops; i++) {
       _fastForward(360);
       for (uint j = 0; j < _numPets; j++) {
-        productionID = LibPet.getProduction(components, _petIDs[j]);
+        productionID = LibKami.getProduction(components, _kamiIDs[j]);
         _collectProduction(productionID);
         collectedCoin = _getAccountBalance(0) - accountBalance;
         expectedExpGain = collectedCoin; // may introduce config knob here to determine ratio
 
-        uint currExperience = LibExperience.get(components, _petIDs[j]);
+        uint currExperience = LibExperience.get(components, _kamiIDs[j]);
         assertEq(currExperience - _experienceLast[j], expectedExpGain);
 
         _experienceLast[j] = currExperience;
@@ -73,7 +73,7 @@ contract ExperienceTest is SetupTemplate {
     // give all pets a bunch of experience
     vm.startPrank(deployer);
     for (uint i; i < _numPets; i++) {
-      LibExperience.set(components, _petIDs[i], 1e9);
+      LibExperience.set(components, _kamiIDs[i], 1e9);
     }
     vm.stopPrank();
 
@@ -85,14 +85,14 @@ contract ExperienceTest is SetupTemplate {
     vm.startPrank(_getOperator(0));
     while (++numLoops < levelingCurve.length - 1) {
       for (uint i; i < _numPets; i++) {
-        currLevel = LibExperience.getLevel(components, _petIDs[i]);
-        skillPoints = LibSkill.getPoints(components, _petIDs[i]);
-        expPoints = LibExperience.get(components, _petIDs[i]);
+        currLevel = LibExperience.getLevel(components, _kamiIDs[i]);
+        skillPoints = LibSkill.getPoints(components, _kamiIDs[i]);
+        expPoints = LibExperience.get(components, _kamiIDs[i]);
 
-        _PetLevelSystem.executeTyped(_petIDs[i]);
-        assertEq(LibExperience.getLevel(components, _petIDs[i]), currLevel + 1);
-        assertEq(LibSkill.getPoints(components, _petIDs[i]), skillPoints + 1);
-        assertEq(LibExperience.get(components, _petIDs[i]), expPoints - levelingCurve[currLevel]);
+        _KamiLevelSystem.executeTyped(_kamiIDs[i]);
+        assertEq(LibExperience.getLevel(components, _kamiIDs[i]), currLevel + 1);
+        assertEq(LibSkill.getPoints(components, _kamiIDs[i]), skillPoints + 1);
+        assertEq(LibExperience.get(components, _kamiIDs[i]), expPoints - levelingCurve[currLevel]);
       }
     }
   }

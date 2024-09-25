@@ -86,7 +86,7 @@ contract Mint20 is ERC20 {
     _mintFormatted(to, amount);
   }
 
-  /// @notice burns tokens. Pet721Mint/GachaMint calls this to mint a pet
+  /// @notice burns tokens. Kami721Mint/GachaMint calls this to mint a pet
   function burn(address from, uint256 amount) external onlyWriter {
     super._burn(from, _convertDP(amount));
   }

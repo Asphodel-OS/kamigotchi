@@ -222,7 +222,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
       nodeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -267,7 +267,7 @@ export interface ProductionStartSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    petID: PromiseOrValue<BigNumberish>,
+    kamiID: PromiseOrValue<BigNumberish>,
     nodeID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -308,7 +308,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
       nodeID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -378,7 +378,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
       nodeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -424,7 +424,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
       nodeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
