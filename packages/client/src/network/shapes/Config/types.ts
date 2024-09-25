@@ -28,10 +28,10 @@ export const getConfigFieldValueAddress = (
 ): string => {
   const { Value } = components;
   const entityIndex = getEntityIndex(world, field);
-  if (!entityIndex) return '0x00';
+  if (!entityIndex) return '0x000000000000000000000000000000000000dEaD';
 
   const raw = getComponentValue(Value, entityIndex)?.value;
-  if (!raw) return '0x00';
+  if (!raw) return '0x000000000000000000000000000000000000dEaD';
   return numberToHex(raw);
 };
 
