@@ -33,7 +33,6 @@ export function registerLoadingState() {
     },
 
     ({ loadingState }) => {
-      console.log('loading state', loadingState);
       if (!loadingState) return <BootScreen status='' />;
       if (loadingState.state === SyncState.LIVE) {
         return null;
