@@ -1,7 +1,7 @@
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 
 import { BootScreen } from 'app/components/boot';
@@ -12,10 +12,13 @@ import { MainWindow } from './components';
 import { NetworkContext, RootContext } from './context';
 import { RootStore } from './store';
 
-export const Root: React.FC<{
+interface Props {
   setLayers: { current: (layers: Layers) => void };
   mountReact: { current: (mount: boolean) => void };
-}> = observer(({ mountReact, setLayers }) => {
+}
+
+export const Root = observer((props: Props) => {
+  const { setLayers, mountReact } = props;
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
   const mode = import.meta.env.MODE;
@@ -28,7 +31,7 @@ export const Root: React.FC<{
   }, []);
 
   // show boot screen until network is loaded
-  if (!mounted || !layers) return <BootScreen />;
+  if (!mounted || !layers) return <BootScreen status='' />;
   return (
     <PrivyProvider
       appId={import.meta.env.VITE_PRIVY_APP_ID}

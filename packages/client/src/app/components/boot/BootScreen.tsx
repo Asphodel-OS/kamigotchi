@@ -1,10 +1,16 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import { useNetwork } from 'app/stores';
 import { loadingScreens } from 'assets/images/loading';
+import { ProgressBar } from '../library/base';
 
-export const BootScreen: React.FC<{}> = ({ children }) => {
+interface Props {
+  status: string;
+  progress?: number; // as percent
+}
+
+export const BootScreen = (props: Props) => {
+  const { status, progress } = props;
   const { randNum } = useNetwork();
   const bannerKeys = Object.keys(loadingScreens);
   const bannerValues = Object.values(loadingScreens);
@@ -16,7 +22,17 @@ export const BootScreen: React.FC<{}> = ({ children }) => {
   return (
     <Container>
       <Image src={bannerValues[getBannerIndex()]} />
-      <Status>{children}</Status>
+      <StatusContainer>
+        <Status>{status}</Status>
+        <BarContainer>
+          <ProgressBar
+            total={100}
+            current={progress ?? 0}
+            colors={{ background: '#bbb', progress: '#333' }}
+            height={1.5}
+          />
+        </BarContainer>
+      </StatusContainer>
       <TagContainer>
         <Tag>banner by: </Tag>
         <Tag>{bannerKeys[getBannerIndex()]}</Tag>
@@ -46,15 +62,28 @@ const Image = styled.img`
   align-self: right;
 `;
 
+const StatusContainer = styled.div`
+  position: absolute;
+  bottom: 25vh;
+  gap: 5vh;
+
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Status = styled.div`
   color: #fff;
-  position: absolute;
-  bottom: 35vh;
   width: 100%;
 
   text-align: center;
-  font-family: Pixel;
   font-size: 2.4vh;
+`;
+
+const BarContainer = styled.div`
+  width: 60%;
 `;
 
 const TagContainer = styled.div`
@@ -67,7 +96,6 @@ const TagContainer = styled.div`
 const Tag = styled.div`
   color: #fff;
   text-align: left;
-  font-family: Pixel;
   font-size: 1.8vh;
   line-height: 2.4vh;
 `;

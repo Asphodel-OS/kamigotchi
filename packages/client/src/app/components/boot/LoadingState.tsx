@@ -33,13 +33,18 @@ export function registerLoadingState() {
     },
 
     ({ loadingState }) => {
-      if (loadingState == null) return <BootScreen>Connecting</BootScreen>;
-      if (loadingState.state === SyncState.LIVE) return null;
+      console.log('loading state', loadingState);
+      if (!loadingState) return <BootScreen status='' />;
+      if (loadingState.state === SyncState.LIVE) {
+        return null;
+      }
+
       const getLoadingMessage = () => {
         if (Math.random() < 1 / 1e3) return 'good luck..';
         return loadingState.msg;
       };
-      return <BootScreen>{getLoadingMessage()}</BootScreen>;
+
+      return <BootScreen status={getLoadingMessage()} progress={loadingState.percentage} />;
     }
   );
 }

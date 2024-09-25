@@ -1,5 +1,4 @@
 import { registerScene } from './canvas';
-export { registerLoadingState } from './boot';
 
 import { registerAccountHeader } from './fixtures/header';
 import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
@@ -36,6 +35,7 @@ import {
   registerWalletConnecter,
 } from './validators';
 
+export { registerLoadingState } from './boot';
 export function registerUIComponents() {
   // fixtures
   registerAccountHeader();
