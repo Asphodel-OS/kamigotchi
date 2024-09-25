@@ -1,9 +1,18 @@
-import { EntityID } from "@mud-classic/recs";
+import { EntityID } from '@mud-classic/recs';
+
+export const GodID = '0x060d' as EntityID;
 
 export enum SyncState {
   CONNECTING,
-  INITIAL,
+  SETUP,
+  BACKFILL,
+  GAPFILL,
+  INITIALIZE,
   LIVE,
 }
 
-export const GodID = "0x060d" as EntityID;
+export type SyncStatus = {
+  state: SyncState;
+  msg: string;
+  percentage: number;
+};

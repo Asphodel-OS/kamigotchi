@@ -15,7 +15,7 @@ import { NetworkEvent } from './types';
  * dispose: function to dispose of the sync worker
  * }
  */
-export function createSyncWorker<C extends Components = Components>(ack$?: Observable<Ack>) {
+export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
   const input$ = new Subject<Input>();
   const worker = new Worker(new URL('./sync/Sync.worker.ts', import.meta.url), {
     type: 'module',

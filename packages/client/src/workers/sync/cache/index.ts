@@ -2,7 +2,7 @@ export {
   createCacheStore,
   getCacheStoreEntries,
   getIndexDBCacheStoreBlockNumber,
-  getIndexDbECSCache,
+  getStateCache,
   loadIndexDbCacheStore,
   saveCacheStoreToIndexDb,
   storeEvent,

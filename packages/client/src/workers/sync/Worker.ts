@@ -21,7 +21,7 @@ import {
   take,
 } from 'rxjs';
 
-import { GodID, SyncState } from 'engine/constants';
+import { GodID, SyncState, SyncStatus } from 'engine/constants';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/providers';
 import { debug as parentDebug } from '../debug';
@@ -30,14 +30,13 @@ import {
   NetworkComponentUpdate,
   NetworkEvent,
   NetworkEvents,
-  SyncStateStruct,
   SyncWorkerConfig,
 } from '../types';
 import {
   createCacheStore,
   getCacheStoreEntries,
   getIndexDBCacheStoreBlockNumber,
-  getIndexDbECSCache,
+  getStateCache,
   loadIndexDbCacheStore,
   saveCacheStoreToIndexDb,
   storeEvent,
@@ -70,7 +69,7 @@ export type Input = Config | Ack;
 export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEvent<C>[]> {
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
-  private syncState: SyncStateStruct = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
+  private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
 
   constructor() {
     debug('creating SyncWorker');
@@ -98,7 +97,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       component: keccak256('component.LoadingState'),
       value: newLoadingState as unknown as ComponentValue<SchemaOf<C[keyof C]>>,
       entity: GodID,
-      txHash: 'worker',
+      txHash: 'worker', // Q: would we benefit at all from modifying the txHash?
       lastEventInTx: false,
       blockNumber,
     };
@@ -114,13 +113,13 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
    *   2.1 Get cache block number
    *   2.2 Get snapshot block number
    *   2.3 Load from more recent source
-   * 3. Cach up to current block number by requesting events from RPC ( -> TODO: Replace with own service)
+   * 3. Cache up to current block number
    * 4. Keep in sync
    *  4.1 If available keep in sync with streaming service
    *  4.2 Else keep in sync with RPC
    */
   private async init() {
-    this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting...', percentage: 0 });
+    this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting..', percentage: 0 });
 
     // Turn config into variable accessible outside the stream
     const computedConfig = await streamToDefinedComputed(
@@ -131,7 +130,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     );
     const config = computedConfig.get();
     const {
-      snapshotServiceUrl,
+      snapshotServiceUrl: snapshotUrl,
       streamServiceUrl,
       chainId,
       worldContract,
@@ -141,19 +140,17 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       disableCache,
     } = config;
 
-    // Set default values for cacheAgeThreshold and cacheInterval
-    const cacheAgeThreshold = config.cacheAgeThreshold || 100;
-    const cacheInterval = config.cacheInterval || 1;
+    // Set default values for config fields
+    const cacheExpiry = config.cache?.expiry || 100;
+    const cacheInterval = config.cache?.interval || 1;
 
-    // Set up
+    // Set up shared primitives
+    this.setLoadingState({ state: SyncState.SETUP, msg: 'Starting State Sync', percentage: 0 });
     const { providers } = await createReconnectingProvider(
       computed(() => computedConfig.get().provider)
     );
     const provider = providers.get().json;
-    const snapshotClient = snapshotServiceUrl
-      ? createSnapshotClient(snapshotServiceUrl)
-      : undefined;
-    const indexDbCache = await getIndexDbECSCache(chainId, worldContract.address);
+    const indexedDB = await getStateCache(chainId, worldContract.address);
     const decode = createDecode();
     const fetchWorldEvents = createFetchWorldEventsInBlockRange(
       provider,
@@ -161,21 +158,31 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       providerOptions?.batch,
       decode
     );
-    const transformWorldEvents = createTransformWorldEventsFromStream(decode);
 
-    // Start syncing current events, but only start streaming to output once gap between initial state and current block is closed
-
-    debug('start initial sync');
-    this.setLoadingState({ state: SyncState.INITIAL, msg: 'Starting initial sync', percentage: 0 });
-    let passLiveEventsToOutput = false;
+    /*
+     * START LIVE SYNC
+     * - start syncing current events to reduce block gap
+     * - only stream events to output after closing block gap
+     * - use stream service if available, otherwise rawdog RPC
+     */
+    this.setLoadingState({
+      state: SyncState.SETUP,
+      msg: 'Initializing Event Streams',
+      percentage: 0,
+    });
+    let outputLiveEvents = false;
     const cacheStore = { current: createCacheStore() };
     const { blockNumber$ } = createBlockNumberStream(providers);
-    // The RPC is only queried if this stream is subscribed to
+
+    // Setup RPC event stream
     const latestEventRPC$ = createLatestEventStreamRPC(
       blockNumber$,
       fetchWorldEvents,
       fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
     );
+
+    // Setup Stream Service -> RPC event stream fallback
+    const transformWorldEvents = createTransformWorldEventsFromStream(decode);
     const latestEvent$ = streamServiceUrl
       ? createLatestEventStreamService(
           streamServiceUrl,
@@ -192,21 +199,19 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
     latestEvent$.subscribe((event) => {
-      // If initial sync is in progress, temporary store the events to apply later
       // Ignore system calls during initial sync
-      if (!passLiveEventsToOutput) {
+      if (!outputLiveEvents) {
         if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
         return;
       }
 
+      // Store cache to indexdb on each interval
       if (isNetworkComponentUpdateEvent(event)) {
-        // Store cache to indexdb every block
-        if (
-          event.blockNumber > cacheStore.current.blockNumber + 1 &&
-          event.blockNumber % cacheInterval === 0
-        )
-          saveCacheStoreToIndexDb(indexDbCache, cacheStore.current);
-
+        const { blockNumber } = event;
+        const blockDiff = blockNumber - cacheStore.current.blockNumber;
+        if (blockDiff > 1 && blockNumber % cacheInterval === 0) {
+          saveCacheStoreToIndexDb(indexedDB, cacheStore.current);
+        }
         storeEvent(cacheStore.current, event);
       }
 
@@ -214,64 +219,65 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     });
     const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
 
-    // Load initial state from cache or snapshot service
+    /*
+     * LOAD INITIAL STATE
+     * - use IndexedDB Storage state cache if not expired
+     * - otherwise retrieve from snapshot service
+     * TODO: support partial state retrieval and hybrid cache+snapshot state construction
+     */
     this.setLoadingState({
-      state: SyncState.INITIAL,
-      msg: 'Fetching cache block number',
+      state: SyncState.BACKFILL,
+      msg: 'Determining Sync Range',
       percentage: 0,
     });
-    const cacheBlockNumber = !disableCache
-      ? await getIndexDBCacheStoreBlockNumber(indexDbCache)
-      : -1;
+    const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexedDB) : -1;
     this.setLoadingState({ percentage: 50 });
+    const snapshotClient = snapshotUrl ? createSnapshotClient(snapshotUrl) : undefined;
     const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
     this.setLoadingState({ percentage: 100 });
-    debug(`
-      cache block: ${cacheBlockNumber}, 
-      snapshot block: ${snapshotBlockNumber > 0 ? snapshotBlockNumber : 'Unavailable'}, 
-      start sync at ${initialBlockNumber}
-    `);
 
     let initialState = createCacheStore();
     if (initialBlockNumber > Math.max(cacheBlockNumber, snapshotBlockNumber)) {
       initialState.blockNumber = initialBlockNumber;
     } else {
-      // Load from cache if the snapshot is less than <cacheAgeThreshold> blocks newer than the cache
+      // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
       const syncFromSnapshot =
-        snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheAgeThreshold;
+        snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheExpiry;
 
       if (syncFromSnapshot) {
         this.setLoadingState({
-          state: SyncState.INITIAL,
-          msg: 'Fetching initial state from snapshot',
+          state: SyncState.BACKFILL,
+          msg: 'Fetching Initial State From Snapshot',
           percentage: 0,
         });
         initialState = await fetchSnapshotChunked(
           snapshotClient,
           worldContract.address,
           decode,
-          config.snapshotNumChunks,
+          config.snapshotNumChunks ?? 10,
           (percentage: number) => this.setLoadingState({ percentage }),
           config.pruneOptions
         );
       } else {
         this.setLoadingState({
-          state: SyncState.INITIAL,
-          msg: 'Fetching initial state from cache',
+          state: SyncState.BACKFILL,
+          msg: 'Loading Initial State From Cache',
           percentage: 0,
         });
-        initialState = await loadIndexDbCacheStore(indexDbCache);
+        initialState = await loadIndexDbCacheStore(indexedDB);
         this.setLoadingState({ percentage: 100 });
       }
-
-      debug(`got ${initialState.state.size} items from ${syncFromSnapshot ? 'snapshot' : 'cache'}`);
     }
 
-    // Load events from gap between initial state and current block number from RPC
+    /*
+     * FILL THE GAP
+     * - Load events between initial and recent state from RPC
+     * Q: shouldnt we just launch the live sync down here if we're chunking it anyways
+     */
     const streamStartBlockNumber = await streamStartBlockNumberPromise;
     this.setLoadingState({
-      state: SyncState.INITIAL,
-      msg: `Fetching state from block ${initialState.blockNumber} to ${streamStartBlockNumber}`,
+      state: SyncState.GAPFILL,
+      msg: `Closing State Gap From Blocks ${initialState.blockNumber} to ${streamStartBlockNumber}`,
       percentage: 0,
     });
 
@@ -283,17 +289,16 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       (percentage: number) => this.setLoadingState({ percentage })
     );
 
-    debug(
-      `got ${gapStateEvents.length} items from block range ${initialState.blockNumber} -> ${streamStartBlockNumber}`
-    );
-
     // Merge initial state, gap state and live events since initial sync started
     storeEvents(initialState, [...gapStateEvents, ...initialLiveEvents]);
     cacheStore.current = initialState;
-    debug(`initial sync state size: ${cacheStore.current.state.size}`);
 
+    /*
+     * INITIALIZE STATE
+     * - Initialize the app state from the list of network events
+     */
     this.setLoadingState({
-      state: SyncState.INITIAL,
+      state: SyncState.INITIALIZE,
       msg: `Initializing with ${cacheStore.current.state.size} state entries`,
       percentage: 0,
     });
@@ -308,16 +313,16 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         this.setLoadingState({ percentage });
       }
     }
+    saveCacheStoreToIndexDb(indexedDB, cacheStore.current);
 
-    // Save initial state to cache
-    saveCacheStoreToIndexDb(indexDbCache, cacheStore.current);
-
-    // Let the client know loading is complete
+    /*
+     * FINISH
+     */
     this.setLoadingState(
-      { state: SyncState.LIVE, msg: `Streaming live events`, percentage: 100 },
+      { state: SyncState.LIVE, msg: `Streaming Live Events`, percentage: 100 },
       cacheStore.current.blockNumber
     );
-    passLiveEventsToOutput = true;
+    outputLiveEvents = true;
   }
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {

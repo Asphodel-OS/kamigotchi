@@ -11,7 +11,7 @@ const debug = parentDebug.extend('CacheStore');
 
 export type State = Map<number, ComponentValue>;
 export type CacheStore = ReturnType<typeof createCacheStore>;
-export type ECSCache = Awaited<ReturnType<typeof getIndexDbECSCache>>;
+export type ECSCache = Awaited<ReturnType<typeof getStateCache>>;
 
 export function createCacheStore() {
   const components: string[] = [];
@@ -135,7 +135,7 @@ export async function getIndexDBCacheStoreBlockNumber(cache: ECSCache): Promise<
   return (await cache.get('BlockNumber', 'current')) ?? 0;
 }
 
-export function getIndexDbECSCache(
+export function getStateCache(
   chainId: number,
   worldAddress: string,
   version?: number,

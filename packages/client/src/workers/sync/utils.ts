@@ -316,6 +316,7 @@ export function createDecode() {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
 
   // hardcode world.component.components and world.component.systems to use uint256 schema
+  // NOTE: maybe compute these keys with keccaks or keep a constants file for readability
   decoders['0x4350dba81aa91e31664a09d24a668f006169a11b3d962b7557aed362d3252aec'] = createDecoder(
     ['value'],
     [13]
@@ -386,7 +387,7 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
     for (const event of contractsEvents) {
       const { lastEventInTx, txHash, args } = event;
       const {
-        component: address,
+        component: address, // not used anymore but keep for reference
         entity: entityId,
         data,
         componentId: rawComponentId,
@@ -416,7 +417,7 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
       }
 
       if (event.eventKey === 'ComponentValueSet') {
-        const value = await decode(component, data, address);
+        const value = await decode(component, data);
         ecsEvents.push({ ...ecsEvent, value });
       }
     }

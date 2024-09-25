@@ -22,8 +22,10 @@ export interface NetworkConfig {
   streamServiceUrl?: string;
   initialBlockNumber?: number;
   blockExplorer?: string;
-  cacheAgeThreshold?: number;
-  cacheInterval?: number;
+  cache?: {
+    interval?: number; // block interval of caching state updates
+    expiry?: number; // number of blocks before cache is considered expired
+  };
   encoders?: boolean;
   pruneOptions?: { playerAddress: string; hashedComponentId: string };
 }

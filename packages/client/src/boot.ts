@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
 
 import { boot as bootReact, mountReact, setLayers } from 'app/boot';

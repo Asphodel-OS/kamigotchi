@@ -2,7 +2,6 @@ import { Result } from '@ethersproject/abi';
 import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
 import { BigNumber, ContractInterface } from 'ethers';
 
-import { SyncState } from 'engine/constants';
 import { ProviderConfig } from 'engine/providers';
 import { Contracts } from 'engine/types';
 import { TxMetadata } from 'engine/types/ecs-stream/ecs-stream';
@@ -79,14 +78,10 @@ export type SyncWorkerConfig = {
   snapshotServiceUrl?: string;
   streamServiceUrl?: string;
   fetchSystemCalls?: boolean;
-  cacheInterval?: number;
-  cacheAgeThreshold?: number;
+  cache?: {
+    interval?: number; // block interval of caching state updates
+    expiry?: number; // number of blocks before cache is considered expired
+  };
   snapshotNumChunks?: number;
   pruneOptions?: { playerAddress: string; hashedComponentId: string };
-};
-
-export type SyncStateStruct = {
-  state: SyncState;
-  msg: string;
-  percentage: number;
 };

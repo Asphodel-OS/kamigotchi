@@ -122,7 +122,15 @@ export async function setupMUDNetwork<
     decodeAndEmitSystemCall
   );
 
-  // define the startSync function
+  // define the startSync function which submits the following data to the sync worker
+  // NOTE: this constructs and passes in the config. we should do this more explicitly
+  // We have like three separate config definitions between:
+  // - engine/types
+  // - network/setup/types
+  // - workers/types
+  // This is a bit of a mess. We should probably figure out what we want to do here to
+  // reduce the brittleness of the logical flow and make the workers/network easier to
+  // configure and reason about.
   function startSync() {
     input$.next({
       type: InputType.Config,
