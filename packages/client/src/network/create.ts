@@ -38,8 +38,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     components,
     network.blockNumber$,
     actions,
-    notifications,
-    api.player
+    notifications
   );
 
   let networkLayer = {

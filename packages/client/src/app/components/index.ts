@@ -1,5 +1,3 @@
-import { registerScene } from './canvas';
-
 import { registerAccountHeader } from './fixtures/header';
 import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
 import { registerNotificationFixture } from './fixtures/notifications';
@@ -36,14 +34,17 @@ import {
 } from './validators';
 
 export { registerLoadingState } from './boot';
-export function registerUIComponents() {
-  // fixtures
+export { registerScene } from './canvas';
+
+export function registerFixtures() {
   registerAccountHeader();
   registerActionQueue();
   registerMenuLeft();
   registerMenuRight();
   registerNotificationFixture();
+}
 
+export function registerModals() {
   // menu modals
   registerAccountModal();
   registerChatModal();
@@ -54,7 +55,7 @@ export function registerUIComponents() {
   registerQuestsModal();
   registerSettingsModal();
 
-  // game modals
+  // scene modals
   registerDialogueModal();
   registerCraftingModal();
   registerERC721BridgeModal();
@@ -68,13 +69,11 @@ export function registerUIComponents() {
   registerNameKamiModal();
   registerNodeModal();
   registerGoalModal();
+}
 
-  // validators
+export function registerValidators() {
   registerAccountRegistrar();
   registerOperatorUpdater();
   registerWalletConnecter();
   registerGasHarasser();
-
-  // Game Scene
-  registerScene();
 }

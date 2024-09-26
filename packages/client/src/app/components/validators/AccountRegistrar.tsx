@@ -148,10 +148,10 @@ export function registerAccountRegistrar() {
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
-        const accountEntityIndex = queryAccountByOwner(components, selectedAddress);
-        if (!!accountEntityIndex == validations.accountExists) return; // no change
-        if (!!accountEntityIndex) {
-          const account = getAccount(world, components, accountEntityIndex);
+        const accountEntity = queryAccountByOwner(components, selectedAddress);
+        if (!!accountEntity == validations.accountExists) return; // no change
+        if (!!accountEntity) {
+          const account = getAccount(world, components, accountEntity);
           setKamiAccount(getKamiAccount(account, kamiAccount));
           setValidations({ ...validations, accountExists: true });
         } else {

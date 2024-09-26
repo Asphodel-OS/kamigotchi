@@ -3,6 +3,7 @@ import { concat, map } from 'rxjs';
 
 import { registerUIComponent } from 'app/root';
 import { GodID, SyncState } from 'engine/constants';
+import { registerModals } from '..';
 import { BootScreen } from './BootScreen';
 
 export function registerLoadingState() {
@@ -35,6 +36,7 @@ export function registerLoadingState() {
     ({ loadingState }) => {
       if (!loadingState) return <BootScreen status='' />;
       if (loadingState.state === SyncState.LIVE) {
+        registerModals();
         return null;
       }
 
