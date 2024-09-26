@@ -44,20 +44,17 @@ export const Pool = (props: Props) => {
   const [filtered, setFiltered] = useState<Kami[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
+  // filter (and implicitly populate) the pool of kamis on initial load
+  useEffect(() => {
+    filterKamis();
+    setLoaded(true);
+    console.log(`gacha pool loaded: ${entities.length} initial kamis`);
+  }, []);
+
   // when the entities or filters change, update the list of filtered kamis
-  // also update on load with however many kamis are initially detected (doesnt matter how many)
   useEffect(() => {
     const isOpen = modals.gacha && isVisible;
     if (isOpen) filterKamis();
-
-    // inital load. waiting as a bit of a hackaround for complete data
-    if (!loaded && entities.length > 0) {
-      setTimeout(() => {
-        filterKamis();
-        setLoaded(true);
-        console.log(`gacha pool loaded: ${entities.length} initial kamis`);
-      }, 1500);
-    }
   }, [filters, entities.length]);
 
   //////////////////

@@ -6,7 +6,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { erc20Abi } from 'viem';
-import { useAccount, useBalance, useBlockNumber, useReadContracts } from 'wagmi';
+import { useBalance, useBlockNumber, useReadContracts } from 'wagmi';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
@@ -24,8 +24,6 @@ import { Commits } from './reroll/Commits';
 import { Reroll } from './reroll/Reroll';
 import { DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
 
-const MINT20PROXY_KEY = 'system.Mint20.Proxy';
-
 export function registerGachaModal() {
   registerUIComponent(
     'Gacha',
@@ -36,7 +34,7 @@ export function registerGachaModal() {
       rowEnd: 85,
     },
     (layers) =>
-      interval(2000).pipe(
+      interval(1000).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
@@ -64,7 +62,6 @@ export function registerGachaModal() {
     ({ network, data, utils }) => {
       const { actions, components, world, api } = network;
       const { mint20Addy, accKamis, commits, poolKamis, partyKamis } = data;
-      const { isConnected } = useAccount();
       const { account } = useKamiAccount();
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
@@ -111,14 +108,13 @@ export function registerGachaModal() {
       useEffect(() => {
         console.log(
           `gacha state updated:`,
-          `\n • connected: ${isConnected}`,
-          `\n • address: ${mint20Addy}`,
+          `\n • ticket address: ${mint20Addy}`,
           `\n • modal ${modals.gacha ? 'open' : 'closed'}`
         );
-        if (!isConnected || !mint20Addy || !modals.gacha) return;
+        if (!mint20Addy || !modals.gacha) return;
         console.log('refetching gacha ticket balance..');
         refetchMint20Balance();
-      }, [isConnected, mint20Addy, modals.gacha]);
+      }, [mint20Addy, modals.gacha]);
 
       // update the gacha balance whenever the result changes
       useEffect(() => {
@@ -131,7 +127,6 @@ export function registerGachaModal() {
         const raw = mint20Balance[0]?.result ?? BigInt(0);
         const decimals = mint20Balance[1]?.result ?? 18;
         const newBalance = parseTokenBalance(raw, decimals);
-
         if (newBalance != gachaBalance) setGachaBalance(newBalance);
       }, [mint20Balance]);
 
@@ -146,8 +141,6 @@ export function registerGachaModal() {
       // Q(jb): is it necessary to run this as an async
       useEffect(() => {
         const tx = async () => {
-          if (!isConnected) return;
-
           const filtered = filterRevealable(commits, Number(blockNumber));
           if (!triedReveal && filtered.length > 0) {
             try {
