@@ -32,7 +32,6 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   systems: Component<{ value: Type.String }>,
   interfaces: { [key in keyof T]: ContractInterface }
 ) {
-  console.log('Creating system executor');
   const systemContracts = observable.box({} as T);
   const systemIdPreimages: { [key: string]: string } = Object.keys(interfaces).reduce(
     (acc, curr) => {

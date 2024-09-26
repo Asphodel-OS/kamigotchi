@@ -40,7 +40,7 @@ export function registerMapModal() {
 
       const [hoveredRoom, setHoveredRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
-      const [zone, setZone] = useState(1);
+      const [zone, setZone] = useState(0);
 
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {

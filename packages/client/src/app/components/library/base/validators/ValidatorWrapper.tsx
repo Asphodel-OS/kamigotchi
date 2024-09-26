@@ -54,6 +54,7 @@ const Wrapper = styled.div<Wrapper>`
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
   pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
+  z-index: 20;
 `;
 
 const Content = styled.div`

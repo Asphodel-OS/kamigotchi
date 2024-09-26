@@ -7,10 +7,11 @@ import { ProgressBar } from '../library/base';
 interface Props {
   status: string;
   progress?: number; // as percent
+  isHidden?: boolean;
 }
 
 export const BootScreen = (props: Props) => {
-  const { status, progress } = props;
+  const { status, progress, isHidden } = props;
   const { randNum } = useNetwork();
   const bannerKeys = Object.keys(loadingScreens);
   const bannerValues = Object.values(loadingScreens);
@@ -20,7 +21,7 @@ export const BootScreen = (props: Props) => {
   };
 
   return (
-    <Container>
+    <Container isHidden={!!isHidden}>
       <Image src={bannerValues[getBannerIndex()]} />
       <StatusContainer>
         <Status>{status}</Status>
@@ -41,7 +42,8 @@ export const BootScreen = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isHidden: boolean }>`
+  display: ${({ isHidden }) => (isHidden ? 'none' : 'block')};
   width: 100%;
   height: 100%;
   position: absolute;
@@ -52,7 +54,7 @@ const Container = styled.div`
   justify-items: center;
   transition: all 2s ease;
   pointer-events: all;
-  z-index: 100;
+  z-index: 10;
 `;
 
 const Image = styled.img`

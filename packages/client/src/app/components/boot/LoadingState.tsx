@@ -1,4 +1,5 @@
 import { getComponentValue } from '@mud-classic/recs';
+import { useEffect, useState } from 'react';
 import { concat, map } from 'rxjs';
 
 import { registerUIComponent } from 'app/root';
@@ -28,24 +29,42 @@ export function registerLoadingState() {
           if (GodEntityIndex != null) {
             loadingState = getComponentValue(LoadingState, GodEntityIndex);
           }
+
+          loadingState = loadingState ?? {
+            state: SyncState.CONNECTING,
+            msg: 'Connecting to Yominet',
+            percentage: 0,
+          };
           return { loadingState };
         })
       );
     },
 
     ({ loadingState }) => {
-      if (!loadingState) return <BootScreen status='' />;
-      if (loadingState.state === SyncState.LIVE) {
-        registerModals();
-        return null;
-      }
+      const [isVisible, setIsVisible] = useState(true);
+      const { state, msg, percentage } = loadingState;
 
-      const getLoadingMessage = () => {
-        if (Math.random() < 1 / 1e3) return 'good luck..';
-        return loadingState.msg;
+      useEffect(() => {
+        if (state === SyncState.LIVE) {
+          registerModals();
+          setTimeout(() => setIsVisible(false), 1500);
+        }
+      }, [state]);
+
+      const getStatus = () => {
+        if (state !== SyncState.LIVE) return msg;
+        const rand = Math.random();
+        const eeggOdds = 1 / 1e2;
+
+        if (rand < eeggOdds) return 'good luck o7';
+        else if (rand < 2 * eeggOdds) return 'play nice now :3';
+        else if (rand < 3 * eeggOdds) return 'we are always ._. watching';
+        else if (rand < 4 * eeggOdds) return 'behind you..';
+        else if (rand < 5 * eeggOdds) return 'enjoy your visit ^^';
+        else return 'transporting you shortly~';
       };
 
-      return <BootScreen status={getLoadingMessage()} progress={loadingState.percentage} />;
+      return <BootScreen status={getStatus()} progress={percentage} isHidden={!isVisible} />;
     }
   );
 }
