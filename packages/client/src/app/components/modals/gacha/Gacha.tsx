@@ -5,18 +5,17 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { erc20Abi } from 'viem';
-import { useBalance, useBlockNumber, useReadContracts } from 'wagmi';
+import { useBalance, useBlockNumber } from 'wagmi';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
+import { GACHA_TICKET_INDEX } from 'constants/items';
 import { getAccountFromBurner } from 'network/shapes/Account';
-import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
+import { getItemBalance } from 'network/shapes/Item';
 import { Kami, KamiOptions, queryKamisByAccount } from 'network/shapes/Kami';
 import { BaseKami, getKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
-import { parseTokenBalance } from 'utils/balances';
 import { playVend } from 'utils/sounds';
 import { MainDisplay } from './display/MainDisplay';
 import { Panel } from './panel/Panel';
@@ -45,7 +44,7 @@ export function registerGachaModal() {
           return {
             network,
             data: {
-              mint20Addy: getConfigFieldValueAddress(world, components, 'MINT20_ADDRESS'),
+              ticketBal: getItemBalance(world, components, account.id, GACHA_TICKET_INDEX),
               accKamis: account.kamis,
               partyKamis: queryKamisByAccount(components, account.id),
               poolKamis: queryKamisByAccount(components, GACHA_ID),
@@ -61,7 +60,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, components, world, api } = network;
-      const { mint20Addy, accKamis, commits, poolKamis, partyKamis } = data;
+      const { ticketBal, accKamis, commits, poolKamis, partyKamis } = data;
       const { account } = useKamiAccount();
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
@@ -75,7 +74,6 @@ export function registerGachaModal() {
 
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [gachaBalance, setGachaBalance] = useState(0);
       const [kamiCache, _] = useState<Map<EntityIndex, Kami>>(new Map());
       const [kamiBlockCache, __] = useState<Map<EntityIndex, JSX.Element>>(new Map());
 
@@ -86,49 +84,6 @@ export function registerGachaModal() {
       const { data: ownerEthBalance } = useBalance({
         address: account.ownerAddress as `0x${string}`,
       });
-
-      // $KAMI Balance of Owner EOA
-      const { data: mint20Balance, refetch: refetchMint20Balance } = useReadContracts({
-        contracts: [
-          {
-            abi: erc20Abi,
-            address: mint20Addy as `0x${string}`,
-            functionName: 'balanceOf',
-            args: [account.ownerAddress as `0x${string}`],
-          },
-          {
-            abi: erc20Abi,
-            address: mint20Addy as `0x${string}`,
-            functionName: 'decimals',
-          },
-        ],
-      });
-
-      // refetch the mint20 balance whenever the wallet connects or contract address changes
-      useEffect(() => {
-        console.log(
-          `gacha state updated:`,
-          `\n • ticket address: ${mint20Addy}`,
-          `\n • modal ${modals.gacha ? 'open' : 'closed'}`
-        );
-        if (!mint20Addy || !modals.gacha) return;
-        console.log('refetching gacha ticket balance..');
-        refetchMint20Balance();
-      }, [mint20Addy, modals.gacha]);
-
-      // update the gacha balance whenever the result changes
-      useEffect(() => {
-        if (!mint20Balance || !mint20Balance[0]) return;
-        if (mint20Balance[0].error) {
-          const error = mint20Balance[0].error;
-          return console.warn(`${error.name} on Gacha Modal:\n${error.message}`);
-        }
-
-        const raw = mint20Balance[0]?.result ?? BigInt(0);
-        const decimals = mint20Balance[1]?.result ?? 18;
-        const newBalance = parseTokenBalance(raw, decimals);
-        if (newBalance != gachaBalance) setGachaBalance(newBalance);
-      }, [mint20Balance]);
 
       // open the party modal when the reveal is triggered
       useEffect(() => {
@@ -167,7 +122,7 @@ export function registerGachaModal() {
       /////////////////
       // ACTIONS
 
-      // get a pet from gacha with Mint20
+      // get a kami from gacha with a gacha ticket
       const mintTx = (amount: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -317,7 +272,7 @@ export function registerGachaModal() {
             <Panel
               tab={tab}
               setTab={setTab}
-              gachaBalance={gachaBalance}
+              gachaBalance={ticketBal}
               actions={{ mint: handleMint, reroll: handleReroll }}
               controls={{
                 limit,
