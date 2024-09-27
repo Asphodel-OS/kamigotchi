@@ -6,7 +6,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -14,9 +13,11 @@ import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomCompon
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
+
 import { LibData } from "libraries/LibData.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
-import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
 
 /*
@@ -37,7 +38,7 @@ library LibNode {
     string memory description
   ) internal returns (uint256 id) {
     id = genID(index);
-    IsNodeComponent(getAddrByID(components, IsNodeCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "NODE");
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, index);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, nodeType);
     IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, roomIndex);
@@ -67,7 +68,7 @@ library LibNode {
   }
 
   function remove(IUintComp components, uint256 id, uint32 nodeIndex) internal {
-    IsNodeComponent(getAddrByID(components, IsNodeCompID)).remove(id);
+    LibEntityType.remove(components, id);
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     IndexRoomComponent(getAddrByID(components, RoomCompID)).remove(id);
@@ -165,7 +166,7 @@ library LibNode {
   // Return the ID of a Node by its index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
-    return IsNodeComponent(getAddrByID(components, IsNodeCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "NODE") ? id : 0;
   }
 
   function getReqs(IUintComp components, uint32 index) internal view returns (uint256[] memory) {

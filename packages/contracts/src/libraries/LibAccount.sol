@@ -4,11 +4,9 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
-import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
@@ -22,6 +20,8 @@ import { StaminaComponent, ID as StaminaCompID } from "components/StaminaCompone
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -44,7 +44,7 @@ library LibAccount {
     address operatorAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsAccountComponent(getAddrByID(components, IsAccCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "ACCOUNT");
     IndexAccountComponent(getAddrByID(components, IndexAccCompID)).set(
       id,
       getAndUpdateTotalAccs(components)
@@ -188,7 +188,7 @@ library LibAccount {
   // CHECKS
 
   function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsAccountComponent(getAddrByID(components, IsAccCompID)).has(id);
+    return LibEntityType.isShape(components, id, "ACCOUNT");
   }
 
   function ownerInUse(IUintComp components, address owner) internal view returns (bool) {
@@ -247,9 +247,10 @@ library LibAccount {
 
   // retrieves the account with farcaster index
   function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "ACCOUNT",
       getCompByID(components, FarcarsterIndexCompID),
-      getCompByID(components, IsAccCompID),
       abi.encode(fid)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -257,9 +258,10 @@ library LibAccount {
 
   // retrieves the account with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "ACCOUNT",
       getCompByID(components, NameCompID),
-      getCompByID(components, IsAccCompID),
       abi.encode(name)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -277,9 +279,10 @@ library LibAccount {
 
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "ACCOUNT",
       getCompByID(components, AddrOwnerCompID),
-      getCompByID(components, IsAccCompID),
       abi.encode(owner)
     );
     return (results.length > 0) ? results[0] : 0;

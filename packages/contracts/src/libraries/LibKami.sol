@@ -15,7 +15,6 @@ import { ExperienceComponent, ID as ExperienceCompID } from "components/Experien
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexKamiComponent, ID as IndexKamiCompID } from "components/IndexKamiComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -24,11 +23,13 @@ import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/Tim
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
+import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonusOld } from "libraries/LibBonusOld.sol";
-import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -59,7 +60,7 @@ library LibKami {
   /// @dev assumes index is not in use
   function create(IUintComp components, uint256 accID, uint32 index) internal returns (uint256) {
     uint256 id = genID(index);
-    IsPetComponent(getAddrByID(components, IsPetCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "KAMI");
     IndexKamiComponent(getAddrByID(components, IndexKamiCompID)).set(id, index);
     setOwner(components, id, accID);
     setMediaURI(components, id, UNREVEALED_URI);
@@ -481,14 +482,15 @@ library LibKami {
   /// @notice get the entity ID of a kami from its index (tokenID)
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
     uint256 id = genID(index);
-    return IsPetComponent(getAddrByID(components, IsPetCompID)).has(id) ? id : 0; // TODO: change to EntityType
+    return LibEntityType.isShape(components, id, "KAMI") ? id : 0;
   }
 
   /// @notice retrieves the kami with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "KAMI",
       getCompByID(components, NameCompID),
-      getCompByID(components, IsPetCompID),
       abi.encode(name)
     );
     return results.length > 0 ? results[0] : 0;
