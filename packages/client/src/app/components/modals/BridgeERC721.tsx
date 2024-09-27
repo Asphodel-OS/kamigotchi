@@ -32,7 +32,7 @@ export function registerERC721BridgeModal() {
           return {
             network,
             data: {
-              erc721: getConfigFieldValueAddress(world, components, 'PET721_ADDRESS'),
+              erc721: getConfigFieldValueAddress(world, components, 'KAMI721_ADDRESS'),
               account: getAccountFromBurner(network, { kamis: true }),
             },
           };
@@ -43,7 +43,7 @@ export function registerERC721BridgeModal() {
     ({ data, network }) => {
       const { erc721, account } = data;
       const { actions, components, world } = network;
-      const { IsPet, PetIndex } = components;
+      const { IsPet, KamiIndex } = components;
 
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
@@ -145,7 +145,7 @@ export function registerERC721BridgeModal() {
             for (let i = 0; i < indices.length; i++) {
               petIndex = ('0x' + indices[i].toString(16).padStart(2, '0')) as unknown as number;
               const entityID = Array.from(
-                runQuery([Has(IsPet), HasValue(PetIndex, { value: petIndex })])
+                runQuery([Has(IsPet), HasValue(KamiIndex, { value: petIndex })])
               )[0];
 
               kamis.push(

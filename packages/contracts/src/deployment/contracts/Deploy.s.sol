@@ -31,7 +31,7 @@ contract Deploy is InitWorld {
       _setUp(address(world)); // set up global variables
 
       // deploy tokens
-      LibDeployTokens.deployPet721(world, components);
+      LibDeployTokens.deployKami721(world, components);
       LibDeployTokens.deployMint20(world, components);
 
       _initWorld(address(world));

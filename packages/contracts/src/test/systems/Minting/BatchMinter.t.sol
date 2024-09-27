@@ -33,14 +33,14 @@ contract BatchMinterTest is SetupTemplate {
     vm.stopPrank();
 
     vm.prank(deployer);
-    uint256 petID = __721BatchMinterSystem.batchMint(1)[0];
+    uint256 kamiID = __721BatchMinterSystem.batchMint(1)[0];
 
-    int32[] memory stats = _calcStatsFromTraits(petID);
-    assertEq(stats[0], LibStat.getHealth(components, petID).base);
-    assertEq(stats[1], LibStat.getPower(components, petID).base);
-    assertEq(stats[2], LibStat.getViolence(components, petID).base);
-    assertEq(stats[3], LibStat.getHarmony(components, petID).base);
-    assertEq(stats[4], LibStat.getSlots(components, petID).base);
+    int32[] memory stats = _calcStatsFromTraits(kamiID);
+    assertEq(stats[0], LibStat.getHealth(components, kamiID).base);
+    assertEq(stats[1], LibStat.getPower(components, kamiID).base);
+    assertEq(stats[2], LibStat.getViolence(components, kamiID).base);
+    assertEq(stats[3], LibStat.getHarmony(components, kamiID).base);
+    assertEq(stats[4], LibStat.getSlots(components, kamiID).base);
   }
 
   function testTraitStats() public {
@@ -51,23 +51,23 @@ contract BatchMinterTest is SetupTemplate {
     vm.stopPrank();
 
     uint numPets = 100;
-    uint[] memory petIDs = new uint[](numPets);
+    uint[] memory kamiIDs = new uint[](numPets);
     for (uint i = 0; i < 10; i++) {
       vm.prank(deployer);
       uint[] memory tempIDs = __721BatchMinterSystem.batchMint(10);
       for (uint j = 0; j < 10; j++) {
-        petIDs[i * 10 + j] = tempIDs[j];
+        kamiIDs[i * 10 + j] = tempIDs[j];
       }
     }
 
     for (uint i = 0; i < numPets; i++) {
-      uint petID = petIDs[i];
-      int32[] memory stats = _calcStatsFromTraits(petID);
-      assertEq(stats[0], LibStat.getHealth(components, petID).base);
-      assertEq(stats[1], LibStat.getPower(components, petID).base);
-      assertEq(stats[2], LibStat.getViolence(components, petID).base);
-      assertEq(stats[3], LibStat.getHarmony(components, petID).base);
-      assertEq(stats[4], LibStat.getSlots(components, petID).base);
+      uint kamiID = kamiIDs[i];
+      int32[] memory stats = _calcStatsFromTraits(kamiID);
+      assertEq(stats[0], LibStat.getHealth(components, kamiID).base);
+      assertEq(stats[1], LibStat.getPower(components, kamiID).base);
+      assertEq(stats[2], LibStat.getViolence(components, kamiID).base);
+      assertEq(stats[3], LibStat.getHarmony(components, kamiID).base);
+      assertEq(stats[4], LibStat.getSlots(components, kamiID).base);
     }
   }
 
@@ -96,7 +96,7 @@ contract BatchMinterTest is SetupTemplate {
     uint256 numPets = 1000;
 
     vm.prank(deployer);
-    uint256[] memory petIDs = __721BatchMinterSystem.batchMint(numPets);
+    uint256[] memory kamiIDs = __721BatchMinterSystem.batchMint(numPets);
 
     uint[] memory backgrounds = LibTraitRegistry.getAllOfType(components, "BACKGROUND");
     uint[] memory bodies = LibTraitRegistry.getAllOfType(components, "BODY");
@@ -111,11 +111,11 @@ contract BatchMinterTest is SetupTemplate {
     uint[] memory handCounts = new uint[](hands.length);
 
     for (uint i = 0; i < numPets; i++) {
-      bgCounts[LibTraitRegistry.getBackgroundIndex(components, petIDs[i])]++;
-      bodyCounts[LibTraitRegistry.getBodyIndex(components, petIDs[i])]++;
-      colorCounts[LibTraitRegistry.getColorIndex(components, petIDs[i])]++;
-      faceCounts[LibTraitRegistry.getFaceIndex(components, petIDs[i])]++;
-      handCounts[LibTraitRegistry.getHandIndex(components, petIDs[i])]++;
+      bgCounts[LibTraitRegistry.getBackgroundIndex(components, kamiIDs[i])]++;
+      bodyCounts[LibTraitRegistry.getBodyIndex(components, kamiIDs[i])]++;
+      colorCounts[LibTraitRegistry.getColorIndex(components, kamiIDs[i])]++;
+      faceCounts[LibTraitRegistry.getFaceIndex(components, kamiIDs[i])]++;
+      handCounts[LibTraitRegistry.getHandIndex(components, kamiIDs[i])]++;
     }
 
     uint[][5] memory traits = [backgrounds, bodies, colors, faces, hands];
@@ -150,7 +150,7 @@ contract BatchMinterTest is SetupTemplate {
   // HELPER FUNCTIONS //
   //////////////////////
 
-  function _calcStatsFromTraits(uint petID) internal view returns (int32[] memory) {
+  function _calcStatsFromTraits(uint kamiID) internal view returns (int32[] memory) {
     int32 health = int32(int(LibConfig.get(components, "KAMI_BASE_HEALTH")));
     int32 power = int32(int(LibConfig.get(components, "KAMI_BASE_POWER")));
     int32 violence = int32(int(LibConfig.get(components, "KAMI_BASE_VIOLENCE")));
@@ -159,7 +159,7 @@ contract BatchMinterTest is SetupTemplate {
 
     // sum the stats from all traits
     uint256 traitRegistryID;
-    uint256[] memory traits = LibPet.getTraits(components, petID);
+    uint256[] memory traits = LibKami.getTraits(components, kamiID);
     for (uint256 i = 0; i < traits.length; i++) {
       traitRegistryID = traits[i];
       health += LibStat.getHealth(components, traitRegistryID).base;

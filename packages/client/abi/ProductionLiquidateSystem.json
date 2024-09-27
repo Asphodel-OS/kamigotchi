@@ -72,7 +72,7 @@
           "internalType": "uint256"
         },
         {
-          "name": "petID",
+          "name": "kamiID",
           "type": "uint256",
           "internalType": "uint256"
         }

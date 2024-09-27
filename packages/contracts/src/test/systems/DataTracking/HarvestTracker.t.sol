@@ -5,12 +5,12 @@ import "test/utils/SetupTemplate.t.sol";
 
 // this test experience gain, leveling and all expected effects due to leveling
 contract HarvestTrackerTest is SetupTemplate {
-  uint256 aPetID;
+  uint256 aKamiID;
 
   function setUp() public override {
     super.setUp();
 
-    aPetID = _mintPet(alice);
+    aKamiID = _mintKami(alice);
   }
 
   function setUpItems() public override {
@@ -22,11 +22,11 @@ contract HarvestTrackerTest is SetupTemplate {
     uint32 nodeIndex = 1;
     _giveItem(alice, 1, 10);
 
-    uint256 prodID = _startProductionByIndex(aPetID, nodeIndex);
+    uint256 prodID = _startProductionByIndex(aKamiID, nodeIndex);
     _fastForward(_idleRequirement + 50);
 
     // feed pet
-    _feedPet(aPetID, 1);
+    _feedPet(aKamiID, 1);
     _fastForward(_idleRequirement + 50);
 
     // // collect harvest - does not inc time

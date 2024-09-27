@@ -7,7 +7,7 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 

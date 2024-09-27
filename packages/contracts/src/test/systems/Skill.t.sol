@@ -155,11 +155,11 @@ contract SkillTest is SetupTemplate {
   function testEffectStats() public {
     uint256 regID = _createSkill(1, "KAMI", "PASSIVE", 0, 5);
     uint256 regEffID = _createSkillEffect(1, "STAT", "HEALTH", 10);
-    uint256 petID = _mintPet(alice.index);
+    uint256 kamiID = _mintKami(alice.index);
 
-    Stat memory ogStat = LibStat.getHealth(components, petID);
-    _upgradeSkill(alice.index, petID, 1);
-    Stat memory newStat = LibStat.getHealth(components, petID);
+    Stat memory ogStat = LibStat.getHealth(components, kamiID);
+    _upgradeSkill(alice.index, kamiID, 1);
+    Stat memory newStat = LibStat.getHealth(components, kamiID);
 
     Stat memory expectedStat = Stat(ogStat.base, ogStat.shift + 10, ogStat.boost, ogStat.sync);
     assertEq(keccak256(abi.encode(expectedStat)), keccak256(abi.encode(newStat)));
@@ -168,11 +168,11 @@ contract SkillTest is SetupTemplate {
   function testEffectGeneral() public {
     uint256 regID = _createSkill(1, "KAMI", "PASSIVE", 0, 5);
     uint256 regEffID = _createSkillEffect(1, "HARVEST", "DRAIN", 10);
-    uint256 petID = _mintPet(alice.index);
+    uint256 kamiID = _mintKami(alice.index);
 
-    int256 ogDrain = LibBonusOld.getRaw(components, petID, "HARVEST_DRAIN");
-    _upgradeSkill(alice.index, petID, 1);
-    int256 newDrain = LibBonusOld.getRaw(components, petID, "HARVEST_DRAIN");
+    int256 ogDrain = LibBonusOld.getRaw(components, kamiID, "HARVEST_DRAIN");
+    _upgradeSkill(alice.index, kamiID, 1);
+    int256 newDrain = LibBonusOld.getRaw(components, kamiID, "HARVEST_DRAIN");
 
     assertEq(ogDrain + 10, newDrain);
   }

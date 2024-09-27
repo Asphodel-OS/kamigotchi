@@ -114,7 +114,7 @@ library LibNode {
     IUintComp components,
     uint32 nodeIndex,
     uint256 accID,
-    uint256 petID
+    uint256 kamiID
   ) internal view returns (bool) {
     uint256[] memory reqIDs = getReqs(components, nodeIndex);
     if (reqIDs.length == 0) return true;
@@ -126,7 +126,7 @@ library LibNode {
 
     return
       LibConditional.checkConditions(components, accReqs, accID) &&
-      LibConditional.checkConditions(components, petReqs, petID);
+      LibConditional.checkConditions(components, petReqs, kamiID);
   }
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {
