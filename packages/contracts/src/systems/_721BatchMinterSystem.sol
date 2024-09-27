@@ -13,6 +13,7 @@ import { Stat } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
+import { EntityTypeComponent, ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
@@ -22,7 +23,6 @@ import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexCol
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IndexKamiComponent, ID as IndexPetCompID } from "components/IndexKamiComponent.sol";
-import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -286,7 +286,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   ////////////////////
 
   IDOwnsKamiComponent internal immutable idOwnsPetComp;
-  IsPetComponent internal immutable isPetComp;
+  EntityTypeComponent internal immutable entityTypeComp;
   IndexKamiComponent internal immutable indexPetComp;
   MediaURIComponent internal immutable mediaURIComp;
   NameComponent internal immutable nameComp;
@@ -305,7 +305,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     baseSeed = uint256(keccak256(abi.encode(blockhash(block.number == 0 ? 0 : block.number - 1))));
 
     idOwnsPetComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
-    isPetComp = IsPetComponent(getAddrByID(components, IsPetCompID));
+    entityTypeComp = EntityTypeComponent(getAddrByID(components, EntityTypeCompID));
     indexPetComp = IndexKamiComponent(getAddrByID(components, IndexPetCompID));
     mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURICompID));
     nameComp = NameComponent(getAddrByID(components, NameCompID));
@@ -355,11 +355,11 @@ contract _721BatchMinterSystem is System, TraitHandler {
     for (uint32 i; i < amount; i++) {
       uint32 index = startIndex + i;
       uint256 id = LibKami.genID(index);
-      require(!isPetComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
+      require(!entityTypeComp.has(id), "batchMint: id already exists");
       ids[i] = id;
 
       idOwnsPetComp.set(id, GACHA_ID); // seed in gacha
-      isPetComp.set(id);
+      entityTypeComp.set(id, string("KAMI"));
       indexPetComp.set(id, index);
       nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
       stateComp.set(id, string("RESTING"));

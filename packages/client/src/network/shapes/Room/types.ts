@@ -1,7 +1,6 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
   HasValue,
   World,
   getComponentValue,
@@ -67,7 +66,7 @@ export const getRoom = (
   index: EntityIndex,
   options?: RoomOptions
 ): Room => {
-  const { IsAccount, AccountID, Description, Exits, RoomIndex, Name } = components;
+  const { AccountID, Description, EntityType, Exits, RoomIndex, Name } = components;
 
   const roomIndex = getComponentValue(RoomIndex, index)?.value as number;
   const loc = getLocation(components, index);
@@ -108,7 +107,10 @@ export const getRoom = (
   // pull players currently in room
   if (options?.players) {
     const accountResults = Array.from(
-      runQuery([Has(IsAccount), HasValue(RoomIndex, { value: room.index })])
+      runQuery([
+        HasValue(EntityType, { value: 'ACCOUNT' }),
+        HasValue(RoomIndex, { value: room.index }),
+      ])
     );
 
     room.players = accountResults.map((accountEntityIndex) => {

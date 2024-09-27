@@ -1,7 +1,6 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
   HasValue,
   QueryFragment,
   World,
@@ -111,9 +110,9 @@ export const queryFriendshipX = (
   options: FriendshipOptions,
   accountOptions?: any
 ): Friendship[] => {
-  const { IsFriendship, AccountID, TargetID, State } = components;
+  const { EntityType, AccountID, TargetID, State } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsFriendship)];
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'FRIENDSHIP' })];
   if (options?.account) toQuery.push(HasValue(AccountID, { value: options.account }));
   if (options?.target) toQuery.push(HasValue(TargetID, { value: options.target }));
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
