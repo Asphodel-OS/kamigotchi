@@ -81,8 +81,10 @@ export const queryNPCListingEntities = (
   components: Components,
   npcIndex: number
 ): EntityIndex[] => {
-  const { NPCIndex, IsListing } = components;
-  return Array.from(runQuery([Has(IsListing), HasValue(NPCIndex, { value: npcIndex })]));
+  const { NPCIndex, EntityType } = components;
+  return Array.from(
+    runQuery([HasValue(EntityType, { value: 'LISTING' }), HasValue(NPCIndex, { value: npcIndex })])
+  );
 };
 
 /////////////////

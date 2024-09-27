@@ -25,7 +25,7 @@ contract RelationshipTest is SetupTemplate {
     uint256 regID = _createRelationship(index.npc, index.rel);
     assertEq(LibRegRel.get(components, index.npc, index.rel), regID);
     assertTrue(_IsRegistryComponent.has(regID));
-    assertTrue(_IsRelationshipComponent.has(regID));
+    assertTrue(LibEntityType.isShape(components, regID, "RELATIONSHIP"));
     assertEq(index.npc, _IndexNPCComponent.get(regID));
     assertEq(index.rel, _IndexRelationshipComponent.get(regID));
 
@@ -40,7 +40,7 @@ contract RelationshipTest is SetupTemplate {
     // check accept relationship
     uint256 rsID = _advRelationship(0, index.npc, index.rel);
     assertEq(LibRelationship.get(components, _getAccount(0), index.npc, index.rel), rsID);
-    assertTrue(_IsRelationshipComponent.has(rsID));
+    assertTrue(LibEntityType.isShape(components, rsID, "RELATIONSHIP"));
     assertEq(_IDOwnsRelationshipComponent.get(rsID), _getAccount(0));
     assertEq(_IndexNPCComponent.get(rsID), index.npc);
     assertEq(_IndexRelationshipComponent.get(rsID), index.rel);

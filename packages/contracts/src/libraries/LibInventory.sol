@@ -9,10 +9,11 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IDOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsInventoryComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IsInventoryComponent as IsInvComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
 import { LibData } from "libraries/LibData.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -40,7 +41,7 @@ library LibInventory {
     uint256 holderID,
     uint32 itemIndex
   ) internal returns (uint256) {
-    IsInvComponent(getAddrByID(components, IsInvCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "INVENTORY");
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
     OwnerComponent(getAddrByID(components, OwnerCompID)).set(id, holderID);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, 0);
@@ -66,9 +67,8 @@ library LibInventory {
     uint32 itemIndex
   ) internal returns (uint256 id) {
     id = genID(holderID, itemIndex);
-    IsInvComponent isComp = IsInvComponent(getAddrByID(components, IsInvCompID));
-    if (!isComp.has(id)) {
-      isComp.set(id);
+    bool has = LibEntityType.checkAndSet(components, id, "INVENTORY");
+    if (!has) {
       IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
       OwnerComponent(getAddrByID(components, OwnerCompID)).set(id, holderID);
     }
@@ -82,8 +82,11 @@ library LibInventory {
     uint256[] memory ids = new uint256[](itemIndices.length);
     for (uint256 i; i < itemIndices.length; i++) ids[i] = genID(holderID, itemIndices[i]);
 
-    IsInvComponent isComp = IsInvComponent(getAddrByID(components, IsInvCompID));
-    (bool[] memory haveIDs, bool allExist) = LibComp.hasBatchWithAggregate(isComp, ids);
+    (bool[] memory haveIDs, bool allExist) = LibEntityType.isShapeBatchWithAggregate(
+      components,
+      ids,
+      "INVENTORY"
+    );
     if (allExist) return ids; // all exist, nothing to create
 
     // create new instances
@@ -92,7 +95,7 @@ library LibInventory {
     for (uint256 i; i < itemIndices.length; i++) {
       uint256 id = ids[i];
       if (!haveIDs[i]) {
-        isComp.set(id);
+        LibEntityType.set(components, id, "INVENTORY"); // optimise?
         indexComp.set(id, itemIndices[i]);
         ownerComp.set(id, holderID);
       }
@@ -102,8 +105,8 @@ library LibInventory {
 
   /// @notice Delete the inventory instance
   function del(IUintComp components, uint256 id) internal {
+    LibEntityType.remove(components, id);
     getCompByID(components, ValueCompID).remove(id);
-    getCompByID(components, IsInvCompID).remove(id);
     getCompByID(components, IndexItemCompID).remove(id);
     getCompByID(components, OwnerCompID).remove(id);
   }
@@ -165,9 +168,11 @@ library LibInventory {
     // raw existence check to cache component
     uint256 fromID = genID(fromHolder, itemIndex);
     uint256 toID = genID(toHolder, itemIndex);
-    IsInvComponent isComp = IsInvComponent(getAddrByID(components, IsInvCompID));
-    if (!isComp.has(fromID)) create(components, fromID, fromHolder, itemIndex);
-    if (!isComp.has(toID)) create(components, toID, toHolder, itemIndex);
+
+    if (!LibEntityType.isShape(components, fromID, "INVENTORY"))
+      create(components, fromID, fromHolder, itemIndex);
+    if (!LibEntityType.isShape(components, toID, "INVENTORY"))
+      create(components, toID, toHolder, itemIndex);
 
     transfer(components, fromID, toID, amt);
   }
@@ -238,7 +243,7 @@ library LibInventory {
     uint32 itemIndex
   ) internal view returns (uint256 result) {
     uint256 id = genID(holderID, itemIndex);
-    return IsInvComponent(getAddrByID(components, IsInvCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "INVENTORY") ? id : 0;
   }
 
   /// @notice Get all the inventories belonging to a holder
@@ -247,9 +252,10 @@ library LibInventory {
     uint256 holderID
   ) internal view returns (uint256[] memory) {
     return
-      LibQuery.getIsWithValue(
+      LibEntityType.queryWithValue(
+        components,
+        "INVENTORY",
         getCompByID(components, OwnerCompID),
-        getCompByID(components, IsInvCompID),
         abi.encode(holderID)
       );
   }
