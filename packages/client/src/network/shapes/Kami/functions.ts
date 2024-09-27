@@ -8,10 +8,10 @@ import { Kami } from './types';
 
 // get the BaseAccount entity that owns a Kami
 export const getAccount = (world: World, components: Components, index: number): BaseAccount => {
-  const { IsPet, PetIndex, OwnsPetID } = components;
-  const kamiEntity = Array.from(runQuery([HasValue(PetIndex, { value: index }), Has(IsPet)]))[0];
+  const { IsPet, KamiIndex, OwnsKamiID } = components;
+  const kamiEntity = Array.from(runQuery([HasValue(KamiIndex, { value: index }), Has(IsPet)]))[0];
 
-  const rawAccID = getComponentValue(OwnsPetID, kamiEntity)?.value ?? '';
+  const rawAccID = getComponentValue(OwnsKamiID, kamiEntity)?.value ?? '';
   if (!rawAccID) return NullAccount;
 
   const accID = formatEntityID(rawAccID);

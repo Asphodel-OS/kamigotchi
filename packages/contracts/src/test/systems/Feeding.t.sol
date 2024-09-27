@@ -41,11 +41,11 @@ contract FeedingTest is SetupTemplate {
     return LibStat.getHealth(components, registryID).base;
   }
 
-  function _calcHarvestingPetHealth(uint petID) internal view returns (uint) {
-    uint productionID = LibPet.getProduction(components, petID);
+  function _calcHarvestingPetHealth(uint kamiID) internal view returns (uint) {
+    uint productionID = LibKami.getProduction(components, kamiID);
     uint output = LibHarvest.calcBounty(components, productionID);
-    uint drain = LibPet.calcStrain(components, petID, output);
-    uint health = uint(int(LibStat.getHealth(components, petID).sync));
+    uint drain = LibKami.calcStrain(components, kamiID, output);
+    uint health = uint(int(LibStat.getHealth(components, kamiID).sync));
     health = (health > drain) ? health - drain : 0;
     return health;
   }
@@ -87,12 +87,12 @@ contract FeedingTest is SetupTemplate {
 
     // mint some pets for the default account
     uint numPets = 5;
-    uint[] memory petIDs = _mintPets(0, numPets);
+    uint[] memory kamiIDs = _mintKamis(0, numPets);
 
     // start their productions
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs[i], _nodeID);
+      _startProduction(kamiIDs[i], _nodeID);
     }
 
     // fast forward 1hr to drain
@@ -105,8 +105,8 @@ contract FeedingTest is SetupTemplate {
       for (uint j = 0; j < _listingIDs.length; j++) {
         itemIndex = _getListingItemIndex(_listingIDs[j]);
         for (uint k = 0; k < numPets; k++) {
-          vm.expectRevert("pet not urs");
-          _PetUseFoodSystem.executeTyped(petIDs[k], itemIndex);
+          vm.expectRevert("kami not urs");
+          _KamiUseFoodSystem.executeTyped(kamiIDs[k], itemIndex);
         }
       }
       vm.stopPrank();
@@ -118,7 +118,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
+        _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -141,37 +141,37 @@ contract FeedingTest is SetupTemplate {
 
     // mint pets for the default account and drain them empty on harvesting
     uint numPets = 5;
-    uint[] memory petIDs = _mintPets(0, numPets);
+    uint[] memory kamiIDs = _mintKamis(0, numPets);
     uint[] memory productionIDs = new uint[](numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(petIDs[i], _nodeID);
+      productionIDs[i] = _startProduction(kamiIDs[i], _nodeID);
     }
     _fastForward(100 hours);
 
     // start production for our new kamis and kill off the originals
-    uint[] memory petIDs2 = _mintPets(1, numPets);
+    uint[] memory kamiIDs2 = _mintKamis(1, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs2[i], _nodeID);
+      _startProduction(kamiIDs2[i], _nodeID);
       _fastForward(_idleRequirement);
-      _liquidateProduction(petIDs2[i], productionIDs[i]);
+      _liquidateProduction(kamiIDs2[i], productionIDs[i]);
     }
     _fastForward(_idleRequirement);
 
     // check we CANNOT revive pets from other accounts
     for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("pet not urs");
+        vm.expectRevert("kami not urs");
         vm.prank(_getOperator(i));
-        _PetUseReviveSystem.executeTyped(petIDs[j], itemIndex);
+        _KamiUseReviveSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
 
     // test that the owner account Can revive its own pets
     for (uint i = 0; i < _listingIDs.length; i++) {
       for (uint j = 0; j < numPets; j++) {
-        _revivePet(petIDs[j], itemIndex);
+        _revivePet(kamiIDs[j], itemIndex);
       }
     }
   }
@@ -191,10 +191,10 @@ contract FeedingTest is SetupTemplate {
 
     // mint some pets, fast forward and start their productions
     uint numPets = 5;
-    uint[] memory petIDs = _mintPets(playerIndex, numPets);
+    uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs[i], _nodeID);
+      _startProduction(kamiIDs[i], _nodeID);
     }
 
     // test that we Can feed pets at the current roomIndex
@@ -202,7 +202,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _feedPet(petIDs[j], itemIndex);
+        _feedPet(kamiIDs[j], itemIndex);
       }
     }
 
@@ -213,8 +213,8 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("pet too far");
-        _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
+        vm.expectRevert("kami too far");
+        _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -226,8 +226,8 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("pet too far");
-        _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
+        vm.expectRevert("kami too far");
+        _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -238,7 +238,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _feedPet(petIDs[j], itemIndex);
+        _feedPet(kamiIDs[j], itemIndex);
       }
     }
   }
@@ -258,7 +258,7 @@ contract FeedingTest is SetupTemplate {
 
     // mint some pets
     uint numPets = 5;
-    uint[] memory petIDs = _mintPets(playerIndex, numPets);
+    uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
     uint[] memory productionIDs = new uint[](numPets);
 
     // fast forward
@@ -266,7 +266,7 @@ contract FeedingTest is SetupTemplate {
 
     // start their production
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(petIDs[i], _nodeID);
+      productionIDs[i] = _startProduction(kamiIDs[i], _nodeID);
     }
 
     // check that we CAN feed when harvesting
@@ -274,7 +274,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _feedPet(petIDs[j], itemIndex);
+        _feedPet(kamiIDs[j], itemIndex);
       }
     }
 
@@ -283,7 +283,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 100 hours);
       for (uint j = 0; j < numPets; j++) {
-        _feedPet(petIDs[j], itemIndex);
+        _feedPet(kamiIDs[j], itemIndex);
       }
     }
 
@@ -294,9 +294,9 @@ contract FeedingTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         _stopProduction(productionIDs[j]);
         _fastForward(_idleRequirement);
-        _feedPet(petIDs[j], itemIndex);
+        _feedPet(kamiIDs[j], itemIndex);
         _fastForward(_idleRequirement);
-        _startProduction(petIDs[j], _nodeID);
+        _startProduction(kamiIDs[j], _nodeID);
       }
     }
 
@@ -313,27 +313,27 @@ contract FeedingTest is SetupTemplate {
     //   for (uint j = 0; j < numPets; j++) {
     //     vm.expectRevert("Pet: already full");
     //     vm.prank(_getOperator(playerIndex));
-    //     _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
+    //     _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
     //   }
     // }
 
     // // spawn some other kamis on a new account
     // uint playerIndex2 = 1;
-    // uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
+    // uint[] memory kamiIDs2 = _mintKamis(playerIndex2, numPets);
 
     // // start production for and starve our original kamis
     // for (uint i = 0; i < numPets; i++) {
-    //   _startProduction(petIDs[i], _nodeID);
+    //   _startProduction(kamiIDs[i], _nodeID);
     // }
     // _currTime += _idleRequirement + 100 hours;
     // vm.warp(_currTime);
 
     // // start production for our new kamis and kill off the originals
     // for (uint i = 0; i < numPets; i++) {
-    //   _startProduction(petIDs2[i], _nodeID);
+    //   _startProduction(kamiIDs2[i], _nodeID);
     //   _currTime += _idleRequirement + 15 minutes;
     //   vm.warp(_currTime);
-    //   _liquidateProduction(petIDs2[i], productionIDs[i]);
+    //   _liquidateProduction(kamiIDs2[i], productionIDs[i]);
     // }
 
     // // fast forward
@@ -346,7 +346,7 @@ contract FeedingTest is SetupTemplate {
     //   for (uint j = 0; j < numPets; j++) {
     //     vm.expectRevert("Pet: must be resting|harvesting");
     //     vm.prank(_getOperator(playerIndex));
-    //     _PetUseFoodSystem.executeTyped(petIDs[j], itemIndex);
+    //     _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
     //   }
     // }
   }
@@ -363,24 +363,24 @@ contract FeedingTest is SetupTemplate {
     uint playerIndex = 0;
     _fundAccount(playerIndex, 1e9);
     _buyFromListing(playerIndex, listingID, 100);
-    uint[] memory petIDs = _mintPets(playerIndex, numPets);
+    uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
 
     // (resting, full hp) check that we CANNOT revive
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("pet not dead");
-      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
+      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // (harvesting, full hp) check that we CANNOT revive
     uint[] memory productionIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(petIDs[i], _nodeID);
+      productionIDs[i] = _startProduction(kamiIDs[i], _nodeID);
       _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("pet not dead");
-      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
+      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // (harvesting, partial hp) check that we CANNOT revive
@@ -388,7 +388,7 @@ contract FeedingTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("pet not dead");
-      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
+      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // (harvesting, no hp) check that we CANNOT revive
@@ -396,23 +396,23 @@ contract FeedingTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("pet not dead");
-      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
+      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // start production for our enemy kamis and kill off the originals
     uint playerIndex2 = 1;
-    uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
+    uint[] memory kamiIDs2 = _mintKamis(playerIndex2, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs2[i], _nodeID);
+      _startProduction(kamiIDs2[i], _nodeID);
       _fastForward(_idleRequirement);
-      _liquidateProduction(petIDs2[i], productionIDs[i]);
+      _liquidateProduction(kamiIDs2[i], productionIDs[i]);
     }
     _fastForward(_idleRequirement);
 
     // (dead) check that we CAN revive
     for (uint i = 0; i < numPets; i++) {
-      _revivePet(petIDs[i], itemIndex);
+      _revivePet(kamiIDs[i], itemIndex);
     }
 
     // (resting, partial hp) check that we CANNOT revive
@@ -420,7 +420,7 @@ contract FeedingTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("pet not dead");
-      _PetUseReviveSystem.executeTyped(petIDs[i], itemIndex);
+      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
   }
 
@@ -437,15 +437,15 @@ contract FeedingTest is SetupTemplate {
 
   //   // mint some pets and start their production
   //   uint numPets = 5;
-  //   uint[] memory petIDs = _mintPets(playerIndex, numPets);
+  //   uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
   //   _fastForward(_idleRequirement);
   //   for (uint i = 0; i < numPets; i++) {
-  //     _startProduction(petIDs[i], _nodeID);
+  //     _startProduction(kamiIDs[i], _nodeID);
   //   }
 
   //   // pass a number of iterations and
   //   uint seed;
-  //   uint petID;
+  //   uint kamiID;
   //   uint32 itemIndex;
   //   uint timeDelta;
   //   uint initialHealth;
@@ -455,19 +455,19 @@ contract FeedingTest is SetupTemplate {
   //   for (uint i = 0; i < numIterations; i++) {
   //     seed = uint(keccak256(abi.encode(i, block.timestamp)));
   //     itemIndex = _getListingItemIndex(_listingIDs[seed % _listingIDs.length]);
-  //     petID = petIDs[seed % numPets];
+  //     kamiID = kamiIDs[seed % numPets];
 
   //     timeDelta = (seed % 5 hours) + _idleRequirement;
   //     _currTime += timeDelta;
   //     vm.warp(_currTime);
 
-  //     initialHealth = _calcHarvestingPetHealth(petID);
+  //     initialHealth = _calcHarvestingPetHealth(kamiID);
   //     healAmt = _getFoodHealAmount(itemIndex);
-  //     finalHealth = (initialHealth + healAmt > LibStat.getHealth(components, petID))
-  //       ? LibStat.getHealth(components, petID)
+  //     finalHealth = (initialHealth + healAmt > LibStat.getHealth(components, kamiID))
+  //       ? LibStat.getHealth(components, kamiID)
   //       : initialHealth + healAmt;
-  //     _feedPet(petID, itemIndex);
-  //     assertEq(LibPet.getLastHealth(components, petID), finalHealth);
+  //     _feedPet(kamiID, itemIndex);
+  //     assertEq(LibKami.getLastHealth(components, kamiID), finalHealth);
   //   }
   // }
 }

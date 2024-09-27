@@ -52,7 +52,7 @@ export const initExplorer = (world: World, components: Components) => {
         return getKamiByIndex(world, components, index, options);
       },
       entities: () => Array.from(components.IsPet.entities()),
-      indices: () => Array.from(components.PetIndex.values.value.values()),
+      indices: () => Array.from(components.KamiIndex.values.value.values()),
     },
 
     nodes: {

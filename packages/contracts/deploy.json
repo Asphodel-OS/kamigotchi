@@ -37,9 +37,9 @@
     { "comp": "IDOwnsInventoryComponent", "name": "OwnsInventoryID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsQuestComponent", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsRelationshipComponent", "name": "OwnsRelationshipID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDOwnsPetComponent", "name": "OwnsPetID", "type": "uint256", "FEtype": "string" },
+    { "comp": "IDOwnsKamiComponent", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdNodeComponent", "name": "NodeID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdPetComponent", "name": "PetID", "type": "uint256", "FEtype": "string" },
+    { "comp": "IdPetComponent", "name": "KamiID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDRoomComponent", "name": "RoomID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdSourceComponent", "name": "SourceID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDTypeComponent", "name": "TypeID", "type": "uint256", "FEtype": "string" },
@@ -56,7 +56,7 @@
     { "comp": "IndexItemComponent", "name": "ItemIndex", "type": "uint32" },
     { "comp": "IndexNodeComponent", "name": "NodeIndex", "type": "uint32" },
     { "comp": "IndexNPCComponent", "name": "NPCIndex", "type": "uint32" },
-    { "comp": "IndexPetComponent", "name": "PetIndex", "type": "uint32" },
+    { "comp": "IndexKamiComponent", "name": "KamiIndex", "type": "uint32" },
     { "comp": "IndexQuestComponent", "name": "QuestIndex", "type": "uint32" },
     { "comp": "IndexRecipeComponent", "name": "RecipeIndex", "type": "uint32" },
     { "comp": "IndexRelationshipComponent", "name": "RelationshipIndex", "type": "uint32" },
@@ -481,19 +481,19 @@
       ]
     },
     {
-      "name": "Pet721IsInWorldSystem",
+      "name": "Kami721IsInWorldSystem",
       "writeAccess": []
     },
     {
-      "name": "Pet721MetadataSystem",
+      "name": "Kami721MetadataSystem",
       "writeAccess": []
     },
     {
-      "name": "PetGachaMintSystem",
+      "name": "KamiGachaMintSystem",
       "writeAccess": [
         "BlockRevealComponent",
         "IdAccountComponent",
-        "IDOwnsPetComponent",
+        "IDOwnsKamiComponent",
         "IdHolderComponent",
         "RerollComponent",
         "TimeLastComponent",
@@ -503,11 +503,11 @@
       ]
     },
     {
-      "name": "PetGachaRerollSystem",
+      "name": "KamiGachaRerollSystem",
       "writeAccess": [
         "BlockRevealComponent",
         "IdAccountComponent",
-        "IDOwnsPetComponent",
+        "IDOwnsKamiComponent",
         "IdHolderComponent",
         "RerollComponent",
         "TimeLastComponent",
@@ -517,12 +517,12 @@
       ]
     },
     {
-      "name": "PetGachaRevealSystem",
+      "name": "KamiGachaRevealSystem",
       "writeAccess": [
         "BlockRevealComponent",
         "IdAccountComponent",
         "IdHolderComponent",
-        "IDOwnsPetComponent",
+        "IDOwnsKamiComponent",
         "RerollComponent",
         "StateComponent",
         "TypeComponent",
@@ -530,7 +530,7 @@
       ]
     },
     {
-      "name": "PetLevelSystem",
+      "name": "KamiLevelSystem",
       "writeAccess": [
         "ExperienceComponent",
         "HealthComponent",
@@ -544,11 +544,11 @@
       ]
     },
     {
-      "name": "PetNameSystem",
+      "name": "KamiNameSystem",
       "writeAccess": ["HasFlagComponent", "NameComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
-      "name": "PetUseFoodSystem",
+      "name": "KamiUseFoodSystem",
       "writeAccess": [
         "IdHolderComponent",
         "IDTypeComponent",
@@ -586,7 +586,7 @@
       "writeAccess": ["HasFlagComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
-      "name": "PetUseReviveSystem",
+      "name": "KamiUseReviveSystem",
       "writeAccess": ["HealthComponent", "StateComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
@@ -769,8 +769,8 @@
     "LibMint20",
     "LibNode",
     "LibNPC",
-    "LibPet721",
-    "LibPet",
+    "LibKami721",
+    "LibKami",
     "LibQuestRegistry",
     "LibQuests",
     "LibRelationshipRegistry",

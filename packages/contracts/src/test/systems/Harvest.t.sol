@@ -50,13 +50,13 @@ pragma solidity ^0.8.0;
 //     // [prec, base, base_prec, mult_prec]
 //     uint32[8] memory configs = LibConfig.getArray(components, "HARVEST_RATE");
 
-//     uint256 petID = _IdPetComponent.get(prodID);
+//     uint256 kamiID = _IdPetComponent.get(prodID);
 //     uint256 nodeID = _IdNodeComponent.get(prodID);
 
 //     uint256 precision = 3600;
 
 //     // power
-//     uint256 power = _calcPower(petID);
+//     uint256 power = _calcPower(kamiID);
 //     uint256 P = power;
 
 //     // base rate
@@ -69,10 +69,10 @@ pragma solidity ^0.8.0;
 //     // multiplier
 //     uint256 multAffinity = _calcAffinityMultiplier(
 //       prodID,
-//       petID,
-//       LibBonusOld.getRaw(components, petID, "HARVEST_AFFINITY_MULT")
+//       kamiID,
+//       LibBonusOld.getRaw(components, kamiID, "HARVEST_AFFINITY_MULT")
 //     );
-//     uint256 multBonus = _calcBonusMultiplier(LibBonusOld.getRaw(components, petID, "HARVEST_OUTPUT"));
+//     uint256 multBonus = _calcBonusMultiplier(LibBonusOld.getRaw(components, kamiID, "HARVEST_OUTPUT"));
 //     uint256 multPrec = 10 ** uint256(configs[3]);
 //     uint256 rfMultiplier = multAffinity * multBonus;
 //     precision *= multPrec;
@@ -81,24 +81,24 @@ pragma solidity ^0.8.0;
 //   }
 
 //   // just kami stats for now - may include equipment later
-//   function _calcPower(uint petID) internal view returns (uint256) {
-//     return uint256(uint32(_PowerComponent.calcTotal(petID)));
+//   function _calcPower(uint kamiID) internal view returns (uint256) {
+//     return uint256(uint32(_PowerComponent.calcTotal(kamiID)));
 //   }
 
-//   function _calcAffinityMultiplier(uint prodID, uint petID) internal view returns (uint) {
-//     return _calcAffinityMultiplier(prodID, petID, 0);
+//   function _calcAffinityMultiplier(uint prodID, uint kamiID) internal view returns (uint) {
+//     return _calcAffinityMultiplier(prodID, kamiID, 0);
 //   }
 
 //   function _calcAffinityMultiplier(
 //     uint prodID,
-//     uint petID,
+//     uint kamiID,
 //     int256 bonus
 //   ) internal view returns (uint) {
 //     string memory nodeAff = LibNode.getAffinity(
 //       components,
 //       LibHarvest.getNode(components, prodID)
 //     );
-//     string[] memory petAffs = LibPet.getAffinities(components, petID);
+//     string[] memory petAffs = LibKami.getAffinities(components, kamiID);
 
 //     // layer the multipliers due to each trait on top of each other
 //     uint256 totMultiplier = 1;
@@ -159,7 +159,7 @@ pragma solidity ^0.8.0;
 //   function testProductionCreation() public {
 //     // setup
 //     uint playerIndex = 0;
-//     uint kamiID = _mintPet(playerIndex);
+//     uint kamiID = _mintKami(playerIndex);
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
 //     // create the production
@@ -174,8 +174,8 @@ pragma solidity ^0.8.0;
 //     assertEq(LibHarvest.getState(components, productionID), "ACTIVE");
 
 //     // test that the kami's state is updated
-//     assertEq(LibPet.getState(components, kamiID), "HARVESTING");
-//     assertEq(LibPet.getLastTs(components, kamiID), _currTime);
+//     assertEq(LibKami.getState(components, kamiID), "HARVESTING");
+//     assertEq(LibKami.getLastTs(components, kamiID), _currTime);
 //   }
 
 //   function testAffinityMultiplier(uint8 nodeSeed, uint8 bodySeed, uint8 handSeed) public {
@@ -198,11 +198,11 @@ pragma solidity ^0.8.0;
 //     // setup
 //     _setConfigArray("KAMI_HARV_EFFICACY", [uint32(5), 7, 3, 0, 0, 0, 0, 0]);
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", nodeAff);
-//     uint petID = _mintPet(0);
+//     uint kamiID = _mintKami(0);
 //     registerTrait(127, 0, 5, 5, 0, 0, 5, bodyAff, "Test Body", "BODY");
 //     registerTrait(127, 0, 5, 5, 0, 0, 5, handAff, "Test Hand", "HAND");
-//     _setPetTrait(petID, "BODY", 127);
-//     _setPetTrait(petID, "HAND", 127);
+//     _setPetTrait(kamiID, "BODY", 127);
+//     _setPetTrait(kamiID, "HAND", 127);
 
 //     uint256 expected;
 //     if (nodeAff.eq("NORMAL") || nodeAff.eq("") || bodyAff.eq("NORMAL"))
@@ -218,11 +218,11 @@ pragma solidity ^0.8.0;
 
 //     // start the production
 //     _fastForward(_idleRequirement);
-//     uint prodID = _startProduction(petID, nodeID);
+//     uint prodID = _startProduction(kamiID, nodeID);
 
 //     // check multiplier
-//     assertEq(expected, _calcAffinityMultiplier(prodID, petID));
-//     assertEq(expected, LibHarvest.calcAffinityMult(components, prodID, petID));
+//     assertEq(expected, _calcAffinityMultiplier(prodID, kamiID));
+//     assertEq(expected, LibHarvest.calcAffinityMult(components, prodID, kamiID));
 
 //     // add bonus
 //     /** add a bonus of 2 to all, therefore expected:
@@ -234,7 +234,7 @@ pragma solidity ^0.8.0;
 //      *   normal & weak: 7 * 5 = 35
 //      */
 //     vm.startPrank(deployer);
-//     LibBonusOld.inc(components, petID, "HARVEST_AFFINITY_MULT", 2);
+//     LibBonusOld.inc(components, kamiID, "HARVEST_AFFINITY_MULT", 2);
 //     vm.stopPrank();
 //     if (nodeAff.eq("NORMAL") || nodeAff.eq("") || bodyAff.eq("NORMAL"))
 //       expected = 7; // mid
@@ -247,8 +247,8 @@ pragma solidity ^0.8.0;
 //       expected *= 9; // strong
 //     else expected *= 5; // weak
 
-//     assertEq(expected, _calcAffinityMultiplier(prodID, petID, 2));
-//     assertEq(expected, LibHarvest.calcAffinityMult(components, prodID, petID));
+//     assertEq(expected, _calcAffinityMultiplier(prodID, kamiID, 2));
+//     assertEq(expected, LibHarvest.calcAffinityMult(components, prodID, kamiID));
 //   }
 
 //   /////////////////
@@ -262,7 +262,7 @@ pragma solidity ^0.8.0;
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
 //     // mint some kamis for our player
-//     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
+//     uint[] memory kamiIDs = _mintKamis(playerIndex, numKamis);
 //     _fastForward(_idleRequirement);
 
 //     // start the productions for all kamis, using their account's operator
@@ -276,10 +276,10 @@ pragma solidity ^0.8.0;
 //     for (uint i = 1; i < 10; i++) {
 //       vm.startPrank(_getOperator(i));
 //       for (uint j = 0; j < numKamis; j++) {
-//         vm.expectRevert("FarmCollect: pet not urs");
+//         vm.expectRevert("FarmCollect: kami not urs");
 //         _ProductionCollectSystem.executeTyped(productionIDs[j]);
 
-//         vm.expectRevert("FarmStop: pet not urs");
+//         vm.expectRevert("FarmStop: kami not urs");
 //         _ProductionStopSystem.executeTyped(productionIDs[j]);
 //       }
 //       vm.stopPrank();
@@ -297,7 +297,7 @@ pragma solidity ^0.8.0;
 //     for (uint i = 1; i < 10; i++) {
 //       vm.startPrank(_getOperator(i));
 //       for (uint j = 0; j < numKamis; j++) {
-//         vm.expectRevert("FarmStart: pet not urs");
+//         vm.expectRevert("FarmStart: kami not urs");
 //         _ProductionStartSystem.executeTyped(kamiIDs[j], nodeID);
 //       }
 //       vm.stopPrank();
@@ -317,7 +317,7 @@ pragma solidity ^0.8.0;
 //     }
 
 //     // register our player account and mint it some kamis
-//     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
+//     uint[] memory kamiIDs = _mintKamis(playerIndex, numKamis);
 //     _fastForward(_idleRequirement);
 
 //     // test that pets can only start a production on node in current room, save productionIDs
@@ -368,7 +368,7 @@ pragma solidity ^0.8.0;
 //     uint playerIndex = 0;
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
-//     uint kamiID = _mintPet(playerIndex);
+//     uint kamiID = _mintKami(playerIndex);
 //     _fastForward(_idleRequirement);
 
 //     uint productionID = _startProduction(kamiID, nodeID);
@@ -414,7 +414,7 @@ pragma solidity ^0.8.0;
 //     // setup
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 //     uint numKamis = (seed % 5) + 1;
-//     uint[] memory kamiIDs = _mintPets(0, numKamis);
+//     uint[] memory kamiIDs = _mintKamis(0, numKamis);
 //     _fastForward(_idleRequirement);
 
 //     // log the starting health of each kami and start its production
@@ -479,15 +479,15 @@ pragma solidity ^0.8.0;
 //     // setup
 //     _setConfig("KAMI_STANDARD_COOLDOWN", 0);
 //     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", "");
-//     uint256 petID = _mintPet(0);
+//     uint256 kamiID = _mintKami(0);
 //     // setting up power and health
 //     vm.startPrank(deployer);
-//     _PowerComponent.set(petID, Stat(power.toInt32(), 0, 0, 0));
-//     _HealthComponent.set(petID, Stat(health.toInt32(), 0, 0, health.toInt32()));
+//     _PowerComponent.set(kamiID, Stat(power.toInt32(), 0, 0, 0));
+//     _HealthComponent.set(kamiID, Stat(health.toInt32(), 0, 0, health.toInt32()));
 //     vm.stopPrank();
 
 //     // starting production
-//     uint prodID = _startProduction(petID, nodeID);
+//     uint prodID = _startProduction(kamiID, nodeID);
 //     _fastForward(timeDelta);
 
 //     // checking calcs
@@ -507,16 +507,16 @@ pragma solidity ^0.8.0;
 //     _setConfig("KAMI_STANDARD_COOLDOWN", 0);
 //     uint256[] memory seeds = _randomUints(3);
 //     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", _getFuzzAffinity(seeds[0], true));
-//     uint256 petID = _mintPet(0);
+//     uint256 kamiID = _mintKami(0);
 //     // setting up affinity
 //     registerTrait(127, 0, 5, 5, 0, 0, 5, _getFuzzAffinity(seeds[1], false), "Test Body", "BODY");
 //     registerTrait(127, 0, 5, 5, 0, 0, 5, _getFuzzAffinity(seeds[2], false), "Test Hand", "HAND");
-//     _setPetTrait(petID, "BODY", 127);
-//     _setPetTrait(petID, "HAND", 127);
+//     _setPetTrait(kamiID, "BODY", 127);
+//     _setPetTrait(kamiID, "HAND", 127);
 //     // setting up power and health
 //     vm.startPrank(deployer);
-//     _PowerComponent.set(petID, Stat(power, 0, 0, 0));
-//     _HealthComponent.set(petID, Stat(health, 0, 0, health));
+//     _PowerComponent.set(kamiID, Stat(power, 0, 0, 0));
+//     _HealthComponent.set(kamiID, Stat(health, 0, 0, health));
 //     vm.stopPrank();
 
 //     // test initial values set accurately
@@ -527,33 +527,33 @@ pragma solidity ^0.8.0;
 //     );
 //     assertEq(
 //       _getFuzzAffinity(seeds[1], false),
-//       LibPet.getAffinities(components, petID)[0],
+//       LibKami.getAffinities(components, kamiID)[0],
 //       "Pet affinity mismatch"
 //     );
 //     assertEq(
 //       _getFuzzAffinity(seeds[2], false),
-//       LibPet.getAffinities(components, petID)[1],
+//       LibKami.getAffinities(components, kamiID)[1],
 //       "Pet affinity mismatch"
 //     );
-//     assertEq(power, _PowerComponent.calcTotal(petID), "Power mismatch");
-//     assertEq(health, _HealthComponent.calcTotal(petID), "Health mismatch");
+//     assertEq(power, _PowerComponent.calcTotal(kamiID), "Power mismatch");
+//     assertEq(health, _HealthComponent.calcTotal(kamiID), "Health mismatch");
 
 //     // start production
-//     uint prodID = _startProduction(petID, nodeID);
+//     uint prodID = _startProduction(kamiID, nodeID);
 
 //     // checking calcs
 //     assertEq(
-//       _calcPower(petID),
-//       uint(int(LibPet.calcTotalPower(components, petID))),
+//       _calcPower(kamiID),
+//       uint(int(LibKami.calcTotalPower(components, kamiID))),
 //       "Power calc mismatch"
 //     );
 //     assertEq(
-//       _calcAffinityMultiplier(prodID, petID),
-//       LibHarvest.calcAffinityMult(components, prodID, petID),
+//       _calcAffinityMultiplier(prodID, kamiID),
+//       LibHarvest.calcAffinityMult(components, prodID, kamiID),
 //       "Affinity multiplier calc mismatch"
 //     );
 //     assertEq(
-//       _calcAffinityMultiplier(prodID, petID) * _calcBonusMultiplier(0),
+//       _calcAffinityMultiplier(prodID, kamiID) * _calcBonusMultiplier(0),
 //       LibHarvest.calcRateMultiplier(components, prodID),
 //       "Multiplier calc mismatch"
 //     );
@@ -577,7 +577,7 @@ pragma solidity ^0.8.0;
 //     );
 //     assertEq(
 //       _calcHealthDrain(_calcOutput(rate, timeDelta)),
-//       LibPet.calcStrain(components, petID, _calcOutput(rate, timeDelta)),
+//       LibKami.calcStrain(components, kamiID, _calcOutput(rate, timeDelta)),
 //       "Health drain calc mismatch"
 //     );
 
@@ -594,7 +594,7 @@ pragma solidity ^0.8.0;
 //       _collectProduction(prodID);
 //       assertEq(
 //         uint(int(health)) - drain,
-//         uint(int(LibStat.getHealth(components, petID).sync)),
+//         uint(int(LibStat.getHealth(components, kamiID).sync)),
 //         "health output mismatch"
 //       );
 //       assertEq(
@@ -622,14 +622,14 @@ pragma solidity ^0.8.0;
 //     return bonus > -1000 ? uint256(bonus + 1000) : 1;
 //   }
 
-// function _setPetTrait(uint petID, string memory trait, uint32 traitIndex) internal {
+// function _setPetTrait(uint kamiID, string memory trait, uint32 traitIndex) internal {
 //   vm.startPrank(deployer);
-//   if (trait.eq("BODY")) LibTraitRegistry.setBodyIndex(components, petID, traitIndex);
-//   else if (trait.eq("HAND")) LibTraitRegistry.setHandIndex(components, petID, traitIndex);
-//   else if (trait.eq("FACE")) LibTraitRegistry.setFaceIndex(components, petID, traitIndex);
-//   else if (trait.eq("COLOR")) LibTraitRegistry.setColorIndex(components, petID, traitIndex);
+//   if (trait.eq("BODY")) LibTraitRegistry.setBodyIndex(components, kamiID, traitIndex);
+//   else if (trait.eq("HAND")) LibTraitRegistry.setHandIndex(components, kamiID, traitIndex);
+//   else if (trait.eq("FACE")) LibTraitRegistry.setFaceIndex(components, kamiID, traitIndex);
+//   else if (trait.eq("COLOR")) LibTraitRegistry.setColorIndex(components, kamiID, traitIndex);
 //   else if (trait.eq("BACKGROUND"))
-//     LibTraitRegistry.setBackgroundIndex(components, petID, traitIndex);
+//     LibTraitRegistry.setBackgroundIndex(components, kamiID, traitIndex);
 //   vm.stopPrank();
 // }
 // }

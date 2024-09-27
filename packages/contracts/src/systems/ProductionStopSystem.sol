@@ -10,7 +10,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -26,23 +26,23 @@ contract ProductionStopSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint256 petID = LibHarvest.getPet(components, id);
+    uint256 kamiID = LibHarvest.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    LibPet.assertAccount(components, petID, accID);
-    require(LibPet.isHarvesting(components, petID), "FarmStop: pet must be harvesting");
-    require(!LibPet.onCooldown(components, petID), "FarmStop: pet on cooldown");
+    LibKami.assertAccount(components, kamiID, accID);
+    require(LibKami.isHarvesting(components, kamiID), "FarmStop: pet must be harvesting");
+    require(!LibKami.onCooldown(components, kamiID), "FarmStop: pet on cooldown");
 
     // health check
-    LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), "FarmStop: pet starving..");
+    LibKami.sync(components, kamiID);
+    require(LibKami.isHealthy(components, kamiID), "FarmStop: pet starving..");
 
     // roomIndex check
-    LibPet.assertRoom(components, petID, accID);
+    LibKami.assertRoom(components, kamiID, accID);
 
     // claim balance and increase experience
     uint256 output = LibHarvest.claim(components, id);
-    LibExperience.inc(components, petID, output);
+    LibExperience.inc(components, kamiID, output);
 
     // scavenge
     uint256 nodeID = LibHarvest.getNode(components, id);
@@ -51,8 +51,8 @@ contract ProductionStopSystem is System {
 
     // process harvest stop
     LibHarvest.stop(components, id);
-    LibPet.setState(components, petID, "RESTING");
-    LibPet.setLastActionTs(components, petID, block.timestamp);
+    LibKami.setState(components, kamiID, "RESTING");
+    LibKami.setLastActionTs(components, kamiID, block.timestamp);
 
     // standard logging and tracking
     LibScore.incFor(components, accID, "COLLECT", output);
