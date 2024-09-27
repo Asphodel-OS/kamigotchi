@@ -32,7 +32,6 @@ contract Deploy is InitWorld {
 
       // deploy tokens
       LibDeployTokens.deployKami721(world, components);
-      LibDeployTokens.deployMint20(world, components);
 
       _initWorld(address(world));
 

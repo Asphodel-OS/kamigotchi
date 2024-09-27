@@ -5,12 +5,12 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
-import { LibMint20 } from "libraries/LibMint20.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.Mint"));
 
-/// @notice commits to get a random pet from gacha using a Mint20 token
+/// @notice commits to get a random pet from gacha using a Gacha Ticket
 /// @dev this acts as a replacement for a traditional reveal
 contract KamiGachaMintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -21,8 +21,9 @@ contract KamiGachaMintSystem is System {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     require(accID != 0, "no account detected");
 
-    // use Mint20 tokens for payment, 1 token for 1 kami. implicit balance check
-    LibMint20.burn(world, msg.sender, amount);
+    // use gacha inventory balance
+    // todo: update this to use itemEffect?
+    LibInventory.decFor(components, accID, GACHA_TICKET_INDEX, amount);
 
     // commits random seed for gacha roll
     uint256[] memory results = LibGacha.commitBatch(world, components, amount, accID, block.number);
