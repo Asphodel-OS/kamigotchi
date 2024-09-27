@@ -1,12 +1,4 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  QueryFragment,
-  World,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, HasValue, QueryFragment, World, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Kami, Options as KamiOptions, getKami } from './types';
@@ -20,9 +12,9 @@ export type QueryOptions = {
 
 // returns raw entity indices
 export const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
-  const { OwnsKamiID, IsPet, State, KamiIndex } = components;
+  const { EntityType, OwnsKamiID, State, KamiIndex } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsPet)];
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'KAMI' })];
   if (options?.index) toQuery.push(HasValue(KamiIndex, { value: options.index }));
   if (options?.account) toQuery.push(HasValue(OwnsKamiID, { value: options.account }));
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));

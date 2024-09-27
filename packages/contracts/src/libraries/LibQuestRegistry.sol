@@ -11,13 +11,14 @@ import { DescriptionComponent, ID as DescCompID } from "components/DescriptionCo
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
-import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
 import { LibAssigner } from "libraries/LibAssigner.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -40,10 +41,9 @@ library LibQuestRegistry {
     string memory endText
   ) internal returns (uint256 id) {
     id = genQuestID(index);
-    IsQuestComponent isQuestComp = IsQuestComponent(getAddrByID(components, IsQuestCompID));
-    require(!isQuestComp.has(id), "LibRegQ.createQ: index used");
+    require(!LibEntityType.has(components, id), "LibRegQ.createQ: index used");
 
-    isQuestComp.set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "QUEST");
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).set(id, index);
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
@@ -117,8 +117,8 @@ library LibQuestRegistry {
       getAddrByID(components, IndexQuestCompID)
     );
     indexQuestComp.remove(questID);
+    LibEntityType.remove(components, questID);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(questID);
-    IsQuestComponent(getAddrByID(components, IsQuestCompID)).remove(questID);
     NameComponent(getAddrByID(components, NameCompID)).remove(questID);
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).remove(questID);
@@ -158,7 +158,7 @@ library LibQuestRegistry {
   // get registry entry by Quest index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     result = genQuestID(index);
-    return IsQuestComponent(getAddrByID(components, IsQuestCompID)).has(result) ? result : 0;
+    return LibEntityType.isShape(components, result, "QUEST") ? result : 0;
   }
 
   // get Objectives by Quest index

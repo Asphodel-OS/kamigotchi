@@ -9,7 +9,6 @@ import { LibQuery } from "solecs/LibQuery.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
-import { IsGoalComponent, ID as IsGoalCompID } from "components/IsGoalComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
@@ -19,8 +18,10 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
+import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibReward } from "libraries/LibReward.sol";
@@ -69,7 +70,7 @@ library LibGoals {
     Condition memory objective
   ) internal returns (uint256 id) {
     id = genGoalID(index);
-    IsGoalComponent(getAddrByID(components, IsGoalCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "GOAL");
     IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
@@ -156,7 +157,7 @@ library LibGoals {
 
   function remove(IUintComp components, uint32 index) internal {
     uint256 goalID = genGoalID(index);
-    IsGoalComponent(getAddrByID(components, IsGoalCompID)).remove(goalID);
+    LibEntityType.remove(components, goalID);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(goalID);
     NameComponent(getAddrByID(components, NameCompID)).remove(goalID);
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(goalID);
@@ -339,7 +340,7 @@ library LibGoals {
 
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
     uint256 id = genGoalID(index);
-    return IsGoalComponent(getAddrByID(components, IsGoalCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "GOAL") ? id : 0;
   }
 
   function getContributionAmt(

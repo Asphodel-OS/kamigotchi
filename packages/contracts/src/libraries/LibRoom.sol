@@ -11,7 +11,6 @@ import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.
 // world2: (formally IDPointer) change to IDTarget or IDTo/From
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol";
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
@@ -19,6 +18,8 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -36,7 +37,7 @@ library LibRoom {
     string memory description
   ) internal returns (uint256 id) {
     id = genID(index);
-    IsRoomComponent(getAddrByID(components, IsRoomCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "ROOM");
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, index);
     LocationComponent(getAddrByID(components, LocationCompID)).set(id, location);
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
@@ -65,7 +66,7 @@ library LibRoom {
   }
 
   function remove(IUintComp components, uint256 id) internal returns (uint256) {
-    IsRoomComponent(getAddrByID(components, IsRoomCompID)).remove(id);
+    LibEntityType.remove(components, id);
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
     LocationComponent(getAddrByID(components, LocationCompID)).remove(id);
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
@@ -85,7 +86,7 @@ library LibRoom {
   // CHECKERS
 
   function isRoom(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRoomComponent(getAddrByID(components, IsRoomCompID)).has(id);
+    return LibEntityType.isShape(components, id, "ROOM");
   }
 
   /// @notice Checks whether a path from Room A to Room B is valid
@@ -188,10 +189,10 @@ library LibRoom {
     IUintComp components,
     Coord memory loc
   ) internal view returns (uint256 result) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
       components,
-      LocationCompID,
-      IsRoomCompID,
+      "ROOM",
+      getCompByID(components, LocationCompID),
       abi.encode(loc)
     );
     return results.length > 0 ? results[0] : 0;

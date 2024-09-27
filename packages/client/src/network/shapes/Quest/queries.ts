@@ -19,9 +19,9 @@ export interface QueryOptions {
 
 // Query for Entity Indices of Quests, depending on the options provided
 export const query = (components: Components, options: QueryOptions): EntityIndex[] => {
-  const { OwnsQuestID, IsComplete, IsQuest, IsRegistry, QuestIndex } = components;
+  const { OwnsQuestID, EntityType, IsComplete, IsRegistry, QuestIndex } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsQuest)];
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'QUEST' })];
   if (options?.registry) toQuery.push(Has(IsRegistry));
   if (options?.account) toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
   if (options?.index) toQuery.push(HasValue(QuestIndex, { value: options.index }));

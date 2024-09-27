@@ -8,12 +8,13 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
-import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { SkillPointComponent, ID as SPCompID } from "components/SkillPointComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
@@ -38,12 +39,11 @@ library LibSkill {
     IUintComp components,
     uint256 targetID,
     uint32 skillIndex
-  ) internal returns (uint256) {
-    uint256 id = genID(targetID, skillIndex);
-    setIsSkill(components, id); // TODO: change to EntityType
-    setHolder(components, id, targetID);
-    setSkillIndex(components, id, skillIndex);
-    return id;
+  ) internal returns (uint256 id) {
+    id = genID(targetID, skillIndex);
+    LibEntityType.set(components, id, "SKILL");
+    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, targetID);
+    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, skillIndex);
   }
 
   // increase skill points of a skill by a specified value
@@ -156,18 +156,6 @@ library LibSkill {
   /////////////////
   // SETTERS
 
-  function setIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddrByID(components, IsSkillCompID)).set(id);
-  }
-
-  function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, index);
-  }
-
-  function setHolder(IUintComp components, uint256 id, uint256 value) internal {
-    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, value);
-  }
-
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {
     SkillPointComponent(getAddrByID(components, SPCompID)).set(id, value);
   }
@@ -224,7 +212,7 @@ library LibSkill {
     uint32 index
   ) internal view returns (uint256) {
     uint256 id = genID(holderID, index);
-    return IsSkillComponent(getAddrByID(components, IsSkillCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "SKILL") ? id : 0;
   }
 
   //////////////////////

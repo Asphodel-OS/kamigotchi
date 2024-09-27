@@ -1,4 +1,4 @@
-import { Has, HasValue, runQuery } from '@mud-classic/recs';
+import { HasValue, runQuery } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
@@ -43,7 +43,7 @@ export function registerERC721BridgeModal() {
     ({ data, network }) => {
       const { erc721, account } = data;
       const { actions, components, world } = network;
-      const { IsPet, KamiIndex } = components;
+      const { EntityType, KamiIndex } = components;
 
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
@@ -145,7 +145,10 @@ export function registerERC721BridgeModal() {
             for (let i = 0; i < indices.length; i++) {
               petIndex = ('0x' + indices[i].toString(16).padStart(2, '0')) as unknown as number;
               const entityID = Array.from(
-                runQuery([Has(IsPet), HasValue(KamiIndex, { value: petIndex })])
+                runQuery([
+                  HasValue(EntityType, { value: 'KAMI' }),
+                  HasValue(KamiIndex, { value: petIndex }),
+                ])
               )[0];
 
               kamis.push(

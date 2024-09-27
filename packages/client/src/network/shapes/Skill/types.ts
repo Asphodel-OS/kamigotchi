@@ -73,8 +73,8 @@ export const getSkill = (
   options?: Options
 ): Skill => {
   const {
+    EntityType,
     IsRegistry,
-    IsSkill,
     Cost,
     Description,
     Level,
@@ -88,8 +88,14 @@ export const getSkill = (
 
   const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
   const registryIndex = Array.from(
-    runQuery([Has(IsRegistry), Has(IsSkill), HasValue(SkillIndex, { value: skillIndex })])
+    runQuery([
+      Has(IsRegistry),
+      HasValue(EntityType, { value: 'SKILL' }),
+      HasValue(SkillIndex, { value: skillIndex }),
+    ])
   )[0];
+
+  console.log(skillIndex, registryIndex);
 
   let skill: Skill = {
     ObjectType: 'SKILL',

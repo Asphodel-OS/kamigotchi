@@ -12,6 +12,7 @@ import { LibPack } from "libraries/utils/LibPack.sol";
 import { Stat } from "components/types/Stat.sol";
 
 import { StatComponent } from "components/base/StatComponent.sol";
+import { EntityTypeComponent, ID as EntityTypeComponentID } from "components/EntityTypeComponent.sol";
 import { HealthComponent, ID as HealthComponentID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyComponentID } from "components/HarmonyComponent.sol";
 import { IDOwnsKamiComponent, ID as IDOwnsKamiComponentID } from "components/IDOwnsKamiComponent.sol";
@@ -21,7 +22,6 @@ import { IndexColorComponent, ID as IndexColorComponentID } from "components/Ind
 import { IndexFaceComponent, ID as IndexFaceComponentID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandComponentID } from "components/IndexHandComponent.sol";
 import { IndexKamiComponent, ID as IndexKamiComponentID } from "components/IndexKamiComponent.sol";
-import { IsPetComponent, ID as IsPetComponentID } from "components/IsPetComponent.sol";
 import { IsRegistryComponent, ID as IsRegComponentID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceComponentID } from "components/ExperienceComponent.sol";
 import { LevelComponent, ID as LevelComponentID } from "components/LevelComponent.sol";
@@ -90,7 +90,7 @@ contract _CreatePetSystem is System {
   uint32[5] internal offsets;
 
   IDOwnsKamiComponent internal immutable idOwnsKamiComp;
-  IsPetComponent internal immutable isPetComp;
+  EntityTypeComponent internal immutable entityTypeComp;
   IndexKamiComponent internal immutable indexKamiComp;
   MediaURIComponent internal immutable mediaURIComp;
   NameComponent internal immutable nameComp;
@@ -117,7 +117,7 @@ contract _CreatePetSystem is System {
 
   constructor(IWorld _world, address _components) System(_world, _components) {
     idOwnsKamiComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiComponentID));
-    isPetComp = IsPetComponent(getAddrByID(components, IsPetComponentID));
+    entityTypeComp = EntityTypeComponent(getAddrByID(components, EntityTypeComponentID));
     indexKamiComp = IndexKamiComponent(getAddrByID(components, IndexKamiComponentID));
     mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURIComponentID));
     nameComp = NameComponent(getAddrByID(components, NameComponentID));
@@ -186,9 +186,9 @@ contract _CreatePetSystem is System {
     uint256 level
   ) internal returns (uint256 id) {
     id = LibKami.genID(index);
-    require(!isPetComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
+    require(!entityTypeComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
 
-    isPetComp.set(id);
+    entityTypeComp.set(id, string("KAMI"));
     idOwnsKamiComp.set(id, accID);
     indexKamiComp.set(id, index);
     nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(index)));

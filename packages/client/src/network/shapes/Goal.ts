@@ -1,7 +1,7 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
+  HasValue,
   World,
   getComponentValue,
   hasComponent,
@@ -50,9 +50,9 @@ export interface GoalReward extends Reward {
 // FUNCTIONS
 
 export const getAllGoals = (world: World, components: Components): Goal[] => {
-  const { IsGoal } = components;
+  const { EntityType } = components;
 
-  const queryFragments = [Has(IsGoal)];
+  const queryFragments = [HasValue(EntityType, { value: 'GOAL' })];
   const raw = Array.from(runQuery(queryFragments));
 
   return raw.map((index): Goal => getGoal(world, components, index));
