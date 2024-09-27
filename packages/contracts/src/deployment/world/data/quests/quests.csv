@@ -283,6 +283,33 @@ Next up, I need you to search the core of the scrapyard to the west. Maybe you'l
 "Lethe Asphodel, Nedu",44,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Points of Importance” (43)",43,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",44,,For Implementation,Objective,HARVEST_TIME,MIN,INC,Harvest for 10 Hours at Clearing,49,36000,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",44,,For Implementation,Reward,ITEM,,,1x Mint,11007,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",45,An Even Rarer Flower,For Implementation,Quest,,,,Give 1 Black Poppy,36,,No,15,,"I'm amazed to see you found me that mint. Very few of the other pioneers have made it this far...... 
+
+There's one other rare flower I need. It can be found around the centre of the forest.... but I regret to inform you that it's even rarer than mint. Best of luck!",,"Have completed ""Elusive Herbs"" (36)",Give 1 Black Poppy,15 REPUTATION,,,
+"Lethe Asphodel, Nedu",45,,For Implementation,Requirement,QUEST,COMPLETE,,"Have completed ""Elusive Herbs"" (36)",36,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",45,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 1 Black Poppy,11011,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",46,Alongside the stream...,For Implementation,Quest,,,,Give 3 Daffodils,11012,3,No,5,,"It looks like filling the Torii Gate with MUSU has opened up a new area by the riverside. I think you should be able to find Daffodils there. Do you mind wandering down to take a look? Yes, I know, even more flowers..... I'm starting a collection.",,Holy Gate Collab Quest Completed,Give 3 Daffodils,2 XP Candy (Large),,,
+"Lethe Asphodel, Nedu",46,,For Implementation,Requirement,GOAL,COMPLETE,,Holy Gate Collab Quest Completed,6,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",46,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 3 Daffodils,11012,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",46,,For Implementation,Reward,ITEM,,,2 XP Candy (Large),104,2,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",47,Defiance of Common Sense,For Implementation,Quest,,,,Give 15 Scrolls of Shop Teleportation,119,15,No,5,,"It seems that Mina has now started selling some sort of teleportation device. That shouldn't be possible at all. I'm going to need a whole bunch of these to reverse engineer whatever she's up to..... Can you go and grab me 15, please?",,Expanding Inventory Collab Quest Completed,Give 15 Scrolls of Shop Teleportation,1 XP Candy (Huge),,,
+"Lethe Asphodel, Nedu",47,,For Implementation,Requirement,GOAL,COMPLETE,,Expanding Inventory Collab Quest Completed,5,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",47,,For Implementation,Objective,ITEM_BURN,MIN,INC,"Give 15 Scrolls of Shop Teleportation ",119,15,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",47,,For Implementation,Reward,ITEM,,,1 XP Candy (Huge),117,1,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",48,A whole team...,For Implementation,Quest,,,,"Have 3 Level 5 Kamigotchi ",,,No,5,,"Raising one Kamigotchi is great, but frankly, you're going to need a squad to survive out here. 
+
+You can get more Kamigotchi by increasing your REPUTATION and claiming Gacha tickets. Come back when you have a team of 3. I'll have even more REPUTATION for you!",,"Completed ""There are more Levels to This"" (6)","Have 3 Level 5 Kamigotchi ",3x XP Candy (Medium),,,
+"Lethe Asphodel, Nedu",48,,For Implementation,Requirement,QUEST,COMPLETE,,"Completed ""There are more Levels to This"" (6)",6,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",48,,For Implementation,Objective,AMT_KAMI_LEVEL_MIN,MIN,,"Have 3 Level 5 Kamigotchi ",5,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",48,,For Implementation,Reward,ITEM,,,3x XP Candy (Medium),105,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",49,Gang Gang,For Implementation,Quest,AMT_KAMI_LEVEL_MIN,,,Have 4 Level 10 Kamigotchi,,,No,5,,"I see you're still growing your squad. Well, I want to see 4 Level 10 Kami, now. 4 is my favourite number, you know. It's a very important number down here. ",,Completed “A whole team…” (48),Have 4 Level 10 Kamigotchi,3x XP Candy (Large),,,
+"Lethe Asphodel, Nedu",49,,For Implementation,Requirement,QUEST,COMPLETE,,Completed “A whole team…” (48),48,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",49,,For Implementation,Objective,AMT_KAMI_LEVEL_MIN,MIN,,Have 4 Level 10 Kamigotchi,10,4,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",49,,For Implementation,Reward,ITEM,,,3x Large XP Candy,104,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",50,A Squad of Elites,For Implementation,Quest,,,,"Have 5 Level 15 Kamigotchi ",,,No,10,,"You're becoming a veritable Kamigotchi powerhouse, now. Well, I'll ask for one final show of strength from your team.... you guessed it, 5 Kamigotchi at Level 15. Get to it.",,"Completed ""Gang Gang” (49)",Have 5 Level 15 Kamigotchi,3x XP Candy (Huge),,,
+"Lethe Asphodel, Nedu",50,,For Implementation,Requirement,QUEST,COMPLETE,,"Completed ""Gang Gang” (49)",49,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",50,,For Implementation,Objective,AMT_KAMI_LEVEL_MIN,MIN,,Have 5 Level 15 Kamigotchi,15,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",50,,For Implementation,Reward,ITEM,,,3x XP Candy (Huge),117,3,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",10001,Desperate Measures,Ingame,Quest,,,,,,,No,15,,"Nice to see you again.
 
 We've had a lot of complaints about a specific individual recently. We'd appreciate it if you could help us... do something about this. The rewards will be good.",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",,,
@@ -376,6 +403,7 @@ Lethe Asphodel,,Fountain of Revival,Needs Revision Work,Quest,,,,,,,No,5,,"We kn
 ,,,Needs Revision Work,Requirement,QUEST,COMPLETE,,Completed Quest 8 (Spring Rites),8,,No,,,,,,,,,,
 ,,,Needs Revision Work,Requirement,KAMI,MIN,CURR,Own At Least 1 Kamigotchi,,1,No,,,,,,,,,,
 ,,,Needs Revision Work,Reward,ITEM,,,1 ribbon,110,1,No,,,,,,,,,,
+,100,Thanks for being early! (Removed quest),Idea,,,,,,,,No,,,,,,,,,,
 "torngarsuk, vaitarna",,Farming 3: Accumulating $MUSU,Rebuild,,,,,,,,No,,,"Great, you're really taking this seriously. You seem to be developing a good relationship with your Kamigotchi. 
 
 Try to get five thousand $MUSU from harvesting. Believe me, this can happen faster than you might think.
@@ -618,15 +646,15 @@ vaitarna,,,Idea,,,,,,,,No,,,,,,,,,,
 torngarsuk,,Scavenge 10 Plastic Bottles,In progress,Quest,,,,,,,No,,,"Hopefully you’ve kept all those plastic bottles from your gift boxes. Scavenge ten of them to help clean up Kamigotchi World.
 A daunting task, but every little bit helps…",,,Scavenge 10 Plastic Bottles,,,,
 torngarsuk,,Flowers for Mina,In progress,Quest,,,,,,,No,,,"Mina wants you to forage Daffodils for her. She left out the why, but it’s probably be best to stay in her good graces and do what she asks.",,,Scavenge 5 Daffodils,,,,
-torngarsuk,,Consume 5 Ice Creams,Review,,,,,,,,No,5,,"Keep ice cream in your inventory for too long and it’ll melt... No, not really. But you should indulge, you deserve it.",,,Consume 5 Ice Creams,,,,
-torngarsuk,,Nightstalker,Review,,,,,,,,No,,,I need some fresh liquidations to test a new hypothesis… They must be made during Moonside. Think you can handle that?,,,Liquidate 5 Kamigotchi during Moonside,,,,
-torngarsuk,,Add 3 Friends,Review,,,,,,,,No,,,By now you’ve probably been banging your head in Clearing for a while… Take a break and put yourself out there. Make some friends.,,,Add 3 Friends,,,,
-torngarsuk,,A Story for the Ages,Review,,,,,,,,No,,,"I’ve got a great prank lined up. All I need
-is some gum, can you help me out?",,,Hand in 30 Gums,,,,
-torngarsuk,,Growth Spurts,Review,,,,,,,,No,,,"Your Kamigotchi sure have grown. I didn’t expect you be such an overachiever. I’ve come up with a new test, but I’m all out of candy...
-
-Could you spare some for an old friend?",,,Hand in 3 XP Candy (Small),,,,
-torngarsuk,,Travel Magic,Review,,,,,,,,No,,,"Mina’s devised a way for you skip the long walks to her shop. Try it out and help me learn more about her magic.
+torngarsuk,49,RMA,Review,,,,,,,,No,,,"I’ve had reports of faulty Giftboxes. I need to investigate, but I don’t have any on hand. Could I have a few of yours?",,,Hand in 3 Giftboxes,,,,
+torngarsuk,48,Travel Magic,Review,,,,,,,,No,,,"Mina’s devised a way for you skip the long walks to her shop. Try it out and help me learn more about her magic.
 
 But don’t rely too much on it, magic has a way of distorting reality...  ",,,"Teleport to Mina’s Shop from Airplane Crash, Temple by the Waterfall and Tunnel of Trees",,,,
-torngarsuk,,RMA,Review,,,,,,,,No,,,"I’ve had reports of faulty Giftboxes. I need to investigate, but I don’t have any on hand. Could I have a few of yours?",,,Hand in 3 Giftboxes,,,,
+torngarsuk,47,Growth Spurts,Review,,,,,,,,No,,,"Your Kamigotchi sure have grown. I didn’t expect you be such an overachiever. I’ve come up with a new test, but I’m all out of candy...
+
+Could you spare some for an old friend?",,,Hand in 3 XP Candy (Small),,,,
+torngarsuk,46,A Story for the Ages,Review,,,,,,,,No,,,"I’ve got a great prank lined up. All I need
+is some gum, can you help me out?",,,Hand in 30 Gums,,,,
+torngarsuk,45,Add 3 Friends,Review,,,,,,,,No,,,By now you’ve probably been banging your head in Clearing for a while… Take a break and put yourself out there. Make some friends.,,,Add 3 Friends,,,,
+torngarsuk,44,Nightstalker,Review,,,,,,,,No,,,I need some fresh liquidations to test a new hypothesis… They must be made during Moonside. Think you can handle that?,,,Liquidate 5 Kamigotchi during Moonside,,,,
+torngarsuk,,Consume 5 Ice Creams,Review,,,,,,,,No,5,,"Keep ice cream in your inventory for too long and it’ll melt... No, not really. But you should indulge, you deserve it.",,,Consume 5 Ice Creams,,,,
