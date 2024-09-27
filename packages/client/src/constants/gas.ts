@@ -1,4 +1,4 @@
-const txCostEst = 1 / 1e6;
+const txCostEst = 1;
 
 export const GasConstants = {
   Max: 1000 * txCostEst,

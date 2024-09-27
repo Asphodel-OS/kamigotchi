@@ -22,7 +22,7 @@ contract Deprecate is SystemCall {
     address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
     vm.startBroadcast(deployerPriv);
 
-    _deprecate(deployerPriv, worldAddr, systemAddrs);
+    _deprecate(systemAddrs);
   }
 
   function deprecateByAddress(
@@ -35,14 +35,10 @@ contract Deprecate is SystemCall {
     address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
     vm.startBroadcast(deployerPriv);
 
-    _deprecate(deployerPriv, worldAddr, systemAddrs);
+    _deprecate(systemAddrs);
   }
 
-  function _deprecate(
-    uint256 deployerPriv,
-    address worldAddr,
-    address[] memory systemAddrs
-  ) internal {
+  function _deprecate(address[] memory systemAddrs) internal {
     // get all components
     Component[] memory comps = getAllComponents();
 
