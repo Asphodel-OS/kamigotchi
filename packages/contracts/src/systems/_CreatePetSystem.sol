@@ -14,13 +14,13 @@ import { Stat } from "components/types/Stat.sol";
 import { StatComponent } from "components/base/StatComponent.sol";
 import { HealthComponent, ID as HealthComponentID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyComponentID } from "components/HarmonyComponent.sol";
-import { IDOwnsPetComponent, ID as IDOwnsPetComponentID } from "components/IDOwnsPetComponent.sol";
+import { IDOwnsKamiComponent, ID as IDOwnsKamiComponentID } from "components/IDOwnsKamiComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyComponentID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundComponentID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorComponentID } from "components/IndexColorComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceComponentID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandComponentID } from "components/IndexHandComponent.sol";
-import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
+import { IndexKamiComponent, ID as IndexKamiComponentID } from "components/IndexKamiComponent.sol";
 import { IsPetComponent, ID as IsPetComponentID } from "components/IsPetComponent.sol";
 import { IsRegistryComponent, ID as IsRegComponentID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceComponentID } from "components/ExperienceComponent.sol";
@@ -38,17 +38,17 @@ import { TimeStartComponent, ID as TimeStartComponentID } from "components/TimeS
 import { ViolenceComponent, ID as ViolenceComponentID } from "components/ViolenceComponent.sol";
 import { ValueComponent, ID as ValueComponentID } from "components/ValueComponent.sol";
 
-import { Pet721 } from "tokens/Pet721.sol";
+import { Kami721 } from "tokens/Kami721.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibPet721 } from "libraries/LibPet721.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami721 } from "libraries/LibKami721.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 
-uint256 constant ID = uint256(keccak256("system.Pet721.create"));
+uint256 constant ID = uint256(keccak256("system.Kami721.create"));
 
 uint256 constant OFFSET_BIT_SIZE = 32;
 
@@ -89,9 +89,9 @@ contract _CreatePetSystem is System {
   TraitStats[] internal traitStats;
   uint32[5] internal offsets;
 
-  IDOwnsPetComponent internal immutable idOwnsPetComp;
+  IDOwnsKamiComponent internal immutable idOwnsKamiComp;
   IsPetComponent internal immutable isPetComp;
-  IndexPetComponent internal immutable indexPetComp;
+  IndexKamiComponent internal immutable indexKamiComp;
   MediaURIComponent internal immutable mediaURIComp;
   NameComponent internal immutable nameComp;
   StateComponent internal immutable stateComp;
@@ -116,9 +116,9 @@ contract _CreatePetSystem is System {
   RarityComponent internal immutable rarityComp;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
-    idOwnsPetComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetComponentID));
+    idOwnsKamiComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiComponentID));
     isPetComp = IsPetComponent(getAddrByID(components, IsPetComponentID));
-    indexPetComp = IndexPetComponent(getAddrByID(components, IndexPetComponentID));
+    indexKamiComp = IndexKamiComponent(getAddrByID(components, IndexKamiComponentID));
     mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURIComponentID));
     nameComp = NameComponent(getAddrByID(components, NameComponentID));
     stateComp = StateComponent(getAddrByID(components, StateComponentID));
@@ -165,7 +165,7 @@ contract _CreatePetSystem is System {
     uint256 level
   ) external onlyOwner {
     // creating pet
-    uint256 petID = _create(index, accID, background, body, color, face, hand, level);
+    uint256 kamiID = _create(index, accID, background, body, color, face, hand, level);
 
     // giving apology items
     LibInventory.incFor(components, accID, level > 14 ? 117 : 104, 2); // give huge xp if level > 14
@@ -185,12 +185,12 @@ contract _CreatePetSystem is System {
     uint32 hand,
     uint256 level
   ) internal returns (uint256 id) {
-    id = LibPet.genID(index);
+    id = LibKami.genID(index);
     require(!isPetComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
 
     isPetComp.set(id);
-    idOwnsPetComp.set(id, accID);
-    indexPetComp.set(id, index);
+    idOwnsKamiComp.set(id, accID);
+    indexKamiComp.set(id, index);
     nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(index)));
     stateComp.set(id, string("RESTING"));
     timeStartComp.set(id, block.timestamp);
@@ -207,7 +207,7 @@ contract _CreatePetSystem is System {
     traits[4] = color;
     _setPetTraits(id, traits);
 
-    Pet721 pet721 = LibPet721.getContract(components);
+    Kami721 pet721 = LibKami721.getContract(components);
     pet721.mint(address(pet721), uint256(index));
   }
 

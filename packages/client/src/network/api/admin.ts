@@ -7,7 +7,7 @@ export function createAdminAPI(systems: any) {
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(commitIDs: BigNumberish[]) {
-    return systems['system.Pet.Gacha.Reveal'].forceReveal(commitIDs);
+    return systems['system.kami.gacha.Reveal'].forceReveal(commitIDs);
   }
 
   // @dev admin reveal for droptables if blockhash has lapsed
@@ -151,21 +151,21 @@ export function createAdminAPI(systems: any) {
 
   async function initBatchMinter() {
     await sleepIf();
-    return systems['system.Pet721.BatchMint'].setTraits();
+    return systems['system.Kami721.BatchMint'].setTraits();
   }
 
   async function batchMint(amount: number) {
     const perBatch = 7;
     for (let i = 0; i < amount; i += perBatch) {
-      await systems['system.Pet721.BatchMint'].batchMint(perBatch);
+      await systems['system.Kami721.BatchMint'].batchMint(perBatch);
       await sleepIf();
     }
-    await systems['system.Pet721.BatchMint'].batchMint(amount % perBatch);
+    await systems['system.Kami721.BatchMint'].batchMint(amount % perBatch);
   }
 
   async function initGachaIncrement() {
     await sleepIf();
-    return systems['system.Pet.Gacha.Mint'].init();
+    return systems['system.kami.gacha.Mint'].init();
   }
 
   // sets the prices for the merchant at the specified roomIndex

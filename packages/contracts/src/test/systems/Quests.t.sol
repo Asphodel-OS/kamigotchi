@@ -313,7 +313,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, 0);
     _createQuestRequirement(1, "BOOL_IS", "ROOM", 1, 0);
-    _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
+    _createQuestObjective(1, "NAME", "INC_MIN", "KAMI721_MINT", 0, 2);
 
     // register account
     address operator = _getOperator(0);
@@ -326,13 +326,13 @@ contract QuestsTest is SetupTemplate {
     vm.prank(operator);
     vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
-    _mintPet(0);
+    _mintKami(0);
     vm.prank(operator);
     vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
-    _mintPet(0);
+    _mintKami(0);
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
   }

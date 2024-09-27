@@ -8,16 +8,16 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 contract HiredHitmanTest is SetupTemplate {
   uint internal nodeID;
-  uint internal aPetID;
-  uint internal bPetID;
-  uint internal cPetID;
+  uint internal aKamiID;
+  uint internal bKamiID;
+  uint internal cKamiID;
 
   function setUp() public override {
     super.setUp();
 
-    aPetID = _mintPet(alice);
-    bPetID = _mintPet(bob);
-    cPetID = _mintPet(charlie);
+    aKamiID = _mintKami(alice);
+    bKamiID = _mintKami(bob);
+    cKamiID = _mintKami(charlie);
     nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
 
     _fastForward(_idleRequirement);
@@ -48,10 +48,10 @@ contract HiredHitmanTest is SetupTemplate {
     _acceptQuest(alice, 1);
 
     // bob places pet, left to farm and die
-    uint256 bProdID = setUpVictim(bPetID);
+    uint256 bProdID = setUpVictim(bKamiID);
 
     // bob places pet, commits a crime
-    snipeVictim(aPetID, bProdID);
+    snipeVictim(aKamiID, bProdID);
 
     // check and complete quest
     assertEq(1, LibData.get(components, alice.id, 0, "LIQUIDATE_TOTAL"), "log mismatch");
@@ -66,10 +66,10 @@ contract HiredHitmanTest is SetupTemplate {
     _acceptQuest(charlie, 1);
 
     // bob places pet, left to farm and die
-    uint256 bProdID = setUpVictim(bPetID);
+    uint256 bProdID = setUpVictim(bKamiID);
 
     // alice places pet, commits a crime
-    snipeVictim(aPetID, bProdID);
+    snipeVictim(aKamiID, bProdID);
 
     // check and complete quest
     assertEq(1, LibData.get(components, bob.id, 0, "LIQUIDATED_VICTIM"), "victim log mismatch");
@@ -92,10 +92,10 @@ contract HiredHitmanTest is SetupTemplate {
     _acceptQuest(alice, 1);
 
     // bob places pet, left to farm and die
-    uint256 bProdID = setUpVictim(bPetID);
+    uint256 bProdID = setUpVictim(bKamiID);
 
     // alice places pet, commits a crime
-    snipeVictim(aPetID, bProdID);
+    snipeVictim(aKamiID, bProdID);
 
     // wrong target check
     assertEq(
@@ -105,9 +105,9 @@ contract HiredHitmanTest is SetupTemplate {
     );
 
     // alice tries again
-    uint256 aPetID2 = _mintPet(alice);
-    uint256 cProdID = setUpVictim(cPetID);
-    snipeVictim(aPetID2, cProdID);
+    uint256 aKamiID2 = _mintKami(alice);
+    uint256 cProdID = setUpVictim(cKamiID);
+    snipeVictim(aKamiID2, cProdID);
 
     // check and complete quest
     assertEq(

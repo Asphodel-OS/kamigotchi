@@ -10,7 +10,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -23,22 +23,22 @@ contract ProductionCollectSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint256 petID = LibHarvest.getPet(components, id);
+    uint256 kamiID = LibHarvest.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    LibPet.assertAccount(components, petID, accID);
-    require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
-    require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");
+    LibKami.assertAccount(components, kamiID, accID);
+    require(LibKami.isHarvesting(components, kamiID), "FarmCollect: pet must be harvesting");
+    require(!LibKami.onCooldown(components, kamiID), "FarmCollect: pet on cooldown");
 
     // health check
-    LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
-    LibPet.assertRoom(components, petID, accID);
+    LibKami.sync(components, kamiID);
+    require(LibKami.isHealthy(components, kamiID), "FarmCollect: pet starving..");
+    LibKami.assertRoom(components, kamiID, accID);
 
     // process collection
     uint256 output = LibHarvest.claim(components, id);
-    LibExperience.inc(components, petID, output);
-    LibPet.setLastActionTs(components, petID, block.timestamp);
+    LibExperience.inc(components, kamiID, output);
+    LibKami.setLastActionTs(components, kamiID, block.timestamp);
 
     // scavenge
     uint256 nodeID = LibHarvest.getNode(components, id);

@@ -21,7 +21,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibBonusOld } from "libraries/LibBonusOld.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibStat } from "libraries/LibStat.sol";
 

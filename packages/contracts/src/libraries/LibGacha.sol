@@ -8,7 +8,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibSort } from "solady/utils/LibSort.sol";
 
-import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
+import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
 
 import { LibCommit } from "libraries/LibCommit.sol";
@@ -47,33 +47,33 @@ library LibGacha {
   // INTERACTIONS
 
   /// @notice deposits pets into the gacha pool
-  /// @dev doesnt use LibPet for batch efficiency
-  function depositPets(IUintComp components, uint256[] memory petIDs) internal {
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+  /// @dev doesnt use LibKami for batch efficiency
+  function depositPets(IUintComp components, uint256[] memory kamiIDs) internal {
+    IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
 
-    for (uint256 i; i < petIDs.length; i++) {
-      ownerComp.set(petIDs[i], GACHA_ID);
-      rerollComp.remove(petIDs[i]);
+    for (uint256 i; i < kamiIDs.length; i++) {
+      ownerComp.set(kamiIDs[i], GACHA_ID);
+      rerollComp.remove(kamiIDs[i]);
     }
   }
 
   /// @notice transfers multiple pets from gacha to accounts
-  /// @dev doesnt use LibPet for batch efficiency
+  /// @dev doesnt use LibKami for batch efficiency
   function withdrawPets(
     IUintComp components,
-    uint256[] memory petIDs,
+    uint256[] memory kamiIDs,
     uint256[] memory commitIDs
   ) internal {
     // update rerolls
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
     uint256[] memory rerolls = LibComp.safeExtractBatchUint256(rerollComp, commitIDs);
-    for (uint256 i; i < petIDs.length; i++) rerolls[i]++;
-    rerollComp.setBatch(petIDs, rerolls);
+    for (uint256 i; i < kamiIDs.length; i++) rerolls[i]++;
+    rerollComp.setBatch(kamiIDs, rerolls);
 
     // update pet ownership
-    IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID)).setBatch(
-      petIDs,
+    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).setBatch(
+      kamiIDs,
       LibCommit.extractHolders(components, commitIDs)
     );
   }
@@ -138,7 +138,7 @@ library LibGacha {
   ) internal returns (uint256[] memory) {
     uint256 count = indices.length;
     uint256[] memory results = new uint256[](count);
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+    IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
 
     for (uint256 i; i < count; i++) {
       uint256 selectedID = ownerComp.getAt(abi.encode(GACHA_ID), indices[i]);
@@ -170,7 +170,7 @@ library LibGacha {
   }
 
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+    IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     return ownerComp.size(abi.encode(GACHA_ID));
   }
 
@@ -199,7 +199,7 @@ library LibGacha {
   // SCRIPTING
 
   function getAllInGacha(IUintComp components) internal view returns (uint256[] memory) {
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+    IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     return ownerComp.getEntitiesWithValue(GACHA_ID);
   }
 }
