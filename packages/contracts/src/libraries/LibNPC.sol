@@ -5,10 +5,11 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { IsNPCComponent, ID as IsNPCCompID } from "components/IsNPCComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 /*
  * LibNPC handles all operations interacting with NPCs
@@ -22,7 +23,7 @@ library LibNPC {
     uint32 roomIndex
   ) internal returns (uint256) {
     uint256 id = genID(index);
-    IsNPCComponent(getAddrByID(components, IsNPCCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "NPC");
     IndexNPCComponent(getAddrByID(components, IndexNPCCompID)).set(id, index);
     setName(components, id, name);
     setRoomIndex(components, id, roomIndex);
@@ -77,8 +78,7 @@ library LibNPC {
   // Return the ID of a Merchant by its index
   function get(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
-    IsNPCComponent comp = IsNPCComponent(getAddrByID(components, IsNPCCompID));
-    return comp.has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "NPC") ? id : 0;
   }
 
   /////////////////

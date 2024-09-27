@@ -51,8 +51,8 @@ library LibFlag {
   ) internal returns (uint256 id) {
     id = genID(parentID, flagType);
     _set(components, id, true);
-    getCompByID(components, IdHolderCompID).setIfEmpty(id, parentID);
-    getCompByID(components, TypeCompID).setIfEmpty(id, flagType);
+    getCompByID(components, IdHolderCompID).checkAndSet(id, parentID);
+    getCompByID(components, TypeCompID).checkAndSet(id, flagType);
   }
 
   /// @notice sets a flag, with ID already generated

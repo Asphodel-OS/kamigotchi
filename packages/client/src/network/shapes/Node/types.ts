@@ -1,7 +1,6 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
   HasValue,
   World,
   getComponentValue,
@@ -44,7 +43,7 @@ export const getNode = (
   const {
     Affinity,
     Description,
-    IsProduction,
+    EntityType,
     RoomIndex,
     Name,
     NodeID,
@@ -77,7 +76,7 @@ export const getNode = (
     // get list of productions on this node
     const productionEntityIndices = Array.from(
       runQuery([
-        Has(IsProduction),
+        HasValue(EntityType, { value: 'HARVEST' }),
         HasValue(NodeID, { value: node.id }),
         HasValue(State, { value: 'ACTIVE' }),
       ])

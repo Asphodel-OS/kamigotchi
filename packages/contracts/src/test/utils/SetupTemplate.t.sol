@@ -12,6 +12,8 @@ import { MUSU_INDEX } from "libraries/LibInventory.sol";
 import "./TestSetupImports.sol";
 import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
 
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
   using SafeCastLib for int32;

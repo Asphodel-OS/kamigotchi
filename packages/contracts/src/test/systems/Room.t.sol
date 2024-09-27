@@ -24,7 +24,7 @@ contract RoomTest is SetupTemplate {
 
   function testRoomShape() public {
     uint256 roomID = _createRoom("1", Coord(1, 1, 0), 1);
-    assertTrue(_IsRoomComponent.has(roomID));
+    assertTrue(LibEntityType.isShape(components, roomID, "ROOM"));
     assertTrue(_isSameLocation(Coord(1, 1, 0), _locFromIndex(1)));
 
     _createRoom("2", Coord(2, 1, 0), 2);
