@@ -9,7 +9,7 @@ import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "components/types/Stat.sol";
 
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
-import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
+import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
@@ -238,8 +238,8 @@ library LibAccount {
     return AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).get(id);
   }
 
-  function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibData.get(components, id, 0, "PET721_MINT");
+  function getKamisMinted(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LibData.get(components, id, 0, "KAMI721_MINT");
   }
 
   /////////////////
@@ -285,12 +285,13 @@ library LibAccount {
     return (results.length > 0) ? results[0] : 0;
   }
 
-  // Get pets owned
-  function getPetsOwned(
+  // Get kamis owned
+  function getKamisOwned(
     IUintComp components,
     uint256 accID
   ) internal view returns (uint256[] memory) {
-    return IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID)).getEntitiesWithValue(accID);
+    return
+      IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).getEntitiesWithValue(accID);
   }
 
   //////////////////
@@ -302,30 +303,30 @@ library LibAccount {
     return uint32(total);
   }
 
-  function logIncPetsMinted(
+  function logIncKamisMinted(
     IWorld world,
     IUintComp components,
     uint256 accID,
     uint256 count
   ) internal {
-    LibData.inc(components, accID, 0, "PET721_MINT", count);
+    LibData.inc(components, accID, 0, "KAMI721_MINT", count);
   }
 
-  function logIncPetsRerolled(
+  function logIncKamisRerolled(
     IWorld world,
     IUintComp components,
     uint256 accID,
     uint256 count
   ) internal {
-    LibData.inc(components, accID, 0, "PET_REROLL", count);
+    LibData.inc(components, accID, 0, "KAMI_REROLL", count);
   }
 
-  function logIncPetsStaked(
+  function logIncKamisStaked(
     IWorld world,
     IUintComp components,
     uint256 accID,
     uint256 count
   ) internal {
-    LibData.inc(components, accID, 0, "PET_STAKE", count);
+    LibData.inc(components, accID, 0, "KAMI_STAKE", count);
   }
 }

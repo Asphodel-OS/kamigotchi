@@ -16,7 +16,7 @@ pragma solidity ^0.8.0;
 // //
 // // We'll also want to check for proper kami initial values
 // // - IsPetComponent
-// // - IndexPetComponent
+// // - IndexKamiComponent
 // // - setAccount
 // // - setMediaURI
 // // - setState
@@ -25,7 +25,7 @@ pragma solidity ^0.8.0;
 // // Best not to rely on SetupTemplate Functions for this. There, we'll want to
 // // enable free mints (through config) for ease of use in testing.
 
-// contract Pet721MintTest is SetupTemplate {
+// contract Kami721MintTest is SetupTemplate {
 //   uint constant mintPrice = 1e18;
 
 //   function setUp() public override {
@@ -49,29 +49,29 @@ pragma solidity ^0.8.0;
 
 //   function _assertOwnerInGame(uint tokenID, address addr) internal {
 //     /*
-//       1) Account owner is EOA, Token owner is Pet721
-//       2) State is not 721_EXTERNAL (LibPet.isInWorld)
+//       1) Account owner is EOA, Token owner is Kami721
+//       2) State is not 721_EXTERNAL (LibKami.isInWorld)
 //       3) Has an owner (checked implicitly in 1)
 //     */
-//     uint entityID = LibPet.getByIndex(components, tokenID);
+//     uint entityID = LibKami.getByIndex(components, tokenID);
 //     assertEq(
 //       addr,
-//       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
+//       address(uint160((LibAccount.getOwner(components, LibKami.getAccount(components, entityID)))))
 //     );
-//     assertEq(_Pet721.ownerOf(tokenID), address(_Pet721));
-//     assertTrue(LibPet.isInWorld(components, entityID));
+//     assertEq(_Kami721.ownerOf(tokenID), address(_Kami721));
+//     assertTrue(LibKami.isInWorld(components, entityID));
 //   }
 
 //   function _assertOwnerOutGame(uint tokenID, address addr) internal {
 //     /*
 //       1) Owned by addr
-//       2) State is  721_EXTERNAL (LibPet.isInWorld)
+//       2) State is  721_EXTERNAL (LibKami.isInWorld)
 //       3) Has no Account
 //     */
-//     uint entityID = LibPet.getByIndex(components, tokenID);
-//     assertEq(_Pet721.ownerOf(tokenID), addr);
-//     assertEq(LibPet.getAccount(components, entityID), 0);
-//     assertTrue(!LibPet.isInWorld(components, entityID));
+//     uint entityID = LibKami.getByIndex(components, tokenID);
+//     assertEq(_Kami721.ownerOf(tokenID), addr);
+//     assertEq(LibKami.getAccount(components, entityID), 0);
+//     assertTrue(!LibKami.isInWorld(components, entityID));
 //   }
 
 //   // converts ERC20 decimals (18) to game decimals (0)
@@ -107,32 +107,32 @@ pragma solidity ^0.8.0;
 
 //     if (num721 == 0) {
 //       vm.prank(owner);
-//       vm.expectRevert("Pet721Mint: must be > 0");
-//       _Pet721MintSystem.executeTyped(num721);
+//       vm.expectRevert("Kami721Mint: must be > 0");
+//       _Kami721MintSystem.executeTyped(num721);
 //       return;
 //     } else if (num20 < num721) {
 //       vm.prank(owner);
 //       // evm underflows on this revert
 //       vm.expectRevert();
-//       _Pet721MintSystem.executeTyped(num721);
+//       _Kami721MintSystem.executeTyped(num721);
 //     } else {
 //       vm.prank(owner);
-//       _Pet721MintSystem.executeTyped(num721);
+//       _Kami721MintSystem.executeTyped(num721);
 
 //       assertEq(_tokenToGameDP(_Mint20.balanceOf(owner)), num20 - num721);
-//       assertEq(_Pet721.balanceOf(address(_Pet721)), num721); // minted in game
+//       assertEq(_Kami721.balanceOf(address(_Kami721)), num721); // minted in game
 //     }
 //   }
 
 //   function testMintSingleGeneric() public {
-//     _mintPet(0);
+//     _mintKami(0);
 //     _assertOwnerInGame(1, _getOwner(0));
 //   }
 
 //   function testMintMultiple() public {
-//     _mintPet(0);
-//     _mintPet(0);
-//     _mintPet(0);
+//     _mintKami(0);
+//     _mintKami(0);
+//     _mintKami(0);
 
 //     _assertOwnerInGame(1, _getOwner(0));
 //     _assertOwnerInGame(2, _getOwner(0));
@@ -143,6 +143,6 @@ pragma solidity ^0.8.0;
 //     vm.prank(_getOwner(0));
 //     // evm underflows on this revert
 //     vm.expectRevert();
-//     _Pet721MintSystem.executeTyped(1);
+//     _Kami721MintSystem.executeTyped(1);
 //   }
 // }

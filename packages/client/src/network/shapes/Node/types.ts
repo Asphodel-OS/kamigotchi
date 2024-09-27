@@ -49,7 +49,7 @@ export const getNode = (
     Name,
     NodeID,
     NodeIndex,
-    PetID,
+    KamiID,
     State,
     Type,
   } = components;
@@ -86,7 +86,7 @@ export const getNode = (
     // get list of kamis from list of productions
     for (let i = 0; i < productionEntityIndices.length; i++) {
       const kamiID = formatEntityID(
-        getComponentValue(PetID, productionEntityIndices[i])?.value ?? ''
+        getComponentValue(KamiID, productionEntityIndices[i])?.value ?? ''
       );
       const kamiEntityIndex = world.entityToIndex.get(kamiID);
       if (kamiEntityIndex) {

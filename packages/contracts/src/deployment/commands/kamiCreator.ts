@@ -73,7 +73,7 @@ const run = async () => {
   const signer = await getSigner(mode);
 
   const restoreSystem = new ethers.Contract(
-    await getSystemAddr(mode, 'system.Pet721.create'),
+    await getSystemAddr(mode, 'system.Kami721.create'),
     abi,
     signer
   );

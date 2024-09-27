@@ -23,7 +23,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
@@ -71,11 +71,11 @@ library LibKill {
   // this block and that the source can attack the target.
   function isLiquidatableBy(
     IUintComp components,
-    uint256 targetPetID,
-    uint256 sourcePetID
+    uint256 targetKamiID,
+    uint256 sourceKamiID
   ) public view returns (bool) {
-    uint256 currHealth = (LibStat.getHealth(components, targetPetID).sync).toUint256();
-    uint256 threshold = calcThreshold(components, sourcePetID, targetPetID);
+    uint256 currHealth = (LibStat.getHealth(components, targetKamiID).sync).toUint256();
+    uint256 threshold = calcThreshold(components, sourceKamiID, targetKamiID);
     return threshold > currHealth;
   }
 
@@ -91,8 +91,8 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_ANIMOSITY");
 
-    uint256 sourceViolence = LibPet.calcTotalViolence(components, sourceID).toUint256();
-    uint256 targetHarmony = LibPet.calcTotalHarmony(components, targetID).toUint256();
+    uint256 sourceViolence = LibKami.calcTotalViolence(components, sourceID).toUint256();
+    uint256 targetHarmony = LibKami.calcTotalHarmony(components, targetID).toUint256();
     int256 imbalance = ((1e18 * sourceViolence) / targetHarmony).toInt256();
     uint256 base = Gaussian.cdf(LibFPMath.lnWad(imbalance)).toUint256();
     uint256 ratio = config[2]; // core animosity baseline
@@ -130,8 +130,8 @@ library LibKill {
 
     // sum the applied shift with the base efficacy value to get the final value
     int256 efficacy = base.toInt256();
-    string memory targetAff = LibPet.getAffinities(components, targetID)[0];
-    string memory sourceAff = LibPet.getAffinities(components, sourceID)[1];
+    string memory targetAff = LibKami.getAffinities(components, targetID)[0];
+    string memory sourceAff = LibKami.getAffinities(components, sourceID)[1];
     efficacy += LibAffinity.calcEfficacyShift(
       LibAffinity.getAttackEffectiveness(sourceAff, targetAff),
       baseEfficacyShifts,
@@ -161,7 +161,7 @@ library LibKill {
     int256 postShiftVal = int(base * ratio) + shift;
     if (postShiftVal < 0) return 0;
 
-    uint256 totalHealth = LibPet.calcTotalHealth(components, targetID).toUint256();
+    uint256 totalHealth = LibKami.calcTotalHealth(components, targetID).toUint256();
     uint256 precision = 10 ** (ANIMOSITY_PREC + config[3] + config[7]);
     return (uint(postShiftVal) * totalHealth) / precision;
   }
@@ -173,8 +173,8 @@ library LibKill {
     uint256 targetID
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
-    uint256 violence1 = LibPet.calcTotalViolence(components, sourceID).toUint256();
-    uint256 violence2 = LibPet.calcTotalViolence(components, targetID).toUint256();
+    uint256 violence1 = LibKami.calcTotalViolence(components, sourceID).toUint256();
+    uint256 violence2 = LibKami.calcTotalViolence(components, targetID).toUint256();
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
     return ((violence1 + violence2) * ratio) / precision;
@@ -189,7 +189,7 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
     int256 ratioBonus = LibBonusOld.getRaw(components, id, "DEF_SALVAGE_RATIO");
-    uint256 power = LibPet.calcTotalPower(components, id).toUint256();
+    uint256 power = LibKami.calcTotalPower(components, id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);
@@ -205,7 +205,7 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
     int256 ratioBonus = LibBonusOld.getRaw(components, id, "ATK_SPOILS_RATIO");
-    uint256 power = LibPet.calcTotalPower(components, id).toUint256();
+    uint256 power = LibKami.calcTotalPower(components, id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);
