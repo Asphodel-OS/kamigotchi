@@ -32,7 +32,7 @@ contract GachaTest is SetupTemplate {
     address owner = _owners[0];
 
     vm.roll(++_currBlock);
-    _giveMint20(0, 1);
+    _giveGachaTicket(alice, 1);
     vm.prank(owner);
     uint256 commitID = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]))[0];
     _assertCommit(commitID, 0, _currBlock, 0);
@@ -132,7 +132,7 @@ contract GachaTest is SetupTemplate {
 
     // minting first pet
     vm.roll(++_currBlock);
-    _giveMint20(0, 1);
+    _giveGachaTicket(alice, 1);
     vm.prank(owner);
     uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]));
     vm.roll(++_currBlock);

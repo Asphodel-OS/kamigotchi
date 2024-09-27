@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { parseToInitCon, readFile, toRevise } from './utils';
+import { GACHA_TICKET_INDEX, parseToInitCon, readFile, toRevise } from './utils';
 
 export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
   const questCSV = await readFile('quests/quests.csv');
@@ -39,7 +39,7 @@ export async function initLocalQuests(api: AdminAPI) {
     'Was it really worth it?',
     0
   );
-  api.registry.quest.add.reward(1000000, 'MINT20', 0, [], [], 111);
+  api.registry.quest.add.reward(1000000, 'ITEM', GACHA_TICKET_INDEX, [], [], 111); // 111 tickets
 }
 
 export async function deleteQuests(api: AdminAPI, indices: number[]) {

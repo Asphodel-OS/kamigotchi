@@ -91,7 +91,6 @@
     { "comp": "NameComponent", "name": "Name", "type": "string" },
     { "comp": "PowerComponent", "name": "Power", "type": "Stat" },
     { "comp": "ProxyPermissionsERC721Component", "name": "ProxyPermissionsERC721", "type": "bool" },
-    { "comp": "ProxyPermissionsMint20Component", "name": "ProxyPermissionsMint20", "type": "bool" },
     { "comp": "RarityComponent", "name": "Rarity", "type": "uint256" },
     { "comp": "RateComponent", "name": "Rate", "type": "uint256" },
     { "comp": "RerollComponent", "name": "Reroll", "type": "uint256" },
@@ -497,7 +496,6 @@
         "IdHolderComponent",
         "RerollComponent",
         "TimeLastComponent",
-        "ProxyPermissionsMint20Component",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -766,7 +764,6 @@
     "LibItem",
     "LibKill",
     "LibListing",
-    "LibMint20",
     "LibNode",
     "LibNPC",
     "LibKami721",

@@ -5,6 +5,7 @@ import { BigNumberish, utils } from 'ethers';
 // CONSTANTS
 
 export const MUSU_INDEX = 1;
+export const GACHA_TICKET_INDEX = 2;
 
 ///////////////
 // GENERAL
@@ -106,12 +107,13 @@ const parseToLogicType = (str: string): string => {
 
 const parseToConType = (str: string): string => {
   if (str === 'GOAL') return 'COMPLETE_COMP';
-  else return str.replace('COIN', 'ITEM');
+  else return str.replace(/COIN|MINT20/g, 'ITEM');
 };
 
 const parseToConIndex = (type: string, index: number): number => {
   // coins are items, use MUSU index
   if (type.includes('COIN')) return MUSU_INDEX;
+  else if (type.includes('MINT20')) return GACHA_TICKET_INDEX;
   else if (type === 'GOAL') return 0;
   else return index;
 };
