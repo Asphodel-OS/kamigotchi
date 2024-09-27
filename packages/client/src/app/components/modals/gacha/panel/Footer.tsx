@@ -1,6 +1,6 @@
 import { Pairing } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
-import { GachaTicket } from 'network/shapes/utils';
+import { ItemImages } from 'assets/images/items';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
@@ -45,9 +45,9 @@ export const Footer = (props: Props) => {
     <Container>
       <Overlay right={0.75} top={-2.4}>
         <Pairing
-          icon={GachaTicket.image}
+          icon={ItemImages.gacha_ticket}
           text={balance.toFixed(1)}
-          tooltip={[GachaTicket.name]}
+          tooltip={['Gacha Ticket']}
           reverse
         />
       </Overlay>
