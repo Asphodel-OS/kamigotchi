@@ -6,12 +6,15 @@ import { ISystem } from "solecs/interfaces/ISystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { Uint32Component } from "components/base/Uint32Component.sol";
+import { StringComponent } from "components/base/StringComponent.sol";
+
 // import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
 
 import "forge-std/Script.sol";
 
 contract SystemCall is Script {
-  mapping(uint256 => address) public systemAddrs;
+  mapping(uint256 => address) public worldAddrs; // for both components and systems
 
   IWorld internal world;
   IUintComp internal systems;
@@ -35,15 +38,43 @@ contract SystemCall is Script {
     return _getSys(systemID).execute(args);
   }
 
+  function _getUintComp(string memory id) public returns (IUintComp) {
+    return IUintComp(_getCompAddr(id));
+  }
+
+  function _getUint32Comp(string memory id) public returns (Uint32Component) {
+    return Uint32Component(_getCompAddr(id));
+  }
+
+  function _getStringComp(string memory id) public returns (StringComponent) {
+    return StringComponent(_getCompAddr(id));
+  }
+
   function _getSys(uint256 systemID) internal returns (ISystem) {
     return ISystem(_getSysAddr(systemID));
   }
 
+  function _getSys(string memory systemID) internal returns (ISystem) {
+    return ISystem(_getSysAddr(systemID));
+  }
+
+  function _getCompAddr(uint256 componentID) internal returns (address addr) {
+    addr = worldAddrs[componentID];
+    if (addr == address(0)) {
+      addr = getAddrByID(components, componentID);
+      worldAddrs[componentID] = addr;
+    }
+  }
+
+  function _getCompAddr(string memory componentID) internal returns (address addr) {
+    return _getCompAddr(uint256(keccak256(abi.encodePacked(componentID))));
+  }
+
   function _getSysAddr(uint256 systemID) internal returns (address addr) {
-    addr = systemAddrs[systemID];
+    addr = worldAddrs[systemID];
     if (addr == address(0)) {
       addr = getAddrByID(systems, systemID);
-      systemAddrs[systemID] = addr;
+      worldAddrs[systemID] = addr;
     }
   }
 

@@ -213,7 +213,7 @@ export function registerGachaModal() {
         actions!.add({
           id: actionID,
           action: 'KamiReveal',
-          params: [commits.length],
+          params: commits,
           description: `Revealing ${commits.length} Gacha rolls`,
           execute: async () => {
             return api.player.mint.reveal(toReveal);
