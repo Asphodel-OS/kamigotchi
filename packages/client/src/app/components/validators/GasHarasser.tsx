@@ -32,7 +32,7 @@ export function registerGasHarasser() {
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators, toggleModals } = useVisibility();
 
-      const fullGas = 0.0001; // hard coded bc js floating points are retarded
+      const fullGas = GasConstants.Full; // js floating points are retarded
       const [value, setValue] = useState(fullGas);
 
       /////////////////
