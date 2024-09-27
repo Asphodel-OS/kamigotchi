@@ -122,7 +122,6 @@ export type { ProductionStartSystem } from "./ProductionStartSystem";
 export type { ProductionStopSystem } from "./ProductionStopSystem";
 export type { PrototypeTagComponent } from "./PrototypeTagComponent";
 export type { ProxyPermissionsERC721Component } from "./ProxyPermissionsERC721Component";
-export type { ProxyPermissionsMint20Component } from "./ProxyPermissionsMint20Component";
 export type { QuestAcceptSystem } from "./QuestAcceptSystem";
 export type { QuestCompleteSystem } from "./QuestCompleteSystem";
 export type { QuestDropSystem } from "./QuestDropSystem";
@@ -311,7 +310,6 @@ export { ProductionStartSystem__factory } from "./factories/ProductionStartSyste
 export { ProductionStopSystem__factory } from "./factories/ProductionStopSystem__factory";
 export { PrototypeTagComponent__factory } from "./factories/PrototypeTagComponent__factory";
 export { ProxyPermissionsERC721Component__factory } from "./factories/ProxyPermissionsERC721Component__factory";
-export { ProxyPermissionsMint20Component__factory } from "./factories/ProxyPermissionsMint20Component__factory";
 export { QuestAcceptSystem__factory } from "./factories/QuestAcceptSystem__factory";
 export { QuestCompleteSystem__factory } from "./factories/QuestCompleteSystem__factory";
 export { QuestDropSystem__factory } from "./factories/QuestDropSystem__factory";

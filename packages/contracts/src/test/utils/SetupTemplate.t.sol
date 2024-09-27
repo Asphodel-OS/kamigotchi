@@ -7,7 +7,7 @@ import { Stat } from "components/types/Stat.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";
-import { MUSU_INDEX } from "libraries/LibInventory.sol";
+import { MUSU_INDEX, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 
 import "./TestSetupImports.sol";
 import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
@@ -38,7 +38,6 @@ abstract contract SetupTemplate is TestSetupImports {
   PlayerAccount charlie;
 
   // Token vars
-  Mint20 _Mint20;
   Kami721 _Kami721;
 
   constructor() MudTest() {}
@@ -69,7 +68,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpTokens() public virtual {
     vm.startPrank(deployer);
     _Kami721 = Kami721(LibDeployTokens.deployKami721(world, components));
-    _Mint20 = Mint20(LibDeployTokens.deployMint20(world, components));
     vm.stopPrank();
   }
 
@@ -218,38 +216,28 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // OWNER ACTIONS
 
-  function _mintKamis(PlayerAccount memory account, uint amt) internal returns (uint[] memory) {
-    return _mintKamis(account.index, amt);
-  }
-
-  // (public) mint and reveal multiple pets for a calling address
-  function _mintKamis(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
-    address owner = _owners[playerIndex];
-
+  function _mintKamis(PlayerAccount memory acc, uint amt) internal returns (uint[] memory) {
     vm.roll(++_currBlock);
-    _giveMint20(playerIndex, amt);
-    vm.prank(owner);
+    _giveGachaTicket(acc, amt);
+    vm.prank(acc.owner);
     uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(amt), (uint256[]));
 
     vm.roll(++_currBlock);
     return _KamiGachaRevealSystem.reveal(commits);
   }
 
-  function _mintKami(PlayerAccount memory account) internal returns (uint) {
-    return _mintKami(account.index);
+  // (public) mint and reveal multiple pets for a calling address
+  function _mintKamis(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
+    return _mintKamis(_accounts[playerIndex], amt);
+  }
+
+  function _mintKami(PlayerAccount memory acc) internal returns (uint) {
+    return _mintKamis(acc, 1)[0];
   }
 
   // (public) mint and reveal a single pet to a specified address
   function _mintKami(uint playerIndex) internal virtual returns (uint) {
-    address owner = _owners[playerIndex];
-
-    vm.roll(++_currBlock);
-    _giveMint20(playerIndex, 1);
-    vm.prank(owner);
-    uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]));
-
-    vm.roll(++_currBlock);
-    return _KamiGachaRevealSystem.reveal(commits)[0];
+    return _mintKami(_accounts[playerIndex]);
   }
 
   /////////////////
@@ -414,9 +402,8 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // ADMIN POWERS
 
-  function _giveMint20(uint playerIndex, uint amount) internal {
-    vm.prank(deployer);
-    _Mint20.adminMint(_getOwner(playerIndex), amount);
+  function _giveGachaTicket(PlayerAccount memory acc, uint amount) internal {
+    _giveItem(acc, GACHA_TICKET_INDEX, amount);
   }
 
   function _giveSkillPoint(uint id, uint amt) internal {

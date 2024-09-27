@@ -100,7 +100,7 @@ pragma solidity ^0.8.0;
 //       _Mint20.adminMint(owner, num20);
 //       return;
 //     } else {
-//       _giveMint20(0, num20);
+//       _giveGachaTicket(0, num20);
 //     }
 
 //     _moveAccount(0, 4); // minting restricted to room 4
