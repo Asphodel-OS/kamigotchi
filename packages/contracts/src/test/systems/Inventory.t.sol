@@ -83,7 +83,7 @@ contract InventoryTest is SetupTemplate {
   // ASSERTIONS
 
   function assertInvExistence(uint256 id, bool exists) public {
-    assertEq(exists, _IsInventoryComponent.has(id));
+    assertEq(exists, LibEntityType.isShape(components, id, "INVENTORY"));
     assertEq(exists, _IndexItemComponent.has(id));
     assertEq(exists, _ValueComponent.has(id));
   }
@@ -94,9 +94,10 @@ contract InventoryTest is SetupTemplate {
   }
 
   function assertInvBalance(uint256 id, uint256 balance) public {
-    if (id == 0 || !_IsInventoryComponent.has(id)) assertInvExistence(id, false);
+    if (id == 0 || !LibEntityType.isShape(components, id, "INVENTORY"))
+      assertInvExistence(id, false);
     else {
-      assertTrue(_IsInventoryComponent.has(id));
+      assertTrue(LibEntityType.isShape(components, id, "INVENTORY"));
       assertEq(_ValueComponent.get(id), balance);
     }
   }

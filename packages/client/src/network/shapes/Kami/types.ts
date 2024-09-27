@@ -101,10 +101,10 @@ export const getKami = (
     BackgroundIndex,
     BodyIndex,
     ColorIndex,
+    EntityType,
     Experience,
     FaceIndex,
     HandIndex,
-    IsProduction,
     IsRegistry,
     LastTime,
     LastActionTime,
@@ -186,7 +186,7 @@ export const getKami = (
   // NOTE: productions should come after traits for harvest calcs to work correctly
   if (options?.production) {
     const productionResults = Array.from(
-      runQuery([Has(IsProduction), HasValue(KamiID, { value: kami.id })])
+      runQuery([HasValue(EntityType, { value: 'HARVEST' }), HasValue(KamiID, { value: kami.id })])
     );
     const productionIndex = productionResults[0];
     if (productionIndex)

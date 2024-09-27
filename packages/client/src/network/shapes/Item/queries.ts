@@ -104,9 +104,9 @@ export const queryInventories = (
   components: Components,
   options: InventoryQueryOptions
 ): Inventory[] => {
-  const { OwnsInventoryID, IsInventory, IsRegistry, ItemIndex } = components;
+  const { EntityType, OwnsInventoryID, IsRegistry, ItemIndex } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsInventory)];
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'INVENTORY' })];
   if (options?.owner) toQuery.push(HasValue(OwnsInventoryID, { value: options.owner }));
   if (options?.itemIndex) toQuery.push(HasValue(ItemIndex, { value: options.itemIndex }));
   if (options?.registry !== undefined) {

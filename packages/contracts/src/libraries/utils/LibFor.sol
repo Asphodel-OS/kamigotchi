@@ -7,12 +7,13 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { BoolComponent } from "components/base/BoolComponent.sol";
-
-import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
-import { ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 
+uint256 constant ForAccount = uint256(keccak256("for.account"));
+uint256 constant ForPet = uint256(keccak256("for.kami"));
+
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 /// @notice LibFor is a library for ForComponent
 library LibFor {
@@ -27,7 +28,11 @@ library LibFor {
     uint256 targetID,
     uint256 for_
   ) internal view returns (bool) {
-    return BoolComponent(getAddrByID(components, for_)).has(targetID);
+    // world2: LibFor revamp: remove this, change to string
+    return
+      for_ == ForAccount
+        ? LibEntityType.isShape(components, targetID, "ACCOUNT")
+        : LibEntityType.isShape(components, targetID, "KAMI");
   }
 
   function isTargetFor(
@@ -47,19 +52,19 @@ library LibFor {
   }
 
   function isForAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return isFor(components, id, IsAccountCompID);
+    return isFor(components, id, ForAccount);
   }
 
   function isForPet(IUintComp components, uint256 id) internal view returns (bool) {
-    return isFor(components, id, IsPetCompID);
+    return isFor(components, id, ForPet);
   }
 
   function isAccount(uint256 value) internal pure returns (bool) {
-    return value == IsAccountCompID;
+    return value == ForAccount;
   }
 
   function isPet(uint256 value) internal pure returns (bool) {
-    return value == IsPetCompID;
+    return value == ForPet;
   }
 
   /////////////////
@@ -115,8 +120,8 @@ library LibFor {
     IUintComp components,
     string memory for_
   ) internal view returns (uint256 value) {
-    if (for_.eq("KAMI")) value = IsPetCompID;
-    else if (for_.eq("ACCOUNT")) value = IsAccountCompID;
+    if (for_.eq("KAMI")) value = ForPet;
+    else if (for_.eq("ACCOUNT")) value = ForAccount;
     else revert("LibFor: invalid type");
   }
 }

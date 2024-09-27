@@ -1,7 +1,6 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
   HasValue,
   World,
   getComponentValue,
@@ -34,13 +33,15 @@ export const getNPC = (world: World, components: Components, entityIndex: Entity
 
 // the Merchant Index here is actually an NPCIndex
 export const getNPCByIndex = (world: World, components: Components, index: number) => {
-  const { IsNPC, NPCIndex } = components;
-  const entityIndex = Array.from(runQuery([Has(IsNPC), HasValue(NPCIndex, { value: index })]))[0];
+  const { EntityType, NPCIndex } = components;
+  const entityIndex = Array.from(
+    runQuery([HasValue(EntityType, { value: 'NPC' }), HasValue(NPCIndex, { value: index })])
+  )[0];
   return getNPC(world, components, entityIndex);
 };
 
 export const getAllNPCs = (world: World, components: Components) => {
-  const { IsNPC } = components;
-  const entityIndices = Array.from(runQuery([Has(IsNPC)]));
+  const { EntityType } = components;
+  const entityIndices = Array.from(runQuery([HasValue(EntityType, { value: 'NPC' })]));
   return entityIndices.map((entityIndex) => getNPC(world, components, entityIndex));
 };
