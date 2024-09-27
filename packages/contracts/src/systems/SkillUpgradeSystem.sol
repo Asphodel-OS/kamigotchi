@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
@@ -35,9 +35,9 @@ contract SkillUpgradeSystem is System {
     if (LibFor.isAccount(forEntity)) {
       require(accID == holderID, "SkillUpgrade: not ur account");
     } else if (LibFor.isPet(forEntity)) {
-      require(accID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
-      require(LibPet.isResting(components, holderID), "SkillUpgrade: pet not resting");
-      LibPet.sync(components, holderID);
+      require(accID == LibKami.getAccount(components, holderID), "SkillUpgrade: not ur pet");
+      require(LibKami.isResting(components, holderID), "SkillUpgrade: pet not resting");
+      LibKami.sync(components, holderID);
     }
 
     // points are decremented when checking prerequisites

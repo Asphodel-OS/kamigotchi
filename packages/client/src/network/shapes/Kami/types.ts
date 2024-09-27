@@ -79,12 +79,12 @@ export const getBaseKami = (
   components: Components,
   entityIndex: EntityIndex
 ): BaseKami => {
-  const { PetIndex, Name, MediaURI } = components;
+  const { KamiIndex, Name, MediaURI } = components;
   return {
     ObjectType: 'KAMI',
     entityIndex,
     id: world.entities[entityIndex],
-    index: getComponentValue(PetIndex, entityIndex)?.value as number,
+    index: getComponentValue(KamiIndex, entityIndex)?.value as number,
     name: getComponentValue(Name, entityIndex)?.value as string,
     image: getComponentValue(MediaURI, entityIndex)?.value as string,
   };
@@ -110,7 +110,7 @@ export const getKami = (
     LastActionTime,
     Level,
     MediaURI,
-    PetID,
+    KamiID,
     Reroll,
     SkillPoint,
     StartTime,
@@ -186,7 +186,7 @@ export const getKami = (
   // NOTE: productions should come after traits for harvest calcs to work correctly
   if (options?.production) {
     const productionResults = Array.from(
-      runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
+      runQuery([Has(IsProduction), HasValue(KamiID, { value: kami.id })])
     );
     const productionIndex = productionResults[0];
     if (productionIndex)

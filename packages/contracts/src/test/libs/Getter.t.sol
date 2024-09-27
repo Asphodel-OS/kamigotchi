@@ -76,13 +76,13 @@ contract LibGetterTest is SetupTemplate {
   function testGetNumKamis(uint256 amt) public {
     vm.assume(amt < 100);
 
-    if (amt > 0) _mintPets(defaultAccIndex, amt);
+    if (amt > 0) _mintKamis(defaultAccIndex, amt);
 
     assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI", 0), amt);
   }
 
   function testGetKamiHighestLevel() public {
-    uint256[] memory kamis = _mintPets(defaultAccIndex, 25);
+    uint256[] memory kamis = _mintKamis(defaultAccIndex, 25);
     vm.startPrank(deployer);
     LibExperience.setLevel(components, kamis[0], 100);
     LibExperience.setLevel(components, kamis[1], 101);

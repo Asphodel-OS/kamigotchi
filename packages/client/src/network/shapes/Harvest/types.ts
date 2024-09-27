@@ -34,7 +34,7 @@ export const getHarvest = (
   options?: HarvestOptions,
   kami?: Kami
 ): Harvest => {
-  const { NodeID, PetID, State, LastTime, ResetTime, StartTime } = components;
+  const { NodeID, KamiID, State, LastTime, ResetTime, StartTime } = components;
   let production: Harvest = {
     id: world.entities[index],
     rate: 0,
@@ -63,7 +63,7 @@ export const getHarvest = (
   // retrieve the kami if it's not passed in
   // NOTE: rate calcs only work if the node is set
   if (!kami) {
-    const kamiID = formatEntityID(getComponentValue(PetID, index)?.value ?? '');
+    const kamiID = formatEntityID(getComponentValue(KamiID, index)?.value ?? '');
     const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
     kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
   }
