@@ -37,7 +37,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // Token vars
   Mint20 _Mint20;
-  Pet721 _Pet721;
+  Kami721 _Kami721;
 
   constructor() MudTest() {}
 
@@ -66,7 +66,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUpTokens() public virtual {
     vm.startPrank(deployer);
-    _Pet721 = Pet721(LibDeployTokens.deployPet721(world, components));
+    _Kami721 = Kami721(LibDeployTokens.deployKami721(world, components));
     _Mint20 = Mint20(LibDeployTokens.deployMint20(world, components));
     vm.stopPrank();
   }
@@ -216,38 +216,38 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // OWNER ACTIONS
 
-  function _mintPets(PlayerAccount memory account, uint amt) internal returns (uint[] memory) {
-    return _mintPets(account.index, amt);
+  function _mintKamis(PlayerAccount memory account, uint amt) internal returns (uint[] memory) {
+    return _mintKamis(account.index, amt);
   }
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
+  function _mintKamis(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
     address owner = _owners[playerIndex];
 
     vm.roll(++_currBlock);
     _giveMint20(playerIndex, amt);
     vm.prank(owner);
-    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(amt), (uint256[]));
+    uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(amt), (uint256[]));
 
     vm.roll(++_currBlock);
-    return _PetGachaRevealSystem.reveal(commits);
+    return _KamiGachaRevealSystem.reveal(commits);
   }
 
-  function _mintPet(PlayerAccount memory account) internal returns (uint) {
-    return _mintPet(account.index);
+  function _mintKami(PlayerAccount memory account) internal returns (uint) {
+    return _mintKami(account.index);
   }
 
   // (public) mint and reveal a single pet to a specified address
-  function _mintPet(uint playerIndex) internal virtual returns (uint) {
+  function _mintKami(uint playerIndex) internal virtual returns (uint) {
     address owner = _owners[playerIndex];
 
     vm.roll(++_currBlock);
     _giveMint20(playerIndex, 1);
     vm.prank(owner);
-    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
+    uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]));
 
     vm.roll(++_currBlock);
-    return _PetGachaRevealSystem.reveal(commits)[0];
+    return _KamiGachaRevealSystem.reveal(commits)[0];
   }
 
   /////////////////
@@ -291,40 +291,40 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   // easy function for getting the proper inputs to feed a pet
-  function _feedPet(uint petID, uint32 foodIndex) internal {
-    uint accID = LibPet.getAccount(components, petID);
+  function _feedPet(uint kamiID, uint32 foodIndex) internal {
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _PetUseFoodSystem.executeTyped(petID, foodIndex);
+    _KamiUseFoodSystem.executeTyped(kamiID, foodIndex);
   }
 
   // easy function for getting the proper inputs to revive a pet
-  function _revivePet(uint petID, uint32 reviveIndex) internal {
-    uint accID = LibPet.getAccount(components, petID);
+  function _revivePet(uint kamiID, uint32 reviveIndex) internal {
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _PetUseReviveSystem.executeTyped(petID, reviveIndex);
+    _KamiUseReviveSystem.executeTyped(kamiID, reviveIndex);
   }
 
-  function _startProductionByIndex(uint petID, uint32 nodeIndex) internal virtual returns (uint) {
+  function _startProductionByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
-    return _startProduction(petID, nodeID);
+    return _startProduction(kamiID, nodeID);
   }
 
-  function _startProduction(uint petID, uint256 nodeID) internal virtual returns (uint) {
-    uint accID = LibPet.getAccount(components, petID);
+  function _startProduction(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    bytes memory productionID = _ProductionStartSystem.executeTyped(petID, nodeID);
+    bytes memory productionID = _ProductionStartSystem.executeTyped(kamiID, nodeID);
     return abi.decode(productionID, (uint));
   }
 
   function _stopProduction(uint productionID) internal {
-    uint petID = LibHarvest.getPet(components, productionID);
-    uint accID = LibPet.getAccount(components, petID);
+    uint kamiID = LibHarvest.getPet(components, productionID);
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
@@ -332,8 +332,8 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _collectProduction(uint productionID) internal {
-    uint petID = LibHarvest.getPet(components, productionID);
-    uint accID = LibPet.getAccount(components, petID);
+    uint kamiID = LibHarvest.getPet(components, productionID);
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
@@ -341,7 +341,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _liquidateProduction(uint attackerID, uint productionID) internal virtual {
-    uint accID = LibPet.getAccount(components, attackerID);
+    uint accID = LibKami.getAccount(components, attackerID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);

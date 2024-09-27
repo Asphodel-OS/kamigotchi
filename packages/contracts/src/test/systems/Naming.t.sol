@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-import { ROOM as NAMING_ROOM } from "systems/PetNameSystem.sol";
+import { ROOM as NAMING_ROOM } from "systems/KamiNameSystem.sol";
 
 contract NamingTest is SetupTemplate {
   function testNamePet(uint32 index) public {
@@ -12,16 +12,16 @@ contract NamingTest is SetupTemplate {
     _IndexRoomComponent.set(alice.id, NAMING_ROOM);
 
     // get a pet
-    uint256 petID = _mintPet(alice.index);
+    uint256 kamiID = _mintKami(alice.index);
 
     // rename once
     vm.prank(alice.operator);
-    _PetNameSystem.executeTyped(petID, "test");
-    assertEq(LibPet.getName(components, petID), "test");
+    _KamiNameSystem.executeTyped(kamiID, "test");
+    assertEq(LibKami.getName(components, kamiID), "test");
 
     // rename again
     vm.prank(alice.operator);
     vm.expectRevert("PetName: cannot be named");
-    _PetNameSystem.executeTyped(petID, "test2");
+    _KamiNameSystem.executeTyped(kamiID, "test2");
   }
 }

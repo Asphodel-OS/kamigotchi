@@ -11,7 +11,7 @@ contract MurderTest is SetupTemplate {
   uint[] internal _foodRegistryIDs;
   uint[] internal _reviveRegistryIDs;
   uint[] internal _nodeIDs;
-  mapping(uint => uint[]) internal _petIDs;
+  mapping(uint => uint[]) internal _kamiIDs;
 
   function setUp() public override {
     super.setUp();
@@ -46,18 +46,18 @@ contract MurderTest is SetupTemplate {
 
   function testMurderBasic() public {
     // setup
-    uint256 aPetID = _mintPet(alice);
-    uint256 bPetID = _mintPet(bob);
+    uint256 aKamiID = _mintKami(alice);
+    uint256 bKamiID = _mintKami(bob);
     _fastForward(_idleRequirement);
 
     // alice places pet, left to farm and die
-    uint256 aProdID = _startProduction(aPetID, _nodeIDs[0]);
+    uint256 aProdID = _startProduction(aKamiID, _nodeIDs[0]);
     _fastForward(10 hours);
 
     // bob places pet, commits a crime
-    _startProduction(bPetID, _nodeIDs[0]);
+    _startProduction(bKamiID, _nodeIDs[0]);
     _fastForward(_idleRequirement);
-    _liquidateProduction(bPetID, aProdID);
+    _liquidateProduction(bKamiID, aProdID);
   }
 
   // test that the correct account must call the liquidation
@@ -68,26 +68,26 @@ contract MurderTest is SetupTemplate {
     uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
     // create and stock a bunch of accounts with revives and kamis
-    for (uint i = 0; i < numAccounts; i++) _petIDs[i] = _mintPets(i, numPets);
+    for (uint i = 0; i < numAccounts; i++) _kamiIDs[i] = _mintKamis(i, numPets);
     _fastForward(_idleRequirement);
 
     // start harvest on node with other account's kamis, fast forward by idle time requirement
     for (uint i = 0; i < numAccounts; i++) {
-      for (uint j = 0; j < numPets; j++) _startProduction(_petIDs[i][j], nodeID);
+      for (uint j = 0; j < numPets; j++) _startProduction(_kamiIDs[i][j], nodeID);
     }
     _fastForward(_idleRequirement);
 
     // check that we CANNOT liquidate the starved kamis from the wrong account
     for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("pet not urs");
+        vm.expectRevert("kami not urs");
         vm.prank(_getOperator(i));
-        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[0][j]);
+        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[0][j]);
       }
     }
 
     // check that we CAN liquidate starved kamis from the right account
-    for (uint i = 0; i < numPets; i++) _liquidateProduction(_petIDs[0][i], victimProductionIDs[i]);
+    for (uint i = 0; i < numPets; i++) _liquidateProduction(_kamiIDs[0][i], victimProductionIDs[i]);
   }
 
   // test that the player must be in the same room to command liquidations
@@ -98,11 +98,11 @@ contract MurderTest is SetupTemplate {
     uint[] memory productionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
     // create acting account and mint its kamis
-    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+    _kamiIDs[playerIndex] = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
     // start harvest on the right Node
-    for (uint j = 0; j < numPets; j++) _startProduction(_petIDs[playerIndex][j], nodeID);
+    for (uint j = 0; j < numPets; j++) _startProduction(_kamiIDs[playerIndex][j], nodeID);
     _fastForward(_idleRequirement);
 
     // move the Account to room 2
@@ -111,7 +111,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: node too far");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[playerIndex][i]);
+      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // move the Account to room 3
@@ -120,14 +120,14 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: node too far");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[playerIndex][i]);
+      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // move the Account to room 1
     // check that we CAN liquidate
     _moveAccount(playerIndex, 1);
     for (uint i = 0; i < numPets; i++)
-      _liquidateProduction(_petIDs[playerIndex][i], productionIDs[i]);
+      _liquidateProduction(_kamiIDs[playerIndex][i], productionIDs[i]);
   }
 
   // test that the pets must be on the same Node to liquidate one another
@@ -137,7 +137,7 @@ contract MurderTest is SetupTemplate {
     uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, _nodeIDs[0]);
 
     // create acting account and mint its kamis
-    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+    _kamiIDs[playerIndex] = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
     // confirm we CANNOT liquidate from the wrong nodes
@@ -151,14 +151,14 @@ contract MurderTest is SetupTemplate {
 
       // start productions for all pets
       for (uint j = 0; j < numPets; j++)
-        playerProductionIDs[j] = _startProduction(_petIDs[playerIndex][j], _nodeIDs[i]);
+        playerProductionIDs[j] = _startProduction(_kamiIDs[playerIndex][j], _nodeIDs[i]);
       _fastForward(_idleRequirement);
 
       // attempt to liquidate, then stop production
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("FarmLiquidate: target too far");
         vm.prank(_getOperator(playerIndex));
-        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[playerIndex][j]);
+        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
         _stopProduction(playerProductionIDs[j]);
       }
       _fastForward(_idleRequirement);
@@ -170,12 +170,12 @@ contract MurderTest is SetupTemplate {
       _moveAccount(playerIndex, roomIndex);
 
     // start harvest on right Node for second account's kamis
-    for (uint i = 0; i < numPets; i++) _startProduction(_petIDs[playerIndex][i], _nodeIDs[0]);
+    for (uint i = 0; i < numPets; i++) _startProduction(_kamiIDs[playerIndex][i], _nodeIDs[0]);
     _fastForward(_idleRequirement);
 
     // check that we CAN liquidate
     for (uint i = 0; i < numPets; i++)
-      _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
+      _liquidateProduction(_kamiIDs[playerIndex][i], victimProductionIDs[i]);
   }
 
   // test that we cannot unless we meet idle requirements
@@ -187,13 +187,13 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // create acting account and mint its kamis
-    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+    _kamiIDs[playerIndex] = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
     // start harvesting on the same node as our victims
     uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++)
-      playerProductionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
+      playerProductionIDs[i] = _startProduction(_kamiIDs[playerIndex][i], nodeID);
 
     // check that we CANNOT liquidate anytime before the idle requirement is met
     uint numIncrements = 7; // KAMI_STANDARD_COOLDOWN must not be divisible by this number
@@ -203,14 +203,14 @@ contract MurderTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("FarmLiquidate: pet on cooldown");
         vm.prank(_getOperator(playerIndex));
-        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[playerIndex][j]);
+        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
       }
     }
 
     // check that we CAN liquidate after the idle requirement is met
     _fastForward(_idleRequirement % numIncrements);
     for (uint i = 0; i < numPets; i++)
-      _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
+      _liquidateProduction(_kamiIDs[playerIndex][i], victimProductionIDs[i]);
   }
 
   // check that pets can only liquidate when both victim and attacker are HARVESTING
@@ -223,13 +223,13 @@ contract MurderTest is SetupTemplate {
 
     // create acting account and mint its pets
     _stockAccount(playerIndex);
-    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+    _kamiIDs[playerIndex] = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
     // start and stop productions for these pets so they're populated
     uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      playerProductionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
+      playerProductionIDs[i] = _startProduction(_kamiIDs[playerIndex][i], nodeID);
       _fastForward(_idleRequirement);
       _stopProduction(playerProductionIDs[i]);
     }
@@ -237,33 +237,33 @@ contract MurderTest is SetupTemplate {
 
     // create a supporting account
     _stockAccount(supportPlayerIndex);
-    _petIDs[supportPlayerIndex] = _mintPets(supportPlayerIndex, numPets);
+    _kamiIDs[supportPlayerIndex] = _mintKamis(supportPlayerIndex, numPets);
     _fastForward(_idleRequirement);
 
     // check that pets CANNOT liquidate when RESTING
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: pet must be harvesting");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
+      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // start out player's productions and starve their pets
-    for (uint i = 0; i < numPets; i++) _startProduction(_petIDs[playerIndex][i], nodeID);
+    for (uint i = 0; i < numPets; i++) _startProduction(_kamiIDs[playerIndex][i], nodeID);
     _fastForward(100 hours);
 
     // check that pets CANNOT liquidate when Starving
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: pet starving..");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
+      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // kill off our player's pets
     uint[] memory supportProductionIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      supportProductionIDs[i] = _startProduction(_petIDs[supportPlayerIndex][i], nodeID);
+      supportProductionIDs[i] = _startProduction(_kamiIDs[supportPlayerIndex][i], nodeID);
       _fastForward(_idleRequirement);
-      _liquidateProduction(_petIDs[supportPlayerIndex][i], playerProductionIDs[i]);
+      _liquidateProduction(_kamiIDs[supportPlayerIndex][i], playerProductionIDs[i]);
     }
 
     // fast forward as syncHealth resets both pets' last action times during liquidation
@@ -273,7 +273,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: pet must be harvesting");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
+      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // starve out our support player's productions
@@ -281,22 +281,22 @@ contract MurderTest is SetupTemplate {
 
     // revive our pets and start their productions
     for (uint i = 0; i < numPets; i++) {
-      _revivePet(_petIDs[playerIndex][i], 1000); // hardcoded for now
+      _revivePet(_kamiIDs[playerIndex][i], 1000); // hardcoded for now
       _fastForward(_idleRequirement);
-      _startProduction(_petIDs[playerIndex][i], nodeID);
+      _startProduction(_kamiIDs[playerIndex][i], nodeID);
     }
     _fastForward(_idleRequirement);
 
     // check that pets CAN liquidate when HARVESTING
     for (uint i = 0; i < numPets; i++)
-      _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
+      _liquidateProduction(_kamiIDs[playerIndex][i], victimProductionIDs[i]);
     _fastForward(_idleRequirement);
 
     // check that pets CAN can liquidate in succession once idle requirement is met
     for (uint i = 0; i < numPets; i++) {
-      _feedPet(_petIDs[playerIndex][i], 2);
+      _feedPet(_kamiIDs[playerIndex][i], 2);
       _fastForward(_idleRequirement);
-      _liquidateProduction(_petIDs[playerIndex][i], supportProductionIDs[i]);
+      _liquidateProduction(_kamiIDs[playerIndex][i], supportProductionIDs[i]);
     }
   }
 
@@ -308,7 +308,7 @@ contract MurderTest is SetupTemplate {
   //   // create, fund and stock our accounts
   //   for (uint i = 0; i < numPlayers; i++) {
   //     _stockAccount(i);
-  //     _petIDs[i] = _mintPets(i, numPets);
+  //     _kamiIDs[i] = _mintKamis(i, numPets);
   //   }
   //   _fastForward(_idleRequirement);
 
@@ -318,7 +318,7 @@ contract MurderTest is SetupTemplate {
   //     for (uint j = 0; j < numPets; j++) {
   //       nodeID = _nodeIDs[uint(keccak256(abi.encodePacked(i, j))) % _nodeIDs.length];
   //       _moveAccount(i, LibNode.getRoom(components, nodeID));
-  //       _startProduction(_petIDs[i][j], nodeID);
+  //       _startProduction(_kamiIDs[i][j], nodeID);
   //     }
   //   }
 
@@ -339,8 +339,8 @@ contract MurderTest is SetupTemplate {
   //     // set the stage
   //     playerIndex = rand % numPlayers;
   //     petIndex = rand % numPets;
-  //     attackerID = _petIDs[playerIndex][petIndex];
-  //     nodeID = LibHarvest.getNode(components, LibPet.getProduction(components, attackerID));
+  //     attackerID = _kamiIDs[playerIndex][petIndex];
+  //     nodeID = LibHarvest.getNode(components, LibKami.getProduction(components, attackerID));
   //     productionIDs = getAllOnNode(components, nodeID);
   //     productionID = productionIDs[rand % productionIDs.length];
   //     victimID = LibHarvest.getPet(components, productionID);
@@ -410,9 +410,9 @@ contract MurderTest is SetupTemplate {
   // assumes the production is active to simulate a health sync
   function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
     uint victimID = LibHarvest.getPet(components, productionID);
-    uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
+    uint totalHealth = uint(int(LibKami.calcTotalHealth(components, victimID)));
     uint output = LibHarvest.calcBounty(components, productionID);
-    uint drain = LibPet.calcStrain(components, victimID, output);
+    uint drain = LibKami.calcStrain(components, victimID, output);
     uint health = uint(int(LibStat.getHealth(components, victimID).sync));
     health = (health > drain) ? health - drain : 0;
 
@@ -421,8 +421,8 @@ contract MurderTest is SetupTemplate {
   }
 
   // gets the playerIndex of a pet's owner
-  function _getOwnerPlayerIndex(uint petID) internal view returns (uint) {
-    uint accID = LibPet.getAccount(components, petID);
+  function _getOwnerPlayerIndex(uint kamiID) internal view returns (uint) {
+    uint accID = LibKami.getAccount(components, kamiID);
     address owner = LibAccount.getOwner(components, accID);
     for (uint i = 0; i < _owners.length; i++) {
       if (_owners[i] == owner) {
@@ -437,12 +437,12 @@ contract MurderTest is SetupTemplate {
     uint numPets,
     uint nodeID
   ) internal returns (uint[] memory) {
-    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+    _kamiIDs[playerIndex] = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
     uint[] memory productionIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
+      productionIDs[i] = _startProduction(_kamiIDs[playerIndex][i], nodeID);
     }
     _fastForward(100 hours);
     return productionIDs;

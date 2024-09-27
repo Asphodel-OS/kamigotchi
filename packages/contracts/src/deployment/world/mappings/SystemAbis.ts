@@ -33,22 +33,21 @@ import FriendRequestSystem from "../../../../../client/abi/FriendRequestSystem.j
 import GoalClaimSystem from "../../../../../client/abi/GoalClaimSystem.json";
 import GoalContributeSystem from "../../../../../client/abi/GoalContributeSystem.json";
 import ItemBurnSystem from "../../../../../client/abi/ItemBurnSystem.json";
+import Kami721IsInWorldSystem from "../../../../../client/abi/Kami721IsInWorldSystem.json";
+import Kami721MetadataSystem from "../../../../../client/abi/Kami721MetadataSystem.json";
+import Kami721StakeSystem from "../../../../../client/abi/Kami721StakeSystem.json";
+import Kami721UnstakeSystem from "../../../../../client/abi/Kami721UnstakeSystem.json";
+import KamiGachaMintSystem from "../../../../../client/abi/KamiGachaMintSystem.json";
+import KamiGachaRerollSystem from "../../../../../client/abi/KamiGachaRerollSystem.json";
+import KamiGachaRevealSystem from "../../../../../client/abi/KamiGachaRevealSystem.json";
+import KamiLevelSystem from "../../../../../client/abi/KamiLevelSystem.json";
+import KamiNameSystem from "../../../../../client/abi/KamiNameSystem.json";
+import KamiUseFoodSystem from "../../../../../client/abi/KamiUseFoodSystem.json";
+import KamiUseRenamePotionSystem from "../../../../../client/abi/KamiUseRenamePotionSystem.json";
+import KamiUseReviveSystem from "../../../../../client/abi/KamiUseReviveSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
 import LootboxCommitSystem from "../../../../../client/abi/LootboxCommitSystem.json";
-import Pet721IsInWorldSystem from "../../../../../client/abi/Pet721IsInWorldSystem.json";
-import Pet721MetadataSystem from "../../../../../client/abi/Pet721MetadataSystem.json";
-import Pet721StakeSystem from "../../../../../client/abi/Pet721StakeSystem.json";
-import Pet721UnstakeSystem from "../../../../../client/abi/Pet721UnstakeSystem.json";
-import PetGachaMintSystem from "../../../../../client/abi/PetGachaMintSystem.json";
-import PetGachaRerollSystem from "../../../../../client/abi/PetGachaRerollSystem.json";
-import PetGachaRevealSystem from "../../../../../client/abi/PetGachaRevealSystem.json";
-import PetLevelSystem from "../../../../../client/abi/PetLevelSystem.json";
-import PetNameSystem from "../../../../../client/abi/PetNameSystem.json";
-import PetUseFoodSystem from "../../../../../client/abi/PetUseFoodSystem.json";
-import PetUseRenamePotionSystem from "../../../../../client/abi/PetUseRenamePotionSystem.json";
-import PetUseReviveSystem from "../../../../../client/abi/PetUseReviveSystem.json";
-import PetUseTransferrerSystem from "../../../../../client/abi/PetUseTransferrerSystem.json";
 import ProductionCollectSystem from "../../../../../client/abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../../../../../client/abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../../../../../client/abi/ProductionStartSystem.json";
@@ -66,11 +65,11 @@ import TradeConfirmSystem from "../../../../../client/abi/TradeConfirmSystem.jso
 import TradeInitiateSystem from "../../../../../client/abi/TradeInitiateSystem.json";
 
 export const SystemAbis = {
-  "system.Pet721.BatchMint": _721BatchMinterSystem.abi,
+  "system.Kami721.BatchMint": _721BatchMinterSystem.abi,
   "system._Admin.Give": _AdminGiveSystem.abi,
   "system._Auth.Manage.Role": _AuthManageRoleSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
-  "system.Pet721.create": _CreatePetSystem.abi,
+  "system.Kami721.create": _CreatePetSystem.abi,
   "system.faction.registry": _FactionRegistrySystem.abi,
   "system.goal.registry": _GoalRegistrySystem.abi,
   "system.item.registry": _ItemRegistrySystem.abi,
@@ -100,22 +99,21 @@ export const SystemAbis = {
   "system.Goal.Claim": GoalClaimSystem.abi,
   "system.Goal.Contribute": GoalContributeSystem.abi,
   "system.item.burn": ItemBurnSystem.abi,
+  "system.Kami721.IsInWorld": Kami721IsInWorldSystem.abi,
+  "system.Kami721.Metadata": Kami721MetadataSystem.abi,
+  "system.Kami721.Stake": Kami721StakeSystem.abi,
+  "system.Kami721.Unstake": Kami721UnstakeSystem.abi,
+  "system.kami.gacha.Mint": KamiGachaMintSystem.abi,
+  "system.kami.gacha.Reroll": KamiGachaRerollSystem.abi,
+  "system.kami.gacha.Reveal": KamiGachaRevealSystem.abi,
+  "system.kami.level": KamiLevelSystem.abi,
+  "system.kami.name": KamiNameSystem.abi,
+  "system.kami.use.food": KamiUseFoodSystem.abi,
+  "system.kami.use.renamePotion": KamiUseRenamePotionSystem.abi,
+  "system.kami.use.revive": KamiUseReviveSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Lootbox.Commit": LootboxCommitSystem.abi,
-  "system.Pet721.IsInWorld": Pet721IsInWorldSystem.abi,
-  "system.Pet721.Metadata": Pet721MetadataSystem.abi,
-  "system.Pet721.Stake": Pet721StakeSystem.abi,
-  "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
-  "system.Pet.Gacha.Mint": PetGachaMintSystem.abi,
-  "system.Pet.Gacha.Reroll": PetGachaRerollSystem.abi,
-  "system.Pet.Gacha.Reveal": PetGachaRevealSystem.abi,
-  "system.Pet.Level": PetLevelSystem.abi,
-  "system.Pet.Name": PetNameSystem.abi,
-  "system.pet.use.food": PetUseFoodSystem.abi,
-  "system.pet.use.renamePotion": PetUseRenamePotionSystem.abi,
-  "system.pet.use.revive": PetUseReviveSystem.abi,
-  "system.pet.use.transferrer": PetUseTransferrerSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,

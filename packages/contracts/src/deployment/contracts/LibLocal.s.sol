@@ -31,31 +31,31 @@ library LibLocal {
     require(allGachaPets.length > numPets, "not enough pets in gacha");
 
     // set pets to account
-    IDOwnsPetComponent ownerComp = IDOwnsPetComponent(
-      getAddrByID(components, IDOwnsPetComponentID)
+    IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(
+      getAddrByID(components, IDOwnsKamiComponentID)
     );
-    uint256[] memory petIDs = new uint256[](numPets);
+    uint256[] memory kamiIDs = new uint256[](numPets);
     uint256[] memory accIDs = new uint256[](numPets);
     for (uint256 i = 0; i < numPets; i++) {
-      petIDs[i] = allGachaPets[i];
+      kamiIDs[i] = allGachaPets[i];
       accIDs[i] = accID;
     }
-    ownerComp.setBatch(petIDs, accIDs);
+    ownerComp.setBatch(kamiIDs, accIDs);
   }
 
   /// @notice enslave pets into harvesting on node 1
   /// @dev pets will be starving by block.timestamp syncs lol
   function initHarvests(IUint256Component components, IUint256Component systems) internal {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    uint256[] memory petIDs = LibAccount.getPetsOwned(components, accID);
+    uint256[] memory kamiIDs = LibAccount.getKamisOwned(components, accID);
     uint256 nodeID = LibNode.getByIndex(components, 30);
 
     // enslavement
-    for (uint256 i = 0; i < petIDs.length; i++) {
-      uint256 prodID = LibHarvest.create(components, nodeID, petIDs[i]);
+    for (uint256 i = 0; i < kamiIDs.length; i++) {
+      uint256 prodID = LibHarvest.create(components, nodeID, kamiIDs[i]);
       LibHarvest.start(components, prodID);
-      LibPet.setState(components, petIDs[i], "HARVESTING");
-      LibPet.setLastActionTs(components, petIDs[i], block.timestamp);
+      LibKami.setState(components, kamiIDs[i], "HARVESTING");
+      LibKami.setLastActionTs(components, kamiIDs[i], block.timestamp);
     }
   }
 }

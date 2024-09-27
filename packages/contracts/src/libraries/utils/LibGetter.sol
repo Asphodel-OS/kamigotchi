@@ -49,11 +49,11 @@ library LibGetter {
     } else if (_type.eq("LEVEL")) {
       balance = LibExperience.getLevel(components, id);
     } else if (_type.eq("KAMI")) {
-      balance = LibAccount.getPetsOwned(components, id).length;
+      balance = LibAccount.getKamisOwned(components, id).length;
     } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
-      balance = getTopLevel(components, LibAccount.getPetsOwned(components, id));
+      balance = getTopLevel(components, LibAccount.getKamisOwned(components, id));
     } else if (_type.eq("KAMI_LEVEL_QUANTITY")) {
-      balance = getMinLevelAmt(components, LibAccount.getPetsOwned(components, id), index);
+      balance = getMinLevelAmt(components, LibAccount.getKamisOwned(components, id), index);
     } else if (_type.eq("SKILL")) {
       balance = LibSkill.getPointsOf(components, id, index);
     } else if (_type.eq("REPUTATION")) {
