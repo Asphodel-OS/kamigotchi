@@ -8,7 +8,6 @@ import { getFactionByIndex, getReputationDetailsByIndex } from '../Faction';
 import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
-import { GachaTicket } from './EntityTypes';
 
 // base shape of an entity with basic details
 export interface DetailedEntity {
@@ -39,8 +38,6 @@ export const getDescribedEntity = (
     };
   else if (type === 'FACTION') return getFactionByIndex(world, components, index);
   else if (type === 'REPUTATION') return getReputationDetailsByIndex(world, components, index);
-  else if (type === 'MINT20')
-    return GachaTicket; // hardcoded gacha ticket
   else return { ObjectType: type, image: helpIcon, name: type };
 };
 

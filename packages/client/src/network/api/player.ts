@@ -304,7 +304,7 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   //    MINT
 
-  // @dev mint a pet with a mint20 token
+  // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
     return systems['system.kami.gacha.Mint'].executeTyped(amount);
@@ -321,15 +321,6 @@ export function createPlayerAPI(systems: any) {
   function rerollPet(kamiIDs: BigNumberish[], totalCost: BigNumberish) {
     return systems['system.kami.gacha.Reroll'].reroll(kamiIDs, {
       value: totalCost,
-    });
-  }
-
-  // @dev mint mint20 tokens with eth
-  // @param amount  number of tokens to mint
-  // @param cost    cost in ETH
-  function mintToken(amount: BigNumberish, cost: BigNumberish) {
-    return systems['system.Mint20.Mint'].mint(amount, {
-      value: utils.parseEther(cost.toString()),
     });
   }
 
@@ -408,7 +399,6 @@ export function createPlayerAPI(systems: any) {
     },
     mint: {
       mintPet: mintPet,
-      mintToken: mintToken,
       reveal: revealPet,
       reroll: rerollPet,
     },
