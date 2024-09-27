@@ -12,9 +12,7 @@ import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
-import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { ValueSignedComponent, ID as ValueSignedCompID } from "components/ValueSignedComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -26,7 +24,9 @@ import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeCompone
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
+
 import { LibConditional } from "libraries/LibConditional.sol";
 
 /// @notice A registry for Skill related entities
@@ -60,8 +60,8 @@ library LibSkillRegistry {
     string memory media
   ) internal returns (uint256 id) {
     id = genID(skillIndex);
-    setIsRegistry(components, id);
-    setIsSkill(components, id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "SKILL");
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
     setName(components, id, name);
@@ -83,8 +83,8 @@ library LibSkillRegistry {
     id = world.getUniqueEntityId();
     setConditionOwner(components, id, genEffectParentID(skillIndex));
 
-    setIsRegistry(components, id);
-    setIsEffect(components, id);
+    LibEntityType.set(components, id, "EFFECT");
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
     ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).set(id, value);
@@ -101,13 +101,13 @@ library LibSkillRegistry {
     setConditionOwner(components, id, genReqParentID(skillIndex));
     LibConditional.create(components, id, type_, logicType);
 
-    setIsRegistry(components, id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     setSkillIndex(components, id, skillIndex);
   }
 
   function delete_(IUintComp components, uint256 id) internal {
-    unsetIsRegistry(components, id);
-    unsetIsSkill(components, id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
+    LibEntityType.remove(components, id);
     unsetSkillIndex(components, id);
     unsetCost(components, id);
     unsetFor(components, id);
@@ -119,8 +119,8 @@ library LibSkillRegistry {
   }
 
   function deleteEffect(IUintComp components, uint256 id) internal {
-    unsetIsRegistry(components, id);
-    unsetIsEffect(components, id);
+    LibEntityType.remove(components, id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
     unsetSkillIndex(components, id);
     unsetType(components, id);
     unsetSubtype(components, id);
@@ -131,7 +131,7 @@ library LibSkillRegistry {
   }
 
   function deleteRequirement(IUintComp components, uint256 id) internal {
-    unsetIsRegistry(components, id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
     unsetSkillIndex(components, id);
     unsetType(components, id);
     unsetIndex(components, id);
@@ -144,18 +144,6 @@ library LibSkillRegistry {
 
   function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
     IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, ownerID);
-  }
-
-  function setIsEffect(IUintComp components, uint256 id) internal {
-    IsEffectComponent(getAddrByID(components, IsEffectCompID)).set(id);
-  }
-
-  function setIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-  }
-
-  function setIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddrByID(components, IsSkillCompID)).set(id);
   }
 
   function setIndex(IUintComp components, uint256 id, uint32 index) internal {
@@ -214,18 +202,6 @@ library LibSkillRegistry {
 
   function unsetConditionOwner(IUintComp components, uint256 id) internal {
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
-  }
-
-  function unsetIsEffect(IUintComp components, uint256 id) internal {
-    IsEffectComponent(getAddrByID(components, IsEffectCompID)).remove(id);
-  }
-
-  function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
-  }
-
-  function unsetIsSkill(IUintComp components, uint256 id) internal {
-    IsSkillComponent(getAddrByID(components, IsSkillCompID)).remove(id);
   }
 
   function unsetIndex(IUintComp components, uint256 id) internal {
@@ -351,7 +327,7 @@ library LibSkillRegistry {
   // get registry entry by Skill index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
-    return IsSkillComponent(getAddrByID(components, IsSkillCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "SKILL") ? id : 0;
   }
 
   function getEffectsByIndex(

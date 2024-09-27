@@ -4,6 +4,7 @@ import "components/base/BoolBareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.is.kill"));
 
+// todo: world2: refactor skill log
 // identifies an entity as a kill log instance
 contract IsKillComponent is BoolBareComponent {
   constructor(address world) BoolBareComponent(world, ID) {}

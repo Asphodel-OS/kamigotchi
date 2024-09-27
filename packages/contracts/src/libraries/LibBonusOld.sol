@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { ValueSignedComponent as SignedValComp, ID as SignedValCompID } from "components/ValueSignedComponent.sol";
-import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 

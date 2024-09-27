@@ -12,12 +12,13 @@ import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.
 // world2: deprecate IdPet, change to IdHolder of sorts
 import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
-import { IsProductionComponent, ID as IsProdCompID } from "components/IsProductionComponent.sol";
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonusOld } from "libraries/LibBonusOld.sol";
@@ -51,7 +52,7 @@ library LibHarvest {
     uint256 kamiID
   ) internal returns (uint256 id) {
     id = genID(kamiID);
-    IsProductionComponent(getAddrByID(components, IsProdCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "HARVEST");
     IdPetComponent(getAddrByID(components, IdPetCompID)).set(id, kamiID);
     IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(
@@ -280,7 +281,7 @@ library LibHarvest {
   // get a production by a pet. assumed only 1
   function getForKami(IUintComp components, uint256 kamiID) internal view returns (uint256 result) {
     uint256 id = genID(kamiID);
-    return IsProductionComponent(getAddrByID(components, IsProdCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "HARVEST") ? id : 0;
   }
 
   /////////////////////
