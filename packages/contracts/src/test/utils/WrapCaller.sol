@@ -21,6 +21,6 @@ contract WrapCaller {
   }
 
   function petSync(uint256 id) public {
-    LibPet.sync(components, id);
+    LibKami.sync(components, id);
   }
 }

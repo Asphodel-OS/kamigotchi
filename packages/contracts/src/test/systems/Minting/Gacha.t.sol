@@ -34,7 +34,7 @@ contract GachaTest is SetupTemplate {
     vm.roll(++_currBlock);
     _giveMint20(0, 1);
     vm.prank(owner);
-    uint256 commitID = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]))[0];
+    uint256 commitID = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]))[0];
     _assertCommit(commitID, 0, _currBlock, 0);
 
     uint256 newPet = _revealSingle(commitID);
@@ -47,7 +47,7 @@ contract GachaTest is SetupTemplate {
     uint256 numInGacha = 5000;
     _batchMint(numInGacha);
 
-    _mintPet(0);
+    _mintKami(0);
   }
 
   function testSingleReroll() public {
@@ -56,7 +56,7 @@ contract GachaTest is SetupTemplate {
     address owner = _owners[0];
 
     // minting first pet
-    uint256 petUser = _mintPet(0);
+    uint256 petUser = _mintKami(0);
     uint256 petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
 
     // checking pet states
@@ -70,7 +70,7 @@ contract GachaTest is SetupTemplate {
     uint256[] memory reCommits = _reroll(0, cost, petUserArr);
     _assertCommit(reCommits[0], 0, _currBlock, 1);
     vm.roll(++_currBlock);
-    petUser = _PetGachaRevealSystem.reveal(reCommits)[0];
+    petUser = _KamiGachaRevealSystem.reveal(reCommits)[0];
     petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
     _assertOutGacha(petUser, 0, 2);
     _assertInGacha(petPool);
@@ -81,7 +81,7 @@ contract GachaTest is SetupTemplate {
     reCommits = _reroll(0, cost, petUserArr);
     _assertCommit(reCommits[0], 0, _currBlock, 2);
     vm.roll(++_currBlock);
-    petUser = _PetGachaRevealSystem.reveal(reCommits)[0];
+    petUser = _KamiGachaRevealSystem.reveal(reCommits)[0];
     petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
     _assertOutGacha(petUser, 0, 3);
     _assertInGacha(petPool);
@@ -93,7 +93,7 @@ contract GachaTest is SetupTemplate {
     address owner = _owners[0];
 
     // minting first pet
-    uint256[] memory userPets = _mintPets(0, 3);
+    uint256[] memory userPets = _mintKamis(0, 3);
 
     // reroll the first pet, replace it with result
     uint256 cost = _getRerollCost(1);
@@ -101,7 +101,7 @@ contract GachaTest is SetupTemplate {
     petUserArr[0] = userPets[0];
     uint256[] memory reCommits = _reroll(0, cost, petUserArr);
     vm.roll(++_currBlock);
-    userPets[0] = _PetGachaRevealSystem.reveal(reCommits)[0];
+    userPets[0] = _KamiGachaRevealSystem.reveal(reCommits)[0];
     _assertOutGacha(userPets[0], 0, 2);
 
     // reroll first two pets, but fail pricing
@@ -112,13 +112,13 @@ contract GachaTest is SetupTemplate {
     vm.deal(owner, cost);
     vm.prank(owner);
     vm.expectRevert("not enough ETH");
-    _PetGachaRerollSystem.reroll{ value: cost }(petUserArr2);
+    _KamiGachaRerollSystem.reroll{ value: cost }(petUserArr2);
 
     // reroll first two pets, but correct pricing
     cost = _getRerollCost(1) + _getRerollCost(2);
     uint256[] memory reCommits2 = _reroll(0, cost, petUserArr2);
     vm.roll(++_currBlock);
-    uint256[] memory outputs = _PetGachaRevealSystem.reveal(reCommits2);
+    uint256[] memory outputs = _KamiGachaRevealSystem.reveal(reCommits2);
     _assertOutGacha(outputs[0], 0, 3);
     _assertOutGacha(outputs[1], 0, 2);
   }
@@ -134,17 +134,17 @@ contract GachaTest is SetupTemplate {
     vm.roll(++_currBlock);
     _giveMint20(0, 1);
     vm.prank(owner);
-    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
+    uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]));
     vm.roll(++_currBlock);
-    uint256[] memory resultPets = _PetGachaRevealSystem.reveal(commits);
-    counts[LibPet.getIndex(components, resultPets[0]) - 1]++;
+    uint256[] memory resultPets = _KamiGachaRevealSystem.reveal(commits);
+    counts[LibKami.getIndex(components, resultPets[0]) - 1]++;
 
     for (uint256 i = 0; i < 1000; i++) {
       uint256 cost = _getRerollCost(i + 1);
       uint256[] memory reCommits = _reroll(0, cost, resultPets);
       vm.roll(++_currBlock);
-      resultPets[0] = _PetGachaRevealSystem.reveal(reCommits)[0];
-      counts[LibPet.getIndex(components, resultPets[0]) - 1]++;
+      resultPets[0] = _KamiGachaRevealSystem.reveal(reCommits)[0];
+      counts[LibKami.getIndex(components, resultPets[0]) - 1]++;
     }
 
     for (uint256 i = 0; i < length; i++) {
@@ -166,19 +166,19 @@ contract GachaTest is SetupTemplate {
   function _reroll(
     uint256 accountIndex,
     uint256 cost,
-    uint256[] memory petIDs
+    uint256[] memory kamiIDs
   ) internal returns (uint256[] memory results) {
     vm.roll(++_currBlock);
     vm.deal(_owners[accountIndex], cost);
     vm.prank(_owners[accountIndex]);
-    results = _PetGachaRerollSystem.reroll{ value: cost }(petIDs);
+    results = _KamiGachaRerollSystem.reroll{ value: cost }(kamiIDs);
   }
 
   function _revealSingle(uint256 commitID) internal returns (uint256) {
     vm.roll(++_currBlock);
     uint256[] memory commits = new uint256[](1);
     commits[0] = commitID;
-    return _PetGachaRevealSystem.reveal(commits)[0];
+    return _KamiGachaRevealSystem.reveal(commits)[0];
   }
 
   function _getRerollCost(uint256 rerolls) internal view returns (uint256) {
@@ -189,16 +189,16 @@ contract GachaTest is SetupTemplate {
   // ASSERTIONS //
   ////////////////
 
-  function _assertInGacha(uint256 petID) internal {
-    assertEq(_IDOwnsPetComponent.get(petID), GACHA_ID);
-    assertTrue(!_RerollComponent.has(petID));
+  function _assertInGacha(uint256 kamiID) internal {
+    assertEq(_IDOwnsKamiComponent.get(kamiID), GACHA_ID);
+    assertTrue(!_RerollComponent.has(kamiID));
   }
 
-  function _assertOutGacha(uint256 petID, uint256 account, uint256 rerolls) internal {
+  function _assertOutGacha(uint256 kamiID, uint256 account, uint256 rerolls) internal {
     account = _getAccount(account);
-    assertEq(_IDOwnsPetComponent.get(petID), account);
-    assertEq(_RerollComponent.get(petID), rerolls);
-    assertEq(_StateComponent.get(petID), "RESTING");
+    assertEq(_IDOwnsKamiComponent.get(kamiID), account);
+    assertEq(_RerollComponent.get(kamiID), rerolls);
+    assertEq(_StateComponent.get(kamiID), "RESTING");
   }
 
   function _assertCommit(

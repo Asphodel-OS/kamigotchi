@@ -26,7 +26,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -48,11 +48,11 @@ library LibHarvest {
   function create(
     IUintComp components,
     uint256 nodeID,
-    uint256 petID
+    uint256 kamiID
   ) internal returns (uint256 id) {
-    id = genID(petID);
+    id = genID(kamiID);
     IsProductionComponent(getAddrByID(components, IsProdCompID)).set(id); // TODO: change to EntityType
-    IdPetComponent(getAddrByID(components, IdPetCompID)).set(id, petID);
+    IdPetComponent(getAddrByID(components, IdPetCompID)).set(id, kamiID);
     IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(
       id,
@@ -63,8 +63,8 @@ library LibHarvest {
   // claim the existing balance on a Production to the Pet's owner (Account)
   // assume the production is Active
   function claim(IUintComp components, uint256 id) internal returns (uint256) {
-    uint256 petID = getPet(components, id);
-    uint256 accID = LibPet.getAccount(components, petID);
+    uint256 kamiID = getPet(components, id);
+    uint256 accID = LibKami.getAccount(components, kamiID);
 
     uint256 balance = getBalance(components, id);
     LibInventory.transferFor(components, id, accID, MUSU_INDEX, balance);
@@ -97,7 +97,7 @@ library LibHarvest {
       LibInventory.incFor(components, id, MUSU_INDEX, netBounty);
 
       uint256 timeDelta = block.timestamp - getLastTs(components, id);
-      uint256 accID = LibPet.getAccount(components, getPet(components, id));
+      uint256 accID = LibKami.getAccount(components, getPet(components, id));
       setLastTs(components, id, block.timestamp);
     }
   }
@@ -120,9 +120,9 @@ library LibHarvest {
   // Calculate the accrued output of a harvest since the pet's last sync.
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
-    uint256 petID = getPet(components, id);
+    uint256 kamiID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
-    int256 boostBonus = LibBonusOld.getRaw(components, petID, "HARV_BOUNTY_BOOST");
+    int256 boostBonus = LibBonusOld.getRaw(components, kamiID, "HARV_BOUNTY_BOOST");
 
     uint256 base = calcFertility(components, id);
     uint256 nudge = calcIntensity(components, id);
@@ -142,7 +142,7 @@ library LibHarvest {
     uint256 id,
     uint256 base
   ) internal view returns (uint256) {
-    uint256 petID = getPet(components, id);
+    uint256 kamiID = getPet(components, id);
     uint256 nodeID = getNode(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_EFFICACY");
 
@@ -156,14 +156,14 @@ library LibHarvest {
     // pull the bonus efficacy shifts from the pet
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
       base: int(0),
-      up: LibBonusOld.getRaw(components, petID, "HARV_FERTILITY_BOOST"),
+      up: LibBonusOld.getRaw(components, kamiID, "HARV_FERTILITY_BOOST"),
       down: int(0)
     });
 
     // sum each applied shift with the base efficacy value to get the final value
     int256 efficacy = base.toInt256();
     string memory nodeAff = LibNode.getAffinity(components, nodeID);
-    string[] memory petAffs = LibPet.getAffinities(components, petID);
+    string[] memory petAffs = LibKami.getAffinities(components, kamiID);
     for (uint256 i = 0; i < petAffs.length; i++) {
       efficacy += LibAffinity.calcEfficacyShift(
         LibAffinity.getHarvestEffectiveness(petAffs[i], nodeAff),
@@ -177,10 +177,10 @@ library LibHarvest {
 
   // Calculate the rate of harvest, measured in musu/s. Assume active (1e9 precision).
   function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 petID = getPet(components, id);
+    uint256 kamiID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
 
-    uint256 power = LibPet.calcTotalPower(components, petID).toUint256();
+    uint256 power = LibKami.calcTotalPower(components, kamiID).toUint256();
     uint256 ratio = config[2]; // fertility core
     uint256 boost = calcEfficacy(components, id, config[6]);
     uint256 precision = 10 ** (RATE_PREC - (config[3] + config[7]));
@@ -190,14 +190,14 @@ library LibHarvest {
   // Calculate the intensity of a production, measured in musu/s (1e9 precision)
   // NOTE: this is a bit of a hack, with an idiosyncratic use of the violence-scaled nudge
   function calcIntensity(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 petID = getPet(components, id);
+    uint256 kamiID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
 
-    uint256 base = config[0] * LibPet.calcTotalViolence(components, petID).toUint256(); // odd application of nudge slot
+    uint256 base = config[0] * LibKami.calcTotalViolence(components, kamiID).toUint256(); // odd application of nudge slot
     uint256 nudge = calcIntensityDuration(components, id) / 60; // minutes, rounded down
     uint256 ratio = config[2]; // period, in minutes. scaled to accomodate current skill balancing
     uint256 boost = config[6];
-    boost += LibBonusOld.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
+    boost += LibBonusOld.getRaw(components, kamiID, "HARV_INTENSITY_NUDGE").toUint256();
     uint256 precision = 10 ** (RATE_PREC - config[7] + config[3]); // ratio is inverted
     return (precision * (base + nudge) * boost) / (ratio * 3600);
   }
@@ -278,8 +278,8 @@ library LibHarvest {
   // QUERIES
 
   // get a production by a pet. assumed only 1
-  function getForPet(IUintComp components, uint256 petID) internal view returns (uint256 result) {
-    uint256 id = genID(petID);
+  function getForKami(IUintComp components, uint256 kamiID) internal view returns (uint256 result) {
+    uint256 id = genID(kamiID);
     return IsProductionComponent(getAddrByID(components, IsProdCompID)).has(id) ? id : 0;
   }
 
@@ -332,7 +332,7 @@ library LibHarvest {
   /////////////////////
   // UTILS
 
-  function genID(uint256 petID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("production", petID)));
+  function genID(uint256 kamiID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("production", kamiID)));
   }
 }

@@ -4,14 +4,14 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.t.sol";
 
 contract NodeTest is SetupTemplate {
-  uint internal aPetID;
-  uint internal bPetID;
+  uint internal aKamiID;
+  uint internal bKamiID;
 
   function setUp() public override {
     super.setUp();
 
-    aPetID = _mintPet(alice);
-    bPetID = _mintPet(bob);
+    aKamiID = _mintKami(alice);
+    bKamiID = _mintKami(bob);
 
     _fastForward(_idleRequirement);
   }
@@ -32,7 +32,7 @@ contract NodeTest is SetupTemplate {
     vm.stopPrank();
 
     // try starting basic production
-    _startProduction(aPetID, nodeID);
+    _startProduction(aKamiID, nodeID);
 
     // delete all
     vm.prank(deployer);
@@ -46,17 +46,17 @@ contract NodeTest is SetupTemplate {
     _createNodeRequirement(nodeIndex, "KAMI", "LEVEL", "CURR_MIN", 0, 2);
 
     // cannot add level 1 pet to node
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
+    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aPetID, nodeID);
+    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up
-    _setLevel(aPetID, 2);
+    _setLevel(aKamiID, 2);
 
     // can now add level 2 pet to node
-    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
-    _startProduction(aPetID, nodeID);
+    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    _startProduction(aKamiID, nodeID);
   }
 
   function testNodeRequirementsAccount() public {
@@ -67,17 +67,17 @@ contract NodeTest is SetupTemplate {
     _createNodeRequirement(nodeIndex, "ACCOUNT", "ROOM", "BOOL_IS", 1, 0);
 
     // cannot add level 1 account to node
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
+    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aPetID, nodeID);
+    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up
     _setLevel(alice.id, 2);
 
     // can now add level 2 account to node
-    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
-    _startProduction(aPetID, nodeID);
+    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    _startProduction(aKamiID, nodeID);
   }
 
   function testNodeRequirementsPetAndAccount() public {
@@ -89,25 +89,25 @@ contract NodeTest is SetupTemplate {
     _createNodeRequirement(nodeIndex, "KAMI", "LEVEL", "CURR_MIN", 0, 2);
 
     // cannot add, level 1 acc and pet
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
+    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aPetID, nodeID);
+    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up pet
-    _setLevel(aPetID, 2);
+    _setLevel(aKamiID, 2);
 
     // cannot add, level 1 acc but level 2 pet
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
+    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aPetID, nodeID);
+    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up account
     _setLevel(alice.id, 2);
 
     // all good
-    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aPetID));
-    _startProduction(aPetID, nodeID);
+    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    _startProduction(aKamiID, nodeID);
   }
 }

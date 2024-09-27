@@ -92,7 +92,7 @@ library LibFor {
   // UTILS
 
   /// @notice splits an array of entityIDs into 2, based on for Acc or Pet
-  /// @dev returns accIDs, petIDs
+  /// @dev returns accIDs, kamiIDs
   function splitAccAndPet(
     IUintComp components,
     uint256[] memory ids

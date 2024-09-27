@@ -15,13 +15,13 @@ import { StatComponent } from "components/base/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
-import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
+import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBgCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
-import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
+import { IndexKamiComponent, ID as IndexPetCompID } from "components/IndexKamiComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
@@ -39,17 +39,17 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { Pet721 } from "tokens/Pet721.sol";
+import { Kami721 } from "tokens/Kami721.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { GACHA_ID } from "libraries/LibGacha.sol";
-import { LibPet721 } from "libraries/LibPet721.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami721 } from "libraries/LibKami721.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 
-uint256 constant ID = uint256(keccak256("system.Pet721.BatchMint"));
+uint256 constant ID = uint256(keccak256("system.Kami721.BatchMint"));
 
 uint256 constant OFFSET_BIT_SIZE = 32;
 
@@ -285,9 +285,9 @@ contract _721BatchMinterSystem is System, TraitHandler {
   // MEMOIZED COMPS //
   ////////////////////
 
-  IDOwnsPetComponent internal immutable idOwnsPetComp;
+  IDOwnsKamiComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
-  IndexPetComponent internal immutable indexPetComp;
+  IndexKamiComponent internal immutable indexPetComp;
   MediaURIComponent internal immutable mediaURIComp;
   NameComponent internal immutable nameComp;
   StateComponent internal immutable stateComp;
@@ -304,9 +304,9 @@ contract _721BatchMinterSystem is System, TraitHandler {
   ) System(_world, _components) TraitHandler(_components) {
     baseSeed = uint256(keccak256(abi.encode(blockhash(block.number == 0 ? 0 : block.number - 1))));
 
-    idOwnsPetComp = IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID));
+    idOwnsPetComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     isPetComp = IsPetComponent(getAddrByID(components, IsPetCompID));
-    indexPetComp = IndexPetComponent(getAddrByID(components, IndexPetCompID));
+    indexPetComp = IndexKamiComponent(getAddrByID(components, IndexPetCompID));
     mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURICompID));
     nameComp = NameComponent(getAddrByID(components, NameCompID));
     stateComp = StateComponent(getAddrByID(components, StateCompID));
@@ -322,7 +322,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   function batchMint(uint256 amount) external onlyOwner returns (uint256[] memory) {
     // require(colorWeights.keys != 0, "traits not set");
 
-    uint32 startIndex = uint32(LibPet721.getContract(components).totalSupply()) + 1; // starts from 1
+    uint32 startIndex = uint32(LibKami721.getContract(components).totalSupply()) + 1; // starts from 1
     uint256 startGacha = idOwnsPetComp.size(abi.encode(GACHA_ID)); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
@@ -345,7 +345,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   // TOP LEVEL LOGIC //
   /////////////////////
 
-  /// @notice create pet, replaces LibPet.create
+  /// @notice create pet, replaces LibKami.create
   function createPets(
     uint32 startIndex,
     uint256 startGacha,
@@ -354,7 +354,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     ids = new uint256[](amount);
     for (uint32 i; i < amount; i++) {
       uint32 index = startIndex + i;
-      uint256 id = LibPet.genID(index);
+      uint256 id = LibKami.genID(index);
       require(!isPetComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
       ids[i] = id;
 
@@ -396,11 +396,11 @@ contract _721BatchMinterSystem is System, TraitHandler {
     }
   }
 
-  /// @notice batch mint pets, replaces LibPet721
+  /// @notice batch mint pets, replaces LibKami721
   function mint721s(uint256 startIndex, uint256 amount) internal {
     uint256[] memory indices = new uint256[](amount);
     for (uint256 i; i < amount; i++) indices[i] = startIndex + i;
-    Pet721 pet721 = LibPet721.getContract(components);
+    Kami721 pet721 = LibKami721.getContract(components);
     pet721.mintBatch(address(pet721), indices);
   }
 
