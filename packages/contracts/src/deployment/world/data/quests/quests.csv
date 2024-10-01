@@ -300,15 +300,15 @@ There's one other rare flower I need. It can be found around the centre of the f
 
 You can get more Kamigotchi by increasing your REPUTATION and claiming Gacha tickets. Come back when you have a team of 3. I'll have even more REPUTATION for you!",,"Completed ""There are more Levels to This"" (6)","Have 3 Level 5 Kamigotchi ",3x XP Candy (Medium),,,
 "Lethe Asphodel, Nedu",48,,For Implementation,Requirement,QUEST,COMPLETE,,"Completed ""There are more Levels to This"" (6)",6,,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",48,,For Implementation,Objective,AMT_KAMI_LEVEL_MIN,MIN,,"Have 3 Level 5 Kamigotchi ",5,3,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",48,,For Implementation,Objective,KAMI_LEVEL_QUANTITY,MIN,CURR,"Have 3 Level 5 Kamigotchi ",5,3,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",48,,For Implementation,Reward,ITEM,,,3x XP Candy (Medium),105,3,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",49,Gang Gang,For Implementation,Quest,AMT_KAMI_LEVEL_MIN,,,Have 4 Level 10 Kamigotchi,,,No,5,,"I see you're still growing your squad. Well, I want to see 4 Level 10 Kami, now. 4 is my favourite number, you know. It's a very important number down here. ",,Completed “A whole team…” (48),Have 4 Level 10 Kamigotchi,3x XP Candy (Large),,,
+"Lethe Asphodel, Nedu",49,Gang Gang,For Implementation,Quest,KAMI_LEVEL_QUANTITY,,,Have 4 Level 10 Kamigotchi,,,No,5,,"I see you're still growing your squad. Well, I want to see 4 Level 10 Kami, now. 4 is my favourite number, you know. It's a very important number down here. ",,Completed “A whole team…” (48),Have 4 Level 10 Kamigotchi,3x XP Candy (Large),,,
 "Lethe Asphodel, Nedu",49,,For Implementation,Requirement,QUEST,COMPLETE,,Completed “A whole team…” (48),48,,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",49,,For Implementation,Objective,AMT_KAMI_LEVEL_MIN,MIN,,Have 4 Level 10 Kamigotchi,10,4,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",49,,For Implementation,Objective,KAMI_LEVEL_QUANTITY,MIN,CURR,Have 4 Level 10 Kamigotchi,10,4,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",49,,For Implementation,Reward,ITEM,,,3x Large XP Candy,104,3,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",50,A Squad of Elites,For Implementation,Quest,,,,"Have 5 Level 15 Kamigotchi ",,,No,10,,"You're becoming a veritable Kamigotchi powerhouse, now. Well, I'll ask for one final show of strength from your team.... you guessed it, 5 Kamigotchi at Level 15. Get to it.",,"Completed ""Gang Gang” (49)",Have 5 Level 15 Kamigotchi,3x XP Candy (Huge),,,
 "Lethe Asphodel, Nedu",50,,For Implementation,Requirement,QUEST,COMPLETE,,"Completed ""Gang Gang” (49)",49,,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",50,,For Implementation,Objective,AMT_KAMI_LEVEL_MIN,MIN,,Have 5 Level 15 Kamigotchi,15,5,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",50,,For Implementation,Objective,KAMI_LEVEL_QUANTITY,MIN,CURR,Have 5 Level 15 Kamigotchi,15,5,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",50,,For Implementation,Reward,ITEM,,,3x XP Candy (Huge),117,3,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",10001,Desperate Measures,Ingame,Quest,,,,,,,No,15,,"Nice to see you again.
 

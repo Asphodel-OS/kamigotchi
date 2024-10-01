@@ -52,6 +52,8 @@ library LibGetter {
       balance = LibAccount.getPetsOwned(components, id).length;
     } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
       balance = getTopLevel(components, LibAccount.getPetsOwned(components, id));
+    } else if (_type.eq("KAMI_LEVEL_QUANTITY")) {
+      balance = getMinLevelAmt(components, LibAccount.getPetsOwned(components, id), index);
     } else if (_type.eq("SKILL")) {
       balance = LibSkill.getPointsOf(components, id, index);
     } else if (_type.eq("REPUTATION")) {
@@ -117,5 +119,19 @@ library LibGetter {
       if (level > highestLevel) highestLevel = level;
     }
     return highestLevel;
+  }
+
+  function getMinLevelAmt(
+    IUintComp components,
+    uint256[] memory ids,
+    uint256 minLevel
+  ) internal view returns (uint256) {
+    uint256 total = 0;
+    LevelComponent levelComp = LevelComponent(getAddrByID(components, LevelCompID));
+    for (uint256 i = 0; i < ids.length; i++) {
+      uint256 level = levelComp.get(ids[i]);
+      if (level >= minLevel) total++;
+    }
+    return total;
   }
 }

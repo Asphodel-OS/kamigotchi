@@ -45,6 +45,12 @@ export const getBalance = (
         if (kami.level > top) top = kami.level;
       });
       return top;
+    } else if (type === 'KAMI_LEVEL_QUANTITY') {
+      let total = 0;
+      getKamisByAccount(world, components, holderID).forEach((kami) => {
+        if (kami.level >= (index ?? 0)) total++;
+      });
+      return total;
     } else if (type === 'ROOM') {
       return (getComponentValue(RoomIndex, holder)?.value ?? 0) * 1;
     }
