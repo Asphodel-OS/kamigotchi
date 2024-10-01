@@ -17,9 +17,6 @@
     { "comp": "HasFlagComponent", "name": "HasFlag", "type": "bool" },
     { "comp": "HarmonyComponent", "name": "Harmony", "type": "Stat" },
     { "comp": "HealthComponent", "name": "Health", "type": "Stat" },
-    { "comp": "IdAccountComponent", "name": "AccountID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdDelegateeComponent", "name": "DelegateeID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdDelegatorComponent", "name": "DelegatorID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDFromComponent", "name": "FromID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdHolderComponent", "name": "HolderID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDParentComponent", "name": "ParentID", "type": "uint256", "FEtype": "string" },
@@ -362,7 +359,7 @@
       "name": "FriendAcceptSystem",
       "writeAccess": [
         "EntityTypeComponent",
-        "IdAccountComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
         "StateComponent",
@@ -373,7 +370,7 @@
       "name": "FriendBlockSystem",
       "writeAccess": [
         "EntityTypeComponent",
-        "IdAccountComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
         "StateComponent",
@@ -384,7 +381,7 @@
       "name": "FriendCancelSystem",
       "writeAccess": [
         "EntityTypeComponent",
-        "IdAccountComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
         "StateComponent",
@@ -395,7 +392,7 @@
       "name": "FriendRequestSystem",
       "writeAccess": [
         "EntityTypeComponent",
-        "IdAccountComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
         "StateComponent",
@@ -461,7 +458,6 @@
       "name": "KamiGachaMintSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdAccountComponent",
         "IDOwnsKamiComponent",
         "IdHolderComponent",
         "RerollComponent",
@@ -474,7 +470,6 @@
       "name": "KamiGachaRerollSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdAccountComponent",
         "IDOwnsKamiComponent",
         "IdHolderComponent",
         "RerollComponent",
@@ -488,7 +483,6 @@
       "name": "KamiGachaRevealSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdAccountComponent",
         "IdHolderComponent",
         "IDOwnsKamiComponent",
         "RerollComponent",
