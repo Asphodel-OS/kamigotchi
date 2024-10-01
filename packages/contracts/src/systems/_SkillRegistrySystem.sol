@@ -5,6 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { Condition } from "libraries/LibConditional.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.skill.registry"));
@@ -16,7 +17,6 @@ contract _SkillRegistrySystem is System {
     (
       uint32 index,
       string memory for_,
-      string memory type_,
       string memory tree,
       string memory name,
       string memory description,
@@ -26,11 +26,10 @@ contract _SkillRegistrySystem is System {
       string memory media
     ) = abi.decode(
         arguments,
-        (uint32, string, string, string, string, string, uint256, uint256, uint256, string)
+        (uint32, string, string, string, string, uint256, uint256, uint256, string)
       );
 
     require(index != 0, "SkillCreate: index cannot be 0");
-    require(!LibString.eq(type_, ""), "SkillCreate: type empty");
     require(!LibString.eq(name, ""), "SkillCreate: name empty");
 
     uint256 regID = LibSkillRegistry.getByIndex(components, index);
@@ -40,30 +39,27 @@ contract _SkillRegistrySystem is System {
       components,
       index,
       for_,
-      type_,
       name,
       description,
       cost,
       max,
+      tree,
+      treeTier,
       media
     );
-    if (!LibString.eq(tree, "")) LibSkillRegistry.setTree(components, regID, tree, treeTier);
 
     return regID;
   }
 
-  function addEffect(bytes memory arguments) public onlyOwner returns (uint256) {
-    (uint32 skillIndex, string memory type_, string memory subtype, int256 value) = abi.decode(
+  function addBonus(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 skillIndex, string memory type_, int256 value) = abi.decode(
       arguments,
-      (uint32, string, string, int256)
+      (uint32, string, int256)
     );
 
-    require(!LibString.eq(type_, ""), "Skill type cannot be empty");
+    require(LibSkillRegistry.getByIndex(components, skillIndex) != 0, "Skill does not exist");
 
-    // create an empty Skill and set any non-zero fields
-    uint256 id = LibSkillRegistry.addEffect(world, components, skillIndex, type_, value);
-    if (!LibString.eq(subtype, "")) LibSkillRegistry.setSubtype(components, id, subtype);
-
+    uint256 id = LibSkillRegistry.addBonus(components, skillIndex, type_, value);
     return id;
   }
 
@@ -76,30 +72,17 @@ contract _SkillRegistrySystem is System {
       uint256 value
     ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
 
-    require(!LibString.eq(type_, ""), "Skill type cannot be empty");
+    require(LibSkillRegistry.getByIndex(components, skillIndex) != 0, "Skill does not exist");
 
-    // create an empty Skill and set any non-zero fields
-    uint256 id = LibSkillRegistry.addRequirement(world, components, skillIndex, type_, logicType);
-    if (index != 0) LibSkillRegistry.setIndex(components, id, index);
-    if (value != 0) LibSkillRegistry.setBalance(components, id, value);
-
+    Condition memory data = Condition(type_, logicType, index, value);
+    uint256 id = LibSkillRegistry.addRequirement(world, components, skillIndex, data);
     return id;
   }
 
   function remove(uint32 index) public onlyOwner {
-    uint256 desID = LibSkillRegistry.getByIndex(components, index);
-    require(desID != 0, "Skill does not exist");
-    LibSkillRegistry.delete_(components, desID);
-
-    uint256[] memory skills = LibSkillRegistry.getEffectsByIndex(components, index);
-    for (uint256 i = 0; i < skills.length; i++) {
-      LibSkillRegistry.deleteEffect(components, skills[i]);
-    }
-
-    uint256[] memory requirements = LibSkillRegistry.getRequirementsByIndex(components, index);
-    for (uint256 i = 0; i < requirements.length; i++) {
-      LibSkillRegistry.deleteRequirement(components, requirements[i]);
-    }
+    uint256 regID = LibSkillRegistry.getByIndex(components, index);
+    require(regID != 0, "Skill does not exist");
+    LibSkillRegistry.remove(components, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

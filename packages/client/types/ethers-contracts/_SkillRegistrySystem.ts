@@ -30,7 +30,7 @@ import type {
 
 export interface _SkillRegistrySystemInterface extends utils.Interface {
   functions: {
-    "addEffect(bytes)": FunctionFragment;
+    "addBonus(bytes)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
@@ -47,7 +47,7 @@ export interface _SkillRegistrySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addEffect"
+      | "addBonus"
       | "addRequirement"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
@@ -63,7 +63,7 @@ export interface _SkillRegistrySystemInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "addEffect",
+    functionFragment: "addBonus",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -109,7 +109,7 @@ export interface _SkillRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "addEffect", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "addBonus", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addRequirement",
     data: BytesLike
@@ -224,7 +224,7 @@ export interface _SkillRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addEffect(
+    addBonus(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -283,7 +283,7 @@ export interface _SkillRegistrySystem extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  addEffect(
+  addBonus(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -342,7 +342,7 @@ export interface _SkillRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addEffect(
+    addBonus(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -422,7 +422,7 @@ export interface _SkillRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
-    addEffect(
+    addBonus(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -482,7 +482,7 @@ export interface _SkillRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
-    addEffect(
+    addBonus(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
