@@ -33,8 +33,6 @@ export function createComponents(world: World) {
     Harmony: defineStatComponent(world, 'Harmony', 'component.stat.harmony'),
     Health: defineStatComponent(world, 'Health', 'component.stat.health'),
     AccountID: defineStringComponent(world, 'AccountID', 'component.id.account'),
-    DelegateeID: defineStringComponent(world, 'DelegateeID', 'component.id.delegatee'),
-    DelegatorID: defineStringComponent(world, 'DelegatorID', 'component.id.delegator'),
     FromID: defineStringComponent(world, 'FromID', 'component.id.from'),
     HolderID: defineStringComponent(world, 'HolderID', 'component.id.holder'),
     ParentID: defineStringComponent(world, 'ParentID', 'component.id.pointer'),

@@ -58,11 +58,6 @@ import QuestDropSystem from "../../../../../client/abi/QuestDropSystem.json";
 import RelationshipAdvanceSystem from "../../../../../client/abi/RelationshipAdvanceSystem.json";
 import ScavengeClaimSystem from "../../../../../client/abi/ScavengeClaimSystem.json";
 import SkillUpgradeSystem from "../../../../../client/abi/SkillUpgradeSystem.json";
-import TradeAcceptSystem from "../../../../../client/abi/TradeAcceptSystem.json";
-import TradeAddToSystem from "../../../../../client/abi/TradeAddToSystem.json";
-import TradeCancelSystem from "../../../../../client/abi/TradeCancelSystem.json";
-import TradeConfirmSystem from "../../../../../client/abi/TradeConfirmSystem.json";
-import TradeInitiateSystem from "../../../../../client/abi/TradeInitiateSystem.json";
 
 export const SystemAbis = {
   "system.Kami721.BatchMint": _721BatchMinterSystem.abi,
@@ -124,9 +119,4 @@ export const SystemAbis = {
   "system.Relationship.Advance": RelationshipAdvanceSystem.abi,
   "system.Scavenge.Claim": ScavengeClaimSystem.abi,
   "system.Skill.Upgrade": SkillUpgradeSystem.abi,
-  "system.Trade.Accept": TradeAcceptSystem.abi,
-  "system.Trade.AddTo": TradeAddToSystem.abi,
-  "system.Trade.Cancel": TradeCancelSystem.abi,
-  "system.Trade.Confirm": TradeConfirmSystem.abi,
-  "system.Trade.Initiate": TradeInitiateSystem.abi,
 };
