@@ -1,11 +1,11 @@
 export {
+  getHolderTreePoints,
   getInstance as getSkillInstance,
   getUpgradeError as getSkillUpgradeError,
-  getTreePoints,
   getTreePointsRequirement,
   isMaxxed as isSkillMaxxed,
   meetsCost as meetsSkillCost,
-  parseEffectText,
+  parseBonusText,
   parseRequirementText,
 } from './functions';
 export {
@@ -13,14 +13,9 @@ export {
   getHolderSkillLevel,
   getHolderSkills,
   getRegistrySkills,
+  getSkillBonuses,
   getSkillByIndex,
-  getSkillEffects,
 } from './getters';
 export { queryHolderSkills, queryRegistrySkills, querySkillByIndex, querySkillsX } from './queries';
-export {
-  getEffect,
-  getRequirement,
-  getSkill,
-  getInstanceEntity as getSkillInstanceEntity,
-} from './types';
-export type { Effect, Requirement, Skill } from './types';
+export { getRequirement, getSkill, getInstanceEntity as getSkillInstanceEntity } from './types';
+export type { Requirement, Skill } from './types';

@@ -9,14 +9,15 @@ import {
 } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { queryConditionsOf } from '../Conditional/queries';
-import { Options, Requirement } from './types';
+import { queryChildrenOf } from '../utils';
+import { Options, Requirement, getBonusParentID } from './types';
 
 /////////////////
 // GETTERS
 
 // get all the skills in the registry
 export const queryRegistrySkills = (components: Components): EntityIndex[] => {
-  return querySkillsX(components, { registry: true }, { requirements: true, effects: true });
+  return querySkillsX(components, { registry: true }, { requirements: true, bonuses: true });
 };
 
 export const queryHolderSkills = (
@@ -54,31 +55,19 @@ export const querySkillsX = (
   filters: Filters,
   options?: Options
 ): EntityIndex[] => {
-  const { EntityType, HolderID, IsRegistry, SkillIndex } = components;
+  const { EntityType, OwnsSkillID, IsRegistry, SkillIndex } = components;
 
   const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'SKILL' })];
   if (filters?.registry) toQuery.push(Has(IsRegistry));
-  if (filters?.holder) toQuery.push(HasValue(HolderID, { value: filters.holder }));
+  if (filters?.holder) toQuery.push(HasValue(OwnsSkillID, { value: filters.holder }));
   if (filters?.index) toQuery.push(HasValue(SkillIndex, { value: filters.index }));
 
   return Array.from(runQuery(toQuery));
 };
 
-// Get the Entity Indices of the Effect of a Skill
-export const querySkillEffects = (
-  world: World,
-  components: Components,
-  skillIndex: number
-): EntityIndex[] => {
-  const { IsRegistry, EntityType, SkillIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      HasValue(EntityType, { value: 'EFFECT' }),
-      HasValue(SkillIndex, { value: skillIndex }),
-    ])
-  );
-  return entityIndices;
+// Get the Entity Indices of the bonuses of a Skill
+export const querySkillBonuses = (components: Components, skillIndex: number): EntityIndex[] => {
+  return queryChildrenOf(components, getBonusParentID(skillIndex));
 };
 
 // Get the Entity Indices of the Requirements of a Skill
