@@ -115,6 +115,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
    * 6. Keep in sync with streamer/rpc
    */
   private async init() {
+    performance.mark('connecting');
     this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting..', percentage: 0 });
 
     // listen on input for the provided a config
@@ -141,7 +142,12 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const cacheInterval = config.cache?.interval || 1;
 
     // Set up shared primitives
-    this.setLoadingState({ state: SyncState.SETUP, msg: 'Starting State Sync', percentage: 0 });
+    performance.mark('setup');
+    this.setLoadingState({
+      state: SyncState.SETUP,
+      msg: 'Starting State Sync',
+      percentage: 0,
+    });
     const { providers } = await createReconnectingProvider(
       computed(() => computedConfig.get().provider)
     );
@@ -221,6 +227,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      * - otherwise retrieve from snapshot service
      * TODO: support partial state retrieval and hybrid cache+snapshot state construction
      */
+    performance.mark('backfill');
     this.setLoadingState({
       state: SyncState.BACKFILL,
       msg: 'Determining Sync Range',
@@ -242,7 +249,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
       if (syncFromSnapshot) {
         this.setLoadingState({
-          state: SyncState.BACKFILL,
           msg: 'Fetching Initial State From Snapshot',
           percentage: 0,
         });
@@ -256,7 +262,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         );
       } else {
         this.setLoadingState({
-          state: SyncState.BACKFILL,
           msg: 'Loading Initial State From Cache',
           percentage: 0,
         });
@@ -270,6 +275,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      * - Load events between initial and recent state from RPC
      * Q: shouldnt we just launch the live sync down here if we're chunking it anyways
      */
+    performance.mark('gapfill');
     const streamStartBlockNumber = await streamStartBlockNumberPromise;
     this.setLoadingState({
       state: SyncState.GAPFILL,
@@ -293,19 +299,20 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      * INITIALIZE STATE
      * - Initialize the app state from the list of network events
      */
+    performance.mark('init');
+    const cacheStoreSize = cacheStore.current.state.size;
     this.setLoadingState({
       state: SyncState.INITIALIZE,
-      msg: `Initializing with ${cacheStore.current.state.size} state entries`,
+      msg: `Initializing with ${cacheStoreSize} state entries`,
       percentage: 0,
     });
 
     // Pass current cacheStore to output and start passing live events
     let i = 0;
     for (const update of getCacheStoreEntries(cacheStore.current)) {
-      i++;
       this.output$.next(update as NetworkEvent<C>);
-      if (i % 5000 === 0) {
-        const percentage = Math.floor((i / cacheStore.current.state.size) * 100);
+      if (i++ % 5e4 === 0) {
+        const percentage = Math.floor((i / cacheStoreSize) * 100);
         this.setLoadingState({ percentage });
       }
     }
@@ -314,11 +321,21 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     /*
      * FINISH
      */
+    performance.mark('live');
     this.setLoadingState(
       { state: SyncState.LIVE, msg: `Streaming Live Events`, percentage: 100 },
       cacheStore.current.blockNumber
     );
+
+    // Q: how does this retroactively affects the Latest Event subscription?
     outputLiveEvents = true;
+
+    performance.measure('connection', 'connecting', 'setup');
+    performance.measure('setup', 'setup', 'backfill');
+    performance.measure('backfill', 'backfill', 'gapfill');
+    performance.measure('gapfill', 'gapfill', 'init');
+    performance.measure('initialization', 'init', 'live');
+    console.log(performance.getEntriesByType('measure'));
   }
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {
