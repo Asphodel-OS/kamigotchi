@@ -107,21 +107,17 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
   /**
    * Start the sync process.
-   *
    * 1. Get config
-   * 2. Load initial state
-   *   2.1 Get cache block number
-   *   2.2 Get snapshot block number
-   *   2.3 Load from more recent source
-   * 3. Cache up to current block number
-   * 4. Keep in sync
-   *  4.1 If available keep in sync with streaming service
-   *  4.2 Else keep in sync with RPC
+   * 2. Start the live sync from streamer/rpc
+   * 3. Load historic state from snapshotter or indexdDB cache
+   * 4. Fill the live-sync state gap since start
+   * 5. Initialize world
+   * 6. Keep in sync with streamer/rpc
    */
   private async init() {
     this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting..', percentage: 0 });
 
-    // Turn config into variable accessible outside the stream
+    // listen on input for the provided a config
     const computedConfig = await streamToDefinedComputed(
       this.input$.pipe(
         map((e) => (e.type === InputType.Config ? e.data : undefined)),
@@ -220,7 +216,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
 
     /*
-     * LOAD INITIAL STATE
+     * LOAD INITIAL STATE (BACKFILL)
      * - use IndexedDB Storage state cache if not expired
      * - otherwise retrieve from snapshot service
      * TODO: support partial state retrieval and hybrid cache+snapshot state construction

@@ -45,9 +45,32 @@ export function registerLoadingState() {
       const { state, msg, percentage } = loadingState;
 
       useEffect(() => {
-        if (state === SyncState.LIVE) {
-          registerModals();
+        if (state === SyncState.CONNECTING) {
+          if (performance.getEntriesByName('connecting').length !== 0) return;
+          performance.mark('connecting');
+        } else if (state === SyncState.SETUP) {
+          if (performance.getEntriesByName('setup').length !== 0) return;
+          performance.mark('setup');
+        } else if (state === SyncState.BACKFILL) {
+          if (performance.getEntriesByName('backfill').length !== 0) return;
+          performance.mark('backfill');
+        } else if (state === SyncState.GAPFILL) {
+          if (performance.getEntriesByName('gapfill').length !== 0) return;
+          performance.mark('gapfill');
+        } else if (state === SyncState.INITIALIZE) {
+          if (performance.getEntriesByName('init').length !== 0) return;
+          performance.mark('init');
+        } else if (state === SyncState.LIVE) {
+          if (performance.getEntriesByName('live').length !== 0) return;
+          performance.mark('live');
           setTimeout(() => setIsVisible(false), 1500);
+          registerModals();
+          performance.measure('connection', 'connecting', 'setup');
+          performance.measure('setup', 'setup', 'backfill');
+          performance.measure('backfill', 'backfill', 'gapfill');
+          performance.measure('gapfill', 'gapfill', 'init');
+          performance.measure('initialization', 'init', 'live');
+          console.log(performance.getEntriesByType('measure'));
         }
       }, [state]);
 
