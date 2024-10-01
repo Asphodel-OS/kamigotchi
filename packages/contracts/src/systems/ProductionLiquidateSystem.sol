@@ -64,11 +64,6 @@ contract ProductionLiquidateSystem is System {
     uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
     LibInventory.incFor(components, productionID, MUSU_INDEX, spoils);
 
-    // calculate experience for killer
-    uint256 victimLevelCost = LibExperience.calcLevelCost(components, targetPetID);
-    uint256 bonusExp = (victimLevelCost * bounty) / 2000;
-    LibExperience.inc(components, petID, bonusExp);
-
     // calculate killer health
     uint256 strain = LibPet.calcStrain(components, petID, spoils);
     uint256 karma = LibKill.calcKarma(components, petID, targetPetID);
