@@ -95,7 +95,7 @@ export function registerCraftingModal() {
           header={<ModalHeader title='Crafting' icon={craftIcon} />}
           canExit
         >
-          <Content key='content'>
+          <Content>
             {recipes.length > 0 ? (
               recipes.map((recipe: Recipe) => (
                 <Kard
