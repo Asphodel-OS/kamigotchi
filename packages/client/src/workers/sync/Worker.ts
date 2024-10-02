@@ -240,18 +240,20 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     this.setLoadingState({ percentage: 100 });
 
     let initialState = createCacheStore();
+    console.log('Before SYNC <------------------------');
     if (initialBlockNumber > Math.max(cacheBlockNumber, snapshotBlockNumber)) {
+      console.log('IF');
       initialState.blockNumber = initialBlockNumber;
     } else {
       // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
       const syncFromSnapshot =
         snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheExpiry;
-
       if (syncFromSnapshot) {
         this.setLoadingState({
           msg: 'Fetching Initial State From Snapshot',
           percentage: 0,
         });
+        console.log('syncFromSnapshot', syncFromSnapshot);
         initialState = await fetchSnapshotChunked(
           snapshotClient,
           worldContract.address,
@@ -269,7 +271,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         this.setLoadingState({ percentage: 100 });
       }
     }
-
+    console.log('AFTER SYNC <------------------------');
     /*
      * FILL THE GAP
      * - Load events between initial and recent state from RPC

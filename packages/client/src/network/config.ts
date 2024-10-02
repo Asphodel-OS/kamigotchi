@@ -92,7 +92,8 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     devMode: false,
     jsonRpc: 'https://yominet.rpc.caldera.xyz/http/',
     wsRpc: 'wss://yominet.rpc.caldera.xyz/ws/',
-    snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
+    snapshotServiceUrl: 'http://localhost:50052',
+    /// snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 5264468217,

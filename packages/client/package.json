@@ -40,6 +40,7 @@
     "web3-utils": "^1.8.0"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^2.1.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@ethersproject/abi": "^5.6.0",
@@ -95,6 +96,7 @@
     "uuid": "^9.0.1",
     "viem": "^2.9.4",
     "wagmi": "^2.9.7",
+    "wire": "link:@bufbuild/protobuf/wire",
     "zustand": "^4.3.1"
   },
   "staticFiles": {

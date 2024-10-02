@@ -3,22 +3,29 @@ import { grpc } from '@improbable-eng/grpc-web';
 import { ComponentValue, Components, EntityID } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { World } from '@mud-classic/solecs/types/ethers-contracts';
-import { Uint8ArrayToHexString, awaitPromise, range, to256BitString } from '@mud-classic/utils';
+import {
+  Uint8ArrayToHexString,
+  awaitPromise,
+  packTuple,
+  range,
+  to256BitString,
+} from '@mud-classic/utils';
 import { BigNumber, BytesLike } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
 
 import { createDecoder } from 'engine/encoders';
 import {
-  ECSStateReplyV2,
-  ECSStateSnapshotServiceClient,
-  ECSStateSnapshotServiceDefinition,
-} from 'engine/types/ecs-snapshot/ecs-snapshot';
-import {
   ECSStreamBlockBundleReply,
   ECSStreamServiceClient,
   ECSStreamServiceDefinition,
 } from 'engine/types/ecs-stream/ecs-stream';
+import {
+  Component,
+  Entity,
+  StateSnapshotServiceClient,
+  StateSnapshotServiceDefinition,
+} from 'engine/types/snapshot/snapshot';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { ComponentsSchema } from 'types/ComponentsSchema';
 import { ContractConfig } from 'workers/types';
@@ -41,8 +48,8 @@ const debug = parentDebug.extend('syncUtils');
  * @param url ECSStateSnapshotService URL
  * @returns ECSStateSnapshotServiceClient
  */
-export function createSnapshotClient(url: string): ECSStateSnapshotServiceClient {
-  return createClient(ECSStateSnapshotServiceDefinition, createChannel(url));
+export function createSnapshotClient(url: string): StateSnapshotServiceClient {
+  return createClient(StateSnapshotServiceDefinition, createChannel(url));
 }
 
 /**
@@ -62,13 +69,13 @@ export function createStreamClient(url: string): ECSStreamServiceClient {
  * @returns Snapsot block number
  */
 export async function getSnapshotBlockNumber(
-  snapshotClient: ECSStateSnapshotServiceClient | undefined,
+  snapshotClient: StateSnapshotServiceClient | undefined,
   worldAddress: string
 ): Promise<number> {
   let blockNumber = -1;
   if (!snapshotClient) return blockNumber;
   try {
-    const response = await snapshotClient.getStateBlockLatest({ worldAddress });
+    const response = await snapshotClient.getStateBlock({});
     blockNumber = response.blockNumber;
   } catch (e) {
     console.error(e);
@@ -85,7 +92,7 @@ export async function getSnapshotBlockNumber(
  * @returns Promise resolving with {@link CacheStore} containing the snapshot state.
  */
 export async function fetchSnapshotChunked(
-  snapshotClient: ECSStateSnapshotServiceClient,
+  snapshotClient: StateSnapshotServiceClient,
   worldAddress: string,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
@@ -93,33 +100,94 @@ export async function fetchSnapshotChunked(
   pruneOptions?: { playerAddress: string; hashedComponentId: string }
 ): Promise<CacheStore> {
   const cacheStore = createCacheStore();
-  const chunkPercentage = Math.ceil(100 / numChunks);
 
   try {
-    const response = pruneOptions
-      ? snapshotClient.getStateLatestStreamPrunedV2({
-          worldAddress,
-          chunkPercentage,
-          pruneAddress: pruneOptions?.playerAddress,
-          pruneComponentId: pruneOptions?.hashedComponentId,
-        })
-      : snapshotClient.getStateLatestStreamV2({
-          worldAddress,
-          chunkPercentage,
-        });
+    //get stateBlock
+    let BlockReply = await snapshotClient.getStateBlock({});
+    cacheStore.blockNumber = BlockReply.blockNumber;
+    console.log('Stored blockNumber');
+    //get components
+    let ComponentsReply = await snapshotClient.getComponents({ fromIdx: 0 });
+    storeComponents(cacheStore, ComponentsReply.components);
+    console.log('Stored components');
 
-    let i = 0;
-    for await (const responseChunk of response) {
-      await reduceFetchedState(responseChunk, cacheStore, decode);
-      setPercentage && setPercentage((i++ / numChunks) * 100);
+    //get Entities
+    let EntitiesReply = snapshotClient.getEntities({ fromIdx: 0, numChunks: numChunks });
+    for await (const responseChunk of EntitiesReply) {
+      storeEntities(cacheStore, responseChunk.entities);
     }
+    console.log('Stored entities');
+
+    //get StateValues
+    let StateValuesReply = snapshotClient.getStateValues({ fromBlock: 0, numChunks: numChunks });
+    for await (const responseChunk of StateValuesReply) {
+      for (const event of responseChunk.state) {
+        const { componentIdx, entityIdx, data } = event;
+        const value = await decode(cacheStore.components[componentIdx], data);
+        storeEventValue(cacheStore, componentIdx, entityIdx, value);
+      }
+    }
+    console.log('Stored state values');
   } catch (e) {
     console.error(e);
   }
-
+  setPercentage && setPercentage(100);
   return cacheStore;
 }
 
+function storeEventValue(
+  cacheStore: CacheStore,
+  componentIdx: number,
+  entityIdx: number,
+  value: ComponentValue
+) {
+  const key = packTuple([componentIdx, entityIdx]);
+  if (value == null) cacheStore.state.delete(key);
+  else cacheStore.state.set(key, value);
+}
+
+function storeComponents(cacheStore: CacheStore, components: Component[]) {
+  for (const component of components) {
+    //need to pad id AND mayebe add 0x
+    var hexId = uint8ArrayToHex(component.id);
+
+    //CHECK INDEX
+    if (component.idx != cacheStore.components.length) {
+      console.log(
+        `Component.IDX ${component.idx} does not mach tail of list${cacheStore.components.length}`
+      );
+      continue;
+    }
+
+    cacheStore.components.push(hexId);
+    cacheStore.componentToIndex.set(hexId, component.idx);
+  }
+}
+
+function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
+  for (const entity of entities) {
+    //need to pad id AND mayebe add 0x
+    var hexId = Uint8ArrayToHexString(entity.id);
+
+    //CHECK INDEX
+    if (entity.idx != cacheStore.entities.length) {
+      console.log(
+        `Entity.IDX ${entity.idx} does not match tail of list ${cacheStore.entities.length}`
+      );
+      continue;
+    }
+
+    cacheStore.entities.push(hexId);
+    cacheStore.entityToIndex.set(hexId, entity.idx);
+  }
+}
+function uint8ArrayToHex(uint8Array: Uint8Array): string {
+  const hex = Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+
+  return '0x' + hex.padStart(64, '0');
+}
 /**
  * Reduces a snapshot response by storing corresponding ECS events into the cache store.
  *
