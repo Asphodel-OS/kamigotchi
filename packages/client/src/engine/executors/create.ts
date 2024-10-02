@@ -61,7 +61,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
     if (!hashedSystemId) throw new Error('System entity not found');
     const id = systemIdPreimages[hashedSystemId];
     if (!id) {
-      console.warn('Unknown system:', hashedSystemId);
+      console.debug('Unknown system:', hashedSystemId);
       return;
     }
     return {

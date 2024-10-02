@@ -92,17 +92,17 @@ export function registerCraftingModal() {
       return (
         <ModalWrapper
           id='crafting'
-          header={[<ModalHeader title='Crafting' icon={craftIcon} />]}
+          header={<ModalHeader title='Crafting' icon={craftIcon} />}
           canExit
         >
-          <Content>
+          <Content key='content'>
             {recipes.length > 0 ? (
               recipes.map((recipe: Recipe) => (
                 <Kard
                   key={`recipe-${recipe.index}`}
                   recipe={recipe}
                   data={data}
-                  actions={{ craft: craft }}
+                  actions={{ craft }}
                   utils={utils}
                 />
               ))
