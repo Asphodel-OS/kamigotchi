@@ -9,7 +9,7 @@ import { erc20Abi } from 'viem';
 import { useBalance, useBlockNumber, useReadContracts } from 'wagmi';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
@@ -45,11 +45,12 @@ export function registerGachaModal() {
           return {
             network,
             data: {
-              mint20Addy: getConfigFieldValueAddress(world, components, 'MINT20_ADDRESS'),
+              account,
               accKamis: account.kamis,
               partyKamis: queryKamisByAccount(components, account.id),
               poolKamis: queryKamisByAccount(components, GACHA_ID),
               commits: queryGachaCommits(world, components, account.id),
+              mint20Addy: getConfigFieldValueAddress(world, components, 'MINT20_ADDRESS'),
             },
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
@@ -61,8 +62,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, components, world, api } = network;
-      const { mint20Addy, accKamis, commits, poolKamis, partyKamis } = data;
-      const { account } = useKamiAccount();
+      const { account, accKamis, commits, poolKamis, partyKamis, mint20Addy } = data;
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -84,7 +84,7 @@ export function registerGachaModal() {
 
       // Owner ETH Balance
       const { data: ownerEthBalance } = useBalance({
-        address: account.ownerAddress as `0x${string}`,
+        address: account.ownerEOA as `0x${string}`,
       });
 
       // $KAMI Balance of Owner EOA
@@ -94,7 +94,7 @@ export function registerGachaModal() {
             abi: erc20Abi,
             address: mint20Addy as `0x${string}`,
             functionName: 'balanceOf',
-            args: [account.ownerAddress as `0x${string}`],
+            args: [account.ownerEOA as `0x${string}`],
           },
           {
             abi: erc20Abi,
@@ -111,10 +111,10 @@ export function registerGachaModal() {
           `\n • ticket address: ${mint20Addy}`,
           `\n • modal ${modals.gacha ? 'open' : 'closed'}`
         );
-        if (!mint20Addy || !modals.gacha) return;
+        if (!mint20Addy || !modals.gacha || !account.ownerEOA) return;
         console.log('refetching gacha ticket balance..');
         refetchMint20Balance();
-      }, [mint20Addy, modals.gacha]);
+      }, [mint20Addy, modals.gacha, account.ownerEOA]);
 
       // update the gacha balance whenever the result changes
       useEffect(() => {
