@@ -3,11 +3,9 @@ export {
   getCacheStoreEntries,
   getIndexDBCacheStoreBlockNumber,
   getStateCache,
-  loadIndexDbCacheStore,
+  loadIndexDbToCacheStore,
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
 } from './CacheStore';
 export type { CacheStore, ECSCache, State } from './CacheStore';
-
-export { initCache } from './initCache';

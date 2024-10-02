@@ -1,53 +1,5 @@
-import { arrayToIterator, deferred, mergeIterators, transformIterator } from "@mud-classic/utils";
-
-const indexedDB = self.indexedDB;
-const VERSION = 2;
-
-/**
- * Initialize an indexedDB store.
- *
- * @param db IDBDatabase
- * @param storeId Id of the store to initialize
- */
-function initStore(db: IDBDatabase, storeId: string) {
-  if (!db.objectStoreNames.contains(storeId)) {
-    db.createObjectStore(storeId);
-  }
-}
-
-/**
- * Initialize an indexedDB database.
- *
- * @param dbId Id of the database to initialize.
- * @param stores Keys of the stores to initialize.
- * @param version Optional: version of the database to initialize.
- * @param idb Optional: custom indexedDB factory
- * @returns Promise resolving with IDBDatabase object
- */
-function initDb(dbId: string, stores: string[], version = VERSION, idb: IDBFactory = indexedDB) {
-  const [resolve, reject, promise] = deferred<IDBDatabase>();
-
-  const request = idb.open(dbId, version);
-
-  // Create store and index
-  request.onupgradeneeded = () => {
-    const db = request.result;
-    for (const store of stores) {
-      initStore(db, store);
-    }
-  };
-
-  request.onsuccess = () => {
-    const db = request.result;
-    resolve(db);
-  };
-
-  request.onerror = (error) => {
-    reject(new Error(JSON.stringify(error)));
-  };
-
-  return promise;
-}
+import { arrayToIterator, deferred, mergeIterators, transformIterator } from '@mud-classic/utils';
+import { initDb } from './db';
 
 type Stores = { [key: string]: unknown };
 type StoreKey<S extends Stores> = keyof S & string;
@@ -69,13 +21,32 @@ export async function initCache<S extends Stores>(
 ) {
   const db = await initDb(id, stores, version, idb);
 
+  /**
+   * retrieve a store
+   *
+   * @param store the key of the desired store
+   */
   function openStore(store: StoreKey<S>): IDBObjectStore {
-    const tx = db.transaction(store, "readwrite");
+    const tx = db.transaction(store, 'readwrite');
     const objectStore = tx.objectStore(store);
     return objectStore;
   }
 
-  function set<Store extends StoreKey<S>>(store: Store, key: string, value: S[Store], ignoreResult = false) {
+  /**
+   * set a value in a store
+   *
+   * @param store the key of the desired store
+   * @param key the key of the desired value
+   * @param value the value to set
+   * @param ignoreResult (optional) whether to ignore the operation result
+   * @returns Promise resolving when the value is set
+   */
+  function set<Store extends StoreKey<S>>(
+    store: Store,
+    key: string,
+    value: S[Store],
+    ignoreResult = false
+  ) {
     const objectStore = openStore(store);
     const request = objectStore.put(value, key);
 
@@ -94,7 +65,17 @@ export async function initCache<S extends Stores>(
     return promise;
   }
 
-  function get<Store extends StoreKey<S>>(store: Store, key: string): Promise<S[Store] | undefined> {
+  /**
+   * get a value from a store
+   *
+   * @param store the key of the desired store
+   * @param key the key of the desired value
+   * @returns Promise resolving to the value at the key
+   */
+  function get<Store extends StoreKey<S>>(
+    store: Store,
+    key: string
+  ): Promise<S[Store] | undefined> {
     const [resolve, reject, promise] = deferred<S[Store] | undefined>();
 
     const objectStore = openStore(store);
@@ -112,6 +93,13 @@ export async function initCache<S extends Stores>(
     return promise;
   }
 
+  /**
+   * remove a value from a store
+   *
+   * @param store the key of the desired store
+   * @param key the key of the desired value
+   * @returns Promise resolving when the value is removed
+   */
   function remove(store: StoreKey<S>, key: string): Promise<void> {
     const [resolve, reject, promise] = deferred<void>();
 
@@ -129,6 +117,12 @@ export async function initCache<S extends Stores>(
     return promise;
   }
 
+  /**
+   * get all keys within a store
+   *
+   * @param store the key of the desired store
+   * @returns Promise resolving to iterator of keys within the store
+   */
   function keys(store: StoreKey<S>): Promise<IterableIterator<string>> {
     const [resolve, reject, promise] = deferred<IterableIterator<string>>();
 
@@ -148,6 +142,12 @@ export async function initCache<S extends Stores>(
     return promise;
   }
 
+  /**
+   * get all values within a store
+   *
+   * @param store the key of the desired store
+   * @returns Promise resolving to iterator of values within the store
+   */
   function values<Store extends StoreKey<S>>(store: Store): Promise<IterableIterator<S[Store]>> {
     const [resolve, reject, promise] = deferred<IterableIterator<S[Store]>>();
 
@@ -165,7 +165,15 @@ export async function initCache<S extends Stores>(
     return promise;
   }
 
-  async function entries<Store extends StoreKey<S>>(store: Store): Promise<IterableIterator<[string, S[Store]]>> {
+  /**
+   * get all entries within a store
+   *
+   * @param store the key of the desired store
+   * @returns Promise resolving to iterator of [key, value] entries within the store
+   */
+  async function entries<Store extends StoreKey<S>>(
+    store: Store
+  ): Promise<IterableIterator<[string, S[Store]]>> {
     const [keyIterator, valueIterator] = await Promise.all([keys(store), values(store)]);
     return mergeIterators(keyIterator, valueIterator);
   }

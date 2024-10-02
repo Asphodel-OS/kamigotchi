@@ -1,11 +1,11 @@
 import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
 import { packTuple, transformIterator, unpackTuple } from '@mud-classic/utils';
 
+import { initCache } from 'cache/';
 import { ECSStateReply } from 'engine/types/ecs-snapshot/ecs-snapshot';
 import { formatEntityID } from 'engine/utils';
 import { debug as parentDebug } from 'workers/debug';
 import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
-import { initCache } from './initCache';
 
 const debug = parentDebug.extend('CacheStore');
 
@@ -72,12 +72,11 @@ export function storeEvents<Cm extends Components>(
   }
 }
 
-export function getCacheStoreEntries<Cm extends Components>({
-  blockNumber,
-  state,
-  components,
-  entities,
-}: CacheStore): IterableIterator<NetworkComponentUpdate<Cm>> {
+export function getCacheStoreEntries<Cm extends Components>(
+  cacheStore: CacheStore
+): IterableIterator<NetworkComponentUpdate<Cm>> {
+  const { blockNumber, state, components, entities } = cacheStore;
+
   return transformIterator(state.entries(), ([key, value]) => {
     const [componentIndex, entityIndex] = unpackTuple(key);
     const component = components[componentIndex];
@@ -109,7 +108,7 @@ export async function saveCacheStoreToIndexDb(cache: ECSCache, store: CacheStore
   await cache.set('BlockNumber', 'current', store.blockNumber);
 }
 
-export async function loadIndexDbCacheStore(cache: ECSCache): Promise<CacheStore> {
+export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheStore> {
   const state =
     (await cache.get('ComponentValues', 'current')) ?? new Map<number, ComponentValue>();
   const blockNumber = (await cache.get('BlockNumber', 'current')) ?? 0;

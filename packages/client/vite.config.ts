@@ -17,6 +17,7 @@ export default defineConfig({
       types: path.resolve(__dirname, './types'),
       app: path.resolve(__dirname, './src/app'),
       assets: path.resolve(__dirname, './src/assets'),
+      cache: path.resolve(__dirname, './src/cache'),
       clients: path.resolve(__dirname, './src/clients'),
       constants: path.resolve(__dirname, './src/constants'),
       engine: path.resolve(__dirname, './src/engine'),

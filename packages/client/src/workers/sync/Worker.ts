@@ -37,7 +37,7 @@ import {
   getCacheStoreEntries,
   getIndexDBCacheStoreBlockNumber,
   getStateCache,
-  loadIndexDbCacheStore,
+  loadIndexDbToCacheStore,
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
@@ -265,7 +265,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           msg: 'Loading Initial State From Cache',
           percentage: 0,
         });
-        initialState = await loadIndexDbCacheStore(indexedDB);
+        initialState = await loadIndexDbToCacheStore(indexedDB);
         this.setLoadingState({ percentage: 100 });
       }
     }

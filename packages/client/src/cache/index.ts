@@ -1,0 +1,1 @@
+export { initCache } from './cache';

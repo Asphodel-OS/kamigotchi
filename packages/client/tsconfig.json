@@ -13,6 +13,7 @@
       "types/*": ["./types/*", "./types"],
       "app/*": ["./src/app/*", "./src/app"],
       "assets/*": ["./src/assets/*", "./src/assets"],
+      "cache/*": ["./src/cache/*", "./src/cache"],
       "clients/*": ["./src/clients/*", "./src/clients"],
       "constants/*": ["./src/constants/*", "./src/constants"],
       "engine/*": ["./src/engine/*", "./src/engine"],
