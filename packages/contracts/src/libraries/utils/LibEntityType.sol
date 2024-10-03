@@ -39,6 +39,10 @@ library LibEntityType {
     EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).remove(id);
   }
 
+  function remove(IUintComp components, uint256[] memory ids) internal {
+    EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).removeBatch(ids);
+  }
+
   function get(IUintComp components, uint256 id) internal view returns (string memory) {
     return EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).get(id);
   }
