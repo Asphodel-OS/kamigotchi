@@ -12,7 +12,7 @@ import { LibString } from "solady/utils/LibString.sol";
  * IdAccount, IdTarget: deprecate, change to LibRelation
  */
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
-import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 
@@ -44,7 +44,7 @@ library LibFriend {
   ) internal returns (uint256 id) {
     id = genID(accID, targetID);
     LibEntityType.set(components, id, "FRIENDSHIP");
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).set(id, accID);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, accID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
 
@@ -61,7 +61,7 @@ library LibFriend {
   ) internal returns (uint256 id) {
     id = genID(accID, senderID);
     LibEntityType.set(components, id, "FRIENDSHIP");
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).set(id, accID);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, accID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, senderID);
 
     // set state - raw component for efficiency
@@ -105,7 +105,7 @@ library LibFriend {
   /// @dev also instrinctly updates pointer
   function remove(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).remove(id);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(id);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).remove(id);
     StateComponent(getAddrByID(components, StateCompID)).remove(id);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
@@ -127,7 +127,7 @@ library LibFriend {
   // GETTERS
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddrByID(components, IdAccountCompID)).get(id);
+    return IdSourceComponent(getAddrByID(components, IdSourceCompID)).get(id);
   }
 
   function getTarget(IUintComp components, uint256 id) internal view returns (uint256) {

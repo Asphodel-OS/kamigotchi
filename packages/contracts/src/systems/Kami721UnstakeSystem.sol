@@ -28,7 +28,6 @@ uint256 constant ROOM = 12;
  *  *     {
       "name": "Kami721UnstakeSystem",
       "writeAccess": [
-        "IdAccountComponent",
         "IDOwnsKamiComponent",
         "IdHolderComponent",
         "ProxyPermissionsERC721Component",
