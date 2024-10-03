@@ -99,7 +99,7 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     traits: {
-      get: (index: number, type: string) => getTraitByIndex(components, index, type),
+      get: (index: number, type: string) => getTraitByIndex(world, components, index, type),
       all: () => getRegistryTraits(world, components),
       indices: () => [
         ...new Set([

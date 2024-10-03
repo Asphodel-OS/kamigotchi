@@ -123,7 +123,6 @@ export function createComponents(world: World) {
     Type: defineStringComponent(world, 'Type', 'component.type'),
     Value: defineNumberComponent(world, 'Value', 'component.value'),
     Values: defineNumberArrayComponent(world, 'Values', 'component.values'),
-    ValueSigned: defineNumberComponent(world, 'ValueSigned', 'component.value.signed'),
     Violence: defineStatComponent(world, 'Violence', 'component.stat.violence'),
     Weights: defineNumberArrayComponent(world, 'Weights', 'component.weights'),
     Whitelist: defineNumberArrayComponent(world, 'Whitelist', 'component.whitelist'),
