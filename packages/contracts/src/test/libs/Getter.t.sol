@@ -100,7 +100,7 @@ contract LibGetterTest is SetupTemplate {
     vm.assume(holderID > 0);
 
     vm.startPrank(deployer);
-    uint256 skillID = LibSkill.assign(components, holderID, index);
+    uint256 skillID = LibSkill.assign(components, index, holderID);
     LibSkill.setPoints(components, skillID, amt);
     vm.stopPrank();
 
