@@ -9,9 +9,9 @@ import { BaseAccount, NullAccount, getAccountFromBurner } from 'network/shapes/A
 import { Kami, getKamiAccount, getKamiBattles, getKamiByIndex } from 'network/shapes/Kami';
 import {
   Skill,
+  getHolderTreePoints,
   getRegistrySkills,
   getSkillUpgradeError,
-  getTreePoints,
   getTreePointsRequirement,
 } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
@@ -156,7 +156,8 @@ export function registerKamiModal() {
               utils={{
                 getUpgradeError: (index: number, registry: Map<number, Skill>) =>
                   getSkillUpgradeError(world, components, index, kami, registry),
-                getTreePoints: (tree: string) => getTreePoints(world, components, kami, tree),
+                getTreePoints: (tree: string) =>
+                  getHolderTreePoints(world, components, tree, kami.id),
                 getTreeRequirement: (skill: Skill) =>
                   getTreePointsRequirement(world, components, skill),
               }}

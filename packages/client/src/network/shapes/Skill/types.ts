@@ -7,12 +7,13 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { BigNumber, utils } from 'ethers';
+import { utils } from 'ethers';
 
 import { baseURI } from 'constants/media';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { getSkillEffects } from '.';
+import { getSkillBonuses } from '.';
+import { Bonus } from '../Bonus';
 import { Condition, queryConditionsOf } from '../Conditional';
 import { DetailedEntity } from '../utils';
 
@@ -29,22 +30,15 @@ export interface Skill extends DetailedEntity {
     current?: number;
     max: number;
   };
-  effects?: Effect[];
+  bonuses?: Bonus[];
   requirements?: Requirement[];
-}
-
-export interface Effect {
-  id: EntityID;
-  type: string;
-  subtype: string;
-  value: number;
 }
 
 export interface Requirement extends Condition {}
 
 export interface Options {
   requirements?: boolean;
-  effects?: boolean;
+  bonuses?: boolean;
 }
 
 export const NullSkill: Skill = {
@@ -61,11 +55,11 @@ export const NullSkill: Skill = {
   },
   treeTier: 0,
   tree: 'NONE',
-  effects: [],
+  bonuses: [],
   requirements: [],
 };
 
-// Get a Skill Registry object with effect and requirements
+// Get a Skill Registry object with bonus and requirements
 export const getSkill = (
   world: World,
   components: Components,
@@ -81,9 +75,9 @@ export const getSkill = (
     Max,
     MediaURI,
     Name,
+    Type,
     SkillIndex,
     SkillPoint,
-    Subtype,
   } = components;
 
   const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
@@ -94,8 +88,6 @@ export const getSkill = (
       HasValue(SkillIndex, { value: skillIndex }),
     ])
   )[0];
-
-  console.log(skillIndex, registryIndex);
 
   let skill: Skill = {
     ObjectType: 'SKILL',
@@ -109,11 +101,11 @@ export const getSkill = (
       current: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),
       max: Number(getComponentValue(Max, registryIndex)?.value || 0),
     },
-    tree: getComponentValue(Subtype, registryIndex)?.value || ('' as string),
+    tree: getComponentValue(Type, registryIndex)?.value || ('' as string),
     treeTier: Number(getComponentValue(Level, registryIndex)?.value || 0),
   };
 
-  if (options?.effects) skill.effects = getSkillEffects(world, components, skill.index);
+  if (options?.bonuses) skill.bonuses = getSkillBonuses(world, components, skill.index);
   if (options?.requirements)
     skill.requirements = queryConditionsOf(
       world,
@@ -122,27 +114,6 @@ export const getSkill = (
       skillIndex
     );
   return skill;
-};
-
-// Get a Effect Registry object
-export const getEffect = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex
-): Effect => {
-  const { ValueSigned, Subtype, Type } = components;
-
-  let effect: Effect = {
-    id: world.entities[entityIndex],
-    type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-    subtype: getComponentValue(Subtype, entityIndex)?.value || ('' as string),
-    value:
-      BigNumber.from(getComponentValue(ValueSigned, entityIndex)?.value || 0)
-        .fromTwos(256)
-        .toNumber() || (0 as number),
-  };
-
-  return effect;
 };
 
 // Get a Requirement Registry object
@@ -186,4 +157,17 @@ export const getInstanceEntity = (
   }
 
   return world.entityToIndex.get(id as EntityID);
+};
+
+export const getBonusParentID = (skillIndex: number): EntityID => {
+  let id = '';
+  const key = 'registry.skill.bonus' + skillIndex.toString();
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = formatEntityID(
+      utils.solidityKeccak256(['string', 'uint32'], ['registry.skill.bonus', skillIndex])
+    );
+  }
+  return id as EntityID;
 };
