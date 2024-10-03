@@ -20,272 +20,118 @@ import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeC
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 
-import { LibConditional } from "libraries/LibConditional.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
 
 /// @notice A registry for Skill related entities
-/// @dev Skills are not copied onto entities, only referenced when assigning the effect
+/** @dev skills use the registry + instance pattern
+ * registry shape:
+ *  - skillIndex
+ *  - isRegistry + isSkill
+ *  - name
+ *  - cost
+ *  - max
+ *  - mediaURI
+ *  - for (type of entity - likely Pet/Account)
+ *  - skill tree (optional) [subtype component]
+ *    - bonus for skill tree points per skill (cost)
+ *    - type component (tree name)
+ *    - level component (tree tier)
+ *  - bonuses (using LibBonus)
+ *
+ * Skill trees:
+ *   implemented as bonuses
+ *
+ */
 library LibSkillRegistry {
+  using LibString for string;
+
   /////////////////
   // INTERACTIONS
 
-  /**
-   * @notice Create a registry entry for a Skill
-   * @dev entity shape:
-   *      - skillIndex
-   *      - isRegistry + isSkill
-   *      - type
-   *      - name
-   *      - cost
-   *      - max
-   *      - mediaURI
-   *      - for (type of entity - likely Pet/Account)
-   *      - skill tree (optional) [subtype component]
-   */
   function create(
     IUintComp components,
     uint32 skillIndex,
     string memory for_,
-    string memory type_,
     string memory name,
     string memory description,
     uint256 cost,
     uint256 max,
+    string memory tree,
+    uint256 treeTier,
     string memory media
   ) internal returns (uint256 id) {
     id = genID(skillIndex);
     LibEntityType.set(components, id, "SKILL");
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-    setSkillIndex(components, id, skillIndex);
-    setType(components, id, type_);
-    setName(components, id, name);
-    setCost(components, id, cost);
-    setMax(components, id, max);
-    setMediaURI(components, id, media);
+
+    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, skillIndex);
+    CostComponent(getAddrByID(components, CostCompID)).set(id, cost);
     DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    MaxComponent(getAddrByID(components, MaxCompID)).set(id, max);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, media);
+
+    // adding skill tree - implemented as a Bonus
+    if (!tree.eq("")) {
+      addBonus(components, skillIndex, genTreeType(tree), int256(cost));
+      LevelComponent(getAddrByID(components, LevelCompID)).set(id, treeTier);
+      TypeComponent(getAddrByID(components, TypeCompID)).set(id, tree);
+    }
 
     LibFor.setFromString(components, id, for_);
   }
 
-  function addEffect(
-    IWorld world,
+  function addBonus(
     IUintComp components,
     uint32 skillIndex,
     string memory type_,
     int256 value
-  ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genEffectParentID(skillIndex));
-
-    LibEntityType.set(components, id, "EFFECT");
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-    setSkillIndex(components, id, skillIndex);
-    setType(components, id, type_);
-    ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).set(id, value);
+  ) internal returns (uint256) {
+    return LibBonus.registryCreate(components, genBonusParentID(skillIndex), type_, value);
   }
 
   function addRequirement(
     IWorld world,
     IUintComp components,
     uint32 skillIndex,
-    string memory type_,
-    string memory logicType
-  ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genReqParentID(skillIndex));
-    LibConditional.create(components, id, type_, logicType);
-
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-    setSkillIndex(components, id, skillIndex);
+    Condition memory data
+  ) internal returns (uint256) {
+    return LibConditional.createFor(world, components, data, genReqParentID(skillIndex));
   }
 
-  function delete_(IUintComp components, uint256 id) internal {
+  function remove(IUintComp components, uint32 index) internal {
+    uint256 id = genID(index);
+
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
     LibEntityType.remove(components, id);
-    unsetSkillIndex(components, id);
-    unsetCost(components, id);
-    unsetFor(components, id);
-    unsetMax(components, id);
-    unsetMediaURI(components, id);
-    unsetName(components, id);
-    unsetType(components, id);
-    DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
-  }
-
-  function deleteEffect(IUintComp components, uint256 id) internal {
-    LibEntityType.remove(components, id);
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
-    unsetSkillIndex(components, id);
-    unsetType(components, id);
-    unsetSubtype(components, id);
-    unsetLogicType(components, id);
-    unsetIndex(components, id);
-    unsetBalanceSigned(components, id);
-    unsetConditionOwner(components, id);
-  }
-
-  function deleteRequirement(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
-    unsetSkillIndex(components, id);
-    unsetType(components, id);
-    unsetIndex(components, id);
-    unsetBalance(components, id);
-    unsetConditionOwner(components, id);
-  }
-
-  /////////////////
-  // SETTERS
-
-  function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, ownerID);
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
-  }
-
-  function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, index);
-  }
-
-  function setCost(IUintComp components, uint256 id, uint256 cost) internal {
-    CostComponent(getAddrByID(components, CostCompID)).set(id, cost);
-  }
-
-  function setFor(IUintComp components, uint256 id, uint for_) internal {
-    ForComponent(getAddrByID(components, ForCompID)).set(id, for_);
-  }
-
-  function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
-    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, logicType);
-  }
-
-  function setMax(IUintComp components, uint256 id, uint256 max) internal {
-    MaxComponent(getAddrByID(components, MaxCompID)).set(id, max);
-  }
-
-  function setMediaURI(IUintComp components, uint256 id, string memory mediaURI) internal {
-    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
-  }
-
-  function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-  }
-
-  /// @notice set the skill tree for a skill (optional)
-  /// @dev uses the subtype component
-  function setTree(IUintComp components, uint256 id, string memory tree, uint256 level) internal {
-    setSubtype(components, id, tree);
-    LevelComponent(getAddrByID(components, LevelCompID)).set(id, level);
-  }
-
-  function setSubtype(IUintComp components, uint256 id, string memory subtype) internal {
-    SubtypeComponent(getAddrByID(components, SubtypeCompID)).set(id, subtype);
-  }
-
-  function setType(IUintComp components, uint256 id, string memory _type) internal {
-    TypeComponent(getAddrByID(components, TypeCompID)).set(id, _type);
-  }
-
-  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
-  }
-
-  /////////////////
-  // UNSETTERS
-
-  function unsetConditionOwner(IUintComp components, uint256 id) internal {
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
-  }
-
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    if (IndexComponent(getAddrByID(components, IndexCompID)).has(id)) {
-      IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
-    }
-  }
-
-  function unsetSkillIndex(IUintComp components, uint256 id) internal {
     IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).remove(id);
-  }
-
-  function unsetCost(IUintComp components, uint256 id) internal {
     CostComponent(getAddrByID(components, CostCompID)).remove(id);
-  }
-
-  function unsetFor(IUintComp components, uint256 id) internal {
-    ForComponent(getAddrByID(components, ForCompID)).remove(id);
-  }
-
-  function unsetLogicType(IUintComp components, uint256 id) internal {
-    if (LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).has(id)) {
-      LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
-    }
-  }
-
-  function unsetMax(IUintComp components, uint256 id) internal {
-    MaxComponent(getAddrByID(components, MaxCompID)).remove(id);
-  }
-
-  function unsetMediaURI(IUintComp components, uint256 id) internal {
-    if (MediaURIComponent(getAddrByID(components, MediaURICompID)).has(id)) {
-      MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
-    }
-  }
-
-  function unsetName(IUintComp components, uint256 id) internal {
+    DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
-  }
+    MaxComponent(getAddrByID(components, MaxCompID)).remove(id);
+    MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
+    LibFor.unset(components, id);
 
-  function unsetSubtype(IUintComp components, uint256 id) internal {
-    if (SubtypeComponent(getAddrByID(components, SubtypeCompID)).has(id)) {
-      SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(id);
-    }
-  }
+    // remove skill tree - bonus removed below
+    LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
 
-  function unsetTree(IUintComp components, uint256 id) internal {
-    unsetSubtype(components, id);
-    LevelComponent levelComp = LevelComponent(getAddrByID(components, LevelCompID));
-    if (levelComp.has(id)) levelComp.remove(id);
-  }
+    uint256[] memory reqs = queryRequirements(components, index);
+    for (uint256 i; i < reqs.length; i++) LibConditional.remove(components, reqs[i]);
 
-  function unsetType(IUintComp components, uint256 id) internal {
-    if (TypeComponent(getAddrByID(components, TypeCompID)).has(id)) {
-      TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
-    }
-  }
-
-  function unsetBalance(IUintComp components, uint256 id) internal {
-    if (ValueComponent(getAddrByID(components, ValueCompID)).has(id)) {
-      ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
-    }
-  }
-
-  function unsetBalanceSigned(IUintComp components, uint256 id) internal {
-    if (ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).has(id)) {
-      ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).remove(id);
-    }
+    uint256[] memory bonuses = queryBonuses(components, index);
+    for (uint256 i; i < bonuses.length; i++) LibBonus.registryRemove(components, bonuses[i]);
   }
 
   /////////////////
   // GETTERS
-
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(components, ValueCompID)).get(id);
-  }
-
-  function getBalanceSigned(IUintComp components, uint256 id) internal view returns (int256) {
-    return ValueSignedComponent(getAddrByID(components, ValueSignedCompID)).get(id);
-  }
-
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddrByID(components, IndexCompID)).get(id);
-  }
 
   function getSkillIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).get(id);
@@ -295,30 +141,28 @@ library LibSkillRegistry {
     return CostComponent(getAddrByID(components, CostCompID)).get(id);
   }
 
-  function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id);
+  function getCost(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (uint256[] memory) {
+    return CostComponent(getAddrByID(components, CostCompID)).getBatch(ids);
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
     return MaxComponent(getAddrByID(components, MaxCompID)).get(id);
   }
 
-  function getSubtype(IUintComp components, uint256 id) internal view returns (string memory) {
-    SubtypeComponent comp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
-    return comp.has(id) ? comp.get(id) : "";
-  }
-
   function getTree(
     IUintComp components,
     uint256 id
   ) internal view returns (bool, string memory, uint256) {
-    SubtypeComponent treeComp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
+    TypeComponent treeComp = TypeComponent(getAddrByID(components, TypeCompID));
     if (!treeComp.has(id)) return (false, "", 0);
-    return (true, treeComp.get(id), LevelComponent(getAddrByID(components, LevelCompID)).get(id));
-  }
-
-  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
+    return (
+      true,
+      genTreeType(treeComp.get(id)),
+      LevelComponent(getAddrByID(components, LevelCompID)).get(id)
+    );
   }
 
   /////////////////
@@ -330,25 +174,19 @@ library LibSkillRegistry {
     return LibEntityType.isShape(components, id, "SKILL") ? id : 0;
   }
 
-  function getEffectsByIndex(
+  // get requirements by Skill index
+  function queryRequirements(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return
-      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(
-        genEffectParentID(index)
-      );
+    return LibConditional.queryFor(components, genReqParentID(index));
   }
 
-  // get requirements by Skill index
-  function getRequirementsByIndex(
+  function queryBonuses(
     IUintComp components,
-    uint32 index
+    uint32 skillIndex
   ) internal view returns (uint256[] memory) {
-    return
-      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(
-        genReqParentID(index)
-      );
+    return LibBonus.queryByParent(components, genBonusParentID(skillIndex));
   }
 
   ////////////////////
@@ -358,11 +196,20 @@ library LibSkillRegistry {
     return uint256(keccak256(abi.encodePacked("registry.skill", index)));
   }
 
+  function genID(uint32[] memory indices) internal pure returns (uint256[] memory ids) {
+    ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+  }
+
   function genReqParentID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.skill.requirement", index)));
   }
 
-  function genEffectParentID(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("registry.skill.effect", index)));
+  function genBonusParentID(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("registry.skill.bonus", index)));
+  }
+
+  function genTreeType(string memory tree) internal pure returns (string memory) {
+    return LibString.concat("SKILL_TREE_", tree);
   }
 }

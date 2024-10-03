@@ -42,28 +42,15 @@ contract SkillUpgradeSystem is System {
 
     // points are decremented when checking prerequisites
     require(
-      LibSkill.meetsPrerequisites(components, holderID, regID),
+      LibSkill.meetsPrerequisites(components, skillIndex, holderID),
       "SkillUpgrade: unmet prerequisites"
     );
 
-    // decrement the skill cost
-    uint256 cost = LibSkillRegistry.getCost(components, regID);
-    LibSkill.dec(components, holderID, cost);
-
-    // create the skill if it doesnt exist and increment it
-    uint256 skillID = LibSkill.get(components, holderID, skillIndex);
-    if (skillID == 0) skillID = LibSkill.assign(components, holderID, skillIndex);
-    LibSkill.inc(components, skillID, 1);
-
-    // get the skill's effects and update the holder's bonuses accordingly
-    uint256[] memory effectIDs = LibSkillRegistry.getEffectsByIndex(components, skillIndex);
-    for (uint256 i = 0; i < effectIDs.length; i++) {
-      LibSkill.processEffectUpgrade(components, holderID, effectIDs[i]);
-    }
+    // upgrading skill
+    uint256 id = LibSkill.upgradeFor(components, skillIndex, holderID);
 
     // standard logging and tracking
     LibSkill.logUsePoint(components, accID);
-    LibSkill.logUseTreePoint(components, holderID, regID, cost);
     LibAccount.updateLastTs(components, accID);
     return "";
   }
