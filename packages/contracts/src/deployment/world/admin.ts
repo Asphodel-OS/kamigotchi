@@ -447,7 +447,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   async function createSkill(
     index: number,
     for_: string,
-    type: string,
     tree: string,
     name: string,
     description: string,
@@ -458,20 +457,9 @@ export function createAdminAPI(compiledCalls: string[]) {
   ) {
     genCall(
       'system.skill.registry',
-      [index, for_, type, tree, name, description, cost, max, treeTier, media],
+      [index, for_, tree, name, description, cost, max, treeTier, media],
       'create',
-      [
-        'uint32',
-        'string',
-        'string',
-        'string',
-        'string',
-        'string',
-        'uint256',
-        'uint256',
-        'uint256',
-        'string',
-      ]
+      ['uint32', 'string', 'string', 'string', 'string', 'uint256', 'uint256', 'uint256', 'string']
     );
   }
 
@@ -479,10 +467,9 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.skill.registry', [index], 'remove');
   }
 
-  async function addSkillEffect(skillIndex: number, type: string, subtype: string, value: number) {
-    genCall('system.skill.registry', [skillIndex, type, subtype, value], 'addEffect', [
+  async function addSkillBonus(skillIndex: number, type: string, value: number) {
+    genCall('system.skill.registry', [skillIndex, type, value], 'addBonus', [
       'uint32',
-      'string',
       'string',
       'int256',
     ]);
@@ -741,7 +728,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         create: createSkill,
         delete: deleteSkill,
         add: {
-          effect: addSkillEffect,
+          bonus: addSkillBonus,
           requirement: addSkillRequirement,
         },
       },

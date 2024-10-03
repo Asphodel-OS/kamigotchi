@@ -13,6 +13,7 @@ import "./TestSetupImports.sol";
 import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibGetter } from "libraries/utils/LibGetter.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
@@ -381,8 +382,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* SKILLS */
 
-  function _upgradeSkill(uint playerIndex, uint targetID, uint32 skillIndex) internal virtual {
-    vm.prank(_getOperator(playerIndex));
+  function _upgradeSkill(
+    PlayerAccount memory acc,
+    uint targetID,
+    uint32 skillIndex
+  ) internal virtual {
+    vm.prank(acc.operator);
     _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
   }
 
@@ -408,7 +413,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
-    LibSkill.inc(components, id, amt);
+    LibSkill.incPoints(components, id, amt);
     vm.stopPrank();
   }
 
@@ -433,6 +438,12 @@ abstract contract SetupTemplate is TestSetupImports {
   function _setUint32(IComponent component, uint256 id, uint32 value) internal {
     vm.prank(deployer);
     component.set(id, abi.encode(value));
+  }
+
+  function _resetSkills(uint256 targetID) internal {
+    vm.startPrank(deployer);
+    LibSkill.resetAll(components, targetID);
+    vm.stopPrank();
   }
 
   /////////////////
@@ -751,29 +762,26 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createSkill(
     uint32 index,
     string memory for_,
-    string memory type_,
     uint256 cost,
     uint256 max
   ) internal returns (uint256) {
-    return _createSkill(index, for_, type_, "", "name", cost, max, 0);
+    return _createSkill(index, for_, "", "name", cost, max, 0);
   }
 
   function _createSkill(
     uint32 index,
     string memory for_,
-    string memory type_,
     string memory tree,
     uint256 cost,
     uint256 max,
     uint256 treeTier
   ) internal returns (uint256) {
-    return _createSkill(index, for_, type_, tree, "name", cost, max, treeTier);
+    return _createSkill(index, for_, tree, "name", cost, max, treeTier);
   }
 
   function _createSkill(
     uint32 index,
     string memory for_,
-    string memory type_,
     string memory tree,
     string memory name,
     uint cost,
@@ -783,18 +791,17 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       __SkillRegistrySystem.create(
-        abi.encode(index, for_, type_, tree, name, "description", cost, max, treeTier, "")
+        abi.encode(index, for_, tree, name, "description", cost, max, treeTier, "")
       );
   }
 
-  function _createSkillEffect(
+  function _createSkillBonus(
     uint32 skillIndex,
     string memory type_,
-    string memory subtype, // can be empty
     int value // can be empty
   ) internal returns (uint256) {
     vm.prank(deployer);
-    return __SkillRegistrySystem.addEffect(abi.encode(skillIndex, type_, subtype, value));
+    return __SkillRegistrySystem.addBonus(abi.encode(skillIndex, type_, value));
   }
 
   function _createSkillRequirement(
