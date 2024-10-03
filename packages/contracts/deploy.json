@@ -108,7 +108,6 @@
     { "comp": "TypeComponent", "name": "Type", "type": "string" },
     { "comp": "ValueComponent", "name": "Value", "type": "uint256" },
     { "comp": "ValuesComponent", "name": "Values", "type": "uint256[]" },
-    { "comp": "ValueSignedComponent", "name": "ValueSigned", "type": "int256" },
     { "comp": "ViolenceComponent", "name": "Violence", "type": "Stat" },
     { "comp": "WeightsComponent", "name": "Weights", "type": "uint256[]" },
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }

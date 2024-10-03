@@ -3,38 +3,90 @@ import { formatEntityID } from 'engine/utils';
 import { BigNumber, utils } from 'ethers';
 import { Components } from 'network/';
 
-const IDStore = new Map<string, string>();
+export interface Bonus {
+  id: EntityID;
+  type: string;
+  value: number;
+  parent?: EntityID;
+}
 
-export const getBonusValue = (
+export const getBonus = (
   world: World,
   components: Components,
-  holderID: EntityID,
-  type: string,
+  entity: EntityIndex,
+  precision: number = 0
+): Bonus => {
+  const { Level, ParentID, Type, Value } = components;
+
+  const regEntity = getRegistryEntity(world, components, entity);
+
+  return {
+    id: world.entities[entity],
+    type: (getComponentValue(Type, regEntity)?.value as string) || '',
+    value: calcValue(
+      getComponentValue(Value, regEntity)?.value as number, // base
+      (getComponentValue(Level, entity)?.value || 1) * 1, // mult
+      precision
+    ),
+    parent: getComponentValue(ParentID, entity)?.value as EntityID,
+  };
+};
+
+export const getBonusValueSingle = (
+  world: World,
+  components: Components,
+  entity: EntityIndex,
   precision: number = 0
 ): number => {
-  const { ValueSigned } = components;
-  const entityIndex = getEntityIndex(world, holderID, type);
-  if (!entityIndex) return 0;
+  const { Level, Value } = components;
 
-  const raw = BigNumber.from(getComponentValue(ValueSigned, entityIndex)?.value ?? 0);
-  return raw.fromTwos(256).toNumber() / 10 ** precision;
+  const regEntity = getRegistryEntity(world, components, entity);
+
+  return calcValue(
+    getComponentValue(Value, regEntity)?.value as number, // base
+    (getComponentValue(Level, entity)?.value || 1) * 1, // mult
+    precision
+  );
+};
+
+const calcValue = (base: number, mult: number, precision: number = 0): number => {
+  const raw = BigNumber.from(base);
+  return (raw.fromTwos(256).toNumber() / 10 ** precision) * mult;
 };
 
 ////////////////////
 // UTILS
 
-const getEntityIndex = (
+const getRegistryEntity = (
   world: World,
-  holderID: EntityID,
-  field: string
-): EntityIndex | undefined => {
-  const key = 'bonus' + holderID + field;
+  components: Components,
+  entity: EntityIndex
+): EntityIndex => {
+  const { IsRegistry, SourceID } = components;
 
+  let regEntity: EntityIndex;
+  if (IsRegistry.values.value.has(entity)) {
+    // is registry entry, take values from here
+    regEntity = entity;
+  } else {
+    // not registry entry, get registry entry
+    const regID = getComponentValue(SourceID, entity)?.value as EntityID;
+    const rawRegID = world.entityToIndex.get(formatEntityID(regID));
+    if (!rawRegID) throw new Error('Bonus: invalid registry entity');
+    regEntity = rawRegID;
+  }
+  return regEntity;
+};
+
+const IDStore = new Map<string, string>();
+
+export const getTypeID = (field: string, holderID: EntityID): string => {
+  const key = 'bonus type' + field + holderID;
   let id = '';
   if (IDStore.has(key)) id = IDStore.get(key)!;
   else {
-    id = utils.solidityKeccak256(['string', 'uint256', 'string'], ['bonus', holderID ?? 0, field]);
+    id = utils.solidityKeccak256(['string', 'string', 'uint256'], ['bonus.type', field, holderID]);
+    IDStore.set(key, id);
   }
-
-  return world.entityToIndex.get(formatEntityID(id));
+  return id;
 };

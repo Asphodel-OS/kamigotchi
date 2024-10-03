@@ -1,12 +1,12 @@
-import { World } from '@mud-classic/recs';
+import { EntityID, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
+import { Bonus, getBonusValue } from '../Bonus';
 import { checkCondition } from '../Conditional';
 import { getConfigFieldValueArray } from '../Config';
 import { Kami, isDead, isHarvesting, isOffWorld, isStarving } from '../Kami';
-import { getData } from '../utils';
-import { Effect, Requirement, Skill } from './types';
+import { Requirement, Skill } from './types';
 
 export const getInstance = (target: Account | Kami, rSkill: Skill) => {
   const kSkill = target.skills?.find((s) => s.index === rSkill.index);
@@ -41,7 +41,7 @@ export const getUpgradeError = (
   // tree check
   if (rSkill.treeTier > 0) {
     const tree = rSkill.tree;
-    const invested = getData(world, components, kami.id, rSkill.tree + 'SKILL_POINTS_USE');
+    const invested = getHolderTreePoints(world, components, tree, kami.id);
     const reqPts = getTreePointsRequirement(world, components, rSkill);
     if (invested < reqPts) return [`Not enough ${tree} points invested [${invested}/${reqPts}]`];
   }
@@ -57,32 +57,34 @@ export const getUpgradeError = (
     return [`Insufficient Skill Points.`, `Need ${rSkill.cost}. Have ${kami.skillPoints}.`];
 };
 
-export const getTreePoints = (world: World, components: Components, kami: Kami, tree: string) => {
-  const treePoints = getData(world, components, kami.id, tree + 'SKILL_POINTS_USE');
+export const getHolderTreePoints = (
+  world: World,
+  components: Components,
+  tree: string,
+  holderID: EntityID
+) => {
+  const treePoints = getBonusValue(world, components, 'SKILL_TREE_' + tree, holderID);
   return treePoints ? treePoints : 0;
 };
 
-// parse the description of a skill effect from its components
+// parse the description of a skill bonus from its components
 // +10% Harvest Output Per Level
 // [+]         [10 | 1.0]           [s | %]   [Harvest] [Output]  [Per Level]
 // [logictype] [value/type/subtype] [subtype] [type]    [subtype] [constant]
-export const parseEffectText = (effect: Effect): string => {
+export const parseBonusText = (bonus: Bonus): string => {
   let text = '';
 
   // number formatting
-  if (effect.type === 'STAT') text += effect.value * 1;
-  else if (effect.subtype === 'COOLDOWN') text += `${effect.value * 1}s`;
-  else text += `${(effect.value / 10).toFixed(1)}%`; // default %
+  if (bonus.type.includes('STAT')) text += bonus.value * 1;
+  else if (bonus.type.startsWith('COOLDOWN')) text += `${bonus.value * 1}s`;
+  else text += `${(bonus.value / 10).toFixed(1)}%`; // default %
 
   // type
-  if (effect.type !== 'STAT') text += ` ${effect.type.toLowerCase()}`;
+  if (bonus.type.startsWith('STAT')) text += ` ${bonus.type.split('_')[1]}`;
+  else if (bonus.type.endsWith('OFFENSE')) text += ` offensive ${bonus.type.slice(0, -7)}`;
+  else if (bonus.type.endsWith('DEFENSE')) text += ` defensive ${bonus.type.slice(0, -7)}`;
 
-  // subtype
-  if (effect.subtype.endsWith('OFFENSE'))
-    text += ` offensive ${effect.subtype.slice(0, -7).toLowerCase().replaceAll('_', ' ')}`;
-  else if (effect.subtype.endsWith('DEFENSE'))
-    text += ` defensive ${effect.subtype.slice(0, -7).toLowerCase().replaceAll('_', ' ')}`;
-  else text += ` ${effect.subtype.toLowerCase().replaceAll('_', ' ')}`;
+  text = text.toLowerCase().replaceAll('_', ' ');
 
   return text + ' per level';
 };
