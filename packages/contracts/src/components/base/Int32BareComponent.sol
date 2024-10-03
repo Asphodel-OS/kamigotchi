@@ -10,25 +10,23 @@ contract Int32BareComponent is BareComponent {
     _set(entity, TypeLib.encodeInt32(value));
   }
 
-  function setBatch(uint256[] memory entities, int32[] memory values) external virtual onlyWriter {
-    _setBatch(entities, TypeLib.encodeBatch(values));
+  function set(uint256[] memory entities, int32[] memory values) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (int32) {
     return TypeLib.decodeInt32(_extractRaw(entity));
   }
 
-  function extractBatch(
-    uint256[] memory entities
-  ) external virtual onlyWriter returns (int32[] memory) {
-    return TypeLib.decodeBatchInt32(_extractRawBatch(entities));
+  function extract(uint256[] memory entities) external virtual onlyWriter returns (int32[] memory) {
+    return TypeLib.decodeBatchInt32(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (int32) {
     return TypeLib.decodeInt32(_getRaw(entity));
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (int32[] memory) {
-    return TypeLib.decodeBatchInt32(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (int32[] memory) {
+    return TypeLib.decodeBatchInt32(_getRaw(entities));
   }
 }
