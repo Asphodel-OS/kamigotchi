@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Skill, parseEffectText, parseRequirementText } from 'network/shapes/Skill';
+import { Skill, parseBonusText, parseRequirementText } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -82,7 +82,7 @@ export const Details = (props: Props) => {
   ////////////////////
   // DISPLAY
 
-  // render a list of values with a label (for Effects/Requirements)
+  // render a list of values with a label (for Bonuses/Requirements)
   const LabeledList = (props: { label: string; values?: string[] }) => {
     if (!props.values || props.values.length <= 0 || props.values[0] == '') return <></>;
     return (
@@ -133,8 +133,8 @@ export const Details = (props: Props) => {
       <Description>{skill.description}</Description>
 
       <LabeledList
-        label='Effects'
-        values={(skill.effects ?? []).map((eff) => parseEffectText(eff))}
+        label='Bonuses'
+        values={(skill.bonuses ?? []).map((bonus) => parseBonusText(bonus))}
       />
       <LabeledList
         label='Requirements'

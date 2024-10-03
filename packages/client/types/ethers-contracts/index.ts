@@ -166,7 +166,6 @@ export type { Uint32ArrayComponent } from "./Uint32ArrayComponent";
 export type { Uint32BareComponent } from "./Uint32BareComponent";
 export type { Uint32Component } from "./Uint32Component";
 export type { ValueComponent } from "./ValueComponent";
-export type { ValueSignedComponent } from "./ValueSignedComponent";
 export type { ValuesComponent } from "./ValuesComponent";
 export type { ViolenceComponent } from "./ViolenceComponent";
 export type { WeightsComponent } from "./WeightsComponent";
@@ -354,7 +353,6 @@ export { Uint32ArrayComponent__factory } from "./factories/Uint32ArrayComponent_
 export { Uint32BareComponent__factory } from "./factories/Uint32BareComponent__factory";
 export { Uint32Component__factory } from "./factories/Uint32Component__factory";
 export { ValueComponent__factory } from "./factories/ValueComponent__factory";
-export { ValueSignedComponent__factory } from "./factories/ValueSignedComponent__factory";
 export { ValuesComponent__factory } from "./factories/ValuesComponent__factory";
 export { ViolenceComponent__factory } from "./factories/ViolenceComponent__factory";
 export { WeightsComponent__factory } from "./factories/WeightsComponent__factory";
