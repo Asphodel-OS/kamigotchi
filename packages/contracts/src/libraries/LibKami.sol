@@ -29,7 +29,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
-import { LibBonusOld } from "libraries/LibBonusOld.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -153,7 +153,7 @@ library LibKami {
   // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
   function calcMetabolism(IUintComp components, uint256 id) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
-    uint256 boostBonus = LibBonusOld.getRaw(components, id, "REST_METABOLISM_BOOST").toUint256();
+    uint256 boostBonus = LibBonus.getFor(components, "REST_METABOLISM_BOOST", id).toUint256();
     uint256 base = calcTotalHarmony(components, id).toUint256();
     uint256 ratio = config[2]; // metabolism core
     uint256 boost = config[6] + boostBonus;
@@ -176,7 +176,7 @@ library LibKami {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
-    int256 bonusBoost = LibBonusOld.getRaw(components, id, "STND_STRAIN_BOOST");
+    int256 bonusBoost = LibBonus.getFor(components, "STND_STRAIN_BOOST", id);
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
 
@@ -189,47 +189,33 @@ library LibKami {
 
   /////////////////
   // STAT CALCS
-  // TODO: implement equipment stats with new stat shapes
 
   // Calculate and return the total harmony of a kami (including equips)
   function calcTotalHarmony(IUintComp components, uint256 id) internal view returns (int32) {
     int32 total = LibStat.getHarmonyTotal(components, id);
-    // uint256[] memory equipment = LibEquipment.getForKami(components, id);
-    // for (uint256 i = 0; i < equipment.length; i++) {
-    //   total += LibEquipment.getHarmony(components, equipment[i]);
-    // }
-    return total;
+    int256 bonusShift = LibBonus.getFor(components, "STAT_HARMONY_SHIFT", id);
+    return total + bonusShift.toInt32();
   }
 
   // Calculate and return the total health of a kami (including equips)
   function calcTotalHealth(IUintComp components, uint256 id) internal view returns (int32) {
     int32 total = LibStat.getHealthTotal(components, id);
-
-    // uint256[] memory equipment = LibEquipment.getForKami(components, id);
-    // for (uint256 i = 0; i < equipment.length; i++) {
-    //   total += LibEquipment.getHealth(components, equipment[i]);
-    // }
-    return total;
+    int256 bonusShift = LibBonus.getFor(components, "STAT_HEALTH_SHIFT", id);
+    return total + bonusShift.toInt32();
   }
 
   // Calculate and return the total power of a kami (including equips)
   function calcTotalPower(IUintComp components, uint256 id) internal view returns (int32) {
     int32 total = LibStat.getPowerTotal(components, id);
-    // uint256[] memory equipment = LibEquipment.getForKami(components, id);
-    // for (uint256 i = 0; i < equipment.length; i++) {
-    //   total += LibEquipment.getPower(components, equipment[i]);
-    // }
-    return total;
+    int256 bonusShift = LibBonus.getFor(components, "STAT_POWER_SHIFT", id);
+    return total + bonusShift.toInt32();
   }
 
   // Calculate and return the total violence of a kami (including equips)
   function calcTotalViolence(IUintComp components, uint256 id) internal view returns (int32) {
     int32 total = LibStat.getViolenceTotal(components, id);
-    // uint256[] memory equipment = LibEquipment.getForKami(components, id);
-    // for (uint256 i = 0; i < equipment.length; i++) {
-    //   total += LibEquipment.getViolence(components, equipment[i]);
-    // }
-    return total;
+    int256 bonusShift = LibBonus.getFor(components, "STAT_VIOLENCE_SHIFT", id);
+    return total + bonusShift.toInt32();
   }
 
   /////////////////
