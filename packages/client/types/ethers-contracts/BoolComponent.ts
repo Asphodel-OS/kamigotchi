@@ -50,7 +50,6 @@ export interface BoolComponentInterface extends utils.Interface {
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "registerWorld(address)": FunctionFragment;
     "remove(uint256[])": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -64,7 +63,6 @@ export interface BoolComponentInterface extends utils.Interface {
     "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
-    "world()": FunctionFragment;
     "writeAccess(address)": FunctionFragment;
   };
 
@@ -90,7 +88,6 @@ export interface BoolComponentInterface extends utils.Interface {
       | "id"
       | "owner"
       | "ownershipHandoverExpiresAt"
-      | "registerWorld"
       | "remove(uint256[])"
       | "remove(uint256)"
       | "renounceOwnership"
@@ -104,7 +101,6 @@ export interface BoolComponentInterface extends utils.Interface {
       | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
-      | "world"
       | "writeAccess"
   ): FunctionFragment;
 
@@ -183,10 +179,6 @@ export interface BoolComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "registerWorld",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "remove(uint256[])",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
@@ -238,7 +230,6 @@ export interface BoolComponentInterface extends utils.Interface {
     functionFragment: "unauthorizeWriter",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "world", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "writeAccess",
     values: [PromiseOrValue<string>]
@@ -313,10 +304,6 @@ export interface BoolComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "registerWorld",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "remove(uint256[])",
     data: BytesLike
   ): Result;
@@ -365,7 +352,6 @@ export interface BoolComponentInterface extends utils.Interface {
     functionFragment: "unauthorizeWriter",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "world", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "writeAccess",
     data: BytesLike
@@ -539,11 +525,6 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -608,8 +589,6 @@ export interface BoolComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    world(overrides?: CallOverrides): Promise<[string]>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
@@ -713,11 +692,6 @@ export interface BoolComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  registerWorld(
-    _world: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   "remove(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -782,8 +756,6 @@ export interface BoolComponent extends BaseContract {
     writer: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  world(overrides?: CallOverrides): Promise<string>;
 
   writeAccess(
     operator: PromiseOrValue<string>,
@@ -885,11 +857,6 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -950,8 +917,6 @@ export interface BoolComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    world(overrides?: CallOverrides): Promise<string>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
@@ -1081,11 +1046,6 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1150,8 +1110,6 @@ export interface BoolComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    world(overrides?: CallOverrides): Promise<BigNumber>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
@@ -1256,11 +1214,6 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1325,8 +1278,6 @@ export interface BoolComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    world(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
