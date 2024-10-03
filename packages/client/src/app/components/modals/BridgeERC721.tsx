@@ -25,9 +25,9 @@ export function registerERC721BridgeModal() {
     (layers) => {
       const { network } = layers;
       const { world, components, systems } = network;
-      const { AccountID, State } = components;
+      const { SourceID, State } = components;
 
-      return merge(AccountID.update$, State.update$).pipe(
+      return merge(SourceID.update$, State.update$).pipe(
         map(() => {
           return {
             network,

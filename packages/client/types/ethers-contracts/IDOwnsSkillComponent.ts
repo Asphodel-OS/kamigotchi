@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IdAccountComponentInterface extends utils.Interface {
+export interface IDOwnsSkillComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
@@ -38,6 +38,7 @@ export interface IdAccountComponentInterface extends utils.Interface {
     "extractRaw(uint256)": FunctionFragment;
     "extractRawBatch(uint256[])": FunctionFragment;
     "get(uint256)": FunctionFragment;
+    "getAt(bytes,uint256)": FunctionFragment;
     "getBatch(uint256[])": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
@@ -57,6 +58,7 @@ export interface IdAccountComponentInterface extends utils.Interface {
     "set(uint256,bytes)": FunctionFragment;
     "setBatch(uint256[],bytes[])": FunctionFragment;
     "setBatch(uint256[],uint256[])": FunctionFragment;
+    "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -73,6 +75,7 @@ export interface IdAccountComponentInterface extends utils.Interface {
       | "extractRaw"
       | "extractRawBatch"
       | "get"
+      | "getAt"
       | "getBatch"
       | "getEntities"
       | "getEntitiesWithValue(bytes)"
@@ -92,6 +95,7 @@ export interface IdAccountComponentInterface extends utils.Interface {
       | "set(uint256,bytes)"
       | "setBatch(uint256[],bytes[])"
       | "setBatch(uint256[],uint256[])"
+      | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -129,6 +133,10 @@ export interface IdAccountComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "get",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAt",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getBatch",
@@ -201,6 +209,10 @@ export interface IdAccountComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "size",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -237,6 +249,7 @@ export interface IdAccountComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "get", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
@@ -295,6 +308,7 @@ export interface IdAccountComponentInterface extends utils.Interface {
     functionFragment: "setBatch(uint256[],uint256[])",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -354,12 +368,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface IdAccountComponent extends BaseContract {
+export interface IDOwnsSkillComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IdAccountComponentInterface;
+  interface: IDOwnsSkillComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -420,6 +434,12 @@ export interface IdAccountComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getAt(
+      value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -428,7 +448,7 @@ export interface IdAccountComponent extends BaseContract {
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     "getEntitiesWithValue(bytes)"(
-      arg0: PromiseOrValue<BytesLike>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -508,6 +528,11 @@ export interface IdAccountComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    size(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -565,6 +590,12 @@ export interface IdAccountComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getAt(
+    value: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getBatch(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
@@ -573,7 +604,7 @@ export interface IdAccountComponent extends BaseContract {
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   "getEntitiesWithValue(bytes)"(
-    arg0: PromiseOrValue<BytesLike>,
+    value: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -653,6 +684,11 @@ export interface IdAccountComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  size(
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -708,6 +744,12 @@ export interface IdAccountComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getAt(
+      value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -716,7 +758,7 @@ export interface IdAccountComponent extends BaseContract {
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     "getEntitiesWithValue(bytes)"(
-      arg0: PromiseOrValue<BytesLike>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -791,6 +833,11 @@ export interface IdAccountComponent extends BaseContract {
       values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    size(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -875,6 +922,12 @@ export interface IdAccountComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getAt(
+      value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -883,7 +936,7 @@ export interface IdAccountComponent extends BaseContract {
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getEntitiesWithValue(bytes)"(
-      arg0: PromiseOrValue<BytesLike>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -963,6 +1016,11 @@ export interface IdAccountComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    size(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -1021,6 +1079,12 @@ export interface IdAccountComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getAt(
+      value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -1029,7 +1093,7 @@ export interface IdAccountComponent extends BaseContract {
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getEntitiesWithValue(bytes)"(
-      arg0: PromiseOrValue<BytesLike>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1107,6 +1171,11 @@ export interface IdAccountComponent extends BaseContract {
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    size(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
