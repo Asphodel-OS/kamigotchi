@@ -14,7 +14,7 @@ export async function initSkills(api: AdminAPI, indices?: number[]) {
 
     try {
       await initSkill(api, skill);
-      await initEffect(api, skill, effectsCSV);
+      await initBonus(api, skill, effectsCSV);
       await initMutualExclusionRequirement(api, skill);
     } catch (e) {
       console.error(`Could not create skill ${index}`, e);
@@ -60,7 +60,6 @@ async function initSkill(api: AdminAPI, skill: any) {
   await api.registry.skill.create(
     index,
     'KAMI', // skills are only for Kami rn
-    'PASSIVE', // all skills are passive rn
     tree,
     name,
     description,
@@ -71,17 +70,17 @@ async function initSkill(api: AdminAPI, skill: any) {
   );
 }
 
-async function initEffect(api: AdminAPI, skill: any, effectsCSV: any) {
+async function initBonus(api: AdminAPI, skill: any, effectsCSV: any) {
   const index = Number(skill['Index']);
   const key = skill['Effect'].split(' ')[0];
   const effect = effectsCSV.find((e: any) => e['Key'] === key);
 
-  const type = effect['Type']; // effect context
+  const rawType = effect['Type'].toUpperCase(); // effect context
   const ast = effect['AsphoAST'].toUpperCase();
   const operation = effect['Operation'].toUpperCase();
-  const subtype = type === 'STAT' ? `${ast}` : `${ast}_${operation}`;
+  const type = `${rawType}_${ast}_${operation}`;
   const value = Number(skill['Value']) * 10 ** Number(effect['Precision']);
-  await api.registry.skill.add.effect(index, type, subtype, value);
+  await api.registry.skill.add.bonus(index, type, value);
 }
 
 // only processes Mutual Exclusion requirement for now

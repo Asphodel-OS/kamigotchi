@@ -6,29 +6,26 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IDOwnsSkillComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsSkillComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
-import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
-import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { SkillPointComponent, ID as SPCompID } from "components/SkillPointComponent.sol";
-import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibBonusOld } from "libraries/LibBonusOld.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibFor } from "libraries/utils/LibFor.sol";
-import { LibKami } from "libraries/LibKami.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
-import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant TREE_POINTS_PER_TIER = 5;
 
 library LibSkill {
+  using LibArray for uint256[];
+  using LibComp for IUintComp;
   using LibString for string;
 
   /////////////////
@@ -37,66 +34,85 @@ library LibSkill {
   // assign a skill to an entity
   function assign(
     IUintComp components,
-    uint256 targetID,
-    uint32 skillIndex
+    uint32 skillIndex,
+    uint256 targetID
   ) internal returns (uint256 id) {
     id = genID(targetID, skillIndex);
     LibEntityType.set(components, id, "SKILL");
-    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, targetID);
+    OwnerComponent(getAddrByID(components, OwnerCompID)).set(id, targetID);
     IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, skillIndex);
   }
 
-  // increase skill points of a skill by a specified value
-  function inc(IUintComp components, uint256 id, uint256 value) internal {
-    SkillPointComponent pointComp = SkillPointComponent(getAddrByID(components, SPCompID));
-    uint256 curr = pointComp.has(id) ? pointComp.get(id) : 0;
-    pointComp.set(id, curr + value);
-  }
+  /// @notice upgrades, increases points for skill by 1
+  function upgradeFor(
+    IUintComp components,
+    uint32 skillIndex,
+    uint256 targetID
+  ) internal returns (uint256 id) {
+    uint256 regID = LibSkillRegistry.genID(skillIndex);
+    id = genID(targetID, skillIndex);
 
-  // decrease skillPoints by a specified value
-  function dec(IUintComp components, uint256 id, uint256 value) internal {
-    SkillPointComponent pointComp = SkillPointComponent(getAddrByID(components, SPCompID));
-    uint256 curr = pointComp.has(id) ? pointComp.get(id) : 0;
-    require(curr >= value, "LibSkill: not enough points");
-    pointComp.set(id, curr - value);
-  }
-
-  // process the upgrade of a skill (can be generic or stat skill)
-  function processEffectUpgrade(IUintComp components, uint256 holderID, uint256 effectID) public {
-    if (LibSkillRegistry.getType(components, effectID).eq("STAT")) {
-      processStatEffectUpgrade(components, holderID, effectID);
-    } else {
-      processGeneralEffectUpgrade(components, holderID, effectID);
+    // create skill if not yet assigned
+    if (!LibEntityType.checkAndSet(components, id, "SKILL")) {
+      OwnerComponent(getAddrByID(components, OwnerCompID)).set(id, targetID);
+      IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).set(id, skillIndex);
     }
+
+    // adjusting points
+    useCost(components, regID, id, targetID);
+
+    // upgrading bonuses
+    LibBonus.incBy(components, LibSkillRegistry.genBonusParentID(skillIndex), id, targetID, 1);
   }
 
-  // process the upgrade of a generic skill inc/dec effect
-  function processGeneralEffectUpgrade(
-    IUintComp components,
-    uint256 holderID,
-    uint256 effectID
-  ) internal {
-    string memory type_ = LibSkillRegistry.getType(components, effectID);
-    string memory subtype = LibSkillRegistry.getSubtype(components, effectID);
-    string memory bonusType;
-    if (subtype.eq("")) bonusType = type_;
-    else bonusType = LibString.concat(LibString.concat(type_, "_"), subtype);
-    int256 value = LibSkillRegistry.getBalanceSigned(components, effectID);
+  /// @notice resets all skills, refund skill points
+  function resetAll(IUintComp components, uint256 targetID) internal {
+    uint256[] memory instanceIDs = queryForHolder(components, targetID);
+    uint32[] memory indices = extractIndex(components, instanceIDs);
+    uint256[] memory regIDs = LibSkillRegistry.genID(indices);
 
-    LibBonusOld.inc(components, holderID, bonusType, value);
+    // reset skill points (extracts points, adds to target)
+    refundCosts(components, regIDs, instanceIDs, targetID);
+
+    // remove bonuses
+    for (uint256 i; i < instanceIDs.length; i++) {
+      // potential optimisation here
+      uint256[] memory bonusIDs = LibBonus.queryByParent(components, instanceIDs[i]);
+      LibBonus.unassign(components, bonusIDs);
+    }
+
+    // deleting instances (remaining components)
+    LibEntityType.remove(components, instanceIDs);
+    OwnerComponent(getAddrByID(components, OwnerCompID)).removeBatch(instanceIDs);
   }
 
-  // processes the upgrade of a stat increment/decrement effect
-  // assume the holder's bonus entity exists
-  function processStatEffectUpgrade(
+  /// @notice uses cost of skill, upgrades
+  /// @dev implicit insufficient points check
+  function useCost(
     IUintComp components,
-    uint256 holderID,
-    uint256 effectID
+    uint256 regID,
+    uint256 instanceID,
+    uint256 targetID
   ) internal {
-    string memory subtype = LibSkillRegistry.getSubtype(components, effectID);
-    int32 amt = int32(LibSkillRegistry.getBalanceSigned(components, effectID));
+    uint256 cost = LibSkillRegistry.getCost(components, regID);
 
-    LibStat.shift(components, holderID, subtype, amt);
+    IUintComp pointsComp = IUintComp(getAddrByID(components, SPCompID));
+    pointsComp.dec(targetID, cost);
+    pointsComp.inc(instanceID, 1);
+  }
+
+  /// @notice refunds skill points to target, extract skill levels
+  function refundCosts(
+    IUintComp components,
+    uint256[] memory regIDs,
+    uint256[] memory instanceIDs,
+    uint256 targetID
+  ) internal {
+    SkillPointComponent pointComp = SkillPointComponent(getAddrByID(components, SPCompID));
+    uint256[] memory instanceLevels = pointComp.extractBatch(instanceIDs);
+    uint256[] memory usedPts = LibSkillRegistry.getCost(components, regIDs);
+    uint256 total = instanceLevels.multiply(usedPts).sum();
+    LibComp.inc(pointComp, targetID, total);
   }
 
   /////////////////
@@ -114,10 +130,10 @@ library LibSkill {
   /// @dev prereqs include cost of skill, max points, and requirements
   function meetsPrerequisites(
     IUintComp components,
-    uint256 targetID,
-    uint256 registryID // skill registry entity id
+    uint32 skillIndex,
+    uint256 targetID
   ) internal view returns (bool) {
-    uint32 skillIndex = LibSkillRegistry.getSkillIndex(components, registryID);
+    uint256 registryID = LibSkillRegistry.genID(skillIndex);
 
     // check point balance against skill cost
     uint256 cost = LibSkillRegistry.getCost(components, registryID);
@@ -132,7 +148,7 @@ library LibSkill {
     if (!meetsTreePrerequisites(components, targetID, registryID)) return false;
 
     // check all other requirements
-    uint256[] memory requirements = LibSkillRegistry.getRequirementsByIndex(components, skillIndex);
+    uint256[] memory requirements = LibSkillRegistry.queryRequirements(components, skillIndex);
     /// TODO: World2: include ForComp, separate requirements from accounts/pets
     return LibConditional.checkConditions(components, requirements, targetID);
   }
@@ -150,11 +166,21 @@ library LibSkill {
 
     // check if target has enough points
     uint256 requirement = getTreeTierPoints(components, tier);
-    return getTreePoints(components, targetID, tree) >= requirement;
+    return getTreePoints(components, tree, targetID) >= requirement;
   }
 
   /////////////////
   // SETTERS
+
+  // increase skill points of a skill by a specified value
+  function incPoints(IUintComp components, uint256 id, uint256 value) internal {
+    IUintComp(getAddrByID(components, SPCompID)).inc(id, value);
+  }
+
+  // decrease skillPoints by a specified value
+  function decPoints(IUintComp components, uint256 id, uint256 value) internal {
+    IUintComp(getAddrByID(components, SPCompID)).dec(id, value);
+  }
 
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {
     SkillPointComponent(getAddrByID(components, SPCompID)).set(id, value);
@@ -163,34 +189,28 @@ library LibSkill {
   /////////////////
   // GETTERS
 
-  function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LevelComponent(getAddrByID(components, LevelCompID)).get(id);
+  function extractIndex(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal returns (uint32[] memory) {
+    return IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).extractBatch(ids);
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    SkillPointComponent comp = SkillPointComponent(getAddrByID(components, SPCompID));
-    return comp.has(id) ? comp.get(id) : 0;
-  }
-
-  function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
-    return MaxComponent(getAddrByID(components, MaxCompID)).get(id);
+    return IUintComp(getAddrByID(components, SPCompID)).safeGetUint256(id);
   }
 
   function getTreePoints(
     IUintComp components,
-    uint256 id,
-    string memory tree
+    string memory tree,
+    uint256 targetID
   ) internal view returns (uint256) {
-    return LibData.get(components, id, 0, tree.concat("SKILL_POINTS_USE"));
+    return LibBonus.getForUint256(components, tree, targetID);
   }
 
   function getTreeTierPoints(IUintComp components, uint256 tier) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_TREE_REQ");
     return config[tier];
-  }
-
-  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   // get the point value of a specific skill for a target
@@ -215,22 +235,18 @@ library LibSkill {
     return LibEntityType.isShape(components, id, "SKILL") ? id : 0;
   }
 
+  function queryForHolder(
+    IUintComp components,
+    uint256 holderID
+  ) internal view returns (uint256[] memory) {
+    return OwnerComponent(getAddrByID(components, OwnerCompID)).getEntitiesWithValue(holderID);
+  }
+
   //////////////////////
   // LOGGING
 
   function logUsePoint(IUintComp components, uint256 holderID) internal {
     LibData.inc(components, holderID, 0, "SKILL_POINTS_USE", 1);
-  }
-
-  /// @notice uses a skill point in a skill tree
-  function logUseTreePoint(
-    IUintComp components,
-    uint256 holderID,
-    uint256 registryID,
-    uint256 cost
-  ) internal {
-    (bool has, string memory tree, ) = LibSkillRegistry.getTree(components, registryID);
-    if (has) LibData.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), cost);
   }
 
   //////////////////////

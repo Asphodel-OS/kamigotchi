@@ -34,7 +34,7 @@ contract KamiLevelSystem is System {
     // consume experience, level pet up and increase its SP
     LibExperience.dec(components, id, levelCost);
     LibExperience.incLevel(components, id, 1);
-    LibSkill.inc(components, id, 1);
+    LibSkill.incPoints(components, id, 1);
 
     // signal a metadata update
     LibKami721.updateEvent(components, LibKami.getIndex(components, id));

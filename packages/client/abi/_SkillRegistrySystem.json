@@ -18,7 +18,7 @@
     },
     {
       "type": "function",
-      "name": "addEffect",
+      "name": "addBonus",
       "inputs": [
         {
           "name": "arguments",
@@ -264,7 +264,7 @@
     }
   ],
   "methodIdentifiers": {
-    "addEffect(bytes)": "ee7f1f9f",
+    "addBonus(bytes)": "2029afd6",
     "addRequirement(bytes)": "7e534103",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
