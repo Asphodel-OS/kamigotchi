@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "solecs/BareComponent.sol";
-import { TypeLib } from "components/types/standard.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
 contract StringBareComponent is BareComponent {
   constructor(address world, uint256 id) BareComponent(world, id) {}
@@ -30,5 +30,13 @@ contract StringBareComponent is BareComponent {
 
   function get(uint256[] memory entities) external view virtual returns (string[] memory) {
     return TypeLib.decodeBatchString(_getRaw(entities));
+  }
+
+  function safeGet(uint256 entity) external view virtual returns (string memory) {
+    return TypeLib.safeDecodeString(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (string[] memory) {
+    return TypeLib.safeDecodeBatchString(_getRaw(entities));
   }
 }

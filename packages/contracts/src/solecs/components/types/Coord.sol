@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { TypeLib } from "solecs/components/types/standard.sol";
+
 // voxel coordinates representation
 struct Coord {
   int32 x;
@@ -8,9 +10,10 @@ struct Coord {
   int32 z;
 }
 
+// Coords are stored as uint256 components. Uses TypeLib for uint256 encoding/decoding.
 library CoordLib {
   function encode(Coord memory value) internal pure returns (bytes memory) {
-    return abi.encode(toUint(value));
+    return TypeLib.encodeUint256(toUint(value));
   }
 
   function encodeBatch(Coord[] memory values) internal pure returns (bytes[] memory) {
@@ -20,12 +23,22 @@ library CoordLib {
   }
 
   function decode(bytes memory encoded) internal pure returns (Coord memory) {
-    return toCoord(abi.decode(encoded, (uint256)));
+    return toCoord(TypeLib.decodeUint256(encoded));
   }
 
   function decodeBatch(bytes[] memory encoded) internal pure returns (Coord[] memory) {
     Coord[] memory coords = new Coord[](encoded.length);
     for (uint256 i = 0; i < encoded.length; i++) coords[i] = decode(encoded[i]);
+    return coords;
+  }
+
+  function safeDecode(bytes memory encoded) internal pure returns (Coord memory) {
+    return toCoord(TypeLib.safeDecodeUint256(encoded));
+  }
+
+  function safeDecodeBatch(bytes[] memory encoded) internal pure returns (Coord[] memory) {
+    Coord[] memory coords = new Coord[](encoded.length);
+    for (uint256 i = 0; i < encoded.length; i++) coords[i] = safeDecode(encoded[i]);
     return coords;
   }
 

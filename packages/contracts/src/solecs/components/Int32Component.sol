@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
-import "solecs/BareComponent.sol";
-import { TypeLib } from "components/types/standard.sol";
+import "solecs/Component.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
-contract Int32BareComponent is BareComponent {
-  constructor(address world, uint256 id) BareComponent(world, id) {}
+contract Int32Component is Component {
+  constructor(address world, uint256 id) Component(world, id) {}
 
   function set(uint256 entity, int32 value) external virtual onlyWriter {
     _set(entity, TypeLib.encodeInt32(value));
@@ -28,5 +28,17 @@ contract Int32BareComponent is BareComponent {
 
   function get(uint256[] memory entities) external view virtual returns (int32[] memory) {
     return TypeLib.decodeBatchInt32(_getRaw(entities));
+  }
+
+  function safeGet(uint256 entity) external view virtual returns (int32) {
+    return TypeLib.safeDecodeInt32(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (int32[] memory) {
+    return TypeLib.safeDecodeBatchInt32(_getRaw(entities));
+  }
+
+  function getEntitiesWithValue(int32 value) external view virtual returns (uint256[] memory) {
+    return _getEntitiesWithValue(TypeLib.encodeInt32(value));
   }
 }

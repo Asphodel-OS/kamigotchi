@@ -98,7 +98,7 @@ library LibScore {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(id);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(id);
   }
 
   // get current epoch for leaderboard

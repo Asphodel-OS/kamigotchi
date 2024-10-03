@@ -5,7 +5,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { Coord, CoordLib } from "components/types/Coord.sol";
+import { Coord, CoordLib } from "solecs/components/types/Coord.sol";
 
 import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.sol";
 // world2: (formally IDPointer) change to IDTarget or IDTo/From
@@ -133,12 +133,8 @@ library LibRoom {
 
   /// @notice Checks if two entities share a room
   function sharesRoom(IUintComp components, uint256 aID, uint256 bID) internal view returns (bool) {
-    (uint32 roomA, uint32 roomB) = LibComp.safeGetTwoUint32(
-      getCompByID(components, IndexRoomCompID),
-      aID,
-      bID
-    );
-    return roomA == roomB;
+    IndexRoomComponent roomComp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
+    return roomComp.safeGet(aID) == roomComp.safeGet(bID);
   }
 
   /////////////////

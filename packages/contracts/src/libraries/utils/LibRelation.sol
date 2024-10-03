@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { Uint256Component } from "components/base/Uint256Component.sol";
+import { Uint256Component } from "solecs/components/Uint256Component.sol";
 
 import { IDFromComponent, ID as IDFromCompID } from "components/IDFromComponent.sol";
 import { IDToComponent, ID as IDToCompID } from "components/IDToComponent.sol";

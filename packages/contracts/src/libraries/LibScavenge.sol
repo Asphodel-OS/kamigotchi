@@ -100,7 +100,7 @@ library LibScavenge {
     ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
 
     uint256 instanceID = genInstanceID(field, index, holderID);
-    uint256 curr = LibComp.safeGetUint256(valComp, instanceID);
+    uint256 curr = valComp.safeGet(instanceID);
     uint256 tierCost = valComp.get(regID);
 
     uint256 numTiers = curr / tierCost;

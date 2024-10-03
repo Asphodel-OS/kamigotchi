@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "components/base/Uint256BareComponent.sol";
-import { TypeLib } from "components/types/standard.sol";
+import "solecs/components/Uint256BareComponent.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
 uint256 constant ID = uint256(keccak256("component.hash"));
 

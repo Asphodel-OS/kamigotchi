@@ -9,14 +9,14 @@ contract PrototypeTagComponent is Component {
   constructor(address world) Component(world, ID) {}
 
   function set(uint256 entity, bool value) public {
-    set(entity, abi.encode(value));
+    _set(entity, abi.encode(value));
   }
 
   function getValue(uint256 entity) public view returns (bool) {
-    return abi.decode(getRaw(entity), (bool));
+    return abi.decode(_getRaw(entity), (bool));
   }
 
   function getEntitiesWithValue(bool value) public view returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(value));
+    return _getEntitiesWithValue(abi.encode(value));
   }
 }

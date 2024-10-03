@@ -5,7 +5,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { Uint32BareComponent } from "components/base/Uint32BareComponent.sol"; // for index comps
+import { Uint32BareComponent } from "solecs/components/Uint32BareComponent.sol"; // for index comps
 import { IDToComponent, ID as IDToCompID } from "components/IDToComponent.sol";
 
 import { LibRelation } from "libraries/utils/LibRelation.sol";
