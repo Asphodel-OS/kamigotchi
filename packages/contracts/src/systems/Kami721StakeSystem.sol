@@ -28,7 +28,6 @@ uint256 constant ROOM = 12;
       "writeAccess": [
         "AddressOperatorComponent",
         "AddressOwnerComponent",
-        "IdAccountComponent",
         "IDOwnsKamiComponent",
         "IdHolderComponent",
         "IsAccountComponent",
