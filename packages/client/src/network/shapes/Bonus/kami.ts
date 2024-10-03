@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getBonusValue } from './types';
+import { getBonusValue } from './getters';
 
 export interface Bonuses {
   attack: Attack;
@@ -53,7 +53,7 @@ export const getBonuses = (
   const holderID = world.entities[entityIndex];
 
   const getBonus = (key: string, precision: number): number => {
-    return getBonusValue(world, components, holderID, key, precision) ?? 0;
+    return getBonusValue(world, components, key, holderID, precision);
   };
 
   const bonuses = {
