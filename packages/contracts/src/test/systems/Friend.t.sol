@@ -224,14 +224,14 @@ contract FriendTest is SetupTemplate {
     string memory state
   ) internal {
     assertTrue(LibEntityType.isShape(components, id, "FRIENDSHIP"));
-    assertEq(_IdAccountComponent.get(id), _getAccount(accIndex));
+    assertEq(_IdSourceComponent.get(id), _getAccount(accIndex));
     assertEq(_IdTargetComponent.get(id), _getAccount(targetIndex));
     assertEq(_StateComponent.get(id), state);
   }
 
   function _assertFSDeletion(uint256 id) internal {
     assertTrue(!LibEntityType.has(components, id));
-    assertTrue(!_IdAccountComponent.has(id));
+    assertTrue(!_IdSourceComponent.has(id));
     assertTrue(!_IdTargetComponent.has(id));
     assertTrue(!_StateComponent.has(id));
   }
