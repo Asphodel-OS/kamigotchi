@@ -138,7 +138,7 @@ export const getKami = (
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
-    stats: getStats(components, entityIndex),
+    stats: getStats(world, components, entityIndex, id),
     bonuses: getKamiBonuses(world, components, entityIndex),
     config: getKamiConfig(world, components),
   };
@@ -179,7 +179,7 @@ export const getKami = (
       faceIndex,
       handIndex,
     };
-    kami.traits = getTraits(components, traitIndices);
+    kami.traits = getTraits(world, components, traitIndices);
   }
 
   // populate Harvest

@@ -1,7 +1,8 @@
-import { EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { StatComponent } from 'network/components/definitions/StatComponent';
+import { getBonusValue } from './Bonus';
 
 export interface Stat {
   base: number;
@@ -24,24 +25,35 @@ export interface Stats {
 
 // get the stats of an entity
 // get the Stats from the EnityIndex of a Kami
-export const getStats = (components: Components, index: EntityIndex): Stats => {
+export const getStats = (
+  world: World,
+  components: Components,
+  entity: EntityIndex,
+  bonusHolderID?: EntityID // optional, calc bonus if provided
+): Stats => {
   const { Harmony, Health, Power, Slots, Stamina, Violence } = components;
 
-  return {
-    health: getStat(index, Health),
-    power: getStat(index, Power),
-    violence: getStat(index, Violence),
-    harmony: getStat(index, Harmony),
-    slots: getStat(index, Slots),
-    stamina: getStat(index, Stamina),
+  const getBonus = (type: string) => {
+    return bonusHolderID ? getBonusValue(world, components, type, bonusHolderID) : 0;
   };
+
+  let stats = {
+    health: getStat(entity, Health, getBonus('STAT_HEALTH_SHIFT')),
+    power: getStat(entity, Power, getBonus('STAT_POWER_SHIFT')),
+    violence: getStat(entity, Violence, getBonus('STAT_VIOLENCE_SHIFT')),
+    harmony: getStat(entity, Harmony, getBonus('STAT_HARMONY_SHIFT')),
+    slots: getStat(entity, Slots, getBonus('STAT_SLOTS_SHIFT')),
+    stamina: getStat(entity, Stamina, getBonus('STAT_STAMINA_SHIFT')),
+  };
+
+  return stats;
 };
 
-export const getStat = (index: EntityIndex, type: StatComponent): Stat => {
+export const getStat = (index: EntityIndex, type: StatComponent, shiftBonus?: number): Stat => {
   const raw = BigInt(getComponentValue(type, index)?.value || 0);
 
   const base = Number(BigInt.asIntN(32, (raw >> 192n) & 0xffffffffffffffffn));
-  const shift = Number(BigInt.asIntN(32, (raw >> 128n) & 0xffffffffffffffffn));
+  const shift = Number(BigInt.asIntN(32, (raw >> 128n) & 0xffffffffffffffffn)) + (shiftBonus ?? 0);
   const boost = Number(BigInt.asIntN(32, (raw >> 64n) & 0xffffffffffffffffn));
   const sync = Number(BigInt.asIntN(32, raw & 0xffffffffffffffffn));
 
