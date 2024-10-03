@@ -18,7 +18,7 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
-import { LibBonusOld } from "libraries/LibBonusOld.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
@@ -120,8 +120,8 @@ library LibKill {
     });
 
     // pull the bonus efficacy shifts from the pets
-    int256 atkBonus = LibBonusOld.getRaw(components, sourceID, "ATK_THRESHOLD_RATIO");
-    int256 defBonus = LibBonusOld.getRaw(components, targetID, "DEF_THRESHOLD_RATIO");
+    int256 atkBonus = LibBonus.getFor(components, "ATK_THRESHOLD_RATIO", sourceID);
+    int256 defBonus = LibBonus.getFor(components, "DEF_THRESHOLD_RATIO", targetID);
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
       base: int(0),
       up: atkBonus + defBonus,
@@ -154,8 +154,8 @@ library LibKill {
 
     // apply attack and defense shifts
     uint256 shiftPrec = 10 ** (ANIMOSITY_PREC + config[3] - config[5]);
-    int256 shiftAttBonus = LibBonusOld.getRaw(components, sourceID, "ATK_THRESHOLD_SHIFT");
-    int256 shiftDefBonus = LibBonusOld.getRaw(components, targetID, "DEF_THRESHOLD_SHIFT");
+    int256 shiftAttBonus = LibBonus.getFor(components, "ATK_THRESHOLD_SHIFT", sourceID);
+    int256 shiftDefBonus = LibBonus.getFor(components, "DEF_THRESHOLD_SHIFT", targetID);
     int256 shift = (shiftAttBonus + shiftDefBonus) * int(shiftPrec);
 
     int256 postShiftVal = int(base * ratio) + shift;
@@ -188,7 +188,7 @@ library LibKill {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
-    int256 ratioBonus = LibBonusOld.getRaw(components, id, "DEF_SALVAGE_RATIO");
+    int256 ratioBonus = LibBonus.getFor(components, "DEF_SALVAGE_RATIO", id);
     uint256 power = LibKami.calcTotalPower(components, id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
@@ -204,7 +204,7 @@ library LibKill {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
-    int256 ratioBonus = LibBonusOld.getRaw(components, id, "ATK_SPOILS_RATIO");
+    int256 ratioBonus = LibBonus.getFor(components, "ATK_SPOILS_RATIO", id);
     uint256 power = LibKami.calcTotalPower(components, id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
