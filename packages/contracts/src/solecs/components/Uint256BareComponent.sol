@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 import "solecs/BareComponent.sol";
 import "solecs/interfaces/IUint256Component.sol";
-import { TypeLib } from "components/types/standard.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
 /**
  * Reference implementation of a component storing a uint256 value for each entity.
@@ -36,8 +36,16 @@ contract Uint256BareComponent is BareComponent, IUint256Component {
     return TypeLib.decodeBatchUint256(_getRaw(entities));
   }
 
-  // not implemented in bare components
+  function safeGet(uint256 entity) external view virtual returns (uint256) {
+    return TypeLib.safeDecodeUint256(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (uint256[] memory) {
+    return TypeLib.safeDecodeBatchUint256(_getRaw(entities));
+  }
+
+  // not implemented in bare components. here for interface
   function getEntitiesWithValue(uint256 value) external view virtual returns (uint256[] memory) {
-    return getEntitiesWithValue(TypeLib.encodeUint256(value));
+    revert BareComponent__NotImplemented();
   }
 }

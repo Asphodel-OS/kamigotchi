@@ -6,8 +6,8 @@ import { ISystem } from "solecs/interfaces/ISystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
-import { Uint32Component } from "components/base/Uint32Component.sol";
-import { StringComponent } from "components/base/StringComponent.sol";
+import { Uint32Component } from "solecs/components/Uint32Component.sol";
+import { StringComponent } from "solecs/components/StringComponent.sol";
 
 // import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
 

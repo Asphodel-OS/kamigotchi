@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";

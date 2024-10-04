@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "solecs/Component.sol";
-import { TypeLib } from "components/types/standard.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
 contract BoolComponent is Component {
   constructor(address world, uint256 id) Component(world, id) {}
@@ -23,14 +23,22 @@ contract BoolComponent is Component {
   }
 
   function get(uint256 entity) external view virtual returns (bool) {
-    return has(entity);
+    return _getRaw(entity).length != 0;
   }
 
   function get(uint256[] memory entities) external view virtual returns (bool[] memory) {
     return TypeLib.decodeBatchBool(_getRaw(entities));
   }
 
+  function safeGet(uint256 entity) external view virtual returns (bool) {
+    return TypeLib.safeDecodeBool(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (bool[] memory) {
+    return TypeLib.safeDecodeBatchBool(_getRaw(entities));
+  }
+
   function getEntitiesWithValue(bool value) external view virtual returns (uint256[] memory) {
-    return getEntitiesWithValue(TypeLib.encodeBool(value));
+    return _getEntitiesWithValue(TypeLib.encodeBool(value));
   }
 }

@@ -205,7 +205,7 @@ library LibInventory {
     uint32 itemIndex
   ) internal view returns (uint256) {
     uint256 id = genID(holderID, itemIndex);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(id);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(id);
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {

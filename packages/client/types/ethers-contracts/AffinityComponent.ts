@@ -33,6 +33,8 @@ export interface AffinityComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "equal(uint256[],bytes)": FunctionFragment;
+    "equal(uint256,bytes)": FunctionFragment;
     "extract(uint256[])": FunctionFragment;
     "extract(uint256)": FunctionFragment;
     "extractRaw(uint256[])": FunctionFragment;
@@ -43,7 +45,6 @@ export interface AffinityComponentInterface extends utils.Interface {
     "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
-    "hasValue(uint256,string)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
@@ -52,6 +53,8 @@ export interface AffinityComponentInterface extends utils.Interface {
     "remove(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
+    "safeGet(uint256)": FunctionFragment;
+    "safeGet(uint256[])": FunctionFragment;
     "set(uint256,string)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "set(uint256[],bytes[])": FunctionFragment;
@@ -67,6 +70,8 @@ export interface AffinityComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
+      | "equal(uint256[],bytes)"
+      | "equal(uint256,bytes)"
       | "extract(uint256[])"
       | "extract(uint256)"
       | "extractRaw(uint256[])"
@@ -77,7 +82,6 @@ export interface AffinityComponentInterface extends utils.Interface {
       | "getRaw(uint256[])"
       | "getRaw(uint256)"
       | "has"
-      | "hasValue"
       | "id"
       | "owner"
       | "ownershipHandoverExpiresAt"
@@ -86,6 +90,8 @@ export interface AffinityComponentInterface extends utils.Interface {
       | "remove(uint256)"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "safeGet(uint256)"
+      | "safeGet(uint256[])"
       | "set(uint256,string)"
       | "set(uint256,bytes)"
       | "set(uint256[],bytes[])"
@@ -107,6 +113,14 @@ export interface AffinityComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "equal(uint256[],bytes)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "equal(uint256,bytes)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "extract(uint256[])",
@@ -148,10 +162,6 @@ export interface AffinityComponentInterface extends utils.Interface {
     functionFragment: "has",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "hasValue",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -177,6 +187,14 @@ export interface AffinityComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "requestOwnershipHandover",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeGet(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeGet(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,string)",
@@ -221,6 +239,14 @@ export interface AffinityComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "equal(uint256[],bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "equal(uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "extract(uint256[])",
     data: BytesLike
   ): Result;
@@ -257,7 +283,6 @@ export interface AffinityComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hasValue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -282,6 +307,14 @@ export interface AffinityComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeGet(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeGet(uint256[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -400,6 +433,18 @@ export interface AffinityComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -450,12 +495,6 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    hasValue(
-      id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     id(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
@@ -487,6 +526,16 @@ export interface AffinityComponent extends BaseContract {
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
 
     "set(uint256,string)"(
       entity: PromiseOrValue<BigNumberish>,
@@ -544,6 +593,18 @@ export interface AffinityComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  "equal(uint256[],bytes)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "equal(uint256,bytes)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   "extract(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -594,12 +655,6 @@ export interface AffinityComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  hasValue(
-    id: PromiseOrValue<BigNumberish>,
-    name: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   id(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
@@ -631,6 +686,16 @@ export interface AffinityComponent extends BaseContract {
   requestOwnershipHandover(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  "safeGet(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "safeGet(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<string[]>;
 
   "set(uint256,string)"(
     entity: PromiseOrValue<BigNumberish>,
@@ -686,6 +751,18 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -736,12 +813,6 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    hasValue(
-      id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     id(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
@@ -769,6 +840,16 @@ export interface AffinityComponent extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
+
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     "set(uint256,string)"(
       entity: PromiseOrValue<BigNumberish>,
@@ -852,6 +933,18 @@ export interface AffinityComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -902,12 +995,6 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hasValue(
-      id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     id(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -938,6 +1025,16 @@ export interface AffinityComponent extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "set(uint256,string)"(
@@ -997,6 +1094,18 @@ export interface AffinityComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1047,12 +1156,6 @@ export interface AffinityComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    hasValue(
-      id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     id(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1083,6 +1186,16 @@ export interface AffinityComponent extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "set(uint256,string)"(

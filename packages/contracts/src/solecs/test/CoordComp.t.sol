@@ -1,21 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { console } from "forge-std/Test.sol";
+import { DSTestPlus } from "solmate/test/utils/DSTestPlus.sol";
+import { Vm } from "forge-std/Vm.sol";
+import { console } from "forge-std/console.sol";
 
+import { World } from "solecs/World.sol";
 import { Coord, CoordLib } from "solecs/components/types/Coord.sol";
 import { CoordComponent } from "solecs/components/CoordComponent.sol";
 
-import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
+contract CoordCompTest is DSTestPlus {
+  Vm internal immutable vm = Vm(HEVM_ADDRESS);
 
-contract CoordCompTest is EmptyWorld {
+  address deployer = address(1);
   CoordComponent coordComp;
 
-  function setUp() public override {
-    super.setUp();
-
+  function setUp() public {
     vm.startPrank(deployer);
-    coordComp = new CoordComponent(address(world), uint256(keccak256("test.Stat")));
+    World world = new World();
+    world.init();
+    coordComp = new CoordComponent(address(world), uint256(keccak256("test.Coord")));
     vm.stopPrank();
   }
 
@@ -113,13 +117,13 @@ contract CoordCompTest is EmptyWorld {
 
   //////////////
   // UTILS
-  function assertEq(Coord memory a, Coord memory b) internal view {
+  function assertEq(Coord memory a, Coord memory b) internal {
     assertEq(a.x, b.x);
     assertEq(a.y, b.y);
     assertEq(a.z, b.z);
   }
 
-  function assertEq(Coord[] memory a, Coord[] memory b) internal view {
+  function assertEq(Coord[] memory a, Coord[] memory b) internal {
     assertEq(a.length, b.length);
     for (uint256 i = 0; i < a.length; i++) assertEq(a[i], b[i]);
   }

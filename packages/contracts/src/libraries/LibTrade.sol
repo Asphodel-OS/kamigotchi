@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
@@ -11,12 +12,16 @@ import { IdRequesterComponent, ID as IdReqerCompID } from "components/IdRequeste
 import { IsRequestComponent, ID as IsRequestCompID } from "components/IsRequestComponent.sol";
 import { IsTradeComponent, ID as IsTradeCompID } from "components/IsTradeComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+
+import { LibComp } from "libraries/utils/LibComp.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { Strings } from "utils/Strings.sol";
 
 // @dev State = [ INITIATED | ACCEPTED | CONFIRMED | CANCELED ]
 library LibTrade {
+  using LibComp for IComponent;
   /////////////////
   // INTERACTIONS
 
@@ -102,7 +107,7 @@ library LibTrade {
     uint256 id,
     string memory state
   ) internal view returns (bool) {
-    return StateComponent(getAddrByID(components, StateCompID)).hasValue(id, state);
+    return getCompByID(components, StateCompID).eqString(id, state);
   }
 
   // Check whether a trade is confirmed by both parties. Assumes exactly 2 parties

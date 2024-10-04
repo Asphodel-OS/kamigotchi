@@ -64,6 +64,6 @@ library LibCooldown {
 
   function _getIdleTime(IUintComp tsComp, uint256 id) internal view returns (int256) {
     // time safely remains in int256 bounds
-    return block.timestamp.toInt256() - tsComp.safeGetUint256(id).toInt256();
+    return block.timestamp.toInt256() - tsComp.safeGet(id).toInt256();
   }
 }

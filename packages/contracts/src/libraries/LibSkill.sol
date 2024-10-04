@@ -197,7 +197,7 @@ library LibSkill {
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddrByID(components, SPCompID)).safeGetUint256(id);
+    return IUintComp(getAddrByID(components, SPCompID)).safeGet(id);
   }
 
   function getTreePoints(

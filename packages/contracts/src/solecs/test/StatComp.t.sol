@@ -1,20 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { console } from "forge-std/Test.sol";
+import { DSTestPlus } from "solmate/test/utils/DSTestPlus.sol";
+import { Vm } from "forge-std/Vm.sol";
+import { console } from "forge-std/console.sol";
 
+import { World } from "solecs/World.sol";
 import { Stat, StatLib } from "solecs/components/types/Stat.sol";
 import { StatComponent } from "solecs/components/StatComponent.sol";
 
-import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
+contract StatCompTest is DSTestPlus {
+  Vm internal immutable vm = Vm(HEVM_ADDRESS);
 
-contract StatCompTest is EmptyWorld {
+  address deployer = address(1);
   StatComponent statComp;
 
-  function setUp() public override {
-    super.setUp();
-
+  function setUp() public {
     vm.startPrank(deployer);
+    World world = new World();
+    world.init();
     statComp = new StatComponent(address(world), uint256(keccak256("test.Stat")));
     vm.stopPrank();
   }
@@ -204,14 +208,14 @@ contract StatCompTest is EmptyWorld {
 
   //////////////
   // UTILS
-  function assertEq(Stat memory a, Stat memory b) internal view {
+  function assertEq(Stat memory a, Stat memory b) internal {
     assertEq(a.base, b.base);
     assertEq(a.shift, b.shift);
     assertEq(a.boost, b.boost);
     assertEq(a.sync, b.sync);
   }
 
-  function assertEq(Stat[] memory a, Stat[] memory b) internal view {
+  function assertEq(Stat[] memory a, Stat[] memory b) internal {
     assertEq(a.length, b.length);
     for (uint256 i = 0; i < a.length; i++) assertEq(a[i], b[i]);
   }

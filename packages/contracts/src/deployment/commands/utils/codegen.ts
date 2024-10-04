@@ -238,7 +238,7 @@ LoadingState: defineLoadingStateComponent(world),
 
   // adding schemas to components[]
   const schemaMap = JSON.parse(
-    await readFile(path.join(baseContractsDir, 'src/components/types/schema.json'), {
+    await readFile(path.join(baseContractsDir, 'src/solecs/components/types/schema.json'), {
       encoding: 'utf8',
     })
   );
