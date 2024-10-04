@@ -17,6 +17,10 @@ interface IComponent is IOwnableWritable {
 
   function extractRaw(uint256[] memory entities) external returns (bytes[] memory);
 
+  function equal(uint256 entity, bytes memory value) external view returns (bool);
+
+  function equal(uint256[] memory entities, bytes memory value) external view returns (bool);
+
   function has(uint256 entity) external view returns (bool);
 
   function getRaw(uint256 entity) external view returns (bytes memory);

@@ -46,6 +46,54 @@
     },
     {
       "type": "function",
+      "name": "equal",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "value",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "equal",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "value",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "extractRaw",
       "inputs": [
         {
@@ -590,6 +638,8 @@
     "authorizeWriter(address)": "4fef6a38",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
+    "equal(uint256,bytes)": "d2f27dcd",
+    "equal(uint256[],bytes)": "2dfbb801",
     "extractRaw(uint256)": "e9ff6c76",
     "extractRaw(uint256[])": "bcab0047",
     "get(uint256)": "9507d39a",

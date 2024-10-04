@@ -319,7 +319,7 @@ library LibQuests {
   }
 
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return getCompByID(components, ValueCompID).safeGetUint256(id);
+    return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -347,7 +347,7 @@ library LibQuests {
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return getCompByID(components, IndexCompID).safeGetUint32(id);
+    return IndexComponent(getAddrByID(components, IndexCompID)).safeGet(id);
   }
 
   ////////////////

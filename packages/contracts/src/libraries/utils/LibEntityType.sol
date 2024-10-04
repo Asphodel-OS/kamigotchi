@@ -31,7 +31,7 @@ library LibEntityType {
     string memory type_
   ) internal returns (bool have) {
     EntityTypeComponent comp = EntityTypeComponent(getAddrByID(components, EntityTypeCompID));
-    have = comp.safeGetString(id).eq(type_);
+    have = comp.has(id);
     if (!have) comp.set(id, type_);
   }
 
@@ -78,7 +78,7 @@ library LibEntityType {
     string memory type_
   ) internal view returns (bool[] memory, bool) {
     EntityTypeComponent comp = EntityTypeComponent(getAddrByID(components, EntityTypeCompID));
-    string[] memory values = comp.safeGetBatchString(ids);
+    string[] memory values = comp.safeGet(ids);
     bool[] memory result = new bool[](ids.length);
     bool allExist = true;
     for (uint256 i = 0; i < ids.length; i++) {

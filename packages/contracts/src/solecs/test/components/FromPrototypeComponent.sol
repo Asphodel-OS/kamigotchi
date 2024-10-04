@@ -9,14 +9,14 @@ contract FromPrototypeComponent is Component {
   constructor(address world) Component(world, ID) {}
 
   function set(uint256 entity, uint256 prototypeEntity) public {
-    set(entity, abi.encode(prototypeEntity));
+    _set(entity, abi.encode(prototypeEntity));
   }
 
   function getValue(uint256 entity) public view returns (uint256) {
-    return abi.decode(getRaw(entity), (uint256));
+    return abi.decode(_getRaw(entity), (uint256));
   }
 
   function getEntitiesWithValue(uint256 prototypeEntity) public view returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(prototypeEntity));
+    return _getEntitiesWithValue(abi.encode(prototypeEntity));
   }
 }
