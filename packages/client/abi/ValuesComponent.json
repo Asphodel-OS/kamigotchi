@@ -329,19 +329,6 @@
     },
     {
       "type": "function",
-      "name": "registerWorld",
-      "inputs": [
-        {
-          "name": "_world",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "remove",
       "inputs": [
         {
@@ -518,19 +505,6 @@
     },
     {
       "type": "function",
-      "name": "world",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
       "name": "writeAccess",
       "inputs": [
         {
@@ -653,7 +627,6 @@
     "id()": "af640d0f",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
-    "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "remove(uint256[])": "4a0fa538",
     "renounceOwnership()": "715018a6",
@@ -666,7 +639,6 @@
     "set(uint256[],uint256[][])": "ad0657a9",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
-    "world()": "30b67baa",
     "writeAccess(address)": "861eb905"
   }
 }
