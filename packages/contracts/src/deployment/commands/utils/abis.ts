@@ -39,7 +39,7 @@ export const UintCompABI = [
     inputs: [{ internalType: 'uint256[]', name: 'entities', type: 'uint256[]' }],
     stateMutability: 'nonpayable',
     type: 'function',
-    name: 'extractBatch',
+    name: 'extract',
     outputs: [{ internalType: 'uint256[]', name: '', type: 'uint256[]' }],
   },
   {
@@ -53,7 +53,7 @@ export const UintCompABI = [
     inputs: [{ internalType: 'uint256[]', name: 'entities', type: 'uint256[]' }],
     stateMutability: 'nonpayable',
     type: 'function',
-    name: 'extractRawBatch',
+    name: 'extractRaw',
     outputs: [{ internalType: 'bytes[]', name: '', type: 'bytes[]' }],
   },
   {
@@ -112,7 +112,7 @@ export const UintCompABI = [
     inputs: [{ internalType: 'uint256[]', name: 'entities', type: 'uint256[]' }],
     stateMutability: 'view',
     type: 'function',
-    name: 'getRawBatch',
+    name: 'getRaw',
     outputs: [{ internalType: 'bytes[]', name: '', type: 'bytes[]' }],
   },
   {
@@ -152,7 +152,7 @@ export const UintCompABI = [
     inputs: [{ internalType: 'uint256[]', name: 'entities', type: 'uint256[]' }],
     stateMutability: 'nonpayable',
     type: 'function',
-    name: 'removeBatch',
+    name: 'remove',
   },
   {
     inputs: [
@@ -179,7 +179,7 @@ export const UintCompABI = [
     ],
     stateMutability: 'nonpayable',
     type: 'function',
-    name: 'setBatch',
+    name: 'set',
   },
   {
     inputs: [
@@ -188,7 +188,7 @@ export const UintCompABI = [
     ],
     stateMutability: 'nonpayable',
     type: 'function',
-    name: 'setBatch',
+    name: 'set',
   },
   {
     inputs: [{ internalType: 'bytes', name: 'value', type: 'bytes' }],

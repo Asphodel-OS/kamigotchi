@@ -97,47 +97,6 @@
       "name": "extract",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "tuple",
-          "internalType": "struct Stat",
-          "components": [
-            {
-              "name": "base",
-              "type": "int32",
-              "internalType": "int32"
-            },
-            {
-              "name": "shift",
-              "type": "int32",
-              "internalType": "int32"
-            },
-            {
-              "name": "boost",
-              "type": "int32",
-              "internalType": "int32"
-            },
-            {
-              "name": "sync",
-              "type": "int32",
-              "internalType": "int32"
-            }
-          ]
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "extractBatch",
-      "inputs": [
-        {
           "name": "entities",
           "type": "uint256[]",
           "internalType": "uint256[]"
@@ -176,6 +135,66 @@
     },
     {
       "type": "function",
+      "name": "extract",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct Stat",
+          "components": [
+            {
+              "name": "base",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "shift",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "boost",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "sync",
+              "type": "int32",
+              "internalType": "int32"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "extractRaw",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes[]",
+          "internalType": "bytes[]"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "extractRaw",
       "inputs": [
         {
@@ -195,7 +214,7 @@
     },
     {
       "type": "function",
-      "name": "extractRawBatch",
+      "name": "get",
       "inputs": [
         {
           "name": "entities",
@@ -206,11 +225,33 @@
       "outputs": [
         {
           "name": "",
-          "type": "bytes[]",
-          "internalType": "bytes[]"
+          "type": "tuple[]",
+          "internalType": "struct Stat[]",
+          "components": [
+            {
+              "name": "base",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "shift",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "boost",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "sync",
+              "type": "int32",
+              "internalType": "int32"
+            }
+          ]
         }
       ],
-      "stateMutability": "nonpayable"
+      "stateMutability": "view"
     },
     {
       "type": "function",
@@ -255,60 +296,6 @@
     },
     {
       "type": "function",
-      "name": "getBatch",
-      "inputs": [
-        {
-          "name": "entities",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "tuple[]",
-          "internalType": "struct Stat[]",
-          "components": [
-            {
-              "name": "base",
-              "type": "int32",
-              "internalType": "int32"
-            },
-            {
-              "name": "shift",
-              "type": "int32",
-              "internalType": "int32"
-            },
-            {
-              "name": "boost",
-              "type": "int32",
-              "internalType": "int32"
-            },
-            {
-              "name": "sync",
-              "type": "int32",
-              "internalType": "int32"
-            }
-          ]
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getEntities",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
       "name": "getEntitiesWithValue",
       "inputs": [
         {
@@ -331,25 +318,6 @@
       "name": "getRaw",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getRawBatch",
-      "inputs": [
-        {
           "name": "entities",
           "type": "uint256[]",
           "internalType": "uint256[]"
@@ -360,6 +328,25 @@
           "name": "",
           "type": "bytes[]",
           "internalType": "bytes[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getRaw",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "stateMutability": "view"
@@ -446,9 +433,9 @@
       "name": "remove",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
         }
       ],
       "outputs": [],
@@ -456,12 +443,12 @@
     },
     {
       "type": "function",
-      "name": "removeBatch",
+      "name": "remove",
       "inputs": [
         {
-          "name": "entities",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [],
@@ -541,25 +528,7 @@
     },
     {
       "type": "function",
-      "name": "setBatch",
-      "inputs": [
-        {
-          "name": "entities",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        },
-        {
-          "name": "values",
-          "type": "bytes[]",
-          "internalType": "bytes[]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setBatch",
+      "name": "set",
       "inputs": [
         {
           "name": "entities",
@@ -592,6 +561,24 @@
               "internalType": "int32"
             }
           ]
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "set",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "values",
+          "type": "bytes[]",
+          "internalType": "bytes[]"
         }
       ],
       "outputs": [],
@@ -825,28 +812,27 @@
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "extract(uint256)": "85b39782",
-    "extractBatch(uint256[])": "dc5c22cd",
+    "extract(uint256[])": "3b93c6e1",
     "extractRaw(uint256)": "e9ff6c76",
-    "extractRawBatch(uint256[])": "12b11155",
+    "extractRaw(uint256[])": "bcab0047",
     "get(uint256)": "9507d39a",
-    "getBatch(uint256[])": "088dd0b9",
-    "getEntities()": "31b933b9",
+    "get(uint256[])": "469dc88e",
     "getEntitiesWithValue(bytes)": "b361be46",
     "getRaw(uint256)": "dd98e3c9",
-    "getRawBatch(uint256[])": "4323c4ef",
+    "getRaw(uint256[])": "a1c58425",
     "has(uint256)": "cccf7a8e",
     "id()": "af640d0f",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
-    "removeBatch(uint256[])": "8482643e",
+    "remove(uint256[])": "4a0fa538",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "set(uint256,(int32,int32,int32,int32))": "32e5cc30",
     "set(uint256,bytes)": "8b282947",
-    "setBatch(uint256[],(int32,int32,int32,int32)[])": "5c067cce",
-    "setBatch(uint256[],bytes[])": "13ca8b6a",
+    "set(uint256[],(int32,int32,int32,int32)[])": "9610dca5",
+    "set(uint256[],bytes[])": "a2c895aa",
     "shift(uint256,int32)": "9ad30956",
     "sync(uint256,int32)": "6ef23a3d",
     "sync(uint256,int32,int32)": "06e76456",

@@ -11,31 +11,29 @@ contract CoordComponent is Component {
     _set(entity, CoordLib.encode(value));
   }
 
-  function setBatch(uint256[] memory entities, Coord[] memory values) external virtual onlyWriter {
-    _setBatch(entities, CoordLib.encodeBatch(values));
+  function set(uint256[] memory entities, Coord[] memory values) external virtual onlyWriter {
+    _set(entities, CoordLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (Coord memory) {
     return CoordLib.decode(_extractRaw(entity));
   }
 
-  function extractBatch(
-    uint256[] memory entities
-  ) external virtual onlyWriter returns (Coord[] memory) {
-    return CoordLib.decodeBatch(_extractRawBatch(entities));
+  function extract(uint256[] memory entities) external virtual onlyWriter returns (Coord[] memory) {
+    return CoordLib.decodeBatch(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (Coord memory) {
     return CoordLib.decode(_getRaw(entity));
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (Coord[] memory) {
-    return CoordLib.decodeBatch(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (Coord[] memory) {
+    return CoordLib.decodeBatch(_getRaw(entities));
   }
 
   function getEntitiesWithValue(
     Coord memory value
   ) external view virtual returns (uint256[] memory) {
-    return _getEntitiesWithValue(CoordLib.encode(value));
+    return getEntitiesWithValue(CoordLib.encode(value));
   }
 }
