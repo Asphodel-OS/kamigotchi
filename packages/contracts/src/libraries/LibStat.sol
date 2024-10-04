@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { Stat, StatLib } from "components/types/Stat.sol";
+import { Stat, StatLib } from "solecs/components/types/Stat.sol";
 
-import { StatComponent } from "components/base/StatComponent.sol";
+import { StatComponent } from "solecs/components/StatComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
@@ -34,11 +34,11 @@ library LibStat {
   }
 
   function applySingle(StatComponent statComp, uint256 fromID, uint256 toID) internal {
-    (Stat memory fromStat, Stat memory toStat) = LibComp.safeGetTwoStat(statComp, fromID, toID);
+    Stat memory fromStat = statComp.safeGet(fromID);
+    if (StatLib.isZero(fromStat)) return; // nothing to apply
 
-    if (StatLib.isZero(fromStat)) return;
-    // nothing to apply
-    else statComp.set(toID, add(fromStat, toStat));
+    Stat memory toStat = statComp.safeGet(toID);
+    statComp.set(toID, add(fromStat, toStat));
   }
 
   // Copy the set stats from one entity to another.
@@ -46,7 +46,7 @@ library LibStat {
     uint256[] memory compIDs = getStatCompIDs();
     for (uint256 i = 0; i < compIDs.length; i++) {
       StatComponent statComp = StatComponent(getAddrByID(components, compIDs[i]));
-      Stat memory fromStat = statComp.safeGetStat(fromID);
+      Stat memory fromStat = statComp.safeGet(fromID);
       if (!StatLib.isZero(fromStat)) statComp.set(toID, fromStat);
     }
   }
@@ -106,7 +106,7 @@ library LibStat {
   // GETTERS
 
   function getHarmony(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, HarmonyCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, HarmonyCompID)).safeGet(id);
   }
 
   function getHarmonyTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -114,7 +114,7 @@ library LibStat {
   }
 
   function getHealth(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, HealthCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, HealthCompID)).safeGet(id);
   }
 
   function getHealthTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -122,7 +122,7 @@ library LibStat {
   }
 
   function getPower(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, PowerCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, PowerCompID)).safeGet(id);
   }
 
   function getPowerTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -130,7 +130,7 @@ library LibStat {
   }
 
   function getSlots(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, SlotsCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, SlotsCompID)).safeGet(id);
   }
 
   function getSlotsTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -138,7 +138,7 @@ library LibStat {
   }
 
   function getStamina(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, StaminaCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, StaminaCompID)).safeGet(id);
   }
 
   function getStaminaTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -146,7 +146,7 @@ library LibStat {
   }
 
   function getViolence(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, ViolenceCompID)).safeGetStat(id);
+    return StatComponent(getAddrByID(components, ViolenceCompID)).safeGet(id);
   }
 
   function getViolenceTotal(IUintComp components, uint256 id) internal view returns (int32) {

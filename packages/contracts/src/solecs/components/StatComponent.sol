@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "solecs/BareComponent.sol";
 
-import { Stat, StatLib } from "components/types/Stat.sol";
+import { Stat, StatLib } from "solecs/components/types/Stat.sol";
 
 contract StatComponent is BareComponent {
   constructor(address world, uint256 id) BareComponent(world, id) {}
@@ -30,6 +30,14 @@ contract StatComponent is BareComponent {
 
   function get(uint256[] memory entities) external view virtual returns (Stat[] memory) {
     return StatLib.decodeBatch(_getRaw(entities));
+  }
+
+  function safeGet(uint256 entity) external view virtual returns (Stat memory) {
+    return StatLib.safeDecode(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (Stat[] memory) {
+    return StatLib.safeDecodeBatch(_getRaw(entities));
   }
 
   //////////////

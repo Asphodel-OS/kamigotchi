@@ -171,7 +171,7 @@ export const getAccount = (
       limits: {
         friends:
           getConfigFieldValue(world, components, 'BASE_FRIENDS_LIMIT') * 1 +
-          (getBonusValue(world, components, account.id, 'FRIENDS_LIMIT') ?? 0),
+          (getBonusValue(world, components, 'FRIENDS_LIMIT', account.id) ?? 0),
         requests: getConfigFieldValue(world, components, 'FRIENDS_REQUEST_LIMIT') * 1,
       },
     };

@@ -3,15 +3,15 @@ pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { Uint32BareComponent } from "components/base/Uint32BareComponent.sol";
+import { Uint32BareComponent } from "solecs/components/Uint32BareComponent.sol";
 import { System } from "solecs/System.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
-import { StatComponent } from "components/base/StatComponent.sol";
+import { StatComponent } from "solecs/components/StatComponent.sol";
 import { EntityTypeComponent, ID as EntityTypeComponentID } from "components/EntityTypeComponent.sol";
 import { HealthComponent, ID as HealthComponentID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyComponentID } from "components/HarmonyComponent.sol";

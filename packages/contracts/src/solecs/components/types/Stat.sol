@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { TypeLib } from "solecs/components/types/standard.sol";
+
 // Stat is a struct that holds the modifying values of a core stat.
 // Total = (1 + boost) * (base + shift)
 struct Stat {
@@ -25,6 +27,7 @@ struct Stat {
 // - sync only makes sense for depletable stats like slots and durability
 // - how overall stats are computed with equipment has yet to be determined
 
+// Stats are stored as uint256 components. Uses TypeLib for uint256 encoding/decoding.
 library StatLib {
   ///////////////
   // CALCS
@@ -64,7 +67,7 @@ library StatLib {
   // ENCODING
 
   function encode(Stat memory stat) internal pure returns (bytes memory) {
-    return abi.encode(toUint(stat));
+    return TypeLib.encodeUint256(toUint(stat));
   }
 
   function encodeBatch(Stat[] memory stats) internal pure returns (bytes[] memory) {
@@ -74,12 +77,22 @@ library StatLib {
   }
 
   function decode(bytes memory encoded) internal pure returns (Stat memory) {
-    return toStat(abi.decode(encoded, (uint256)));
+    return toStat(TypeLib.decodeUint256(encoded));
   }
 
   function decodeBatch(bytes[] memory encoded) internal pure returns (Stat[] memory) {
     Stat[] memory stats = new Stat[](encoded.length);
     for (uint256 i = 0; i < encoded.length; i++) stats[i] = decode(encoded[i]);
+    return stats;
+  }
+
+  function safeDecode(bytes memory encoded) internal pure returns (Stat memory) {
+    return toStat(TypeLib.safeDecodeUint256(encoded));
+  }
+
+  function safeDecodeBatch(bytes[] memory encoded) internal pure returns (Stat[] memory) {
+    Stat[] memory stats = new Stat[](encoded.length);
+    for (uint256 i = 0; i < encoded.length; i++) stats[i] = safeDecode(encoded[i]);
     return stats;
   }
 

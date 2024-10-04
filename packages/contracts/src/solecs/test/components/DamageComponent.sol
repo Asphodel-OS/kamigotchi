@@ -9,14 +9,14 @@ contract DamageComponent is Component {
   constructor(address world) Component(world, ID) {}
 
   function set(uint256 entity, uint256 value) public {
-    set(entity, abi.encode(value));
+    _set(entity, abi.encode(value));
   }
 
   function getValue(uint256 entity) public view returns (uint256) {
-    return abi.decode(getRaw(entity), (uint256));
+    return abi.decode(_getRaw(entity), (uint256));
   }
 
   function getEntitiesWithValue(uint256 value) public view returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(value));
+    return _getEntitiesWithValue(abi.encode(value));
   }
 }

@@ -179,7 +179,7 @@ library LibData {
   // GETTERS
 
   function get(IUintComp components, uint256 dataID) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(components, ValueCompID)).safeGetUint256(dataID);
+    return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(dataID);
   }
 
   function get(

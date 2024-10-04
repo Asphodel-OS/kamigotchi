@@ -43,6 +43,8 @@ export interface PositionComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "equal(uint256[],bytes)": FunctionFragment;
+    "equal(uint256,bytes)": FunctionFragment;
     "extractRaw(uint256[])": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
     "getAt(bytes,uint256)": FunctionFragment;
@@ -75,6 +77,8 @@ export interface PositionComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
+      | "equal(uint256[],bytes)"
+      | "equal(uint256,bytes)"
       | "extractRaw(uint256[])"
       | "extractRaw(uint256)"
       | "getAt"
@@ -113,6 +117,14 @@ export interface PositionComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "equal(uint256[],bytes)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "equal(uint256,bytes)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "extractRaw(uint256[])",
@@ -216,6 +228,14 @@ export interface PositionComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "completeOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "equal(uint256[],bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "equal(uint256,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -384,6 +404,18 @@ export interface PositionComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -517,6 +549,18 @@ export interface PositionComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  "equal(uint256[],bytes)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "equal(uint256,bytes)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   "extractRaw(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -647,6 +691,18 @@ export interface PositionComponent extends BaseContract {
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
@@ -803,6 +859,18 @@ export interface PositionComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -935,6 +1003,18 @@ export interface PositionComponent extends BaseContract {
     completeOwnershipHandover(
       pendingOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "extractRaw(uint256[])"(
