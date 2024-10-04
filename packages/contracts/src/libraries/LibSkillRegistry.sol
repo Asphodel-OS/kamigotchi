@@ -144,7 +144,7 @@ library LibSkillRegistry {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    return CostComponent(getAddrByID(components, CostCompID)).getBatch(ids);
+    return CostComponent(getAddrByID(components, CostCompID)).get(ids);
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {

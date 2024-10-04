@@ -83,7 +83,7 @@ library LibSkill {
 
     // deleting instances (remaining components)
     LibEntityType.remove(components, instanceIDs);
-    OwnerComponent(getAddrByID(components, OwnerCompID)).removeBatch(instanceIDs);
+    OwnerComponent(getAddrByID(components, OwnerCompID)).remove(instanceIDs);
   }
 
   /// @notice uses cost of skill, upgrades
@@ -109,7 +109,7 @@ library LibSkill {
     uint256 targetID
   ) internal {
     SkillPointComponent pointComp = SkillPointComponent(getAddrByID(components, SPCompID));
-    uint256[] memory instanceLevels = pointComp.extractBatch(instanceIDs);
+    uint256[] memory instanceLevels = pointComp.extract(instanceIDs);
     uint256[] memory usedPts = LibSkillRegistry.getCost(components, regIDs);
     uint256 total = instanceLevels.multiply(usedPts).sum();
     LibComp.inc(pointComp, targetID, total);
@@ -193,7 +193,7 @@ library LibSkill {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint32[] memory) {
-    return IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).extractBatch(ids);
+    return IndexSkillComponent(getAddrByID(components, IndexSkillCompID)).extract(ids);
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {

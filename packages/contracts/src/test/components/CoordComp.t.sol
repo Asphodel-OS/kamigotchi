@@ -37,7 +37,7 @@ contract CoordCompTest is EmptyWorld {
     assertEq(coordComp.get(id), original);
     vm.expectRevert();
     coordComp.get(1);
-    assertEq(coordComp.getBatch(ids), ogBatch);
+    assertEq(coordComp.get(ids), ogBatch);
 
     // test extract
     vm.prank(deployer);
@@ -49,7 +49,7 @@ contract CoordCompTest is EmptyWorld {
     vm.prank(deployer);
     coordComp.set(id, original);
     vm.prank(deployer);
-    assertEq(coordComp.extractBatch(ids), ogBatch);
+    assertEq(coordComp.extract(ids), ogBatch);
     assertEq(extracted, original);
     assertTrue(!coordComp.has(id));
     vm.expectRevert();
@@ -68,11 +68,11 @@ contract CoordCompTest is EmptyWorld {
     ogBatch[1] = Coord(11, 21, 31);
     ogBatch[2] = Coord(12, 22, 32);
     vm.prank(deployer);
-    coordComp.setBatch(ids, ogBatch);
+    coordComp.set(ids, ogBatch);
     for (uint256 i = 0; i < ids.length; i++) {
       assertEq(coordComp.get(ids[i]), ogBatch[i]);
     }
-    assertEq(coordComp.getBatch(ids), ogBatch);
+    assertEq(coordComp.get(ids), ogBatch);
 
     // test setting permissions
     vm.expectRevert();
@@ -81,19 +81,19 @@ contract CoordCompTest is EmptyWorld {
     batch[0] = Coord(1, 1, 1);
     batch[1] = Coord(2, 2, 2);
     vm.expectRevert();
-    coordComp.setBatch(ids, batch);
+    coordComp.set(ids, batch);
 
     // test removing permissions
     vm.expectRevert();
     coordComp.remove(id);
     vm.expectRevert();
-    coordComp.removeBatch(ids);
+    coordComp.remove(ids);
 
     // test extract permissions
     vm.expectRevert();
     coordComp.extract(id);
     vm.expectRevert();
-    coordComp.extractBatch(ids);
+    coordComp.extract(ids);
   }
 
   //////////////
