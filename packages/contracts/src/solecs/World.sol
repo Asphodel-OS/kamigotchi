@@ -42,11 +42,22 @@ contract World is IWorld, Ownable {
 
   constructor() {
     _initializeOwner(msg.sender);
-    _components = new Uint256Component(address(0), componentsComponentId);
-    _systems = new Uint256Component(address(0), systemsComponentId);
+
+    // setting up registry components
+    // NOTE: registry components map(address -> ID). To switch this?
+    _components = new Uint256Component(address(this), componentsComponentId);
+    _systems = new Uint256Component(address(this), systemsComponentId);
+
+    // setting up registry system
     register = new RegisterSystem(this, address(_components));
     _systems.authorizeWriter(address(register));
     _components.authorizeWriter(address(register));
+
+    // storing components and system addresses
+
+    // register.execute(
+    //   abi.encode(msg.sender, RegisterType.System, address(register), registerSystemId)
+    // );
   }
 
   /** @notice
@@ -54,11 +65,9 @@ contract World is IWorld, Ownable {
    * Separated from the constructor to prevent circular dependencies.
    */
   function init() public {
-    _components.registerWorld(address(this));
-    _systems.registerWorld(address(this));
-    register.execute(
-      abi.encode(msg.sender, RegisterType.System, address(register), registerSystemId)
-    );
+    registerComponent(address(_components), componentsComponentId);
+    registerComponent(address(_systems), systemsComponentId);
+    registerSystem(address(register), registerSystemId);
   }
 
   /** @notice

@@ -28,6 +28,4 @@ interface IComponent is IOwnableWritable {
   function getRaw(uint256[] memory entities) external view returns (bytes[] memory);
 
   function getEntitiesWithValue(bytes memory value) external view returns (uint256[] memory);
-
-  function world() external view returns (address);
 }
