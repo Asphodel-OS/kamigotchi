@@ -90,7 +90,7 @@ library LibExperience {
 
   // get the Experience of an entity, defaults to 0 if not found
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddrByID(components, ExpCompID)).safeGetUint256(id);
+    return ExperienceComponent(getAddrByID(components, ExpCompID)).safeGet(id);
   }
 
   // get the Level of an entity, defaults to 1 if not found

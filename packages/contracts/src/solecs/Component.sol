@@ -25,20 +25,20 @@ abstract contract Component is BareComponent {
   /// @param value Abi-encoded value to get the list of entities with this value for.
   function getEntitiesWithValue(
     bytes memory value
-  ) public view virtual override returns (uint256[] memory) {
-    return valToEntities[keccak256(value)].values();
+  ) external view virtual override returns (uint256[] memory) {
+    return _getEntitiesWithValue(value);
   }
 
   /// @notice Get entity at specific index in set of entities with that value
   /// @dev This set is unordered, its just used to select an entity in said set
   /// @param value Abi-encoded value to get the list of entities with this value for.
-  function getAt(bytes memory value, uint256 index) public view virtual returns (uint256) {
+  function getAt(bytes memory value, uint256 index) external view virtual returns (uint256) {
     return valToEntities[keccak256(value)].at(index);
   }
 
   /// @notice Get length of entities with value
   /// @param value Abi-encoded value to get the list of entities with this value for.
-  function size(bytes memory value) public view virtual returns (uint256) {
+  function size(bytes memory value) external view virtual returns (uint256) {
     return valToEntities[keccak256(value)].length();
   }
 
@@ -96,5 +96,11 @@ abstract contract Component is BareComponent {
 
     // Remove the entities from the mapping; Emit global event
     super._remove(entities);
+  }
+
+  function _getEntitiesWithValue(
+    bytes memory value
+  ) internal view virtual returns (uint256[] memory) {
+    return valToEntities[keccak256(value)].values();
   }
 }

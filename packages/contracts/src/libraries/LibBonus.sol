@@ -207,9 +207,11 @@ library LibBonus {
   // GETTERS
 
   function get(IUintComp components, uint256[] memory ids) internal view returns (int256 total) {
-    uint256[] memory sources = getCompByID(components, IdSourceCompID).safeGetBatchUint256(ids);
-    uint256[] memory levels = getCompByID(components, LevelCompID).safeGetBatchUint256(ids);
-    uint256[] memory values = getCompByID(components, ValueCompID).safeGetBatchUint256(sources);
+    uint256[] memory sources = IdSourceComponent(getAddrByID(components, IdSourceCompID)).safeGet(
+      ids
+    );
+    uint256[] memory levels = LevelComponent(getAddrByID(components, LevelCompID)).safeGet(ids);
+    uint256[] memory values = ValueComponent(getAddrByID(components, ValueCompID)).safeGet(sources);
 
     for (uint256 i; i < ids.length; i++) total += calcSingle(values[i], levels[i]);
   }

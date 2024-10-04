@@ -135,12 +135,12 @@ library LibListing {
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genBuyParentID(id);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(ptr);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genSellParentID(id);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(ptr);
   }
 
   //////////////////

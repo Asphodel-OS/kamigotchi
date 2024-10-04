@@ -8,7 +8,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
@@ -245,11 +245,10 @@ library LibKami {
     if (state.eq("HARVESTING")) {
       uint256 productionID = getProduction(components, kamiID);
       uint256 nodeID = LibHarvest.getNode(components, productionID);
-      (uint32 kamiRoom, uint32 accRoom) = getCompByID(components, IndexRoomCompID).safeGetTwoUint32(
-        nodeID,
-        accID
-      ); // kami is at nodeID
-      sameRoom = kamiRoom == accRoom;
+      IndexRoomComponent roomComp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
+      uint32 nodeRoom = roomComp.safeGet(nodeID);
+      uint32 accRoom = roomComp.safeGet(accID);
+      sameRoom = nodeRoom == accRoom;
     } else if (state.eq("721_EXTERNAL")) {
       sameRoom = false; // outside
     } else sameRoom = true;
@@ -392,17 +391,17 @@ library LibKami {
 
   // get the entity ID of the kami account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return getCompByID(components, IDOwnsKamiCompID).safeGetUint256(id);
+    return IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).safeGet(id);
   }
 
   // null string might not be very useful, may be better for a has check
   function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    return getCompByID(components, AffinityCompID).safeGetString(id);
+    return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(id);
   }
 
   // get the last time a kami commited a Standard Action
   function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return getCompByID(components, TimeLastActCompID).safeGetUint256(id);
+    return TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).safeGet(id);
   }
 
   // get the last time a kami commited a syncing Action
@@ -465,7 +464,7 @@ library LibKami {
     uint256[] memory regIDs = new uint256[](2);
     regIDs[0] = LibTraitRegistry.getBodyOf(components, id);
     regIDs[1] = LibTraitRegistry.getHandOf(components, id);
-    return getCompByID(components, AffinityCompID).safeGetBatchString(regIDs);
+    return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regIDs);
   }
 
   /////////////////

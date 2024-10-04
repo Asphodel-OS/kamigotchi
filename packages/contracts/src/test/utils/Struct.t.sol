@@ -4,11 +4,11 @@ pragma solidity >=0.8.0;
 import { console } from "forge-std/Test.sol";
 
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
-import { Uint256BareComponent } from "components/base/Uint256BareComponent.sol";
+import { Uint256BareComponent } from "solecs/components/Uint256BareComponent.sol";
 import { LocationComponent } from "components/LocationComponent.sol";
-import { StatComponent } from "components/base/StatComponent.sol";
+import { StatComponent } from "solecs/components/StatComponent.sol";
 
 import { Coord } from "components/LocationComponent.sol";
 

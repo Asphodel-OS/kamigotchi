@@ -9,4 +9,6 @@ interface IUint256Component is IComponent {
   function get(uint256 entity) external view returns (uint256);
 
   function getEntitiesWithValue(uint256 value) external view returns (uint256[] memory);
+
+  function safeGet(uint256 entity) external view returns (uint256);
 }

@@ -34,6 +34,8 @@ export interface ProxyPermissionsERC721ComponentInterface
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "equal(uint256[],bytes)": FunctionFragment;
+    "equal(uint256,bytes)": FunctionFragment;
     "extract(uint256[])": FunctionFragment;
     "extract(uint256)": FunctionFragment;
     "extractRaw(uint256[])": FunctionFragment;
@@ -52,6 +54,8 @@ export interface ProxyPermissionsERC721ComponentInterface
     "remove(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
+    "safeGet(uint256)": FunctionFragment;
+    "safeGet(uint256[])": FunctionFragment;
     "set(uint256)": FunctionFragment;
     "set(uint256[])": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
@@ -67,6 +71,8 @@ export interface ProxyPermissionsERC721ComponentInterface
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
+      | "equal(uint256[],bytes)"
+      | "equal(uint256,bytes)"
       | "extract(uint256[])"
       | "extract(uint256)"
       | "extractRaw(uint256[])"
@@ -85,6 +91,8 @@ export interface ProxyPermissionsERC721ComponentInterface
       | "remove(uint256)"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "safeGet(uint256)"
+      | "safeGet(uint256[])"
       | "set(uint256)"
       | "set(uint256[])"
       | "set(uint256,bytes)"
@@ -106,6 +114,14 @@ export interface ProxyPermissionsERC721ComponentInterface
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "equal(uint256[],bytes)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "equal(uint256,bytes)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "extract(uint256[])",
@@ -174,6 +190,14 @@ export interface ProxyPermissionsERC721ComponentInterface
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "safeGet(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeGet(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "set(uint256)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -213,6 +237,14 @@ export interface ProxyPermissionsERC721ComponentInterface
   ): Result;
   decodeFunctionResult(
     functionFragment: "completeOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "equal(uint256[],bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "equal(uint256,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -276,6 +308,14 @@ export interface ProxyPermissionsERC721ComponentInterface
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeGet(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeGet(uint256[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -394,6 +434,18 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -476,6 +528,16 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[boolean[]]>;
+
     "set(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -529,6 +591,18 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
     pendingOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  "equal(uint256[],bytes)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "equal(uint256,bytes)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   "extract(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
@@ -612,6 +686,16 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  "safeGet(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "safeGet(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<boolean[]>;
+
   "set(uint256)"(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -663,6 +747,18 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
@@ -742,6 +838,16 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<boolean[]>;
+
     "set(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -820,6 +926,18 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
     completeOwnershipHandover(
       pendingOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "extract(uint256[])"(
@@ -904,6 +1022,16 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "set(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -957,6 +1085,18 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
     completeOwnershipHandover(
       pendingOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "extract(uint256[])"(
@@ -1039,6 +1179,16 @@ export interface ProxyPermissionsERC721Component extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "safeGet(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "set(uint256)"(
