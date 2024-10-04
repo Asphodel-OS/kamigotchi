@@ -34,55 +34,15 @@ library LibQuery {
     return entities;
   }
 
-  /// @notice to query for an entity that has two components, with a matching value for the first comp
-  /// @dev primary components must be a value without global scaling
-  function getIsWithValue(
-    IUintComp components,
-    uint256 compHasValue,
-    uint256 compHas,
-    bytes memory value
-  ) internal view returns (uint256[] memory) {
-    return
-      getIsWithValue(
-        getCompByID(components, compHasValue),
-        getCompByID(components, compHas),
-        value
-      );
-  }
-
-  /// @notice to query for an entity that has two components, with a matching value for the first comp
-  /// @dev primary components must be a value without global scaling
-  function getIsWithValue(
-    IComponent compHasValue,
-    IComponent compHas,
-    bytes memory value
-  ) internal view returns (uint256[] memory) {
-    uint256[] memory hasValue = compHasValue.getEntitiesWithValue(value);
-
-    uint256 numIs;
-    for (uint256 i = 0; i < hasValue.length; i++) {
-      if (compHas.has(hasValue[i])) numIs++;
-      else hasValue[i] = 0;
-    }
-
-    uint256[] memory results = new uint256[](numIs);
-    uint256 j;
-    for (uint256 i = 0; i < hasValue.length; i++) if (hasValue[i] != 0) results[j++] = hasValue[i];
-
-    return results;
-  }
-
-  /**
-   * @notice checks if entity fufils query fragment.
-   * @param fragment query fragment to check against
-   * @param entities entities to check
-   * @return results new array of entities that fulfill the query fragment
-   */
+  /// @notice checks if entity fufils query fragment.
+  /// @param fragment query fragment to check against
+  /// @param entities entities to check
+  /// @return results new array of entities that fulfill the query fragment
   function checkFragment(
     QueryFragment memory fragment,
     uint256[] memory entities
   ) internal view returns (uint256[] memory) {
-    bytes[] memory values = fragment.component.getRawBatch(entities);
+    bytes[] memory values = fragment.component.getRaw(entities);
 
     uint256 nonZeroVals;
     for (uint256 i; i < values.length; i++) {
@@ -94,16 +54,14 @@ library LibQuery {
     return removeZeros(entities, nonZeroVals);
   }
 
-  /**
-   * @notice validates query fragment against a value
-   * @param fragment query fragment to check against
-   * @param value value to check against
-   * @return result boolean result of the check
-   */
+  /// @notice validates query fragment against a value
+  /// @param fragment query fragment to check against
+  /// @param value value to check against
+  /// @return result boolean result of the check
   function checkValue(
     QueryFragment memory fragment,
     bytes memory value
-  ) internal view returns (bool) {
+  ) internal pure returns (bool) {
     if (fragment.queryType == QueryType.Has) {
       return value.length > 0;
     } else if (fragment.queryType == QueryType.HasValue) {
@@ -117,12 +75,10 @@ library LibQuery {
     }
   }
 
-  /**
-   * @notice removes 0 values in an array
-   * @param entities entities to remove 0 values from
-   * @param numValues number of non-zero values in the array
-   * @return results new array of entities without 0 values
-   */
+  /// @notice removes 0 values in an array
+  /// @param entities entities to remove 0 values from
+  /// @param numValues number of non-zero values in the array
+  /// @return results new array of entities without 0 values
   function removeZeros(
     uint256[] memory entities,
     uint256 numValues

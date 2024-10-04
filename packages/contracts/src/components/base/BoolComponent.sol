@@ -10,29 +10,27 @@ contract BoolComponent is Component {
     _set(entity, TypeLib.encodeBool(true));
   }
 
-  function setBatch(uint256[] memory entities) external virtual onlyWriter {
-    _setBatch(entities, TypeLib.encodeBatch(entities.length));
+  function set(uint256[] memory entities) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(entities.length));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (bool) {
     return TypeLib.decodeBool(_extractRaw(entity));
   }
 
-  function extractBatch(
-    uint256[] memory entities
-  ) external virtual onlyWriter returns (bool[] memory) {
-    return TypeLib.decodeBatchBool(_extractRawBatch(entities));
+  function extract(uint256[] memory entities) external virtual onlyWriter returns (bool[] memory) {
+    return TypeLib.decodeBatchBool(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (bool) {
     return has(entity);
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (bool[] memory) {
-    return TypeLib.decodeBatchBool(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (bool[] memory) {
+    return TypeLib.decodeBatchBool(_getRaw(entities));
   }
 
   function getEntitiesWithValue(bool value) external view virtual returns (uint256[] memory) {
-    return _getEntitiesWithValue(TypeLib.encodeBool(value));
+    return getEntitiesWithValue(TypeLib.encodeBool(value));
   }
 }

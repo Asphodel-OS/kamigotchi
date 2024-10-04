@@ -111,10 +111,10 @@ library LibBonus {
 
   /// @notice remove bonus instances
   function unassign(IUintComp components, uint256[] memory ids) internal {
-    IdSourceComponent(getAddrByID(components, IdSourceCompID)).removeBatch(ids);
-    IDTypeComponent(getAddrByID(components, IDTypeCompID)).removeBatch(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).removeBatch(ids);
-    LevelComponent(getAddrByID(components, LevelCompID)).removeBatch(ids);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(ids);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).remove(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    LevelComponent(getAddrByID(components, LevelCompID)).remove(ids);
   }
 
   /////////////////

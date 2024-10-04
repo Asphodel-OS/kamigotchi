@@ -77,8 +77,9 @@ library LibCommit {
   }
 
   function isAvailable(IUintComp components, uint256[] memory ids) internal returns (bool) {
-    uint256[] memory blocks = BlockRevComponent(getAddrByID(components, BlockRevealCompID))
-      .getBatch(ids);
+    uint256[] memory blocks = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).get(
+      ids
+    );
     for (uint256 i; i < ids.length; i++) if (!isAvailable(blocks[i])) return false;
     return true;
   }
@@ -101,7 +102,7 @@ library LibCommit {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory seeds) {
-    seeds = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).extractBatch(ids);
+    seeds = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).extract(ids);
     for (uint256 i; i < ids.length; i++) seeds[i] = hashSeed(seeds[i], ids[i]);
   }
 
@@ -113,7 +114,7 @@ library LibCommit {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    return IdHolderComponent(getAddrByID(components, IdHolderCompID)).extractBatch(ids);
+    return IdHolderComponent(getAddrByID(components, IdHolderCompID)).extract(ids);
   }
 
   function extractType(IUintComp components, uint256 id) internal returns (string memory) {
@@ -124,7 +125,7 @@ library LibCommit {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (string[] memory) {
-    return TypeComponent(getAddrByID(components, TypeCompID)).extractBatch(ids);
+    return TypeComponent(getAddrByID(components, TypeCompID)).extract(ids);
   }
 
   /////////////////
@@ -153,7 +154,7 @@ library LibCommit {
   }
 
   function unsetHolders(IUintComp components, uint256[] memory ids) internal {
-    IdHolderComponent(getAddrByID(components, IdHolderCompID)).removeBatch(ids);
+    IdHolderComponent(getAddrByID(components, IdHolderCompID)).remove(ids);
   }
 
   /////////////////

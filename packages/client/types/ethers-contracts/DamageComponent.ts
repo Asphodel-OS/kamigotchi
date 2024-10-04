@@ -33,27 +33,26 @@ export interface DamageComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "extractRaw(uint256[])": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
-    "extractRawBatch(uint256[])": FunctionFragment;
     "getAt(bytes,uint256)": FunctionFragment;
-    "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getEntitiesWithValue(uint256)": FunctionFragment;
+    "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
-    "getRawBatch(uint256[])": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
+    "remove(uint256[])": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "removeBatch(uint256[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "set(uint256,uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
-    "setBatch(uint256[],bytes[])": FunctionFragment;
+    "set(uint256[],bytes[])": FunctionFragment;
     "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
@@ -66,27 +65,26 @@ export interface DamageComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
-      | "extractRaw"
-      | "extractRawBatch"
+      | "extractRaw(uint256[])"
+      | "extractRaw(uint256)"
       | "getAt"
-      | "getEntities"
       | "getEntitiesWithValue(bytes)"
       | "getEntitiesWithValue(uint256)"
-      | "getRaw"
-      | "getRawBatch"
+      | "getRaw(uint256[])"
+      | "getRaw(uint256)"
       | "getValue"
       | "has"
       | "id"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "registerWorld"
-      | "remove"
-      | "removeBatch"
+      | "remove(uint256[])"
+      | "remove(uint256)"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "set(uint256,uint256)"
       | "set(uint256,bytes)"
-      | "setBatch"
+      | "set(uint256[],bytes[])"
       | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
@@ -107,20 +105,16 @@ export interface DamageComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "extractRaw",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "extractRaw(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "extractRawBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "extractRaw(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAt",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntities",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue(bytes)",
@@ -131,12 +125,12 @@ export interface DamageComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRaw",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getRaw(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRawBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "getRaw(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getValue",
@@ -157,12 +151,12 @@ export interface DamageComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "remove",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "remove(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "remove(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -181,7 +175,7 @@ export interface DamageComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch",
+    functionFragment: "set(uint256[],bytes[])",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
@@ -214,16 +208,15 @@ export interface DamageComponentInterface extends utils.Interface {
     functionFragment: "completeOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "extractRaw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "extractRawBatch",
+    functionFragment: "extractRaw(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extractRaw(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntities",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getEntitiesWithValue(bytes)",
     data: BytesLike
@@ -232,9 +225,12 @@ export interface DamageComponentInterface extends utils.Interface {
     functionFragment: "getEntitiesWithValue(uint256)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getRaw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getRawBatch",
+    functionFragment: "getRaw(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRaw(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getValue", data: BytesLike): Result;
@@ -249,9 +245,12 @@ export interface DamageComponentInterface extends utils.Interface {
     functionFragment: "registerWorld",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeBatch",
+    functionFragment: "remove(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "remove(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -270,7 +269,10 @@ export interface DamageComponentInterface extends utils.Interface {
     functionFragment: "set(uint256,bytes)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setBatch", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "set(uint256[],bytes[])",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -372,13 +374,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extractRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "extractRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extractRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -387,8 +389,6 @@ export interface DamageComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     "getEntitiesWithValue(bytes)"(
       value: PromiseOrValue<BytesLike>,
@@ -400,15 +400,15 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getRawBatch(
+    "getRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[string[]]>;
+
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getValue(
       entity: PromiseOrValue<BigNumberish>,
@@ -434,13 +434,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -464,7 +464,7 @@ export interface DamageComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -507,13 +507,13 @@ export interface DamageComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extractRaw(
-    entity: PromiseOrValue<BigNumberish>,
+  "extractRaw(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extractRawBatch(
-    entities: PromiseOrValue<BigNumberish>[],
+  "extractRaw(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -522,8 +522,6 @@ export interface DamageComponent extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   "getEntitiesWithValue(bytes)"(
     value: PromiseOrValue<BytesLike>,
@@ -535,15 +533,15 @@ export interface DamageComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  getRaw(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getRawBatch(
+  "getRaw(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<string[]>;
+
+  "getRaw(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getValue(
     entity: PromiseOrValue<BigNumberish>,
@@ -569,13 +567,13 @@ export interface DamageComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  remove(
-    entity: PromiseOrValue<BigNumberish>,
+  "remove(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  removeBatch(
-    entities: PromiseOrValue<BigNumberish>[],
+  "remove(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -599,7 +597,7 @@ export interface DamageComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setBatch(
+  "set(uint256[],bytes[])"(
     entities: PromiseOrValue<BigNumberish>[],
     values: PromiseOrValue<BytesLike>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -640,23 +638,21 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    extractRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    extractRawBatch(
+    "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getAt(
       value: PromiseOrValue<BytesLike>,
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     "getEntitiesWithValue(bytes)"(
       value: PromiseOrValue<BytesLike>,
@@ -668,15 +664,15 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getRawBatch(
+    "getRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getValue(
       entity: PromiseOrValue<BigNumberish>,
@@ -702,13 +698,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -728,7 +724,7 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
@@ -797,13 +793,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extractRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "extractRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extractRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -812,8 +808,6 @@ export interface DamageComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getEntitiesWithValue(bytes)"(
       value: PromiseOrValue<BytesLike>,
@@ -825,13 +819,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "getRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -859,13 +853,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -889,7 +883,7 @@ export interface DamageComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -933,13 +927,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extractRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "extractRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extractRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -948,8 +942,6 @@ export interface DamageComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getEntitiesWithValue(bytes)"(
       value: PromiseOrValue<BytesLike>,
@@ -961,13 +953,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "getRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -995,13 +987,13 @@ export interface DamageComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1025,7 +1017,7 @@ export interface DamageComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }

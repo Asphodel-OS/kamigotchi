@@ -290,6 +290,11 @@
     },
     {
       "type": "error",
+      "name": "QueryOrderNotSupported",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "Unauthorized",
       "inputs": []
     }

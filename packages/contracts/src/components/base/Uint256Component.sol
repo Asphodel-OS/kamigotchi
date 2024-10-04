@@ -11,32 +11,29 @@ contract Uint256Component is Component, IUint256Component {
     _set(entity, TypeLib.encodeUint256(value));
   }
 
-  function setBatch(
-    uint256[] memory entities,
-    uint256[] memory values
-  ) external virtual onlyWriter {
-    _setBatch(entities, TypeLib.encodeBatch(values));
+  function set(uint256[] memory entities, uint256[] memory values) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (uint256) {
     return TypeLib.decodeUint256(_extractRaw(entity));
   }
 
-  function extractBatch(
+  function extract(
     uint256[] memory entities
   ) external virtual onlyWriter returns (uint256[] memory) {
-    return TypeLib.decodeBatchUint256(_extractRawBatch(entities));
+    return TypeLib.decodeBatchUint256(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (uint256) {
     return TypeLib.decodeUint256(_getRaw(entity));
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (uint256[] memory) {
-    return TypeLib.decodeBatchUint256(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (uint256[] memory) {
+    return TypeLib.decodeBatchUint256(_getRaw(entities));
   }
 
   function getEntitiesWithValue(uint256 value) external view virtual returns (uint256[] memory) {
-    return _getEntitiesWithValue(TypeLib.encodeUint256(value));
+    return getEntitiesWithValue(TypeLib.encodeUint256(value));
   }
 }
