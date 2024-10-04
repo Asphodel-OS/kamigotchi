@@ -22,24 +22,19 @@ abstract contract BareComponent is IComponent, OwnableWritable {
   error ZeroValueNotAllowed();
 
   /// @notice Reference to the World contract this component is registered in
-  address public world;
+  address internal immutable world;
+  /// @notice Public identifier of this component
+  uint256 public immutable id;
 
   /// @notice Mapping from entity id to value in this component
   mapping(uint256 => bytes) internal entityToValue;
 
-  /// @notice Public identifier of this component
-  uint256 public id;
-
   constructor(address _world, uint256 _id) OwnableWritable() {
     id = _id;
-    if (_world != address(0)) registerWorld(_world);
-  }
-
-  /// @notice Register this component in the given world.
-  /// @param _world Address of the World contract.
-  function registerWorld(address _world) public onlyOwner {
     world = _world;
-    IWorld(world).registerComponent(address(this), id);
+
+    // register component if deployed separately from world
+    if (msg.sender != world) IWorld(world).registerComponent(address(this), id);
   }
 
   /** @notice
