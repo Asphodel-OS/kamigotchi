@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 import { erc20Abi, formatUnits } from 'viem';
 import { useReadContracts } from 'wagmi';
 

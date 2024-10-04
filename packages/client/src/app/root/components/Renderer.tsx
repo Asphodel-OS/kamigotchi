@@ -1,4 +1,3 @@
-import { filterNullishValues } from '@mud-classic/utils';
 import { useLayers, useStore } from 'app/root/hooks';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
@@ -44,27 +43,29 @@ export const UIComponentRenderer: React.FC<{
   );
 });
 
-export const ComponentRenderer: React.FC = observer(() => {
+export const ComponentRenderer = observer(() => {
   const { UIComponents } = useStore();
   const layers = useLayers();
   if (!layers) return null;
 
   return (
     <UIGrid>
-      {filterNullishValues(
+      {
         // Iterate through all registered UIComponents
         // and return those whose requirements are fulfilled
-        [...UIComponents.entries()].map(([id, uiComponent]) => {
-          return (
-            <UIComponentRenderer
-              layers={layers}
-              id={id}
-              key={`componentRenderer-${id}`}
-              uiComponent={uiComponent}
-            />
-          );
-        })
-      )}
+        [...UIComponents.entries()]
+          .map(([id, uiComponent]) => {
+            return (
+              <UIComponentRenderer
+                layers={layers}
+                id={id}
+                key={`componentRenderer-${id}`}
+                uiComponent={uiComponent}
+              />
+            );
+          })
+          .filter((value) => value != null)
+      }
     </UIGrid>
   );
 });
