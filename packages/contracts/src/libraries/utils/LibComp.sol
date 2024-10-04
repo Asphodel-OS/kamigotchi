@@ -15,46 +15,14 @@ library LibComp {
   /////////////////
   // CHECKS
 
-  function allHave(IComp component, uint256[] memory ids) internal view returns (bool) {
-    return allHave(component, ids, true);
-  }
-
   function allHave(IComp component, uint256[] memory ids, bool has) internal view returns (bool) {
     bool[] memory results = hasBatch(component, ids);
     for (uint256 i; i < ids.length; i++) if (results[i] == !has) return false;
     return true;
   }
 
-  function eqUint256(IComp component, uint256 id, uint256 value) internal view returns (bool) {
-    return safeGetUint256(component, id) == value;
-  }
-
-  function eqUint32(IComp component, uint256 id, uint32 value) internal view returns (bool) {
-    return safeGetUint32(component, id) == value;
-  }
-
   function eqString(IComp component, uint256 id, string memory str) internal view returns (bool) {
     return safeGetString(component, id).eq(str);
-  }
-
-  function eqUint256(
-    IComp component,
-    uint256[] memory ids,
-    uint256 value
-  ) internal view returns (bool) {
-    uint256[] memory values = safeGetBatchUint256(component, ids);
-    for (uint256 i; i < ids.length; i++) if (values[i] != value) return false;
-    return true;
-  }
-
-  function eqUint32(
-    IComp component,
-    uint256[] memory ids,
-    uint32 value
-  ) internal view returns (bool) {
-    uint32[] memory values = safeGetBatchUint32(component, ids);
-    for (uint256 i; i < ids.length; i++) if (values[i] != value) return false;
-    return true;
   }
 
   function eqString(
@@ -88,33 +56,33 @@ library LibComp {
     return abi.decode(value, (string));
   }
 
-  function safeExtractBatchUint256(
+  function safeextractUint256(
     IComp component,
     uint256[] memory entities
   ) internal returns (uint256[] memory) {
-    bytes[] memory values = component.extractRawBatch(entities);
+    bytes[] memory values = component.extractRaw(entities);
     uint256[] memory result = new uint256[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (uint256)) : 0;
     return result;
   }
 
-  function safeExtractBatchUint32(
+  function safeextractUint32(
     IComp component,
     uint256[] memory entities
   ) internal returns (uint32[] memory) {
-    bytes[] memory values = component.extractRawBatch(entities);
+    bytes[] memory values = component.extractRaw(entities);
     uint32[] memory result = new uint32[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (uint32)) : 0;
     return result;
   }
 
-  function safeExtractBatchString(
+  function safeextractString(
     IComp component,
     uint256[] memory entities
   ) internal returns (string[] memory) {
-    bytes[] memory values = component.extractRawBatch(entities);
+    bytes[] memory values = component.extractRaw(entities);
     string[] memory result = new string[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (string)) : "";
@@ -128,25 +96,10 @@ library LibComp {
     IComp component,
     uint256[] memory entities
   ) internal view returns (bool[] memory) {
-    bytes[] memory values = component.getRawBatch(entities);
+    bytes[] memory values = component.getRaw(entities);
     bool[] memory result = new bool[](values.length);
     for (uint256 i = 0; i < entities.length; i++) result[i] = values[i].length > 0;
     return result;
-  }
-
-  /// @notice returns a bool array of existence, and a bool indicating if all exists
-  function hasBatchWithAggregate(
-    IComp component,
-    uint256[] memory entities
-  ) internal view returns (bool[] memory, bool) {
-    bytes[] memory values = component.getRawBatch(entities);
-    bool[] memory result = new bool[](values.length);
-    bool allExist = true;
-    for (uint256 i = 0; i < entities.length; i++) {
-      result[i] = values[i].length > 0;
-      if (!result[i]) allExist = false;
-    }
-    return (result, allExist);
   }
 
   function safeGetUint256(IComp component, uint256 entity) internal view returns (uint256) {
@@ -177,7 +130,7 @@ library LibComp {
     IComp component,
     uint256[] memory entities
   ) internal view returns (uint256[] memory) {
-    bytes[] memory values = component.getRawBatch(entities);
+    bytes[] memory values = component.getRaw(entities);
     uint256[] memory result = new uint256[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (uint256)) : 0;
@@ -188,7 +141,7 @@ library LibComp {
     IComp component,
     uint256[] memory entities
   ) internal view returns (uint32[] memory) {
-    bytes[] memory values = component.getRawBatch(entities);
+    bytes[] memory values = component.getRaw(entities);
     uint32[] memory result = new uint32[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (uint32)) : 0;
@@ -199,7 +152,7 @@ library LibComp {
     IComp component,
     uint256[] memory entities
   ) internal view returns (string[] memory) {
-    bytes[] memory values = component.getRawBatch(entities);
+    bytes[] memory values = component.getRaw(entities);
     string[] memory result = new string[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? abi.decode(values[i], (string)) : "";
@@ -210,7 +163,7 @@ library LibComp {
     StatComponent statComp,
     uint256[] memory entities
   ) internal view returns (Stat[] memory) {
-    bytes[] memory values = statComp.getRawBatch(entities);
+    bytes[] memory values = statComp.getRaw(entities);
     Stat[] memory result = new Stat[](values.length);
     for (uint256 i = 0; i < values.length; i++)
       result[i] = values[i].length > 0 ? StatLib.decode(values[i]) : Stat(0, 0, 0, 0);
@@ -271,49 +224,25 @@ library LibComp {
   function setAll(IComp component, uint256[] memory entities, bytes memory value) internal {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i; i < entities.length; i++) values[i] = value;
-    component.setBatch(entities, values);
+    component.set(entities, values);
   }
 
   function setAll(IComp component, uint256[] memory entities, uint256 value) internal {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i; i < entities.length; i++) values[i] = abi.encode(value);
-    component.setBatch(entities, values);
+    component.set(entities, values);
   }
 
   function setAll(IComp component, uint256[] memory entities, uint32 value) internal {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i; i < entities.length; i++) values[i] = abi.encode(value);
-    component.setBatch(entities, values);
+    component.set(entities, values);
   }
 
   function setAll(IComp component, uint256[] memory entities, string memory value) internal {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i; i < entities.length; i++) values[i] = abi.encode(value);
-    component.setBatch(entities, values);
-  }
-
-  function checkAndSet(IComp component, uint256 id, bytes memory value) internal returns (bool) {
-    bool has = component.has(id);
-    if (!has) component.set(id, value);
-    return has;
-  }
-
-  function checkAndSet(IComp component, uint256 id, uint256 value) internal returns (bool) {
-    bool has = component.has(id);
-    if (!has) component.set(id, abi.encode(value));
-    return has;
-  }
-
-  function checkAndSet(IComp component, uint256 id, uint32 value) internal returns (bool) {
-    bool has = component.has(id);
-    if (!has) component.set(id, abi.encode(value));
-    return has;
-  }
-
-  function checkAndSet(IComp component, uint256 id, string memory value) internal returns (bool) {
-    bool has = component.has(id);
-    if (!has) component.set(id, abi.encode(value));
-    return has;
+    component.set(entities, values);
   }
 
   /////////////////

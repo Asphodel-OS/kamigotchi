@@ -145,8 +145,8 @@ library LibQuests {
   function removeSnapshottedObjectives(IUintComp components, uint256 questID) internal {
     uint256[] memory objectives = querySnapshottedObjectives(components, questID);
 
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).removeBatch(objectives);
-    ValueComponent(getAddrByID(components, ValueCompID)).removeBatch(objectives);
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).remove(objectives);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(objectives);
   }
 
   function checkRepeat(
@@ -183,7 +183,7 @@ library LibQuests {
   ) internal view returns (bool result) {
     uint32 questIndex = getQuestIndex(components, questID);
     uint256[] memory objIDs = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
-    Condition[] memory objs = LibConditional.getBatch(components, objIDs);
+    Condition[] memory objs = LibConditional.get(components, objIDs);
 
     for (uint256 i; i < objs.length; i++) {
       (HANDLER handler, LOGIC operator) = LibConditional.parseLogic(objs[i]);

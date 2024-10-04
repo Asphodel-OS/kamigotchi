@@ -203,10 +203,8 @@ library LibRecipe {
     uint256[] memory ioIDs = new uint256[](2);
     ioIDs[0] = genInputID(recipeIndex);
     ioIDs[1] = genOutputID(recipeIndex);
-    uint32[][] memory indices = KeysComponent(getAddrByID(components, KeysCompID)).getBatch(ioIDs);
-    uint256[][] memory amts = ValuesComponent(getAddrByID(components, ValuesCompID)).getBatch(
-      ioIDs
-    );
+    uint32[][] memory indices = KeysComponent(getAddrByID(components, KeysCompID)).get(ioIDs);
+    uint256[][] memory amts = ValuesComponent(getAddrByID(components, ValuesCompID)).get(ioIDs);
 
     // multiply by amount
     LibArray.multiply(amts[0], rolls);

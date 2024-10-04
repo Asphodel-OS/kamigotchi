@@ -224,11 +224,17 @@ library LibKami {
   /// @notice require that a kami is owned by an account
   /// @dev implicit isKami check - only kamis are mapped to IDOwnsKamiComponent
   function assertAccount(IUintComp components, uint256 id, uint256 accID) internal view {
-    require(getCompByID(components, IDOwnsKamiCompID).eqUint256(id, accID), "kami not urs");
+    require(
+      IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) == accID,
+      "kami not urs"
+    );
   }
 
   function assertAccount(IUintComp components, uint256[] memory ids, uint256 accID) internal view {
-    require(getCompByID(components, IDOwnsKamiCompID).eqUint256(ids, accID), "kami not urs");
+    uint256[] memory owners = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(
+      ids
+    );
+    for (uint256 i; i < ids.length; i++) require(owners[i] == accID, "kami not urs");
   }
 
   /// @notice require kami in same room as account
@@ -349,7 +355,7 @@ library LibKami {
     configs[2] = "KAMI_BASE_VIOLENCE";
     configs[3] = "KAMI_BASE_HARMONY";
     configs[4] = "KAMI_BASE_SLOTS";
-    uint256[] memory configVals = LibConfig.getBatch(components, configs);
+    uint256[] memory configVals = LibConfig.get(components, configs);
     int32 health = configVals[0].toInt32();
     int32 power = configVals[1].toInt32();
     int32 violence = configVals[2].toInt32();

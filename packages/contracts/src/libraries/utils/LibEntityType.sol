@@ -40,7 +40,7 @@ library LibEntityType {
   }
 
   function remove(IUintComp components, uint256[] memory ids) internal {
-    EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).removeBatch(ids);
+    EntityTypeComponent(getAddrByID(components, EntityTypeCompID)).remove(ids);
   }
 
   function get(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -92,7 +92,6 @@ library LibEntityType {
   // QUERIES
 
   /// @notice queries for entities of type that has value in specified component
-  /// @dev equivalent to LibQuery.getIsWithValue
   function queryWithValue(
     IUintComp components,
     string memory type_,

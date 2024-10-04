@@ -21,36 +21,28 @@ abstract contract Component is BareComponent {
 
   constructor(address _world, uint256 _id) BareComponent(_world, _id) {}
 
-  /**
-   * @notice Get a list of all entities that have the specified value in this component.
-   * @param value Abi-encoded value to get the list of entities with this value for.
-   */
+  /// @notice Get a list of all entities that have the specified value in this component.
+  /// @param value Abi-encoded value to get the list of entities with this value for.
   function getEntitiesWithValue(
     bytes memory value
   ) public view virtual override returns (uint256[] memory) {
-    return _getEntitiesWithValue(value);
+    return valToEntities[keccak256(value)].values();
   }
 
-  /**
-   * @notice Get entity at specific index in set of entities with that value
-   * @dev This set is unordered, its just used to select an entity in said set
-   * @param value Abi-encoded value to get the list of entities with this value for.
-   */
+  /// @notice Get entity at specific index in set of entities with that value
+  /// @dev This set is unordered, its just used to select an entity in said set
+  /// @param value Abi-encoded value to get the list of entities with this value for.
   function getAt(bytes memory value, uint256 index) public view virtual returns (uint256) {
     return valToEntities[keccak256(value)].at(index);
   }
 
-  /**
-   * @notice Get length of entities with value
-   * @param value Abi-encoded value to get the list of entities with this value for.
-   */
+  /// @notice Get length of entities with value
+  /// @param value Abi-encoded value to get the list of entities with this value for.
   function size(bytes memory value) public view virtual returns (uint256) {
     return valToEntities[keccak256(value)].length();
   }
 
-  /**
-   * @inheritdoc BareComponent
-   */
+  /// @inheritdoc BareComponent
   function _set(uint256 entity, bytes memory value) internal virtual override {
     bytes memory oldValue = entityToValue[entity];
 
@@ -64,10 +56,8 @@ abstract contract Component is BareComponent {
     super._set(entity, value);
   }
 
-  /**
-   * @inheritdoc BareComponent
-   */
-  function _setBatch(uint256[] memory entities, bytes[] memory values) internal virtual override {
+  /// @inheritdoc BareComponent
+  function _set(uint256[] memory entities, bytes[] memory values) internal virtual override {
     for (uint256 i = 0; i < entities.length; i++) {
       bytes memory oldValue = entityToValue[entities[i]];
 
@@ -79,12 +69,10 @@ abstract contract Component is BareComponent {
     }
 
     // Store the entity's value; Emit global event
-    super._setBatch(entities, values);
+    super._set(entities, values);
   }
 
-  /**
-   * @inheritdoc BareComponent
-   */
+  /// @inheritdoc BareComponent
   function _remove(uint256 entity) internal virtual override {
     bytes memory value = entityToValue[entity];
     if (value.length == 0) return; // skip if no value
@@ -96,10 +84,8 @@ abstract contract Component is BareComponent {
     super._remove(entity);
   }
 
-  /**
-   * @inheritdoc BareComponent
-   */
-  function _removeBatch(uint256[] memory entities) internal virtual override {
+  /// @inheritdoc BareComponent
+  function _remove(uint256[] memory entities) internal virtual override {
     for (uint256 i = 0; i < entities.length; i++) {
       bytes memory value = entityToValue[entities[i]];
       if (value.length == 0) continue; // skip if no value
@@ -109,12 +95,6 @@ abstract contract Component is BareComponent {
     }
 
     // Remove the entities from the mapping; Emit global event
-    super._removeBatch(entities);
-  }
-
-  function _getEntitiesWithValue(
-    bytes memory value
-  ) internal view virtual returns (uint256[] memory) {
-    return valToEntities[keccak256(value)].values();
+    super._remove(entities);
   }
 }

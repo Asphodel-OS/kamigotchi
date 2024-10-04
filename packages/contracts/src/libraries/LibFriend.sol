@@ -89,7 +89,7 @@ library LibFriend {
     uint256[] memory pointers = new uint256[](2);
     pointers[0] = genCounterPtr(accID, "FRIEND");
     pointers[1] = genCounterPtr(targetID, "FRIEND");
-    IDParentComponent(getAddrByID(components, IDParentCompID)).setBatch(ids, pointers);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(ids, pointers);
   }
 
   /// @notice update incoming request counter via pointer

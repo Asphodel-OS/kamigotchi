@@ -74,11 +74,11 @@ library LibFor {
     return ForComponent(getAddrByID(components, ForCompID)).get(id);
   }
 
-  function getBatch(
+  function get(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    return ForComponent(getAddrByID(components, ForCompID)).getBatch(ids);
+    return ForComponent(getAddrByID(components, ForCompID)).get(ids);
   }
 
   function set(IUintComp components, uint256 id, uint256 for_) internal {
@@ -102,7 +102,7 @@ library LibFor {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory, uint256[] memory) {
-    uint256[] memory fors = getBatch(components, ids);
+    uint256[] memory fors = get(components, ids);
     uint256[] memory accs = new uint256[](ids.length);
     uint256[] memory pets = new uint256[](ids.length);
 
