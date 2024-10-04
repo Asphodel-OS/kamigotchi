@@ -40,7 +40,7 @@ library LibLocal {
       kamiIDs[i] = allGachaPets[i];
       accIDs[i] = accID;
     }
-    ownerComp.setBatch(kamiIDs, accIDs);
+    ownerComp.set(kamiIDs, accIDs);
   }
 
   /// @notice enslave pets into harvesting on node 1

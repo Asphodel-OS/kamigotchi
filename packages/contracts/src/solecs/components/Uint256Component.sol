@@ -16,19 +16,19 @@ contract Uint256Component is Component, IUint256Component {
     set(entity, abi.encode(value));
   }
 
-  function setBatch(uint256[] memory entities, uint256[] memory values) public virtual {
+  function set(uint256[] memory entities, uint256[] memory values) public virtual {
     bytes[] memory rawValues = new bytes[](entities.length);
     for (uint256 i = 0; i < entities.length; i++) rawValues[i] = abi.encode(values[i]);
 
-    setBatch(entities, rawValues);
+    set(entities, rawValues);
   }
 
   function extract(uint256 entity) public virtual returns (uint256) {
     return abi.decode(extractRaw(entity), (uint256));
   }
 
-  function extractBatch(uint256[] memory entities) public virtual returns (uint256[] memory) {
-    bytes[] memory rawValues = extractRawBatch(entities);
+  function extract(uint256[] memory entities) public virtual returns (uint256[] memory) {
+    bytes[] memory rawValues = extractRaw(entities);
     uint256[] memory values = new uint256[](entities.length);
     for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (uint256));
     return values;
@@ -38,8 +38,8 @@ contract Uint256Component is Component, IUint256Component {
     return abi.decode(getRaw(entity), (uint256));
   }
 
-  function getBatch(uint256[] memory entities) public view virtual returns (uint256[] memory) {
-    bytes[] memory rawValues = getRawBatch(entities);
+  function get(uint256[] memory entities) public view virtual returns (uint256[] memory) {
+    bytes[] memory rawValues = getRaw(entities);
     uint256[] memory values = new uint256[](entities.length);
     for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (uint256));
     return values;

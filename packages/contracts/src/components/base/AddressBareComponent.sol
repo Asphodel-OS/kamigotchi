@@ -10,28 +10,25 @@ contract AddressBareComponent is BareComponent {
     _set(entity, TypeLib.encodeAddress(value));
   }
 
-  function setBatch(
-    uint256[] memory entities,
-    address[] memory values
-  ) external virtual onlyWriter {
-    _setBatch(entities, TypeLib.encodeBatch(values));
+  function set(uint256[] memory entities, address[] memory values) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (address) {
     return TypeLib.decodeAddress(_extractRaw(entity));
   }
 
-  function extractBatch(
+  function extract(
     uint256[] memory entities
   ) external virtual onlyWriter returns (address[] memory) {
-    return TypeLib.decodeBatchAddress(_extractRawBatch(entities));
+    return TypeLib.decodeBatchAddress(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (address) {
     return TypeLib.decodeAddress(_getRaw(entity));
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (address[] memory) {
-    return TypeLib.decodeBatchAddress(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (address[] memory) {
+    return TypeLib.decodeBatchAddress(_getRaw(entities));
   }
 }

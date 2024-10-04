@@ -33,31 +33,30 @@ export interface BoolComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "extract(uint256[])": FunctionFragment;
     "extract(uint256)": FunctionFragment;
-    "extractBatch(uint256[])": FunctionFragment;
+    "extractRaw(uint256[])": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
-    "extractRawBatch(uint256[])": FunctionFragment;
+    "get(uint256[])": FunctionFragment;
     "get(uint256)": FunctionFragment;
     "getAt(bytes,uint256)": FunctionFragment;
-    "getBatch(uint256[])": FunctionFragment;
-    "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bool)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
-    "getRawBatch(uint256[])": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
+    "remove(uint256[])": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "removeBatch(uint256[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "set(uint256)": FunctionFragment;
+    "set(uint256[])": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
-    "setBatch(uint256[],bytes[])": FunctionFragment;
-    "setBatch(uint256[])": FunctionFragment;
+    "set(uint256[],bytes[])": FunctionFragment;
     "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
@@ -70,31 +69,30 @@ export interface BoolComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
-      | "extract"
-      | "extractBatch"
-      | "extractRaw"
-      | "extractRawBatch"
-      | "get"
+      | "extract(uint256[])"
+      | "extract(uint256)"
+      | "extractRaw(uint256[])"
+      | "extractRaw(uint256)"
+      | "get(uint256[])"
+      | "get(uint256)"
       | "getAt"
-      | "getBatch"
-      | "getEntities"
       | "getEntitiesWithValue(bool)"
       | "getEntitiesWithValue(bytes)"
-      | "getRaw"
-      | "getRawBatch"
+      | "getRaw(uint256[])"
+      | "getRaw(uint256)"
       | "has"
       | "id"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "registerWorld"
-      | "remove"
-      | "removeBatch"
+      | "remove(uint256[])"
+      | "remove(uint256)"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "set(uint256)"
+      | "set(uint256[])"
       | "set(uint256,bytes)"
-      | "setBatch(uint256[],bytes[])"
-      | "setBatch(uint256[])"
+      | "set(uint256[],bytes[])"
       | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
@@ -115,36 +113,32 @@ export interface BoolComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "extract",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "extractBatch",
+    functionFragment: "extract(uint256[])",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "extractRaw",
+    functionFragment: "extract(uint256)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "extractRawBatch",
+    functionFragment: "extractRaw(uint256[])",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "get",
+    functionFragment: "extractRaw(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "get(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "get(uint256)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAt",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntities",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue(bool)",
@@ -155,12 +149,12 @@ export interface BoolComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRaw",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getRaw(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRawBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "getRaw(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "has",
@@ -177,12 +171,12 @@ export interface BoolComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "remove",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "remove(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "remove(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -197,16 +191,16 @@ export interface BoolComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "set(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch(uint256[],bytes[])",
+    functionFragment: "set(uint256[],bytes[])",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setBatch(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "size",
@@ -238,23 +232,31 @@ export interface BoolComponentInterface extends utils.Interface {
     functionFragment: "completeOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "extract", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "extractBatch",
+    functionFragment: "extract(uint256[])",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "extractRaw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "extractRawBatch",
+    functionFragment: "extract(uint256)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "get", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "extractRaw(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extractRaw(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "get(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "get(uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getBatch", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntities",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getEntitiesWithValue(bool)",
     data: BytesLike
@@ -263,9 +265,12 @@ export interface BoolComponentInterface extends utils.Interface {
     functionFragment: "getEntitiesWithValue(bytes)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getRaw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getRawBatch",
+    functionFragment: "getRaw(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRaw(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
@@ -279,9 +284,12 @@ export interface BoolComponentInterface extends utils.Interface {
     functionFragment: "registerWorld",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeBatch",
+    functionFragment: "remove(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "remove(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -297,15 +305,15 @@ export interface BoolComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "set(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "set(uint256,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBatch(uint256[],bytes[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBatch(uint256[])",
+    functionFragment: "set(uint256[],bytes[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
@@ -409,27 +417,32 @@ export interface BoolComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extract(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    extractBatch(
+    "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extractRaw(
+    "extract(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extractRawBatch(
+    "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    get(
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[boolean[]]>;
+
+    "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -439,13 +452,6 @@ export interface BoolComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    getBatch(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[boolean[]]>;
-
-    getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     "getEntitiesWithValue(bool)"(
       value: PromiseOrValue<boolean>,
@@ -457,15 +463,15 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getRawBatch(
+    "getRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[string[]]>;
+
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -486,13 +492,13 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -509,20 +515,20 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "set(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setBatch(uint256[],bytes[])"(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "setBatch(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -563,27 +569,32 @@ export interface BoolComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extract(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  extractBatch(
+  "extract(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extractRaw(
+  "extract(uint256)"(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extractRawBatch(
+  "extractRaw(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  get(
+  "extractRaw(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "get(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<boolean[]>;
+
+  "get(uint256)"(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -593,13 +604,6 @@ export interface BoolComponent extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getBatch(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<boolean[]>;
-
-  getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   "getEntitiesWithValue(bool)"(
     value: PromiseOrValue<boolean>,
@@ -611,15 +615,15 @@ export interface BoolComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  getRaw(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getRawBatch(
+  "getRaw(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<string[]>;
+
+  "getRaw(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -640,13 +644,13 @@ export interface BoolComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  remove(
-    entity: PromiseOrValue<BigNumberish>,
+  "remove(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  removeBatch(
-    entities: PromiseOrValue<BigNumberish>[],
+  "remove(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -663,20 +667,20 @@ export interface BoolComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  "set(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "set(uint256,bytes)"(
     entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setBatch(uint256[],bytes[])"(
+  "set(uint256[],bytes[])"(
     entities: PromiseOrValue<BigNumberish>[],
     values: PromiseOrValue<BytesLike>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "setBatch(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -715,27 +719,32 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    extract(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    extractBatch(
+    "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<boolean[]>;
 
-    extractRaw(
+    "extract(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<boolean>;
 
-    extractRawBatch(
+    "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
 
-    get(
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<boolean[]>;
+
+    "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -745,13 +754,6 @@ export interface BoolComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getBatch(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<boolean[]>;
-
-    getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     "getEntitiesWithValue(bool)"(
       value: PromiseOrValue<boolean>,
@@ -763,15 +765,15 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getRawBatch(
+    "getRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -792,13 +794,13 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -811,20 +813,20 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    "set(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setBatch(uint256[],bytes[])"(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setBatch(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -891,27 +893,32 @@ export interface BoolComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extract(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    extractBatch(
+    "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extractRaw(
+    "extract(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extractRawBatch(
+    "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    get(
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -921,13 +928,6 @@ export interface BoolComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getBatch(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getEntitiesWithValue(bool)"(
       value: PromiseOrValue<boolean>,
@@ -939,13 +939,13 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "getRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -968,13 +968,13 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -991,20 +991,20 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    "set(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setBatch(uint256[],bytes[])"(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "setBatch(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1046,27 +1046,32 @@ export interface BoolComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extract(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    extractBatch(
+    "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extractRaw(
+    "extract(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extractRawBatch(
+    "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    get(
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1076,13 +1081,6 @@ export interface BoolComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getBatch(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getEntitiesWithValue(bool)"(
       value: PromiseOrValue<boolean>,
@@ -1094,13 +1092,13 @@ export interface BoolComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "getRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1123,13 +1121,13 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
+    "remove(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    removeBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1146,20 +1144,20 @@ export interface BoolComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    "set(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBatch(uint256[],bytes[])"(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setBatch(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

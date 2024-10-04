@@ -10,31 +10,31 @@ contract StringComponent is Component {
     _set(entity, TypeLib.encodeString(value));
   }
 
-  function setBatch(uint256[] memory entities, string[] memory values) external virtual onlyWriter {
-    _setBatch(entities, TypeLib.encodeBatch(values));
+  function set(uint256[] memory entities, string[] memory values) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (string memory) {
     return TypeLib.decodeString(_extractRaw(entity));
   }
 
-  function extractBatch(
+  function extract(
     uint256[] memory entities
   ) external virtual onlyWriter returns (string[] memory) {
-    return TypeLib.decodeBatchString(_extractRawBatch(entities));
+    return TypeLib.decodeBatchString(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (string memory) {
     return TypeLib.decodeString(_getRaw(entity));
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (string[] memory) {
-    return TypeLib.decodeBatchString(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (string[] memory) {
+    return TypeLib.decodeBatchString(_getRaw(entities));
   }
 
   function getEntitiesWithValue(
     string memory value
   ) external view virtual returns (uint256[] memory) {
-    return _getEntitiesWithValue(TypeLib.encodeString(value));
+    return getEntitiesWithValue(TypeLib.encodeString(value));
   }
 }

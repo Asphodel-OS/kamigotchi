@@ -10,34 +10,31 @@ contract Uint32ArrayComponent is Component {
     _set(entity, TypeLib.encodeUint32Array(value));
   }
 
-  function setBatch(
-    uint256[] memory entities,
-    uint32[][] memory values
-  ) external virtual onlyWriter {
-    _setBatch(entities, TypeLib.encodeBatch(values));
+  function set(uint256[] memory entities, uint32[][] memory values) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (uint32[] memory) {
     return TypeLib.decodeUint32Array(_extractRaw(entity));
   }
 
-  function extractBatch(
+  function extract(
     uint256[] memory entities
   ) external virtual onlyWriter returns (uint32[][] memory) {
-    return TypeLib.decodeBatchUint32Array(_extractRawBatch(entities));
+    return TypeLib.decodeBatchUint32Array(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (uint32[] memory) {
     return TypeLib.decodeUint32Array(_getRaw(entity));
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (uint32[][] memory) {
-    return TypeLib.decodeBatchUint32Array(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (uint32[][] memory) {
+    return TypeLib.decodeBatchUint32Array(_getRaw(entities));
   }
 
   function getEntitiesWithValue(
     uint32[] memory value
   ) external view virtual returns (uint256[] memory) {
-    return _getEntitiesWithValue(TypeLib.encodeUint32Array(value));
+    return getEntitiesWithValue(TypeLib.encodeUint32Array(value));
   }
 }

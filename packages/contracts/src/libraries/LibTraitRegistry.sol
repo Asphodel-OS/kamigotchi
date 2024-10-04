@@ -315,7 +315,7 @@ library LibTraitRegistry {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    uint256[] memory weights = RarityComponent(getAddrByID(components, RarityCompID)).getBatch(ids);
+    uint256[] memory weights = RarityComponent(getAddrByID(components, RarityCompID)).get(ids);
     return LibRandom.processWeightedRarity(weights);
   }
 
@@ -467,13 +467,16 @@ library LibTraitRegistry {
     IUintComp components,
     string memory _type
   ) internal view returns (uint256[] memory) {
-    uint256 ptr = genReverseMappingPtr(_type);
-    return
-      LibQuery.getIsWithValue(
-        getCompByID(components, ForCompID),
-        getCompByID(components, IsRegCompID),
-        abi.encode(ptr)
-      );
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getCompByID(components, ForCompID),
+      abi.encode(genReverseMappingPtr(_type))
+    );
+    fragments[1] = QueryFragment(QueryType.Has, getCompByID(components, IsRegCompID), "");
+
+    return LibQuery.query(fragments);
   }
 
   /////////////////

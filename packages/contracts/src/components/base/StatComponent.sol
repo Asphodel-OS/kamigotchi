@@ -12,26 +12,24 @@ contract StatComponent is BareComponent {
     _set(entity, value);
   }
 
-  function setBatch(uint256[] memory entities, Stat[] memory values) external virtual onlyWriter {
-    _setBatch(entities, StatLib.encodeBatch(values));
+  function set(uint256[] memory entities, Stat[] memory values) external virtual onlyWriter {
+    _set(entities, StatLib.encodeBatch(values));
   }
 
   function extract(uint256 entity) external virtual onlyWriter returns (Stat memory) {
     return StatLib.decode(_extractRaw(entity));
   }
 
-  function extractBatch(
-    uint256[] memory entities
-  ) external virtual onlyWriter returns (Stat[] memory) {
-    return StatLib.decodeBatch(_extractRawBatch(entities));
+  function extract(uint256[] memory entities) external virtual onlyWriter returns (Stat[] memory) {
+    return StatLib.decodeBatch(_extractRaw(entities));
   }
 
   function get(uint256 entity) external view virtual returns (Stat memory) {
     return _get(entity);
   }
 
-  function getBatch(uint256[] memory entities) external view virtual returns (Stat[] memory) {
-    return StatLib.decodeBatch(_getRawBatch(entities));
+  function get(uint256[] memory entities) external view virtual returns (Stat[] memory) {
+    return StatLib.decodeBatch(_getRaw(entities));
   }
 
   //////////////
