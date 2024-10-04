@@ -14,17 +14,17 @@ contract TimelockComponent is Component {
   constructor(address world) Component(world, ID) {}
 
   function set(uint256 entity, TimelockOp memory value) public {
-    set(entity, abi.encode(value));
+    _set(entity, abi.encode(value));
   }
 
   function get(uint256 entity) public view virtual returns (TimelockOp memory) {
-    TimelockOp memory value = abi.decode(getRaw(entity), (TimelockOp));
+    TimelockOp memory value = abi.decode(_getRaw(entity), (TimelockOp));
     return value;
   }
 
   function getEntitiesWithValue(
     TimelockOp memory value
   ) public view virtual returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(value));
+    return _getEntitiesWithValue(abi.encode(value));
   }
 }

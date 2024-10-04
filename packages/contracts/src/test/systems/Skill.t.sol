@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 contract SkillTest is SetupTemplate {
   function setUp() public override {

@@ -9,14 +9,14 @@ contract OwnedByEntityComponent is Component {
   constructor(address world) Component(world, ID) {}
 
   function set(uint256 entity, uint256 ownedByEntity) public {
-    set(entity, abi.encode(ownedByEntity));
+    _set(entity, abi.encode(ownedByEntity));
   }
 
   function getValue(uint256 entity) public view returns (uint256) {
-    return abi.decode(getRaw(entity), (uint256));
+    return abi.decode(_getRaw(entity), (uint256));
   }
 
   function getEntitiesWithValue(uint256 ownedByEntity) public view returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(ownedByEntity));
+    return _getEntitiesWithValue(abi.encode(ownedByEntity));
   }
 }

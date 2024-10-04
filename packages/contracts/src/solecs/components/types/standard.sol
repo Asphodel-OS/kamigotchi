@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 /// @notice a library to handle the standard solidity types
-/// @dev why? standardise logic in one place for upgradability and visibility
+/// @dev to standardise logic in one place for upgradability and visibility
 library TypeLib {
   /////////////////
   // ENCODERS
@@ -211,6 +211,112 @@ library TypeLib {
   function decodeBatchInt32Array(bytes[] memory values) internal pure returns (int32[][] memory) {
     int32[][] memory decodedVals = new int32[][](values.length);
     for (uint256 i = 0; i < values.length; i++) decodedVals[i] = decodeInt32Array(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeUint256(bytes memory value) internal pure returns (uint256) {
+    return value.length > 0 ? abi.decode(value, (uint256)) : 0;
+  }
+
+  function safeDecodeUint32(bytes memory value) internal pure returns (uint32) {
+    return value.length > 0 ? abi.decode(value, (uint32)) : 0;
+  }
+
+  function safeDecodeInt256(bytes memory value) internal pure returns (int256) {
+    return value.length > 0 ? abi.decode(value, (int256)) : int256(0);
+  }
+
+  function safeDecodeInt32(bytes memory value) internal pure returns (int32) {
+    return value.length > 0 ? abi.decode(value, (int32)) : int32(0);
+  }
+
+  function safeDecodeAddress(bytes memory value) internal pure returns (address) {
+    return value.length > 0 ? abi.decode(value, (address)) : address(0);
+  }
+
+  function safeDecodeBool(bytes memory value) internal pure returns (bool) {
+    return value.length > 0 ? abi.decode(value, (bool)) : false;
+  }
+
+  function safeDecodeString(bytes memory value) internal pure returns (string memory) {
+    return value.length > 0 ? abi.decode(value, (string)) : "";
+  }
+
+  function safeDecodeUint256Array(bytes memory value) internal pure returns (uint256[] memory) {
+    return value.length > 0 ? abi.decode(value, (uint256[])) : new uint256[](0);
+  }
+
+  function safeDecodeUint32Array(bytes memory value) internal pure returns (uint32[] memory) {
+    return value.length > 0 ? abi.decode(value, (uint32[])) : new uint32[](0);
+  }
+
+  function safeDecodeInt32Array(bytes memory value) internal pure returns (int32[] memory) {
+    return value.length > 0 ? abi.decode(value, (int32[])) : new int32[](0);
+  }
+
+  function safeDecodeBatchUint256(bytes[] memory values) internal pure returns (uint256[] memory) {
+    uint256[] memory decodedVals = new uint256[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeUint256(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchUint32(bytes[] memory values) internal pure returns (uint32[] memory) {
+    uint32[] memory decodedVals = new uint32[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeUint32(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchInt256(bytes[] memory values) internal pure returns (int256[] memory) {
+    int256[] memory decodedVals = new int256[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeInt256(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchInt32(bytes[] memory values) internal pure returns (int32[] memory) {
+    int32[] memory decodedVals = new int32[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeInt32(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchAddress(bytes[] memory values) internal pure returns (address[] memory) {
+    address[] memory decodedVals = new address[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeAddress(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchBool(bytes[] memory values) internal pure returns (bool[] memory) {
+    bool[] memory decodedVals = new bool[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeBool(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchString(bytes[] memory values) internal pure returns (string[] memory) {
+    string[] memory decodedVals = new string[](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeString(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchUint256Array(
+    bytes[] memory values
+  ) internal pure returns (uint256[][] memory) {
+    uint256[][] memory decodedVals = new uint256[][](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeUint256Array(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchUint32Array(
+    bytes[] memory values
+  ) internal pure returns (uint32[][] memory) {
+    uint32[][] memory decodedVals = new uint32[][](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeUint32Array(values[i]);
+    return decodedVals;
+  }
+
+  function safeDecodeBatchInt32Array(
+    bytes[] memory values
+  ) internal pure returns (int32[][] memory) {
+    int32[][] memory decodedVals = new int32[][](values.length);
+    for (uint256 i = 0; i < values.length; i++) decodedVals[i] = safeDecodeInt32Array(values[i]);
     return decodedVals;
   }
 }

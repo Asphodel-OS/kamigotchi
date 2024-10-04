@@ -67,7 +67,8 @@ library LibGacha {
   ) internal {
     // update rerolls
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
-    uint256[] memory rerolls = LibComp.safeextractUint256(rerollComp, commitIDs);
+    uint256[] memory rerolls = rerollComp.safeGet(commitIDs);
+    rerollComp.remove(commitIDs);
     for (uint256 i; i < kamiIDs.length; i++) rerolls[i]++;
     rerollComp.set(kamiIDs, rerolls);
 
@@ -191,8 +192,10 @@ library LibGacha {
   function extractRerollBatch(
     IUintComp components,
     uint256[] memory ids
-  ) internal returns (uint256[] memory) {
-    return getCompByID(components, RerollCompID).safeextractUint256(ids);
+  ) internal returns (uint256[] memory rerolls) {
+    RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
+    rerolls = rerollComp.safeGet(ids);
+    rerollComp.remove(ids);
   }
 
   /////////////////

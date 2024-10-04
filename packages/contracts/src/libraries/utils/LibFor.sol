@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { BoolComponent } from "components/base/BoolComponent.sol";
+import { BoolComponent } from "solecs/components/BoolComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 
 uint256 constant ForAccount = uint256(keccak256("for.account"));

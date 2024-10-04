@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexRecipeComponent, ID as IndexRecipeCompID } from "components/IndexRecipeComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -167,7 +167,7 @@ library LibRecipe {
   function afterCraft(IUintComp components, uint256 recipeID, uint256 amt, uint256 accID) internal {
     // add account experience
     ExperienceComponent expComp = ExperienceComponent(getAddrByID(components, ExpCompID));
-    uint256 xp = LibComp.safeGetUint256(expComp, recipeID);
+    uint256 xp = expComp.safeGet(recipeID);
     if (xp > 0) LibComp.inc(expComp, accID, amt * xp);
   }
 

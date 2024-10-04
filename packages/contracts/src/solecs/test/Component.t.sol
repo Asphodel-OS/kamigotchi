@@ -43,7 +43,7 @@ contract ComponentTest is DSTestPlus {
     assertEq(0, component.size(abi.encode(2)));
   }
 
-  function testset() public {
+  function testSet() public {
     uint256[] memory entities = new uint256[](2);
     entities[0] = 1;
     entities[1] = 2;
