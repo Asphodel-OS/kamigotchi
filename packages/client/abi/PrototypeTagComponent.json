@@ -62,25 +62,6 @@
       "name": "extractRaw",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "extractRawBatch",
-      "inputs": [
-        {
           "name": "entities",
           "type": "uint256[]",
           "internalType": "uint256[]"
@@ -91,6 +72,25 @@
           "name": "",
           "type": "bytes[]",
           "internalType": "bytes[]"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "extractRaw",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "stateMutability": "nonpayable"
@@ -115,19 +115,6 @@
           "name": "",
           "type": "uint256",
           "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getEntities",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
         }
       ],
       "stateMutability": "view"
@@ -175,25 +162,6 @@
       "name": "getRaw",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getRawBatch",
-      "inputs": [
-        {
           "name": "entities",
           "type": "uint256[]",
           "internalType": "uint256[]"
@@ -204,6 +172,25 @@
           "name": "",
           "type": "bytes[]",
           "internalType": "bytes[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getRaw",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "stateMutability": "view"
@@ -309,9 +296,9 @@
       "name": "remove",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
         }
       ],
       "outputs": [],
@@ -319,12 +306,12 @@
     },
     {
       "type": "function",
-      "name": "removeBatch",
+      "name": "remove",
       "inputs": [
         {
-          "name": "entities",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [],
@@ -382,7 +369,7 @@
     },
     {
       "type": "function",
-      "name": "setBatch",
+      "name": "set",
       "inputs": [
         {
           "name": "entities",
@@ -567,13 +554,12 @@
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "extractRaw(uint256)": "e9ff6c76",
-    "extractRawBatch(uint256[])": "12b11155",
+    "extractRaw(uint256[])": "bcab0047",
     "getAt(bytes,uint256)": "6f9aa155",
-    "getEntities()": "31b933b9",
     "getEntitiesWithValue(bool)": "001326ab",
     "getEntitiesWithValue(bytes)": "b361be46",
     "getRaw(uint256)": "dd98e3c9",
-    "getRawBatch(uint256[])": "4323c4ef",
+    "getRaw(uint256[])": "a1c58425",
     "getValue(uint256)": "0ff4c916",
     "has(uint256)": "cccf7a8e",
     "id()": "af640d0f",
@@ -581,12 +567,12 @@
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
-    "removeBatch(uint256[])": "8482643e",
+    "remove(uint256[])": "4a0fa538",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "set(uint256,bool)": "62f46d56",
     "set(uint256,bytes)": "8b282947",
-    "setBatch(uint256[],bytes[])": "13ca8b6a",
+    "set(uint256[],bytes[])": "a2c895aa",
     "size(bytes)": "1c5ee10c",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",

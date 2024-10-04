@@ -67,12 +67,12 @@ library LibGacha {
   ) internal {
     // update rerolls
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
-    uint256[] memory rerolls = LibComp.safeExtractBatchUint256(rerollComp, commitIDs);
+    uint256[] memory rerolls = LibComp.safeextractUint256(rerollComp, commitIDs);
     for (uint256 i; i < kamiIDs.length; i++) rerolls[i]++;
-    rerollComp.setBatch(kamiIDs, rerolls);
+    rerollComp.set(kamiIDs, rerolls);
 
     // update pet ownership
-    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).setBatch(
+    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(
       kamiIDs,
       LibCommit.extractHolders(components, commitIDs)
     );
@@ -182,7 +182,7 @@ library LibGacha {
     uint256[] memory ids,
     uint256[] memory rerolls
   ) internal {
-    RerollComponent(getAddrByID(components, RerollCompID)).setBatch(ids, rerolls);
+    RerollComponent(getAddrByID(components, RerollCompID)).set(ids, rerolls);
   }
 
   ///////////////////
@@ -192,7 +192,7 @@ library LibGacha {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    return getCompByID(components, RerollCompID).safeExtractBatchUint256(ids);
+    return getCompByID(components, RerollCompID).safeextractUint256(ids);
   }
 
   /////////////////

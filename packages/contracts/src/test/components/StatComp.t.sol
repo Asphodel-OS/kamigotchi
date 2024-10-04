@@ -37,7 +37,7 @@ contract StatCompTest is EmptyWorld {
     assertEq(statComp.get(id), original);
     vm.expectRevert();
     statComp.get(1);
-    assertEq(statComp.getBatch(ids), ogBatch);
+    assertEq(statComp.get(ids), ogBatch);
 
     // test extract
     vm.prank(deployer);
@@ -49,7 +49,7 @@ contract StatCompTest is EmptyWorld {
     vm.prank(deployer);
     statComp.set(id, original);
     vm.prank(deployer);
-    assertEq(statComp.extractBatch(ids), ogBatch);
+    assertEq(statComp.extract(ids), ogBatch);
     assertEq(extracted, original);
     assertTrue(!statComp.has(id));
     vm.expectRevert();
@@ -68,11 +68,11 @@ contract StatCompTest is EmptyWorld {
     ogBatch[1] = Stat(11, 21, 31, 41);
     ogBatch[2] = Stat(12, 22, 32, 42);
     vm.prank(deployer);
-    statComp.setBatch(ids, ogBatch);
+    statComp.set(ids, ogBatch);
     for (uint256 i = 0; i < ids.length; i++) {
       assertEq(statComp.get(ids[i]), ogBatch[i]);
     }
-    assertEq(statComp.getBatch(ids), ogBatch);
+    assertEq(statComp.get(ids), ogBatch);
 
     // test setting permissions
     vm.expectRevert();
@@ -81,19 +81,19 @@ contract StatCompTest is EmptyWorld {
     batch[0] = Stat(1, 1, 1, 1);
     batch[1] = Stat(2, 2, 2, 2);
     vm.expectRevert();
-    statComp.setBatch(ids, batch);
+    statComp.set(ids, batch);
 
     // test removing permissions
     vm.expectRevert();
     statComp.remove(id);
     vm.expectRevert();
-    statComp.removeBatch(ids);
+    statComp.remove(ids);
 
     // test extract permissions
     vm.expectRevert();
     statComp.extract(id);
     vm.expectRevert();
-    statComp.extractBatch(ids);
+    statComp.extract(ids);
   }
 
   function testStatCompFunctions() public {

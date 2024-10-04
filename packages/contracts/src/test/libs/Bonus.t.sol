@@ -219,7 +219,7 @@ contract BonusTest is SetupTemplate {
   }
 
   function _getSource(uint256[] memory ids) internal view returns (uint256[] memory) {
-    return _IdSourceComponent.getBatch(ids);
+    return _IdSourceComponent.get(ids);
   }
 
   function _setBonusLevel(uint256 id, uint256 level) internal {

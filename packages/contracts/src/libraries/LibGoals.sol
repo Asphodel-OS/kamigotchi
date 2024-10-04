@@ -5,7 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
@@ -376,13 +376,16 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    uint256 pointer = genRwdParentID(goalIndex);
-    return
-      LibQuery.getIsWithValue(
-        getCompByID(components, IDParentCompID),
-        getCompByID(components, LevelCompID),
-        abi.encode(pointer)
-      );
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getCompByID(components, IDParentCompID),
+      abi.encode(genRwdParentID(goalIndex))
+    );
+    fragments[1] = QueryFragment(QueryType.Has, getCompByID(components, LevelCompID), "");
+
+    return LibQuery.query(fragments);
   }
 
   ////////////////////
