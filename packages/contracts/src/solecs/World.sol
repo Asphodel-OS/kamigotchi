@@ -98,7 +98,7 @@ contract World is IWorld, Ownable {
    * Emits the `ComponentValueSet` event for clients to reconstruct the state.
    */
   function registerComponentValueSet(uint256 entity, bytes calldata data) public {
-    require(_components.has(addressToEntity(msg.sender)), "component not registered");
+    // getIdByAddress has implicit existence check
     emit ComponentValueSet(getIdByAddress(_components, msg.sender), msg.sender, entity, data);
   }
 
@@ -107,7 +107,7 @@ contract World is IWorld, Ownable {
    * Emits the `ComponentValueRemoved` event for clients to reconstruct the state.
    */
   function registerComponentValueRemoved(uint256 entity) public {
-    require(_components.has(addressToEntity(msg.sender)), "component not registered");
+    // getIdByAddress has implicit existence check
     emit ComponentValueRemoved(getIdByAddress(_components, msg.sender), msg.sender, entity);
   }
 

@@ -15,15 +15,15 @@ contract PositionComponent is Component {
   constructor(address world) Component(world, ID) {}
 
   function set(uint256 entity, Position calldata value) public {
-    set(entity, abi.encode(value));
+    _set(entity, abi.encode(value));
   }
 
   function getValue(uint256 entity) public view returns (Position memory) {
-    (int64 x, int64 y) = abi.decode(getRaw(entity), (int64, int64));
+    (int64 x, int64 y) = abi.decode(_getRaw(entity), (int64, int64));
     return Position(x, y);
   }
 
   function getEntitiesWithValue(Position calldata value) public view returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(value));
+    return _getEntitiesWithValue(abi.encode(value));
   }
 }

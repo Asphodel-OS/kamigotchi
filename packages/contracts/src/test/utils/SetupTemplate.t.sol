@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";

@@ -202,8 +202,8 @@ library LibGoals {
   ) internal returns (uint256) {
     uint256 objID = genObjID(goalID);
     IUintComp balComp = IUintComp(getAddrByID(components, ValueCompID));
-    uint256 currBal = balComp.safeGetUint256(goalID);
-    uint256 targetBal = balComp.safeGetUint256(objID);
+    uint256 currBal = balComp.safeGet(goalID);
+    uint256 targetBal = balComp.safeGet(objID);
 
     // cap contribution to target balance
     if (currBal + amt >= targetBal) {

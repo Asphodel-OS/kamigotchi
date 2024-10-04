@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "solecs/Component.sol";
-import { TypeLib } from "components/types/standard.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
 contract AddressComponent is Component {
   constructor(address world, uint256 id) Component(world, id) {}
@@ -32,7 +32,15 @@ contract AddressComponent is Component {
     return TypeLib.decodeBatchAddress(_getRaw(entities));
   }
 
+  function safeGet(uint256 entity) external view virtual returns (address) {
+    return TypeLib.safeDecodeAddress(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (address[] memory) {
+    return TypeLib.safeDecodeBatchAddress(_getRaw(entities));
+  }
+
   function getEntitiesWithValue(address value) external view virtual returns (uint256[] memory) {
-    return getEntitiesWithValue(TypeLib.encodeAddress(value));
+    return _getEntitiesWithValue(TypeLib.encodeAddress(value));
   }
 }

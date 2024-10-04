@@ -8,6 +8,7 @@ import { LibTypes } from "./LibTypes.sol";
 
 import { OwnableWritable } from "./OwnableWritable.sol";
 
+import { console } from "forge-std/Test.sol";
 /**
  * Components are a key-value store from entity id to component value.
  * They are registered in the World and register updates to their state in the World.
@@ -48,11 +49,11 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    */
   /// @param entity Entity to set the value for.
   /// @param value Value to set for the given entity.
-  function set(uint256 entity, bytes memory value) public override onlyWriter {
+  function set(uint256 entity, bytes memory value) external override onlyWriter {
     _set(entity, value);
   }
 
-  function set(uint256[] memory entities, bytes[] memory values) public override onlyWriter {
+  function set(uint256[] memory entities, bytes[] memory values) external override onlyWriter {
     _set(entities, values);
   }
 
@@ -62,11 +63,11 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    * Can only be called by addresses with write access to this component.
    */
   /// @param entity Entity to remove from this component.
-  function remove(uint256 entity) public override onlyWriter {
+  function remove(uint256 entity) external override onlyWriter {
     _remove(entity);
   }
 
-  function remove(uint256[] memory entities) public override onlyWriter {
+  function remove(uint256[] memory entities) external override onlyWriter {
     _remove(entities);
   }
 
@@ -74,7 +75,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    * Gets and removes the raw value of the given entity in this component.
    */
   /// @param entity Entity to extract the raw value in this component for.
-  function extractRaw(uint256 entity) public virtual override onlyWriter returns (bytes memory) {
+  function extractRaw(uint256 entity) external virtual override onlyWriter returns (bytes memory) {
     return _extractRaw(entity);
   }
 
@@ -84,15 +85,36 @@ abstract contract BareComponent is IComponent, OwnableWritable {
   /// @param entities Entities to extract the raw values in this component for.
   function extractRaw(
     uint256[] memory entities
-  ) public virtual override onlyWriter returns (bytes[] memory) {
+  ) external virtual override onlyWriter returns (bytes[] memory) {
     return _extractRaw(entities);
+  }
+
+  /** @notice
+   * Checks if entity has value equal to the given value
+   */
+  function equal(uint256 entity, bytes memory value) external view virtual override returns (bool) {
+    return keccak256(_getRaw(entity)) == keccak256(value);
+  }
+
+  /** @notice
+   * Checks if all entities have value equal to the given value
+   */
+  function equal(
+    uint256[] memory entities,
+    bytes memory value
+  ) external view virtual override returns (bool) {
+    bytes32 hash = keccak256(value);
+    for (uint256 i = 0; i < entities.length; i++) {
+      if (keccak256(_getRaw(entities[i])) != hash) return false;
+    }
+    return true;
   }
 
   /** @notice
    * Check whether the given entity has a value in this component.
    */
   /// @param entity Entity to check whether it has a value in this component for.
-  function has(uint256 entity) public view virtual override returns (bool) {
+  function has(uint256 entity) external view virtual override returns (bool) {
     return entityToValue[entity].length != 0;
   }
 
@@ -100,7 +122,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    * Get the raw (abi-encoded) value of the given entity in this component.
    */
   /// @param entity Entity to get the raw value in this component for.
-  function getRaw(uint256 entity) public view virtual override returns (bytes memory) {
+  function getRaw(uint256 entity) external view virtual override returns (bytes memory) {
     return _getRaw(entity);
   }
 
@@ -108,16 +130,16 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    * Get multiple raw (abi-encoded) values of the given entities in this component.
    */
   /// @param entities Entities to get the raw values in this component for.
-  function getRaw(uint256[] memory entities) public view virtual override returns (bytes[] memory) {
-    bytes[] memory values = new bytes[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) values[i] = entityToValue[entities[i]];
-    return values;
+  function getRaw(
+    uint256[] memory entities
+  ) external view virtual override returns (bytes[] memory) {
+    return _getRaw(entities);
   }
 
   /** Not implemented in BareComponent */
   function getEntitiesWithValue(
     bytes memory
-  ) public view virtual override returns (uint256[] memory) {
+  ) external view virtual override returns (uint256[] memory) {
     revert BareComponent__NotImplemented();
   }
 
