@@ -3,7 +3,7 @@ import { grpc } from '@improbable-eng/grpc-web';
 import { ComponentValue, Components, EntityID } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { World } from '@mud-classic/solecs/types/ethers-contracts';
-import { Uint8ArrayToHexString, awaitPromise, range, to256BitString } from '@mud-classic/utils';
+import { awaitPromise, range, to256BitString } from '@mud-classic/utils';
 import { BigNumber, BytesLike } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
@@ -35,6 +35,8 @@ import { CacheStore, createCacheStore, storeEvent, storeEvents } from './cache';
 import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
+
+// TODO: clean this shit up
 
 /**
  * Create a ECSStateSnapshotServiceClient
@@ -118,6 +120,18 @@ export async function fetchSnapshotChunked(
   }
 
   return cacheStore;
+}
+
+function formatHex(hex: string): string {
+  if (hex.substring(0, 2) == '0x') hex = hex.substring(2);
+  const prefix = hex.length % 2 !== 0 ? '0x0' : '0x';
+  return prefix + hex;
+}
+
+function Uint8ArrayToHexString(data: Uint8Array): string {
+  if (data.length === 0) return '0x00';
+  const str = data.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+  return formatHex(str);
 }
 
 /**

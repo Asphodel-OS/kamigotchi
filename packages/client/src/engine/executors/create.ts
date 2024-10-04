@@ -7,11 +7,12 @@ import {
   Type,
   World,
 } from '@mud-classic/recs';
-import { deferred, keccak256, toEthAddress } from '@mud-classic/utils';
+import { keccak256, toEthAddress } from '@mud-classic/utils';
 import { Contract, ContractInterface, Signer } from 'ethers';
 import { observable, runInAction } from 'mobx';
 
 import { createTxQueue } from 'engine/queue';
+import { deferred } from 'utils/async';
 import { Network } from './network';
 
 /**
