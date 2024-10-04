@@ -1,5 +1,6 @@
-import { arrayToIterator, deferred, mergeIterators, transformIterator } from '@mud-classic/utils';
+import { deferred } from 'utils/async';
 import { initDb } from './db';
+import { arrayToIterator, mergeIterators, transformIterator } from './utils';
 
 type Stores = { [key: string]: unknown };
 type StoreKey<S extends Stores> = keyof S & string;

@@ -1,4 +1,4 @@
-import { deferred } from '@mud-classic/utils';
+import { deferred } from 'utils/async';
 
 const INDEXEDDB = self.indexedDB;
 const VERSION = 2;
