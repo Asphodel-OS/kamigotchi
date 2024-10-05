@@ -6,9 +6,9 @@ import { World } from '@mud-classic/solecs/types/ethers-contracts';
 import {
   Uint8ArrayToHexString,
   awaitPromise,
-  packTuple,
   range,
   to256BitString,
+  unpackTuple,
 } from '@mud-classic/utils';
 import { BigNumber, BytesLike } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
@@ -93,60 +93,108 @@ export async function getSnapshotBlockNumber(
  */
 export async function fetchSnapshotChunked(
   snapshotClient: StateSnapshotServiceClient,
-  worldAddress: string,
+  cacheStore: CacheStore,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
-  setPercentage?: (percentage: number) => void,
-  pruneOptions?: { playerAddress: string; hashedComponentId: string }
+  setPercentage?: (percentage: number) => void
 ): Promise<CacheStore> {
-  const cacheStore = createCacheStore();
-
   try {
+    let currentBlock = cacheStore.blockNumber;
     //get stateBlock
     let BlockReply = await snapshotClient.getStateBlock({});
     cacheStore.blockNumber = BlockReply.blockNumber;
     console.log('Stored blockNumber');
+    let idx = cacheStore.components.length > 0 ? cacheStore.components.length - 1 : 0;
     //get components
-    let ComponentsReply = await snapshotClient.getComponents({ fromIdx: 0 });
+    let ComponentsReply = await snapshotClient.getComponents({
+      fromIdx: idx,
+    });
     storeComponents(cacheStore, ComponentsReply.components);
-    console.log('Stored components');
+    console.log('Stored components: ', cacheStore.components.length);
 
+    idx = cacheStore.entities.length > 0 ? cacheStore.entities.length - 1 : 0;
     //get Entities
-    let EntitiesReply = snapshotClient.getEntities({ fromIdx: 0, numChunks: numChunks });
+    let EntitiesReply = snapshotClient.getEntities({
+      fromIdx: idx,
+      numChunks: numChunks,
+    });
+    let numEntities = 0;
     for await (const responseChunk of EntitiesReply) {
       storeEntities(cacheStore, responseChunk.entities);
+      numEntities += responseChunk.entities.length;
     }
-    console.log('Stored entities');
+    console.log('Stored entities: ', numEntities);
+
+    //get StateRemovals
+    // Applies only on a partial state load
+    if (cacheStore.state.size != 0) {
+      let StateRemovalsReply = snapshotClient.getStateRemovals({
+        fromBlock: currentBlock,
+        numChunks: numChunks,
+      });
+      let numStateRemovals = 0;
+      for await (const responseChunk of StateRemovalsReply) {
+        for (const event of responseChunk.state) {
+          const { packedIdx } = event;
+          cacheStore.state.delete(packedIdx);
+        }
+        numStateRemovals += responseChunk.state.length;
+      }
+      console.log('Removed state values: ', numStateRemovals);
+    }
 
     //get StateValues
-    let StateValuesReply = snapshotClient.getStateValues({ fromBlock: 0, numChunks: numChunks });
+    let StateValuesReply = snapshotClient.getStateValues({
+      fromBlock: currentBlock,
+      numChunks: numChunks,
+    });
+    let numStateValues = 0;
+    const counter: CounterMap<string> = new Map();
     for await (const responseChunk of StateValuesReply) {
       for (const event of responseChunk.state) {
-        const { componentIdx, entityIdx, data } = event;
+        const { packedIdx, data } = event;
+        let componentIdx = unpackTuple(packedIdx)[0];
         const value = await decode(cacheStore.components[componentIdx], data);
-        storeEventValue(cacheStore, componentIdx, entityIdx, value);
+        cacheStore.state.set(packedIdx, value);
+        incrementCount(counter, packedIdx);
       }
+      numStateValues += responseChunk.state.length;
     }
-    console.log('Stored state values');
+
+    console.log('Stored state values: ', numStateValues);
+    console.log('In counter: ', getSize(counter));
+    console.log('Above threshold: ', getEntriesAboveThreshold(counter, 1));
   } catch (e) {
     console.error(e);
   }
   setPercentage && setPercentage(100);
+
   return cacheStore;
 }
+type CounterMap<T> = Map<T, number>;
 
-function storeEventValue(
-  cacheStore: CacheStore,
-  componentIdx: number,
-  entityIdx: number,
-  value: ComponentValue
-) {
-  const key = packTuple([componentIdx, entityIdx]);
-  if (value == null) cacheStore.state.delete(key);
-  else cacheStore.state.set(key, value);
+function incrementCount<T>(map: CounterMap<T>, key: T): void {
+  map.set(key, (map.get(key) || 0) + 1);
+}
+function getSize<T>(map: CounterMap<T>): number {
+  return map.size;
+}
+function getCount<T>(map: CounterMap<T>, key: T): number {
+  return map.get(key) || 0;
+}
+function getEntriesAboveThreshold<T>(map: CounterMap<T>, threshold: number): [T, number][] {
+  return Array.from(map.entries()).filter(([_, count]) => count > threshold);
+}
+
+function storeEventValue(cacheStore: CacheStore, packedIdxs: number, value: ComponentValue) {
+  if (value == null) {
+    cacheStore.state.delete(packedIdxs);
+    console.log('deleted state value', packedIdxs);
+  } else cacheStore.state.set(packedIdxs, value);
 }
 
 function storeComponents(cacheStore: CacheStore, components: Component[]) {
+  if (cacheStore.components.length == 0) cacheStore.components.push('0x0');
   for (const component of components) {
     //need to pad id AND mayebe add 0x
     var hexId = uint8ArrayToHex(component.id);
@@ -165,8 +213,8 @@ function storeComponents(cacheStore: CacheStore, components: Component[]) {
 }
 
 function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
+  if (cacheStore.entities.length == 0) cacheStore.entities.push('0x0');
   for (const entity of entities) {
-    //need to pad id AND mayebe add 0x
     var hexId = Uint8ArrayToHexString(entity.id);
 
     //CHECK INDEX

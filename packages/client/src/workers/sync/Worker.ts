@@ -201,6 +201,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
     latestEvent$.subscribe((event) => {
+      // This is so I can test partial sync
+      return;
       // Ignore system calls during initial sync
       if (!outputLiveEvents) {
         if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
@@ -239,39 +241,30 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
     this.setLoadingState({ percentage: 100 });
 
-    let initialState = createCacheStore();
     console.log('Before SYNC <------------------------');
-    if (initialBlockNumber > Math.max(cacheBlockNumber, snapshotBlockNumber)) {
-      console.log('IF');
-      initialState.blockNumber = initialBlockNumber;
-    } else {
-      // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
-      const syncFromSnapshot =
-        snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheExpiry;
-      if (syncFromSnapshot) {
-        this.setLoadingState({
-          msg: 'Fetching Initial State From Snapshot',
-          percentage: 0,
-        });
-        console.log('syncFromSnapshot', syncFromSnapshot);
-        initialState = await fetchSnapshotChunked(
-          snapshotClient,
-          worldContract.address,
-          decode,
-          config.snapshotNumChunks ?? 10,
-          (percentage: number) => this.setLoadingState({ percentage }),
-          config.pruneOptions
-        );
-      } else {
-        this.setLoadingState({
-          msg: 'Loading Initial State From Cache',
-          percentage: 0,
-        });
-        initialState = await loadIndexDbCacheStore(indexedDB);
-        this.setLoadingState({ percentage: 100 });
-      }
-    }
+    // load from cache if theres anything
+
+    let initialState = await loadIndexDbCacheStore(indexedDB);
+    console.log('BlockNumber', initialState.blockNumber);
+    console.log('Components', initialState.components.length);
+    console.log('Entities', initialState.entities.length);
+    console.log('StateValues', initialState.state.size);
+    console.log('--------------------');
+
+    initialState = await fetchSnapshotChunked(
+      snapshotClient,
+      initialState,
+      decode,
+      config.snapshotNumChunks ?? 10,
+      (percentage: number) => this.setLoadingState({ percentage })
+    );
     console.log('AFTER SYNC <------------------------');
+    console.log('BlockNumber', initialState.blockNumber);
+    console.log('Components', initialState.components.length);
+    console.log('Entities', initialState.entities.length);
+    console.log('StateValues', initialState.state.size);
+    console.log('--------------------');
+
     /*
      * FILL THE GAP
      * - Load events between initial and recent state from RPC

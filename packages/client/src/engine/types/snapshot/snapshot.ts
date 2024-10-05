@@ -22,8 +22,7 @@ export interface Component {
 }
 
 export interface State {
-  entityIdx: number;
-  componentIdx: number;
+  packedIdx: number;
   data: Uint8Array;
 }
 
@@ -175,19 +174,16 @@ export const Component: MessageFns<Component> = {
 };
 
 function createBaseState(): State {
-  return { entityIdx: 0, componentIdx: 0, data: new Uint8Array(0) };
+  return { packedIdx: 0, data: new Uint8Array(0) };
 }
 
 export const State: MessageFns<State> = {
   encode(message: State, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.entityIdx !== 0) {
-      writer.uint32(8).uint32(message.entityIdx);
-    }
-    if (message.componentIdx !== 0) {
-      writer.uint32(16).uint32(message.componentIdx);
+    if (message.packedIdx !== 0) {
+      writer.uint32(8).uint32(message.packedIdx);
     }
     if (message.data.length !== 0) {
-      writer.uint32(26).bytes(message.data);
+      writer.uint32(18).bytes(message.data);
     }
     return writer;
   },
@@ -204,17 +200,10 @@ export const State: MessageFns<State> = {
             break;
           }
 
-          message.entityIdx = reader.uint32();
+          message.packedIdx = reader.uint32();
           continue;
         case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.componentIdx = reader.uint32();
-          continue;
-        case 3:
-          if (tag !== 26) {
+          if (tag !== 18) {
             break;
           }
 
@@ -234,8 +223,7 @@ export const State: MessageFns<State> = {
   },
   fromPartial(object: DeepPartial<State>): State {
     const message = createBaseState();
-    message.entityIdx = object.entityIdx ?? 0;
-    message.componentIdx = object.componentIdx ?? 0;
+    message.packedIdx = object.packedIdx ?? 0;
     message.data = object.data ?? new Uint8Array(0);
     return message;
   },
