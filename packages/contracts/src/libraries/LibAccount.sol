@@ -37,12 +37,11 @@ library LibAccount {
 
   // Create an account account
   function create(
-    IWorld world,
     IUintComp components,
     address ownerAddr,
     address operatorAddr
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = addressToEntity(ownerAddr);
     LibEntityType.set(components, id, "ACCOUNT");
     IndexAccountComponent(getAddrByID(components, IndexAccCompID)).set(
       id,
