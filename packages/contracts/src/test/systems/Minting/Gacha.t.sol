@@ -119,6 +119,12 @@ contract GachaTest is SetupTemplate {
     uint256[] memory reCommits2 = _reroll(0, cost, petUserArr2);
     vm.roll(++_currBlock);
     uint256[] memory outputs = _KamiGachaRevealSystem.reveal(reCommits2);
+    // account for sort
+    if (reCommits2[1] < reCommits2[0]) {
+      uint256 temp = outputs[0];
+      outputs[0] = outputs[1];
+      outputs[1] = temp;
+    }
     _assertOutGacha(outputs[0], 0, 3);
     _assertOutGacha(outputs[1], 0, 2);
   }
