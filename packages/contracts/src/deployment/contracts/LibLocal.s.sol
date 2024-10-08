@@ -16,7 +16,7 @@ library LibLocal {
 
   /// @notice dummy account(s)
   function initAccounts(IWorld world, IUint256Component components) internal {
-    uint256 accID = LibAccount.create(world, components, msg.sender, msg.sender);
+    uint256 accID = LibAccount.create(components, msg.sender, msg.sender);
     LibAccount.setName(components, accID, "victim bot");
   }
 
