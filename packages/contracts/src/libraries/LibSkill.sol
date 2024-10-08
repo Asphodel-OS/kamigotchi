@@ -96,7 +96,7 @@ library LibSkill {
   ) internal {
     uint256 cost = LibSkillRegistry.getCost(components, regID);
 
-    IUintComp pointsComp = IUintComp(getAddrByID(components, SPCompID));
+    SkillPointComponent pointsComp = SkillPointComponent(getAddrByID(components, SPCompID));
     pointsComp.dec(targetID, cost);
     pointsComp.inc(instanceID, 1);
   }
@@ -112,7 +112,7 @@ library LibSkill {
     uint256[] memory instanceLevels = pointComp.extract(instanceIDs);
     uint256[] memory usedPts = LibSkillRegistry.getCost(components, regIDs);
     uint256 total = instanceLevels.multiply(usedPts).sum();
-    LibComp.inc(pointComp, targetID, total);
+    pointComp.inc(targetID, total);
   }
 
   /////////////////
@@ -174,12 +174,12 @@ library LibSkill {
 
   // increase skill points of a skill by a specified value
   function incPoints(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddrByID(components, SPCompID)).inc(id, value);
+    SkillPointComponent(getAddrByID(components, SPCompID)).inc(id, value);
   }
 
   // decrease skillPoints by a specified value
   function decPoints(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddrByID(components, SPCompID)).dec(id, value);
+    SkillPointComponent(getAddrByID(components, SPCompID)).dec(id, value);
   }
 
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {
@@ -197,7 +197,7 @@ library LibSkill {
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddrByID(components, SPCompID)).safeGet(id);
+    return SkillPointComponent(getAddrByID(components, SPCompID)).safeGet(id);
   }
 
   function getTreePoints(

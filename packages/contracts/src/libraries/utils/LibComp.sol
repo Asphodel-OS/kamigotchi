@@ -72,35 +72,4 @@ library LibComp {
     for (uint256 i; i < entities.length; i++) values[i] = abi.encode(value);
     component.set(entities, values);
   }
-
-  /////////////////
-  // CALCS
-
-  function inc(IUintComp component, uint256 id, uint256 amt) internal {
-    component.set(id, component.safeGet(id) + amt);
-  }
-
-  /// @dev needs to get individually in case of repeated indices
-  function incBatch(IUintComp component, uint256[] memory ids, uint256 amt) internal {
-    for (uint256 i; i < ids.length; i++) inc(component, ids[i], amt);
-  }
-
-  /// @dev needs to get individually in case of repeated indices
-  function incBatch(IUintComp component, uint256[] memory ids, uint256[] memory amts) internal {
-    for (uint256 i; i < ids.length; i++) inc(component, ids[i], amts[i]);
-  }
-
-  function dec(IUintComp component, uint256 id, uint256 amt) internal {
-    component.set(id, component.safeGet(id) - amt);
-  }
-
-  /// @dev needs to get individually in case of repeated indices
-  function decBatch(IUintComp component, uint256[] memory ids, uint256 amt) internal {
-    for (uint256 i; i < ids.length; i++) dec(component, ids[i], amt);
-  }
-
-  /// @dev needs to get individually in case of repeated indices
-  function decBatch(IUintComp component, uint256[] memory ids, uint256[] memory amts) internal {
-    for (uint256 i; i < ids.length; i++) dec(component, ids[i], amts[i]);
-  }
 }
