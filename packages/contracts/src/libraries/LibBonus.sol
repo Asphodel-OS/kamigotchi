@@ -128,7 +128,7 @@ library LibBonus {
     uint256 amt
   ) internal returns (uint256[] memory) {
     uint256[] memory instanceIDs = _assignFromRegistry(components, parentRegID, holderID);
-    IUintComp(getAddrByID(components, LevelCompID)).incBatch(instanceIDs, amt);
+    LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
     return instanceIDs;
   }
 
@@ -141,7 +141,7 @@ library LibBonus {
     uint256 amt
   ) internal returns (uint256[] memory) {
     uint256[] memory instanceIDs = _assignFromRegistry(components, parentRegID, parentID, holderID);
-    IUintComp(getAddrByID(components, LevelCompID)).incBatch(instanceIDs, amt);
+    LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
     return instanceIDs;
   }
 

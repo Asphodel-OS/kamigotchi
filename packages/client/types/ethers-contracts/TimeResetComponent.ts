@@ -33,6 +33,9 @@ export interface TimeResetComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "dec(uint256,uint256)": FunctionFragment;
+    "dec(uint256[],uint256)": FunctionFragment;
+    "dec(uint256[],uint256[])": FunctionFragment;
     "equal(uint256[],bytes)": FunctionFragment;
     "equal(uint256,bytes)": FunctionFragment;
     "extract(uint256[])": FunctionFragment;
@@ -47,6 +50,9 @@ export interface TimeResetComponentInterface extends utils.Interface {
     "getRaw(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
+    "inc(uint256[],uint256)": FunctionFragment;
+    "inc(uint256[],uint256[])": FunctionFragment;
+    "inc(uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "remove(uint256[])": FunctionFragment;
@@ -69,6 +75,9 @@ export interface TimeResetComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
+      | "dec(uint256,uint256)"
+      | "dec(uint256[],uint256)"
+      | "dec(uint256[],uint256[])"
       | "equal(uint256[],bytes)"
       | "equal(uint256,bytes)"
       | "extract(uint256[])"
@@ -83,6 +92,9 @@ export interface TimeResetComponentInterface extends utils.Interface {
       | "getRaw(uint256)"
       | "has"
       | "id"
+      | "inc(uint256[],uint256)"
+      | "inc(uint256[],uint256[])"
+      | "inc(uint256,uint256)"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "remove(uint256[])"
@@ -111,6 +123,18 @@ export interface TimeResetComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dec(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dec(uint256[],uint256)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dec(uint256[],uint256[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "equal(uint256[],bytes)",
@@ -165,6 +189,18 @@ export interface TimeResetComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "inc(uint256[],uint256)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "inc(uint256[],uint256[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "inc(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -236,6 +272,18 @@ export interface TimeResetComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "dec(uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "dec(uint256[],uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "dec(uint256[],uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "equal(uint256[],bytes)",
     data: BytesLike
   ): Result;
@@ -285,6 +333,18 @@ export interface TimeResetComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "inc(uint256[],uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "inc(uint256[],uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "inc(uint256,uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -429,6 +489,24 @@ export interface TimeResetComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -497,6 +575,24 @@ export interface TimeResetComponent extends BaseContract {
     ): Promise<[boolean]>;
 
     id(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
 
@@ -587,6 +683,24 @@ export interface TimeResetComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  "dec(uint256,uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "dec(uint256[],uint256)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "dec(uint256[],uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "equal(uint256[],bytes)"(
     entities: PromiseOrValue<BigNumberish>[],
     value: PromiseOrValue<BytesLike>,
@@ -655,6 +769,24 @@ export interface TimeResetComponent extends BaseContract {
   ): Promise<boolean>;
 
   id(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "inc(uint256[],uint256)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "inc(uint256[],uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "inc(uint256,uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -743,6 +875,24 @@ export interface TimeResetComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -811,6 +961,24 @@ export interface TimeResetComponent extends BaseContract {
     ): Promise<boolean>;
 
     id(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -923,6 +1091,24 @@ export interface TimeResetComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -991,6 +1177,24 @@ export interface TimeResetComponent extends BaseContract {
     ): Promise<BigNumber>;
 
     id(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1082,6 +1286,24 @@ export interface TimeResetComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -1150,6 +1372,24 @@ export interface TimeResetComponent extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     id(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

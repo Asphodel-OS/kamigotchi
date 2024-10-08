@@ -24,12 +24,12 @@ library LibExperience {
 
   // increase experience by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddrByID(components, ExpCompID)).inc(id, value);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).inc(id, value);
   }
 
   // decrease experience by a specified value
   function dec(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddrByID(components, ExpCompID)).dec(id, value);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).dec(id, value);
   }
 
   // increase level by a specified value
