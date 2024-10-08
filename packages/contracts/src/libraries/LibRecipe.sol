@@ -168,7 +168,7 @@ library LibRecipe {
     // add account experience
     ExperienceComponent expComp = ExperienceComponent(getAddrByID(components, ExpCompID));
     uint256 xp = expComp.safeGet(recipeID);
-    if (xp > 0) LibComp.inc(expComp, accID, amt * xp);
+    if (xp > 0) expComp.inc(accID, amt * xp);
   }
 
   /////////////////
