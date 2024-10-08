@@ -128,7 +128,7 @@ library LibItem {
 
     ExperienceComponent xpComp = ExperienceComponent(getAddrByID(components, ExpCompID));
     uint256 xp = xpComp.safeGet(regID);
-    if (xp > 0) LibComp.inc(xpComp, targetID, xp);
+    if (xp > 0) xpComp.inc(targetID, xp);
 
     LibStat.applyAll(components, regID, targetID);
   }

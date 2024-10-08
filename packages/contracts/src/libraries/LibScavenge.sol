@@ -86,7 +86,7 @@ library LibScavenge {
     uint256 holderID
   ) internal {
     uint256 id = genInstanceID(field, index, holderID);
-    LibComp.inc(ValueComponent(getAddrByID(components, ValueCompID)), id, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice reduces max number of claimable scavbar tiers, returns tiers removed
