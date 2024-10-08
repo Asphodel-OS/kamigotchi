@@ -52,7 +52,7 @@ contract MurderTest is SetupTemplate {
 
     // alice places pet, left to farm and die
     uint256 aProdID = _startProduction(aKamiID, _nodeIDs[0]);
-    _fastForward(10 hours);
+    _fastForward(20 hours);
 
     // bob places pet, commits a crime
     _startProduction(bKamiID, _nodeIDs[0]);
