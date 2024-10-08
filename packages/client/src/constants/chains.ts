@@ -2,7 +2,7 @@ import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
 import { Chain, localhost, optimism } from '@wagmi/core/chains';
 
 const rawYominet = {
-  id: 3529424848629633,
+  id: 4303131403034904,
   name: 'yominet',
   nativeCurrency: {
     decimals: 18,
