@@ -15,6 +15,7 @@ import { StringComponent } from "solecs/components/StringComponent.sol";
 import { System } from "solecs/System.sol";
 
 import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 
 uint256 constant IsCompID = uint256(keccak256("test.Is"));
 uint256 constant OwnerCompID = uint256(keccak256("test.Owner"));
@@ -61,6 +62,18 @@ contract GasTest is EmptyWorld {
     console.log("write cost:", gasstart - gasleft());
   }
 
+  function testGasInc() public {
+    vm.startPrank(deployer);
+    ownerComp.set(1, 2);
+
+    uint256 gasstart = gasleft();
+    // LibComp.inc(ownerComp, 1, 2);
+    console.log("inc cost:", gasstart - gasleft());
+
+    gasstart = gasleft();
+    // ownerComp.incer(1, 2);
+    console.log("incer cost:", gasstart - gasleft());
+  }
   function testGasReverseQuery() public {
     vm.prank(deployer);
     ownerComp.set(1, 2);

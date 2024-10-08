@@ -53,7 +53,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    IUintComp(getAddrByID(components, ValueCompID)).inc(id, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice adds score based on current epoch.
@@ -78,7 +78,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    IUintComp(getAddrByID(components, ValueCompID)).dec(id, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).dec(id, amt);
   }
 
   /// @notice decs score based on current epoch.
