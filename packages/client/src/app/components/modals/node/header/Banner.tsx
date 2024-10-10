@@ -94,7 +94,6 @@ export const Banner = (props: Props) => {
           text='Add Kami to Node'
           disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
           fullWidth
-          noBounce
         />
       </Tooltip>
     );
@@ -201,7 +200,6 @@ const Details = styled.div`
 `;
 
 const Name = styled.div`
-  font-family: Pixel;
   font-size: 1.2vw;
   padding: 0.5vw 0;
 `;
@@ -231,7 +229,6 @@ const Icon = styled.img`
 
 const Description = styled.div`
   font-size: 0.75vw;
-  font-family: Pixel;
   line-height: 1.1vw;
   text-align: left;
   padding: 0.45vw 0.3vw;

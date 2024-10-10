@@ -75,20 +75,6 @@ export const ItemGrid = (props: Props) => {
 
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
-    // let options: Option[] = [];
-
-    // if (item.type === 'LOOTBOX') {
-    //   options = getLootboxActions(item, inv.balance);
-    // } else if (item.for && item.for === 'ACCOUNT') {
-    //   options = [{ text: 'Consume', onClick: () => feedAccount(inv.item) }];
-    // } else if (item.for && item.for === 'KAMI') {
-    //   let kamis = getAccessibleKamis(account);
-    //   if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
-    //   if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
-    //   if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
-    //   options = kamis.map((kami) => ({ text: kami.name, onClick: () => feedKami(kami, inv.item) }));
-    // }
-
     const options = getActions(item, inv.balance);
 
     return (
@@ -96,6 +82,7 @@ export const ItemGrid = (props: Props) => {
         <IconListButton
           key={item.index}
           img={item.image}
+          scale={4.8}
           balance={inv.balance}
           options={options}
           disabled={options.length == 0}
@@ -115,6 +102,6 @@ export const ItemGrid = (props: Props) => {
 const Container = styled.div`
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 0.3vw;
 `;

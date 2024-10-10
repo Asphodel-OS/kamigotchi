@@ -1,5 +1,5 @@
 import { Popover } from '@mui/material';
-import { clickFx, hoverFx } from 'app/styles/effects';
+import { hoverFx } from 'app/styles/effects';
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -12,7 +12,8 @@ interface Props {
   balance?: number;
   disabled?: boolean;
   fullWidth?: boolean;
-  noBounce?: boolean;
+  scale?: number;
+  scalesOnHeight?: boolean;
 }
 
 export interface Option {
@@ -24,11 +25,13 @@ export interface Option {
 
 export function IconListButton(props: Props) {
   const { img, options, text, balance } = props;
-  const { disabled, fullWidth, noBounce } = props;
+  const { disabled, fullWidth } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const scale = props.scale ?? 1.4;
+  const scaleOrientation = props.scalesOnHeight ? 'vh' : 'vw';
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
       playClick();
       setAnchorEl(event.currentTarget);
@@ -51,24 +54,18 @@ export function IconListButton(props: Props) {
 
   const MenuItem = (option: Option, i: number) => {
     return (
-      <Option key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
-        {option.image && <Icon src={option.image} />}
+      <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
+        {option.image && <MenuIcon src={option.image} />}
         {option.text}
-      </Option>
+      </MenuOption>
     );
   };
 
   return (
     <Wrapper>
-      <Button
-        ref={toggleRef}
-        onClick={handleClick}
-        disabled={!!disabled}
-        fullWidth={!!fullWidth}
-        noBounce={!!noBounce}
-      >
+      <Button ref={toggleRef} onClick={handleOpen} disabled={!!disabled} fullWidth={!!fullWidth}>
         {balance ? <Balance>{balance}</Balance> : <Corner />}
-        <Image src={img} isItem={!!balance} />
+        <Image src={img} scale={scale} orientation={scaleOrientation} />
         {text && <Text>{text}</Text>}
       </Button>
       <Popover
@@ -84,15 +81,14 @@ export function IconListButton(props: Props) {
   );
 }
 
+const Wrapper = styled.div`
+  width: auto;
+`;
+
 interface ButtonProps {
   disabled: boolean;
   fullWidth: boolean;
-  noBounce: boolean;
 }
-
-const Wrapper = styled.div<{ fullWidth?: boolean }>`
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-`;
 
 const Button = styled.button<ButtonProps>`
   position: relative;
@@ -115,9 +111,16 @@ const Button = styled.button<ButtonProps>`
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
   }
-  &:active {
-    animation: ${() => clickFx()} 0.3s;
-  }
+`;
+
+const Image = styled.img<{ scale: number; orientation: string }>`
+  width: ${({ scale }) => scale}${({ orientation }) => orientation};
+  height: ${({ scale }) => scale}${({ orientation }) => orientation};
+  ${({ scale }) => (scale > 2.4 ? 'image-rendering: pixelated;' : '')}
+`;
+
+const Text = styled.div`
+  font-size: 0.8vw;
 `;
 
 const Corner = styled.div`
@@ -139,35 +142,20 @@ const Balance = styled.div`
   bottom: 0;
   right: 0;
 
-  font-size: 9px;
+  font-size: 0.75vw;
   align-items: center;
   justify-content: center;
   padding: 0.2vw;
 `;
 
-const Icon = styled.img`
-  height: 1.4vw;
-`;
-
-const Image = styled.img<{ isItem?: boolean }>`
-  width: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
-  height: ${({ isItem }) => (isItem ? '60px' : '1.4vw')};
-  ${({ isItem }) => (isItem ? 'image-rendering: pixelated;' : '')}
-`;
-
-const Text = styled.div`
-  font-family: Pixel;
-  font-size: 0.8vw;
-`;
-
 const Menu = styled.div`
   border: solid black 0.15vw;
-  border-radius: 3.5px;
+  border-radius: 0.6vw;
   color: black;
   min-width: 6vw;
 `;
 
-const Option = styled.div<{ disabled?: boolean }>`
+const MenuOption = styled.div<{ disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.4vw;
@@ -187,4 +175,8 @@ const Option = styled.div<{ disabled?: boolean }>`
   &:active {
     background-color: #bbb;
   }
+`;
+
+const MenuIcon = styled.img`
+  height: 1.4vw;
 `;
