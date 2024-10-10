@@ -43,13 +43,15 @@ import {
   storeEvents,
 } from './cache';
 import {
+  createLatestEventStreamService,
+  createTransformWorldEventsFromStream,
+} from './streamClient';
+import {
   createDecode,
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
-  createLatestEventStreamService,
   createSnapshotClient,
-  createTransformWorldEventsFromStream,
   fetchEventsInBlockRangeChunked,
   fetchSnapshotChunked,
   getSnapshotBlockNumber,
