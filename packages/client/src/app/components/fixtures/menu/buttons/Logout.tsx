@@ -1,65 +1,71 @@
-import { useLogin, usePrivy } from '@privy-io/react-auth';
-import styled from 'styled-components';
+import { usePrivy } from '@privy-io/react-auth';
 
-import { Tooltip } from 'app/components/library';
-import { clickFx, hoverFx } from 'app/styles/effects';
+import { IconListButton, Tooltip } from 'app/components/library';
+import { useVisibility } from 'app/stores';
 import { logoutIcon } from 'assets/images/icons/actions';
+import { helpIcon, settingsIcon } from 'assets/images/icons/menu';
 
 export const LogoutMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
-  const { login } = useLogin({
-    onError: (error) => {
-      console.error(error);
-    },
-  });
+  const { modals, setModals } = useVisibility();
 
   const handleClick = () => {
-    if (ready && !authenticated) login(); // not used anymore
     if (ready && authenticated) logout();
   };
 
+  const toggleSettings = () => {
+    if (modals.settings) setModals({ settings: false });
+    else {
+      setModals({
+        chat: false,
+        help: false,
+        inventory: false,
+        quests: false,
+        settings: true,
+      });
+    }
+  };
+
+  const toggleHelp = () => {
+    if (modals.help) setModals({ help: false });
+    else {
+      setModals({
+        chat: false,
+        help: true,
+        inventory: false,
+        quests: false,
+        settings: false,
+      });
+    }
+  };
+
+  // clear any indexedDB prefixed with 'ECSCache'
+  const clearCache = async () => {
+    const dbs = await indexedDB.databases();
+    dbs.forEach((db) => {
+      if (db.name?.startsWith('ECSCache')) {
+        const request = indexedDB.deleteDatabase(db.name);
+        request.onsuccess = function (event) {
+          console.log('Database deleted successfully');
+        };
+      }
+    });
+    location.reload();
+  };
+
   return (
-    <Tooltip text={['Logout']}>
-      <Button onClick={handleClick}>
-        <Image src={logoutIcon} />
-        <Text>Logout</Text>
-      </Button>
+    <Tooltip text={['More']}>
+      <IconListButton
+        img={settingsIcon}
+        options={[
+          { text: 'Settings', image: settingsIcon, onClick: toggleSettings },
+          { text: 'Help', image: helpIcon, onClick: toggleHelp },
+          { text: 'Hard Refresh', image: helpIcon, onClick: clearCache },
+          { text: 'Logout', image: logoutIcon, onClick: handleClick },
+        ]}
+        scale={3}
+        scalesOnHeight
+      />
     </Tooltip>
   );
 };
-
-const Button = styled.div`
-  background-color: #fff;
-  border-radius: 0.9vh;
-  border: solid black 0.15vw;
-  height: 4.5vh;
-  padding: 0.4vh;
-  gap: 0.4vh;
-
-  cursor: pointer;
-  pointer-events: auto;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-
-  &:hover {
-    animation: ${() => hoverFx()} 0.2s;
-    transform: scale(1.05);
-  }
-  &:active {
-    animation: ${() => clickFx()} 0.3s;
-  }
-`;
-
-const Image = styled.img`
-  height: 100%;
-  width: auto;
-`;
-
-const Text = styled.div`
-  color: black;
-  font-size: 1.2vh;
-  text-align: left;
-`;
