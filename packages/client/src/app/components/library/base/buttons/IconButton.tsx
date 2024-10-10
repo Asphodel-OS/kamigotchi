@@ -1,6 +1,6 @@
-import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import styled from 'styled-components';
 
+import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 interface Props {

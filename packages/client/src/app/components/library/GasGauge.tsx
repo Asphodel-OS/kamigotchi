@@ -14,7 +14,7 @@ export const GasGauge = (props: GaugeProps) => {
 
   const handleClick = () => {
     playClick();
-    setModals({ ...modals, operatorFund: !modals.operatorFund });
+    setModals({ operatorFund: !modals.operatorFund });
   };
 
   const levelToAngle = (level: number) => {

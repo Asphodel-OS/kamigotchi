@@ -10,9 +10,9 @@ interface State {
 }
 
 interface Actions {
-  setFixtures: (data: Fixtures) => void;
-  setModals: (data: Modals) => void;
-  setValidators: (data: Validators) => void;
+  setFixtures: (data: Partial<Fixtures>) => void;
+  setModals: (data: Partial<Modals>) => void;
+  setValidators: (data: Partial<Validators>) => void;
   toggleModals: (isOn: boolean) => void;
   toggleFixtures: (isOn: boolean) => void;
 }
@@ -145,9 +145,12 @@ export const useVisibility = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setFixtures: (data: Fixtures) => set((state: State) => ({ ...state, fixtures: data })),
-    setModals: (data: Modals) => set((state: State) => ({ ...state, modals: data })),
-    setValidators: (data: Validators) => set((state: State) => ({ ...state, validators: data })),
+    setFixtures: (data: Partial<Fixtures>) =>
+      set((state: State) => ({ ...state, fixtures: { ...state.fixtures, ...data } })),
+    setModals: (data: Partial<Modals>) =>
+      set((state: State) => ({ ...state, modals: { ...state.modals, ...data } })),
+    setValidators: (data: Partial<Validators>) =>
+      set((state: State) => ({ ...state, validators: { ...state.validators, ...data } })),
     toggleFixtures: (isOn: boolean) =>
       set((state: State) => ({ ...state, fixtures: toggleFixtures(isOn) })),
     toggleModals: (isOn: boolean) =>

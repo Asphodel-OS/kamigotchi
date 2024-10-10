@@ -40,7 +40,7 @@ export function registerNotificationFixture() {
         if (targetModal === undefined) return;
 
         const target = targetModal as keyof Modals;
-        setModals({ ...modals, [target]: true });
+        setModals({ [target]: true });
         dismiss(entityIndex);
       };
 

@@ -45,7 +45,6 @@ export const Room = (props: Props) => {
 
   const closeModals = () => {
     setModals({
-      ...modals,
       accountOperator: false,
       bridgeERC20: false,
       bridgeERC721: false,

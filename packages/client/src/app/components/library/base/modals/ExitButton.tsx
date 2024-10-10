@@ -15,7 +15,7 @@ export const ExitButton = (props: Props) => {
   // closes the modal this exit button is on
   const handleClose = () => {
     playClick();
-    setModals({ ...modals, [props.divName]: false });
+    setModals({ [props.divName]: false });
   };
 
   return <Button onClick={handleClose}>X</Button>;

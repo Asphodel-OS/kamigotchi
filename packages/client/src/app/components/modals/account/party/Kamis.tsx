@@ -17,8 +17,8 @@ export const Kamis = (props: Props) => {
     const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
-    if (modals.kami && sameKami) setModals({ ...modals, kami: false });
-    else setModals({ ...modals, kami: true });
+    if (modals.kami && sameKami) setModals({ kami: false });
+    else setModals({ kami: true });
     playClick();
   };
 

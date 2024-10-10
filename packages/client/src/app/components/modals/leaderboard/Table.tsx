@@ -22,7 +22,7 @@ export const Table = (props: Props) => {
   // toggle the account modal settings depending on its current state
   const handleClick = (account: Account) => {
     setAccount(account.index);
-    if (!modals.account) setModals({ ...modals, account: true });
+    if (!modals.account) setModals({ account: true });
     playClick();
   };
 

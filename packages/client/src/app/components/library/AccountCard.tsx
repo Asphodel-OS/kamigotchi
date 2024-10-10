@@ -39,7 +39,7 @@ export const AccountCard = (props: Props) => {
   // toggle the kami modal settings depending on its current state
   const handleClick = () => {
     setAccount(account.index);
-    if (!modals.account) setModals({ ...modals, account: true });
+    if (!modals.account) setModals({ account: true });
     playClick();
   };
 

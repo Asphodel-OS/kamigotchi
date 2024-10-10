@@ -133,7 +133,7 @@ export function registerGachaModal() {
       // open the party modal when the reveal is triggered
       useEffect(() => {
         if (!waitingToReveal) return;
-        setModals({ ...modals, party: true });
+        setModals({ party: true });
         setWaitingToReveal(false);
       }, [waitingToReveal]);
 

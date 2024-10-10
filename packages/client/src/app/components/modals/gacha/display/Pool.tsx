@@ -63,8 +63,8 @@ export const Pool = (props: Props) => {
   const kamiOnClick = (kami: BaseKami) => {
     const sameKami = kamiIndex === kami.index;
     if (!sameKami) setKami(kami.index);
-    if (modals.kami && sameKami) setModals({ ...modals, kami: false });
-    else setModals({ ...modals, gacha: true, kami: true, party: true });
+    if (modals.kami && sameKami) setModals({ kami: false });
+    else setModals({ gacha: true, kami: true, party: true });
     playClick();
   };
 

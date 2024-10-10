@@ -22,7 +22,7 @@ export const Players = (props: Props) => {
   const handleClick = (playerIndex: number) => {
     playClick();
     setAccount(playerIndex);
-    setModals({ ...modals, account: true, map: false });
+    setModals({ account: true, map: false });
   };
 
   ///////////////////

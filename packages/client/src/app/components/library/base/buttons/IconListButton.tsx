@@ -1,8 +1,8 @@
 import { Popover } from '@mui/material';
-import { hoverFx } from 'app/styles/effects';
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -116,7 +116,7 @@ const Button = styled.button<ButtonProps>`
 const Image = styled.img<{ scale: number; orientation: string }>`
   width: ${({ scale }) => scale}${({ orientation }) => orientation};
   height: ${({ scale }) => scale}${({ orientation }) => orientation};
-  ${({ scale }) => (scale > 2.4 ? 'image-rendering: pixelated;' : '')}
+  ${({ scale }) => (scale > 3.2 ? 'image-rendering: pixelated;' : '')}
 `;
 
 const Text = styled.div`

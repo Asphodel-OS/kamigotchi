@@ -39,7 +39,7 @@ export const Account = () => {
         <Tooltip text={['fund account operator']}>
           <ActionButton
             text='fund'
-            onClick={() => setModals({ ...modals, operatorFund: true })}
+            onClick={() => setModals({ operatorFund: true })}
             size='small'
           />
         </Tooltip>

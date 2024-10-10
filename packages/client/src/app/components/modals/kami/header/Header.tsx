@@ -40,7 +40,6 @@ export const Header = (props: Props) => {
       return () => {
         setAccount(owner.index || 0);
         setModals({
-          ...modals,
           account: true,
           kami: false,
           party: false,

@@ -27,7 +27,7 @@ export const MenuButton = (props: Props) => {
     if (!targetModal) return;
 
     const isModalOpen = modals[targetModal];
-    let nextModals = { ...modals, [targetModal]: !isModalOpen };
+    let nextModals = { [targetModal]: !isModalOpen };
     if (!isModalOpen) nextModals = { ...nextModals, ...hideModals };
     setModals(nextModals);
   };

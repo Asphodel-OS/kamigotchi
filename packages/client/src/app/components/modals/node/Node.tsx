@@ -80,7 +80,7 @@ export function registerNodeModal() {
       // updates from selected Node updates
       useEffect(() => {
         let node = getNodeByIndex(world, components, nodeIndex, { kamis: true });
-        if (node.index == 0) setModals({ ...modals, node: false }); // NullNode
+        if (node.index == 0) setModals({ node: false }); // NullNode
         setNode(node);
       }, [nodeIndex]);
 

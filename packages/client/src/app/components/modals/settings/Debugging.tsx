@@ -23,7 +23,7 @@ export const Debugging = () => {
         <Header>Testnet debugging</Header>
       </HeaderRow>
       <Section key='commits'>
-        {FieldRow('Commits Modal', 'Open', () => setModals({ ...modals, reveal: true }))}
+        {FieldRow('Commits Modal', 'Open', () => setModals({ reveal: true }))}
       </Section>
     </Container>
   );

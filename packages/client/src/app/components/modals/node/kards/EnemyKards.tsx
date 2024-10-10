@@ -82,7 +82,7 @@ export const EnemyCards = (props: Props) => {
 
   // toggle the node modal to the selected one
   const selectAccount = (index: number) => {
-    if (!modals.account) setModals({ ...modals, account: true, party: false, map: false });
+    if (!modals.account) setModals({ account: true, party: false, map: false });
     if (accountIndex !== index) setAccount(index);
     playClick();
   };

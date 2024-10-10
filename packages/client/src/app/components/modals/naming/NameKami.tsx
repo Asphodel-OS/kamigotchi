@@ -48,7 +48,7 @@ export function registerNameKamiModal() {
       const handleNameTx = async (name: string) => {
         try {
           nameKami(kami, name);
-          setModals({ ...modals, nameKami: false });
+          setModals({ nameKami: false });
         } catch (e) {}
       };
 

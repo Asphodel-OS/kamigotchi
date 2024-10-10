@@ -51,7 +51,7 @@ export function registerEMABoardModal() {
 
       const promptRename = (kami: Kami) => {
         setKami(kami.entityIndex);
-        setModals({ ...modals, emaBoard: false, nameKami: true });
+        setModals({ emaBoard: false, nameKami: true });
       };
 
       const useRenamePotion = (kami: Kami) => {

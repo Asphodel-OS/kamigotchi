@@ -121,7 +121,7 @@ export const Battles = (props: Props) => {
         sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
         onClick={() => {
           setNode(node.index);
-          setModals({ ...modals, kami: false, node: true });
+          setModals({ kami: false, node: true });
           playClick();
         }}
       >
