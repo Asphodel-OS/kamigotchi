@@ -119,7 +119,7 @@ library LibInventory {
   function incFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     uint256 id = createFor(components, holderID, itemIndex);
     ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
-    LibData.inc(components, 0, itemIndex, "ITEM_GLOBAL_COUNT", amt);
+    LibData.inc(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
   }
 
   function incForBatch(
@@ -130,13 +130,14 @@ library LibInventory {
   ) internal {
     uint256[] memory ids = createForBatch(components, holderID, itemIndices);
     ValueComponent(getAddrByID(components, ValueCompID)).inc(ids, amts);
-    LibData.inc(components, 0, itemIndices, "ITEM_GLOBAL_COUNT", amts);
+    LibData.inc(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
   }
 
   /// @notice decrease, and creates new inventory if needed
   function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     uint256 id = createFor(components, holderID, itemIndex);
     ValueComponent(getAddrByID(components, ValueCompID)).dec(id, amt);
+    LibData.dec(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
   }
 
   function decForBatch(
@@ -147,6 +148,7 @@ library LibInventory {
   ) internal {
     uint256[] memory ids = createForBatch(components, holderID, itemIndices);
     ValueComponent(getAddrByID(components, ValueCompID)).dec(ids, amts);
+    LibData.dec(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
   }
 
   /// @notice sets, and creates new inventory if needed
