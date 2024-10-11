@@ -314,7 +314,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _stopProduction(uint productionID) internal {
-    uint kamiID = LibHarvest.getPet(components, productionID);
+    uint kamiID = LibHarvest.getKami(components, productionID);
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
@@ -323,7 +323,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _collectProduction(uint productionID) internal {
-    uint kamiID = LibHarvest.getPet(components, productionID);
+    uint kamiID = LibHarvest.getKami(components, productionID);
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 

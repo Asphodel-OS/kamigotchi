@@ -10,7 +10,7 @@ import {
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { Node, getNode } from '../Node';
+import { BaseNode, getBaseNodeByIndex } from '../Node';
 import { getDataArray } from '../utils';
 import { BaseKami, getBaseKami } from './types';
 
@@ -20,7 +20,7 @@ export interface KillLog {
   entityIndex: EntityIndex;
   source: BaseKami;
   target: BaseKami;
-  node: Node;
+  node: BaseNode;
   balance: number;
   bounty: number;
   time: number;
@@ -32,14 +32,14 @@ export const getKill = (
   components: Components,
   entityIndex: EntityIndex
 ): KillLog => {
-  const { NodeID, SourceID, TargetID, Time } = components;
+  const { NodeIndex, SourceID, TargetID, Time } = components;
 
   const id = world.entities[entityIndex];
   const bounties = getDataArray(world, components, id, 'KILL_BOUNTIES');
 
   // identify the Node
-  const nodeID = formatEntityID(getComponentValue(NodeID, entityIndex)?.value ?? '');
-  const nodeEntityIndex = world.entityToIndex.get(nodeID) as EntityIndex;
+  const nodeIndex = (getComponentValue(NodeIndex, entityIndex)?.value ?? 0) * 1;
+  const node = getBaseNodeByIndex(world, components, nodeIndex); // update to bare
 
   // identify the Source and Target Kamis
   const sourceID = formatEntityID(getComponentValue(SourceID, entityIndex)?.value ?? '');
@@ -50,7 +50,7 @@ export const getKill = (
   const killLog: KillLog = {
     id,
     entityIndex,
-    node: getNode(world, components, nodeEntityIndex), // update to bare
+    node: node,
     balance: bounties[0],
     bounty: bounties[1],
     time: (getComponentValue(Time, entityIndex)?.value as number) * 1,

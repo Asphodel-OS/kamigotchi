@@ -47,7 +47,7 @@ contract ProductionLiquidateSystem is System {
     require(LibRoom.sharesRoom(components, accID, nodeID), "FarmLiquidate: node too far");
 
     // check that the pet is capable of liquidating the target production
-    uint256 targetKamiID = LibHarvest.getPet(components, targetProductionID);
+    uint256 targetKamiID = LibHarvest.getKami(components, targetProductionID);
     LibKami.sync(components, targetKamiID);
     require(LibKill.isLiquidatableBy(components, targetKamiID, kamiID), "Pet: you lack violence");
 
@@ -70,14 +70,15 @@ contract ProductionLiquidateSystem is System {
     LibKami.drain(components, kamiID, SafeCastLib.toInt32(strain + karma));
 
     // kill the target and shut off the production
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
     LibKami.kill(components, targetKamiID);
     LibHarvest.stop(components, targetProductionID);
-    LibKill.create(world, components, kamiID, targetKamiID, nodeID, bounty - salvage, spoils);
+    LibKill.create(world, components, kamiID, targetKamiID, nodeIndex, bounty - salvage, spoils);
     LibKami.setLastActionTs(components, kamiID, block.timestamp);
 
     // standard logging and tracking
     LibScore.incFor(components, accID, "LIQUIDATE", 1);
-    LibKill.logTotals(components, accID, LibNode.getIndex(components, nodeID));
+    LibKill.logTotals(components, accID, nodeIndex);
     LibKill.logVictim(components, accID, LibKami.getAccount(components, targetKamiID));
     LibAccount.updateLastTs(components, accID);
     return "";
