@@ -58,7 +58,6 @@ library LibRoom {
     id = world.getUniqueEntityId();
     LibConditional.create(components, id, Condition(type_, logicType, condIndex, condValue));
 
-    // world2: change to LibRelation?
     IDRoomComponent(getAddrByID(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
     IDParentComponent sourceComp = IDParentComponent(getAddrByID(components, IDParentCompID));
     if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
