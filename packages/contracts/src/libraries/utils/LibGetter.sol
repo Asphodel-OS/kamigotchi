@@ -44,6 +44,9 @@ library LibGetter {
     string memory _type,
     uint32 index
   ) public view returns (uint256 balance) {
+    // change holderID to 0 for global scoped data
+    if (_type.endsWith("GLOBAL")) id = 0;
+
     if (_type.eq("ITEM")) {
       balance = LibInventory.getBalanceOf(components, id, index);
     } else if (_type.eq("LEVEL")) {
@@ -60,8 +63,6 @@ library LibGetter {
       balance = LibFactions.getRep(components, id, index);
     } else if (_type.eq("BLOCKTIME")) {
       balance = block.timestamp;
-    } else if (_type.eq("ITEM_GLOBAL_COUNT")) {
-      balance = LibData.get(components, 0, index, _type);
     } else {
       balance = LibData.get(components, id, index, _type);
     }
