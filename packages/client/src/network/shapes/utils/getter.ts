@@ -1,4 +1,4 @@
-import { EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
@@ -21,7 +21,11 @@ export const getBalance = (
   isKami?: boolean
 ): number => {
   const { Level, RoomIndex } = components;
-  const holderID = world.entities[holder];
+  let holderID = world.entities[holder];
+
+  if (type.includes('GLOBAL')) {
+    holderID = '0x0000000000000000000000000000000000000000' as EntityID;
+  }
 
   if (type === 'ITEM') {
     return getItemBalance(world, components, holderID, index ?? 0);

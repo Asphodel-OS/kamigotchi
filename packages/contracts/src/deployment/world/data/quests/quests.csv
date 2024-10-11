@@ -160,6 +160,7 @@ This world won’t last…….. but I can give you something that will. I need h
 
 This NFT won’t be available after the testnet period ends. Good luck.",,At least 50 Reputation,Have 300 Reputation,"Kamigotchi World Passport (NFT) ",,,
 ,20,,Ingame,Objective,REPUTATION,MIN,CURR,Have 300 Reputation,1,300,No,,,,,,,,,,
+,20,,Ingame,Objective,ITEM_GLOBAL_COUNT,MAX,CURR,Less than 200 passports claimed,2,200,No,,,,,,,,,,
 ,20,,Ingame,Reward,ITEM,,,"Kamigotchi World Passport (NFT) ",2,1,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",21,Daily Grind,Ingame,Quest,,,,,,,No,5,,"This world follows its own cycles. The calendar here isn't quite the same as in your world.... for example, things here run on a 36 hour day. Have you noticed?
 

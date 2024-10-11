@@ -60,6 +60,8 @@ library LibGetter {
       balance = LibFactions.getRep(components, id, index);
     } else if (_type.eq("BLOCKTIME")) {
       balance = block.timestamp;
+    } else if (_type.eq("ITEM_GLOBAL_COUNT")) {
+      balance = LibData.get(components, 0, index, _type);
     } else {
       balance = LibData.get(components, id, index, _type);
     }
