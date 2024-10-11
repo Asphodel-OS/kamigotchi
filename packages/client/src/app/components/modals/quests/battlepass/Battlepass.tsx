@@ -132,9 +132,10 @@ export const Battlepass = (props: Props) => {
         tooltip.push(`• ${entity.name} x${value}`);
       });
 
+      // hardcode for passport limit
       if (quest.index === 20) {
         const processed = utils.parseObjectives(quest);
-        tooltip.push('', 'Objectives:');
+        tooltip.push('', 'Additional conditions:');
         processed.objectives.forEach((o) => {
           if (o.target.type !== 'REPUTATION') {
             const [tar, curr] = parseConditionalUnits(o);
