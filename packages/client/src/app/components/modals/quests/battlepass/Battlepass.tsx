@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { ProgressBar } from 'app/components/library/base/measures/ProgressBar';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
+import { parseConditionalUnits } from 'network/shapes/Conditional/interpretation';
 import { meetsRequirements, Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
@@ -130,6 +131,17 @@ export const Battlepass = (props: Props) => {
         const value = (r.target.value ?? 0) * 1;
         tooltip.push(`• ${entity.name} x${value}`);
       });
+
+      if (quest.index === 20) {
+        const processed = utils.parseObjectives(quest);
+        tooltip.push('', 'Objectives:');
+        processed.objectives.forEach((o) => {
+          if (o.target.type !== 'REPUTATION') {
+            const [tar, curr] = parseConditionalUnits(o);
+            tooltip.push(`• [${curr}/${tar}] ${o.name} `);
+          }
+        });
+      }
     }
 
     return tooltip;
