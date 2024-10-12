@@ -53,8 +53,7 @@ import {
   createLatestEventStreamRPC,
   createSnapshotClient,
   fetchEventsInBlockRangeChunked,
-  fetchSnapshotChunked,
-  getSnapshotBlockNumber,
+  fetchState,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -237,41 +236,47 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     });
     const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexedDB) : -1;
     this.setLoadingState({ percentage: 50 });
-    const snapshotClient = snapshotUrl ? createSnapshotClient(snapshotUrl) : undefined;
-    const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
+
+    const kamigazeClient = createSnapshotClient(snapshotUrl);
+
     this.setLoadingState({ percentage: 100 });
 
-    let initialState = createCacheStore();
-    if (initialBlockNumber > Math.max(cacheBlockNumber, snapshotBlockNumber)) {
-      initialState.blockNumber = initialBlockNumber;
-    } else {
-      // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
-      const syncFromSnapshot =
-        snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheExpiry;
+    // KAMIGAZE INTEGRRATION
+    let initialState = await loadIndexDbToCacheStore(indexedDB);
+    // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
+    this.setLoadingState({
+      msg: 'Fetching Initial State From Snapshot',
+      percentage: 0,
+    });
+    console.log('BlockNumber', initialState.blockNumber);
+    console.log('Components', initialState.components.length);
+    console.log('Entities', initialState.entities.length);
+    console.log('StateValues', initialState.state.size);
+    console.log('--------------------');
+    initialState = await fetchState(
+      initialState,
+      kamigazeClient,
+      decode,
+      config.snapshotNumChunks ?? 10,
+      (percentage: number) => this.setLoadingState({ percentage })
+    );
+    console.log('AFTER SYNC <------------------------');
+    console.log('BlockNumber', initialState.blockNumber);
+    console.log('Components', initialState.components.length);
+    console.log('Entities', initialState.entities.length);
+    console.log('StateValues', initialState.state.size);
+    console.log('--------------------');
 
-      if (syncFromSnapshot) {
-        this.setLoadingState({
-          msg: 'Fetching Initial State From Snapshot',
-          percentage: 0,
-        });
-        initialState = await fetchSnapshotChunked(
-          snapshotClient,
-          worldContract.address,
-          decode,
-          config.snapshotNumChunks ?? 10,
-          (percentage: number) => this.setLoadingState({ percentage }),
-          config.pruneOptions
-        );
-      } else {
-        this.setLoadingState({
-          msg: 'Loading Initial State From Cache',
-          percentage: 0,
-        });
-        initialState = await loadIndexDbToCacheStore(indexedDB);
-        this.setLoadingState({ percentage: 100 });
-      }
-    }
-
+    /*
+    await fetchSnapshotChunked(
+      snapshotClient,
+      worldContract.address,
+      decode,
+      config.snapshotNumChunks ?? 10,
+      (percentage: number) => this.setLoadingState({ percentage }),
+      config.pruneOptions
+    );
+    */
     /*
      * FILL THE GAP
      * - Load events between initial and recent state from RPC
