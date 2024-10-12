@@ -55,8 +55,7 @@ const Container = styled.div<{ isHidden: boolean }>`
   transition: all 2s ease;
   pointer-events: all;
   z-index: 10;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
 `;
 
 const Image = styled.img`
