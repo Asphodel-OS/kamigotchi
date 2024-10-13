@@ -58,28 +58,31 @@ export async function fetchState(
   const chunkPercentage = Math.ceil(100 / numChunks);
 
   let currentBlock = cacheStore.blockNumber;
+  let initialLoad = currentBlock == 0;
 
   let BlockResponse = await kamigazeClient.getStateBlock({});
   storeBlock(cacheStore, BlockResponse);
+  let componentIdx = initialLoad ? 0 : cacheStore.components.length - 1;
   let ComponentsResponse = await kamigazeClient.getComponents({
-    fromIdx: cacheStore.components.length,
+    fromIdx: componentIdx,
   });
   storeComponents(cacheStore, ComponentsResponse.components);
   let EntitiesResponse = kamigazeClient.getEntities({
     fromIdx: cacheStore.entities.length,
     numChunks: numChunks,
   });
+  let entityIdx = initialLoad ? 0 : cacheStore.entities.length - 1;
   for await (const responseChunk of EntitiesResponse) {
     storeEntities(cacheStore, responseChunk.entities);
   }
-  if (cacheStore.state.size != 0) {
+  if (!initialLoad) {
     let StateRemovalsReponse = await kamigazeClient.getState({
       fromBlock: currentBlock,
       numChunks: numChunks,
       removals: true,
     });
     for await (const responseChunk of StateRemovalsReponse) {
-      await removeValues(cacheStore, responseChunk.state);
+      removeValues(cacheStore, responseChunk.state);
     }
   }
 
@@ -89,7 +92,7 @@ export async function fetchState(
     removals: false,
   });
   for await (const responseChunk of StateValuesResponse) {
-    await storeValues(cacheStore, responseChunk.state, decode);
+    storeValues(cacheStore, responseChunk.state, decode);
   }
 
   return cacheStore;
