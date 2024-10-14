@@ -23,7 +23,7 @@ contract ProductionCollectSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint256 kamiID = LibHarvest.getPet(components, id);
+    uint256 kamiID = LibHarvest.getKami(components, id);
 
     // standard checks (ownership, cooldown, state)
     LibKami.assertAccount(components, kamiID, accID);
@@ -36,7 +36,7 @@ contract ProductionCollectSystem is System {
     LibKami.assertRoom(components, kamiID, accID);
 
     // process collection
-    uint256 output = LibHarvest.claim(components, id);
+    uint256 output = LibHarvest.claim(components, id, accID);
     LibExperience.inc(components, kamiID, output);
     LibKami.setLastActionTs(components, kamiID, block.timestamp);
 

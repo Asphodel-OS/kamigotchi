@@ -26,7 +26,7 @@ contract ProductionStopSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint256 kamiID = LibHarvest.getPet(components, id);
+    uint256 kamiID = LibHarvest.getKami(components, id);
 
     // standard checks (ownership, cooldown, state)
     LibKami.assertAccount(components, kamiID, accID);
@@ -41,7 +41,7 @@ contract ProductionStopSystem is System {
     LibKami.assertRoom(components, kamiID, accID);
 
     // claim balance and increase experience
-    uint256 output = LibHarvest.claim(components, id);
+    uint256 output = LibHarvest.claim(components, id, accID);
     LibExperience.inc(components, kamiID, output);
 
     // scavenge
