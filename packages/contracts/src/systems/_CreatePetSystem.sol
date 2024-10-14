@@ -186,7 +186,7 @@ contract _CreatePetSystem is System {
     uint256 level
   ) internal returns (uint256 id) {
     id = LibKami.genID(index);
-    require(!entityTypeComp.has(id), "batchMint: id already exists"); // world2: change to EntityType
+    require(!entityTypeComp.has(id), "batchMint: id already exists");
 
     entityTypeComp.set(id, string("KAMI"));
     idOwnsKamiComp.set(id, accID);
