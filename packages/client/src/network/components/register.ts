@@ -51,8 +51,6 @@ export function createComponents(world: World) {
     OwnsRelationshipID: defineStringComponent(world, 'OwnsRelationshipID', 'component.id.relationship.owns'),
     OwnsSkillID: defineStringComponent(world, 'OwnsSkillID', 'component.id.skill.owns'),
     OwnsKamiID: defineStringComponent(world, 'OwnsKamiID', 'component.id.kami.owns'),
-    NodeID: defineStringComponent(world, 'NodeID', 'component.id.node'),
-    KamiID: defineStringComponent(world, 'KamiID', 'component.id.pet'),
     RoomID: defineStringComponent(world, 'RoomID', 'component.id.room'),
     SourceID: defineStringComponent(world, 'SourceID', 'component.id.source'),
     TypeID: defineStringComponent(world, 'TypeID', 'component.id.score.type'),

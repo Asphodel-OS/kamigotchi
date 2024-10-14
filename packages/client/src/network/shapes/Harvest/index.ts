@@ -1,3 +1,4 @@
+export { getForKami as getHarvestForKami } from './getters';
 export {
   calcBounty as calcHarvestBounty,
   calcFertility as calcHarvestFertiity,
@@ -6,7 +7,6 @@ export {
   calcNetBounty as calcHarvestNetBounty,
   calcRate as calcHarvestRate,
 } from './harvest';
-
 export {
   calcKarma as calcLiqKarma,
   calcStrain as calcLiqStrain,

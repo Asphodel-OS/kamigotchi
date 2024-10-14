@@ -1,12 +1,71 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-// import { LibString } from "solady/utils/LibString.sol";
+import "test/utils/SetupTemplate.t.sol";
 
-// import "test/utils/SetupTemplate.t.sol";
+contract HarvestTest is SetupTemplate {
+  uint256 aKamiID;
 
-// // TODO: test for correct production rates upon starting harvests
-// contract HarvestTest is SetupTemplate {
+  function setUp() public override {
+    super.setUp();
+
+    aKamiID = _mintKami(alice);
+  }
+
+  function setUpItems() public override {
+    _createFood(1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
+  }
+
+  function testHarvestShape() public {
+    uint32 nodeIndex = 1;
+
+    uint256 prodID = _startProductionByIndex(aKamiID, nodeIndex);
+    _fastForward(_idleRequirement + 50);
+
+    _collectProduction(prodID);
+    _fastForward(_idleRequirement + 50);
+
+    _stopProduction(prodID);
+  }
+
+  function testHarvestCollects() public {
+    uint32 nodeIndex = 1;
+    uint256 expectedTotal;
+
+    uint256 prodID = _startProductionByIndex(aKamiID, nodeIndex);
+
+    for (uint256 i = 0; i < 10; i++) {
+      _fastForward(_idleRequirement + 15 minutes);
+      expectedTotal += LibHarvest.calcBounty(components, prodID);
+      _collectProduction(prodID);
+      assertEq(LibHarvest.getBalance(components, prodID), 0, "har bal mismatch"); // harvest balance resets upon collect
+      assertEq(_getItemBal(alice, 1), expectedTotal, "output bal mismatch"); // total farmed goes to account
+    }
+
+    // catching balance in the middle of a sync
+    _fastForward(_idleRequirement + 15 minutes);
+    assertEq(LibHarvest.getBalance(components, prodID), 0, "pre-sync mismatch");
+    uint256 expectedBounty = LibHarvest.calcBounty(components, prodID);
+    _sync(prodID);
+    expectedTotal += expectedBounty;
+    assertEq(LibHarvest.getBalance(components, prodID), expectedBounty, "post-sync mismatch");
+
+    _fastForward(_idleRequirement + 15 minutes);
+    expectedTotal += LibHarvest.calcBounty(components, prodID);
+    _stopProduction(prodID);
+    assertEq(LibHarvest.getBalance(components, prodID), 0, "post-stop mismatch");
+    assertEq(_getItemBal(alice, 1), expectedTotal, "end total mismatch");
+  }
+
+  /////////////////
+  // UTILS
+
+  function _sync(uint256 prodID) internal {
+    vm.startPrank(deployer);
+    LibHarvest.sync(components, prodID);
+    vm.stopPrank();
+  }
+}
 //   using LibString for string;
 //   using SafeCastLib for int32;
 //   using SafeCastLib for uint256;
@@ -169,7 +228,7 @@ pragma solidity ^0.8.0;
 //     uint productionID = abi.decode(productionIDFarm20, (uint));
 
 //     // test that a production is created with the expected base fields
-//     assertEq(LibHarvest.getPet(components, productionID), kamiID);
+//     assertEq(LibHarvest.getKami(components, productionID), kamiID);
 //     assertEq(LibHarvest.getNode(components, productionID), nodeID);
 //     assertEq(LibHarvest.getState(components, productionID), "ACTIVE");
 
