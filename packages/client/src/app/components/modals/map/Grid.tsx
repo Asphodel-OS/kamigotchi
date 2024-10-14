@@ -23,7 +23,7 @@ interface Props {
 export const Grid = (props: Props) => {
   const { world, components, index, zone, rooms, actions } = props;
   const [grid, setGrid] = useState<Room[][]>([]);
-  const [numberOfEnemyKamis, setNumberOfEnemyKamis] = useState('0');
+  const [numberOfKamisAndPlayers, setnumberOfKamisAndPlayers] = useState(['0', '0']);
 
   useEffect(() => {
     const z = rooms.get(index)?.location.z;
@@ -115,7 +115,10 @@ export const Grid = (props: Props) => {
                   onMouseEnter={() => {
                     if (isRoom) actions.setHoveredRoom(room.index);
                     const node = getNodeByIndex(world, components, room.index, { kamis: true });
-                    setNumberOfEnemyKamis(node.kamis.length.toString());
+                    setnumberOfKamisAndPlayers([
+                      node.kamis.length.toString(),
+                      room.players?.length.toString() ?? '0',
+                    ]);
                   }}
                   onMouseLeave={() => {
                     if (isRoom) actions.setHoveredRoom(0);
@@ -130,8 +133,10 @@ export const Grid = (props: Props) => {
                   '',
                   room.description,
                   '',
-                  'number of enemy Kamis',
-                  numberOfEnemyKamis,
+                  'Number of harvesting Kamis on tile',
+                  `Kamis: ${numberOfKamisAndPlayers[0]}`,
+                  'Number of Players on tile',
+                  `Players: ${numberOfKamisAndPlayers[1]}`,
                 ];
 
                 tile = (
