@@ -274,6 +274,6 @@ library LibItem {
   function logFeed(IUintComp components, uint256 accID, uint256 amt) internal {
     // TODO: merge score and data entities?
     LibScore.incFor(components, accID, "FEED", amt);
-    LibData.inc(components, accID, 0, "KAMI_FEED", amt); // world2: change to FEED
+    LibData.inc(components, accID, 0, "FEED", amt);
   }
 }
