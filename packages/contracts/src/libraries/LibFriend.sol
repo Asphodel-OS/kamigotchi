@@ -9,7 +9,6 @@ import { LibString } from "solady/utils/LibString.sol";
 
 /** world2: revamp friendship IDComponents
  * IDParent (formally IDPointer): to split to something friendship specific (IDOwns?) or IDType is ok too
- * IdAccount, IdTarget: deprecate, change to LibRelation
  */
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";

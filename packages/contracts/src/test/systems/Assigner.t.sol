@@ -20,19 +20,17 @@ contract AssignerTest is SetupTemplate {
     vm.stopPrank();
 
     // uncreated assigner checks
-    assertTrue(LibAssigner.isUniversal(_IDToComponent, actionID));
+    assertTrue(LibAssigner.isUniversal(components, actionID));
     assertTrue(LibAssigner.check(components, assignerID, actionID, alice.id));
 
     // create assigner
     uint256 relationID = _createAssigner(assignerID, actionID);
 
     // shape checks
-    assertEq(LibRelation.get(components, assignerID, actionID), relationID);
-    assertEq(LibRelation.getViaComp(_IDToComponent, assignerID, actionID), relationID);
-    assertEq(LibRelation.getViaComp(_IDFromComponent, assignerID, actionID), relationID);
+    assertEq(LibAssigner.get(components, assignerID, actionID), relationID);
 
     // condition checks
-    assertTrue(!LibAssigner.isUniversal(_IDToComponent, actionID));
+    assertTrue(!LibAssigner.isUniversal(components, actionID));
     assertTrue(!LibAssigner.check(components, assignerID, actionID, alice.id));
     _setUint32(_IndexRoomComponent, alice.id, 1); // move to correct room
     assertTrue(LibAssigner.check(components, assignerID, actionID, alice.id));
