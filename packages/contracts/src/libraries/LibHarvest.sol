@@ -4,32 +4,30 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-// world2: deprecate IdNode, rely on nodeIndex
-import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
-// world2: deprecate IdPet, change to IdHolder of sorts
-import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
-import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
-
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
+
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
-import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibPhase } from "libraries/utils/LibPhase.sol";
-import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant RATE_PREC = 6;
 
@@ -37,6 +35,7 @@ uint256 constant RATE_PREC = 6;
  * LibHarvest handles all retrieval and manipulation of mining nodes/productions
  */
 library LibHarvest {
+  using LibComp for IComponent;
   using SafeCastLib for int32;
   using SafeCastLib for uint32;
   using SafeCastLib for int256;
@@ -53,53 +52,46 @@ library LibHarvest {
   ) internal returns (uint256 id) {
     id = genID(kamiID);
     LibEntityType.set(components, id, "HARVEST");
-    IdPetComponent(getAddrByID(components, IdPetCompID)).set(id, kamiID);
-    IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
-    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(
-      id,
-      LibNode.getIndex(components, nodeID)
-    );
+    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, kamiID);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, nodeID);
   }
 
-  // claim the existing balance on a Production to the Pet's owner (Account)
-  // assume the production is Active
-  function claim(IUintComp components, uint256 id) internal returns (uint256) {
-    uint256 kamiID = getPet(components, id);
-    uint256 accID = LibKami.getAccount(components, kamiID);
+  /// @notice claim the existing balance on a Production to the Pet's owner (Account)
+  /// @dev assume harvest is active. toID (usually account) is derived externally from kamiID
+  function claim(IUintComp components, uint256 prodID, uint256 toID) internal returns (uint256) {
+    // safely get and reset existing balance
+    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+    uint256 balance = valComp.safeGet(prodID);
+    if (balance > 0) valComp.remove(prodID);
 
-    uint256 balance = getBalance(components, id);
-    LibInventory.transferFor(components, id, accID, MUSU_INDEX, balance);
+    LibInventory.incFor(components, toID, MUSU_INDEX, balance);
     return balance;
   }
 
-  function resetIntensity(IUintComp components, uint256 id) public {
-    setResetTs(components, id, block.timestamp);
+  function resetIntensity(IUintComp components, uint256 id) internal {
+    TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, block.timestamp);
   }
 
   // Starts an _existing_ production if not already started.
   function start(IUintComp components, uint256 id) internal {
-    setState(components, id, "ACTIVE");
-    LibInventory.setFor(components, id, MUSU_INDEX, 0);
-    setStartTs(components, id, block.timestamp);
-    setResetTs(components, id, block.timestamp); // intensity reset time
-    setLastTs(components, id, block.timestamp);
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("ACTIVE"));
+    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
+    TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, block.timestamp); // intensity reset time
+    TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, block.timestamp);
   }
 
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
-    setState(components, id, "INACTIVE");
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("INACTIVE"));
   }
 
   // snapshot a production's balance and time. return the balance gained
   // also logs the harvest time since the last sync
-  function sync(IUintComp components, uint256 id) public returns (uint256 netBounty) {
+  function sync(IUintComp components, uint256 id) internal returns (uint256 netBounty) {
     if (isActive(components, id)) {
       netBounty = calcBounty(components, id);
-      LibInventory.incFor(components, id, MUSU_INDEX, netBounty);
-
-      uint256 timeDelta = block.timestamp - getLastTs(components, id);
-      uint256 accID = LibKami.getAccount(components, getPet(components, id));
-      setLastTs(components, id, block.timestamp);
+      ValueComponent(getAddrByID(components, ValueCompID)).inc(id, netBounty);
+      TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, block.timestamp);
     }
   }
 
@@ -118,15 +110,15 @@ library LibHarvest {
   /////////////////////
   // CALCULATIONS
 
-  // Calculate the accrued output of a harvest since the pet's last sync.
+  // Calculate the accrued output of a harvest since the kami's last sync.
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
-    uint256 kamiID = getPet(components, id);
+    uint256 kamiID = getKami(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
     int256 boostBonus = LibBonus.getFor(components, "HARV_BOUNTY_BOOST", kamiID);
 
-    uint256 base = calcFertility(components, id);
-    uint256 nudge = calcIntensity(components, id);
+    uint256 base = calcFertility(components, id, kamiID);
+    uint256 nudge = calcIntensity(components, id, kamiID);
     uint256 rate = base + nudge;
     uint256 ratio = calcDuration(components, id);
     uint256 boost = (config[6].toInt256() + boostBonus).toUint256();
@@ -141,9 +133,9 @@ library LibHarvest {
   function calcEfficacy(
     IUintComp components,
     uint256 id,
-    uint256 base
+    uint256 base,
+    uint256 kamiID
   ) internal view returns (uint256) {
-    uint256 kamiID = getPet(components, id);
     uint256 nodeID = getNode(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_EFFICACY");
 
@@ -177,21 +169,27 @@ library LibHarvest {
   }
 
   // Calculate the rate of harvest, measured in musu/s. Assume active (1e9 precision).
-  function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 kamiID = getPet(components, id);
+  function calcFertility(
+    IUintComp components,
+    uint256 id,
+    uint256 kamiID
+  ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
 
     uint256 power = LibKami.calcTotalPower(components, kamiID).toUint256();
     uint256 ratio = config[2]; // fertility core
-    uint256 boost = calcEfficacy(components, id, config[6]);
+    uint256 boost = calcEfficacy(components, id, config[6], kamiID);
     uint256 precision = 10 ** (RATE_PREC - (config[3] + config[7]));
     return (precision * power * ratio * boost) / 3600;
   }
 
   // Calculate the intensity of a production, measured in musu/s (1e9 precision)
   // NOTE: this is a bit of a hack, with an idiosyncratic use of the violence-scaled nudge
-  function calcIntensity(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 kamiID = getPet(components, id);
+  function calcIntensity(
+    IUintComp components,
+    uint256 id,
+    uint256 kamiID
+  ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
 
     uint256 base = config[0] * LibKami.calcTotalViolence(components, kamiID).toUint256(); // odd application of nudge slot
@@ -207,7 +205,7 @@ library LibHarvest {
   // CHECKERS
 
   function isActive(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibString.eq("ACTIVE", getState(components, id));
+    return getCompByID(components, StateCompID).eqString(id, "ACTIVE");
   }
 
   /////////////////
@@ -215,37 +213,15 @@ library LibHarvest {
 
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
-    IdNodeComponent comp = IdNodeComponent(getAddrByID(components, IdNodeCompID));
-    if (comp.get(id) != nodeID) {
-      comp.set(id, nodeID);
-      IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(
-        id,
-        LibNode.getIndex(components, nodeID)
-      );
-    }
-  }
-
-  function setState(IUintComp components, uint256 id, string memory state) internal {
-    StateComponent(getAddrByID(components, StateCompID)).set(id, state);
-  }
-
-  function setLastTs(IUintComp components, uint256 id, uint256 timeStart) internal {
-    TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, timeStart);
-  }
-
-  function setResetTs(IUintComp components, uint256 id, uint256 timeReset) internal {
-    TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, timeReset);
-  }
-
-  function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
-    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, timeStart);
+    IdSourceComponent comp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
+    if (comp.get(id) != nodeID) comp.set(id, nodeID);
   }
 
   /////////////////
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibInventory.getBalanceOf(components, id, MUSU_INDEX);
+    return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {
@@ -253,11 +229,11 @@ library LibHarvest {
   }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdNodeComponent(getAddrByID(components, IdNodeCompID)).get(id);
+    return IdSourceComponent(getAddrByID(components, IdSourceCompID)).get(id);
   }
 
-  function getPet(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdPetComponent(getAddrByID(components, IdPetCompID)).get(id);
+  function getKami(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IdHolderComponent(getAddrByID(components, IdHolderCompID)).get(id);
   }
 
   // the check here is just a patch to address broken kamis in the current deployment
@@ -265,10 +241,6 @@ library LibHarvest {
     TimeResetComponent comp = TimeResetComponent(getAddrByID(components, TimeResetCompID));
     if (comp.has(id)) return comp.get(id);
     return block.timestamp; // if missing then we have no intensity
-  }
-
-  function getState(IUintComp components, uint256 id) internal view returns (string memory) {
-    return StateComponent(getAddrByID(components, StateCompID)).get(id);
   }
 
   function getStartTs(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -334,6 +306,6 @@ library LibHarvest {
   // UTILS
 
   function genID(uint256 kamiID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("production", kamiID)));
+    return uint256(keccak256(abi.encodePacked("harvest", kamiID)));
   }
 }

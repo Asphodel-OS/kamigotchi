@@ -8,7 +8,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
-import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
@@ -45,7 +44,7 @@ library LibKill {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID,
-    uint256 nodeID,
+    uint32 nodeIndex,
     uint256 balance,
     uint256 bounty
   ) internal returns (uint256 id) {
@@ -53,7 +52,7 @@ library LibKill {
     IsKillComponent(getAddrByID(components, IsKillCompID)).set(id);
     IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, sourceID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
-    IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, nodeIndex);
     TimeComponent(getAddrByID(components, TimeCompID)).set(id, block.timestamp);
 
     // set bounties

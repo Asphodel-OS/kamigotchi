@@ -123,12 +123,11 @@ library LibKami {
   }
 
   // Update the current health of a kami as well as any active production
-  function sync(IUintComp components, uint256 id) internal {
+  function sync(IUintComp components, uint256 id) public {
     string memory state = getState(components, id);
 
     if (state.eq("HARVESTING")) {
-      uint256 productionID = getProduction(components, id);
-      uint256 deltaBalance = LibHarvest.sync(components, productionID);
+      uint256 deltaBalance = LibHarvest.sync(components, getProduction(components, id));
       uint256 damage = calcStrain(components, id, deltaBalance);
       drain(components, id, damage.toInt32());
     } else if (state.eq("RESTING")) {

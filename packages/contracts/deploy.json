@@ -25,8 +25,6 @@
     { "comp": "IDOwnsRelationshipComponent", "name": "OwnsRelationshipID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsSkillComponent", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsKamiComponent", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdNodeComponent", "name": "NodeID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdPetComponent", "name": "KamiID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDRoomComponent", "name": "RoomID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdSourceComponent", "name": "SourceID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDTypeComponent", "name": "TypeID", "type": "uint256", "FEtype": "string" },
@@ -560,7 +558,6 @@
       "writeAccess": [
         "EntityTypeComponent",
         "IdHolderComponent",
-        "IdNodeComponent",
         "IdSourceComponent",
         "IDTypeComponent",
         "IDOwnsInventoryComponent",
@@ -585,9 +582,8 @@
       "writeAccess": [
         "EntityTypeComponent",
         "IDOwnsInventoryComponent",
-        "IdNodeComponent",
-        "IdPetComponent",
-        "IndexNodeComponent",
+        "IdHolderComponent",
+        "IdSourceComponent",
         "IndexItemComponent",
         "HealthComponent",
         "RateComponent",

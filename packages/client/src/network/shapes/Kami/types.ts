@@ -18,7 +18,7 @@ import {
   getKamiConfig,
 } from '../Config';
 import { hasFlag } from '../Flag';
-import { Harvest, getHarvest } from '../Harvest';
+import { Harvest, getHarvestForKami } from '../Harvest';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
@@ -110,7 +110,6 @@ export const getKami = (
     LastActionTime,
     Level,
     MediaURI,
-    KamiID,
     Reroll,
     SkillPoint,
     StartTime,
@@ -185,12 +184,7 @@ export const getKami = (
   // populate Harvest
   // NOTE: productions should come after traits for harvest calcs to work correctly
   if (options?.production) {
-    const productionResults = Array.from(
-      runQuery([HasValue(EntityType, { value: 'HARVEST' }), HasValue(KamiID, { value: kami.id })])
-    );
-    const productionIndex = productionResults[0];
-    if (productionIndex)
-      kami.production = getHarvest(world, components, productionIndex, { node: true }, kami);
+    kami.production = getHarvestForKami(world, components, kami, { node: true });
   }
 
   if (options?.rerolls) {

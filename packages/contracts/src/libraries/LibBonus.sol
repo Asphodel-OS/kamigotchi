@@ -126,10 +126,9 @@ library LibBonus {
     uint256 parentRegID,
     uint256 holderID,
     uint256 amt
-  ) internal returns (uint256[] memory) {
-    uint256[] memory instanceIDs = _assignFromRegistry(components, parentRegID, holderID);
+  ) internal returns (uint256[] memory instanceIDs) {
+    instanceIDs = _assignFromRegistry(components, parentRegID, holderID);
     LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
-    return instanceIDs;
   }
 
   /// @notice increases bonus based on registry entry (eg skill)
@@ -139,10 +138,9 @@ library LibBonus {
     uint256 parentID,
     uint256 holderID,
     uint256 amt
-  ) internal returns (uint256[] memory) {
-    uint256[] memory instanceIDs = _assignFromRegistry(components, parentRegID, parentID, holderID);
+  ) internal returns (uint256[] memory instanceIDs) {
+    instanceIDs = _assignFromRegistry(components, parentRegID, parentID, holderID);
     LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
-    return instanceIDs;
   }
 
   /// @notice assigns bonus entity if not already assigned
@@ -150,13 +148,13 @@ library LibBonus {
     IUintComp components,
     uint256 parentRegID,
     uint256 holderID
-  ) internal returns (uint256[] memory) {
+  ) internal returns (uint256[] memory instanceIDs) {
     IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
     IDTypeComponent idTypeComp = IDTypeComponent(getAddrByID(components, IDTypeCompID));
     TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
 
     uint256[] memory bonusRegIDs = queryByParent(components, parentRegID);
-    uint256[] memory instanceIDs = new uint256[](bonusRegIDs.length);
+    instanceIDs = new uint256[](bonusRegIDs.length);
     for (uint256 i; i < bonusRegIDs.length; i++) {
       uint256 id = genInstanceID(bonusRegIDs[i], holderID);
       instanceIDs[i] = id;
@@ -165,7 +163,6 @@ library LibBonus {
         idTypeComp.set(id, genTypeID(typeComp.get(bonusRegIDs[i]), holderID));
       }
     }
-    return instanceIDs;
   }
 
   function _assignFromRegistry(
@@ -173,14 +170,14 @@ library LibBonus {
     uint256 parentRegID,
     uint256 parentID,
     uint256 holderID
-  ) internal returns (uint256[] memory) {
+  ) internal returns (uint256[] memory instanceIDs) {
     IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
     IDTypeComponent idTypeComp = IDTypeComponent(getAddrByID(components, IDTypeCompID));
     IDParentComponent idParentComp = IDParentComponent(getAddrByID(components, IDParentCompID));
     TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
 
     uint256[] memory bonusRegIDs = queryByParent(components, parentRegID);
-    uint256[] memory instanceIDs = new uint256[](bonusRegIDs.length);
+    instanceIDs = new uint256[](bonusRegIDs.length);
     for (uint256 i; i < bonusRegIDs.length; i++) {
       uint256 id = genInstanceID(bonusRegIDs[i], holderID);
       instanceIDs[i] = id;
@@ -190,7 +187,6 @@ library LibBonus {
         idParentComp.set(id, parentID);
       }
     }
-    return instanceIDs;
   }
 
   /////////////////
