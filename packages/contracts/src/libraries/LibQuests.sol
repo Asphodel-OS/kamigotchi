@@ -400,13 +400,7 @@ library LibQuests {
     // world2: flatten naming (leftover from LibHash)
     return
       uint256(
-        keccak256(
-          abi.encodePacked(
-            "quest.objective.snapshot",
-            questID,
-            keccak256(abi.encode("Quest.Objective", logicType, _type, index)) // previously: objHash
-          )
-        )
+        keccak256(abi.encodePacked("quest.objective.snapshot", questID, logicType, _type, index))
       );
   }
 }
