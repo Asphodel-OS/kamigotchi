@@ -343,7 +343,7 @@ contract MurderTest is SetupTemplate {
   //     nodeID = LibHarvest.getNode(components, LibKami.getProduction(components, attackerID));
   //     productionIDs = getAllOnNode(components, nodeID);
   //     productionID = productionIDs[rand % productionIDs.length];
-  //     victimID = LibHarvest.getPet(components, productionID);
+  //     victimID = LibHarvest.getKami(components, productionID);
 
   //     // fast forward 15-75min
   //     _fastForward((rand % 1 hours) + 15 minutes);
@@ -409,7 +409,7 @@ contract MurderTest is SetupTemplate {
   // checks whether a production should be liquidatable by a pet
   // assumes the production is active to simulate a health sync
   function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
-    uint victimID = LibHarvest.getPet(components, productionID);
+    uint victimID = LibHarvest.getKami(components, productionID);
     uint totalHealth = uint(int(LibKami.calcTotalHealth(components, victimID)));
     uint output = LibHarvest.calcBounty(components, productionID);
     uint drain = LibKami.calcStrain(components, victimID, output);

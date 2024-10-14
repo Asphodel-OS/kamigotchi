@@ -3,7 +3,17 @@ import { HasValue, World, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { queryConditionsOf } from '../Conditional/queries';
-import { Node, NullNode, Options, getNode } from './types';
+import { BaseNode, Node, NullNode, Options, getBaseNode, getNode, getNodeEntity } from './types';
+
+export const getBaseNodeByIndex = (
+  world: World,
+  components: Components,
+  index: number
+): BaseNode => {
+  const entityIndex = getNodeEntity(world, index);
+  if (!entityIndex) return NullNode;
+  return getBaseNode(world, components, entityIndex);
+};
 
 export const getNodeByIndex = (
   world: World,
@@ -11,13 +21,9 @@ export const getNodeByIndex = (
   index: number,
   options?: Options
 ): Node => {
-  const { EntityType, NodeIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([HasValue(EntityType, { value: 'NODE' }), HasValue(NodeIndex, { value: index })])
-  );
-  if (entityIndices.length === 0) return NullNode;
-
-  return getNode(world, components, entityIndices[0], options);
+  const entityIndex = getNodeEntity(world, index);
+  if (!entityIndex) return NullNode;
+  return getNode(world, components, entityIndex, options);
 };
 
 export const getAllNodes = (world: World, components: Components, options?: Options): Node[] => {

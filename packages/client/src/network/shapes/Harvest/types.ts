@@ -1,8 +1,8 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { formatEntityID } from 'engine/utils';
+import { utils } from 'ethers';
 import { Components } from 'network/';
-import { getMusuBalance } from '../Item';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './harvest';
@@ -34,11 +34,11 @@ export const getHarvest = (
   options?: HarvestOptions,
   kami?: Kami
 ): Harvest => {
-  const { NodeID, KamiID, State, LastTime, ResetTime, StartTime } = components;
+  const { HolderID, SourceID, State, LastTime, ResetTime, StartTime, Value } = components;
   let production: Harvest = {
     id: world.entities[index],
     rate: 0,
-    balance: getMusuBalance(world, components, world.entities[index]),
+    balance: ((getComponentValue(Value, index)?.value as number) || 0) * 1,
     state: getComponentValue(State, index)?.value as string,
     time: {
       last: (getComponentValue(LastTime, index)?.value as number) * 1,
@@ -52,7 +52,7 @@ export const getHarvest = (
 
   // populate Node
   if (options?.node) {
-    const nodeID = formatEntityID(getComponentValue(NodeID, index)?.value ?? '');
+    const nodeID = formatEntityID(getComponentValue(SourceID, index)?.value ?? '');
     const nodeIndex = world.entityToIndex.get(nodeID);
     if (nodeIndex) production.node = getNode(world, components, nodeIndex);
   }
@@ -63,10 +63,28 @@ export const getHarvest = (
   // retrieve the kami if it's not passed in
   // NOTE: rate calcs only work if the node is set
   if (!kami) {
-    const kamiID = formatEntityID(getComponentValue(KamiID, index)?.value ?? '');
+    const kamiID = formatEntityID(getComponentValue(HolderID, index)?.value ?? '');
     const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
-    kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
+    kami = getKami(world, components, kamiEntityIndex, { traits: true });
   }
   production.rate = calcRate(production, kami);
   return production;
+};
+
+/////////////////
+// IDs
+
+const IDStore = new Map<string, string>();
+
+export const getHarvestEntity = (world: World, holderID: string): EntityIndex | undefined => {
+  let id = '';
+  const key = 'harvest' + holderID;
+
+  if (IDStore.has(key)) id = IDStore.get(key)!;
+  else {
+    id = formatEntityID(utils.solidityKeccak256(['string', 'uint256'], ['harvest', holderID]));
+    IDStore.set(key, id);
+  }
+
+  return world.entityToIndex.get(id as EntityID);
 };
