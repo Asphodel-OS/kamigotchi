@@ -1,12 +1,17 @@
 import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { World } from '@mud-classic/recs';
 import { Tooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
+import { Components } from 'network/';
+import { getNodeByIndex } from 'network/shapes/Node';
 import { Room, emptyRoom } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
 interface Props {
+  world: World;
+  components: Components;
   index: number; // index of current room
   zone: number;
   rooms: Map<number, Room>;
@@ -16,7 +21,7 @@ interface Props {
   };
 }
 export const Grid = (props: Props) => {
-  const { index, zone, rooms, actions } = props;
+  const { world, components, index, zone, rooms, actions } = props;
   const [grid, setGrid] = useState<Room[][]>([]);
 
   useEffect(() => {
@@ -116,8 +121,17 @@ export const Grid = (props: Props) => {
               );
 
               if (isRoom) {
+                const node = getNodeByIndex(world, components, room.index, { kamis: true });
                 const name = `${room.name} ${isBlocked ? '(blocked)' : ''}`;
-                const description = [name, '', room.description, ''];
+                const description = [
+                  name,
+                  '',
+                  room.description,
+                  '',
+                  'Number of enemy Kamis',
+                  node.kamis.length.toString(),
+                ];
+
                 tile = (
                   <Tooltip key={j} text={description} grow>
                     {tile}

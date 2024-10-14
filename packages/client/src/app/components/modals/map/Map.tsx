@@ -92,6 +92,8 @@ export function registerMapModal() {
           truncate
         >
           <Grid
+            world={world}
+            components={components}
             index={selectedRoom}
             zone={zone}
             rooms={roomMap}
