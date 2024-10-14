@@ -43,6 +43,14 @@ export interface StateResponse {
   state: State[];
 }
 
+export interface StreamResponse {
+  latestBlockNumber: number;
+  entities: Entity[];
+  components: Component[];
+  stateRemovals: State[];
+  stateValues: State[];
+}
+
 /** Requests */
 export interface BlockRequest {
 }
@@ -60,6 +68,9 @@ export interface StateRequest {
   fromBlock: number;
   numChunks?: number | undefined;
   removals?: boolean | undefined;
+}
+
+export interface StreamRequest {
 }
 
 function createBaseEntity(): Entity {
@@ -410,6 +421,95 @@ export const StateResponse: MessageFns<StateResponse> = {
   },
 };
 
+function createBaseStreamResponse(): StreamResponse {
+  return { latestBlockNumber: 0, entities: [], components: [], stateRemovals: [], stateValues: [] };
+}
+
+export const StreamResponse: MessageFns<StreamResponse> = {
+  encode(message: StreamResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.latestBlockNumber !== 0) {
+      writer.uint32(8).uint64(message.latestBlockNumber);
+    }
+    for (const v of message.entities) {
+      Entity.encode(v!, writer.uint32(18).fork()).join();
+    }
+    for (const v of message.components) {
+      Component.encode(v!, writer.uint32(26).fork()).join();
+    }
+    for (const v of message.stateRemovals) {
+      State.encode(v!, writer.uint32(34).fork()).join();
+    }
+    for (const v of message.stateValues) {
+      State.encode(v!, writer.uint32(42).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): StreamResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStreamResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.latestBlockNumber = longToNumber(reader.uint64());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.entities.push(Entity.decode(reader, reader.uint32()));
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.components.push(Component.decode(reader, reader.uint32()));
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.stateRemovals.push(State.decode(reader, reader.uint32()));
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.stateValues.push(State.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<StreamResponse>): StreamResponse {
+    return StreamResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
+    const message = createBaseStreamResponse();
+    message.latestBlockNumber = object.latestBlockNumber ?? 0;
+    message.entities = object.entities?.map((e) => Entity.fromPartial(e)) || [];
+    message.components = object.components?.map((e) => Component.fromPartial(e)) || [];
+    message.stateRemovals = object.stateRemovals?.map((e) => State.fromPartial(e)) || [];
+    message.stateValues = object.stateValues?.map((e) => State.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseBlockRequest(): BlockRequest {
   return {};
 }
@@ -612,10 +712,44 @@ export const StateRequest: MessageFns<StateRequest> = {
   },
 };
 
-export type StateSnapshotServiceDefinition = typeof StateSnapshotServiceDefinition;
-export const StateSnapshotServiceDefinition = {
-  name: "StateSnapshotService",
-  fullName: "kamigaze.StateSnapshotService",
+function createBaseStreamRequest(): StreamRequest {
+  return {};
+}
+
+export const StreamRequest: MessageFns<StreamRequest> = {
+  encode(_: StreamRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): StreamRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStreamRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<StreamRequest>): StreamRequest {
+    return StreamRequest.fromPartial(base ?? {});
+  },
+  fromPartial(_: DeepPartial<StreamRequest>): StreamRequest {
+    const message = createBaseStreamRequest();
+    return message;
+  },
+};
+
+export type KamigazeServiceDefinition = typeof KamigazeServiceDefinition;
+export const KamigazeServiceDefinition = {
+  name: "KamigazeService",
+  fullName: "kamigaze.KamigazeService",
   methods: {
     /** Requests the latest block number based on the latest ECS state. */
     getStateBlock: {
@@ -644,25 +778,7 @@ export const StateSnapshotServiceDefinition = {
       responseStream: true,
       options: {},
     },
-    /** Get state entries */
-    getStateValues: {
-      name: "GetStateValues",
-      requestType: StateRequest,
-      requestStream: false,
-      responseType: StateResponse,
-      responseStream: true,
-      options: {},
-    },
-    /** Get state entry removals */
-    getStateRemovals: {
-      name: "GetStateRemovals",
-      requestType: StateRequest,
-      requestStream: false,
-      responseType: StateResponse,
-      responseStream: true,
-      options: {},
-    },
-    /** Get State consolidated */
+    /** Get State */
     getState: {
       name: "GetState",
       requestType: StateRequest,
@@ -671,10 +787,19 @@ export const StateSnapshotServiceDefinition = {
       responseStream: true,
       options: {},
     },
+    /** Stream */
+    subscribeToStream: {
+      name: "SubscribeToStream",
+      requestType: StreamRequest,
+      requestStream: false,
+      responseType: StreamResponse,
+      responseStream: true,
+      options: {},
+    },
   },
 } as const;
 
-export interface StateSnapshotServiceImplementation<CallContextExt = {}> {
+export interface KamigazeServiceImplementation<CallContextExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
   getStateBlock(request: BlockRequest, context: CallContext & CallContextExt): Promise<DeepPartial<BlockResponse>>;
   /** components */
@@ -687,24 +812,19 @@ export interface StateSnapshotServiceImplementation<CallContextExt = {}> {
     request: EntitiesRequest,
     context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<EntitiesResponse>>;
-  /** Get state entries */
-  getStateValues(
-    request: StateRequest,
-    context: CallContext & CallContextExt,
-  ): ServerStreamingMethodResult<DeepPartial<StateResponse>>;
-  /** Get state entry removals */
-  getStateRemovals(
-    request: StateRequest,
-    context: CallContext & CallContextExt,
-  ): ServerStreamingMethodResult<DeepPartial<StateResponse>>;
-  /** Get State consolidated */
+  /** Get State */
   getState(
     request: StateRequest,
     context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<StateResponse>>;
+  /** Stream */
+  subscribeToStream(
+    request: StreamRequest,
+    context: CallContext & CallContextExt,
+  ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
 }
 
-export interface StateSnapshotServiceClient<CallOptionsExt = {}> {
+export interface KamigazeServiceClient<CallOptionsExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
   getStateBlock(request: DeepPartial<BlockRequest>, options?: CallOptions & CallOptionsExt): Promise<BlockResponse>;
   /** components */
@@ -717,18 +837,13 @@ export interface StateSnapshotServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<EntitiesRequest>,
     options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<EntitiesResponse>;
-  /** Get state entries */
-  getStateValues(
-    request: DeepPartial<StateRequest>,
-    options?: CallOptions & CallOptionsExt,
-  ): AsyncIterable<StateResponse>;
-  /** Get state entry removals */
-  getStateRemovals(
-    request: DeepPartial<StateRequest>,
-    options?: CallOptions & CallOptionsExt,
-  ): AsyncIterable<StateResponse>;
-  /** Get State consolidated */
+  /** Get State */
   getState(request: DeepPartial<StateRequest>, options?: CallOptions & CallOptionsExt): AsyncIterable<StateResponse>;
+  /** Stream */
+  subscribeToStream(
+    request: DeepPartial<StreamRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): AsyncIterable<StreamResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
