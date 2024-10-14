@@ -30,6 +30,10 @@ export function createPlayerAPI(systems: any) {
     return systems['system.pet.use.renamePotion'].executeTyped(petID, itemIndex);
   }
 
+  function useTransferrerPet(petID: BigNumberish, itemIndex: number) {
+    return systems['system.pet.use.transferrer'].executeTyped(petID, itemIndex);
+  }
+
   // upgrade a pet's skill
   function upgradePetSkill(petID: BigNumberish, skillIndex: number) {
     return systems['system.Pet.Skill.Upgrade'].executeTyped(petID, skillIndex);
@@ -353,6 +357,7 @@ export function createPlayerAPI(systems: any) {
         food: useFoodPet,
         renamePotion: useRenamePotionPet,
         revive: useRevivePet,
+        transferrer: useTransferrerPet,
       },
     },
     account: {

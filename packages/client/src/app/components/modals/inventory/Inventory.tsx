@@ -122,6 +122,17 @@ export function registerInventoryModal() {
         });
       };
 
+      const t1ToT2Kami = (kami: Kami, item: Item) => {
+        actions.add({
+          action: 'Sending kami to the next world',
+          params: [kami.id, item.index],
+          description: `Sending ${kami.name} to the next world`,
+          execute: async () => {
+            return api.player.pet.use.transferrer(kami.id, item.index);
+          },
+        });
+      };
+
       // feed the account
       const feedAccount = (item: Item) => {
         actions.add({
@@ -203,6 +214,7 @@ export function registerInventoryModal() {
               feedAccount,
               teleportAccount,
               openLootbox,
+              t1ToT2Kami,
             }}
           />
         </ModalWrapper>

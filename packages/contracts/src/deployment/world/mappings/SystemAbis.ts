@@ -48,6 +48,7 @@ import PetNameSystem from "../../../../../client/abi/PetNameSystem.json";
 import PetUseFoodSystem from "../../../../../client/abi/PetUseFoodSystem.json";
 import PetUseRenamePotionSystem from "../../../../../client/abi/PetUseRenamePotionSystem.json";
 import PetUseReviveSystem from "../../../../../client/abi/PetUseReviveSystem.json";
+import PetUseTransferrerSystem from "../../../../../client/abi/PetUseTransferrerSystem.json";
 import ProductionCollectSystem from "../../../../../client/abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../../../../../client/abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../../../../../client/abi/ProductionStartSystem.json";
@@ -114,6 +115,7 @@ export const SystemAbis = {
   "system.pet.use.food": PetUseFoodSystem.abi,
   "system.pet.use.renamePotion": PetUseRenamePotionSystem.abi,
   "system.pet.use.revive": PetUseReviveSystem.abi,
+  "system.pet.use.transferrer": PetUseTransferrerSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,

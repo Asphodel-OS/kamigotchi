@@ -1,5 +1,6 @@
 {
   "components": [
+    { "comp": "KamiTransferrerComponent", "name": "KamiTransferrer", "type": "uint256" },
     { "comp": "IsConsumableComponent", "name": "_DeprecatedIsConsumable", "type": "bool" },
     { "comp": "IsLogComponent", "name": "_DeprecatedIsLog", "type": "bool" },
     { "comp": "IsLootboxComponent", "name": "_DeprecatedIsLootbox", "type": "bool" },
@@ -563,6 +564,21 @@
         "TimeLastComponent",
         "TimeResetComponent",
         "TimeStartComponent"
+      ]
+    },
+    {
+      "name": "PetUseTransferrerSystem",
+      "writeAccess": [
+        "IdHolderComponent",
+        "IDTypeComponent",
+        "HasFlagComponent",
+        "HealthComponent",
+        "RateComponent",
+        "ValueComponent",
+        "TimeLastComponent",
+        "TimeResetComponent",
+        "TimeStartComponent",
+        "KamiTransferrerComponent"
       ]
     },
     {

@@ -15,6 +15,7 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
+    KamiTransferrer: defineNumberComponent(world, 'KamiTransferrer', 'component.kami.transfer'),
     _DeprecatedIsConsumable: defineBoolComponent(world, '_DeprecatedIsConsumable', 'component.is.consumable'),
     _DeprecatedIsLog: defineBoolComponent(world, '_DeprecatedIsLog', 'component.is.log'),
     _DeprecatedIsLootbox: defineBoolComponent(world, '_DeprecatedIsLootbox', 'component.is.lootbox'),

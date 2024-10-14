@@ -15,6 +15,7 @@ interface Props {
     feedKami: (kami: Kami, item: Item) => void;
     reviveKami: (kami: Kami, item: Item) => void;
     renamePotionKami: (kami: Kami, item: Item) => void;
+    t1ToT2Kami: (kami: Kami, item: Item) => void; // testnet function, for sending kami from t1 to t2
     feedAccount: (item: Item) => void;
     teleportAccount: (item: Item) => void;
     openLootbox: (item: Item, amount: number) => void;
@@ -50,6 +51,7 @@ export const ItemGrid = (props: Props) => {
     if (item.type === 'FOOD') action = (kami) => actions.feedKami(kami, item);
     else if (item.type === 'REVIVE') action = (kami) => actions.reviveKami(kami, item);
     else if (item.type === 'RENAME_POTION') action = (kami) => actions.renamePotionKami(kami, item);
+    else if (item.type === 'TRANSFERRER') action = (kami) => actions.t1ToT2Kami(kami, item);
 
     return kamis.map((kami) => ({ text: kami.name, onClick: () => action(kami) }));
   };
@@ -59,6 +61,7 @@ export const ItemGrid = (props: Props) => {
     if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
     if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
     if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
+    if (item.type === 'TRANSFERRER') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
     return kamis;
   };
 

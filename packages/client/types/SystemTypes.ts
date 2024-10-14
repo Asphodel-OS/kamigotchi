@@ -48,6 +48,7 @@ import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetUseFoodSystem } from "./ethers-contracts/PetUseFoodSystem";
 import { PetUseRenamePotionSystem } from "./ethers-contracts/PetUseRenamePotionSystem";
 import { PetUseReviveSystem } from "./ethers-contracts/PetUseReviveSystem";
+import { PetUseTransferrerSystem } from "./ethers-contracts/PetUseTransferrerSystem";
 import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSystem";
 import { ProductionLiquidateSystem } from "./ethers-contracts/ProductionLiquidateSystem";
 import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem";
@@ -114,6 +115,7 @@ export type SystemTypes = {
   "system.pet.use.food": PetUseFoodSystem;
   "system.pet.use.renamePotion": PetUseRenamePotionSystem;
   "system.pet.use.revive": PetUseReviveSystem;
+  "system.pet.use.transferrer": PetUseTransferrerSystem;
   "system.Production.Collect": ProductionCollectSystem;
   "system.Production.Liquidate": ProductionLiquidateSystem;
   "system.Production.Start": ProductionStartSystem;

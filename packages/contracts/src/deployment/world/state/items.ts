@@ -7,7 +7,7 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
 
   const ignoreTypes = ['OTHER'];
   const baseTypes = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT'];
-  const consumableTypes = ['FOOD', 'REVIVE', 'RENAME_POTION', 'TELEPORT'];
+  const consumableTypes = ['FOOD', 'REVIVE', 'RENAME_POTION', 'TELEPORT', 'TRANSFERRER'];
   for (let i = 0; i < itemsCSV.length; i++) {
     const item = itemsCSV[i];
     if (
