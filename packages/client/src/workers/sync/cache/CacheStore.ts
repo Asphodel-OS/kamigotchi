@@ -20,9 +20,9 @@ export function createCacheStore() {
   const entityToIndex = new Map<string, number>();
   const blockNumber = 0;
   const state: State = new Map<number, ComponentValue>();
-  const latestBlockFromKamigaze = 0;
-  const latestEntityIdxFromKamigaze = 0;
-  const lastestComponentIdxFromKamigaze = 0;
+  const lastKamigazeBlock = 0;
+  const lastKamigazeEntity = 0;
+  const lastKamigazeComponent = 0;
 
   return {
     components,
@@ -31,9 +31,9 @@ export function createCacheStore() {
     entityToIndex,
     blockNumber,
     state,
-    latestBlockFromKamigaze,
-    latestEntityIdxFromKamigaze,
-    lastestComponentIdxFromKamigaze,
+    lastKamigazeBlock,
+    lastKamigazeEntity,
+    lastKamigazeComponent,
   };
 }
 
@@ -119,6 +119,9 @@ export async function saveCacheStoreToIndexDb(cache: ECSCache, store: CacheStore
   await cache.set('Mappings', 'components', store.components);
   await cache.set('Mappings', 'entities', store.entities);
   await cache.set('BlockNumber', 'current', store.blockNumber);
+  await cache.set('LastKamigazeBlock', 'current', store.lastKamigazeBlock);
+  await cache.set('LastKamigazeEntity', 'current', store.lastKamigazeEntity);
+  await cache.set('LastKamigazeComponent', 'current', store.lastKamigazeComponent);
 }
 
 export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheStore> {
@@ -140,6 +143,10 @@ export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheSto
     entityToIndex.set(entities[i]!, i);
   }
 
+  const lastKamigazeBlock = (await cache.get('LastKamigazeBlock', 'current')) ?? 0;
+  const lastKamigazeEntity = (await cache.get('LastKamigazeEntity', 'current')) ?? 0;
+  const lastKamigazeComponent = (await cache.get('LastKamigazeComponent', 'current')) ?? 0;
+
   return {
     state,
     blockNumber,
@@ -147,9 +154,9 @@ export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheSto
     entities,
     componentToIndex,
     entityToIndex,
-    latestBlockFromKamigaze,
-    latestEntityIdxFromKamigaze,
-    lastestComponentIdxFromKamigaze,
+    lastKamigazeBlock,
+    lastKamigazeEntity,
+    lastKamigazeComponent,
   };
 }
 
@@ -168,9 +175,20 @@ export function getStateCache(
     BlockNumber: number;
     Mappings: string[];
     Snapshot: ECSStateReply;
+    LastKamigazeBlock: number;
+    LastKamigazeEntity: number;
+    LastKamigazeComponent: number;
   }>(
     getCacheId('ECSCache', chainId, worldAddress), // Store a separate cache for each World contract address
-    ['ComponentValues', 'BlockNumber', 'Mappings', 'Snapshot'],
+    [
+      'ComponentValues',
+      'BlockNumber',
+      'Mappings',
+      'Snapshot',
+      'LastKamigazeBlock',
+      'LastKamigazeEntity',
+      'LastKamigazeComponent',
+    ],
     version,
     idb
   );

@@ -57,24 +57,32 @@ export async function fetchStateFromKamigaze(
 ): Promise<CacheStore> {
   const chunkPercentage = Math.ceil(100 / numChunks);
 
-  let currentBlock = cacheStore.blockNumber;
+  let currentBlock = cacheStore.lastKamigazeBlock;
   let initialLoad = currentBlock == 0;
 
   let BlockResponse = await kamigazeClient.getStateBlock({});
   storeBlock(cacheStore, BlockResponse);
-  let componentIdx = initialLoad ? 0 : cacheStore.components.length - 1;
+  cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
+
+  // remove from the cache any component added by the rpc sync
+  cacheStore.components.splice(cacheStore.lastKamigazeComponent + 1);
   let ComponentsResponse = await kamigazeClient.getComponents({
-    fromIdx: componentIdx,
+    fromIdx: cacheStore.lastKamigazeComponent,
   });
   storeComponents(cacheStore, ComponentsResponse.components);
+  cacheStore.lastKamigazeComponent = cacheStore.components.length - 1;
+
   let EntitiesResponse = kamigazeClient.getEntities({
-    fromIdx: cacheStore.entities.length,
+    fromIdx: cacheStore.lastKamigazeEntity,
     numChunks: numChunks,
   });
-  let entityIdx = initialLoad ? 0 : cacheStore.entities.length - 1;
+  // remove from the cache any entity added by the rpc sync
+  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
   for await (const responseChunk of EntitiesResponse) {
     storeEntities(cacheStore, responseChunk.entities);
   }
+  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
+
   if (!initialLoad) {
     let StateRemovalsReponse = await kamigazeClient.getState({
       fromBlock: currentBlock,
@@ -106,7 +114,9 @@ export function storeComponents(cacheStore: CacheStore, components: Component[])
     console.log('No components to store');
     return;
   }
-  if (cacheStore.components.length == 0) cacheStore.components.push('0x0');
+  if (cacheStore.components.length == 0) {
+    cacheStore.components.push('0x0');
+  }
   for (const component of components) {
     var hexId = Uint8ArrayToHexString(component.id);
 
@@ -121,7 +131,7 @@ export function storeComponents(cacheStore: CacheStore, components: Component[])
     cacheStore.components.push(hexId);
     cacheStore.componentToIndex.set(hexId, component.idx);
   }
-  console.log('Stored components');
+  console.log('Stored components: ' + cacheStore.components.length);
 }
 
 export function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
