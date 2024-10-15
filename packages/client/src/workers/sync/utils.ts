@@ -16,9 +16,9 @@ import {
   BlockResponse,
   Component,
   Entity,
+  KamigazeServiceClient,
+  KamigazeServiceDefinition,
   State,
-  StateSnapshotServiceClient,
-  StateSnapshotServiceDefinition,
 } from 'engine/types/kamigaze/kamigaze';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { ComponentsSchema } from 'types/ComponentsSchema';
@@ -45,12 +45,12 @@ export function createStreamClient(url: string): StreamServiceClient {
  * KAMIGAZE INTEGRATION
  */
 
-export function createSnapshotClient(url: string): StateSnapshotServiceClient {
-  return createClient(StateSnapshotServiceDefinition, createChannel(url));
+export function createSnapshotClient(url: string): KamigazeServiceClient {
+  return createClient(KamigazeServiceDefinition, createChannel(url));
 }
-export async function fetchState(
+export async function fetchStateFromKamigaze(
   cacheStore: CacheStore,
-  kamigazeClient: StateSnapshotServiceClient,
+  kamigazeClient: KamigazeServiceClient,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
   setPercentage?: (percentage: number) => void

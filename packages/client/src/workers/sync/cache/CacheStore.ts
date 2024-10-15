@@ -20,8 +20,21 @@ export function createCacheStore() {
   const entityToIndex = new Map<string, number>();
   const blockNumber = 0;
   const state: State = new Map<number, ComponentValue>();
+  const latestBlockFromKamigaze = 0;
+  const latestEntityIdxFromKamigaze = 0;
+  const lastestComponentIdxFromKamigaze = 0;
 
-  return { components, componentToIndex, entities, entityToIndex, blockNumber, state };
+  return {
+    components,
+    componentToIndex,
+    entities,
+    entityToIndex,
+    blockNumber,
+    state,
+    latestBlockFromKamigaze,
+    latestEntityIdxFromKamigaze,
+    lastestComponentIdxFromKamigaze,
+  };
 }
 
 export function storeEvent<Cm extends Components>(
@@ -127,7 +140,17 @@ export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheSto
     entityToIndex.set(entities[i]!, i);
   }
 
-  return { state, blockNumber, components, entities, componentToIndex, entityToIndex };
+  return {
+    state,
+    blockNumber,
+    components,
+    entities,
+    componentToIndex,
+    entityToIndex,
+    latestBlockFromKamigaze,
+    latestEntityIdxFromKamigaze,
+    lastestComponentIdxFromKamigaze,
+  };
 }
 
 export async function getIndexDBCacheStoreBlockNumber(cache: ECSCache): Promise<number> {

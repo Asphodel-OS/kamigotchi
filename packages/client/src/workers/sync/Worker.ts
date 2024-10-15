@@ -53,7 +53,7 @@ import {
   createLatestEventStreamRPC,
   createSnapshotClient,
   fetchEventsInBlockRangeChunked,
-  fetchState,
+  fetchStateFromKamigaze,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -253,7 +253,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     console.log('Entities', initialState.entities.length);
     console.log('StateValues', initialState.state.size);
     console.log('--------------------');
-    initialState = await fetchState(
+    initialState = await fetchStateFromKamigaze(
       initialState,
       kamigazeClient,
       decode,
