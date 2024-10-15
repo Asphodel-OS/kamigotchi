@@ -133,9 +133,11 @@ library LibCommit {
 
   // gets seed from future blockhash and entityID. blockhash needs to be revealed within 256 blocks
   function hashSeed(uint256 blocknumber, uint256 entityID) internal view returns (uint256) {
-    uint256 bhash = uint256(blockhash(blocknumber));
-    require(bhash != 0, "Blockhash unavailable. Contact admin");
-    return uint256(keccak256(abi.encodePacked(bhash, entityID)));
+    /// TODO: blockhash unimplemented in initia, removing it temp. need to implement proper random source.
+    // uint256 bhash = uint256(blockhash(blocknumber));
+    // require(bhash != 0, "Blockhash unavailable. Contact admin");
+    // return uint256(keccak256(abi.encodePacked(bhash, entityID)));
+    return uint256(keccak256(abi.encodePacked(blocknumber, entityID)));
   }
 
   /////////////////

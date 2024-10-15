@@ -25,7 +25,7 @@ export async function deprecateByAddress(
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.split(' ') || []),
+      ...(forgeOpts?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -59,7 +59,7 @@ export async function deprecateByID(
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.split(' ') || []),
+      ...(forgeOpts?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );

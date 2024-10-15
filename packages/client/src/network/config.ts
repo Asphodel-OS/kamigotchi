@@ -90,14 +90,16 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: 'https://json-rpc.minievm-2.initia.xyz',
-    wsRpc: 'wss://json-rpc-websocket.minievm-2.initia.xyz',
-    // snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
+    jsonRpc:
+      'https://maze-jsonrpc-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+    wsRpc:
+      'https://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+    snapshotServiceUrl: 'https://snapshot-lb.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
-    chainId: 4303131403034904,
-    worldAddress: '0x5cFCfc9983ad9284E73882cc674215DF8AC1823e',
-    initialBlockNumber: 112538,
+    chainId: 4471190363524365,
+    worldAddress: '0xeb2DB9B4900fcA1D3B7b130967E4b5D1e68c2bFa',
+    initialBlockNumber: 1181,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;
