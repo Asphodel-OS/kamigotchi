@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
+import { usePrivy } from '@privy-io/react-auth';
 import { ActionButton, CopyButton, Tooltip } from 'app/components/library';
 import { useAccount, useVisibility } from 'app/stores';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();
   const { modals, setModals } = useVisibility();
+  const { exportWallet } = usePrivy();
 
   const truncateAddress = (address: string) => {
     if (!address) return '';
@@ -53,6 +55,10 @@ export const Account = () => {
         {FieldRow('Address', kamiAccount.operatorAddress)}
         {!import.meta.env.DEV &&
           FieldRow('Private Key', localStorage.getItem('operatorPrivateKey') || '')}
+        <Row>
+          <Text>Private Key</Text>
+          <ActionButton text='Export' onClick={() => exportWallet()} size='small' />
+        </Row>
       </Section>
     </Container>
   );
