@@ -36,7 +36,7 @@ export const executeCall = async (
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.split(' ') || []),
+      ...(forgeOpts?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -67,7 +67,7 @@ export const executeCallFromStream = async (
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.split(' ') || []),
+      ...(forgeOpts?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -98,7 +98,7 @@ export const executeGodSystem = async (
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.split(' ') || []),
+      ...(forgeOpts?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
