@@ -257,6 +257,9 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
     console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
     console.log('------------------------------------------------');
+
+    // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
+    // I removed it here just to make sure Kamigaze is working as expected
     initialState = await fetchStateFromKamigaze(
       initialState,
       kamigazeClient,
@@ -274,16 +277,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
     console.log('------------------------------------------------');
 
-    /*
-    await fetchSnapshotChunked(
-      snapshotClient,
-      worldContract.address,
-      decode,
-      config.snapshotNumChunks ?? 10,
-      (percentage: number) => this.setLoadingState({ percentage }),
-      config.pruneOptions
-    );
-    */
     /*
      * FILL THE GAP
      * - Load events between initial and recent state from RPC
