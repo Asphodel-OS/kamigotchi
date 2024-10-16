@@ -1,22 +1,14 @@
+import { usePrivy } from '@privy-io/react-auth';
 import styled from 'styled-components';
 
-import { usePrivy } from '@privy-io/react-auth';
 import { ActionButton, CopyButton, Tooltip } from 'app/components/library';
 import { useAccount, useVisibility } from 'app/stores';
+import { getAbbrevAddr } from 'utils/address';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();
   const { modals, setModals } = useVisibility();
   const { exportWallet } = usePrivy();
-
-  const truncateAddress = (address: string) => {
-    if (!address) return '';
-    return address.slice(0, 6) + '...' + address.slice(-4);
-  };
-
-  const copyText = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
 
   const FieldRow = (label: string, value: string) => {
     return (
@@ -24,10 +16,10 @@ export const Account = () => {
         <Text>{label}</Text>
         <RowContent>
           <Tooltip text={[value]}>
-            <Text>{truncateAddress(value)}</Text>
+            <Text>{getAbbrevAddr(value)}</Text>
           </Tooltip>
           <Tooltip text={['copy']}>
-            <CopyButton onClick={() => copyText(value)}></CopyButton>
+            <CopyButton text={value} />
           </Tooltip>
         </RowContent>
       </Row>

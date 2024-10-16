@@ -268,7 +268,7 @@ export function registerAccountRegistrar() {
               </IconButton>
             </Tooltip>
             <Tooltip text={['copy address']}>
-              <CopyButton onClick={() => copyBurnerAddress()} />
+              <CopyButton text={burnerAddress} />
             </Tooltip>
           </AddressRow>
         );

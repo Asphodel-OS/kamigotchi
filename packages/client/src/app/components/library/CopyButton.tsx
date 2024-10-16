@@ -1,11 +1,11 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { IconButton, Snackbar } from '@mui/material';
+import { IconButton, Snackbar, SnackbarContent } from '@mui/material';
 import { useState } from 'react';
 
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  onClick: Function;
+  text: string;
 }
 
 // CopyButton provides visual and audio feedback to match common copy-button affordances.
@@ -16,9 +16,8 @@ export const CopyButton = (props: Props) => {
 
   const handleClick = () => {
     playClick();
-    props.onClick();
+    navigator.clipboard.writeText(props.text);
     setOpen(true);
-    // navigator.clipboard.writeText(window.location.toString())
   };
 
   return (
@@ -30,12 +29,23 @@ export const CopyButton = (props: Props) => {
         open={open}
         onClose={() => setOpen(false)}
         autoHideDuration={2000}
-        message='Copied to clipboard'
         anchorOrigin={{
-          vertical: 'bottom',
+          vertical: 'top',
           horizontal: 'right',
         }}
-      />
+      >
+        <SnackbarContent
+          style={{
+            backgroundColor: '#fff',
+            color: '#333',
+            borderRadius: '0.6vw',
+            padding: '0.6vw',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          message='Copied to clipboard'
+        />
+      </Snackbar>
     </>
   );
 };
