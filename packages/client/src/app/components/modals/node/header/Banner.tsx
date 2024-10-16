@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconListButton, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 import { harvestIcon } from 'assets/images/icons/actions';
 import { getRarities } from 'constants/rarities';
 import { rooms } from 'constants/rooms';
@@ -87,7 +88,7 @@ export const Banner = (props: Props) => {
 
     return (
       <Tooltip text={[getDisabledReason(kamis)]} grow>
-        <IconListButton
+        <IconButtonHybrid
           key={`harvest-add`}
           img={harvestIcon}
           options={actionOptions}

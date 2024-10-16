@@ -1,7 +1,8 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
+import { ActionButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
@@ -108,7 +109,11 @@ export function registerEMABoardModal() {
         if (!disabled) tooltipText = `use holy dust (${dustAmt})`;
 
         const button = (
-          <IconButton img={useIcon} onClick={() => useRenamePotion(kami)} disabled={disabled} />
+          <IconButtonHybrid
+            img={useIcon}
+            onClick={() => useRenamePotion(kami)}
+            disabled={disabled}
+          />
         );
 
         return <Tooltip text={[tooltipText]}>{button}</Tooltip>;

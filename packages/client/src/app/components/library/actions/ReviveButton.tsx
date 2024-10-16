@@ -2,7 +2,8 @@ import { reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Inventory, filterInventories } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { IconButton, Tooltip } from '../base';
+import { Tooltip } from '../base';
+import { IconButtonHybrid } from '../base/buttons/IconButtonHybrid';
 
 // button for reviving kami
 export const ReviveButton = (kami: Kami, account: Account, triggerAction: Function) => {
@@ -15,7 +16,7 @@ export const ReviveButton = (kami: Kami, account: Account, triggerAction: Functi
 
   return (
     <Tooltip text={[tooltipText]}>
-      <IconButton
+      <IconButtonHybrid
         img={reviveIcon}
         onClick={() => triggerAction(kami, reviveIndex)}
         disabled={!hasRevive(account)}

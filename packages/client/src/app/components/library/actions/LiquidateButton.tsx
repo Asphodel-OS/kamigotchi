@@ -1,4 +1,3 @@
-import { IconListButton } from 'app/components/library';
 import { liquidateIcon } from 'assets/images/icons/actions';
 import {
   calcLiqKarma,
@@ -9,6 +8,7 @@ import {
 } from 'network/shapes/Harvest';
 import { isStarving, Kami, onCooldown } from 'network/shapes/Kami';
 import { Tooltip } from '../base';
+import { IconButtonHybrid } from '../base/buttons/IconButtonHybrid';
 
 // button for liquidating a harvest
 // TODO: clean this up
@@ -24,10 +24,11 @@ export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Fun
     };
   });
 
+  // eslint-disable-next-line prefer-const
   let tooltipText = getLiquidateTooltip(target, allies);
   return (
     <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
-      <IconListButton
+      <IconButtonHybrid
         key='liquidate-button'
         img={liquidateIcon}
         options={actionOptions}

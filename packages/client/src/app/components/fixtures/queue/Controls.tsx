@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { formatEther } from 'viem';
 import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
-import { GasGauge, IconButton, Tooltip } from 'app/components/library';
+import { GasGauge, Tooltip } from 'app/components/library';
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';
@@ -54,6 +55,7 @@ export const Controls = (props: Props) => {
   // INTERPRETATION
 
   // calculated the gas gauge level
+  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
   const calcGaugeSetting = (balance: bigint = BigInt(0)): number => {
     const formatted = Number(formatEther(balance));
     const level = formatted / GasConstants.Full;
@@ -113,7 +115,7 @@ export const Controls = (props: Props) => {
         </Tooltip>
         {PriceWarning()}
       </RowPrefix>
-      <IconButton onClick={() => toggleMode()} img={iconMapping[mode]} />
+      <IconButtonHybrid onClick={() => toggleMode()} img={iconMapping[mode]} />
     </Row>
   );
 };

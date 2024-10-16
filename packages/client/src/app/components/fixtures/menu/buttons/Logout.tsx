@@ -1,6 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 
-import { IconListButton, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 import { useVisibility } from 'app/stores';
 import { logoutIcon } from 'assets/images/icons/actions';
 import { helpIcon, settingsIcon } from 'assets/images/icons/menu';
@@ -55,7 +56,7 @@ export const LogoutMenuButton = () => {
 
   return (
     <Tooltip text={['More']}>
-      <IconListButton
+      <IconButtonHybrid
         img={settingsIcon}
         options={[
           { text: 'Settings', image: settingsIcon, onClick: toggleSettings },

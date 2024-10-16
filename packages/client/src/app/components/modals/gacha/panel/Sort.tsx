@@ -1,6 +1,5 @@
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 import styled from 'styled-components';
-
-import { IconButton } from 'app/components/library';
 
 interface Props {
   name: string;
@@ -22,7 +21,7 @@ export const Sort = (props: Props) => {
 
   return (
     <Container>
-      <IconButton img={icon} onClick={flip} text={getLabel()} size={2} noMargin />
+      <IconButtonHybrid img={icon} onClick={flip} text={getLabel()} size={2} noMargin />
     </Container>
   );
 };

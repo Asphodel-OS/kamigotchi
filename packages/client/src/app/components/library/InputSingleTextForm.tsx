@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import PlaceholderIcon from 'assets/images/icons/placeholder.png';
 import { playClick } from 'utils/sounds';
-import { IconButton, Tooltip } from './base';
+import { Tooltip } from './base';
+import { IconButtonHybrid } from './base/buttons/IconButtonHybrid';
 
 interface Props {
   fullWidth?: boolean; // whether the input should take up the full width of its container
@@ -73,7 +74,7 @@ export const InputSingleTextForm = (props: Props) => {
       </InputGroup>
       {hasButton && (
         <Tooltip text={getButtonTooltip()}>
-          <IconButton
+          <IconButtonHybrid
             img={buttonIcon ?? PlaceholderIcon}
             onClick={() => handleSubmit()}
             disabled={isButtonDisabled()}

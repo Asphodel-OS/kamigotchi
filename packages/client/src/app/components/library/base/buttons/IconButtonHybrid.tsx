@@ -7,13 +7,18 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   img: string;
-  options: Option[];
+  options?: Option[];
   text?: string;
   balance?: number;
   disabled?: boolean;
   fullWidth?: boolean;
   scale?: number;
   scalesOnHeight?: boolean;
+  onClick?: () => void;
+  size?: number;
+  color?: string;
+  noMargin?: boolean;
+  pulse?: boolean;
 }
 
 export interface Option {
@@ -23,19 +28,32 @@ export interface Option {
   disabled?: boolean;
 }
 
-export function IconListButton(props: Props) {
-  const { img, options, text, balance, disabled, fullWidth } = props;
+export function IconButtonHybrid(props: Props) {
+  const {
+    img,
+    options,
+    text,
+    balance,
+    disabled,
+    fullWidth,
+    onClick,
+    size,
+    color,
+    pulse,
+    noMargin,
+  } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const scale = props.scale ?? 1.4;
   const scaleOrientation = props.scalesOnHeight ? 'vh' : 'vw';
 
-  function handleClick(event?: React.MouseEvent<HTMLButtonElement>) {
+  const handleClick = async (event?: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
       playClick();
       event ? setAnchorEl(event.currentTarget) : setAnchorEl(null);
+      onClick && (await onClick());
     }
-  }
+  };
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
@@ -65,10 +83,15 @@ export function IconListButton(props: Props) {
         }}
         disabled={!!disabled}
         fullWidth={!!fullWidth}
+        color={color ?? '#fff'}
       >
-        {balance ? <Balance>{balance}</Balance> : <Corner />}
+        {options && (balance ? <Balance>{balance}</Balance> : <Corner />)}
         <Image src={img} scale={scale} orientation={scaleOrientation} />
-        {text && <Text>{text}</Text>}
+        {text && (
+          <Text options={options} scale={scale}>
+            {text}
+          </Text>
+        )}
       </Button>
       {options && (
         <Popover
@@ -101,7 +124,6 @@ const Button = styled.button<ButtonProps>`
   border: solid black 0.15vw;
   border-radius: 0.45vw;
   color: black;
-
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
   padding: 0.4vw;
   gap: 0.4vw;
@@ -125,10 +147,9 @@ const Image = styled.img<{ scale: number; orientation: string }>`
   ${({ scale }) => (scale > 3.2 ? 'image-rendering: pixelated;' : '')}
 `;
 
-const Text = styled.div`
-  font-size: 0.8vw;
+const Text = styled.div<{ scale: number; options?: Option[] }>`
+  font-size: ${({ scale, options }) => (options ? scale * 0.25 : scale * 0.8)}vw;
 `;
-
 const Corner = styled.div`
   position: absolute;
   border: solid black 0.3vw;

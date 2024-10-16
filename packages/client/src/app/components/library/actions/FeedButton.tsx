@@ -1,9 +1,10 @@
-import { IconListButton, IconListButtonOption } from 'app/components/library';
+import { IconListButtonOption } from 'app/components/library';
 import { feedIcon } from 'assets/images/icons/actions';
 import { Account, hasFood } from 'network/shapes/Account';
 import { filterInventories, Inventory } from 'network/shapes/Item';
 import { calcCooldown, isFull, isHarvesting, Kami } from 'network/shapes/Kami';
 import { Tooltip } from '../base';
+import { IconButtonHybrid } from '../base/buttons/IconButtonHybrid';
 
 // button for feeding a kami
 export const FeedButton = (kami: Kami, account: Account, triggerAction: Function) => {
@@ -18,7 +19,7 @@ export const FeedButton = (kami: Kami, account: Account, triggerAction: Function
 
   return (
     <Tooltip key='feed-tooltip' text={[tooltip]}>
-      <IconListButton img={feedIcon} options={options} disabled={disabled} />
+      <IconButtonHybrid img={feedIcon} options={options} disabled={disabled} />
     </Tooltip>
   );
 };

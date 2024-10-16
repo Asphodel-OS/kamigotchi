@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
-import { EmptyText, IconListButton, Tooltip } from 'app/components/library';
+import { EmptyText, Tooltip } from 'app/components/library';
 import { Option } from 'app/components/library/base/buttons/IconListButton';
 import { Account, getAccessibleKamis } from 'network/shapes/Account';
 import { Inventory, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 
@@ -82,7 +83,7 @@ export const ItemGrid = (props: Props) => {
 
     return (
       <Tooltip key={item.index} text={[item.name, '', item.description ?? '']}>
-        <IconListButton
+        <IconButtonHybrid
           key={item.index}
           img={item.image}
           scale={4.8}

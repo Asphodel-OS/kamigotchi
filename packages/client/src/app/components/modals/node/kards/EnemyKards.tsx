@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-import { IconListButton, KamiCard } from 'app/components/library';
+import { KamiCard } from 'app/components/library';
 import { LiquidateButton } from 'app/components/library/actions';
+import { IconButtonHybrid } from 'app/components/library/base/buttons/IconButtonHybrid';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { kamiIcon } from 'assets/images/icons/menu';
@@ -92,7 +93,7 @@ export const EnemyCards = (props: Props) => {
       <Row>
         <Title>Enemies</Title>
         <Sort>
-          <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} />
+          <IconButtonHybrid img={SortMap[sort]} text={sort} options={sortOptions} />
         </Sort>
       </Row>
       {sorted.map((kami: Kami) => {
