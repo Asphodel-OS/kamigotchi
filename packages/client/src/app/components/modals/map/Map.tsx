@@ -6,6 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getNodeByIndex } from 'network/shapes/Node';
 import { Room, getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { Grid } from './Grid';
 
@@ -41,6 +42,9 @@ export function registerMapModal() {
       const [hoveredRoom, setHoveredRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
+      const getNode = (roomIndex: number) => {
+        return getNodeByIndex(world, components, roomIndex, { kamis: true });
+      };
 
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
@@ -92,12 +96,11 @@ export function registerMapModal() {
           truncate
         >
           <Grid
-            world={world}
-            components={components}
             index={selectedRoom}
             zone={zone}
             rooms={roomMap}
             actions={{ move, setHoveredRoom }}
+            utils={{ getNode }}
           />
         </ModalWrapper>
       );

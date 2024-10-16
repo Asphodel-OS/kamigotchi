@@ -1,17 +1,13 @@
 import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { World } from '@mud-classic/recs';
 import { Tooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
-import { Components } from 'network/';
-import { getNodeByIndex } from 'network/shapes/Node';
+import { Node } from 'network/shapes/Node';
 import { Room, emptyRoom } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  world: World;
-  components: Components;
   index: number; // index of current room
   zone: number;
   rooms: Map<number, Room>;
@@ -19,9 +15,10 @@ interface Props {
     move: (roomIndex: number) => void;
     setHoveredRoom: (roomIndex: number) => void;
   };
+  utils: { getNode: (roomIndex: number) => Node };
 }
 export const Grid = (props: Props) => {
-  const { world, components, index, zone, rooms, actions } = props;
+  const { index, zone, rooms, actions, utils } = props;
   const [grid, setGrid] = useState<Room[][]>([]);
   const [numberOfKamis, setNumberOfKamis] = useState('0');
   const [numberOfPlayers, setNumberOfPlayers] = useState('0');
@@ -66,6 +63,7 @@ export const Grid = (props: Props) => {
 
     setGrid(grid);
   }, [zone]);
+  //
 
   /////////////////
   // INTERACTIONS
@@ -115,7 +113,7 @@ export const Grid = (props: Props) => {
                   isHighlighted={isCurrRoom || isExit}
                   onMouseEnter={() => {
                     if (isRoom) actions.setHoveredRoom(room.index);
-                    const node = getNodeByIndex(world, components, room.index, { kamis: true });
+                    const node = utils.getNode(room.index);
                     setNumberOfPlayers(room.players?.length.toString() ?? '0');
                     setNumberOfKamis(node.kamis.length.toString());
                   }}
