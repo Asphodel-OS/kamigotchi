@@ -54,13 +54,15 @@ export function registerLoadingState() {
       const getStatus = () => {
         if (state !== SyncState.LIVE) return msg;
         const rand = Math.random();
-        const eeggOdds = 1 / 1e2;
+        const eEggOdds = 1 / 1e3;
 
-        if (rand < eeggOdds) return 'good luck o7';
-        else if (rand < 2 * eeggOdds) return 'play nice now :3';
-        else if (rand < 3 * eeggOdds) return 'we are always ._. watching';
-        else if (rand < 4 * eeggOdds) return 'behind you..';
-        else if (rand < 5 * eeggOdds) return 'enjoy your visit ^^';
+        if (rand < eEggOdds) return 'good luck o7';
+        else if (rand < 2 * eEggOdds) return 'play nice now :3';
+        else if (rand < 3 * eEggOdds) return 'we are always ._. watching';
+        else if (rand < 4 * eEggOdds) return 'behind you..';
+        else if (rand < 5 * eEggOdds) return 'enjoy your visit ^^';
+        else if (rand < 6 * eEggOdds) return 'S> Fame @@@@@@@ @ @@@@@@@';
+        else if (rand < 7 * eEggOdds) return 'kms';
         else return 'transporting you shortly~';
       };
 
