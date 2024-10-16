@@ -5,7 +5,7 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   img: string;
-  onClick: Function;
+  onClick: () => void;
   text?: string;
   size?: number;
   color?: string;
@@ -16,29 +16,18 @@ interface Props {
 
 // ActionButton is a text button that triggers an Action when clicked
 export const IconButton = (props: Props) => {
-  const { img, onClick, text, size, disabled, color, pulse, noMargin } = props;
+  const { img, onClick, text, size, color, disabled, pulse, noMargin } = props;
   const scale = size ?? 2.5;
-
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
     await onClick();
   };
 
-  // override styles for sizes and disabling
-  const setStyles = () => {
-    let styles: any = {};
-    if (color) styles.backgroundColor = color;
-    if (disabled) styles.backgroundColor = '#b2b2b2';
-
-    return styles;
-  };
-
   return (
     <Button
       scale={scale}
       onClick={!disabled ? handleClick : () => {}}
-      style={setStyles()}
       color={color ?? '#fff'}
       pulse={pulse}
       noMargin={noMargin}

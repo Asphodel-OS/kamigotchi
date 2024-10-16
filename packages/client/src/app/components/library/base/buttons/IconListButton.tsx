@@ -18,35 +18,30 @@ interface Props {
 
 export interface Option {
   text: string;
-  onClick: Function;
+  onClick: () => void;
   image?: string;
   disabled?: boolean;
 }
 
 export function IconListButton(props: Props) {
-  const { img, options, text, balance } = props;
-  const { disabled, fullWidth } = props;
+  const { img, options, text, balance, disabled, fullWidth } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const scale = props.scale ?? 1.4;
   const scaleOrientation = props.scalesOnHeight ? 'vh' : 'vw';
 
-  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  function handleClick(event?: React.MouseEvent<HTMLButtonElement>) {
     if (!disabled) {
       playClick();
-      setAnchorEl(event.currentTarget);
+      event ? setAnchorEl(event.currentTarget) : setAnchorEl(null);
     }
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  }
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
     playClick();
     option.onClick();
-    handleClose();
+    handleClick();
   };
 
   const open = Boolean(anchorEl);
@@ -63,7 +58,14 @@ export function IconListButton(props: Props) {
 
   return (
     <Wrapper>
-      <Button ref={toggleRef} onClick={handleOpen} disabled={!!disabled} fullWidth={!!fullWidth}>
+      <Button
+        ref={toggleRef}
+        onClick={(e) => {
+          handleClick(e);
+        }}
+        disabled={!!disabled}
+        fullWidth={!!fullWidth}
+      >
         {balance ? <Balance>{balance}</Balance> : <Corner />}
         <Image src={img} scale={scale} orientation={scaleOrientation} />
         {text && <Text>{text}</Text>}
@@ -72,7 +74,9 @@ export function IconListButton(props: Props) {
         id={id}
         open={open}
         anchorEl={anchorEl}
-        onClose={handleClose}
+        onClose={() => {
+          handleClick();
+        }}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         <Menu>{options.map((option, i) => MenuItem(option, i))}</Menu>
