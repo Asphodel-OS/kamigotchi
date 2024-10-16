@@ -53,8 +53,6 @@ export const Account = () => {
       <Section key='operator'>
         <SubHeader>Operator (Embedded Wallet)</SubHeader>
         {FieldRow('Address', kamiAccount.operatorAddress)}
-        {!import.meta.env.DEV &&
-          FieldRow('Private Key', localStorage.getItem('operatorPrivateKey') || '')}
         <Row>
           <Text>Private Key</Text>
           <ActionButton text='Export' onClick={() => exportWallet()} size='small' />
