@@ -267,7 +267,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       config.snapshotNumChunks ?? 10,
       (percentage: number) => this.setLoadingState({ percentage })
     );
-    console.log('CACHE STORE AFTER SYNC <------------------------');
+    console.log('CACHE STORE AFTER SYNC <------------------------ ');
     console.log('BlockNumber', initialState.blockNumber);
     console.log('Components', initialState.components.length);
     console.log('Entities', initialState.entities.length);
