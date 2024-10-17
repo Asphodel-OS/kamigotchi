@@ -13,7 +13,7 @@ export const room49: Room = {
   objects: [
     {
       name: 'gate',
-      coordinates: { x1: 40, y1: 90, x2: 75, y2: 125 },
+      coordinates: { x1: 40, y1: 40, x2: 75, y2: 125 },
       onClick: () => triggerGoalModal([7]),
     },
   ],
