@@ -7,9 +7,12 @@ import {
   getAccountByIndex,
   getAccountByName,
   getAccountByOwner,
+  getAccountCoinStats,
   getAccountItemStats,
+  getAccountKillStats,
   getAccountRepStats,
   getAllAccounts,
+  getOverallAccountStats,
 } from 'network/shapes/Account';
 import { getByOperator } from 'network/shapes/Account/getters';
 
@@ -37,10 +40,13 @@ export const accounts = (world: World, components: Components) => {
       reputation: (limit?: number) => getAccountRepStats(world, components, limit),
     },
     stats: {
+      coin: (limit?: number) => getAccountCoinStats(world, components, limit),
       item: (index?: number, limit?: number) =>
         getAccountItemStats(world, components, index, limit),
-      musu: (limit?: number) => getAccountItemStats(world, components, limit),
-      reputation: (limit?: number) => getAccountRepStats(world, components, limit),
+      kill: (limit?: number) => getAccountKillStats(world, components, limit),
+      musu: (limit?: number) => getAccountItemStats(world, components, 1, limit),
+      rep: (limit?: number) => getAccountRepStats(world, components, limit),
+      overall: (limit?: number) => getOverallAccountStats(world, components, limit),
     },
   };
 };

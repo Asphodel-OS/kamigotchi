@@ -17,8 +17,11 @@ export {
   queryFromBurner as queryAccountFromBurner,
 } from './queries';
 export {
+  getCoinStats as getAccountCoinStats,
   getItemStats as getAccountItemStats,
+  getKillStats as getAccountKillStats,
   getReputationStats as getAccountRepStats,
+  getOverallStats as getOverallAccountStats,
 } from './stats';
 
 export { NullAccount, getAccount, getBaseAccount } from './types';
