@@ -17,8 +17,8 @@ export {
   queryFromBurner as queryAccountFromBurner,
 } from './queries';
 export {
-  getMusuRankings as getAccountMusuRankings,
-  getReputationRankings as getAccountRepRankings,
+  getItemStats as getAccountItemStats,
+  getReputationStats as getAccountRepStats,
 } from './stats';
 
 export { NullAccount, getAccount, getBaseAccount } from './types';

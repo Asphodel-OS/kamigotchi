@@ -1,35 +1,19 @@
 import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import {
-  AccountOptions,
-  getAccountByID,
-  getAccountByIndex,
-  getAccountByName,
-  getAccountByOwner,
-  getAccountMusuRankings,
-  getAccountRepRankings,
-  getAllAccounts,
-  queryAccountByIndex,
-} from 'network/shapes/Account';
-import { getByOperator } from 'network/shapes/Account/getters';
-import { getConfigFieldValue, getConfigFieldValueArray } from 'network/shapes/Config';
-import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
-import { getAllFactions, getFactionByIndex } from 'network/shapes/Faction';
-import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
+import { AccountOptions } from 'network/shapes/Account';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllNPCs, getNPCByIndex } from 'network/shapes/NPCs';
-import {
-  getQuest,
-  getQuestByIndex,
-  queryAcceptedQuests,
-  queryRegistryQuests,
-} from 'network/shapes/Quest';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { getRegistrySkills, getSkillByIndex } from 'network/shapes/Skill';
 import { getRegistryTraits, getTraitByIndex } from 'network/shapes/Trait';
+import { accounts } from './accounts';
+import { configs } from './configs';
+import { factions } from './factions';
+import { goals } from './goals';
+import { quests } from './quests';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
 export const initExplorer = (world: World, components: Components) => {
@@ -57,39 +41,10 @@ export const initExplorer = (world: World, components: Components) => {
   }
 
   return {
-    accounts: {
-      all: (options?: AccountOptions) => getAllAccounts(world, components, options),
-      get: (index: number) => getAccountByIndex(world, components, index, fullAccountOptions),
-      getByID: (id: EntityID) => getAccountByID(world, components, id, fullAccountOptions),
-      getByOwner: (owner: string) =>
-        getAccountByOwner(world, components, owner.toLowerCase(), fullAccountOptions),
-      getByOperator: (operator: string) =>
-        getByOperator(world, components, operator.toLowerCase(), fullAccountOptions),
-      getByName: (name: string) => getAccountByName(world, components, name, fullAccountOptions),
-      entities: () => Array.from(components.IsAccount.entities()),
-      indices: () => Array.from(components.AccountIndex.values.value.values()),
-      rankings: {
-        musu: (limit?: number) => getAccountMusuRankings(world, components, limit),
-        reputation: (limit?: number) => getAccountRepRankings(world, components, limit),
-      },
-    },
-
-    config: {
-      get: (name: string) => getConfigFieldValue(world, components, name),
-      getArray: (name: string) => getConfigFieldValueArray(world, components, name),
-      getAddress: (name: string) => getConfigFieldValueAddress(world, components, name),
-    },
-
-    goals: {
-      all: () => getAllGoals(world, components),
-      get: (index: number) => getGoalByIndex(world, components, index),
-    },
-
-    factions: {
-      all: () => getAllFactions(world, components),
-      get: (index: number) => getFactionByIndex(world, components, index),
-      indices: () => Array.from(components.FactionIndex.values.value.values()),
-    },
+    accounts: accounts(world, components),
+    configs: configs(world, components),
+    factions: factions(world, components),
+    goals: goals(world, components),
 
     kamis: {
       all: (options?: KamiOptions) => getAllKamis(world, components, options),
@@ -136,23 +91,7 @@ export const initExplorer = (world: World, components: Components) => {
       indices: () => [...new Set(Array.from(components.ItemIndex.values.value.values()))],
     },
 
-    quests: {
-      all: () => {
-        const entities = queryRegistryQuests(components);
-        const quests = entities.map((entity) => getQuest(world, components, entity));
-        return quests.sort((a, b) => a.index - b.index);
-      },
-      get: (index: number) => getQuestByIndex(world, components, index),
-      getForAccount: (accountIndex: number) => {
-        const accEntity = queryAccountByIndex(components, accountIndex) as EntityIndex;
-        const accountID = world.entities[accEntity];
-        const entities = queryAcceptedQuests(components, accountID);
-        const quests = entities.map((entity) => getQuest(world, components, entity));
-        return quests.sort((a, b) => a.index - b.index);
-      },
-      indices: () => [...new Set(Array.from(components.QuestIndex.values.value.values()))],
-    },
-
+    quests: quests(world, components),
     skills: {
       all: () => getRegistrySkills(world, components),
       get: (index: number, options?: {}) => getSkillByIndex(world, components, index, options),

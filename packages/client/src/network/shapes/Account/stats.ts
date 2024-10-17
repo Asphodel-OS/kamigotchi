@@ -2,11 +2,11 @@ import { World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { getReputation } from '../Faction';
-import { getMusuBalance } from '../Item';
+import { getItemBalance } from '../Item';
 import { queryAll } from './queries';
 
 // return the ranked reputation values of all accounts
-export const getReputationRankings = (
+export const getReputationStats = (
   world: World,
   components: Components,
   limit?: number,
@@ -40,10 +40,11 @@ export const getReputationRankings = (
 };
 
 // return the ranked musu balances of all accounts
-export const getMusuRankings = (
+export const getItemStats = (
   world: World,
   components: Components,
-  limit?: number,
+  index = 1,
+  limit = 200,
   flatten = true
 ) => {
   const { AccountIndex, Name } = components;
@@ -53,17 +54,17 @@ export const getMusuRankings = (
     return {
       index: getComponentValue(AccountIndex, entityIndex)?.value as number,
       name: getComponentValue(Name, entityIndex)?.value as string,
-      coin: getMusuBalance(world, components, id),
+      amt: getItemBalance(world, components, id, index),
     };
   });
 
   // sort and filter
-  const ranked = raw.sort((a, b) => b.coin - a.coin);
+  const ranked = raw.sort((a, b) => b.amt - a.amt);
   const truncated = ranked.slice(0, limit ?? raw.length);
 
   // optionally flatten and return
   if (flatten) {
-    return truncated.map((result, ranking) => `${ranking + 1}. ${result.name}: ${result.coin}`);
+    return truncated.map((result, ranking) => `${ranking + 1}. ${result.name}: ${result.amt}`);
   }
   return truncated;
 };
