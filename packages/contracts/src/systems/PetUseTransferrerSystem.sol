@@ -40,7 +40,7 @@ contract PetUseTransferrerSystem is System {
     // use item
     LibPet.sync(components, petID);
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
-    KamiTransferrerComponent(getAddrByID(components, KamiTransferrerCompID)).set(petID, petID);
+    KamiTransferrerComponent(getAddrByID(components, KamiTransferrerCompID)).set(accID, petID);
 
     // reset the pet's intensity
     if (LibPet.isHarvesting(components, petID)) {

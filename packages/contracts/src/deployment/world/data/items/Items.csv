@@ -2,7 +2,7 @@
 Items%201b9894152b7f4649a68169aa3a6bcffe/musu.png,1,1,MUSU,Ingame,Misc,,Kamigotchi kurrency,,,,,,,,,,,,No
 Items%201b9894152b7f4649a68169aa3a6bcffe/kamigotchi_ticket_native.png,2,2,Gacha Ticket,Ingame,Misc,,"Redeemable for one Kami. You should take this to the vending machine… ",,,,,,,,,,,,No
 Items%201b9894152b7f4649a68169aa3a6bcffe/passport_yellow.png,3,3,Kamigotchi World Passport,Ingame,NFT,,,,,,,,,,,,,,Yes
-,4,,Testnet transfer item (placeholder name),For Implementation,Transferrer,Kami,,,,,,,,,,,,,No
+Items%201b9894152b7f4649a68169aa3a6bcffe/pomegranate_native.png,4,,Pomegranate,For Implementation,Transferrer,Kami,"Allows you to save one Kamigotchi from Testnet 1 and carry it over to Testnet 2. Choose wisely.",,,,,,,,,,,,No
 Items%201b9894152b7f4649a68169aa3a6bcffe/ghost_gum_wip_native.png,101,11301,Maple-Flavor Ghost Gum,Ingame,Food,Kami,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. ",25,,,,,,,,,,,No
 Items%201b9894152b7f4649a68169aa3a6bcffe/pom_poms_candy_wip_native.png,102,11303,Pom-Pom Fruit Candy,Ingame,Food,Kami,These fruit candies contain a huge amount of energy. Restores 100 Health to a Kamigotchi.,100,,,,,,,,,,,No
 Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,103,11304,Gakki Cookie Sticks,Ingame,Food,Kami,Heavy duty rations by a Kami’s standards.. Restores 200 Health to a Kamigotchi.,200,,,,,,,,,,,No
