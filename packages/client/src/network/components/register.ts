@@ -15,6 +15,7 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
+    VRF: defineStringComponent(world, 'VRF', 'component.VRF'),
     OperatorAddress: defineStringComponent(world, 'OperatorAddress', 'component.address.operator'),
     OwnerAddress: defineStringComponent(world, 'OwnerAddress', 'component.address.owner'),
     Affinity: defineStringComponent(world, 'Affinity', 'component.affiinity'),
