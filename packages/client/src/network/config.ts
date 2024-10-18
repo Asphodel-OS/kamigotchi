@@ -90,7 +90,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: 'https://yominet.rpc.caldera.xyz/http/',
+    jsonRpc: '/http', //https://yominet.rpc.caldera.xyz/http/',
     wsRpc: 'wss://yominet.rpc.caldera.xyz/ws/',
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
     //snapshotServiceUrl: 'http://localhost:80',
