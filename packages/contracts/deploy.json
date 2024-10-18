@@ -1,16 +1,5 @@
 {
   "components": [
-    { "comp": "KamiTransferrerComponent", "name": "KamiTransferrer", "type": "uint256" },
-    { "comp": "IsConsumableComponent", "name": "_DeprecatedIsConsumable", "type": "bool" },
-    { "comp": "IsLogComponent", "name": "_DeprecatedIsLog", "type": "bool" },
-    { "comp": "IsLootboxComponent", "name": "_DeprecatedIsLootbox", "type": "bool" },
-    { "comp": "IsObjectiveComponent", "name": "_DeprecatedIsObjective", "type": "bool" },
-    { "comp": "IsRequirementComponent", "name": "_DeprecatedIsRequirement", "type": "bool" },
-    { "comp": "IsRewardComponent", "name": "_DepreciatedIsReward", "type": "bool" },
-    { "comp": "HashComponent", "name": "_DeprecatedHash", "type": "uint256", "FEtype": "string" },
-    { "comp": "PriceBuyComponent", "name": "_DeprecatedPriceBuy", "type": "uint256" },
-    { "comp": "PriceSellComponent", "name": "_DeprecatedPriceSell", "type": "uint256" },
-    { "comp": "ProxyPermissionsFarm20Component", "name": "_DeprecatedProxyPermissionsFarm20", "type": "bool" },
     { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
     { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
     { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
@@ -28,18 +17,14 @@
     { "comp": "HasFlagComponent", "name": "HasFlag", "type": "bool" },
     { "comp": "HarmonyComponent", "name": "Harmony", "type": "Stat" },
     { "comp": "HealthComponent", "name": "Health", "type": "Stat" },
-    { "comp": "IdAccountComponent", "name": "AccountID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdDelegateeComponent", "name": "DelegateeID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdDelegatorComponent", "name": "DelegatorID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDFromComponent", "name": "FromID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdHolderComponent", "name": "HolderID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDParentComponent", "name": "ParentID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsInventoryComponent", "name": "OwnsInventoryID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsQuestComponent", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsRelationshipComponent", "name": "OwnsRelationshipID", "type": "uint256", "FEtype": "string" },
+    { "comp": "IDOwnsSkillComponent", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDOwnsKamiComponent", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdNodeComponent", "name": "NodeID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdPetComponent", "name": "KamiID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDRoomComponent", "name": "RoomID", "type": "uint256", "FEtype": "string" },
     { "comp": "IdSourceComponent", "name": "SourceID", "type": "uint256", "FEtype": "string" },
     { "comp": "IDTypeComponent", "name": "TypeID", "type": "uint256", "FEtype": "string" },
@@ -62,26 +47,10 @@
     { "comp": "IndexRelationshipComponent", "name": "RelationshipIndex", "type": "uint32" },
     { "comp": "IndexRoomComponent", "name": "RoomIndex", "type": "uint32" },
     { "comp": "IndexSkillComponent", "name": "SkillIndex", "type": "uint32" },
-    { "comp": "IsAccountComponent", "name": "IsAccount", "type": "bool" },
-    { "comp": "IsBonusComponent", "name": "IsBonus", "type": "bool" },
     { "comp": "IsCompleteComponent", "name": "IsComplete", "type": "bool" },
-    { "comp": "IsEffectComponent", "name": "IsEffect", "type": "bool" },
-    { "comp": "IsEquippedComponent", "name": "IsEquipped", "type": "bool" },
-    { "comp": "IsFriendshipComponent", "name": "IsFriendship", "type": "bool" },
-    { "comp": "IsInventoryComponent", "name": "IsInventory", "type": "bool" },
-    { "comp": "IsGoalComponent", "name": "IsGoal", "type": "bool" },
     { "comp": "IsKillComponent", "name": "IsKill", "type": "bool" },
-    { "comp": "IsListingComponent", "name": "IsListing", "type": "bool" },
-    { "comp": "IsNodeComponent", "name": "IsNode", "type": "bool" },
-    { "comp": "IsNPCComponent", "name": "IsNPC", "type": "bool" },
-    { "comp": "IsPetComponent", "name": "IsPet", "type": "bool" },
-    { "comp": "IsProductionComponent", "name": "IsProduction", "type": "bool" },
     { "comp": "IsRegistryComponent", "name": "IsRegistry", "type": "bool" },
-    { "comp": "IsRelationshipComponent", "name": "IsRelationship", "type": "bool" },
     { "comp": "IsRepeatableComponent", "name": "IsRepeatable", "type": "bool" },
-    { "comp": "IsRoomComponent", "name": "IsRoom", "type": "bool" },
-    { "comp": "IsQuestComponent", "name": "IsQuest", "type": "bool" },
-    { "comp": "IsSkillComponent", "name": "IsSkill", "type": "bool" },
     { "comp": "KeysComponent", "name": "Keys", "type": "uint32[]" },
     { "comp": "LevelComponent", "name": "Level", "type": "uint256" },
     { "comp": "LocationComponent", "name": "Location", "type": "Coord" },
@@ -140,7 +109,6 @@
         "EntityTypeComponent",
         "DescriptionComponent",
         "IDParentComponent",
-        "IsGoalComponent",
         "IsCompleteComponent",
         "IndexComponent",
         "IndexRoomComponent",
@@ -186,7 +154,6 @@
       "writeAccess": [
         "EntityTypeComponent",
         "IDParentComponent",
-        "IsListingComponent",
         "IndexComponent",
         "IndexItemComponent",
         "IndexNPCComponent",
@@ -201,12 +168,12 @@
       "writeAccess": [
         "AffinityComponent",
         "DescriptionComponent",
+        "EntityTypeComponent",
         "ForComponent",
         "IDParentComponent",
         "IndexComponent",
         "IndexNodeComponent",
         "IndexRoomComponent",
-        "IsNodeComponent",
         "IsRegistryComponent",
         "LogicTypeComponent",
         "KeysComponent",
@@ -219,7 +186,7 @@
     },
     {
       "name": "_NPCRegistrySystem",
-      "writeAccess": ["IsNPCComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
+      "writeAccess": ["EntityTypeComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
     },
     {
       "name": "_QuestRegistrySystem",
@@ -248,8 +215,8 @@
     {
       "name": "_RelationshipRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IsRegistryComponent",
-        "IsRelationshipComponent",
         "IndexNPCComponent",
         "IndexRelationshipComponent",
         "NameComponent",
@@ -260,11 +227,11 @@
     {
       "name": "_RoomRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IDParentComponent",
         "IDRoomComponent",
         "IndexRoomComponent",
         "IndexComponent",
-        "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
         "LocationComponent",
@@ -278,18 +245,17 @@
     {
       "name": "_SkillRegistrySystem",
       "writeAccess": [
+        "EntityTypeComponent",
+        "IdSourceComponent",
         "IDParentComponent",
+        "IDTypeComponent",
         "IsRegistryComponent",
-        "IsSkillComponent",
-        "IsEffectComponent",
-        "IsRequirementComponent",
         "IndexSkillComponent",
-        "ValueSignedComponent",
+        "IndexComponent",
         "CostComponent",
         "DescriptionComponent",
         "ForComponent",
         "LevelComponent",
-        "IndexComponent",
         "LogicTypeComponent",
         "MaxComponent",
         "MediaURIComponent",
@@ -328,12 +294,12 @@
     {
       "name": "AccountRegisterSystem",
       "writeAccess": [
-        "IsAccountComponent",
         "IndexAccountComponent",
         "AddressOperatorComponent",
         "AddressOwnerComponent",
         "CacheOperatorComponent",
         "IndexRoomComponent",
+        "EntityTypeComponent",
         "NameComponent",
         "StaminaComponent",
         "TimeLastActionComponent",
@@ -357,8 +323,8 @@
     {
       "name": "CraftSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "ExperienceComponent",
-        "IsInventoryComponent",
         "IndexItemComponent",
         "IDOwnsInventoryComponent",
         "ValueComponent",
@@ -371,12 +337,12 @@
       "name": "DroptableRevealSystem",
       "writeAccess": [
         "BlockRevealComponent",
+        "EntityTypeComponent",
         "ForComponent",
         "IdHolderComponent",
         "IDOwnsInventoryComponent",
         "IndexItemComponent",
         "IndexComponent",
-        "IsInventoryComponent",
         "TypeComponent",
         "TimeComponent",
         "ValueComponent",
@@ -390,10 +356,10 @@
     {
       "name": "FriendAcceptSystem",
       "writeAccess": [
-        "IdAccountComponent",
+        "EntityTypeComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
-        "IsFriendshipComponent",
         "StateComponent",
         "TimeLastComponent"
       ]
@@ -401,10 +367,10 @@
     {
       "name": "FriendBlockSystem",
       "writeAccess": [
-        "IdAccountComponent",
+        "EntityTypeComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
-        "IsFriendshipComponent",
         "StateComponent",
         "TimeLastComponent"
       ]
@@ -412,10 +378,10 @@
     {
       "name": "FriendCancelSystem",
       "writeAccess": [
-        "IdAccountComponent",
+        "EntityTypeComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
-        "IsFriendshipComponent",
         "StateComponent",
         "TimeLastComponent"
       ]
@@ -423,10 +389,10 @@
     {
       "name": "FriendRequestSystem",
       "writeAccess": [
-        "IdAccountComponent",
+        "EntityTypeComponent",
+        "IdSourceComponent",
         "IDParentComponent",
         "IdTargetComponent",
-        "IsFriendshipComponent",
         "StateComponent",
         "TimeLastComponent"
       ]
@@ -434,11 +400,11 @@
     {
       "name": "GoalContributeSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IdHolderComponent",
         "IDTypeComponent",
         "IDOwnsInventoryComponent",
         "IndexItemComponent",
-        "IsInventoryComponent",
         "IsCompleteComponent",
         "TimeLastComponent",
         "ValueComponent"
@@ -451,12 +417,12 @@
     {
       "name": "ListingBuySystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IdHolderComponent",
         "IDOwnsInventoryComponent",
         "IDTypeComponent",
         "IndexComponent",
         "IndexItemComponent",
-        "IsInventoryComponent",
         "TimeLastComponent",
         "TypeComponent",
         "ValueComponent"
@@ -490,7 +456,6 @@
       "name": "KamiGachaMintSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdAccountComponent",
         "IDOwnsKamiComponent",
         "IdHolderComponent",
         "RerollComponent",
@@ -503,7 +468,6 @@
       "name": "KamiGachaRerollSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdAccountComponent",
         "IDOwnsKamiComponent",
         "IdHolderComponent",
         "RerollComponent",
@@ -517,7 +481,6 @@
       "name": "KamiGachaRevealSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "IdAccountComponent",
         "IdHolderComponent",
         "IDOwnsKamiComponent",
         "RerollComponent",
@@ -564,22 +527,7 @@
       ]
     },
     {
-      "name": "PetUseTransferrerSystem",
-      "writeAccess": [
-        "IdHolderComponent",
-        "IDTypeComponent",
-        "HasFlagComponent",
-        "HealthComponent",
-        "RateComponent",
-        "ValueComponent",
-        "TimeLastComponent",
-        "TimeResetComponent",
-        "TimeStartComponent",
-        "KamiTransferrerComponent"
-      ]
-    },
-    {
-      "name": "PetUseRenamePotionSystem",
+      "name": "KamiUseRenamePotionSystem",
       "writeAccess": ["HasFlagComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
@@ -589,12 +537,12 @@
     {
       "name": "ProductionCollectSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
         "IDTypeComponent",
         "IDOwnsInventoryComponent",
-        "IsInventoryComponent",
         "IndexComponent",
         "IndexItemComponent",
         "RateComponent",
@@ -608,8 +556,8 @@
     {
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IdHolderComponent",
-        "IdNodeComponent",
         "IdSourceComponent",
         "IDTypeComponent",
         "IDOwnsInventoryComponent",
@@ -617,7 +565,6 @@
         "IndexComponent",
         "IndexItemComponent",
         "IndexNodeComponent",
-        "IsInventoryComponent",
         "IsKillComponent",
         "ExperienceComponent",
         "HealthComponent",
@@ -633,12 +580,10 @@
     {
       "name": "ProductionStartSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IDOwnsInventoryComponent",
-        "IsInventoryComponent",
-        "IsProductionComponent",
-        "IdNodeComponent",
-        "IdPetComponent",
-        "IndexNodeComponent",
+        "IdHolderComponent",
+        "IdSourceComponent",
         "IndexItemComponent",
         "HealthComponent",
         "RateComponent",
@@ -653,8 +598,8 @@
     {
       "name": "ProductionStopSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IDOwnsInventoryComponent",
-        "IsInventoryComponent",
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
@@ -673,10 +618,10 @@
     {
       "name": "QuestAcceptSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IDOwnsQuestComponent",
         "IndexQuestComponent",
         "IsCompleteComponent",
-        "IsQuestComponent",
         "IsRepeatableComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
@@ -691,10 +636,10 @@
     {
       "name": "QuestDropSystem",
       "writeAccess": [
+        "EntityTypeComponent",
         "IDOwnsQuestComponent",
         "IndexQuestComponent",
         "IsCompleteComponent",
-        "IsQuestComponent",
         "IsRepeatableComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
@@ -705,7 +650,7 @@
     {
       "name": "RelationshipAdvanceSystem",
       "writeAccess": [
-        "IsRelationshipComponent",
+        "EntityTypeComponent",
         "IDOwnsRelationshipComponent",
         "IndexNPCComponent",
         "IndexRelationshipComponent",
@@ -719,22 +664,19 @@
     {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
-        "IdHolderComponent",
-        "IndexSkillComponent",
-        "IsBonusComponent",
-        "IsSkillComponent",
-        "HarmonyComponent",
+        "EntityTypeComponent",
         "HealthComponent",
-        "PowerComponent",
-        "RateComponent",
+        "IDParentComponent",
+        "IDTypeComponent",
+        "IdSourceComponent",
+        "IDOwnsSkillComponent",
+        "IndexSkillComponent",
+        "LevelComponent",
         "SkillPointComponent",
-        "SlotsComponent",
         "TimeLastComponent",
         "TimeStartComponent",
         "TypeComponent",
-        "ValueComponent",
-        "ValueSignedComponent",
-        "ViolenceComponent"
+        "ValueComponent"
       ]
     },
     {
