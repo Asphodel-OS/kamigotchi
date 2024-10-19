@@ -30,9 +30,15 @@ export function registerLoadingState() {
             loadingState = getComponentValue(LoadingState, GodEntityIndex);
           }
 
+          // loadingState = loadingState ?? {
+          //   state: SyncState.CONNECTING,
+          //   msg: 'Connecting to Yominet',
+          //   percentage: 0,
+          // };
+
           loadingState = loadingState ?? {
             state: SyncState.CONNECTING,
-            msg: 'Connecting to Yominet',
+            msg: 'kamigotchi will be back in a few days!',
             percentage: 0,
           };
           return { loadingState };
@@ -52,18 +58,19 @@ export function registerLoadingState() {
       }, [state]);
 
       const getStatus = () => {
-        if (state !== SyncState.LIVE) return msg;
-        const rand = Math.random();
-        const eEggOdds = 1 / 1e3;
+        return 'kamigotchi will be back in a few days!';
+        // if (state !== SyncState.LIVE) return msg;
+        // const rand = Math.random();
+        // const eEggOdds = 1 / 1e3;
 
-        if (rand < eEggOdds) return 'good luck o7';
-        else if (rand < 2 * eEggOdds) return 'play nice now :3';
-        else if (rand < 3 * eEggOdds) return 'we are always ._. watching';
-        else if (rand < 4 * eEggOdds) return 'behind you..';
-        else if (rand < 5 * eEggOdds) return 'enjoy your visit ^^';
-        else if (rand < 6 * eEggOdds) return 'S> Fame @@@@@@@ @ @@@@@@@';
-        else if (rand < 7 * eEggOdds) return 'kms';
-        else return 'transporting you shortly~';
+        // if (rand < eEggOdds) return 'good luck o7';
+        // else if (rand < 2 * eEggOdds) return 'play nice now :3';
+        // else if (rand < 3 * eEggOdds) return 'we are always ._. watching';
+        // else if (rand < 4 * eEggOdds) return 'behind you..';
+        // else if (rand < 5 * eEggOdds) return 'enjoy your visit ^^';
+        // else if (rand < 6 * eEggOdds) return 'S> Fame @@@@@@@ @ @@@@@@@';
+        // else if (rand < 7 * eEggOdds) return 'kms';
+        // else return 'transporting you shortly~';
       };
 
       return <BootScreen status={getStatus()} progress={percentage} isHidden={!isVisible} />;
