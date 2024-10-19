@@ -5,7 +5,6 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   img: string;
-  scalesOnHeight?: boolean;
   onClick: () => void;
   text?: string;
   size?: number;
@@ -13,28 +12,23 @@ interface Props {
   disabled?: boolean;
   noMargin?: boolean;
   pulse?: boolean;
-  balance?: number;
-  fullWidth?: boolean;
-  isIconList?: boolean;
+  utils?: {
+    extraProps: () => {
+      isIconList?: boolean;
+      balance?: number;
+      fullWidth?: boolean;
+      scalesOnHeight?: boolean;
+    };
+  };
 }
 
 // ActionButton is a text button that triggers an Action when clicked
 export const IconButton = (props: Props) => {
-  const {
-    img,
-    onClick,
-    text,
-    size,
-    color,
-    disabled,
-    noMargin,
-    pulse,
-    balance,
-    scalesOnHeight,
-    fullWidth,
-    isIconList,
-  } = props;
+  const { img, onClick, text, size, color, disabled, noMargin, pulse, utils } = props;
   const scale = size ?? 2.5;
+
+  const { isIconList, balance, fullWidth, scalesOnHeight } = utils?.extraProps?.() ?? {};
+
   const scalescaleOrientation = scalesOnHeight ? 'vh' : 'vw';
 
   // layer on a sound effect

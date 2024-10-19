@@ -30,6 +30,10 @@ export const IconListButton = (props: Props) => {
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
   const scale = props.scale ?? 1.4;
+  const isIconList = true;
+  const extraProps = () => {
+    return { isIconList, balance, fullWidth, scalesOnHeight };
+  };
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
@@ -61,17 +65,13 @@ export const IconListButton = (props: Props) => {
         }}
       >
         <IconButton
-          balance={balance}
-          scalesOnHeight={scalesOnHeight}
           img={img}
           disabled={!!disabled}
-          fullWidth={!!fullWidth}
           onClick={handleClick}
-          isIconList={true}
           text={text}
           size={scale}
+          utils={{ extraProps }}
         />
-
         <Popover
           id={id}
           open={open}
