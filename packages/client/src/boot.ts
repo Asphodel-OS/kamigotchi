@@ -46,7 +46,7 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
   // we also need this specifically waited upon for proper data subscriptions and wallet flow
   if (initialBoot) {
     initialBoot = false;
-    // layers.network.startSync();
+    layers.network.startSync();
   }
 
   return layers as Layers;
