@@ -48,6 +48,8 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 
+import { LibQuests } from "libraries/LibQuests.sol";
+
 uint256 constant ID = uint256(keccak256("system.Kami721.create"));
 
 uint256 constant OFFSET_BIT_SIZE = 32;
@@ -155,36 +157,36 @@ contract _CreatePetSystem is System {
   /////////////////////
 
   function create(
-    uint32 index,
-    uint256 accID,
+    address accAddr,
     uint32 background,
     uint32 body,
     uint32 color,
     uint32 face,
-    uint32 hand,
-    uint256 level
+    uint32 hand
   ) external onlyOwner {
+    uint256 accID = uint256(uint160(accAddr));
     // creating pet
-    uint256 kamiID = _create(index, accID, background, body, color, face, hand, level);
+    uint256 kamiID = _create(accID, background, body, color, face, hand);
 
-    // giving apology items
-    LibInventory.incFor(components, accID, level > 14 ? 117 : 104, 2); // give huge xp if level > 14
-    LibInventory.incFor(components, accID, 112, 2); // mochi apology
-    LibInventory.incFor(components, accID, 113, 2); // mochi apology
-    LibInventory.incFor(components, accID, 114, 2); // mochi apology
-    LibInventory.incFor(components, accID, 115, 2); // mochi apology
+    // setting quests completitions
+    uint256 questID = LibQuests.assign(world, components, 1, accID);
+    LibQuests.setCompleted(components, questID);
+    LibQuests.assign(world, components, 57, accID);
+
+    // logging kami stuff
+    LibAccount.logIncKamisMinted(world, components, accID, 1);
   }
 
   function _create(
-    uint32 index,
     uint256 accID,
     uint32 background,
     uint32 body,
     uint32 color,
     uint32 face,
-    uint32 hand,
-    uint256 level
+    uint32 hand
   ) internal returns (uint256 id) {
+    uint32 index = uint32(LibKami721.getContract(components).totalSupply()) + 1; // starts from 1
+
     id = LibKami.genID(index);
     require(!entityTypeComp.has(id), "batchMint: id already exists");
 
@@ -195,8 +197,8 @@ contract _CreatePetSystem is System {
     stateComp.set(id, string("RESTING"));
     timeStartComp.set(id, block.timestamp);
     timeLastComp.set(id, block.timestamp);
-    levelComp.set(id, level);
-    skillPointComp.set(id, level + 1);
+    levelComp.set(id, 1);
+    skillPointComp.set(id, 1);
     expComp.set(id, 0);
 
     uint32[] memory traits = new uint32[](5);

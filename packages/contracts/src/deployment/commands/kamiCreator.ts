@@ -12,18 +12,13 @@ const argv = yargs(hideBin(process.argv))
 dotenv.config();
 
 /// CONSTANTS
-import { data } from './data/KamiRecovery.json';
+import { tester as data } from './data/KamiTransfer.json';
 // hardcoded abi from _CreatePetSystem
 const abi = [
   {
     type: 'function',
-    name: 'restore',
+    name: 'create',
     inputs: [
-      {
-        name: 'index',
-        type: 'uint32',
-        internalType: 'uint32',
-      },
       {
         name: 'accID',
         type: 'uint256',
@@ -54,56 +49,49 @@ const abi = [
         type: 'uint32',
         internalType: 'uint32',
       },
-      {
-        name: 'level',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
     ],
     outputs: [],
     stateMutability: 'nonpayable',
   },
+  { type: 'function', name: 'setTraits', inputs: [], outputs: [], stateMutability: 'nonpayable' },
 ];
 
-const successful: number[] = []; // i love global variables
-const failed: number[] = [];
+const successful: string[] = []; // i love global variables
+const failed: string[] = [];
 
 const run = async () => {
   const mode = argv.mode || 'DEV';
   const signer = await getSigner(mode);
 
-  const restoreSystem = new ethers.Contract(
+  const createSystem = new ethers.Contract(
     await getSystemAddr(mode, 'system.Kami721.create'),
     abi,
     signer
   );
-  console.log('restoreSystem: ' + restoreSystem.address);
+  console.log('createSystem: ' + createSystem.address);
 
-  // for (let i = 0; i < data.length; i++) {
-  for (let i = 5; i < 909; i++) {
-    // 909
-    if (i == 632 || i == 633) continue;
-    const index = Number(data[i].kamiindex) + 5000;
+  // createSystem.setTraits();
+
+  for (let i = 0; i < data.length; i++) {
     try {
-      const tx = await restoreSystem.restore(
-        index,
-        data[i].ownerentityid,
-        data[i].background,
-        data[i].body,
-        data[i].color,
-        data[i].face,
-        data[i].hand,
-        data[i].kamilevel
+      const tx = await createSystem.create(
+        data[i].owneraddress,
+        data[i].backgroundindex,
+        data[i].bodyindex,
+        data[i].colourindex,
+        data[i].faceindex,
+        data[i].handindex
       );
-      txWaiter(index, tx);
+      txWaiter(data[i].owneraddress, tx);
     } catch (e) {
-      console.log('failed: ' + index);
-      failed.push(index);
+      console.log('failed: ' + data[i].owneraddress);
+      console.log(e);
+      failed.push(data[i].owneraddress);
     }
   }
 };
 
-async function txWaiter(index: number, tx: ethers.providers.TransactionResponse) {
+async function txWaiter(index: string, tx: ethers.providers.TransactionResponse) {
   try {
     await tx.wait();
     console.log('done: ' + index);
