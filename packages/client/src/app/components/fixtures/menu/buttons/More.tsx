@@ -4,14 +4,27 @@ import { IconListButton, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { logoutIcon } from 'assets/images/icons/actions';
 import { helpIcon, settingsIcon } from 'assets/images/icons/menu';
+import { useEffect, useState } from 'react';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
-  const { modals, setModals } = useVisibility();
+  const { modals, setModals, setFixtures } = useVisibility();
+  const [disabled, setDisabled] = useState(true);
 
   const handleClick = () => {
     if (ready && authenticated) logout();
   };
+  useEffect(() => {
+    if (ready) {
+      if (!authenticated) {
+        setFixtures({ moreMenu: true });
+        setDisabled(true);
+      } else {
+        setFixtures({ moreMenu: false });
+        setDisabled(false);
+      }
+    }
+  }, [ready, authenticated]);
 
   const toggleSettings = () => {
     if (modals.settings) setModals({ settings: false });
@@ -58,10 +71,15 @@ export const MoreMenuButton = () => {
       <IconListButton
         img={settingsIcon}
         options={[
-          { text: 'Settings', image: settingsIcon, onClick: toggleSettings },
+          {
+            text: 'Settings',
+            disabled: disabled,
+            image: settingsIcon,
+            onClick: toggleSettings,
+          },
           { text: 'Help', image: helpIcon, onClick: toggleHelp },
           { text: 'Hard Refresh', image: helpIcon, onClick: clearCache },
-          { text: 'Logout', image: logoutIcon, onClick: handleClick },
+          { text: 'Logout', disabled: disabled, image: logoutIcon, onClick: handleClick },
         ]}
         scale={4.5}
         scaleOrientation='vh'
