@@ -98,8 +98,8 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 4471190363524365,
-    worldAddress: '0xeb2DB9B4900fcA1D3B7b130967E4b5D1e68c2bFa',
-    initialBlockNumber: 1181,
+    worldAddress: '0x64468b657c0b8a48eded0b5ffeead1a23f060f9c',
+    initialBlockNumber: 290735,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;
