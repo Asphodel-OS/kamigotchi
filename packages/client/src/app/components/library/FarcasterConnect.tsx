@@ -108,7 +108,7 @@ export const FarcasterConnect = (props: Props) => {
   return (
     <Tooltip text={getTooltipText()}>
       <IconButton
-        size={size ?? 2.5}
+        scale={size ?? 2.5}
         img={farcasterLogo}
         color={getColor()}
         onClick={getOnClick()}

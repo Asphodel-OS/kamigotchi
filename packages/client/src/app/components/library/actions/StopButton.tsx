@@ -17,7 +17,6 @@ export const StopButton = (kami: Kami, account: Account, triggerAction: Function
         img={stopIcon}
         onClick={() => triggerAction(kami)}
         disabled={disabled}
-        noMargin
       />
     </Tooltip>
   );

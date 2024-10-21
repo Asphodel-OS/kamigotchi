@@ -22,7 +22,7 @@ export const Sort = (props: Props) => {
 
   return (
     <Container>
-      <IconButton img={icon} onClick={flip} text={getLabel()} size={2} noMargin />
+      <IconButton img={icon} onClick={flip} text={getLabel()} scale={2} />
     </Container>
   );
 };

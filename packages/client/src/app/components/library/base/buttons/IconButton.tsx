@@ -1,3 +1,4 @@
+import { ForwardedRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
 import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
@@ -7,17 +8,25 @@ interface Props {
   img: string;
   onClick: Function;
   text?: string;
-  size?: number;
   color?: string;
   disabled?: boolean;
-  noMargin?: boolean;
+  fullWidth?: boolean;
   pulse?: boolean;
+  balance?: number;
+  corner?: boolean;
+  scale?: number;
+  scaleOrientation?: 'vw' | 'vh';
 }
 
 // ActionButton is a text button that triggers an Action when clicked
-export const IconButton = (props: Props) => {
-  const { img, onClick, text, size, disabled, color, pulse, noMargin } = props;
-  const scale = size ?? 2.5;
+export const IconButton = forwardRef(function IconButton(
+  props: Props,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
+  const { img, onClick, text, disabled, fullWidth, color, pulse } = props;
+  const { balance, corner } = props; // IconListButton options
+  const scale = props.scale ?? 2.5;
+  const scaleOrientation = props.scaleOrientation ?? 'vw';
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -25,50 +34,47 @@ export const IconButton = (props: Props) => {
     await onClick();
   };
 
-  // override styles for sizes and disabling
-  const setStyles = () => {
-    let styles: any = {};
-    if (color) styles.backgroundColor = color;
-    if (disabled) styles.backgroundColor = '#b2b2b2';
-
-    return styles;
-  };
-
   return (
     <Button
-      scale={scale}
-      onClick={!disabled ? handleClick : () => {}}
-      style={setStyles()}
       color={color ?? '#fff'}
-      pulse={pulse}
-      noMargin={noMargin}
+      onClick={!disabled ? handleClick : () => {}}
+      scale={scale}
+      orientation={scaleOrientation}
+      fullWidth={fullWidth}
       disabled={disabled}
-      square={!text}
+      pulse={pulse}
+      ref={ref}
     >
-      <Image src={img} scale={scale} />
-      {text && <Text scale={scale}>{text}</Text>}
+      <Image src={img} scale={scale} orientation={scaleOrientation} />
+      {text && (
+        <Text scale={scale} orientation={scaleOrientation}>
+          {text}
+        </Text>
+      )}
+      {balance && <Balance>{balance}</Balance>}
+      {corner && <Corner />}
     </Button>
   );
-};
+});
 
 interface ButtonProps {
-  scale: number;
   color: string;
+  scale: number;
+  orientation: string;
+  fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
-  noMargin?: boolean;
-  square?: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
+  position: relative;
   border: solid black 0.15vw;
-  border-radius: ${({ scale }) => scale * 0.2}vw;
-  height: ${({ scale }) => scale}vw;
-  ${({ square, scale }) => square && `width: ${scale}vw;`}
+  border-radius: 0.45vw;
+  height: ${({ scale }) => scale}${({ orientation }) => orientation};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
-  margin: ${({ scale, noMargin }) => (noMargin ? 0 : scale * 0.1)}vw;
-  padding: ${({ scale }) => scale * 0.1}vw;
-  gap: ${({ scale }) => scale * 0.1}vw;
+  padding: ${({ scale }) => scale * 0.1}${({ orientation }) => orientation};
+  gap: ${({ scale }) => scale * 0.1}${({ orientation }) => orientation};
 
   display: flex;
   flex-flow: row nowrap;
@@ -90,10 +96,37 @@ const Button = styled.button<ButtonProps>`
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
 `;
 
-const Image = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 0.75}vw;
+const Image = styled.img<{ scale: number; orientation: string }>`
+  width: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
+  height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
+  ${({ scale }) => (scale > 4.5 ? 'image-rendering: pixelated;' : '')}
 `;
 
-const Text = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => scale * 0.25}vw;
+const Text = styled.div<{ scale: number; orientation: string }>`
+  font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
+`;
+
+const Corner = styled.div`
+  position: absolute;
+  border: solid black 0.3vw;
+  border-color: transparent black black transparent;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+`;
+
+const Balance = styled.div`
+  position: absolute;
+  background-color: white;
+  border-top: solid black 0.15vw;
+  border-left: solid black 0.15vw;
+  border-radius: 0.3vw 0 0.3vw 0;
+  bottom: 0;
+  right: 0;
+
+  font-size: 0.75vw;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2vw;
 `;
