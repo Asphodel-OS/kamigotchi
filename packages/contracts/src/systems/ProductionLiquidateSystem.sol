@@ -9,18 +9,36 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibKami } from "libraries/LibKami.sol";
-import { LibHarvest } from "libraries/LibHarvest.sol";
-import { LibScore } from "libraries/LibScore.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
+import { LibScore } from "libraries/LibScore.sol";
+import { LibStat, Stat, StatLib } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
 // liquidates a target production using a player's pet.
 contract ProductionLiquidateSystem is System {
+  using SafeCastLib for uint256;
+
+  event KamiLiquidated(
+    uint32 indexed sourceIndex,
+    int32 sourceHealth,
+    int32 sourceHealthTotal,
+    uint32 indexed targetIndex,
+    int32 targetHealth,
+    int32 targetHealthTotal,
+    uint32 bounty,
+    uint32 salvage,
+    uint32 spoils,
+    uint32 strain,
+    uint32 karma,
+    uint64 endTs
+  );
+
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -64,10 +82,32 @@ contract ProductionLiquidateSystem is System {
     uint256 spoils = LibKill.calcSpoils(components, kamiID, bounty - salvage);
     LibInventory.incFor(components, productionID, MUSU_INDEX, spoils);
 
-    // calculate killer health
+    // calculate health impact on killer
     uint256 strain = LibKami.calcStrain(components, kamiID, spoils);
     uint256 karma = LibKill.calcKarma(components, kamiID, targetKamiID);
-    LibKami.drain(components, kamiID, SafeCastLib.toInt32(strain + karma));
+
+    // log the liquidation event
+    {
+      Stat memory sourceHealth = LibStat.getHealth(components, kamiID);
+      Stat memory targetHealth = LibStat.getHealth(components, targetKamiID);
+      emit KamiLiquidated(
+        LibKami.getIndex(components, kamiID),
+        sourceHealth.sync,
+        StatLib.calcTotal(sourceHealth),
+        LibKami.getIndex(components, targetKamiID),
+        targetHealth.sync,
+        StatLib.calcTotal(targetHealth),
+        bounty.toUint32(),
+        salvage.toUint32(),
+        spoils.toUint32(),
+        strain.toUint32(),
+        karma.toUint32(),
+        block.timestamp.toUint64()
+      );
+    }
+
+    // drain the killer
+    LibKami.drain(components, kamiID, (strain + karma).toInt32());
 
     // kill the target and shut off the production
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
