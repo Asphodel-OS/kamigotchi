@@ -106,7 +106,7 @@ export const Logs = (props: Props) => {
         </RowSegment>
         <RowSegment>
           {Time(actionData.time)}
-          {EtherscanButton(actionData.txHash)}
+          {/* {EtherscanButton(actionData.txHash)} */}
         </RowSegment>
       </Row>
     );
