@@ -12,12 +12,7 @@ export const CollectButton = (kami: Kami, account: Account, triggerAction: Funct
 
   return (
     <Tooltip key='collect-tooltip' text={[tooltip]}>
-      <IconButton
-        onClick={() => triggerAction(kami)}
-        img={collectIcon}
-        disabled={disabled}
-        noMargin
-      />
+      <IconButton onClick={() => triggerAction(kami)} img={collectIcon} disabled={disabled} />
     </Tooltip>
   );
 };

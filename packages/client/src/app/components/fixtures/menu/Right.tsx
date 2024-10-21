@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
-import { ChatMenuButton, InventoryMenuButton, LogoutMenuButton, QuestMenuButton } from './buttons';
+import { ChatMenuButton, InventoryMenuButton, MoreMenuButton, QuestMenuButton } from './buttons';
 
 export function registerMenuRight() {
   registerUIComponent(
@@ -22,7 +22,7 @@ export function registerMenuRight() {
           <InventoryMenuButton />
           <QuestMenuButton />
           <ChatMenuButton />
-          <LogoutMenuButton />
+          <MoreMenuButton />
         </Wrapper>
       );
     }
