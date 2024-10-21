@@ -8,13 +8,13 @@ interface Props {
   img: string;
   onClick: Function;
   text?: string;
-  scale?: number;
   color?: string;
   disabled?: boolean;
-  noMargin?: boolean;
+  fullWidth?: boolean;
   pulse?: boolean;
   balance?: number;
   corner?: boolean;
+  scale?: number;
   scaleOrientation?: 'vw' | 'vh';
 }
 
@@ -23,7 +23,7 @@ export const IconButton = forwardRef(function IconButton(
   props: Props,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
-  const { img, onClick, text, disabled, color, pulse, noMargin } = props;
+  const { img, onClick, text, disabled, fullWidth, color, pulse } = props;
   const { balance, corner } = props; // IconListButton options
   const scale = props.scale ?? 2.5;
   const scaleOrientation = props.scaleOrientation ?? 'vw';
@@ -34,29 +34,22 @@ export const IconButton = forwardRef(function IconButton(
     await onClick();
   };
 
-  // override styles for sizes and disabling
-  const setStyles = () => {
-    let styles: any = {};
-    if (color) styles.backgroundColor = color;
-    if (disabled) styles.backgroundColor = '#b2b2b2';
-
-    return styles;
-  };
-
   return (
     <Button
-      scale={scale}
-      onClick={!disabled ? handleClick : () => {}}
-      style={setStyles()}
       color={color ?? '#fff'}
-      pulse={pulse}
-      noMargin={noMargin}
+      onClick={!disabled ? handleClick : () => {}}
+      scale={scale}
+      fullWidth={fullWidth}
       disabled={disabled}
-      square={!text}
+      pulse={pulse}
       ref={ref}
     >
       <Image src={img} scale={scale} orientation={scaleOrientation} />
-      {text && <Text scale={scale}>{text}</Text>}
+      {text && (
+        <Text scale={scale} orientation={scaleOrientation}>
+          {text}
+        </Text>
+      )}
       {balance && <Balance>{balance}</Balance>}
       {corner && <Corner />}
     </Button>
@@ -66,10 +59,9 @@ export const IconButton = forwardRef(function IconButton(
 interface ButtonProps {
   scale: number;
   color: string;
+  fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
-  noMargin?: boolean;
-  square?: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -77,9 +69,8 @@ const Button = styled.button<ButtonProps>`
   border: solid black 0.15vw;
   border-radius: 0.45vw;
   height: ${({ scale }) => scale}vw;
-  ${({ square, scale }) => square && `width: ${scale}vw;`}
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
-  margin: ${({ scale, noMargin }) => (noMargin ? 0 : scale * 0.1)}vw;
   padding: ${({ scale }) => scale * 0.1}vw;
   gap: ${({ scale }) => scale * 0.1}vw;
 
@@ -101,6 +92,16 @@ const Button = styled.button<ButtonProps>`
   }
 
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
+`;
+
+const Image = styled.img<{ scale: number; orientation: string }>`
+  width: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
+  height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
+  ${({ scale }) => (scale > 3.2 ? 'image-rendering: pixelated;' : '')}
+`;
+
+const Text = styled.div<{ scale: number; orientation: string }>`
+  font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
 `;
 
 const Corner = styled.div`
@@ -126,13 +127,4 @@ const Balance = styled.div`
   align-items: center;
   justify-content: center;
   padding: 0.2vw;
-`;
-
-const Image = styled.img<{ scale: number; orientation: string }>`
-  height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
-  ${({ scale }) => (scale > 3.2 ? 'image-rendering: pixelated;' : '')}
-`;
-
-const Text = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => scale * 0.25}vw;
 `;

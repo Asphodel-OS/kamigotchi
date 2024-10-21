@@ -19,7 +19,6 @@ export const ReviveButton = (kami: Kami, account: Account, triggerAction: Functi
         img={reviveIcon}
         onClick={() => triggerAction(kami, reviveIndex)}
         disabled={!hasRevive(account)}
-        noMargin
       />
     </Tooltip>
   );
