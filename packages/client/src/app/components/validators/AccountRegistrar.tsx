@@ -1,10 +1,11 @@
 import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
-import { Alert, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
+import { DripButton } from '../library/base/buttons/DripButton';
 
 import { ActionButton, CopyButton, Tooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -23,7 +24,6 @@ import {
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
 import { getAbbrevAddr } from 'utils/address';
-import { dripEth } from 'utils/faucet';
 import { playSignup } from 'utils/sounds';
 
 /**
@@ -142,7 +142,7 @@ export function registerAccountRegistrar() {
         console.log('updating account register');
         const accountEntity = queryAccountByOwner(components, selectedAddress);
         if (!!accountEntity == validations.accountExists) return; // no change
-        if (!!accountEntity) {
+        if (accountEntity) {
           const account = getAccount(world, components, accountEntity);
           setKamiAccount(getKamiAccount(account, kamiAccount));
           setValidations({ ...validations, accountExists: true });
@@ -288,27 +288,7 @@ export function registerAccountRegistrar() {
           size='vending'
         />
       );
-      const DripButton = () => {
-        const { selectedAddress } = useNetwork.getState();
-        const [error, setError] = useState(false);
-        const [showModal, setShowModal] = useState(false);
 
-        const handleClickOpen = () => {
-          dripEth(selectedAddress, setError, setShowModal);
-        };
-
-        return (
-          <>
-            <ActionButton
-              text=' Drip Eth'
-              disabled={error}
-              onClick={() => handleClickOpen}
-              size='vending'
-            />
-            {showModal && <Alert severity='success'>Success!</Alert>}
-          </>
-        );
-      };
       const IntroStep1 = () => {
         return (
           <>
