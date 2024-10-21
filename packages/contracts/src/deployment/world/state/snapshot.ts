@@ -5,8 +5,8 @@ import { file as itemData } from '../../commands/data/ItemTransfer.json';
 import { file as kamiData } from '../../commands/data/KamiTransfer.json';
 
 export async function initSnapshot(api: AdminAPI) {
-  initTransferKamis(api);
-  initTransferItems(api);
+  await initTransferKamis(api);
+  await initTransferItems(api);
 }
 
 async function initTransferKamis(api: AdminAPI) {
