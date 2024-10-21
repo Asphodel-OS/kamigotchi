@@ -7,7 +7,7 @@ export function createAdminAPI(systems: any) {
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(commitIDs: BigNumberish[]) {
-    return systems['system.kami.gacha.Reveal'].forceReveal(commitIDs);
+    return systems['system.kami.gacha.reveal'].forceReveal(commitIDs);
   }
 
   // @dev admin reveal for droptables if blockhash has lapsed
@@ -165,7 +165,7 @@ export function createAdminAPI(systems: any) {
 
   async function initGachaIncrement() {
     await sleepIf();
-    return systems['system.kami.gacha.Mint'].init();
+    return systems['system.kami.gacha.mint'].init();
   }
 
   // sets the prices for the merchant at the specified roomIndex

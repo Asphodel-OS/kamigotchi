@@ -295,19 +295,19 @@ export function createPlayerAPI(systems: any) {
   // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
-    return systems['system.kami.gacha.Mint'].executeTyped(amount);
+    return systems['system.kami.gacha.mint'].executeTyped(amount);
   }
 
   // @dev reveal a minted pet
   // @param commitIDs array of commitIDs
   function revealPet(commitIDs: BigNumberish[]) {
-    return systems['system.kami.gacha.Reveal'].reveal(commitIDs);
+    return systems['system.kami.gacha.reveal'].reveal(commitIDs);
   }
 
   // @dev reroll a pet
   // @param kamiID  kamiID
   function rerollPet(kamiIDs: BigNumberish[], totalCost: BigNumberish) {
-    return systems['system.kami.gacha.Reroll'].reroll(kamiIDs, {
+    return systems['system.kami.gacha.reroll'].reroll(kamiIDs, {
       value: totalCost,
     });
   }

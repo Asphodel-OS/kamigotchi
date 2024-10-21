@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibKami } from "libraries/LibKami.sol";
 
-uint256 constant ID = uint256(keccak256("system.kami.gacha.Reroll"));
+uint256 constant ID = uint256(keccak256("system.kami.gacha.reroll"));
 
 /// @notice commits to get a random pet from gacha via rerolling + cost
 /// @dev only meant to be called for a single account
