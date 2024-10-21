@@ -69,11 +69,47 @@ export interface ProductionLiquidateSystemInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "KamiLiquidated(uint32,int32,int32,uint32,int32,int32,uint32,uint32,uint32,uint32,uint32,uint64)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "KamiLiquidated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface KamiLiquidatedEventObject {
+  sourceIndex: number;
+  sourceHealth: number;
+  sourceHealthTotal: number;
+  targetIndex: number;
+  targetHealth: number;
+  targetHealthTotal: number;
+  bounty: number;
+  salvage: number;
+  spoils: number;
+  strain: number;
+  karma: number;
+  endTs: BigNumber;
+}
+export type KamiLiquidatedEvent = TypedEvent<
+  [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    BigNumber
+  ],
+  KamiLiquidatedEventObject
+>;
+
+export type KamiLiquidatedEventFilter = TypedEventFilter<KamiLiquidatedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -172,6 +208,35 @@ export interface ProductionLiquidateSystem extends BaseContract {
   };
 
   filters: {
+    "KamiLiquidated(uint32,int32,int32,uint32,int32,int32,uint32,uint32,uint32,uint32,uint32,uint64)"(
+      sourceIndex?: PromiseOrValue<BigNumberish> | null,
+      sourceHealth?: null,
+      sourceHealthTotal?: null,
+      targetIndex?: PromiseOrValue<BigNumberish> | null,
+      targetHealth?: null,
+      targetHealthTotal?: null,
+      bounty?: null,
+      salvage?: null,
+      spoils?: null,
+      strain?: null,
+      karma?: null,
+      endTs?: null
+    ): KamiLiquidatedEventFilter;
+    KamiLiquidated(
+      sourceIndex?: PromiseOrValue<BigNumberish> | null,
+      sourceHealth?: null,
+      sourceHealthTotal?: null,
+      targetIndex?: PromiseOrValue<BigNumberish> | null,
+      targetHealth?: null,
+      targetHealthTotal?: null,
+      bounty?: null,
+      salvage?: null,
+      spoils?: null,
+      strain?: null,
+      karma?: null,
+      endTs?: null
+    ): KamiLiquidatedEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null

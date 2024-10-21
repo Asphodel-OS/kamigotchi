@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
+import { Stat, StatLib } from "components/types/Stat.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -15,12 +17,29 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
 // liquidates a target production using a player's pet.
-// TODO: support kill logs
 contract ProductionLiquidateSystem is System {
+  using SafeCastLib for uint256;
+
+  event KamiLiquidated(
+    uint32 indexed sourceIndex,
+    int32 sourceHealth,
+    int32 sourceHealthTotal,
+    uint32 indexed targetIndex,
+    int32 targetHealth,
+    int32 targetHealthTotal,
+    uint32 bounty,
+    uint32 salvage,
+    uint32 spoils,
+    uint32 strain,
+    uint32 karma,
+    uint64 endTs
+  );
+
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -51,13 +70,34 @@ contract ProductionLiquidateSystem is System {
     LibPet.sync(components, targetPetID);
     require(LibKill.isLiquidatableBy(components, targetPetID, petID), "Pet: you lack violence");
 
-    // collect the money to the production. drain accordingly
+    // evaluate the outcome
     uint256 bounty = LibHarvest.getBalance(components, targetProductionID);
     uint256 salvage = LibKill.calcSalvage(components, targetPetID, bounty);
     uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
     uint256 strain = LibPet.calcStrain(components, petID, spoils);
     uint256 karma = LibKill.calcKarma(components, petID, targetPetID);
 
+    // log the liquidation event
+    {
+      Stat memory sourceHealth = LibStat.getHealth(components, petID);
+      Stat memory targetHealth = LibStat.getHealth(components, targetPetID);
+      emit KamiLiquidated(
+        LibPet.getIndex(components, petID),
+        sourceHealth.sync,
+        StatLib.calcTotal(sourceHealth),
+        LibPet.getIndex(components, targetPetID),
+        targetHealth.sync,
+        StatLib.calcTotal(targetHealth),
+        bounty.toUint32(),
+        salvage.toUint32(),
+        spoils.toUint32(),
+        strain.toUint32(),
+        karma.toUint32(),
+        block.timestamp.toUint64()
+      );
+    }
+
+    // transfer musu and drain health accordingly
     if (salvage > 0) {
       uint256 victimAccountID = LibPet.getAccount(components, targetPetID);
       LibInventory.incFor(components, victimAccountID, MUSU_INDEX, salvage);
