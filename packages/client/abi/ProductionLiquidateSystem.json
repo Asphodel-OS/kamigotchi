@@ -147,6 +147,85 @@
     },
     {
       "type": "event",
+      "name": "KamiLiquidated",
+      "inputs": [
+        {
+          "name": "sourceIndex",
+          "type": "uint32",
+          "indexed": true,
+          "internalType": "uint32"
+        },
+        {
+          "name": "sourceHealth",
+          "type": "int32",
+          "indexed": false,
+          "internalType": "int32"
+        },
+        {
+          "name": "sourceHealthTotal",
+          "type": "int32",
+          "indexed": false,
+          "internalType": "int32"
+        },
+        {
+          "name": "targetIndex",
+          "type": "uint32",
+          "indexed": true,
+          "internalType": "uint32"
+        },
+        {
+          "name": "targetHealth",
+          "type": "int32",
+          "indexed": false,
+          "internalType": "int32"
+        },
+        {
+          "name": "targetHealthTotal",
+          "type": "int32",
+          "indexed": false,
+          "internalType": "int32"
+        },
+        {
+          "name": "bounty",
+          "type": "uint32",
+          "indexed": false,
+          "internalType": "uint32"
+        },
+        {
+          "name": "salvage",
+          "type": "uint32",
+          "indexed": false,
+          "internalType": "uint32"
+        },
+        {
+          "name": "spoils",
+          "type": "uint32",
+          "indexed": false,
+          "internalType": "uint32"
+        },
+        {
+          "name": "strain",
+          "type": "uint32",
+          "indexed": false,
+          "internalType": "uint32"
+        },
+        {
+          "name": "karma",
+          "type": "uint32",
+          "indexed": false,
+          "internalType": "uint32"
+        },
+        {
+          "name": "endTs",
+          "type": "uint64",
+          "indexed": false,
+          "internalType": "uint64"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
       "name": "OwnershipHandoverCanceled",
       "inputs": [
         {
