@@ -42,6 +42,13 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
+  // ADMIN
+
+  async function adminGive(addr: string, type: string, itemIndex: number, amount: number) {
+    genCall('system._Admin.Give', [addr, type, itemIndex, amount]);
+  }
+
+  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
@@ -174,6 +181,21 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   async function batchMint(amount: number) {
     genCall('system.Kami721.BatchMint', [amount], 'batchMint');
+  }
+
+  async function initCreatePet() {
+    genCall('system.Kami721.create', [], 'setTraits');
+  }
+
+  async function createPet(
+    accID: BigNumberish,
+    background: number,
+    body: number,
+    color: number,
+    face: number,
+    hand: number
+  ) {
+    genCall('system.Kami721.create', [accID, background, body, color, face, hand], 'create');
   }
 
   /////////////////
@@ -637,6 +659,9 @@ export function createAdminAPI(compiledCalls: string[]) {
         remove: removeRole,
       },
     },
+    admin: {
+      give: adminGive,
+    },
     config: {
       set: {
         array: setConfigArray,
@@ -683,6 +708,10 @@ export function createAdminAPI(compiledCalls: string[]) {
       batchMinter: {
         init: initBatchMinter,
         mint: batchMint,
+      },
+      create: {
+        init: initCreatePet,
+        mint: createPet,
       },
     },
     registry: {

@@ -22,7 +22,7 @@ contract _AdminGiveSystem is System, AuthRoles {
       arguments,
       (address, string, uint32, uint256)
     );
-    uint256 accID = LibAccount.getByOwner(components, owner);
+    uint256 accID = uint256(uint160(owner));
     LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
 
     return "";

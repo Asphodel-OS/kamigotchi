@@ -14,6 +14,7 @@ import { initRecipes } from './recipes';
 import { initRelationships } from './relationships';
 import { initRooms } from './rooms';
 import { initSkills } from './skills';
+import { initSnapshot } from './snapshot';
 import { initTraits } from './traits';
 
 export async function initAll(api: AdminAPI, local: boolean) {
@@ -36,8 +37,10 @@ export async function initAll(api: AdminAPI, local: boolean) {
     await initAllLocal(api);
     await initGachaPool(api, 88);
   } else {
-    await initGachaPool(api, 1000);
+    await initGachaPool(api, 2500);
   }
+
+  await initSnapshot(api);
 }
 
 export async function initAllLocal(api: AdminAPI) {
