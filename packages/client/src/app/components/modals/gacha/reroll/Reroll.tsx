@@ -1,4 +1,3 @@
-import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -14,6 +13,7 @@ interface Props {
   data: {
     kamis: Kami[];
     balance: bigint;
+    maxRerolls: number;
   };
   utils: {
     getRerollCost: (kami: Kami) => bigint;
@@ -23,6 +23,9 @@ interface Props {
 export const Reroll = (props: Props) => {
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
   const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
+
+  const { actions, data, utils } = props;
+  const { kamis, balance, maxRerolls } = data;
 
   //////////////////
   // LOGIC
@@ -38,6 +41,13 @@ export const Reroll = (props: Props) => {
     setSelectedKamis([]);
   };
 
+  const canRerollSelected = () => {
+    for (const kami of selectedKamis) {
+      if (kami.rerolls ?? 0 > maxRerolls) return false;
+    }
+    return true;
+  };
+
   //////////////////
   // DISPLAY
 
@@ -49,25 +59,28 @@ export const Reroll = (props: Props) => {
     text.push('');
 
     // stats
-    text.push('Re-roll cost: ' + utils.formatEther(props.utils.getRerollCost(kami)) + 'Ξ');
-    text.push('Re-rolls done: ' + kami.rerolls?.toString() ?? '0');
+    text.push(`Re-roll cost: ${props.utils.getRerollCost(kami)} Ξ`);
+    text.push(`Re-rolls done: ${kami.rerolls?.toString()} / ${maxRerolls}`);
 
     return text;
   };
 
   const formatWei = (wei: bigint): string => {
-    return Number(utils.formatEther(wei)).toFixed(4);
+    // return Number(utils.formatEther(wei)).toFixed(4);
+    return Number(wei).toFixed(2);
   };
 
   const FooterButton = (
     <Footer>
-      <SideBalance balance={formatWei(rerollPrice) + 'Ξ'} title='Re-roll cost' />
+      {/* <SideBalance balance={formatWei(rerollPrice) + 'Ξ'} title='Re-roll cost' /> */}
+      <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
       <div style={{ flexGrow: 6 }} />
       <ActionButton
         onClick={handleReroll}
         text='Re-roll'
         size='large'
-        disabled={selectedKamis.length === 0 || rerollPrice > props.data.balance}
+        // disabled={selectedKamis.length === 0 || rerollPrice > props.data.balance}
+        disabled={selectedKamis.length === 0 || canRerollSelected()}
         fill
       />
     </Footer>
@@ -76,10 +89,10 @@ export const Reroll = (props: Props) => {
   const Grid =
     props.data.kamis.length > 0 ? (
       <KamiGrid
-        kamis={props.data.kamis}
+        kamis={kamis}
         getKamiText={getKamiText}
-        amtShown={props.data.kamis.length} // here if truncation makes sense later
-        grossShowable={props.data.kamis.length}
+        amtShown={kamis.length} // here if truncation makes sense later
+        grossShowable={kamis.length}
         incAmtShown={() => {}}
         select={{
           arr: selectedKamis,

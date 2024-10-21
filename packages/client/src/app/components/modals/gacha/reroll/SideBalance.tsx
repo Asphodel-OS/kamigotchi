@@ -11,8 +11,9 @@ export const SideBalance = (props: Props) => {
   return (
     <Container>
       <Row>
-        {props.icon && <Icon src={props.icon} />}
-        <NumberText>{props.balance}</NumberText>
+        {/* {props.icon && <Icon src={props.icon} />} */}
+        {/* <NumberText>{props.balance}</NumberText> */}
+        <NumberText>{props.balance} rerolls per kami</NumberText>
       </Row>
     </Container>
   );
@@ -43,7 +44,7 @@ const Row = styled.div`
 
 const NumberText = styled.div`
   font-family: Pixel;
-  font-size: 2.2vh;
+  font-size: 1.8vh;
   color: #333;
 
   text-decoration: inherit;

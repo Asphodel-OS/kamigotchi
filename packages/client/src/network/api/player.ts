@@ -1,3 +1,4 @@
+import { GasExponent } from 'constants/gas';
 import { BigNumberish, utils } from 'ethers';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
@@ -51,7 +52,7 @@ export function createPlayerAPI(systems: any) {
   // @param amount   amount to fund
   function fundOperator(amount: string) {
     return systems['system.Account.Fund'].ownerToOperator({
-      value: utils.parseEther(amount),
+      value: utils.parseUnits(amount, GasExponent),
     });
   }
 
@@ -59,7 +60,7 @@ export function createPlayerAPI(systems: any) {
   // @param amount   amount to refund
   function refundOwner(amount: string) {
     return systems['system.Account.Fund'].operatorToOwner({
-      value: utils.parseEther(amount),
+      value: utils.parseUnits(amount, GasExponent),
     });
   }
 
