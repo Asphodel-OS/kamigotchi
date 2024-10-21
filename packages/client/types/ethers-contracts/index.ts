@@ -162,6 +162,7 @@ export type { Uint32ArrayBareComponent } from "./Uint32ArrayBareComponent";
 export type { Uint32ArrayComponent } from "./Uint32ArrayComponent";
 export type { Uint32BareComponent } from "./Uint32BareComponent";
 export type { Uint32Component } from "./Uint32Component";
+export type { VRFComponent } from "./VRFComponent";
 export type { ValueComponent } from "./ValueComponent";
 export type { ValuesComponent } from "./ValuesComponent";
 export type { ViolenceComponent } from "./ViolenceComponent";
@@ -346,6 +347,7 @@ export { Uint32ArrayBareComponent__factory } from "./factories/Uint32ArrayBareCo
 export { Uint32ArrayComponent__factory } from "./factories/Uint32ArrayComponent__factory";
 export { Uint32BareComponent__factory } from "./factories/Uint32BareComponent__factory";
 export { Uint32Component__factory } from "./factories/Uint32Component__factory";
+export { VRFComponent__factory } from "./factories/VRFComponent__factory";
 export { ValueComponent__factory } from "./factories/ValueComponent__factory";
 export { ValuesComponent__factory } from "./factories/ValuesComponent__factory";
 export { ViolenceComponent__factory } from "./factories/ViolenceComponent__factory";

@@ -104,19 +104,20 @@ contract LootboxTest is SetupTemplate {
     assertEq(_getItemBal(alice, 1), 25);
   }
 
-  function testLootboxExpired() public {
-    uint32 lootboxIndex = 10;
-    _createBlankLootbox(lootboxIndex);
-    uint256[] memory revealIDs = new uint256[](1);
-    _giveItem(alice, lootboxIndex, 1);
+  // not used with vrf
+  // function testLootboxExpired() public {
+  //   uint32 lootboxIndex = 10;
+  //   _createBlankLootbox(lootboxIndex);
+  //   uint256[] memory revealIDs = new uint256[](1);
+  //   _giveItem(alice, lootboxIndex, 1);
 
-    revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
-    vm.roll(_currBlock += 300);
+  //   revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
+  //   vm.roll(_currBlock += 300);
 
-    vm.prank(alice.operator);
-    vm.expectRevert("Blockhash unavailable. Contact admin");
-    _DroptableRevealSystem.executeTyped(revealIDs);
-  }
+  //   vm.prank(alice.operator);
+  //   vm.expectRevert("Blockhash unavailable. Contact admin");
+  //   _DroptableRevealSystem.executeTyped(revealIDs);
+  // }
 
   function testLootboxForceReveal() public {
     uint32 lootboxIndex = 10;
