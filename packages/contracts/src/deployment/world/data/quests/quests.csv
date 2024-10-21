@@ -86,7 +86,7 @@ Lethe Asphodel,12,Proving Yourself,Ingame,Quest,,,,,,,No,0,,"You’re doing well
 Completing quests for me will raise your REPUTATION. As your REPUTATION grows, you’ll be able to claim rewards that manifest both within and outside of this world. 
 
 For now, raise your REPUTATION to 25 if you want a second testnet Kamigotchi. ",,Have 10 Reputation,Have 25 Reputation,1 Gacha Ticket,,,
-,12,,Ingame,Objective,ITEM_COUNT_GLOBAL,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,,,
+,12,,Ingame,Objective,REPUTATION,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,,,
 ,12,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 Lethe Asphodel,13,Further Progression,Ingame,Quest,,,,,,,No,0,,"You’re getting started. 
 
