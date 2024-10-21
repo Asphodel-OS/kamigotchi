@@ -9,7 +9,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibKami } from "libraries/LibKami.sol";
 
-uint256 constant ID = uint256(keccak256("system.Kami721.Stake"));
+uint256 constant ID = uint256(keccak256("system.kami721.stake"));
 uint256 constant ROOM = 12;
 
 /// @notice DEPRECIATED sets a pet outside world => game world

@@ -18,10 +18,10 @@ import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
 import { LibStat, Stat, StatLib } from "libraries/LibStat.sol";
 
-uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
+uint256 constant ID = uint256(keccak256("system.harvest.liquidate"));
 
 // liquidates a target production using a player's pet.
-contract ProductionLiquidateSystem is System {
+contract HarvestLiquidateSystem is System {
   using SafeCastLib for uint256;
 
   event KamiLiquidated(

@@ -14,13 +14,13 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
-uint256 constant ID = uint256(keccak256("system.Production.Stop"));
+uint256 constant ID = uint256(keccak256("system.harvest.stop"));
 
-// ProductionStopSystem collects and stops an active pet production. This is the case
+// HarvestStopSystem collects and stops an active pet production. This is the case
 // when a pet is stopped by the owner. When it is stopped by liquidation or death, the
 // output is not collected.
 // TODO: update productions to support all kinds of nodes, not just harvesting
-contract ProductionStopSystem is System {
+contract HarvestStopSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {

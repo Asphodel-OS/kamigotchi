@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
-uint256 constant ID = uint256(keccak256("system.Trade.Cancel"));
+uint256 constant ID = uint256(keccak256("system.trade.cancel"));
 
 // TradeCancelSystem allows an account to cancel a trade they're currently involved in
 contract TradeCancelSystem is System {

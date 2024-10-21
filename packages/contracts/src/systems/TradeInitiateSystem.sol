@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
-uint256 constant ID = uint256(keccak256("system.Trade.Initiate"));
+uint256 constant ID = uint256(keccak256("system.trade.initiate"));
 
 // TradeInitiateSystem allows an account to initiate a trade with another account, by request
 contract TradeInitiateSystem is System {
