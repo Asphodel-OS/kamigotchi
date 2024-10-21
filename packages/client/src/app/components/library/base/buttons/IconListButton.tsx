@@ -1,9 +1,10 @@
 import { Popover } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
+import { IconButton } from './IconButton';
 
 interface Props {
   img: string;
@@ -24,17 +25,16 @@ export interface Option {
 }
 
 export function IconListButton(props: Props) {
-  const { img, options, text, balance } = props;
+  const { img, options, text, scale, balance } = props;
   const { disabled, fullWidth } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const scale = props.scale ?? 1.4;
   const scaleOrientation = props.scalesOnHeight ? 'vh' : 'vw';
 
-  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled) {
+  const handleOpen = () => {
+    if (!disabled && toggleRef.current) {
       playClick();
-      setAnchorEl(event.currentTarget);
+      setAnchorEl(toggleRef.current);
     }
   };
 
@@ -63,11 +63,21 @@ export function IconListButton(props: Props) {
 
   return (
     <Wrapper>
-      <Button ref={toggleRef} onClick={handleOpen} disabled={!!disabled} fullWidth={!!fullWidth}>
+      <IconButton
+        img={img}
+        text={text}
+        onClick={handleOpen}
+        disabled={disabled}
+        scale={scale}
+        balance={balance}
+        corner={!balance}
+        ref={toggleRef}
+      />
+      {/* <Button ref={toggleRef} onClick={handleOpen} disabled={!!disabled} fullWidth={!!fullWidth}>
         {balance ? <Balance>{balance}</Balance> : <Corner />}
         <Image src={img} scale={scale} orientation={scaleOrientation} />
         {text && <Text>{text}</Text>}
-      </Button>
+      </Button> */}
       <Popover
         id={id}
         open={open}

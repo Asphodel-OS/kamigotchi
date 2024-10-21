@@ -1,3 +1,4 @@
+import { ForwardedRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
 import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
@@ -7,17 +8,25 @@ interface Props {
   img: string;
   onClick: Function;
   text?: string;
-  size?: number;
+  scale?: number;
   color?: string;
   disabled?: boolean;
   noMargin?: boolean;
   pulse?: boolean;
+  balance?: number;
+  corner?: boolean;
+  scaleOrientation?: 'vw' | 'vh';
 }
 
 // ActionButton is a text button that triggers an Action when clicked
-export const IconButton = (props: Props) => {
-  const { img, onClick, text, size, disabled, color, pulse, noMargin } = props;
-  const scale = size ?? 2.5;
+export const IconButton = forwardRef(function IconButton(
+  props: Props,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
+  const { img, onClick, text, disabled, color, pulse, noMargin } = props;
+  const { balance, corner } = props; // IconListButton options
+  const scale = props.scale ?? 2.5;
+  const scaleOrientation = props.scaleOrientation ?? 'vw';
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -44,12 +53,15 @@ export const IconButton = (props: Props) => {
       noMargin={noMargin}
       disabled={disabled}
       square={!text}
+      ref={ref}
     >
-      <Image src={img} scale={scale} />
+      <Image src={img} scale={scale} orientation={scaleOrientation} />
       {text && <Text scale={scale}>{text}</Text>}
+      {balance && <Balance>{balance}</Balance>}
+      {corner && <Corner />}
     </Button>
   );
-};
+});
 
 interface ButtonProps {
   scale: number;
@@ -61,8 +73,9 @@ interface ButtonProps {
 }
 
 const Button = styled.button<ButtonProps>`
+  position: relative;
   border: solid black 0.15vw;
-  border-radius: ${({ scale }) => scale * 0.2}vw;
+  border-radius: 0.45vw;
   height: ${({ scale }) => scale}vw;
   ${({ square, scale }) => square && `width: ${scale}vw;`}
 
@@ -90,8 +103,34 @@ const Button = styled.button<ButtonProps>`
   animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
 `;
 
-const Image = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 0.75}vw;
+const Corner = styled.div`
+  position: absolute;
+  border: solid black 0.3vw;
+  border-color: transparent black black transparent;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+`;
+
+const Balance = styled.div`
+  position: absolute;
+  background-color: white;
+  border-top: solid black 0.15vw;
+  border-left: solid black 0.15vw;
+  border-radius: 0.3vw 0 0.3vw 0;
+  bottom: 0;
+  right: 0;
+
+  font-size: 0.75vw;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2vw;
+`;
+
+const Image = styled.img<{ scale: number; orientation: string }>`
+  height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
+  ${({ scale }) => (scale > 3.2 ? 'image-rendering: pixelated;' : '')}
 `;
 
 const Text = styled.div<{ scale: number }>`
