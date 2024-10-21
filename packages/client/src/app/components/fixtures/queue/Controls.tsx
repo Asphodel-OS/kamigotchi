@@ -6,7 +6,7 @@ import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 import { GasGauge, IconButton, Tooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
-import { GasConstants } from 'constants/gas';
+import { GasConstants, GasExponent } from 'constants/gas';
 import { parseTokenBalance } from 'utils/balances';
 
 interface Props {
@@ -28,10 +28,10 @@ export const Controls = (props: Props) => {
   useWatchBlockNumber({
     onBlockNumber: (n) => {
       refetchOperatorBalance();
-      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, operatorBalance?.decimals));
+      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, GasExponent));
       if (n % 5n == 0n) {
         refetchGasPrice();
-        setGasPrice((gasPriceData ?? 0n) / 10n ** 6n); // Mwei
+        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent - 3)); // Mwei
       }
     },
   });
@@ -73,8 +73,8 @@ export const Controls = (props: Props) => {
   };
 
   const getBalanceTooltip = (balance: number) => {
-    const eth = balance.toFixed(6);
-    return ['1 ETH = 1000 milliETH', '', `${eth}Ξ`];
+    const eth = balance.toFixed(4);
+    return ['1 ETH = 1,000,000,000 nanoETH', '', `${eth}Ξ`];
   };
 
   //////////////////
@@ -109,7 +109,7 @@ export const Controls = (props: Props) => {
           <GasGauge level={calcGaugeSetting(operatorBalance?.value)} />
         </Tooltip>
         <Tooltip text={getBalanceTooltip(burnerGasBalance)}>
-          <Text>{(burnerGasBalance * 1000).toFixed(3)}mETH</Text>
+          <Text>{burnerGasBalance.toFixed(1)}nETH</Text>
         </Tooltip>
         {PriceWarning()}
       </RowPrefix>

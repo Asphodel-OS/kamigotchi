@@ -63,7 +63,8 @@ library LibCommit {
     }
 
     // writing
-    getCompByID(components, BlockRevealCompID).setAll(ids, revealBlock);
+    uint256 nextIncrement = VRFComponent(getAddrByID(components, VRFCompID)).increment() + 1;
+    getCompByID(components, BlockRevealCompID).setAll(ids, nextIncrement);
     getCompByID(components, IdHolderCompID).setAll(ids, holderID);
     getCompByID(components, TypeCompID).setAll(ids, type_);
   }
@@ -71,21 +72,25 @@ library LibCommit {
   ///////////////
   // CHECKERS
 
-  function isAvailable(uint256 blockNum) internal view returns (bool) {
-    return blockNum + 256 >= block.number;
-  }
+  // function isAvailable(uint256 blockNum) internal view returns (bool) {
+  // return blockNum + 256 >= block.number;
+  // }
 
   /// @notice checks if a blockhash is available
   function isAvailable(IUintComp components, uint256 id) internal returns (bool) {
     uint256 revBlock = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).get(id);
-    return isAvailable(revBlock);
+    uint256 seed = VRFComponent(getAddrByID(components, VRFCompID)).safeGet(revBlock);
+    return seed != 0;
+    // return isAvailable(revBlock);
   }
 
   function isAvailable(IUintComp components, uint256[] memory ids) internal returns (bool) {
     uint256[] memory blocks = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).get(
       ids
     );
-    for (uint256 i; i < ids.length; i++) if (!isAvailable(blocks[i])) return false;
+    uint256[] memory seeds = VRFComponent(getAddrByID(components, VRFCompID)).safeGet(blocks);
+    for (uint256 i; i < ids.length; i++) if (seeds[i] == 0) return false;
+    // for (uint256 i; i < ids.length; i++) if (!isAvailable(blocks[i])) return false;
     return true;
   }
 

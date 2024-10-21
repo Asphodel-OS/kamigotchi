@@ -11,6 +11,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX } from 'constants/items';
 import { getAccountFromBurner } from 'network/shapes/Account';
+import { getConfigFieldValue } from 'network/shapes/Config';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { getItemBalance } from 'network/shapes/Item';
 import { Kami, KamiOptions, queryKamisByAccount } from 'network/shapes/Kami';
@@ -50,6 +51,7 @@ export function registerGachaModal() {
               partyKamis: queryKamisByAccount(components, account.id),
               poolKamis: queryKamisByAccount(components, GACHA_ID),
               commits: queryGachaCommits(world, components, account.id),
+              maxRerolls: getConfigFieldValue(world, components, 'GACHA_MAX_REROLLS'),
             },
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
@@ -228,6 +230,7 @@ export function registerGachaModal() {
             <Reroll
               actions={{ handleReroll }}
               data={{
+                maxRerolls: data.maxRerolls,
                 kamis: accKamis.filter((kami) => kami.state === 'RESTING') || [],
                 balance: ownerEthBalance?.value || 0n, // bigint used for dealing with wei
               }}
