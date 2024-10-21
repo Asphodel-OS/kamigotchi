@@ -3,17 +3,17 @@ import { AdminAPI } from '../admin';
 import { getGoalID } from './utils';
 
 export async function initListings(api: AdminAPI) {
-  setListing(api, 1, 101, 50); // gum (S)
-  setListing(api, 1, 102, 180); // candy (M)
-  setListing(api, 1, 103, 320); // cookie sticks (L)
-  setListing(api, 1, 110, 100); // ribbon
+  setListing(api, 1, 11301, 50); // gum (S)
+  setListing(api, 1, 11303, 180); // candy (M)
+  setListing(api, 1, 11304, 320); // cookie sticks (L)
+  setListing(api, 1, 11001, 100); // ribbon
 
-  setListing(api, 1, 107, 160); // ice cream (L)
-  setListing(api, 1, 108, 90); // ice cream (M)
-  setListing(api, 1, 109, 50); // ice cream (S)
+  setListing(api, 1, 21201, 50); // ice cream (S)
+  setListing(api, 1, 21202, 90); // ice cream (M)
+  setListing(api, 1, 21203, 160); // ice cream (L)
 
-  setListing(api, 1, 119, 35); // teleport scroll
-  initRequirement(api, 1, 119, 'COMPLETE_COMP', 'BOOL_IS', 0, getGoalID(5)); // require 1 teleport scroll
+  setListing(api, 1, 21100, 35); // teleport scroll
+  initRequirement(api, 1, 21100, 'COMPLETE_COMP', 'BOOL_IS', 0, getGoalID(5)); // require 1 teleport scroll
 }
 
 export async function deleteListings(api: AdminAPI, indices: number[]) {
