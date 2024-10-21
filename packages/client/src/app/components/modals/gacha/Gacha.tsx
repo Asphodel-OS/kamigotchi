@@ -102,7 +102,7 @@ export function registerGachaModal() {
           if (!triedReveal && filtered.length > 0) {
             try {
               // wait to give buffer for rpc
-              await new Promise((resolve) => setTimeout(resolve, 500));
+              await new Promise((resolve) => setTimeout(resolve, 750));
               revealTx(filtered);
               setTriedReveal(true);
             } catch (e) {

@@ -138,7 +138,6 @@ export function registerAccountRegistrar() {
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
-        console.log('updating account register');
         const accountEntity = queryAccountByOwner(components, selectedAddress);
         if (!!accountEntity == validations.accountExists) return; // no change
         if (!!accountEntity) {
