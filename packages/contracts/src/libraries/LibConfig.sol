@@ -43,6 +43,11 @@ library LibConfig {
     set(components, field, LibPack.stringToUint(value));
   }
 
+  function remove(IUintComp components, string memory field) internal {
+    uint256 id = genID(field);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+  }
+
   //////////////////
   // CHECKERS
 
