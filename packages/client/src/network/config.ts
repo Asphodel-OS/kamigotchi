@@ -93,9 +93,10 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     jsonRpc:
       'https://maze-jsonrpc-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
     wsRpc:
-      'https://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+      'wss://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
     snapshotServiceUrl: 'https://snapshot-initia-lb.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
+    faucetServiceUrl: 'http://localhost:50081',
 
     chainId: 4471190363524365,
     worldAddress: '0x64468b657c0b8a48eded0b5ffeead1a23f060f9c',
