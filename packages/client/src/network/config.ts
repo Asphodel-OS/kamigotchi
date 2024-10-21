@@ -99,7 +99,7 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
 
     chainId: 4471190363524365,
     worldAddress: '0x64468b657c0b8a48eded0b5ffeead1a23f060f9c',
-    initialBlockNumber: 290735,
+    initialBlockNumber: 290600,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;
