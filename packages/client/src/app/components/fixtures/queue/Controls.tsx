@@ -6,7 +6,7 @@ import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 import { GasGauge, IconButton, Tooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
-import { GasConstants } from 'constants/gas';
+import { GasConstants, GasExponent } from 'constants/gas';
 import { parseTokenBalance } from 'utils/balances';
 
 interface Props {
@@ -28,10 +28,10 @@ export const Controls = (props: Props) => {
   useWatchBlockNumber({
     onBlockNumber: (n) => {
       refetchOperatorBalance();
-      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, operatorBalance?.decimals));
+      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, GasExponent));
       if (n % 5n == 0n) {
         refetchGasPrice();
-        setGasPrice((gasPriceData ?? 0n) / 10n ** 6n); // Mwei
+        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent - 3)); // Mwei
       }
     },
   });

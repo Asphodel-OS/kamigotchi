@@ -1094,6 +1094,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initMintConfigs() internal virtual {
     _setConfig("GACHA_REROLL_PRICE", 0);
+    _setConfig("GACHA_MAX_REROLLS", 100);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
