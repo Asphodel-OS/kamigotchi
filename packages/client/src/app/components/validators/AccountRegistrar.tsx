@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@m
 import InfoIcon from '@mui/icons-material/Info';
 import { IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
@@ -95,13 +95,8 @@ export function registerAccountRegistrar() {
         return accountIndex;
       };
 
-      return merge(
-        AccountIndex.update$,
-        FarcasterIndex.update$,
-        Name.update$,
-        OperatorAddress.update$,
-        OwnerAddress.update$
-      ).pipe(
+      // race condition present when updating by components, updates every second instead
+      return interval(1000).pipe(
         map(() => {
           const { selectedAddress } = useNetwork.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
@@ -143,6 +138,7 @@ export function registerAccountRegistrar() {
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
+        console.log('updating account register');
         const accountEntity = queryAccountByOwner(components, selectedAddress);
         if (!!accountEntity == validations.accountExists) return; // no change
         if (!!accountEntity) {
