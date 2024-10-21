@@ -15,11 +15,11 @@ export async function initGoals(api: AdminAPI) {
     50000
   );
   await api.goal.add.reward(1, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
-  await api.goal.add.reward(1, 'Bronze', 50, 'ITEM', 'REWARD', 106, [], [], 1);
+  await api.goal.add.reward(1, 'Bronze', 50, 'ITEM', 'REWARD', 11201, [], [], 1);
   await api.goal.add.reward(1, 'Bronze', 50, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(1, 'Silver', 250, 'ITEM', 'REWARD', 105, [], [], 2);
+  await api.goal.add.reward(1, 'Silver', 250, 'ITEM', 'REWARD', 11202, [], [], 2);
   await api.goal.add.reward(1, 'Silver', 250, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(1, 'Gold', 500, 'ITEM', 'REWARD', 104, [], [], 3);
+  await api.goal.add.reward(1, 'Gold', 500, 'ITEM', 'REWARD', 11203, [], [], 3);
   await api.goal.add.reward(1, 'Gold', 500, 'REPUTATION', 'REWARD', 1, [], [], 10);
 
   await api.goal.create(
@@ -53,7 +53,7 @@ export async function initGoals(api: AdminAPI) {
   );
   await api.goal.add.reward(3, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
   await api.goal.add.reward(3, 'Bronze', 1000, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(3, 'Bronze', 1000, 'ITEM', 'REWARD', 104, [], [], 1);
+  await api.goal.add.reward(3, 'Bronze', 1000, 'ITEM', 'REWARD', 11203, [], [], 1);
   await api.goal.add.reward(3, 'Silver', 5000, 'REPUTATION', 'REWARD', 1, [], [], 5);
   await api.goal.add.reward(3, 'Gold', 10000, 'REPUTATION', 'REWARD', 1, [], [], 10);
 
@@ -100,9 +100,9 @@ export async function initGoals(api: AdminAPI) {
     0
   );
   await api.goal.add.reward(5, 'Bronze', 1000, 'REPUTATION', 'REWARD', 2, [], [], 5);
-  await api.goal.add.reward(5, 'Bronze', 1000, 'ITEM', 'REWARD', 119, [], [], 10);
+  await api.goal.add.reward(5, 'Bronze', 1000, 'ITEM', 'REWARD', 21100, [], [], 10);
   await api.goal.add.reward(5, 'Silver', 5000, 'REPUTATION', 'REWARD', 2, [], [], 10);
-  await api.goal.add.reward(5, 'Silver', 5000, 'ITEM', 'REWARD', 117, [], [], 3);
+  await api.goal.add.reward(5, 'Silver', 5000, 'ITEM', 'REWARD', 11204, [], [], 3);
   await api.goal.add.reward(5, 'Gold', 20000, 'REPUTATION', 'REWARD', 2, [], [], 10);
 
   await api.goal.create(
@@ -117,7 +117,7 @@ export async function initGoals(api: AdminAPI) {
   );
   await api.goal.add.reward(6, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
   await api.goal.add.reward(6, 'Bronze', 2500, 'REPUTATION', 'REWARD', 1, [], [], 10);
-  await api.goal.add.reward(6, 'Bronze', 2500, 'ITEM', 'REWARD', 117, [], [], 1);
+  await api.goal.add.reward(6, 'Bronze', 2500, 'ITEM', 'REWARD', 11204, [], [], 1);
   await api.goal.add.reward(6, 'Silver', 7500, 'REPUTATION', 'REWARD', 1, [], [], 10);
   await api.goal.add.reward(6, 'Gold', 25000, 'REPUTATION', 'REWARD', 1, [], [], 5);
 

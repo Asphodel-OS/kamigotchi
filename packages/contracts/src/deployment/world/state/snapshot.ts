@@ -1,6 +1,7 @@
 import { AdminAPI } from '../admin';
 
-import { tester as data } from '../../commands/data/KamiTransfer.json';
+import { ethers } from 'ethers';
+import { file as data } from '../../commands/data/KamiTransfer.json';
 
 export async function initSnapshot(api: AdminAPI) {
   initTransferKamis(api);
@@ -12,7 +13,7 @@ async function initTransferKamis(api: AdminAPI) {
 
   for (let i = 0; i < data.length; i++) {
     await api.mint.create.mint(
-      data[i].owneraddress,
+      ethers.utils.getAddress(data[i].owneraddress),
       data[i].backgroundindex,
       data[i].bodyindex,
       data[i].colourindex,
