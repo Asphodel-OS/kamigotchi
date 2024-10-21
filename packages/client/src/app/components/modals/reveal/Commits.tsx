@@ -72,7 +72,8 @@ export const Commits = (props: Props) => {
   const ActiveCell = (commit: Commit) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
-        <ActiveName>{getCommitTimeFrom(commit)} [Available]</ActiveName>
+        {/* <ActiveName>{getCommitTimeFrom(commit)} [Available]</ActiveName> */}
+        <ActiveName>Available</ActiveName>
         {BottomButton(commit)}
       </CellContainer>
     );
