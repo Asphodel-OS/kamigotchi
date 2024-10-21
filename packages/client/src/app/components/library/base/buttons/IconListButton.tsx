@@ -68,6 +68,7 @@ export function IconListButton(props: Props) {
         onClick={handleOpen}
         disabled={disabled}
         scale={scale}
+        scaleOrientation={scaleOrientation}
         fullWidth={fullWidth}
         balance={balance}
         corner={!balance}

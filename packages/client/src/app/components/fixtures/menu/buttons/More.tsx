@@ -5,7 +5,7 @@ import { useVisibility } from 'app/stores';
 import { logoutIcon } from 'assets/images/icons/actions';
 import { helpIcon, settingsIcon } from 'assets/images/icons/menu';
 
-export const LogoutMenuButton = () => {
+export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
   const { modals, setModals } = useVisibility();
 
@@ -63,8 +63,8 @@ export const LogoutMenuButton = () => {
           { text: 'Hard Refresh', image: helpIcon, onClick: clearCache },
           { text: 'Logout', image: logoutIcon, onClick: handleClick },
         ]}
-        scale={3}
-        scalesOnHeight
+        scale={4.5}
+        scaleOrientation='vh'
       />
     </Tooltip>
   );

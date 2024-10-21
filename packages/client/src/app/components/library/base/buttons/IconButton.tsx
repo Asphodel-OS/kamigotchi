@@ -39,6 +39,7 @@ export const IconButton = forwardRef(function IconButton(
       color={color ?? '#fff'}
       onClick={!disabled ? handleClick : () => {}}
       scale={scale}
+      orientation={scaleOrientation}
       fullWidth={fullWidth}
       disabled={disabled}
       pulse={pulse}
@@ -57,8 +58,9 @@ export const IconButton = forwardRef(function IconButton(
 });
 
 interface ButtonProps {
-  scale: number;
   color: string;
+  scale: number;
+  orientation: string;
   fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
@@ -68,11 +70,11 @@ const Button = styled.button<ButtonProps>`
   position: relative;
   border: solid black 0.15vw;
   border-radius: 0.45vw;
-  height: ${({ scale }) => scale}vw;
+  height: ${({ scale }) => scale}${({ orientation }) => orientation};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
-  padding: ${({ scale }) => scale * 0.1}vw;
-  gap: ${({ scale }) => scale * 0.1}vw;
+  padding: ${({ scale }) => scale * 0.1}${({ orientation }) => orientation};
+  gap: ${({ scale }) => scale * 0.1}${({ orientation }) => orientation};
 
   display: flex;
   flex-flow: row nowrap;
@@ -97,7 +99,7 @@ const Button = styled.button<ButtonProps>`
 const Image = styled.img<{ scale: number; orientation: string }>`
   width: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
   height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
-  ${({ scale }) => (scale > 3.2 ? 'image-rendering: pixelated;' : '')}
+  ${({ scale }) => (scale > 4.5 ? 'image-rendering: pixelated;' : '')}
 `;
 
 const Text = styled.div<{ scale: number; orientation: string }>`
