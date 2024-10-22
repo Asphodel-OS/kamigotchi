@@ -1,8 +1,9 @@
 import { EntityID, World, getComponentValue } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { Effect, Skill, getEffect, getSkill, getSkillInstanceEntity, querySkillsX } from '.';
-import { queryHolderSkills, querySkillByIndex, querySkillEffects } from './queries';
-import { NullSkill, Options } from './types';
+import { Skill, getSkill, getSkillInstanceEntity, querySkillsX } from '.';
+import { Bonus, getBonusesByParent } from '../Bonus';
+import { queryHolderSkills, querySkillByIndex } from './queries';
+import { NullSkill, Options, getBonusParentID } from './types';
 
 /////////////////
 // VALUES
@@ -26,7 +27,7 @@ export const getHolderSkillLevel = (
 
 export const getRegistrySkills = (world: World, components: Components): Skill[] => {
   return querySkillsX(components, { registry: true }).map((entityIndex) =>
-    getSkill(world, components, entityIndex, { effects: true, requirements: true })
+    getSkill(world, components, entityIndex, { bonuses: true, requirements: true })
   );
 };
 
@@ -63,12 +64,12 @@ export const getHolderSkillByIndex = (
   return getSkill(world, components, entity, options);
 };
 
-export const getSkillEffects = (
+export const getSkillBonuses = (
   world: World,
   components: Components,
   skillIndex: number
-): Effect[] => {
-  return querySkillEffects(world, components, skillIndex).map((entityIndex) =>
-    getEffect(world, components, entityIndex)
-  );
+): Bonus[] => {
+  const unfiltered = getBonusesByParent(world, components, getBonusParentID(skillIndex));
+  // filter out tree bonuses
+  return unfiltered.filter((bonus) => !bonus.type.startsWith('SKILL_TREE_'));
 };

@@ -1,4 +1,4 @@
-import { getComponentValue, Has, HasValue, runQuery, World } from '@mud-classic/recs';
+import { getComponentValue, HasValue, runQuery, World } from '@mud-classic/recs';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
@@ -8,10 +8,12 @@ import { Kami } from './types';
 
 // get the BaseAccount entity that owns a Kami
 export const getAccount = (world: World, components: Components, index: number): BaseAccount => {
-  const { IsPet, PetIndex, OwnsPetID } = components;
-  const kamiEntity = Array.from(runQuery([HasValue(PetIndex, { value: index }), Has(IsPet)]))[0];
+  const { EntityType, KamiIndex, OwnsKamiID } = components;
+  const kamiEntity = Array.from(
+    runQuery([HasValue(KamiIndex, { value: index }), HasValue(EntityType, { value: 'KAMI' })])
+  )[0];
 
-  const rawAccID = getComponentValue(OwnsPetID, kamiEntity)?.value ?? '';
+  const rawAccID = getComponentValue(OwnsKamiID, kamiEntity)?.value ?? '';
   if (!rawAccID) return NullAccount;
 
   const accID = formatEntityID(rawAccID);

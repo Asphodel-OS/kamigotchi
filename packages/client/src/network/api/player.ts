@@ -1,33 +1,34 @@
+import { GasExponent } from 'constants/gas';
 import { BigNumberish, utils } from 'ethers';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(systems: any) {
   /////////////////
-  //     PET
+  //     KAMI
 
   // level a pet, if it has enough experience
-  function levelPet(petID: BigNumberish) {
-    return systems['system.Pet.Level'].executeTyped(petID);
+  function levelPet(kamiID: BigNumberish) {
+    return systems['system.kami.level'].executeTyped(kamiID);
   }
 
   // name / rename a pet
-  function namePet(petID: BigNumberish, name: string) {
-    return systems['system.Pet.Name'].executeTyped(petID, name);
+  function namePet(kamiID: BigNumberish, name: string) {
+    return systems['system.kami.name'].executeTyped(kamiID, name);
   }
 
   // feed a pet using a Pet Item
-  function useFoodPet(petID: BigNumberish, itemIndex: number) {
-    return systems['system.pet.use.food'].executeTyped(petID, itemIndex);
+  function useFoodPet(kamiID: BigNumberish, itemIndex: number) {
+    return systems['system.kami.use.food'].executeTyped(kamiID, itemIndex);
   }
 
   // revive a pet using a Revive Item
-  function useRevivePet(petID: BigNumberish, reviveIndex: number) {
-    return systems['system.pet.use.revive'].executeTyped(petID, reviveIndex);
+  function useRevivePet(kamiID: BigNumberish, reviveIndex: number) {
+    return systems['system.kami.use.revive'].executeTyped(kamiID, reviveIndex);
   }
 
-  function useRenamePotionPet(petID: BigNumberish, itemIndex: number) {
-    return systems['system.pet.use.renamePotion'].executeTyped(petID, itemIndex);
+  function useRenamePotionPet(kamiID: BigNumberish, itemIndex: number) {
+    return systems['system.kami.use.renamePotion'].executeTyped(kamiID, itemIndex);
   }
 
   function useTransferrerPet(petID: BigNumberish, itemIndex: number) {
@@ -35,13 +36,13 @@ export function createPlayerAPI(systems: any) {
   }
 
   // upgrade a pet's skill
-  function upgradePetSkill(petID: BigNumberish, skillIndex: number) {
-    return systems['system.Pet.Skill.Upgrade'].executeTyped(petID, skillIndex);
+  function upgradePetSkill(kamiID: BigNumberish, skillIndex: number) {
+    return systems['system.Pet.Skill.Upgrade'].executeTyped(kamiID, skillIndex);
   }
 
   // use a pet item
-  function usePetItem(petID: BigNumberish, itemIndex: BigNumberish) {
-    return systems['system.pet.use.renamePotion'].executeTyped(petID, itemIndex);
+  function usePetItem(kamiID: BigNumberish, itemIndex: BigNumberish) {
+    return systems['system.kami.use.renamePotion'].executeTyped(kamiID, itemIndex);
   }
 
   /////////////////
@@ -51,7 +52,7 @@ export function createPlayerAPI(systems: any) {
   // @param amount   amount to fund
   function fundOperator(amount: string) {
     return systems['system.Account.Fund'].ownerToOperator({
-      value: utils.parseEther(amount),
+      value: utils.parseUnits(amount, GasExponent),
     });
   }
 
@@ -59,7 +60,7 @@ export function createPlayerAPI(systems: any) {
   // @param amount   amount to refund
   function refundOwner(amount: string) {
     return systems['system.Account.Fund'].operatorToOwner({
-      value: utils.parseEther(amount),
+      value: utils.parseUnits(amount, GasExponent),
     });
   }
 
@@ -214,13 +215,13 @@ export function createPlayerAPI(systems: any) {
   }
 
   // @dev liquidates a production, if able to, using the specified pet
-  function liquidateProduction(productionID: BigNumberish, petID: BigNumberish) {
-    return systems['system.Production.Liquidate'].executeTyped(productionID, petID);
+  function liquidateProduction(productionID: BigNumberish, kamiID: BigNumberish) {
+    return systems['system.Production.Liquidate'].executeTyped(productionID, kamiID);
   }
 
   // @dev starts a deposit production for a character. If none exists, it creates one.
-  function startProduction(petID: BigNumberish, nodeID: BigNumberish) {
-    return systems['system.Production.Start'].executeTyped(petID, nodeID);
+  function startProduction(kamiID: BigNumberish, nodeID: BigNumberish) {
+    return systems['system.Production.Start'].executeTyped(kamiID, nodeID);
   }
 
   // @dev retrieves the amount due from a passive deposit production and stops it.
@@ -304,32 +305,23 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   //    MINT
 
-  // @dev mint a pet with a mint20 token
+  // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
-    return systems['system.Pet.Gacha.Mint'].executeTyped(amount);
+    return systems['system.kami.gacha.Mint'].executeTyped(amount);
   }
 
   // @dev reveal a minted pet
   // @param commitIDs array of commitIDs
   function revealPet(commitIDs: BigNumberish[]) {
-    return systems['system.Pet.Gacha.Reveal'].reveal(commitIDs);
+    return systems['system.kami.gacha.Reveal'].reveal(commitIDs);
   }
 
   // @dev reroll a pet
-  // @param petID  PetID
-  function rerollPet(petIDs: BigNumberish[], totalCost: BigNumberish) {
-    return systems['system.Pet.Gacha.Reroll'].reroll(petIDs, {
+  // @param kamiID  kamiID
+  function rerollPet(kamiIDs: BigNumberish[], totalCost: BigNumberish) {
+    return systems['system.kami.gacha.Reroll'].reroll(kamiIDs, {
       value: totalCost,
-    });
-  }
-
-  // @dev mint mint20 tokens with eth
-  // @param amount  number of tokens to mint
-  // @param cost    cost in ETH
-  function mintToken(amount: BigNumberish, cost: BigNumberish) {
-    return systems['system.Mint20.Mint'].mint(amount, {
-      value: utils.parseEther(cost.toString()),
     });
   }
 
@@ -337,15 +329,15 @@ export function createPlayerAPI(systems: any) {
   //   ERC721
 
   // @dev deposits pet from outside -> game world
-  // @param tokenID  ERC721 petID, not MUD entity ID
+  // @param tokenID  ERC721 kamiID, not MUD entity ID
   function depositERC721(tokenID: BigNumberish) {
-    return systems['system.Pet721.Stake'].executeTyped(tokenID);
+    return systems['system.Kami721.Stake'].executeTyped(tokenID);
   }
 
   // @dev brings pet from game world -> outside
-  // @param tokenID  ERC721 petID, not MUD entity ID
+  // @param tokenID  ERC721 kamiID, not MUD entity ID
   function withdrawERC721(tokenID: BigNumberish) {
-    return systems['system.Pet721.Unstake'].executeTyped(tokenID);
+    return systems['system.Kami721.Unstake'].executeTyped(tokenID);
   }
 
   return {
@@ -408,7 +400,6 @@ export function createPlayerAPI(systems: any) {
     },
     mint: {
       mintPet: mintPet,
-      mintToken: mintToken,
       reveal: revealPet,
       reroll: rerollPet,
     },

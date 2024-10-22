@@ -75,7 +75,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
     wsRpc: 'ws://localhost:8545',
 
     chainId: 1337,
-    worldAddress: params.get('worldAddress') ?? '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
+    worldAddress: params.get('worldAddress') ?? '0x0165878A594ca255338adfa4d48449f69242Eb8F',
     initialBlockNumber: parseInt(params.get('initialBlockNumber') ?? '0'),
   };
 
@@ -90,15 +90,16 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: '/http(.*)', //https://yominet.rpc.caldera.xyz/http/',
-    wsRpc: 'wss://yominet.rpc.caldera.xyz/ws/',
-    snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
-    //snapshotServiceUrl: 'http://localhost:80',
+    jsonRpc:
+      'https://maze-jsonrpc-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+    wsRpc:
+      'https://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+    snapshotServiceUrl: 'https://kamigaze.test.asphodel.io', 
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
-    chainId: 5264468217,
-    worldAddress: '0x441E13a25cAECaD50028E7623a39b91a507bca02',
-    initialBlockNumber: 1077451,
+    chainId: 4471190363524365,
+    worldAddress: '0x6CF5466067C2c60818921E8d1aCf35abAC50B250',
+    initialBlockNumber: 303930,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;

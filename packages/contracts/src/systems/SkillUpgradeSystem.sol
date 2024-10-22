@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
@@ -35,35 +35,22 @@ contract SkillUpgradeSystem is System {
     if (LibFor.isAccount(forEntity)) {
       require(accID == holderID, "SkillUpgrade: not ur account");
     } else if (LibFor.isPet(forEntity)) {
-      require(accID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
-      require(LibPet.isResting(components, holderID), "SkillUpgrade: pet not resting");
-      LibPet.sync(components, holderID);
+      require(accID == LibKami.getAccount(components, holderID), "SkillUpgrade: not ur pet");
+      require(LibKami.isResting(components, holderID), "SkillUpgrade: pet not resting");
+      LibKami.sync(components, holderID);
     }
 
     // points are decremented when checking prerequisites
     require(
-      LibSkill.meetsPrerequisites(components, holderID, regID),
+      LibSkill.meetsPrerequisites(components, skillIndex, holderID),
       "SkillUpgrade: unmet prerequisites"
     );
 
-    // decrement the skill cost
-    uint256 cost = LibSkillRegistry.getCost(components, regID);
-    LibSkill.dec(components, holderID, cost);
-
-    // create the skill if it doesnt exist and increment it
-    uint256 skillID = LibSkill.get(components, holderID, skillIndex);
-    if (skillID == 0) skillID = LibSkill.assign(components, holderID, skillIndex);
-    LibSkill.inc(components, skillID, 1);
-
-    // get the skill's effects and update the holder's bonuses accordingly
-    uint256[] memory effectIDs = LibSkillRegistry.getEffectsByIndex(components, skillIndex);
-    for (uint256 i = 0; i < effectIDs.length; i++) {
-      LibSkill.processEffectUpgrade(components, holderID, effectIDs[i]);
-    }
+    // upgrading skill
+    uint256 id = LibSkill.upgradeFor(components, skillIndex, holderID);
 
     // standard logging and tracking
     LibSkill.logUsePoint(components, accID);
-    LibSkill.logUseTreePoint(components, holderID, regID, cost);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

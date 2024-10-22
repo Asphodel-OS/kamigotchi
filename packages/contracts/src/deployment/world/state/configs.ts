@@ -1,4 +1,3 @@
-import { utils } from 'ethers';
 import { AdminAPI } from '../admin';
 
 export async function initConfigs(api: AdminAPI) {
@@ -17,7 +16,9 @@ export async function initConfigs(api: AdminAPI) {
 
   // Kami Mint Price and Limits
   // to be 5, set at 500 for testing
-  await api.config.set.number('GACHA_REROLL_PRICE', utils.parseEther('0.0001'));
+  // await api.config.set.number('GACHA_REROLL_PRICE', utils.parseEther('0.0001'));
+  await api.config.set.number('GACHA_REROLL_PRICE', 0);
+  await api.config.set.number('GACHA_MAX_REROLLS', 10);
 
   // Kami Base Stats
   await api.config.set.number('KAMI_BASE_HEALTH', 50);
@@ -68,4 +69,5 @@ export async function initLocalConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100, 0, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [1, 0, 2, 0, 0, 0, 0, 0]); // 960x testnet rate
   await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100, 0, 0, 0, 1000, 3]);
+  await api.config.set.number('BYPASS_VRF', 1);
 }

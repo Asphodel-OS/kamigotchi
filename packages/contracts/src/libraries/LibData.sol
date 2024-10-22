@@ -36,11 +36,11 @@ library LibData {
   }
 
   function inc(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).incBatch(dataIDs, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(dataIDs, amt);
   }
 
   function inc(IUintComp components, uint256[] memory dataIDs, uint256[] memory amts) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).incBatch(dataIDs, amts);
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(dataIDs, amts);
   }
 
   function inc(
@@ -95,11 +95,11 @@ library LibData {
   }
 
   function dec(IUintComp components, uint256[] memory dataIDs, uint256 amt) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).decBatch(dataIDs, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).dec(dataIDs, amt);
   }
 
   function dec(IUintComp components, uint256[] memory dataIDs, uint256[] memory amts) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).decBatch(dataIDs, amts);
+    ValueComponent(getAddrByID(components, ValueCompID)).dec(dataIDs, amts);
   }
 
   function dec(
@@ -179,7 +179,7 @@ library LibData {
   // GETTERS
 
   function get(IUintComp components, uint256 dataID) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(components, ValueCompID)).safeGetUint256(dataID);
+    return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(dataID);
   }
 
   function get(

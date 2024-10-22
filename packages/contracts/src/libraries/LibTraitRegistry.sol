@@ -6,7 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
@@ -315,7 +315,7 @@ library LibTraitRegistry {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    uint256[] memory weights = RarityComponent(getAddrByID(components, RarityCompID)).getBatch(ids);
+    uint256[] memory weights = RarityComponent(getAddrByID(components, RarityCompID)).get(ids);
     return LibRandom.processWeightedRarity(weights);
   }
 
@@ -467,13 +467,16 @@ library LibTraitRegistry {
     IUintComp components,
     string memory _type
   ) internal view returns (uint256[] memory) {
-    uint256 ptr = genReverseMappingPtr(_type);
-    return
-      LibQuery.getIsWithValue(
-        getCompByID(components, ForCompID),
-        getCompByID(components, IsRegCompID),
-        abi.encode(ptr)
-      );
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getCompByID(components, ForCompID),
+      abi.encode(genReverseMappingPtr(_type))
+    );
+    fragments[1] = QueryFragment(QueryType.Has, getCompByID(components, IsRegCompID), "");
+
+    return LibQuery.query(fragments);
   }
 
   /////////////////

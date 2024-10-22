@@ -3,14 +3,17 @@ pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";
-import { MUSU_INDEX } from "libraries/LibInventory.sol";
+import { MUSU_INDEX, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 
 import "./TestSetupImports.sol";
 import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibGetter } from "libraries/utils/LibGetter.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
@@ -36,8 +39,7 @@ abstract contract SetupTemplate is TestSetupImports {
   PlayerAccount charlie;
 
   // Token vars
-  Mint20 _Mint20;
-  Pet721 _Pet721;
+  Kami721 _Kami721;
 
   constructor() MudTest() {}
 
@@ -66,8 +68,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUpTokens() public virtual {
     vm.startPrank(deployer);
-    _Pet721 = Pet721(LibDeployTokens.deployPet721(world, components));
-    _Mint20 = Mint20(LibDeployTokens.deployMint20(world, components));
+    _Kami721 = Kami721(LibDeployTokens.deployKami721(world, components));
     vm.stopPrank();
   }
 
@@ -216,38 +217,28 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // OWNER ACTIONS
 
-  function _mintPets(PlayerAccount memory account, uint amt) internal returns (uint[] memory) {
-    return _mintPets(account.index, amt);
+  function _mintKamis(PlayerAccount memory acc, uint amt) internal returns (uint[] memory) {
+    vm.roll(++_currBlock);
+    _giveGachaTicket(acc, amt);
+    vm.prank(acc.owner);
+    uint256[] memory commits = abi.decode(_KamiGachaMintSystem.executeTyped(amt), (uint256[]));
+
+    vm.roll(++_currBlock);
+    return _KamiGachaRevealSystem.reveal(commits);
   }
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
-    address owner = _owners[playerIndex];
-
-    vm.roll(++_currBlock);
-    _giveMint20(playerIndex, amt);
-    vm.prank(owner);
-    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(amt), (uint256[]));
-
-    vm.roll(++_currBlock);
-    return _PetGachaRevealSystem.reveal(commits);
+  function _mintKamis(uint playerIndex, uint amt) internal virtual returns (uint[] memory) {
+    return _mintKamis(_accounts[playerIndex], amt);
   }
 
-  function _mintPet(PlayerAccount memory account) internal returns (uint) {
-    return _mintPet(account.index);
+  function _mintKami(PlayerAccount memory acc) internal returns (uint) {
+    return _mintKamis(acc, 1)[0];
   }
 
   // (public) mint and reveal a single pet to a specified address
-  function _mintPet(uint playerIndex) internal virtual returns (uint) {
-    address owner = _owners[playerIndex];
-
-    vm.roll(++_currBlock);
-    _giveMint20(playerIndex, 1);
-    vm.prank(owner);
-    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
-
-    vm.roll(++_currBlock);
-    return _PetGachaRevealSystem.reveal(commits)[0];
+  function _mintKami(uint playerIndex) internal virtual returns (uint) {
+    return _mintKami(_accounts[playerIndex]);
   }
 
   /////////////////
@@ -291,40 +282,40 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   // easy function for getting the proper inputs to feed a pet
-  function _feedPet(uint petID, uint32 foodIndex) internal {
-    uint accID = LibPet.getAccount(components, petID);
+  function _feedPet(uint kamiID, uint32 foodIndex) internal {
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _PetUseFoodSystem.executeTyped(petID, foodIndex);
+    _KamiUseFoodSystem.executeTyped(kamiID, foodIndex);
   }
 
   // easy function for getting the proper inputs to revive a pet
-  function _revivePet(uint petID, uint32 reviveIndex) internal {
-    uint accID = LibPet.getAccount(components, petID);
+  function _revivePet(uint kamiID, uint32 reviveIndex) internal {
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _PetUseReviveSystem.executeTyped(petID, reviveIndex);
+    _KamiUseReviveSystem.executeTyped(kamiID, reviveIndex);
   }
 
-  function _startProductionByIndex(uint petID, uint32 nodeIndex) internal virtual returns (uint) {
+  function _startProductionByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
-    return _startProduction(petID, nodeID);
+    return _startProduction(kamiID, nodeID);
   }
 
-  function _startProduction(uint petID, uint256 nodeID) internal virtual returns (uint) {
-    uint accID = LibPet.getAccount(components, petID);
+  function _startProduction(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    bytes memory productionID = _ProductionStartSystem.executeTyped(petID, nodeID);
+    bytes memory productionID = _ProductionStartSystem.executeTyped(kamiID, nodeID);
     return abi.decode(productionID, (uint));
   }
 
   function _stopProduction(uint productionID) internal {
-    uint petID = LibHarvest.getPet(components, productionID);
-    uint accID = LibPet.getAccount(components, petID);
+    uint kamiID = LibHarvest.getKami(components, productionID);
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
@@ -332,8 +323,8 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _collectProduction(uint productionID) internal {
-    uint petID = LibHarvest.getPet(components, productionID);
-    uint accID = LibPet.getAccount(components, petID);
+    uint kamiID = LibHarvest.getKami(components, productionID);
+    uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
@@ -341,7 +332,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _liquidateProduction(uint attackerID, uint productionID) internal virtual {
-    uint accID = LibPet.getAccount(components, attackerID);
+    uint accID = LibKami.getAccount(components, attackerID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
@@ -391,8 +382,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* SKILLS */
 
-  function _upgradeSkill(uint playerIndex, uint targetID, uint32 skillIndex) internal virtual {
-    vm.prank(_getOperator(playerIndex));
+  function _upgradeSkill(
+    PlayerAccount memory acc,
+    uint targetID,
+    uint32 skillIndex
+  ) internal virtual {
+    vm.prank(acc.operator);
     _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
   }
 
@@ -412,14 +407,13 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // ADMIN POWERS
 
-  function _giveMint20(uint playerIndex, uint amount) internal {
-    vm.prank(deployer);
-    _Mint20.adminMint(_getOwner(playerIndex), amount);
+  function _giveGachaTicket(PlayerAccount memory acc, uint amount) internal {
+    _giveItem(acc, GACHA_TICKET_INDEX, amount);
   }
 
   function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
-    LibSkill.inc(components, id, amt);
+    LibSkill.incPoints(components, id, amt);
     vm.stopPrank();
   }
 
@@ -444,6 +438,12 @@ abstract contract SetupTemplate is TestSetupImports {
   function _setUint32(IComponent component, uint256 id, uint32 value) internal {
     vm.prank(deployer);
     component.set(id, abi.encode(value));
+  }
+
+  function _resetSkills(uint256 targetID) internal {
+    vm.startPrank(deployer);
+    LibSkill.resetAll(components, targetID);
+    vm.stopPrank();
   }
 
   /////////////////
@@ -762,29 +762,26 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createSkill(
     uint32 index,
     string memory for_,
-    string memory type_,
     uint256 cost,
     uint256 max
   ) internal returns (uint256) {
-    return _createSkill(index, for_, type_, "", "name", cost, max, 0);
+    return _createSkill(index, for_, "", "name", cost, max, 0);
   }
 
   function _createSkill(
     uint32 index,
     string memory for_,
-    string memory type_,
     string memory tree,
     uint256 cost,
     uint256 max,
     uint256 treeTier
   ) internal returns (uint256) {
-    return _createSkill(index, for_, type_, tree, "name", cost, max, treeTier);
+    return _createSkill(index, for_, tree, "name", cost, max, treeTier);
   }
 
   function _createSkill(
     uint32 index,
     string memory for_,
-    string memory type_,
     string memory tree,
     string memory name,
     uint cost,
@@ -794,18 +791,17 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       __SkillRegistrySystem.create(
-        abi.encode(index, for_, type_, tree, name, "description", cost, max, treeTier, "")
+        abi.encode(index, for_, tree, name, "description", cost, max, treeTier, "")
       );
   }
 
-  function _createSkillEffect(
+  function _createSkillBonus(
     uint32 skillIndex,
     string memory type_,
-    string memory subtype, // can be empty
     int value // can be empty
   ) internal returns (uint256) {
     vm.prank(deployer);
-    return __SkillRegistrySystem.addEffect(abi.encode(skillIndex, type_, subtype, value));
+    return __SkillRegistrySystem.addBonus(abi.encode(skillIndex, type_, value));
   }
 
   function _createSkillRequirement(
@@ -818,6 +814,13 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       __SkillRegistrySystem.addRequirement(abi.encode(skillIndex, type_, logicType, index, value));
+  }
+
+  /* VRF */
+
+  function _seedVRF() internal {
+    vm.prank(deployer);
+    _VRFComponent.seed(uint256(keccak256(abi.encodePacked(block.number, block.timestamp))));
   }
 
   /* TRAITS */
@@ -1062,6 +1065,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _initHarvestConfigs();
     _initLiquidationConfigs();
     _initSkillConfigs();
+    _initVRFConfigs();
   }
 
   function _initBaseConfigs() internal virtual {
@@ -1090,6 +1094,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initMintConfigs() internal virtual {
     _setConfig("GACHA_REROLL_PRICE", 0);
+    _setConfig("GACHA_MAX_REROLLS", 100);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
@@ -1131,6 +1136,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initSkillConfigs() internal virtual {
     _setConfigArray("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
+  }
+
+  function _initVRFConfigs() internal virtual {
+    _setConfig("BYPASS_VRF", 1);
   }
 
   ///////////////////////

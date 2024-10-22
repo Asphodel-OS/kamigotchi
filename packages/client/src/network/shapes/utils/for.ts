@@ -3,8 +3,8 @@ import { utils } from 'ethers';
 import { Account } from '../Account';
 import { Kami } from '../Kami';
 
-const forAccount = utils.solidityKeccak256(['string'], ['component.is.account']);
-const forKami = utils.solidityKeccak256(['string'], ['component.is.pet']);
+const forAccount = utils.solidityKeccak256(['string'], ['for.account']);
+const forKami = utils.solidityKeccak256(['string'], ['for.kami']);
 
 export type ForType = '' | 'ACCOUNT' | 'KAMI';
 

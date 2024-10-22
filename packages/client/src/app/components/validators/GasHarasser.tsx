@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { formatEther } from 'viem';
+import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
-import { GasConstants } from 'constants/gas';
+import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
 import { getAbbrevAddr } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
@@ -32,7 +32,7 @@ export function registerGasHarasser() {
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators, toggleModals } = useVisibility();
 
-      const fullGas = 0.0001; // hard coded bc js floating points are retarded
+      const fullGas = GasConstants.Full; // js floating points are retarded
       const [value, setValue] = useState(fullGas);
 
       /////////////////
@@ -82,7 +82,7 @@ export function registerGasHarasser() {
 
       // abstracted out for easy modification and readability. keyword: 'Enough'
       const hasEnoughGas = (value: bigint) => {
-        return Number(formatEther(value)) > GasConstants.Warning;
+        return Number(formatUnits(value, GasExponent)) > GasConstants.Warning;
       };
 
       /////////////////

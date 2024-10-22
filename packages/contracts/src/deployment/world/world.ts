@@ -57,6 +57,9 @@ export class WorldState {
 
   api = {
     init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
+    all: {
+      init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
+    },
     local: {
       init: () => this.genCalls((api) => initAllLocal(api)),
     } as SubFunc,

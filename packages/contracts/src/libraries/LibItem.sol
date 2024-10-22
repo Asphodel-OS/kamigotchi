@@ -7,7 +7,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
@@ -127,8 +127,8 @@ library LibItem {
     uint256 regID = genID(itemIndex);
 
     ExperienceComponent xpComp = ExperienceComponent(getAddrByID(components, ExpCompID));
-    uint256 xp = LibComp.safeGetUint256(xpComp, regID);
-    if (xp > 0) LibComp.inc(xpComp, targetID, xp);
+    uint256 xp = xpComp.safeGet(regID);
+    if (xp > 0) xpComp.inc(targetID, xp);
 
     LibStat.applyAll(components, regID, targetID);
   }
@@ -274,6 +274,6 @@ library LibItem {
   function logFeed(IUintComp components, uint256 accID, uint256 amt) internal {
     // TODO: merge score and data entities?
     LibScore.incFor(components, accID, "FEED", amt);
-    LibData.inc(components, accID, 0, "PET_FEED", amt); // world2: change to FEED
+    LibData.inc(components, accID, 0, "FEED", amt);
   }
 }

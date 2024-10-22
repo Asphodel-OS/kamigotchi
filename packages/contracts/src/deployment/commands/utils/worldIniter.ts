@@ -39,7 +39,7 @@ export async function initWorld(
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.split(' ') || []),
+      ...(forgeOpts?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );

@@ -4,12 +4,10 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 
-import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
-import { IDOwnsPetComponent, ID as IDOwnsPetCompID } from "components/IDOwnsPetComponent.sol";
+import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
@@ -23,12 +21,13 @@ import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/Tim
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
-import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -38,13 +37,12 @@ library LibAccount {
 
   // Create an account account
   function create(
-    IWorld world,
     IUintComp components,
     address ownerAddr,
     address operatorAddr
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    IsAccountComponent(getAddrByID(components, IsAccCompID)).set(id); // TODO: change to EntityType
+    uint256 id = addressToEntity(ownerAddr);
+    LibEntityType.set(components, id, "ACCOUNT");
     IndexAccountComponent(getAddrByID(components, IndexAccCompID)).set(
       id,
       getAndUpdateTotalAccs(components)
@@ -119,8 +117,6 @@ library LibAccount {
   ) internal {
     if (LibString.eq(_type, "ITEM")) {
       LibInventory.incFor(components, holderID, index, amount);
-    } else if (LibString.eq(_type, "MINT20")) {
-      LibMint20.mint(world, getOwner(components, holderID), amount);
     } else if (LibString.eq(_type, "REPUTATION")) {
       LibFactions.incRep(components, holderID, index, amount);
     } else {
@@ -188,7 +184,7 @@ library LibAccount {
   // CHECKS
 
   function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsAccountComponent(getAddrByID(components, IsAccCompID)).has(id);
+    return LibEntityType.isShape(components, id, "ACCOUNT");
   }
 
   function ownerInUse(IUintComp components, address owner) internal view returns (bool) {
@@ -238,8 +234,8 @@ library LibAccount {
     return AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).get(id);
   }
 
-  function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibData.get(components, id, 0, "PET721_MINT");
+  function getKamisMinted(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LibData.get(components, id, 0, "KAMI721_MINT");
   }
 
   /////////////////
@@ -247,9 +243,10 @@ library LibAccount {
 
   // retrieves the account with farcaster index
   function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "ACCOUNT",
       getCompByID(components, FarcarsterIndexCompID),
-      getCompByID(components, IsAccCompID),
       abi.encode(fid)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -257,9 +254,10 @@ library LibAccount {
 
   // retrieves the account with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "ACCOUNT",
       getCompByID(components, NameCompID),
-      getCompByID(components, IsAccCompID),
       abi.encode(name)
     );
     return (results.length > 0) ? results[0] : 0;
@@ -277,20 +275,22 @@ library LibAccount {
 
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    uint256[] memory results = LibQuery.getIsWithValue(
+    uint256[] memory results = LibEntityType.queryWithValue(
+      components,
+      "ACCOUNT",
       getCompByID(components, AddrOwnerCompID),
-      getCompByID(components, IsAccCompID),
       abi.encode(owner)
     );
     return (results.length > 0) ? results[0] : 0;
   }
 
-  // Get pets owned
-  function getPetsOwned(
+  // Get kamis owned
+  function getKamisOwned(
     IUintComp components,
     uint256 accID
   ) internal view returns (uint256[] memory) {
-    return IDOwnsPetComponent(getAddrByID(components, IDOwnsPetCompID)).getEntitiesWithValue(accID);
+    return
+      IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).getEntitiesWithValue(accID);
   }
 
   //////////////////
@@ -302,30 +302,30 @@ library LibAccount {
     return uint32(total);
   }
 
-  function logIncPetsMinted(
+  function logIncKamisMinted(
     IWorld world,
     IUintComp components,
     uint256 accID,
     uint256 count
   ) internal {
-    LibData.inc(components, accID, 0, "PET721_MINT", count);
+    LibData.inc(components, accID, 0, "KAMI721_MINT", count);
   }
 
-  function logIncPetsRerolled(
+  function logIncKamisRerolled(
     IWorld world,
     IUintComp components,
     uint256 accID,
     uint256 count
   ) internal {
-    LibData.inc(components, accID, 0, "PET_REROLL", count);
+    LibData.inc(components, accID, 0, "KAMI_REROLL", count);
   }
 
-  function logIncPetsStaked(
+  function logIncKamisStaked(
     IWorld world,
     IUintComp components,
     uint256 accID,
     uint256 count
   ) internal {
-    LibData.inc(components, accID, 0, "PET_STAKE", count);
+    LibData.inc(components, accID, 0, "KAMI_STAKE", count);
   }
 }

@@ -58,7 +58,7 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     index: getComponentValue(ItemIndex, entityIndex)?.value as number,
     type: type,
     for: getFor(components, entityIndex),
-    stats: getStats(components, entityIndex),
+    stats: getStats(world, components, entityIndex),
     experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
   };
 
@@ -125,6 +125,7 @@ export const getRegEntityIndex = (world: World, itemIndex: number): EntityIndex 
     id = formatEntityID(
       utils.solidityKeccak256(['string', 'uint32'], ['registry.item', itemIndex])
     );
+    IDStore.set(key, id);
   }
 
   return world.entityToIndex.get(id as EntityID);

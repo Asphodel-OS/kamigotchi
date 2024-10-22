@@ -313,7 +313,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, 0);
     _createQuestRequirement(1, "BOOL_IS", "ROOM", 1, 0);
-    _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
+    _createQuestObjective(1, "NAME", "INC_MIN", "KAMI721_MINT", 0, 2);
 
     // register account
     address operator = _getOperator(0);
@@ -326,13 +326,13 @@ contract QuestsTest is SetupTemplate {
     vm.prank(operator);
     vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
-    _mintPet(0);
+    _mintKami(0);
     vm.prank(operator);
     vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
-    _mintPet(0);
+    _mintKami(0);
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
   }
@@ -360,19 +360,6 @@ contract QuestsTest is SetupTemplate {
     // check that quest can be completed when objectives met
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
-  }
-
-  function testRewardMint20() public {
-    // create quest
-    _createQuest(1, 0);
-    _createQuestReward(1, "MINT20", 0, 2);
-
-    // accept quest
-    uint256 questID = _acceptQuest(0, 1);
-
-    // check that Mint20 is properly distributed
-    _completeQuest(0, questID);
-    assertEq(2 * 10 ** 18, _Mint20.balanceOf(_getOwner(0)));
   }
 
   function testRewardFaction() public {
@@ -406,20 +393,12 @@ contract QuestsTest is SetupTemplate {
     return LibData.getID(data.holderID, data.index, data.type_);
   }
 
-  function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
-    return
-      LibQuery.getIsWithValue(
-        getCompByID(components, IDOwnsQuestComponentID),
-        getCompByID(components, IsObjectiveComponentID),
-        abi.encode(questID)
-      );
-  }
-
   function _getAccountQuests(uint256 accID) internal view returns (uint256[] memory) {
     return
-      LibQuery.getIsWithValue(
+      LibEntityType.queryWithValue(
+        components,
+        "QUEST",
         getCompByID(components, IDOwnsQuestComponentID),
-        getCompByID(components, IsQuestComponentID),
         abi.encode(accID)
       );
   }

@@ -18,7 +18,7 @@ import {
   getKamiConfig,
 } from '../Config';
 import { hasFlag } from '../Flag';
-import { Harvest, getHarvest } from '../Harvest';
+import { Harvest, getHarvestForKami } from '../Harvest';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
@@ -79,12 +79,12 @@ export const getBaseKami = (
   components: Components,
   entityIndex: EntityIndex
 ): BaseKami => {
-  const { PetIndex, Name, MediaURI } = components;
+  const { KamiIndex, Name, MediaURI } = components;
   return {
     ObjectType: 'KAMI',
     entityIndex,
     id: world.entities[entityIndex],
-    index: getComponentValue(PetIndex, entityIndex)?.value as number,
+    index: getComponentValue(KamiIndex, entityIndex)?.value as number,
     name: getComponentValue(Name, entityIndex)?.value as string,
     image: getComponentValue(MediaURI, entityIndex)?.value as string,
   };
@@ -101,16 +101,15 @@ export const getKami = (
     BackgroundIndex,
     BodyIndex,
     ColorIndex,
+    EntityType,
     Experience,
     FaceIndex,
     HandIndex,
-    IsProduction,
     IsRegistry,
     LastTime,
     LastActionTime,
     Level,
     MediaURI,
-    PetID,
     Reroll,
     SkillPoint,
     StartTime,
@@ -138,7 +137,7 @@ export const getKami = (
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
-    stats: getStats(components, entityIndex),
+    stats: getStats(world, components, entityIndex, id),
     bonuses: getKamiBonuses(world, components, entityIndex),
     config: getKamiConfig(world, components),
   };
@@ -179,18 +178,13 @@ export const getKami = (
       faceIndex,
       handIndex,
     };
-    kami.traits = getTraits(components, traitIndices);
+    kami.traits = getTraits(world, components, traitIndices);
   }
 
   // populate Harvest
   // NOTE: productions should come after traits for harvest calcs to work correctly
   if (options?.production) {
-    const productionResults = Array.from(
-      runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
-    );
-    const productionIndex = productionResults[0];
-    if (productionIndex)
-      kami.production = getHarvest(world, components, productionIndex, { node: true }, kami);
+    kami.production = getHarvestForKami(world, components, kami, { node: true });
   }
 
   if (options?.rerolls) {

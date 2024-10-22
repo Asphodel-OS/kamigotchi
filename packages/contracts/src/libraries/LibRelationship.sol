@@ -9,7 +9,8 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { IDOwnsRelationshipComponent, ID as IDOwnsRSCompID } from "components/IDOwnsRelationshipComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { IndexRelationshipComponent, ID as IndexRelCompID } from "components/IndexRelationshipComponent.sol";
-import { IsRelationshipComponent, ID as IsRelCompID } from "components/IsRelationshipComponent.sol";
+
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibRelationshipRegistry } from "libraries/LibRelationshipRegistry.sol";
 
@@ -24,7 +25,7 @@ library LibRelationship {
     uint32 relIndex
   ) internal returns (uint256) {
     uint256 id = genID(accID, npcIndex, relIndex);
-    IsRelationshipComponent(getAddrByID(components, IsRelCompID)).set(id); // TODO: change to EntityType
+    LibEntityType.set(components, id, "RELATIONSHIP");
     IDOwnsRelationshipComponent(getAddrByID(components, IDOwnsRSCompID)).set(id, accID);
     IndexNPCComponent(getAddrByID(components, IndexNPCCompID)).set(id, npcIndex);
     IndexRelationshipComponent(getAddrByID(components, IndexRelCompID)).set(id, relIndex);

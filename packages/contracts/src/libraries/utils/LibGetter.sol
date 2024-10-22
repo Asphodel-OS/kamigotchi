@@ -44,24 +44,25 @@ library LibGetter {
     string memory _type,
     uint32 index
   ) public view returns (uint256 balance) {
+    // change holderID to 0 for global scoped data
+    if (_type.endsWith("GLOBAL")) id = 0;
+
     if (_type.eq("ITEM")) {
       balance = LibInventory.getBalanceOf(components, id, index);
     } else if (_type.eq("LEVEL")) {
       balance = LibExperience.getLevel(components, id);
     } else if (_type.eq("KAMI")) {
-      balance = LibAccount.getPetsOwned(components, id).length;
+      balance = LibAccount.getKamisOwned(components, id).length;
     } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
-      balance = getTopLevel(components, LibAccount.getPetsOwned(components, id));
+      balance = getTopLevel(components, LibAccount.getKamisOwned(components, id));
     } else if (_type.eq("KAMI_LEVEL_QUANTITY")) {
-      balance = getMinLevelAmt(components, LibAccount.getPetsOwned(components, id), index);
+      balance = getMinLevelAmt(components, LibAccount.getKamisOwned(components, id), index);
     } else if (_type.eq("SKILL")) {
       balance = LibSkill.getPointsOf(components, id, index);
     } else if (_type.eq("REPUTATION")) {
       balance = LibFactions.getRep(components, id, index);
     } else if (_type.eq("BLOCKTIME")) {
       balance = block.timestamp;
-    } else if (_type.eq("ITEM_GLOBAL_COUNT")) {
-      balance = LibData.get(components, 0, index, _type);
     } else {
       balance = LibData.get(components, id, index, _type);
     }

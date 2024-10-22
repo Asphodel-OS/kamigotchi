@@ -24,12 +24,12 @@ library LibExperience {
 
   // increase experience by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddrByID(components, ExpCompID)).inc(id, value);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).inc(id, value);
   }
 
   // decrease experience by a specified value
   function dec(IUintComp components, uint256 id, uint256 value) internal {
-    IUintComp(getAddrByID(components, ExpCompID)).dec(id, value);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).dec(id, value);
   }
 
   // increase level by a specified value
@@ -90,7 +90,7 @@ library LibExperience {
 
   // get the Experience of an entity, defaults to 0 if not found
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddrByID(components, ExpCompID)).safeGetUint256(id);
+    return ExperienceComponent(getAddrByID(components, ExpCompID)).safeGet(id);
   }
 
   // get the Level of an entity, defaults to 1 if not found

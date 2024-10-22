@@ -1,4 +1,4 @@
-import { Has, HasValue, runQuery } from '@mud-classic/recs';
+import { HasValue, runQuery } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
@@ -25,14 +25,14 @@ export function registerERC721BridgeModal() {
     (layers) => {
       const { network } = layers;
       const { world, components, systems } = network;
-      const { AccountID, State } = components;
+      const { SourceID, State } = components;
 
-      return merge(AccountID.update$, State.update$).pipe(
+      return merge(SourceID.update$, State.update$).pipe(
         map(() => {
           return {
             network,
             data: {
-              erc721: getConfigFieldValueAddress(world, components, 'PET721_ADDRESS'),
+              erc721: getConfigFieldValueAddress(world, components, 'KAMI721_ADDRESS'),
               account: getAccountFromBurner(network, { kamis: true }),
             },
           };
@@ -43,7 +43,7 @@ export function registerERC721BridgeModal() {
     ({ data, network }) => {
       const { erc721, account } = data;
       const { actions, components, world } = network;
-      const { IsPet, PetIndex } = components;
+      const { EntityType, KamiIndex } = components;
 
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
@@ -145,7 +145,10 @@ export function registerERC721BridgeModal() {
             for (let i = 0; i < indices.length; i++) {
               petIndex = ('0x' + indices[i].toString(16).padStart(2, '0')) as unknown as number;
               const entityID = Array.from(
-                runQuery([Has(IsPet), HasValue(PetIndex, { value: petIndex })])
+                runQuery([
+                  HasValue(EntityType, { value: 'KAMI' }),
+                  HasValue(KamiIndex, { value: petIndex }),
+                ])
               )[0];
 
               kamis.push(

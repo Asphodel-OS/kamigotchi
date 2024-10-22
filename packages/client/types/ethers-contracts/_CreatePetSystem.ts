@@ -55,7 +55,7 @@ export interface _CreatePetSystemInterface extends utils.Interface {
     "_getTraitStats(uint256)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
-    "create(uint32,uint256,uint32,uint32,uint32,uint32,uint32,uint256)": FunctionFragment;
+    "create(address,uint32,uint32,uint32,uint32,uint32)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -97,9 +97,7 @@ export interface _CreatePetSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "create",
     values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -260,14 +258,12 @@ export interface _CreatePetSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     create(
-      index: PromiseOrValue<BigNumberish>,
-      accID: PromiseOrValue<BigNumberish>,
+      accAddr: PromiseOrValue<string>,
       background: PromiseOrValue<BigNumberish>,
       body: PromiseOrValue<BigNumberish>,
       color: PromiseOrValue<BigNumberish>,
       face: PromiseOrValue<BigNumberish>,
       hand: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -320,14 +316,12 @@ export interface _CreatePetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   create(
-    index: PromiseOrValue<BigNumberish>,
-    accID: PromiseOrValue<BigNumberish>,
+    accAddr: PromiseOrValue<string>,
     background: PromiseOrValue<BigNumberish>,
     body: PromiseOrValue<BigNumberish>,
     color: PromiseOrValue<BigNumberish>,
     face: PromiseOrValue<BigNumberish>,
     hand: PromiseOrValue<BigNumberish>,
-    level: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -378,14 +372,12 @@ export interface _CreatePetSystem extends BaseContract {
     ): Promise<void>;
 
     create(
-      index: PromiseOrValue<BigNumberish>,
-      accID: PromiseOrValue<BigNumberish>,
+      accAddr: PromiseOrValue<string>,
       background: PromiseOrValue<BigNumberish>,
       body: PromiseOrValue<BigNumberish>,
       color: PromiseOrValue<BigNumberish>,
       face: PromiseOrValue<BigNumberish>,
       hand: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -459,14 +451,12 @@ export interface _CreatePetSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     create(
-      index: PromiseOrValue<BigNumberish>,
-      accID: PromiseOrValue<BigNumberish>,
+      accAddr: PromiseOrValue<string>,
       background: PromiseOrValue<BigNumberish>,
       body: PromiseOrValue<BigNumberish>,
       color: PromiseOrValue<BigNumberish>,
       face: PromiseOrValue<BigNumberish>,
       hand: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -520,14 +510,12 @@ export interface _CreatePetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     create(
-      index: PromiseOrValue<BigNumberish>,
-      accID: PromiseOrValue<BigNumberish>,
+      accAddr: PromiseOrValue<string>,
       background: PromiseOrValue<BigNumberish>,
       body: PromiseOrValue<BigNumberish>,
       color: PromiseOrValue<BigNumberish>,
       face: PromiseOrValue<BigNumberish>,
       hand: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

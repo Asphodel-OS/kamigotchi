@@ -1,9 +1,10 @@
 import { EntityID, World } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
+import { GasExponent } from 'constants/gas';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { getConfigFieldValueWei } from './Config';
+import { getConfigFieldValue } from './Config';
 import { getKamisByAccount, Kami, KamiOptions } from './Kami';
 import { Commit } from './utils';
 import { queryHolderCommits } from './utils/commits';
@@ -27,8 +28,10 @@ export const queryGachaKamis = (
 };
 
 export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {
-  const baseCost = getConfigFieldValueWei(world, components, 'GACHA_REROLL_PRICE');
+  const baseCost = BigInt(getConfigFieldValue(world, components, 'GACHA_REROLL_PRICE'));
+  const rerolls = BigInt((kami.rerolls || 0) + 1);
+  const exponent = BigInt(10) ** BigInt(GasExponent);
 
   // placeholder linear function
-  return baseCost * BigInt((kami.rerolls || 0) + 1);
+  return (baseCost * rerolls) / exponent;
 };

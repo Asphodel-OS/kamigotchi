@@ -4,136 +4,111 @@ pragma solidity >=0.8.0;
 import { console } from "forge-std/Test.sol";
 
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
+import { getAddrByID, getIdByAddress } from "solecs/utils.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibString } from "solady/utils/LibString.sol";
 
-import { BoolComponent } from "components/base/BoolComponent.sol";
-import { Uint256BareComponent } from "components/base/Uint256BareComponent.sol";
-import { Uint256Component } from "components/base/Uint256Component.sol";
+import { BoolComponent } from "solecs/components/BoolComponent.sol";
+import { Uint256BareComponent } from "solecs/components/Uint256BareComponent.sol";
+import { Uint256Component } from "solecs/components/Uint256Component.sol";
+import { StringComponent } from "solecs/components/StringComponent.sol";
+import { System } from "solecs/System.sol";
 
 import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
+
+uint256 constant IsCompID = uint256(keccak256("test.Is"));
+uint256 constant OwnerCompID = uint256(keccak256("test.Owner"));
+uint256 constant StringCompID = uint256(keccak256("test.String"));
+uint256 constant TestSystemID = uint256(keccak256("test.system"));
+
+contract SetSystem is System {
+  constructor(IWorld _world, address _components) System(_world, _components) {}
+
+  function execute(bytes memory args) public override returns (bytes memory) {
+    (uint256 entity, uint256 value) = abi.decode(args, (uint256, uint256));
+    Uint256Component(getAddrByID(components, OwnerCompID)).set(entity, value);
+    return "";
+  }
+}
 
 contract GasTest is EmptyWorld {
   BoolComponent isComp;
   Uint256Component ownerComp;
+  StringComponent stringComp;
+  SetSystem testSystem;
 
   function setUp() public override {
     super.setUp();
 
     vm.startPrank(deployer);
 
-    isComp = new BoolComponent(address(world), uint256(keccak256("test.Is")));
-    ownerComp = new Uint256Component(address(world), uint256(keccak256("test.Owner")));
+    isComp = new BoolComponent(address(world), IsCompID);
+    ownerComp = new Uint256Component(address(world), OwnerCompID);
+    stringComp = new StringComponent(address(world), StringCompID);
+    testSystem = new SetSystem(world, address(world.components()));
+    world.registerSystem(address(testSystem), TestSystemID);
+    ownerComp.authorizeWriter(address(testSystem));
+    isComp.authorizeWriter(address(testSystem));
+    stringComp.authorizeWriter(address(testSystem));
 
     vm.stopPrank();
   }
 
-  function testIsQueryVsCacheComp() public {
-    uint256 holder = uint256(keccak256("iambagholder"));
-
-    vm.prank(deployer);
-    Uint256BareComponent bareComp = new Uint256BareComponent(
-      address(world),
-      uint256(keccak256("test.Bare"))
-    );
-    vm.startPrank(deployer);
-    uint256 id = world.getUniqueEntityId();
-    isComp.set(id);
-    ownerComp.set(id, holder);
-    bareComp.set(holder, id);
-
-    // reading to make all warm
-    isComp.has(id);
-    ownerComp.get(id);
-    bareComp.get(holder);
-    vm.stopPrank();
-
-    createEntity(1, 0);
-    createEntity(1, holder);
+  function testGasWrite() public {
+    SetSystem sys = testSystem;
     uint256 gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("1 entity     : ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("1 cache     : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("1 entitiesWVal: ", gasstart - gasleft());
+    sys.execute(abi.encode(1, 2));
+    console.log("write cost:", gasstart - gasleft());
+  }
 
-    createEntity(9, 0);
-    gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("10 entities  : ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("10 cache    : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("10 entitiesWVal: ", gasstart - gasleft());
+  function testGasInc() public {
+    vm.startPrank(deployer);
+    ownerComp.set(1, 2);
 
-    createEntity(100, 0);
-    gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("100 entities : ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("100 cache   : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("100 entitiesWVal: ", gasstart - gasleft());
+    uint256 gasstart = gasleft();
+    // LibComp.inc(ownerComp, 1, 2);
+    console.log("inc cost:", gasstart - gasleft());
 
-    createEntity(400, 0);
     gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("500 entities : ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("500 cache   : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("500 entitiesWVal: ", gasstart - gasleft());
+    // ownerComp.incer(1, 2);
+    console.log("incer cost:", gasstart - gasleft());
+  }
+  function testGasReverseQuery() public {
+    vm.prank(deployer);
+    ownerComp.set(1, 2);
 
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("1000 entities: ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("1000 cache  : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("1000 entitiesWVal: ", gasstart - gasleft());
+    uint256 gasstart = gasleft();
+    address addr = getAddrByID(ownerComp, 2);
+    console.log("reverse query cost:", gasstart - gasleft());
 
-    createEntity(500, 0);
     gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("1500 entities: ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("1500 cache  : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("1500 entitiesWVal: ", gasstart - gasleft());
+    uint256 ider = getIdByAddress(ownerComp, address(1));
+    console.log("straight cost:", gasstart - gasleft());
 
-    createEntity(500, 0);
     gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("2000 entities: ", gasstart - gasleft());
-    gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("2000 cache  : ", gasstart - gasleft());
-    gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("2000 entitiesWVal: ", gasstart - gasleft());
+    uint256(uint160(2));
+    console.log("addrToEntity cost:", gasstart - gasleft());
 
-    createEntity(500, 0);
     gasstart = gasleft();
-    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
-    console.log("2500 entities: ", gasstart - gasleft());
+    ownerComp.get(1);
+    console.log("direct cost:", gasstart - gasleft());
+
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.get(holder);
-    console.log("2500 cache  : ", gasstart - gasleft());
+    ownerComp.getRaw(1);
+    console.log("getRaw cost:", gasstart - gasleft());
+
     gasstart = gasleft();
-    ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
-    console.log("2500 entitiesWVal: ", gasstart - gasleft());
+    ownerComp.safeGet(1);
+    console.log("safeGet cost:", gasstart - gasleft());
+
+    gasstart = gasleft();
+    if (ownerComp.has(1)) ownerComp.get(1);
+    console.log("has cost:", gasstart - gasleft());
+
+    gasstart = gasleft();
+    uint256 ider2 = ownerComp.get(1);
+    console.log("direct cost:", gasstart - gasleft());
   }
 
   function createEntity(uint256 amount, uint256 holderID) internal {

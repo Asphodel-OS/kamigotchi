@@ -1,51 +1,81 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
+import "solecs/Component.sol";
+import "solecs/interfaces/IUint256Component.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 
-import { Component } from "../Component.sol";
-import { LibTypes } from "../LibTypes.sol";
-import { IUint256Component } from "../interfaces/IUint256Component.sol";
-
-/** @notice
- * SOLECS implementation of a component storing a uint256 value for each entity.
- * used for internal solecs testing; Live uint256Comp does not use this
- */
 contract Uint256Component is Component, IUint256Component {
   constructor(address world, uint256 id) Component(world, id) {}
 
-  function set(uint256 entity, uint256 value) public virtual {
-    set(entity, abi.encode(value));
+  function set(uint256 entity, uint256 value) external virtual onlyWriter {
+    _set(entity, TypeLib.encodeUint256(value));
   }
 
-  function setBatch(uint256[] memory entities, uint256[] memory values) public virtual {
-    bytes[] memory rawValues = new bytes[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) rawValues[i] = abi.encode(values[i]);
-
-    setBatch(entities, rawValues);
+  function set(uint256[] memory entities, uint256[] memory values) external virtual onlyWriter {
+    _set(entities, TypeLib.encodeBatch(values));
   }
 
-  function extract(uint256 entity) public virtual returns (uint256) {
-    return abi.decode(extractRaw(entity), (uint256));
+  function extract(uint256 entity) external virtual onlyWriter returns (uint256) {
+    return TypeLib.decodeUint256(_extractRaw(entity));
   }
 
-  function extractBatch(uint256[] memory entities) public virtual returns (uint256[] memory) {
-    bytes[] memory rawValues = extractRawBatch(entities);
-    uint256[] memory values = new uint256[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (uint256));
-    return values;
+  function extract(
+    uint256[] memory entities
+  ) external virtual onlyWriter returns (uint256[] memory) {
+    return TypeLib.decodeBatchUint256(_extractRaw(entities));
   }
 
-  function get(uint256 entity) public view virtual returns (uint256) {
-    return abi.decode(getRaw(entity), (uint256));
+  function inc(uint256 entity, uint256 value) external virtual onlyWriter {
+    _inc(entity, value);
   }
 
-  function getBatch(uint256[] memory entities) public view virtual returns (uint256[] memory) {
-    bytes[] memory rawValues = getRawBatch(entities);
-    uint256[] memory values = new uint256[](entities.length);
-    for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (uint256));
-    return values;
+  function inc(uint256[] memory entities, uint256 value) external virtual onlyWriter {
+    for (uint256 i; i < entities.length; i++) _inc(entities[i], value);
   }
 
-  function getEntitiesWithValue(uint256 value) public view virtual returns (uint256[] memory) {
-    return getEntitiesWithValue(abi.encode(value));
+  function inc(uint256[] memory entities, uint256[] memory values) external virtual onlyWriter {
+    require(entities.length == values.length, "arr length mismatch");
+    for (uint256 i; i < entities.length; i++) _inc(entities[i], values[i]);
+  }
+
+  function dec(uint256 entity, uint256 value) external virtual onlyWriter {
+    _dec(entity, value);
+  }
+
+  function dec(uint256[] memory entities, uint256 value) external virtual onlyWriter {
+    for (uint256 i; i < entities.length; i++) _dec(entities[i], value);
+  }
+
+  function dec(uint256[] memory entities, uint256[] memory values) external virtual onlyWriter {
+    require(entities.length == values.length, "arr length mismatch");
+    for (uint256 i; i < entities.length; i++) _dec(entities[i], values[i]);
+  }
+
+  function get(uint256 entity) external view virtual returns (uint256) {
+    return TypeLib.decodeUint256(_getRaw(entity));
+  }
+
+  function get(uint256[] memory entities) external view virtual returns (uint256[] memory) {
+    return TypeLib.decodeBatchUint256(_getRaw(entities));
+  }
+
+  function safeGet(uint256 entity) external view virtual returns (uint256) {
+    return TypeLib.safeDecodeUint256(_getRaw(entity));
+  }
+
+  function safeGet(uint256[] memory entities) external view virtual returns (uint256[] memory) {
+    return TypeLib.safeDecodeBatchUint256(_getRaw(entities));
+  }
+
+  function getEntitiesWithValue(uint256 value) external view virtual returns (uint256[] memory) {
+    return _getEntitiesWithValue(TypeLib.encodeUint256(value));
+  }
+
+  function _inc(uint256 entity, uint256 value) internal virtual {
+    _set(entity, TypeLib.encodeUint256(TypeLib.safeDecodeUint256(_getRaw(entity)) + value));
+  }
+
+  function _dec(uint256 entity, uint256 value) internal virtual {
+    _set(entity, TypeLib.encodeUint256(TypeLib.safeDecodeUint256(_getRaw(entity)) - value));
   }
 }

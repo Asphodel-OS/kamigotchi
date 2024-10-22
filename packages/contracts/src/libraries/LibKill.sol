@@ -8,7 +8,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
-import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
@@ -18,12 +17,12 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAffinity } from "libraries/utils/LibAffinity.sol";
-import { LibBonusOld } from "libraries/LibBonusOld.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibPet } from "libraries/LibPet.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
@@ -45,7 +44,7 @@ library LibKill {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID,
-    uint256 nodeID,
+    uint32 nodeIndex,
     uint256 balance,
     uint256 bounty
   ) internal returns (uint256 id) {
@@ -53,7 +52,7 @@ library LibKill {
     IsKillComponent(getAddrByID(components, IsKillCompID)).set(id);
     IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, sourceID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
-    IdNodeComponent(getAddrByID(components, IdNodeCompID)).set(id, nodeID);
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, nodeIndex);
     TimeComponent(getAddrByID(components, TimeCompID)).set(id, block.timestamp);
 
     // set bounties
@@ -71,11 +70,11 @@ library LibKill {
   // this block and that the source can attack the target.
   function isLiquidatableBy(
     IUintComp components,
-    uint256 targetPetID,
-    uint256 sourcePetID
+    uint256 targetKamiID,
+    uint256 sourceKamiID
   ) public view returns (bool) {
-    uint256 currHealth = (LibStat.getHealth(components, targetPetID).sync).toUint256();
-    uint256 threshold = calcThreshold(components, sourcePetID, targetPetID);
+    uint256 currHealth = (LibStat.getHealth(components, targetKamiID).sync).toUint256();
+    uint256 threshold = calcThreshold(components, sourceKamiID, targetKamiID);
     return threshold > currHealth;
   }
 
@@ -91,8 +90,8 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_ANIMOSITY");
 
-    uint256 sourceViolence = LibPet.calcTotalViolence(components, sourceID).toUint256();
-    uint256 targetHarmony = LibPet.calcTotalHarmony(components, targetID).toUint256();
+    uint256 sourceViolence = LibKami.calcTotalViolence(components, sourceID).toUint256();
+    uint256 targetHarmony = LibKami.calcTotalHarmony(components, targetID).toUint256();
     int256 imbalance = ((1e18 * sourceViolence) / targetHarmony).toInt256();
     uint256 base = Gaussian.cdf(LibFPMath.lnWad(imbalance)).toUint256();
     uint256 ratio = config[2]; // core animosity baseline
@@ -120,8 +119,8 @@ library LibKill {
     });
 
     // pull the bonus efficacy shifts from the pets
-    int256 atkBonus = LibBonusOld.getRaw(components, sourceID, "ATK_THRESHOLD_RATIO");
-    int256 defBonus = LibBonusOld.getRaw(components, targetID, "DEF_THRESHOLD_RATIO");
+    int256 atkBonus = LibBonus.getFor(components, "ATK_THRESHOLD_RATIO", sourceID);
+    int256 defBonus = LibBonus.getFor(components, "DEF_THRESHOLD_RATIO", targetID);
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
       base: int(0),
       up: atkBonus + defBonus,
@@ -130,8 +129,8 @@ library LibKill {
 
     // sum the applied shift with the base efficacy value to get the final value
     int256 efficacy = base.toInt256();
-    string memory targetAff = LibPet.getAffinities(components, targetID)[0];
-    string memory sourceAff = LibPet.getAffinities(components, sourceID)[1];
+    string memory targetAff = LibKami.getAffinities(components, targetID)[0];
+    string memory sourceAff = LibKami.getAffinities(components, sourceID)[1];
     efficacy += LibAffinity.calcEfficacyShift(
       LibAffinity.getAttackEffectiveness(sourceAff, targetAff),
       baseEfficacyShifts,
@@ -154,14 +153,14 @@ library LibKill {
 
     // apply attack and defense shifts
     uint256 shiftPrec = 10 ** (ANIMOSITY_PREC + config[3] - config[5]);
-    int256 shiftAttBonus = LibBonusOld.getRaw(components, sourceID, "ATK_THRESHOLD_SHIFT");
-    int256 shiftDefBonus = LibBonusOld.getRaw(components, targetID, "DEF_THRESHOLD_SHIFT");
+    int256 shiftAttBonus = LibBonus.getFor(components, "ATK_THRESHOLD_SHIFT", sourceID);
+    int256 shiftDefBonus = LibBonus.getFor(components, "DEF_THRESHOLD_SHIFT", targetID);
     int256 shift = (shiftAttBonus + shiftDefBonus) * int(shiftPrec);
 
     int256 postShiftVal = int(base * ratio) + shift;
     if (postShiftVal < 0) return 0;
 
-    uint256 totalHealth = LibPet.calcTotalHealth(components, targetID).toUint256();
+    uint256 totalHealth = LibKami.calcTotalHealth(components, targetID).toUint256();
     uint256 precision = 10 ** (ANIMOSITY_PREC + config[3] + config[7]);
     return (uint(postShiftVal) * totalHealth) / precision;
   }
@@ -173,8 +172,8 @@ library LibKill {
     uint256 targetID
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
-    uint256 violence1 = LibPet.calcTotalViolence(components, sourceID).toUint256();
-    uint256 violence2 = LibPet.calcTotalViolence(components, targetID).toUint256();
+    uint256 violence1 = LibKami.calcTotalViolence(components, sourceID).toUint256();
+    uint256 violence2 = LibKami.calcTotalViolence(components, targetID).toUint256();
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
     return ((violence1 + violence2) * ratio) / precision;
@@ -188,8 +187,8 @@ library LibKill {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
-    int256 ratioBonus = LibBonusOld.getRaw(components, id, "DEF_SALVAGE_RATIO");
-    uint256 power = LibPet.calcTotalPower(components, id).toUint256();
+    int256 ratioBonus = LibBonus.getFor(components, "DEF_SALVAGE_RATIO", id);
+    uint256 power = LibKami.calcTotalPower(components, id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);
@@ -204,8 +203,8 @@ library LibKill {
     uint256 amt
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
-    int256 ratioBonus = LibBonusOld.getRaw(components, id, "ATK_SPOILS_RATIO");
-    uint256 power = LibPet.calcTotalPower(components, id).toUint256();
+    int256 ratioBonus = LibBonus.getFor(components, "ATK_SPOILS_RATIO", id);
+    uint256 power = LibKami.calcTotalPower(components, id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);

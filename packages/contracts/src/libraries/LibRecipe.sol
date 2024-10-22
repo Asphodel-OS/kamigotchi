@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
-import { Stat } from "components/types/Stat.sol";
+import { Stat } from "solecs/components/types/Stat.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexRecipeComponent, ID as IndexRecipeCompID } from "components/IndexRecipeComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -167,8 +167,8 @@ library LibRecipe {
   function afterCraft(IUintComp components, uint256 recipeID, uint256 amt, uint256 accID) internal {
     // add account experience
     ExperienceComponent expComp = ExperienceComponent(getAddrByID(components, ExpCompID));
-    uint256 xp = LibComp.safeGetUint256(expComp, recipeID);
-    if (xp > 0) LibComp.inc(expComp, accID, amt * xp);
+    uint256 xp = expComp.safeGet(recipeID);
+    if (xp > 0) expComp.inc(accID, amt * xp);
   }
 
   /////////////////
@@ -203,10 +203,8 @@ library LibRecipe {
     uint256[] memory ioIDs = new uint256[](2);
     ioIDs[0] = genInputID(recipeIndex);
     ioIDs[1] = genOutputID(recipeIndex);
-    uint32[][] memory indices = KeysComponent(getAddrByID(components, KeysCompID)).getBatch(ioIDs);
-    uint256[][] memory amts = ValuesComponent(getAddrByID(components, ValuesCompID)).getBatch(
-      ioIDs
-    );
+    uint32[][] memory indices = KeysComponent(getAddrByID(components, KeysCompID)).get(ioIDs);
+    uint256[][] memory amts = ValuesComponent(getAddrByID(components, ValuesCompID)).get(ioIDs);
 
     // multiply by amount
     LibArray.multiply(amts[0], rolls);

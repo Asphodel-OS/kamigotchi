@@ -37,6 +37,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     "executeTyped(string,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
+    "remove(string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "setValue(string,uint256)": FunctionFragment;
@@ -54,6 +55,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
       | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
+      | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "setValue"
@@ -82,6 +84,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "remove",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -128,6 +134,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     functionFragment: "ownershipHandoverExpiresAt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -261,6 +268,11 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
 
+    remove(
+      name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -324,6 +336,11 @@ export interface _ConfigSetSystem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  remove(
+    name: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -382,6 +399,11 @@ export interface _ConfigSetSystem extends BaseContract {
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    remove(
+      name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -471,6 +493,11 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    remove(
+      name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -533,6 +560,11 @@ export interface _ConfigSetSystem extends BaseContract {
     ownershipHandoverExpiresAt(
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    remove(
+      name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(

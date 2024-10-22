@@ -1,7 +1,6 @@
 import {
   EntityID,
   EntityIndex,
-  Has,
   HasValue,
   QueryFragment,
   World,
@@ -27,12 +26,12 @@ export const getFriendship = (
   entityIndex: EntityIndex,
   accountOptions?: any
 ): Friendship => {
-  const { AccountID, TargetID, State } = components;
+  const { SourceID, TargetID, State } = components;
 
   const account = getAccountByID(
     world,
     components,
-    formatEntityID(getComponentValue(AccountID, entityIndex)?.value ?? ''),
+    formatEntityID(getComponentValue(SourceID, entityIndex)?.value ?? ''),
     accountOptions
   );
 
@@ -111,10 +110,10 @@ export const queryFriendshipX = (
   options: FriendshipOptions,
   accountOptions?: any
 ): Friendship[] => {
-  const { IsFriendship, AccountID, TargetID, State } = components;
+  const { EntityType, SourceID, TargetID, State } = components;
 
-  const toQuery: QueryFragment[] = [Has(IsFriendship)];
-  if (options?.account) toQuery.push(HasValue(AccountID, { value: options.account }));
+  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'FRIENDSHIP' })];
+  if (options?.account) toQuery.push(HasValue(SourceID, { value: options.account }));
   if (options?.target) toQuery.push(HasValue(TargetID, { value: options.target }));
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
   const raw = Array.from(runQuery(toQuery));

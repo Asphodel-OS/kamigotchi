@@ -9,16 +9,16 @@ import { LibString } from "solady/utils/LibString.sol";
 
 /** world2: revamp friendship IDComponents
  * IDParent (formally IDPointer): to split to something friendship specific (IDOwns?) or IDType is ok too
- * IdAccount, IdTarget: deprecate, change to LibRelation
  */
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
-import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
-import { IsFriendshipComponent, ID as IsFriendCompID } from "components/IsFriendshipComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { Strings } from "utils/Strings.sol";
 
@@ -42,9 +42,8 @@ library LibFriend {
     string memory state // REQUEST | FRIEND | BLOCKED
   ) internal returns (uint256 id) {
     id = genID(accID, targetID);
-    // world2: change to EntityType
-    IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).set(id); // TODO: change to EntityType
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).set(id, accID);
+    LibEntityType.set(components, id, "FRIENDSHIP");
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, accID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
 
@@ -60,8 +59,8 @@ library LibFriend {
     uint256 requestID
   ) internal returns (uint256 id) {
     id = genID(accID, senderID);
-    IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).set(id);
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).set(id, accID);
+    LibEntityType.set(components, id, "FRIENDSHIP");
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, accID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, senderID);
 
     // set state - raw component for efficiency
@@ -89,7 +88,7 @@ library LibFriend {
     uint256[] memory pointers = new uint256[](2);
     pointers[0] = genCounterPtr(accID, "FRIEND");
     pointers[1] = genCounterPtr(targetID, "FRIEND");
-    IDParentComponent(getAddrByID(components, IDParentCompID)).setBatch(ids, pointers);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(ids, pointers);
   }
 
   /// @notice update incoming request counter via pointer
@@ -104,10 +103,10 @@ library LibFriend {
   /// @notice removes a friend entity
   /// @dev also instrinctly updates pointer
   function remove(IUintComp components, uint256 id) internal {
-    unsetIsFriendship(components, id);
-    unsetAccount(components, id);
-    unsetTarget(components, id);
-    unsetState(components, id);
+    LibEntityType.remove(components, id);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(id);
+    IdTargetComponent(getAddrByID(components, IdTargetCompID)).remove(id);
+    StateComponent(getAddrByID(components, StateCompID)).remove(id);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
   }
 
@@ -127,7 +126,7 @@ library LibFriend {
   // GETTERS
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddrByID(components, IdAccountCompID)).get(id);
+    return IdSourceComponent(getAddrByID(components, IdSourceCompID)).get(id);
   }
 
   function getTarget(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -139,42 +138,7 @@ library LibFriend {
   }
 
   function isFriendship(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).has(id);
-  }
-
-  /////////////////
-  // SETTERS
-
-  function setAccount(IUintComp components, uint256 id, uint256 accID) internal {
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).set(id, accID);
-  }
-
-  function setIsFriendship(IUintComp components, uint256 id) internal {
-    IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).set(id);
-  }
-
-  function setTarget(IUintComp components, uint256 id, uint256 targetID) internal {
-    IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
-  }
-
-  function setState(IUintComp components, uint256 id, string memory state) internal {
-    StateComponent(getAddrByID(components, StateCompID)).set(id, state);
-  }
-
-  function unsetAccount(IUintComp components, uint256 id) internal {
-    IdAccountComponent(getAddrByID(components, IdAccountCompID)).remove(id);
-  }
-
-  function unsetIsFriendship(IUintComp components, uint256 id) internal {
-    IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).remove(id);
-  }
-
-  function unsetTarget(IUintComp components, uint256 id) internal {
-    IdTargetComponent(getAddrByID(components, IdTargetCompID)).remove(id);
-  }
-
-  function unsetState(IUintComp components, uint256 id) internal {
-    StateComponent(getAddrByID(components, StateCompID)).remove(id);
+    return LibEntityType.isShape(components, id, "FRIENDSHIP");
   }
 
   /////////////////
@@ -187,7 +151,7 @@ library LibFriend {
     uint256 targetID
   ) internal view returns (uint256) {
     uint256 id = genID(accID, targetID);
-    return IsFriendshipComponent(getAddrByID(components, IsFriendCompID)).has(id) ? id : 0;
+    return LibEntityType.isShape(components, id, "FRIENDSHIP") ? id : 0;
   }
 
   function getFriendCount(IUintComp components, uint256 accID) internal view returns (uint256) {

@@ -128,13 +128,13 @@ export const Banner = (props: Props) => {
       <Row>
         <Label>Drops: </Label>
         <Tooltip text={[nodeDrops[0]?.name ?? '']}>
-          <Icon key={'node-' + nodeDrops[0]?.name ?? ''} src={nodeDrops[0]?.image ?? ''} />
+          <Icon key={'node-' + nodeDrops[0]?.name} src={nodeDrops[0]?.image ?? ''} />
         </Tooltip>
 
         <Tooltip text={DTtext}>
           <Row style={{ borderLeft: 'solid #666 1px', paddingLeft: '0.3vw' }}>
             {dt.map((entry) => (
-              <Icon key={'scav-' + entry.object.name ?? ''} src={entry.object.image} />
+              <Icon key={'scav-' + entry.object.name} src={entry.object.image} />
             ))}
           </Row>
         </Tooltip>

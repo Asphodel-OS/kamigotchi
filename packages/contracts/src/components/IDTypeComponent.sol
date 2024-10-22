@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
-import "components/base/Uint256Component.sol";
+import "solecs/components/Uint256Component.sol";
 
-// world2: change to "component.id.type"
-uint256 constant ID = uint256(keccak256("component.id.score.type"));
+uint256 constant ID = uint256(keccak256("component.id.type"));
 
 /// @notice reverse mapped types – usually a hashed value of (type, context)
 contract IDTypeComponent is Uint256Component {

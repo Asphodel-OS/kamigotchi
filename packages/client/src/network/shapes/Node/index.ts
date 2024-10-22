@@ -1,5 +1,5 @@
 export { passesNodeReqs } from './functions';
-export { getAllNodes, getNodeByIndex, getNodeRequirements } from './queries';
-export { NullNode, getNode } from './types';
+export { getAllNodes, getBaseNodeByIndex, getNodeByIndex, getNodeRequirements } from './getters';
+export { NullNode, getBaseNode, getNode } from './types';
 
-export type { Node, Options as NodeOptions } from './types';
+export type { BaseNode, Node, Options as NodeOptions } from './types';

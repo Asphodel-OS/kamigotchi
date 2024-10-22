@@ -42,11 +42,22 @@ contract World is IWorld, Ownable {
 
   constructor() {
     _initializeOwner(msg.sender);
-    _components = new Uint256Component(address(0), componentsComponentId);
-    _systems = new Uint256Component(address(0), systemsComponentId);
+
+    // setting up registry components
+    // NOTE: registry components map(address -> ID). To switch this?
+    _components = new Uint256Component(address(this), componentsComponentId);
+    _systems = new Uint256Component(address(this), systemsComponentId);
+
+    // setting up registry system
     register = new RegisterSystem(this, address(_components));
     _systems.authorizeWriter(address(register));
     _components.authorizeWriter(address(register));
+
+    // storing components and system addresses
+
+    // register.execute(
+    //   abi.encode(msg.sender, RegisterType.System, address(register), registerSystemId)
+    // );
   }
 
   /** @notice
@@ -54,11 +65,9 @@ contract World is IWorld, Ownable {
    * Separated from the constructor to prevent circular dependencies.
    */
   function init() public {
-    _components.registerWorld(address(this));
-    _systems.registerWorld(address(this));
-    register.execute(
-      abi.encode(msg.sender, RegisterType.System, address(register), registerSystemId)
-    );
+    registerComponent(address(_components), componentsComponentId);
+    registerComponent(address(_systems), systemsComponentId);
+    registerSystem(address(register), registerSystemId);
   }
 
   /** @notice
@@ -98,7 +107,7 @@ contract World is IWorld, Ownable {
    * Emits the `ComponentValueSet` event for clients to reconstruct the state.
    */
   function registerComponentValueSet(uint256 entity, bytes calldata data) public {
-    require(_components.has(addressToEntity(msg.sender)), "component not registered");
+    // getIdByAddress has implicit existence check
     emit ComponentValueSet(getIdByAddress(_components, msg.sender), msg.sender, entity, data);
   }
 
@@ -107,7 +116,7 @@ contract World is IWorld, Ownable {
    * Emits the `ComponentValueRemoved` event for clients to reconstruct the state.
    */
   function registerComponentValueRemoved(uint256 entity) public {
-    require(_components.has(addressToEntity(msg.sender)), "component not registered");
+    // getIdByAddress has implicit existence check
     emit ComponentValueRemoved(getIdByAddress(_components, msg.sender), msg.sender, entity);
   }
 

@@ -1,15 +1,8 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
 import { IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
@@ -63,7 +56,7 @@ export function registerAccountRegistrar() {
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
-      const { IsAccount, AccountIndex, FarcasterIndex, Name, OperatorAddress, OwnerAddress } =
+      const { AccountIndex, EntityType, FarcasterIndex, Name, OperatorAddress, OwnerAddress } =
         components;
 
       // TODO?: replace this with getAccount shape
@@ -94,19 +87,16 @@ export function registerAccountRegistrar() {
 
       const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
         const accountIndex = Array.from(
-          runQuery([Has(IsAccount), HasValue(OwnerAddress, { value: ownerAddress })])
+          runQuery([
+            HasValue(OwnerAddress, { value: ownerAddress }),
+            HasValue(EntityType, { value: 'ACCOUNT' }),
+          ])
         )[0];
         return accountIndex;
       };
 
-      return merge(
-        IsAccount.update$,
-        AccountIndex.update$,
-        FarcasterIndex.update$,
-        Name.update$,
-        OperatorAddress.update$,
-        OwnerAddress.update$
-      ).pipe(
+      // race condition present when updating by components, updates every second instead
+      return interval(1000).pipe(
         map(() => {
           const { selectedAddress } = useNetwork.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);

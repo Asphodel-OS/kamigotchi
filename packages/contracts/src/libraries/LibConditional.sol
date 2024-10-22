@@ -121,7 +121,7 @@ library LibConditional {
     uint256 targetID
   ) internal view returns (bool) {
     if (conditionIDs.length == 0) return true;
-    Condition[] memory datas = getBatch(components, conditionIDs);
+    Condition[] memory datas = get(components, conditionIDs);
 
     for (uint256 i = 0; i < conditionIDs.length; i++) {
       if (!check(components, targetID, datas[i])) return false;
@@ -177,7 +177,7 @@ library LibConditional {
       });
   }
 
-  function getBatch(
+  function get(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (Condition[] memory) {

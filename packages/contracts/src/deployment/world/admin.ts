@@ -42,6 +42,13 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
+  // ADMIN
+
+  async function adminGive(addr: string, type: string, itemIndex: number, amount: number) {
+    genCall('system._Admin.Give', [addr, type, itemIndex, amount]);
+  }
+
+  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
@@ -169,11 +176,26 @@ export function createAdminAPI(compiledCalls: string[]) {
   // MINT
 
   async function initBatchMinter() {
-    genCall('system.Pet721.BatchMint', [], 'setTraits');
+    genCall('system.Kami721.BatchMint', [], 'setTraits');
   }
 
   async function batchMint(amount: number) {
-    genCall('system.Pet721.BatchMint', [amount], 'batchMint');
+    genCall('system.Kami721.BatchMint', [amount], 'batchMint');
+  }
+
+  async function initCreatePet() {
+    genCall('system.Kami721.create', [], 'setTraits');
+  }
+
+  async function createPet(
+    accID: BigNumberish,
+    background: number,
+    body: number,
+    color: number,
+    face: number,
+    hand: number
+  ) {
+    genCall('system.Kami721.create', [accID, background, body, color, face, hand], 'create');
   }
 
   /////////////////
@@ -447,7 +469,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   async function createSkill(
     index: number,
     for_: string,
-    type: string,
     tree: string,
     name: string,
     description: string,
@@ -458,20 +479,9 @@ export function createAdminAPI(compiledCalls: string[]) {
   ) {
     genCall(
       'system.skill.registry',
-      [index, for_, type, tree, name, description, cost, max, treeTier, media],
+      [index, for_, tree, name, description, cost, max, treeTier, media],
       'create',
-      [
-        'uint32',
-        'string',
-        'string',
-        'string',
-        'string',
-        'string',
-        'uint256',
-        'uint256',
-        'uint256',
-        'string',
-      ]
+      ['uint32', 'string', 'string', 'string', 'string', 'uint256', 'uint256', 'uint256', 'string']
     );
   }
 
@@ -479,10 +489,9 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.skill.registry', [index], 'remove');
   }
 
-  async function addSkillEffect(skillIndex: number, type: string, subtype: string, value: number) {
-    genCall('system.skill.registry', [skillIndex, type, subtype, value], 'addEffect', [
+  async function addSkillBonus(skillIndex: number, type: string, value: number) {
+    genCall('system.skill.registry', [skillIndex, type, value], 'addBonus', [
       'uint32',
-      'string',
       'string',
       'int256',
     ]);
@@ -650,6 +659,9 @@ export function createAdminAPI(compiledCalls: string[]) {
         remove: removeRole,
       },
     },
+    admin: {
+      give: adminGive,
+    },
     config: {
       set: {
         array: setConfigArray,
@@ -697,6 +709,10 @@ export function createAdminAPI(compiledCalls: string[]) {
         init: initBatchMinter,
         mint: batchMint,
       },
+      create: {
+        init: initCreatePet,
+        mint: createPet,
+      },
     },
     registry: {
       item: {
@@ -741,7 +757,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         create: createSkill,
         delete: deleteSkill,
         add: {
-          effect: addSkillEffect,
+          bonus: addSkillBonus,
           requirement: addSkillRequirement,
         },
       },

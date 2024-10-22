@@ -7,14 +7,14 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
-import { IsListingComponent, ID as IsListingCompID } from "components/IsListingComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+
+import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
-import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 
@@ -37,7 +37,6 @@ library LibListing {
   ) internal returns (uint256 id) {
     id = genID(npcIndex, itemIndex);
     LibEntityType.set(components, id, "LISTING");
-    IsListingComponent(getAddrByID(components, IsListingCompID)).set(id); // deprecated
 
     IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).set(id, npcIndex);
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
@@ -60,7 +59,6 @@ library LibListing {
 
   function remove(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
-    IsListingComponent(getAddrByID(components, IsListingCompID)).remove(id);
 
     IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).remove(id);
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
@@ -137,12 +135,12 @@ library LibListing {
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genBuyParentID(id);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(ptr);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     uint256 ptr = genSellParentID(id);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(ptr);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(ptr);
   }
 
   //////////////////

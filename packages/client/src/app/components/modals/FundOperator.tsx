@@ -10,7 +10,7 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
-import { GasConstants } from 'constants/gas';
+import { GasConstants, GasExponent } from 'constants/gas';
 import { playFund } from 'utils/sounds';
 
 export function registerFundOperatorModal() {
@@ -35,7 +35,7 @@ export function registerFundOperatorModal() {
       const { selectedAddress, apis } = useNetwork();
 
       const [isFunding, setIsFunding] = useState(true);
-      const [amount, setAmount] = useState(0.05);
+      const [amount, setAmount] = useState(1);
       const [statusText, setStatusText] = useState('');
       const [statusColor, setStatusColor] = useState('grey');
 
@@ -123,8 +123,8 @@ export function registerFundOperatorModal() {
       const StateBox = (fundState: boolean) => {
         const text = fundState ? 'Owner' : 'Operator';
         const balance = fundState
-          ? Number(formatUnits(OwnerBalance?.value ?? 0n, 18)).toFixed(4)
-          : Number(formatUnits(OperatorBalance?.value ?? 0n, 18)).toFixed(4);
+          ? Number(formatUnits(OwnerBalance?.value ?? 0n, GasExponent)).toFixed(2)
+          : Number(formatUnits(OperatorBalance?.value ?? 0n, GasExponent)).toFixed(2);
         const color = fundState == isFunding ? 'grey' : 'white';
         const textColor = fundState == isFunding ? 'white' : 'black';
         return (
@@ -137,7 +137,7 @@ export function registerFundOperatorModal() {
 
       useEffect(() => {
         const curBal = Number(
-          formatUnits((isFunding ? OwnerBalance : OperatorBalance)?.value ?? 0n, 18)
+          formatUnits((isFunding ? OwnerBalance : OperatorBalance)?.value ?? 0n, GasExponent)
         );
 
         if (amount > curBal) {
@@ -182,9 +182,9 @@ export function registerFundOperatorModal() {
               <Input
                 style={{ pointerEvents: 'auto' }}
                 type='number'
-                step='0.01'
+                step='1'
                 onKeyDown={(e) => catchKeys(e)}
-                placeholder='0.05'
+                placeholder={GasConstants.Full.toString()}
                 onChange={(e) => handleChange(e)}
               ></Input>
               <WarnText style={{ color: statusColor }}>{statusText}</WarnText>

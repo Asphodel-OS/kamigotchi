@@ -53,7 +53,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    IUintComp(getAddrByID(components, ValueCompID)).inc(id, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
   }
 
   /// @notice adds score based on current epoch.
@@ -78,7 +78,7 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    IUintComp(getAddrByID(components, ValueCompID)).dec(id, amt);
+    ValueComponent(getAddrByID(components, ValueCompID)).dec(id, amt);
   }
 
   /// @notice decs score based on current epoch.
@@ -98,7 +98,7 @@ library LibScore {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGetUint256(id);
+    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(id);
   }
 
   // get current epoch for leaderboard
@@ -111,8 +111,7 @@ library LibScore {
 
   /// @notice set current epoch for leaderboard. shoud only be called by owner
   function setCurrentEpoch(IUintComp components, uint256 epoch) internal {
-    uint256 id = LibConfig.getID("LEADERBOARD_EPOCH");
-    LibConfig.setValue(components, id, epoch);
+    LibConfig.set(components, "LEADERBOARD_EPOCH", epoch);
   }
 
   /////////////////

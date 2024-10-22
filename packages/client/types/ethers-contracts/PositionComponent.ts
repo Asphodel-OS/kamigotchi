@@ -43,31 +43,30 @@ export interface PositionComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "equal(uint256[],bytes)": FunctionFragment;
+    "equal(uint256,bytes)": FunctionFragment;
+    "extractRaw(uint256[])": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
-    "extractRawBatch(uint256[])": FunctionFragment;
     "getAt(bytes,uint256)": FunctionFragment;
-    "getEntities()": FunctionFragment;
     "getEntitiesWithValue((int64,int64))": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
-    "getRawBatch(uint256[])": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "registerWorld(address)": FunctionFragment;
+    "remove(uint256[])": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "removeBatch(uint256[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "set(uint256,(int64,int64))": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
-    "setBatch(uint256[],bytes[])": FunctionFragment;
+    "set(uint256[],bytes[])": FunctionFragment;
     "size(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
-    "world()": FunctionFragment;
     "writeAccess(address)": FunctionFragment;
   };
 
@@ -76,31 +75,30 @@ export interface PositionComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
-      | "extractRaw"
-      | "extractRawBatch"
+      | "equal(uint256[],bytes)"
+      | "equal(uint256,bytes)"
+      | "extractRaw(uint256[])"
+      | "extractRaw(uint256)"
       | "getAt"
-      | "getEntities"
       | "getEntitiesWithValue((int64,int64))"
       | "getEntitiesWithValue(bytes)"
-      | "getRaw"
-      | "getRawBatch"
+      | "getRaw(uint256[])"
+      | "getRaw(uint256)"
       | "getValue"
       | "has"
       | "id"
       | "owner"
       | "ownershipHandoverExpiresAt"
-      | "registerWorld"
-      | "remove"
-      | "removeBatch"
+      | "remove(uint256[])"
+      | "remove(uint256)"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "set(uint256,(int64,int64))"
       | "set(uint256,bytes)"
-      | "setBatch"
+      | "set(uint256[],bytes[])"
       | "size"
       | "transferOwnership"
       | "unauthorizeWriter"
-      | "world"
       | "writeAccess"
   ): FunctionFragment;
 
@@ -117,20 +115,24 @@ export interface PositionComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "extractRaw",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "equal(uint256[],bytes)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "extractRawBatch",
+    functionFragment: "equal(uint256,bytes)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extractRaw(uint256[])",
     values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extractRaw(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAt",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntities",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue((int64,int64))",
@@ -141,12 +143,12 @@ export interface PositionComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRaw",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getRaw(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRawBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "getRaw(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getValue",
@@ -163,16 +165,12 @@ export interface PositionComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "registerWorld",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "remove",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeBatch",
+    functionFragment: "remove(uint256[])",
     values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "remove(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -191,7 +189,7 @@ export interface PositionComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch",
+    functionFragment: "set(uint256[],bytes[])",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
@@ -206,7 +204,6 @@ export interface PositionComponentInterface extends utils.Interface {
     functionFragment: "unauthorizeWriter",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "world", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "writeAccess",
     values: [PromiseOrValue<string>]
@@ -224,16 +221,23 @@ export interface PositionComponentInterface extends utils.Interface {
     functionFragment: "completeOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "extractRaw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "extractRawBatch",
+    functionFragment: "equal(uint256[],bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "equal(uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extractRaw(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extractRaw(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntities",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getEntitiesWithValue((int64,int64))",
     data: BytesLike
@@ -242,9 +246,12 @@ export interface PositionComponentInterface extends utils.Interface {
     functionFragment: "getEntitiesWithValue(bytes)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getRaw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getRawBatch",
+    functionFragment: "getRaw(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRaw(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getValue", data: BytesLike): Result;
@@ -256,12 +263,11 @@ export interface PositionComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "registerWorld",
+    functionFragment: "remove(uint256[])",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeBatch",
+    functionFragment: "remove(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -280,7 +286,10 @@ export interface PositionComponentInterface extends utils.Interface {
     functionFragment: "set(uint256,bytes)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setBatch", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "set(uint256[],bytes[])",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -290,7 +299,6 @@ export interface PositionComponentInterface extends utils.Interface {
     functionFragment: "unauthorizeWriter",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "world", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "writeAccess",
     data: BytesLike
@@ -382,13 +390,25 @@ export interface PositionComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extractRaw(
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "equal(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "extractRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    extractRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -397,8 +417,6 @@ export interface PositionComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     "getEntitiesWithValue((int64,int64))"(
       value: PositionStruct,
@@ -410,15 +428,15 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getRawBatch(
+    "getRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[string[]]>;
+
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getValue(
       entity: PromiseOrValue<BigNumberish>,
@@ -439,18 +457,13 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    removeBatch(
+    "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -474,7 +487,7 @@ export interface PositionComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -494,8 +507,6 @@ export interface PositionComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    world(overrides?: CallOverrides): Promise<[string]>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
@@ -517,13 +528,25 @@ export interface PositionComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extractRaw(
+  "equal(uint256[],bytes)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "equal(uint256,bytes)"(
     entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "extractRaw(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  extractRawBatch(
-    entities: PromiseOrValue<BigNumberish>[],
+  "extractRaw(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -532,8 +555,6 @@ export interface PositionComponent extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   "getEntitiesWithValue((int64,int64))"(
     value: PositionStruct,
@@ -545,15 +566,15 @@ export interface PositionComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  getRaw(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getRawBatch(
+  "getRaw(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<string[]>;
+
+  "getRaw(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getValue(
     entity: PromiseOrValue<BigNumberish>,
@@ -574,18 +595,13 @@ export interface PositionComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  registerWorld(
-    _world: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  remove(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  removeBatch(
+  "remove(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "remove(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -609,7 +625,7 @@ export interface PositionComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setBatch(
+  "set(uint256[],bytes[])"(
     entities: PromiseOrValue<BigNumberish>[],
     values: PromiseOrValue<BytesLike>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -630,8 +646,6 @@ export interface PositionComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  world(overrides?: CallOverrides): Promise<string>;
-
   writeAccess(
     operator: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -650,23 +664,33 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    extractRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<boolean>;
 
-    extractRawBatch(
+    "equal(uint256,bytes)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getAt(
       value: PromiseOrValue<BytesLike>,
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     "getEntitiesWithValue((int64,int64))"(
       value: PositionStruct,
@@ -678,15 +702,15 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getRawBatch(
+    "getRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getValue(
       entity: PromiseOrValue<BigNumberish>,
@@ -707,18 +731,13 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    removeBatch(
+    "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -738,7 +757,7 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
@@ -758,8 +777,6 @@ export interface PositionComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    world(overrides?: CallOverrides): Promise<string>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
@@ -807,13 +824,25 @@ export interface PositionComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extractRaw(
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "equal(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "extractRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    extractRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -822,8 +851,6 @@ export interface PositionComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getEntitiesWithValue((int64,int64))"(
       value: PositionStruct,
@@ -835,13 +862,13 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "getRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -864,18 +891,13 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    removeBatch(
+    "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -899,7 +921,7 @@ export interface PositionComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -919,8 +941,6 @@ export interface PositionComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    world(overrides?: CallOverrides): Promise<BigNumber>;
 
     writeAccess(
       operator: PromiseOrValue<string>,
@@ -943,13 +963,25 @@ export interface PositionComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extractRaw(
+    "equal(uint256[],bytes)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "equal(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "extractRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    extractRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "extractRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -958,8 +990,6 @@ export interface PositionComponent extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getEntitiesWithValue((int64,int64))"(
       value: PositionStruct,
@@ -971,13 +1001,13 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getRaw(
-      entity: PromiseOrValue<BigNumberish>,
+    "getRaw(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getRawBatch(
-      entities: PromiseOrValue<BigNumberish>[],
+    "getRaw(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1000,18 +1030,13 @@ export interface PositionComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    registerWorld(
-      _world: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    remove(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeBatch(
+    "remove(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "remove(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1035,7 +1060,7 @@ export interface PositionComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setBatch(
+    "set(uint256[],bytes[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1055,8 +1080,6 @@ export interface PositionComponent extends BaseContract {
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    world(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     writeAccess(
       operator: PromiseOrValue<string>,

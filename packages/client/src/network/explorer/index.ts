@@ -52,7 +52,7 @@ export const initExplorer = (world: World, components: Components) => {
         return getKamiByIndex(world, components, index, options);
       },
       entities: () => Array.from(components.IsPet.entities()),
-      indices: () => Array.from(components.PetIndex.values.value.values()),
+      indices: () => Array.from(components.KamiIndex.values.value.values()),
     },
 
     nodes: {
@@ -99,7 +99,7 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     traits: {
-      get: (index: number, type: string) => getTraitByIndex(components, index, type),
+      get: (index: number, type: string) => getTraitByIndex(world, components, index, type),
       all: () => getRegistryTraits(world, components),
       indices: () => [
         ...new Set([
