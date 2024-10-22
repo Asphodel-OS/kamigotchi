@@ -112,7 +112,7 @@ export function registerGasHarasser() {
         let newValue = Number(event.target.value);
         newValue = Math.max(fullGas / 10, newValue);
         newValue = Math.min(fullGas * 10, newValue);
-        setValue(newValue);
+        setValue(1000000);
       };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -142,16 +142,16 @@ export function registerGasHarasser() {
             <Input
               type='number'
               value={value}
-              step={fullGas / 2}
+              step={fullGas / 10}
               onChange={(e) => handleChange(e)}
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
             <ActionButton text='Feed' onClick={feed} size='validator' />
           </Row>
-          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+          {/* <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
             Need eth? Check out the faucet.
-          </Link>
+          </Link> */}
         </ValidatorWrapper>
       );
     }

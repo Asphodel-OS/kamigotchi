@@ -21,6 +21,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const components = createComponents(world);
 
   const { network, startSync, systems, createSystems, txReduced$ } = await setupMUDNetwork<
+    //@ts-ignore
     typeof components,
     SystemTypes
   >(world, components, SystemAbis, config, { fetchSystemCalls: true });
