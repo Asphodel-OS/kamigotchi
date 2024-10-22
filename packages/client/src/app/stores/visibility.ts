@@ -24,7 +24,6 @@ export interface Fixtures {
   actionQueue: boolean;
   header: boolean;
   menu: boolean;
-  moreMenu: boolean;
   notifications: boolean;
 }
 
@@ -32,7 +31,6 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
   actionQueue: isOn,
   header: isOn,
   menu: isOn,
-  moreMenu: isOn,
   notifications: isOn,
 });
 
@@ -110,7 +108,6 @@ export const useVisibility = create<State & Actions>((set) => {
       actionQueue: false,
       header: false,
       menu: false,
-      moreMenu: true,
       notifications: true,
     },
     modals: {

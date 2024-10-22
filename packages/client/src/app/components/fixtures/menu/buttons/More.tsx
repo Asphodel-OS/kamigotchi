@@ -17,14 +17,12 @@ export const MoreMenuButton = () => {
   useEffect(() => {
     if (ready) {
       if (!authenticated) {
-        setFixtures({ moreMenu: true });
         setDisabled(true);
       } else {
-        setFixtures({ moreMenu: false });
         setDisabled(false);
       }
     }
-  }, [ready, authenticated]);
+  }, [authenticated]);
 
   const toggleSettings = () => {
     if (modals.settings) setModals({ settings: false });

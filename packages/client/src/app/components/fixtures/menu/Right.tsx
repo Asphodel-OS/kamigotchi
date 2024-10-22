@@ -25,7 +25,7 @@ export function registerMenuRight() {
             <ChatMenuButton />
             <MoreMenuButton />
           </Wrapper>
-          <Wrapper style={{ display: fixtures.moreMenu ? 'flex' : 'none' }}>
+          <Wrapper style={{ display: fixtures.menu ? 'none' : 'flex' }}>
             <MoreMenuButton />
           </Wrapper>
         </>
