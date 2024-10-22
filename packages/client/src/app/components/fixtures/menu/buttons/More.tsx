@@ -1,14 +1,14 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useEffect, useState } from 'react';
 
 import { IconListButton, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { logoutIcon } from 'assets/images/icons/actions';
 import { helpIcon, settingsIcon } from 'assets/images/icons/menu';
-import { useEffect, useState } from 'react';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
-  const { modals, setModals, setFixtures } = useVisibility();
+  const { modals, setModals } = useVisibility();
   const [disabled, setDisabled] = useState(true);
 
   const handleClick = () => {
@@ -16,11 +16,7 @@ export const MoreMenuButton = () => {
   };
   useEffect(() => {
     if (ready) {
-      if (!authenticated) {
-        setDisabled(true);
-      } else {
-        setDisabled(false);
-      }
+      setDisabled(!authenticated);
     }
   }, [authenticated]);
 
