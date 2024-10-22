@@ -1,29 +1,23 @@
 import { Snackbar, SnackbarContent } from '@mui/material';
 import { useNetwork } from 'app/stores';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { dripEth } from 'utils/faucet';
 import { ActionButton } from '..';
 
 export const DripButton = React.memo(() => {
   const { selectedAddress } = useNetwork.getState();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({ currentState: false, message: '' });
   const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState('');
 
   const handleClickOpen = () => {
     dripEth(selectedAddress, setError);
     setShowModal(true);
   };
-
-  useEffect(() => {
-    error ? setMessage(error) : setMessage('Succeeded!');
-  }, [showModal]);
-
   return (
     <>
       <ActionButton
         text=' Drip Eth'
-        disabled={error !== null}
+        disabled={error.currentState}
         onClick={() => handleClickOpen()}
         size='vending'
       />
@@ -45,7 +39,7 @@ export const DripButton = React.memo(() => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          message={message}
+          message={error.message}
         />
       </Snackbar>
     </>

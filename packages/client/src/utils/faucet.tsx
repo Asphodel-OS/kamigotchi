@@ -8,10 +8,10 @@ export const dripEth = async (account: any, setError: Dispatch<SetStateAction<an
 
   try {
     const faucetClient = createClient(FaucetServiceDefinition, createChannel(url));
+    //change this later
+    setError({ currentState: false, message: 'Succeeded!' });
     await faucetClient.drip({ address: account });
   } catch (e: any) {
-    setError(e.response.data.message);
-    console.log('fallo');
-    //console.log('e.response.data.message' + e.response.data.message);
+    setError({ currentState: true, message: e.response.data.message });
   }
 };
