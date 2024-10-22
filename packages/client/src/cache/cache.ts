@@ -28,7 +28,7 @@ export async function initCache<S extends Stores>(
    * @param store the key of the desired store
    */
   function openStore(store: StoreKey<S>): IDBObjectStore {
-    const tx = db.transaction([store], 'readwrite');
+    const tx = db.transaction(store, 'readwrite');
     const objectStore = tx.objectStore(store);
     return objectStore;
   }
