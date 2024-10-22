@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useEffect, useState } from 'react';
 
 import { IconListButton, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
@@ -8,6 +9,13 @@ import { helpIcon, settingsIcon } from 'assets/images/icons/menu';
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
   const { modals, setModals } = useVisibility();
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    if (ready) {
+      setDisabled(!authenticated);
+    }
+  }, [authenticated]);
 
   const handleClick = () => {
     if (ready && authenticated) logout();
@@ -58,10 +66,10 @@ export const MoreMenuButton = () => {
       <IconListButton
         img={settingsIcon}
         options={[
-          { text: 'Settings', image: settingsIcon, onClick: toggleSettings },
+          { text: 'Settings', disabled: disabled, image: settingsIcon, onClick: toggleSettings },
           { text: 'Help', image: helpIcon, onClick: toggleHelp },
           { text: 'Hard Refresh', image: helpIcon, onClick: clearCache },
-          { text: 'Logout', image: logoutIcon, onClick: handleClick },
+          { text: 'Logout', disabled: disabled, image: logoutIcon, onClick: handleClick },
         ]}
         scale={4.5}
         scaleOrientation='vh'
