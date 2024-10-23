@@ -98,7 +98,7 @@ export function registerGasHarasser() {
         actions.add({
           action: 'AccountFund',
           params: [value.toString()],
-          description: `Funding Operator ${value.toLocaleString()}wei`,
+          description: `Funding Operator ${value.toLocaleString()} ONYX`,
           execute: async () => {
             return api.account.fund(value.toString());
           },
