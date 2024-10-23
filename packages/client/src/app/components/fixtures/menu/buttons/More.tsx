@@ -12,9 +12,7 @@ export const MoreMenuButton = () => {
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    if (ready) {
-      setDisabled(!authenticated);
-    }
+    if (ready) setDisabled(!authenticated);
   }, [authenticated]);
 
   const handleClick = () => {
@@ -66,10 +64,10 @@ export const MoreMenuButton = () => {
       <IconListButton
         img={settingsIcon}
         options={[
-          { text: 'Settings', disabled: disabled, image: settingsIcon, onClick: toggleSettings },
+          { text: 'Settings', disabled, image: settingsIcon, onClick: toggleSettings },
           { text: 'Help', image: helpIcon, onClick: toggleHelp },
           { text: 'Hard Refresh', image: helpIcon, onClick: clearCache },
-          { text: 'Logout', disabled: disabled, image: logoutIcon, onClick: handleClick },
+          { text: 'Logout', disabled, image: logoutIcon, onClick: handleClick },
         ]}
         scale={4.5}
         scaleOrientation='vh'
