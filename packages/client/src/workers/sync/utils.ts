@@ -2,7 +2,7 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { ComponentValue, Components, EntityID } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { World } from '@mud-classic/solecs/types/ethers-contracts';
-import { awaitPromise, range, to256BitString } from '@mud-classic/utils';
+import { awaitPromise, range, to256BitString, unpackTuple } from '@mud-classic/utils';
 import { BigNumber, BytesLike } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, map, of } from 'rxjs';
@@ -11,8 +11,15 @@ import { createDecoder } from 'engine/encoders';
 import {
   ECSStateReplyV2,
   ECSStateSnapshotServiceClient,
-  ECSStateSnapshotServiceDefinition,
 } from 'engine/types/ecs-snapshot/ecs-snapshot';
+import {
+  BlockResponse,
+  Component,
+  Entity,
+  KamigazeServiceClient,
+  KamigazeServiceDefinition,
+  State,
+} from 'engine/types/kamigaze/kamigaze';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { ComponentsSchema } from 'types/ComponentsSchema';
 import { ContractConfig } from 'workers/types';
@@ -30,39 +37,148 @@ import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
 
-// TODO: clean this shit up
-
-/**
- * Create a ECSStateSnapshotServiceClient
- * @param url ECSStateSnapshotService URL
- * @returns ECSStateSnapshotServiceClient
- */
-export function createSnapshotClient(url: string): ECSStateSnapshotServiceClient {
-  return createClient(ECSStateSnapshotServiceDefinition, createChannel(url));
+export function createStreamClient(url: string): StreamServiceClient {
+  return createClient(StreamServiceDefinition, createChannel(url, grpc.WebsocketTransport()));
 }
 
 /**
- * Return the snapshot block number.
- *
- * @param snapshotClient ECSStateSnapshotServiceClient
- * @param worldAddress Address of the World contract to get the snapshot for.
- * @returns Snapsot block number
+ * KAMIGAZE INTEGRATION
  */
-export async function getSnapshotBlockNumber(
-  snapshotClient: ECSStateSnapshotServiceClient | undefined,
-  worldAddress: string
-): Promise<number> {
-  let blockNumber = -1;
-  if (!snapshotClient) return blockNumber;
-  try {
-    const response = await snapshotClient.getStateBlockLatest({ worldAddress });
-    blockNumber = response.blockNumber;
-  } catch (e) {
-    console.error(e);
+
+export function createSnapshotClient(url: string): KamigazeServiceClient {
+  return createClient(KamigazeServiceDefinition, createChannel(url));
+}
+export async function fetchStateFromKamigaze(
+  cacheStore: CacheStore,
+  kamigazeClient: KamigazeServiceClient,
+  decode: ReturnType<typeof createDecode>,
+  numChunks = 10,
+  setPercentage?: (percentage: number) => void
+): Promise<CacheStore> {
+  const chunkPercentage = Math.ceil(100 / numChunks);
+
+  let currentBlock = cacheStore.lastKamigazeBlock;
+  let initialLoad = currentBlock == 0;
+
+  let BlockResponse = await kamigazeClient.getStateBlock({});
+  storeBlock(cacheStore, BlockResponse);
+  cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
+
+  // remove from the cache any component added by the rpc sync
+  cacheStore.components.splice(cacheStore.lastKamigazeComponent + 1);
+  let ComponentsResponse = await kamigazeClient.getComponents({
+    fromIdx: cacheStore.lastKamigazeComponent,
+  });
+  storeComponents(cacheStore, ComponentsResponse.components);
+  cacheStore.lastKamigazeComponent = cacheStore.components.length - 1;
+
+  let EntitiesResponse = kamigazeClient.getEntities({
+    fromIdx: cacheStore.lastKamigazeEntity,
+    numChunks: numChunks,
+  });
+  // remove from the cache any entity added by the rpc sync
+  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
+  for await (const responseChunk of EntitiesResponse) {
+    storeEntities(cacheStore, responseChunk.entities);
   }
-  return blockNumber;
+  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
+
+  if (!initialLoad) {
+    let StateRemovalsReponse = await kamigazeClient.getState({
+      fromBlock: currentBlock,
+      numChunks: numChunks,
+      removals: true,
+    });
+    for await (const responseChunk of StateRemovalsReponse) {
+      removeValues(cacheStore, responseChunk.state);
+    }
+  }
+
+  let StateValuesResponse = await kamigazeClient.getState({
+    fromBlock: currentBlock,
+    numChunks: numChunks,
+    removals: false,
+  });
+  for await (const responseChunk of StateValuesResponse) {
+    storeValues(cacheStore, responseChunk.state, decode);
+  }
+
+  return cacheStore;
+}
+export function storeBlock(cacheStore: CacheStore, block: BlockResponse) {
+  cacheStore.blockNumber = block.blockNumber;
+  console.log('Stored block');
+}
+export function storeComponents(cacheStore: CacheStore, components: Component[]) {
+  if (typeof components === 'undefined') {
+    console.log('No components to store');
+    return;
+  }
+  if (cacheStore.components.length == 0) {
+    cacheStore.components.push('0x0');
+  }
+  for (const component of components) {
+    var hexId = Uint8ArrayToHexString(component.id);
+
+    //CHECK INDEX
+    if (component.idx != cacheStore.components.length) {
+      console.log(
+        `Component.IDX ${component.idx} does not mach tail of list${cacheStore.components.length}`
+      );
+      continue;
+    }
+
+    cacheStore.components.push(hexId);
+    cacheStore.componentToIndex.set(hexId, component.idx);
+  }
+  console.log('Stored components: ' + cacheStore.components.length);
 }
 
+export function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
+  if (typeof entities === 'undefined') {
+    console.log('No components to store');
+    return;
+  }
+  if (cacheStore.entities.length == 0) cacheStore.entities.push('0x0');
+  for (const entity of entities) {
+    var hexId = Uint8ArrayToHexString(entity.id);
+
+    //CHECK INDEX
+    if (entity.idx != cacheStore.entities.length) {
+      console.log(
+        `Entity.IDX ${entity.idx} does not match tail of list ${cacheStore.entities.length}`
+      );
+      continue;
+    }
+
+    cacheStore.entities.push(hexId);
+    cacheStore.entityToIndex.set(hexId, entity.idx);
+  }
+  console.log('Stored entities');
+}
+
+export async function storeValues(
+  cacheStore: CacheStore,
+  values: State[],
+  decode: ReturnType<typeof createDecode>
+) {
+  for (const event of values) {
+    const { packedIdx, data } = event;
+    let componentIdx = unpackTuple(packedIdx)[0];
+    const value = await decode(cacheStore.components[componentIdx], data);
+    cacheStore.state.set(packedIdx, value);
+  }
+  console.log('Stored values');
+}
+
+export function removeValues(cacheStore: CacheStore, values: State[]) {
+  for (const event of values) {
+    const { packedIdx, data } = event;
+    cacheStore.state.delete(packedIdx);
+  }
+  console.log('Removed values');
+}
+/************************************* END KAMIGAZE INTEGRATION *************************************/
 /**
  * Load from the remote snapshot service in chunks via a stream.
  *
@@ -402,7 +518,6 @@ function createBlockCache(provider: JsonRpcProvider) {
  */
 export function createDecode() {
   const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
-
   // hardcode world.component.components and world.component.systems to use uint256 schema
   // NOTE: maybe compute these keys with keccaks or keep a constants file for readability
   decoders['0x4350dba81aa91e31664a09d24a668f006169a11b3d962b7557aed362d3252aec'] = createDecoder(

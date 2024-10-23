@@ -53,8 +53,7 @@ import {
   createLatestEventStreamRPC,
   createSnapshotClient,
   fetchEventsInBlockRangeChunked,
-  fetchSnapshotChunked,
-  getSnapshotBlockNumber,
+  fetchStateFromKamigaze,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -237,40 +236,46 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     });
     const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexedDB) : -1;
     this.setLoadingState({ percentage: 50 });
-    const snapshotClient = snapshotUrl ? createSnapshotClient(snapshotUrl) : undefined;
-    const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
+
+    const kamigazeClient = createSnapshotClient(snapshotUrl);
+
     this.setLoadingState({ percentage: 100 });
 
-    let initialState = createCacheStore();
-    if (initialBlockNumber > Math.max(cacheBlockNumber, snapshotBlockNumber)) {
-      initialState.blockNumber = initialBlockNumber;
-    } else {
-      // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
-      const syncFromSnapshot =
-        snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheExpiry;
+    // KAMIGAZE INTEGRRATION
+    let initialState = await loadIndexDbToCacheStore(indexedDB);
+    // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
+    this.setLoadingState({
+      msg: 'Fetching Initial State From Snapshot',
+      percentage: 0,
+    });
+    console.log('CACHE STORE BEFORE SYNC <-----------------------');
+    console.log('BlockNumber', initialState.blockNumber);
+    console.log('Components', initialState.components.length);
+    console.log('Entities', initialState.entities.length);
+    console.log('StateValues', initialState.state.size);
+    console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
+    console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
+    console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
+    console.log('------------------------------------------------');
 
-      if (syncFromSnapshot) {
-        this.setLoadingState({
-          msg: 'Fetching Initial State From Snapshot',
-          percentage: 0,
-        });
-        initialState = await fetchSnapshotChunked(
-          snapshotClient,
-          worldContract.address,
-          decode,
-          config.snapshotNumChunks ?? 10,
-          (percentage: number) => this.setLoadingState({ percentage }),
-          config.pruneOptions
-        );
-      } else {
-        this.setLoadingState({
-          msg: 'Loading Initial State From Cache',
-          percentage: 0,
-        });
-        initialState = await loadIndexDbToCacheStore(indexedDB);
-        this.setLoadingState({ percentage: 100 });
-      }
-    }
+    // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
+    // I removed it here just to make sure Kamigaze is working as expected
+    initialState = await fetchStateFromKamigaze(
+      initialState,
+      kamigazeClient,
+      decode,
+      config.snapshotNumChunks ?? 10,
+      (percentage: number) => this.setLoadingState({ percentage })
+    );
+    console.log('CACHE STORE AFTER SYNC <------------------------ ');
+    console.log('BlockNumber', initialState.blockNumber);
+    console.log('Components', initialState.components.length);
+    console.log('Entities', initialState.entities.length);
+    console.log('StateValues', initialState.state.size);
+    console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
+    console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
+    console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
+    console.log('------------------------------------------------');
 
     /*
      * FILL THE GAP

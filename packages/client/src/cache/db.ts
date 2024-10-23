@@ -20,6 +20,7 @@ export function initDb(dbId: string, storeKeys: string[], version = VERSION, idb
   // Create store and index
   request.onupgradeneeded = () => {
     const db = request.result;
+
     for (const key of storeKeys) {
       if (!db.objectStoreNames.contains(key)) {
         db.createObjectStore(key);
