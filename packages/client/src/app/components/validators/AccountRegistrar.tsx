@@ -275,17 +275,10 @@ export function registerAccountRegistrar() {
         );
       };
 
-      const NextButton = () => (
-        <ActionButton text='Next' onClick={() => setStep(step + 1)} size='vending' />
-      );
+      const NextButton = () => <ActionButton text='Next' onClick={() => setStep(step + 1)} />;
 
       const BackButton = () => (
-        <ActionButton
-          text='Back'
-          disabled={step === 0}
-          onClick={() => setStep(step - 1)}
-          size='vending'
-        />
+        <ActionButton text='Back' disabled={step === 0} onClick={() => setStep(step - 1)} />
       );
 
       const IntroStep1 = () => {
@@ -327,7 +320,6 @@ export function registerAccountRegistrar() {
               text='Submit'
               disabled={addressTaken || name === '' || isNameTaken() || /\s/.test(name)}
               onClick={() => handleAccountCreation(name)}
-              size='vending'
             />
           );
 
