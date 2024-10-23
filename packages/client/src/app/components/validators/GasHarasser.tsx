@@ -153,9 +153,6 @@ export function registerGasHarasser() {
             />
             <ActionButton text='feed' onClick={feed} />
           </Row>
-          {/* <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
-            Need eth? Check out the faucet.
-          </Link> */}
         </ValidatorWrapper>
       );
     }
