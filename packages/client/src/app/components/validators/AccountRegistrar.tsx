@@ -15,6 +15,7 @@ import {
   useVisibility,
 } from 'app/stores';
 import { copy } from 'app/utils';
+import axios from 'axios';
 import {
   Account,
   getAccount,
@@ -194,6 +195,12 @@ export function registerAccountRegistrar() {
         return actionID;
       };
 
+      const dripFaucet = async (address: string) => {
+        await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
+          address: address,
+        });
+      };
+
       /////////////////
       // INTERACTION
 
@@ -210,6 +217,10 @@ export function registerAccountRegistrar() {
       const handleAccountCreation = async (username: string) => {
         playSignup();
         toggleFixtures(true);
+
+        // drip faucet before creating account
+        // await dripFaucet(selectedAddress);
+
         try {
           const actionID = createAccount(username);
           if (!actionID) throw new Error('Account creation failed');
@@ -277,6 +288,16 @@ export function registerAccountRegistrar() {
 
       const NextButton = () => <ActionButton text='Next' onClick={() => setStep(step + 1)} />;
 
+      const NextAndFaucetButton = () => (
+        <ActionButton
+          text='Next'
+          onClick={() => {
+            setStep(step + 1);
+            dripFaucet(selectedAddress);
+          }}
+        />
+      );
+
       const BackButton = () => (
         <ActionButton text='Back' disabled={step === 0} onClick={() => setStep(step - 1)} />
       );
@@ -289,7 +310,7 @@ export function registerAccountRegistrar() {
             <Description>This world exists entirely on-chain.</Description>
             <br />
             <Row>
-              <NextButton />
+              <NextAndFaucetButton />
             </Row>
           </>
         );
@@ -300,7 +321,6 @@ export function registerAccountRegistrar() {
             <br />
             <Description>Kamigotchi are key to this world.</Description>
             <Description>You will need them to progress.</Description>
-            <Description>You'll also need testnet Ethereum! Here's the faucet:</Description>
 
             <br />
             <Row>
