@@ -9,7 +9,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 
-uint256 constant ID = uint256(keccak256("system.Listing.Sell"));
+uint256 constant ID = uint256(keccak256("system.listing.sell"));
 
 // ListingSellSystem allows a character to buy an item listed with a merchant (npc)
 // NOTE: this currently assumes all purchases are for fungible items. need to generalize

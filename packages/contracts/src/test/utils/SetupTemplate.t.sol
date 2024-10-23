@@ -309,7 +309,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    bytes memory productionID = _ProductionStartSystem.executeTyped(kamiID, nodeID);
+    bytes memory productionID = _HarvestStartSystem.executeTyped(kamiID, nodeID);
     return abi.decode(productionID, (uint));
   }
 
@@ -319,7 +319,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _ProductionStopSystem.executeTyped(productionID);
+    _HarvestStopSystem.executeTyped(productionID);
   }
 
   function _collectProduction(uint productionID) internal {
@@ -328,7 +328,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _ProductionCollectSystem.executeTyped(productionID);
+    _HarvestCollectSystem.executeTyped(productionID);
   }
 
   function _liquidateProduction(uint attackerID, uint productionID) internal virtual {
@@ -336,7 +336,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
+    _HarvestLiquidateSystem.executeTyped(productionID, attackerID);
   }
 
   /* QUESTS */

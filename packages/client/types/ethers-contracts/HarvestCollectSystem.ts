@@ -28,13 +28,13 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ProductionStartSystemInterface extends utils.Interface {
+export interface HarvestCollectSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -71,7 +71,7 @@ export interface ProductionStartSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -176,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface ProductionStartSystem extends BaseContract {
+export interface HarvestCollectSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ProductionStartSystemInterface;
+  interface: HarvestCollectSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -222,8 +222,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
-      nodeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -267,8 +266,7 @@ export interface ProductionStartSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    kamiID: PromiseOrValue<BigNumberish>,
-    nodeID: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -308,8 +306,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
-      nodeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -378,8 +375,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
-      nodeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -424,8 +420,7 @@ export interface ProductionStartSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
-      nodeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

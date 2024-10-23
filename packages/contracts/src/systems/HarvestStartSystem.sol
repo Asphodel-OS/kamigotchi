@@ -11,13 +11,13 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 
-uint256 constant ID = uint256(keccak256("system.Production.Start"));
+uint256 constant ID = uint256(keccak256("system.harvest.start"));
 
-// ProductionStartSystem activates a pet production on a node. If it doesn't exist, we create one.
+// HarvestStartSystem activates a pet production on a node. If it doesn't exist, we create one.
 // We limit to one production per pet, and one production on a node per character.
 // NOTE: pet is guaranteed to be healthy if resting.
 // TODO: update productions to support all kinds of nodes, not just harvesting
-contract ProductionStartSystem is System {
+contract HarvestStartSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {

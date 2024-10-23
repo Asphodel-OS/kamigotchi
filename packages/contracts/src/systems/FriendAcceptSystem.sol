@@ -10,7 +10,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFriend } from "libraries/LibFriend.sol";
 
-uint256 constant ID = uint256(keccak256("system.Friend.Accept"));
+uint256 constant ID = uint256(keccak256("system.friend.accept"));
 
 contract FriendAcceptSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

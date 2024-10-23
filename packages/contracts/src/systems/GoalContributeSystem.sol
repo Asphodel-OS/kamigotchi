@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
 
-uint256 constant ID = uint256(keccak256("system.Goal.Contribute"));
+uint256 constant ID = uint256(keccak256("system.goal.contribute"));
 
 contract GoalContributeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

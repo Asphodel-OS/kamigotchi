@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 
-uint256 constant ID = uint256(keccak256("system.Account.Set.Name"));
+uint256 constant ID = uint256(keccak256("system.account.set.name"));
 
 // names an existing account. must be called by Owner EOA
 contract AccountSetNameSystem is System {

@@ -82,7 +82,7 @@ contract MurderTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("kami not urs");
         vm.prank(_getOperator(i));
-        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[0][j]);
+        _HarvestLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[0][j]);
       }
     }
 
@@ -111,7 +111,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: node too far");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
+      _HarvestLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // move the Account to room 3
@@ -120,7 +120,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: node too far");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
+      _HarvestLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // move the Account to room 1
@@ -158,7 +158,7 @@ contract MurderTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("FarmLiquidate: target too far");
         vm.prank(_getOperator(playerIndex));
-        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
+        _HarvestLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
         _stopProduction(playerProductionIDs[j]);
       }
       _fastForward(_idleRequirement);
@@ -203,7 +203,7 @@ contract MurderTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("FarmLiquidate: pet on cooldown");
         vm.prank(_getOperator(playerIndex));
-        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
+        _HarvestLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
       }
     }
 
@@ -244,7 +244,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: pet must be harvesting");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
+      _HarvestLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // start out player's productions and starve their pets
@@ -255,7 +255,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: pet starving..");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
+      _HarvestLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // kill off our player's pets
@@ -273,7 +273,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("FarmLiquidate: pet must be harvesting");
       vm.prank(_getOperator(playerIndex));
-      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
+      _HarvestLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
 
     // starve out our support player's productions
@@ -359,7 +359,7 @@ contract MurderTest is SetupTemplate {
   //     if (!_isLiquidatableBy(productionID, attackerID)) {
   //       vm.expectRevert("Pet: you lack violence");
   //       vm.prank(_getOperator(playerIndex));
-  //       _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
+  //       _HarvestLiquidateSystem.executeTyped(productionID, attackerID);
   //     } else {
   //       // liquidate, revive, heal
   //       _liquidateProduction(attackerID, productionID);

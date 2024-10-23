@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
-uint256 constant ID = uint256(keccak256("system.Account.Fund"));
+uint256 constant ID = uint256(keccak256("system.account.fund"));
 
 // hopper system to fund/refund burner wallet.
 // using a system instead of directly sending eth to fit into MUD client flow.
