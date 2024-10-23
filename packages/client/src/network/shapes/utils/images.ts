@@ -1,5 +1,6 @@
 import { FactionIcons } from 'assets/images/icons/factions';
 import { ItemImages } from 'assets/images/items';
+import { SkillImages } from 'assets/images/skills';
 import { AffinityIcons } from 'constants/affinities';
 
 export const getAffinityImage = (name: string) => {
@@ -32,4 +33,15 @@ export const getItemImage = (name: string) => {
   if (!key) throw new Error(`No item image found for ${name}`);
 
   return ItemImages[key];
+};
+
+// clean up name of item to standard format and query out map of item images
+export const getSkillImage = (name: string) => {
+  name = name.toLowerCase();
+  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
+  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
+  const key = name as keyof typeof SkillImages;
+  if (!key) throw new Error(`No skill image found for ${name}`);
+
+  return SkillImages[key];
 };
