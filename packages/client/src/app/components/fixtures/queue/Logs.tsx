@@ -86,18 +86,15 @@ export const Logs = (props: Props) => {
     if (!hash) return <></>;
     return (
       <Tooltip text={[`View on Etherscan`]}>
-        <OpenIcon
-          src={OpenInNewIcon}
-          onClick={() => window.open(`https://yominet.explorer.caldera.xyz/tx/${hash}`, '_blank')}
-        />
+        <OpenIcon src={OpenInNewIcon} />
       </Tooltip>
     );
   };
 
   const Log = (entityIndex: EntityIndex) => {
     const actionData = getComponentValueStrict(ActionComponent, entityIndex);
-    let state = ActionStateString[actionData.state as ActionState];
-    let metadata = actionData.metadata ?? '';
+    const state = ActionStateString[actionData.state as ActionState];
+    const metadata = actionData.metadata ?? '';
     return (
       <Row key={`action${entityIndex}`}>
         <RowSegment>

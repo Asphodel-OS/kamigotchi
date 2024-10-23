@@ -12,10 +12,6 @@ const rawYominet = {
   rpcUrls: {
     default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
   },
-
-  blockExplorers: {
-    default: { name: 'Explorer', url: 'https://yominet.explorer.caldera.xyz' },
-  },
 } as const satisfies Chain;
 
 const yominet = addRpcUrlOverrideToChain(rawYominet, import.meta.env.VITE_RPC_TRANSPORT_URL);

@@ -75,6 +75,7 @@ export const Controls = (props: Props) => {
   const getBalanceTooltip = (balance: number) => {
     const eth = balance.toFixed(6);
     return ['1 ETH = 10^18 wei', '', `${eth}Ξ`];
+    return ['1 ETH = 10^18 wei', '', `${eth}Ξ`];
   };
 
   //////////////////
@@ -109,7 +110,7 @@ export const Controls = (props: Props) => {
           <GasGauge level={calcGaugeSetting(operatorBalance?.value)} />
         </Tooltip>
         <Tooltip text={getBalanceTooltip(burnerGasBalance)}>
-          <Text>{(burnerGasBalance / 1e9).toFixed(3)}nETH</Text>
+          <Text>{burnerGasBalance.toFixed(2)}wei</Text>
         </Tooltip>
         {PriceWarning()}
       </RowPrefix>

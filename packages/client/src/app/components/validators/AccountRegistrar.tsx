@@ -140,7 +140,7 @@ export function registerAccountRegistrar() {
       useEffect(() => {
         const accountEntity = queryAccountByOwner(components, selectedAddress);
         if (!!accountEntity == validations.accountExists) return; // no change
-        if (!!accountEntity) {
+        if (accountEntity) {
           const account = getAccount(world, components, accountEntity);
           setKamiAccount(getKamiAccount(account, kamiAccount));
           setValidations({ ...validations, accountExists: true });
@@ -308,9 +308,7 @@ export function registerAccountRegistrar() {
             <Description>Kamigotchi are key to this world.</Description>
             <Description>You will need them to progress.</Description>
             <Description>You'll also need testnet Ethereum! Here's the faucet:</Description>
-            <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
-              https://yominet.hub.caldera.xyz/
-            </Link>
+
             <br />
             <Row>
               <BackButton />
@@ -359,9 +357,6 @@ export function registerAccountRegistrar() {
               <BackButton />
               <SubmitButton />
             </Row>
-            <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
-              Need eth? Check out the faucet.
-            </Link>
           </>
         );
       };
