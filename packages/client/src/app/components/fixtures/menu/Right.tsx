@@ -18,12 +18,17 @@ export function registerMenuRight() {
     () => {
       const { fixtures } = useVisibility();
       return (
-        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <InventoryMenuButton />
-          <QuestMenuButton />
-          <ChatMenuButton />
-          <MoreMenuButton />
-        </Wrapper>
+        <>
+          <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+            <InventoryMenuButton />
+            <QuestMenuButton />
+            <ChatMenuButton />
+            <MoreMenuButton />
+          </Wrapper>
+          <Wrapper style={{ display: fixtures.menu ? 'none' : 'flex' }}>
+            <MoreMenuButton />
+          </Wrapper>
+        </>
       );
     }
   );
