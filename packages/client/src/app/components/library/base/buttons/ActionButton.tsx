@@ -39,7 +39,7 @@ export const ActionButton = (props: Props) => {
       styles.fontSize = '.8vw';
       styles.margin = '0vw .16vw';
       styles.padding = '.4vw .8vw';
-      styles.borderRadius = '.4vw';
+      styles.borderRadius = '.45vw';
       styles.borderWidth = '.15vw';
     } else if (size === 'large') {
       styles.fontSize = '1.4vw';
@@ -112,7 +112,6 @@ const Button = styled.button`
   color: black;
   justify-content: center;
 
-  font-family: Pixel;
   text-align: center;
   text-decoration: none;
 

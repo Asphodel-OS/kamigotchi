@@ -48,10 +48,11 @@ export function registerAccountRegistrar() {
   registerUIComponent(
     'AccountRegistrar',
     {
-      colStart: 20,
-      colEnd: 80,
-      rowStart: 30,
-      rowEnd: 60,
+      // positioning controlled by validator wrapper
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0,
     },
     (layers) => {
       const { network } = layers;
@@ -403,18 +404,18 @@ const Row = styled.div`
 
 const Description = styled.p`
   color: #333;
-  padding: 10px;
-  font-size: 1.2vh;
+  padding: 0.9vw 0;
+  font-size: 0.75vw;
   text-align: center;
 `;
 
 const Link = styled.div`
   color: #11f;
-  padding: 1vh 0 0 0;
+  padding: 0.6vw 0 0 0;
   cursor: pointer;
   pointer-events: auto;
 
-  font-size: 1vh;
+  font-size: 0.6vw;
   text-align: center;
   text-decoration: underline;
 
@@ -425,10 +426,7 @@ const Link = styled.div`
 
 const Input = styled.input`
   background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
+  border: solid black 0.15vw;
   padding: 15px 12px;
   margin: 5px 0px;
 

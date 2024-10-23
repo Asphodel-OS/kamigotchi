@@ -25,10 +25,11 @@ export function registerWalletConnecter() {
   registerUIComponent(
     'WalletConnecter',
     {
-      colStart: 30,
-      colEnd: 70,
-      rowStart: 40,
-      rowEnd: 60,
+      // positioning controlled by validator wrapper
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0,
     },
     (layers) => of(layers),
     (layers) => {
@@ -203,7 +204,7 @@ export function registerWalletConnecter() {
           errorPrimary={getWarning()}
         >
           <Description>{getDescription()}</Description>
-          <ActionButton onClick={handleClick} text={getButtonLabel()} size='vending' />
+          <ActionButton onClick={handleClick} text={getButtonLabel()} />
         </ValidatorWrapper>
       );
     }
@@ -211,8 +212,8 @@ export function registerWalletConnecter() {
 }
 
 const Description = styled.div`
-  font-size: 12px;
   color: #333;
+  padding: 0.9vw 0;
+  font-size: 0.75vw;
   text-align: center;
-  padding: 0px 0px 20px 0px;
 `;
