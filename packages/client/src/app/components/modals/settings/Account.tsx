@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ActionButton, CopyButton, Tooltip } from 'app/components/library';
 import { useAccount, useVisibility } from 'app/stores';
-import { getAbbrevAddr } from 'utils/address';
+import { abbreviateAddress } from 'utils/address';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();
@@ -16,7 +16,7 @@ export const Account = () => {
         <Text>{label}</Text>
         <RowContent>
           <Tooltip text={[value]}>
-            <Text>{getAbbrevAddr(value)}</Text>
+            <Text>{abbreviateAddress(value)}</Text>
           </Tooltip>
           <Tooltip text={['copy']}>
             <CopyButton text={value} />

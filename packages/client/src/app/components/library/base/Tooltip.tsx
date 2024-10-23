@@ -6,12 +6,14 @@ interface Props {
   children: React.ReactNode;
   grow?: boolean;
   direction?: 'row' | 'column';
+  align?: 'left' | 'right' | 'center';
 }
 
 export const Tooltip = (props: Props) => {
   const { children, text, direction } = props;
-  const flexGrow = props.grow ? '1' : '0';
   const conjoinedText = text.join('\n');
+  const flexGrow = props.grow ? '1' : '0';
+  const align = props.align ?? 'left';
 
   return (
     <MUITooltip
@@ -42,6 +44,7 @@ export const Tooltip = (props: Props) => {
             fontFamily: 'Pixel',
             lineHeight: '1.25vw',
             whiteSpace: 'pre-line',
+            textAlign: align,
           },
         },
       }}

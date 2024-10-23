@@ -9,19 +9,21 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
+import { copy } from 'app/utils';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
-import { getAbbrevAddr } from 'utils/address';
+import { abbreviateAddress } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
 
 export function registerGasHarasser() {
   registerUIComponent(
     'GasHarasser',
     {
-      colStart: 25,
-      colEnd: 75,
-      rowStart: 25,
-      rowEnd: 70,
+      // positioning controlled by validator wrapper
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0,
     },
     (layers) => of(layers),
     (layers) => {
@@ -96,7 +98,7 @@ export function registerGasHarasser() {
         actions.add({
           action: 'AccountFund',
           params: [value.toString()],
-          description: `Funding Operator ${value.toString()}`,
+          description: `Funding Operator ${value.toLocaleString()}wei`,
           execute: async () => {
             return api.account.fund(value.toString());
           },
@@ -133,25 +135,27 @@ export function registerGasHarasser() {
           id='gas-harasser'
           divName='gasHarasser'
           title='Embedded wallet is empty!'
-          errorPrimary={`Please top up on gas ._.`}
+          errorPrimary={`pls feed me pls a crumb of wei ._.`}
         >
-          <Tooltip text={[account.operatorAddress]}>
-            <Description>Address: {getAbbrevAddr(account.operatorAddress)}</Description>
+          <Tooltip text={[account.operatorAddress, '(click to copy)']} align='center'>
+            <Description onClick={() => copy(account.operatorAddress)}>
+              Address: {abbreviateAddress(account.operatorAddress)}
+            </Description>
           </Tooltip>
           <Row>
             <Input
               type='number'
               value={value}
-              step={fullGas / 2}
+              step={fullGas / 10}
               onChange={(e) => handleChange(e)}
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
-            <ActionButton text='Feed' onClick={feed} size='validator' />
+            <ActionButton text='feed' onClick={feed} />
           </Row>
-          <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
+          {/* <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
             Need eth? Check out the faucet.
-          </Link>
+          </Link> */}
         </ValidatorWrapper>
       );
     }
@@ -160,9 +164,9 @@ export function registerGasHarasser() {
 
 const Description = styled.div`
   color: #333;
-  font-family: Pixel;
-  font-size: 1.2vh;
-  line-height: 1.5vh;
+  padding: 0.9vw 0 0 0;
+  font-size: 0.9vw;
+  line-height: 1.5vw;
   text-align: center;
 `;
 
@@ -171,19 +175,21 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 0.75vh;
+  margin: 0.75vw;
+  gap: 0.15vw;
 `;
 
 const Input = styled.input`
   background-color: #ffffff;
-  border: solid black 0.1vh;
-  border-radius: 0.45vh;
-  color: black;
-  width: 12vh;
-  padding: 0.9vh;
+  border: solid black 0.15vw;
+  border-radius: 0.45vw;
 
-  font-family: Pixel;
-  font-size: 1.2vh;
+  color: black;
+  width: 9vw;
+  height: 1.8vw;
+  padding: 0.6vw;
+
+  font-size: 0.75vw;
   text-align: left;
   text-decoration: none;
 
@@ -197,7 +203,6 @@ const Link = styled.div`
   cursor: pointer;
   pointer-events: auto;
 
-  font-family: Pixel;
   font-size: 1.2vh;
   text-decoration: underline;
   text-align: center;

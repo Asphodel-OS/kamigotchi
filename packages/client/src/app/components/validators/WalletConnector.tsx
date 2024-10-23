@@ -13,7 +13,7 @@ import { useNetwork, useVisibility } from 'app/stores';
 import { wagmiConfig } from 'clients/wagmi';
 import { defaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
-import { getAbbrevAddr } from 'utils/address';
+import { abbreviateAddress } from 'utils/address';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
@@ -25,10 +25,11 @@ export function registerWalletConnecter() {
   registerUIComponent(
     'WalletConnecter',
     {
-      colStart: 30,
-      colEnd: 70,
-      rowStart: 40,
-      rowEnd: 60,
+      // positioning controlled by validator wrapper
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0,
     },
     (layers) => of(layers),
     (layers) => {
@@ -123,7 +124,7 @@ export function registerWalletConnecter() {
       const addNetworkAPI = async (wallet: ConnectedWallet) => {
         const injectedAddress = wallet.address.toLowerCase();
         if (!apis.has(injectedAddress)) {
-          console.log(`Establishing APIs for ${getAbbrevAddr(injectedAddress)}`);
+          console.log(`Establishing APIs for ${abbreviateAddress(injectedAddress)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
           const networkInstance = await createNetworkInstance(provider);
           const systems = network.createSystems(networkInstance);
@@ -137,7 +138,7 @@ export function registerWalletConnecter() {
       const updateBaseNetwork = async (wallet: ConnectedWallet) => {
         const embeddedAddress = wallet.address.toLowerCase();
         if (burnerAddress !== embeddedAddress) {
-          console.log(`Updating base network ${getAbbrevAddr(embeddedAddress)}`);
+          console.log(`Updating base network ${abbreviateAddress(embeddedAddress)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
           await updateNetworkLayer(network, provider);
           setBurnerAddress(embeddedAddress);
@@ -203,7 +204,7 @@ export function registerWalletConnecter() {
           errorPrimary={getWarning()}
         >
           <Description>{getDescription()}</Description>
-          <ActionButton onClick={handleClick} text={getButtonLabel()} size='vending' />
+          <ActionButton onClick={handleClick} text={getButtonLabel()} />
         </ValidatorWrapper>
       );
     }
@@ -211,8 +212,8 @@ export function registerWalletConnecter() {
 }
 
 const Description = styled.div`
-  font-size: 12px;
   color: #333;
+  padding: 0.9vw 0;
+  font-size: 0.75vw;
   text-align: center;
-  padding: 0px 0px 20px 0px;
 `;
