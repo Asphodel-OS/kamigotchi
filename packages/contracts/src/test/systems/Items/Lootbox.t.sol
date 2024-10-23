@@ -177,7 +177,7 @@ contract LootboxTest is SetupTemplate {
     uint256 revealBlock,
     uint256 count
   ) internal {
-    assertEq(_ForComponent.get(id), LibItem.getByIndex(components, index));
+    assertEq(_IdSourceComponent.get(id), LibItem.getByIndex(components, index));
     assertEq(_ValueComponent.get(id), count);
     assertEq(_IdHolderComponent.get(id), holderID);
     assertEq(_BlockRevealComponent.get(id), revealBlock);

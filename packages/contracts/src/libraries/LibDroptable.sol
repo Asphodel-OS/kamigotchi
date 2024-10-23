@@ -7,7 +7,7 @@ import { getAddrByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
-import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
@@ -33,7 +33,7 @@ library LibDroptable {
     uint256 accID
   ) internal returns (uint256 id) {
     id = LibCommit.commit(world, components, accID, block.number, "ITEM_DROPTABLE_COMMIT");
-    ForComponent(getAddrByID(components, ForCompID)).set(id, dtID);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, dtID);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, count);
   }
 
@@ -44,7 +44,7 @@ library LibDroptable {
   /// @dev avoid big array for memory's sake
   function reveal(IUintComp components, uint256[] memory commitIDs) internal {
     // sorted in order of stack depth
-    ForComponent forComp = ForComponent(getAddrByID(components, ForCompID));
+    IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
     IdHolderComponent holderComp = IdHolderComponent(getAddrByID(components, IdHolderCompID));
     BlockRevComponent blockComp = BlockRevComponent(getAddrByID(components, BlockRevealCompID));
     WeightsComponent weightsComp = WeightsComponent(getAddrByID(components, WeightsCompID));
@@ -57,7 +57,7 @@ library LibDroptable {
       uint256 commitID = commitIDs[i];
       if (commitID == 0) continue;
 
-      uint256 dtID = forComp.extract(commitID);
+      uint256 dtID = idSourceComp.extract(commitID);
       uint256 holderID = holderComp.extract(commitID);
 
       uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
