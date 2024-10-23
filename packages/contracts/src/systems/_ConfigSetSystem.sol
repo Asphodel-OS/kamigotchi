@@ -35,8 +35,4 @@ contract _ConfigSetSystem is System {
   function setValueString(string memory name, string memory value) public onlyOwner {
     LibConfig.setString(components, name, value);
   }
-
-  function remove(string memory name) public onlyOwner {
-    LibConfig.remove(components, name);
-  }
 }

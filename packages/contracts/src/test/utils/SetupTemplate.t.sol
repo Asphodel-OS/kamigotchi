@@ -816,13 +816,6 @@ abstract contract SetupTemplate is TestSetupImports {
       __SkillRegistrySystem.addRequirement(abi.encode(skillIndex, type_, logicType, index, value));
   }
 
-  /* VRF */
-
-  function _seedVRF() internal {
-    vm.prank(deployer);
-    _VRFComponent.seed(uint256(keccak256(abi.encodePacked(block.number, block.timestamp))));
-  }
-
   /* TRAITS */
 
   function registerTrait(
@@ -1065,7 +1058,6 @@ abstract contract SetupTemplate is TestSetupImports {
     _initHarvestConfigs();
     _initLiquidationConfigs();
     _initSkillConfigs();
-    _initVRFConfigs();
   }
 
   function _initBaseConfigs() internal virtual {
@@ -1136,10 +1128,6 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initSkillConfigs() internal virtual {
     _setConfigArray("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
-  }
-
-  function _initVRFConfigs() internal virtual {
-    _setConfig("BYPASS_VRF", 1);
   }
 
   ///////////////////////

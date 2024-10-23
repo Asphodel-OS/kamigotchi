@@ -60,7 +60,7 @@ library LibDroptable {
       uint256 dtID = forComp.extract(commitID);
       uint256 holderID = holderComp.extract(commitID);
 
-      uint256[] memory amts = _select(components, blockComp, weightsComp, valComp, dtID, commitID);
+      uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
       _distribute(components, keysComp, dtID, amts, holderID);
       log(timeComp, logComp, holderID, dtID, amts);
     }
@@ -69,7 +69,6 @@ library LibDroptable {
   /// @notice selects a single droptable result
   /// @dev raw component use for puter efficiency
   function _select(
-    IUintComp components,
     BlockRevComponent blockComp,
     WeightsComponent weightsComp,
     ValueComponent valComp,
@@ -78,7 +77,7 @@ library LibDroptable {
   ) internal returns (uint256[] memory) {
     uint256[] memory weights = weightsComp.get(dtID);
     LibRandom.processWeightedRarityInPlace(weights);
-    uint256 seed = LibCommit.extractSeedDirect(components, blockComp, commitID);
+    uint256 seed = LibCommit.extractSeedDirect(blockComp, commitID);
     uint256 count = valComp.extract(commitID);
 
     return LibRandom.selectMultipleFromWeighted(weights, seed, count);
