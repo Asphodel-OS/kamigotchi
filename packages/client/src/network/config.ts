@@ -94,12 +94,12 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
       'https://maze-jsonrpc-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
     wsRpc:
       'https://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
-    snapshotServiceUrl: 'https://snapshot-initia-lb.test.asphodel.io',
+    snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 4471190363524365,
-    worldAddress: '0x6CF5466067C2c60818921E8d1aCf35abAC50B250',
-    initialBlockNumber: 303930,
+    worldAddress: '0x87dA385A2ed20E3210567661448780C6e9A9ba40',
+    initialBlockNumber: 342196,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;
