@@ -2,6 +2,9 @@
 pragma solidity >=0.8.0;
 
 interface IOwnableWritable {
+  event AuthorizedWriter(address indexed writer);
+  event UnauthorizedWriter(address indexed writer);
+
   function authorizeWriter(address writer) external;
 
   function unauthorizeWriter(address writer) external;

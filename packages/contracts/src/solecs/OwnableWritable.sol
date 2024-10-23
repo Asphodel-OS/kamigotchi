@@ -32,6 +32,8 @@ abstract contract OwnableWritable is IOwnableWritable, Ownable {
   /// @param writer Address to grant write access to.
   function authorizeWriter(address writer) public virtual override onlyOwner {
     OwnableWritableStorage.layout().writeAccess[writer] = true;
+
+    emit AuthorizedWriter(writer);
   }
 
   /// @notice Revoke write access from the given address.
@@ -39,5 +41,7 @@ abstract contract OwnableWritable is IOwnableWritable, Ownable {
   /// @param writer Address to revoke write access.
   function unauthorizeWriter(address writer) public virtual override onlyOwner {
     delete OwnableWritableStorage.layout().writeAccess[writer];
+
+    emit UnauthorizedWriter(writer);
   }
 }

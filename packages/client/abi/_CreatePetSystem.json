@@ -87,14 +87,9 @@
       "name": "create",
       "inputs": [
         {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "accID",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "accAddr",
+          "type": "address",
+          "internalType": "address"
         },
         {
           "name": "background",
@@ -120,11 +115,6 @@
           "name": "hand",
           "type": "uint32",
           "internalType": "uint32"
-        },
-        {
-          "name": "level",
-          "type": "uint256",
-          "internalType": "uint256"
         }
       ],
       "outputs": [],
@@ -303,7 +293,7 @@
     "_getTraitStats(uint256)": "c4908186",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
-    "create(uint32,uint256,uint32,uint32,uint32,uint32,uint32,uint256)": "5108de86",
+    "create(address,uint32,uint32,uint32,uint32,uint32)": "3f744615",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
