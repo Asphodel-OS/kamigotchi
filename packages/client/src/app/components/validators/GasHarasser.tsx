@@ -98,7 +98,7 @@ export function registerGasHarasser() {
         actions.add({
           action: 'AccountFund',
           params: [value.toString()],
-          description: `Funding Operator ${value.toString()}`,
+          description: `Funding Operator ${value.toLocaleString()}wei`,
           execute: async () => {
             return api.account.fund(value.toString());
           },
@@ -114,7 +114,7 @@ export function registerGasHarasser() {
         let newValue = Number(event.target.value);
         newValue = Math.max(fullGas / 10, newValue);
         newValue = Math.min(fullGas * 10, newValue);
-        setValue(1000000);
+        setValue(newValue);
       };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 // TODO: fix gas wei conversion
-const txCostEst = 1 / 1e9;
+const txCostEst = 1e6;
 
 export const GasConstants = {
   Max: 1000 * txCostEst,
