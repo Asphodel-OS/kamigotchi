@@ -83,8 +83,16 @@ export const parseBonusText = (bonus: Bonus): string => {
   if (bonus.type.startsWith('STAT')) text += ` ${bonus.type.split('_')[1]}`;
   else if (bonus.type.endsWith('OFFENSE')) text += ` offensive ${bonus.type.slice(0, -7)}`;
   else if (bonus.type.endsWith('DEFENSE')) text += ` defensive ${bonus.type.slice(0, -7)}`;
+  else text += ` ${bonus.type}`;
 
+  // formatting
   text = text.toLowerCase().replaceAll('_', ' ');
+
+  // replace contractions with full words
+  text = text.replaceAll('atk', 'attack ');
+  text = text.replaceAll('def', 'defense ');
+  text = text.replaceAll('harv', 'harvest ');
+  text = text.replaceAll('stnd', 'standard');
 
   return text + ' per level';
 };
