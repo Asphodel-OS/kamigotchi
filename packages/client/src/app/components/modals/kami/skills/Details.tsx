@@ -36,6 +36,7 @@ export const Details = (props: Props) => {
   // update registry/kami skill instances when index changes
   useEffect(() => {
     const skill = skills.get(index);
+    console.log('skill:', skill);
     setSkill(skill); // registry skill instance
     setKSkill(kami.skills?.find((s) => s.index * 1 === skill?.index)); // kami skill instance
     setDisabledReason(owner.index !== account.index ? ['not ur kami'] : upgradeError);

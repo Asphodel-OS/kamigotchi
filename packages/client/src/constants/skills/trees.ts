@@ -4,6 +4,7 @@ const PredatorTree = [
   [131, 132, 133],
   [141, 142, 143],
   [151, 152, 153],
+  [161, 162, 163],
 ];
 
 const EnlightenedTree = [
@@ -12,6 +13,7 @@ const EnlightenedTree = [
   [231, 232, 233],
   [241, 242, 243],
   [251, 252, 253],
+  [261, 262, 263],
 ];
 
 const GuardianTree = [
@@ -20,6 +22,7 @@ const GuardianTree = [
   [331, 332, 333],
   [341, 342, 343],
   [351, 352, 353],
+  [361, 362, 363],
 ];
 
 const HarvesterTree = [
@@ -28,6 +31,7 @@ const HarvesterTree = [
   [431, 432, 433],
   [441, 442, 443],
   [451, 452, 453],
+  [461, 462, 463],
 ];
 
 export const SkillTrees = new Map([
