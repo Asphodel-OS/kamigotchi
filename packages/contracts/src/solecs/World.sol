@@ -27,6 +27,10 @@ contract World is IWorld, Ownable {
   Uint256Component private _systems;
   RegisterSystem public register;
 
+  /// @dev a temp upgradable address for testing emittable events on world
+  /// no state logic, out of audit scope
+  address public _emitter;
+
   event ComponentValueSet(
     uint256 indexed componentId,
     address indexed component,
@@ -52,12 +56,6 @@ contract World is IWorld, Ownable {
     register = new RegisterSystem(this, address(_components));
     _systems.authorizeWriter(address(register));
     _components.authorizeWriter(address(register));
-
-    // storing components and system addresses
-
-    // register.execute(
-    //   abi.encode(msg.sender, RegisterType.System, address(register), registerSystemId)
-    // );
   }
 
   /** @notice
@@ -84,6 +82,10 @@ contract World is IWorld, Ownable {
    */
   function systems() public view returns (IUint256Component) {
     return _systems;
+  }
+
+  function updateEmitter(address emitter) public onlyOwner {
+    _emitter = emitter;
   }
 
   /** @notice

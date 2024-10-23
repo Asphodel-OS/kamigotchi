@@ -393,15 +393,30 @@ export interface ViolenceComponentInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "AuthorizedWriter(address)": EventFragment;
     "OwnershipHandoverCanceled(address)": EventFragment;
     "OwnershipHandoverRequested(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "UnauthorizedWriter(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AuthorizedWriter"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnauthorizedWriter"): EventFragment;
 }
+
+export interface AuthorizedWriterEventObject {
+  writer: string;
+}
+export type AuthorizedWriterEvent = TypedEvent<
+  [string],
+  AuthorizedWriterEventObject
+>;
+
+export type AuthorizedWriterEventFilter =
+  TypedEventFilter<AuthorizedWriterEvent>;
 
 export interface OwnershipHandoverCanceledEventObject {
   pendingOwner: string;
@@ -436,6 +451,17 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface UnauthorizedWriterEventObject {
+  writer: string;
+}
+export type UnauthorizedWriterEvent = TypedEvent<
+  [string],
+  UnauthorizedWriterEventObject
+>;
+
+export type UnauthorizedWriterEventFilter =
+  TypedEventFilter<UnauthorizedWriterEvent>;
 
 export interface ViolenceComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1008,6 +1034,13 @@ export interface ViolenceComponent extends BaseContract {
   };
 
   filters: {
+    "AuthorizedWriter(address)"(
+      writer?: PromiseOrValue<string> | null
+    ): AuthorizedWriterEventFilter;
+    AuthorizedWriter(
+      writer?: PromiseOrValue<string> | null
+    ): AuthorizedWriterEventFilter;
+
     "OwnershipHandoverCanceled(address)"(
       pendingOwner?: PromiseOrValue<string> | null
     ): OwnershipHandoverCanceledEventFilter;
@@ -1030,6 +1063,13 @@ export interface ViolenceComponent extends BaseContract {
       oldOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "UnauthorizedWriter(address)"(
+      writer?: PromiseOrValue<string> | null
+    ): UnauthorizedWriterEventFilter;
+    UnauthorizedWriter(
+      writer?: PromiseOrValue<string> | null
+    ): UnauthorizedWriterEventFilter;
   };
 
   estimateGas: {
