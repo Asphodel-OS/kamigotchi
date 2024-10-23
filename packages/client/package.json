@@ -65,7 +65,7 @@
     "@wagmi/core": "^2.10.4",
     "antd": "^5.4.3",
     "async-mutex": "^0.3.2",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "debug": "^4.3.4",
     "ethers": "^5",
     "google-protobuf": "^3.14.0",
