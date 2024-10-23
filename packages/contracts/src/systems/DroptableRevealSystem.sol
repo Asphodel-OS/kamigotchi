@@ -5,11 +5,6 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
-import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
-import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibCommit } from "libraries/LibCommit.sol";
@@ -47,27 +42,6 @@ contract DroptableRevealSystem is System, AuthRoles {
 
     LibCommit.resetBlocks(components, ids);
     LibDroptable.reveal(components, ids);
-  }
-
-  // temporary function to address broken reveals from scav node upgrades
-  function replaceBrokenReveal(uint256 id) public onlyCommManager(components) {
-    // match to array format
-    uint256[] memory ids = new uint256[](1);
-    ids[0] = id;
-
-    require(!LibCommit.isAvailable(components, ids), "LootboxExeRev: commit still available");
-    require(LibDroptable.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
-
-    // removing broken components
-    BlockRevealComponent(getAddrByID(components, BlockRevealCompID)).remove(id);
-    ForComponent(getAddrByID(components, ForCompID)).remove(id);
-
-    // getting details
-    uint256 holderID = IdHolderComponent(getAddrByID(components, IdHolderCompID)).extract(id);
-    uint256 amt = ValueComponent(getAddrByID(components, ValueCompID)).extract(id);
-
-    // replacing with lootbox
-    LibInventory.incFor(components, holderID, 10001, amt);
   }
 
   function executeTyped(uint256[] memory ids) public returns (bytes memory) {
