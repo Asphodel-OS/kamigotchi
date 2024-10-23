@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Coord, LibRoom } from "libraries/LibRoom.sol";
 
-uint256 constant ID = uint256(keccak256("system.Account.Move"));
+uint256 constant ID = uint256(keccak256("system.account.move"));
 
 // moves the account to a valid room location
 contract AccountMoveSystem is System {

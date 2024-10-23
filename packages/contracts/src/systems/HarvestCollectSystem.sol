@@ -14,10 +14,10 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
-uint256 constant ID = uint256(keccak256("system.Production.Collect"));
+uint256 constant ID = uint256(keccak256("system.harvest.collect"));
 
-// ProductionCollectSystem collects on an active pet production.
-contract ProductionCollectSystem is System {
+// HarvestCollectSystem collects on an active pet production.
+contract HarvestCollectSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {

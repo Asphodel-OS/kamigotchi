@@ -10,7 +10,7 @@ import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
-uint256 constant ID = uint256(keccak256("system.Lootbox.Commit"));
+uint256 constant ID = uint256(keccak256("system.lootbox.commit"));
 
 // @notice start the reveal process for a lootbox
 contract LootboxCommitSystem is System {

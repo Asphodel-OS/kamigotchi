@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 
-uint256 constant ID = uint256(keccak256("system.Account.Register"));
+uint256 constant ID = uint256(keccak256("system.account.register"));
 
 // registers an account for the calling Owner EOA
 contract AccountRegisterSystem is System {

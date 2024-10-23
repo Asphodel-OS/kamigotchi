@@ -8,7 +8,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibFriend } from "libraries/LibFriend.sol";
 
-uint256 constant ID = uint256(keccak256("system.Friend.Block"));
+uint256 constant ID = uint256(keccak256("system.friend.block"));
 
 /**  @notice
  * a generic system to block other accounts

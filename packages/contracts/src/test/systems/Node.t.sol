@@ -49,7 +49,7 @@ contract NodeTest is SetupTemplate {
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up
     _setLevel(aKamiID, 2);
@@ -70,7 +70,7 @@ contract NodeTest is SetupTemplate {
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up
     _setLevel(alice.id, 2);
@@ -92,7 +92,7 @@ contract NodeTest is SetupTemplate {
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up pet
     _setLevel(aKamiID, 2);
@@ -101,7 +101,7 @@ contract NodeTest is SetupTemplate {
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("FarmStart: node reqs not met");
-    _ProductionStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up account
     _setLevel(alice.id, 2);

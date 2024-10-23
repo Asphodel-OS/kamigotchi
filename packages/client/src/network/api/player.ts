@@ -36,13 +36,9 @@ export function createPlayerAPI(systems: any) {
   }
 
   // upgrade a pet's skill
+  // NOTE: not used, not implemented
   function upgradePetSkill(kamiID: BigNumberish, skillIndex: number) {
-    return systems['system.Pet.Skill.Upgrade'].executeTyped(kamiID, skillIndex);
-  }
-
-  // use a pet item
-  function usePetItem(kamiID: BigNumberish, itemIndex: BigNumberish) {
-    return systems['system.kami.use.renamePotion'].executeTyped(kamiID, itemIndex);
+    return systems['system.kami.skill.upgrade'].executeTyped(kamiID, skillIndex);
   }
 
   /////////////////
@@ -51,7 +47,7 @@ export function createPlayerAPI(systems: any) {
   // @dev funds an operator from owner address
   // @param amount   amount to fund
   function fundOperator(amount: string) {
-    return systems['system.Account.Fund'].ownerToOperator({
+    return systems['system.account.fund'].ownerToOperator({
       value: utils.parseUnits(amount, GasExponent),
     });
   }
@@ -59,7 +55,7 @@ export function createPlayerAPI(systems: any) {
   // @dev refunds an operators balance to owner
   // @param amount   amount to refund
   function refundOwner(amount: string) {
-    return systems['system.Account.Fund'].operatorToOwner({
+    return systems['system.account.fund'].operatorToOwner({
       value: utils.parseUnits(amount, GasExponent),
     });
   }
@@ -75,7 +71,7 @@ export function createPlayerAPI(systems: any) {
   // @dev moves the account to another room from their current roomIndex
   // @param roomIndex  destination room roomIndex
   function moveAccount(roomIndex: number) {
-    return systems['system.Account.Move'].executeTyped(roomIndex);
+    return systems['system.account.move'].executeTyped(roomIndex);
   }
 
   // @dev registers an account. should be called by Owner wallet
@@ -83,28 +79,28 @@ export function createPlayerAPI(systems: any) {
   // @param name              name of the account
   // @param food              player's reported favorite food
   function registerAccount(operatorAddress: BigNumberish, name: string) {
-    return systems['system.Account.Register'].executeTyped(operatorAddress, name);
+    return systems['system.account.register'].executeTyped(operatorAddress, name);
   }
 
   // @dev renames account. should be called by Owner EOA
   // @param name       name
   function setAccountName(name: string) {
-    return systems['system.Account.Set.Name'].executeTyped(name);
+    return systems['system.account.set.name'].executeTyped(name);
   }
 
   // @dev sets the Operator address on an account. should be called by Owner EOA
   // @param operatorAddress   address of the Operator wallet
   function setAccountOperator(operatorAddress: BigNumberish) {
-    return systems['system.Account.Set.Operator'].executeTyped(operatorAddress);
+    return systems['system.account.set.operator'].executeTyped(operatorAddress);
   }
 
   // @dev set the Farcaster-associated data for an account
   function setAccountFarcasterData(fid: number, imageURI: string) {
-    return systems['system.Account.Set.FarcasterData'].executeTyped(fid, imageURI);
+    return systems['system.account.set.farcaster'].executeTyped(fid, imageURI);
   }
 
   function upgradeAccountSkill(skillIndex: number) {
-    return systems['system.Account.Skill.Upgrade'].executeTyped(skillIndex);
+    return systems['system.account.skill.upgrade'].executeTyped(skillIndex);
   }
 
   /////////////////
@@ -134,25 +130,25 @@ export function createPlayerAPI(systems: any) {
   // @dev send a friend request
   // @param targetAddr owner address of the target account
   function sendFriendRequest(targetAddr: string) {
-    return systems['system.Friend.Request'].executeTyped(targetAddr);
+    return systems['system.friend.request'].executeTyped(targetAddr);
   }
 
   // @dev accept a friend request
   // @param reqID entityID of the friend request
   function acceptFriendRequest(reqID: BigNumberish) {
-    return systems['system.Friend.Accept'].executeTyped(reqID);
+    return systems['system.friend.accept'].executeTyped(reqID);
   }
 
   // @dev cancel a friend request, an existing friend, or a block
   // @param entityID entityID of the friendship entity
   function cancelFriendship(entityID: BigNumberish) {
-    return systems['system.Friend.Cancel'].executeTyped(entityID);
+    return systems['system.friend.cancel'].executeTyped(entityID);
   }
 
   // @dev block an account
   // @param targetAddr owner address of the target account
   function blockAccount(targetAddr: string) {
-    return systems['system.Friend.Block'].executeTyped(targetAddr);
+    return systems['system.friend.block'].executeTyped(targetAddr);
   }
 
   /////////////////
@@ -160,12 +156,12 @@ export function createPlayerAPI(systems: any) {
 
   // @dev contributes to a goal
   function goalContribute(goalIndex: number, amt: number) {
-    return systems['system.Goal.Contribute'].executeTyped(goalIndex, amt);
+    return systems['system.goal.contribute'].executeTyped(goalIndex, amt);
   }
 
   // @dev claims a reward from a goal
   function goalClaim(goalIndex: number) {
-    return systems['system.Goal.Claim'].executeTyped(goalIndex);
+    return systems['system.goal.claim'].executeTyped(goalIndex);
   }
 
   /////////////////
@@ -176,7 +172,7 @@ export function createPlayerAPI(systems: any) {
   // @param itemIndices      array of item indices
   // @param amt              amount to buy
   function buyFromListing(merchantIndex: number, itemIndices: number[], amts: number[]) {
-    return systems['system.Listing.Buy'].executeTyped(merchantIndex, itemIndices, amts);
+    return systems['system.listing.buy'].executeTyped(merchantIndex, itemIndices, amts);
   }
 
   // @dev allows a character to sell an item through a merchant listing entity
@@ -184,7 +180,7 @@ export function createPlayerAPI(systems: any) {
   // @param itemIndices      array of item indices
   // @param amt              amount to sell
   function sellToListing(merchantIndex: number, itemIndices: number[], amts: number[]) {
-    return systems['system.Listing.Sell'].executeTyped(merchantIndex, itemIndices, amts);
+    return systems['system.listing.sell'].executeTyped(merchantIndex, itemIndices, amts);
   }
 
   /////////////////
@@ -194,16 +190,7 @@ export function createPlayerAPI(systems: any) {
   // @param index   item index of lootbox
   // @param amount  amount of lootboxes to open
   function lootboxCommit(index: number, amount: number) {
-    return systems['system.Lootbox.Commit'].executeTyped(index, amount);
-  }
-
-  /////////////////
-  //   NODES
-
-  // @dev collects from all eligible productions on a node
-  // @param nodeID   entityID of the node
-  function collectAllFromNode(nodeID: BigNumberish) {
-    return systems['system.Node.Collect'].executeTyped(nodeID);
+    return systems['system.lootbox.commit'].executeTyped(index, amount);
   }
 
   /////////////////
@@ -211,22 +198,22 @@ export function createPlayerAPI(systems: any) {
 
   // @dev retrieves the amount due from a passive deposit production and resets the starting point
   function collectProduction(productionID: BigNumberish) {
-    return systems['system.Production.Collect'].executeTyped(productionID);
+    return systems['system.harvest.collect'].executeTyped(productionID);
   }
 
   // @dev liquidates a production, if able to, using the specified pet
   function liquidateProduction(productionID: BigNumberish, kamiID: BigNumberish) {
-    return systems['system.Production.Liquidate'].executeTyped(productionID, kamiID);
+    return systems['system.harvest.liquidate'].executeTyped(productionID, kamiID);
   }
 
   // @dev starts a deposit production for a character. If none exists, it creates one.
   function startProduction(kamiID: BigNumberish, nodeID: BigNumberish) {
-    return systems['system.Production.Start'].executeTyped(kamiID, nodeID);
+    return systems['system.harvest.start'].executeTyped(kamiID, nodeID);
   }
 
   // @dev retrieves the amount due from a passive deposit production and stops it.
   function stopProduction(productionID: BigNumberish) {
-    return systems['system.Production.Stop'].executeTyped(productionID);
+    return systems['system.harvest.stop'].executeTyped(productionID);
   }
 
   /////////////////
@@ -235,27 +222,27 @@ export function createPlayerAPI(systems: any) {
   // @dev accept a quest for an account
   // @param index   index of the quest
   function acceptQuest(assignerID: BigNumberish, index: number) {
-    return systems['system.Quest.Accept'].executeTyped(assignerID, index);
+    return systems['system.quest.accept'].executeTyped(assignerID, index);
   }
 
   // @dev complete a quest for an account
   // @param id   id of the quest
   function completeQuest(id: BigNumberish) {
-    return systems['system.Quest.Complete'].executeTyped(id);
+    return systems['system.quest.complete'].executeTyped(id);
   }
 
   /////////////////
   //  SKILLS
 
   function upgradeSkill(entityID: BigNumberish, skillIndex: number) {
-    return systems['system.Skill.Upgrade'].executeTyped(entityID, skillIndex);
+    return systems['system.skill.upgrade'].executeTyped(entityID, skillIndex);
   }
 
   /////////////////
   // RELATIONSHIP
 
   function advanceRelationship(indexNPC: number, indexRelationship: number) {
-    return systems['system.Relationship.Advance'].executeTyped(indexNPC, indexRelationship);
+    return systems['system.relationship.advance'].executeTyped(indexNPC, indexRelationship);
   }
 
   /////////////////
@@ -263,7 +250,7 @@ export function createPlayerAPI(systems: any) {
 
   // @dev claim scavenge points
   function claimScavenge(scavBarID: BigNumberish) {
-    return systems['system.Scavenge.Claim'].executeTyped(scavBarID);
+    return systems['system.scavenge.claim'].executeTyped(scavBarID);
   }
 
   /////////////////
@@ -272,7 +259,7 @@ export function createPlayerAPI(systems: any) {
   // @dev Updates Trade to ACCEPTED, removes IsRequest Component, creates ACTIVE Registers
   // @param tradeID   entityID of the trade log
   function acceptTrade(tradeID: BigNumberish) {
-    return systems['system.Trade.Accept'].executeTyped(tradeID);
+    return systems['system.trade.accept'].executeTyped(tradeID);
   }
 
   // @dev creates an itemInventory entity, assigns to trade register and transfers the
@@ -281,25 +268,25 @@ export function createPlayerAPI(systems: any) {
   // @param itemType  the id of the item being added, 0 for merit
   // @param amt       quantity of item being added
   function addToTrade(tradeID: BigNumberish, itemType: number, amt: number) {
-    return systems['system.Trade.AddTo'].executeTyped(tradeID, itemType, amt);
+    return systems['system.trade.add'].executeTyped(tradeID, itemType, amt);
   }
 
   // @dev Updates Trade to CANCELED, updates both Registers ACTIVE->CANCELED
   // @param tradeID entityID of the trade log
   function cancelTrade(tradeID: BigNumberish) {
-    return systems['system.Trade.Cancel'].executeTyped(tradeID);
+    return systems['system.trade.cancel'].executeTyped(tradeID);
   }
 
   // @dev Updates Trade ACCEPTED->?COMPLETE, updates account's register ACTIVE->CONFIRMED
   // @param tradeID   entityID of the trade log
   function confirmTrade(tradeID: BigNumberish) {
-    return systems['system.Trade.Confirm'].executeTyped(tradeID);
+    return systems['system.trade.confirm'].executeTyped(tradeID);
   }
 
   // @dev Creates an INITIATED Trade between Account and toID, with IsRequest Component
   // @param toID  entityID of the trade request receiver
   function initiateTrade(toID: BigNumberish) {
-    return systems['system.Trade.Initiate'].executeTyped(toID);
+    return systems['system.trade.initiate'].executeTyped(toID);
   }
 
   /////////////////
@@ -308,19 +295,19 @@ export function createPlayerAPI(systems: any) {
   // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
-    return systems['system.kami.gacha.Mint'].executeTyped(amount);
+    return systems['system.kami.gacha.mint'].executeTyped(amount);
   }
 
   // @dev reveal a minted pet
   // @param commitIDs array of commitIDs
   function revealPet(commitIDs: BigNumberish[]) {
-    return systems['system.kami.gacha.Reveal'].reveal(commitIDs);
+    return systems['system.kami.gacha.reveal'].reveal(commitIDs);
   }
 
   // @dev reroll a pet
   // @param kamiID  kamiID
   function rerollPet(kamiIDs: BigNumberish[], totalCost: BigNumberish) {
-    return systems['system.kami.gacha.Reroll'].reroll(kamiIDs, {
+    return systems['system.kami.gacha.reroll'].reroll(kamiIDs, {
       value: totalCost,
     });
   }
@@ -331,13 +318,13 @@ export function createPlayerAPI(systems: any) {
   // @dev deposits pet from outside -> game world
   // @param tokenID  ERC721 kamiID, not MUD entity ID
   function depositERC721(tokenID: BigNumberish) {
-    return systems['system.Kami721.Stake'].executeTyped(tokenID);
+    return systems['system.kami721.stake'].executeTyped(tokenID);
   }
 
   // @dev brings pet from game world -> outside
   // @param tokenID  ERC721 kamiID, not MUD entity ID
   function withdrawERC721(tokenID: BigNumberish) {
-    return systems['system.Kami721.Unstake'].executeTyped(tokenID);
+    return systems['system.kami721.unstake'].executeTyped(tokenID);
   }
 
   return {
@@ -394,9 +381,6 @@ export function createPlayerAPI(systems: any) {
     listing: {
       buy: buyFromListing,
       sell: sellToListing,
-    },
-    node: {
-      collect: collectAllFromNode,
     },
     mint: {
       mintPet: mintPet,

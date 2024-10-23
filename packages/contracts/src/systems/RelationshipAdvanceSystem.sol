@@ -9,7 +9,7 @@ import { LibNPC } from "libraries/LibNPC.sol";
 import { LibRelationship } from "libraries/LibRelationship.sol";
 import { LibRelationshipRegistry } from "libraries/LibRelationshipRegistry.sol";
 
-uint256 constant ID = uint256(keccak256("system.Relationship.Advance"));
+uint256 constant ID = uint256(keccak256("system.relationship.advance"));
 
 contract RelationshipAdvanceSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

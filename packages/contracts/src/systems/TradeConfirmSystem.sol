@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
-uint256 constant ID = uint256(keccak256("system.Trade.Confirm"));
+uint256 constant ID = uint256(keccak256("system.trade.confirm"));
 
 // TradeConfirmSystem allows an account to confirm a trade they're currently involved in
 contract TradeConfirmSystem is System {

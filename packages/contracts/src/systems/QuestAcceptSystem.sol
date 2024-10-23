@@ -9,7 +9,7 @@ import { LibAssigner } from "libraries/LibAssigner.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
-uint256 constant ID = uint256(keccak256("system.Quest.Accept"));
+uint256 constant ID = uint256(keccak256("system.quest.accept"));
 
 contract QuestAcceptSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

@@ -32,6 +32,10 @@ import FriendCancelSystem from "../../../../../client/abi/FriendCancelSystem.jso
 import FriendRequestSystem from "../../../../../client/abi/FriendRequestSystem.json";
 import GoalClaimSystem from "../../../../../client/abi/GoalClaimSystem.json";
 import GoalContributeSystem from "../../../../../client/abi/GoalContributeSystem.json";
+import HarvestCollectSystem from "../../../../../client/abi/HarvestCollectSystem.json";
+import HarvestLiquidateSystem from "../../../../../client/abi/HarvestLiquidateSystem.json";
+import HarvestStartSystem from "../../../../../client/abi/HarvestStartSystem.json";
+import HarvestStopSystem from "../../../../../client/abi/HarvestStopSystem.json";
 import ItemBurnSystem from "../../../../../client/abi/ItemBurnSystem.json";
 import Kami721IsInWorldSystem from "../../../../../client/abi/Kami721IsInWorldSystem.json";
 import Kami721MetadataSystem from "../../../../../client/abi/Kami721MetadataSystem.json";
@@ -48,10 +52,6 @@ import KamiUseReviveSystem from "../../../../../client/abi/KamiUseReviveSystem.j
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
 import LootboxCommitSystem from "../../../../../client/abi/LootboxCommitSystem.json";
-import ProductionCollectSystem from "../../../../../client/abi/ProductionCollectSystem.json";
-import ProductionLiquidateSystem from "../../../../../client/abi/ProductionLiquidateSystem.json";
-import ProductionStartSystem from "../../../../../client/abi/ProductionStartSystem.json";
-import ProductionStopSystem from "../../../../../client/abi/ProductionStopSystem.json";
 import QuestAcceptSystem from "../../../../../client/abi/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../../../../../client/abi/QuestCompleteSystem.json";
 import QuestDropSystem from "../../../../../client/abi/QuestDropSystem.json";
@@ -82,51 +82,51 @@ export const SystemAbis = {
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
-  "system.Account.Fund": AccountFundSystem.abi,
-  "system.Account.Move": AccountMoveSystem.abi,
-  "system.Account.Register": AccountRegisterSystem.abi,
-  "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
-  "system.Account.Set.Name": AccountSetNameSystem.abi,
-  "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
+  "system.account.fund": AccountFundSystem.abi,
+  "system.account.move": AccountMoveSystem.abi,
+  "system.account.register": AccountRegisterSystem.abi,
+  "system.account.set.farcaster": AccountSetFarcasterDataSystem.abi,
+  "system.account.set.name": AccountSetNameSystem.abi,
+  "system.account.set.operator": AccountSetOperatorSystem.abi,
   "system.account.use.food": AccountUseFoodSystem.abi,
   "system.account.use.teleport": AccountUseTeleportSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
-  "system.Friend.Accept": FriendAcceptSystem.abi,
-  "system.Friend.Block": FriendBlockSystem.abi,
-  "system.Friend.Cancel": FriendCancelSystem.abi,
-  "system.Friend.Request": FriendRequestSystem.abi,
-  "system.Goal.Claim": GoalClaimSystem.abi,
-  "system.Goal.Contribute": GoalContributeSystem.abi,
+  "system.friend.accept": FriendAcceptSystem.abi,
+  "system.friend.block": FriendBlockSystem.abi,
+  "system.friend.cancel": FriendCancelSystem.abi,
+  "system.friend.request": FriendRequestSystem.abi,
+  "system.goal.claim": GoalClaimSystem.abi,
+  "system.goal.contribute": GoalContributeSystem.abi,
+  "system.harvest.collect": HarvestCollectSystem.abi,
+  "system.harvest.liquidate": HarvestLiquidateSystem.abi,
+  "system.harvest.start": HarvestStartSystem.abi,
+  "system.harvest.stop": HarvestStopSystem.abi,
   "system.item.burn": ItemBurnSystem.abi,
   "system.Kami721.IsInWorld": Kami721IsInWorldSystem.abi,
   "system.Kami721.Metadata": Kami721MetadataSystem.abi,
-  "system.Kami721.Stake": Kami721StakeSystem.abi,
-  "system.Kami721.Unstake": Kami721UnstakeSystem.abi,
-  "system.kami.gacha.Mint": KamiGachaMintSystem.abi,
-  "system.kami.gacha.Reroll": KamiGachaRerollSystem.abi,
-  "system.kami.gacha.Reveal": KamiGachaRevealSystem.abi,
+  "system.kami721.stake": Kami721StakeSystem.abi,
+  "system.kami721.unstake": Kami721UnstakeSystem.abi,
+  "system.kami.gacha.mint": KamiGachaMintSystem.abi,
+  "system.kami.gacha.reroll": KamiGachaRerollSystem.abi,
+  "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,
   "system.kami.level": KamiLevelSystem.abi,
   "system.kami.name": KamiNameSystem.abi,
   "system.kami.use.food": KamiUseFoodSystem.abi,
   "system.kami.use.renamePotion": KamiUseRenamePotionSystem.abi,
   "system.kami.use.revive": KamiUseReviveSystem.abi,
-  "system.Listing.Buy": ListingBuySystem.abi,
-  "system.Listing.Sell": ListingSellSystem.abi,
-  "system.Lootbox.Commit": LootboxCommitSystem.abi,
-  "system.Production.Collect": ProductionCollectSystem.abi,
-  "system.Production.Liquidate": ProductionLiquidateSystem.abi,
-  "system.Production.Start": ProductionStartSystem.abi,
-  "system.Production.Stop": ProductionStopSystem.abi,
-  "system.Quest.Accept": QuestAcceptSystem.abi,
-  "system.Quest.Complete": QuestCompleteSystem.abi,
+  "system.listing.buy": ListingBuySystem.abi,
+  "system.listing.sell": ListingSellSystem.abi,
+  "system.lootbox.commit": LootboxCommitSystem.abi,
+  "system.quest.accept": QuestAcceptSystem.abi,
+  "system.quest.complete": QuestCompleteSystem.abi,
   "system.Quest.Drop": QuestDropSystem.abi,
-  "system.Relationship.Advance": RelationshipAdvanceSystem.abi,
-  "system.Scavenge.Claim": ScavengeClaimSystem.abi,
-  "system.Skill.Upgrade": SkillUpgradeSystem.abi,
-  "system.Trade.Accept": TradeAcceptSystem.abi,
-  "system.Trade.AddTo": TradeAddToSystem.abi,
-  "system.Trade.Cancel": TradeCancelSystem.abi,
-  "system.Trade.Confirm": TradeConfirmSystem.abi,
-  "system.Trade.Initiate": TradeInitiateSystem.abi,
+  "system.relationship.advance": RelationshipAdvanceSystem.abi,
+  "system.scavenge.claim": ScavengeClaimSystem.abi,
+  "system.skill.upgrade": SkillUpgradeSystem.abi,
+  "system.trade.accept": TradeAcceptSystem.abi,
+  "system.trade.add": TradeAddToSystem.abi,
+  "system.trade.cancel": TradeCancelSystem.abi,
+  "system.trade.confirm": TradeConfirmSystem.abi,
+  "system.trade.initiate": TradeInitiateSystem.abi,
 };
