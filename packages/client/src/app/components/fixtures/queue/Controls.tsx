@@ -28,10 +28,10 @@ export const Controls = (props: Props) => {
   useWatchBlockNumber({
     onBlockNumber: (n) => {
       refetchOperatorBalance();
-      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, GasExponent));
+      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, GasExponent - 3));
       if (n % 5n == 0n) {
         refetchGasPrice();
-        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent - 3)); // Mwei
+        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent - 3)); // mONYX
       }
     },
   });
@@ -74,8 +74,7 @@ export const Controls = (props: Props) => {
 
   const getBalanceTooltip = (balance: number) => {
     const eth = balance.toFixed(6);
-    return ['1 ETH = 10^18 wei', '', `${eth}Ξ`];
-    return ['1 ETH = 10^18 wei', '', `${eth}Ξ`];
+    return ['1 ONYX = 1000 milliONYX', '', `${eth} ONYX`];
   };
 
   //////////////////
@@ -110,7 +109,7 @@ export const Controls = (props: Props) => {
           <GasGauge level={calcGaugeSetting(operatorBalance?.value)} />
         </Tooltip>
         <Tooltip text={getBalanceTooltip(burnerGasBalance)}>
-          <Text>{burnerGasBalance.toFixed(2)}wei</Text>
+          <Text>{burnerGasBalance.toFixed(2)}mONYX</Text>
         </Tooltip>
         {PriceWarning()}
       </RowPrefix>
