@@ -1,4 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
+// import converter from 'bech32-converting';
 import { waitForActionCompletion } from 'network/utils';
 import React, { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
@@ -10,6 +11,7 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
+import axios from 'axios';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { playFund } from 'utils/sounds';
 
@@ -94,6 +96,12 @@ export function registerFundOperatorModal() {
         await waitForActionCompletion(actions!.Action, actionIndex);
       };
 
+      const dripFaucet = async (address: string) => {
+        await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
+          address: address,
+        });
+      };
+
       /////////////////
       // INTERACTIONS
 
@@ -118,6 +126,11 @@ export function registerFundOperatorModal() {
       const TxButton = () => {
         const text = isFunding! ? 'Fund Operator' : 'Send to Owner';
         return <ActionButton onClick={chooseTx} size='large' text={text} />;
+      };
+
+      const FaucetButton = () => {
+        const addr = isFunding! ? kamiAccount.ownerAddress : kamiAccount.operatorAddress;
+        return <ActionButton onClick={() => dripFaucet(addr)} size='medium' text='Drip Faucet' />;
       };
 
       const StateBox = (fundState: boolean) => {
@@ -189,7 +202,10 @@ export function registerFundOperatorModal() {
               ></Input>
               <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
             </div>
-            {TxButton()}
+            <Column>
+              {TxButton()}
+              {FaucetButton()}
+            </Column>
           </Grid>
         </ModalWrapper>
       );
@@ -241,6 +257,13 @@ const Row = styled.div`
   flex-direction: row wrap;
   align-items: center;
   width: 100%;
+`;
+
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vh;
 `;
 
 const Description = styled.p`
