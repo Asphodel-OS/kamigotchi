@@ -12,7 +12,7 @@ import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
 import { getAbbrevAddr } from 'utils/address';
-import { playFund, playSuccess } from 'utils/sounds';
+import { playClick, playFund, playSuccess } from 'utils/sounds';
 
 export function registerGasHarasser() {
   registerUIComponent(
@@ -120,6 +120,12 @@ export function registerGasHarasser() {
         if (event.key === 'Enter') feed();
       };
 
+      // copy displayed address to clipboard
+      const copyAddress = () => {
+        playClick();
+        navigator.clipboard.writeText(account.operatorAddress);
+      };
+
       const feed = async () => {
         playFund();
         await fundTx();
@@ -134,10 +140,12 @@ export function registerGasHarasser() {
           id='gas-harasser'
           divName='gasHarasser'
           title='Embedded wallet is empty!'
-          errorPrimary={`Please top up on gas ._.`}
+          errorPrimary={`pls feed me pls a crumb of wei ._.`}
         >
-          <Tooltip text={[account.operatorAddress]}>
-            <Description>Address: {getAbbrevAddr(account.operatorAddress)}</Description>
+          <Tooltip text={[account.operatorAddress, '(click to copy)']} align='center'>
+            <Description onClick={copyAddress}>
+              Address: {getAbbrevAddr(account.operatorAddress)}
+            </Description>
           </Tooltip>
           <Row>
             <Input
@@ -148,7 +156,7 @@ export function registerGasHarasser() {
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
-            <ActionButton text='Feed' onClick={feed} />
+            <ActionButton text='feed' onClick={feed} />
           </Row>
           {/* <Link onClick={() => window.open('https://yominet.hub.caldera.xyz/', '_blank')}>
             Need eth? Check out the faucet.
