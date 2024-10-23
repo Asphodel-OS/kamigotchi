@@ -38,7 +38,7 @@ const run = async () => {
   await generateInitScript(mode, categories, action, args);
 
   // running script.sol
-  await initWorld(getDeployerKey(mode), getRpc(mode)!, world);
+  await initWorld(getDeployerKey(mode), getRpc(mode)!, world, argv.forgeOpts);
 
   if (mode === 'DEV') setAutoMine(false);
 };
