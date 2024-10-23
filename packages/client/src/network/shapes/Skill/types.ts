@@ -9,13 +9,13 @@ import {
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
 
-import { baseURI } from 'constants/media';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getSkillBonuses } from '.';
 import { Bonus } from '../Bonus';
 import { Condition, queryConditionsOf } from '../Conditional';
 import { DetailedEntity } from '../utils';
+import { getSkillImage } from '../utils/images';
 
 /////////////////
 // SHAPES
@@ -89,13 +89,15 @@ export const getSkill = (
     ])
   )[0];
 
+  const name = getComponentValue(Name, registryIndex)?.value || ('' as string);
+
   let skill: Skill = {
     ObjectType: 'SKILL',
     id: world.entities[entityIndex],
     index: skillIndex,
-    name: getComponentValue(Name, registryIndex)?.value || ('' as string),
+    name: name,
     description: getComponentValue(Description, registryIndex)?.value || ('' as string),
-    image: `${baseURI}${getComponentValue(MediaURI, registryIndex)?.value || ('' as string)}`,
+    image: getSkillImage(name),
     cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
     points: {
       current: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),

@@ -48,7 +48,7 @@ export async function reviseSkills(api: AdminAPI, overrideIndices?: number[]) {
 
 async function initSkill(api: AdminAPI, skill: any) {
   const index = Number(skill['Index']);
-  const name = skill['Name'];
+  const name = skill['Name'].trim();
   const filename = name.toLowerCase().replace(/ /g, '_');
   const mediaUri = `images/skills/${filename}.png`;
   const description = skill['Description'] ?? '';
@@ -80,6 +80,7 @@ async function initBonus(api: AdminAPI, skill: any, effectsCSV: any) {
   const operation = effect['Operation'].toUpperCase();
   const type = `${rawType}_${ast}_${operation}`;
   const value = Number(skill['Value']) * 10 ** Number(effect['Precision']);
+
   await api.registry.skill.add.bonus(index, type, value);
 }
 

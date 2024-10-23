@@ -41,4 +41,4 @@ export const SkillTrees = new Map([
   ['Harvester', HarvesterTree],
 ]);
 
-export const TierRequirements = [0, 0, 5, 15, 25, 40]; // no 0 tier
+export const TierRequirements = [0, 0, 5, 15, 25, 40, 55]; // no 0 tier
