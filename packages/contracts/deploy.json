@@ -338,8 +338,8 @@
       "writeAccess": [
         "BlockRevealComponent",
         "EntityTypeComponent",
-        "ForComponent",
         "IdHolderComponent",
+        "IdSourceComponent",
         "IDOwnsInventoryComponent",
         "IndexItemComponent",
         "IndexComponent",
@@ -436,7 +436,7 @@
       "name": "LootboxCommitSystem",
       "writeAccess": [
         "BlockRevealComponent",
-        "ForComponent",
+        "IdSourceComponent",
         "IdHolderComponent",
         "IndexItemComponent",
         "TimeLastComponent",

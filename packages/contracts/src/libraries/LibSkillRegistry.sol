@@ -8,7 +8,6 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";

@@ -107,13 +107,15 @@ export const queryDTCommits = (
   components: Components,
   holderID: EntityID
 ): DTCommit[] => {
-  const { For, Value } = components;
+  const { SourceID, Value } = components;
 
   const commits = queryHolderCommits(world, components, 'ITEM_DROPTABLE_COMMIT', holderID);
   return commits.map((commit) => {
     return {
       ...commit,
-      parentID: formatEntityID((getComponentValue(For, commit.entityIndex)?.value || 0).toString()),
+      parentID: formatEntityID(
+        (getComponentValue(SourceID, commit.entityIndex)?.value || 0).toString()
+      ),
       rolls: (getComponentValue(Value, commit.entityIndex)?.value as number) * 1,
     };
   });
