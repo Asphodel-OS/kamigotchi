@@ -35,7 +35,7 @@ export function registerFundOperatorModal() {
       const { selectedAddress, apis } = useNetwork();
 
       const [isFunding, setIsFunding] = useState(true);
-      const [amount, setAmount] = useState(1);
+      const [amount, setAmount] = useState(GasConstants.Full);
       const [statusText, setStatusText] = useState('');
       const [statusColor, setStatusColor] = useState('grey');
 
@@ -69,7 +69,7 @@ export function registerFundOperatorModal() {
           id: actionID,
           action: 'AccountFund',
           params: [amount.toString()],
-          description: `Funding Operator ${amount.toString()}`,
+          description: `Funding Operator ${amount.toString()} ONYX`,
           execute: async () => {
             return api.account.fund(amount.toString());
           },
@@ -85,7 +85,7 @@ export function registerFundOperatorModal() {
           id: actionID,
           action: 'AccountRefund',
           params: [amount.toString()],
-          description: `Refunding Owner ${amount.toString()}`,
+          description: `Refunding Owner ${amount.toString()} ONYX`,
           execute: async () => {
             return network.api.player.account.refund(amount.toString());
           },
