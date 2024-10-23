@@ -9,7 +9,7 @@ import { getAddrByID } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
 
-uint256 constant ID = uint256(keccak256("system.Scavenge.Claim"));
+uint256 constant ID = uint256(keccak256("system.scavenge.claim"));
 
 contract ScavengeClaimSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

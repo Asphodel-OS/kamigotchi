@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ProductionLiquidateSystemInterface extends utils.Interface {
+export interface HarvestStartSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
@@ -176,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface ProductionLiquidateSystem extends BaseContract {
+export interface HarvestStartSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ProductionLiquidateSystemInterface;
+  interface: HarvestStartSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -222,8 +222,8 @@ export interface ProductionLiquidateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -267,8 +267,8 @@ export interface ProductionLiquidateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    targetProductionID: PromiseOrValue<BigNumberish>,
     kamiID: PromiseOrValue<BigNumberish>,
+    nodeID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -308,8 +308,8 @@ export interface ProductionLiquidateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -378,8 +378,8 @@ export interface ProductionLiquidateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -424,8 +424,8 @@ export interface ProductionLiquidateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

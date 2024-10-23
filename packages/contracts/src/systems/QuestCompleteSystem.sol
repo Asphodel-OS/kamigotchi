@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 
-uint256 constant ID = uint256(keccak256("system.Quest.Complete"));
+uint256 constant ID = uint256(keccak256("system.quest.complete"));
 
 contract QuestCompleteSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

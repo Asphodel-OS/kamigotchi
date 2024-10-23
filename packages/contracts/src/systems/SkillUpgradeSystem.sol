@@ -11,7 +11,7 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
-uint256 constant ID = uint256(keccak256("system.Skill.Upgrade"));
+uint256 constant ID = uint256(keccak256("system.skill.upgrade"));
 
 // upgrade a skill
 contract SkillUpgradeSystem is System {

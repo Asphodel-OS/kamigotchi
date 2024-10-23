@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 
-uint256 constant ID = uint256(keccak256("system.kami.gacha.Mint"));
+uint256 constant ID = uint256(keccak256("system.kami.gacha.mint"));
 
 /// @notice commits to get a random pet from gacha using a Gacha Ticket
 /// @dev this acts as a replacement for a traditional reveal

@@ -12,7 +12,7 @@ import { LibKami } from "libraries/LibKami.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 
-uint256 constant ID = uint256(keccak256("system.kami.gacha.Reveal"));
+uint256 constant ID = uint256(keccak256("system.kami.gacha.reveal"));
 
 /// @notice reveals gacha results. owner agnostic - reveal is sent to original account
 contract KamiGachaRevealSystem is System, AuthRoles {

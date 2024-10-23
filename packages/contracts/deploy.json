@@ -536,7 +536,7 @@
       "writeAccess": ["HealthComponent", "StateComponent", "TimeLastComponent", "ValueComponent"]
     },
     {
-      "name": "ProductionCollectSystem",
+      "name": "HarvestCollectSystem",
       "writeAccess": [
         "EntityTypeComponent",
         "ExperienceComponent",
@@ -555,7 +555,7 @@
       ]
     },
     {
-      "name": "ProductionLiquidateSystem",
+      "name": "HarvestLiquidateSystem",
       "writeAccess": [
         "EntityTypeComponent",
         "IdHolderComponent",
@@ -579,7 +579,7 @@
       ]
     },
     {
-      "name": "ProductionStartSystem",
+      "name": "HarvestStartSystem",
       "writeAccess": [
         "EntityTypeComponent",
         "IDOwnsInventoryComponent",
@@ -597,7 +597,7 @@
       ]
     },
     {
-      "name": "ProductionStopSystem",
+      "name": "HarvestStopSystem",
       "writeAccess": [
         "EntityTypeComponent",
         "IDOwnsInventoryComponent",
