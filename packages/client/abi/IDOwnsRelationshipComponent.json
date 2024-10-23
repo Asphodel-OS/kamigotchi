@@ -694,6 +694,19 @@
     },
     {
       "type": "event",
+      "name": "AuthorizedWriter",
+      "inputs": [
+        {
+          "name": "writer",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
       "name": "OwnershipHandoverCanceled",
       "inputs": [
         {
@@ -730,6 +743,19 @@
         },
         {
           "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "UnauthorizedWriter",
+      "inputs": [
+        {
+          "name": "writer",
           "type": "address",
           "indexed": true,
           "internalType": "address"
