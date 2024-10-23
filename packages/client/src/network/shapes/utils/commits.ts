@@ -28,10 +28,7 @@ export const filterRevealable = <T extends Commit>(commits: T[], currBlock: numb
 
 export const canReveal = (commit: Commit, currBlock: number | BigInt): boolean => {
   // although commits are valid for 256 blocks, set to 250 for a small buffer
-  // return commit.revealBlock + 250 > Number(currBlock);
-
-  // testnet2 vrf, no reveal expiration. to change to waiting for future
-  return true;
+  return commit.revealBlock + 250 > Number(currBlock);
 };
 
 /////////////////

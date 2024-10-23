@@ -120,19 +120,6 @@
     },
     {
       "type": "function",
-      "name": "remove",
-      "inputs": [
-        {
-          "name": "name",
-          "type": "string",
-          "internalType": "string"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -292,7 +279,6 @@
     "executeTyped(string,uint256)": "92976665",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
-    "remove(string)": "80599e4b",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "setValue(string,uint256)": "7c2da7aa",

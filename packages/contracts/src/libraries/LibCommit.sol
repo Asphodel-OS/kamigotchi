@@ -9,9 +9,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { VRFComponent, ID as VRFCompID } from "components/VRFComponent.sol";
 
-import { LibConfig } from "libraries/LibConfig.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
@@ -36,10 +34,7 @@ library LibCommit {
     string memory type_
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-
-    // testnet2 uses VRF, no need for block number. left here in case this changes
-    uint256 nextIncrement = VRFComponent(getAddrByID(components, VRFCompID)).increment() + 1;
-    BlockRevComponent(getAddrByID(components, BlockRevealCompID)).set(id, nextIncrement);
+    BlockRevComponent(getAddrByID(components, BlockRevealCompID)).set(id, revealBlock);
     IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, holderID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
   }
@@ -63,8 +58,7 @@ library LibCommit {
     }
 
     // writing
-    uint256 nextIncrement = VRFComponent(getAddrByID(components, VRFCompID)).increment() + 1;
-    getCompByID(components, BlockRevealCompID).setAll(ids, nextIncrement);
+    getCompByID(components, BlockRevealCompID).setAll(ids, revealBlock);
     getCompByID(components, IdHolderCompID).setAll(ids, holderID);
     getCompByID(components, TypeCompID).setAll(ids, type_);
   }
@@ -72,26 +66,21 @@ library LibCommit {
   ///////////////
   // CHECKERS
 
-  // function isAvailable(uint256 blockNum) internal view returns (bool) {
-  // return blockNum + 256 >= block.number;
-  // }
+  function isAvailable(uint256 blockNum) internal view returns (bool) {
+    return uint256(blockhash(blockNum)) != 0;
+  }
 
   /// @notice checks if a blockhash is available
   function isAvailable(IUintComp components, uint256 id) internal returns (bool) {
     uint256 revBlock = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).get(id);
-    uint256 seed = VRFComponent(getAddrByID(components, VRFCompID)).safeGet(revBlock);
-    return seed != 0;
-    // return isAvailable(revBlock);
+    return isAvailable(revBlock);
   }
 
   function isAvailable(IUintComp components, uint256[] memory ids) internal returns (bool) {
     uint256[] memory blocks = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).get(
       ids
     );
-    uint256[] memory seeds = VRFComponent(getAddrByID(components, VRFCompID)).safeGet(blocks);
-    for (uint256 i; i < ids.length; i++) if (seeds[i] == 0) return false;
-    // for (uint256 i; i < ids.length; i++) if (!isAvailable(blocks[i])) return false;
-    return true;
+    for (uint256 i; i < ids.length; i++) if (!isAvailable(blocks[i])) return false;
   }
 
   ///////////////
@@ -100,16 +89,12 @@ library LibCommit {
   /// @notice gets seed from a commit, and remove it
   function extractSeed(IUintComp components, uint256 id) internal returns (uint256) {
     uint256 revBlock = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).extract(id);
-    return hashSeed(components, revBlock, id);
+    return hashSeed(revBlock, id);
   }
 
   /// @notice bypasses component registry to extract seed
-  function extractSeedDirect(
-    IUintComp components,
-    BlockRevComponent blockComp,
-    uint256 id
-  ) internal returns (uint256) {
-    return hashSeed(components, blockComp.extract(id), id);
+  function extractSeedDirect(BlockRevComponent blockComp, uint256 id) internal returns (uint256) {
+    return hashSeed(blockComp.extract(id), id);
   }
 
   function extractSeeds(
@@ -117,7 +102,7 @@ library LibCommit {
     uint256[] memory ids
   ) internal returns (uint256[] memory seeds) {
     seeds = BlockRevComponent(getAddrByID(components, BlockRevealCompID)).extract(ids);
-    for (uint256 i; i < ids.length; i++) seeds[i] = hashSeed(components, seeds[i], ids[i]);
+    for (uint256 i; i < ids.length; i++) seeds[i] = hashSeed(seeds[i], ids[i]);
   }
 
   function extractHolder(IUintComp components, uint256 id) internal returns (uint256) {
@@ -146,25 +131,10 @@ library LibCommit {
   // GETTERS
 
   // gets seed from future blockhash and entityID. blockhash needs to be revealed within 256 blocks
-  function hashSeed(
-    IUintComp components,
-    uint256 blocknumber,
-    uint256 entityID
-  ) internal view returns (uint256) {
-    /// TODO: blockhash unimplemented in initia, removing it temp. need to implement proper random source.
-    // uint256 bhash = uint256(blockhash(blocknumber));
-    // require(bhash != 0, "Blockhash unavailable. Contact admin");
-    // return uint256(keccak256(abi.encodePacked(bhash, entityID)));
-
-    // testnet implementation, update for mainnet
-    uint256 seeder;
-    if (LibConfig.has(components, "BYPASS_VRF"))
-      seeder = blocknumber; // skip if local or testing
-    else {
-      seeder = VRFComponent(getAddrByID(components, VRFCompID)).safeGet(blocknumber);
-      require(seeder != 0, "VRF value unavailable. Contact admin");
-    }
-    return uint256(keccak256(abi.encodePacked(seeder, entityID)));
+  function hashSeed(uint256 blocknumber, uint256 entityID) internal view returns (uint256) {
+    uint256 bhash = uint256(blockhash(blocknumber));
+    require(bhash != 0, "Blockhash unavailable. Contact admin");
+    return uint256(keccak256(abi.encodePacked(bhash, entityID)));
   }
 
   /////////////////
