@@ -9,10 +9,11 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
+import { copy } from 'app/utils';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
-import { getAbbrevAddr } from 'utils/address';
-import { playClick, playFund, playSuccess } from 'utils/sounds';
+import { abbreviateAddress } from 'utils/address';
+import { playFund, playSuccess } from 'utils/sounds';
 
 export function registerGasHarasser() {
   registerUIComponent(
@@ -120,12 +121,6 @@ export function registerGasHarasser() {
         if (event.key === 'Enter') feed();
       };
 
-      // copy displayed address to clipboard
-      const copyAddress = () => {
-        playClick();
-        navigator.clipboard.writeText(account.operatorAddress);
-      };
-
       const feed = async () => {
         playFund();
         await fundTx();
@@ -143,8 +138,8 @@ export function registerGasHarasser() {
           errorPrimary={`pls feed me pls a crumb of wei ._.`}
         >
           <Tooltip text={[account.operatorAddress, '(click to copy)']} align='center'>
-            <Description onClick={copyAddress}>
-              Address: {getAbbrevAddr(account.operatorAddress)}
+            <Description onClick={() => copy(account.operatorAddress)}>
+              Address: {abbreviateAddress(account.operatorAddress)}
             </Description>
           </Tooltip>
           <Row>

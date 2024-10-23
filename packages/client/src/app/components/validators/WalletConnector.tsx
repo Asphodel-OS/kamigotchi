@@ -13,7 +13,7 @@ import { useNetwork, useVisibility } from 'app/stores';
 import { wagmiConfig } from 'clients/wagmi';
 import { defaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
-import { getAbbrevAddr } from 'utils/address';
+import { abbreviateAddress } from 'utils/address';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
@@ -124,7 +124,7 @@ export function registerWalletConnecter() {
       const addNetworkAPI = async (wallet: ConnectedWallet) => {
         const injectedAddress = wallet.address.toLowerCase();
         if (!apis.has(injectedAddress)) {
-          console.log(`Establishing APIs for ${getAbbrevAddr(injectedAddress)}`);
+          console.log(`Establishing APIs for ${abbreviateAddress(injectedAddress)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
           const networkInstance = await createNetworkInstance(provider);
           const systems = network.createSystems(networkInstance);
@@ -138,7 +138,7 @@ export function registerWalletConnecter() {
       const updateBaseNetwork = async (wallet: ConnectedWallet) => {
         const embeddedAddress = wallet.address.toLowerCase();
         if (burnerAddress !== embeddedAddress) {
-          console.log(`Updating base network ${getAbbrevAddr(embeddedAddress)}`);
+          console.log(`Updating base network ${abbreviateAddress(embeddedAddress)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
           await updateNetworkLayer(network, provider);
           setBurnerAddress(embeddedAddress);
