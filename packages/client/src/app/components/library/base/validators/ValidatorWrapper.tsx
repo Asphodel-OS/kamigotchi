@@ -58,16 +58,17 @@ const Wrapper = styled.div<Wrapper>`
 `;
 
 const Content = styled.div`
-  border: solid black 2px;
-  border-radius: 10px;
-  background-color: white;
   position: absolute;
+  background-color: white;
+  border: solid black 0.15vw;
+  border-radius: 1.2vw;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 100%;
   max-height: 100%;
-  padding: 3vh 6vh;
+  padding: 2vw 4vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -80,43 +81,40 @@ const Header = styled.div`
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6vh;
+  padding: 0.3vw;
   width: 100%;
 `;
 
 const Title = styled.div`
   color: #333;
-  padding: 0.6vh;
-  font-size: 2.1vh;
+  padding: 0.6vw;
+  font-size: 1.5vw;
   text-align: center;
 `;
 
 const Subtitle = styled.div`
   color: #666;
-  padding: 0.6vh;
-  font-size: 1.8vh;
+  padding: 0.6vw;
+  font-size: 1.2vw;
   text-align: center;
 `;
 
 const ErrorPrimary = styled.div`
   color: #922;
-  padding: 0.6vh;
-  font-size: 1.5vh;
+  padding: 0.45vw;
+  font-size: 0.9vw;
   text-align: center;
 `;
 
 const ErrorSecondary = styled.div`
   color: #922;
-  padding: 0.6vh;
-  font-size: 0.9vh;
+  padding: 0.45vw;
+  font-size: 0.9vw;
   text-align: center;
 `;
 
 const Children = styled.div`
-  padding: 0.6vh;
-  overflow-y: scroll;
   max-height: 100%;
-  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;

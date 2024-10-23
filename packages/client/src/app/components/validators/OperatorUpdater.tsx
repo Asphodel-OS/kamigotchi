@@ -16,10 +16,11 @@ export function registerOperatorUpdater() {
   registerUIComponent(
     'OperatorUpdater',
     {
-      colStart: 20,
-      colEnd: 80,
-      rowStart: 25,
-      rowEnd: 70,
+      // positioning controlled by validator wrapper
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0,
     },
     (layers) => of(layers),
     (layers) => {
@@ -112,11 +113,10 @@ export function registerOperatorUpdater() {
 }
 
 const Description = styled.div`
-  font-size: 12px;
   color: #333;
+  padding: 0.9vw 0;
+  font-size: 0.75vw;
   text-align: center;
-  font-family: Pixel;
-  padding: 5px 0px;
 `;
 
 const Row = styled.div`

@@ -14,7 +14,7 @@ export const getAddressFromPrivateKey = (privateKey: string): string => {
   return address;
 };
 
-export const getAbbrevAddr = (
+export const abbreviateAddress = (
   address: string,
   prefix: boolean = true,
   suffix: boolean = true

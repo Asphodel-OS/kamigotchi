@@ -1,12 +1,11 @@
 import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
-import { IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { ActionButton, CopyButton, Tooltip, ValidatorWrapper } from 'app/components/library';
+import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import {
   Account as KamiAccount,
@@ -15,6 +14,7 @@ import {
   useNetwork,
   useVisibility,
 } from 'app/stores';
+import { copy } from 'app/utils';
 import {
   Account,
   getAccount,
@@ -22,7 +22,7 @@ import {
   queryAccountByOwner,
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
-import { getAbbrevAddr } from 'utils/address';
+import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 
 /**
@@ -48,16 +48,16 @@ export function registerAccountRegistrar() {
   registerUIComponent(
     'AccountRegistrar',
     {
-      colStart: 20,
-      colEnd: 80,
-      rowStart: 30,
-      rowEnd: 60,
+      // positioning controlled by validator wrapper
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0,
     },
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
-      const { AccountIndex, EntityType, FarcasterIndex, Name, OperatorAddress, OwnerAddress } =
-        components;
+      const { AccountIndex, EntityType, Name, OperatorAddress, OwnerAddress } = components;
 
       // TODO?: replace this with getAccount shape
       const getAccountDetails = (entityIndex: EntityIndex): KamiAccount => {
@@ -224,7 +224,8 @@ export function registerAccountRegistrar() {
       };
 
       const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
+        const truncated = event.target.value.slice(0, 16);
+        setName(truncated);
       };
 
       /////////////////
@@ -240,25 +241,23 @@ export function registerAccountRegistrar() {
 
       const OperatorDisplay = () => {
         const infoText = [
-          'The embedded wallet (operator address) to this account is managed by Privy.',
+          'Your account Operator (embedded wallet) is managed by Privy.',
           '',
-          'It behaves like a session key and is used to approve in-game actions without the need for explicit signatures.',
-          '',
-          'It cannot make account level changes or migrate your assets in and out of the game.',
+          `It behaves like a session key. And is used to approve\
+          in-game actions without the need for explicit signatures.\
+          It cannot be used to authorize account level changes\
+          or migrate assets in and out of your account.`,
         ];
 
         return (
           <AddressRow>
-            <Tooltip text={[burnerAddress]}>
-              <Description>Operator: {getAbbrevAddr(burnerAddress)}</Description>
+            <Tooltip text={[burnerAddress, '(click to copy)']} align='center'>
+              <Description onClick={() => copy(burnerAddress)}>
+                Operator: {abbreviateAddress(burnerAddress)}
+              </Description>
             </Tooltip>
-            <Tooltip text={infoText}>
-              <IconButton size='small'>
-                <InfoIcon fontSize='small' style={{ color: '#666' }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip text={['copy address']}>
-              <CopyButton text={burnerAddress} />
+            <Tooltip text={infoText} align='center'>
+              <InfoIcon fontSize='small' style={{ color: '#666' }} />
             </Tooltip>
           </AddressRow>
         );
@@ -267,8 +266,10 @@ export function registerAccountRegistrar() {
       const OwnerDisplay = () => {
         return (
           <AddressRow>
-            <Tooltip text={[selectedAddress]}>
-              <Description>Owner: {getAbbrevAddr(selectedAddress)}</Description>
+            <Tooltip text={[selectedAddress, '(click to copy)']} align='center'>
+              <Description onClick={() => copy(selectedAddress)}>
+                Owner: {abbreviateAddress(selectedAddress)}
+              </Description>
             </Tooltip>
           </AddressRow>
         );
@@ -351,7 +352,7 @@ export function registerAccountRegistrar() {
               value={name}
               onChange={(e) => handleChangeName(e)}
               onKeyDown={(e) => catchKeys(e)}
-              placeholder='username'
+              placeholder='your username'
               style={{ pointerEvents: 'auto' }}
             />
             <Row>
@@ -398,46 +399,44 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding-top: 10px;
 `;
 
 const Description = styled.p`
   color: #333;
-  padding: 10px;
-  font-size: 1.2vh;
+  padding: 0.3vw 0;
+  font-size: 0.75vw;
   text-align: center;
+`;
+
+const Input = styled.input`
+  border-radius: 0.45vw;
+  border: solid #71f 0.1vw;
+  background-color: #ddd;
+
+  padding: 0.6vw;
+  margin: 0.9vw 0 0.3vw 0;
+  width: 12.5vw;
+
+  display: inline-block;
+  justify-content: center;
+  cursor: text;
+
+  font-size: 0.6vw;
+  text-align: center;
+  text-decoration: none;
 `;
 
 const Link = styled.div`
   color: #11f;
-  padding: 1vh 0 0 0;
+  padding: 0.6vw 0 0 0;
   cursor: pointer;
   pointer-events: auto;
 
-  font-size: 1vh;
+  font-size: 0.6vw;
   text-align: center;
   text-decoration: underline;
 
   &:hover {
     color: #71f;
   }
-`;
-
-const Input = styled.input`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 15px 12px;
-  margin: 5px 0px;
-
-  text-align: left;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
