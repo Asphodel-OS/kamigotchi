@@ -11,7 +11,7 @@ export const ReviveButton = (kami: Kami, account: Account, triggerAction: Functi
 
   let inventories = account.inventories ?? [];
   inventories = filterInventories(inventories, 'FOOD', 'KAMI');
-  const reviveIndex = 110; /// temporary hardcoded revive index
+  const reviveIndex = 11001; /// temporary hardcoded revive index
 
   return (
     <Tooltip text={[tooltipText]}>
