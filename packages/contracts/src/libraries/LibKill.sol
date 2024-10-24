@@ -122,9 +122,9 @@ library LibKill {
     int256 atkBonus = LibBonus.getFor(components, "ATK_THRESHOLD_RATIO", sourceID);
     int256 defBonus = LibBonus.getFor(components, "DEF_THRESHOLD_RATIO", targetID);
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
-      base: int(0),
+      base: atkBonus + defBonus,
       up: atkBonus + defBonus,
-      down: int(0)
+      down: atkBonus + defBonus
     });
 
     // sum the applied shift with the base efficacy value to get the final value
@@ -172,11 +172,10 @@ library LibKill {
     uint256 targetID
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
-    uint256 violence1 = LibKami.calcTotalViolence(components, sourceID).toUint256();
-    uint256 violence2 = LibKami.calcTotalViolence(components, targetID).toUint256();
+    uint256 violence = LibKami.calcTotalViolence(components, targetID).toUint256();
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
-    return ((violence1 + violence2) * ratio) / precision;
+    return (violence * ratio) / precision;
   }
 
   // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.

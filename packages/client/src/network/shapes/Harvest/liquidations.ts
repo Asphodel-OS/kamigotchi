@@ -20,9 +20,9 @@ const calcLiquidationEfficacy = (attacker: Kami, defender: Kami): number => {
   const defBonus = defender.bonuses.defense.threshold.ratio;
 
   const base = thresholdConfig.ratio.value;
-  const shiftNeut = effConfig.base;
+  const shiftNeut = effConfig.base + attBonus + defBonus;
   const shiftUp = effConfig.up + attBonus + defBonus;
-  const shiftDown = effConfig.down;
+  const shiftDown = effConfig.down + attBonus + defBonus;
 
   let shift = shiftNeut;
   if (attacker.traits && defender.traits) {
@@ -110,7 +110,7 @@ export const calcStrain = (attacker: Kami, defender: Kami): number => {
 // calculate liquidation hp recoil due to violence
 export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const karmaConfig = attacker.config.liquidation.karma;
-  const totalViolence = attacker.stats.violence.total + defender.stats.violence.total;
+  const totalViolence = defender.stats.violence.total;
   const karma = totalViolence * karmaConfig.ratio.value;
   return Math.floor(karma);
 };
