@@ -20,7 +20,7 @@ export const CollectButton = (kami: Kami, account: Account, triggerAction: Funct
 // generate a tooltip for any reason the kami's harvest cannot be collected from
 const getDisabledTooltip = (kami: Kami, account: Account): string => {
   const cooldown = calcCooldown(kami);
-  const inRoom = kami.production?.node?.roomIndex == account.roomIndex;
+  const inRoom = kami.harvest?.node?.roomIndex == account.roomIndex;
 
   let tooltip = '';
   if (!isHarvesting(kami)) tooltip = 'uhh.. not harvesting?';

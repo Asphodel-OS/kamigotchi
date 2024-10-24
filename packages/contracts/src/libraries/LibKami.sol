@@ -122,12 +122,12 @@ library LibKami {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("RESTING"));
   }
 
-  // Update the current health of a kami as well as any active production
+  // Update the current health of a kami as well as any active harvest
   function sync(IUintComp components, uint256 id) public {
     string memory state = getState(components, id);
 
     if (state.eq("HARVESTING")) {
-      uint256 deltaBalance = LibHarvest.sync(components, getProduction(components, id));
+      uint256 deltaBalance = LibHarvest.sync(components, getHarvest(components, id));
       uint256 damage = calcStrain(components, id, deltaBalance);
       drain(components, id, damage.toInt32());
     } else if (state.eq("RESTING")) {
@@ -242,8 +242,8 @@ library LibKami {
 
     bool sameRoom;
     if (state.eq("HARVESTING")) {
-      uint256 productionID = getProduction(components, kamiID);
-      uint256 nodeID = LibHarvest.getNode(components, productionID);
+      uint256 harvestID = getHarvest(components, kamiID);
+      uint256 nodeID = LibHarvest.getNode(components, harvestID);
       IndexRoomComponent roomComp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
       uint32 nodeRoom = roomComp.safeGet(nodeID);
       uint32 accRoom = roomComp.safeGet(accID);
@@ -413,8 +413,8 @@ library LibKami {
     string memory state = getState(components, id);
 
     if (state.eq("HARVESTING")) {
-      uint256 productionID = getProduction(components, id);
-      uint256 nodeID = LibHarvest.getNode(components, productionID);
+      uint256 harvestID = getHarvest(components, id);
+      uint256 nodeID = LibHarvest.getNode(components, harvestID);
       roomIndex = LibNode.getRoom(components, nodeID);
     } else if (state.eq("721_EXTERNAL")) {
       roomIndex = 0;
@@ -438,8 +438,8 @@ library LibKami {
     return LibAccount.getOwner(components, accID);
   }
 
-  // Get the production of a kami. Return 0 if there are none.
-  function getProduction(IUintComp components, uint256 id) internal view returns (uint256) {
+  // Get the harvest of a kami. Return 0 if there are none.
+  function getHarvest(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibHarvest.getForKami(components, id);
   }
 

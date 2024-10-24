@@ -13,10 +13,10 @@ import { LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system.harvest.start"));
 
-// HarvestStartSystem activates a pet production on a node. If it doesn't exist, we create one.
-// We limit to one production per pet, and one production on a node per character.
+// HarvestStartSystem activates a pet harvest on a node. If it doesn't exist, we create one.
+// We limit to one harvest per pet, and one harvest on a node per character.
 // NOTE: pet is guaranteed to be healthy if resting.
-// TODO: update productions to support all kinds of nodes, not just harvesting
+// TODO: update harvests to support all kinds of nodes, not just harvesting
 contract HarvestStartSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -41,7 +41,7 @@ contract HarvestStartSystem is System {
       "FarmStart: node reqs not met"
     );
 
-    // start the production, create if none exists
+    // start the harvest, create if none exists
     uint256 id = LibHarvest.getForKami(components, kamiID);
     if (id == 0) id = LibHarvest.create(components, nodeID, kamiID);
     else LibHarvest.setNode(components, id, nodeID);

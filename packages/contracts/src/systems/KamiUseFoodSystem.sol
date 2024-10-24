@@ -41,8 +41,8 @@ contract KamiUseFoodSystem is System {
 
     // reset the pet's intensity
     if (LibKami.isHarvesting(components, kamiID)) {
-      uint256 productionID = LibKami.getProduction(components, kamiID);
-      LibHarvest.resetIntensity(components, productionID);
+      uint256 harvestID = LibKami.getHarvest(components, kamiID);
+      LibHarvest.resetIntensity(components, harvestID);
     }
 
     // standard logging and tracking

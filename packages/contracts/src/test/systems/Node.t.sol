@@ -31,8 +31,8 @@ contract NodeTest is SetupTemplate {
     __NodeRegistrySystem.addRequirement(abi.encode(1, "ACCOUNT", "ROOM", "BOOL_IS", 1, 0));
     vm.stopPrank();
 
-    // try starting basic production
-    _startProduction(aKamiID, nodeID);
+    // try starting basic harvest
+    _startHarvest(aKamiID, nodeID);
 
     // delete all
     vm.prank(deployer);
@@ -56,7 +56,7 @@ contract NodeTest is SetupTemplate {
 
     // can now add level 2 pet to node
     assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
-    _startProduction(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeID);
   }
 
   function testNodeRequirementsAccount() public {
@@ -77,7 +77,7 @@ contract NodeTest is SetupTemplate {
 
     // can now add level 2 account to node
     assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
-    _startProduction(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeID);
   }
 
   function testNodeRequirementsPetAndAccount() public {
@@ -108,6 +108,6 @@ contract NodeTest is SetupTemplate {
 
     // all good
     assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
-    _startProduction(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeID);
   }
 }

@@ -258,7 +258,7 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
+      targetHarvestID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -303,7 +303,7 @@ export interface HarvestLiquidateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    targetProductionID: PromiseOrValue<BigNumberish>,
+    targetHarvestID: PromiseOrValue<BigNumberish>,
     kamiID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -344,7 +344,7 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
+      targetHarvestID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -443,7 +443,7 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
+      targetHarvestID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -489,7 +489,7 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
+      targetHarvestID: PromiseOrValue<BigNumberish>,
       kamiID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

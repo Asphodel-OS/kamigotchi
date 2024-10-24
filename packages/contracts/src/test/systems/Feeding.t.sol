@@ -42,8 +42,8 @@ contract FeedingTest is SetupTemplate {
   }
 
   function _calcHarvestingPetHealth(uint kamiID) internal view returns (uint) {
-    uint productionID = LibKami.getProduction(components, kamiID);
-    uint output = LibHarvest.calcBounty(components, productionID);
+    uint harvestID = LibKami.getHarvest(components, kamiID);
+    uint output = LibHarvest.calcBounty(components, harvestID);
     uint drain = LibKami.calcStrain(components, kamiID, output);
     uint health = uint(int(LibStat.getHealth(components, kamiID).sync));
     health = (health > drain) ? health - drain : 0;
@@ -89,10 +89,10 @@ contract FeedingTest is SetupTemplate {
     uint numPets = 5;
     uint[] memory kamiIDs = _mintKamis(0, numPets);
 
-    // start their productions
+    // start their harvests
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(kamiIDs[i], _nodeID);
+      _startHarvest(kamiIDs[i], _nodeID);
     }
 
     // fast forward 1hr to drain
@@ -142,20 +142,20 @@ contract FeedingTest is SetupTemplate {
     // mint pets for the default account and drain them empty on harvesting
     uint numPets = 5;
     uint[] memory kamiIDs = _mintKamis(0, numPets);
-    uint[] memory productionIDs = new uint[](numPets);
+    uint[] memory harvestIDs = new uint[](numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(kamiIDs[i], _nodeID);
+      harvestIDs[i] = _startHarvest(kamiIDs[i], _nodeID);
     }
     _fastForward(100 hours);
 
-    // start production for our new kamis and kill off the originals
+    // start harvest for our new kamis and kill off the originals
     uint[] memory kamiIDs2 = _mintKamis(1, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(kamiIDs2[i], _nodeID);
+      _startHarvest(kamiIDs2[i], _nodeID);
       _fastForward(_idleRequirement);
-      _liquidateProduction(kamiIDs2[i], productionIDs[i]);
+      _liquidateHarvest(kamiIDs2[i], harvestIDs[i]);
     }
     _fastForward(_idleRequirement);
 
@@ -189,12 +189,12 @@ contract FeedingTest is SetupTemplate {
       _buyFromListing(playerIndex, _listingIDs[j], 10);
     }
 
-    // mint some pets, fast forward and start their productions
+    // mint some pets, fast forward and start their harvests
     uint numPets = 5;
     uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(kamiIDs[i], _nodeID);
+      _startHarvest(kamiIDs[i], _nodeID);
     }
 
     // test that we Can feed pets at the current roomIndex
@@ -259,14 +259,14 @@ contract FeedingTest is SetupTemplate {
     // mint some pets
     uint numPets = 5;
     uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
-    uint[] memory productionIDs = new uint[](numPets);
+    uint[] memory harvestIDs = new uint[](numPets);
 
     // fast forward
     _fastForward(_idleRequirement);
 
-    // start their production
+    // start their harvest
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(kamiIDs[i], _nodeID);
+      harvestIDs[i] = _startHarvest(kamiIDs[i], _nodeID);
     }
 
     // check that we CAN feed when harvesting
@@ -287,22 +287,22 @@ contract FeedingTest is SetupTemplate {
       }
     }
 
-    // stop productions and check that we CAN feed resting pets
+    // stop harvests and check that we CAN feed resting pets
     for (uint i = 0; i < _listingIDs.length; i++) {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _stopProduction(productionIDs[j]);
+        _stopHarvest(harvestIDs[j]);
         _fastForward(_idleRequirement);
         _feedPet(kamiIDs[j], itemIndex);
         _fastForward(_idleRequirement);
-        _startProduction(kamiIDs[j], _nodeID);
+        _startHarvest(kamiIDs[j], _nodeID);
       }
     }
 
-    // // stop all productions and allow pets to heal to full
+    // // stop all harvests and allow pets to heal to full
     // for (uint i = 0; i < numPets; i++) {
-    //   _stopProduction(productionIDs[i]);
+    //   _stopHarvest(harvestIDs[i]);
     // }
     // _currTime += _idleRequirement + 100 hours;
     // vm.warp(_currTime);
@@ -321,19 +321,19 @@ contract FeedingTest is SetupTemplate {
     // uint playerIndex2 = 1;
     // uint[] memory kamiIDs2 = _mintKamis(playerIndex2, numPets);
 
-    // // start production for and starve our original kamis
+    // // start harvest for and starve our original kamis
     // for (uint i = 0; i < numPets; i++) {
-    //   _startProduction(kamiIDs[i], _nodeID);
+    //   _startHarvest(kamiIDs[i], _nodeID);
     // }
     // _currTime += _idleRequirement + 100 hours;
     // vm.warp(_currTime);
 
-    // // start production for our new kamis and kill off the originals
+    // // start harvest for our new kamis and kill off the originals
     // for (uint i = 0; i < numPets; i++) {
-    //   _startProduction(kamiIDs2[i], _nodeID);
+    //   _startHarvest(kamiIDs2[i], _nodeID);
     //   _currTime += _idleRequirement + 15 minutes;
     //   vm.warp(_currTime);
-    //   _liquidateProduction(kamiIDs2[i], productionIDs[i]);
+    //   _liquidateHarvest(kamiIDs2[i], harvestIDs[i]);
     // }
 
     // // fast forward
@@ -374,9 +374,9 @@ contract FeedingTest is SetupTemplate {
     }
 
     // (harvesting, full hp) check that we CANNOT revive
-    uint[] memory productionIDs = new uint[](numPets);
+    uint[] memory harvestIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(kamiIDs[i], _nodeID);
+      harvestIDs[i] = _startHarvest(kamiIDs[i], _nodeID);
       _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("pet not dead");
@@ -399,14 +399,14 @@ contract FeedingTest is SetupTemplate {
       _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
-    // start production for our enemy kamis and kill off the originals
+    // start harvest for our enemy kamis and kill off the originals
     uint playerIndex2 = 1;
     uint[] memory kamiIDs2 = _mintKamis(playerIndex2, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(kamiIDs2[i], _nodeID);
+      _startHarvest(kamiIDs2[i], _nodeID);
       _fastForward(_idleRequirement);
-      _liquidateProduction(kamiIDs2[i], productionIDs[i]);
+      _liquidateHarvest(kamiIDs2[i], harvestIDs[i]);
     }
     _fastForward(_idleRequirement);
 
@@ -435,12 +435,12 @@ contract FeedingTest is SetupTemplate {
   //     _buyFromListing(playerIndex, _listingIDs[j], 100);
   //   }
 
-  //   // mint some pets and start their production
+  //   // mint some pets and start their harvest
   //   uint numPets = 5;
   //   uint[] memory kamiIDs = _mintKamis(playerIndex, numPets);
   //   _fastForward(_idleRequirement);
   //   for (uint i = 0; i < numPets; i++) {
-  //     _startProduction(kamiIDs[i], _nodeID);
+  //     _startHarvest(kamiIDs[i], _nodeID);
   //   }
 
   //   // pass a number of iterations and

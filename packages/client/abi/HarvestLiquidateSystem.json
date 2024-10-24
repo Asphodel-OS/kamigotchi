@@ -67,7 +67,7 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "targetProductionID",
+          "name": "targetHarvestID",
           "type": "uint256",
           "internalType": "uint256"
         },

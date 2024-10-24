@@ -299,44 +299,44 @@ abstract contract SetupTemplate is TestSetupImports {
     _KamiUseReviveSystem.executeTyped(kamiID, reviveIndex);
   }
 
-  function _startProductionByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
+  function _startHarvestByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
-    return _startProduction(kamiID, nodeID);
+    return _startHarvest(kamiID, nodeID);
   }
 
-  function _startProduction(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+  function _startHarvest(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    bytes memory productionID = _HarvestStartSystem.executeTyped(kamiID, nodeID);
-    return abi.decode(productionID, (uint));
+    bytes memory harvestID = _HarvestStartSystem.executeTyped(kamiID, nodeID);
+    return abi.decode(harvestID, (uint));
   }
 
-  function _stopProduction(uint productionID) internal {
-    uint kamiID = LibHarvest.getKami(components, productionID);
+  function _stopHarvest(uint harvestID) internal {
+    uint kamiID = LibHarvest.getKami(components, harvestID);
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _HarvestStopSystem.executeTyped(productionID);
+    _HarvestStopSystem.executeTyped(harvestID);
   }
 
-  function _collectProduction(uint productionID) internal {
-    uint kamiID = LibHarvest.getKami(components, productionID);
+  function _collectHarvest(uint harvestID) internal {
+    uint kamiID = LibHarvest.getKami(components, harvestID);
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _HarvestCollectSystem.executeTyped(productionID);
+    _HarvestCollectSystem.executeTyped(harvestID);
   }
 
-  function _liquidateProduction(uint attackerID, uint productionID) internal virtual {
+  function _liquidateHarvest(uint attackerID, uint harvestID) internal virtual {
     uint accID = LibKami.getAccount(components, attackerID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _HarvestLiquidateSystem.executeTyped(productionID, attackerID);
+    _HarvestLiquidateSystem.executeTyped(harvestID, attackerID);
   }
 
   /* QUESTS */

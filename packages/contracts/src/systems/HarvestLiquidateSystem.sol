@@ -20,7 +20,7 @@ import { LibStat, Stat, StatLib } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.harvest.liquidate"));
 
-// liquidates a target production using a player's pet.
+// liquidates a target harvest using a player's pet.
 contract HarvestLiquidateSystem is System {
   using SafeCastLib for uint256;
 
@@ -42,7 +42,7 @@ contract HarvestLiquidateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 targetProductionID, uint256 kamiID) = abi.decode(arguments, (uint256, uint256));
+    (uint256 targetHarvestID, uint256 kamiID) = abi.decode(arguments, (uint256, uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
@@ -51,26 +51,26 @@ contract HarvestLiquidateSystem is System {
 
     // basic requirements (state and idle time)
     require(!LibKami.onCooldown(components, kamiID), "FarmLiquidate: pet on cooldown");
-    require(LibHarvest.isActive(components, targetProductionID), "FarmLiquidate: Harvest inactive");
+    require(LibHarvest.isActive(components, targetHarvestID), "FarmLiquidate: Harvest inactive");
 
     // health check
     LibKami.sync(components, kamiID);
     require(LibKami.isHealthy(components, kamiID), "FarmLiquidate: pet starving..");
 
     // check that the two kamis share the same node
-    uint256 productionID = LibKami.getProduction(components, kamiID);
-    uint256 nodeID = LibHarvest.getNode(components, productionID);
-    uint256 targetNodeID = LibHarvest.getNode(components, targetProductionID);
+    uint256 harvestID = LibKami.getHarvest(components, kamiID);
+    uint256 nodeID = LibHarvest.getNode(components, harvestID);
+    uint256 targetNodeID = LibHarvest.getNode(components, targetHarvestID);
     require(nodeID == targetNodeID, "FarmLiquidate: target too far");
     require(LibRoom.sharesRoom(components, accID, nodeID), "FarmLiquidate: node too far");
 
-    // check that the pet is capable of liquidating the target production
-    uint256 targetKamiID = LibHarvest.getKami(components, targetProductionID);
+    // check that the pet is capable of liquidating the target harvest
+    uint256 targetKamiID = LibHarvest.getKami(components, targetHarvestID);
     LibKami.sync(components, targetKamiID);
     require(LibKill.isLiquidatableBy(components, targetKamiID, kamiID), "Pet: you lack violence");
 
     // calculate musu/experience for victim
-    uint256 bounty = LibHarvest.getBalance(components, targetProductionID);
+    uint256 bounty = LibHarvest.getBalance(components, targetHarvestID);
     uint256 salvage = LibKill.calcSalvage(components, targetKamiID, bounty);
     if (salvage > 0) {
       uint256 victimAccountID = LibKami.getAccount(components, targetKamiID);
@@ -80,7 +80,7 @@ contract HarvestLiquidateSystem is System {
 
     // calculate musu for killer
     uint256 spoils = LibKill.calcSpoils(components, kamiID, bounty - salvage);
-    LibInventory.incFor(components, productionID, MUSU_INDEX, spoils);
+    LibInventory.incFor(components, harvestID, MUSU_INDEX, spoils);
 
     // calculate health impact on killer
     uint256 strain = LibKami.calcStrain(components, kamiID, spoils);
@@ -109,10 +109,10 @@ contract HarvestLiquidateSystem is System {
     // drain the killer
     LibKami.drain(components, kamiID, (strain + karma).toInt32());
 
-    // kill the target and shut off the production
+    // kill the target and shut off the harvest
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
     LibKami.kill(components, targetKamiID);
-    LibHarvest.stop(components, targetProductionID);
+    LibHarvest.stop(components, targetHarvestID);
     LibKill.create(world, components, kamiID, targetKamiID, nodeIndex, bounty - salvage, spoils);
     LibKami.setLastActionTs(components, kamiID, block.timestamp);
 
@@ -124,7 +124,7 @@ contract HarvestLiquidateSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 targetProductionID, uint256 kamiID) public returns (bytes memory) {
-    return execute(abi.encode(targetProductionID, kamiID));
+  function executeTyped(uint256 targetHarvestID, uint256 kamiID) public returns (bytes memory) {
+    return execute(abi.encode(targetHarvestID, kamiID));
   }
 }

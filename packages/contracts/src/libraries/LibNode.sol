@@ -21,7 +21,7 @@ import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
 
 /*
- * LibNode handles all retrieval and manipulation of mining nodes/productions
+ * LibNode handles all retrieval and manipulation of mining nodes/harvests
  */
 library LibNode {
   //////////////

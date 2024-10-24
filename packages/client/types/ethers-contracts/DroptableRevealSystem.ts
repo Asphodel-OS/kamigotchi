@@ -39,7 +39,6 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "replaceBrokenReveal(uint256)": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -55,7 +54,6 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
-      | "replaceBrokenReveal"
       | "requestOwnershipHandover"
       | "transferOwnership"
   ): FunctionFragment;
@@ -91,10 +89,6 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "replaceBrokenReveal",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "requestOwnershipHandover",
     values?: undefined
   ): string;
@@ -128,10 +122,6 @@ export interface DroptableRevealSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "replaceBrokenReveal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -262,11 +252,6 @@ export interface DroptableRevealSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    replaceBrokenReveal(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -316,11 +301,6 @@ export interface DroptableRevealSystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  replaceBrokenReveal(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   requestOwnershipHandover(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -363,11 +343,6 @@ export interface DroptableRevealSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    replaceBrokenReveal(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
@@ -445,11 +420,6 @@ export interface DroptableRevealSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    replaceBrokenReveal(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -498,11 +468,6 @@ export interface DroptableRevealSystem extends BaseContract {
 
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    replaceBrokenReveal(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     requestOwnershipHandover(
