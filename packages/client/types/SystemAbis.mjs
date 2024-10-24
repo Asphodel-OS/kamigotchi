@@ -57,6 +57,7 @@ import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
 import QuestDropSystem from "../abi/QuestDropSystem.json";
 import RelationshipAdvanceSystem from "../abi/RelationshipAdvanceSystem.json";
 import ScavengeClaimSystem from "../abi/ScavengeClaimSystem.json";
+import SkillResetSystem from "../abi/SkillResetSystem.json";
 import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
@@ -123,6 +124,7 @@ export const SystemAbis = {
   "system.Quest.Drop": QuestDropSystem.abi,
   "system.relationship.advance": RelationshipAdvanceSystem.abi,
   "system.scavenge.claim": ScavengeClaimSystem.abi,
+  "system.skill.reset": SkillResetSystem.abi,
   "system.skill.upgrade": SkillUpgradeSystem.abi,
   "system.trade.accept": TradeAcceptSystem.abi,
   "system.trade.add": TradeAddToSystem.abi,
