@@ -96,6 +96,8 @@ export function getCacheStoreEntries<Cm extends Components>(
     const entity = entities[entityIndex];
 
     if (component == null || entity == null) {
+      console.warn(`KEY: ${key}`);
+      console.warn(`Indexes component / entity: ${componentIndex}, ${entityIndex}`);
       throw new Error(`Unknown component / entity: ${component}, ${entity}`);
     }
 

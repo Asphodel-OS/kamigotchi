@@ -64,6 +64,7 @@ export async function fetchStateFromKamigaze(
   storeBlock(cacheStore, BlockResponse);
   cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
 
+  // Components
   // remove from the cache any component added by the rpc sync
   cacheStore.components.splice(cacheStore.lastKamigazeComponent + 1);
   let ComponentsResponse = await kamigazeClient.getComponents({
@@ -72,17 +73,7 @@ export async function fetchStateFromKamigaze(
   storeComponents(cacheStore, ComponentsResponse.components);
   cacheStore.lastKamigazeComponent = cacheStore.components.length - 1;
 
-  let EntitiesResponse = kamigazeClient.getEntities({
-    fromIdx: cacheStore.lastKamigazeEntity,
-    numChunks: numChunks,
-  });
-  // remove from the cache any entity added by the rpc sync
-  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
-  for await (const responseChunk of EntitiesResponse) {
-    storeEntities(cacheStore, responseChunk.entities);
-  }
-  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
-
+  // State Removal
   if (!initialLoad) {
     let StateRemovalsReponse = await kamigazeClient.getState({
       fromBlock: currentBlock,
@@ -94,6 +85,7 @@ export async function fetchStateFromKamigaze(
     }
   }
 
+  // State Values
   let StateValuesResponse = await kamigazeClient.getState({
     fromBlock: currentBlock,
     numChunks: numChunks,
@@ -102,6 +94,18 @@ export async function fetchStateFromKamigaze(
   for await (const responseChunk of StateValuesResponse) {
     storeValues(cacheStore, responseChunk.state, decode);
   }
+
+  // Entities
+  let EntitiesResponse = kamigazeClient.getEntities({
+    fromIdx: cacheStore.lastKamigazeEntity,
+    numChunks: numChunks,
+  });
+  // remove from the cache any entity added by the rpc sync
+  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
+  for await (const responseChunk of EntitiesResponse) {
+    storeEntities(cacheStore, responseChunk.entities);
+  }
+  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
 
   return cacheStore;
 }
