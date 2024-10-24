@@ -129,6 +129,7 @@ export type { RelationshipAdvanceSystem } from "./RelationshipAdvanceSystem";
 export type { RerollComponent } from "./RerollComponent";
 export type { ScavengeClaimSystem } from "./ScavengeClaimSystem";
 export type { SkillPointComponent } from "./SkillPointComponent";
+export type { SkillResetSystem } from "./SkillResetSystem";
 export type { SkillUpgradeSystem } from "./SkillUpgradeSystem";
 export type { SlotsComponent } from "./SlotsComponent";
 export type { StaminaComponent } from "./StaminaComponent";
@@ -313,6 +314,7 @@ export { RelationshipAdvanceSystem__factory } from "./factories/RelationshipAdva
 export { RerollComponent__factory } from "./factories/RerollComponent__factory";
 export { ScavengeClaimSystem__factory } from "./factories/ScavengeClaimSystem__factory";
 export { SkillPointComponent__factory } from "./factories/SkillPointComponent__factory";
+export { SkillResetSystem__factory } from "./factories/SkillResetSystem__factory";
 export { SkillUpgradeSystem__factory } from "./factories/SkillUpgradeSystem__factory";
 export { SlotsComponent__factory } from "./factories/SlotsComponent__factory";
 export { StaminaComponent__factory } from "./factories/StaminaComponent__factory";
