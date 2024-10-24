@@ -4,6 +4,11 @@ import { BigNumberish, utils } from 'ethers';
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(systems: any) {
+  // temporary: reset skills
+  function resetSkills(kamiID: BigNumberish) {
+    return systems['system.skill.reset'].executeTyped(kamiID);
+  }
+
   /////////////////
   //     KAMI
 
@@ -328,6 +333,7 @@ export function createPlayerAPI(systems: any) {
   }
 
   return {
+    resetSkills: resetSkills,
     pet: {
       level: levelPet,
       name: namePet,
