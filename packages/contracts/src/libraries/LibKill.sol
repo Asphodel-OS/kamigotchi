@@ -122,9 +122,9 @@ library LibKill {
     int256 atkBonus = LibBonus.getFor(components, "ATK_THRESHOLD_RATIO", sourceID);
     int256 defBonus = LibBonus.getFor(components, "DEF_THRESHOLD_RATIO", targetID);
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
-      base: int(0),
+      base: atkBonus + defBonus,
       up: atkBonus + defBonus,
-      down: int(0)
+      down: atkBonus + defBonus
     });
 
     // sum the applied shift with the base efficacy value to get the final value
