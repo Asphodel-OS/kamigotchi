@@ -28,7 +28,7 @@ contract KamiUseFoodSystem is System {
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);
     LibKami.assertRoom(components, kamiID, accID);
-    require(!LibKami.onCooldown(components, kamiID), "pet on cooldown");
+    require(!LibKami.onCooldown(components, kamiID), "kami on cooldown");
     require(
       LibKami.isResting(components, kamiID) || LibKami.isHarvesting(components, kamiID),
       "pet must be alive"
