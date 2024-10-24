@@ -434,10 +434,10 @@ contract MurderTest is SetupTemplate {
   // assumes the harvest is active to simulate a health sync
   function _isLiquidatableBy(uint harvestID, uint attackerID) internal view returns (bool) {
     uint victimID = LibHarvest.getKami(components, harvestID);
-    uint totalHealth = uint(int(LibKami.calcTotalHealth(components, victimID)));
+    uint totalHealth = uint(int(LibStat.getTotal(components, "HEALTH", victimID)));
     uint output = LibHarvest.calcBounty(components, harvestID);
     uint drain = LibKami.calcStrain(components, victimID, output);
-    uint health = uint(int(LibStat.getHealth(components, victimID).sync));
+    uint health = uint(int(LibStat.get(components, "HEALTH", victimID).sync));
     health = (health > drain) ? health - drain : 0;
 
     uint threshold = LibKill.calcAnimosity(components, attackerID, victimID); // 1e18 precision

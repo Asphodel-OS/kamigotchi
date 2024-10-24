@@ -55,7 +55,27 @@
     },
     {
       "type": "function",
-      "name": "calcTotal",
+      "name": "cancelOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "completeOwnershipHandover",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "deprecatedCalcTotal",
       "inputs": [
         {
           "name": "entity",
@@ -74,23 +94,56 @@
     },
     {
       "type": "function",
-      "name": "cancelOwnershipHandover",
-      "inputs": [],
-      "outputs": [],
-      "stateMutability": "payable"
+      "name": "deprecatedSync",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
-      "name": "completeOwnershipHandover",
+      "name": "deprecatedSync",
       "inputs": [
         {
-          "name": "pendingOwner",
-          "type": "address",
-          "internalType": "address"
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        },
+        {
+          "name": "max",
+          "type": "int32",
+          "internalType": "int32"
         }
       ],
-      "outputs": [],
-      "stateMutability": "payable"
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -727,59 +780,6 @@
     },
     {
       "type": "function",
-      "name": "sync",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        },
-        {
-          "name": "max",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "sync",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -938,9 +938,11 @@
   "methodIdentifiers": {
     "authorizeWriter(address)": "4fef6a38",
     "boost(uint256,int32)": "a8ed7591",
-    "calcTotal(uint256)": "af6128c2",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
+    "deprecatedCalcTotal(uint256)": "0701be9a",
+    "deprecatedSync(uint256,int32)": "15278f6f",
+    "deprecatedSync(uint256,int32,int32)": "1ddbf372",
     "equal(uint256,bytes)": "d2f27dcd",
     "equal(uint256[],bytes)": "2dfbb801",
     "extract(uint256)": "85b39782",
@@ -967,8 +969,6 @@
     "set(uint256[],(int32,int32,int32,int32)[])": "9610dca5",
     "set(uint256[],bytes[])": "a2c895aa",
     "shift(uint256,int32)": "9ad30956",
-    "sync(uint256,int32)": "6ef23a3d",
-    "sync(uint256,int32,int32)": "06e76456",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "writeAccess(address)": "861eb905"

@@ -91,7 +91,7 @@ library LibKill {
     uint256 targetKamiID,
     uint256 sourceKamiID
   ) public view returns (bool) {
-    uint256 currHealth = (LibStat.getHealth(components, targetKamiID).sync).toUint256();
+    uint256 currHealth = LibStat.getCurrent(components, "HEALTH", targetKamiID).toUint256();
     uint256 threshold = calcThreshold(components, sourceKamiID, targetKamiID);
     return threshold > currHealth;
   }
@@ -108,8 +108,8 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_ANIMOSITY");
 
-    uint256 sourceViolence = LibKami.calcTotalViolence(components, sourceID).toUint256();
-    uint256 targetHarmony = LibKami.calcTotalHarmony(components, targetID).toUint256();
+    uint256 sourceViolence = LibStat.getTotal(components, "VIOLENCE", sourceID).toUint256();
+    uint256 targetHarmony = LibStat.getTotal(components, "HARMONY", targetID).toUint256();
     int256 imbalance = ((1e18 * sourceViolence) / targetHarmony).toInt256();
     uint256 base = Gaussian.cdf(LibFPMath.lnWad(imbalance)).toUint256();
     uint256 ratio = config[2]; // core animosity baseline
@@ -178,7 +178,7 @@ library LibKill {
     int256 postShiftVal = int(base * ratio) + shift;
     if (postShiftVal < 0) return 0;
 
-    uint256 totalHealth = LibKami.calcTotalHealth(components, targetID).toUint256();
+    uint256 totalHealth = LibStat.getTotal(components, "HEALTH", targetID).toUint256();
     uint256 precision = 10 ** (ANIMOSITY_PREC + config[3] + config[7]);
     return (uint(postShiftVal) * totalHealth) / precision;
   }
@@ -190,7 +190,7 @@ library LibKill {
     uint256 targetID
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
-    uint256 violence = LibKami.calcTotalViolence(components, targetID).toUint256();
+    uint256 violence = LibStat.getTotal(components, "VIOLENCE", targetID).toUint256();
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
     return (violence * ratio) / precision;
@@ -205,7 +205,7 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
     int256 ratioBonus = LibBonus.getFor(components, "DEF_SALVAGE_RATIO", id);
-    uint256 power = LibKami.calcTotalPower(components, id).toUint256();
+    uint256 power = LibStat.getTotal(components, "POWER", id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);
@@ -221,7 +221,7 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
     int256 ratioBonus = LibBonus.getFor(components, "ATK_SPOILS_RATIO", id);
-    uint256 power = LibKami.calcTotalPower(components, id).toUint256();
+    uint256 power = LibStat.getTotal(components, "POWER", id).toUint256();
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);
@@ -294,15 +294,15 @@ library LibKill {
     uint256 victimID,
     KillBalance memory bals
   ) internal {
-    Stat memory killerHp = LibStat.getHealth(components, killerID);
-    Stat memory victimHp = LibStat.getHealth(components, victimID);
+    Stat memory killerHp = LibStat.get(components, "HEALTH", killerID);
+    Stat memory victimHp = LibStat.get(components, "HEALTH", victimID);
     emit KamiLiquidated(
       LibKami.getIndex(components, killerID),
       killerHp.sync,
-      StatLib.calcTotal(killerHp),
+      StatLib.deprecatedCalcTotal(killerHp),
       LibKami.getIndex(components, victimID),
       victimHp.sync,
-      StatLib.calcTotal(victimHp),
+      StatLib.deprecatedCalcTotal(victimHp),
       bals.bounty.toUint32(),
       bals.salvage.toUint32(),
       bals.spoils.toUint32(),

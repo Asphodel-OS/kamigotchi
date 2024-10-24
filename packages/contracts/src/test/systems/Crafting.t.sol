@@ -64,7 +64,7 @@ contract CraftingTest is SetupTemplate {
 
     // not enough stamina
     vm.startPrank(deployer);
-    _StaminaComponent.sync(alice.id, -9999);
+    LibStat.setSyncZero(components, "STAMINA", alice.id);
     _TimeLastActionComponent.set(alice.id, block.timestamp);
     vm.stopPrank();
     vm.prank(alice.operator);
@@ -72,8 +72,9 @@ contract CraftingTest is SetupTemplate {
     _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
 
     // valid craft
-    vm.prank(deployer);
-    _StaminaComponent.sync(alice.id, 1000);
+    vm.startPrank(deployer);
+    LibStat.sync(components, "STAMINA", 1000, alice.id);
+    vm.stopPrank();
     _craft(alice, recipeIndex, 1);
     assertEq(_getItemBal(alice, 2), 5);
   }
@@ -225,8 +226,8 @@ contract CraftingTest is SetupTemplate {
     __RecipeRegistrySystem.create(
       abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 1, int32(int(stCost)))
     );
-    _StaminaComponent.sync(alice.id, -9999);
-    int32 currSt = _StaminaComponent.sync(alice.id, initialSt);
+    LibStat.setSyncZero(components, "STAMINA", alice.id);
+    int32 currSt = LibStat.sync(components, "STAMINA", initialSt, alice.id);
     vm.stopPrank();
     _giveItem(alice, 1, 3 * uint256(amtToCraft));
 
