@@ -172,11 +172,10 @@ library LibKill {
     uint256 targetID
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
-    uint256 violence1 = LibKami.calcTotalViolence(components, sourceID).toUint256();
-    uint256 violence2 = LibKami.calcTotalViolence(components, targetID).toUint256();
+    uint256 violence = LibKami.calcTotalViolence(components, targetID).toUint256();
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
-    return ((violence1 + violence2) * ratio) / precision;
+    return (violence * ratio) / precision;
   }
 
   // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.

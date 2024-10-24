@@ -57,7 +57,7 @@ export async function initConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_SPOILS', [35, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
-  await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 300, 3, 0, 0, 0, 0]);
+  await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 2000, 3, 0, 0, 0, 0]);
 }
 
 // local config settings for faster testing
