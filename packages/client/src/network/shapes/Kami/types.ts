@@ -58,7 +58,7 @@ export interface Kami extends BaseKami {
   flags?: {
     namable: boolean;
   };
-  production?: Harvest;
+  harvest?: Harvest;
   skills?: Skill[];
   traits?: Traits;
   rerolls?: number;
@@ -67,7 +67,7 @@ export interface Kami extends BaseKami {
 // optional data to populate for a Kami Entity
 export interface Options {
   flags?: boolean;
-  production?: boolean;
+  harvest?: boolean;
   skills?: boolean;
   traits?: boolean;
   rerolls?: boolean;
@@ -182,9 +182,9 @@ export const getKami = (
   }
 
   // populate Harvest
-  // NOTE: productions should come after traits for harvest calcs to work correctly
-  if (options?.production) {
-    kami.production = getHarvestForKami(world, components, kami, { node: true });
+  // NOTE: harvests should come after traits for harvest calcs to work correctly
+  if (options?.harvest) {
+    kami.harvest = getHarvestForKami(world, components, kami, { node: true });
   }
 
   if (options?.rerolls) {

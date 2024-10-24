@@ -32,7 +32,7 @@ import { LibKami } from "libraries/LibKami.sol";
 uint256 constant RATE_PREC = 6;
 
 /*
- * LibHarvest handles all retrieval and manipulation of mining nodes/productions
+ * LibHarvest handles all retrieval and calculation of harvest outputs
  */
 library LibHarvest {
   using LibComp for IComponent;
@@ -44,7 +44,7 @@ library LibHarvest {
   /////////////////
   // INTERACTIONS
 
-  // Creates a production for a pet at a deposit. Assumes one doesn't already exist.
+  // Creates a harvest for a pet at a deposit. Assumes one doesn't already exist.
   function create(
     IUintComp components,
     uint256 nodeID,
@@ -56,7 +56,7 @@ library LibHarvest {
     IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, nodeID);
   }
 
-  /// @notice claim the existing balance on a Production to the Pet's owner (Account)
+  /// @notice claim the existing balance on a Harvest to the Pet's owner (Account)
   /// @dev assume harvest is active. toID (usually account) is derived externally from kamiID
   function claim(IUintComp components, uint256 prodID, uint256 toID) internal returns (uint256) {
     // safely get and reset existing balance
@@ -72,7 +72,7 @@ library LibHarvest {
     TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, block.timestamp);
   }
 
-  // Starts an _existing_ production if not already started.
+  // Starts an _existing_ harvest if not already started.
   function start(IUintComp components, uint256 id) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("ACTIVE"));
     TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
@@ -80,13 +80,13 @@ library LibHarvest {
     TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, block.timestamp);
   }
 
-  // Stops an _existing_ production. All potential proceeds will be lost after this point.
+  // Stops an _existing_ harvest. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("INACTIVE"));
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
   }
 
-  // snapshot a production's balance and time. return the balance gained
+  // snapshot a harvest's balance and time. return the balance gained
   // also logs the harvest time since the last sync
   function sync(IUintComp components, uint256 id) internal returns (uint256 netBounty) {
     if (isActive(components, id)) {
@@ -103,7 +103,7 @@ library LibHarvest {
   /////////////////////
   // CALCULATIONS (time)
 
-  // Calculate the duration since a production last started, measured in seconds.
+  // Calculate the duration since a harvest last started, measured in seconds.
   function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
     return block.timestamp - getLastTs(components, id);
   }
@@ -188,8 +188,8 @@ library LibHarvest {
     return (precision * power * ratio * boost) / 3600;
   }
 
-  // Calculate the intensity of a production, measured in musu/s (1e9 precision)
-  // NOTE: this is a bit of a hack, with an idiosyncratic use of the violence-scaled nudge
+  // Calculate the intensity of a harvest, measured in musu/s (1e9 precision)
+  // NOTE: a bit of a hack, scales violence by commandeering nudge slot
   function calcIntensity(
     IUintComp components,
     uint256 id,
@@ -216,7 +216,7 @@ library LibHarvest {
   /////////////////
   // SETTERS
 
-  // Set the node for a pet's production
+  // Set the node for a pet's harvest
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
     IdSourceComponent comp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
     if (comp.get(id) != nodeID) comp.set(id, nodeID);
@@ -255,7 +255,7 @@ library LibHarvest {
   /////////////////
   // QUERIES
 
-  // get a production by a pet. assumed only 1
+  // get a harvest by a pet. assumed only 1
   function getForKami(IUintComp components, uint256 kamiID) internal view returns (uint256 result) {
     uint256 id = genID(kamiID);
     return LibEntityType.isShape(components, id, "HARVEST") ? id : 0;

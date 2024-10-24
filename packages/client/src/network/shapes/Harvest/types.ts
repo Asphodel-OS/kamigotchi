@@ -35,7 +35,7 @@ export const getHarvest = (
   kami?: Kami
 ): Harvest => {
   const { HolderID, SourceID, State, LastTime, ResetTime, StartTime, Value } = components;
-  let production: Harvest = {
+  let harvest: Harvest = {
     id: world.entities[index],
     rate: 0,
     balance: ((getComponentValue(Value, index)?.value as number) || 0) * 1,
@@ -54,7 +54,7 @@ export const getHarvest = (
   if (options?.node) {
     const nodeID = formatEntityID(getComponentValue(SourceID, index)?.value ?? '');
     const nodeIndex = world.entityToIndex.get(nodeID);
-    if (nodeIndex) production.node = getNode(world, components, nodeIndex);
+    if (nodeIndex) harvest.node = getNode(world, components, nodeIndex);
   }
 
   /////////////////
@@ -67,8 +67,8 @@ export const getHarvest = (
     const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
     kami = getKami(world, components, kamiEntityIndex, { traits: true });
   }
-  production.rate = calcRate(production, kami);
-  return production;
+  harvest.rate = calcRate(harvest, kami);
+  return harvest;
 };
 
 /////////////////

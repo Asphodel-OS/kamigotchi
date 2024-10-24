@@ -65,14 +65,14 @@ export const Kards = (props: Props) => {
       //   description.push(`by ${kami.deaths[0].source!.name}`);
       //   description.push(`on ${kami.deaths[0].node.name} `);
       // }
-    } else if (isHarvesting(kami) && kami.production) {
+    } else if (isHarvesting(kami) && kami.harvest) {
       if (calcHealth(kami) == 0) {
-        description = [`Starving.. `, `on ${kami.production.node?.name}`];
-      } else if (kami.production.node != undefined) {
-        const harvestRate = getRateDisplay(kami.production.rate, 2);
+        description = [`Starving.. `, `on ${kami.harvest.node?.name}`];
+      } else if (kami.harvest.node != undefined) {
+        const harvestRate = getRateDisplay(kami.harvest.rate, 2);
         description = [
           `Harvesting`,
-          `on ${kami.production.node.name}`,
+          `on ${kami.harvest.node.name}`,
           `${harvestRate} MUSU/hr`,
           `${healthRate} HP/hr`,
         ];
@@ -94,7 +94,7 @@ export const Kards = (props: Props) => {
 
   // returns the onClick function for the description
   const getDescriptionOnClick = (kami: Kami) => {
-    if (isHarvesting(kami)) return () => selectNode(kami.production?.node?.index!);
+    if (isHarvesting(kami)) return () => selectNode(kami.harvest?.node?.index!);
   };
 
   /////////////////

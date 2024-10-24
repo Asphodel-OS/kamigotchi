@@ -18,7 +18,7 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 
 // A score entity is similar to a fungible inventory entity.
 // This library is called whenever a pet conducts a score gaining operation,
-// like reaping production
+// like reaping harvest
 
 // Components:
 // EntityID: hash(IdHolder, score type, epoch)
