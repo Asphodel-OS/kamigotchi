@@ -1054,7 +1054,6 @@ abstract contract SetupTemplate is TestSetupImports {
     _initLevelingConfigs();
     _initFriendConfigs();
     _initKamiConfigs();
-    _initHealthConfigs();
     _initHarvestConfigs();
     _initLiquidationConfigs();
     _initSkillConfigs();
@@ -1091,21 +1090,18 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initKamiConfigs() internal virtual {
-    // Idle Requirements
-    _setConfig("KAMI_STANDARD_COOLDOWN", 180);
-
     // Kami Stats
     _setConfig("KAMI_BASE_HEALTH", 50);
     _setConfig("KAMI_BASE_POWER", 10);
     _setConfig("KAMI_BASE_VIOLENCE", 10);
     _setConfig("KAMI_BASE_HARMONY", 10);
     _setConfig("KAMI_BASE_SLOTS", 0);
-  }
 
-  function _initHealthConfigs() internal virtual {
-    // Kami Health Heal Rates
-    // (prec, base, base_prec, mult_prec)
+    // healing
     _setConfigArray("KAMI_REST_METABOLISM", [uint32(0), 0, 1200, 3, 0, 0, 1000, 3]);
+
+    // cooldown
+    _setConfig("KAMI_STANDARD_COOLDOWN", 180);
   }
 
   function _initHarvestConfigs() internal virtual {
