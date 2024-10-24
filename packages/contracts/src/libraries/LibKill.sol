@@ -20,14 +20,24 @@ import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
-import { LibStat } from "libraries/LibStat.sol";
+import { LibStat, Stat, StatLib } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
 
 uint256 constant ANIMOSITY_PREC = 6;
+
+struct KillBalance {
+  uint256 bounty;
+  uint256 salvage;
+  uint256 spoils;
+  uint256 strain;
+  uint256 karma;
+}
 
 // LibKill does maths for liquidation calcs and handles creation of kill logs,
 // which track when, where and with whom a murder took place.
@@ -38,28 +48,36 @@ library LibKill {
   using SafeCastLib for int256;
   using SafeCastLib for uint256;
 
-  // creates a kill log. pretty sure we don't need to do anything with the library aside from this
-  function create(
-    IWorld world,
-    IUintComp components,
-    uint256 sourceID,
-    uint256 targetID,
-    uint32 nodeIndex,
-    uint256 balance,
-    uint256 bounty
-  ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    IsKillComponent(getAddrByID(components, IsKillCompID)).set(id);
-    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, sourceID);
-    IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, targetID);
-    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, nodeIndex);
-    TimeComponent(getAddrByID(components, TimeCompID)).set(id, block.timestamp);
+  event KamiLiquidated(
+    uint32 indexed sourceIndex,
+    int32 sourceHealth,
+    int32 sourceHealthTotal,
+    uint32 indexed targetIndex,
+    int32 targetHealth,
+    int32 targetHealthTotal,
+    uint32 bounty,
+    uint32 salvage,
+    uint32 spoils,
+    uint32 strain,
+    uint32 karma,
+    uint64 endTs
+  );
 
-    // set bounties
-    uint32[8] memory bounties;
-    bounties[0] = balance.toUint32(); // balance (negative)
-    bounties[1] = bounty.toUint32(); // bounty (positive)
-    LibData.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
+  /////////////////
+  // INTERACTIONS
+
+  /// @notice send salvage back to victim's owner
+  function sendSalvage(IUintComp components, uint256 victimID, uint256 amt) internal {
+    if (amt == 0) return;
+    uint256 accID = LibKami.getAccount(components, victimID);
+    LibInventory.incFor(components, accID, MUSU_INDEX, amt);
+    LibExperience.inc(components, victimID, amt);
+  }
+
+  /// @notice send spoils to killer's owner
+  function sendSpoils(IUintComp components, uint256 killerProdID, uint256 amt) internal {
+    if (amt == 0) return;
+    LibHarvest.incBounty(components, killerProdID, amt);
   }
 
   /////////////////
@@ -213,6 +231,47 @@ library LibKill {
   /////////////////
   // LOGGING
 
+  function log(
+    IWorld world,
+    IUintComp components,
+    uint256 accID,
+    uint256 killerID,
+    uint256 victimID,
+    uint256 nodeID,
+    KillBalance memory bals
+  ) internal {
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+
+    emitLog(components, killerID, victimID, bals);
+
+    logKill(world, components, killerID, victimID, nodeIndex, bals);
+    logTotals(components, accID, nodeIndex);
+    logVictim(components, accID, LibKami.getAccount(components, victimID));
+  }
+
+  // creates a kill log. pretty sure we don't need to do anything with the library aside from this
+  function logKill(
+    IWorld world,
+    IUintComp components,
+    uint256 killerID,
+    uint256 victimID,
+    uint32 nodeIndex,
+    KillBalance memory bals
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
+    IsKillComponent(getAddrByID(components, IsKillCompID)).set(id);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, killerID);
+    IdTargetComponent(getAddrByID(components, IdTargetCompID)).set(id, victimID);
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, nodeIndex);
+    TimeComponent(getAddrByID(components, TimeCompID)).set(id, block.timestamp);
+
+    // set bounties
+    uint32[8] memory bounties;
+    bounties[0] = (bals.bounty - bals.salvage).toUint32(); // balance (negative)
+    bounties[1] = bals.spoils.toUint32(); // bounty (positive)
+    LibData.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
+  }
+
   function logTotals(IUintComp components, uint256 accID, uint32 nodeIndex) internal {
     uint32[] memory indices = new uint32[](3);
     indices[1] = nodeIndex;
@@ -224,8 +283,32 @@ library LibKill {
     LibData.inc(components, accID, indices, types, 1);
   }
 
-  function logVictim(IUintComp components, uint256 accID, uint256 victimID) internal {
-    LibData.inc(components, victimID, 0, "LIQUIDATED_VICTIM", 1);
-    LibData.inc(components, accID, LibAccount.getIndex(components, victimID), "LIQ_TARGET_ACC", 1);
+  function logVictim(IUintComp components, uint256 accID, uint256 accVicID) internal {
+    LibData.inc(components, accVicID, 0, "LIQUIDATED_VICTIM", 1);
+    LibData.inc(components, accID, LibAccount.getIndex(components, accVicID), "LIQ_TARGET_ACC", 1);
+  }
+
+  function emitLog(
+    IUintComp components,
+    uint256 killerID,
+    uint256 victimID,
+    KillBalance memory bals
+  ) internal {
+    Stat memory killerHp = LibStat.getHealth(components, killerID);
+    Stat memory victimHp = LibStat.getHealth(components, victimID);
+    emit KamiLiquidated(
+      LibKami.getIndex(components, killerID),
+      killerHp.sync,
+      StatLib.calcTotal(killerHp),
+      LibKami.getIndex(components, victimID),
+      victimHp.sync,
+      StatLib.calcTotal(victimHp),
+      bals.bounty.toUint32(),
+      bals.salvage.toUint32(),
+      bals.spoils.toUint32(),
+      bals.strain.toUint32(),
+      bals.karma.toUint32(),
+      block.timestamp.toUint64()
+    );
   }
 }

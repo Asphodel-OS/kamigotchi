@@ -27,11 +27,11 @@ contract HarvestStartSystem is System {
     // standard checks (ownership, cooldown, state)
     LibKami.assertAccount(components, kamiID, accID);
     require(LibKami.isResting(components, kamiID), "FarmStart: pet must be resting");
-    require(!LibKami.onCooldown(components, kamiID), "FarmStart: pet on cooldown");
+    require(!LibKami.onCooldown(components, kamiID), "FarmStart: kami on cooldown");
 
     // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibKami.sync(components, kamiID);
-    require(LibKami.isHealthy(components, kamiID), "FarmStart: pet starving..");
+    require(LibKami.isHealthy(components, kamiID), "FarmStart: kami starving..");
     require(LibRoom.sharesRoom(components, accID, nodeID), "FarmStart: node too far");
 
     // check node requirements (if any)
