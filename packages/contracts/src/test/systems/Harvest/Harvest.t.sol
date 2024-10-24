@@ -444,12 +444,12 @@ contract HarvestTest is SetupTemplate {
 
 //     // attempt to stop it again
 //     vm.prank(_getOperator(playerIndex));
-//     vm.expectRevert("FarmStop: pet must be harvesting");
+//     vm.expectRevert("FarmStop: kami must be harvesting");
 //     _HarvestStopSystem.executeTyped(productionID);
 
 //     // attempt to collect on stopped production
 //     vm.prank(_getOperator(playerIndex));
-//     vm.expectRevert("FarmCollect: pet must be harvesting");
+//     vm.expectRevert("FarmCollect: kami must be harvesting");
 //     _HarvestCollectSystem.executeTyped(productionID);
 
 //     // loop through start|collect|stop a few times to make sure it still works
@@ -505,7 +505,7 @@ contract HarvestTest is SetupTemplate {
 
 //         if (kamiHealths[j] <= drain) {
 //           vm.prank(_getOperator(0));
-//           vm.expectRevert("FarmCollect: pet starving..");
+//           vm.expectRevert("FarmCollect: kami starving..");
 //           _HarvestCollectSystem.executeTyped(productionIDs[j]);
 //           _isStarved[j] = true;
 //         } else {
@@ -647,7 +647,7 @@ contract HarvestTest is SetupTemplate {
 //       vm.prank(_getOperator(0));
 //       if (drain >= (1 << 31))
 //         vm.expectRevert(SafeCastLib.Overflow.selector); // overflow check
-//       else vm.expectRevert("FarmCollect: pet starving..");
+//       else vm.expectRevert("FarmCollect: kami starving..");
 //       _HarvestCollectSystem.executeTyped(prodID);
 //     } else {
 //       _collectProduction(prodID);

@@ -30,12 +30,12 @@ contract HarvestStopSystem is System {
 
     // standard checks (ownership, cooldown, state)
     LibKami.assertAccount(components, kamiID, accID);
-    require(LibKami.isHarvesting(components, kamiID), "FarmStop: pet must be harvesting");
-    require(!LibKami.onCooldown(components, kamiID), "FarmStop: pet on cooldown");
+    require(LibKami.isHarvesting(components, kamiID), "FarmStop: kami must be harvesting");
+    require(!LibKami.onCooldown(components, kamiID), "FarmStop: kami on cooldown");
 
     // health check
     LibKami.sync(components, kamiID);
-    require(LibKami.isHealthy(components, kamiID), "FarmStop: pet starving..");
+    require(LibKami.isHealthy(components, kamiID), "FarmStop: kami starving..");
 
     // roomIndex check
     LibKami.assertRoom(components, kamiID, accID);

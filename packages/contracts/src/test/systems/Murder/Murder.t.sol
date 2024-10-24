@@ -46,18 +46,37 @@ contract MurderTest is SetupTemplate {
 
   function testMurderBasic() public {
     // setup
-    uint256 aKamiID = _mintKami(alice);
-    uint256 bKamiID = _mintKami(bob);
+    uint256 victimID = _mintKami(alice);
+    uint256 killerID = _mintKami(bob);
     _fastForward(_idleRequirement);
 
     // alice places pet, left to farm and die
-    uint256 aProdID = _startProduction(aKamiID, _nodeIDs[0]);
-    _fastForward(20 hours);
+    uint256 aProdID = _startProduction(victimID, _nodeIDs[0]);
+    _fastForward(24 hours);
 
-    // bob places pet, commits a crime
-    _startProduction(bKamiID, _nodeIDs[0]);
+    // bob places pet
+    uint256 bProdID = _startProduction(killerID, _nodeIDs[0]);
     _fastForward(_idleRequirement);
-    _liquidateProduction(bKamiID, aProdID);
+
+    // simulate a crime
+    uint256 initialBalance = _getHarvestBounty(bProdID);
+    uint256 bounty = _getHarvestBounty(aProdID);
+    uint256 salvage = LibKill.calcSalvage(components, victimID, bounty);
+    uint256 spoils = LibKill.calcSpoils(components, killerID, bounty - salvage);
+
+    // commit said crime
+    _liquidateProduction(killerID, aProdID);
+
+    // verify crime balances
+    assertEq(
+      LibHarvest.getBalance(components, bProdID),
+      initialBalance + spoils,
+      "killer balance mismatch"
+    );
+    assertEq(_getHarvestBounty(aProdID), 0, "victim prod balance >0");
+    assertEq(_getItemBal(alice, MUSU_INDEX), salvage, "victim balance mismatch");
+    assertTrue(LibKami.isDead(components, victimID), "victim not dead");
+    assertFalse(LibHarvest.isActive(components, aProdID), "victim harvest not stopped");
   }
 
   // test that the correct account must call the liquidation
@@ -109,7 +128,7 @@ contract MurderTest is SetupTemplate {
     // check that we CANNOT liquidate
     _moveAccount(playerIndex, 2);
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("FarmLiquidate: node too far");
+      vm.expectRevert("node too far");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
     }
@@ -118,7 +137,7 @@ contract MurderTest is SetupTemplate {
     // check that we CANNOT liquidate
     _moveAccount(playerIndex, 3);
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("FarmLiquidate: node too far");
+      vm.expectRevert("node too far");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(productionIDs[i], _kamiIDs[playerIndex][i]);
     }
@@ -156,7 +175,7 @@ contract MurderTest is SetupTemplate {
 
       // attempt to liquidate, then stop production
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("FarmLiquidate: target too far");
+        vm.expectRevert("target too far");
         vm.prank(_getOperator(playerIndex));
         _HarvestLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
         _stopProduction(playerProductionIDs[j]);
@@ -201,7 +220,7 @@ contract MurderTest is SetupTemplate {
       _fastForward(_idleRequirement / numIncrements);
 
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("FarmLiquidate: pet on cooldown");
+        vm.expectRevert("kami on cooldown");
         vm.prank(_getOperator(playerIndex));
         _HarvestLiquidateSystem.executeTyped(victimProductionIDs[j], _kamiIDs[playerIndex][j]);
       }
@@ -242,7 +261,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when RESTING
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("FarmLiquidate: pet must be harvesting");
+      vm.expectRevert("kami must be harvesting");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
@@ -253,7 +272,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when Starving
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("FarmLiquidate: pet starving..");
+      vm.expectRevert("kami starving..");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
@@ -271,7 +290,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when DEAD
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("FarmLiquidate: pet must be harvesting");
+      vm.expectRevert("kami must be harvesting");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(victimProductionIDs[i], _kamiIDs[playerIndex][i]);
     }
@@ -357,7 +376,7 @@ contract MurderTest is SetupTemplate {
 
   //     // if production is liquidatable, liquidate it then revive pet. revert otherwise
   //     if (!_isLiquidatableBy(productionID, attackerID)) {
-  //       vm.expectRevert("Pet: you lack violence");
+  //       vm.expectRevert("kami lacks violence (weak)");
   //       vm.prank(_getOperator(playerIndex));
   //       _HarvestLiquidateSystem.executeTyped(productionID, attackerID);
   //     } else {
@@ -379,6 +398,12 @@ contract MurderTest is SetupTemplate {
 
   /////////////////
   // HELPER FUNCTIONS
+
+  function _getHarvestBounty(uint harvID) internal view returns (uint) {
+    uint256 existing = LibHarvest.getBalance(components, harvID);
+    uint256 increase = LibHarvest.calcBounty(components, harvID);
+    return existing + increase;
+  }
 
   function _createFoodListings(uint32 npcIndex) internal {
     uint32 itemIndex;

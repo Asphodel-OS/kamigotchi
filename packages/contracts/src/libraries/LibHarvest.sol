@@ -83,6 +83,7 @@ library LibHarvest {
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("INACTIVE"));
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
   }
 
   // snapshot a production's balance and time. return the balance gained
@@ -90,9 +91,13 @@ library LibHarvest {
   function sync(IUintComp components, uint256 id) internal returns (uint256 netBounty) {
     if (isActive(components, id)) {
       netBounty = calcBounty(components, id);
-      ValueComponent(getAddrByID(components, ValueCompID)).inc(id, netBounty);
+      incBounty(components, id, netBounty);
       TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, block.timestamp);
     }
+  }
+
+  function incBounty(IUintComp components, uint256 id, uint256 amt) internal {
+    ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
   }
 
   /////////////////////

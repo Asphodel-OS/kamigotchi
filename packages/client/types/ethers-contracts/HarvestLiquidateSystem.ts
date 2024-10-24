@@ -124,53 +124,17 @@ export interface HarvestLiquidateSystemInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "KamiLiquidated(uint32,int32,int32,uint32,int32,int32,uint32,uint32,uint32,uint32,uint32,uint64)": EventFragment;
     "OwnershipHandoverCanceled(address)": EventFragment;
     "OwnershipHandoverRequested(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "SystemDeprecated()": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "KamiLiquidated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
-
-export interface KamiLiquidatedEventObject {
-  sourceIndex: number;
-  sourceHealth: number;
-  sourceHealthTotal: number;
-  targetIndex: number;
-  targetHealth: number;
-  targetHealthTotal: number;
-  bounty: number;
-  salvage: number;
-  spoils: number;
-  strain: number;
-  karma: number;
-  endTs: BigNumber;
-}
-export type KamiLiquidatedEvent = TypedEvent<
-  [
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    BigNumber
-  ],
-  KamiLiquidatedEventObject
->;
-
-export type KamiLiquidatedEventFilter = TypedEventFilter<KamiLiquidatedEvent>;
 
 export interface OwnershipHandoverCanceledEventObject {
   pendingOwner: string;
@@ -258,8 +222,8 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
-      kamiID: PromiseOrValue<BigNumberish>,
+      victimHarvID: PromiseOrValue<BigNumberish>,
+      killerID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -303,8 +267,8 @@ export interface HarvestLiquidateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    targetProductionID: PromiseOrValue<BigNumberish>,
-    kamiID: PromiseOrValue<BigNumberish>,
+    victimHarvID: PromiseOrValue<BigNumberish>,
+    killerID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -344,8 +308,8 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
-      kamiID: PromiseOrValue<BigNumberish>,
+      victimHarvID: PromiseOrValue<BigNumberish>,
+      killerID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -367,35 +331,6 @@ export interface HarvestLiquidateSystem extends BaseContract {
   };
 
   filters: {
-    "KamiLiquidated(uint32,int32,int32,uint32,int32,int32,uint32,uint32,uint32,uint32,uint32,uint64)"(
-      sourceIndex?: PromiseOrValue<BigNumberish> | null,
-      sourceHealth?: null,
-      sourceHealthTotal?: null,
-      targetIndex?: PromiseOrValue<BigNumberish> | null,
-      targetHealth?: null,
-      targetHealthTotal?: null,
-      bounty?: null,
-      salvage?: null,
-      spoils?: null,
-      strain?: null,
-      karma?: null,
-      endTs?: null
-    ): KamiLiquidatedEventFilter;
-    KamiLiquidated(
-      sourceIndex?: PromiseOrValue<BigNumberish> | null,
-      sourceHealth?: null,
-      sourceHealthTotal?: null,
-      targetIndex?: PromiseOrValue<BigNumberish> | null,
-      targetHealth?: null,
-      targetHealthTotal?: null,
-      bounty?: null,
-      salvage?: null,
-      spoils?: null,
-      strain?: null,
-      karma?: null,
-      endTs?: null
-    ): KamiLiquidatedEventFilter;
-
     "OwnershipHandoverCanceled(address)"(
       pendingOwner?: PromiseOrValue<string> | null
     ): OwnershipHandoverCanceledEventFilter;
@@ -443,8 +378,8 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
-      kamiID: PromiseOrValue<BigNumberish>,
+      victimHarvID: PromiseOrValue<BigNumberish>,
+      killerID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -489,8 +424,8 @@ export interface HarvestLiquidateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      targetProductionID: PromiseOrValue<BigNumberish>,
-      kamiID: PromiseOrValue<BigNumberish>,
+      victimHarvID: PromiseOrValue<BigNumberish>,
+      killerID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
