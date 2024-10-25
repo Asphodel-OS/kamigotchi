@@ -17,8 +17,10 @@ import {
   map,
   Observable,
   of,
+  retry,
   Subject,
   take,
+  tap,
 } from 'rxjs';
 
 import { GodID, SyncState, SyncStatus } from 'engine/constants';
@@ -193,6 +195,16 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           transformWorldEvents,
           Boolean(fetchSystemCalls)
         ).pipe(
+          retry({
+            delay: 1000, // Delay 1 second between retries
+            count: 1, // Retry once
+            resetOnSuccess: true,
+          }),
+          tap({
+            error: (err) => {
+              console.warn('SyncWorker stream service dropped, trying to reconnect');
+            },
+          }),
           catchError((err) => {
             console.error('SyncWorker stream service error, falling back to RPC', err);
             return latestEventRPC$;
