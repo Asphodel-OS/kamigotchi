@@ -96,6 +96,7 @@ const Menu = styled.div`
   border-radius: 0.6vw;
   color: black;
   min-width: 6vw;
+  width: max-content;
 `;
 
 const MenuOption = styled.div<{ disabled?: boolean }>`
