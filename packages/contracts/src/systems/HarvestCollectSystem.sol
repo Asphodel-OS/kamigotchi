@@ -16,7 +16,7 @@ import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.harvest.collect"));
 
-// HarvestCollectSystem collects on an active pet production.
+// HarvestCollectSystem collects on an active pet harvest.
 contract HarvestCollectSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

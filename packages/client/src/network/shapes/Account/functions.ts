@@ -55,7 +55,7 @@ export const getAccessibleKamis = (account: Account): Kami[] => {
     if (isDead(kami) || isResting(kami)) return true;
     if (isUnrevealed(kami) || isOffWorld(kami)) return false;
     const accLoc = account?.roomIndex ?? 0;
-    const kamiLoc = kami.production?.node?.roomIndex ?? 0;
+    const kamiLoc = kami.harvest?.node?.roomIndex ?? 0;
     return accLoc === kamiLoc;
   });
 };

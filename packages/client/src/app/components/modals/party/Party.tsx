@@ -24,7 +24,7 @@ export function registerPartyModal() {
           const { network } = layers;
           const account = getAccountFromBurner(network, {
             inventory: true,
-            kamis: { production: true, traits: true },
+            kamis: { harvest: true, traits: true },
           });
 
           return {

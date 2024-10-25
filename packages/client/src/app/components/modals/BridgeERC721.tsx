@@ -154,7 +154,7 @@ export function registerERC721BridgeModal() {
               kamis.push(
                 getKami(world, components, entityID, {
                   // deaths: true,
-                  production: true,
+                  harvest: true,
                   traits: true,
                 })
               );
@@ -206,7 +206,7 @@ export function registerERC721BridgeModal() {
       const isDead = (kami: Kami): boolean => kami.state === 'DEAD';
 
       const isHarvesting = (kami: Kami): boolean =>
-        kami.state === 'HARVESTING' && kami.production != undefined;
+        kami.state === 'HARVESTING' && kami.harvest != undefined;
 
       const isResting = (kami: Kami): boolean => kami.state === 'RESTING';
 

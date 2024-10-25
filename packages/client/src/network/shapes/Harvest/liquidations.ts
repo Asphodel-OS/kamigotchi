@@ -67,9 +67,9 @@ export const calcThreshold = (attacker: Kami, defender: Kami): number => {
   return Math.floor(threshold);
 };
 
-// calculate the salvage of a kami having its current production liquidated
+// calculate the salvage of a kami having its current harvest liquidated
 const calcSalvage = (kami: Kami, balance?: number): number => {
-  if (!kami.production) return 0;
+  if (!kami.harvest) return 0;
 
   const config = kami.config.liquidation.salvage;
   const bonus = kami.bonuses.defense.salvage;
@@ -84,7 +84,7 @@ const calcSalvage = (kami: Kami, balance?: number): number => {
 
 // calculate the spoils of one kami from liquidating another kami
 const calcSpoils = (attacker: Kami, defender: Kami): number => {
-  if (!defender.production) return 0;
+  if (!defender.harvest) return 0;
 
   const config = attacker.config.liquidation.spoils;
   const bonus = attacker.bonuses.attack.spoils;
@@ -100,7 +100,7 @@ const calcSpoils = (attacker: Kami, defender: Kami): number => {
 
 // calculate the strain of one kami from liquidating another kami
 export const calcStrain = (attacker: Kami, defender: Kami): number => {
-  const harvest = defender.production;
+  const harvest = defender.harvest;
   if (!harvest) return 0;
 
   const spoils = calcSpoils(attacker, defender);

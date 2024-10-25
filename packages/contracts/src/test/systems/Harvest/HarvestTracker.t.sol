@@ -22,7 +22,7 @@ contract HarvestTrackerTest is SetupTemplate {
     uint32 nodeIndex = 1;
     _giveItem(alice, 1, 10);
 
-    uint256 prodID = _startProductionByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
     _fastForward(_idleRequirement + 50);
 
     // feed pet
@@ -30,12 +30,12 @@ contract HarvestTrackerTest is SetupTemplate {
     _fastForward(_idleRequirement + 50);
 
     // // collect harvest - does not inc time
-    _collectProduction(prodID);
+    _collectHarvest(prodID);
     assertEq(0, LibData.get(components, alice.id, 0, "HARVEST_TIME"));
 
     // // stop harvest - logs time
     _fastForward(_idleRequirement + 50);
-    _stopProduction(prodID);
+    _stopHarvest(prodID);
     assertEq(block.timestamp - startTime, LibData.get(components, alice.id, 0, "HARVEST_TIME"));
   }
 }

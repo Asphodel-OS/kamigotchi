@@ -23,24 +23,24 @@ contract ExperienceTest is SetupTemplate {
   // test that the experience gained from producing coins is accurate
   // TODO ?: move this to the harvesting test file
   function testExperienceGain() public {
-    // start all productions
+    // start all harvests
     _fastForward(_idleRequirement);
     for (uint i = 0; i < _numPets; i++) {
-      _startProduction(_kamiIDs[i], _nodeID);
+      _startHarvest(_kamiIDs[i], _nodeID);
     }
 
     // fast forward an hour a number of times and each time check that the resulting
     // experience gain matches the expected, based on how much is collected
     uint accountBalance;
-    uint productionID;
+    uint harvestID;
     uint collectedCoin;
     uint expectedExpGain;
     uint numLoops = 3;
     for (uint i = 0; i < numLoops; i++) {
       _fastForward(360);
       for (uint j = 0; j < _numPets; j++) {
-        productionID = LibKami.getProduction(components, _kamiIDs[j]);
-        _collectProduction(productionID);
+        harvestID = LibKami.getHarvest(components, _kamiIDs[j]);
+        _collectHarvest(harvestID);
         collectedCoin = _getAccountBalance(0) - accountBalance;
         expectedExpGain = collectedCoin; // may introduce config knob here to determine ratio
 
