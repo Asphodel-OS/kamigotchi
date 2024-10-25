@@ -43,9 +43,9 @@ import {
   storeEvents,
 } from './cache';
 import {
-  createLatestEventStreamService,
+  createKamigazeStreamService,
   createTransformWorldEventsFromStream,
-} from './streamClient';
+} from './kamigazeStreamClient';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,
@@ -187,7 +187,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     // Setup Stream Service -> RPC event stream fallback
     const transformWorldEvents = createTransformWorldEventsFromStream(decode);
     const latestEvent$ = streamServiceUrl
-      ? createLatestEventStreamService(
+      ? createKamigazeStreamService(
           streamServiceUrl,
           worldContract.address,
           transformWorldEvents,

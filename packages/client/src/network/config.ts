@@ -96,6 +96,7 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
       'wss://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
+    streamServiceUrl: 'https://kamigaze.test.asphodel.io',
 
     chainId: 4471190363524365,
     worldAddress: '0x513AD046381e08f6D31eA21C4c2765FB3Cf47bD9',
