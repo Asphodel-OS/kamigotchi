@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/http(.*)",
-      "destination": "https://yominet.rpc.caldera.xyz/http$1"
-    }
-  ]
-}
