@@ -78,10 +78,10 @@ export const calcIdleTime = (kami: Kami): number => {
   return Date.now() / 1000 - kami.time.last;
 };
 
-// calculate the time a production has been active since its last update
+// calculate the time a harvest has been active since its last update
 export const calcHarvestTime = (kami: Kami): number => {
-  if (!isHarvesting(kami) || !kami.production) return 0;
-  return calcHarvestIdleTime(kami.production);
+  if (!isHarvesting(kami) || !kami.harvest) return 0;
+  return calcHarvestIdleTime(kami.harvest);
 };
 
 // calculate the cooldown remaining on kami standard actions
@@ -125,8 +125,8 @@ export const calcHealthRate = (kami: Kami): number => {
 
 // calculate the rate of health drain while harvesting
 const calcHarvestingHealthRate = (kami: Kami): number => {
-  if (!kami.production) return 0;
-  const rate = calcStrainFromBalance(kami, kami.production.rate, false);
+  if (!kami.harvest) return 0;
+  const rate = calcStrainFromBalance(kami, kami.harvest.rate, false);
   return -1 * rate;
 };
 
@@ -141,10 +141,10 @@ const calcRestingHealthRate = (kami: Kami): number => {
 ////////////////
 // HARVEST
 
-// calculate the expected output from a pet production based on start time
+// calculate the expected output from a pet harvest based on start time
 export const calcOutput = (kami: Kami): number => {
-  if (!isHarvesting(kami) || !kami.production) return 0;
-  return kami.production.balance + calcHarvestNetBounty(kami.production);
+  if (!isHarvesting(kami) || !kami.harvest) return 0;
+  return kami.harvest.balance + calcHarvestNetBounty(kami.harvest);
 };
 
 ////////////////////

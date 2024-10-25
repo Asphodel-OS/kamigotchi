@@ -18,7 +18,7 @@ interface Props {
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
-// information ranging from current production or death as well as support common actions.
+// information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
   const { kami, description, subtext, actions, showBattery, showCooldown } = props;
   const { modals, setModals } = useVisibility();

@@ -91,8 +91,8 @@ export const getNode = (
   if (options?.kamis) {
     let kamis: Kami[] = [];
 
-    // get list of productions on this node
-    const productionEntityIndices = Array.from(
+    // get list of harvests on this node
+    const harvestEntityIndices = Array.from(
       runQuery([
         HasValue(EntityType, { value: 'HARVEST' }),
         HasValue(SourceID, { value: node.id }),
@@ -100,16 +100,16 @@ export const getNode = (
       ])
     );
 
-    // get list of kamis from list of productions
-    for (let i = 0; i < productionEntityIndices.length; i++) {
+    // get list of kamis from list of harvests
+    for (let i = 0; i < harvestEntityIndices.length; i++) {
       const kamiID = formatEntityID(
-        getComponentValue(HolderID, productionEntityIndices[i])?.value ?? ''
+        getComponentValue(HolderID, harvestEntityIndices[i])?.value ?? ''
       );
       const kamiEntityIndex = world.entityToIndex.get(kamiID);
       if (kamiEntityIndex) {
         kamis.push(
           getKami(world, components, kamiEntityIndex, {
-            production: true,
+            harvest: true,
             traits: true,
           })
         );

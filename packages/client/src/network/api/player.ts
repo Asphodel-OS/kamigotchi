@@ -201,24 +201,24 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   // PRODUCTIONS
 
-  // @dev retrieves the amount due from a passive deposit production and resets the starting point
-  function collectProduction(productionID: BigNumberish) {
-    return systems['system.harvest.collect'].executeTyped(productionID);
+  // @dev retrieves the amount due from a passive deposit harvest and resets the starting point
+  function collectProduction(harvestID: BigNumberish) {
+    return systems['system.harvest.collect'].executeTyped(harvestID);
   }
 
-  // @dev liquidates a production, if able to, using the specified pet
-  function liquidateProduction(productionID: BigNumberish, kamiID: BigNumberish) {
-    return systems['system.harvest.liquidate'].executeTyped(productionID, kamiID);
+  // @dev liquidates a harvest, if able to, using the specified pet
+  function liquidateProduction(harvestID: BigNumberish, kamiID: BigNumberish) {
+    return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID);
   }
 
-  // @dev starts a deposit production for a character. If none exists, it creates one.
+  // @dev starts a deposit harvest for a character. If none exists, it creates one.
   function startProduction(kamiID: BigNumberish, nodeID: BigNumberish) {
     return systems['system.harvest.start'].executeTyped(kamiID, nodeID);
   }
 
-  // @dev retrieves the amount due from a passive deposit production and stops it.
-  function stopProduction(productionID: BigNumberish) {
-    return systems['system.harvest.stop'].executeTyped(productionID);
+  // @dev retrieves the amount due from a passive deposit harvest and stops it.
+  function stopProduction(harvestID: BigNumberish) {
+    return systems['system.harvest.stop'].executeTyped(harvestID);
   }
 
   /////////////////
@@ -393,7 +393,7 @@ export function createPlayerAPI(systems: any) {
       reveal: revealPet,
       reroll: rerollPet,
     },
-    production: {
+    harvest: {
       collect: collectProduction,
       liquidate: liquidateProduction,
       start: startProduction,

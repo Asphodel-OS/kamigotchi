@@ -14,7 +14,7 @@ import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.harvest.liquidate"));
 
-// liquidates a target production using a player's pet.
+// liquidates a target harvest using a player's pet.
 contract HarvestLiquidateSystem is System {
   using SafeCastLib for uint256;
 
@@ -37,12 +37,12 @@ contract HarvestLiquidateSystem is System {
     require(LibKami.isHealthy(components, killerID), "kami starving..");
 
     // check that the two kamis share the same node
-    uint256 harvID = LibKami.getProduction(components, killerID);
+    uint256 harvID = LibKami.getHarvest(components, killerID);
     uint256 nodeID = LibHarvest.getNode(components, harvID);
     require(nodeID == LibHarvest.getNode(components, victimHarvID), "target too far");
     require(LibRoom.sharesRoom(components, accID, nodeID), "node too far");
 
-    // check that the pet is capable of liquidating the target production
+    // check that the pet is capable of liquidating the target harvest
     uint256 victimID = LibHarvest.getKami(components, victimHarvID);
     LibKami.sync(components, victimID);
     require(LibKill.isLiquidatableBy(components, victimID, killerID), "kami lacks violence (weak)");
@@ -74,7 +74,7 @@ contract HarvestLiquidateSystem is System {
     // drain the killer
     LibKami.drain(components, killerID, (strain + karma).toInt32());
 
-    // kill the target and shut off the production
+    // kill the target and shut off the harvest
     LibKami.kill(components, victimID);
     LibHarvest.stop(components, victimHarvID);
     LibKami.setLastActionTs(components, killerID, block.timestamp);

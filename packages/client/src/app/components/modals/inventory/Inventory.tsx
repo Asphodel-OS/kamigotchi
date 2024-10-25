@@ -29,7 +29,7 @@ export function registerInventoryModal() {
           const { network } = layers;
 
           const account = getAccountFromBurner(network, {
-            kamis: { flags: true, production: true },
+            kamis: { flags: true, harvest: true },
             inventory: true,
           });
           return {

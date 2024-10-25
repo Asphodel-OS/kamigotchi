@@ -19,25 +19,25 @@ contract HarvestTest is SetupTemplate {
   function testHarvestShape() public {
     uint32 nodeIndex = 1;
 
-    uint256 prodID = _startProductionByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
     _fastForward(_idleRequirement + 50);
 
-    _collectProduction(prodID);
+    _collectHarvest(prodID);
     _fastForward(_idleRequirement + 50);
 
-    _stopProduction(prodID);
+    _stopHarvest(prodID);
   }
 
   function testHarvestCollects() public {
     uint32 nodeIndex = 1;
     uint256 expectedTotal;
 
-    uint256 prodID = _startProductionByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
 
     for (uint256 i = 0; i < 10; i++) {
       _fastForward(_idleRequirement + 15 minutes);
       expectedTotal += LibHarvest.calcBounty(components, prodID);
-      _collectProduction(prodID);
+      _collectHarvest(prodID);
       assertEq(LibHarvest.getBalance(components, prodID), 0, "har bal mismatch"); // harvest balance resets upon collect
       assertEq(_getItemBal(alice, 1), expectedTotal, "output bal mismatch"); // total farmed goes to account
     }
@@ -52,7 +52,7 @@ contract HarvestTest is SetupTemplate {
 
     _fastForward(_idleRequirement + 15 minutes);
     expectedTotal += LibHarvest.calcBounty(components, prodID);
-    _stopProduction(prodID);
+    _stopHarvest(prodID);
     assertEq(LibHarvest.getBalance(components, prodID), 0, "post-stop mismatch");
     assertEq(_getItemBal(alice, 1), expectedTotal, "end total mismatch");
   }
@@ -215,22 +215,22 @@ contract HarvestTest is SetupTemplate {
 //     }
 //   }
 
-//   function testProductionCreation() public {
+//   function testHarvestCreation() public {
 //     // setup
 //     uint playerIndex = 0;
 //     uint kamiID = _mintKami(playerIndex);
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
-//     // create the production
+//     // create the harvest
 //     _fastForward(_idleRequirement);
 //     vm.prank(_getOperator(playerIndex));
-//     bytes memory productionIDFarm20 = _HarvestStartSystem.executeTyped(kamiID, nodeID);
-//     uint productionID = abi.decode(productionIDFarm20, (uint));
+//     bytes memory harvestIDFarm20 = _HarvestStartSystem.executeTyped(kamiID, nodeID);
+//     uint harvestID = abi.decode(harvestIDFarm20, (uint));
 
-//     // test that a production is created with the expected base fields
-//     assertEq(LibHarvest.getKami(components, productionID), kamiID);
-//     assertEq(LibHarvest.getNode(components, productionID), nodeID);
-//     assertEq(LibHarvest.getState(components, productionID), "ACTIVE");
+//     // test that a harvest is created with the expected base fields
+//     assertEq(LibHarvest.getKami(components, harvestID), kamiID);
+//     assertEq(LibHarvest.getNode(components, harvestID), nodeID);
+//     assertEq(LibHarvest.getState(components, harvestID), "ACTIVE");
 
 //     // test that the kami's state is updated
 //     assertEq(LibKami.getState(components, kamiID), "HARVESTING");
@@ -275,9 +275,9 @@ contract HarvestTest is SetupTemplate {
 //       expected *= 7; // strong
 //     else expected *= 3; // weak
 
-//     // start the production
+//     // start the harvest
 //     _fastForward(_idleRequirement);
-//     uint prodID = _startProduction(kamiID, nodeID);
+//     uint prodID = _startHarvest(kamiID, nodeID);
 
 //     // check multiplier
 //     assertEq(expected, _calcAffinityMultiplier(prodID, kamiID));
@@ -313,9 +313,9 @@ contract HarvestTest is SetupTemplate {
 //   /////////////////
 //   // CONSTRAINTS TESTS
 
-//   // test that a pet's productions cannot be started/stopped/collected from by
+//   // test that a pet's harvests cannot be started/stopped/collected from by
 //   // anyone aside from the owner of the pet
-//   function testProductionAccountConstraints() public {
+//   function testHarvestAccountConstraints() public {
 //     uint numKamis = 5;
 //     uint playerIndex = 0; // the player we're playing with
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
@@ -324,35 +324,35 @@ contract HarvestTest is SetupTemplate {
 //     uint[] memory kamiIDs = _mintKamis(playerIndex, numKamis);
 //     _fastForward(_idleRequirement);
 
-//     // start the productions for all kamis, using their account's operator
-//     uint[] memory productionIDs = new uint[](numKamis);
+//     // start the harvests for all kamis, using their account's operator
+//     uint[] memory harvestIDs = new uint[](numKamis);
 //     for (uint i = 0; i < numKamis; i++) {
-//       productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
+//       harvestIDs[i] = _startHarvest(kamiIDs[i], nodeID);
 //     }
 //     _fastForward(_idleRequirement);
 
-//     // check that other players cannot collect or stop productions
+//     // check that other players cannot collect or stop harvests
 //     for (uint i = 1; i < 10; i++) {
 //       vm.startPrank(_getOperator(i));
 //       for (uint j = 0; j < numKamis; j++) {
 //         vm.expectRevert("FarmCollect: kami not urs");
-//         _HarvestCollectSystem.executeTyped(productionIDs[j]);
+//         _HarvestCollectSystem.executeTyped(harvestIDs[j]);
 
 //         vm.expectRevert("FarmStop: kami not urs");
-//         _HarvestStopSystem.executeTyped(productionIDs[j]);
+//         _HarvestStopSystem.executeTyped(harvestIDs[j]);
 //       }
 //       vm.stopPrank();
 //     }
 
-//     // check that the owner can collect and stop productions
+//     // check that the owner can collect and stop harvests
 //     for (uint i = 0; i < numKamis; i++) {
-//       _collectProduction(productionIDs[i]);
+//       _collectHarvest(harvestIDs[i]);
 //       _fastForward(_idleRequirement);
-//       _stopProduction(productionIDs[i]);
+//       _stopHarvest(harvestIDs[i]);
 //     }
 //     _fastForward(_idleRequirement);
 
-//     // check that other players cannot start productions
+//     // check that other players cannot start harvests
 //     for (uint i = 1; i < 10; i++) {
 //       vm.startPrank(_getOperator(i));
 //       for (uint j = 0; j < numKamis; j++) {
@@ -364,7 +364,7 @@ contract HarvestTest is SetupTemplate {
 //   }
 
 //   // test roomIndex constraints apply for relevant harvesting functions
-//   function testProductionRoomIndexConstraints() public {
+//   function testHarvestRoomIndexConstraints() public {
 //     uint playerIndex = 0;
 //     uint numNodes = 3;
 //     uint numKamis = 5;
@@ -379,8 +379,8 @@ contract HarvestTest is SetupTemplate {
 //     uint[] memory kamiIDs = _mintKamis(playerIndex, numKamis);
 //     _fastForward(_idleRequirement);
 
-//     // test that pets can only start a production on node in current room, save productionIDs
-//     uint[] memory productionIDs = new uint[](numKamis);
+//     // test that pets can only start a harvest on node in current room, save harvestIDs
+//     uint[] memory harvestIDs = new uint[](numKamis);
 //     for (uint i = 0; i < numKamis; i++) {
 //       vm.expectRevert("FarmStart: node too far");
 //       vm.prank(_getOperator(playerIndex));
@@ -390,39 +390,39 @@ contract HarvestTest is SetupTemplate {
 //       vm.prank(_getOperator(playerIndex));
 //       _HarvestStartSystem.executeTyped(kamiIDs[i], nodeIDs[1]);
 
-//       productionIDs[i] = _startProduction(kamiIDs[i], nodeIDs[0]); // roomIndex 1, where account is
+//       harvestIDs[i] = _startHarvest(kamiIDs[i], nodeIDs[0]); // roomIndex 1, where account is
 //     }
 //     _fastForward(_idleRequirement);
 
-//     // test that productions can be collected from in the same room
-//     // NOTE: all productions at this point are in room 1
-//     for (uint i = 0; i < productionIDs.length; i++) {
-//       _collectProduction(productionIDs[i]);
+//     // test that harvests can be collected from in the same room
+//     // NOTE: all harvests at this point are in room 1
+//     for (uint i = 0; i < harvestIDs.length; i++) {
+//       _collectHarvest(harvestIDs[i]);
 //     }
 //     _fastForward(_idleRequirement);
 
-//     // move rooms and check that production cannot be collected from or stopped
+//     // move rooms and check that harvest cannot be collected from or stopped
 //     _moveAccount(playerIndex, 2);
-//     for (uint i = 0; i < productionIDs.length; i++) {
+//     for (uint i = 0; i < harvestIDs.length; i++) {
 //       vm.expectRevert("FarmCollect: node too far");
 //       vm.prank(_getOperator(playerIndex));
-//       _HarvestCollectSystem.executeTyped(productionIDs[i]);
+//       _HarvestCollectSystem.executeTyped(harvestIDs[i]);
 
 //       vm.expectRevert("FarmStop: node too far");
 //       vm.prank(_getOperator(playerIndex));
-//       _HarvestStopSystem.executeTyped(productionIDs[i]);
+//       _HarvestStopSystem.executeTyped(harvestIDs[i]);
 //     }
 
-//     // move back to room 1 and stop all productions
+//     // move back to room 1 and stop all harvests
 //     _moveAccount(playerIndex, 1);
-//     for (uint i = 0; i < productionIDs.length; i++) {
-//       _stopProduction(productionIDs[i]);
+//     for (uint i = 0; i < harvestIDs.length; i++) {
+//       _stopHarvest(harvestIDs[i]);
 //     }
 //   }
 
-//   // test that production operations are properly gated by kami states
+//   // test that harvest operations are properly gated by kami states
 //   // TODO: test 'STARVING' pseudo-state
-//   function testProductionStateConstraints() public {
+//   function testHarvestStateConstraints() public {
 //     // setup
 //     uint playerIndex = 0;
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
@@ -430,16 +430,16 @@ contract HarvestTest is SetupTemplate {
 //     uint kamiID = _mintKami(playerIndex);
 //     _fastForward(_idleRequirement);
 
-//     uint productionID = _startProduction(kamiID, nodeID);
+//     uint harvestID = _startHarvest(kamiID, nodeID);
 //     _fastForward(_idleRequirement);
 
-//     // attempt to start production again on current node
+//     // attempt to start harvest again on current node
 //     vm.prank(_getOperator(playerIndex));
 //     vm.expectRevert("FarmStart: pet must be resting");
 //     _HarvestStartSystem.executeTyped(kamiID, nodeID);
 
-//     // stop production..
-//     _stopProduction(productionID);
+//     // stop harvest..
+//     _stopHarvest(harvestID);
 //     _fastForward(_idleRequirement);
 
 //     // attempt to stop it again
@@ -447,7 +447,7 @@ contract HarvestTest is SetupTemplate {
 //     vm.expectRevert("FarmStop: kami must be harvesting");
 //     _HarvestStopSystem.executeTyped(productionID);
 
-//     // attempt to collect on stopped production
+//     // attempt to collect on stopped harvest
 //     vm.prank(_getOperator(playerIndex));
 //     vm.expectRevert("FarmCollect: kami must be harvesting");
 //     _HarvestCollectSystem.executeTyped(productionID);
@@ -455,11 +455,11 @@ contract HarvestTest is SetupTemplate {
 //     // loop through start|collect|stop a few times to make sure it still works
 //     uint numIterations = 20;
 //     for (uint i = 0; i < numIterations; i++) {
-//       _startProduction(kamiID, nodeID);
+//       _startHarvest(kamiID, nodeID);
 //       _fastForward(_idleRequirement);
-//       _collectProduction(productionID);
+//       _collectHarvest(harvestID);
 //       _fastForward(_idleRequirement);
-//       _stopProduction(productionID);
+//       _stopHarvest(harvestID);
 //       _fastForward(_idleRequirement);
 //     }
 //   }
@@ -467,21 +467,21 @@ contract HarvestTest is SetupTemplate {
 //   /////////////////
 //   // CALCULATION TESTS
 
-//   // test that productions yield the correct amount of funds
+//   // test that harvests yield the correct amount of funds
 //   // assume that rate calculations are correct
-//   function testProductionValues(uint seed) public {
+//   function testHarvestValues(uint seed) public {
 //     // setup
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 //     uint numKamis = (seed % 5) + 1;
 //     uint[] memory kamiIDs = _mintKamis(0, numKamis);
 //     _fastForward(_idleRequirement);
 
-//     // log the starting health of each kami and start its production
+//     // log the starting health of each kami and start its harvest
 //     uint[] memory kamiHealths = new uint[](numKamis);
-//     uint[] memory productionIDs = new uint[](numKamis);
+//     uint[] memory harvestIDs = new uint[](numKamis);
 //     for (uint i = 0; i < numKamis; i++) {
 //       kamiHealths[i] = uint(int(LibStat.getHealth(components, kamiIDs[i]).sync));
-//       productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
+//       harvestIDs[i] = _startHarvest(kamiIDs[i], nodeID);
 //     }
 
 //     // collect and check that collected amts and kami healths are as expected
@@ -499,8 +499,8 @@ contract HarvestTest is SetupTemplate {
 //       for (uint j = 0; j < numKamis; j++) {
 //         if (_isStarved[j]) continue;
 
-//         rate = LibHarvest.getRate(components, productionIDs[j]);
-//         assertEq(rate, _calcRate(productionIDs[j]));
+//         rate = LibHarvest.getRate(components, harvestIDs[j]);
+//         assertEq(rate, _calcRate(harvestIDs[j]));
 //         drain = _calcHealthDrain(_calcOutput(rate, timeDelta));
 
 //         if (kamiHealths[j] <= drain) {
@@ -509,7 +509,7 @@ contract HarvestTest is SetupTemplate {
 //           _HarvestCollectSystem.executeTyped(productionIDs[j]);
 //           _isStarved[j] = true;
 //         } else {
-//           _collectProduction(productionIDs[j]);
+//           _collectHarvest(harvestIDs[j]);
 //           assertEq(
 //             uint(int(LibStat.getHealth(components, kamiIDs[j]).sync)),
 //             kamiHealths[j] - drain
@@ -545,8 +545,8 @@ contract HarvestTest is SetupTemplate {
 //     _HealthComponent.set(kamiID, Stat(health.toInt32(), 0, 0, health.toInt32()));
 //     vm.stopPrank();
 
-//     // starting production
-//     uint prodID = _startProduction(kamiID, nodeID);
+//     // starting harvest
+//     uint prodID = _startHarvest(kamiID, nodeID);
 //     _fastForward(timeDelta);
 
 //     // checking calcs
@@ -554,7 +554,7 @@ contract HarvestTest is SetupTemplate {
 //     console.log(expectedOutput);
 //     assertEq((power * ratioNumerator) / ratioDenominator, _calcRate(prodID), "Rate calc mismatch");
 //     assertEq(expectedOutput, _calcOutput(_calcRate(prodID), timeDelta), "Output calc mismatch");
-//     _collectProduction(prodID);
+//     _collectHarvest(prodID);
 //     assertEq(expectedOutput, LibCoin.get(components, _getAccount(0)), "coin output mismatch");
 //   }
 
@@ -597,8 +597,8 @@ contract HarvestTest is SetupTemplate {
 //     assertEq(power, _PowerComponent.calcTotal(kamiID), "Power mismatch");
 //     assertEq(health, _HealthComponent.calcTotal(kamiID), "Health mismatch");
 
-//     // start production
-//     uint prodID = _startProduction(kamiID, nodeID);
+//     // start harvest
+//     uint prodID = _startHarvest(kamiID, nodeID);
 
 //     // checking calcs
 //     assertEq(
@@ -650,7 +650,7 @@ contract HarvestTest is SetupTemplate {
 //       else vm.expectRevert("FarmCollect: kami starving..");
 //       _HarvestCollectSystem.executeTyped(prodID);
 //     } else {
-//       _collectProduction(prodID);
+//       _collectHarvest(prodID);
 //       assertEq(
 //         uint(int(health)) - drain,
 //         uint(int(LibStat.getHealth(components, kamiID).sync)),
