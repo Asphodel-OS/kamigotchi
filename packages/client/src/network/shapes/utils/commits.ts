@@ -27,8 +27,8 @@ export const filterRevealable = <T extends Commit>(commits: T[], currBlock: numb
 };
 
 export const canReveal = (commit: Commit, currBlock: number | BigInt): boolean => {
-  // although commits are valid for 256 blocks, set to 250 for a small buffer
-  return commit.revealBlock + 250 > Number(currBlock);
+  // return commit.revealBlock + 250 > Number(currBlock);
+  return true; // blockhash doesnt expire
 };
 
 /////////////////
