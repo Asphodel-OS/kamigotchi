@@ -37,6 +37,7 @@ export function registerFundOperatorModal() {
       const { selectedAddress, apis } = useNetwork();
 
       const [isFunding, setIsFunding] = useState(true);
+      const [isDripping, setIsDripping] = useState(false);
       const [amount, setAmount] = useState(GasConstants.Full);
       const [statusText, setStatusText] = useState('');
       const [statusColor, setStatusColor] = useState('grey');
@@ -97,9 +98,11 @@ export function registerFundOperatorModal() {
       };
 
       const dripFaucet = async (address: string) => {
+        setIsDripping(true);
         await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
           address: address,
         });
+        setIsDripping(false);
       };
 
       /////////////////
@@ -130,7 +133,13 @@ export function registerFundOperatorModal() {
 
       const FaucetButton = () => {
         const addr = isFunding! ? kamiAccount.ownerAddress : kamiAccount.operatorAddress;
-        return <ActionButton onClick={() => dripFaucet(addr)} size='medium' text='Drip Faucet' />;
+        return (
+          <ActionButton
+            onClick={() => dripFaucet(addr)}
+            size='medium'
+            text={`Drip Faucet ${isDripping ? '(pending)' : ''}`}
+          />
+        );
       };
 
       const StateBox = (fundState: boolean) => {
