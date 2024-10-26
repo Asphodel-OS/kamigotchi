@@ -169,7 +169,7 @@ library LibGacha {
     uint256[] memory counts
   ) internal view returns (bool) {
     uint256 max = LibConfig.get(components, "GACHA_MAX_REROLLS");
-    for (uint256 i; i < counts.length; i++) if (counts[i] > max) return false;
+    for (uint256 i; i < counts.length; i++) if (counts[i] >= max) return false;
     return true;
   }
 
