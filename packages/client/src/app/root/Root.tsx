@@ -28,9 +28,8 @@ export const Root = observer((props: Props) => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
     console.log(`Loaded in { ${mode} } mode (chain ${defaultChain.id}).`);
+    localStorage.removeItem('wagmi.store');
   }, []);
-
-  localStorage.removeItem('wagmi.store');
 
   // show boot screen until network is loaded
   if (!mounted || !layers) return <BootScreen status='' />;
