@@ -91,9 +91,9 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
     jsonRpc:
-      'https://maze-jsonrpc-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+      'https://maze-jsonrpc-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
     wsRpc:
-      'wss://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.ane1-prod-nocsm.newmetric.xyz',
+      'wss://maze-ws-sequencer-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
