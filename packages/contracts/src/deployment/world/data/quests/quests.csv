@@ -5,7 +5,7 @@ Start by exploring your surroundings. You can move around by using the Map Menu 
 
 Work out how to move, and then move 3 times. Afterwards, I’ll have a reward for you! ",Well done. You’ll be rewarded for each Quest you complete - complements of the Kamigotchi World Tourism Association.,None.,Move 3 times,1 Gacha Ticket,,,
 ,1,,Ingame,Objective,MOVE,MIN,INC,Move 3 times,,3,No,,,,,,,,,,
-,1,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
+,1,,Ingame,Reward,ITEM,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 "Lethe Asphodel, vaitarna, Nedu",2,An ode to MUSU,Ingame,Quest,,,,,,,No,5,,"Your Kamigotchi can be used to harvest resources from this world. Open the harvesting menu in the top left bar and take a look. 
 
 You’ll need to move to another room to harvest, though. Use your Kamigotchi to Harvest for 5 minutes and I’ll have another reward for you.","Congratulations! You've made your first Harvest. Red Gakki Ribbons are hard to come by, so don’t waste it. ",Quest 11 completed. (Your First Kamigotchi),Harvest for >5 minutes.,1 XP Candy (Small),,,
@@ -87,14 +87,14 @@ Completing quests for me will raise your REPUTATION. As your REPUTATION grows, y
 
 For now, raise your REPUTATION to 25 if you want a second testnet Kamigotchi. ",,Have 10 Reputation,Have 25 Reputation,1 Gacha Ticket,,,
 ,12,,Ingame,Objective,REPUTATION,MIN,CURR,Have 25 REPUTATION,1,25,No,,,,,,,,,,
-,12,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
+,12,,Ingame,Reward,ITEM,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 Lethe Asphodel,13,Further Progression,Ingame,Quest,,,,,,,No,0,,"You’re getting started. 
 
 There are things to come for those with sufficient REPUTATION. Quests are one thing, but if you explore this world you’ll find other ways to raise your REPUTATION. 
 
 Raise your REPUTATION to 100 and then we’ll talk about other incentives. ",,Quest 12 Completed (Proving Yourself),Have 100 Reputation,1 Gacha Ticket,,,
 ,13,,Ingame,Objective,REPUTATION,MIN,CURR,Have 100 REPUTATION,1,100,No,,,,,,,,,,
-,13,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
+,13,,Ingame,Reward,ITEM,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 Nedu,14,The Kamigotchi Who Shall Be Named,Ingame,Quest,,,,,,,No,5,,"Deep within the forest lies a shrine - beside it is a board capable of renaming your Kamigotchi. Seek it out and bless one of your Kamigotchi with a new name. 
 
 ",,Have completed Supporting local businesses (9),Name a Kamigotchi using Holy Dust,Giftbox,,,
@@ -117,7 +117,7 @@ Did you know that liquidating Kamigotchi is much easier if the attacker has the 
 Go hunt down another 5 Kami. I’ll have something very special for you once you’re done. You’ll like it. ",,Quest 10 Completed (An Unforgiving World),Liquidate 5 Kamigotchi,Large XP Candy,,"I rlly like the idea of using dark-souls style covenants and would like to touch on this, but putting this one on hold until we develop that more",
 ,16,,Ingame,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,,,
 ,16,,Ingame,Objective,LIQUIDATE_TOTAL,MIN,INC,Liquidate 5 Kamigotchi,,5,No,,,,,,,,,,
-,16,,Ingame,Reward,ITEM,,,,,,No,,,,,,,,,,
+,16,,Ingame,Reward,ITEM,,,1x Large XP Candy,11203,1,No,,,,,,,,,,
 ,20,Kamigotchi Citizenship,Ingame,Quest,,,,,,,No,,,"You’ve truly proven yourself. 
 
 This world won’t last…….. but I can give you something that will. I need help here….. so work your reputation up to 300 and I’ll give you an NFT. We’ve got plans for this baby, but for now….. 
@@ -142,7 +142,7 @@ Lethe Asphodel,22,,Ingame,Reward,ITEM,,,1x Medium XP Candy,11202,1,No,,,,,,,,,,
 Lethe Asphodel,23,A dark forest…,Ingame,Quest,,,,,,,No,5,,Moonside is the time to hunt. Seek out and slay a Kamigotchi under the cover of darkness.... embrace the call of the night...,,Have completed A place of tranquility (22),Liquidate a Kamigotchi during nighttime,1x Large XP Candy,,,
 Lethe Asphodel,23,,Ingame,Requirement,QUEST,COMPLETE,,Have completed A place of tranquility (22),22,,No,,,,,,,,,,
 Lethe Asphodel,23,,Ingame,Objective,LIQ_WHEN_MOONSIDE,MIN,INC,Liquidate 1 Kamigotchi during moonside,,1,No,,,,,,,,,,
-Lethe Asphodel,23,,Ingame,Reward,ITEM,,,,,,No,,,,,,,,,,
+Lethe Asphodel,23,,Ingame,Reward,ITEM,,,1x Large XP Candy,11203,1,No,,,,,,,,,,
 Lethe Asphodel,24,Feeding them up…,Ingame,Quest,,,,,,,No,5,,"As you've probably noticed, use of food is key to efficient Harvesting. The more you spend, the more you can earn.....
 
 Now you're getting into the groove of it. Feed Kamigotchi thirty times in total to show me you understand how eating works.",,Have completed Got MUSU? (15),Feed a Kamigotchi 30 times,2x Giftbox,,,
@@ -156,18 +156,18 @@ Lethe Asphodel,25,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are m
 Lethe Asphodel,25,,Ingame,Objective,MOVE,MIN,INC,Move 100 times,,100,No,,,,,,,,,,
 Lethe Asphodel,25,,Ingame,Reward,ITEM,,,2x Medium XP Candy,11202,2,No,,,,,,,,,,
 Lethe Asphodel,26,Searching for somebody,Ingame,Quest,,,,Reroll 10 times,,10,No,5,,"Seems like you're struggling to find the right Kamigotchi. Well, here's a consolation prize at least....",,Rerolled at least 10 times,Reroll 100 times,1x Giftbox,,,
-Lethe Asphodel,26,,Ingame,Requirement,KAMI_REROLL,MIN,,Have rerolled at least 1 times,,1,No,,,,,,,,,,
+Lethe Asphodel,26,,Ingame,Requirement,KAMI_REROLL,MIN,,Have rerolled at least 3 times,,1,No,,,,,,,,,,
 Lethe Asphodel,26,,Ingame,Objective,KAMI_REROLL,MIN,INC,Reroll 5 times,,5,No,,,,,,,,,,
 Lethe Asphodel,26,,Ingame,Reward,ITEM,,,2x Giftbox,21001,2,No,,,,,,,,,,
 Lethe Asphodel,27,Expanding Your Team,Ingame,Quest,,,,Have 150 REPUTATION,,,No,,,"If you can make it to 150 REPUTATION, I'm comfortable giving you access to another Kamigotchi. It just makes sense to support you more as you help the community.…",,,Have 150 REPUTATION,Gacha Ticket,,,
 ,27,,Ingame,Objective,REPUTATION,MIN,CURR,Have 150 REPUTATION,1,150,No,,,,,,,,,,
-,27,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
+,27,,Ingame,Reward,ITEM,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 Lethe Asphodel,28," Another One",Ingame,Quest,,,,Have 200 REPUTATION,,,No,,,"You'll really need to dedicate yourself to completing Quests if if you want your fifth Kami. But of course, this is only a step on the road to 300 REPUTATION… That's the real reward, trust us. ",,,Have 150 REPUTATION,Gacha Ticket,,,
 ,28,,Ingame,Objective,REPUTATION,MIN,CURR,Have 200 REPUTATION,1,200,No,,,,,,,,,,
-,28,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
+,28,,Ingame,Reward,ITEM,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 Lethe Asphodel,29,"A Full House ",Ingame,Quest,,,,Have 250 REPUTATION,,,No,,,"This is the last Ticket it'll be possible to get within this world. If you can make it this far, you're very close to snatching that Passport… you can do this.",,,Have 150 REPUTATION,Gacha Ticket,,,
 ,29,,Ingame,Objective,REPUTATION,MIN,CURR,Have 250 REPUTATION,1,250,No,,,,,,,,,,
-,29,,Ingame,Reward,MINT20,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
+,29,,Ingame,Reward,ITEM,,,1 Gacha Ticket,2,1,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",31,Kamigotchi Development 301,Ingame,Quest,,,,Have a level 30 Kamigotchi,,30,No,10,,"You're really getting into the rhythm of managing your Kamigotchi. I hope by now you've started to pay careful attention to the choices you make when developing your Kami.... It can be difficult to decide whether to focus on one tree or spread your attention across all of them.
 
 Anyway: Now for a Level 30 Kami. You can do it.",,"Have completed ""There are even more levels to this"" (7)",Have a level 30 Kamigotchi,2x Huge XP Candy,,,
@@ -210,13 +210,13 @@ For now, bring me some and I'll give you an XP Candy. Deal?",,"Have completed ""
 Yes, I know it's degrading.",,"Have completed ""Building Materials"" (32)",Give 10 Scrap Metal,1x Large XP Candy,,,
 "Lethe Asphodel, Nedu",37,,Ingame,Requirement,QUEST,COMPLETE,,"Have completed ""Building Materials"" (32) ",32,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",37,,Ingame,Objective,ITEM_BURN,MIN,INC,Give 10 Scrap Metal,105,10,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",37,,Ingame,Reward,ITEM,,,,,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",37,,Ingame,Reward,ITEM,,,1x Large XP Candy,11203,1,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",38,Research Samples,Ingame,Quest,,,,Give 5 Better Ice Creams,,,No,5,,"I don't know if you trust Mina.... but I have no idea where Mina got those Ice Creams from, or how you're even able to eat them. 
 
 I need samples of the things, because I'm very interested in finding out. Bring me some. Fast. This is important to me...",,"Have completed ""Supporting Local Businesses"" (9) ",Give 5 Better Ice Creams,1x Large XP Candy,,,
 "Lethe Asphodel, Nedu",38,,Ingame,Requirement,QUEST,COMPLETE,,"Have completed ""Supporting Local Businesses"" (9)",9,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",38,,Ingame,Objective,ITEM_BURN,MIN,INC,Give 5 Better Ice Creams,21202,5,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",38,,Ingame,Reward,ITEM,,,,,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",38,,Ingame,Reward,ITEM,,,1x Large XP Candy,11203,1,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",39,Industrial Quantities,Ingame,Quest,,,,Give 20 Sticks and 20 Stones,,,No,5,,"You're really becoming a pro at this scavenging thing. 
 
 Well, time to practice the basics. Can you bring me uh, a ton of wood and stone? I need more. For that project of mine. We're almost there.....",,"Have completed ""Scrap Metal Hunter"" (37)",Give 20 Sticks and 20 Stones,3x Large XP Candy,,,
@@ -253,11 +253,11 @@ Next up, I need you to search the core of the scrapyard to the west. Maybe you'l
 There's one other rare flower I need. It can be found around the centre of the forest.... but I regret to inform you that it's even rarer than mint. Best of luck!",,"Have completed ""Elusive Herbs"" (36)",Give 1 Black Poppy,15 REPUTATION,,,
 "Lethe Asphodel, Nedu",45,,Ingame,Requirement,QUEST,COMPLETE,,"Have completed ""Elusive Herbs"" (36)",36,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",45,,Ingame,Objective,ITEM_BURN,MIN,INC,Give 1 Black Poppy,109,1,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",46,Alongside the stream...,Ingame,Quest,,,,Give 3 Daffodils,11012,3,No,5,,"It looks like filling the Torii Gate with MUSU has opened up a new area by the riverside. I think you should be able to find Daffodils there. Do you mind wandering down to take a look? Yes, I know, even more flowers..... I'm starting a collection.",,Holy Gate Collab Quest Completed,Give 3 Daffodils,2 XP Candy (Large),,,
+"Lethe Asphodel, Nedu",46,Alongside the stream...,Ingame,Quest,,,,Give 3 Daffodils,,,No,5,,"It looks like filling the Torii Gate with MUSU has opened up a new area by the riverside. I think you should be able to find Daffodils there. Do you mind wandering down to take a look? Yes, I know, even more flowers..... I'm starting a collection.",,Holy Gate Collab Quest Completed,Give 3 Daffodils,2 XP Candy (Large),,,
 "Lethe Asphodel, Nedu",46,,Ingame,Requirement,GOAL,COMPLETE,,Holy Gate Collab Quest Completed,6,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",46,,Ingame,Objective,ITEM_BURN,MIN,INC,Give 3 Daffodils,110,3,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",46,,Ingame,Reward,ITEM,,,2 XP Candy (Large),11203,2,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",47,Defiance of Common Sense,Ingame,Quest,,,,Give 15 Scrolls of Shop Teleportation,119,15,No,5,,"It seems that Mina has now started selling some sort of teleportation device. That shouldn't be possible at all. I'm going to need a whole bunch of these to reverse engineer whatever she's up to..... Can you go and grab me 15, please?",,Expanding Inventory Collab Quest Completed,Give 15 Scrolls of Shop Teleportation,1 XP Candy (Huge),,,
+"Lethe Asphodel, Nedu",47,Defiance of Common Sense,Ingame,Quest,,,,Give 15 Scrolls of Shop Teleportation,,,No,5,,"It seems that Mina has now started selling some sort of teleportation device. That shouldn't be possible at all. I'm going to need a whole bunch of these to reverse engineer whatever she's up to..... Can you go and grab me 15, please?",,Expanding Inventory Collab Quest Completed,Give 15 Scrolls of Shop Teleportation,1 XP Candy (Huge),,,
 "Lethe Asphodel, Nedu",47,,Ingame,Requirement,GOAL,COMPLETE,,Expanding Inventory Collab Quest Completed,5,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",47,,Ingame,Objective,ITEM_BURN,MIN,INC,"Give 15 Scrolls of Shop Teleportation ",21100,15,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",47,,Ingame,Reward,ITEM,,,1 XP Candy (Huge),11204,1,No,,,,,,,,,,

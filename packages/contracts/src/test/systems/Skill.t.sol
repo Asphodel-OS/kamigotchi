@@ -5,8 +5,12 @@ import "test/utils/SetupTemplate.t.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
 contract SkillTest is SetupTemplate {
+  uint32 resetItemIndex = 11001;
+
   function setUp() public override {
     super.setUp();
+
+    _createConsumable(resetItemIndex, "SKILL_RESET");
   }
 
   function _initSkillConfigs() internal override {
@@ -43,43 +47,45 @@ contract SkillTest is SetupTemplate {
 
   function testSkillReset() public {
     // create skills (total points: 12)
-    _createSkill(1, "ACCOUNT", 0, 1);
-    _createSkill(2, "ACCOUNT", 1, 1);
+    _createSkill(1, "KAMI", 0, 1);
+    _createSkill(2, "KAMI", 1, 1);
     _createSkillBonus(2, "BONUS_A", 2);
-    _createSkill(3, "ACCOUNT", 1, 5);
+    _createSkill(3, "KAMI", 1, 5);
     _createSkillBonus(3, "BONUS_A", 3);
-    _createSkill(4, "ACCOUNT", 3, 2);
+    _createSkill(4, "KAMI", 3, 2);
     _createSkillBonus(4, "BONUS_B", 5);
 
+    uint256 kamiID = _mintKami(alice);
+
     // give skill points
-    _giveSkillPoint(alice.id, 12);
+    _giveSkillPoint(kamiID, 12 - 1);
 
     // upgrade skills
-    _upgradeSkill(alice, alice.id, 1);
-    _upgradeSkill(alice, alice.id, 2);
-    for (uint256 i; i < 5; i++) _upgradeSkill(alice, alice.id, 3);
-    for (uint256 i; i < 2; i++) _upgradeSkill(alice, alice.id, 4);
+    _upgradeSkill(alice, kamiID, 1);
+    _upgradeSkill(alice, kamiID, 2);
+    for (uint256 i; i < 5; i++) _upgradeSkill(alice, kamiID, 3);
+    for (uint256 i; i < 2; i++) _upgradeSkill(alice, kamiID, 4);
 
     // check bonuses and points
-    assertEq(LibBonus.getForUint256(components, "BONUS_A", alice.id), 17);
-    assertEq(LibBonus.getForUint256(components, "BONUS_B", alice.id), 10);
-    assertEq(LibSkill.getPoints(components, alice.id), 0);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 1), 1);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 2), 1);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 3), 5);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 4), 2);
+    assertEq(LibBonus.getForUint256(components, "BONUS_A", kamiID), 17);
+    assertEq(LibBonus.getForUint256(components, "BONUS_B", kamiID), 10);
+    assertEq(LibSkill.getPoints(components, kamiID), 0);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 1), 1);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 2), 1);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 3), 5);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 4), 2);
 
     // reset skills
-    _resetSkills(alice.id);
+    _resetSkills(alice, kamiID);
 
     // check bonuses and points
-    assertEq(LibBonus.getForUint256(components, "BONUS_A", alice.id), 0);
-    assertEq(LibBonus.getForUint256(components, "BONUS_B", alice.id), 0);
-    assertEq(LibSkill.getPoints(components, alice.id), 12);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 1), 0);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 2), 0);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 3), 0);
-    assertEq(LibGetter.getBalanceOf(components, alice.id, "SKILL", 4), 0);
+    assertEq(LibBonus.getForUint256(components, "BONUS_A", kamiID), 0);
+    assertEq(LibBonus.getForUint256(components, "BONUS_B", kamiID), 0);
+    assertEq(LibSkill.getPoints(components, kamiID), 12);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 1), 0);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 2), 0);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 3), 0);
+    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 4), 0);
   }
 
   // test whether skill upgrades are properly gated by skill point availability
@@ -129,45 +135,47 @@ contract SkillTest is SetupTemplate {
   }
 
   function testSkillTreeBasic() public {
-    uint256 regID1 = _createSkill(1, "ACCOUNT", "TREE", 1, 5, 0);
-    uint256 regID2 = _createSkill(2, "ACCOUNT", "TREE", 2, 5, 0);
-    uint256 regIDTiered = _createSkill(3, "ACCOUNT", "TREE", 1, 5, 1);
+    uint256 regID1 = _createSkill(1, "KAMI", "TREE", 1, 5, 0);
+    uint256 regID2 = _createSkill(2, "KAMI", "TREE", 2, 5, 0);
+    uint256 regIDTiered = _createSkill(3, "KAMI", "TREE", 1, 5, 1);
     string memory treeType = LibSkillRegistry.genTreeType("TREE");
+
+    uint256 kamiID = _mintKami(alice);
 
     // giving account skill points to spend
     vm.prank(deployer);
-    _SkillPointComponent.set(alice.id, 100);
+    _SkillPointComponent.set(kamiID, 100);
 
     // test blank
-    assertEq(LibBonus.getForUint256(components, treeType, alice.id), 0);
-    assertTrue(LibSkill.meetsTreePrerequisites(components, alice.id, regID1));
-    assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regIDTiered));
+    assertEq(LibBonus.getForUint256(components, treeType, kamiID), 0);
+    assertTrue(LibSkill.meetsTreePrerequisites(components, kamiID, regID1));
+    assertFalse(LibSkill.meetsTreePrerequisites(components, kamiID, regIDTiered));
 
     // test upgrade
-    _upgradeSkill(alice, alice.id, 1);
-    assertEq(LibBonus.getForUint256(components, treeType, alice.id), 1);
-    _upgradeSkill(alice, alice.id, 2); // costs 2
-    assertEq(LibBonus.getForUint256(components, treeType, alice.id), 3);
+    _upgradeSkill(alice, kamiID, 1);
+    assertEq(LibBonus.getForUint256(components, treeType, kamiID), 1);
+    _upgradeSkill(alice, kamiID, 2); // costs 2
+    assertEq(LibBonus.getForUint256(components, treeType, kamiID), 3);
 
     // test fail (total 3 points, 5 needed)
-    assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regIDTiered));
+    assertFalse(LibSkill.meetsTreePrerequisites(components, kamiID, regIDTiered));
     vm.prank(alice.operator);
     vm.expectRevert("SkillUpgrade: unmet prerequisites");
-    _SkillUpgradeSystem.executeTyped(alice.id, 3);
+    _SkillUpgradeSystem.executeTyped(kamiID, 3);
 
     // test upgrade (5 points)
-    _upgradeSkill(alice, alice.id, 2);
-    assertEq(LibBonus.getForUint256(components, treeType, alice.id), 5);
-    assertTrue(LibSkill.meetsTreePrerequisites(components, alice.id, regIDTiered));
-    _upgradeSkill(alice, alice.id, 3);
+    _upgradeSkill(alice, kamiID, 2);
+    assertEq(LibBonus.getForUint256(components, treeType, kamiID), 5);
+    assertTrue(LibSkill.meetsTreePrerequisites(components, kamiID, regIDTiered));
+    _upgradeSkill(alice, kamiID, 3);
 
     // test reset skills
-    _resetSkills(alice.id);
-    assertEq(LibBonus.getForUint256(components, treeType, alice.id), 0);
-    assertFalse(LibSkill.meetsTreePrerequisites(components, alice.id, regIDTiered));
+    _resetSkills(alice, kamiID);
+    assertEq(LibBonus.getForUint256(components, treeType, kamiID), 0);
+    assertFalse(LibSkill.meetsTreePrerequisites(components, kamiID, regIDTiered));
     vm.prank(alice.operator);
     vm.expectRevert("SkillUpgrade: unmet prerequisites");
-    _SkillUpgradeSystem.executeTyped(alice.id, 3);
+    _SkillUpgradeSystem.executeTyped(kamiID, 3);
   }
 
   function testSkillTreeMultiple() public {
@@ -242,5 +250,16 @@ contract SkillTest is SetupTemplate {
     assertEq(LibBonus.getFor(components, "HARVEST_DRAIN", kamiID), 0);
     _upgradeSkill(alice, kamiID, 1);
     assertEq(LibBonus.getFor(components, "HARVEST_DRAIN", kamiID), 10);
+  }
+
+  ////////////////
+  // UTILS
+
+  function _resetSkills(PlayerAccount memory acc, uint256 targetID) internal {
+    _giveItem(acc, resetItemIndex, 1);
+
+    vm.startPrank(acc.operator);
+    _KamiUseSkillResetSystem.executeTyped(targetID, resetItemIndex);
+    vm.stopPrank();
   }
 }

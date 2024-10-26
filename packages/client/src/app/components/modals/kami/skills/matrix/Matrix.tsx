@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { SkillTrees, TierRequirements } from 'constants/skills/trees';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
@@ -12,7 +12,6 @@ interface Props {
   kami: Kami;
   skills: Map<number, Skill>;
   setDisplayed: (skillIndex: number) => void;
-  reset: (kami: Kami) => void; // testnet world 1.5, to remove
   utils: {
     getUpgradeError: (index: number) => string[] | undefined;
     getTreePoints: (tree: string) => number;
@@ -60,7 +59,6 @@ export const Matrix = (props: Props) => {
         })}
         <PointsText>
           {kami.skillPoints} unused point{kami.skillPoints != 1 ? 's' : ''}
-          <ActionButton text='Reset Skills' onClick={() => props.reset(kami)} />
         </PointsText>
       </Content>
     </Container>

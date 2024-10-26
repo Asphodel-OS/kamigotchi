@@ -28,13 +28,13 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface SkillResetSystemInterface extends utils.Interface {
+export interface KamiUseSkillResetSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256)": FunctionFragment;
+    "executeTyped(uint256,uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -71,7 +71,7 @@ export interface SkillResetSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -176,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface SkillResetSystem extends BaseContract {
+export interface KamiUseSkillResetSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SkillResetSystemInterface;
+  interface: KamiUseSkillResetSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -222,7 +222,8 @@ export interface SkillResetSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      holderID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -266,7 +267,8 @@ export interface SkillResetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    holderID: PromiseOrValue<BigNumberish>,
+    kamiID: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -306,7 +308,8 @@ export interface SkillResetSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      holderID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -375,7 +378,8 @@ export interface SkillResetSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      holderID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -420,7 +424,8 @@ export interface SkillResetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      holderID: PromiseOrValue<BigNumberish>,
+      kamiID: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

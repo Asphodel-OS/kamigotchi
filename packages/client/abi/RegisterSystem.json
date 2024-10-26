@@ -144,25 +144,6 @@
     },
     {
       "type": "function",
-      "name": "requirement",
-      "inputs": [
-        {
-          "name": "args",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -256,7 +237,6 @@
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "requirement(bytes)": "8b246a5b",
     "transferOwnership(address)": "f2fde38b"
   }
 }

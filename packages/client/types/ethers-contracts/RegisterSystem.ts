@@ -39,7 +39,6 @@ export interface RegisterSystemInterface extends utils.Interface {
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "requirement(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -54,7 +53,6 @@ export interface RegisterSystemInterface extends utils.Interface {
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "requirement"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -94,10 +92,6 @@ export interface RegisterSystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "requirement",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -130,10 +124,6 @@ export interface RegisterSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requirement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -262,11 +252,6 @@ export interface RegisterSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    requirement(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -314,11 +299,6 @@ export interface RegisterSystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  requirement(
-    args: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -357,11 +337,6 @@ export interface RegisterSystem extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    requirement(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -439,11 +414,6 @@ export interface RegisterSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    requirement(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -490,11 +460,6 @@ export interface RegisterSystem extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requirement(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
