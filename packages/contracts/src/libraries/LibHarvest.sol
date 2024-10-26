@@ -26,8 +26,9 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
-import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibNode } from "libraries/LibNode.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant RATE_PREC = 6;
 
@@ -181,7 +182,7 @@ library LibHarvest {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
 
-    uint256 power = LibKami.calcTotalPower(components, kamiID).toUint256();
+    uint256 power = LibStat.getTotal(components, "POWER", kamiID).toUint256();
     uint256 ratio = config[2]; // fertility core
     uint256 boost = calcEfficacy(components, id, config[6], kamiID);
     uint256 precision = 10 ** (RATE_PREC - (config[3] + config[7]));
@@ -197,7 +198,7 @@ library LibHarvest {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
 
-    uint256 base = config[0] * LibKami.calcTotalViolence(components, kamiID).toUint256(); // odd application of nudge slot
+    uint256 base = config[0] * LibStat.getTotal(components, "VIOLENCE", kamiID).toUint256(); // odd application of nudge slot
     uint256 nudge = calcIntensityDuration(components, id) / 60; // minutes, rounded down
     uint256 ratio = config[2]; // period, in minutes. scaled to accomodate current skill balancing
     uint256 boost = config[6];

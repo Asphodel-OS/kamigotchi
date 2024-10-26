@@ -480,7 +480,7 @@ contract HarvestTest is SetupTemplate {
 //     uint[] memory kamiHealths = new uint[](numKamis);
 //     uint[] memory harvestIDs = new uint[](numKamis);
 //     for (uint i = 0; i < numKamis; i++) {
-//       kamiHealths[i] = uint(int(LibStat.getHealth(components, kamiIDs[i]).sync));
+//       kamiHealths[i] = uint(int(LibStat.get(components, "HEALTH",  kamiIDs[i]).sync));
 //       harvestIDs[i] = _startHarvest(kamiIDs[i], nodeID);
 //     }
 
@@ -511,7 +511,7 @@ contract HarvestTest is SetupTemplate {
 //         } else {
 //           _collectHarvest(harvestIDs[j]);
 //           assertEq(
-//             uint(int(LibStat.getHealth(components, kamiIDs[j]).sync)),
+//             uint(int(LibStat.get(components, "HEALTH",  kamiIDs[j]).sync)),
 //             kamiHealths[j] - drain
 //           );
 //           assertEq(
@@ -603,7 +603,7 @@ contract HarvestTest is SetupTemplate {
 //     // checking calcs
 //     assertEq(
 //       _calcPower(kamiID),
-//       uint(int(LibKami.calcTotalPower(components, kamiID))),
+//       uint(int(LibStat.getTotal(components, "POWER", kamiID))),
 //       "Power calc mismatch"
 //     );
 //     assertEq(
@@ -653,7 +653,7 @@ contract HarvestTest is SetupTemplate {
 //       _collectHarvest(prodID);
 //       assertEq(
 //         uint(int(health)) - drain,
-//         uint(int(LibStat.getHealth(components, kamiID).sync)),
+//         uint(int(LibStat.get(components, "HEALTH",  kamiID).sync)),
 //         "health output mismatch"
 //       );
 //       assertEq(

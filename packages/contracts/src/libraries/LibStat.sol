@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Stat, StatLib } from "solecs/components/types/Stat.sol";
@@ -16,29 +17,65 @@ import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComp
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 
+import { LibBonus } from "libraries/LibBonus.sol";
+
 // LibStat manages the retrieval and update of stats. This library differs from
 // others in the sense that it does not manage a single entity type, but rather
 // any entity that can have stats. Only handles StatComponents.
 library LibStat {
   using LibComp for StatComponent;
+  using LibString for string;
+  using SafeCastLib for int256;
 
   /////////////////
   // INTERACTIONS
 
-  /// @notice Apply the set stats from one entity to another
-  /// @dev we do not ever expect Base to be set for a consumable
-  function applyAll(IUintComp components, uint256 fromID, uint256 toID) internal {
-    uint256[] memory compIDs = getStatCompIDs();
-    for (uint256 i = 0; i < compIDs.length; i++)
-      applySingle(StatComponent(getAddrByID(components, compIDs[i])), fromID, toID);
+  /// @notice syncs and sets a Stat
+  function sync(
+    IUintComp components,
+    string memory type_,
+    int32 amt,
+    uint256 id
+  ) internal returns (int32) {
+    StatComponent statComp = getStatComp(components, type_);
+    Stat memory base = statComp.safeGet(id);
+    Stat memory withBonus = add(base, getBonuses(components, type_, id));
+
+    // sync with total bonus applied, but don't edit any other base stat
+    base.sync = calcSync(calcTotal(withBonus), base.sync, amt);
+
+    statComp.set(id, base);
+    return base.sync;
   }
 
-  function applySingle(StatComponent statComp, uint256 fromID, uint256 toID) internal {
-    Stat memory fromStat = statComp.safeGet(fromID);
-    if (StatLib.isZero(fromStat)) return; // nothing to apply
+  /// @notice Apply the set stats from one entity to another
+  /// @dev we do not ever expect Base to be set for a consumable
+  function applyAll(IUintComp components, uint256 deltaID, uint256 baseID) internal {
+    uint256[] memory compIDs = getStatCompIDs();
+    for (uint256 i = 0; i < compIDs.length; i++)
+      applySingle(components, compIDs[i], deltaID, baseID);
+  }
 
-    Stat memory toStat = statComp.safeGet(toID);
-    statComp.set(toID, add(fromStat, toStat));
+  function applySingle(
+    IUintComp components,
+    uint256 statCompID,
+    uint256 deltaID,
+    uint256 baseID
+  ) internal {
+    StatComponent statComp = StatComponent(getAddrByID(components, statCompID));
+    Stat memory delta = statComp.safeGet(deltaID);
+    if (StatLib.isZero(delta)) return; // nothing to apply
+
+    Stat memory baseStat = statComp.safeGet(baseID);
+    Stat memory result = add(baseStat, delta);
+
+    // syncing
+    if (delta.sync > 0) {
+      Stat memory withBonus = add(result, getBonuses(components, compIDToType(statCompID), baseID));
+      result.sync = calcSync(calcTotal(withBonus), result.sync, 0);
+    }
+
+    statComp.set(baseID, result);
   }
 
   // Copy the set stats from one entity to another.
@@ -57,100 +94,91 @@ library LibStat {
     for (uint256 i = 0; i < compIDs.length; i++) getCompByID(components, compIDs[i]).remove(id);
   }
 
-  // adjust the shift field of a specified stat type
-  function shift(
-    IUintComp components,
-    uint256 id,
-    string memory type_,
-    int32 amt
-  ) internal returns (int32) {
-    return getStatComponent(components, type_).shift(id, amt);
-  }
-
-  // adjust the multiplier field of a specified stat type (1e3 decimals of precision)
-  function boost(
-    IUintComp components,
-    uint256 id,
-    string memory type_,
-    int32 amt
-  ) internal returns (int32) {
-    return getStatComponent(components, type_).boost(id, amt);
-  }
-
   /////////////////
   // CALCULATIONS
 
-  /// @notice Add two stats together
-  /// @dev we do not ever expect Base change
-  function add(Stat memory fromStat, Stat memory toStat) internal pure returns (Stat memory) {
-    Stat memory result = toStat;
-    result.shift += fromStat.shift;
-    result.boost += fromStat.boost;
-    if (fromStat.sync > 0) {
-      int32 max = StatLib.calcTotal(result);
-      result.sync = StatLib.sync(result, fromStat.sync, max);
-    }
-    return result;
+  function calcTotal(Stat memory value) internal pure returns (int32) {
+    int32 total = ((1e3 + value.boost) * (value.base + value.shift)) / 1e3;
+    return (total > 0) ? total : int32(0);
   }
 
-  /// @notice syncs a Stat, but allow for negative value
-  /// @dev used for 0 check; do add 0 check for write
-  function syncSigned(Stat memory stat, int32 amt) internal pure returns (int32) {
-    int32 result = stat.sync + amt;
-    int32 max = StatLib.calcTotal(stat);
-    if (result > max) return max;
-    return result;
+  function calcSync(int32 max, int32 curr, int32 delta) internal pure returns (int32 syncResult) {
+    syncResult = curr + delta;
+    if (syncResult < 0) syncResult = 0;
+    else if (syncResult > max) syncResult = max;
   }
 
   /////////////////
   // GETTERS
 
-  function getHarmony(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, HarmonyCompID)).safeGet(id);
+  function get(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (Stat memory) {
+    return get(components, getStatComp(components, type_), type_, id);
   }
 
-  function getHarmonyTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddrByID(components, HarmonyCompID)).calcTotal(id);
+  function get(
+    IUintComp components,
+    StatComponent statComp,
+    string memory type_,
+    uint256 id
+  ) internal view returns (Stat memory) {
+    Stat memory base = statComp.safeGet(id);
+    return add(base, getBonuses(components, type_, id));
   }
 
-  function getHealth(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, HealthCompID)).safeGet(id);
+  function getTotal(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (int32) {
+    return calcTotal(get(components, type_, id));
   }
 
-  function getHealthTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddrByID(components, HealthCompID)).calcTotal(id);
+  /// @notice gets current value (sync)
+  /// @dev must be called after syncing. does not query bonus
+  function getCurrent(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (int32) {
+    return getStatComp(components, type_).safeGet(id).sync;
   }
 
-  function getPower(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, PowerCompID)).safeGet(id);
+  function getWithoutBonus(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (Stat memory) {
+    return getStatComp(components, type_).safeGet(id);
   }
 
-  function getPowerTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddrByID(components, PowerCompID)).calcTotal(id);
+  function getBonuses(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (Stat memory) {
+    return Stat(0, getShiftBonus(components, type_, id), getBoostBonus(components, type_, id), 0);
   }
 
-  function getSlots(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, SlotsCompID)).safeGet(id);
+  function getShiftBonus(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (int32) {
+    return
+      LibBonus.getFor(components, string("STAT_").concat(type_).concat("_SHIFT"), id).toInt32();
   }
 
-  function getSlotsTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddrByID(components, SlotsCompID)).calcTotal(id);
-  }
-
-  function getStamina(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, StaminaCompID)).safeGet(id);
-  }
-
-  function getStaminaTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddrByID(components, StaminaCompID)).calcTotal(id);
-  }
-
-  function getViolence(IUintComp components, uint256 id) internal view returns (Stat memory) {
-    return StatComponent(getAddrByID(components, ViolenceCompID)).safeGet(id);
-  }
-
-  function getViolenceTotal(IUintComp components, uint256 id) internal view returns (int32) {
-    return StatComponent(getAddrByID(components, ViolenceCompID)).calcTotal(id);
+  function getBoostBonus(
+    IUintComp components,
+    string memory type_,
+    uint256 id
+  ) internal view returns (int32) {
+    return
+      LibBonus.getFor(components, string("STAT_").concat(type_).concat("_SHIFT"), id).toInt32();
   }
 
   function getStatCompIDs() internal pure returns (uint256[] memory) {
@@ -166,6 +194,13 @@ library LibStat {
 
   /////////////////
   // SETTERS
+
+  // note: setting sync manually for any non-zero value breaks abstraction
+  function setSyncZero(IUintComp components, string memory type_, uint256 id) internal {
+    Stat memory stat = getWithoutBonus(components, type_, id);
+    stat.sync = 0;
+    getStatComp(components, type_).set(id, stat);
+  }
 
   // set the harmony stat struct of an entity
   function setHarmony(IUintComp components, uint256 id, Stat memory value) internal {
@@ -225,22 +260,39 @@ library LibStat {
   }
 
   ////////////////////
-  // COMPONENT GETTERS
+  // UTILS
 
-  function getStatComponent(
+  /// @dev base is never expected to change
+  function add(Stat memory base, Stat memory toAdd) internal pure returns (Stat memory) {
+    return
+      Stat(base.base, base.shift + toAdd.shift, base.boost + toAdd.boost, base.sync + toAdd.sync);
+  }
+
+  function typeToCompID(string memory type_) internal pure returns (uint256) {
+    if (LibString.eq(type_, "HEALTH")) return HealthCompID;
+    if (LibString.eq(type_, "POWER")) return PowerCompID;
+    if (LibString.eq(type_, "HARMONY")) return HarmonyCompID;
+    if (LibString.eq(type_, "VIOLENCE")) return ViolenceCompID;
+    if (LibString.eq(type_, "SLOTS")) return SlotsCompID;
+    if (LibString.eq(type_, "STAMINA")) return StaminaCompID;
+    revert("LibStat: invalid stat type");
+  }
+
+  // tbh kill me this is a mess get rid of it soon tm
+  function compIDToType(uint256 compID) internal pure returns (string memory) {
+    if (compID == HealthCompID) return "HEALTH";
+    if (compID == PowerCompID) return "POWER";
+    if (compID == HarmonyCompID) return "HARMONY";
+    if (compID == ViolenceCompID) return "VIOLENCE";
+    if (compID == SlotsCompID) return "SLOTS";
+    if (compID == StaminaCompID) return "STAMINA";
+    revert("LibStat: invalid stat type");
+  }
+
+  function getStatComp(
     IUintComp components,
     string memory type_
-  ) public view returns (StatComponent) {
-    if (LibString.eq(type_, "HEALTH"))
-      return HealthComponent(getAddrByID(components, HealthCompID));
-    if (LibString.eq(type_, "POWER")) return PowerComponent(getAddrByID(components, PowerCompID));
-    if (LibString.eq(type_, "HARMONY"))
-      return HarmonyComponent(getAddrByID(components, HarmonyCompID));
-    if (LibString.eq(type_, "VIOLENCE"))
-      return ViolenceComponent(getAddrByID(components, ViolenceCompID));
-    if (LibString.eq(type_, "SLOTS")) return SlotsComponent(getAddrByID(components, SlotsCompID));
-    if (LibString.eq(type_, "STAMINA"))
-      return StaminaComponent(getAddrByID(components, StaminaCompID));
-    revert("LibStat: invalid stat type");
+  ) internal view returns (StatComponent) {
+    return StatComponent(getAddrByID(components, typeToCompID(type_)));
   }
 }

@@ -47,11 +47,11 @@ contract TraitsTest is SetupTemplate {
     uint[] memory traits = LibKami.getTraits(components, kamiID);
     for (uint i = 0; i < traits.length; i++) {
       traitRegistryID = traits[i];
-      health += LibStat.getHealth(components, traitRegistryID).base;
-      power += LibStat.getPower(components, traitRegistryID).base;
-      violence += LibStat.getViolence(components, traitRegistryID).base;
-      harmony += LibStat.getHarmony(components, traitRegistryID).base;
-      slots += LibStat.getSlots(components, traitRegistryID).base;
+      health += LibStat.get(components, "HEALTH", traitRegistryID).base;
+      power += LibStat.get(components, "POWER", traitRegistryID).base;
+      violence += LibStat.get(components, "VIOLENCE", traitRegistryID).base;
+      harmony += LibStat.get(components, "HARMONY", traitRegistryID).base;
+      slots += LibStat.get(components, "SLOTS", traitRegistryID).base;
     }
 
     int32[] memory stats = new int32[](5);
@@ -83,11 +83,11 @@ contract TraitsTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       kamiID = kamiIDs[i];
       stats = _calcStatsFromTraits(kamiID);
-      assertEq(stats[0], LibStat.getHealth(components, kamiID).base);
-      assertEq(stats[1], LibStat.getPower(components, kamiID).base);
-      assertEq(stats[2], LibStat.getViolence(components, kamiID).base);
-      assertEq(stats[3], LibStat.getHarmony(components, kamiID).base);
-      assertEq(stats[4], LibStat.getSlots(components, kamiID).base);
+      assertEq(stats[0], LibStat.get(components, "HEALTH", kamiID).base);
+      assertEq(stats[1], LibStat.get(components, "POWER", kamiID).base);
+      assertEq(stats[2], LibStat.get(components, "VIOLENCE", kamiID).base);
+      assertEq(stats[3], LibStat.get(components, "HARMONY", kamiID).base);
+      assertEq(stats[4], LibStat.get(components, "SLOTS", kamiID).base);
     }
   }
 

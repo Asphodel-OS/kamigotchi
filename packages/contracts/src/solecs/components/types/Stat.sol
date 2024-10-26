@@ -32,7 +32,7 @@ library StatLib {
   ///////////////
   // CALCS
 
-  function calcTotal(Stat memory value) internal pure returns (int32) {
+  function deprecatedCalcTotal(Stat memory value) internal pure returns (int32) {
     int32 total = ((1e3 + value.boost) * (value.base + value.shift)) / 1e3;
     return (total > 0) ? total : int32(0);
   }
@@ -45,7 +45,7 @@ library StatLib {
     return value.boost + amt;
   }
 
-  function sync(Stat memory value, int32 amt, int32 max) internal pure returns (int32) {
+  function deprecatedSync(Stat memory value, int32 amt, int32 max) internal pure returns (int32) {
     value.sync += amt;
     if (value.sync < 0) value.sync = 0;
     if (value.sync > max) value.sync = max;

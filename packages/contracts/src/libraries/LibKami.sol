@@ -56,36 +56,6 @@ library LibKami {
   ///////////////////////
   // ENTITY INTERACTIONS
 
-  /// @notice create a pet entity and set its base fields
-  /// @dev assumes index is not in use
-  function create(IUintComp components, uint256 accID, uint32 index) internal returns (uint256) {
-    uint256 id = genID(index);
-    LibEntityType.set(components, id, "KAMI");
-    IndexKamiComponent(getAddrByID(components, IndexKamiCompID)).set(id, index);
-    setOwner(components, id, accID);
-    setMediaURI(components, id, UNREVEALED_URI);
-    setState(components, id, "UNREVEALED");
-    setStartTs(components, id, block.timestamp);
-
-    LibExperience.setLevel(components, id, 1);
-    LibExperience.set(components, id, 0);
-    LibSkill.setPoints(components, id, 1);
-
-    string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
-    setName(components, id, name);
-    return id;
-  }
-
-  /// @notice called when a kami is revealed
-  /// @dev most of the reveal logic (generation) is in the Kami721RevealSystem itself
-  ///       this function is for components saved directly on the Kami Entity
-  function reveal(IUintComp components, uint256 id, string memory uri) internal {
-    revive(components, id);
-    setStats(components, id);
-    setMediaURI(components, id, uri);
-    setLastTs(components, id, block.timestamp);
-  }
-
   /// @notice bridging a kami Outside => MUD. Does not handle account details
   function stake(IUintComp components, uint256 id, uint256 accID) internal {
     setState(components, id, "RESTING");
@@ -101,20 +71,19 @@ library LibKami {
   // Drains HP from a kami. Opposite of healing
   function drain(IUintComp components, uint256 id, int32 amt) internal {
     if (amt == 0) return;
-    HealthComponent(getAddrByID(components, HealthCompID)).sync(id, -1 * amt);
+    LibStat.sync(components, "HEALTH", -1 * amt, id);
   }
 
   // heal the kami by a given amount
   function heal(IUintComp components, uint256 id, int32 amt) internal {
-    if (amt == 0) return; // skip if no healing
-    int32 total = calcTotalHealth(components, id);
-    HealthComponent(getAddrByID(components, HealthCompID)).sync(id, amt, total);
+    if (amt == 0) return;
+    LibStat.sync(components, "HEALTH", amt, id);
   }
 
   // Update a kami's health to 0 and its state to DEAD
   function kill(IUintComp components, uint256 id) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("DEAD"));
-    HealthComponent(getAddrByID(components, HealthCompID)).sync(id, -(1 << 31));
+    LibStat.setSyncZero(components, "HEALTH", id);
   }
 
   // Update a kami's state to RESTING
@@ -153,7 +122,7 @@ library LibKami {
   function calcMetabolism(IUintComp components, uint256 id) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
     uint256 boostBonus = LibBonus.getFor(components, "REST_METABOLISM_BOOST", id).toUint256();
-    uint256 base = calcTotalHarmony(components, id).toUint256();
+    uint256 base = LibStat.getTotal(components, "HARMONY", id).toUint256();
     uint256 ratio = config[2]; // metabolism core
     uint256 boost = config[6] + boostBonus;
     uint256 precision = 10 ** (METABOLISM_PREC - (config[3] + config[7]));
@@ -179,42 +148,11 @@ library LibKami {
     uint256 core = config[2];
     uint256 boost = uint(config[6].toInt256() + bonusBoost);
 
-    uint256 harmony = calcTotalHarmony(components, id).toUint256(); // prec 0
+    uint256 harmony = LibStat.getTotal(components, "HARMONY", id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);
     uint256 divisor = precision * (harmony + config[0]); // config[0] is hijacked
 
     return (amt * core * boost + (divisor - 1)) / divisor;
-  }
-
-  /////////////////
-  // STAT CALCS
-
-  // Calculate and return the total harmony of a kami (including equips)
-  function calcTotalHarmony(IUintComp components, uint256 id) internal view returns (int32) {
-    int32 total = LibStat.getHarmonyTotal(components, id);
-    int256 bonusShift = LibBonus.getFor(components, "STAT_HARMONY_SHIFT", id);
-    return total + bonusShift.toInt32();
-  }
-
-  // Calculate and return the total health of a kami (including equips)
-  function calcTotalHealth(IUintComp components, uint256 id) internal view returns (int32) {
-    int32 total = LibStat.getHealthTotal(components, id);
-    int256 bonusShift = LibBonus.getFor(components, "STAT_HEALTH_SHIFT", id);
-    return total + bonusShift.toInt32();
-  }
-
-  // Calculate and return the total power of a kami (including equips)
-  function calcTotalPower(IUintComp components, uint256 id) internal view returns (int32) {
-    int32 total = LibStat.getPowerTotal(components, id);
-    int256 bonusShift = LibBonus.getFor(components, "STAT_POWER_SHIFT", id);
-    return total + bonusShift.toInt32();
-  }
-
-  // Calculate and return the total violence of a kami (including equips)
-  function calcTotalViolence(IUintComp components, uint256 id) internal view returns (int32) {
-    int32 total = LibStat.getViolenceTotal(components, id);
-    int256 bonusShift = LibBonus.getFor(components, "STAT_VIOLENCE_SHIFT", id);
-    return total + bonusShift.toInt32();
   }
 
   /////////////////
@@ -264,11 +202,6 @@ library LibKami {
     return getCompByID(components, StateCompID).eqString(id, "DEAD");
   }
 
-  // Check whether the kami is fully healed.
-  function isFull(IUintComp components, uint256 id) internal view returns (bool) {
-    return calcTotalHealth(components, id) == LibStat.getHealth(components, id).sync;
-  }
-
   // Check whether a kami is harvesting.
   function isHarvesting(IUintComp components, uint256 id) internal view returns (bool result) {
     return getCompByID(components, StateCompID).eqString(id, "HARVESTING");
@@ -276,7 +209,7 @@ library LibKami {
 
   // Check whether the current health of a kami is greater than 0. Assume health synced this block.
   function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibStat.getHealth(components, id).sync > 0;
+    return LibStat.get(components, "HEALTH", id).sync > 0;
   }
 
   // Check whether a kami's ERC721 token is in the game world
@@ -343,41 +276,6 @@ library LibKami {
 
   function setState(IUintComp components, uint256 id, string memory state) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
-  }
-
-  // set a kami's stats from its traits
-  function setStats(IUintComp components, uint256 id) internal {
-    string[] memory configs = new string[](5);
-    configs[0] = "KAMI_BASE_HEALTH";
-    configs[1] = "KAMI_BASE_POWER";
-    configs[2] = "KAMI_BASE_VIOLENCE";
-    configs[3] = "KAMI_BASE_HARMONY";
-    configs[4] = "KAMI_BASE_SLOTS";
-    uint256[] memory configVals = LibConfig.get(components, configs);
-    int32 health = configVals[0].toInt32();
-    int32 power = configVals[1].toInt32();
-    int32 violence = configVals[2].toInt32();
-    int32 harmony = configVals[3].toInt32();
-    int32 slots = configVals[4].toInt32();
-
-    // sum the stats from all traits
-    uint256 traitRegistryID;
-    uint256[] memory traits = getTraits(components, id);
-    for (uint256 i = 0; i < traits.length; i++) {
-      traitRegistryID = traits[i];
-      health += LibStat.getHealth(components, traitRegistryID).base;
-      power += LibStat.getPower(components, traitRegistryID).base;
-      violence += LibStat.getViolence(components, traitRegistryID).base;
-      harmony += LibStat.getHarmony(components, traitRegistryID).base;
-      slots += LibStat.getSlots(components, traitRegistryID).base;
-    }
-
-    // set the stats
-    LibStat.setHealth(components, id, Stat(health, 0, 0, health));
-    LibStat.setPower(components, id, Stat(power, 0, 0, 0));
-    LibStat.setViolence(components, id, Stat(violence, 0, 0, 0));
-    LibStat.setHarmony(components, id, Stat(harmony, 0, 0, 0));
-    LibStat.setSlots(components, id, Stat(slots, 0, 0, slots));
   }
 
   /////////////////

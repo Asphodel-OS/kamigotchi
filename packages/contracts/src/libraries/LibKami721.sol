@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
@@ -22,6 +23,8 @@ uint256 constant NUM_TRAITS = 5;
 /// @notice used for Kami721 related systems and interactions
 /// @dev    systems do not interact with the ERC721 directly, only through this lib
 library LibKami721 {
+  using SafeCastLib for int32;
+
   ////////////////////////
   // INTERACTIONS
 
@@ -140,13 +143,21 @@ library LibKami721 {
     result = string(
       abi.encodePacked(
         result,
-        _traitToString("Health", uint256(uint32(LibStat.getHealthTotal(components, kamiID))), true)
+        _traitToString(
+          "Health",
+          LibStat.getStatComp(components, "HEALTH").safeGet(kamiID).base.toUint256(),
+          true
+        )
       )
     );
     result = string(
       abi.encodePacked(
         result,
-        _traitToString("Power", uint256(uint32(LibStat.getPowerTotal(components, kamiID))), true)
+        _traitToString(
+          "Power",
+          LibStat.getStatComp(components, "POWER").safeGet(kamiID).base.toUint256(),
+          true
+        )
       )
     );
     result = string(
@@ -154,7 +165,7 @@ library LibKami721 {
         result,
         _traitToString(
           "Violence",
-          uint256(uint32(LibStat.getViolenceTotal(components, kamiID))),
+          LibStat.getStatComp(components, "VIOLENCE").safeGet(kamiID).base.toUint256(),
           true
         )
       )
@@ -164,7 +175,7 @@ library LibKami721 {
         result,
         _traitToString(
           "Harmony",
-          uint256(uint32(LibStat.getHarmonyTotal(components, kamiID))),
+          LibStat.getStatComp(components, "HARMONY").safeGet(kamiID).base.toUint256(),
           true
         )
       )

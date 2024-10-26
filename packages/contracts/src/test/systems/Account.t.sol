@@ -114,11 +114,7 @@ contract Reverter {
     return LibAccount.getByOperator(components, addr);
   }
 
-  function syncAndUseStamina(
-    IUint256Component components,
-    uint256 id,
-    int32 amt
-  ) public returns (int32) {
-    return LibAccount.syncAndUseStamina(components, id, amt);
+  function syncAndUseStamina(IUint256Component components, uint256 id, int32 amt) public {
+    LibAccount.syncAndUseStamina(components, id, amt);
   }
 }
