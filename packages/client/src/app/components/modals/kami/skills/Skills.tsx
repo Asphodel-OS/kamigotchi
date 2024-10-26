@@ -17,7 +17,6 @@ interface Props {
   skills: Skill[]; // registry skills
   actions: {
     upgrade: (skill: Skill) => void;
-    reset: (kami: Kami) => void; // testnet world 1.5, to remove
   };
   utils: {
     getUpgradeError: (index: number, registry: Map<number, Skill>) => string[] | undefined;
@@ -70,7 +69,6 @@ export const Skills = (props: Props) => {
       <Matrix
         kami={kami}
         skills={skillMap}
-        reset={props.actions.reset} // testnet world 1.5, to remove
         setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
         utils={{
           getUpgradeError: (index: number) => utils.getUpgradeError(index, skillMap),

@@ -4,11 +4,6 @@ import { BigNumberish, utils } from 'ethers';
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(systems: any) {
-  // temporary: reset skills
-  function resetSkills(kamiID: BigNumberish) {
-    return systems['system.skill.reset'].executeTyped(kamiID);
-  }
-
   /////////////////
   //     KAMI
 
@@ -36,8 +31,8 @@ export function createPlayerAPI(systems: any) {
     return systems['system.kami.use.renamePotion'].executeTyped(kamiID, itemIndex);
   }
 
-  function useTransferrerPet(petID: BigNumberish, itemIndex: number) {
-    return systems['system.pet.use.transferrer'].executeTyped(petID, itemIndex);
+  function useSkillResetPet(kamiID: BigNumberish, itemIndex: number) {
+    return systems['system.kami.use.skill.reset'].executeTyped(kamiID, itemIndex);
   }
 
   // upgrade a pet's skill
@@ -333,7 +328,6 @@ export function createPlayerAPI(systems: any) {
   }
 
   return {
-    resetSkills: resetSkills,
     pet: {
       level: levelPet,
       name: namePet,
@@ -342,7 +336,7 @@ export function createPlayerAPI(systems: any) {
         food: useFoodPet,
         renamePotion: useRenamePotionPet,
         revive: useRevivePet,
-        transferrer: useTransferrerPet,
+        skillReset: useSkillResetPet,
       },
     },
     account: {

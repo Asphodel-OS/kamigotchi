@@ -82,7 +82,6 @@
     { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
-    { "name": "SkillResetSystem", "writeAccess": ["*"] },
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
@@ -534,6 +533,26 @@
     {
       "name": "KamiUseReviveSystem",
       "writeAccess": ["HealthComponent", "StateComponent", "TimeLastComponent", "ValueComponent"]
+    },
+    {
+      "name": "KamiUseSkillResetSystem",
+      "writeAccess": [
+        "EntityTypeComponent",
+        "HealthComponent",
+        "IdHolderComponent",
+        "IDParentComponent",
+        "IDTypeComponent",
+        "IdSourceComponent",
+        "IDOwnsSkillComponent",
+        "IndexSkillComponent",
+        "LevelComponent",
+        "SkillPointComponent",
+        "TimeLastComponent",
+        "TimeStartComponent",
+        "TimeResetComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
     },
     {
       "name": "HarvestCollectSystem",

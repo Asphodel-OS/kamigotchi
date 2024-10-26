@@ -440,12 +440,6 @@ abstract contract SetupTemplate is TestSetupImports {
     component.set(id, abi.encode(value));
   }
 
-  function _resetSkills(uint256 targetID) internal {
-    vm.startPrank(deployer);
-    LibSkill.resetAll(components, targetID);
-    vm.stopPrank();
-  }
-
   /////////////////
   // WORLD POPULATION
 
@@ -626,6 +620,14 @@ abstract contract SetupTemplate is TestSetupImports {
     _IsRegistryComponent.set(id);
     _IndexItemComponent.set(id, index);
 
+    vm.stopPrank();
+  }
+
+  function _createConsumable(uint32 index, string memory type_) public returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = __ItemRegistrySystem.createConsumable(
+      abi.encode(index, "KAMI", "name", "description", type_, "media")
+    );
     vm.stopPrank();
   }
 

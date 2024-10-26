@@ -132,18 +132,6 @@ export function registerKamiModal() {
         // updateKamiAfterAction(actionIndex);
       };
 
-      // testnet world 1.5, to remove
-      const resetSkills = (kami: Kami) => {
-        const actionIndex = actions.add({
-          action: 'SkillReset',
-          params: [kami.id],
-          description: `Resetting Skills for ${kami.name}`,
-          execute: async () => {
-            return api.player.resetSkills(kami.id);
-          },
-        });
-      };
-
       /////////////////
       // DISPLAY
 
@@ -164,7 +152,7 @@ export function registerKamiModal() {
             <Skills
               data={{ account, kami, owner }}
               skills={getRegistrySkills(world, components)}
-              actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill), reset: resetSkills }}
+              actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill) }}
               utils={{
                 getUpgradeError: (index: number, registry: Map<number, Skill>) =>
                   getSkillUpgradeError(world, components, index, kami, registry),
