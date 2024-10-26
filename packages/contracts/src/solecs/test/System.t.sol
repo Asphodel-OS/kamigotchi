@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { DSTest } from "ds-test/test.sol";
-import { World } from "../World.sol";
-import { IUint256Component } from "../interfaces/IUint256Component.sol";
+import "./BaseTester.t.sol";
+
 import { IWorld } from "../interfaces/IWorld.sol";
 import { System } from "../System.sol";
 
@@ -26,14 +25,13 @@ contract SampleSystem is System {
   }
 }
 
-contract SystemTest is DSTest {
+contract SystemTest is BaseTester {
   IUint256Component public systems;
-  World internal world;
-  IUint256Component public components;
   SampleSystem system;
 
-  function setUp() public {
-    world = new World();
+  function setUp() public override {
+    super.setUp();
+
     components = world.components();
     systems = world.systems();
 

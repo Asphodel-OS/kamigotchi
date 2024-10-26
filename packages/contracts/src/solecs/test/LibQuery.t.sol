@@ -1,20 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { DSTest } from "ds-test/test.sol";
-import { Vm } from "forge-std/Vm.sol";
-import { console } from "forge-std/console.sol";
+import "./BaseTester.t.sol";
 
-import { World } from "../World.sol";
 import { LibQuery, QueryFragment, QueryType } from "../LibQuery.sol";
 import { TestComponent1, TestComponent2, TestComponent3 } from "./components/TestComponent.sol";
 import { PrototypeTagComponent } from "./components/PrototypeTagComponent.sol";
 import { FromPrototypeComponent } from "./components/FromPrototypeComponent.sol";
 import { OwnedByEntityComponent } from "./components/OwnedByEntityComponent.sol";
 
-contract LibQueryTest is DSTest {
-  Vm internal immutable vm = Vm(HEVM_ADDRESS);
-
+contract LibQueryTest is BaseTester {
   address payable[] internal users;
 
   TestComponent1 internal component1;
@@ -25,15 +20,21 @@ contract LibQueryTest is DSTest {
   FromPrototypeComponent internal fromPrototype;
   OwnedByEntityComponent internal ownedByEntity;
 
-  function setUp() public {
-    World world = new World();
-    world.init();
+  function setUp() public override {
+    super.setUp();
+
     component1 = new TestComponent1(address(world));
+    world.registerComponent(address(component1), component1.ID());
     component2 = new TestComponent2(address(world));
+    world.registerComponent(address(component2), component2.ID());
     component3 = new TestComponent3(address(world));
+    world.registerComponent(address(component3), component3.ID());
     prototypeTag = new PrototypeTagComponent(address(world));
+    world.registerComponent(address(prototypeTag), prototypeTag.ID());
     fromPrototype = new FromPrototypeComponent(address(world));
+    world.registerComponent(address(fromPrototype), fromPrototype.ID());
     ownedByEntity = new OwnedByEntityComponent(address(world));
+    world.registerComponent(address(ownedByEntity), ownedByEntity.ID());
   }
 
   ///////////////////////

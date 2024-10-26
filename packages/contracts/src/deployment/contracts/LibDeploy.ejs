@@ -35,6 +35,7 @@ IComponent comp;
 <% components.forEach(component=> { %>
 console.log("Deploying <%= component.comp %>");
 comp = new <%= component.comp %>(address(result.world));
+result.world.registerComponent(address(comp), <%= component.comp %>ID);
 console.log(address(comp));
 <% });%>
 }
