@@ -30,6 +30,8 @@ export const Root = observer((props: Props) => {
     console.log(`Loaded in { ${mode} } mode (chain ${defaultChain.id}).`);
   }, []);
 
+  localStorage.removeItem('wagmi.store');
+
   // show boot screen until network is loaded
   if (!mounted || !layers) return <BootScreen status='' />;
   return (
