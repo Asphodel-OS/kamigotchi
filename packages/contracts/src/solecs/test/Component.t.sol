@@ -1,24 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
-import { DSTestPlus } from "solmate/test/utils/DSTestPlus.sol";
-import { Vm } from "forge-std/Vm.sol";
-import { console } from "forge-std/console.sol";
+
+import "./BaseTester.t.sol";
 
 import { BareComponent } from "../BareComponent.sol";
 import { TestComponent } from "./components/TestComponent.sol";
-import { World } from "../World.sol";
 
-contract ComponentTest is DSTestPlus {
-  Vm internal immutable vm = Vm(HEVM_ADDRESS);
-
-  address payable[] internal users;
-
+contract ComponentTest is BaseTester {
   TestComponent internal component;
 
-  function setUp() public {
-    World world = new World();
-    world.init();
+  function setUp() public override {
+    super.setUp();
+
     component = new TestComponent(address(world));
+    world.registerComponent(address(component), component.ID());
   }
 
   function testSetAndGetValue() public {

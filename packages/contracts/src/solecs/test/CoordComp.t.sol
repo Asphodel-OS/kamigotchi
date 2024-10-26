@@ -1,26 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { DSTestPlus } from "solmate/test/utils/DSTestPlus.sol";
-import { Vm } from "forge-std/Vm.sol";
-import { console } from "forge-std/console.sol";
+import "./BaseTester.t.sol";
 
-import { World } from "solecs/World.sol";
 import { Coord, CoordLib } from "solecs/components/types/Coord.sol";
 import { CoordComponent } from "solecs/components/CoordComponent.sol";
 
-contract CoordCompTest is DSTestPlus {
-  Vm internal immutable vm = Vm(HEVM_ADDRESS);
-
-  address deployer = address(1);
+contract CoordCompTest is BaseTester {
   CoordComponent coordComp;
 
-  function setUp() public {
-    vm.startPrank(deployer);
-    World world = new World();
-    world.init();
+  function setUp() public override {
+    super.setUp();
+
     coordComp = new CoordComponent(address(world), uint256(keccak256("test.Coord")));
-    vm.stopPrank();
+    world.registerComponent(address(coordComp), uint256(keccak256("test.Coord")));
   }
 
   //////////////
@@ -79,23 +72,29 @@ contract CoordCompTest is DSTestPlus {
     assertEq(coordComp.get(ids), ogBatch);
 
     // test setting permissions
+    vm.prank(address(1));
     vm.expectRevert();
     coordComp.set(0, Coord(1, 1, 1));
     Coord[] memory batch = new Coord[](2);
     batch[0] = Coord(1, 1, 1);
     batch[1] = Coord(2, 2, 2);
+    vm.prank(address(1));
     vm.expectRevert();
     coordComp.set(ids, batch);
 
     // test removing permissions
+    vm.prank(address(1));
     vm.expectRevert();
     coordComp.remove(id);
+    vm.prank(address(1));
     vm.expectRevert();
     coordComp.remove(ids);
 
     // test extract permissions
+    vm.prank(address(1));
     vm.expectRevert();
     coordComp.extract(id);
+    vm.prank(address(1));
     vm.expectRevert();
     coordComp.extract(ids);
   }

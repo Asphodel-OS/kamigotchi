@@ -32,9 +32,6 @@ abstract contract BareComponent is IComponent, OwnableWritable {
   constructor(address _world, uint256 _id) OwnableWritable() {
     id = _id;
     world = _world;
-
-    // register component if deployed separately from world
-    if (msg.sender != world) IWorld(world).registerComponent(address(this), id);
   }
 
   /** @notice

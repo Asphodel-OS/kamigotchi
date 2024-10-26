@@ -67,9 +67,9 @@ contract World is IWorld, Ownable {
    * Separated from the constructor to prevent circular dependencies.
    */
   function init() public {
-    registerComponent(address(_components), componentsComponentId);
-    registerComponent(address(_systems), systemsComponentId);
-    registerSystem(address(register), registerSystemId);
+    _registerComponent(address(_components), componentsComponentId);
+    _registerComponent(address(_systems), systemsComponentId);
+    _registerSystem(address(register), registerSystemId);
   }
 
   /** @notice
@@ -96,24 +96,23 @@ contract World is IWorld, Ownable {
    * Register a new component in this World.
    * ID must be unique.
    */
-  function registerComponent(address addr, uint256 id) public {
-    register.execute(abi.encode(msg.sender, RegisterType.Component, addr, id));
-    emit ComponentRegistered(id, addr);
+  function registerComponent(address addr, uint256 id) public onlyOwner {
+    _registerComponent(addr, id);
   }
 
   /** @notice
    * Register a new system in this World.
    * ID must be unique.
    */
-  function registerSystem(address addr, uint256 id) public {
-    register.execute(abi.encode(msg.sender, RegisterType.System, addr, id));
-    emit SystemRegistered(id, addr);
+  function registerSystem(address addr, uint256 id) public onlyOwner {
+    _registerSystem(addr, id);
   }
 
   /** @notice
    * Register a component value update.
    * Emits the `ComponentValueSet` event for clients to reconstruct the state.
    */
+  /// @dev can only be called by component
   function registerComponentValueSet(uint256 entity, bytes calldata data) public {
     // getIdByAddress has implicit existence check
     emit ComponentValueSet(getIdByAddress(_components, msg.sender), msg.sender, entity, data);
@@ -123,6 +122,7 @@ contract World is IWorld, Ownable {
    * Register a component value removal.
    * Emits the `ComponentValueRemoved` event for clients to reconstruct the state.
    */
+  /// @dev can only be called by component
   function registerComponentValueRemoved(uint256 entity) public {
     // getIdByAddress has implicit existence check
     emit ComponentValueRemoved(getIdByAddress(_components, msg.sender), msg.sender, entity);
@@ -133,5 +133,15 @@ contract World is IWorld, Ownable {
    */
   function getUniqueEntityId() public returns (uint256) {
     return uint256(keccak256(abi.encodePacked(++nonce)));
+  }
+
+  function _registerComponent(address addr, uint256 id) internal {
+    register.execute(abi.encode(msg.sender, RegisterType.Component, addr, id));
+    emit ComponentRegistered(id, addr);
+  }
+
+  function _registerSystem(address addr, uint256 id) internal {
+    register.execute(abi.encode(msg.sender, RegisterType.System, addr, id));
+    emit SystemRegistered(id, addr);
   }
 }

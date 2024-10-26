@@ -19,10 +19,6 @@ uint256 constant ID = uint256(keccak256("world.system.register"));
 contract RegisterSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function requirement(bytes memory args) public view returns (bytes memory) {
-    // TODO: Refactor to remove requirement/execute split
-  }
-
   function execute(
     address msgSender,
     RegisterType registerType,
@@ -54,12 +50,18 @@ contract RegisterSystem is System {
 
     uint256[] memory entitiesWithId = registry.getEntitiesWithValue(id);
 
-    require(
-      entitiesWithId.length == 0 ||
-        (entitiesWithId.length == 1 &&
-          Ownable(entityToAddress(entitiesWithId[0])).owner() == msgSender),
-      "id already registered and caller not owner"
-    );
+    if (registerType == RegisterType.Component) {
+      // components cannot be upgraded
+      require(entitiesWithId.length == 0, "component already registered");
+    } else {
+      // systems can be upgraded
+      require(
+        entitiesWithId.length == 0 ||
+          (entitiesWithId.length == 1 &&
+            Ownable(entityToAddress(entitiesWithId[0])).owner() == msgSender),
+        "system already registered and caller not owner"
+      );
+    }
 
     if (entitiesWithId.length == 1) {
       // Remove previous system
