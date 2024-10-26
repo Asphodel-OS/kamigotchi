@@ -1,25 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { DSTestPlus } from "solmate/test/utils/DSTestPlus.sol";
-import { Vm } from "forge-std/Vm.sol";
-import { console } from "forge-std/console.sol";
+import "./BaseTester.t.sol";
 
-import { World } from "solecs/World.sol";
 import { Stat, StatLib } from "solecs/components/types/Stat.sol";
 import { StatComponent } from "solecs/components/StatComponent.sol";
 
-contract StatCompTest is DSTestPlus {
-  Vm internal immutable vm = Vm(HEVM_ADDRESS);
-
-  address deployer = address(1);
+contract StatCompTest is BaseTester {
   StatComponent statComp;
 
-  function setUp() public {
+  function setUp() public override {
+    super.setUp();
+
     vm.startPrank(deployer);
-    World world = new World();
-    world.init();
     statComp = new StatComponent(address(world), uint256(keccak256("test.Stat")));
+    world.registerComponent(address(statComp), uint256(keccak256("test.Stat")));
     vm.stopPrank();
   }
 
@@ -79,23 +74,29 @@ contract StatCompTest is DSTestPlus {
     assertEq(statComp.get(ids), ogBatch);
 
     // test setting permissions
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.set(0, Stat(1, 1, 1, 1));
     Stat[] memory batch = new Stat[](2);
     batch[0] = Stat(1, 1, 1, 1);
     batch[1] = Stat(2, 2, 2, 2);
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.set(ids, batch);
 
     // test removing permissions
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.remove(id);
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.remove(ids);
 
     // test extract permissions
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.extract(id);
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.extract(ids);
   }
@@ -151,6 +152,7 @@ contract StatCompTest is DSTestPlus {
     int32 shifted = statComp.shift(id, 11);
     assertEq(shifted, stat.shift, "shift mismatch");
     assertEq(statComp.get(id), stat);
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.shift(id, 1);
 
@@ -162,6 +164,7 @@ contract StatCompTest is DSTestPlus {
     int32 boosted = statComp.boost(id, 2);
     assertEq(boosted, stat.boost, "boost mismatch");
     assertEq(statComp.get(id), stat);
+    vm.prank(address(1));
     vm.expectRevert();
     statComp.boost(id, 1);
   }

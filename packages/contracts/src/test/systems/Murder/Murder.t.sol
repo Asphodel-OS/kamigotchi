@@ -51,11 +51,11 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // alice places pet, left to farm and die
-    uint256 aProdID = _startProduction(victimID, _nodeIDs[0]);
+    uint256 aProdID = _startHarvest(victimID, _nodeIDs[0]);
     _fastForward(24 hours);
 
     // bob places pet
-    uint256 bProdID = _startProduction(killerID, _nodeIDs[0]);
+    uint256 bProdID = _startHarvest(killerID, _nodeIDs[0]);
     _fastForward(_idleRequirement);
 
     // simulate a crime
@@ -65,7 +65,7 @@ contract MurderTest is SetupTemplate {
     uint256 spoils = LibKill.calcSpoils(components, killerID, bounty - salvage);
 
     // commit said crime
-    _liquidateProduction(killerID, aProdID);
+    _liquidateHarvest(killerID, aProdID);
 
     // verify crime balances
     assertEq(
