@@ -3,16 +3,18 @@ import styled from 'styled-components';
 interface Props {
   title: string;
   icon?: string;
+  staminaBar?: React.JSX.Element;
 }
 
 // ModalHeader renders a standard modal header with Title and optional icon.
 export const ModalHeader = (props: Props) => {
-  const { icon, title } = props;
+  const { icon, title, staminaBar } = props;
 
   return (
     <Wrapper>
       {icon && <Image src={icon} alt={title} />}
       <Title>{title}</Title>
+      {staminaBar}
     </Wrapper>
   );
 };

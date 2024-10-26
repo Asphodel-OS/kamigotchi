@@ -1,10 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { Battery, Tooltip } from 'app/components/library';
 import { Modals, useVisibility } from 'app/stores';
-import { calcStaminaPercent } from 'network/shapes/Account';
-import { Stat } from 'network/shapes/Stats';
 import { ExitButton } from './ExitButton';
 
 interface Props {
@@ -17,14 +14,12 @@ interface Props {
   noInternalBorder?: boolean;
   noPadding?: boolean;
   truncate?: boolean;
-  playerStamina?: Stat;
-  getStaminaTooltip?: (stamina: Stat) => string[];
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { id, children, header, footer, playerStamina, getStaminaTooltip } = props;
+  const { id, children, header, footer } = props;
   const { canExit, noInternalBorder, noPadding, overlay, truncate } = props;
   const { modals } = useVisibility();
 
@@ -33,14 +28,6 @@ export const ModalWrapper = (props: Props) => {
       <Content truncate={truncate}>
         {canExit && (
           <ButtonRow>
-            {getStaminaTooltip && playerStamina && (
-              <Tooltip text={getStaminaTooltip(playerStamina)}>
-                <TextBox>
-                  {`${calcStaminaPercent(playerStamina)}%`}
-                  <Battery level={calcStaminaPercent(playerStamina)} scale={1.2} />
-                </TextBox>
-              </Tooltip>
-            )}
             <ExitButton divName={id} />
           </ButtonRow>
         )}
@@ -132,19 +119,6 @@ const fadeIn = keyframes`
 const fadeOut = keyframes`
   from { opacity: 1; }
   to { opacity: 0; }
-`;
-const TextBox = styled.div`
-  padding-right: 1vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.6vh;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 1.2vh;
 `;
 
 export { Wrapper as ModalWrapperLite };

@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { Battery, ModalHeader, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner, getStamina } from 'network/shapes/Account';
+import { calcStaminaPercent, getAccountFromBurner, getStamina } from 'network/shapes/Account';
 import { getNodeByIndex } from 'network/shapes/Node';
 import { Room, getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { Stat } from 'network/shapes/Stats';
+import styled from 'styled-components';
 import { Grid } from './Grid';
 
 export function registerMapModal() {
@@ -95,6 +96,14 @@ export function registerMapModal() {
           },
         });
       };
+      const staminaBar = (
+        <Tooltip text={getStaminaTooltip(playerStamina)}>
+          <TextBox>
+            {`${calcStaminaPercent(playerStamina)}%`}
+            <Battery level={calcStaminaPercent(playerStamina)} scale={1.2} />
+          </TextBox>
+        </Tooltip>
+      );
 
       ///////////////////
       // RENDER
@@ -102,12 +111,16 @@ export function registerMapModal() {
       return (
         <ModalWrapper
           id='map'
-          header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
+          header={
+            <ModalHeader
+              title={roomMap.get(selectedRoom)?.name ?? 'Map'}
+              icon={mapIcon}
+              staminaBar={staminaBar}
+            />
+          }
           canExit
           noPadding
           truncate
-          playerStamina={playerStamina}
-          getStaminaTooltip={getStaminaTooltip}
         >
           {' '}
           <Grid
@@ -122,3 +135,16 @@ export function registerMapModal() {
     }
   );
 }
+const TextBox = styled.div`
+  padding-right: 1vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6vh;
+
+  color: black;
+  font-family: Pixel;
+  font-size: calc(1.2vw);
+`;
