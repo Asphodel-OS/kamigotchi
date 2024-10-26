@@ -31,6 +31,10 @@ contract World is IWorld, Ownable {
   /// no state logic, out of audit scope
   address public _emitter;
 
+  event ComponentRegistered(uint256 indexed componentId, address indexed component);
+
+  event SystemRegistered(uint256 indexed systemId, address indexed system);
+
   event ComponentValueSet(
     uint256 indexed componentId,
     address indexed component,
@@ -92,16 +96,18 @@ contract World is IWorld, Ownable {
    * Register a new component in this World.
    * ID must be unique.
    */
-  function registerComponent(address componentAddr, uint256 id) public {
-    register.execute(abi.encode(msg.sender, RegisterType.Component, componentAddr, id));
+  function registerComponent(address addr, uint256 id) public {
+    register.execute(abi.encode(msg.sender, RegisterType.Component, addr, id));
+    emit ComponentRegistered(id, addr);
   }
 
   /** @notice
    * Register a new system in this World.
    * ID must be unique.
    */
-  function registerSystem(address systemAddr, uint256 id) public {
-    register.execute(abi.encode(msg.sender, RegisterType.System, systemAddr, id));
+  function registerSystem(address addr, uint256 id) public {
+    register.execute(abi.encode(msg.sender, RegisterType.System, addr, id));
+    emit SystemRegistered(id, addr);
   }
 
   /** @notice
