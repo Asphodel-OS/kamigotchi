@@ -17,7 +17,7 @@ const rawYominet = {
   },
 } as const satisfies Chain;
 
-const rawOldYominet = {
+export const oldYominet = {
   id: 5264468217,
   name: 'yominet',
   nativeCurrency: {
@@ -35,10 +35,6 @@ const rawOldYominet = {
 } as const satisfies Chain;
 
 const yominet = addRpcUrlOverrideToChain(rawYominet, import.meta.env.VITE_RPC_TRANSPORT_URL);
-export const oldYominet = addRpcUrlOverrideToChain(
-  rawOldYominet,
-  'https://yominet.rpc.caldera.xyz/http/'
-);
 
 export const chainConfigs: Map<string, Chain> = new Map();
 chainConfigs.set('development', localhost);
