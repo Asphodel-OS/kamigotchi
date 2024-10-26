@@ -82,11 +82,16 @@ export const Logs = (props: Props) => {
     );
   };
 
-  const EtherscanButton = (hash: string | undefined) => {
+  const ExplorerButton = (hash: string | undefined) => {
     if (!hash) return <></>;
     return (
-      <Tooltip text={[`View on Etherscan`]}>
-        <OpenIcon src={OpenInNewIcon} />
+      <Tooltip text={[`View on block explorer`]}>
+        <OpenIcon
+          src={OpenInNewIcon}
+          onClick={() =>
+            window.open(`https://scan.testnet.initia.xyz/preyominet-1/txs/${hash}`, '_blank')
+          }
+        />
       </Tooltip>
     );
   };
@@ -103,7 +108,7 @@ export const Logs = (props: Props) => {
         </RowSegment>
         <RowSegment>
           {Time(actionData.time)}
-          {/* {EtherscanButton(actionData.txHash)} */}
+          {ExplorerButton(actionData.txHash)}
         </RowSegment>
       </Row>
     );
