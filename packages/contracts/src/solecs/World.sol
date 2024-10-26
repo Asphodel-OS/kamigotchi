@@ -5,10 +5,10 @@ import { IWorld } from "./interfaces/IWorld.sol";
 import { IUint256Component } from "./interfaces/IUint256Component.sol";
 import { Ownable } from "solady/auth/Ownable.sol";
 import { addressToEntity, getIdByAddress } from "./utils.sol";
-import { componentsComponentId, systemsComponentId } from "./constants.sol";
+import { COMPONENTS_COMPONENT_ID, SYSTEMS_COMPONENT_ID } from "./constants.sol";
 
 import { Uint256Component } from "./components/Uint256Component.sol";
-import { RegisterSystem, ID as registerSystemId, RegisterType } from "./systems/RegisterSystem.sol";
+import { RegisterSystem, ID as REGISTER_SYSTEM_ID, RegisterType } from "./systems/RegisterSystem.sol";
 
 /** @notice
  * The `World` contract is at the core of every on-chain world.
@@ -53,8 +53,8 @@ contract World is IWorld, Ownable {
 
     // setting up registry components
     // NOTE: registry components map(address -> ID). To switch this?
-    _components = new Uint256Component(address(this), componentsComponentId);
-    _systems = new Uint256Component(address(this), systemsComponentId);
+    _components = new Uint256Component(address(this), COMPONENTS_COMPONENT_ID);
+    _systems = new Uint256Component(address(this), SYSTEMS_COMPONENT_ID);
 
     // setting up registry system
     register = new RegisterSystem(this, address(_components));
@@ -67,22 +67,20 @@ contract World is IWorld, Ownable {
    * Separated from the constructor to prevent circular dependencies.
    */
   function init() public {
-    _registerComponent(address(_components), componentsComponentId);
-    _registerComponent(address(_systems), systemsComponentId);
-    _registerSystem(address(register), registerSystemId);
+    _registerComponent(address(_components), COMPONENTS_COMPONENT_ID);
+    _registerComponent(address(_systems), SYSTEMS_COMPONENT_ID);
+    _registerSystem(address(register), REGISTER_SYSTEM_ID);
   }
 
   /** @notice
-   * Get the component registry Uint256Component
-   * (mapping from component address to component id)
+   * Get the component registry Uint256Component (comp addr => comp id)
    */
   function components() public view returns (IUint256Component) {
     return _components;
   }
 
   /** @notice
-   * Get the system registry Uint256Component
-   * (mapping from system address to system id)
+   * Get the system registry Uint256Component (sys addr => sys id)
    */
   function systems() public view returns (IUint256Component) {
     return _systems;
