@@ -35,7 +35,6 @@ import {
 import {
   createCacheStore,
   getCacheStoreEntries,
-  getIndexDBCacheStoreBlockNumber,
   getStateCache,
   loadIndexDbToCacheStore,
   saveCacheStoreToIndexDb,
@@ -234,48 +233,50 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       msg: 'Determining Sync Range',
       percentage: 0,
     });
-    const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexedDB) : -1;
     this.setLoadingState({ percentage: 50 });
 
-    const kamigazeClient = createSnapshotClient(snapshotUrl);
-
-    this.setLoadingState({ percentage: 100 });
+    // LOAD CACHE
+    let initialState = await loadIndexDbToCacheStore(indexedDB);
 
     // KAMIGAZE INTEGRRATION
-    let initialState = await loadIndexDbToCacheStore(indexedDB);
     // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
-    this.setLoadingState({
-      msg: 'Fetching Initial State From Snapshot',
-      percentage: 0,
-    });
-    console.log('CACHE STORE BEFORE SYNC <-----------------------');
-    console.log('BlockNumber', initialState.blockNumber);
-    console.log('Components', initialState.components.length);
-    console.log('Entities', initialState.entities.length);
-    console.log('StateValues', initialState.state.size);
-    console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
-    console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
-    console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
-    console.log('------------------------------------------------');
+    if (snapshotUrl) {
+      const kamigazeClient = createSnapshotClient(snapshotUrl);
+      this.setLoadingState({
+        msg: 'Fetching Initial State From Snapshot',
+        percentage: 0,
+      });
+      console.log('CACHE STORE BEFORE SYNC <-----------------------');
+      console.log('BlockNumber', initialState.blockNumber);
+      console.log('Components', initialState.components.length);
+      console.log('Entities', initialState.entities.length);
+      console.log('StateValues', initialState.state.size);
+      console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
+      console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
+      console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
+      console.log('------------------------------------------------');
 
-    // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
-    // I removed it here just to make sure Kamigaze is working as expected
-    initialState = await fetchStateFromKamigaze(
-      initialState,
-      kamigazeClient,
-      decode,
-      config.snapshotNumChunks ?? 10,
-      (percentage: number) => this.setLoadingState({ percentage })
-    );
-    console.log('CACHE STORE AFTER SYNC <------------------------ ');
-    console.log('BlockNumber', initialState.blockNumber);
-    console.log('Components', initialState.components.length);
-    console.log('Entities', initialState.entities.length);
-    console.log('StateValues', initialState.state.size);
-    console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
-    console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
-    console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
-    console.log('------------------------------------------------');
+      // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
+      // I removed it here just to make sure Kamigaze is working as expected
+      initialState = await fetchStateFromKamigaze(
+        initialState,
+        kamigazeClient,
+        decode,
+        config.snapshotNumChunks ?? 10,
+        (percentage: number) => this.setLoadingState({ percentage })
+      );
+      console.log('CACHE STORE AFTER SYNC <------------------------ ');
+      console.log('BlockNumber', initialState.blockNumber);
+      console.log('Components', initialState.components.length);
+      console.log('Entities', initialState.entities.length);
+      console.log('StateValues', initialState.state.size);
+      console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
+      console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
+      console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
+      console.log('------------------------------------------------');
+    }
+
+    this.setLoadingState({ percentage: 100 });
 
     /*
      * FILL THE GAP
