@@ -1,14 +1,13 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Battery, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
-import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
+import { queryAccountFromBurner } from 'network/shapes/Account';
 import { getMusuBalance } from 'network/shapes/Item';
-import { Stat } from 'network/shapes/Stats';
 import { getCurrPhase, getKamiTime, getPhaseIcon, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
@@ -29,7 +28,6 @@ export function registerAccountHeader() {
 
           return {
             data: {
-              stamina: getStamina(world, components, accountEntity),
               musu: getMusuBalance(world, components, world.entities[accountEntity]),
             },
           };
@@ -37,23 +35,11 @@ export function registerAccountHeader() {
       );
     },
     ({ data }) => {
-      const { stamina, musu } = data;
+      const { musu } = data;
       const { fixtures } = useVisibility();
 
       /////////////////
       // INTERPRETATION
-
-      const getStaminaTooltip = (stamina: Stat) => {
-        const staminaCurr = stamina.sync;
-        const staminaTotal = stamina.total;
-        const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
-        const recoveryPeriod = Math.round(1 / stamina.rate);
-        return [
-          `Account Stamina (${staminaString})`,
-          '',
-          `Determines how far your Operator can travel. Recovers by 1 every ${recoveryPeriod}s`,
-        ];
-      };
 
       const getClockTooltip = () => {
         const phase = getPhaseName(getCurrPhase());
@@ -75,14 +61,6 @@ export function registerAccountHeader() {
       return (
         <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
           <Row>
-            <Cell>
-              <Tooltip text={getStaminaTooltip(stamina)}>
-                <TextBox>
-                  {`${calcStaminaPercent(stamina)}%`}
-                  <Battery level={calcStaminaPercent(stamina)} scale={1.2} />
-                </TextBox>
-              </Tooltip>
-            </Cell>
             <Cell>
               <Tooltip text={getClockTooltip()}>
                 <TextBox>
@@ -133,7 +111,7 @@ const Row = styled.div`
 
 const Cell = styled.div`
   border-right: 0.15vw solid black;
-  width: 33%;
+  width: 47%;
 
   display: flex;
   flex-flow: row nowrap;

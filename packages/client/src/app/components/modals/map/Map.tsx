@@ -5,9 +5,10 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { getAccountFromBurner, getStamina } from 'network/shapes/Account';
 import { getNodeByIndex } from 'network/shapes/Node';
 import { Room, getAllRooms, getRoomByIndex } from 'network/shapes/Room';
+import { Stat } from 'network/shapes/Stats';
 import { Grid } from './Grid';
 
 export function registerMapModal() {
@@ -45,7 +46,18 @@ export function registerMapModal() {
       const getNode = (roomIndex: number) => {
         return getNodeByIndex(world, components, roomIndex, { kamis: true });
       };
-
+      const playerStamina = getStamina(world, components, data.account.entityIndex);
+      const getStaminaTooltip = (stamina: Stat) => {
+        const staminaCurr = stamina.sync;
+        const staminaTotal = stamina.total;
+        const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
+        const recoveryPeriod = Math.round(1 / stamina.rate);
+        return [
+          `Account Stamina (${staminaString})`,
+          '',
+          `Determines how far your Operator can travel. Recovers by 1 every ${recoveryPeriod}s`,
+        ];
+      };
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
         if (modals.map) setSelectedRoom(data.account.roomIndex);
@@ -94,7 +106,10 @@ export function registerMapModal() {
           canExit
           noPadding
           truncate
+          playerStamina={playerStamina}
+          getStaminaTooltip={getStaminaTooltip}
         >
+          {' '}
           <Grid
             index={selectedRoom}
             zone={zone}
