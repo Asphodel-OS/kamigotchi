@@ -134,6 +134,7 @@ export function registerAccountRegistrar() {
       const { validations, setValidations } = useAccount();
 
       const [step, setStep] = useState(0);
+      const [isDripping, setIsDripping] = useState(false);
       const [name, setName] = useState('');
 
       // update the Kami Account and validation based on changes to the
@@ -196,9 +197,11 @@ export function registerAccountRegistrar() {
       };
 
       const dripFaucet = async (address: string) => {
+        setIsDripping(true);
         await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
           address: address,
         });
+        setIsDripping(false);
       };
 
       /////////////////
@@ -288,18 +291,16 @@ export function registerAccountRegistrar() {
 
       const NextButton = () => <ActionButton text='Next' onClick={() => setStep(step + 1)} />;
 
-      const NextAndFaucetButton = () => (
-        <ActionButton
-          text='Next'
-          onClick={() => {
-            setStep(step + 1);
-            dripFaucet(selectedAddress);
-          }}
-        />
-      );
-
       const BackButton = () => (
         <ActionButton text='Back' disabled={step === 0} onClick={() => setStep(step - 1)} />
+      );
+
+      const FaucetButton = () => (
+        <ActionButton
+          onClick={() => dripFaucet(selectedAddress)}
+          size='medium'
+          text={`Drip Faucet ${isDripping ? '(pending)' : ''}`}
+        />
       );
 
       const IntroStep1 = () => {
@@ -310,7 +311,7 @@ export function registerAccountRegistrar() {
             <Description>This world exists entirely on-chain.</Description>
             <br />
             <Row>
-              <NextAndFaucetButton />
+              <NextButton />
             </Row>
           </>
         );
@@ -368,6 +369,7 @@ export function registerAccountRegistrar() {
             <Row>
               <BackButton />
               <SubmitButton />
+              <FaucetButton />
             </Row>
           </>
         );
