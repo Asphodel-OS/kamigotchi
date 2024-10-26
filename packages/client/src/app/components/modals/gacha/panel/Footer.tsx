@@ -10,7 +10,7 @@ interface Props {
   tab: TabType;
   balance: number;
   actions: {
-    mint: (amount: number) => Promise<void>;
+    mint: (amount: number) => Promise<boolean>;
   };
 }
 
@@ -29,9 +29,10 @@ export const Footer = (props: Props) => {
     setQuantity(Math.max(0, quantity - 1));
   };
 
-  const handleMint = () => {
+  const handleMint = async () => {
     playClick();
-    mint(quantity);
+    const success = await mint(quantity);
+    if (success) setQuantity(0);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

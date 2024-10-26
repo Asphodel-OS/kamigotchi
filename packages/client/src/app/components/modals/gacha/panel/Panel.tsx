@@ -11,7 +11,7 @@ interface Props {
   setTab: (tab: TabType) => void;
   gachaBalance: number;
   actions: {
-    mint: (balance: number) => Promise<void>;
+    mint: (balance: number) => Promise<boolean>;
     reroll: (kamis: BaseKami[], price: bigint) => () => Promise<void>;
   };
   controls: {

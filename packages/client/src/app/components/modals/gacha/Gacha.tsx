@@ -198,9 +198,11 @@ export function registerGachaModal() {
           );
           setTriedReveal(false);
           playVend();
+          return true;
         } catch (e) {
           console.log('Gacha.tsx: handleMint() mint failed', e);
         }
+        return false;
       };
 
       const handleReroll = (kamis: BaseKami[], price: bigint) => async () => {
