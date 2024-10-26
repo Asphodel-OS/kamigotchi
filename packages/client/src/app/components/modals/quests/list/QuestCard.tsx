@@ -77,7 +77,7 @@ export const QuestCard = (props: Props) => {
   const AcceptButton = (quest: Quest) => {
     return (
       <Overlay key={'accept-button'} bottom={0.8} right={0.8}>
-        <ActionButton onClick={() => accept(quest)} text='Accept' noMargin />
+        <ActionButton onClick={() => accept(quest)} text='Accept' />
       </Overlay>
     );
   };
@@ -89,7 +89,6 @@ export const QuestCard = (props: Props) => {
           onClick={() => complete(quest)}
           text='Complete'
           disabled={!meetsObjectives(quest)}
-          noMargin
         />
       </Overlay>
     );

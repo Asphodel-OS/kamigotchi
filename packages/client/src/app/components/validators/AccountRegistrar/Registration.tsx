@@ -20,7 +20,7 @@ interface Props {
     burner: string;
   };
   actions: {
-    createAccount: (username: string) => EntityID;
+    createAccount: (username: string) => EntityID | void;
   };
   utils: {
     setStep: (step: number) => void;
@@ -74,20 +74,25 @@ export const Registration = (props: Props) => {
     setFaucetState('claiming');
     setFaucetSymbol('🌀');
 
-    const response = await axios.post(
-      `https://initia-faucet-0${faucetIndex + 1}.test.asphodel.io/claim`,
-      { address }
-    );
-
-    if (response.status !== 200) {
-      console.error('Faucet Error', response.status);
+    let response: any;
+    try {
+      response = await axios.post(
+        `https://initia-faucet-0${faucetIndex + 1}.test.asphodel.io/claim`,
+        {
+          address,
+        }
+      );
+    } catch (e: any) {
+      console.error('Faucet Error', e.response.status, e.response.data);
       setFaucetState('unclaimed');
       setFaucetSymbol('❌');
       setFaucetIndex((faucetIndex + 1) % TOTAL_FAUCETS);
-    } else {
-      setFaucetState('claimed');
-      setFaucetSymbol('✅');
-      // TODO: play drippiest sound known to humankind
+    } finally {
+      if (response.status == 200) {
+        setFaucetState('claimed');
+        setFaucetSymbol('✅');
+        // TODO: play drippiest sound known to humankind
+      }
     }
   };
 
@@ -130,23 +135,12 @@ export const Registration = (props: Props) => {
     );
   };
 
-  const SubmitButton = () => {
-    let button = (
-      <ActionButton
-        text='Submit'
-        disabled={address.isTaken || name === '' || isNameTaken() || /\s/.test(name)}
-        onClick={() => handleAccountCreation(name)}
-      />
-    );
-
-    let tooltip: string[] = [];
-    if (address.isTaken) tooltip = ['That Operator address is already taken.'];
-    else if (name === '') tooltip = [`Name cannot be empty.`];
-    else if (isNameTaken()) tooltip = ['That name is already taken.'];
-    else if (/\s/.test(name)) tooltip = [`Name cannot contain whitespace.`];
-    if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>;
-
-    return button;
+  const getSubmitTooltip = () => {
+    if (address.isTaken) return 'That Operator address is already taken.';
+    else if (name === '') return `Name cannot be empty.`;
+    else if (isNameTaken()) return 'That name is already taken.';
+    else if (/\s/.test(name)) return `Name cannot contain whitespace.`;
+    return 'Register';
   };
 
   return (
@@ -162,7 +156,13 @@ export const Registration = (props: Props) => {
           placeholder='your username'
           style={{ pointerEvents: 'auto' }}
         />
-        <SubmitButton />
+        <Tooltip text={[getSubmitTooltip()]}>
+          <ActionButton
+            text='→'
+            disabled={address.isTaken || name === '' || isNameTaken() || /\s/.test(name)}
+            onClick={() => handleAccountCreation(name)}
+          />
+        </Tooltip>
       </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
@@ -188,18 +188,18 @@ export const AddressRow = styled.div`
 
 export const Input = styled.input`
   border-radius: 0.45vw;
-  border: solid #71f 0.1vw;
+  border: solid #71f 0.15vw;
   background-color: #ddd;
 
   padding: 0.6vw;
-  margin: 0.9vw 0 0.3vw 0;
-  width: 12.5vw;
+  width: 18vw;
+  height: 2.1vw;
 
-  display: inline-block;
+  display: flex;
   justify-content: center;
+  align-items: center;
   cursor: text;
 
-  font-size: 0.6vw;
+  font-size: 0.75vw;
   text-align: center;
-  text-decoration: none;
 `;

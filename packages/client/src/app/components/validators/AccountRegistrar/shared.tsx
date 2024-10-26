@@ -17,6 +17,8 @@ export const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  gap: 0.3vw;
+  margin-top: 0.45vw;
 `;
 
 export const Description = styled.p`

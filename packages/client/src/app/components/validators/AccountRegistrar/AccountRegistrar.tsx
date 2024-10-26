@@ -1,7 +1,6 @@
 import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
-import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
@@ -21,7 +20,7 @@ import {
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
 import { Registration } from './Registration';
-import { BackButton } from './shared';
+import { BackButton, Description, Row } from './shared';
 
 /**
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
@@ -235,14 +234,17 @@ export function registerAccountRegistrar() {
           IntroStep1(),
           IntroStep2(),
           <Registration
-            addresses={{
+            address={{
               selected: selectedAddress,
               burner: burnerAddress,
               isTaken: operatorAddresses.has(burnerAddress),
             }}
             actions={{ createAccount }}
             utils={{
+              setStep,
               queryAccountByName,
+              toggleFixtures,
+              waitForActionCompletion: utils.waitForActionCompletion,
             }}
           />,
         ];
@@ -264,17 +266,3 @@ export function registerAccountRegistrar() {
     }
   );
 }
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Description = styled.p`
-  color: #333;
-  padding: 0.3vw 0;
-  font-size: 0.75vw;
-  text-align: center;
-`;

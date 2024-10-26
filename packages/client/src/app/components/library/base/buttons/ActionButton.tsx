@@ -12,7 +12,6 @@ interface Props {
   size?: 'small' | 'medium' | 'large' | 'menu' | 'validator';
   pulse?: boolean;
   tooltip?: string[];
-  noMargin?: boolean;
   noBorder?: boolean;
 }
 
@@ -37,6 +36,7 @@ export const ActionButton = (props: Props) => {
     } else if (size === 'medium') {
       styles.fontSize = '.8vw';
       styles.padding = '.4vw .8vw';
+      styles.height = '2.1vw';
       styles.borderRadius = '.45vw';
       styles.borderWidth = '.15vw';
     } else if (size === 'large') {
@@ -67,7 +67,6 @@ export const ActionButton = (props: Props) => {
     }
 
     if (props.fill) styles.flexGrow = '1';
-    if (props.noMargin) styles.margin = '0vw';
     if (props.noBorder) {
       styles.border = 'none';
       styles.borderRadius = '0vw';
@@ -100,7 +99,9 @@ const Button = styled.button`
   border: solid black;
 
   color: black;
+  display: flex;
   justify-content: center;
+  align-items: center;
 
   text-align: center;
   text-decoration: none;

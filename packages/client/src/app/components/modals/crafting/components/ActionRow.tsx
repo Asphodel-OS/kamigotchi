@@ -69,7 +69,6 @@ export const ActionRow = (props: Props) => {
           tooltip={[errorText]}
           disabled={!enoughInputs() || !enoughStamina()}
           noBorder
-          noMargin
         />
         {/* <Stepper>
           <StepperButton onClick={handleInc} style={{ borderBottom: '0.15vw solid black' }}>
