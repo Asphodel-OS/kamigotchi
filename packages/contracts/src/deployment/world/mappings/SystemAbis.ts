@@ -49,6 +49,7 @@ import KamiNameSystem from "../../../../../client/abi/KamiNameSystem.json";
 import KamiUseFoodSystem from "../../../../../client/abi/KamiUseFoodSystem.json";
 import KamiUseRenamePotionSystem from "../../../../../client/abi/KamiUseRenamePotionSystem.json";
 import KamiUseReviveSystem from "../../../../../client/abi/KamiUseReviveSystem.json";
+import KamiUseSkillResetSystem from "../../../../../client/abi/KamiUseSkillResetSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
 import LootboxCommitSystem from "../../../../../client/abi/LootboxCommitSystem.json";
@@ -57,7 +58,6 @@ import QuestCompleteSystem from "../../../../../client/abi/QuestCompleteSystem.j
 import QuestDropSystem from "../../../../../client/abi/QuestDropSystem.json";
 import RelationshipAdvanceSystem from "../../../../../client/abi/RelationshipAdvanceSystem.json";
 import ScavengeClaimSystem from "../../../../../client/abi/ScavengeClaimSystem.json";
-import SkillResetSystem from "../../../../../client/abi/SkillResetSystem.json";
 import SkillUpgradeSystem from "../../../../../client/abi/SkillUpgradeSystem.json";
 import TradeAcceptSystem from "../../../../../client/abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../../../../../client/abi/TradeAddToSystem.json";
@@ -116,6 +116,7 @@ export const SystemAbis = {
   "system.kami.use.food": KamiUseFoodSystem.abi,
   "system.kami.use.renamePotion": KamiUseRenamePotionSystem.abi,
   "system.kami.use.revive": KamiUseReviveSystem.abi,
+  "system.kami.use.skill.reset": KamiUseSkillResetSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,
   "system.lootbox.commit": LootboxCommitSystem.abi,
@@ -124,7 +125,6 @@ export const SystemAbis = {
   "system.Quest.Drop": QuestDropSystem.abi,
   "system.relationship.advance": RelationshipAdvanceSystem.abi,
   "system.scavenge.claim": ScavengeClaimSystem.abi,
-  "system.skill.reset": SkillResetSystem.abi,
   "system.skill.upgrade": SkillUpgradeSystem.abi,
   "system.trade.accept": TradeAcceptSystem.abi,
   "system.trade.add": TradeAddToSystem.abi,

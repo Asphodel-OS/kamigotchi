@@ -4,17 +4,17 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibSkill } from "libraries/LibSkill.sol";
 
-uint256 constant ID = uint256(keccak256("system.kami.use.food"));
+uint256 constant ID = uint256(keccak256("system.kami.use.skill.reset"));
 
-// eat one snack
-contract KamiUseFoodSystem is System {
+contract KamiUseSkillResetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -22,31 +22,23 @@ contract KamiUseFoodSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    require(LibItem.isTypeOf(components, itemIndex, "FOOD"), "that's not food");
+    require(
+      LibItem.isTypeOf(components, itemIndex, "SKILL_RESET"),
+      "that's not a skill reset item"
+    );
     require(LibItem.isForPet(components, itemIndex), "that's not for kamis");
 
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);
-    LibKami.assertRoom(components, kamiID, accID);
-    require(!LibKami.onCooldown(components, kamiID), "kami on cooldown");
-    require(
-      LibKami.isResting(components, kamiID) || LibKami.isHarvesting(components, kamiID),
-      "pet must be alive"
-    );
+    require(LibKami.isResting(components, kamiID), "kami not resting"); // implicit location check
 
     // use item
+    LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check
+    LibSkill.resetAll(components, kamiID);
     LibKami.sync(components, kamiID);
-    LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
-    LibItem.applyStats(components, itemIndex, kamiID);
-
-    // reset the pet's intensity
-    if (LibKami.isHarvesting(components, kamiID)) {
-      uint256 harvestID = LibKami.getHarvest(components, kamiID);
-      LibHarvest.resetIntensity(components, harvestID);
-    }
 
     // standard logging and tracking
-    LibItem.logFeed(components, accID, 1);
+    LibAccount.updateLastTs(components, accID);
     LibItem.logUse(components, accID, itemIndex, 1);
     LibAccount.updateLastTs(components, accID);
 

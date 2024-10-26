@@ -36,7 +36,7 @@ contract SkillUpgradeSystem is System {
       require(accID == holderID, "SkillUpgrade: not ur account");
     } else if (LibFor.isPet(forEntity)) {
       require(accID == LibKami.getAccount(components, holderID), "SkillUpgrade: not ur pet");
-      require(LibKami.isResting(components, holderID), "SkillUpgrade: pet not resting");
+      require(LibKami.isResting(components, holderID), "SkillUpgrade: kami not resting");
       LibKami.sync(components, holderID);
     }
 

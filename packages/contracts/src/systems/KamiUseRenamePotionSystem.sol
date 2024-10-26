@@ -22,11 +22,11 @@ contract KamiUseRenamePotionSystem is System {
 
     // item checks
     require(LibItem.isTypeOf(components, itemIndex, "RENAME_POTION"), "that's not a rename potion");
-    require(LibItem.isForPet(components, itemIndex), "that's not for pets");
+    require(LibItem.isForPet(components, itemIndex), "that's not for kamis");
 
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);
-    require(LibKami.isResting(components, kamiID), "Pet not resting"); // implicit location check
+    require(LibKami.isResting(components, kamiID), "kami not resting"); // implicit location check
 
     // use item
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check

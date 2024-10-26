@@ -22,7 +22,7 @@ contract KamiUseReviveSystem is System {
 
     // item checks
     require(LibItem.isTypeOf(components, itemIndex, "REVIVE"), "that's not a revive");
-    require(LibItem.isForPet(components, itemIndex), "that's not for pets");
+    require(LibItem.isForPet(components, itemIndex), "that's not for kamis");
 
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);

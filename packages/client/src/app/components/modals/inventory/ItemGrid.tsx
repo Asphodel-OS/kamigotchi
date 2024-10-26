@@ -15,7 +15,7 @@ interface Props {
     feedKami: (kami: Kami, item: Item) => void;
     reviveKami: (kami: Kami, item: Item) => void;
     renamePotionKami: (kami: Kami, item: Item) => void;
-    t1ToT2Kami: (kami: Kami, item: Item) => void; // testnet function, for sending kami from t1 to t2
+    resetSkillKami: (kami: Kami, item: Item) => void;
     feedAccount: (item: Item) => void;
     teleportAccount: (item: Item) => void;
     openLootbox: (item: Item, amount: number) => void;
@@ -47,13 +47,23 @@ export const ItemGrid = (props: Props) => {
   const getKamiActions = (item: Item, bal: number): Option[] => {
     const kamis = getAvailableKamis(item);
 
+    let text: (kami: Kami) => string;
     let action: (kami: Kami) => void;
-    if (item.type === 'FOOD') action = (kami) => actions.feedKami(kami, item);
-    else if (item.type === 'REVIVE') action = (kami) => actions.reviveKami(kami, item);
-    else if (item.type === 'RENAME_POTION') action = (kami) => actions.renamePotionKami(kami, item);
-    else if (item.type === 'TRANSFERRER') action = (kami) => actions.t1ToT2Kami(kami, item);
+    if (item.type === 'FOOD') {
+      text = (kami) => `Feed ${kami.name}`;
+      action = (kami) => actions.feedKami(kami, item);
+    } else if (item.type === 'REVIVE') {
+      text = (kami) => `Revive ${kami.name}`;
+      action = (kami) => actions.reviveKami(kami, item);
+    } else if (item.type === 'RENAME_POTION') {
+      text = (kami) => `Allow ${kami.name} to be renamed`;
+      action = (kami) => actions.renamePotionKami(kami, item);
+    } else if (item.type === 'SKILL_RESET') {
+      text = (kami) => `Reset ${kami.name}'s Skills`;
+      action = (kami) => actions.resetSkillKami(kami, item);
+    }
 
-    return kamis.map((kami) => ({ text: kami.name, onClick: () => action(kami) }));
+    return kamis.map((kami) => ({ text: text(kami), onClick: () => action(kami) }));
   };
 
   const getAvailableKamis = (item: Item): Kami[] => {
@@ -61,7 +71,7 @@ export const ItemGrid = (props: Props) => {
     if (item.type === 'REVIVE') kamis = kamis.filter((kami) => kami.state === 'DEAD');
     if (item.type === 'FOOD') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
     if (item.type === 'RENAME_POTION') kamis = kamis.filter((kami) => !kami.flags?.namable);
-    if (item.type === 'TRANSFERRER') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
+    if (item.type === 'SKILL_RESET') kamis = kamis.filter((kami) => kami.state !== 'DEAD');
     return kamis;
   };
 

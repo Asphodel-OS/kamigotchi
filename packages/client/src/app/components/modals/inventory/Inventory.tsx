@@ -85,13 +85,13 @@ export function registerInventoryModal() {
         });
       };
 
-      const t1ToT2Kami = (kami: Kami, item: Item) => {
+      const resetSkillKami = (kami: Kami, item: Item) => {
         actions.add({
-          action: 'Sending kami to the next world',
+          action: 'Resetting kami skills',
           params: [kami.id, item.index],
-          description: `Sending ${kami.name} to the next world`,
+          description: `Resetting ${kami.name}'s skills`,
           execute: async () => {
-            return api.player.pet.use.transferrer(kami.id, item.index);
+            return api.player.pet.use.skillReset(kami.id, item.index);
           },
         });
       };
@@ -171,7 +171,7 @@ export function registerInventoryModal() {
               feedAccount,
               teleportAccount,
               openLootbox,
-              t1ToT2Kami,
+              resetSkillKami,
             }}
           />
         </ModalWrapper>
