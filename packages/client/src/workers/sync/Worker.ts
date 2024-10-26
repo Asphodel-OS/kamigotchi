@@ -37,25 +37,23 @@ import {
 import {
   createCacheStore,
   getCacheStoreEntries,
-  getIndexDBCacheStoreBlockNumber,
   getStateCache,
   loadIndexDbToCacheStore,
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
 } from './cache';
+import { createSnapshotClient, fetchStateFromKamigaze } from './clients/snapshot';
 import {
   createKamigazeStreamService,
   createTransformWorldEventsFromStream,
-} from './kamigazeStreamClient';
+} from './clients/stream';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
-  createSnapshotClient,
   fetchEventsInBlockRangeChunked,
-  fetchStateFromKamigaze,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -135,13 +133,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       chainId,
       worldContract,
       provider: { options: providerOptions },
-      initialBlockNumber,
       fetchSystemCalls,
-      disableCache,
     } = config;
 
     // Set default values for config fields
-    const cacheExpiry = config.cache?.expiry || 100;
     const cacheInterval = config.cache?.interval || 1;
 
     // Set up shared primitives
@@ -247,9 +242,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       msg: 'Determining Sync Range',
       percentage: 0,
     });
-    const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexedDB) : -1;
+    // const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexedDB) : -1;
     this.setLoadingState({ percentage: 50 });
 
+    // TODO: handle case where snapshot service is down
     const kamigazeClient = createSnapshotClient(snapshotUrl);
 
     this.setLoadingState({ percentage: 100 });

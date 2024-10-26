@@ -10,15 +10,15 @@ import {
   StreamResponse,
 } from 'engine/types/kamigaze/kamigaze';
 import { formatComponentID, formatEntityID } from 'engine/utils';
-import { debug as parentDebug } from '../debug';
+import { debug as parentDebug } from '../../debug';
 import {
   NetworkComponentUpdate,
   NetworkEvent,
   NetworkEvents,
   SystemCall,
   SystemCallTransaction,
-} from '../types';
-import { createDecode, groupByTxHash } from './utils';
+} from '../../types';
+import { createDecode, groupByTxHash } from '../utils';
 
 const debug = parentDebug.extend('syncUtils');
 
