@@ -26,6 +26,8 @@ import { waitForActionCompletion } from 'network/utils';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 
+type FaucetState = 'unclaimed' | 'claiming' | 'claimed';
+
 /**
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
  * based on the connected wallet address. Unfortunately, this means listening to both changes
@@ -134,8 +136,8 @@ export function registerAccountRegistrar() {
       const { validations, setValidations } = useAccount();
 
       const [step, setStep] = useState(0);
-      const [isDripping, setIsDripping] = useState(false);
       const [name, setName] = useState('');
+      const [faucetState, setFaucetState] = useState<FaucetState>('unclaimed');
 
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
@@ -197,11 +199,17 @@ export function registerAccountRegistrar() {
       };
 
       const dripFaucet = async (address: string) => {
-        setIsDripping(true);
-        await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
-          address: address,
+        setFaucetState('claiming');
+        const response = await axios.post('https://initia-faucet.test.asphodel.io/claim', {
+          address,
         });
-        setIsDripping(false);
+        if (response.status !== 200) {
+          console.error('Faucet Error', response.status);
+          setFaucetState('unclaimed');
+        } else {
+          setFaucetState('claimed');
+          // TODO: play drippiest sound known to humankind
+        }
       };
 
       /////////////////
@@ -213,16 +221,9 @@ export function registerAccountRegistrar() {
         }
       };
 
-      const copyBurnerAddress = () => {
-        navigator.clipboard.writeText(burnerAddress);
-      };
-
       const handleAccountCreation = async (username: string) => {
         playSignup();
         toggleFixtures(true);
-
-        // drip faucet before creating account
-        // await dripFaucet(selectedAddress);
 
         try {
           const actionID = createAccount(username);
@@ -299,7 +300,8 @@ export function registerAccountRegistrar() {
         <ActionButton
           onClick={() => dripFaucet(selectedAddress)}
           size='medium'
-          text={`Drip Faucet ${isDripping ? '(pending)' : ''}`}
+          text={`ONYX Faucet ${faucetState === 'claiming' ? '(pending)' : ''}`}
+          disabled={faucetState !== 'unclaimed'}
         />
       );
 
