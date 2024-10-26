@@ -9,9 +9,21 @@ import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
 
 const debug = parentDebug.extend('CacheStore');
 
+// TODO: either delineate or merge clear responssibilities between CacheStore and ECSCache
 export type State = Map<number, ComponentValue>;
 export type CacheStore = ReturnType<typeof createCacheStore>;
 export type ECSCache = Awaited<ReturnType<typeof getStateCache>>;
+type StateReport = {
+  blockNumber: number;
+  numComponents: number;
+  numEntities: number;
+  numStateEntries: number;
+  kamigaze: {
+    lastBlock: number;
+    lastEntity: number;
+    lastComponent: number;
+  };
+};
 
 export function createCacheStore() {
   const components: string[] = [];
@@ -216,4 +228,19 @@ function mergeCacheStores(stores: CacheStore[]): CacheStore {
   }
 
   return result;
+}
+
+// gets the state report of the CacheStore
+export function getStateReport(cacheStore: CacheStore): StateReport {
+  return {
+    blockNumber: cacheStore.blockNumber,
+    numComponents: cacheStore.components.length,
+    numEntities: cacheStore.entities.length,
+    numStateEntries: cacheStore.state.size,
+    kamigaze: {
+      lastBlock: cacheStore.lastKamigazeBlock,
+      lastEntity: cacheStore.lastKamigazeEntity,
+      lastComponent: cacheStore.lastKamigazeComponent,
+    },
+  };
 }

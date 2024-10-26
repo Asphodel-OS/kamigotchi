@@ -41,6 +41,7 @@ import {
   storeEvent,
   storeEvents,
 } from './cache';
+import { getStateReport } from './cache/CacheStore';
 import {
   createLatestEventStreamService,
   createTransformWorldEventsFromStream,
@@ -86,10 +87,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
    * }
    * @param blockNumber Optional: block number to pass in the component update.
    */
-  private setLoadingState(
-    loadingState: Partial<{ state: SyncState; msg: string; percentage: number }>,
-    blockNumber = 0
-  ) {
+  private setLoadingState(loadingState: Partial<SyncStatus>, blockNumber = 0) {
     const newLoadingState = { ...this.syncState, ...loadingState };
     this.syncState = newLoadingState;
     const update: NetworkComponentUpdate<C> = {
@@ -228,33 +226,18 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      * TODO: support partial state retrieval and hybrid cache+snapshot state construction
      */
     performance.mark('backfill');
-    this.setLoadingState({
-      state: SyncState.BACKFILL,
-      msg: 'Determining Sync Range',
-      percentage: 0,
-    });
-    this.setLoadingState({ percentage: 50 });
+    this.setLoadingState({ state: SyncState.BACKFILL, percentage: 0 });
 
-    // LOAD CACHE
+    // load cache
+    this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
     let initialState = await loadIndexDbToCacheStore(indexedDB);
+    console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
-    // KAMIGAZE INTEGRRATION
-    // Load from cache if the snapshot is less than <cacheExpiry> blocks newer than the cache
+    // retrieve snapshot if url provided
+    // TODO: include a liveness check on the snapshot
     if (snapshotUrl) {
+      this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
       const kamigazeClient = createSnapshotClient(snapshotUrl);
-      this.setLoadingState({
-        msg: 'Fetching Initial State From Snapshot',
-        percentage: 0,
-      });
-      console.log('CACHE STORE BEFORE SYNC <-----------------------');
-      console.log('BlockNumber', initialState.blockNumber);
-      console.log('Components', initialState.components.length);
-      console.log('Entities', initialState.entities.length);
-      console.log('StateValues', initialState.state.size);
-      console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
-      console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
-      console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
-      console.log('------------------------------------------------');
 
       // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
       // I removed it here just to make sure Kamigaze is working as expected
@@ -265,18 +248,9 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         config.snapshotNumChunks ?? 10,
         (percentage: number) => this.setLoadingState({ percentage })
       );
-      console.log('CACHE STORE AFTER SYNC <------------------------ ');
-      console.log('BlockNumber', initialState.blockNumber);
-      console.log('Components', initialState.components.length);
-      console.log('Entities', initialState.entities.length);
-      console.log('StateValues', initialState.state.size);
-      console.log('lastBlockFromKamigaze', initialState.lastKamigazeBlock);
-      console.log('lastEntityFromKamigaze', initialState.lastKamigazeEntity);
-      console.log('lastComponentFromKamigaze', initialState.lastKamigazeComponent);
-      console.log('------------------------------------------------');
+      this.setLoadingState({ percentage: 100 }); // move % updates into fetchStateFromKamigaze
+      console.log('INTIAL STATE (POST-SYNC)', getStateReport(initialState));
     }
-
-    this.setLoadingState({ percentage: 100 });
 
     /*
      * FILL THE GAP
