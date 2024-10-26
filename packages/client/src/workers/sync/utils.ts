@@ -37,10 +37,6 @@ import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
 
-export function createStreamClient(url: string): StreamServiceClient {
-  return createClient(StreamServiceDefinition, createChannel(url, grpc.WebsocketTransport()));
-}
-
 /**
  * KAMIGAZE INTEGRATION
  */
@@ -48,6 +44,8 @@ export function createStreamClient(url: string): StreamServiceClient {
 export function createSnapshotClient(url: string): KamigazeServiceClient {
   return createClient(KamigazeServiceDefinition, createChannel(url));
 }
+
+// TODO: chunk this according to expected size of payload
 export async function fetchStateFromKamigaze(
   cacheStore: CacheStore,
   kamigazeClient: KamigazeServiceClient,
