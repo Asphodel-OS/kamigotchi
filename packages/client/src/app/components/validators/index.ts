@@ -1,4 +1,4 @@
-import { registerAccountRegistrar } from './AccountRegistrar';
+import { registerAccountRegistrar } from './AccountRegistrar/AccountRegistrar';
 import { registerGasHarasser } from './GasHarasser';
 import { registerOperatorUpdater } from './OperatorUpdater';
 import { registerWalletConnecter } from './WalletConnector';

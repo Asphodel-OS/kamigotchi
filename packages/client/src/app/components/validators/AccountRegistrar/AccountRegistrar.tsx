@@ -1,11 +1,10 @@
 import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
-import InfoIcon from '@mui/icons-material/Info';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
+import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import {
   Account as KamiAccount,
@@ -14,8 +13,6 @@ import {
   useNetwork,
   useVisibility,
 } from 'app/stores';
-import { copy } from 'app/utils';
-import axios from 'axios';
 import {
   Account,
   getAccount,
@@ -23,11 +20,8 @@ import {
   queryAccountByOwner,
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
-import { abbreviateAddress } from 'utils/address';
-import { playSignup } from 'utils/sounds';
-
-type FaucetState = 'unclaimed' | 'claiming' | 'claimed';
-const TOTAL_FAUCETS = 2;
+import { Registration } from './Registration';
+import { BackButton } from './shared';
 
 /**
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
@@ -111,8 +105,14 @@ export function registerAccountRegistrar() {
               accountFromWorldUpdate,
               operatorAddresses,
             },
-            functions: {
+            utils: {
+              queryAccountByName: (name: string) => queryAccountByName(components, name),
               getKamiAccount,
+              waitForActionCompletion: (action: EntityID) =>
+                waitForActionCompletion(
+                  network.actions.Action,
+                  world.entityToIndex.get(action) as EntityIndex
+                ),
             },
             network,
           };
@@ -120,9 +120,9 @@ export function registerAccountRegistrar() {
       );
     },
 
-    ({ data, functions, network }) => {
+    ({ data, utils, network }) => {
       const { accountFromWorldUpdate, operatorAddresses } = data;
-      const { getKamiAccount } = functions;
+      const { getKamiAccount, queryAccountByName } = utils;
       const { actions, components, world } = network;
 
       const {
@@ -135,16 +135,7 @@ export function registerAccountRegistrar() {
       const { validators, setValidators } = useVisibility();
       const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
       const { validations, setValidations } = useAccount();
-
       const [step, setStep] = useState(0);
-      const [name, setName] = useState('');
-      const [faucetState, setFaucetState] = useState<FaucetState>('unclaimed');
-      const [faucetSymbol, setFaucetSymbol] = useState<string>('🚰');
-
-      // note(jb): quite possibly the jankiest shit i've written in my life
-      const [faucetIndex, setFaucetIndex] = useState<number>(
-        Math.floor(TOTAL_FAUCETS * Math.random())
-      );
 
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
@@ -205,111 +196,10 @@ export function registerAccountRegistrar() {
         return actionID;
       };
 
-      const dripFaucet = async (address: string) => {
-        console.log('Faucet Index', faucetIndex);
-        setFaucetState('claiming');
-        setFaucetSymbol('🌀');
-
-        const response = await axios.post(
-          `https://initia-faucet-0${faucetIndex + 1}.test.asphodel.io/claim`,
-          { address }
-        );
-
-        if (response.status !== 200) {
-          console.error('Faucet Error', response.status);
-          setFaucetState('unclaimed');
-          setFaucetSymbol('❌');
-          setFaucetIndex((faucetIndex + 1) % TOTAL_FAUCETS);
-        } else {
-          setFaucetState('claimed');
-          setFaucetSymbol('✅');
-          // TODO: play drippiest sound known to humankind
-        }
-      };
-
-      /////////////////
-      // INTERACTION
-
-      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter' && !isNameTaken()) {
-          handleAccountCreation(name);
-        }
-      };
-
-      const handleAccountCreation = async (username: string) => {
-        playSignup();
-        toggleFixtures(true);
-
-        try {
-          const actionID = createAccount(username);
-          if (!actionID) throw new Error('Account creation failed');
-
-          await waitForActionCompletion(
-            actions.Action,
-            world.entityToIndex.get(actionID) as EntityIndex
-          );
-        } catch (e) {
-          console.error('ERROR CREATING ACCOUNT:', e);
-        }
-      };
-
-      const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const truncated = event.target.value.slice(0, 16);
-        setName(truncated);
-      };
-
-      /////////////////
-      // INTERPRETATION
-
-      const isNameTaken = () => {
-        const account = queryAccountByName(components, name);
-        return !!account;
-      };
-
       /////////////////
       // RENDERING
 
-      const OperatorDisplay = () => {
-        const infoText = [
-          'Your account Operator (embedded wallet) is managed by Privy.',
-          '',
-          `It behaves like a session key. And is used to approve\
-          in-game actions without the need for explicit signatures.\
-          It cannot be used to authorize account level changes\
-          or migrate assets in and out of your account.`,
-        ];
-
-        return (
-          <AddressRow>
-            <Tooltip text={[burnerAddress, '(click to copy)']} align='center'>
-              <Description onClick={() => copy(burnerAddress)}>
-                Operator: {abbreviateAddress(burnerAddress)}
-              </Description>
-            </Tooltip>
-            <Tooltip text={infoText} align='center'>
-              <InfoIcon fontSize='small' style={{ color: '#666' }} />
-            </Tooltip>
-          </AddressRow>
-        );
-      };
-
-      const OwnerDisplay = () => {
-        return (
-          <AddressRow>
-            <Tooltip text={[selectedAddress, '(click to copy)']} align='center'>
-              <Description onClick={() => copy(selectedAddress)}>
-                Owner: {abbreviateAddress(selectedAddress)}
-              </Description>
-            </Tooltip>
-          </AddressRow>
-        );
-      };
-
       const NextButton = () => <ActionButton text='Next' onClick={() => setStep(step + 1)} />;
-
-      const BackButton = () => (
-        <ActionButton text='Back' disabled={step === 0} onClick={() => setStep(step - 1)} />
-      );
 
       const IntroStep1 = () => {
         return (
@@ -333,67 +223,29 @@ export function registerAccountRegistrar() {
 
             <br />
             <Row>
-              <BackButton />
+              <BackButton step={step} setStep={setStep} />
               <NextButton />
             </Row>
           </>
         );
       };
 
-      const UsernameStep = () => {
-        const addressTaken = operatorAddresses.has(burnerAddress);
-
-        const SubmitButton = () => {
-          let button = (
-            <ActionButton
-              text='Submit'
-              disabled={addressTaken || name === '' || isNameTaken() || /\s/.test(name)}
-              onClick={() => handleAccountCreation(name)}
-            />
-          );
-
-          let tooltip: string[] = [];
-          if (addressTaken) tooltip = ['That Operator address is already taken.'];
-          else if (name === '') tooltip = [`Name cannot be empty.`];
-          else if (isNameTaken()) tooltip = ['That name is already taken.'];
-          else if (/\s/.test(name)) tooltip = [`Name cannot contain whitespace.`];
-          if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>;
-
-          return button;
-        };
-
-        return (
-          <>
-            {OwnerDisplay()}
-            {OperatorDisplay()}
-            <Row>
-              <Input
-                type='string'
-                value={name}
-                onChange={(e) => handleChangeName(e)}
-                onKeyDown={(e) => catchKeys(e)}
-                placeholder='your username'
-                style={{ pointerEvents: 'auto' }}
-              />
-              <SubmitButton />
-            </Row>
-            <Row>
-              <BackButton />
-              <Tooltip text={['ONYX Faucet', `(${faucetState})`]} align='center'>
-                <ActionButton
-                  onClick={() => dripFaucet(selectedAddress)}
-                  size='medium'
-                  text={`Faucet ${faucetSymbol}`}
-                  disabled={faucetState !== 'unclaimed'}
-                />
-              </Tooltip>
-            </Row>
-          </>
-        );
-      };
-
       const GetSteps = () => {
-        return [IntroStep1(), IntroStep2(), UsernameStep()];
+        return [
+          IntroStep1(),
+          IntroStep2(),
+          <Registration
+            addresses={{
+              selected: selectedAddress,
+              burner: burnerAddress,
+              isTaken: operatorAddresses.has(burnerAddress),
+            }}
+            actions={{ createAccount }}
+            utils={{
+              queryAccountByName,
+            }}
+          />,
+        ];
       };
 
       /////////////////
@@ -413,13 +265,6 @@ export function registerAccountRegistrar() {
   );
 }
 
-const AddressRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`;
-
 const Row = styled.div`
   display: flex;
   flex-direction: row;
@@ -432,22 +277,4 @@ const Description = styled.p`
   padding: 0.3vw 0;
   font-size: 0.75vw;
   text-align: center;
-`;
-
-const Input = styled.input`
-  border-radius: 0.45vw;
-  border: solid #71f 0.1vw;
-  background-color: #ddd;
-
-  padding: 0.6vw;
-  margin: 0.9vw 0 0.3vw 0;
-  width: 12.5vw;
-
-  display: inline-block;
-  justify-content: center;
-  cursor: text;
-
-  font-size: 0.6vw;
-  text-align: center;
-  text-decoration: none;
 `;
