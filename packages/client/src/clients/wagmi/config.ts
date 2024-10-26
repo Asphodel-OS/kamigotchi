@@ -1,14 +1,14 @@
 import { createConfig, http } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 
-import { defaultChain } from 'constants/chains';
+import { defaultChain, oldYominet } from 'constants/chains';
 
 const mode = import.meta.env.MODE;
 const transportUrl = import.meta.env.VITE_RPC_TRANSPORT_URL;
 const defaultTransport = mode === 'development' ? http() : http(transportUrl);
 
 export const config = createConfig({
-  chains: [defaultChain],
+  chains: [defaultChain, oldYominet],
   transports: {
     [defaultChain.id]: defaultTransport,
   },
