@@ -77,17 +77,13 @@ library LibAccount {
 
   // Recover's stamina to an account
   function recover(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
-    return StaminaComponent(getAddrByID(components, StaminaCompID)).sync(id, amt);
+    return LibStat.sync(components, "STAMINA", amt, id);
   }
 
-  function syncAndUseStamina(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
-    StaminaComponent stComp = StaminaComponent(getAddrByID(components, StaminaCompID));
-    int32 delta = amt + calcStaminaRecovery(components, id); // add recovery in amt change
-    int32 expected = LibStat.syncSigned(stComp.get(id), delta); // sync with negative possible
-
-    require(expected >= 0, "Account: insufficient stamina");
-    updateLastActionTs(components, id);
-    return stComp.sync(id, delta);
+  function syncAndUseStamina(IUintComp components, uint256 id, int32 amt) internal {
+    int32 current = syncStamina(components, id); // splitting up could be cleaner
+    require(current + amt >= 0, "Account: insufficient stamina");
+    LibStat.sync(components, "STAMINA", amt, id); // optimisable: double sync
   }
 
   // syncs the stamina of an account. rounds down, ruthlessly

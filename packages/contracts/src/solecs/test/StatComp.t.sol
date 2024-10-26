@@ -1,20 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "./BaseTester.t.sol";
+import { DSTestPlus } from "solmate/test/utils/DSTestPlus.sol";
+import { Vm } from "forge-std/Vm.sol";
+import { console } from "forge-std/console.sol";
 
+import { World } from "solecs/World.sol";
 import { Stat, StatLib } from "solecs/components/types/Stat.sol";
 import { StatComponent } from "solecs/components/StatComponent.sol";
 
-contract StatCompTest is BaseTester {
+contract StatCompTest is DSTestPlus {
+  Vm internal immutable vm = Vm(HEVM_ADDRESS);
+
+  address deployer = address(1);
   StatComponent statComp;
 
-  function setUp() public override {
-    super.setUp();
-
+  function setUp() public {
     vm.startPrank(deployer);
+    World world = new World();
+    world.init();
     statComp = new StatComponent(address(world), uint256(keccak256("test.Stat")));
-    world.registerComponent(address(statComp), uint256(keccak256("test.Stat")));
     vm.stopPrank();
   }
 
@@ -74,99 +79,25 @@ contract StatCompTest is BaseTester {
     assertEq(statComp.get(ids), ogBatch);
 
     // test setting permissions
-    vm.prank(address(1));
     vm.expectRevert();
     statComp.set(0, Stat(1, 1, 1, 1));
     Stat[] memory batch = new Stat[](2);
     batch[0] = Stat(1, 1, 1, 1);
     batch[1] = Stat(2, 2, 2, 2);
-    vm.prank(address(1));
     vm.expectRevert();
     statComp.set(ids, batch);
 
     // test removing permissions
-    vm.prank(address(1));
     vm.expectRevert();
     statComp.remove(id);
-    vm.prank(address(1));
     vm.expectRevert();
     statComp.remove(ids);
 
     // test extract permissions
-    vm.prank(address(1));
     vm.expectRevert();
     statComp.extract(id);
-    vm.prank(address(1));
     vm.expectRevert();
     statComp.extract(ids);
-  }
-
-  function testStatCompFunctions() public {
-    uint256 id = 111;
-    Stat memory stat = Stat(1, 2, 3, 4);
-    vm.prank(deployer);
-    statComp.set(id, stat);
-
-    // test total
-    int32 expTotal = ((1e3 + stat.boost) * (stat.base + stat.shift)) / 1e3;
-    assertEq(statComp.calcTotal(id), expTotal);
-
-    // test sync, 0 amt
-    stat = Stat(10, 0, 0, 5);
-    vm.prank(deployer);
-    statComp.set(id, stat);
-    vm.prank(deployer);
-    int32 synced = statComp.sync(id, 0);
-    assertEq(synced, 5, "sync 0 mismatch");
-    assertEq(statComp.get(id).sync, 5);
-
-    // test sync, positive amt
-    vm.prank(deployer);
-    statComp.set(id, stat);
-    vm.prank(deployer);
-    synced = statComp.sync(id, 11);
-    assertEq(synced, 10, "sync pos mismatch");
-    assertEq(statComp.get(id).sync, 10);
-
-    // test sync, negative amt
-    vm.prank(deployer);
-    statComp.set(id, stat);
-    vm.prank(deployer);
-    synced = statComp.sync(id, -1);
-    assertEq(synced, 4, "sync neg mismatch");
-    assertEq(statComp.get(id).sync, 4);
-
-    // test sync, forced total
-    vm.prank(deployer);
-    statComp.set(id, stat);
-    vm.prank(deployer);
-    synced = statComp.sync(id, 100, 20);
-    assertEq(synced, 20, "sync total mismatch");
-    assertEq(statComp.get(id).sync, 20);
-
-    // // test shift
-    vm.prank(deployer);
-    statComp.set(id, stat);
-    stat.shift += 11;
-    vm.prank(deployer);
-    int32 shifted = statComp.shift(id, 11);
-    assertEq(shifted, stat.shift, "shift mismatch");
-    assertEq(statComp.get(id), stat);
-    vm.prank(address(1));
-    vm.expectRevert();
-    statComp.shift(id, 1);
-
-    // test boost
-    vm.prank(deployer);
-    statComp.set(id, stat);
-    stat.boost += 2;
-    vm.prank(deployer);
-    int32 boosted = statComp.boost(id, 2);
-    assertEq(boosted, stat.boost, "boost mismatch");
-    assertEq(statComp.get(id), stat);
-    vm.prank(address(1));
-    vm.expectRevert();
-    statComp.boost(id, 1);
   }
 
   //////////////

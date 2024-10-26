@@ -38,14 +38,14 @@ contract FeedingTest is SetupTemplate {
 
   function _getFoodHealAmount(uint32 index) internal view returns (int32) {
     uint registryID = LibItem.getByIndex(components, index);
-    return LibStat.getHealth(components, registryID).base;
+    return LibStat.get(components, "HEALTH", registryID).base;
   }
 
   function _calcHarvestingPetHealth(uint kamiID) internal view returns (uint) {
     uint harvestID = LibKami.getHarvest(components, kamiID);
     uint output = LibHarvest.calcBounty(components, harvestID);
     uint drain = LibKami.calcStrain(components, kamiID, output);
-    uint health = uint(int(LibStat.getHealth(components, kamiID).sync));
+    uint health = uint(int(LibStat.get(components, "HEALTH", kamiID).sync));
     health = (health > drain) ? health - drain : 0;
     return health;
   }
@@ -463,8 +463,8 @@ contract FeedingTest is SetupTemplate {
 
   //     initialHealth = _calcHarvestingPetHealth(kamiID);
   //     healAmt = _getFoodHealAmount(itemIndex);
-  //     finalHealth = (initialHealth + healAmt > LibStat.getHealth(components, kamiID))
-  //       ? LibStat.getHealth(components, kamiID)
+  //     finalHealth = (initialHealth + healAmt > LibStat.get(components, "HEALTH",  kamiID))
+  //       ? LibStat.get(components, "HEALTH",  kamiID)
   //       : initialHealth + healAmt;
   //     _feedPet(kamiID, itemIndex);
   //     assertEq(LibKami.getLastHealth(components, kamiID), finalHealth);

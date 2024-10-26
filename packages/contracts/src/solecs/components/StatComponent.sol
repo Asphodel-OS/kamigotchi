@@ -44,9 +44,10 @@ contract StatComponent is BareComponent {
   // CALCS
 
   // calculate the stat total = ((1 + boost) * (base + shift))
-  function calcTotal(uint256 entity) external view virtual returns (int32) {
+  /// @dev deprecated
+  function deprecatedCalcTotal(uint256 entity) external view virtual returns (int32) {
     Stat memory value = _get(entity);
-    return StatLib.calcTotal(value);
+    return StatLib.deprecatedCalcTotal(value);
   }
 
   // adjust the shift value of the stat.
@@ -66,17 +67,21 @@ contract StatComponent is BareComponent {
   }
 
   // adjust the sync value of the stat. bound result between [0, calcTotal()]
-  function sync(uint256 entity, int32 amt) external onlyWriter returns (int32) {
+  function deprecatedSync(uint256 entity, int32 amt) external onlyWriter returns (int32) {
     Stat memory value = _get(entity);
-    value.sync = StatLib.sync(value, amt, StatLib.calcTotal(value));
+    value.sync = StatLib.deprecatedSync(value, amt, StatLib.deprecatedCalcTotal(value));
     _set(entity, value);
     return value.sync;
   }
 
   // adjust the sync value of the stat with a specified max value
-  function sync(uint256 entity, int32 amt, int32 max) external onlyWriter returns (int32) {
+  function deprecatedSync(
+    uint256 entity,
+    int32 amt,
+    int32 max
+  ) external onlyWriter returns (int32) {
     Stat memory value = _get(entity);
-    value.sync = StatLib.sync(value, amt, max);
+    value.sync = StatLib.deprecatedSync(value, amt, max);
     _set(entity, value);
     return value.sync;
   }
