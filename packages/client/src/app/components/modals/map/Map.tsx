@@ -137,13 +137,11 @@ export function registerMapModal() {
 }
 const TextBox = styled.div`
   padding-right: 1vw;
-
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
   gap: 0.6vh;
-
   color: black;
   font-family: Pixel;
   font-size: calc(1.2vw);

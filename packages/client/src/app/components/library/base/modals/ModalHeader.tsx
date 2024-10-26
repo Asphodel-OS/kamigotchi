@@ -11,11 +11,13 @@ export const ModalHeader = (props: Props) => {
   const { icon, title, staminaBar } = props;
 
   return (
-    <Wrapper>
-      {icon && <Image src={icon} alt={title} />}
-      <Title>{title}</Title>
-      {staminaBar}
-    </Wrapper>
+    <>
+      <Wrapper>
+        {icon && <Image src={icon} alt={title} />}
+        <Title>{title}</Title>
+        <WrapperStaminaBar>{staminaBar}</WrapperStaminaBar>
+      </Wrapper>
+    </>
   );
 };
 
@@ -39,4 +41,10 @@ const Title = styled.div`
 const Image = styled.img`
   height: 2vw;
   width: auto;
+`;
+const WrapperStaminaBar = styled.div`
+  position: fixed;
+  margin-left: 20%;
+  display: flex;
+  flex-flow: row;
 `;
