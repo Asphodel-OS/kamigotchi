@@ -6,8 +6,8 @@ const rawYominet = {
   name: 'yominet',
   nativeCurrency: {
     decimals: 18,
-    name: 'Ethereum',
-    symbol: 'ETH',
+    name: 'Onyx',
+    symbol: 'ONYX',
   },
   rpcUrls: {
     default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
