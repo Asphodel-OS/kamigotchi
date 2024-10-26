@@ -200,7 +200,7 @@ export function registerAccountRegistrar() {
 
       const dripFaucet = async (address: string) => {
         setFaucetState('claiming');
-        const response = await axios.post('https://initia-faucet.test.asphodel.io/claim', {
+        const response = await axios.post('https://initia-faucet-01.test.asphodel.io/claim', {
           address,
         });
         if (response.status !== 200) {
