@@ -12,6 +12,9 @@ const rawYominet = {
   rpcUrls: {
     default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
   },
+  blockExplorers: {
+    default: { name: 'Onyxscan', url: 'https://scan.testnet.initia.xyz/preyominet-1' },
+  },
 } as const satisfies Chain;
 
 const yominet = addRpcUrlOverrideToChain(rawYominet, import.meta.env.VITE_RPC_TRANSPORT_URL);
