@@ -9,7 +9,7 @@ interface Props {
   disabled?: boolean;
   fill?: boolean;
   inverted?: boolean;
-  size?: 'small' | 'medium' | 'large' | 'vending' | 'menu' | 'validator';
+  size?: 'small' | 'medium' | 'large' | 'menu' | 'validator';
   pulse?: boolean;
   tooltip?: string[];
   noMargin?: boolean;
@@ -31,34 +31,24 @@ export const ActionButton = (props: Props) => {
     const size = props.size ?? 'medium';
     if (size === 'small') {
       styles.fontSize = '.6vw';
-      styles.margin = '0vw .12vw';
       styles.padding = '.3vw .6vw';
       styles.borderRadius = '.3vw';
       styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
       styles.fontSize = '.8vw';
-      styles.margin = '0vw .16vw';
       styles.padding = '.4vw .8vw';
       styles.borderRadius = '.45vw';
       styles.borderWidth = '.15vw';
     } else if (size === 'large') {
       styles.fontSize = '1.4vw';
-      styles.margin = '0vw .28vw';
       styles.padding = '.7vw 1.4vw';
       styles.borderRadius = '.7vw';
       styles.borderWidth = '.2vw';
     } else if (size === 'validator') {
       styles.fontSize = '1.2vh';
-      styles.margin = '0vh .1vh';
       styles.padding = '0.9vh';
       styles.borderRadius = '0.45vh';
       styles.borderWidth = '0.1vh';
-    } else if (size === 'vending') {
-      styles.fontSize = '12px';
-      styles.margin = '3px';
-      styles.padding = '8px 24px';
-      styles.borderRadius = '5px';
-      styles.borderWidth = '2px';
     } else if (size === 'menu') {
       styles.fontSize = '0.9vh';
       styles.padding = '0vh .6vh';

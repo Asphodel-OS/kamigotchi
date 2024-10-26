@@ -27,6 +27,7 @@ import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 
 type FaucetState = 'unclaimed' | 'claiming' | 'claimed';
+const TOTAL_FAUCETS = 2;
 
 /**
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
@@ -138,6 +139,12 @@ export function registerAccountRegistrar() {
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
       const [faucetState, setFaucetState] = useState<FaucetState>('unclaimed');
+      const [faucetSymbol, setFaucetSymbol] = useState<string>('🚰');
+
+      // note(jb): quite possibly the jankiest shit i've written in my life
+      const [faucetIndex, setFaucetIndex] = useState<number>(
+        Math.floor(TOTAL_FAUCETS * Math.random())
+      );
 
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
@@ -199,15 +206,23 @@ export function registerAccountRegistrar() {
       };
 
       const dripFaucet = async (address: string) => {
+        console.log('Faucet Index', faucetIndex);
         setFaucetState('claiming');
-        const response = await axios.post('https://initia-faucet-01.test.asphodel.io/claim', {
-          address,
-        });
+        setFaucetSymbol('🌀');
+
+        const response = await axios.post(
+          `https://initia-faucet-0${faucetIndex + 1}.test.asphodel.io/claim`,
+          { address }
+        );
+
         if (response.status !== 200) {
           console.error('Faucet Error', response.status);
           setFaucetState('unclaimed');
+          setFaucetSymbol('❌');
+          setFaucetIndex((faucetIndex + 1) % TOTAL_FAUCETS);
         } else {
           setFaucetState('claimed');
+          setFaucetSymbol('✅');
           // TODO: play drippiest sound known to humankind
         }
       };
@@ -296,15 +311,6 @@ export function registerAccountRegistrar() {
         <ActionButton text='Back' disabled={step === 0} onClick={() => setStep(step - 1)} />
       );
 
-      const FaucetButton = () => (
-        <ActionButton
-          onClick={() => dripFaucet(selectedAddress)}
-          size='medium'
-          text={`ONYX Faucet ${faucetState === 'claiming' ? '(pending)' : ''}`}
-          disabled={faucetState !== 'unclaimed'}
-        />
-      );
-
       const IntroStep1 = () => {
         return (
           <>
@@ -360,18 +366,27 @@ export function registerAccountRegistrar() {
           <>
             {OwnerDisplay()}
             {OperatorDisplay()}
-            <Input
-              type='string'
-              value={name}
-              onChange={(e) => handleChangeName(e)}
-              onKeyDown={(e) => catchKeys(e)}
-              placeholder='your username'
-              style={{ pointerEvents: 'auto' }}
-            />
+            <Row>
+              <Input
+                type='string'
+                value={name}
+                onChange={(e) => handleChangeName(e)}
+                onKeyDown={(e) => catchKeys(e)}
+                placeholder='your username'
+                style={{ pointerEvents: 'auto' }}
+              />
+              <SubmitButton />
+            </Row>
             <Row>
               <BackButton />
-              <SubmitButton />
-              <FaucetButton />
+              <Tooltip text={['ONYX Faucet', `(${faucetState})`]} align='center'>
+                <ActionButton
+                  onClick={() => dripFaucet(selectedAddress)}
+                  size='medium'
+                  text={`Faucet ${faucetSymbol}`}
+                  disabled={faucetState !== 'unclaimed'}
+                />
+              </Tooltip>
             </Row>
           </>
         );
@@ -435,19 +450,4 @@ const Input = styled.input`
   font-size: 0.6vw;
   text-align: center;
   text-decoration: none;
-`;
-
-const Link = styled.div`
-  color: #11f;
-  padding: 0.6vw 0 0 0;
-  cursor: pointer;
-  pointer-events: auto;
-
-  font-size: 0.6vw;
-  text-align: center;
-  text-decoration: underline;
-
-  &:hover {
-    color: #71f;
-  }
 `;

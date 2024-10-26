@@ -104,7 +104,7 @@ export function registerOperatorUpdater() {
           <Description>New Avatar: {burnerAddress}</Description>
           <br />
           <Row>
-            <ActionButton text='Update' onClick={handleSubmit} size='vending' />
+            <ActionButton text='Update' onClick={handleSubmit} />
           </Row>
         </ValidatorWrapper>
       );
