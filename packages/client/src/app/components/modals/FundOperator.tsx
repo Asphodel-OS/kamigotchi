@@ -99,7 +99,7 @@ export function registerFundOperatorModal() {
 
       const dripFaucet = async (address: string) => {
         setIsDripping(true);
-        await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
+        await axios.post(' https://initia-faucet-01.test.asphodel.io/claim', {
           address: address,
         });
         setIsDripping(false);

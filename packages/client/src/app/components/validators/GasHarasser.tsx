@@ -109,7 +109,7 @@ export function registerGasHarasser() {
       };
 
       const dripFaucet = async (address: string) => {
-        await axios.post(' https://initia-faucet.test.asphodel.io/claim', {
+        await axios.post(' https://initia-faucet-01.test.asphodel.io/claim', {
           address: address,
         });
       };
