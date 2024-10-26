@@ -3,19 +3,17 @@ import styled from 'styled-components';
 interface Props {
   title: string;
   icon?: string;
-  staminaBar?: React.JSX.Element;
 }
 
 // ModalHeader renders a standard modal header with Title and optional icon.
 export const ModalHeader = (props: Props) => {
-  const { icon, title, staminaBar } = props;
+  const { icon, title } = props;
 
   return (
     <>
       <Wrapper>
         {icon && <Image src={icon} alt={title} />}
         <Title>{title}</Title>
-        <WrapperStaminaBar>{staminaBar}</WrapperStaminaBar>
       </Wrapper>
     </>
   );
@@ -41,10 +39,4 @@ const Title = styled.div`
 const Image = styled.img`
   height: 2vw;
   width: auto;
-`;
-const WrapperStaminaBar = styled.div`
-  position: fixed;
-  margin-left: 20%;
-  display: flex;
-  flex-flow: row;
 `;

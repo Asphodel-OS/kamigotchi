@@ -111,16 +111,11 @@ export function registerMapModal() {
       return (
         <ModalWrapper
           id='map'
-          header={
-            <ModalHeader
-              title={roomMap.get(selectedRoom)?.name ?? 'Map'}
-              icon={mapIcon}
-              staminaBar={staminaBar}
-            />
-          }
+          header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
           canExit
           noPadding
           truncate
+          footer={staminaBar}
         >
           {' '}
           <Grid
@@ -136,10 +131,11 @@ export function registerMapModal() {
   );
 }
 const TextBox = styled.div`
-  padding-right: 1vw;
+  margin-right: 5px;
+  padding: 7px;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.6vh;
   color: black;
