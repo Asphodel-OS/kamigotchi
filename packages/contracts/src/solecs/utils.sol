@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { IUint256Component } from "./interfaces/IUint256Component.sol";
 import { IComponent } from "./interfaces/IComponent.sol";
 import { ISystem } from "./interfaces/ISystem.sol";
-import { systemsComponentId } from "./constants.sol";
+import { SYSTEMS_COMPONENT_ID } from "./constants.sol";
 
 /// @notice Turn an entity ID into its corresponding Ethereum address.
 function entityToAddress(uint256 entity) pure returns (address) {
@@ -39,7 +39,7 @@ function getCompByID(IUint256Component components, uint256 id) view returns (ICo
  * System registry component is registered (like _components in World.sol)
  */
 function getSystemAddressById(IUint256Component components, uint256 id) view returns (address) {
-  IUint256Component systems = IUint256Component(getAddrByID(components, systemsComponentId));
+  IUint256Component systems = IUint256Component(getAddrByID(components, SYSTEMS_COMPONENT_ID));
   return getAddrByID(systems, id);
 }
 
