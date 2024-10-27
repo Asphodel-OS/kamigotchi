@@ -1,3 +1,5 @@
+import { EntityIndex } from '@mud-classic/recs';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconListButton, KamiCard } from 'app/components/library';
@@ -7,9 +9,7 @@ import { ActionIcons } from 'assets/images/icons/actions';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { healthIcon } from 'assets/images/icons/stats';
 import { BaseAccount } from 'network/shapes/Account';
-import { Kami, calcHealth, calcOutput } from 'network/shapes/Kami';
-import { calcHealthPercent } from 'network/shapes/Kami/functions';
-import { useEffect, useMemo, useState } from 'react';
+import { Kami, KamiOptions, calcHealth, calcHealthPercent, calcOutput } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 type KamiSort = 'name' | 'health' | 'health %' | 'output' | 'cooldown';
@@ -23,23 +23,32 @@ const SortMap: Record<KamiSort, string> = {
 };
 
 interface Props {
-  kamis: Kami[];
-  myKamis: Kami[];
-  ownerCache: Map<number, BaseAccount>;
+  entities: {
+    allies: EntityIndex[];
+    enemies: EntityIndex[];
+  };
   actions: {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
+  };
+  utils: {
+    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
+    getOwner: (index: number) => BaseAccount;
   };
 }
 
 // rendering of an ally kami on this node
 export const EnemyCards = (props: Props) => {
-  const { kamis, myKamis, ownerCache, actions } = props;
+  const { actions, utils, entities } = props;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
-  const [sort, setSort] = useState<KamiSort>('cooldown');
-  const [sorted, setSorted] = useState<Kami[]>([]);
+
   const [isVisible, setIsVisible] = useState(false);
-  const display = kamis.length > 0 ? 'flex' : 'none';
+
+  const [ownerCache, _] = useState(new Map<number, BaseAccount>());
+  const [allies, setAllies] = useState<Kami[]>([]);
+  const [enemies, setEnemies] = useState<Kami[]>([]);
+  const [sorted, setSorted] = useState<Kami[]>([]);
+  const [sort, setSort] = useState<KamiSort>('cooldown');
 
   // toggle off render calcs whenever the node modal is closed
   useEffect(() => {
@@ -57,10 +66,17 @@ export const EnemyCards = (props: Props) => {
     []
   );
 
-  // sort whenever the list of kamis changes or the sort changes
+  // populate the ally/enemy data if the enemy modal is open
   useEffect(() => {
     if (!isVisible) return;
-    const sorted = [...kamis].sort((a, b) => {
+    setEnemies(entities.enemies.map((entity) => utils.getKami(entity, { harvest: true })));
+    setAllies(entities.allies.map((entity) => utils.getKami(entity, { harvest: true })));
+  }, [entities]);
+
+  // sort whenever the list of enemies changes or the sort changes
+  useEffect(() => {
+    if (!isVisible) return;
+    const sorted = [...enemies].sort((a, b) => {
       if (sort === 'name') return a.name.localeCompare(b.name);
       else if (sort === 'health') return calcHealth(a) - calcHealth(b);
       else if (sort === 'health %') return calcHealthPercent(a) - calcHealthPercent(b);
@@ -73,12 +89,15 @@ export const EnemyCards = (props: Props) => {
       return 0;
     });
     setSorted(sorted);
-  }, [kamis, sort]);
+  }, [enemies, sort]);
 
   const handleToggle = () => {
     playClick();
     setIsVisible(!isVisible);
   };
+
+  /////////////////
+  // INTERPRETATION
 
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
@@ -92,6 +111,19 @@ export const EnemyCards = (props: Props) => {
     return description;
   };
 
+  // get and cache owner lookups. if owner is null, update the cache
+  const getOwner = (kami: Kami) => {
+    const owner = ownerCache.get(kami.index);
+    if (!owner || !owner.index) {
+      const updatedOwner = utils.getOwner(kami.index);
+      ownerCache.set(kami.index, updatedOwner);
+    }
+    return ownerCache.get(kami.index)!;
+  };
+
+  /////////////////
+  // INTERACTION
+
   // toggle the node modal to the selected one
   const selectAccount = (index: number) => {
     if (!modals.account) setModals({ account: true, party: false, map: false });
@@ -100,21 +132,23 @@ export const EnemyCards = (props: Props) => {
   };
 
   return (
-    <Container style={{ display }}>
+    <Container style={{ display: entities.enemies.length > 0 ? 'flex' : 'none' }}>
       <Row>
-        <Title onClick={handleToggle}>{`${isVisible ? '▼' : '▶'} Enemies(${kamis.length})`}</Title>
+        <Title
+          onClick={handleToggle}
+        >{`${isVisible ? '▼' : '▶'} Enemies(${entities.enemies.length})`}</Title>
         <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
       </Row>
       {isVisible &&
         sorted.map((kami: Kami) => {
-          const owner = ownerCache.get(kami.index)!;
+          const owner = getOwner(kami);
           return (
             <KamiCard
               key={kami.index}
               kami={kami}
               subtext={`${owner.name} (\$${calcOutput(kami)})`}
               subtextOnClick={() => selectAccount(owner.index)}
-              actions={LiquidateButton(kami, myKamis, actions.liquidate)}
+              actions={LiquidateButton(kami, allies, actions.liquidate)}
               description={getDescription(kami)}
               showBattery
               showCooldown

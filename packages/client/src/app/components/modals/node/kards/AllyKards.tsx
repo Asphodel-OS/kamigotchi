@@ -20,7 +20,6 @@ interface Props {
 }
 
 // rendering of an ally kami on this node
-//  TODO: optimize this according to slow vs fast data rather than recomputing all kami data indiscriminately
 export const AllyKards = (props: Props) => {
   const { actions, utils, entities, account } = props;
   const { collect, feed, stop } = actions;
@@ -41,6 +40,7 @@ export const AllyKards = (props: Props) => {
     <Container style={{ display: entities.length > 0 ? 'flex' : 'none' }}>
       <Title>Allies</Title>
       {entities.map((entity: EntityIndex) => {
+        // TODO: optimize this. dont recompute all kami data indiscriminately
         const kami = utils.getKami(entity, { harvest: true, traits: true });
         return (
           <KamiCard

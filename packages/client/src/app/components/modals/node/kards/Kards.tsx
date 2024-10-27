@@ -9,7 +9,6 @@ import { EnemyCards } from './EnemyKards';
 
 interface Props {
   account: Account;
-  kamis: Kami[];
   kamiEntities: {
     account: EntityIndex[];
     node: EntityIndex[];
@@ -27,8 +26,7 @@ interface Props {
 }
 
 export const Kards = (props: Props) => {
-  const { actions, kamis, kamiEntities, account, utils } = props;
-  const [ownerCache, _] = useState(new Map<number, BaseAccount>());
+  const { actions, kamiEntities, account, utils } = props;
   const [allies, setAllies] = useState<EntityIndex[]>([]);
   const [enemies, setEnemies] = useState<EntityIndex[]>([]);
 
@@ -41,7 +39,6 @@ export const Kards = (props: Props) => {
       if (party.includes(entity)) allyEntities.push(entity);
       else enemyEntities.push(entity);
     });
-    console.log('counts', allyEntities.length, enemyEntities.length);
     setAllies(allyEntities);
     setEnemies(enemyEntities);
   }, [kamiEntities]);
@@ -50,14 +47,9 @@ export const Kards = (props: Props) => {
   // DISPLAY
 
   return (
-    <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
+    <Container style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}>
       <AllyKards account={account} entities={allies} actions={actions} utils={utils} />
-      <EnemyCards
-        entities={{ allies, enemies }}
-        ownerCache={ownerCache}
-        actions={actions}
-        utils={utils}
-      />
+      <EnemyCards entities={{ allies, enemies }} actions={actions} utils={utils} />
     </Container>
   );
 };

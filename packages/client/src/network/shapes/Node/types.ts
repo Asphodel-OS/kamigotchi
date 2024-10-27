@@ -1,17 +1,9 @@
-import {
-  EntityID,
-  EntityIndex,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { Item, getItemByIndex } from '../Item';
-import { Kami, getKami } from '../Kami';
+import { Kami } from '../Kami';
 import { DetailedEntity } from '../utils';
 import { getNodeRequirements } from './getters';
 
@@ -30,10 +22,6 @@ export interface Node extends BaseNode {
   drops: Item[];
   requirements: Condition[];
   kamis: Kami[];
-}
-
-export interface Options {
-  kamis?: boolean;
 }
 
 export const getBaseNode = (
@@ -55,17 +43,10 @@ export const getBaseNode = (
 };
 
 // get a Node from its EntityIndex
-export const getNode = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex,
-  options?: Options
-): Node => {
-  const { Description, EntityType, RoomIndex, SourceID, NodeIndex, HolderID, State, Type } =
-    components;
+export const getNode = (world: World, components: Components, entityIndex: EntityIndex): Node => {
+  const { Description, RoomIndex, NodeIndex, Type } = components;
 
   const nodeIndex = getComponentValue(NodeIndex, entityIndex)?.value as number;
-
   let node: Node = {
     ...getBaseNode(world, components, entityIndex),
     type: getComponentValue(Type, entityIndex)?.value as string,
@@ -75,37 +56,6 @@ export const getNode = (
     requirements: getNodeRequirements(world, components, nodeIndex),
     kamis: [],
   };
-
-  // (option) get the kamis on this node
-  if (options?.kamis) {
-    let kamis: Kami[] = [];
-
-    // get list of harvests on this node
-    const harvestEntityIndices = Array.from(
-      runQuery([
-        HasValue(EntityType, { value: 'HARVEST' }),
-        HasValue(SourceID, { value: node.id }),
-        HasValue(State, { value: 'ACTIVE' }),
-      ])
-    );
-
-    // get list of kamis from list of harvests
-    for (let i = 0; i < harvestEntityIndices.length; i++) {
-      const kamiID = formatEntityID(
-        getComponentValue(HolderID, harvestEntityIndices[i])?.value ?? ''
-      );
-      const kamiEntityIndex = world.entityToIndex.get(kamiID);
-      if (kamiEntityIndex) {
-        kamis.push(
-          getKami(world, components, kamiEntityIndex, {
-            harvest: true,
-            traits: true,
-          })
-        );
-      }
-    }
-    node.kamis = kamis;
-  }
 
   return node;
 };

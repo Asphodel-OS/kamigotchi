@@ -19,10 +19,8 @@ import {
 import {
   Node,
   NullNode,
-  getNode,
   getNodeByIndex,
   passesNodeReqs,
-  queryNodeByIndex,
   queryNodeKamis,
 } from 'network/shapes/Node';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
@@ -50,17 +48,12 @@ export function registerNodeModal() {
           const { world, components } = network;
           const { nodeIndex } = useSelected.getState();
 
-          const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-
-          let node = NullNode;
-          const nodeEntity = queryNodeByIndex(world, nodeIndex);
-          if (nodeEntity) node = getNode(world, components, nodeEntity, { kamis: true });
+          const account = getAccountFromBurner(network, { inventory: true });
 
           return {
             network,
             data: {
               account,
-              node,
               kamiEntities: {
                 account: queryKamisByAccount(components, account.id),
                 node: queryNodeKamis(world, components, nodeIndex),
@@ -74,7 +67,7 @@ export function registerNodeModal() {
               getScavPoints: (nodeIndex: number) =>
                 getScavPoints(world, components, 'node', nodeIndex, account.id),
               passesNodeReqs: (kami: Kami) =>
-                passesNodeReqs(world, components, node, account, kami),
+                passesNodeReqs(world, components, nodeIndex, account, kami),
               parseConditionalText: (condition: Condition, tracking?: boolean) =>
                 parseConditionalText(world, components, condition, tracking),
               getScavBarFromHash: (nodeIndex: number) =>
@@ -88,7 +81,7 @@ export function registerNodeModal() {
     // Render
     ({ data, network, utils }) => {
       // console.log('Node Modal Data', data);
-      const { account, kamiEntities, commits } = data;
+      const { account, kamiEntities } = data;
       const {
         actions,
         api,
@@ -98,19 +91,14 @@ export function registerNodeModal() {
       } = network;
       const { nodeIndex } = useSelected();
       const { setModals } = useVisibility();
-      const [node, setNode] = useState<Node>(data.node);
+      const [node, setNode] = useState<Node>(NullNode);
 
       // updates from selected Node updates
       useEffect(() => {
-        let node = getNodeByIndex(world, components, nodeIndex, { kamis: true });
+        let node = getNodeByIndex(world, components, nodeIndex);
         if (node.index == 0) setModals({ node: false }); // NullNode
         setNode(node);
       }, [nodeIndex]);
-
-      // updates from component subscription updates
-      useEffect(() => {
-        setNode(data.node);
-      }, [data.node]);
 
       /////////////////
       // ACTIONS
@@ -219,7 +207,7 @@ export function registerNodeModal() {
           truncate
           noPadding
         >
-          {node.kamis.length === 0 && (
+          {kamiEntities.node.length === 0 && (
             <EmptyText
               text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
               size={1}
@@ -227,7 +215,6 @@ export function registerNodeModal() {
           )}
           <Kards
             account={account}
-            kamis={node.kamis}
             kamiEntities={kamiEntities}
             actions={{ collect, feed, liquidate, stop }}
             utils={utils}
