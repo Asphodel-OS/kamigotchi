@@ -1,15 +1,17 @@
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Battery, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
+import { getColor } from 'app/components/library/base/measures/Battery';
 import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getMusuBalance } from 'network/shapes/Item';
 import { Stat } from 'network/shapes/Stats';
-import { getCurrPhase, getKamiTime, getPhaseIcon, getPhaseName } from 'utils/time';
+import { getCurrPhase, getPhaseIcon, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -57,6 +59,7 @@ export function registerAccountHeader() {
 
       const getClockTooltip = () => {
         const phase = getPhaseName(getCurrPhase());
+        //  {getKamiTime(Date.now())}
         return [
           `Kami World Clock (${phase})`,
           '',
@@ -73,33 +76,52 @@ export function registerAccountHeader() {
       };
 
       return (
-        <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
-          <Row>
-            <Cell>
-              <Tooltip text={getStaminaTooltip(stamina)}>
-                <TextBox>
-                  {`${calcStaminaPercent(stamina)}%`}
-                  <Battery level={calcStaminaPercent(stamina)} scale={1.2} />
-                </TextBox>
-              </Tooltip>
-            </Cell>
-            <Cell>
-              <Tooltip text={getClockTooltip()}>
-                <TextBox>
-                  <Icon src={getPhaseIcon(getCurrPhase())} />
-                  {getKamiTime(Date.now())}
-                </TextBox>
-              </Tooltip>
-            </Cell>
-            <Cell style={{ borderWidth: 0 }}>
-              <Tooltip text={getMusuTooltip()}>
-                <TextBox>
-                  <Icon src={ItemImages.musu} />
-                  {musu}
-                </TextBox>
-              </Tooltip>
-            </Cell>
-          </Row>
+        <Container>
+          <Tooltip text={getMusuTooltip()}>
+            <TextBox>
+              <Icon src={ItemImages.musu} />
+              {musu}
+            </TextBox>
+          </Tooltip>
+          <Circle>
+            <Tooltip text={getClockTooltip()}>
+              <Phases>
+                <Icon
+                  style={{
+                    position: 'relative',
+                    right: '3vh',
+                    top: '6vh',
+                  }}
+                  src={getPhaseIcon((getCurrPhase() % 3) + 2)}
+                />
+                <Icon
+                  style={{
+                    position: 'relative',
+                    top: '1vh',
+                  }}
+                  src={getPhaseIcon(getCurrPhase())}
+                />
+                <Icon
+                  style={{
+                    position: 'relative',
+                    left: '3vh',
+                    top: '6vh',
+                  }}
+                  src={getPhaseIcon((getCurrPhase() % 3) + 1)}
+                />
+              </Phases>
+            </Tooltip>
+            <ArrowUpwardIcon
+              style={{ width: '5vh', height: '6vh', top: '1.6vh', position: 'relative' }}
+            />
+            <SmallCircle>
+              <SmallCircleFill height={calcStaminaPercent(stamina)}>
+                <Tooltip text={getStaminaTooltip(stamina)}>
+                  <CircleTextBox style={{ height: 100 }} />
+                </Tooltip>
+              </SmallCircleFill>
+            </SmallCircle>
+          </Circle>
         </Container>
       );
     }
@@ -107,41 +129,75 @@ export function registerAccountHeader() {
 }
 
 const Container = styled.div`
-  background-color: white;
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
-  width: 99%;
-  height: 4.5vh;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-around;
-  align-items: center;
-
   pointer-events: auto;
+  position: absolute;
+  bottom: 10;
+  left: 10;
 `;
 
-const Row = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-evenly;
-
-  flex-grow: 1;
-`;
-
-const Cell = styled.div`
-  border-right: 0.15vw solid black;
-  width: 33%;
+const TextBox = styled.div`
+  height: 4.5vh;
+  width: max-content;
+  padding: 1.2vh;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
+  gap: 0.6vh;
+
+  color: black;
+  font-family: Pixel;
+  background-color: white;
+  border: 0.15vw solid black;
+  font-size: 1.2vh;
+  border-radius: 0.9vh;
+  left: 13vh;
+  top: 2.5vh;
+  position: relative;
 `;
 
-const TextBox = styled.div`
+const Icon = styled.img`
+  width: 2.4vh;
+  height: auto;
+`;
+
+const Circle = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 50%;
+  height: 15vh;
+  width: 15vh;
+  border: 0.2vh solid black;
+  background-color: white;
+  position: relative;
+`;
+const SmallCircle = styled.div`
+  border-radius: 50%;
+  height: 8vh;
+  width: 8vh;
+  border: 0.3vh solid black;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+`;
+const SmallCircleFill = styled.div<{ height: number }>`
+  height: ${({ height }) => height}%;
+  position: relative;
+  background-color: ${({ height }) => getColor(height)};
+`;
+const Phases = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+const CircleTextBox = styled.div`
   padding: 1.2vh;
 
   display: flex;
@@ -153,9 +209,4 @@ const TextBox = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 1.2vh;
-`;
-
-const Icon = styled.img`
-  width: 2.4vh;
-  height: auto;
 `;
