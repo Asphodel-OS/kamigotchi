@@ -41,6 +41,11 @@ export const EnemyCards = (props: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const display = kamis.length > 0 ? 'flex' : 'none';
 
+  // toggle off render calcs whenever the node modal is closed
+  useEffect(() => {
+    if (!modals.node) setIsVisible(false);
+  }, [modals.node]);
+
   // memoized sort options
   const sortOptions = useMemo(
     () =>
