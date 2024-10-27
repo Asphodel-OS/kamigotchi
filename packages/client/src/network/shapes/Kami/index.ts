@@ -3,6 +3,7 @@ export {
   calcCooldown,
   calcHarvestTime,
   calcHealth,
+  calcHealthPercent,
   calcIdleTime,
   calcOutput,
   calcStrainFromBalance,
