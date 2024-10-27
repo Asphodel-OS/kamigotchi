@@ -70,6 +70,11 @@ export const EnemyCards = (props: Props) => {
     setSorted(sorted);
   }, [kamis, sort]);
 
+  const handleToggle = () => {
+    playClick();
+    setIsVisible(!isVisible);
+  };
+
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
     const health = calcHealth(kami);
@@ -92,10 +97,8 @@ export const EnemyCards = (props: Props) => {
   return (
     <Container style={{ display }}>
       <Row>
-        <Title>Enemies</Title>
-        <Sort>
-          <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
-        </Sort>
+        <Title onClick={handleToggle}>{`${isVisible ? '▼' : '▶'} Enemies(${kamis.length})`}</Title>
+        <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
       </Row>
       {isVisible &&
         sorted.map((kami: Kami) => {
@@ -139,15 +142,16 @@ const Row = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: flex-end;
-`;
-
-const Sort = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
+  user-select: none;
 `;
 
 const Title = styled.div`
   font-size: 1.2vw;
   color: #333;
   padding: 0.2vw;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
