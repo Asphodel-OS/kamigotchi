@@ -8,7 +8,6 @@ import {
 } from '@mud-classic/recs';
 
 import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { Item, getItemByIndex } from '../Item';
@@ -62,18 +61,8 @@ export const getNode = (
   entityIndex: EntityIndex,
   options?: Options
 ): Node => {
-  const {
-    Affinity,
-    Description,
-    EntityType,
-    RoomIndex,
-    Name,
-    SourceID,
-    NodeIndex,
-    HolderID,
-    State,
-    Type,
-  } = components;
+  const { Description, EntityType, RoomIndex, SourceID, NodeIndex, HolderID, State, Type } =
+    components;
 
   const nodeIndex = getComponentValue(NodeIndex, entityIndex)?.value as number;
 
@@ -135,22 +124,4 @@ export const NullNode: Node = {
   drops: [],
   requirements: [],
   kamis: [],
-};
-
-/////////////////
-// IDs
-
-const IDStore = new Map<string, string>();
-
-export const getNodeEntity = (world: World, nodeIndex: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'harvest' + nodeIndex.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['node', nodeIndex]));
-    IDStore.set(key, id);
-  }
-
-  return world.entityToIndex.get(id as EntityID);
 };

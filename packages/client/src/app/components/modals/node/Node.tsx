@@ -10,7 +10,15 @@ import { getAccountFromBurner } from 'network/shapes/Account';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { Droptable, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
 import { Kami, getKamiAccount } from 'network/shapes/Kami';
-import { Node, NullNode, getNodeByIndex, passesNodeReqs } from 'network/shapes/Node';
+import {
+  Node,
+  NullNode,
+  getNode,
+  getNodeByIndex,
+  passesNodeReqs,
+  queryNodeByIndex,
+  queryNodeKamis,
+} from 'network/shapes/Node';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
@@ -37,15 +45,18 @@ export function registerNodeModal() {
           const { nodeIndex } = useSelected.getState();
 
           const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-          let node = getNodeByIndex(world, components, nodeIndex, { kamis: true });
-          if (!node) node = NullNode;
+
+          let node = NullNode;
+          const nodeEntity = queryNodeByIndex(world, nodeIndex);
+          if (nodeEntity) node = getNode(world, components, nodeEntity, { kamis: true });
+          const nodeKamiEntities = queryNodeKamis(world, components, nodeIndex);
 
           // reveal flow
           const commits = queryDTCommits(world, components, account.id);
 
           return {
             network,
-            data: { account, node, commits },
+            data: { account, node, nodeKamiEntities, commits },
             utils: {
               getOwner: (kamiIndex: number) => getKamiAccount(world, components, kamiIndex),
               getScavPoints: (nodeIndex: number) =>
