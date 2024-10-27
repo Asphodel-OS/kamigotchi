@@ -28,6 +28,7 @@ import grit from './grit.png';
 import hedging from './hedging.png';
 import heft from './heft.png';
 import hefty from './hefty.png';
+import hungry from './hungry.png';
 import immortality from './immortality.png';
 import index_funds from './index_funds.png';
 import intelligent_investor from './intelligent_investor.png';
@@ -104,6 +105,7 @@ export const SkillImages = {
   hedging,
   heft,
   hefty,
+  hungry,
   immortality,
   index_funds,
   intelligent_investor,
