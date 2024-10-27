@@ -6,7 +6,7 @@ import { passesConditionsByFor } from '../Conditional';
 import { Kami } from '../Kami';
 import { Node } from './types';
 
-export const passesNodeReqs = (
+export const passesRequirements = (
   world: World,
   components: Components,
   node: Node,

@@ -9,7 +9,13 @@ import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { Droptable, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
-import { Kami, getKamiAccount } from 'network/shapes/Kami';
+import {
+  Kami,
+  KamiOptions,
+  getKami,
+  getKamiAccount,
+  queryKamisByAccount,
+} from 'network/shapes/Kami';
 import {
   Node,
   NullNode,
@@ -49,15 +55,21 @@ export function registerNodeModal() {
           let node = NullNode;
           const nodeEntity = queryNodeByIndex(world, nodeIndex);
           if (nodeEntity) node = getNode(world, components, nodeEntity, { kamis: true });
-          const nodeKamiEntities = queryNodeKamis(world, components, nodeIndex);
-
-          // reveal flow
-          const commits = queryDTCommits(world, components, account.id);
 
           return {
             network,
-            data: { account, node, nodeKamiEntities, commits },
+            data: {
+              account,
+              node,
+              kamiEntities: {
+                account: queryKamisByAccount(components, account.id),
+                node: queryNodeKamis(world, components, nodeIndex),
+              },
+              commits: queryDTCommits(world, components, account.id),
+            },
             utils: {
+              getKami: (entity: EntityIndex, options?: KamiOptions) =>
+                getKami(world, components, entity, options),
               getOwner: (kamiIndex: number) => getKamiAccount(world, components, kamiIndex),
               getScavPoints: (nodeIndex: number) =>
                 getScavPoints(world, components, 'node', nodeIndex, account.id),
@@ -76,7 +88,7 @@ export function registerNodeModal() {
     // Render
     ({ data, network, utils }) => {
       // console.log('Node Modal Data', data);
-      const { account } = data;
+      const { account, kamiEntities, commits } = data;
       const {
         actions,
         api,
@@ -85,7 +97,7 @@ export function registerNodeModal() {
         localSystems: { DTRevealer },
       } = network;
       const { nodeIndex } = useSelected();
-      const { modals, setModals } = useVisibility();
+      const { setModals } = useVisibility();
       const [node, setNode] = useState<Node>(data.node);
 
       // updates from selected Node updates
@@ -216,6 +228,7 @@ export function registerNodeModal() {
           <Kards
             account={account}
             kamis={node.kamis}
+            kamiEntities={kamiEntities}
             actions={{ collect, feed, liquidate, stop }}
             utils={utils}
           />

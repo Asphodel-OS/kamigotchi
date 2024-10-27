@@ -1,4 +1,4 @@
-export { passesNodeReqs } from './functions';
+export { passesRequirements as passesNodeReqs } from './functions';
 export { getAllNodes, getBaseNodeByIndex, getNodeByIndex, getNodeRequirements } from './getters';
 export { queryByIndex as queryNodeByIndex, queryForKamis as queryNodeKamis } from './queries';
 export { NullNode, getBaseNode, getNode } from './types';

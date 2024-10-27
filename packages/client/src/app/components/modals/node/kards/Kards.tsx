@@ -1,14 +1,19 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account, BaseAccount } from 'network/shapes/Account';
-import { Kami } from 'network/shapes/Kami';
+import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
 
 interface Props {
   account: Account;
   kamis: Kami[];
+  kamiEntities: {
+    account: EntityIndex[];
+    node: EntityIndex[];
+  };
   actions: {
     collect: (kami: Kami) => void;
     feed: (kami: Kami, itemIndex: number) => void;
@@ -16,15 +21,19 @@ interface Props {
     stop: (kami: Kami) => void;
   };
   utils: {
+    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
     getOwner: (index: number) => BaseAccount;
   };
 }
 
 export const Kards = (props: Props) => {
-  const { actions, kamis, account, utils } = props;
+  const { actions, kamis, kamiEntities, account, utils } = props;
   const [ownerCache, _] = useState(new Map<number, BaseAccount>());
-  const [allies, setAllies] = useState<Kami[]>([]);
-  const [enemies, setEnemies] = useState<Kami[]>([]);
+  const [allies0, setAllies0] = useState<Kami[]>([]);
+  const [enemies0, setEnemies0] = useState<Kami[]>([]);
+
+  const [allies, setAllies] = useState<EntityIndex[]>([]);
+  const [enemies, setEnemies] = useState<EntityIndex[]>([]);
 
   // identify ally vs enemy kamis whenever the list of kamis changes
   useEffect(() => {
@@ -36,10 +45,22 @@ export const Kards = (props: Props) => {
       else enemyKamis.push(kami);
     });
 
-    setAllies(allyKamis);
-    setEnemies(enemyKamis);
+    setAllies0(allyKamis);
+    setEnemies0(enemyKamis);
   }, [kamis]);
 
+  useEffect(() => {
+    const allyEntities: EntityIndex[] = [];
+    const enemyEntities: EntityIndex[] = [];
+    kamiEntities.node.forEach((entity) => {
+      const party = kamiEntities.account;
+      if (party.includes(entity)) allyEntities.push(entity);
+      else enemyEntities.push(entity);
+    });
+    console.log('counts', allyEntities.length, enemyEntities.length);
+    setAllies(allyEntities);
+    setEnemies(enemyEntities);
+  }, [kamiEntities]);
   /////////////////
   // INTERPRETATION
 
@@ -58,8 +79,8 @@ export const Kards = (props: Props) => {
 
   return (
     <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
-      <AllyKards account={account} kamis={allies} actions={actions} />
-      <EnemyCards kamis={enemies} myKamis={allies} ownerCache={ownerCache} actions={actions} />
+      <AllyKards account={account} entities={allies} actions={actions} utils={utils} />
+      <EnemyCards kamis={enemies0} myKamis={allies0} ownerCache={ownerCache} actions={actions} />
     </Container>
   );
 };

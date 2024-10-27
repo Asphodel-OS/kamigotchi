@@ -1,25 +1,28 @@
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { KamiCard } from 'app/components/library';
 import { CollectButton, FeedButton, StopButton } from 'app/components/library/actions';
 import { Account } from 'network/shapes/Account';
-import { Kami, calcHealth, calcOutput } from 'network/shapes/Kami';
+import { Kami, KamiOptions, calcHealth, calcOutput } from 'network/shapes/Kami';
 
 interface Props {
   account: Account;
-  kamis: Kami[];
+  entities: EntityIndex[]; // ally kami entities
   actions: {
     collect: (kami: Kami) => void;
     feed: (kami: Kami, itemIndex: number) => void;
     stop: (kami: Kami) => void;
   };
+  utils: {
+    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
+  };
 }
 
 // rendering of an ally kami on this node
 export const AllyKards = (props: Props) => {
-  const { actions, kamis, account } = props;
+  const { actions, utils, entities, account } = props;
   const { collect, feed, stop } = actions;
-  const display = kamis.length > 0 ? 'flex' : 'none';
 
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
@@ -34,23 +37,26 @@ export const AllyKards = (props: Props) => {
   };
 
   return (
-    <Container style={{ display }}>
+    <Container style={{ display: entities.length > 0 ? 'flex' : 'none' }}>
       <Title>Allies</Title>
-      {kamis.map((kami: Kami) => (
-        <KamiCard
-          key={kami.index}
-          kami={kami}
-          description={getDescription(kami)}
-          subtext={`yours (\$${calcOutput(kami)})`}
-          actions={[
-            FeedButton(kami, account, feed),
-            CollectButton(kami, account, collect),
-            StopButton(kami, account, stop),
-          ]}
-          showBattery
-          showCooldown
-        />
-      ))}
+      {entities.map((entity: EntityIndex) => {
+        const kami = utils.getKami(entity);
+        return (
+          <KamiCard
+            key={kami.index}
+            kami={kami}
+            description={getDescription(kami)}
+            subtext={`yours (\$${calcOutput(kami)})`}
+            actions={[
+              FeedButton(kami, account, feed),
+              CollectButton(kami, account, collect),
+              StopButton(kami, account, stop),
+            ]}
+            showBattery
+            showCooldown
+          />
+        );
+      })}
     </Container>
   );
 };
