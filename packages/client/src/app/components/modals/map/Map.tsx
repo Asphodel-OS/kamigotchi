@@ -43,7 +43,7 @@ export function registerMapModal() {
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
       const getNode = (roomIndex: number) => {
-        return getNodeByIndex(world, components, roomIndex, { kamis: true });
+        return getNodeByIndex(world, components, roomIndex);
       };
 
       // set selected room roomIndex to the player's current one when map modal is opened

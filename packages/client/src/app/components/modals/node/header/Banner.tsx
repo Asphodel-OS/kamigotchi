@@ -1,3 +1,4 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -8,7 +9,7 @@ import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
 import { Droptable, DTDetails, NullDT } from 'network/shapes/Droptable';
-import { canHarvest, isResting, Kami, onCooldown } from 'network/shapes/Kami';
+import { canHarvest, isResting, Kami, KamiOptions, onCooldown } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { ScavBar } from 'network/shapes/Scavenge';
 import { getAffinityImage } from 'network/shapes/utils';
@@ -17,12 +18,13 @@ import { ScavengeBar } from './ScavengeBar';
 interface Props {
   account: Account;
   node: Node;
-  kamis: Kami[];
+  kamiEntities: EntityIndex[];
   actions: {
     scavClaim: (scavBar: ScavBar) => void;
     addKami: (kami: Kami) => void;
   };
   utils: {
+    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
     passesNodeReqs: (kami: Kami) => boolean;
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
     getScavPoints: () => number;
@@ -34,9 +36,10 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const Banner = (props: Props) => {
-  const { account, node, kamis, utils, actions } = props;
+  const { account, node, kamiEntities, utils, actions } = props;
   const { scavClaim, addKami } = actions;
   const [scavBar, setScavBar] = useState<ScavBar | undefined>(undefined);
+  const [kamis, setKamis] = useState<Kami[]>([]);
 
   /////////////////
   // TRACKING
@@ -46,6 +49,11 @@ export const Banner = (props: Props) => {
     const newScavBar = utils.getScavBar();
     setScavBar(newScavBar);
   }, [node.index]);
+
+  useEffect(() => {
+    const newKamis = kamiEntities.map((entity) => utils.getKami(entity));
+    setKamis(newKamis);
+  }, [kamiEntities]);
 
   // update the scavbar for its points every onc
 

@@ -194,7 +194,7 @@ export function registerNodeModal() {
               key='banner'
               account={account}
               node={node}
-              kamis={account.kamis}
+              kamiEntities={kamiEntities.account}
               actions={{ scavClaim, addKami: (kami) => start(kami, node) }}
               utils={{
                 ...utils,
