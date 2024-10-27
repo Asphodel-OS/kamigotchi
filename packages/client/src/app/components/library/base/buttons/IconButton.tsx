@@ -14,6 +14,7 @@ interface Props {
   pulse?: boolean;
   balance?: number;
   corner?: boolean;
+  radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
 }
@@ -27,6 +28,7 @@ export const IconButton = forwardRef(function IconButton(
   const { balance, corner } = props; // IconListButton options
   const scale = props.scale ?? 2.5;
   const scaleOrientation = props.scaleOrientation ?? 'vw';
+  const radius = props.radius ?? 0.45;
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -40,6 +42,7 @@ export const IconButton = forwardRef(function IconButton(
       onClick={!disabled ? handleClick : () => {}}
       scale={scale}
       orientation={scaleOrientation}
+      radius={radius}
       fullWidth={fullWidth}
       disabled={disabled}
       pulse={pulse}
@@ -52,7 +55,7 @@ export const IconButton = forwardRef(function IconButton(
         </Text>
       )}
       {balance && <Balance>{balance}</Balance>}
-      {corner && <Corner />}
+      {corner && <Corner radius={radius - 0.15} />}
     </Button>
   );
 });
@@ -61,6 +64,7 @@ interface ButtonProps {
   color: string;
   scale: number;
   orientation: string;
+  radius: number;
   fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
@@ -69,7 +73,7 @@ interface ButtonProps {
 const Button = styled.button<ButtonProps>`
   position: relative;
   border: solid black 0.15vw;
-  border-radius: 0.45vw;
+  border-radius: ${({ radius }) => radius}vw;
   height: ${({ scale }) => scale}${({ orientation }) => orientation};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
@@ -106,9 +110,10 @@ const Text = styled.div<{ scale: number; orientation: string }>`
   font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
 `;
 
-const Corner = styled.div`
+const Corner = styled.div<{ radius: number }>`
   position: absolute;
   border: solid black 0.3vw;
+  border-radius: 0 0 ${({ radius }) => radius}vw 0;
   border-color: transparent black black transparent;
   right: 0;
   bottom: 0;

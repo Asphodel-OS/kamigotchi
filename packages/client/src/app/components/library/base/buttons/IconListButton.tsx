@@ -12,6 +12,7 @@ interface Props {
   balance?: number;
   disabled?: boolean;
   fullWidth?: boolean;
+  radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
 }
@@ -24,11 +25,13 @@ export interface Option {
 }
 
 export function IconListButton(props: Props) {
-  const { img, options, text, scale, balance } = props;
+  const { img, options, text, balance } = props;
   const { disabled, fullWidth } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const scaleOrientation = props.scaleOrientation ?? 'vw';
+  const scale = props.scale ?? 2.5;
+  const radius = props.radius ?? 0.45;
 
   const handleOpen = () => {
     if (!disabled && toggleRef.current) {
@@ -67,6 +70,7 @@ export function IconListButton(props: Props) {
         text={text}
         onClick={handleOpen}
         disabled={disabled}
+        radius={radius}
         scale={scale}
         scaleOrientation={scaleOrientation}
         fullWidth={fullWidth}

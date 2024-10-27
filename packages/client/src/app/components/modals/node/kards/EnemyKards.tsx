@@ -38,6 +38,7 @@ export const EnemyCards = (props: Props) => {
   const { accountIndex, setAccount } = useSelected();
   const [sort, setSort] = useState<KamiSort>('cooldown');
   const [sorted, setSorted] = useState<Kami[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
   const display = kamis.length > 0 ? 'flex' : 'none';
 
   // memoized sort options
@@ -53,6 +54,7 @@ export const EnemyCards = (props: Props) => {
 
   // sort whenever the list of kamis changes or the sort changes
   useEffect(() => {
+    if (!isVisible) return;
     const sorted = [...kamis].sort((a, b) => {
       if (sort === 'name') return a.name.localeCompare(b.name);
       else if (sort === 'health') return calcHealth(a) - calcHealth(b);
@@ -92,24 +94,25 @@ export const EnemyCards = (props: Props) => {
       <Row>
         <Title>Enemies</Title>
         <Sort>
-          <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} />
+          <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
         </Sort>
       </Row>
-      {sorted.map((kami: Kami) => {
-        const owner = ownerCache.get(kami.index)!;
-        return (
-          <KamiCard
-            key={kami.index}
-            kami={kami}
-            subtext={`${owner.name} (\$${calcOutput(kami)})`}
-            subtextOnClick={() => selectAccount(owner.index)}
-            actions={LiquidateButton(kami, myKamis, actions.liquidate)}
-            description={getDescription(kami)}
-            showBattery
-            showCooldown
-          />
-        );
-      })}
+      {isVisible &&
+        sorted.map((kami: Kami) => {
+          const owner = ownerCache.get(kami.index)!;
+          return (
+            <KamiCard
+              key={kami.index}
+              kami={kami}
+              subtext={`${owner.name} (\$${calcOutput(kami)})`}
+              subtextOnClick={() => selectAccount(owner.index)}
+              actions={LiquidateButton(kami, myKamis, actions.liquidate)}
+              description={getDescription(kami)}
+              showBattery
+              showCooldown
+            />
+          );
+        })}
     </Container>
   );
 };
@@ -130,8 +133,7 @@ const Row = styled.div`
   opacity: 0.9;
   width: 100%;
 
-  padding: 0.3vw;
-  padding-bottom: 0.15vw;
+  padding: 0.3vw 0 0.15vw 0;
 
   display: flex;
   flex-flow: row nowrap;
@@ -147,5 +149,5 @@ const Sort = styled.div`
 const Title = styled.div`
   font-size: 1.2vw;
   color: #333;
-  padding-bottom: 0.2vw;
+  padding: 0.2vw;
 `;
