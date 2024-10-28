@@ -3,14 +3,14 @@ import { interval, map } from 'rxjs';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/stores';
+import { useAccount, useSelected, useVisibility } from 'app/stores';
 import { operatorIcon } from 'assets/images/icons/menu';
 import {
   Account,
   BaseAccount,
   getAccountByIndex,
-  getAccountFromBurner,
   getAllBaseAccounts,
+  NullAccount,
 } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Bottom } from './Bottom';
@@ -33,31 +33,25 @@ export function registerAccountModal() {
 
       return interval(3333).pipe(
         map(() => {
-          const account = getAccountFromBurner(network, {
-            friends: true,
-            inventory: true,
-            kamis: true,
-            stats: true,
-          });
-
           return {
             network,
-            data: { account },
           };
         })
       );
     },
     // Render
-    ({ data, network }) => {
+    ({ network }) => {
       const { actions, api, components, world } = network;
+      const { account: player } = useAccount();
       const { accountIndex } = useSelected();
-      const [account, setAccount] = useState<Account | null>(
-        getAccountByIndex(world, components, accountIndex)
-      );
+      const { modals } = useVisibility();
+
+      const [account, setAccount] = useState<Account>(NullAccount);
       const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
 
       // update data of the selected account when account index or data changes
       useEffect(() => {
+        if (!modals.account) return;
         const accountOptions = {
           friends: true,
           inventory: true,
@@ -65,7 +59,7 @@ export function registerAccountModal() {
           stats: true,
         };
         setAccount(getAccountByIndex(world, components, accountIndex, accountOptions));
-      }, [accountIndex, data.account]);
+      }, [accountIndex, modals.account]);
 
       // set the default tab when account index switches
       useEffect(() => {
@@ -74,7 +68,7 @@ export function registerAccountModal() {
       }, [accountIndex]);
 
       const isSelf = () => {
-        return data.account.index === accountIndex;
+        return player.index === accountIndex;
       };
 
       /////////////////
@@ -143,7 +137,7 @@ export function registerAccountModal() {
           <Bio
             key='bio'
             account={account} // account selected for viewing
-            playerAccount={data.account} // account of the player
+            isSelf={isSelf()}
             actionSystem={actions}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
           />

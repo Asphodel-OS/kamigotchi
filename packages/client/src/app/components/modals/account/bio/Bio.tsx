@@ -12,7 +12,7 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account; // account selected for viewing
-  playerAccount: Account; // account of the player
+  isSelf: boolean;
   actionSystem: ActionSystem;
   actions: {
     sendRequest: (account: Account) => void;
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { actionSystem, account, playerAccount } = props;
+  const { actionSystem, account, isSelf } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   /////////////////
@@ -101,7 +101,7 @@ export const Bio = (props: Props) => {
         <Identifiers>
           <TitleRow>
             <Title>{account.name}</Title>
-            {account.index === playerAccount.index && (
+            {isSelf && (
               <FarcasterConnect account={account} actionSystem={actionSystem} size={1.2} />
             )}
           </TitleRow>
