@@ -109,8 +109,9 @@ export const calcStrain = (attacker: Kami, defender: Kami): number => {
 // calculate liquidation hp recoil due to violence
 export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const karmaConfig = attacker.config.liquidation.karma;
-  const totalViolence = defender.stats.violence.total;
-  const karma = totalViolence * karmaConfig.ratio.value;
+  const v2 = defender.stats.violence.total;
+  const h1 = attacker.stats.harmony.total;
+  const karma = (v2 - h1) * karmaConfig.ratio.value;
   return Math.floor(karma);
 };
 
