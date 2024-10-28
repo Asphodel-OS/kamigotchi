@@ -129,6 +129,14 @@ export const EnemyCards = (props: Props) => {
     return ownerCache.get(kami.index)!;
   };
 
+  // doing this for a bit of testing sanity
+  const getActions = (kami: Kami) => {
+    if (sort === 'health %') return [LiquidateButton(kami, allies, actions.liquidate)];
+    if (sort === 'cooldown') return [LiquidateButton(kami, allies, actions.liquidate)];
+    return [];
+    return [LiquidateButton(kami, allies, actions.liquidate)];
+  };
+
   /////////////////
   // INTERACTION
 
@@ -156,7 +164,7 @@ export const EnemyCards = (props: Props) => {
               kami={kami}
               subtext={`${owner.name} (\$${calcOutput(kami)})`}
               subtextOnClick={() => selectAccount(owner.index)}
-              actions={LiquidateButton(kami, allies, actions.liquidate)}
+              actions={getActions(kami)}
               description={getDescription(kami)}
               showBattery
               showCooldown
