@@ -12,9 +12,7 @@ export const QuestMenuButton = () => {
     emaBoard: false,
     help: false,
     inventory: false,
-    kami: false,
     leaderboard: false,
-    nameKami: false,
     settings: false,
   };
 
