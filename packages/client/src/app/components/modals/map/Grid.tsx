@@ -3,7 +3,9 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
+import { kamiIcon } from 'assets/images/icons/menu';
 import { mapBackgrounds } from 'assets/images/map';
+import { Kami } from 'network/shapes/Kami';
 import { Room, emptyRoom } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
@@ -11,6 +13,7 @@ interface Props {
   index: number; // index of current room
   zone: number;
   rooms: Map<number, Room>;
+  accountKamis: Kami[];
   actions: {
     move: (roomIndex: number) => void;
   };
@@ -22,11 +25,12 @@ interface Props {
 }
 
 export const Grid = (props: Props) => {
-  const { index, zone, rooms, actions, utils } = props;
+  const { index, zone, rooms, actions, utils, accountKamis } = props;
   const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom } = utils;
   const [grid, setGrid] = useState<Room[][]>([]);
   const [kamis, setKamis] = useState<EntityIndex[]>([]);
   const [players, setPlayers] = useState<EntityIndex[]>([]);
+  const [harvestMap, setHarvestMap] = useState<Map<number, boolean>>(new Map());
 
   // set the grid whenever the room zone changes
   useEffect(() => {
@@ -70,7 +74,15 @@ export const Grid = (props: Props) => {
     setGrid(grid);
   }, [zone]);
   //
-
+  useEffect(() => {
+    const newHarvestMap = new Map<number, boolean>();
+    accountKamis.forEach((accountKami) => {
+      if (accountKami.harvest && accountKami.harvest.node) {
+        newHarvestMap.set(accountKami.harvest.node.index, accountKami.harvest.state === 'ACTIVE');
+      }
+    });
+    setHarvestMap(newHarvestMap);
+  }, [accountKamis]);
   /////////////////
   // INTERACTIONS
 
@@ -101,7 +113,6 @@ export const Grid = (props: Props) => {
               // TODO: move this logic elsewher for a bit of sanity
               const isRoom = room.index != 0;
               const isCurrRoom = room.index == index;
-
               const currExit = rooms.get(index)?.exits?.find((e) => e.toIndex === room.index);
               const isExit = !!currExit;
               const isBlocked = currExit?.blocked; // blocked exit
@@ -131,7 +142,20 @@ export const Grid = (props: Props) => {
                   onMouseLeave={() => {
                     if (isRoom) setHoveredRoom(0);
                   }}
-                />
+                >
+                  {room?.index !== undefined && harvestMap.get(room.index) && (
+                    <img
+                      src={kamiIcon}
+                      style={{
+                        margin: 'auto',
+                        display: 'block',
+                        maxHeight: '100%',
+                        maxWidth: '100%',
+                        position: 'relative',
+                      }}
+                    />
+                  )}
+                </Tile>
               );
 
               if (isRoom) {

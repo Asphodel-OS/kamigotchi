@@ -6,6 +6,7 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner, queryAccountsByRoom } from 'network/shapes/Account';
+
 import { queryNodeKamis } from 'network/shapes/Node';
 import { Room, getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { Grid } from './Grid';
@@ -26,7 +27,7 @@ export function registerMapModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network);
+          const account = getAccountFromBurner(network, { kamis: { harvest: true } });
           return {
             network,
             data: { account },
@@ -105,6 +106,7 @@ export function registerMapModal() {
             zone={zone}
             rooms={roomMap}
             actions={{ move }}
+            accountKamis={account.kamis}
             utils={{ setHoveredRoom, queryNodeKamis, queryAccountsByRoom }}
           />
         </ModalWrapper>
