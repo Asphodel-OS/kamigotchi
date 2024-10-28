@@ -16,7 +16,6 @@ import { StaminaComponent, ID as StaminaCompID } from "components/StaminaCompone
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
-
 import { LibBonus } from "libraries/LibBonus.sol";
 
 // LibStat manages the retrieval and update of stats. This library differs from
@@ -30,7 +29,7 @@ library LibStat {
   /////////////////
   // INTERACTIONS
 
-  /// @notice syncs and sets a Stat
+  /// @notice sets the sync value of a stat while accounting for bonuses
   function sync(
     IUintComp components,
     string memory type_,
@@ -56,6 +55,7 @@ library LibStat {
       applySingle(components, compIDs[i], deltaID, baseID);
   }
 
+  // apply the delta of stat changes to base
   function applySingle(
     IUintComp components,
     uint256 statCompID,
@@ -178,7 +178,7 @@ library LibStat {
     uint256 id
   ) internal view returns (int32) {
     return
-      LibBonus.getFor(components, string("STAT_").concat(type_).concat("_SHIFT"), id).toInt32();
+      LibBonus.getFor(components, string("STAT_").concat(type_).concat("_BOOST"), id).toInt32();
   }
 
   function getStatCompIDs() internal pure returns (uint256[] memory) {

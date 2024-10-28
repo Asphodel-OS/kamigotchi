@@ -73,8 +73,9 @@ export const EnemyCards = (props: Props) => {
   // populate the ally/enemy data if the enemy modal is open
   useEffect(() => {
     if (!isVisible) return;
-    setEnemies(entities.enemies.map((entity) => utils.getKami(entity, { harvest: true })));
-    setAllies(entities.allies.map((entity) => utils.getKami(entity, { harvest: true })));
+    const kamiOptions = { harvest: true, traits: true };
+    setEnemies(entities.enemies.map((entity) => utils.getKami(entity, kamiOptions)));
+    setAllies(entities.allies.map((entity) => utils.getKami(entity, kamiOptions)));
   }, [entities]);
 
   // sort whenever the list of enemies changes or the sort changes
