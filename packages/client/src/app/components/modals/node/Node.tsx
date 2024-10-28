@@ -42,7 +42,7 @@ export function registerNodeModal() {
 
     // Requirement
     (layers) =>
-      interval(1000).pipe(
+      interval(2000).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
