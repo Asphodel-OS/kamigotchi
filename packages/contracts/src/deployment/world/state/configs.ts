@@ -88,7 +88,7 @@ async function initLiquidation(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // nontraditional AST node
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
-  await api.config.set.array('KAMI_LIQ_SPOILS', [35, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
+  await api.config.set.array('KAMI_LIQ_SPOILS', [45, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 3000, 3, 0, 0, 0, 0]);
 }
 

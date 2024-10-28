@@ -196,7 +196,7 @@ library LibKill {
 
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
-    return (uint256(v2 - h1) * ratio) / precision;
+    return (uint32(v2 - h1) * ratio) / precision;
   }
 
   // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
@@ -228,6 +228,7 @@ library LibKill {
     uint256 powerTuning = (config[0] + power) * 10 ** (config[3] - config[1]); // scale to Ratio precision
     uint256 ratio = config[2] + powerTuning + ratioBonus.toUint256();
     uint256 precision = 10 ** uint256(config[3]);
+    if (ratio / precision > 1) return amt;
     return (amt * ratio) / precision;
   }
 
@@ -302,10 +303,10 @@ library LibKill {
     emit KamiLiquidated(
       LibKami.getIndex(components, killerID),
       killerHp.sync,
-      StatLib.deprecatedCalcTotal(killerHp),
+      LibStat.getTotal(components, "HEALTH", killerID),
       LibKami.getIndex(components, victimID),
       victimHp.sync,
-      StatLib.deprecatedCalcTotal(victimHp),
+      LibStat.getTotal(components, "HEALTH", victimID),
       bals.bounty.toUint32(),
       bals.salvage.toUint32(),
       bals.spoils.toUint32(),

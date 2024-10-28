@@ -93,7 +93,7 @@ const calcSpoils = (attacker: Kami, defender: Kami): number => {
   const salvage = calcSalvage(defender, balance);
   const powerTuning = power / 100 + config.nudge.value;
   const spoilsRatio = config.ratio.value + powerTuning + bonus.ratio;
-  const spoils = (balance - salvage) * spoilsRatio;
+  const spoils = (balance - salvage) * Math.min(1, spoilsRatio);
   return spoils;
 };
 
