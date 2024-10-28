@@ -5,8 +5,8 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'network/shapes/Account';
-import { getNodeByIndex } from 'network/shapes/Node';
+import { getAccountFromBurner, queryAccountsByRoom } from 'network/shapes/Account';
+import { queryNodeKamis } from 'network/shapes/Node';
 import { Room, getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { Grid } from './Grid';
 
@@ -25,40 +25,45 @@ export function registerMapModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
+          const { world, components } = network;
           const account = getAccountFromBurner(network);
           return {
             network,
             data: { account },
+            utils: {
+              queryNodeKamis: (nodeIndex: number) => queryNodeKamis(world, components, nodeIndex),
+              queryAccountsByRoom: (roomIndex: number) =>
+                queryAccountsByRoom(components, roomIndex),
+            },
           };
         })
       ),
 
     // Render
-    ({ network, data }) => {
+    ({ network, data, utils }) => {
+      const { account } = data;
       const { actions, api, components, world } = network;
-      const { roomIndex: selectedRoom, setRoom: setSelectedRoom } = useSelected();
+      const { queryNodeKamis, queryAccountsByRoom } = utils;
+      const { roomIndex, setRoom: setRoomIndex } = useSelected();
       const { modals } = useVisibility();
 
       const [hoveredRoom, setHoveredRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
-      const getNode = (roomIndex: number) => {
-        return getNodeByIndex(world, components, roomIndex);
-      };
 
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
-        if (modals.map) setSelectedRoom(data.account.roomIndex);
+        if (modals.map) setRoomIndex(account.roomIndex);
       }, [modals.map]);
 
       // query the set of rooms whenever the selected room changes
       useEffect(() => {
         const roomMap = new Map<number, Room>();
-        const currRoom = getRoomByIndex(world, components, selectedRoom);
+        const currRoom = getRoomByIndex(world, components, roomIndex);
         setZone(currRoom.location.z);
 
         const queriedRooms = getAllRooms(world, components, {
-          checkExits: { account: data.account },
+          checkExits: { account: account },
           players: true,
         });
 
@@ -68,7 +73,7 @@ export function registerMapModal() {
           }
         }
         setRoomMap(roomMap);
-      }, [selectedRoom]);
+      }, [roomIndex]);
 
       ///////////////////
       // ACTIONS
@@ -90,17 +95,17 @@ export function registerMapModal() {
       return (
         <ModalWrapper
           id='map'
-          header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
+          header={<ModalHeader title={roomMap.get(roomIndex)?.name ?? 'Map'} icon={mapIcon} />}
           canExit
           noPadding
           truncate
         >
           <Grid
-            index={selectedRoom}
+            index={roomIndex}
             zone={zone}
             rooms={roomMap}
-            actions={{ move, setHoveredRoom }}
-            utils={{ getNode }}
+            actions={{ move }}
+            utils={{ setHoveredRoom, queryNodeKamis, queryAccountsByRoom }}
           />
         </ModalWrapper>
       );

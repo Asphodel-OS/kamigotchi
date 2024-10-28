@@ -1,9 +1,9 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
-import { Node } from 'network/shapes/Node';
 import { Room, emptyRoom } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
@@ -13,16 +13,22 @@ interface Props {
   rooms: Map<number, Room>;
   actions: {
     move: (roomIndex: number) => void;
+  };
+  utils: {
+    queryNodeKamis: (nodeIndex: number) => EntityIndex[];
+    queryAccountsByRoom: (roomIndex: number) => EntityIndex[];
     setHoveredRoom: (roomIndex: number) => void;
   };
-  utils: { getNode: (roomIndex: number) => Node };
 }
+
 export const Grid = (props: Props) => {
   const { index, zone, rooms, actions, utils } = props;
+  const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom } = utils;
   const [grid, setGrid] = useState<Room[][]>([]);
-  const [numberOfKamis, setNumberOfKamis] = useState('0');
-  const [numberOfPlayers, setNumberOfPlayers] = useState('0');
+  const [kamis, setKamis] = useState<EntityIndex[]>([]);
+  const [players, setPlayers] = useState<EntityIndex[]>([]);
 
+  // set the grid whenever the room zone changes
   useEffect(() => {
     const z = rooms.get(index)?.location.z;
     if (!z) return;
@@ -73,6 +79,15 @@ export const Grid = (props: Props) => {
     actions.move(roomIndex);
   };
 
+  // updates the stats for a room and set it as the hovered room
+  const updateRoomStats = (roomIndex: number) => {
+    if (roomIndex != 0) {
+      setHoveredRoom(roomIndex);
+      setPlayers(queryAccountsByRoom(roomIndex));
+      setKamis(queryNodeKamis(roomIndex));
+    }
+  };
+
   /////////////////
   // RENDER
 
@@ -83,6 +98,7 @@ export const Grid = (props: Props) => {
         {grid.map((row, i) => (
           <Row key={i}>
             {row.map((room, j) => {
+              // TODO: move this logic elsewher for a bit of sanity
               const isRoom = room.index != 0;
               const isCurrRoom = room.index == index;
 
@@ -111,14 +127,9 @@ export const Grid = (props: Props) => {
                   onClick={onClick}
                   hasRoom={isRoom}
                   isHighlighted={isCurrRoom || isExit}
-                  onMouseEnter={() => {
-                    if (isRoom) actions.setHoveredRoom(room.index);
-                    const node = utils.getNode(room.index);
-                    setNumberOfPlayers(room.players?.length.toString() ?? '0');
-                    setNumberOfKamis(node.kamis.length.toString());
-                  }}
+                  onMouseEnter={() => updateRoomStats(room.index)}
                   onMouseLeave={() => {
-                    if (isRoom) actions.setHoveredRoom(0);
+                    if (isRoom) setHoveredRoom(0);
                   }}
                 />
               );
@@ -130,8 +141,8 @@ export const Grid = (props: Props) => {
                   '',
                   room.description,
                   '',
-                  `${numberOfKamis} kamis harvesting`,
-                  `${numberOfPlayers} players on this tile`,
+                  `${players.length} players on this tile`,
+                  `${kamis.length} kamis harvesting`,
                 ];
 
                 tile = (
