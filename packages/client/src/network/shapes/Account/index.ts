@@ -15,6 +15,7 @@ export {
   queryByOperator as queryAccountByOperator,
   queryByOwner as queryAccountByOwner,
   queryFromBurner as queryAccountFromBurner,
+  queryByRoom as queryAccountsByRoom,
 } from './queries';
 export {
   getCoinStats as getAccountCoinStats,

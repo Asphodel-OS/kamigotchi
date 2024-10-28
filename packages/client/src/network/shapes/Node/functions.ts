@@ -4,7 +4,7 @@ import { Components } from 'network/';
 import { Account } from '../Account';
 import { passesConditionsByFor } from '../Conditional';
 import { Kami } from '../Kami';
-import { getNodeRequirements } from './getters';
+import { getRequirements } from './getters';
 
 export const passesRequirements = (
   world: World,
@@ -13,8 +13,7 @@ export const passesRequirements = (
   account: Account,
   kami: Kami
 ): boolean => {
-  // getNodeRequirements;
-  const requirements = getNodeRequirements(world, components, index);
+  const requirements = getRequirements(world, components, index);
   return passesConditionsByFor(world, components, requirements, {
     account: account,
     kami: kami,

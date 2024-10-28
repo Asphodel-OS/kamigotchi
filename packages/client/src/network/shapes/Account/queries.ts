@@ -4,9 +4,10 @@ import { Components, NetworkLayer } from 'network/';
 
 export type QueryOptions = {
   index?: number;
+  name?: string;
   operator?: string;
   owner?: string;
-  name?: string;
+  room?: number;
 };
 
 export const queryFromBurner = (network: NetworkLayer): EntityIndex => {
@@ -17,12 +18,13 @@ export const queryFromBurner = (network: NetworkLayer): EntityIndex => {
 
 // query Account entities generally with query options. return matching entity indices
 const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
-  const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress } = components;
+  const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress, RoomIndex } = components;
   const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'ACCOUNT' })];
   if (options?.index) toQuery.push(HasValue(AccountIndex, { value: options.index }));
   if (options?.name) toQuery.push(HasValue(Name, { value: options.name }));
   if (options?.owner) toQuery.push(HasValue(OwnerAddress, { value: options.owner }));
   if (options?.operator) toQuery.push(HasValue(OperatorAddress, { value: options.operator }));
+  if (options?.room) toQuery.push(HasValue(RoomIndex, { value: options.room }));
   return Array.from(runQuery(toQuery));
 };
 
@@ -31,16 +33,9 @@ export const queryAll = (components: Components) => {
   return query(components);
 };
 
-// query for an account entity by its owner address
-export const queryByOwner = (components: Components, owner: string) => {
-  const results = query(components, { owner });
-  if (results.length == 0) return;
-  return results[0];
-};
-
-// query for an account entity by its operator address
-export const queryByOperator = (components: Components, operator: string) => {
-  const results = query(components, { operator });
+// query for an account entity by its index
+export const queryByIndex = (components: Components, index: number) => {
+  const results = query(components, { index });
   if (results.length == 0) return;
   return results[0];
 };
@@ -52,9 +47,22 @@ export const queryByName = (components: Components, name: string) => {
   return results[0];
 };
 
-// query for an account entity by its index
-export const queryByIndex = (components: Components, index: number) => {
-  const results = query(components, { index });
+// query for an account entity by its operator address
+export const queryByOperator = (components: Components, operator: string) => {
+  const results = query(components, { operator });
   if (results.length == 0) return;
   return results[0];
+};
+
+// query for an account entity by its owner address
+export const queryByOwner = (components: Components, owner: string) => {
+  const results = query(components, { owner });
+  if (results.length == 0) return;
+  return results[0];
+};
+
+// query for account entities by a room index
+export const queryByRoom = (components: Components, roomIndex: number) => {
+  const results = query(components, { room: roomIndex });
+  return results;
 };

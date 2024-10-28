@@ -31,7 +31,7 @@ export const queryByIndex = (world: World, index: number): EntityIndex | undefin
   return world.entityToIndex.get(id);
 };
 
-// query for the kami entities with active harvests on a given node
+// query for the kami entities with active harvests on a given node (by node index)
 export const queryForKamis = (world: World, comps: Components, index: number): EntityIndex[] => {
   const { EntityType, SourceID, HolderID, State } = comps;
   const id = indexToID(index);

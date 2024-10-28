@@ -5,7 +5,7 @@ import { Condition } from '../Conditional';
 import { Item, getItemByIndex } from '../Item';
 import { Kami } from '../Kami';
 import { DetailedEntity } from '../utils';
-import { getNodeRequirements } from './getters';
+import { getRequirements } from './getters';
 
 export interface BaseNode extends DetailedEntity {
   ObjectType: 'NODE';
@@ -53,7 +53,7 @@ export const getNode = (world: World, components: Components, entityIndex: Entit
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     description: getComponentValue(Description, entityIndex)?.value as string,
     drops: [getItemByIndex(world, components, 1)],
-    requirements: getNodeRequirements(world, components, nodeIndex),
+    requirements: getRequirements(world, components, nodeIndex),
     kamis: [],
   };
 
