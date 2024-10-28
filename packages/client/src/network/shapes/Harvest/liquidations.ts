@@ -1,4 +1,4 @@
-import { memoCDF, memoLogDiv } from 'utils/math';
+import cdf from '@stdlib/stats-base-dists-normal-cdf';
 import {
   calcHealth,
   calcOutput,
@@ -47,7 +47,8 @@ const calcAnimosity = (attacker: Kami, defender: Kami): number => {
   const precision = 10 ** 6;
   const attViolence = attacker.stats.violence.total;
   const defHarmony = defender.stats.harmony.total;
-  const base = memoCDF(memoLogDiv(attViolence, defHarmony));
+  // const base = memoCDF(memoLogDiv(attViolence, defHarmony));
+  const base = cdf(Math.log(attViolence / defHarmony), 0, 1);
   const ratio = attacker.config.liquidation.animosity.ratio.value;
   return Math.floor(precision * base * ratio) / precision;
 };
