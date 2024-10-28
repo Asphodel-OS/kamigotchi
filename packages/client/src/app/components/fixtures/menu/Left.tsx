@@ -1,9 +1,9 @@
 import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { getNodeByIndex } from 'network/shapes/Node';
-import styled from 'styled-components';
+import { queryNodeByIndex } from 'network/shapes/Node';
 import { AccountMenuButton, MapMenuButton, NodeMenuButton, PartyMenuButton } from './buttons';
 
 export function registerMenuLeft() {
@@ -20,14 +20,13 @@ export function registerMenuLeft() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const { world, components } = network;
+          const { world } = network;
           const { roomIndex } = useSelected.getState();
-          let node = getNodeByIndex(world, components, roomIndex);
-          return { data: { node } };
+          let nodeEntity = queryNodeByIndex(world, roomIndex);
+          return { nodeEntity };
         })
       ),
-    ({ data }) => {
-      const { node } = data;
+    ({ nodeEntity }) => {
       const { fixtures } = useVisibility();
 
       return (
@@ -35,7 +34,7 @@ export function registerMenuLeft() {
           <AccountMenuButton />
           <PartyMenuButton />
           <MapMenuButton />
-          <NodeMenuButton disabled={!node || node.index == 0} />
+          <NodeMenuButton disabled={!nodeEntity} />
         </Wrapper>
       );
     }
