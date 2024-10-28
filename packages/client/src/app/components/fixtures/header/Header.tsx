@@ -92,7 +92,7 @@ export function registerAccountHeader() {
                     right: '3vh',
                     top: '6vh',
                   }}
-                  src={getPhaseIcon((getCurrPhase() % 3) + 2)}
+                  src={getPhaseIcon((getCurrPhase() + 1) % 3)}
                 />
                 <Icon
                   style={{
@@ -107,7 +107,7 @@ export function registerAccountHeader() {
                     left: '3vh',
                     top: '6vh',
                   }}
-                  src={getPhaseIcon((getCurrPhase() % 3) + 1)}
+                  src={getPhaseIcon((getCurrPhase() + 2) % 3)}
                 />
               </Phases>
             </Tooltip>
