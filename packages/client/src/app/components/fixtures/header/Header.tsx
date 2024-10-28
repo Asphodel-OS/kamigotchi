@@ -76,7 +76,7 @@ export function registerAccountHeader() {
       };
 
       return (
-        <Container>
+        <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <Tooltip text={getMusuTooltip()}>
             <TextBox>
               <Icon src={ItemImages.musu} />
