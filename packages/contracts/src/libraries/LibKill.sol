@@ -192,10 +192,11 @@ library LibKill {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_KARMA");
     int32 v2 = LibStat.getTotal(components, "VIOLENCE", targetID);
     int32 h1 = LibStat.getTotal(components, "HARMONY", sourceID);
-    uint256 diff = v2 - h1 > 0 ? uint256(v2 - h1) : 0;
+    if (v2 - h1 < 0) return 0;
+
     uint256 ratio = uint(config[2]);
     uint256 precision = 10 ** uint(config[3]);
-    return (diff * ratio) / precision;
+    return (uint256(v2 - h1) * ratio) / precision;
   }
 
   // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.

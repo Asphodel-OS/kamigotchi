@@ -111,7 +111,8 @@ export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const karmaConfig = attacker.config.liquidation.karma;
   const v2 = defender.stats.violence.total;
   const h1 = attacker.stats.harmony.total;
-  const karma = (v2 - h1) * karmaConfig.ratio.value;
+  const diff = Math.max(0, v2 - h1);
+  const karma = diff * karmaConfig.ratio.value;
   return Math.floor(karma);
 };
 
