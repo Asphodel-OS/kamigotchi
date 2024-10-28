@@ -10,7 +10,6 @@ export const InventoryMenuButton = () => {
     dialogue: false,
     emaBoard: false,
     help: false,
-    kami: false,
     leaderboard: false,
     nameKami: false,
     quests: false,

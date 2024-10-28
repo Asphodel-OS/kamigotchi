@@ -9,7 +9,6 @@ export const ChatMenuButton = () => {
     dialogue: false,
     emaBoard: false,
     help: false,
-    kami: false,
     inventory: false,
     leaderboard: false,
     nameKami: false,
