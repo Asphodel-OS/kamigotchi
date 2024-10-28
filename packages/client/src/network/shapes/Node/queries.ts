@@ -39,9 +39,9 @@ export const queryForKamis = (world: World, comps: Components, index: number): E
   // get list of active harvests on this node
   const harvestEntities = Array.from(
     runQuery([
-      HasValue(EntityType, { value: 'HARVEST' }),
-      HasValue(SourceID, { value: id }),
+      HasValue(SourceID, { value: id }), // most constraining field first
       HasValue(State, { value: 'ACTIVE' }),
+      HasValue(EntityType, { value: 'HARVEST' }),
     ])
   );
 

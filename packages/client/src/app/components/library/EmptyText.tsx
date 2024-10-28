@@ -3,16 +3,16 @@ import styled from 'styled-components';
 interface Props {
   text: string[];
   size?: number;
+  gapScale?: number;
 }
 
 export const EmptyText = (props: Props) => {
-  const { text, size } = props;
-  const scale = size ?? 1.2;
+  const { text, size, gapScale } = props;
 
   return (
     <Container>
       {text.map((t: string) => (
-        <Text key={t} scale={scale}>
+        <Text key={t} size={size ?? 1.2} gapScale={gapScale ?? 3}>
           {t}
         </Text>
       ))}
@@ -31,8 +31,8 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Text = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => scale}vw;
-  line-height: ${({ scale }) => 3 * scale}vw;
+const Text = styled.div<{ size: number; gapScale: number }>`
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size, gapScale }) => gapScale * size}vw;
   text-align: center;
 `;

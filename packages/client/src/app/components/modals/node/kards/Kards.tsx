@@ -1,5 +1,5 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account, BaseAccount } from 'network/shapes/Account';
@@ -29,6 +29,8 @@ export const Kards = (props: Props) => {
   const { actions, kamiEntities, account, utils } = props;
   const [allies, setAllies] = useState<EntityIndex[]>([]);
   const [enemies, setEnemies] = useState<EntityIndex[]>([]);
+  const [visibleEnemies, setVisibleEnemies] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // identify ally vs enemy kamis whenever the list of kamis changes
   useEffect(() => {
@@ -43,13 +45,53 @@ export const Kards = (props: Props) => {
     setEnemies(enemyEntities);
   }, [kamiEntities]);
 
+  // scrolling effects for enemy kards
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [enemies.length, visibleEnemies]);
+
+  /////////////////
+  // INTERACTION
+
+  // when scrolling, load more kamis when nearing the bottom of the container
+  const handleScroll = () => {
+    if (isScrolledToBottom()) {
+      const newLimit = Math.min(visibleEnemies + 5, enemies.length);
+      console.log('newLimit', { visibleEnemies, enemies: enemies.length, newLimit });
+      setVisibleEnemies(newLimit);
+    }
+  };
+
+  /////////////////
+  // INTERPRETATION
+
+  // check whether the container is scrolled to the bottom
+  const isScrolledToBottom = () => {
+    const current = containerRef.current;
+    if (!current) return false;
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    return scrollTop + clientHeight >= scrollHeight - 20; // 20px threshold
+  };
+
   ///////////////////
   // DISPLAY
 
   return (
-    <Container style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}>
+    <Container
+      ref={containerRef}
+      style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}
+    >
       <AllyKards account={account} entities={allies} actions={actions} utils={utils} />
-      <EnemyCards entities={{ allies, enemies }} actions={actions} utils={utils} />
+      <EnemyCards
+        entities={{ allies, enemies }}
+        actions={actions}
+        utils={utils}
+        limit={{ val: visibleEnemies, set: setVisibleEnemies }}
+      />
     </Container>
   );
 };
@@ -57,4 +99,5 @@ export const Kards = (props: Props) => {
 const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
+  overflow-y: auto;
 `;

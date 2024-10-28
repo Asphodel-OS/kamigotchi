@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconListButton, KamiCard } from 'app/components/library';
+import { EmptyText, IconListButton, KamiCard } from 'app/components/library';
 import { LiquidateButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
@@ -23,6 +23,10 @@ const SortMap: Record<KamiSort, string> = {
 };
 
 interface Props {
+  limit: {
+    val: number;
+    set: (val: number) => void;
+  };
   entities: {
     allies: EntityIndex[];
     enemies: EntityIndex[];
@@ -36,9 +40,9 @@ interface Props {
   };
 }
 
-// rendering of an ally kami on this node
+// rendering of enermy kamis on this node
 export const EnemyCards = (props: Props) => {
-  const { actions, utils, entities } = props;
+  const { actions, utils, entities, limit } = props;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
 
@@ -50,11 +54,6 @@ export const EnemyCards = (props: Props) => {
   const [sorted, setSorted] = useState<Kami[]>([]);
   const [sort, setSort] = useState<KamiSort>('cooldown');
 
-  // toggle off render calcs whenever the node modal is closed
-  useEffect(() => {
-    if (!modals.node) setIsVisible(false);
-  }, [modals.node]);
-
   // memoized sort options
   const sortOptions = useMemo(
     () =>
@@ -65,6 +64,11 @@ export const EnemyCards = (props: Props) => {
       })),
     []
   );
+
+  // toggle off render calcs whenever the node modal is closed
+  useEffect(() => {
+    if (!modals.node) setIsVisible(false);
+  }, [modals.node]);
 
   // populate the ally/enemy data if the enemy modal is open
   useEffect(() => {
@@ -91,8 +95,12 @@ export const EnemyCards = (props: Props) => {
     setSorted(sorted);
   }, [enemies, sort]);
 
+  /////////////////
+  // INTERACTION
+
   const handleToggle = () => {
     playClick();
+    if (!isVisible) limit.set(10); // Reset limit to 10 when toggling
     setIsVisible(!isVisible);
   };
 
@@ -140,7 +148,7 @@ export const EnemyCards = (props: Props) => {
         <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
       </Row>
       {isVisible &&
-        sorted.map((kami: Kami) => {
+        sorted.slice(0, limit.val).map((kami: Kami) => {
           const owner = getOwner(kami);
           return (
             <KamiCard
@@ -155,6 +163,9 @@ export const EnemyCards = (props: Props) => {
             />
           );
         })}
+      {limit.val < sorted.length && isVisible && (
+        <EmptyText text={['loading more kamis', 'pls be patient..']} size={1} />
+      )}
     </Container>
   );
 };
@@ -182,6 +193,12 @@ const Row = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   user-select: none;
+`;
+
+const Loading = styled.div`
+  font-size: 1.2vw;
+  color: #333;
+  padding: 0.2vw;
 `;
 
 const Title = styled.div`
