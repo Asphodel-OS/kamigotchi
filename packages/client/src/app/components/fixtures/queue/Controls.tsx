@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { formatEther } from 'viem';
 import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
 import { GasGauge, IconButton, Tooltip } from 'app/components/library';
@@ -8,6 +7,10 @@ import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { parseTokenBalance } from 'utils/balances';
+
+// NOTE: ACTUAL GAS EXPONENT HANDLED IN constants/gas.ts
+// the precision to represent gas numbers at readable scale (e.g. mONYX)
+const READABILITY_PRECISION = 3;
 
 interface Props {
   mode: number;
@@ -19,7 +22,7 @@ export const Controls = (props: Props) => {
   const { account: kamiAccount } = useAccount();
   const iconMapping = [triggerIcons.eyeClosed, triggerIcons.eyeHalf, triggerIcons.eyeOpen];
 
-  const [burnerGasBalance, setBurnerGasBalance] = useState<number>(0);
+  const [operatorGas, setOperatorGas] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<bigint>(0n);
 
   /////////////////
@@ -27,17 +30,19 @@ export const Controls = (props: Props) => {
 
   useWatchBlockNumber({
     onBlockNumber: (n) => {
-      refetchOperatorBalance();
-      setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, GasExponent - 3));
+      refetchOperatorGas();
+      setOperatorGas(parseTokenBalance(operatorGasRaw?.value, GasExponent));
+
+      // refresh gas price every 5 blocks
       if (n % 5n == 0n) {
         refetchGasPrice();
-        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent - 3)); // mONYX
+        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent)); // mONYX
       }
     },
   });
 
   // Operator Eth Balance
-  const { data: operatorBalance, refetch: refetchOperatorBalance } = useBalance({
+  const { data: operatorGasRaw, refetch: refetchOperatorGas } = useBalance({
     address: kamiAccount.operatorAddress as `0x${string}`,
   });
 
@@ -54,16 +59,16 @@ export const Controls = (props: Props) => {
   // INTERPRETATION
 
   // calculated the gas gauge level
-  const calcGaugeSetting = (balance: bigint = BigInt(0)): number => {
-    const formatted = Number(formatEther(balance));
-    const level = formatted / GasConstants.Full;
+  const calcGaugeSetting = (): number => {
+    const level = operatorGas / GasConstants.Full;
     return Math.min(level, 1.0);
   };
 
-  const getGaugeTooltip = (balance: number) => {
+  const getGaugeTooltip = () => {
     const tooltip = [`Gas Tank`, ''];
     let description = '';
 
+    const balance = getScaledBalance();
     if (balance < GasConstants.Low) description = 'Tank STARVING T-T feed NAO';
     else if (balance < GasConstants.Quarter) description = 'Tank Hongry :| feed soon?';
     else if (balance < GasConstants.Half) description = 'Tank.. kinda hongry ._.';
@@ -72,9 +77,15 @@ export const Controls = (props: Props) => {
     return [...tooltip, description];
   };
 
-  const getBalanceTooltip = (balance: number) => {
-    const eth = balance.toFixed(6);
-    return ['1 ONYX = 1000 milliONYX', '', `${eth} ONYX`];
+  // get the tooltip
+  const getBalanceTooltip = () => {
+    const gas = operatorGas.toFixed(6);
+    return ['1 ONYX = 1000 milliONYX', '', `${gas} ONYX`];
+  };
+
+  // get gas balance converted to readability precision units
+  const getScaledBalance = () => {
+    return operatorGas * 10 ** READABILITY_PRECISION;
   };
 
   //////////////////
@@ -105,11 +116,11 @@ export const Controls = (props: Props) => {
   return (
     <Row>
       <RowPrefix>
-        <Tooltip text={getGaugeTooltip(burnerGasBalance)}>
-          <GasGauge level={calcGaugeSetting(operatorBalance?.value)} />
+        <Tooltip text={getGaugeTooltip()}>
+          <GasGauge level={calcGaugeSetting()} />
         </Tooltip>
-        <Tooltip text={getBalanceTooltip(burnerGasBalance)}>
-          <Text>{burnerGasBalance.toFixed(2)}mONYX</Text>
+        <Tooltip text={getBalanceTooltip()}>
+          <Text>{getScaledBalance().toFixed(2)}mONYX</Text>
         </Tooltip>
         {PriceWarning()}
       </RowPrefix>
