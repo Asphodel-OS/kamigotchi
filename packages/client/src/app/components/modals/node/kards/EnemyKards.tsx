@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, IconListButton, KamiCard } from 'app/components/library';
+import { EmptyText, IconListButton } from 'app/components/library';
 import { LiquidateButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
@@ -12,6 +12,7 @@ import { BaseAccount } from 'network/shapes/Account';
 import { Kami, KamiOptions, calcHealth, calcHealthPercent, calcOutput } from 'network/shapes/Kami';
 import { Traits } from 'network/shapes/Trait';
 import { playClick } from 'utils/sounds';
+import { KamiCard } from '../KamiCard/KamiCard';
 
 type KamiSort = 'name' | 'health' | 'health %' | 'output' | 'cooldown';
 
@@ -128,7 +129,6 @@ export const EnemyCards = (props: Props) => {
     });
     if (enemiesStale) {
       setEnemies(newEnemies);
-      console.log('enemies stale refreshing');
     }
   }, [isVisible, lastRefresh]);
 
@@ -167,7 +167,6 @@ export const EnemyCards = (props: Props) => {
     const kami = utils.getKami(entity, kamiOptions);
     KamiCache.set(entity, kami);
     KamiLastTs.set(entity, kami.time.last);
-    console.log('processing kami', kami.name, isNew);
     return kami;
   };
 
