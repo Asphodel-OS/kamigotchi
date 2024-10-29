@@ -1,32 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   image?: string;
-  content: React.ReactNode;
+  children: React.ReactNode;
   imageOnClick?: () => void;
-  titleBarContent?: React.ReactNode;
   fullWidth?: boolean;
-  size?: 'small' | 'medium' | 'large';
+  scale?: number;
 }
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = (props: Props) => {
-  // toggle the kami modal settings depending on current its current state
-  const imageOnClick = () => {
-    if (props.imageOnClick) {
-      props.imageOnClick();
-      return;
+  const { image, children, imageOnClick, fullWidth } = props;
+  const scale = props.scale ?? 9;
+
+  // handle image click if there is one
+  const handleImageClick = () => {
+    if (imageOnClick) {
+      imageOnClick();
+      playClick();
     }
   };
 
   return (
-    <Wrapper key={props.image} fullWidth={props.fullWidth}>
-      <Image onClick={() => imageOnClick()} src={props.image} size={props.size} />
-      <Container>
-        {props.titleBarContent ? <TitleBar>{props.titleBarContent}</TitleBar> : null}
-        <Content>{props.content}</Content>
-      </Container>
+    <Wrapper fullWidth={fullWidth}>
+      <Image onClick={() => handleImageClick()} src={image} scale={scale} />
+      <Container>{children}</Container>
     </Wrapper>
   );
 };
@@ -43,7 +43,7 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
+const Image = styled.img<{ scale: number }>`
   border-style: solid;
   border-width: 0vw 0.15vw 0vw 0vw;
   border-color: black;
@@ -56,17 +56,8 @@ const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
     opacity: 0.75;
   }
 
-  height: ${(props) => {
-    if (props.size === 'small') return '6vw';
-    if (props.size === 'large') return '12vw';
-    return '9vw';
-  }};
-
-  width: ${(props) => {
-    if (props.size === 'small') return '6vw';
-    if (props.size === 'large') return '12vw';
-    return '9vw';
-  }};
+  height: ${({ scale }) => scale}vw;
+  width: ${({ scale }) => scale}vw;
 `;
 
 const Container = styled.div`
@@ -77,26 +68,5 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-  align-items: stretch;
-`;
-
-const TitleBar = styled.div`
-  border-style: solid;
-  border-width: 0vw 0vw 0.15vw 0vw;
-  border-color: black;
-  padding: 0.45vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Content = styled.div`
-  flex-grow: 1;
-  padding: 0.2vw;
-
-  display: flex;
-  flex-flow: row nowrap;
   align-items: stretch;
 `;

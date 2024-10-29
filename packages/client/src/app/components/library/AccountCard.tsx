@@ -75,23 +75,38 @@ export const AccountCard = (props: Props) => {
     <Card
       image={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
       imageOnClick={() => handleClick()}
-      titleBarContent={[<Title key='title' />]}
-      content={[
+      fullWidth
+      scale={6}
+    >
+      <TitleBar>
+        <Title key='title' />
+      </TitleBar>
+      <Content>
         <ContentColumn key='col-1'>
           <Description />
-        </ContentColumn>,
+        </ContentColumn>
         <ContentColumn key='col-2'>
           <ContentSubtext key='subtext' onClick={props.subtextOnClick}>
             {subtext}
           </ContentSubtext>
           <ContentActions key='actions'>{actions}</ContentActions>
-        </ContentColumn>,
-      ]}
-      fullWidth
-      size='small'
-    />
+        </ContentColumn>
+      </Content>
+    </Card>
   );
 };
+
+const TitleBar = styled.div`
+  border-style: solid;
+  border-width: 0vw 0vw 0.15vw 0vw;
+  border-color: black;
+  padding: 0.45vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const TitleText = styled.div`
   font-family: Pixel;
@@ -103,6 +118,15 @@ const TitleText = styled.div`
   &:hover {
     opacity: 0.6;
   }
+`;
+
+const Content = styled.div`
+  flex-grow: 1;
+  padding: 0.2vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
 `;
 
 const ContentColumn = styled.div`

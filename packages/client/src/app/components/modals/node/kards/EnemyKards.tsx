@@ -8,7 +8,9 @@ import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { healthIcon } from 'assets/images/icons/stats';
+import { Affinity } from 'constants/affinities';
 import { BaseAccount } from 'network/shapes/Account';
+import { Harvest } from 'network/shapes/Harvest';
 import { Kami, KamiOptions, calcHealth, calcHealthPercent, calcOutput } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
@@ -21,6 +23,11 @@ const SortMap: Record<KamiSort, string> = {
   output: ActionIcons.collect,
   cooldown: ActionIcons.harvest,
 };
+
+// cache for harvest rates of enemy kamis
+const Harvests = new Map<number, Harvest>();
+const bodyAffinities = new Map<number, Affinity>();
+const handAffinities = new Map<number, Affinity>();
 
 interface Props {
   limit: {
@@ -47,6 +54,7 @@ export const EnemyCards = (props: Props) => {
   const { accountIndex, setAccount } = useSelected();
 
   const [isVisible, setIsVisible] = useState(false);
+  const [lastHarvestRefresh, setLastHarvestRefresh] = useState(Date.now());
 
   const [ownerCache, _] = useState(new Map<number, BaseAccount>());
   const [allies, setAllies] = useState<Kami[]>([]);
@@ -119,6 +127,12 @@ export const EnemyCards = (props: Props) => {
     ];
     return description;
   };
+
+  // const getHarvestRate = (kami: Kami, harvest: boolean) => {
+  //   const rate = Harvests.get(kami.index);
+  //   if rate) Harvests.set(kami.index, calcRate());
+  //   return Harvests.get(kami.index)!;
+  // };
 
   // get and cache owner lookups. if owner is null, update the cache
   const getOwner = (kami: Kami) => {

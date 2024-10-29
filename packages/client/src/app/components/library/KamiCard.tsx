@@ -69,7 +69,7 @@ export const KamiCard = (props: Props) => {
 
   const CornerContent = (kami: Kami) => {
     const cooldown = calcCooldown(kami);
-    const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
+    const cooldownString = `Cooldown: ${Math.round(cooldown)}s`;
     const totalHealth = kami.stats.health.total;
     const batteryString = !isUnrevealed(kami)
       ? `Health: ${calcHealth(kami).toFixed()}/${totalHealth}`
@@ -92,27 +92,37 @@ export const KamiCard = (props: Props) => {
   };
 
   return (
-    <Card
-      image={kami.image}
-      imageOnClick={() => kamiOnClick()}
-      titleBarContent={[
+    <Card image={kami.image} imageOnClick={() => kamiOnClick()}>
+      <TitleBar>
         <TitleText key='title' onClick={() => kamiOnClick()}>
           {kami.name}
-        </TitleText>,
-        CornerContent(kami),
-      ]}
-      content={[
+        </TitleText>
+        {CornerContent(kami)}
+      </TitleBar>
+      <CardContent>
         <ContentColumn key='column-1'>
           <Description />
-        </ContentColumn>,
+        </ContentColumn>
         <ContentColumn key='column-2'>
           <ContentSubtext onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>
-        </ContentColumn>,
-      ]}
-    />
+        </ContentColumn>
+      </CardContent>
+    </Card>
   );
 };
+
+const TitleBar = styled.div`
+  border-style: solid;
+  border-width: 0vw 0vw 0.15vw 0vw;
+  border-color: black;
+  padding: 0.45vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const TitleText = styled.div`
   font-family: Pixel;
@@ -137,6 +147,15 @@ const TitleCorner = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+`;
+
+const CardContent = styled.div`
+  flex-grow: 1;
+  padding: 0.2vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
 `;
 
 const ContentColumn = styled.div`
