@@ -8,13 +8,14 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { Affinity } from 'constants/affinities';
 import { Components } from 'network/';
 import { Stats, getStats } from './Stats';
 
 // standardized shape of Traits on an Entity
 export interface Trait {
   name: string;
-  affinity: string;
+  affinity: Affinity;
   rarity: number;
   stats: Stats;
 }
@@ -27,7 +28,7 @@ export interface Traits {
   hand: Trait;
 }
 
-export interface TraitIndices {
+export interface TraitEntities {
   backgroundIndex: EntityIndex;
   bodyIndex: EntityIndex;
   colorIndex: EntityIndex;
@@ -42,7 +43,7 @@ export const getTrait = (world: World, components: Components, entityIndex: Enti
 
   return {
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    affinity: getComponentValue(Affinity, entityIndex)?.value || ('' as string),
+    affinity: (getComponentValue(Affinity, entityIndex)?.value ?? '') as Affinity,
     rarity: getComponentValue(Rarity, entityIndex)?.value || (0 as number),
     stats: getStats(world, components, entityIndex),
   };
@@ -82,7 +83,7 @@ export const getRegistryTraits = (world: World, components: Components): Trait[]
   return entityIndices.map((index) => getTrait(world, components, index));
 };
 
-export const getTraits = (world: World, components: Components, indices: TraitIndices): Traits => {
+export const getTraits = (world: World, components: Components, indices: TraitEntities): Traits => {
   return {
     background: getTrait(world, components, indices.backgroundIndex),
     body: getTrait(world, components, indices.bodyIndex),
@@ -90,4 +91,27 @@ export const getTraits = (world: World, components: Components, indices: TraitIn
     face: getTrait(world, components, indices.faceIndex),
     hand: getTrait(world, components, indices.handIndex),
   };
+};
+
+// get the traits of a kami entity
+export const getKamiTraits = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): Traits => {
+  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = components;
+
+  const getTraitPointer = (type: Component) => {
+    const traitIndex = getComponentValue(type, entity)?.value as number;
+    return Array.from(runQuery([Has(IsRegistry), HasValue(type, { value: traitIndex })]))[0];
+  };
+
+  const traitIndices: TraitEntities = {
+    backgroundIndex: getTraitPointer(BackgroundIndex),
+    bodyIndex: getTraitPointer(BodyIndex),
+    colorIndex: getTraitPointer(ColorIndex),
+    faceIndex: getTraitPointer(FaceIndex),
+    handIndex: getTraitPointer(HandIndex),
+  };
+  return getTraits(world, components, traitIndices);
 };

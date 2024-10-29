@@ -8,10 +8,9 @@ import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { healthIcon } from 'assets/images/icons/stats';
-import { Affinity } from 'constants/affinities';
 import { BaseAccount } from 'network/shapes/Account';
-import { Harvest } from 'network/shapes/Harvest';
 import { Kami, KamiOptions, calcHealth, calcHealthPercent, calcOutput } from 'network/shapes/Kami';
+import { Traits } from 'network/shapes/Trait';
 import { playClick } from 'utils/sounds';
 
 type KamiSort = 'name' | 'health' | 'health %' | 'output' | 'cooldown';
@@ -25,9 +24,9 @@ const SortMap: Record<KamiSort, string> = {
 };
 
 // cache for harvest rates of enemy kamis
-const Harvests = new Map<number, Harvest>();
-const bodyAffinities = new Map<number, Affinity>();
-const handAffinities = new Map<number, Affinity>();
+const KamiCache = new Map<EntityIndex, Kami>();
+const KamiLastTs = new Map<EntityIndex, number>(); // kami index -> last update ts
+const OwnerCache = new Map<EntityIndex, BaseAccount>();
 
 interface Props {
   limit: {
@@ -43,6 +42,8 @@ interface Props {
   };
   utils: {
     getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
+    getKamiTraits: (entity: EntityIndex) => Traits;
+    getLastTime: (entity: EntityIndex) => number;
     getOwner: (index: number) => BaseAccount;
   };
 }
@@ -54,9 +55,8 @@ export const EnemyCards = (props: Props) => {
   const { accountIndex, setAccount } = useSelected();
 
   const [isVisible, setIsVisible] = useState(false);
-  const [lastHarvestRefresh, setLastHarvestRefresh] = useState(Date.now());
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-  const [ownerCache, _] = useState(new Map<number, BaseAccount>());
   const [allies, setAllies] = useState<Kami[]>([]);
   const [enemies, setEnemies] = useState<Kami[]>([]);
   const [sorted, setSorted] = useState<Kami[]>([]);
@@ -73,22 +73,70 @@ export const EnemyCards = (props: Props) => {
     []
   );
 
-  // toggle off render calcs whenever the node modal is closed
+  // set visibility to skip data pulls
   useEffect(() => {
     if (!modals.node) setIsVisible(false);
   }, [modals.node]);
 
-  // populate the ally/enemy data if the enemy modal is open
+  // ticking
+  useEffect(() => {
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 2000);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []);
+
+  // populate the ally kami data as new ones come in
   useEffect(() => {
     if (!isVisible) return;
-    const kamiOptions = { harvest: true, traits: true };
-    setEnemies(entities.enemies.map((entity) => utils.getKami(entity, kamiOptions)));
-    setAllies(entities.allies.map((entity) => utils.getKami(entity, kamiOptions)));
-  }, [entities]);
+    setAllies(entities.allies.map((entity) => getKami(entity)));
+  }, [isVisible, entities.allies.length]);
+
+  // populate the enemy kami data as new ones come in
+  useEffect(() => {
+    if (!isVisible) return;
+    setEnemies(entities.enemies.map((entity) => getKami(entity)));
+  }, [isVisible, entities.enemies.length]);
+
+  // check to see whether we should refresh each kami's data as needed
+  useEffect(() => {
+    if (!isVisible) return;
+
+    // check for ally updates
+    let alliesStale = false;
+    const newAllies = allies.map((kami) => {
+      const lastTime = utils.getLastTime(kami.entityIndex);
+      const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
+      if (lastTime > lastUpdate) {
+        kami = processKami(kami.entityIndex);
+        alliesStale = true;
+      }
+      return kami; // do we need to requery?
+    });
+    if (alliesStale) setAllies(newAllies);
+
+    // check for enemy updates
+    let enemiesStale = false;
+    const newEnemies = enemies.map((kami) => {
+      const lastTime = utils.getLastTime(kami.entityIndex);
+      const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
+      if (lastTime > lastUpdate) {
+        kami = processKami(kami.entityIndex);
+        enemiesStale = true;
+      }
+      return kami; // do we need to requery?
+    });
+    if (enemiesStale) {
+      setEnemies(newEnemies);
+      console.log('enemies stale refreshing');
+    }
+  }, [isVisible, lastRefresh]);
 
   // sort whenever the list of enemies changes or the sort changes
   useEffect(() => {
+    console.log('enemy update detected');
     if (!isVisible) return;
+    console.log('sorting enemies');
     const sorted = [...enemies].sort((a, b) => {
       if (sort === 'name') return a.name.localeCompare(b.name);
       else if (sort === 'health') return calcHealth(a) - calcHealth(b);
@@ -103,6 +151,25 @@ export const EnemyCards = (props: Props) => {
     });
     setSorted(sorted);
   }, [enemies, sort]);
+
+  /////////////////
+  // CACHE OPERATIONS
+
+  // get a kami from the cache or live pool
+  const getKami = (entity: EntityIndex) => {
+    if (!KamiLastTs.has(entity)) processKami(entity, true);
+    return KamiCache.get(entity)!;
+  };
+
+  // cache any persistent kami data
+  const processKami = (entity: EntityIndex, isNew = false) => {
+    const kamiOptions = { harvest: true, traits: isNew };
+    const kami = utils.getKami(entity, kamiOptions);
+    KamiCache.set(entity, kami);
+    KamiLastTs.set(entity, kami.time.last);
+    console.log('processing kami', kami.name, isNew);
+    return kami;
+  };
 
   /////////////////
   // INTERACTION
@@ -128,27 +195,18 @@ export const EnemyCards = (props: Props) => {
     return description;
   };
 
-  // const getHarvestRate = (kami: Kami, harvest: boolean) => {
-  //   const rate = Harvests.get(kami.index);
-  //   if rate) Harvests.set(kami.index, calcRate());
-  //   return Harvests.get(kami.index)!;
-  // };
-
   // get and cache owner lookups. if owner is null, update the cache
   const getOwner = (kami: Kami) => {
-    const owner = ownerCache.get(kami.index);
+    const owner = OwnerCache.get(kami.entityIndex);
     if (!owner || !owner.index) {
       const updatedOwner = utils.getOwner(kami.index);
-      ownerCache.set(kami.index, updatedOwner);
+      OwnerCache.set(kami.entityIndex, updatedOwner);
     }
-    return ownerCache.get(kami.index)!;
+    return OwnerCache.get(kami.entityIndex)!;
   };
 
   // doing this for a bit of testing sanity
   const getActions = (kami: Kami) => {
-    if (sort === 'health %') return [LiquidateButton(kami, allies, actions.liquidate)];
-    if (sort === 'cooldown') return [LiquidateButton(kami, allies, actions.liquidate)];
-    return [];
     return [LiquidateButton(kami, allies, actions.liquidate)];
   };
 
@@ -216,12 +274,6 @@ const Row = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   user-select: none;
-`;
-
-const Loading = styled.div`
-  font-size: 1.2vw;
-  color: #333;
-  padding: 0.2vw;
 `;
 
 const Title = styled.div`

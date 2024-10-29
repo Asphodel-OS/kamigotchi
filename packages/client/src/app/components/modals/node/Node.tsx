@@ -24,6 +24,8 @@ import {
   queryNodeKamis,
 } from 'network/shapes/Node';
 import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
+import { getKamiTraits } from 'network/shapes/Trait';
+import { getLastTime } from 'network/shapes/utils/time';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
 import { Kards } from './kards/Kards';
@@ -63,6 +65,8 @@ export function registerNodeModal() {
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
                 getKami(world, components, entity, options),
+              getKamiTraits: (entity: EntityIndex) => getKamiTraits(world, components, entity),
+              getLastTime: (entity: EntityIndex) => getLastTime(components, entity),
               getOwner: (kamiIndex: number) => getKamiAccount(world, components, kamiIndex),
               getScavPoints: (nodeIndex: number) =>
                 getScavPoints(world, components, 'node', nodeIndex, account.id),

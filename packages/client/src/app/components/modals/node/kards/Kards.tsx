@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami, KamiOptions } from 'network/shapes/Kami';
+import { Traits } from 'network/shapes/Trait';
 import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
 
@@ -21,6 +22,8 @@ interface Props {
   };
   utils: {
     getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
+    getKamiTraits: (entity: EntityIndex) => Traits;
+    getLastTime: (entity: EntityIndex) => number;
     getOwner: (index: number) => BaseAccount;
   };
 }

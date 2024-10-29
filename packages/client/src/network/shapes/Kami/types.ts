@@ -1,13 +1,4 @@
-import {
-  Component,
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { KamiBonuses, getKamiBonuses } from '../Bonus';
@@ -21,7 +12,7 @@ import { hasFlag } from '../Flag';
 import { Harvest, getHarvestForKami } from '../Harvest';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
-import { TraitIndices, Traits, getTraits } from '../Trait';
+import { Traits, getKamiTraits } from '../Trait';
 import { DetailedEntity } from '../utils';
 import { calcHealthRate } from './functions';
 
@@ -98,14 +89,7 @@ export const getKami = (
   options?: Options
 ): Kami => {
   const {
-    BackgroundIndex,
-    BodyIndex,
-    ColorIndex,
-    EntityType,
     Experience,
-    FaceIndex,
-    HandIndex,
-    IsRegistry,
     LastTime,
     LastActionTime,
     Level,
@@ -157,29 +141,7 @@ export const getKami = (
   }
 
   // populate Traits
-  if (options?.traits) {
-    // gets registry entity for a trait
-    const getTraitPointer = (type: Component) => {
-      const traitIndex = getComponentValue(type, entityIndex)?.value as number;
-      return Array.from(runQuery([Has(IsRegistry), HasValue(type, { value: traitIndex })]))[0];
-    };
-
-    // adding traits
-    const backgroundIndex = getTraitPointer(BackgroundIndex);
-    const bodyIndex = getTraitPointer(BodyIndex);
-    const colorIndex = getTraitPointer(ColorIndex);
-    const faceIndex = getTraitPointer(FaceIndex);
-    const handIndex = getTraitPointer(HandIndex);
-
-    const traitIndices: TraitIndices = {
-      backgroundIndex,
-      bodyIndex,
-      colorIndex,
-      faceIndex,
-      handIndex,
-    };
-    kami.traits = getTraits(world, components, traitIndices);
-  }
+  if (options?.traits) kami.traits = getKamiTraits(world, components, entityIndex);
 
   // populate Harvest
   // NOTE: harvests should come after traits for harvest calcs to work correctly
@@ -195,7 +157,9 @@ export const getKami = (
   // ADJUSTMENTS
 
   kami.time.cooldown.requirement += kami.bonuses.general.cooldown;
-  kami.stats.health.rate = calcHealthRate(kami);
+
+  // only works if harvest is set
+  kami.stats.health.rate = calcHealthRate(kami); // TODO: stop relying on this field
 
   // TODO: move these over to functions.ts now that we've standardized calcs
   // experience threshold calculation according to level

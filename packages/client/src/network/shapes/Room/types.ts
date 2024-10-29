@@ -4,7 +4,6 @@ import {
   HasValue,
   World,
   getComponentValue,
-  hasComponent,
   runQuery,
 } from '@mud-classic/recs';
 import { utils } from 'ethers';
@@ -66,7 +65,7 @@ export const getRoom = (
   index: EntityIndex,
   options?: RoomOptions
 ): Room => {
-  const { AccountID, Description, EntityType, Exits, RoomIndex, Name } = components;
+  const { Description, EntityType, Exits, RoomIndex, Name } = components;
 
   const roomIndex = getComponentValue(RoomIndex, index)?.value as number;
   const loc = getLocation(components, index);
@@ -97,12 +96,12 @@ export const getRoom = (
     });
   }
 
-  // if the room has an owner, include their name
-  if (options?.owner && hasComponent(AccountID, index)) {
-    const accountID = formatEntityID(getComponentValue(AccountID, index)?.value ?? '');
-    const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
-    room.owner = getAccount(world, components, accountEntityIndex);
-  }
+  // // if the room has an owner, include their name
+  // if (options?.owner && hasComponent(AccountID, index)) {
+  //   const accountID = formatEntityID(getComponentValue(AccountID, index)?.value ?? '');
+  //   const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
+  //   room.owner = getAccount(world, components, accountEntityIndex);
+  // }
 
   // pull players currently in room
   if (options?.players) {
