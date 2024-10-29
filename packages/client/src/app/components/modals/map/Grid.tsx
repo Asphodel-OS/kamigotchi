@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { mapBackgrounds } from 'assets/images/map';
+import { Harvest } from 'network/shapes/Harvest';
 import { Kami } from 'network/shapes/Kami';
-import { Room, emptyRoom } from 'network/shapes/Room';
+import { emptyRoom, Room } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -21,12 +22,22 @@ interface Props {
     queryNodeKamis: (nodeIndex: number) => EntityIndex[];
     queryAccountsByRoom: (roomIndex: number) => EntityIndex[];
     setHoveredRoom: (roomIndex: number) => void;
+    queryKamisByAccount: () => EntityIndex[];
+    getHarvest: (entityIndex: EntityIndex) => Harvest;
+    getHarvestEntity: (kamiIndex: number) => EntityIndex | undefined;
   };
 }
 
 export const Grid = (props: Props) => {
   const { index, zone, rooms, actions, utils, accountKamis } = props;
-  const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom } = utils;
+  const {
+    queryNodeKamis,
+    queryAccountsByRoom,
+    setHoveredRoom,
+    queryKamisByAccount,
+    getHarvest,
+    getHarvestEntity,
+  } = utils;
   const [grid, setGrid] = useState<Room[][]>([]);
   const [kamis, setKamis] = useState<EntityIndex[]>([]);
   const [players, setPlayers] = useState<EntityIndex[]>([]);
@@ -76,9 +87,12 @@ export const Grid = (props: Props) => {
   //
   useEffect(() => {
     const newHarvestMap = new Map<number, boolean>();
-    accountKamis.forEach((accountKami) => {
-      if (accountKami.harvest && accountKami.harvest.node) {
-        newHarvestMap.set(accountKami.harvest.node.index, accountKami.harvest.state === 'ACTIVE');
+    queryKamisByAccount().forEach((accountKami) => {
+      const harvestEntity = getHarvestEntity(accountKami);
+      if (harvestEntity) {
+        const harvestInfo = getHarvest(harvestEntity);
+        harvestInfo !== undefined &&
+          newHarvestMap.set(harvestInfo.node?.index ?? 0, harvestInfo.state === 'ACTIVE');
       }
     });
     setHarvestMap(newHarvestMap);
@@ -147,11 +161,7 @@ export const Grid = (props: Props) => {
                     <img
                       src={kamiIcon}
                       style={{
-                        margin: 'auto',
-                        display: 'block',
-                        maxHeight: '100%',
-                        maxWidth: '100%',
-                        position: 'relative',
+                        opacity: 1!,
                       }}
                     />
                   )}
