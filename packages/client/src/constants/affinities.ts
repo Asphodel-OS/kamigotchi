@@ -1,10 +1,10 @@
 import { eerieIcon, insectIcon, normalIcon, scrapIcon } from 'assets/images/icons/affinities';
 
 export enum Affinity {
-  Normal = 'Normal',
-  Eerie = 'Eerie',
-  Insect = 'Insect',
-  Scrap = 'Scrap',
+  Normal = 'NORMAL',
+  Eerie = 'EERIE',
+  Insect = 'INSECT',
+  Scrap = 'SCRAP',
 }
 
 export const AffinityColors = {

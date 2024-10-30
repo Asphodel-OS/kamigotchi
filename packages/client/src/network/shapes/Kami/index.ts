@@ -8,7 +8,6 @@ export {
   calcOutput,
   calcStrainFromBalance,
   canHarvest,
-  getAccount as getKamiAccount,
   isDead,
   isFull,
   isHarvesting,
@@ -20,6 +19,7 @@ export {
 } from './functions';
 export {
   getAll as getAllKamis,
+  getAccount as getKamiAccount,
   getByIndex as getKamiByIndex,
   getByAccount as getKamisByAccount,
 } from './getters';

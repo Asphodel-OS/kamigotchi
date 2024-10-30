@@ -349,6 +349,8 @@
         "ValuesComponent"
       ]
     },
+    { "name": "EchoKamisSystem", "writeAccess": ["*"] },
+    { "name": "EchoRoomSystem", "writeAccess": ["IndexRoomComponent"] },
     {
       "name": "ItemBurnSystem",
       "writeAccess": ["TimeLastComponent", "ValueComponent"]
@@ -479,15 +481,7 @@
     },
     {
       "name": "KamiGachaRevealSystem",
-      "writeAccess": [
-        "BlockRevealComponent",
-        "IdHolderComponent",
-        "IDOwnsKamiComponent",
-        "RerollComponent",
-        "StateComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "KamiLevelSystem",

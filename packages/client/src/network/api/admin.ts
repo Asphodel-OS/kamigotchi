@@ -565,7 +565,7 @@ export function createAdminAPI(systems: any) {
     const mode = urlParams.get('mode') || import.meta.env.MODE;
     if (mode && ['production', 'staging'].includes(mode)) {
       console.log('sleeping');
-      return new Promise((resolve) => setTimeout(resolve, 3000));
+      return new Promise((resolve) => setTimeout(resolve, 1500));
     }
   }
 

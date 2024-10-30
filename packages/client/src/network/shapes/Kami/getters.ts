@@ -1,10 +1,14 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
-import { Components } from 'network/';
+import { EntityID, EntityIndex,  getComponentValue, HasValue, runQuery, World  } from '@mud-classic/recs';
+
+
 import { getHarvest } from 'network/shapes/Harvest';
 import { getHarvestEntity } from 'network/shapes/Harvest/types';
+import { formatEntityID } from 'engine/utils';
+import { Components } from 'network/components';
+import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
 import { query } from './queries';
-import { Options, getKami } from './types';
+import { getKami, Options } from './types';
 
 // get all Kamis
 export const getAll = (world: World, components: Components, options?: Options) => {
@@ -48,7 +52,27 @@ export const getByState = (
   return results.map((index) => getKami(world, components, index, options));
 };
 
-// get Kami harvesting location
+
+////////////////
+// OTHER GETTERS
+
+// get the BaseAccount entity that owns a Kami, queried by kami index
+export const getAccount = (world: World, components: Components, index: number): BaseAccount => {
+  const { EntityType, KamiIndex, OwnsKamiID } = components;
+  const kamiEntity = Array.from(
+    runQuery([HasValue(KamiIndex, { value: index }), HasValue(EntityType, { value: 'KAMI' })])
+  )[0];
+
+  const rawAccID = getComponentValue(OwnsKamiID, kamiEntity)?.value ?? '';
+  if (!rawAccID) return NullAccount;
+
+  const accID = formatEntityID(rawAccID);
+  const accEntity = world.entityToIndex.get(accID);
+  if (!accEntity) return NullAccount;
+
+  return getBaseAccount(world, components, accEntity);
+};
+  // get Kami harvesting location
 export const getKamiLocation = (world: World, components: Components, kamiIndex: EntityIndex) => {
   const harvestEntity = getHarvestEntity(world, world.entities[kamiIndex]);
   if (harvestEntity) {
@@ -56,4 +80,5 @@ export const getKamiLocation = (world: World, components: Components, kamiIndex:
 
     return harvestInfo.state === 'ACTIVE' ? harvestInfo.node?.index : undefined;
   }
+
 };

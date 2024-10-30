@@ -21,23 +21,25 @@ interface Props {
 }
 
 export const Reroll = (props: Props) => {
+  const { actions, data, utils } = props;
+  const { kamis, maxRerolls } = data;
+
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
   const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
-
-  const { actions, data, utils } = props;
-  const { kamis, balance, maxRerolls } = data;
 
   //////////////////
   // LOGIC
 
+  // update the reroll price of each kami when the list changes
   useEffect(() => {
     let price = BigInt(0);
-    selectedKamis.forEach((kami) => (price += props.utils.getRerollCost(kami)));
+    selectedKamis.forEach((kami) => (price += utils.getRerollCost(kami)));
     setRerollPrice(price);
   }, [selectedKamis]);
 
+  //
   const handleReroll = () => {
-    props.actions.handleReroll(selectedKamis, rerollPrice)();
+    actions.handleReroll(selectedKamis, rerollPrice)();
     setSelectedKamis([]);
   };
 

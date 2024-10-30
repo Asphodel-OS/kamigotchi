@@ -26,6 +26,8 @@ import AccountUseFoodSystem from "../../../../../client/abi/AccountUseFoodSystem
 import AccountUseTeleportSystem from "../../../../../client/abi/AccountUseTeleportSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
+import EchoKamisSystem from "../../../../../client/abi/EchoKamisSystem.json";
+import EchoRoomSystem from "../../../../../client/abi/EchoRoomSystem.json";
 import FriendAcceptSystem from "../../../../../client/abi/FriendAcceptSystem.json";
 import FriendBlockSystem from "../../../../../client/abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../../../../../client/abi/FriendCancelSystem.json";
@@ -93,6 +95,8 @@ export const SystemAbis = {
   "system.account.use.teleport": AccountUseTeleportSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
+  "system.echo.kamis": EchoKamisSystem.abi,
+  "system.echo.room": EchoRoomSystem.abi,
   "system.friend.accept": FriendAcceptSystem.abi,
   "system.friend.block": FriendBlockSystem.abi,
   "system.friend.cancel": FriendCancelSystem.abi,
