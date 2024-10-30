@@ -84,7 +84,7 @@ export const Grid = (props: Props) => {
 
     setGrid(grid);
   }, [zone]);
-  //
+  // manages Kami harvest location and name
   useEffect(() => {
     const newHarvestMap = new Map<number, string[]>();
     queryKamisByAccount().forEach((accountKami) => {
@@ -130,25 +130,25 @@ export const Grid = (props: Props) => {
               const currExit = rooms.get(index)?.exits?.find((e) => e.toIndex === room.index);
               const isExit = !!currExit;
               const isBlocked = currExit?.blocked; // blocked exit
+              const kamiBackGround =
+                room?.index !== undefined && harvestMap.get(room.index) ? true : false;
 
-              let color, opacity;
+              let backgroundColor;
               let onClick: MouseEventHandler | undefined;
               if (isCurrRoom) {
-                color = '#3b3';
-                opacity = 0.9;
+                backgroundColor = 'rgba(51,187,51,0.9)';
               } else if (isBlocked) {
-                color = '#000';
-                opacity = 0.3;
+                backgroundColor = 'rgba(0,0,0,0.3)';
               } else if (isExit) {
-                color = '#f85';
-                opacity = 0.6;
+                backgroundColor = 'rgba(255,136,85,0.6)';
                 onClick = () => handleRoomMove(room?.index ?? 0);
               }
 
               let tile = (
                 <Tile
                   key={j}
-                  style={{ backgroundColor: color, opacity }}
+                  backgroundColor={backgroundColor}
+                  kamiBackGround={kamiBackGround}
                   onClick={onClick}
                   hasRoom={isRoom}
                   isHighlighted={isCurrRoom || isExit}
@@ -156,16 +156,7 @@ export const Grid = (props: Props) => {
                   onMouseLeave={() => {
                     if (isRoom) setHoveredRoom(0);
                   }}
-                >
-                  {room?.index !== undefined && harvestMap.get(room.index) !== undefined && (
-                    <img
-                      src={kamiIcon}
-                      style={{
-                        opacity: 1!,
-                      }}
-                    />
-                  )}
-                </Tile>
+                />
               );
 
               if (isRoom) {
@@ -228,25 +219,36 @@ const Row = styled.div`
   flex-grow: 1;
 `;
 
-const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean }>`
-  opacity: 0.2;
-  border-right: 0.01vw solid black;
-  border-top: 0.01vw solid black;
-
+const Tile = styled.div<{
+  hasRoom: boolean;
+  isHighlighted: boolean;
+  backgroundColor: any;
+  kamiBackGround: boolean;
+}>`
+  border-right: 0.01vw solid rgba(0, 0, 0, 0.2);
+  border-top: 0.01vw solid rgba(0, 0, 0, 0.2);
+  background-color: ${({ backgroundColor }) => backgroundColor};
   display: flex;
   align-content: stretch;
   align-items: stretch;
   justify-content: stretch;
   flex-grow: 1;
-
+  ${({ kamiBackGround }) =>
+    kamiBackGround &&
+    `    
+    background-image: url(${kamiIcon});
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity:1;    
+    
+    `}
   ${({ hasRoom }) =>
     hasRoom &&
     `
     &:hover {
       opacity: 0.9;
       cursor: help;
-      border-left: 0.01vw solid black;
-      border-bottom: 0.01vw solid black;
+    border: 0.01vw solid rgba(0, 0, 0, 1);
     }
   `}
 
@@ -254,8 +256,8 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean }>`
     isHighlighted &&
     `
     opacity: 0.9;
-    border-left: 0.01vw solid black;
-    border-bottom: 0.01vw solid black;
+    border: 0.01vw solid black;
+ 
   `}
 
   ${({ onClick }) =>
