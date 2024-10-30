@@ -15,8 +15,44 @@ export const MoreMenuButton = () => {
     if (ready) setDisabled(!authenticated);
   }, [authenticated]);
 
-  const handleClick = () => {
+  /////////////////
+  // HANDLERS
+
+  const handleLogout = () => {
     if (ready && authenticated) logout();
+  };
+
+  const handleHardRefresh = () => {
+    clearCookies();
+    clearCache();
+    location.reload();
+  };
+
+  /////////////////
+  // INTERACTION
+
+  // clear any indexedDB prefixed with 'ECSCache'
+  const clearCache = async () => {
+    const dbs = await indexedDB.databases();
+    dbs.forEach((db) => {
+      if (db.name?.startsWith('ECSCache')) {
+        const request = indexedDB.deleteDatabase(db.name);
+        request.onsuccess = function (event) {
+          console.log('Database deleted successfully');
+        };
+      }
+    });
+  };
+
+  // cleares all cookies
+  // TODO: move this to helper function next time we need it
+  const clearCookies = () => {
+    document.cookie.split(';').forEach((cookie) => {
+      console.log(cookie);
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    });
   };
 
   const toggleSettings = () => {
@@ -45,20 +81,6 @@ export const MoreMenuButton = () => {
     }
   };
 
-  // clear any indexedDB prefixed with 'ECSCache'
-  const clearCache = async () => {
-    const dbs = await indexedDB.databases();
-    dbs.forEach((db) => {
-      if (db.name?.startsWith('ECSCache')) {
-        const request = indexedDB.deleteDatabase(db.name);
-        request.onsuccess = function (event) {
-          console.log('Database deleted successfully');
-        };
-      }
-    });
-    location.reload();
-  };
-
   return (
     <Tooltip text={['More']}>
       <IconListButton
@@ -66,8 +88,8 @@ export const MoreMenuButton = () => {
         options={[
           { text: 'Settings', disabled, image: settingsIcon, onClick: toggleSettings },
           { text: 'Help', image: helpIcon, onClick: toggleHelp },
-          { text: 'Hard Refresh', image: resetIcon, onClick: clearCache },
-          { text: 'Logout', disabled, image: logoutIcon, onClick: handleClick },
+          { text: 'Hard Refresh', image: resetIcon, onClick: handleHardRefresh },
+          { text: 'Logout', disabled, image: logoutIcon, onClick: handleLogout },
         ]}
         scale={4.5}
         scaleOrientation='vh'
