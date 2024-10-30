@@ -9,8 +9,7 @@ import { ActionIcons } from 'assets/images/icons/actions';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { healthIcon } from 'assets/images/icons/stats';
 import { BaseAccount } from 'network/shapes/Account';
-import { Kami, KamiOptions, calcHealth, calcHealthPercent, calcOutput } from 'network/shapes/Kami';
-import { Traits } from 'network/shapes/Trait';
+import { Kami, calcHealth, calcHealthPercent, calcOutput } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiCard } from '../KamiCard/KamiCard';
 
@@ -23,11 +22,6 @@ const SortMap: Record<KamiSort, string> = {
   output: ActionIcons.collect,
   cooldown: ActionIcons.harvest,
 };
-
-// cache for harvest rates of enemy kamis
-const KamiCache = new Map<EntityIndex, Kami>();
-const KamiLastTs = new Map<EntityIndex, number>(); // kami index -> last update ts
-const OwnerCache = new Map<EntityIndex, BaseAccount>();
 
 interface Props {
   limit: {
@@ -42,20 +36,21 @@ interface Props {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
   };
   utils: {
-    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
-    getKamiTraits: (entity: EntityIndex) => Traits;
-    getLastTime: (entity: EntityIndex) => number;
-    getOwner: (index: number) => BaseAccount;
+    getKami: (entity: EntityIndex) => Kami;
+    refreshKami: (kami: Kami) => Kami;
+    getOwner: (kami: Kami) => BaseAccount;
   };
 }
 
 // rendering of enermy kamis on this node
 export const EnemyCards = (props: Props) => {
   const { actions, utils, entities, limit } = props;
+  const { getOwner, getKami, refreshKami } = utils;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
 
   const [isVisible, setIsVisible] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   const [allies, setAllies] = useState<Kami[]>([]);
@@ -74,35 +69,30 @@ export const EnemyCards = (props: Props) => {
     []
   );
 
-  // set visibility to skip data pulls
+  // set up ticking
   useEffect(() => {
-    if (!modals.node) setIsVisible(false);
-  }, [modals.node]);
-
-  // ticking
-  useEffect(() => {
-    const timerId = setInterval(() => setLastRefresh(Date.now()), 2000);
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 500);
     return function cleanup() {
       clearInterval(timerId);
     };
   }, []);
 
-  // populate the ally kami data as new ones come in
+  // set visibility whenever modal is closed
   useEffect(() => {
-    if (!isVisible) return;
-    setAllies(entities.allies.map((entity) => getKami(entity)));
-  }, [isVisible, entities.allies.length]);
+    if (!modals.node) setIsVisible(false);
+  }, [modals.node]);
 
-  // populate the enemy kami data as new ones come in
+  // populate the kami data as changes to entities are detected
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible || isUpdating) return;
+    setAllies(entities.allies.map((entity) => getKami(entity)));
     setEnemies(entities.enemies.map((entity) => getKami(entity)));
-  }, [isVisible, entities.enemies.length]);
+  }, [isVisible, entities.allies.length, entities.enemies.length]);
 
   // check to see whether we should refresh each kami's data as needed
   useEffect(() => {
     if (!isVisible) return;
-
+    setIsUpdating(true);
     // check for ally updates
     let alliesStale = false;
     const newAllies = allies.map((kami) => refreshKami(kami));
@@ -119,20 +109,19 @@ export const EnemyCards = (props: Props) => {
 
     // indicate updates to the kami object pointers
     if (alliesStale) {
-      console.log('allies stale. refreshing..');
+      console.log('ALLIES STALE. REFRESHING..');
       setAllies(newAllies);
     }
     if (enemiesStale) {
-      console.log('enemies stale. refreshing..');
+      console.log('ENEMIES STALE. REFRESHING..');
       setEnemies(newEnemies);
     }
+    setIsUpdating(false);
   }, [isVisible, lastRefresh]);
 
   // sort whenever the list of enemies changes or the sort changes
   useEffect(() => {
-    console.log('enemy update detected');
     if (!isVisible) return;
-    console.log('sorting enemies');
     const sorted = [...enemies].sort((a, b) => {
       if (sort === 'name') return a.name.localeCompare(b.name);
       else if (sort === 'health') return calcHealth(a) - calcHealth(b);
@@ -147,35 +136,6 @@ export const EnemyCards = (props: Props) => {
     });
     setSorted(sorted);
   }, [enemies, sort]);
-
-  /////////////////
-  // CACHE OPERATIONS
-
-  // get a kami from the cache or live pool
-  const getKami = (entity: EntityIndex) => {
-    if (!KamiLastTs.has(entity)) processKami(entity, true);
-    return KamiCache.get(entity)!;
-  };
-
-  // cache any persistent kami data
-  const processKami = (entity: EntityIndex, isNew = false) => {
-    const kamiOptions = { harvest: true, traits: isNew };
-    const kami = utils.getKami(entity, kamiOptions);
-    KamiCache.set(entity, kami);
-    KamiLastTs.set(entity, kami.time.last);
-    return kami;
-  };
-
-  // refresh a kami as needed and return the most recent instance
-  const refreshKami = (kami: Kami) => {
-    const lastTime = utils.getLastTime(kami.entityIndex);
-    const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
-    if (lastTime > lastUpdate) {
-      kami = processKami(kami.entityIndex, true); // need to pull traits again. no way to replace atm
-      KamiCache.set(kami.entityIndex, kami);
-    }
-    return kami;
-  };
 
   /////////////////
   // INTERACTION
@@ -199,16 +159,6 @@ export const EnemyCards = (props: Props) => {
       `Violence: ${kami.stats.violence.total}`,
     ];
     return description;
-  };
-
-  // get and cache owner lookups. if owner is null, update the cache
-  const getOwner = (kami: Kami) => {
-    const owner = OwnerCache.get(kami.entityIndex);
-    if (!owner || !owner.index) {
-      const updatedOwner = utils.getOwner(kami.index);
-      OwnerCache.set(kami.entityIndex, updatedOwner);
-    }
-    return OwnerCache.get(kami.entityIndex)!;
   };
 
   // doing this for a bit of testing sanity

@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { EmptyText, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { BaseAccount, getAccountFromBurner } from 'network/shapes/Account';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { Droptable, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
 import {
@@ -29,6 +29,11 @@ import { getLastTime } from 'network/shapes/utils/time';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
 import { Kards } from './kards/Kards';
+
+// cache for harvest rates of enemy kamis
+const KamiCache = new Map<EntityIndex, Kami>();
+const KamiLastTs = new Map<EntityIndex, number>(); // kami index -> last update ts
+const OwnerCache = new Map<EntityIndex, BaseAccount>();
 
 export function registerNodeModal() {
   registerUIComponent(
@@ -103,6 +108,45 @@ export function registerNodeModal() {
         if (node.index == 0) setModals({ node: false }); // NullNode
         setNode(node);
       }, [nodeIndex]);
+
+      /////////////////
+      // CACHE OPERATIONS
+
+      // cache any persistent kami data
+      const processKami = (entity: EntityIndex, options?: KamiOptions) => {
+        const kamiOptions = { harvest: true, traits: true };
+        const kami = utils.getKami(entity, kamiOptions);
+        KamiCache.set(entity, kami);
+        KamiLastTs.set(entity, kami.time.last);
+        return kami;
+      };
+
+      // get a kami from the cache or live pool
+      const getKami = (entity: EntityIndex) => {
+        if (!KamiLastTs.has(entity)) processKami(entity);
+        return KamiCache.get(entity)!;
+      };
+
+      // refresh a kami as needed and return the most recent instance
+      const refreshKami = (kami: Kami) => {
+        const lastTime = utils.getLastTime(kami.entityIndex);
+        const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
+        if (lastTime > lastUpdate) {
+          kami = processKami(kami.entityIndex); // need to pull traits again. no way to replace atm
+          KamiCache.set(kami.entityIndex, kami);
+        }
+        return kami;
+      };
+
+      // get and cache owner lookups. if owner is null, update the cache
+      const getOwner = (kami: Kami) => {
+        let owner = OwnerCache.get(kami.entityIndex);
+        if (!owner || !owner.index) {
+          owner = utils.getOwner(kami.index);
+          OwnerCache.set(kami.entityIndex, owner);
+        }
+        return owner;
+      };
 
       /////////////////
       // ACTIONS
@@ -221,7 +265,7 @@ export function registerNodeModal() {
             account={account}
             kamiEntities={kamiEntities}
             actions={{ collect, feed, liquidate, stop }}
-            utils={utils}
+            utils={{ getKami, refreshKami, getOwner }}
           />
         </ModalWrapper>
       );

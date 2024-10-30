@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account, BaseAccount } from 'network/shapes/Account';
-import { Kami, KamiOptions } from 'network/shapes/Kami';
-import { Traits } from 'network/shapes/Trait';
+import { Kami } from 'network/shapes/Kami';
 import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
 
@@ -21,10 +20,9 @@ interface Props {
     stop: (kami: Kami) => void;
   };
   utils: {
-    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
-    getKamiTraits: (entity: EntityIndex) => Traits;
-    getLastTime: (entity: EntityIndex) => number;
-    getOwner: (index: number) => BaseAccount;
+    getKami: (entity: EntityIndex) => Kami;
+    refreshKami: (kami: Kami) => Kami;
+    getOwner: (kami: Kami) => BaseAccount;
   };
 }
 
@@ -64,8 +62,7 @@ export const Kards = (props: Props) => {
   const handleScroll = () => {
     if (isScrolledToBottom()) {
       const newLimit = Math.min(visibleEnemies + 5, enemies.length);
-      console.log('newLimit', { visibleEnemies, enemies: enemies.length, newLimit });
-      setVisibleEnemies(newLimit);
+      if (newLimit != visibleEnemies) setVisibleEnemies(newLimit);
     }
   };
 

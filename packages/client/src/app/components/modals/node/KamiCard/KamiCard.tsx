@@ -29,13 +29,10 @@ export const KamiCard = (props: Props) => {
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
-    console.log(`kamicard mounted ${kami.name}`);
-    const refreshClock = () => {
-      setLastRefresh(Date.now());
-    };
-    const timerId = setInterval(refreshClock, 1000);
+    console.log(`kamicard mounted: ${kami.name}`);
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 1000);
     return () => {
-      console.log(`kamicard umounted ${kami.name}`);
+      console.log(`kamicard umounted: ${kami.name}`);
       clearInterval(timerId);
     };
   }, []);

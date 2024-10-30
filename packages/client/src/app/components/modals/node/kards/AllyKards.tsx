@@ -1,10 +1,12 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { KamiCard } from 'app/components/library';
 import { CollectButton, FeedButton, StopButton } from 'app/components/library/actions';
+import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Kami, KamiOptions, calcHealth, calcOutput } from 'network/shapes/Kami';
+import { useEffect, useState } from 'react';
+import { KamiCard } from '../KamiCard/KamiCard';
 
 interface Props {
   account: Account;
@@ -16,13 +18,53 @@ interface Props {
   };
   utils: {
     getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
+    refreshKami: (kami: Kami) => Kami;
   };
 }
 
 // rendering of an ally kami on this node
 export const AllyKards = (props: Props) => {
   const { actions, utils, entities, account } = props;
+  const { getKami, refreshKami } = utils;
   const { collect, feed, stop } = actions;
+  const { modals } = useVisibility();
+
+  const [allies, setAllies] = useState<Kami[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false); // whether updating from entities change
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+
+  // ticking
+  useEffect(() => {
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 500);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []);
+
+  // set visibility whenever modal is toggled
+  useEffect(() => {
+    setIsVisible(modals.node);
+  }, [modals.node]);
+
+  // check to see whether we should refresh each kami's data at each interval
+  useEffect(() => {
+    if (!isVisible || isUpdating) return;
+    let alliesStale = false;
+    const newAllies = allies.map((kami) => refreshKami(kami));
+    for (let i = 0; i < allies.length; i++) {
+      if (newAllies[i] != allies[i]) alliesStale = true;
+    }
+    if (alliesStale) setAllies(newAllies);
+  }, [isVisible, lastRefresh]);
+
+  // populate the enemy kami data as new ones come in
+  useEffect(() => {
+    if (!isVisible) return;
+    setIsUpdating(true);
+    setAllies(entities.map((entity) => getKami(entity)));
+    setIsUpdating(false);
+  }, [isVisible, entities.length]);
 
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
