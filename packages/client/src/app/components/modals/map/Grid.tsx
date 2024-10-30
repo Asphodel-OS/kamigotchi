@@ -148,7 +148,6 @@ export const Grid = (props: Props) => {
                 <Tile
                   key={j}
                   backgroundColor={backgroundColor}
-                  kamiBackGround={kamiBackGround}
                   onClick={onClick}
                   hasRoom={isRoom}
                   isHighlighted={isCurrRoom || isExit}
@@ -156,7 +155,13 @@ export const Grid = (props: Props) => {
                   onMouseLeave={() => {
                     if (isRoom) setHoveredRoom(0);
                   }}
-                />
+                >
+                  {kamiBackGround && (
+                    <KamiImage>
+                      <KamiShadow />
+                    </KamiImage>
+                  )}
+                </Tile>
               );
 
               if (isRoom) {
@@ -185,6 +190,54 @@ export const Grid = (props: Props) => {
   );
 };
 
+const KamiImage = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-image: url(${kamiIcon});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation: 2s infinite alternate floating;
+  animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  @keyframes floating {
+    0% {
+      transform: translatey(-15px);
+    }
+
+    50% {
+      transform: translatey(-20px);
+    }
+    100% {
+      transform: translatey(-15px);
+    }
+  }
+`;
+const KamiShadow = styled.div`
+  height: 10%;
+  width: 10%;
+  position: absolute;
+  animation: 2s infinite alternate shadow;
+  animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  @keyframes shadow {
+    0% {
+      width: 15px;
+      box-shadow: 0px 9px 8px rgba(0, 0, 0, 0.9);
+    }
+    50% {
+      width: 16px;
+      box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.8);
+    }
+    100% {
+      width: 17px;
+      box-shadow: 0px 9px 8px rgba(0, 0, 0, 0.9);
+    }
+  }
+`;
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -223,7 +276,6 @@ const Tile = styled.div<{
   hasRoom: boolean;
   isHighlighted: boolean;
   backgroundColor: any;
-  kamiBackGround: boolean;
 }>`
   border-right: 0.01vw solid rgba(0, 0, 0, 0.2);
   border-top: 0.01vw solid rgba(0, 0, 0, 0.2);
@@ -233,15 +285,7 @@ const Tile = styled.div<{
   align-items: stretch;
   justify-content: stretch;
   flex-grow: 1;
-  ${({ kamiBackGround }) =>
-    kamiBackGround &&
-    `    
-    background-image: url(${kamiIcon});
-    background-repeat: no-repeat;
-    background-size: contain;
-    opacity:1;    
-    
-    `}
+
   ${({ hasRoom }) =>
     hasRoom &&
     `
