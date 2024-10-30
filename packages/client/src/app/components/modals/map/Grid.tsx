@@ -116,7 +116,16 @@ export const Grid = (props: Props) => {
 
   /////////////////
   // RENDER
-
+  const showKamisString = (roomIndex: number) => {
+    const harvestMapNames = harvestMap.get(roomIndex);
+    let res = null;
+    if (harvestMapNames !== undefined) {
+      harvestMapNames.length > 1
+        ? (res = `${harvestMapNames.slice(0, -1).join(',') + ' and ' + harvestMapNames.slice(-1)} are on this tile`)
+        : (res = `${harvestMapNames} is on this tile`);
+    }
+    return res;
+  };
   return (
     <Container>
       <Background src={mapBackgrounds[zone]} />
@@ -157,9 +166,10 @@ export const Grid = (props: Props) => {
                   }}
                 >
                   {kamiBackGround && (
-                    <KamiImage>
+                    <KamiAndShadow>
+                      <KamiImage />
                       <KamiShadow />
-                    </KamiImage>
+                    </KamiAndShadow>
                   )}
                 </Tile>
               );
@@ -173,6 +183,7 @@ export const Grid = (props: Props) => {
                   '',
                   `${players.length} players on this tile`,
                   `${kamis.length} kamis harvesting`,
+                  showKamisString(room.index),
                 ];
 
                 tile = (
@@ -198,45 +209,60 @@ const KamiImage = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
+  position: relative;
   background-image: url(${kamiIcon});
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   animation: 2s infinite alternate floating;
-  animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  animation-timing-function: linear;
+
+  z-index: 2;
   @keyframes floating {
     0% {
-      transform: translatey(-15px);
+      transform: translatey(-50%);
     }
 
     50% {
-      transform: translatey(-20px);
+      transform: translatey(-40%);
     }
     100% {
-      transform: translatey(-15px);
+      transform: translatey(-50%);
     }
   }
 `;
 const KamiShadow = styled.div`
-  height: 10%;
-  width: 10%;
   position: absolute;
+  height: 20%;
+  position: relative;
   animation: 2s infinite alternate shadow;
-  animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  animation-timing-function: linear;
+
   @keyframes shadow {
     0% {
-      width: 15px;
-      box-shadow: 0px 9px 8px rgba(0, 0, 0, 0.9);
+      width: 25%;
+      box-shadow: 0px -15px 7px rgba(0, 0, 0, 0.9);
     }
     50% {
-      width: 16px;
-      box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.8);
+      width: 33%;
+      box-shadow: 0px -15px 6.8px rgba(0, 0, 0, 1);
     }
     100% {
-      width: 17px;
-      box-shadow: 0px 9px 8px rgba(0, 0, 0, 0.9);
+      width: 30%;
+      box-shadow: 0px -15px 7px rgba(0, 0, 0, 0.9);
     }
   }
+`;
+
+const KamiAndShadow = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;
 const Container = styled.div`
   position: relative;
