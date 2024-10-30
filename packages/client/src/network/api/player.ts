@@ -5,6 +5,17 @@ export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(systems: any) {
   /////////////////
+  // ECHO
+
+  function echoKamis(accID: BigNumberish) {
+    return systems['system.echo.kamis'].executeTyped(accID);
+  }
+
+  function echoRoom(accID: BigNumberish) {
+    return systems['system.echo.room'].executeTyped(accID);
+  }
+
+  /////////////////
   //     KAMI
 
   // level a pet, if it has enough experience
@@ -328,6 +339,10 @@ export function createPlayerAPI(systems: any) {
   }
 
   return {
+    echo: {
+      kami: echoKamis,
+      room: echoRoom,
+    },
     pet: {
       level: levelPet,
       name: namePet,

@@ -9,6 +9,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCommit } from "libraries/LibCommit.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibEcho } from "libraries/LibEcho.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 
@@ -26,6 +27,10 @@ contract KamiGachaRevealSystem is System, AuthRoles {
     uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
     uint256[] memory kamiIDs = LibGacha.selectPets(components, commitIDs);
     LibGacha.withdrawPets(components, kamiIDs, commitIDs);
+
+    for (uint256 i = 0; i < kamiIDs.length; i++) {
+      LibEcho.kami(components, kamiIDs[i]);
+    }
 
     return kamiIDs;
   }
@@ -46,6 +51,10 @@ contract KamiGachaRevealSystem is System, AuthRoles {
     // regular flow
     uint256[] memory kamiIDs = LibGacha.selectPets(components, commitIDs);
     LibGacha.withdrawPets(components, kamiIDs, commitIDs);
+
+    for (uint256 i = 0; i < kamiIDs.length; i++) {
+      LibEcho.kami(components, kamiIDs[i]);
+    }
 
     return kamiIDs;
   }

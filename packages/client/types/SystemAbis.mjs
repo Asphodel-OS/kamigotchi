@@ -26,6 +26,8 @@ import AccountUseFoodSystem from "../abi/AccountUseFoodSystem.json";
 import AccountUseTeleportSystem from "../abi/AccountUseTeleportSystem.json";
 import CraftSystem from "../abi/CraftSystem.json";
 import DroptableRevealSystem from "../abi/DroptableRevealSystem.json";
+import EchoKamisSystem from "../abi/EchoKamisSystem.json";
+import EchoRoomSystem from "../abi/EchoRoomSystem.json";
 import FriendAcceptSystem from "../abi/FriendAcceptSystem.json";
 import FriendBlockSystem from "../abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../abi/FriendCancelSystem.json";
@@ -93,6 +95,8 @@ export const SystemAbis = {
   "system.account.use.teleport": AccountUseTeleportSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
+  "system.echo.kamis": EchoKamisSystem.abi,
+  "system.echo.room": EchoRoomSystem.abi,
   "system.friend.accept": FriendAcceptSystem.abi,
   "system.friend.block": FriendBlockSystem.abi,
   "system.friend.cancel": FriendCancelSystem.abi,

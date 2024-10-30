@@ -26,6 +26,8 @@ import { AccountUseFoodSystem } from "./ethers-contracts/AccountUseFoodSystem";
 import { AccountUseTeleportSystem } from "./ethers-contracts/AccountUseTeleportSystem";
 import { CraftSystem } from "./ethers-contracts/CraftSystem";
 import { DroptableRevealSystem } from "./ethers-contracts/DroptableRevealSystem";
+import { EchoKamisSystem } from "./ethers-contracts/EchoKamisSystem";
+import { EchoRoomSystem } from "./ethers-contracts/EchoRoomSystem";
 import { FriendAcceptSystem } from "./ethers-contracts/FriendAcceptSystem";
 import { FriendBlockSystem } from "./ethers-contracts/FriendBlockSystem";
 import { FriendCancelSystem } from "./ethers-contracts/FriendCancelSystem";
@@ -93,6 +95,8 @@ export type SystemTypes = {
   "system.account.use.teleport": AccountUseTeleportSystem;
   "system.craft": CraftSystem;
   "system.droptable.item.reveal": DroptableRevealSystem;
+  "system.echo.kamis": EchoKamisSystem;
+  "system.echo.room": EchoRoomSystem;
   "system.friend.accept": FriendAcceptSystem;
   "system.friend.block": FriendBlockSystem;
   "system.friend.cancel": FriendCancelSystem;
