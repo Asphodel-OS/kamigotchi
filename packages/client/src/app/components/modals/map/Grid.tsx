@@ -121,8 +121,8 @@ export const Grid = (props: Props) => {
     let res = null;
     if (harvestMapNames !== undefined) {
       harvestMapNames.length > 1
-        ? (res = `${harvestMapNames.slice(0, -1).join(',') + ' and ' + harvestMapNames.slice(-1)} are on this tile`)
-        : (res = `${harvestMapNames} is on this tile`);
+        ? (res = `${harvestMapNames.slice(0, -1).join(',') + ' and ' + harvestMapNames.slice(-1)} are Harvesting on this tile`)
+        : (res = `${harvestMapNames} is Harvesting on this tile`);
     }
     return res;
   };
