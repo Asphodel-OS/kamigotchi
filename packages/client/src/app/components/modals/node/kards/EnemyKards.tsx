@@ -24,13 +24,11 @@ const SortMap: Record<KamiSort, string> = {
 };
 
 interface Props {
+  allies: Kami[];
+  enemyEntities: EntityIndex[];
   limit: {
     val: number;
     set: (val: number) => void;
-  };
-  entities: {
-    allies: EntityIndex[];
-    enemies: EntityIndex[];
   };
   actions: {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
@@ -44,7 +42,7 @@ interface Props {
 
 // rendering of enermy kamis on this node
 export const EnemyCards = (props: Props) => {
-  const { actions, utils, entities, limit } = props;
+  const { allies, enemyEntities, limit, actions, utils } = props;
   const { getOwner, getKami, refreshKami } = utils;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
@@ -53,7 +51,6 @@ export const EnemyCards = (props: Props) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-  const [allies, setAllies] = useState<Kami[]>([]);
   const [enemies, setEnemies] = useState<Kami[]>([]);
   const [sorted, setSorted] = useState<Kami[]>([]);
   const [sort, setSort] = useState<KamiSort>('cooldown');
@@ -72,43 +69,25 @@ export const EnemyCards = (props: Props) => {
   // set up ticking
   useEffect(() => {
     const timerId = setInterval(() => setLastRefresh(Date.now()), 250);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
+    return () => clearInterval(timerId);
   }, []);
 
-  // set visibility whenever modal is closed
-  useEffect(() => {
-    if (!modals.node) setIsVisible(false);
-  }, [modals.node]);
-
-  // populate the kami arrays as changes to entities are detected
+  // populate the enemy kami data as new ones come in
   useEffect(() => {
     if (!isVisible) return;
     setIsUpdating(true);
-    setAllies(entities.allies.map((entity) => getKami(entity)));
-    setEnemies(entities.enemies.map((entity) => getKami(entity)));
+    setEnemies(enemyEntities.map((entity) => getKami(entity)));
     setIsUpdating(false);
-  }, [isVisible, entities.allies.length, entities.enemies.length]); // might need better triggers
+  }, [isVisible, enemyEntities]); // might need better triggers
 
   // check to see whether we should refresh each kami's data as needed
   useEffect(() => {
     if (!isVisible || isUpdating) return;
-
-    let alliesStale = false;
-    const newAllies = allies.map((kami) => refreshKami(kami));
-    for (let i = 0; i < allies.length; i++) {
-      if (newAllies[i] != allies[i]) alliesStale = true;
-    }
-
     let enemiesStale = false;
     const newEnemies = enemies.map((kami) => refreshKami(kami));
     for (let i = 0; i < enemies.length; i++) {
       if (newEnemies[i] != enemies[i]) enemiesStale = true;
     }
-
-    // indicate updates to the kami object pointers
-    if (alliesStale) setAllies(newAllies);
     if (enemiesStale) setEnemies(newEnemies);
   }, [isVisible, lastRefresh]);
 
@@ -130,12 +109,18 @@ export const EnemyCards = (props: Props) => {
     setSorted(sorted);
   }, [enemies, sort]);
 
+  // set visibility whenever modal is closed
+  useEffect(() => {
+    if (!modals.node) setIsVisible(false);
+  }, [modals.node]);
+
   /////////////////
   // INTERACTION
 
   const handleToggle = () => {
     playClick();
-    if (!isVisible) limit.set(10); // Reset limit to 10 when toggling
+    if (!isVisible) limit.set(10);
+    else limit.set(0); // Reset limit to 0 when toggling
     setIsVisible(!isVisible);
   };
 
@@ -170,11 +155,11 @@ export const EnemyCards = (props: Props) => {
   };
 
   return (
-    <Container style={{ display: entities.enemies.length > 0 ? 'flex' : 'none' }}>
+    <Container style={{ display: enemyEntities.length > 0 ? 'flex' : 'none' }}>
       <Row>
         <Title
           onClick={handleToggle}
-        >{`${isVisible ? '▼' : '▶'} Enemies(${entities.enemies.length})`}</Title>
+        >{`${isVisible ? '▼' : '▶'} Enemies(${enemyEntities.length})`}</Title>
         <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
       </Row>
       {isVisible &&
