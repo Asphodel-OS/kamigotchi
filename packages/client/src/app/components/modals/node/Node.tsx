@@ -49,7 +49,7 @@ export function registerNodeModal() {
 
     // Requirement
     (layers) =>
-      interval(2000).pipe(
+      interval(1000).pipe(
         map(() => {
           const { network } = layers;
           const { world, components } = network;
@@ -112,7 +112,7 @@ export function registerNodeModal() {
       /////////////////
       // CACHE OPERATIONS
 
-      // cache any persistent kami data
+      // retrieve a kami's most recent data and update it on the cache
       const processKami = (entity: EntityIndex, options?: KamiOptions) => {
         const kamiOptions = { harvest: true, traits: true };
         const kami = utils.getKami(entity, kamiOptions);
@@ -132,8 +132,8 @@ export function registerNodeModal() {
         const lastTime = utils.getLastTime(kami.entityIndex);
         const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
         if (lastTime > lastUpdate) {
-          kami = processKami(kami.entityIndex); // need to pull traits again. no way to replace atm
           KamiCache.set(kami.entityIndex, kami);
+          return processKami(kami.entityIndex);
         }
         return kami;
       };

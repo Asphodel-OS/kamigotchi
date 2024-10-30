@@ -35,13 +35,16 @@ export const Kards = (props: Props) => {
 
   // identify ally vs enemy kamis whenever the list of kamis changes
   useEffect(() => {
+    const party = kamiEntities.account;
     const allyEntities: EntityIndex[] = [];
     const enemyEntities: EntityIndex[] = [];
+
+    // separate the list of node kami entities into allies and enemies
     kamiEntities.node.forEach((entity) => {
-      const party = kamiEntities.account;
       if (party.includes(entity)) allyEntities.push(entity);
       else enemyEntities.push(entity);
     });
+
     setAllies(allyEntities);
     setEnemies(enemyEntities);
   }, [kamiEntities]);

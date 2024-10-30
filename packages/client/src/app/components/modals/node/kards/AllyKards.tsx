@@ -36,7 +36,7 @@ export const AllyKards = (props: Props) => {
 
   // ticking
   useEffect(() => {
-    const timerId = setInterval(() => setLastRefresh(Date.now()), 500);
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 250);
     return function cleanup() {
       clearInterval(timerId);
     };
@@ -46,6 +46,14 @@ export const AllyKards = (props: Props) => {
   useEffect(() => {
     setIsVisible(modals.node);
   }, [modals.node]);
+
+  // populate the enemy kami data as new ones come in
+  useEffect(() => {
+    if (!isVisible) return;
+    setIsUpdating(true);
+    setAllies(entities.map((entity) => getKami(entity)));
+    setIsUpdating(false);
+  }, [isVisible, entities.length]);
 
   // check to see whether we should refresh each kami's data at each interval
   useEffect(() => {
@@ -58,13 +66,8 @@ export const AllyKards = (props: Props) => {
     if (alliesStale) setAllies(newAllies);
   }, [isVisible, lastRefresh]);
 
-  // populate the enemy kami data as new ones come in
-  useEffect(() => {
-    if (!isVisible) return;
-    setIsUpdating(true);
-    setAllies(entities.map((entity) => getKami(entity)));
-    setIsUpdating(false);
-  }, [isVisible, entities.length]);
+  /////////////////
+  // INTERPRETATION
 
   // get the description on the card
   const getDescription = (kami: Kami): string[] => {
@@ -81,25 +84,21 @@ export const AllyKards = (props: Props) => {
   return (
     <Container style={{ display: entities.length > 0 ? 'flex' : 'none' }}>
       <Title>Allies</Title>
-      {entities.map((entity: EntityIndex) => {
-        // TODO: optimize this. dont recompute all kami data indiscriminately
-        const kami = utils.getKami(entity, { harvest: true, traits: true });
-        return (
-          <KamiCard
-            key={kami.index}
-            kami={kami}
-            description={getDescription(kami)}
-            subtext={`yours (\$${calcOutput(kami)})`}
-            actions={[
-              FeedButton(kami, account, feed),
-              CollectButton(kami, account, collect),
-              StopButton(kami, account, stop),
-            ]}
-            showBattery
-            showCooldown
-          />
-        );
-      })}
+      {allies.map((kami: Kami) => (
+        <KamiCard
+          key={kami.index}
+          kami={kami}
+          description={getDescription(kami)}
+          subtext={`yours (\$${calcOutput(kami)})`}
+          actions={[
+            FeedButton(kami, account, feed),
+            CollectButton(kami, account, collect),
+            StopButton(kami, account, stop),
+          ]}
+          showBattery
+          showCooldown
+        />
+      ))}
     </Container>
   );
 };

@@ -71,7 +71,7 @@ export const EnemyCards = (props: Props) => {
 
   // set up ticking
   useEffect(() => {
-    const timerId = setInterval(() => setLastRefresh(Date.now()), 500);
+    const timerId = setInterval(() => setLastRefresh(Date.now()), 250);
     return function cleanup() {
       clearInterval(timerId);
     };
@@ -82,41 +82,34 @@ export const EnemyCards = (props: Props) => {
     if (!modals.node) setIsVisible(false);
   }, [modals.node]);
 
-  // populate the kami data as changes to entities are detected
-  useEffect(() => {
-    if (!isVisible || isUpdating) return;
-    setAllies(entities.allies.map((entity) => getKami(entity)));
-    setEnemies(entities.enemies.map((entity) => getKami(entity)));
-  }, [isVisible, entities.allies.length, entities.enemies.length]);
-
-  // check to see whether we should refresh each kami's data as needed
+  // populate the kami arrays as changes to entities are detected
   useEffect(() => {
     if (!isVisible) return;
     setIsUpdating(true);
-    // check for ally updates
+    setAllies(entities.allies.map((entity) => getKami(entity)));
+    setEnemies(entities.enemies.map((entity) => getKami(entity)));
+    setIsUpdating(false);
+  }, [isVisible, entities.allies.length, entities.enemies.length]); // might need better triggers
+
+  // check to see whether we should refresh each kami's data as needed
+  useEffect(() => {
+    if (!isVisible || isUpdating) return;
+
     let alliesStale = false;
     const newAllies = allies.map((kami) => refreshKami(kami));
     for (let i = 0; i < allies.length; i++) {
       if (newAllies[i] != allies[i]) alliesStale = true;
     }
 
-    // check for enemy updates
     let enemiesStale = false;
-    const newEnemies = allies.map((kami) => refreshKami(kami));
-    for (let i = 0; i < allies.length; i++) {
-      if (newEnemies[i] != allies[i]) enemiesStale = true;
+    const newEnemies = enemies.map((kami) => refreshKami(kami));
+    for (let i = 0; i < enemies.length; i++) {
+      if (newEnemies[i] != enemies[i]) enemiesStale = true;
     }
 
     // indicate updates to the kami object pointers
-    if (alliesStale) {
-      console.log('ALLIES STALE. REFRESHING..');
-      setAllies(newAllies);
-    }
-    if (enemiesStale) {
-      console.log('ENEMIES STALE. REFRESHING..');
-      setEnemies(newEnemies);
-    }
-    setIsUpdating(false);
+    if (alliesStale) setAllies(newAllies);
+    if (enemiesStale) setEnemies(newEnemies);
   }, [isVisible, lastRefresh]);
 
   // sort whenever the list of enemies changes or the sort changes
