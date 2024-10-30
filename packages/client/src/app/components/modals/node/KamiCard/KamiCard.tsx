@@ -29,11 +29,13 @@ export const KamiCard = (props: Props) => {
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
+    console.log(`kamicard mounted ${kami.name}`);
     const refreshClock = () => {
       setLastRefresh(Date.now());
     };
     const timerId = setInterval(refreshClock, 1000);
-    return function cleanup() {
+    return () => {
+      console.log(`kamicard umounted ${kami.name}`);
       clearInterval(timerId);
     };
   }, []);
@@ -69,25 +71,18 @@ export const KamiCard = (props: Props) => {
     return <>{[header, ...details]}</>;
   };
 
-  const CornerContent = (kami: Kami) => {
-    const cooldown = calcCooldown(kami);
-    const totalHealth = kami.stats.health.total;
-
-    return (
-      <TitleCorner key='corner'>
-        {showCooldown && <Cooldown total={kami.time.cooldown.requirement} current={cooldown} />}
-        {showBattery && <Health current={calcHealth(kami)} total={totalHealth} />}
-      </TitleCorner>
-    );
-  };
-
   return (
     <Card image={kami.image} imageOnClick={() => handleKamiClick()}>
       <TitleBar>
         <TitleText key='title' onClick={() => handleKamiClick()}>
           {kami.name}
         </TitleText>
-        {CornerContent(kami)}
+        <TitleCorner key='corner'>
+          {showCooldown && (
+            <Cooldown total={kami.time.cooldown.requirement} current={calcCooldown(kami)} />
+          )}
+          {showBattery && <Health current={calcHealth(kami)} total={kami.stats.health.total} />}
+        </TitleCorner>
       </TitleBar>
       <Content>
         <ContentColumn key='column-1'>

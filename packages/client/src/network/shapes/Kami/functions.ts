@@ -1,27 +1,5 @@
-import { getComponentValue, HasValue, runQuery, World } from '@mud-classic/recs';
-
-import { formatEntityID } from 'engine/utils';
-import { Components } from 'network/components';
-import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
 import { calcHarvestIdleTime, calcHarvestNetBounty } from '../Harvest';
 import { Kami } from './types';
-
-// get the BaseAccount entity that owns a Kami
-export const getAccount = (world: World, components: Components, index: number): BaseAccount => {
-  const { EntityType, KamiIndex, OwnsKamiID } = components;
-  const kamiEntity = Array.from(
-    runQuery([HasValue(KamiIndex, { value: index }), HasValue(EntityType, { value: 'KAMI' })])
-  )[0];
-
-  const rawAccID = getComponentValue(OwnsKamiID, kamiEntity)?.value ?? '';
-  if (!rawAccID) return NullAccount;
-
-  const accID = formatEntityID(rawAccID);
-  const accEntity = world.entityToIndex.get(accID);
-  if (!accEntity) return NullAccount;
-
-  return getBaseAccount(world, components, accEntity);
-};
 
 ////////////////
 // STATE CHECKS

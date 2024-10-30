@@ -105,29 +105,25 @@ export const EnemyCards = (props: Props) => {
 
     // check for ally updates
     let alliesStale = false;
-    const newAllies = allies.map((kami) => {
-      const lastTime = utils.getLastTime(kami.entityIndex);
-      const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
-      if (lastTime > lastUpdate) {
-        kami = processKami(kami.entityIndex);
-        alliesStale = true;
-      }
-      return kami; // do we need to requery?
-    });
-    if (alliesStale) setAllies(newAllies);
+    const newAllies = allies.map((kami) => refreshKami(kami));
+    for (let i = 0; i < allies.length; i++) {
+      if (newAllies[i] != allies[i]) alliesStale = true;
+    }
 
     // check for enemy updates
     let enemiesStale = false;
-    const newEnemies = enemies.map((kami) => {
-      const lastTime = utils.getLastTime(kami.entityIndex);
-      const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
-      if (lastTime > lastUpdate) {
-        kami = processKami(kami.entityIndex);
-        enemiesStale = true;
-      }
-      return kami; // do we need to requery?
-    });
+    const newEnemies = allies.map((kami) => refreshKami(kami));
+    for (let i = 0; i < allies.length; i++) {
+      if (newEnemies[i] != allies[i]) enemiesStale = true;
+    }
+
+    // indicate updates to the kami object pointers
+    if (alliesStale) {
+      console.log('allies stale. refreshing..');
+      setAllies(newAllies);
+    }
     if (enemiesStale) {
+      console.log('enemies stale. refreshing..');
       setEnemies(newEnemies);
     }
   }, [isVisible, lastRefresh]);
@@ -167,6 +163,17 @@ export const EnemyCards = (props: Props) => {
     const kami = utils.getKami(entity, kamiOptions);
     KamiCache.set(entity, kami);
     KamiLastTs.set(entity, kami.time.last);
+    return kami;
+  };
+
+  // refresh a kami as needed and return the most recent instance
+  const refreshKami = (kami: Kami) => {
+    const lastTime = utils.getLastTime(kami.entityIndex);
+    const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
+    if (lastTime > lastUpdate) {
+      kami = processKami(kami.entityIndex, true); // need to pull traits again. no way to replace atm
+      KamiCache.set(kami.entityIndex, kami);
+    }
     return kami;
   };
 
