@@ -8,9 +8,8 @@ import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner, queryAccountsByRoom } from 'network/shapes/Account';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { getHarvest } from 'network/shapes/Harvest';
-import { getHarvestEntity } from 'network/shapes/Harvest/types';
-import { queryKamisByAccount } from 'network/shapes/Kami';
+import { getBaseKami, queryKamisByAccount } from 'network/shapes/Kami';
+import { getKamiLocation } from 'network/shapes/Kami/getters';
 import { queryNodeKamis } from 'network/shapes/Node';
 import { getAllRooms, getRoomByIndex, Room } from 'network/shapes/Room';
 import { Grid } from './Grid';
@@ -40,10 +39,9 @@ export function registerMapModal() {
               queryAccountsByRoom: (roomIndex: number) =>
                 queryAccountsByRoom(components, roomIndex),
               queryKamisByAccount: () => queryKamisByAccount(components, account.id),
-              getHarvest: (entityIndex: EntityIndex) =>
-                getHarvest(world, components, entityIndex, { node: true }),
-              getHarvestEntity: (kamiIndex: number) =>
-                getHarvestEntity(world, world.entities[kamiIndex]),
+              getKamiLocation: (kamiIndex: EntityIndex) =>
+                getKamiLocation(world, components, kamiIndex),
+              getBaseKami: (kamiIndex: EntityIndex) => getBaseKami(world, components, kamiIndex),
             },
           };
         })
@@ -57,8 +55,8 @@ export function registerMapModal() {
         queryNodeKamis,
         queryAccountsByRoom,
         queryKamisByAccount,
-        getHarvest,
-        getHarvestEntity,
+        getKamiLocation,
+        getBaseKami,
       } = utils;
       const { roomIndex, setRoom: setRoomIndex } = useSelected();
       const { modals } = useVisibility();
@@ -126,8 +124,8 @@ export function registerMapModal() {
               queryNodeKamis,
               queryAccountsByRoom,
               queryKamisByAccount,
-              getHarvest,
-              getHarvestEntity,
+              getKamiLocation,
+              getBaseKami,
             }}
           />
         </ModalWrapper>

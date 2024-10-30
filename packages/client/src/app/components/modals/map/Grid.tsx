@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { mapBackgrounds } from 'assets/images/map';
-import { Harvest } from 'network/shapes/Harvest';
 import { Kami } from 'network/shapes/Kami';
+import { BaseKami } from 'network/shapes/Kami/types';
 import { emptyRoom, Room } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
@@ -23,8 +23,8 @@ interface Props {
     queryAccountsByRoom: (roomIndex: number) => EntityIndex[];
     setHoveredRoom: (roomIndex: number) => void;
     queryKamisByAccount: () => EntityIndex[];
-    getHarvest: (entityIndex: EntityIndex) => Harvest;
-    getHarvestEntity: (kamiIndex: number) => EntityIndex | undefined;
+    getKamiLocation: (kamiIndex: EntityIndex) => number | undefined;
+    getBaseKami: (kamiIndex: EntityIndex) => BaseKami;
   };
 }
 
@@ -35,13 +35,13 @@ export const Grid = (props: Props) => {
     queryAccountsByRoom,
     setHoveredRoom,
     queryKamisByAccount,
-    getHarvest,
-    getHarvestEntity,
+    getKamiLocation,
+    getBaseKami,
   } = utils;
   const [grid, setGrid] = useState<Room[][]>([]);
   const [kamis, setKamis] = useState<EntityIndex[]>([]);
   const [players, setPlayers] = useState<EntityIndex[]>([]);
-  const [harvestMap, setHarvestMap] = useState<Map<number, boolean>>(new Map());
+  const [harvestMap, setHarvestMap] = useState<Map<number, string[]>>(new Map());
 
   // set the grid whenever the room zone changes
   useEffect(() => {
@@ -86,13 +86,13 @@ export const Grid = (props: Props) => {
   }, [zone]);
   //
   useEffect(() => {
-    const newHarvestMap = new Map<number, boolean>();
+    const newHarvestMap = new Map<number, string[]>();
     queryKamisByAccount().forEach((accountKami) => {
-      const harvestEntity = getHarvestEntity(accountKami);
-      if (harvestEntity) {
-        const harvestInfo = getHarvest(harvestEntity);
-        harvestInfo !== undefined &&
-          newHarvestMap.set(harvestInfo.node?.index ?? 0, harvestInfo.state === 'ACTIVE');
+      const kamiLocation = getKamiLocation(accountKami);
+      if (kamiLocation !== undefined) {
+        const kamiNames = newHarvestMap.get(kamiLocation) ?? [];
+        kamiNames.push(getBaseKami(accountKami).name);
+        newHarvestMap.set(kamiLocation, kamiNames);
       }
     });
     setHarvestMap(newHarvestMap);
@@ -157,7 +157,7 @@ export const Grid = (props: Props) => {
                     if (isRoom) setHoveredRoom(0);
                   }}
                 >
-                  {room?.index !== undefined && harvestMap.get(room.index) && (
+                  {room?.index !== undefined && harvestMap.get(room.index) !== undefined && (
                     <img
                       src={kamiIcon}
                       style={{

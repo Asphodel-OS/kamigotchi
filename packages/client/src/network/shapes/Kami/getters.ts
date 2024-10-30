@@ -1,6 +1,8 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { getHarvest } from 'network/shapes/Harvest';
+import { getHarvestEntity } from 'network/shapes/Harvest/types';
 import { query } from './queries';
 import { Options, getKami } from './types';
 
@@ -44,4 +46,14 @@ export const getByState = (
 ) => {
   const results = query(components, { state });
   return results.map((index) => getKami(world, components, index, options));
+};
+
+// get Kami harvesting location
+export const getKamiLocation = (world: World, components: Components, kamiIndex: EntityIndex) => {
+  const harvestEntity = getHarvestEntity(world, world.entities[kamiIndex]);
+  if (harvestEntity) {
+    const harvestInfo = getHarvest(world, components, harvestEntity, { node: true });
+
+    return harvestInfo.state === 'ACTIVE' ? harvestInfo.node?.index : undefined;
+  }
 };
