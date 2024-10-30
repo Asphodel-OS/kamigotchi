@@ -8,11 +8,11 @@ export function createPlayerAPI(systems: any) {
   // ECHO
 
   function echoKamis(accID: BigNumberish) {
-    return systems['system.echo.kamis'].executeTyped(accID);
+    return systems['system.echo.kamis'].executeTyped();
   }
 
   function echoRoom(accID: BigNumberish) {
-    return systems['system.echo.room'].executeTyped(accID);
+    return systems['system.echo.room'].executeTyped();
   }
 
   /////////////////
