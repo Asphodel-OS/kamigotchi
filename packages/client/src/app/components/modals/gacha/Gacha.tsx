@@ -15,7 +15,7 @@ import { getConfigFieldValue } from 'network/shapes/Config';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { getItemBalance } from 'network/shapes/Item';
 import { Kami, KamiOptions, queryKamisByAccount } from 'network/shapes/Kami';
-import { BaseKami, getKami } from 'network/shapes/Kami/types';
+import { BaseKami, GachaKami, getGachaKami, getKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
 import { MainDisplay } from './display/MainDisplay';
@@ -56,7 +56,7 @@ export function registerGachaModal() {
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
                 getKami(world, components, entity, options),
-              getBaseKami: (entity: EntityIndex) => getKami(world, components, entity),
+              getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
             },
           };
         })
@@ -76,7 +76,7 @@ export function registerGachaModal() {
 
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [kamiCache, _] = useState<Map<EntityIndex, Kami>>(new Map());
+      const [kamiCache, _] = useState<Map<EntityIndex, GachaKami>>(new Map());
       const [kamiBlockCache, __] = useState<Map<EntityIndex, JSX.Element>>(new Map());
 
       /////////////////

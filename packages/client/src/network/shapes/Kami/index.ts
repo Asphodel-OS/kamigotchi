@@ -35,5 +35,5 @@ export {
 
 export type { KillLog } from './battle';
 export type { QueryOptions } from './queries';
-export { getBaseKami, getKami } from './types';
-export type { Kami, Options as KamiOptions } from './types';
+export { getBaseKami, getGachaKami, getKami } from './types';
+export type { BaseKami, GachaKami, Kami, Options as KamiOptions } from './types';

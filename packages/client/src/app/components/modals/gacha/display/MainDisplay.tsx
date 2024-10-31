@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { Kami, KamiOptions } from 'network/shapes/Kami';
-import { BaseKami } from 'network/shapes/Kami/types';
+import { GachaKami } from 'network/shapes/Kami/types';
 import { Filter, Sort, TabType } from '../types';
 import { Pool } from './Pool';
 
@@ -14,7 +14,7 @@ interface Props {
     sorts: Sort[];
   };
   caches: {
-    kamis: Map<EntityIndex, Kami>;
+    kamis: Map<EntityIndex, GachaKami>;
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
@@ -22,7 +22,7 @@ interface Props {
     partyEntities: EntityIndex[];
   };
   utils: {
-    getBaseKami: (entity: EntityIndex) => BaseKami;
+    getGachaKami: (entity: EntityIndex) => GachaKami;
     getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
   };
 }

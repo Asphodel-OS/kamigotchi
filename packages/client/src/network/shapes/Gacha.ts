@@ -5,7 +5,7 @@ import { GasExponent } from 'constants/gas';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getConfigFieldValue } from './Config';
-import { getKamisByAccount, Kami, KamiOptions } from './Kami';
+import { Kami } from './Kami';
 import { Commit } from './utils';
 import { queryHolderCommits } from './utils/commits';
 
@@ -17,14 +17,6 @@ export const queryGachaCommits = (
   accountID: EntityID
 ): Commit[] => {
   return queryHolderCommits(world, components, 'GACHA_COMMIT', accountID);
-};
-
-export const queryGachaKamis = (
-  world: World,
-  components: Components,
-  kamiOptions?: KamiOptions
-): Kami[] => {
-  return getKamisByAccount(world, components, GACHA_ID, kamiOptions);
 };
 
 export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {

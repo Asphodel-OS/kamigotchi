@@ -22,6 +22,12 @@ export interface BaseKami extends DetailedEntity {
   entityIndex: EntityIndex;
 }
 
+// minimal gacha kami. reduced querying for performance
+export interface GachaKami extends BaseKami {
+  level: number;
+  stats: Stats;
+}
+
 // standardized shape of a Kami Entity
 export interface Kami extends BaseKami {
   level: number;
@@ -81,6 +87,20 @@ export const getBaseKami = (
   };
 };
 
+export const getGachaKami = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): GachaKami => {
+  const { Level } = components;
+
+  return {
+    ...getBaseKami(world, components, entityIndex),
+    level: (getComponentValue(Level, entityIndex)?.value ?? 0) * 1,
+    stats: getStats(world, components, entityIndex), // skips bonus calcs
+  };
+};
+
 // get a Kami from its EnityIndex. includes options for which data to include
 export const getKami = (
   world: World,
@@ -88,24 +108,14 @@ export const getKami = (
   entityIndex: EntityIndex,
   options?: Options
 ): Kami => {
-  const {
-    Experience,
-    LastTime,
-    LastActionTime,
-    Level,
-    MediaURI,
-    Reroll,
-    SkillPoint,
-    StartTime,
-    State,
-  } = components;
+  const { Experience, LastTime, LastActionTime, Level, Reroll, SkillPoint, StartTime, State } =
+    components;
 
   const id = world.entities[entityIndex];
 
   // populate the base Kami data
   const kami: Kami = {
     ...getBaseKami(world, components, entityIndex),
-    image: getComponentValue(MediaURI, entityIndex)?.value as string,
     level: (getComponentValue(Level, entityIndex)?.value ?? 0) * 1,
     experience: {
       current: (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) * 1,

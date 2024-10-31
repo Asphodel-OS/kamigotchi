@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library/styles';
-import { Kami } from 'network/shapes/Kami';
+import { GachaKami } from 'network/shapes/Kami';
 
 interface Props {
-  kami: Kami;
+  kami: GachaKami;
   onClick?: () => void;
 }
 

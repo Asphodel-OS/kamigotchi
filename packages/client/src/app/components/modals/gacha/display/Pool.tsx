@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami, KamiOptions } from 'network/shapes/Kami';
-import { BaseKami } from 'network/shapes/Kami/types';
+import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
 import { Stats } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../types';
@@ -20,14 +20,14 @@ interface Props {
     filters: Filter[];
   };
   caches: {
-    kamis: Map<EntityIndex, Kami>;
+    kamis: Map<EntityIndex, GachaKami>;
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
     entities: EntityIndex[];
   };
   utils: {
-    getBaseKami: (entity: EntityIndex) => BaseKami;
+    getGachaKami: (entity: EntityIndex) => GachaKami;
     getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
   };
   isVisible: boolean;
@@ -41,7 +41,7 @@ export const Pool = (props: Props) => {
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
 
-  const [filtered, setFiltered] = useState<Kami[]>([]);
+  const [filtered, setFiltered] = useState<GachaKami[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   // filter (and implicitly populate) the pool of kamis on initial load
@@ -74,12 +74,12 @@ export const Pool = (props: Props) => {
   // returns a kami from the cache, or creates a new one and sets it if not found
   // NOTE: this is safe because we dont expect updates on kamis in the gacha pool
   const getKami = (entity: EntityIndex) => {
-    if (!kamis.has(entity)) kamis.set(entity, utils.getKami(entity));
+    if (!kamis.has(entity)) kamis.set(entity, utils.getGachaKami(entity));
     return kamis.get(entity)!;
   };
 
   // get the react component of a KamiBlock displayed in the pool
-  const getKamiBlock = (kami: Kami) => {
+  const getKamiBlock = (kami: GachaKami) => {
     const entity = kami.entityIndex;
     if (!kamiBlocks.has(entity)) {
       const tooltip = [
@@ -119,7 +119,7 @@ export const Pool = (props: Props) => {
     setFiltered(newFiltered);
   };
 
-  const sortKamis = (kamis: Kami[]) => {
+  const sortKamis = (kamis: GachaKami[]) => {
     const sorted = [...kamis].sort((a, b) => {
       for (let i = 0; i < sorts.length; i++) {
         const sort = sorts[i];
@@ -129,8 +129,8 @@ export const Pool = (props: Props) => {
         let aStat = 0;
         let bStat = 0;
         if (['INDEX', 'LEVEL'].includes(sort.field)) {
-          aStat = a[field as keyof Kami] as number;
-          bStat = b[field as keyof Kami] as number;
+          aStat = a[field as keyof GachaKami] as number;
+          bStat = b[field as keyof GachaKami] as number;
         } else {
           aStat = a.stats[field as keyof Stats].total;
           bStat = b.stats[field as keyof Stats].total;
