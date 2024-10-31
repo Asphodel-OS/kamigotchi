@@ -103,9 +103,10 @@ export function create<C extends Contracts>(
     const fragment = target.interface.fragments.find((fragment) => fragment.name === prop);
     const stateMutability = fragment && (fragment as { stateMutability?: string }).stateMutability;
 
-    // Create a function that estimates gas
+    // skip gas estimation if gasLimit is set
     const estGasFunction = target.estimateGas[prop as string];
-    const estimateGas = () => estGasFunction(...args);
+    const estimateGas = () =>
+      callOverrides.gasLimit ? Promise.resolve(callOverrides.gasLimit) : estGasFunction(...args);
 
     // Create a function that executes the tx when called
     const execute = async (txData: Overrides) => {

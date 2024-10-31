@@ -79,10 +79,9 @@ export function createPlayerAPI(systems: any) {
     return systems['system.account.use.teleport'].executeTyped(itemIndex);
   }
 
-  // @dev moves the account to another room from their current roomIndex
-  // @param roomIndex  destination room roomIndex
   function moveAccount(roomIndex: number) {
-    return systems['system.account.move'].executeTyped(roomIndex);
+    // hardcode gas limit to 1.2m; approx upper bound for moving room with 1 gate
+    return systems['system.account.move'].executeTyped(roomIndex, { gasLimit: 1200000 });
   }
 
   // @dev registers an account. should be called by Owner wallet

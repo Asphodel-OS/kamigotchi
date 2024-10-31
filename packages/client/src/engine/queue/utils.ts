@@ -50,6 +50,10 @@ export async function getTxGasData(
 export function isOverrides(obj: any): obj is Overrides {
   if (typeof obj !== 'object' || Array.isArray(obj) || obj === null) return false;
   return (
+    'gasLimit' in obj ||
+    'gasPrice' in obj ||
+    'maxFeePerGas' in obj ||
+    'maxPriorityFeePerGas' in obj ||
     'nonce' in obj ||
     'type' in obj ||
     'accessList' in obj ||
