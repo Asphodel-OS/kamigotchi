@@ -3,7 +3,15 @@ import styled from 'styled-components';
 import { ActionButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 
-export const Debugging = () => {
+interface Props {
+  actions: {
+    echoRoom: () => void;
+    echoKamis: () => void;
+  };
+}
+
+export const Debugging = (props: Props) => {
+  const { actions } = props;
   const { modals, setModals } = useVisibility();
 
   const FieldRow = (label: string, buttonText: string, onClick: () => void) => {
@@ -24,6 +32,8 @@ export const Debugging = () => {
       </HeaderRow>
       <Section key='commits'>
         {FieldRow('Commits Modal', 'Open', () => setModals({ reveal: true }))}
+        {FieldRow('Sync kamis', 'sync', actions.echoKamis)}
+        {FieldRow('Sync location', 'sync', actions.echoRoom)}
       </Section>
     </Container>
   );

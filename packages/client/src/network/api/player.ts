@@ -7,11 +7,11 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   // ECHO
 
-  function echoKamis(accID: BigNumberish) {
+  function echoKamis() {
     return systems['system.echo.kamis'].executeTyped();
   }
 
-  function echoRoom(accID: BigNumberish) {
+  function echoRoom() {
     return systems['system.echo.room'].executeTyped();
   }
 

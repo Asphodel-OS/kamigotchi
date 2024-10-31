@@ -1,10 +1,11 @@
-import { of } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { settingsIcon } from 'assets/images/icons/menu';
 
+import { getAccountFromBurner } from 'network/shapes/Account';
 import { Account } from './Account';
 import { Debugging } from './Debugging';
 import { Volume } from './Volume';
@@ -19,8 +20,46 @@ export function registerSettingsModal() {
       rowEnd: 75,
     },
 
-    (layers) => of(layers),
-    () => {
+    (layers) =>
+      interval(5000).pipe(
+        map(() => {
+          const { network } = layers;
+          const account = getAccountFromBurner(network);
+
+          return {
+            network: network,
+            account: account,
+          };
+        })
+      ),
+    ({ network, account }) => {
+      const { actions, api } = network;
+
+      /////////////////
+      // ACTIONS
+
+      const echoRoom = () => {
+        actions.add({
+          action: 'Sync location',
+          params: [],
+          description: 'Syncing account location',
+          execute: async () => {
+            return api.player.echo.room();
+          },
+        });
+      };
+
+      const echoKamis = () => {
+        actions.add({
+          action: 'Sync kamis',
+          params: [],
+          description: 'Syncing account kamis',
+          execute: async () => {
+            return api.player.echo.kami();
+          },
+        });
+      };
+
       return (
         <ModalWrapper
           id='settings'
@@ -32,7 +71,7 @@ export function registerSettingsModal() {
           <Divider />
           <Account />
           <Divider />
-          <Debugging />
+          <Debugging actions={{ echoRoom, echoKamis }} />
         </ModalWrapper>
       );
     }

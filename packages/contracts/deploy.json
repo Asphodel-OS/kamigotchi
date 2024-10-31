@@ -481,7 +481,15 @@
     },
     {
       "name": "KamiGachaRevealSystem",
-      "writeAccess": ["*"]
+      "writeAccess": [
+        "BlockRevealComponent",
+        "IdHolderComponent",
+        "IDOwnsKamiComponent",
+        "RerollComponent",
+        "StateComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
     },
     {
       "name": "KamiLevelSystem",
