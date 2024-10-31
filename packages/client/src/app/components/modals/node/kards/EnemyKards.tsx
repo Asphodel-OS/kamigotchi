@@ -72,11 +72,39 @@ export const EnemyCards = (props: Props) => {
     return () => clearInterval(timerId);
   }, []);
 
-  // populate the enemy kami data as new ones come in
+  // populate enemy kami data as the list of entities changes.
+  // the purpose of this hook is to incrementally ensure all kamis that belong
+  // on the list are on the list, rather than to ensure their data is fresh
   useEffect(() => {
-    if (!isVisible) return;
     setIsUpdating(true);
-    setEnemies(enemyEntities.map((entity) => getKami(entity)));
+
+    // determine the entities that need to be added and removed
+    const newEntitiesSet = new Set(enemyEntities);
+    const oldEntitiesSet = new Set(enemies.map((enemy) => enemy.entityIndex));
+    const toAdd = newEntitiesSet.difference(oldEntitiesSet);
+    const toRemove = oldEntitiesSet.difference(newEntitiesSet);
+
+    // remove the entities that need to be removed
+    let newEnemies: Kami[] = [];
+    if (toRemove.size != enemies.length) {
+      newEnemies = [...enemies];
+      for (const entity of toRemove) {
+        const index = newEnemies.findIndex((enemy) => enemy.entityIndex === entity);
+        if (index != -1) newEnemies.splice(index, 1);
+      }
+    }
+
+    // allot cycle time to add entities depending on whether the list is visible
+    const maxCycleTime = isVisible ? 200 : 100;
+    const timeStart = Date.now();
+    const iterator = toAdd.values();
+    let next = iterator.next();
+    while (!next.done && Date.now() - timeStart < maxCycleTime) {
+      newEnemies.push(getKami(next.value));
+      next = iterator.next();
+    }
+
+    setEnemies(newEnemies);
     setIsUpdating(false);
   }, [isVisible, enemyEntities]); // might need better triggers
 

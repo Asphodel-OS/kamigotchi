@@ -131,10 +131,7 @@ export function registerNodeModal() {
       const refreshKami = (kami: Kami) => {
         const lastTime = utils.getLastTime(kami.entityIndex);
         const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
-        if (lastTime > lastUpdate) {
-          KamiCache.set(kami.entityIndex, kami);
-          return processKami(kami.entityIndex);
-        }
+        if (lastTime > lastUpdate) kami = processKami(kami.entityIndex);
         return kami;
       };
 
