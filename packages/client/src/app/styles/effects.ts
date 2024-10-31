@@ -1,4 +1,4 @@
-import { keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const clickFx = (scale = 0.05, translate = 0) => keyframes`
   0% { transform: scale(${1 + scale}) translateX(${100 * translate * (1 - scale)}%); }
@@ -47,5 +47,32 @@ export const glimmerFx = keyframes`
     background-position: 100vw;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+`;
+
+export const Shimmer = styled.div`
+  height: 90%;
+  width: 90%;
+  border-bottom-right-radius: 3px;
+  background: linear-gradient(45deg, #0000 40%, #fafafa 50%, #0000 60%);
+  position: absolute;
+  z-index: -5;
+  animation: shimmer 3s infinite both;
+  background-size: 500%;
+  animation-timing-function: ease-in-out;
+  @keyframes shimmer {
+    0% {
+      background-position-x: 100%;
+    }
+    3% {
+      background-position-x: 70%;
+    }
+
+    6% {
+      background-position-x: 40%;
+    }
+    9% {
+      background-position-x: 10%;
+    }
   }
 `;
