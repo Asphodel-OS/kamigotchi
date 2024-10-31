@@ -3,18 +3,17 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { kamiIcon } from 'assets/images/icons/menu';
 import { mapBackgrounds } from 'assets/images/map';
-import { Kami } from 'network/shapes/Kami';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { emptyRoom, Room } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
+import { FloatingMapKami } from './FloatingMapKami';
 
 interface Props {
   index: number; // index of current room
   zone: number;
   rooms: Map<number, Room>;
-  accountKamis: Kami[];
+  accountKamis: EntityIndex[];
   actions: {
     move: (roomIndex: number) => void;
   };
@@ -22,27 +21,18 @@ interface Props {
     queryNodeKamis: (nodeIndex: number) => EntityIndex[];
     queryAccountsByRoom: (roomIndex: number) => EntityIndex[];
     setHoveredRoom: (roomIndex: number) => void;
-    queryKamisByAccount: () => EntityIndex[];
     getKamiLocation: (kamiIndex: EntityIndex) => number | undefined;
     getBaseKami: (kamiIndex: EntityIndex) => BaseKami;
   };
 }
-
+const KamiNames: Map<number, string[]> = new Map<number, string[]>();
 export const Grid = (props: Props) => {
   const { index, zone, rooms, actions, utils, accountKamis } = props;
-  const {
-    queryNodeKamis,
-    queryAccountsByRoom,
-    setHoveredRoom,
-    queryKamisByAccount,
-    getKamiLocation,
-    getBaseKami,
-  } = utils;
+  const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom, getKamiLocation, getBaseKami } =
+    utils;
   const [grid, setGrid] = useState<Room[][]>([]);
   const [kamis, setKamis] = useState<EntityIndex[]>([]);
   const [players, setPlayers] = useState<EntityIndex[]>([]);
-  const [harvestMap, setHarvestMap] = useState<Map<number, string[]>>(new Map());
-
   // set the grid whenever the room zone changes
   useEffect(() => {
     const z = rooms.get(index)?.location.z;
@@ -86,17 +76,29 @@ export const Grid = (props: Props) => {
   }, [zone]);
   // manages Kami harvest location and name
   useEffect(() => {
-    const newHarvestMap = new Map<number, string[]>();
-    queryKamisByAccount().forEach((accountKami) => {
+    KamiNames.forEach((value, key) => {
+      KamiNames.set(key, []);
+    });
+    accountKamis.forEach((accountKami) => {
       const kamiLocation = getKamiLocation(accountKami);
       if (kamiLocation !== undefined) {
-        const kamiNames = newHarvestMap.get(kamiLocation) ?? [];
+        const kamiNames = KamiNames.get(kamiLocation) ?? [];
         kamiNames.push(getBaseKami(accountKami).name);
-        newHarvestMap.set(kamiLocation, kamiNames);
+        KamiNames.set(kamiLocation, kamiNames);
       }
     });
-    setHarvestMap(newHarvestMap);
   }, [accountKamis]);
+
+  const getKamiString = (roomIndex: number) => {
+    const names = KamiNames.get(roomIndex);
+    let res = '';
+    if (names !== undefined) {
+      names.length > 1
+        ? (res = `${names.slice(0, -1).join(',') + ' and ' + names.slice(-1)} are Harvesting on this tile`)
+        : (res = `${names} is Harvesting on this tile`);
+    }
+    return res;
+  };
   /////////////////
   // INTERACTIONS
 
@@ -116,16 +118,6 @@ export const Grid = (props: Props) => {
 
   /////////////////
   // RENDER
-  const showKamisString = (roomIndex: number) => {
-    const harvestMapNames = harvestMap.get(roomIndex);
-    let res = null;
-    if (harvestMapNames !== undefined) {
-      harvestMapNames.length > 1
-        ? (res = `${harvestMapNames.slice(0, -1).join(',') + ' and ' + harvestMapNames.slice(-1)} are Harvesting on this tile`)
-        : (res = `${harvestMapNames} is Harvesting on this tile`);
-    }
-    return res;
-  };
   return (
     <Container>
       <Background src={mapBackgrounds[zone]} />
@@ -139,16 +131,13 @@ export const Grid = (props: Props) => {
               const currExit = rooms.get(index)?.exits?.find((e) => e.toIndex === room.index);
               const isExit = !!currExit;
               const isBlocked = currExit?.blocked; // blocked exit
-              const kamiBackGround =
-                room?.index !== undefined && harvestMap.get(room.index) ? true : false;
+              const kamiBackGround = room?.index !== undefined && !!KamiNames.has(room.index);
 
               let backgroundColor;
               let onClick: MouseEventHandler | undefined;
-              if (isCurrRoom) {
-                backgroundColor = 'rgba(51,187,51,0.9)';
-              } else if (isBlocked) {
-                backgroundColor = 'rgba(0,0,0,0.3)';
-              } else if (isExit) {
+              if (isCurrRoom) backgroundColor = 'rgba(51,187,51,0.9)';
+              else if (isBlocked) backgroundColor = 'rgba(0,0,0,0.3)';
+              else if (isExit) {
                 backgroundColor = 'rgba(255,136,85,0.6)';
                 onClick = () => handleRoomMove(room?.index ?? 0);
               }
@@ -165,12 +154,7 @@ export const Grid = (props: Props) => {
                     if (isRoom) setHoveredRoom(0);
                   }}
                 >
-                  {kamiBackGround && (
-                    <KamiAndShadow>
-                      <KamiImage />
-                      <KamiShadow />
-                    </KamiAndShadow>
-                  )}
+                  {kamiBackGround && <FloatingMapKami />}
                 </Tile>
               );
 
@@ -183,7 +167,7 @@ export const Grid = (props: Props) => {
                   '',
                   `${players.length} players on this tile`,
                   `${kamis.length} kamis harvesting`,
-                  showKamisString(room.index),
+                  getKamiString(room.index),
                 ];
 
                 tile = (
@@ -201,69 +185,6 @@ export const Grid = (props: Props) => {
   );
 };
 
-const KamiImage = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  position: relative;
-  background-image: url(${kamiIcon});
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  animation: 2s infinite alternate floating;
-  animation-timing-function: linear;
-
-  z-index: 2;
-  @keyframes floating {
-    0% {
-      transform: translatey(-50%);
-    }
-
-    50% {
-      transform: translatey(-40%);
-    }
-    100% {
-      transform: translatey(-50%);
-    }
-  }
-`;
-const KamiShadow = styled.div`
-  position: absolute;
-  height: 20%;
-  position: relative;
-  animation: 2s infinite alternate shadow;
-  animation-timing-function: linear;
-
-  @keyframes shadow {
-    0% {
-      width: 25%;
-      box-shadow: 0px -15px 7px rgba(0, 0, 0, 0.9);
-    }
-    50% {
-      width: 33%;
-      box-shadow: 0px -15px 6.8px rgba(0, 0, 0, 1);
-    }
-    100% {
-      width: 30%;
-      box-shadow: 0px -15px 7px rgba(0, 0, 0, 0.9);
-    }
-  }
-`;
-
-const KamiAndShadow = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-`;
 const Container = styled.div`
   position: relative;
   width: 100%;

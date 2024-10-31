@@ -1,11 +1,15 @@
-
-import { EntityID, EntityIndex,  getComponentValue, HasValue, runQuery, World  } from '@mud-classic/recs';
-
-
-import { getHarvest } from 'network/shapes/Harvest';
-import { getHarvestEntity } from 'network/shapes/Harvest/types';
+import {
+  EntityID,
+  EntityIndex,
+  getComponentValue,
+  HasValue,
+  runQuery,
+  World,
+} from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
+import { getHarvest } from 'network/shapes/Harvest';
+import { getHarvestEntity } from 'network/shapes/Harvest/types';
 import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
 import { query } from './queries';
 import { getKami, Options } from './types';
@@ -25,7 +29,6 @@ export const getByIndex = (
 ) => {
   const results = query(components, { index: index });
   if (results.length == 0) return;
-
   const entity = results[0];
   return getKami(world, components, entity, options);
 };
@@ -52,7 +55,6 @@ export const getByState = (
   return results.map((index) => getKami(world, components, index, options));
 };
 
-
 ////////////////
 // OTHER GETTERS
 
@@ -72,13 +74,12 @@ export const getAccount = (world: World, components: Components, index: number):
 
   return getBaseAccount(world, components, accEntity);
 };
-  // get Kami harvesting location
-export const getKamiLocation = (world: World, components: Components, kamiIndex: EntityIndex) => {
-  const harvestEntity = getHarvestEntity(world, world.entities[kamiIndex]);
+// get Kami harvesting location
+export const getLocation = (world: World, components: Components, entity: EntityIndex) => {
+  const harvestEntity = getHarvestEntity(world, world.entities[entity]);
   if (harvestEntity) {
     const harvestInfo = getHarvest(world, components, harvestEntity, { node: true });
 
     return harvestInfo.state === 'ACTIVE' ? harvestInfo.node?.index : undefined;
   }
-
 };

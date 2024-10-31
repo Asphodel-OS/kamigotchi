@@ -21,6 +21,7 @@ export {
   getAll as getAllKamis,
   getAccount as getKamiAccount,
   getByIndex as getKamiByIndex,
+  getLocation as getKamiLocation,
   getByAccount as getKamisByAccount,
 } from './getters';
 export {

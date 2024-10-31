@@ -8,8 +8,7 @@ import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner, queryAccountsByRoom } from 'network/shapes/Account';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { getBaseKami, queryKamisByAccount } from 'network/shapes/Kami';
-import { getKamiLocation } from 'network/shapes/Kami/getters';
+import { getBaseKami, getKamiLocation, queryKamisByAccount } from 'network/shapes/Kami';
 import { queryNodeKamis } from 'network/shapes/Node';
 import { getAllRooms, getRoomByIndex, Room } from 'network/shapes/Room';
 import { Grid } from './Grid';
@@ -30,7 +29,7 @@ export function registerMapModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network, { kamis: { harvest: true } });
+          const account = getAccountFromBurner(network);
           return {
             network,
             data: { account },
@@ -51,13 +50,6 @@ export function registerMapModal() {
     ({ network, data, utils }) => {
       const { account } = data;
       const { actions, api, components, world } = network;
-      const {
-        queryNodeKamis,
-        queryAccountsByRoom,
-        queryKamisByAccount,
-        getKamiLocation,
-        getBaseKami,
-      } = utils;
       const { roomIndex, setRoom: setRoomIndex } = useSelected();
       const { modals } = useVisibility();
       const [hoveredRoom, setHoveredRoom] = useState(0);
@@ -104,6 +96,7 @@ export function registerMapModal() {
 
       ///////////////////
       // RENDER
+      const accountKamis = queryKamisByAccount(components, account.id);
 
       return (
         <ModalWrapper
@@ -117,16 +110,9 @@ export function registerMapModal() {
             index={roomIndex}
             zone={zone}
             rooms={roomMap}
-            accountKamis={account.kamis}
+            accountKamis={accountKamis}
             actions={{ move }}
-            utils={{
-              setHoveredRoom,
-              queryNodeKamis,
-              queryAccountsByRoom,
-              queryKamisByAccount,
-              getKamiLocation,
-              getBaseKami,
-            }}
+            utils={{ ...utils, setHoveredRoom }}
           />
         </ModalWrapper>
       );
