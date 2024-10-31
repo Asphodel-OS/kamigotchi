@@ -3,13 +3,14 @@ import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami, calcCooldown, calcHealth } from 'network/shapes/Kami';
+import { calcStrainFromBalance } from 'network/shapes/Kami/functions';
 import { playClick } from 'utils/sounds';
 import { Card } from '../../../library/base';
 import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
 interface Props {
-  kami: Kami;
+  kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
   subtext?: string;
@@ -22,7 +23,9 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, description, subtext, actions, showBattery, showCooldown } = props;
+  const { kami, actions, showBattery, showCooldown } = props;
+  const { description, descriptionOnClick } = props;
+  const { subtext, subtextOnClick } = props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 
@@ -51,12 +54,21 @@ export const KamiCard = (props: Props) => {
   };
 
   /////////////////
+  // INTERPRETATION
+
+  const calcKamiHealth = () => {
+    const rate = calcStrainFromBalance(kami, kami.harvest!.rate, false);
+    kami.stats.health.rate = -1 * rate;
+    return calcHealth(kami);
+  };
+
+  /////////////////
   // DISPLAY
 
   // generate the styled text divs for the description
   const Description = () => {
     const header = (
-      <TextBig key='header' onClick={props.descriptionOnClick}>
+      <TextBig key='header' onClick={descriptionOnClick}>
         {description[0]}
       </TextBig>
     );
@@ -78,7 +90,7 @@ export const KamiCard = (props: Props) => {
           {showCooldown && (
             <Cooldown total={kami.time.cooldown.requirement} current={calcCooldown(kami)} />
           )}
-          {showBattery && <Health current={calcHealth(kami)} total={kami.stats.health.total} />}
+          {showBattery && <Health current={calcKamiHealth()} total={kami.stats.health.total} />}
         </TitleCorner>
       </TitleBar>
       <Content>
@@ -86,7 +98,7 @@ export const KamiCard = (props: Props) => {
           <Description />
         </ContentColumn>
         <ContentColumn key='column-2'>
-          <ContentSubtext onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
+          <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>
         </ContentColumn>
       </Content>

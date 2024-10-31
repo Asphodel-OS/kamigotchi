@@ -1,4 +1,4 @@
-import { calcHarvestIdleTime, calcHarvestNetBounty } from '../Harvest';
+import { calcHarvestIdleTime, calcHarvestNetBounty, calcHarvestRate } from '../Harvest';
 import { Kami } from './types';
 
 ////////////////
@@ -102,7 +102,7 @@ export const calcHealthRate = (kami: Kami): number => {
 };
 
 // calculate the rate of health drain while harvesting
-const calcHarvestingHealthRate = (kami: Kami): number => {
+export const calcHarvestingHealthRate = (kami: Kami): number => {
   if (!kami.harvest) return 0;
   const rate = calcStrainFromBalance(kami, kami.harvest.rate, false);
   return -1 * rate;
@@ -116,6 +116,13 @@ const calcRestingHealthRate = (kami: Kami): number => {
   return (kami.stats.harmony.total * ratio * boost) / 3600;
 };
 
+// assume harvest rate has been updated if it is active
+export const updateHealthRate = (kami: Kami): number => {
+  const rate = calcHealthRate(kami);
+  kami.stats.health.rate = rate;
+  return rate;
+};
+
 ////////////////
 // HARVEST
 
@@ -123,6 +130,14 @@ const calcRestingHealthRate = (kami: Kami): number => {
 export const calcOutput = (kami: Kami): number => {
   if (!isHarvesting(kami) || !kami.harvest) return 0;
   return kami.harvest.balance + calcHarvestNetBounty(kami.harvest);
+};
+
+// update the harvest rate on the kami's harvest. do nothing if no harvest
+export const updateHarvestRate = (kami: Kami): number => {
+  if (!kami.harvest || kami.harvest.state !== 'ACTIVE') return 0;
+  const rate = calcHarvestRate(kami.harvest, kami);
+  kami.harvest.rate = rate;
+  return rate;
 };
 
 ////////////////////

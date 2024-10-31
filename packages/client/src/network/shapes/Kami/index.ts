@@ -16,6 +16,8 @@ export {
   isStarving,
   isUnrevealed,
   onCooldown,
+  updateHarvestRate as updateKamiHarvestRate,
+  updateHealthRate as updateKamiHealthRate,
 } from './functions';
 export {
   getAll as getAllKamis,

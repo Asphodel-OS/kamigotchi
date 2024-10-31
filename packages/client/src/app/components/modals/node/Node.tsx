@@ -15,6 +15,7 @@ import {
   getKami,
   getKamiAccount,
   queryKamisByAccount,
+  updateKamiHarvestRate,
 } from 'network/shapes/Kami';
 import {
   Node,
@@ -30,9 +31,12 @@ import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
 import { Kards } from './kards/Kards';
 
+const HARVEST_STALE_LIMIT = 60 * 1000; // 1 minute
+
 // cache for harvest rates of enemy kamis
 const KamiCache = new Map<EntityIndex, Kami>();
 const KamiLastTs = new Map<EntityIndex, number>(); // kami index -> last update ts
+const HarvestUpdateTs = new Map<EntityIndex, number>();
 const OwnerCache = new Map<EntityIndex, BaseAccount>();
 
 export function registerNodeModal() {
@@ -118,6 +122,7 @@ export function registerNodeModal() {
         const kami = utils.getKami(entity, kamiOptions);
         KamiCache.set(entity, kami);
         KamiLastTs.set(entity, kami.time.last);
+        HarvestUpdateTs.set(entity, Date.now());
         return kami;
       };
 
@@ -129,9 +134,21 @@ export function registerNodeModal() {
 
       // refresh a kami as needed and return the most recent instance
       const refreshKami = (kami: Kami) => {
-        const lastTime = utils.getLastTime(kami.entityIndex);
-        const lastUpdate = KamiLastTs.get(kami.entityIndex)!;
-        if (lastTime > lastUpdate) kami = processKami(kami.entityIndex);
+        const entityIndex = kami.entityIndex;
+
+        // reprocess any updated kamis
+        const lastTime = utils.getLastTime(entityIndex);
+        const lastUpdate = KamiLastTs.get(entityIndex)!;
+        const wasUpdated = lastTime > lastUpdate;
+        if (wasUpdated) kami = processKami(entityIndex);
+
+        // recalculate rates for any stale harvests
+        const now = Date.now();
+        const lastHarvestUpdate = HarvestUpdateTs.get(entityIndex) ?? 0;
+        if (now - lastHarvestUpdate > HARVEST_STALE_LIMIT) {
+          updateKamiHarvestRate(kami);
+          HarvestUpdateTs.set(entityIndex, now);
+        }
         return kami;
       };
 
