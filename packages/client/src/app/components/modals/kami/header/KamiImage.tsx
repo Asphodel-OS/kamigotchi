@@ -61,7 +61,7 @@ export const KamiImage = (props: Props) => {
         <Overlay bottom={0} right={0}>
           <Tooltip text={[getLevelTooltip()]}>
             <Button disabled={!canLevel} onClick={() => handleLevelUp()}>
-              ↑
+              ↑{canLevel && <Shimmer />}
             </Button>
           </Tooltip>
         </Overlay>
@@ -158,4 +158,30 @@ const Button = styled.div<ButtonProps>`
   color: black;
   font-size: 0.8vw;
   text-align: center;
+`;
+const Shimmer = styled.div`
+  height: 90%;
+  width: 90%;
+  border-bottom-right-radius: 3px;
+  background: linear-gradient(45deg, #0000 40%, #fafafa 50%, #0000 60%);
+  position: absolute;
+  z-index: -5;
+  animation: shimmer 3s infinite both;
+  background-size: 500%;
+  animation-timing-function: ease-in-out;
+  @keyframes shimmer {
+    0% {
+      background-position-x: 100%;
+    }
+    3% {
+      background-position-x: 70%;
+    }
+
+    6% {
+      background-position-x: 40%;
+    }
+    9% {
+      background-position-x: 10%;
+    }
+  }
 `;
