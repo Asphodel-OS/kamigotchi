@@ -181,7 +181,7 @@ export async function getIndexDBCacheStoreBlockNumber(cache: ECSCache): Promise<
 export function getStateCache(
   chainId: number,
   worldAddress: string,
-  version?: number,
+  version: number,
   idb?: IDBFactory
 ) {
   return initCache<{
@@ -193,7 +193,7 @@ export function getStateCache(
     LastKamigazeEntity: number;
     LastKamigazeComponent: number;
   }>(
-    getCacheId('ECSCache', chainId, worldAddress), // Store a separate cache for each World contract address
+    getCacheId('ECSCache', chainId, worldAddress, version), // Store a separate cache for each World contract address
     [
       'ComponentValues',
       'BlockNumber',
@@ -208,8 +208,8 @@ export function getStateCache(
   );
 }
 
-function getCacheId(namespace: string, chainId: number, worldAddress: string) {
-  return `${namespace}-${chainId}-${worldAddress}`;
+function getCacheId(namespace: string, chainId: number, worldAddress: string, version: number) {
+  return `${namespace}-${chainId}-${worldAddress}-v${version}`;
 }
 
 // unused

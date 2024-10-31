@@ -21,6 +21,7 @@ import {
   take,
 } from 'rxjs';
 
+import { VERSION as DB_VERSION } from 'cache/db';
 import { GodID, SyncState, SyncStatus } from 'engine/constants';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/providers';
@@ -150,7 +151,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       computed(() => computedConfig.get().provider)
     );
     const provider = providers.get().json;
-    const indexedDB = await getStateCache(chainId, worldContract.address);
+    const indexedDB = await getStateCache(chainId, worldContract.address, DB_VERSION);
     const decode = createDecode();
     const fetchWorldEvents = createFetchWorldEventsInBlockRange(
       provider,
