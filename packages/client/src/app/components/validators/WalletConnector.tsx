@@ -39,7 +39,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { network } = layers;
-      const { address: wagmiAddress, chain, isConnected, status } = useAccount();
+      const { address: wagmiAddress, chain, isConnected } = useAccount();
       const { connectors, connect } = useConnect();
       const { ready, authenticated, login, logout } = usePrivy();
       const { wallets, ready: walletsReady } = useWallets();

@@ -1,12 +1,8 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { KamiCard } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
-import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
-import { Account } from 'network/shapes/Account';
 import {
-  Kami,
   calcHealth,
   calcOutput,
   isDead,
@@ -14,61 +10,81 @@ import {
   isOffWorld,
   isResting,
   isUnrevealed,
-} from 'network/shapes/Kami';
+  KamiRefreshOptions,
+} from 'app/cache/kami';
+import { KamiCard } from 'app/components/library';
+import { useSelected, useVisibility } from 'app/stores';
+import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
+import { Account, NullAccount } from 'network/shapes/Account';
+import { Kami } from 'network/shapes/Kami';
 import { getRateDisplay } from 'utils/rates';
 import { playClick } from 'utils/sounds';
 
+const REFRESH_INTERVAL = 2000;
+
 interface Props {
-  account: Account;
+  data: {
+    accountEntity: EntityIndex;
+  };
   display: {
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
-  kamis: Kami[];
+  utils: {
+    getAccount: () => Account;
+    getKamis: (options?: KamiRefreshOptions) => Kami[];
+  };
 }
 
 export const Kards = (props: Props) => {
-  const { account, display, kamis } = props;
+  const { display, data, utils } = props;
+  const { accountEntity } = data;
+  const { getAccount, getKamis } = utils;
+
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode } = useSelected();
 
+  const [account, setAccount] = useState<Account>(NullAccount);
+  const [kamis, setKamis] = useState<Kami[]>([]);
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+
   // ticking
-  const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
-    const refreshClock = () => {
-      setLastRefresh(Date.now());
-    };
-    const timerId = setInterval(refreshClock, 1000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
+    updateData();
+    const refreshClock = () => setLastRefresh(Date.now());
+    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+    return () => clearInterval(timerId);
   }, []);
+
+  // refresh data whenever the modal is opened
+  useEffect(() => {
+    if (!modals.party) return;
+    updateData();
+  }, [modals.party, lastRefresh, accountEntity]);
+
+  // set the data required to populate the modal
+  const updateData = () => {
+    setAccount(getAccount());
+    setKamis(getKamis());
+  };
 
   /////////////////
   // INTERPRETATION
 
   // get the description of the kami as a list of lines
-  // TODO: clean this up
+  // TODO: clean this up. might be overeager on harvest rate calcs
   const getDescription = (kami: Kami): string[] => {
-    const healthRate = getRateDisplay(kami.stats.health.rate, 2);
+    const healthRate = getRateDisplay(kami.stats!.health.rate, 2);
 
     let description: string[] = [];
-    if (isOffWorld(kami)) {
-      description = ['kidnapped by slave traders'];
-    } else if (isUnrevealed(kami)) {
-      description = ['Unrevealed!'];
-    } else if (isResting(kami)) {
-      description = ['Resting', `${healthRate} HP/hr`];
-    } else if (isDead(kami)) {
-      description = [`Murdered`];
-      // if (kami.deaths && kami.deaths.length > 0) {
-      //   description.push(`by ${kami.deaths[0].source!.name}`);
-      //   description.push(`on ${kami.deaths[0].node.name} `);
-      // }
-    } else if (isHarvesting(kami) && kami.harvest) {
+    if (isOffWorld(kami)) description = ['kidnapped by slave traders'];
+    else if (isUnrevealed(kami)) description = ['Unrevealed!'];
+    else if (isResting(kami)) description = ['Resting', `${healthRate} HP/hr`];
+    else if (isDead(kami)) description = [`Murdered`];
+    else if (isHarvesting(kami) && kami.harvest) {
+      const harvestRate = getRateDisplay(kami.harvest!.rate, 2);
       if (calcHealth(kami) == 0) {
         description = [`Starving.. `, `on ${kami.harvest.node?.name}`];
       } else if (kami.harvest.node != undefined) {
-        const harvestRate = getRateDisplay(kami.harvest.rate, 2);
         description = [
           `Harvesting`,
           `on ${kami.harvest.node.name}`,
@@ -112,7 +128,7 @@ export const Kards = (props: Props) => {
         kamis.map((kami) => {
           return (
             <KamiCard
-              key={kami.entityIndex}
+              key={kami.entity}
               kami={kami}
               description={getDescription(kami)}
               descriptionOnClick={getDescriptionOnClick(kami)}

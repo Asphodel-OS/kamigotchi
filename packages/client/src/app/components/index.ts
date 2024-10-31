@@ -5,12 +5,12 @@ import { registerActionQueue } from './fixtures/queue';
 
 import { registerAccountModal } from './modals/account';
 import { registerChatModal } from './modals/chat';
+import { registerCraftingModal } from './modals/crafting';
 import { registerDialogueModal } from './modals/dialogue';
 import { registerGachaModal } from './modals/gacha';
 import { registerGoalModal } from './modals/goals';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
-import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
@@ -25,7 +25,6 @@ import { registerSettingsModal } from './modals/settings';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
 
-import { registerCraftingModal } from './modals/crafting';
 import {
   registerAccountRegistrar,
   registerGasHarasser,
@@ -51,6 +50,7 @@ export function registerModals() {
   registerHelpModal();
   registerInventoryModal();
   registerMapModal();
+  registerNodeModal();
   registerPartyModal();
   registerQuestsModal();
   registerSettingsModal();
@@ -62,12 +62,11 @@ export function registerModals() {
   registerEMABoardModal();
   registerFundOperatorModal();
   registerGachaModal();
-  registerKamiModal();
+  // registerKamiModal();
   registerLeaderboardModal();
   registerRevealModal();
   registerMerchantModal();
   registerNameKamiModal();
-  registerNodeModal();
   registerGoalModal();
 }
 

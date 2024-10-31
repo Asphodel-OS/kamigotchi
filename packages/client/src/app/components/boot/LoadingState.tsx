@@ -22,7 +22,7 @@ export function registerLoadingState() {
         world,
       } = layers.network;
 
-      return concat([1], LoadingState.update$).pipe(
+      return concat([], LoadingState.update$).pipe(
         map(() => {
           let loadingState;
           const GodEntityIndex = world.entityToIndex.get(GodID);
@@ -46,7 +46,7 @@ export function registerLoadingState() {
 
       useEffect(() => {
         if (state === SyncState.LIVE) {
-          setTimeout(() => setIsVisible(false), 1500);
+          setTimeout(() => setIsVisible(false), 500);
           registerModals();
         }
       }, [state]);

@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { getAccountFromEmbedded } from 'network/shapes/Account';
 import {
   Contribution,
   Goal,
@@ -41,7 +41,7 @@ export function registerGoalModal() {
       return interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const account = getAccountFromBurner(network, {
+          const account = getAccountFromEmbedded(network, {
             inventory: true,
           });
           return {

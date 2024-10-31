@@ -1,5 +1,29 @@
 import { DaylightIcon, EvenfallIcon, MoonsideIcon } from 'assets/images/icons/phases';
 
+const SECONDS_PER_MINUTE = 60;
+const SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60;
+const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
+
+/////////////////
+// NORMIETIME
+
+// get the string representation of a time delta (s)
+// NOTE: logic here is a bit messy. clean this up at some point
+export const getTimeDeltaString = (delta: number): string => {
+  if (delta > SECONDS_PER_DAY) {
+    const days = Math.floor(delta / SECONDS_PER_DAY);
+    const hours = Math.floor((delta % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+    return `${days} days ${hours} hours ago`;
+  } else if (delta > SECONDS_PER_HOUR) {
+    const hours = Math.floor(delta / SECONDS_PER_HOUR);
+    const minutes = Math.floor((delta % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+    return `${hours} hours ${minutes} minutes ago`;
+  } else {
+    const minutes = Math.floor(delta / SECONDS_PER_MINUTE);
+    return `${minutes} minutes ago`;
+  }
+};
+
 /////////////////
 // KAMITIME
 

@@ -47,10 +47,10 @@ export const getByIndex = (
 export const getByOperator = (
   world: World,
   components: Components,
-  operatorEOA: string,
+  operatorAddress: string,
   options?: Options
 ) => {
-  const entity = queryByOperator(components, operatorEOA);
+  const entity = queryByOperator(components, operatorAddress);
   if (!entity) return NullAccount;
   return getAccount(world, components, entity, options);
 };
@@ -59,10 +59,10 @@ export const getByOperator = (
 export const getByOwner = (
   world: World,
   components: Components,
-  ownerEOA: string,
+  ownerAddress: string,
   options?: Options
 ) => {
-  const entity = queryByOwner(components, ownerEOA);
+  const entity = queryByOwner(components, ownerAddress);
   if (!entity) return NullAccount;
   return getAccount(world, components, entity, options);
 };

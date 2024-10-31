@@ -71,7 +71,7 @@ export function registerOperatorUpdater() {
         actions.add({
           action: 'AccountSetOperator',
           params: [address],
-          description: `Setting Account Avatar to 0x..${address.slice(-4)}`,
+          description: `Setting Account Operator to 0x..${address.slice(-4)}`,
           execute: async () => {
             return api.account.set.operator(address);
           },
@@ -97,11 +97,11 @@ export function registerOperatorUpdater() {
         <ValidatorWrapper
           id='operator-updater'
           divName='operatorUpdater'
-          title='Update Avatar'
-          errorPrimary='Connected Burner != Account Avatar'
+          title='Update Operator'
+          errorPrimary='Connected Burner != Account Operator'
         >
-          <Description>Old Avatar: {kamiAccount.operatorAddress}</Description>
-          <Description>New Avatar: {burnerAddress}</Description>
+          <Description>Old Operator: {kamiAccount.operatorAddress}</Description>
+          <Description>New Operator: {burnerAddress}</Description>
           <br />
           <Row>
             <ActionButton text='Update' onClick={handleSubmit} />

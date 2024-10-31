@@ -82,6 +82,7 @@ export const getFlagsByFilter = (
 ///////////////
 // UTILS
 
+// gets the entity index for a flag based on the holder and field
 const getEntityIndex = (
   world: any,
   holderID: EntityID | undefined,
@@ -91,6 +92,7 @@ const getEntityIndex = (
   return getEntityByHash(world, ['has.flag', holderID, field], ['string', 'uint256', 'string']);
 };
 
+// checks whether or not a flag entity is set
 const _has = (components: Components, index: EntityIndex | undefined): boolean => {
   const { HasFlag } = components;
   return index ? (getComponentValue(HasFlag, index)?.value as boolean) : false;

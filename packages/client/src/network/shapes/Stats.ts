@@ -52,7 +52,8 @@ export const getStats = (
   const { Harmony, Health, Power, Slots, Stamina, Violence } = components;
 
   const getBonus = (type: string) => {
-    return bonusHolderID ? getBonusValue(world, components, type, bonusHolderID) : 0;
+    if (!bonusHolderID) return 0;
+    return getBonusValue(world, components, type, bonusHolderID);
   };
 
   let stats = {

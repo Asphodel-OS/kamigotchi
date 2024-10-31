@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
+import { calcStaminaPercent, getStamina } from 'app/cache/account';
 import { Tooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/base/measures/Battery';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';
-import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Stat } from 'network/shapes/Stats';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
@@ -25,7 +26,7 @@ export function registerClock() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const accountEntity = queryAccountFromBurner(network);
+          const accountEntity = queryAccountFromEmbedded(network);
 
           return {
             data: {

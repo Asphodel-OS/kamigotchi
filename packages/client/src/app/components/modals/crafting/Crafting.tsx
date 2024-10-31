@@ -2,10 +2,11 @@ import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import { getAccount, getStamina } from 'app/cache/account';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
-import { getAccountFromBurner, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance } from 'network/shapes/Item';
 import { getAllRecipes, haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
@@ -31,28 +32,32 @@ export function registerCraftingModal() {
           const { network } = layers;
           const { world, components } = network;
 
-          const account = getAccountFromBurner(network); // sorry: this is not great practice, was stuffed in
-
-          const accountEntityIndex = queryAccountFromBurner(network);
-          const stamina = getStamina(world, components, accountEntityIndex).sync;
+          const accountEntity = queryAccountFromEmbedded(network);
+          const accountID = world.entities[accountEntity];
+          const stamina = getStamina(world, components, accountEntity).sync;
 
           return {
             network,
-            accountEntityIndex,
+            accountEntity,
             data: {
               stamina: stamina,
             },
             utils: {
               meetsRequirements: (recipe: Recipe) =>
-                passesConditions(world, components, recipe.requirements, account),
+                passesConditions(
+                  world,
+                  components,
+                  recipe.requirements,
+                  getAccount(world, components, accountEntity, { live: 2 })
+                ),
               displayRequirements: (recipe: Recipe) =>
                 recipe.requirements
                   .map((req) => parseConditionalText(world, components, req))
                   .join(', '),
               getItemBalance: (index: number) =>
-                getItemBalance(world, components, world.entities[accountEntityIndex], index),
+                getItemBalance(world, components, accountID, index),
               haveIngredients: (recipe: Recipe) =>
-                haveIngredients(world, components, recipe, world.entities[accountEntityIndex]),
+                haveIngredients(world, components, recipe, accountID),
             },
           };
         })

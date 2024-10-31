@@ -1,15 +1,19 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import { getAccount } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { mapIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner, queryAccountsByRoom } from 'network/shapes/Account';
-
-import { EntityIndex } from '@mud-classic/recs';
-import { getBaseKami, getKamiLocation, queryKamisByAccount } from 'network/shapes/Kami';
-import { queryNodeKamis } from 'network/shapes/Node';
+import {
+  queryAccountFromEmbedded,
+  queryAccountKamis,
+  queryAccountsByRoom,
+} from 'network/shapes/Account';
+import { getBaseKami, getKamiLocation } from 'network/shapes/Kami';
+import { queryNodeByIndex, queryNodeKamis } from 'network/shapes/Node';
 import { getAllRooms, getRoomByIndex, Room } from 'network/shapes/Room';
 import { Grid } from './Grid';
 
@@ -29,15 +33,24 @@ export function registerMapModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network);
+
+          const accountEntity = queryAccountFromEmbedded(network);
+          const account = getAccount(world, components, accountEntity);
+
           return {
             network,
-            data: { account },
+            data: {
+              account,
+              accountKamis: queryAccountKamis(world, components, accountEntity),
+            },
             utils: {
-              queryNodeKamis: (nodeIndex: number) => queryNodeKamis(world, components, nodeIndex),
+              queryNodeByIndex: (index: number) => queryNodeByIndex(world, index),
+              queryNodeKamis: (nodeEntity: EntityIndex) =>
+                queryNodeKamis(world, components, nodeEntity),
               queryAccountsByRoom: (roomIndex: number) =>
                 queryAccountsByRoom(components, roomIndex),
-              queryKamisByAccount: () => queryKamisByAccount(components, account.id),
+              queryAccountKamis: (entity: EntityIndex) =>
+                queryAccountKamis(world, components, entity),
               getKamiLocation: (kamiIndex: EntityIndex) =>
                 getKamiLocation(world, components, kamiIndex),
               getBaseKami: (kamiIndex: EntityIndex) => getBaseKami(world, components, kamiIndex),
@@ -49,6 +62,7 @@ export function registerMapModal() {
     // Render
     ({ network, data, utils }) => {
       const { account } = data;
+      const { queryAccountKamis } = utils;
       const { actions, api, components, world } = network;
       const { roomIndex, setRoom: setRoomIndex } = useSelected();
       const { modals } = useVisibility();
@@ -96,7 +110,7 @@ export function registerMapModal() {
 
       ///////////////////
       // RENDER
-      const accountKamis = queryKamisByAccount(components, account.id);
+      const accountKamis = queryAccountKamis(account.entity);
 
       return (
         <ModalWrapper

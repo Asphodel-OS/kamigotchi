@@ -1,9 +1,9 @@
 import {
-  harmonyIcon,
-  healthIcon,
-  powerIcon,
-  slotsIcon,
-  violenceIcon,
+  HarmonyIcon,
+  HealthIcon,
+  PowerIcon,
+  SlotsIcon,
+  ViolenceIcon,
 } from 'assets/images/icons/stats';
 
 export const StatDescriptions = {
@@ -22,9 +22,9 @@ export const StatColors = {
 };
 
 export const StatIcons = {
-  health: healthIcon,
-  power: powerIcon,
-  violence: violenceIcon,
-  harmony: harmonyIcon,
-  slots: slotsIcon,
+  health: HealthIcon,
+  power: PowerIcon,
+  violence: ViolenceIcon,
+  harmony: HarmonyIcon,
+  slots: SlotsIcon,
 };

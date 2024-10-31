@@ -2,18 +2,17 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import {
+  getHolderTreePoints,
+  // getSkillUpgradeError,
+  getTreePointsRequirement,
+} from 'app/cache/skill/calcs';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { BaseAccount, NullAccount, getAccountFromBurner } from 'network/shapes/Account';
+import { BaseAccount, NullAccount, getAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, getKamiAccount, getKamiBattles, getKamiByIndex } from 'network/shapes/Kami';
-import {
-  Skill,
-  getHolderTreePoints,
-  getRegistrySkills,
-  getSkillUpgradeError,
-  getTreePointsRequirement,
-} from 'network/shapes/Skill';
+import { Skill, getRegistrySkills } from 'network/shapes/Skill';
 import { waitForActionCompletion } from 'network/utils';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
@@ -40,7 +39,7 @@ export function registerKamiModal() {
 
       return interval(SYNC_TIME).pipe(
         map(() => {
-          const account = getAccountFromBurner(network);
+          const account = getAccountFromEmbedded(network);
           return {
             network,
             data: { account },
@@ -180,7 +179,7 @@ export function registerKamiModal() {
             <Battles
               kami={kami}
               utils={{
-                getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entityIndex),
+                getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entity),
               }}
             />
           )}

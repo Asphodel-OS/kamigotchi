@@ -20,7 +20,8 @@ interface Props {
     move: (roomIndex: number) => void;
   };
   utils: {
-    queryNodeKamis: (nodeIndex: number) => EntityIndex[];
+    queryNodeByIndex: (index: number) => EntityIndex;
+    queryNodeKamis: (nodeEntity: EntityIndex) => EntityIndex[];
     queryAccountsByRoom: (roomIndex: number) => EntityIndex[];
     setHoveredRoom: (roomIndex: number) => void;
     getKamiLocation: (kamiIndex: EntityIndex) => number | undefined;
@@ -30,11 +31,18 @@ interface Props {
 
 export const Grid = (props: Props) => {
   const { index, zone, rooms, actions, utils, accountKamis } = props;
-  const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom, getKamiLocation, getBaseKami } =
-    utils;
+  const {
+    queryNodeByIndex,
+    queryNodeKamis,
+    queryAccountsByRoom,
+    setHoveredRoom,
+    getKamiLocation,
+    getBaseKami,
+  } = utils;
   const [grid, setGrid] = useState<Room[][]>([]);
   const [kamis, setKamis] = useState<EntityIndex[]>([]);
   const [players, setPlayers] = useState<EntityIndex[]>([]);
+
   // set the grid whenever the room zone changes
   useEffect(() => {
     const z = rooms.get(index)?.location.z;
@@ -116,7 +124,8 @@ export const Grid = (props: Props) => {
     if (roomIndex != 0) {
       setHoveredRoom(roomIndex);
       setPlayers(queryAccountsByRoom(roomIndex));
-      setKamis(queryNodeKamis(roomIndex));
+      const nodeEntity = queryNodeByIndex(roomIndex);
+      setKamis(queryNodeKamis(nodeEntity));
     }
   };
 

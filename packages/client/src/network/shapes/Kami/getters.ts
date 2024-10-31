@@ -2,10 +2,14 @@ import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/re
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
 import { getHarvest } from 'network/shapes/Harvest';
-import { getHarvestEntity } from 'network/shapes/Harvest/types';
 import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
-import { query, queryByName } from './queries';
+import { queryHarvest } from './harvest';
+import { query } from './queries';
 import { getKami, getKamiEntity, Options } from './types';
+
+/*
+ * TODO: clean up this file, it's a tad disgusting
+ */
 
 // get all Kamis
 export const getAll = (world: World, components: Components, options?: Options) => {
@@ -38,7 +42,7 @@ export const getByAccount = (
 };
 
 export const getByName = (world: World, components: Components, name: string) => {
-  const results = queryByName(components, name);
+  const results = query(components, { name });
   return results.map((index) => getKami(world, components, index));
 };
 
@@ -72,9 +76,10 @@ export const getAccount = (world: World, components: Components, index: number):
 
   return getBaseAccount(world, components, accEntity);
 };
+
 // get Kami harvesting location
 export const getLocation = (world: World, components: Components, entity: EntityIndex) => {
-  const harvestEntity = getHarvestEntity(world, world.entities[entity]);
+  const harvestEntity = queryHarvest(world, entity);
   if (harvestEntity) {
     const harvestInfo = getHarvest(world, components, harvestEntity, { node: true });
 

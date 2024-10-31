@@ -7,7 +7,7 @@ import { useReadContract } from 'wagmi';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
 import { Kami, getKamiByIndex } from 'network/shapes/Kami';
 
@@ -32,7 +32,7 @@ export function registerERC721BridgeModal() {
             network,
             data: {
               erc721: getConfigFieldValueAddress(world, components, 'KAMI721_ADDRESS'),
-              account: getAccountFromBurner(network, { kamis: true }),
+              account: getAccountFromEmbedded(network, { kamis: true }),
             },
           };
         })
