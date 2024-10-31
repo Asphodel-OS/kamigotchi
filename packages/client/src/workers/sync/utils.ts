@@ -292,7 +292,7 @@ export function createLatestEventStreamRPC(
       const to = blockNumber;
       lastSyncedBlockNumber = to;
       const events = await fetchWorldEvents(from, to);
-      console.log(`[rpc] fetched ${events.length} events from block range ${from} -> ${to}`);
+      // console.log(`[rpc] fetched ${events.length} events from block range ${from} -> ${to}`);
 
       if (fetchSystemCallsFromEvents && events.length > 0) {
         const systemCalls = await fetchSystemCallsFromEvents(events, blockNumber);
