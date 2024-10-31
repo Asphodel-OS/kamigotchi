@@ -77,7 +77,7 @@ export const Grid = (props: Props) => {
   // manages Kami harvest location and name
   useEffect(() => {
     KamiNames.forEach((value, key) => {
-      KamiNames.set(key, []);
+      KamiNames.delete(key);
     });
     accountKamis.forEach((accountKami) => {
       const kamiLocation = getKamiLocation(accountKami);
