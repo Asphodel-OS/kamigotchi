@@ -21,7 +21,7 @@ export const getStamina = (
   stamina.rate = (1 / (recoveryPeriod ?? 300)) * 1;
 
   // sync
-  const recovered = Math.floor(calcStandardIdleTime(components, entityIndex) * stamina.rate!);
+  const recovered = Math.floor(calcStandardIdleTime(components, entityIndex) * (stamina.rate ?? 0));
   stamina.sync = sync(stamina, recovered);
   return stamina;
 };

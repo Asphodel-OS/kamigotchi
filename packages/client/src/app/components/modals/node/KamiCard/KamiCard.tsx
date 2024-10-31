@@ -57,7 +57,7 @@ export const KamiCard = (props: Props) => {
   // INTERPRETATION
 
   const calcKamiHealth = () => {
-    const rate = calcStrainFromBalance(kami, kami.harvest!.rate, false);
+    const rate = calcStrainFromBalance(kami, kami.harvest?.rate ?? 0, false);
     kami.stats.health.rate = -1 * rate;
     return calcHealth(kami);
   };
