@@ -108,8 +108,19 @@ contract QuestsTest is SetupTemplate {
     // accept quest - second time, completed, after time
     _fastForward(1001);
     uint256 questID2 = _acceptQuest(0, 1);
-
     assertEq(questID, questID2);
+    _assertAccNumQuests(_getAccount(0), 1);
+    _completeQuest(0, questID);
+
+    // accept quest - third time, completed, within time
+    vm.prank(operator);
+    vm.expectRevert("QuestAccept: repeat cons not met");
+    _QuestAcceptSystem.executeTyped(0, 1);
+
+    // accept quest - third time, completed, after time
+    _fastForward(1001);
+    uint256 questID3 = _acceptQuest(0, 1);
+    assertEq(questID, questID3);
     _assertAccNumQuests(_getAccount(0), 1);
   }
 

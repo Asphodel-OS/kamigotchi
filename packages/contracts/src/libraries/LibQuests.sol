@@ -75,7 +75,7 @@ library LibQuests {
       id = repeatQuestID;
 
       unsetCompleted(components, id);
-      LibEntityType.set(components, id, "QUEST");
+      TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
 
       // previous objective snapshot are unset during quest completion
       snapshotObjectives(components, questIndex, id, accID);
