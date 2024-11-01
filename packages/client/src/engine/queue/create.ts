@@ -133,7 +133,7 @@ export function create<C extends Contracts>(
           ReturnTypeStrict<(typeof target)[typeof prop]>
         >;
         // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
-        const wait = async () => (await response).wait(0);
+        const wait = async () => (await response).wait();
 
         // Resolved value goes to the initiator of the transaction
         resolve({ hash, wait, response });
