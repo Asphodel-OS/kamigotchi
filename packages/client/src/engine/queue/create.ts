@@ -126,6 +126,7 @@ export function create<C extends Contracts>(
         // Populate config and Tx
         const configOverrides = { ...callOverrides, ...txData };
         const populatedTx = await member(...argsWithoutOverrides, configOverrides);
+        // populatedTx.gasLimit = BigNumber.from(populatedTx.gasLimit).mul(2);
         const tx = await target.signer.sendTransaction(populatedTx);
         const hash = tx.hash;
 
@@ -133,7 +134,15 @@ export function create<C extends Contracts>(
           ReturnTypeStrict<(typeof target)[typeof prop]>
         >;
         // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
-        const wait = async () => (await response).wait();
+        // const wait = async () => (await response).wait();
+        const wait = async () => {
+          const txConfirmed = await target.provider.waitForTransaction(hash, 1, 45000);
+          if (txConfirmed?.status === 0) {
+            // if tx did not complete, initiate tx.wait() to throw regular error
+            return (await response).wait();
+          }
+          return txConfirmed;
+        };
 
         // Resolved value goes to the initiator of the transaction
         resolve({ hash, wait, response });
@@ -194,7 +203,13 @@ export function create<C extends Contracts>(
         const isRepeatError = error?.reason?.includes('transaction already imported');
         const doResetNonce = isExpirationError || isRepeatError;
 
-        console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
+        console.log(
+          `[TXQueue] TX Sent\n`,
+          `(error=${!!error},`,
+          `isMutationError=${isMutationError},`,
+          `incNonce=${!!doIncNonce},`,
+          `resetNonce=${!!doResetNonce})`
+        );
 
         // Nonce handling
         if (doIncNonce) incNonce();
@@ -206,8 +221,7 @@ export function create<C extends Contracts>(
     // Await confirmation
     if (txResult?.hash) {
       try {
-        const tx = await txResult.wait();
-        console.log(`[TXQueue] TX Confirmed\n`, tx);
+        await txResult.wait();
       } catch (e) {
         console.warn('[TXQueue] tx failed in block', e);
 

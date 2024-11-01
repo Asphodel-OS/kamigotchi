@@ -9,6 +9,7 @@ import {
   setComponent,
   updateComponent,
 } from '@mud-classic/recs';
+import { awaitStreamValue } from '@mud-classic/utils';
 import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { defineActionComponent } from './ActionComponent';
@@ -84,13 +85,32 @@ export function createActionSystem<M = undefined>(
     try {
       // Execute the action
       const tx = await request.execute();
-      updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
       if (tx) {
-        const txConfirmed = await tx.wait().catch((e: any) => handleError(e, request));
+        // Wait for all tx events to be reduced
+        updateAction({ state: ActionState.WaitingForTxEvents, txHash: tx.hash });
+
+        // NOTE: this logic should be baked into the network layer and we should be better handling the
+        // other confirmation statuses
+        async function waitFor(tx: any) {
+          // perform regular wait
+          const txConfirmed = await provider
+            .waitForTransaction(tx.hash, 1, 8000)
+            .catch((e) => handleError(e, request!));
+          if (txConfirmed?.status === 0) {
+            // if tx did not complete, initiate tx.wait() to throw regular error
+            await tx.wait().catch((e: any) => handleError(e, request!));
+          }
+          return txConfirmed;
+        }
+
+        // const txConfirmed = await tx.wait().catch((e: any) => handleError(e, request));
+        // const txConfirmed = await provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
+        const txConfirmed = waitFor(tx);
+        await awaitStreamValue(txReduced$, (v) => v === tx.hash);
+        updateAction({ state: ActionState.TxReduced });
         if (request.awaitConfirmation) await txConfirmed;
       }
-
       updateAction({ state: ActionState.Complete });
     } catch (e) {
       handleError(e, request);
