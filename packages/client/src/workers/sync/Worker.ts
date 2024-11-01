@@ -45,6 +45,7 @@ import {
   storeEvents,
 } from './cache';
 import { getStateReport } from './cache/CacheStore';
+import { createKamigazeStreamService } from './kamigazeStreamClient';
 import { createTransformWorldEventsFromStream } from './streamClient';
 import {
   createDecode,
@@ -209,7 +210,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
     latestEvent$.subscribe((event) => {
-      console.log('event from stream: ', event);
       // Ignore system calls during initial sync
       if (!outputLiveEvents) {
         if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
