@@ -44,8 +44,10 @@ import {
   storeEvents,
 } from './cache';
 import { getStateReport } from './cache/CacheStore';
-import { createKamigazeStreamService } from './kamigazeStreamClient';
-import { createTransformWorldEventsFromStream } from './streamClient';
+import {
+  createKamigazeStreamService,
+  createTransformWorldEventsFromStream,
+} from './kamigazeStreamClient';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,
