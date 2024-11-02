@@ -51,13 +51,12 @@ export function createKamigazeStreamService(
     ecsEvents: true,
     ecsEventsIncludeTxMetadata: includeSystemCalls,
   });
-  console.log('bip');
   // Turn stream responses into rxjs NetworkEvent
   return from(response).pipe(
     map(async (responseChunk) => {
       const events = await transformWorldEvents(responseChunk);
       debug(`got ${events.length} events from block ${responseChunk.blockNumber}`);
-
+      console.log(`got ${events.length} events from block ${responseChunk.blockNumber}`);
       if (includeSystemCalls && events.length > 0) {
         const systemCalls = parseSystemCallsFromStreamEvents(events);
         return [...events, ...systemCalls];
