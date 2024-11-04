@@ -1,17 +1,16 @@
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
 
 import { getColor } from 'app/components/library/base/measures/Battery';
+import { ClockIcons } from 'assets/images/icons/clock';
 import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getMusuBalance } from 'network/shapes/Item';
 import { Stat } from 'network/shapes/Stats';
-import { getCurrPhase, getPhaseIcon, getPhaseName } from 'utils/time';
+import { getCurrPhase, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -74,17 +73,8 @@ export function registerAccountHeader() {
           'The interconnecting energy of the universe. Collect it by Harvesting with your Kamis.',
         ];
       };
-
-      return (
-        <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <Tooltip text={getMusuTooltip()}>
-            <TextBox>
-              <Icon src={ItemImages.musu} />
-              {musu}
-            </TextBox>
-          </Tooltip>
-          <Circle>
-            <Tooltip text={getClockTooltip()}>
+      /*
+<Tooltip text={getClockTooltip()}>
               <Phases>
                 <Icon
                   style={{
@@ -110,17 +100,25 @@ export function registerAccountHeader() {
                   src={getPhaseIcon((getCurrPhase() + 2) % 3)}
                 />
               </Phases>
+            </Tooltip>*/
+
+      /*
+             <Tooltip text={getMusuTooltip()}>
+            <TextBox>
+              <Icon src={ItemImages.musu} />
+              {musu}
+            </TextBox>
+          </Tooltip> 
+          */
+      return (
+        <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+          <Circle>
+            <ClockOverlay />
+            <Tooltip text={getStaminaTooltip(stamina)}>
+              <SmallCircle>
+                <SmallCircleFill height={calcStaminaPercent(stamina)} />
+              </SmallCircle>
             </Tooltip>
-            <ArrowUpwardIcon
-              style={{ width: '5vh', height: '6vh', top: '1.6vh', position: 'relative' }}
-            />
-            <SmallCircle>
-              <SmallCircleFill height={calcStaminaPercent(stamina)}>
-                <Tooltip text={getStaminaTooltip(stamina)}>
-                  <CircleTextBox style={{ height: 100 }} />
-                </Tooltip>
-              </SmallCircleFill>
-            </SmallCircle>
           </Circle>
         </Container>
       );
@@ -133,8 +131,17 @@ const Container = styled.div`
   position: absolute;
   bottom: 10;
   left: 10;
+  z-index: -1;
 `;
-
+const ClockOverlay = styled.div`
+  background-image: url(${ClockIcons.overlay});
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+`;
 const TextBox = styled.div`
   height: 4.5vh;
   width: max-content;
@@ -170,43 +177,42 @@ const Circle = styled.div`
   border-radius: 50%;
   height: 15vh;
   width: 15vh;
-  border: 0.2vh solid black;
-  background-color: white;
   position: relative;
+  background-image: url(${ClockIcons.clock_base});
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: -1;
 `;
 const SmallCircle = styled.div`
   border-radius: 50%;
-  height: 8vh;
-  width: 8vh;
+  height: 5.5vh;
+  width: 5.5vh;
   border: 0.3vh solid black;
-  position: relative;
+  position: absolute;
+  left: 5.3vh;
+  bottom: 2.5vh;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+  background-image: url(${ClockIcons.stamina_base});
+  background-position: center;
+  background-size: 150vh;
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-event: none;
 `;
 const SmallCircleFill = styled.div<{ height: number }>`
   height: ${({ height }) => height}%;
   position: relative;
   background-color: ${({ height }) => getColor(height)};
+  pointer-event: none;
 `;
 const Phases = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-`;
-const CircleTextBox = styled.div`
-  padding: 1.2vh;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.6vh;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 1.2vh;
 `;
