@@ -8,9 +8,8 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
+import { hashArgs } from './utils';
 export interface QueryOptions {
   item?: boolean;
   recipe?: boolean;
@@ -61,19 +60,8 @@ export const getAssignerEntity = (
 };
 
 /////////////////
-// UTILS
-
-const IDStore = new Map<string, string>();
+// IDs
 
 export const genID = (fromID: string, toID: string): EntityID => {
-  const key = 'assigner' + fromID + toID;
-
-  if (!IDStore.has(key)) {
-    IDStore.set(
-      key,
-      formatEntityID(utils.solidityKeccak256(['string', 'uint256', 'uint256'], [fromID, toID]))
-    );
-  }
-
-  return IDStore.get(key)! as EntityID;
+  return hashArgs(['assigner', fromID, toID], ['string', 'uint256', 'uint256']);
 };

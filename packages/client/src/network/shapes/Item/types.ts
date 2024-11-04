@@ -8,13 +8,9 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
-import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/components';
 import { Stats, getStats } from '../Stats';
-import { DetailedEntity, ForType, getFor, getItemImage } from '../utils';
-
-const IDStore = new Map<string, string>();
+import { DetailedEntity, ForType, getEntityByHash, getFor, getItemImage } from '../utils';
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
@@ -117,16 +113,5 @@ export const getInventory = (
 };
 
 export const getRegEntityIndex = (world: World, itemIndex: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'registry.item' + itemIndex.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'uint32'], ['registry.item', itemIndex])
-    );
-    IDStore.set(key, id);
-  }
-
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(world, ['registry.item', itemIndex], ['string', 'uint32']);
 };

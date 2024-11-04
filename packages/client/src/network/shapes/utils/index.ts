@@ -3,6 +3,7 @@ export { canReveal, filterRevealable } from './commits';
 export { getData, getDataArray, unpackArray32 } from './data';
 export { getFor } from './for';
 export { getBalance, getBool, getInventoryBalance } from './getter';
+export { getEntityByHash, hashArgs } from './IDs';
 export { getAffinityImage, getItemImage } from './images';
 export { getDescribedEntity, parseQuantity } from './parse';
 

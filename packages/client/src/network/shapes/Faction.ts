@@ -7,11 +7,9 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { utils } from 'ethers';
 
-import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
-import { DetailedEntity } from './utils';
+import { DetailedEntity, getEntityByHash } from './utils';
 import { getFactionImage } from './utils/images';
 
 // standardized Object shape of a Score Entity
@@ -107,17 +105,8 @@ export const getReputationDetails = (
 ///////////////
 // IDs
 
-const IDStore = new Map<string, string>();
-
 const getEntityIndex = (world: any, index: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'faction' + index.toString();
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['faction', index]));
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(world, ['faction', index], ['string', 'uint32']);
 };
 
 const getRepEntityIndex = (
@@ -127,19 +116,11 @@ const getRepEntityIndex = (
 ): EntityIndex | undefined => {
   if (!holderID) return;
 
-  let id = '';
-  const key = 'faction.reputation' + holderID + index.toString();
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(
-        ['string', 'uint256', 'uint32'],
-        ['faction.reputation', holderID, index]
-      )
-    );
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(
+    world,
+    ['faction.reputation', holderID, index],
+    ['string', 'uint256', 'uint32']
+  );
 };
 
 ////////////////

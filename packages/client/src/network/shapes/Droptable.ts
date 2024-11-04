@@ -1,9 +1,8 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
 import { getItemDetailsByIndex } from './Item';
-import { Commit, DetailedEntity } from './utils';
+import { Commit, DetailedEntity, getEntityByHash } from './utils';
 import { queryHolderCommits } from './utils/commits';
 
 export interface Droptable {
@@ -39,8 +38,6 @@ export const NullDTLog: DTLog = {
   id: '0' as EntityID,
   results: [],
 };
-
-const IDStore = new Map<string, string>();
 
 export const getDroptable = (components: Components, index: EntityIndex): Droptable => {
   const { Keys, Weights } = components;
@@ -121,23 +118,18 @@ export const queryDTCommits = (
   });
 };
 
+//////////////////
+// IDs
+
 const getLogEntityIndex = (
   world: any,
   holderID: EntityID | undefined,
   dtID: EntityID | undefined
 ): EntityIndex | undefined => {
   if (!holderID) return;
-  let id = '';
-  const key = 'droptable.item.log' + holderID + dtID;
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(
-        ['string', 'uint256', 'uint256'],
-        ['droptable.item.log', holderID, dtID]
-      )
-    );
-  }
-  return world.entityToIndex.get(id);
+  return getEntityByHash(
+    world,
+    ['droptable.item.log', holderID, dtID],
+    ['string', 'uint256', 'uint256']
+  );
 };

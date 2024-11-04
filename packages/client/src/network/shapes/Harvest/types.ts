@@ -1,10 +1,10 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
+import { getEntityByHash } from '../utils';
 import { calcRate } from './harvest';
 
 // standardized shape of an Harvest Entity
@@ -74,17 +74,7 @@ export const getHarvest = (
 /////////////////
 // IDs
 
-const IDStore = new Map<string, string>();
-
 export const getHarvestEntity = (world: World, holderID: string): EntityIndex | undefined => {
-  let id = '';
-  const key = 'harvest' + holderID;
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(utils.solidityKeccak256(['string', 'uint256'], ['harvest', holderID]));
-    IDStore.set(key, id);
-  }
-
-  return world.entityToIndex.get(id as EntityID);
+  if (!holderID) return;
+  return getEntityByHash(world, ['harvest', holderID], ['string', 'uint256']);
 };

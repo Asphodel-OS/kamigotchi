@@ -1,9 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Reward, getReward } from './Rewards';
-import { queryChildrenOf } from './utils';
+import { getEntityByHash, hashArgs, queryChildrenOf } from './utils';
 
 export interface ScavBar {
   id: EntityID;
@@ -12,8 +10,6 @@ export interface ScavBar {
   cost: number;
   rewards: Reward[];
 }
-
-const IDStore = new Map<string, string>();
 
 /////////////////
 // FUNCTIONS
@@ -72,30 +68,18 @@ export const getScavPoints = (
 };
 
 /////////////////
-// UTILS
+// IDs
 
 const getRewardParentID = (regID: EntityID): EntityID => {
-  let id = '';
-  const key = 'scavenge.reward' + regID;
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'uint256'], ['scavenge.reward', regID]);
-    IDStore.set(key, id);
-  }
-  return id as EntityID; // ignore leading 0 pruning; for direct SC querying
+  return hashArgs(['scavenge.reward', regID], ['string', 'uint256'], true);
 };
 
 const getRegIndex = (world: World, field: string, index: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'scavenge.reward' + field + index.toString();
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'string', 'uint32'], ['registry.scavenge', field, index])
-    );
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(
+    world,
+    ['registry.scavenge', field, index],
+    ['string', 'string', 'uint32']
+  );
 };
 
 const getInstanceID = (
@@ -104,17 +88,9 @@ const getInstanceID = (
   index: number,
   holderID: EntityID
 ): EntityIndex | undefined => {
-  let id = '';
-  const key = 'scavenge.instance' + field + index.toString() + holderID;
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(
-        ['string', 'string', 'uint32', 'uint256'],
-        ['scavenge.instance', field, index, holderID]
-      )
-    );
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(
+    world,
+    ['scavenge.instance', field, index, holderID],
+    ['string', 'string', 'uint32', 'uint256']
+  );
 };

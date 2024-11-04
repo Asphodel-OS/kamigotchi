@@ -1,10 +1,8 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { formatEntityID } from 'engine/utils';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 
 import { Components } from 'network/';
-
-const IDStore = new Map<string, string>();
+import { getEntityByHash } from './IDs';
 
 // unpack a uint32[8] array from a config uint256
 export const unpackArray32 = (packed: BigNumber | number): number[] => {
@@ -67,18 +65,9 @@ const getEntityIndex = (
   index: number,
   field: string
 ): EntityIndex | undefined => {
-  let id = '';
-  const key = 'is.data' + holderID + index.toString() + field;
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(
-        ['string', 'uint256', 'uint32', 'string'],
-        ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
-      )
-    );
-  }
-
-  return world.entityToIndex.get(id);
+  return getEntityByHash(
+    world,
+    ['is.data', holderID, index, field],
+    ['string', 'uint256', 'uint32', 'string']
+  );
 };

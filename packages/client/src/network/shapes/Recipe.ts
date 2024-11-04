@@ -1,12 +1,10 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
 import { queryActions } from './Assigner';
 import { getItemDetailsByIndex } from './Item';
 import { getStat } from './Stats';
-import { DetailedEntity } from './utils';
+import { DetailedEntity, getEntityByHash } from './utils';
 
 /////////////////
 // GETTERS
@@ -115,43 +113,14 @@ export const NullRecipe: Recipe = {
 //////////////////
 // IDs
 
-const IDStore = new Map<string, string>();
-
 const getRegEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'registry.recipe' + recipeIndex.toString();
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'uint32'], ['registry.recipe', recipeIndex])
-    );
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(world, ['registry.recipe', recipeIndex], ['string', 'uint32']);
 };
 
 const getInputEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'recipe.input' + recipeIndex.toString();
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'uint32'], ['recipe.input', recipeIndex])
-    );
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(world, ['recipe.input', recipeIndex], ['string', 'uint32']);
 };
 
 const getOutputEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
-  let id = '';
-  const key = 'recipe.output' + recipeIndex.toString();
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'uint32'], ['recipe.output', recipeIndex])
-    );
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(world, ['recipe.output', recipeIndex], ['string', 'uint32']);
 };

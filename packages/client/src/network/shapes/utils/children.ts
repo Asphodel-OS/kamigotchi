@@ -1,7 +1,6 @@
 import { EntityID, EntityIndex, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
-import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
+import { hashArgs } from './IDs';
 
 // libraries for interactions with IDParentComponent shapes (children)
 
@@ -25,14 +24,6 @@ export const queryChildrenOfEntityIndex = (
 /////////////////
 // UTILS
 
-const IDStore = new Map<string, string>();
-
 export const genID = (field: string, index: number): EntityID => {
-  let id = '';
-  const key = field + index.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else id = utils.solidityKeccak256(['string', 'uint32'], [field, index]) as EntityID;
-
-  return formatEntityID(id);
+  return hashArgs([field, index], ['string', 'uint32']);
 };

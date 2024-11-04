@@ -1,7 +1,8 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { Components } from 'network/';
+import { hashArgs } from '../utils';
 
 export interface Bonus {
   id: EntityID;
@@ -78,15 +79,6 @@ const getRegistryEntity = (
   return regEntity;
 };
 
-const IDStore = new Map<string, string>();
-
 export const getTypeID = (field: string, holderID: EntityID): string => {
-  const key = 'bonus type' + field + holderID;
-  let id = '';
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'string', 'uint256'], ['bonus.type', field, holderID]);
-    IDStore.set(key, id);
-  }
-  return id;
+  return hashArgs(['bonus.type', field, holderID], ['string', 'string', 'uint256']);
 };

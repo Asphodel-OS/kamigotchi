@@ -1,8 +1,7 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
-import { utils } from 'ethers';
 
 import { MUSU_INDEX } from 'constants/items';
-import { formatEntityID } from 'engine/utils';
+import { getEntityByHash } from '../utils';
 import { Inventory } from './types';
 
 const IDStore = new Map<string, string>();
@@ -22,15 +21,9 @@ export const getInventoryEntityIndex = (
   holderID: EntityID,
   itemIndex: number
 ): EntityIndex | undefined => {
-  let id = '';
-  const key = 'inventory.instance' + holderID + itemIndex.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(
-      ['string', 'uint256', 'uint32'],
-      ['inventory.instance', holderID, itemIndex]
-    );
-  }
-  return world.entityToIndex.get(formatEntityID(id));
+  return getEntityByHash(
+    world,
+    ['inventory.instance', holderID, itemIndex],
+    ['string', 'uint256', 'uint32']
+  );
 };

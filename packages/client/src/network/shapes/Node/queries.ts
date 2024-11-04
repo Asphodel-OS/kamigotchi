@@ -8,21 +8,15 @@ import {
 } from '@mud-classic/recs';
 
 import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 import { Components } from 'network/';
+import { hashArgs } from '../utils';
 
 // node index -> id cache
 const IDStore = new Map<number, EntityID>();
 
 // get the entity ID of a Node by its index
 export const indexToID = (index: number): EntityID => {
-  let id = IDStore.get(index);
-  if (!id) {
-    const keccak = utils.solidityKeccak256(['string', 'uint32'], ['node', index]);
-    id = formatEntityID(keccak);
-    IDStore.set(index, id);
-  }
-  return id;
+  return hashArgs(['node', index], ['string', 'uint32']);
 };
 
 // query for the entity index of the Node with the given index

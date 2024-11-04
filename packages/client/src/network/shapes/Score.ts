@@ -7,14 +7,11 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { utils } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Account, getAccount } from './Account';
-
-const IDStore = new Map<string, string>();
-const TypeStore = new Map<string, string>();
+import { getEntityByHash, hashArgs } from './utils';
 
 // standardized Object shape of a Score Entity
 export interface Score {
@@ -84,33 +81,22 @@ export const getScoresByFilter = (
   return getScoresByType(world, components, typeID);
 };
 
+/////////////////
+// IDs
+
 const getEntityIndex = (
   world: any,
   holderID: EntityID,
-  index: number,
+  epoch: number,
   field: string
 ): EntityIndex | undefined => {
-  let id = '';
-  const key = holderID + index.toString() + field;
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(
-      ['string', 'uint256', 'uint32', 'string'],
-      [holderID, index, index, field]
-    );
-  }
-
-  return world.entityToIndex.get(formatEntityID(id));
+  return getEntityByHash(
+    world,
+    ['is.score', holderID, epoch, field],
+    ['string', 'uint256', 'uint32', 'string']
+  );
 };
 
 const getType = (type: string, epoch: number): EntityID => {
-  let id = '';
-  const key = 'score.type' + type + epoch.toString();
-
-  if (TypeStore.has(key)) id = TypeStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'string', 'uint256'], ['score.type', type, epoch]);
-  }
-  return formatEntityID(id);
+  return hashArgs(['score.type', type, epoch], ['string', 'string', 'uint256'], true);
 };

@@ -1,12 +1,9 @@
 import { EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { utils } from 'ethers';
 
-import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { numberToHex } from 'viem';
+import { getEntityByHash } from '../utils';
 import { unpackArray32 } from '../utils/data';
-
-const IDStore = new Map<string, string>();
 
 // get an Config from its EntityIndex
 export const getConfigFieldValue = (
@@ -65,13 +62,5 @@ export const getConfigFieldValueWei = (
 };
 
 const getEntityIndex = (world: World, field: string): EntityIndex | undefined => {
-  let id = '';
-  const key = 'is.config' + field;
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'string'], ['is.config', field]);
-  }
-
-  return world.entityToIndex.get(formatEntityID(id));
+  return getEntityByHash(world, ['is.config', field], ['string', 'string']);
 };

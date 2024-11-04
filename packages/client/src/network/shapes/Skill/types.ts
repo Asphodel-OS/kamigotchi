@@ -7,14 +7,12 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { utils } from 'ethers';
 
-import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getSkillBonuses } from '.';
 import { Bonus } from '../Bonus';
 import { Condition, queryConditionsOf } from '../Conditional';
-import { DetailedEntity } from '../utils';
+import { DetailedEntity, getEntityByHash, hashArgs } from '../utils';
 import { getSkillImage } from '../utils/images';
 
 /////////////////
@@ -140,36 +138,19 @@ export const getRequirement = (
 //////////////////
 // IDs
 
-const IDStore = new Map<string, string>();
-
 export const getInstanceEntity = (
   world: World,
   holderID: EntityID,
   index: number
 ): EntityIndex | undefined => {
-  let id = '';
-  const key = 'registry.item' + holderID + index.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'uint256', 'uint32'], ['skill.instance', holderID, index])
-    );
-    IDStore.set(key, id);
-  }
-
-  return world.entityToIndex.get(id as EntityID);
+  if (!holderID) return;
+  return getEntityByHash(
+    world,
+    ['skill.instance', holderID, index],
+    ['string', 'uint256', 'uint32']
+  );
 };
 
 export const getBonusParentID = (skillIndex: number): EntityID => {
-  let id = '';
-  const key = 'registry.skill.bonus' + skillIndex.toString();
-
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = formatEntityID(
-      utils.solidityKeccak256(['string', 'uint32'], ['registry.skill.bonus', skillIndex])
-    );
-  }
-  return id as EntityID;
+  return hashArgs(['registry.skill.bonus', skillIndex], ['string', 'uint32']);
 };

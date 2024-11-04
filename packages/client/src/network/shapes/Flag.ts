@@ -8,11 +8,9 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
 
 import { Components } from 'network/';
-
-const IDStore = new Map<string, string>();
+import { getEntityByHash } from './utils';
 
 // standardized Object shape of a Score Entity
 export interface Flag {
@@ -90,13 +88,7 @@ const getEntityIndex = (
   field: string
 ): EntityIndex | undefined => {
   if (!holderID) return;
-  let id = '';
-  const key = 'has.flag' + holderID + field;
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'uint256', 'string'], ['has.flag', holderID, field]);
-  }
-  return world.entityToIndex.get(formatEntityID(id));
+  return getEntityByHash(world, ['has.flag', holderID, field], ['string', 'uint256', 'string']);
 };
 
 const _has = (components: Components, index: EntityIndex | undefined): boolean => {

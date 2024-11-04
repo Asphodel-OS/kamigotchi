@@ -8,11 +8,11 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
-import { utils } from 'ethers';
 import { Components } from 'network/';
 import { Item, getItem } from 'network/shapes/Item';
 import { Account } from './Account';
 import { passesConditions, queryConditionsOfID } from './Conditional';
+import { getEntityByHash, hashArgs } from './utils';
 
 export const getNPCListingsFiltered = (
   world: World,
@@ -83,7 +83,7 @@ export const queryNPCListingEntities = (
 ): EntityIndex[] => {
   const { NPCIndex, EntityType } = components;
   return Array.from(
-    runQuery([HasValue(EntityType, { value: 'LISTING' }), HasValue(NPCIndex, { value: npcIndex })])
+    runQuery([HasValue(NPCIndex, { value: npcIndex }), HasValue(EntityType, { value: 'LISTING' })])
   );
 };
 
@@ -108,26 +108,13 @@ export const sortListings = (listings: Listing[]): Listing[] => {
   });
 };
 
-const IDStore = new Map<string, string>();
+//////////////////
+// IDs
 
 const getReqPtrID = (regID: EntityID): EntityID => {
-  let id = '';
-  const key = 'listing.requirement' + regID;
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'uint256'], ['listing.requirement', regID]);
-    IDStore.set(key, id);
-  }
-  return id as EntityID; // ignore leading 0 pruning; for direct SC querying
+  return hashArgs(['listing.requirement', regID], ['string', 'uint256'], true);
 };
 
 const getBuyPtrEntity = (world: World, regID: EntityID): EntityIndex | undefined => {
-  let id = '';
-  const key = 'listing.buy' + regID;
-  if (IDStore.has(key)) id = IDStore.get(key)!;
-  else {
-    id = utils.solidityKeccak256(['string', 'uint256'], ['listing.buy', regID]);
-    IDStore.set(key, id);
-  }
-  return world.entityToIndex.get(id as EntityID);
+  return getEntityByHash(world, ['listing.buy', regID], ['string', 'uint256']);
 };

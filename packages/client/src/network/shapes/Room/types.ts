@@ -6,13 +6,12 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { utils } from 'ethers';
 import { Components } from 'network/';
 
 import { Account, getAccount } from '../Account';
 import { Condition, passesConditions } from '../Conditional';
 
-import { formatEntityID } from 'engine/utils';
+import { hashArgs } from '../utils';
 import { getGatesBetween } from './functions';
 import { queryRoomsEntitiesX } from './queries';
 
@@ -142,11 +141,11 @@ const getLocation = (components: Components, index: EntityIndex): Coord => {
 // UTILS
 
 export const getGateToPtr = (index: number): EntityID => {
-  return formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['room.gate.to', index]));
+  return hashArgs(['room.gate.to', index], ['string', 'uint32']);
 };
 
 export const getGateFromPtr = (index: number): EntityID => {
-  return formatEntityID(utils.solidityKeccak256(['string', 'uint32'], ['room.gate.from', index]));
+  return hashArgs(['room.gate.from', index], ['string', 'uint32']);
 };
 
 const getAdjacentIndices = (components: Components, location: Coord): number[] => {
