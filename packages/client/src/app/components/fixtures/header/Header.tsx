@@ -74,33 +74,7 @@ export function registerAccountHeader() {
         ];
       };
       /*
-<Tooltip text={getClockTooltip()}>
-              <Phases>
-                <Icon
-                  style={{
-                    position: 'relative',
-                    right: '3vh',
-                    top: '6vh',
-                  }}
-                  src={getPhaseIcon((getCurrPhase() + 1) % 3)}
-                />
-                <Icon
-                  style={{
-                    position: 'relative',
-                    top: '1vh',
-                  }}
-                  src={getPhaseIcon(getCurrPhase())}
-                />
-                <Icon
-                  style={{
-                    position: 'relative',
-                    left: '3vh',
-                    top: '6vh',
-                  }}
-                  src={getPhaseIcon((getCurrPhase() + 2) % 3)}
-                />
-              </Phases>
-            </Tooltip>*/
+       */
 
       /*
              <Tooltip text={getMusuTooltip()}>
@@ -110,16 +84,48 @@ export function registerAccountHeader() {
             </TextBox>
           </Tooltip> 
           */
+
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <Circle>
-            <ClockOverlay />
-            <Tooltip text={getStaminaTooltip(stamina)}>
-              <SmallCircle>
-                <SmallCircleFill height={calcStaminaPercent(stamina)} />
-              </SmallCircle>
+            <Tooltip text={getClockTooltip()}>
+              <Phases>
+                <Icon
+                  style={{
+                    position: 'relative',
+                    left: '1.3vh',
+                    bottom: '2.2vh',
+                    width: '3vh',
+                  }}
+                  src={ClockIcons.night}
+                />
+                <Icon
+                  style={{
+                    position: 'relative',
+                    left: '2.8vh',
+                    bottom: '10.2vh',
+                    width: '3vh',
+                  }}
+                  src={ClockIcons.twilight}
+                />
+                <Icon
+                  style={{
+                    position: 'relative',
+                    left: '4.5vh',
+                    bottom: '2.2vh',
+                    width: '3vh',
+                  }}
+                  src={ClockIcons.day}
+                />
+              </Phases>
             </Tooltip>
           </Circle>
+          <ClockOverlay />
+          <Tooltip text={getStaminaTooltip(stamina)}>
+            <SmallCircle>
+              <SmallCircleFill height={calcStaminaPercent(stamina)} />
+            </SmallCircle>
+          </Tooltip>
         </Container>
       );
     }
@@ -129,19 +135,84 @@ export function registerAccountHeader() {
 const Container = styled.div`
   pointer-events: auto;
   position: absolute;
-  bottom: 10;
   left: 10;
   z-index: -1;
+  bottom: 6vh;
+`;
+/**/
+const Circle = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 50%;
+  height: 25vh;
+  width: 25vh;
+  position: relative;
+  background-image: url(${ClockIcons.clock_base});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 17.5vh;
+  z-index: -1;
+  overflow: hidden;
+  transform-origin: center;
+  animation: rotate 23s linear infinite;
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `;
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
   background-position: center;
-  background-size: contain;
+  background-size: 17vh;
   background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
+  height: 18.5vh;
+  width: 17vh;
   pointer-events: none;
+  position: absolute;
+  left: 16%;
+  top: 14%;
+}
 `;
+
+const SmallCircle = styled.div`
+  border-radius: 50%;
+  height: 6vh;
+  width: 6vh;
+  border: 0.3vh solid black;
+  position: absolute;
+  bottom: 26%;
+  left: 41.5%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background-image: url(${ClockIcons.stamina_base});
+  background-position: center;
+  background-size: 150vh;
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-event: none;
+`;
+const SmallCircleFill = styled.div<{ height: number }>`
+  height: ${({ height }) => height}%;
+  position: relative;
+  background-color: ${({ height }) => getColor(height)};
+  pointer-event: none;
+`;
+const Phases = styled.div`
+  position: absolute;
+  left: 6vh;
+  bottom: 6vh;
+`;
+
+const Icon = styled.img``;
 const TextBox = styled.div`
   height: 4.5vh;
   width: max-content;
@@ -162,57 +233,4 @@ const TextBox = styled.div`
   left: 13vh;
   top: 2.5vh;
   position: relative;
-`;
-
-const Icon = styled.img`
-  width: 2.4vh;
-  height: auto;
-`;
-
-const Circle = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  border-radius: 50%;
-  height: 15vh;
-  width: 15vh;
-  position: relative;
-  background-image: url(${ClockIcons.clock_base});
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  z-index: -1;
-`;
-const SmallCircle = styled.div`
-  border-radius: 50%;
-  height: 5.5vh;
-  width: 5.5vh;
-  border: 0.3vh solid black;
-  position: absolute;
-  left: 5.3vh;
-  bottom: 2.5vh;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-  background-image: url(${ClockIcons.stamina_base});
-  background-position: center;
-  background-size: 150vh;
-  background-repeat: no-repeat;
-  z-index: -1;
-  pointer-event: none;
-`;
-const SmallCircleFill = styled.div<{ height: number }>`
-  height: ${({ height }) => height}%;
-  position: relative;
-  background-color: ${({ height }) => getColor(height)};
-  pointer-event: none;
-`;
-const Phases = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
 `;
