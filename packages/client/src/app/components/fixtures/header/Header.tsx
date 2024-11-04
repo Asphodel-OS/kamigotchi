@@ -10,7 +10,8 @@ import { ClockIcons } from 'assets/images/icons/clock';
 import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getMusuBalance } from 'network/shapes/Item';
 import { Stat } from 'network/shapes/Stats';
-import { getCurrPhase, getPhaseName } from 'utils/time';
+import { useEffect, useState } from 'react';
+import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -84,36 +85,48 @@ export function registerAccountHeader() {
             </TextBox>
           </Tooltip> 
           */
+      // note to myself: rotate icons, musu icon
+      const [rotateClock, setRotateClock] = useState(0);
 
+      function updateClocks() {
+        const kamiTime = parseInt(getKamiTime(Date.now()).split(':')[0]);
+
+        setRotateClock((kamiTime - 18) * 10);
+      }
+      useEffect(() => {
+        updateClocks();
+        const interval = setInterval(updateClocks, 1000);
+        return () => clearInterval(interval);
+      }, []);
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <Circle>
+          <Circle style={{ transform: `rotate(${rotateClock}deg)` }}>
             <Tooltip text={getClockTooltip()}>
               <Phases>
                 <Icon
                   style={{
                     position: 'relative',
-                    left: '1.3vh',
-                    bottom: '2.2vh',
-                    width: '3vh',
+                    left: '-0.2vh',
+                    bottom: '1.8vh',
+                    width: '3.3vh',
                   }}
                   src={ClockIcons.night}
                 />
                 <Icon
                   style={{
                     position: 'relative',
-                    left: '2.8vh',
-                    bottom: '10.2vh',
-                    width: '3vh',
+                    left: '1.5vh',
+                    bottom: '10.8vh',
+                    width: '3.3vh',
                   }}
                   src={ClockIcons.twilight}
                 />
                 <Icon
                   style={{
                     position: 'relative',
-                    left: '4.5vh',
-                    bottom: '2.2vh',
-                    width: '3vh',
+                    left: '3.2vh',
+                    bottom: '1.8vh',
+                    width: '3.3vh',
                   }}
                   src={ClockIcons.day}
                 />
@@ -156,15 +169,6 @@ const Circle = styled.div`
   z-index: -1;
   overflow: hidden;
   transform-origin: center;
-  animation: rotate 23s linear infinite;
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
 `;
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
@@ -175,7 +179,7 @@ const ClockOverlay = styled.div`
   width: 17vh;
   pointer-events: none;
   position: absolute;
-  left: 16%;
+  left: 12.6%;
   top: 14%;
 }
 `;
@@ -187,7 +191,7 @@ const SmallCircle = styled.div`
   border: 0.3vh solid black;
   position: absolute;
   bottom: 26%;
-  left: 41.5%;
+  left: 38%;
 
   display: flex;
   flex-direction: column;
