@@ -106,10 +106,12 @@ export const queryInventories = (
 ): Inventory[] => {
   const { EntityType, OwnsInventoryID, IsRegistry, ItemIndex } = components;
 
-  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'INVENTORY' })];
-  if (options?.owner) toQuery.push(HasValue(OwnsInventoryID, { value: options.owner }));
+  const toQuery: QueryFragment[] = [];
   if (options?.itemIndex) toQuery.push(HasValue(ItemIndex, { value: options.itemIndex }));
+  if (options?.owner) toQuery.push(HasValue(OwnsInventoryID, { value: options.owner }));
+  toQuery.push(HasValue(EntityType, { value: 'INVENTORY' }));
   if (options?.registry !== undefined) {
+    // registry is put last because of potential size
     if (options?.registry) toQuery.push(Has(IsRegistry));
     else toQuery.push(Not(IsRegistry));
   }

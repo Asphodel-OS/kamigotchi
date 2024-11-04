@@ -54,10 +54,8 @@ export const queryRoomsEntitiesX = (
 ): EntityIndex[] => {
   const { Location, EntityType, RoomIndex } = components;
 
-  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'ROOM' })];
-
+  const toQuery: QueryFragment[] = [];
   if (options?.index) toQuery.push(HasValue(RoomIndex, { value: options.index }));
-
   if (options?.location) {
     toQuery.push(
       HasValue(Location, {
@@ -65,6 +63,7 @@ export const queryRoomsEntitiesX = (
       })
     );
   }
+  toQuery.push(HasValue(EntityType, { value: 'ROOM' }));
 
   return Array.from(runQuery(toQuery));
 };

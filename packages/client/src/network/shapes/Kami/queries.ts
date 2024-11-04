@@ -14,10 +14,11 @@ export type QueryOptions = {
 export const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
   const { EntityType, OwnsKamiID, State, KamiIndex } = components;
 
-  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'KAMI' })];
+  const toQuery: QueryFragment[] = [];
   if (options?.index) toQuery.push(HasValue(KamiIndex, { value: options.index }));
   if (options?.account) toQuery.push(HasValue(OwnsKamiID, { value: options.account }));
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
+  toQuery.push(HasValue(EntityType, { value: 'KAMI' }));
 
   return Array.from(runQuery(toQuery));
 };

@@ -19,12 +19,13 @@ export const queryFromBurner = (network: NetworkLayer): EntityIndex => {
 // query Account entities generally with query options. return matching entity indices
 const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
   const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress, RoomIndex } = components;
-  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'ACCOUNT' })];
+  const toQuery: QueryFragment[] = [];
   if (options?.index) toQuery.push(HasValue(AccountIndex, { value: options.index }));
   if (options?.name) toQuery.push(HasValue(Name, { value: options.name }));
   if (options?.owner) toQuery.push(HasValue(OwnerAddress, { value: options.owner }));
   if (options?.operator) toQuery.push(HasValue(OperatorAddress, { value: options.operator }));
   if (options?.room) toQuery.push(HasValue(RoomIndex, { value: options.room }));
+  toQuery.push(HasValue(EntityType, { value: 'ACCOUNT' }));
   return Array.from(runQuery(toQuery));
 };
 

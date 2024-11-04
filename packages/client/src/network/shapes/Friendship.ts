@@ -112,10 +112,11 @@ export const queryFriendshipX = (
 ): Friendship[] => {
   const { EntityType, SourceID, TargetID, State } = components;
 
-  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'FRIENDSHIP' })];
+  const toQuery: QueryFragment[] = [];
   if (options?.account) toQuery.push(HasValue(SourceID, { value: options.account }));
   if (options?.target) toQuery.push(HasValue(TargetID, { value: options.target }));
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
+  toQuery.push(HasValue(EntityType, { value: 'FRIENDSHIP' }));
   const raw = Array.from(runQuery(toQuery));
 
   return raw.map((index: EntityIndex) => getFriendship(world, components, index, accountOptions));

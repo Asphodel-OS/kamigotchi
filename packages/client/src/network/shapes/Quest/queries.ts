@@ -21,11 +21,13 @@ export interface QueryOptions {
 export const query = (components: Components, options: QueryOptions): EntityIndex[] => {
   const { OwnsQuestID, EntityType, IsComplete, IsRegistry, QuestIndex } = components;
 
-  const toQuery: QueryFragment[] = [HasValue(EntityType, { value: 'QUEST' })];
-  if (options?.registry) toQuery.push(Has(IsRegistry));
+  const toQuery: QueryFragment[] = [];
   if (options?.account) toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
   if (options?.index) toQuery.push(HasValue(QuestIndex, { value: options.index }));
+  toQuery.push(HasValue(EntityType, { value: 'QUEST' }));
+  if (options?.registry) toQuery.push(Has(IsRegistry));
   if (options?.completed !== undefined) {
+    // completed is put last because of potential size
     if (options?.completed) toQuery.push(Has(IsComplete));
     else toQuery.push(Not(IsComplete));
   }
