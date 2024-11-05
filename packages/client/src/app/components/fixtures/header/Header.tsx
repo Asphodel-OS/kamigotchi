@@ -74,8 +74,6 @@ export function registerAccountHeader() {
           'The interconnecting energy of the universe. Collect it by Harvesting with your Kamis.',
         ];
       };
-      /*
-       */
 
       /*
              <Tooltip text={getMusuTooltip()}>
@@ -85,12 +83,11 @@ export function registerAccountHeader() {
             </TextBox>
           </Tooltip> 
           */
-      // note to myself: rotate icons, musu icon
+      // note to myself:  musu icon
       const [rotateClock, setRotateClock] = useState(0);
 
       function updateClocks() {
         const kamiTime = parseInt(getKamiTime(Date.now()).split(':')[0]);
-
         setRotateClock((kamiTime - 18) * 10);
       }
       useEffect(() => {
@@ -98,6 +95,7 @@ export function registerAccountHeader() {
         const interval = setInterval(updateClocks, 1000);
         return () => clearInterval(interval);
       }, []);
+
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <Circle style={{ transform: `rotate(${rotateClock}deg)` }}>
@@ -105,28 +103,28 @@ export function registerAccountHeader() {
               <Phases>
                 <Icon
                   style={{
-                    position: 'relative',
                     left: '-0.2vh',
                     bottom: '1.8vh',
                     width: '3.3vh',
+                    transform: `rotate(${-rotateClock}deg)`,
                   }}
                   src={ClockIcons.night}
                 />
                 <Icon
                   style={{
-                    position: 'relative',
                     left: '1.5vh',
                     bottom: '10.8vh',
                     width: '3.3vh',
+                    transform: `rotate(${-rotateClock}deg)`,
                   }}
                   src={ClockIcons.twilight}
                 />
                 <Icon
                   style={{
-                    position: 'relative',
                     left: '3.2vh',
                     bottom: '1.8vh',
                     width: '3.3vh',
+                    transform: `rotate(${-rotateClock}deg)`,
                   }}
                   src={ClockIcons.day}
                 />
@@ -173,25 +171,25 @@ const Circle = styled.div`
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
   background-position: center;
-  background-size: 17vh;
+  background-size: 20vh;
   background-repeat: no-repeat;
   height: 18.5vh;
-  width: 17vh;
+  width: 20vh;
   pointer-events: none;
   position: absolute;
-  left: 12.6%;
-  top: 14%;
+  left: 6%;
+  top: 11%;
 }
 `;
 
 const SmallCircle = styled.div`
   border-radius: 50%;
-  height: 6vh;
-  width: 6vh;
+  height: 7vh;
+  width: 7vh;
   border: 0.3vh solid black;
   position: absolute;
   bottom: 26%;
-  left: 38%;
+  left: 36%;
 
   display: flex;
   flex-direction: column;
@@ -216,7 +214,9 @@ const Phases = styled.div`
   bottom: 6vh;
 `;
 
-const Icon = styled.img``;
+const Icon = styled.img`
+  position: relative;
+`;
 const TextBox = styled.div`
   height: 4.5vh;
   width: max-content;
