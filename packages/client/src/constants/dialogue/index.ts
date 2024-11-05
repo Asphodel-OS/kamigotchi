@@ -17,6 +17,7 @@ import dialogues16 from './16_techno-temple';
 import dialogues18 from './18_cave-crossroads';
 import dialogues19 from './19_violence-temple';
 import dialogues49 from './49_clearing';
+import dialogues52 from './52_airplane_crash';
 import dialogues54 from './54_plane_interior';
 import { DialogueNode } from './types';
 
@@ -52,6 +53,7 @@ const dialogueList = dialogues00.concat(
   dialogues18,
   dialogues19,
   dialogues49,
+  dialogues52,
   dialogues54
 );
 
