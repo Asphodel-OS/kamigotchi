@@ -9,6 +9,8 @@ import { emptyRoom, Room } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 import { FloatingMapKami } from './FloatingMapKami';
 
+const KamiNames: Map<number, string[]> = new Map<number, string[]>();
+
 interface Props {
   index: number; // index of current room
   zone: number;
@@ -25,7 +27,7 @@ interface Props {
     getBaseKami: (kamiIndex: EntityIndex) => BaseKami;
   };
 }
-const KamiNames: Map<number, string[]> = new Map<number, string[]>();
+
 export const Grid = (props: Props) => {
   const { index, zone, rooms, actions, utils, accountKamis } = props;
   const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom, getKamiLocation, getBaseKami } =
@@ -74,6 +76,7 @@ export const Grid = (props: Props) => {
 
     setGrid(grid);
   }, [zone]);
+
   // manages Kami harvest location and name
   useEffect(() => {
     KamiNames.forEach((value, key) => {
@@ -99,6 +102,7 @@ export const Grid = (props: Props) => {
     }
     return res;
   };
+
   /////////////////
   // INTERACTIONS
 
@@ -131,7 +135,7 @@ export const Grid = (props: Props) => {
               const currExit = rooms.get(index)?.exits?.find((e) => e.toIndex === room.index);
               const isExit = !!currExit;
               const isBlocked = currExit?.blocked; // blocked exit
-              const kamiBackGround = room?.index !== undefined && !!KamiNames.has(room.index);
+              const hasKamis = room?.index !== undefined && !!KamiNames.has(room.index);
 
               let backgroundColor;
               let onClick: MouseEventHandler | undefined;
@@ -154,7 +158,7 @@ export const Grid = (props: Props) => {
                     if (isRoom) setHoveredRoom(0);
                   }}
                 >
-                  {kamiBackGround && <FloatingMapKami />}
+                  {hasKamis && <FloatingMapKami />}
                 </Tile>
               );
 
