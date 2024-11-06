@@ -41,6 +41,7 @@ export function registerAccountHeader() {
     ({ data }) => {
       const { stamina, musu } = data;
       const { fixtures } = useVisibility();
+      const [rotateClock, setRotateClock] = useState(0);
 
       /////////////////
       // INTERPRETATION
@@ -67,29 +68,11 @@ export function registerAccountHeader() {
         ];
       };
 
-      const getMusuTooltip = () => {
-        return [
-          'Musubi (musu)',
-          '',
-          'The interconnecting energy of the universe. Collect it by Harvesting with your Kamis.',
-        ];
-      };
-
-      /*
-             <Tooltip text={getMusuTooltip()}>
-            <TextBox>
-              <Icon src={ItemImages.musu} />
-              {musu}
-            </TextBox>
-          </Tooltip> 
-          */
-      // note to myself:  musu icon
-      const [rotateClock, setRotateClock] = useState(0);
-
       function updateClocks() {
         const kamiTime = parseInt(getKamiTime(Date.now()).split(':')[0]);
         setRotateClock((kamiTime - 18) * 10);
       }
+
       useEffect(() => {
         updateClocks();
         const interval = setInterval(updateClocks, 1000);
@@ -146,9 +129,9 @@ export function registerAccountHeader() {
 const Container = styled.div`
   pointer-events: auto;
   position: absolute;
-  left: 10;
+  left: -3;
   z-index: -1;
-  bottom: 6vh;
+  top: 77.7vh;
 `;
 /**/
 const Circle = styled.div`
@@ -215,26 +198,5 @@ const Phases = styled.div`
 `;
 
 const Icon = styled.img`
-  position: relative;
-`;
-const TextBox = styled.div`
-  height: 4.5vh;
-  width: max-content;
-  padding: 1.2vh;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.6vh;
-
-  color: black;
-  font-family: Pixel;
-  background-color: white;
-  border: 0.15vw solid black;
-  font-size: 1.2vh;
-  border-radius: 0.9vh;
-  left: 13vh;
-  top: 2.5vh;
   position: relative;
 `;

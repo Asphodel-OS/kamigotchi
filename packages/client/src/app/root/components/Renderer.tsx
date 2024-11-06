@@ -81,4 +81,5 @@ const UIGrid = styled.div`
   width: 100vw;
   pointer-events: none;
   z-index: 100;
+  overflow: hidden;
 `;
