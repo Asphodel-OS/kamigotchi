@@ -78,10 +78,11 @@ export function registerAccountHeader() {
         const interval = setInterval(updateClocks, 1000);
         return () => clearInterval(interval);
       }, []);
-
+      //
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <Circle style={{ transform: `rotate(${rotateClock}deg)` }}>
+            <BandColor />
             <Tooltip text={getClockTooltip()}>
               <Phases>
                 <Icon
@@ -129,7 +130,7 @@ export function registerAccountHeader() {
 const Container = styled.div`
   pointer-events: auto;
   position: absolute;
-  left: -3;
+  left: 4;
   z-index: -1;
   top: 77.7vh;
 `;
@@ -142,7 +143,7 @@ const Circle = styled.div`
   border-radius: 50%;
   height: 25vh;
   width: 25vh;
-  position: relative;
+  position: absolute;
   background-image: url(${ClockIcons.clock_base});
   background-position: center;
   background-repeat: no-repeat;
@@ -150,6 +151,16 @@ const Circle = styled.div`
   z-index: -1;
   overflow: hidden;
   transform-origin: center;
+`;
+const BandColor = styled.div`
+  min-width: 75%;
+  min-height: 105%;
+  top: 5vh;
+  position: absolute;
+  border-radius: 50%;
+  border-width: 0.6vh;
+  border-style: solid;
+  border-color: black #ffffff00 #ffffff00 #00000000;
 `;
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
@@ -160,8 +171,8 @@ const ClockOverlay = styled.div`
   width: 20vh;
   pointer-events: none;
   position: absolute;
-  left: 6%;
-  top: 11%;
+  left: 1.5vh;
+  top: 2.5vh;
 }
 `;
 
@@ -171,8 +182,8 @@ const SmallCircle = styled.div`
   width: 7vh;
   border: 0.3vh solid black;
   position: absolute;
-  bottom: 26%;
-  left: 36%;
+  top: 11.5vh;
+  left: 9vh;
 
   display: flex;
   flex-direction: column;
