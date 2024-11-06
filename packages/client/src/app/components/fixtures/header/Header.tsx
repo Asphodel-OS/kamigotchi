@@ -42,6 +42,7 @@ export function registerAccountHeader() {
       const { stamina, musu } = data;
       const { fixtures } = useVisibility();
       const [rotateClock, setRotateClock] = useState(0);
+      const [rotateBand, setRotateBand] = useState(0);
 
       /////////////////
       // INTERPRETATION
@@ -71,6 +72,7 @@ export function registerAccountHeader() {
       function updateClocks() {
         const kamiTime = parseInt(getKamiTime(Date.now()).split(':')[0]);
         setRotateClock((kamiTime - 18) * 10);
+        setRotateBand([120, 0, 240][Math.floor(kamiTime / 12)]);
       }
 
       useEffect(() => {
@@ -82,7 +84,7 @@ export function registerAccountHeader() {
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <Circle style={{ transform: `rotate(${rotateClock}deg)` }}>
-            <BandColor />
+            <BandColor style={{ transform: `rotate(${rotateBand}deg)` }} />
             <Tooltip text={getClockTooltip()}>
               <Phases>
                 <Icon
@@ -153,8 +155,8 @@ const Circle = styled.div`
   transform-origin: center;
 `;
 const BandColor = styled.div`
-  min-width: 75%;
-  min-height: 105%;
+  min-width: 60%;
+  min-height: 60%;
   top: 5vh;
   position: absolute;
   border-radius: 50%;
