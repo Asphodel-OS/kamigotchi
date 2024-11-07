@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
@@ -10,7 +11,6 @@ import { ClockIcons } from 'assets/images/icons/clock';
 import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getMusuBalance } from 'network/shapes/Item';
 import { Stat } from 'network/shapes/Stats';
-import { useEffect, useState } from 'react';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
 export function registerAccountHeader() {
@@ -61,9 +61,8 @@ export function registerAccountHeader() {
 
       const getClockTooltip = () => {
         const phase = getPhaseName(getCurrPhase());
-        //  {getKamiTime(Date.now())}
         return [
-          `Kami World Clock (${phase})`,
+          `Kami World Clock (${phase}): ${getKamiTime(Date.now())}`,
           '',
           `Kamigotchi World operates on a 36h day with three distinct phases: Daylight, Evenfall, and Moonside.`,
         ];
@@ -81,49 +80,21 @@ export function registerAccountHeader() {
         const interval = setInterval(updateClocks, 1000);
         return () => clearInterval(interval);
       }, []);
-      //
-      const Icons = () => {
-        return (
-          <Phases>
-            <IconNight
-              style={{
-                left: '-0.2vh',
-                bottom: '1.8vh',
-                width: '3.3vh',
-                transform: `rotate(${-rotateClock}deg)`,
-              }}
-              src={ClockIcons.night}
-              bandColor={rotateBand}
-            />
-            <IconTwilight
-              style={{
-                left: '1.5vh',
-                bottom: '10.8vh',
-                width: '3.3vh',
-                transform: `rotate(${-rotateClock}deg)`,
-              }}
-              src={ClockIcons.twilight}
-              bandColor={rotateBand}
-            />
-            <IconDay
-              style={{
-                left: '3.2vh',
-                bottom: '1.8vh',
-                width: '3.3vh',
-                transform: `rotate(${-rotateClock}deg)`,
-              }}
-              src={ClockIcons.day}
-              bandColor={rotateBand}
-            />
-          </Phases>
-        );
-      };
+
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <Circle style={{ transform: `rotate(${rotateClock}deg)` }}>
-            <BandColor bandColor={rotateBand} style={{ transform: `rotate(${rotateBand}deg)` }} />
+          <Circle rotation={rotateClock}>
+            <BandColor rotation={rotateBand} />
             <Tooltip text={getClockTooltip()}>
-              <Icons />
+              <Phases>
+                <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
+                <IconTwilight
+                  src={ClockIcons.twilight}
+                  iconColor={rotateBand}
+                  rotation={rotateClock}
+                />
+                <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
+              </Phases>
             </Tooltip>
           </Circle>
           <ClockOverlay />
@@ -146,7 +117,7 @@ const Container = styled.div`
   top: 77.7vh;
 `;
 /**/
-const Circle = styled.div`
+const Circle = styled.div<{ rotation: number }>`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -162,30 +133,9 @@ const Circle = styled.div`
   z-index: -1;
   overflow: hidden;
   transform-origin: center;
+  ${({ rotation }) => `transform: rotate(${rotation}deg);`}
 `;
 
-const BandColor = styled.div<{ bandColor: number }>`
-  min-width: 60%;
-  min-height: 60%;
-  top: 5vh;
-  position: absolute;
-  border-width: 0.3vh;
-  --a: 120deg;
-  aspect-ratio: 1;
-  padding: 0.8vh;
-  box-sizing: border-box;
-  border-radius: 50%;
-
-  ${({ bandColor }) =>
-    bandColor === 180
-      ? `background: rgb(79 34 183 / 42%);`
-      : bandColor === 60
-        ? `background: rgb(191 180 27 / 42%);`
-        : `background: rgb(174 18 191 / 42%);`}
-  mask:
-    linear-gradient(#0000 0 0) content-box intersect,
-    conic-gradient(#000 var(--a), #0000 0);
-`;
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
   background-position: center;
@@ -209,7 +159,6 @@ const SmallCircle = styled.div`
   position: absolute;
   top: 11.5vh;
   left: 9vh;
-
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -232,16 +181,49 @@ const Phases = styled.div`
   left: 6vh;
   bottom: 6vh;
 `;
-
-const IconNight = styled.img<{ bandColor: number }>`
-  position: relative;
-  ${({ bandColor }) => bandColor === 180 && `filter:opacity(0.75) drop-shadow(0 0 0 #4f22b7);`}
+const BandColor = styled.div<{ rotation: number }>`
+  min-width: 60%;
+  min-height: 60%;
+  top: 5vh;
+  position: absolute;
+  border-width: 0.3vh;
+  --a: 120deg;
+  aspect-ratio: 1;
+  padding: 0.8vh;
+  box-sizing: border-box;
+  border-radius: 50%;
+  ${({ rotation }) => `transform: rotate(${rotation}deg);`}
+  ${({ rotation }) =>
+    rotation === 180
+      ? `background: rgb(79 34 183 / 42%);`
+      : rotation === 60
+        ? `background: rgb(191 180 27 / 42%);`
+        : `background: rgb(174 18 191 / 42%);`}
+  mask:
+    linear-gradient(#0000 0 0) content-box intersect,
+    conic-gradient(#000 var(--a), #0000 0);
 `;
-const IconTwilight = styled.img<{ bandColor: number }>`
+const IconNight = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
-  ${({ bandColor }) => bandColor === 300 && `filter:opacity(0.75) drop-shadow(0 0 0 #ae12bf);`}
+  left: -0.2vh;
+  bottom: 1.8vh;
+  width: 3.3vh;
+  ${({ iconColor }) => iconColor === 180 && `filter:opacity(0.75) drop-shadow(0 0 0 #4f22b7);`}
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
-const IconDay = styled.img<{ bandColor: number }>`
+const IconTwilight = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
-  ${({ bandColor }) => bandColor === 60 && `filter:opacity(0.75) drop-shadow(0 0 0 #bfb41b);`}
+  left: 1.5vh;
+  bottom: 10.8vh;
+  width: 3.3vh;
+  ${({ iconColor }) => iconColor === 300 && `filter:opacity(0.75) drop-shadow(0 0 0 #ae12bf);`}
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
+`;
+const IconDay = styled.img<{ iconColor: number; rotation: number }>`
+  position: relative;
+  left: 3.2vh;
+  bottom: 1.8vh;
+  width: 3.3vh;
+  ${({ iconColor }) => iconColor === 60 && `filter:opacity(0.75) drop-shadow(0 0 0 #bfb41b);`}
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
