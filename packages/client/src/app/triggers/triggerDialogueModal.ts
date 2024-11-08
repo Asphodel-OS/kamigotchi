@@ -17,6 +17,7 @@ export const triggerDialogueModal = (index: number) => {
         emaBoard: false,
         kami: false,
         map: false,
+        merchant: false,
         nameKami: false,
         node: false,
         party: false,
