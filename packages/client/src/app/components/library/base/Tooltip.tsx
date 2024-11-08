@@ -1,5 +1,5 @@
-import { default as MUITooltip } from '@mui/material/Tooltip';
-import React from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 interface Props {
   text: string[];
@@ -26,42 +26,57 @@ export const Tooltip = (props: Props) => {
   };
   const flexGrow = props.grow ? '1' : '0';
   const align = props.align ?? 'left';
-  console.log('text[0] ' + text[0]);
-  return (
-    <MUITooltip
-      title={conjoinedText()}
-      followCursor
-      enterDelay={500}
-      leaveTouchDelay={0}
-      style={{
-        flexGrow: flexGrow,
-        display: 'flex',
-        cursor: 'help',
-        flexDirection: direction ?? 'column',
-      }}
-      componentsProps={{
-        tooltip: {
-          sx: {
-            zIndex: '2',
-            borderStyle: 'solid',
-            borderWidth: '.15vw',
-            borderColor: 'black',
-            backgroundColor: '#fff',
-            borderRadius: '0.6vw',
-            padding: '0.9vw',
-            maxWidth: '36vw',
+  const [active, setActive] = useState('none');
 
-            color: 'black',
-            fontSize: '.7vw',
-            fontFamily: 'Pixel',
-            lineHeight: '1.25vw',
-            whiteSpace: 'pre-line',
-            textAlign: align,
-          },
-        },
-      }}
+  let timeout: NodeJS.Timeout;
+
+  return (
+    <MyToolTip
+      flexGrow={flexGrow}
+      direction={direction}
+      onMouseEnter={() => setActive('flex')}
+      onMouseLeave={() => setActive('none')}
     >
-      <span>{children}</span>
-    </MUITooltip>
+      {children}
+      {active && (
+        <PopOverText active={active} flexGrow={flexGrow} direction={direction} align={align}>
+          {conjoinedText()}
+        </PopOverText>
+      )}
+    </MyToolTip>
   );
 };
+
+const MyToolTip = styled.div<{ flexGrow: string; direction?: string }>`
+  flex-direction: ${({ direction }) => direction ?? 'column'};
+  flex-grow: ${({ flexGrow }) => flexGrow};
+  display: flex;
+  cursor: help;
+  flex-direction: column;
+`;
+
+const PopOverText = styled.div<{
+  align: string;
+  flexGrow: string;
+  direction?: string;
+  active: string;
+}>`
+  display: ${({ active }) => active};
+  z-index: 102;
+  border-style: solid;
+  border-width: 0.15vw;
+  border-color: black;
+  background-color: #fff;
+  border-radius: 0.6vw;
+  padding: 0.9vw;
+  max-width: 6vw;
+  color: black;
+  font-size: 0.7vw;
+  font-family: Pixel;
+  line-height: 1.25vw;
+  white-space: pre-line;
+  flex-direction: ${({ direction }) => direction ?? 'column'};
+  flex-grow: ${({ flexGrow }) => flexGrow};
+  text-align: ${({ align }) => align};
+  position: fixed;
+`;
