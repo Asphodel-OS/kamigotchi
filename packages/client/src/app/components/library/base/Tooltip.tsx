@@ -7,17 +7,29 @@ interface Props {
   grow?: boolean;
   direction?: 'row' | 'column';
   align?: 'left' | 'right' | 'center';
+  title?: boolean;
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, text, direction } = props;
-  const conjoinedText = text.join('\n');
+  const { children, text, direction, title } = props;
+  const conjoinedText = () => {
+    return !title ? (
+      text.join('\n')
+    ) : (
+      <>
+        <div style={{ fontWeight: 'bold', position: 'relative', textAlign: 'center' }}>
+          {text[0] + '\n'}
+        </div>
+        <div>{text.slice(1).join('\n')}</div>
+      </>
+    );
+  };
   const flexGrow = props.grow ? '1' : '0';
   const align = props.align ?? 'left';
-
+  console.log('text[0] ' + text[0]);
   return (
     <MUITooltip
-      title={conjoinedText}
+      title={conjoinedText()}
       followCursor
       enterDelay={500}
       leaveTouchDelay={0}
