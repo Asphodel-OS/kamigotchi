@@ -8,10 +8,11 @@ interface Props {
   direction?: 'row' | 'column';
   align?: 'left' | 'right' | 'center';
   title?: boolean;
+  popOverDirection?: 'left' | 'right' | 'bottom' | 'top';
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, text, direction, title } = props;
+  const { children, text, direction, title, popOverDirection } = props;
   const conjoinedText = () => {
     return !title ? (
       text.join('\n')
@@ -28,8 +29,6 @@ export const Tooltip = (props: Props) => {
   const align = props.align ?? 'left';
   const [active, setActive] = useState('none');
 
-  let timeout: NodeJS.Timeout;
-
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -39,7 +38,7 @@ export const Tooltip = (props: Props) => {
     >
       {children}
       {active && (
-        <PopOverText active={active} flexGrow={flexGrow} direction={direction} align={align}>
+        <PopOverText popOverDirection={popOverDirection} active={active} align={align}>
           {conjoinedText()}
         </PopOverText>
       )}
@@ -52,31 +51,46 @@ const MyToolTip = styled.div<{ flexGrow: string; direction?: string }>`
   flex-grow: ${({ flexGrow }) => flexGrow};
   display: flex;
   cursor: help;
-  flex-direction: column;
 `;
 
 const PopOverText = styled.div<{
   align: string;
-  flexGrow: string;
-  direction?: string;
   active: string;
+  popOverDirection?: string;
 }>`
   display: ${({ active }) => active};
-  z-index: 102;
   border-style: solid;
   border-width: 0.15vw;
   border-color: black;
   background-color: #fff;
   border-radius: 0.6vw;
   padding: 0.9vw;
-  max-width: 6vw;
+  max-width: 26vw;
   color: black;
   font-size: 0.7vw;
   font-family: Pixel;
   line-height: 1.25vw;
   white-space: pre-line;
-  flex-direction: ${({ direction }) => direction ?? 'column'};
-  flex-grow: ${({ flexGrow }) => flexGrow};
-  text-align: ${({ align }) => align};
   position: fixed;
+  --tooltip-margin: 30px;
+  text-align: ${({ align }) => align};
+  ${({ popOverDirection }) => {
+    if (popOverDirection === 'top')
+      return `      
+          transform:translateY(-102%);
+        `;
+    if (popOverDirection === 'bottom')
+      return `      
+              transform:translateY(29%);
+            `;
+
+    if (popOverDirection === 'left')
+      return `      
+                      transform:translateX(-102%);
+                    `;
+    if (popOverDirection === 'right')
+      return `      
+                      transform:translateX(14%);
+                    `;
+  }}
 `;
