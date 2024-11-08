@@ -1,1 +1,0 @@
-export { registerAccountHeader } from './Header';

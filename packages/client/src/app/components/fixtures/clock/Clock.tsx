@@ -9,18 +9,17 @@ import { useVisibility } from 'app/stores';
 import { getColor } from 'app/components/library/base/measures/Battery';
 import { ClockIcons } from 'assets/images/icons/clock';
 import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
-import { getMusuBalance } from 'network/shapes/Item';
 import { Stat } from 'network/shapes/Stats';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
-export function registerAccountHeader() {
+export function registerClock() {
   registerUIComponent(
-    'HeaderFixture',
+    'ClockFixture',
     {
       colStart: 33,
       colEnd: 67,
-      rowStart: 3,
-      rowEnd: 30,
+      rowStart: 78,
+      rowEnd: 99,
     },
     (layers) => {
       return interval(1000).pipe(
@@ -32,14 +31,13 @@ export function registerAccountHeader() {
           return {
             data: {
               stamina: getStamina(world, components, accountEntity),
-              musu: getMusuBalance(world, components, world.entities[accountEntity]),
             },
           };
         })
       );
     },
     ({ data }) => {
-      const { stamina, musu } = data;
+      const { stamina } = data;
       const { fixtures } = useVisibility();
       const [rotateClock, setRotateClock] = useState(0);
       const [rotateBand, setRotateBand] = useState(0);
@@ -114,9 +112,8 @@ const Container = styled.div`
   position: absolute;
   left: 4;
   z-index: -1;
-  top: 77.7vh;
 `;
-/**/
+
 const Circle = styled.div<{ rotation: number }>`
   display: flex;
   flex-direction: column;
@@ -147,8 +144,6 @@ const ClockOverlay = styled.div`
   position: absolute;
   left: 1.5vh;
   top: 2.5vh;
-
-}
 `;
 
 const SmallCircle = styled.div`
@@ -170,17 +165,20 @@ const SmallCircle = styled.div`
   z-index: -1;
   pointer-event: none;
 `;
+
 const SmallCircleFill = styled.div<{ height: number }>`
   height: ${({ height }) => height}%;
   position: relative;
   background-color: ${({ height }) => getColor(height)};
   pointer-event: none;
 `;
+
 const Phases = styled.div`
   position: absolute;
   left: 6vh;
   bottom: 6vh;
 `;
+
 const BandColor = styled.div<{ rotation: number }>`
   min-width: 60%;
   min-height: 60%;
@@ -203,6 +201,7 @@ const BandColor = styled.div<{ rotation: number }>`
     linear-gradient(#0000 0 0) content-box intersect,
     conic-gradient(#000 var(--a), #0000 0);
 `;
+
 const IconNight = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
   left: -0.2vh;
@@ -211,6 +210,7 @@ const IconNight = styled.img<{ iconColor: number; rotation: number }>`
   ${({ iconColor }) => iconColor === 180 && `filter:opacity(0.75) drop-shadow(0 0 0 #4f22b7);`}
   ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
+
 const IconTwilight = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
   left: 1.5vh;
@@ -219,6 +219,7 @@ const IconTwilight = styled.img<{ iconColor: number; rotation: number }>`
   ${({ iconColor }) => iconColor === 300 && `filter:opacity(0.75) drop-shadow(0 0 0 #ae12bf);`}
   ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
+
 const IconDay = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
   left: 3.2vh;

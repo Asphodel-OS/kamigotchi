@@ -1,4 +1,4 @@
-import { registerAccountHeader } from './fixtures/header';
+import { registerClock } from './fixtures/clock';
 import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
 import { registerNotificationFixture } from './fixtures/notifications';
 import { registerActionQueue } from './fixtures/queue';
@@ -37,8 +37,8 @@ export { registerLoadingState } from './boot';
 export { registerScene } from './canvas';
 
 export function registerFixtures() {
-  registerAccountHeader();
   registerActionQueue();
+  registerClock();
   registerMenuLeft();
   registerMenuRight();
   registerNotificationFixture();

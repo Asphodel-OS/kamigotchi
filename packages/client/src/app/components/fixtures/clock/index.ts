@@ -1,0 +1,1 @@
+export { registerClock } from './Clock';

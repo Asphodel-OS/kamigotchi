@@ -9,6 +9,7 @@ import { Account } from './types';
 /////////////////
 // GETTERS
 
+// does not include bonuses
 export const getStamina = (
   world: World,
   components: Components,
