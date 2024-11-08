@@ -60,12 +60,13 @@ const PopOverText = styled.div<{
 }>`
   display: ${({ active }) => active};
   border-style: solid;
+  z-index: 100;
   border-width: 0.15vw;
   border-color: black;
   background-color: #fff;
   border-radius: 0.6vw;
   padding: 0.9vw;
-  max-width: 26vw;
+  max-width: 36vw;
   color: black;
   font-size: 0.7vw;
   font-family: Pixel;
