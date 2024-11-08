@@ -122,6 +122,18 @@ library LibFriend {
     return friendship != 0 && getState(components, friendship).eq("FRIEND");
   }
 
+  function checkIsFriendship(IUintComp components, uint256 id) internal view {
+    if (!LibEntityType.isShape(components, id, "FRIENDSHIP")) revert("not friendship");
+  }
+
+  function isState(
+    IUintComp components,
+    uint256 id,
+    string memory state
+  ) internal view returns (bool) {
+    return getCompByID(components, StateCompID).eqString(id, state);
+  }
+
   /////////////////
   // GETTERS
 
@@ -135,10 +147,6 @@ library LibFriend {
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
     return StateComponent(getAddrByID(components, StateCompID)).get(id);
-  }
-
-  function isFriendship(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibEntityType.isShape(components, id, "FRIENDSHIP");
   }
 
   /////////////////

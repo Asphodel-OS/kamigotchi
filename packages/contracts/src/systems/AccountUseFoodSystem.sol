@@ -20,8 +20,8 @@ contract AccountUseFoodSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.checkTypeOf(components, itemIndex, "FOOD");
-    LibItem.checkForAccount(components, itemIndex);
+    LibItem.onlyType(components, itemIndex, "FOOD");
+    LibItem.onlyForAccount(components, itemIndex);
 
     // use items
     LibAccount.syncStamina(components, accID);

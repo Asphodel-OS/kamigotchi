@@ -22,7 +22,7 @@ contract QuestAcceptSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check requirements
-    require(LibAssigner.check(components, assignerID, regID, accID), "not assigner");
+    LibAssigner.checkFor(components, assignerID, regID, accID);
     require(LibQuests.checkRequirements(components, index, accID), "QuestAccept: reqs not met");
 
     uint256 questID = LibQuests.getAccQuestIndex(components, accID, index);

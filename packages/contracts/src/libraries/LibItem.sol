@@ -139,18 +139,29 @@ library LibItem {
     roomComp.set(targetID, roomComp.get(regID));
   }
 
+  function droptableCommit(
+    IWorld world,
+    IUintComp components,
+    uint32 itemIndex,
+    uint256 amt,
+    uint256 accID
+  ) internal returns (uint256) {
+    uint256 regID = genID(itemIndex);
+    return LibDroptable.commit(world, components, regID, amt, accID);
+  }
+
   /////////////////
   // CHECKERS
 
   /// @notice check if entity is an item of specific type
-  function checkTypeOf(IUintComp components, uint32 index, string memory type_) internal view {
+  function onlyType(IUintComp components, uint32 index, string memory type_) internal view {
     uint256 id = genID(index);
     if (!LibEntityType.isShape(components, id, "ITEM")) revert("thats not an item");
     if (!getCompByID(components, TypeCompID).eqString(id, type_))
       revert(LibString.concat("thats not item type ", type_));
   }
 
-  function checkTypeOf(
+  function onlyType(
     IUintComp components,
     uint32[] memory indices,
     string memory type_
@@ -162,13 +173,13 @@ library LibItem {
       revert(LibString.concat("thats not item type ", type_));
   }
 
-  function checkBurnable(IUintComp components, uint32[] memory indices) internal view {
+  function onlyBurnable(IUintComp components, uint32[] memory indices) internal view {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
   }
 
-  function checkForAccount(IUintComp components, uint32 index) internal view {
+  function onlyForAccount(IUintComp components, uint32 index) internal view {
     if (!LibFor.isForAccount(components, genID(index))) revert("that's not for accounts");
   }
 

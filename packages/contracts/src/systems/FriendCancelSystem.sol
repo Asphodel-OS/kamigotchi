@@ -18,22 +18,24 @@ contract FriendCancelSystem is System {
     uint256 friendshipID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    require(LibFriend.isFriendship(components, friendshipID), "FriendCancel: not a friendship");
+    // checks
+    LibFriend.checkIsFriendship(components, friendshipID);
 
     string memory state = LibFriend.getState(components, friendshipID);
     if (LibString.eq(state, "REQUEST")) {
       // request can be deleted by either party
-      require(
-        LibFriend.getAccount(components, friendshipID) == accID ||
-          LibFriend.getTarget(components, friendshipID) == accID,
-        "FriendCancel: not owner/target"
-      );
+      if (
+        !(LibFriend.getAccount(components, friendshipID) == accID ||
+          LibFriend.getTarget(components, friendshipID) == accID)
+      ) revert("FriendCancel: not owner/target");
     } else if (LibString.eq(state, "BLOCKED")) {
       // block can only be deleted by owner
-      require(LibFriend.getAccount(components, friendshipID) == accID, "FriendCancel: not owner");
+      if (LibFriend.getAccount(components, friendshipID) != accID)
+        revert("FriendCancel: not owner");
     } else {
       // if friend, delete friendship owned by other entity
-      require(LibFriend.getAccount(components, friendshipID) == accID, "FriendCancel: not owner");
+      if (LibFriend.getAccount(components, friendshipID) != accID)
+        revert("FriendCancel: not owner");
 
       uint256 counterpartyID = LibFriend.getFriendship(
         components,

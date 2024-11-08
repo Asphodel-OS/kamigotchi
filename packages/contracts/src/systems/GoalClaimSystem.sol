@@ -17,8 +17,8 @@ contract GoalClaimSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     uint256 goalID = LibGoals.getByIndex(components, goalIndex);
-    require(goalID != 0, "goal not found");
-    require(LibGoals.canClaim(components, goalID, accID), "cannot claim from this goal");
+    if (goalID == 0) revert("goal not found");
+    LibGoals.onlyClaimable(components, goalID, accID);
 
     LibGoals.distributeRewards(world, components, goalIndex, goalID, accID);
     LibGoals.setClaimed(components, goalID, accID);

@@ -240,6 +240,20 @@ library LibGoals {
   ////////////////////
   // CHECKERS
 
+  function onlyClaimable(IUintComp components, uint256 goalID, uint256 accID) internal view {
+    if (!canClaim(components, goalID, accID)) revert("cannot claim from this goal");
+  }
+
+  function onlyContributable(
+    IUintComp components,
+    uint32 goalIndex,
+    uint256 goalID,
+    uint256 accID
+  ) internal view {
+    if (!canContribute(components, goalIndex, goalID, accID))
+      revert("cannot contribute to this goal");
+  }
+
   function canClaim(
     IUintComp components,
     uint256 goalID,

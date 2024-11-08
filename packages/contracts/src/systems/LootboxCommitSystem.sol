@@ -18,15 +18,15 @@ contract LootboxCommitSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 index, uint256 amt) = abi.decode(arguments, (uint32, uint256));
-    require(amt <= 10, "LootboxStartReveal: max 10");
 
+    // checks
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    LibItem.onlyType(components, index, "LOOTBOX");
+    if (amt > 10) revert("max 10 reveal at once");
+
+    // decrease and commit
     LibInventory.decFor(components, accID, index, amt); // implicit balance check
-
-    uint256 regID = LibItem.getByIndex(components, index);
-    require(LibItem.isLootbox(components, index), "LootboxStartReveal: not lootbox");
-
-    uint256 revealID = LibDroptable.commit(world, components, regID, amt, accID);
+    uint256 revealID = LibItem.droptableCommit(world, components, index, amt, accID);
 
     // standard logging and tracking
     LibData.inc(components, accID, index, "LOOTBOX_OPENED", amt);

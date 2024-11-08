@@ -22,7 +22,7 @@ contract KamiUseFoodSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.checkTypeOf(components, itemIndex, "FOOD");
+    LibItem.onlyType(components, itemIndex, "FOOD");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks

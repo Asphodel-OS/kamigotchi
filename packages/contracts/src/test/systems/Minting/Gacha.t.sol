@@ -111,7 +111,7 @@ contract GachaTest is SetupTemplate {
     vm.roll(++_currBlock);
     vm.deal(owner, cost);
     vm.prank(owner);
-    vm.expectRevert("not enough ETH");
+    vm.expectRevert("not enough payment");
     _KamiGachaRerollSystem.reroll{ value: cost }(petUserArr2);
 
     // reroll first two pets, but correct pricing

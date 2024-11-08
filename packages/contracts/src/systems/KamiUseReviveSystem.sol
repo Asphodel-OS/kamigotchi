@@ -21,7 +21,7 @@ contract KamiUseReviveSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.checkTypeOf(components, itemIndex, "REVIVE");
+    LibItem.onlyType(components, itemIndex, "REVIVE");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks

@@ -19,8 +19,8 @@ contract KamiGachaRevealSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function reveal(uint256[] memory rawCommitIDs) external returns (uint256[] memory) {
-    require(rawCommitIDs.length > 0, "need commits to reveal");
-    require(LibGacha.extractIsCommits(components, rawCommitIDs), "not gacha commit");
+    if (rawCommitIDs.length == 0) revert("need commits to reveal");
+    LibGacha.checkAndExtractIsCommit(components, rawCommitIDs);
 
     // sorts commits by cronological order via entityID
     uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
@@ -34,11 +34,11 @@ contract KamiGachaRevealSystem is System, AuthRoles {
   function forceReveal(
     uint256[] memory commitIDs
   ) external onlyCommManager(components) returns (uint256[] memory) {
-    require(commitIDs.length > 0, "need commits to reveal");
-    require(LibGacha.extractIsCommits(components, commitIDs), "not gacha commit");
+    if (commitIDs.length == 0) revert("need commits to reveal");
+    LibGacha.checkAndExtractIsCommit(components, commitIDs);
 
     // checks if blockhash is not available
-    require(!LibCommit.isAvailable(components, commitIDs), "no need for force reveal");
+    if (LibCommit.isAvailable(components, commitIDs)) revert("no need for force reveal");
 
     // generate new seeds
     LibCommit.resetBlocks(components, commitIDs);

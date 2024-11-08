@@ -22,12 +22,12 @@ contract FriendBlockSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    require(targetID != 0, "FriendBlock: target no account");
-    require(accID != targetID, "FriendBlock: cannot block self");
+    if (targetID == 0) revert("FriendBlock: target no account");
+    if (accID == targetID) revert("FriendBlock: cannot block self");
 
     // remove existing friendship from target->account
     uint256 targetToAcc = LibFriend.getFriendship(components, targetID, accID);
-    if (targetToAcc != 0 && !LibString.eq(LibFriend.getState(components, targetToAcc), "BLOCKED")) {
+    if (targetToAcc != 0 && !LibFriend.isState(components, targetToAcc, "BLOCKED")) {
       LibFriend.remove(components, targetToAcc);
     }
 

@@ -22,7 +22,7 @@ contract KamiUseSkillResetSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.checkTypeOf(components, itemIndex, "SKILL_RESET");
+    LibItem.onlyType(components, itemIndex, "SKILL_RESET");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks

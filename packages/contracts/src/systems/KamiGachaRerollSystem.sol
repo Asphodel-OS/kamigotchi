@@ -23,9 +23,8 @@ contract KamiGachaRerollSystem is System {
 
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);
-    require(LibGacha.checkMaxRerolls(components, prevRerolls), "too many rerolls");
-    uint256 price = LibGacha.calcRerollsCost(components, prevRerolls);
-    require(msg.value >= price, "not enough ETH");
+    LibGacha.onlyNotMaxRerolls(components, prevRerolls);
+    if (msg.value < LibGacha.calcRerollsCost(components, prevRerolls)) revert("not enough payment");
 
     // send pet into pool
     LibGacha.depositPets(components, kamiIDs);

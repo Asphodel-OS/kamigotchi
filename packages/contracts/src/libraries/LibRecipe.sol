@@ -174,13 +174,13 @@ library LibRecipe {
   /////////////////
   // CHECKERS
 
-  function meetsRequirements(
+  function passesRequirements(
     IUintComp components,
     uint32 recipeIndex,
     uint256 accID
-  ) internal view returns (bool) {
+  ) internal view {
     uint256[] memory reqIDs = getRequirements(components, recipeIndex);
-    return LibConditional.checkConditions(components, reqIDs, accID);
+    if (!LibConditional.checkConditions(components, reqIDs, accID)) revert("Recipe: reqs not met");
   }
 
   /////////////////

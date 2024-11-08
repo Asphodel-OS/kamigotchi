@@ -21,7 +21,7 @@ contract KamiUseRenamePotionSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.checkTypeOf(components, itemIndex, "RENAME_POTION");
+    LibItem.onlyType(components, itemIndex, "RENAME_POTION");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks

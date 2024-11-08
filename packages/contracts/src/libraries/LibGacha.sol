@@ -155,22 +155,17 @@ library LibGacha {
   /////////////////
   // CHECKERS
 
-  function extractIsCommits(IUintComp components, uint256[] memory ids) internal returns (bool) {
+  function checkAndExtractIsCommit(IUintComp components, uint256[] memory ids) internal {
     string[] memory types = LibCommit.extractTypes(components, ids);
     for (uint256 i; i < ids.length; i++) {
-      if (!LibString.eq(types[i], "GACHA_COMMIT")) return false;
+      if (!LibString.eq(types[i], "GACHA_COMMIT")) revert("not gacha commit");
     }
-    return true;
   }
 
   /// @notice testnet2 function, rerolls are free but limited
-  function checkMaxRerolls(
-    IUintComp components,
-    uint256[] memory counts
-  ) internal view returns (bool) {
+  function onlyNotMaxRerolls(IUintComp components, uint256[] memory counts) internal view {
     uint256 max = LibConfig.get(components, "GACHA_MAX_REROLLS");
-    for (uint256 i; i < counts.length; i++) if (counts[i] >= max) return false;
-    return true;
+    for (uint256 i; i < counts.length; i++) if (counts[i] >= max) revert("too many rerolls");
   }
 
   /////////////////

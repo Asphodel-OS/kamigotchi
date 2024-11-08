@@ -30,7 +30,7 @@ contract LootboxTest is SetupTemplate {
 
     if (useAmt > 10) {
       vm.startPrank(alice.operator);
-      vm.expectRevert("LootboxStartReveal: max 10");
+      vm.expectRevert("max 10 reveal at once");
       _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt);
 
       assertEq(_getItemBal(alice, lootboxIndex), startAmt);

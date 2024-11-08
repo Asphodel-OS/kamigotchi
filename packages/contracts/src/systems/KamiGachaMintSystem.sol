@@ -19,7 +19,7 @@ contract KamiGachaMintSystem is System {
     uint256 amount = abi.decode(arguments, (uint256));
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    require(accID != 0, "no account detected");
+    if (accID == 0) revert("no account detected");
 
     // use gacha inventory balance
     // todo: update this to use itemEffect?

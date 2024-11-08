@@ -113,11 +113,10 @@ library LibDroptable {
   ///////////////////
   // CHECKERS
 
-  function extractAreCommits(IUintComp components, uint256[] memory ids) internal returns (bool) {
+  function checkAndExtractIsCommit(IUintComp components, uint256[] memory ids) internal {
     string[] memory types = LibCommit.extractTypes(components, ids);
     for (uint256 i; i < ids.length; i++)
-      if (!LibString.eq(types[i], "ITEM_DROPTABLE_COMMIT")) return false;
-    return true;
+      if (!LibString.eq(types[i], "ITEM_DROPTABLE_COMMIT")) revert("not reveal entity");
   }
 
   /////////////////

@@ -23,8 +23,8 @@ contract DroptableRevealSystem is System, AuthRoles {
     uint256[] memory ids = abi.decode(arguments, (uint256[]));
 
     // checks
-    require(ids.length > 0, "LootboxExeRev: no reveals");
-    require(LibDroptable.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
+    if (ids.length == 0) revert("ItemReveal: no reveals");
+    LibDroptable.checkAndExtractIsCommit(components, ids);
 
     // revealing
     LibCommit.filterInvalid(components, ids);
@@ -37,8 +37,8 @@ contract DroptableRevealSystem is System, AuthRoles {
     uint256[] memory ids = new uint256[](1);
     ids[0] = id;
 
-    require(!LibCommit.isAvailable(components, ids), "LootboxExeRev: commit still available");
-    require(LibDroptable.extractAreCommits(components, ids), "LootboxExeRev: not reveal entity");
+    if (LibCommit.isAvailable(components, ids)) revert("no need for force reveal");
+    LibDroptable.checkAndExtractIsCommit(components, ids);
 
     LibCommit.resetBlocks(components, ids);
     LibDroptable.reveal(components, ids);

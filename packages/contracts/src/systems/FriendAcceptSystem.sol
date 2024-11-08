@@ -19,22 +19,20 @@ contract FriendAcceptSystem is System {
     uint256 requestID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    require(LibFriend.isFriendship(components, requestID), "FriendAccept: not a friendship");
-    require(
-      LibString.eq(LibFriend.getState(components, requestID), "REQUEST"),
-      "FriendAccept: not a request"
-    );
+    LibFriend.checkIsFriendship(components, requestID);
+    if (!LibFriend.isState(components, requestID, "REQUEST")) revert("FriendAccept: not a request");
 
     // friendship specific checks
     uint256 senderID = LibFriend.getAccount(components, requestID);
-    require(LibFriend.getTarget(components, requestID) == accID, "FriendAccept: not for you");
+    if (LibFriend.getTarget(components, requestID) != accID) revert("FriendAccept: not for you");
 
     // check number of friends limit
     uint256 baseLimit = LibConfig.get(components, "FRIENDS_BASE_LIMIT");
     uint256 frenLimit = baseLimit + LibBonus.getForUint256(components, "FRIENDS_LIMIT", accID);
     uint256 senderLimit = baseLimit + LibBonus.getForUint256(components, "FRIENDS_LIMIT", senderID);
-    require(LibFriend.getFriendCount(components, accID) < frenLimit, "Friend limit reached");
-    require(LibFriend.getFriendCount(components, senderID) < senderLimit, "Friend limit reached");
+    if (LibFriend.getFriendCount(components, accID) >= frenLimit) revert("Friend limit reached");
+    if (LibFriend.getFriendCount(components, senderID) >= senderLimit)
+      revert("Friend limit reached");
 
     // accept request; overwrites any previous request/block
     uint256 id = LibFriend.accept(components, accID, senderID, requestID);

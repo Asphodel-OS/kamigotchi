@@ -19,27 +19,24 @@ contract FriendRequestSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    require(targetID != 0, "FriendRequest: target no account");
-    require(accID != targetID, "FriendRequest: cannot fren self");
+    if (targetID == 0) revert("FriendRequest: target no account");
+    if (accID == targetID) revert("FriendRequest: cannot fren self");
 
     // friendship specific checks
-    require(
-      LibFriend.getRequestCount(components, targetID) <
-        LibConfig.get(components, "FRIENDS_REQUEST_LIMIT"),
-      "Max friend requests reached"
-    );
+    if (
+      LibFriend.getRequestCount(components, targetID) >=
+      LibConfig.get(components, "FRIENDS_REQUEST_LIMIT")
+    ) revert("Max friend requests reached");
     /// @dev FE should not get here; if either alr requested, friends, or blocked, a friendship will exist
-    require(
-      LibFriend.getFriendship(components, accID, targetID) == 0,
-      "FriendRequest: already exists"
-    );
+    if (LibFriend.getFriendship(components, accID, targetID) != 0)
+      revert("FriendRequest: already exists");
 
     uint256 incomingReq = LibFriend.getFriendship(components, targetID, accID);
     if (incomingReq != 0) {
       string memory state = LibFriend.getState(components, incomingReq);
-      if (LibString.eq(state, "REQUEST")) require(false, "FriendRequest: inbound request exists");
-      if (LibString.eq(state, "FRIENDS")) require(false, "FriendRequest: already friends");
-      if (LibString.eq(state, "BLOCKED")) require(false, "FriendRequest: blocked");
+      if (LibString.eq(state, "REQUEST")) revert("FriendRequest: inbound request exists");
+      if (LibString.eq(state, "FRIENDS")) revert("FriendRequest: already friends");
+      if (LibString.eq(state, "BLOCKED")) revert("FriendRequest: blocked");
       revert("FriendRequest: complicated situationship(?)");
     }
 

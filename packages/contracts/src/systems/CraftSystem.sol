@@ -20,13 +20,13 @@ contract CraftSystem is System {
       (uint256, uint32, uint256)
     );
     uint256 regID = LibRecipe.get(components, index);
-    require(regID != 0, "Recipe: does not exist");
+    if (regID == 0) revert("Recipe: does not exist");
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check requirements
-    require(LibAssigner.check(components, assignerID, regID, accID), "not assigner");
-    require(LibRecipe.meetsRequirements(components, index, accID), "Recipe: reqs not met");
+    LibAssigner.checkFor(components, assignerID, regID, accID);
+    LibRecipe.passesRequirements(components, index, accID);
 
     LibRecipe.beforeCraft(components, regID, amt, accID);
     (uint32[] memory itemIndices, uint256[] memory amts) = LibRecipe.craft(

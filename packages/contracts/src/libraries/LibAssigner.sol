@@ -66,6 +66,15 @@ library LibAssigner {
   /////////////////
   // CHECKERS
 
+  function checkFor(
+    IUintComp components,
+    uint256 assignerID,
+    uint256 actionID,
+    uint256 accID
+  ) internal view {
+    if (!check(components, assignerID, actionID, accID)) revert("not assigner");
+  }
+
   function check(
     IUintComp components,
     uint256 assignerID,
