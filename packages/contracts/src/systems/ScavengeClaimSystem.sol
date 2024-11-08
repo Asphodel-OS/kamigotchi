@@ -23,6 +23,8 @@ contract ScavengeClaimSystem is System {
 
     // get amt of rewards and distribute
     uint256 count = LibScavenge.extractNumTiers(components, scavBarID, scavField, scavIndex, accID);
+    if (count == 0)
+      revert("no scav rolls. node modal may be out of sync, showing already claimed rolls");
     LibScavenge.distributeRewards(world, components, scavBarID, count, accID);
 
     // standard logging and tracking
