@@ -288,7 +288,8 @@ Nedu,53,,Ingame,Requirement,QUEST,COMPLETE,,Completed Nomadic Explorer (52),52,,
 Nedu,53,,Ingame,Objective,MOVE,MIN,INC,Move 1000 times,,1000,No,,,,,,,,,,
 Nedu,53,,Ingame,Reward,ITEM,,,5x Best Ice Cream,21203,5,No,,,,,,,,,,
 Nedu,53,,Ingame,Reward,ITEM,,,1x XP Candy (Large),11203,1,No,,,,,,,,,,
-Nedu,54,A Terrible Tragedy,Ingame,Quest,,,,Harvest 10 hours at Airplane Crash,,,No,5,,"Hmm, this is unexpected.... There seems to be an anomaly in the readings from the crash site. I need you to investigate further. Have your Kamigotchi harvest at the Airplane Crash site. Be careful, though.... The energy there feels... heavy.",,Have completed Insect Node Coop,Harvest 10 hours at Airplane Crash,"1x Daffodil, 1 XP Candy (Medium)",,,
+Nedu,54,A Terrible Tragedy,Ingame,Quest,,,,Harvest 10 hours at Airplane Crash,,,No,5,,"Hmm, this is unexpected.... There seems to be an anomaly in the readings from the crash site. I need you to investigate further. Have your Kamigotchi harvest at the Airplane Crash site. Be careful, though.... The energy there feels... heavy.",,Have completed Insect Node Coop & Scouting Out (42),Harvest 10 hours at Airplane Crash,"1x Daffodil, 1 XP Candy (Medium)",,,
+Nedu,54,,For Implementation,Requirement,QUEST,COMPLETE,,Have completed Scouting Out (42),42,,No,,,,,,,,,,
 Nedu,54,,Ingame,Requirement,GOAL,COMPLETE,,Have completed Insect Node Coop,3,,No,,,,,,,,,,
 Nedu,54,,Ingame,Objective,HARVEST_TIME,MIN,INC,Harvest 10 hours at Airplane Crash,52,36000,No,,,,,,,,,,
 Nedu,54,,Ingame,Reward,ITEM,,,1x Daffodil,110,1,No,,,,,,,,,,
@@ -315,6 +316,6 @@ Well, it's nice to see you back. This time round, a few of the rewards have been
 "Nedu, Lethe Asphodel",10001,,Shelved,Reward,ITEM,,,1x Large XP Candy,11203,1,No,,,,,,,,,,
 ,10002,Fountain of Revival [Daily],Ingame,Quest,,,,,,,Yes,,,"Kamigotchi rise, fall, and rise again......
 
-Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),Liquidate one of Plotchy's Kamigotchi,"5x Giftbox, 1 Large XP Candy",,,
+Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),,1x Red Gakki Ribbon,,,
 ,10002,,Ingame,Requirement,ROOM,IS,,At room 11,11,,No,,,,,,,,,,
 ,10002,,Ingame,Reward,ITEM,,,1 Revive,11001,1,No,,,,,,,,,,
