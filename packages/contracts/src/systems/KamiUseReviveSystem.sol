@@ -21,8 +21,8 @@ contract KamiUseReviveSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    require(LibItem.isTypeOf(components, itemIndex, "REVIVE"), "that's not a revive");
-    require(LibItem.isForPet(components, itemIndex), "that's not for kamis");
+    LibItem.checkTypeOf(components, itemIndex, "REVIVE");
+    LibItem.checkForPet(components, itemIndex);
 
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);

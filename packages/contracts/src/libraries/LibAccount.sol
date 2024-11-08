@@ -12,7 +12,7 @@ import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAcc
 import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
-import { CacheOperatorComponent, ID as CacheOperatorCompID } from "components/CacheOperatorComponent.sol";
+import { CacheOperatorComponent as CacheOpComponent, ID as CacheOpCompID } from "components/CacheOperatorComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -51,7 +51,7 @@ library LibAccount {
     AddressOperatorComponent(getAddrByID(components, AddrOperatorCompID)).set(id, operatorAddr);
     IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, 1);
     TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
-    CacheOperatorComponent(getAddrByID(components, CacheOperatorCompID)).set(
+    CacheOpComponent(getAddrByID(components, CacheOpCompID)).set(
       uint256(uint160(operatorAddr)),
       id
     );
@@ -82,7 +82,7 @@ library LibAccount {
 
   function syncAndUseStamina(IUintComp components, uint256 id, int32 amt) internal {
     int32 current = syncStamina(components, id); // splitting up could be cleaner
-    require(current + amt >= 0, "Account: insufficient stamina");
+    if (current + amt < 0) revert("Account: insufficient stamina");
     LibStat.sync(components, "STAMINA", amt, id); // optimisable: double sync
   }
 
@@ -116,7 +116,7 @@ library LibAccount {
     } else if (LibString.eq(_type, "REPUTATION")) {
       LibFactions.incRep(components, holderID, index, amount);
     } else {
-      require(false, "LibAccount: unknown type");
+      revert("LibAccount: unknown type");
     }
   }
 
@@ -131,7 +131,7 @@ library LibAccount {
     if (LibString.eq(_type, "ITEM")) {
       LibInventory.decFor(components, holderID, index, amount);
     } else {
-      require(false, "LibAccount: unknown type");
+      revert("LibAccount: unknown type");
     }
   }
 
@@ -148,9 +148,7 @@ library LibAccount {
   // SETTERS
 
   function setOperator(IUintComp components, uint256 id, address addr, address prevAddr) internal {
-    CacheOperatorComponent cacheComp = CacheOperatorComponent(
-      getAddrByID(components, CacheOperatorCompID)
-    );
+    CacheOpComponent cacheComp = CacheOpComponent(getAddrByID(components, CacheOpCompID));
     cacheComp.remove(uint256(uint160(prevAddr)));
     cacheComp.set(uint256(uint160(addr)), id);
     AddressOperatorComponent(getAddrByID(components, AddrOperatorCompID)).set(id, addr);
@@ -191,10 +189,7 @@ library LibAccount {
   }
 
   function operatorInUse(IUintComp components, address operator) internal view returns (bool) {
-    return
-      CacheOperatorComponent(getAddrByID(components, CacheOperatorCompID)).has(
-        uint256(uint160(operator))
-      );
+    return CacheOpComponent(getAddrByID(components, CacheOpCompID)).has(uint256(uint160(operator)));
   }
 
   /////////////////
@@ -261,12 +256,11 @@ library LibAccount {
 
   // Get an account entity by Wallet address. Assume only 1.
   function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
-    CacheOperatorComponent cacheComp = CacheOperatorComponent(
-      getAddrByID(components, CacheOperatorCompID)
+    uint256 value = CacheOpComponent(getAddrByID(components, CacheOpCompID)).safeGet(
+      uint256(uint160(operator)) // operator address as entityID
     );
-    uint256 id = uint256(uint160(operator));
-    require(cacheComp.has(id), "Account: Operator not found");
-    return cacheComp.get(id);
+    if (value == 0) revert("Account: Operator not found");
+    return value;
   }
 
   // Get the account of an owner. Assume only 1.

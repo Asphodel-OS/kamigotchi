@@ -19,14 +19,14 @@ function addressToEntity(address addr) pure returns (uint256) {
 /// @notice Get an Ethereum address from an address/id registry component (like _components/_systems in World.sol)
 function getAddrByID(IUint256Component registry, uint256 id) view returns (address) {
   uint256[] memory entities = registry.getEntitiesWithValue(id);
-  require(entities.length != 0, "id not registered");
+  if (entities.length == 0) revert("id not registered");
   return entityToAddress(entities[0]);
 }
 
 /// @notice Get an entity id from an address/id registry component (like _components/_systems in World.sol)
 function getIdByAddress(IUint256Component registry, address addr) view returns (uint256 id) {
   id = registry.safeGet(addressToEntity(addr));
-  require(id != 0, "address not registered");
+  if (id == 0) revert("address not registered");
 }
 
 /// @notice Get a Component from an address/id registry component (like _components in World.sol)

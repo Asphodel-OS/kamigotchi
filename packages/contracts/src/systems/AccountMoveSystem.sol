@@ -21,14 +21,12 @@ contract AccountMoveSystem is System {
     uint256 currRoomID = LibRoom.getByIndex(components, currIndex);
     uint256 toRoomID = LibRoom.getByIndex(components, toIndex);
 
-    require(
-      LibRoom.isReachable(components, toIndex, currRoomID, toRoomID),
-      "AccMove: unreachable room"
-    );
-    require(
-      LibRoom.isAccessible(components, currIndex, toIndex, accID),
-      "AccMove: inaccessible room"
-    );
+    if (!LibRoom.isReachable(components, toIndex, currRoomID, toRoomID)) {
+      revert("AccMove: unreachable room");
+    }
+    if (!LibRoom.isAccessible(components, currIndex, toIndex, accID)) {
+      revert("AccMove: inaccessible room");
+    }
 
     // implicit stamina check
     LibAccount.move(components, accID, toIndex);

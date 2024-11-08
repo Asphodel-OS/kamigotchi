@@ -40,7 +40,7 @@ contract ItemBurnerTest is SetupTemplate {
     indices[0] = 2;
     amts[0] = 1;
     vm.prank(alice.operator);
-    vm.expectRevert("ItemBurn: not burnable");
+    vm.expectRevert("item not burnable");
     _ItemBurnSystem.executeTyped(indices, amts);
 
     // try unburnable (mixed batch)
@@ -51,7 +51,7 @@ contract ItemBurnerTest is SetupTemplate {
     amts[0] = 1;
     amts[1] = 1;
     vm.prank(alice.operator);
-    vm.expectRevert("ItemBurn: not burnable");
+    vm.expectRevert("item not burnable");
     _ItemBurnSystem.executeTyped(indices, amts);
   }
 

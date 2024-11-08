@@ -16,10 +16,10 @@ contract AccountSetNameSystem is System {
     string memory name = abi.decode(arguments, (string));
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
-    require(accID != 0, "Account: does not exist");
-    require(bytes(name).length > 0, "Account: name cannot be empty");
-    require(bytes(name).length <= 16, "Account: name must be < 16chars");
-    require(LibAccount.getByName(components, name) == 0, "Account: name taken");
+    if (accID == 0) revert("Account: does not exist");
+    if (bytes(name).length == 0) revert("Account: name cannot be empty");
+    if (bytes(name).length > 16) revert("Account: name must be < 16chars");
+    if (LibAccount.getByName(components, name) != 0) revert("Account: name taken");
 
     LibAccount.setName(components, accID, name);
 

@@ -189,7 +189,7 @@ library LibInventory {
 
     // removing from
     uint256 fromBal = comp.get(fromID);
-    require(fromBal >= amt, "Inventory: insufficient balance");
+    if (fromBal < amt) revert("Inventory: insufficient balance");
     comp.set(fromID, fromBal - amt);
 
     // adding to

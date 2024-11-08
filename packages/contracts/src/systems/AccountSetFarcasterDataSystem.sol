@@ -16,10 +16,10 @@ contract AccountSetFarcasterDataSystem is System {
     (uint32 fid, string memory pfpURI) = abi.decode(arguments, (uint32, string));
 
     uint256 accID = LibAccount.getByFarcasterIndex(components, fid);
-    require(accID == 0, "Account: fid already claimed");
+    if (accID != 0) revert("Account: fid already claimed");
 
     accID = LibAccount.getByOwner(components, msg.sender);
-    require(accID != 0, "Account: does not exist");
+    if (accID == 0) revert("Account: no account");
 
     LibAccount.setFarcasterIndex(components, accID, fid);
     LibAccount.setMediaURI(components, accID, pfpURI);

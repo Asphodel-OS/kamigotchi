@@ -22,11 +22,8 @@ contract KamiUseSkillResetSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    require(
-      LibItem.isTypeOf(components, itemIndex, "SKILL_RESET"),
-      "that's not a skill reset item"
-    );
-    require(LibItem.isForPet(components, itemIndex), "that's not for kamis");
+    LibItem.checkTypeOf(components, itemIndex, "SKILL_RESET");
+    LibItem.checkForPet(components, itemIndex);
 
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);

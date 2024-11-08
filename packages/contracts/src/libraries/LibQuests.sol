@@ -197,7 +197,7 @@ library LibQuests {
       } else if (handler == HANDLER.BOOLEAN) {
         result = LibConditional.checkBool(components, accID, objs[i], operator);
       } else {
-        require(false, "Unknown objective handler");
+        revert("Unknown objective handler");
       }
 
       if (!result) return false;
@@ -225,10 +225,10 @@ library LibQuests {
     LOGIC logic
   ) internal view returns (bool) {
     uint256 snapshotID = getSnapshotObjective(components, questID, data);
-    require(
-      snapshotID != 0,
-      "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
-    ); // longtext >< for a user call to action
+    if (snapshotID == 0)
+      revert(
+        "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
+      ); // longtext >< for a user call to action
 
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
     uint256 prevValue = ValueComponent(getAddrByID(components, ValueCompID)).get(snapshotID);
@@ -248,10 +248,10 @@ library LibQuests {
     LOGIC logic
   ) internal view returns (bool) {
     uint256 snapshotID = getSnapshotObjective(components, questID, data);
-    require(
-      snapshotID != 0,
-      "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
-    ); // longtext >< for a user call to action
+    if (snapshotID == 0)
+      revert(
+        "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
+      ); // longtext >< for a user call to action
 
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
     uint256 prevValue = ValueComponent(getAddrByID(components, ValueCompID)).get(snapshotID);

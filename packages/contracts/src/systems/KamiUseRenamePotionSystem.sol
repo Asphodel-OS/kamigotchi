@@ -21,8 +21,8 @@ contract KamiUseRenamePotionSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    require(LibItem.isTypeOf(components, itemIndex, "RENAME_POTION"), "that's not a rename potion");
-    require(LibItem.isForPet(components, itemIndex), "that's not for kamis");
+    LibItem.checkTypeOf(components, itemIndex, "RENAME_POTION");
+    LibItem.checkForPet(components, itemIndex);
 
     // pet checks
     LibKami.assertAccount(components, kamiID, accID);

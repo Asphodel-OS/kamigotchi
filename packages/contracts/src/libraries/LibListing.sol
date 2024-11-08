@@ -85,7 +85,7 @@ library LibListing {
     uint256 amt
   ) internal returns (uint256 total) {
     uint256 price = getBuyPrice(components, listingID);
-    require(price > 0, "Listing.Buy(): invalid listing");
+    if (price == 0) revert("Listing.Buy(): invalid listing");
 
     total = amt * price;
     LibInventory.incFor(components, accID, itemIndex, amt);
@@ -101,7 +101,7 @@ library LibListing {
     uint256 amt
   ) internal returns (uint256 total) {
     uint256 price = getSellPrice(components, listingID);
-    require(price > 0, "Listing.Sell(): invalid listing");
+    if (price == 0) revert("Listing.Sell(): invalid listing");
 
     total = amt * price;
     LibInventory.decFor(components, accID, itemIndex, amt);

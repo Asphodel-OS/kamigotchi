@@ -121,7 +121,7 @@ library LibRandom {
     uint32[] memory results = new uint32[](count);
     uint256 max = keys.length;
 
-    require(count <= max, "LibRandom: not enough keys");
+    if (count > max) revert("LibRandom: not enough keys");
 
     for (uint256 i; i < count; i++) {
       randN = uint256(keccak256(abi.encode(randN, i)));
@@ -142,7 +142,7 @@ library LibRandom {
     uint256 max = keys.length;
     uint256 count = randNs.length;
 
-    require(count <= max, "LibRandom: not enough keys");
+    if (count > max) revert("LibRandom: not enough keys");
 
     uint32[] memory results = new uint32[](count);
     for (uint256 i; i < count; i++) {

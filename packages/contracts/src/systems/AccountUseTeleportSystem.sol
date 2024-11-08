@@ -20,8 +20,8 @@ contract AccountUseTeleportSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    require(LibItem.isTypeOf(components, itemIndex, "TELEPORT"), "that's not a teleport");
-    require(LibItem.isForAccount(components, itemIndex), "that's not for accounts");
+    LibItem.checkTypeOf(components, itemIndex, "TELEPORT");
+    LibItem.checkForAccount(components, itemIndex);
 
     // use items
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check

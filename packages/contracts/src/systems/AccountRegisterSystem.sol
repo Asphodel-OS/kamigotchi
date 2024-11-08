@@ -15,13 +15,13 @@ contract AccountRegisterSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (address operator, string memory name) = abi.decode(arguments, (address, string));
     // address unqiueness  constraints
-    require(!LibAccount.ownerInUse(components, msg.sender), "Account: exists for Owner");
-    require(!LibAccount.operatorInUse(components, operator), "Account: exists for Operator");
+    if (LibAccount.ownerInUse(components, msg.sender)) revert("Account: exists for Owner");
+    if (LibAccount.operatorInUse(components, operator)) revert("Account: exists for Operator");
 
     // check for naming constraints
-    require(bytes(name).length > 0, "Account: name cannot be empty");
-    require(bytes(name).length <= 16, "Account: name must be < 16chars");
-    require(LibAccount.getByName(components, name) == 0, "Account: name taken");
+    if (bytes(name).length == 0) revert("Account: name cannot be empty");
+    if (bytes(name).length > 16) revert("Account: name must be < 16chars");
+    if (LibAccount.getByName(components, name) != 0) revert("Account: name taken");
 
     uint256 accID = LibAccount.create(components, msg.sender, operator);
     LibAccount.setName(components, accID, name);

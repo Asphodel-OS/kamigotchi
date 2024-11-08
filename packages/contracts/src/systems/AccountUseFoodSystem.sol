@@ -20,8 +20,8 @@ contract AccountUseFoodSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    require(LibItem.isTypeOf(components, itemIndex, "FOOD"), "that's not food");
-    require(LibItem.isForAccount(components, itemIndex), "that's not for accounts");
+    LibItem.checkTypeOf(components, itemIndex, "FOOD");
+    LibItem.checkForAccount(components, itemIndex);
 
     // use items
     LibAccount.syncStamina(components, accID);

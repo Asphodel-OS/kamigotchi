@@ -158,23 +158,21 @@ library LibKami {
   /////////////////
   // CHECKERS
 
-  /// @notice require that a kami is owned by an account
+  /// @notice revert if  a kami is not owned by an account
   /// @dev implicit isKami check - only kamis are mapped to IDOwnsKamiComponent
   function assertAccount(IUintComp components, uint256 id, uint256 accID) internal view {
-    require(
-      IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) == accID,
-      "kami not urs"
-    );
+    if (IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) != accID)
+      revert("kami not urs");
   }
 
   function assertAccount(IUintComp components, uint256[] memory ids, uint256 accID) internal view {
     uint256[] memory owners = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(
       ids
     );
-    for (uint256 i; i < ids.length; i++) require(owners[i] == accID, "kami not urs");
+    for (uint256 i; i < ids.length; i++) if (owners[i] != accID) revert("kami not urs");
   }
 
-  /// @notice require kami in same room as account
+  /// @notice revert if kami is not in same room as account
   function assertRoom(IUintComp components, uint256 kamiID, uint256 accID) internal view {
     string memory state = getState(components, kamiID);
 
@@ -190,7 +188,7 @@ library LibKami {
       sameRoom = false; // outside
     } else sameRoom = true;
 
-    require(sameRoom, "kami too far");
+    if (!sameRoom) revert("kami too far");
   }
 
   function assertRoom(IUintComp components, uint256 kamiID) internal view {

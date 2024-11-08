@@ -133,7 +133,7 @@ library LibCommit {
   // gets seed from future blockhash and entityID. blockhash needs to be revealed within 256 blocks
   function hashSeed(uint256 blocknumber, uint256 entityID) internal view returns (uint256) {
     uint256 bhash = uint256(blockhash(blocknumber));
-    require(bhash != 0, "Blockhash unavailable. Contact admin");
+    if (bhash == 0) revert("Blockhash unavailable. Contact admin");
     return uint256(keccak256(abi.encodePacked(bhash, entityID)));
   }
 

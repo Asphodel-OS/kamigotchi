@@ -22,7 +22,8 @@ contract ItemBurnSystem is System {
     (uint32[] memory indices, uint256[] memory amts) = abi.decode(arguments, (uint32[], uint256[]));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    require(LibItem.isBurnable(components, indices), "ItemBurn: not burnable");
+    // checks
+    LibItem.checkBurnable(components, indices);
 
     // burning
     LibInventory.decForBatch(components, accID, indices, amts); // implicit inventory balance check

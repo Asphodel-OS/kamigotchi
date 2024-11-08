@@ -88,7 +88,7 @@ library LibGetter {
     } else if (_type.eq("COOLDOWN")) {
       return LibCooldown.isActive(components, targetID);
     } else {
-      require(false, "Unknown bool condition type");
+      revert("Unknown bool condition type");
     }
   }
 

@@ -143,53 +143,37 @@ library LibItem {
   // CHECKERS
 
   /// @notice check if entity is an item of specific type
-  function isTypeOf(
-    IUintComp components,
-    uint32 index,
-    string memory type_
-  ) internal view returns (bool) {
+  function checkTypeOf(IUintComp components, uint32 index, string memory type_) internal view {
     uint256 id = genID(index);
-    return
-      LibEntityType.isShape(components, id, "ITEM") ||
-      getCompByID(components, TypeCompID).eqString(id, type_);
+    if (!LibEntityType.isShape(components, id, "ITEM")) revert("thats not an item");
+    if (!getCompByID(components, TypeCompID).eqString(id, type_))
+      revert(LibString.concat("thats not item type ", type_));
   }
 
-  function isTypeOf(
+  function checkTypeOf(
     IUintComp components,
     uint32[] memory indices,
     string memory type_
   ) internal view returns (bool) {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
-    return
-      LibEntityType.isShape(components, ids, "ITEM") ||
-      LibComp.eqString(getCompByID(components, TypeCompID), ids, type_);
+    if (!LibEntityType.isShape(components, ids, "ITEM")) revert("thats not an item");
+    if (!getCompByID(components, TypeCompID).eqString(ids, type_))
+      revert(LibString.concat("thats not item type ", type_));
   }
 
-  function isBurnable(IUintComp components, uint32 index) internal view returns (bool) {
-    uint256 id = genID(index);
-    return !LibFlag.has(components, id, "ITEM_UNBURNABLE");
-  }
-
-  function isBurnable(IUintComp components, uint32[] memory indices) internal view returns (bool) {
+  function checkBurnable(IUintComp components, uint32[] memory indices) internal view {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
-    return LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false);
+    if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
   }
 
-  // check whether an entity is consumable by its index
-  function isConsumable(IUintComp components, uint32 index) internal view returns (bool) {
-    uint256 id = genID(index);
-    // return getCompByID(components, IsConsumableCompID).has(id);
-    return true;
+  function checkForAccount(IUintComp components, uint32 index) internal view {
+    if (!LibFor.isForAccount(components, genID(index))) revert("that's not for accounts");
   }
 
-  function isForAccount(IUintComp components, uint32 index) internal view returns (bool) {
-    return LibFor.isForAccount(components, genID(index));
-  }
-
-  function isForPet(IUintComp components, uint32 index) internal view returns (bool) {
-    return LibFor.isForPet(components, genID(index));
+  function checkForPet(IUintComp components, uint32 index) internal view {
+    if (!LibFor.isForPet(components, genID(index))) revert("that's not for kamis");
   }
 
   // NOTE: temporary function as we decide how to identify revives with out type_

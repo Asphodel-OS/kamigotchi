@@ -4,14 +4,19 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.t.sol";
 
 contract AccItemsTest is SetupTemplate {
-  uint32 petItemIndex = 998;
+  uint32 petFoodIndex = 998;
+  uint32 petTeleportIndex = 997;
   uint32 wrongTypeItemIndex = 999;
 
   function setUpItems() public override {
-    // wrong pet consumable
+    // wrong pet consumables
     vm.startPrank(deployer);
     __ItemRegistrySystem.createConsumable(
-      abi.encode(petItemIndex, "KAMI", "name", "description", "FOOD", "media")
+      abi.encode(petFoodIndex, "KAMI", "name", "description", "FOOD", "media")
+    );
+    vm.startPrank(deployer);
+    __ItemRegistrySystem.createConsumable(
+      abi.encode(petTeleportIndex, "KAMI", "name", "description", "TELEPORT", "media")
     );
     // wrong type consumable
     __ItemRegistrySystem.createConsumable(
@@ -31,7 +36,7 @@ contract AccItemsTest is SetupTemplate {
     _giveItem(alice, itemIndex, 1);
 
     // testing item checks
-    assertTypeAndFor(_AccountUseFoodSystem);
+    assertTypeAndFor(_AccountUseFoodSystem, petFoodIndex);
 
     // setting stamina
     vm.startPrank(deployer);
@@ -59,7 +64,7 @@ contract AccItemsTest is SetupTemplate {
     _giveItem(alice, itemIndex, 1);
 
     // testing item checks
-    assertTypeAndFor(_AccountUseTeleportSystem);
+    assertTypeAndFor(_AccountUseTeleportSystem, petTeleportIndex);
 
     // using item
     vm.prank(alice.operator);
@@ -70,10 +75,10 @@ contract AccItemsTest is SetupTemplate {
   /////////////////
   // UTILS
 
-  function assertTypeAndFor(ISystem system) public {
+  function assertTypeAndFor(ISystem system, uint32 wrongItem) public {
     vm.prank(alice.operator);
     vm.expectRevert("that's not for accounts");
-    system.execute(abi.encode(petItemIndex));
+    system.execute(abi.encode(wrongItem));
 
     vm.prank(alice.operator);
     vm.expectRevert(); // could be different type errors

@@ -138,7 +138,7 @@ library LibConditional {
     (HANDLER handler, LOGIC logic) = parseLogic(data);
     if (handler == HANDLER.CURRENT) return checkCurr(components, targetID, data, logic);
     else if (handler == HANDLER.BOOLEAN) return checkBool(components, targetID, data, logic);
-    else require(false, "Handler not yet implemented");
+    else revert("Handler not yet implemented");
   }
 
   /// @notice checks for a current value against an account
@@ -161,7 +161,7 @@ library LibConditional {
   ) internal view returns (bool result) {
     result = LibGetter.getBool(components, targetID, data.type_, data.index, data.value);
     if (logic == LOGIC.NOT) result = !result;
-    else require(logic == LOGIC.IS, "Unknown bool logic operator");
+    else if (logic != LOGIC.IS) revert("Unknown bool logic operator");
   }
 
   ///////////////////////
@@ -260,27 +260,22 @@ library LibConditional {
     else if (logicType.startsWith("INC")) handler = HANDLER.INCREASE;
     else if (logicType.startsWith("DEC")) handler = HANDLER.DECREASE;
     else if (logicType.startsWith("BOOL")) handler = HANDLER.BOOLEAN;
-    else require(false, "Unknown condition handler");
+    else revert("Unknown condition handler");
 
     if (logicType.endsWith("MIN")) operator = LOGIC.MIN;
     else if (logicType.endsWith("MAX")) operator = LOGIC.MAX;
     else if (logicType.endsWith("EQUAL")) operator = LOGIC.EQUAL;
     else if (logicType.endsWith("IS")) operator = LOGIC.IS;
     else if (logicType.endsWith("NOT")) operator = LOGIC.NOT;
-    else require(false, "Unknown condition operator");
+    else revert("Unknown condition operator");
 
     return (handler, operator);
   }
 
   function _checkLogicOperator(uint256 a, uint256 b, LOGIC logic) internal pure returns (bool) {
-    if (logic == LOGIC.MIN) {
-      return a >= b;
-    } else if (logic == LOGIC.MAX) {
-      return a <= b;
-    } else if (logic == LOGIC.EQUAL) {
-      return a == b;
-    } else {
-      require(false, "Unknown logic operator");
-    }
+    if (logic == LOGIC.MIN) return a >= b;
+    else if (logic == LOGIC.MAX) return a <= b;
+    else if (logic == LOGIC.EQUAL) return a == b;
+    else revert("Unknown logic operator");
   }
 }
