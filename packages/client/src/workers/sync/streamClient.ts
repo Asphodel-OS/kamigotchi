@@ -5,10 +5,10 @@ import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
 
 import {
-  KamigazeServiceClient,
-  KamigazeServiceDefinition,
-  StreamResponse,
-} from 'engine/types/kamigaze/kamigaze';
+  ECSStreamBlockBundleReply,
+  ECSStreamServiceClient,
+  ECSStreamServiceDefinition,
+} from 'engine/types/ecs-stream/ecs-stream';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { debug as parentDebug } from '../debug';
 import {
@@ -22,8 +22,13 @@ import { createDecode, groupByTxHash } from './utils';
 
 const debug = parentDebug.extend('syncUtils');
 
-export function createKamigazeStreamClient(url: string): KamigazeServiceClient {
-  return createClient(KamigazeServiceDefinition, createChannel(url, grpc.WebsocketTransport()));
+/**
+ * Create a ECSStreamServiceClient
+ * @param url ECSStreamService URL
+ * @returns ECSStreamServiceClient
+ */
+export function createStreamClient(url: string): ECSStreamServiceClient {
+  return createClient(ECSStreamServiceDefinition, createChannel(url, grpc.WebsocketTransport()));
 }
 
 /**
@@ -35,14 +40,14 @@ export function createKamigazeStreamClient(url: string): KamigazeServiceClient {
  * @param transformWorldEvents Function to transform World events from a stream service ({@link createTransformWorldEventsFromStream}).
  * @returns Stream of {@link NetworkComponentUpdate}s.
  */
-export function createKamigazeStreamService(
+export function createLatestEventStreamService(
   streamServiceUrl: string,
   worldAddress: string,
   transformWorldEvents: ReturnType<typeof createTransformWorldEventsFromStream>,
   includeSystemCalls: boolean
 ): Observable<NetworkEvent> {
-  const streamServiceClient = createKamigazeStreamClient(streamServiceUrl);
-  const response = streamServiceClient.subscribeToStream({
+  const streamServiceClient = createStreamClient(streamServiceUrl);
+  const response = streamServiceClient.subscribeToStreamLatest({
     worldAddress,
     blockNumber: true,
     blockHash: true,
@@ -51,11 +56,13 @@ export function createKamigazeStreamService(
     ecsEvents: true,
     ecsEventsIncludeTxMetadata: includeSystemCalls,
   });
+
   // Turn stream responses into rxjs NetworkEvent
   return from(response).pipe(
     map(async (responseChunk) => {
       const events = await transformWorldEvents(responseChunk);
       debug(`got ${events.length} events from block ${responseChunk.blockNumber}`);
+
       if (includeSystemCalls && events.length > 0) {
         const systemCalls = parseSystemCallsFromStreamEvents(events);
         return [...events, ...systemCalls];
@@ -74,7 +81,7 @@ export function createKamigazeStreamService(
  * @returns Function to transform World contract events from a stream service.
  */
 export function createTransformWorldEventsFromStream(decode: ReturnType<typeof createDecode>) {
-  return async (message: StreamResponse) => {
+  return async (message: ECSStreamBlockBundleReply) => {
     const { blockNumber, ecsEvents } = message;
 
     const convertedEcsEvents: NetworkComponentUpdate[] = [];

@@ -17,7 +17,6 @@ import {
   map,
   Observable,
   of,
-  retry,
   Subject,
   take,
 } from 'rxjs';
@@ -45,9 +44,9 @@ import {
 } from './cache';
 import { getStateReport } from './cache/CacheStore';
 import {
-  createKamigazeStreamService,
+  createLatestEventStreamService,
   createTransformWorldEventsFromStream,
-} from './kamigazeStreamClient';
+} from './streamClient';
 import {
   createDecode,
   createFetchSystemCallsFromEvents,
@@ -186,13 +185,12 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     // Setup Stream Service -> RPC event stream fallback
     const transformWorldEvents = createTransformWorldEventsFromStream(decode);
     const latestEvent$ = streamServiceUrl
-      ? createKamigazeStreamService(
+      ? createLatestEventStreamService(
           streamServiceUrl,
           worldContract.address,
           transformWorldEvents,
           Boolean(fetchSystemCalls)
         ).pipe(
-          retry({ delay: 500 }), // Retry once after 5 seconds
           catchError((err) => {
             console.error('SyncWorker stream service error, falling back to RPC', err);
             return latestEventRPC$;

@@ -93,9 +93,8 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     jsonRpc:
       'https://maze-jsonrpc-s2-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
     wsRpc:
-      'https://maze-ws-s2-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
+      'wss://maze-ws-s2-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
-    streamServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 4471190363524365,
