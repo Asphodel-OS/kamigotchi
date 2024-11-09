@@ -1,192 +1,185 @@
 {
   "components": [
-    { "comp": "AddressOperatorComponent", "name": "OperatorAddress", "type": "address" },
-    { "comp": "AddressOwnerComponent", "name": "OwnerAddress", "type": "address" },
-    { "comp": "AffinityComponent", "name": "Affinity", "type": "string" },
-    { "comp": "BlacklistComponent", "name": "Blacklist", "type": "uint32[]" },
-    { "comp": "BlockRevealComponent", "name": "RevealBlock", "type": "uint256" },
-    { "comp": "CacheOperatorComponent", "name": "OperatorCache", "type": "address", "FEtype": "number" },
-    { "comp": "CostComponent", "name": "Cost", "type": "uint256" },
-    { "comp": "DescriptionAltComponent", "name": "DescriptionAlt", "type": "string" },
-    { "comp": "DescriptionComponent", "name": "Description", "type": "string" },
-    { "comp": "EntityTypeComponent", "name": "EntityType", "type": "string" },
-    { "comp": "ExitsComponent", "name": "Exits", "type": "uint32[]" },
-    { "comp": "ExperienceComponent", "name": "Experience", "type": "uint256" },
-    { "comp": "FarcasterIndexComponent", "name": "FarcasterIndex", "type": "uint32" },
-    { "comp": "ForComponent", "name": "For", "type": "uint256" },
-    { "comp": "HasFlagComponent", "name": "HasFlag", "type": "bool" },
-    { "comp": "HarmonyComponent", "name": "Harmony", "type": "Stat" },
-    { "comp": "HealthComponent", "name": "Health", "type": "Stat" },
-    { "comp": "IDFromComponent", "name": "FromID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdHolderComponent", "name": "HolderID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDParentComponent", "name": "ParentID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDOwnsInventoryComponent", "name": "OwnsInventoryID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDOwnsQuestComponent", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDOwnsRelationshipComponent", "name": "OwnsRelationshipID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDOwnsSkillComponent", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDOwnsKamiComponent", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDRoomComponent", "name": "RoomID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdSourceComponent", "name": "SourceID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDTypeComponent", "name": "TypeID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IdTargetComponent", "name": "TargetID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IDToComponent", "name": "ToID", "type": "uint256", "FEtype": "string" },
-    { "comp": "IndexComponent", "name": "Index", "type": "uint32" },
-    { "comp": "IndexAccountComponent", "name": "AccountIndex", "type": "uint32" },
-    { "comp": "IndexBackgroundComponent", "name": "BackgroundIndex", "type": "uint32" },
-    { "comp": "IndexBodyComponent", "name": "BodyIndex", "type": "uint32" },
-    { "comp": "IndexColorComponent", "name": "ColorIndex", "type": "uint32" },
-    { "comp": "IndexFaceComponent", "name": "FaceIndex", "type": "uint32" },
-    { "comp": "IndexFactionComponent", "name": "FactionIndex", "type": "uint32" },
-    { "comp": "IndexHandComponent", "name": "HandIndex", "type": "uint32" },
-    { "comp": "IndexItemComponent", "name": "ItemIndex", "type": "uint32" },
-    { "comp": "IndexNodeComponent", "name": "NodeIndex", "type": "uint32" },
-    { "comp": "IndexNPCComponent", "name": "NPCIndex", "type": "uint32" },
-    { "comp": "IndexKamiComponent", "name": "KamiIndex", "type": "uint32" },
-    { "comp": "IndexQuestComponent", "name": "QuestIndex", "type": "uint32" },
-    { "comp": "IndexRecipeComponent", "name": "RecipeIndex", "type": "uint32" },
-    { "comp": "IndexRelationshipComponent", "name": "RelationshipIndex", "type": "uint32" },
-    { "comp": "IndexRoomComponent", "name": "RoomIndex", "type": "uint32" },
-    { "comp": "IndexSkillComponent", "name": "SkillIndex", "type": "uint32" },
-    { "comp": "IsCompleteComponent", "name": "IsComplete", "type": "bool" },
-    { "comp": "IsKillComponent", "name": "IsKill", "type": "bool" },
-    { "comp": "IsRegistryComponent", "name": "IsRegistry", "type": "bool" },
-    { "comp": "IsRepeatableComponent", "name": "IsRepeatable", "type": "bool" },
-    { "comp": "KeysComponent", "name": "Keys", "type": "uint32[]" },
-    { "comp": "LevelComponent", "name": "Level", "type": "uint256" },
-    { "comp": "LocationComponent", "name": "Location", "type": "Coord" },
-    { "comp": "LogicTypeComponent", "name": "LogicType", "type": "string" },
-    { "comp": "MaxComponent", "name": "Max", "type": "uint256" },
-    { "comp": "MediaURIComponent", "name": "MediaURI", "type": "string" },
-    { "comp": "NameComponent", "name": "Name", "type": "string" },
-    { "comp": "PowerComponent", "name": "Power", "type": "Stat" },
-    { "comp": "ProxyPermissionsERC721Component", "name": "ProxyPermissionsERC721", "type": "bool" },
-    { "comp": "RarityComponent", "name": "Rarity", "type": "uint256" },
-    { "comp": "RateComponent", "name": "Rate", "type": "uint256" },
-    { "comp": "RerollComponent", "name": "Reroll", "type": "uint256" },
-    { "comp": "SkillPointComponent", "name": "SkillPoint", "type": "uint256" },
-    { "comp": "SlotsComponent", "name": "Slots", "type": "Stat" },
-    { "comp": "StaminaComponent", "name": "Stamina", "type": "Stat" },
-    { "comp": "StateComponent", "name": "State", "type": "string" },
-    { "comp": "SubtypeComponent", "name": "Subtype", "type": "string" },
-    { "comp": "TimeComponent", "name": "Time", "type": "uint256" },
-    { "comp": "TimeLastActionComponent", "name": "LastActionTime", "type": "uint256" },
-    { "comp": "TimeLastComponent", "name": "LastTime", "type": "uint256" },
-    { "comp": "TimelockComponent", "name": "Timelock", "type": "TimelockOp" },
-    { "comp": "TimeResetComponent", "name": "ResetTime", "type": "uint256" },
-    { "comp": "TimeStartComponent", "name": "StartTime", "type": "uint256" },
-    { "comp": "TypeComponent", "name": "Type", "type": "string" },
-    { "comp": "ValueComponent", "name": "Value", "type": "uint256" },
-    { "comp": "ValuesComponent", "name": "Values", "type": "uint256[]" },
-    { "comp": "ViolenceComponent", "name": "Violence", "type": "Stat" },
-    { "comp": "WeightsComponent", "name": "Weights", "type": "uint256[]" },
-    { "comp": "WhitelistComponent", "name": "Whitelist", "type": "uint32[]" }
+    { "comp": "AddressOperator", "name": "OperatorAddress", "type": "address", "indexed": true },
+    { "comp": "AddressOwner", "name": "OwnerAddress", "type": "address", "indexed": true },
+    { "comp": "Affinity", "name": "Affinity", "type": "string" },
+    { "comp": "Blacklist", "name": "Blacklist", "type": "uint32[]" },
+    { "comp": "BlockReveal", "name": "RevealBlock", "type": "uint256" },
+    { "comp": "CacheOperator", "name": "OperatorCache", "type": "address", "FEtype": "number" },
+    { "comp": "Cost", "name": "Cost", "type": "uint256" },
+    { "comp": "DescriptionAlt", "name": "DescriptionAlt", "type": "string" },
+    { "comp": "Description", "name": "Description", "type": "string" },
+    { "comp": "EntityType", "name": "EntityType", "type": "string" },
+    { "comp": "Exits", "name": "Exits", "type": "uint32[]" },
+    { "comp": "Experience", "name": "Experience", "type": "uint256" },
+    { "comp": "FarcasterIndex", "name": "FarcasterIndex", "type": "uint32", "indexed": true },
+    { "comp": "For", "name": "For", "type": "uint256" },
+    { "comp": "HasFlag", "name": "HasFlag", "type": "bool", "indexed": true },
+    { "comp": "Harmony", "name": "Harmony", "type": "Stat" },
+    { "comp": "Health", "name": "Health", "type": "Stat" },
+    { "comp": "IDFrom", "name": "FromID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IdHolder", "name": "HolderID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDParent", "name": "ParentID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsInventory", "name": "OwnsInvID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsKami", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDRoom", "name": "RoomID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IdSource", "name": "SourceID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDType", "name": "TypeID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IdTarget", "name": "TargetID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDTo", "name": "ToID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "Index", "name": "Index", "type": "uint32" },
+    { "comp": "IndexAccount", "name": "AccountIndex", "type": "uint32", "indexed": true },
+    { "comp": "IndexBackground", "name": "BackgroundIndex", "type": "uint32" },
+    { "comp": "IndexBody", "name": "BodyIndex", "type": "uint32" },
+    { "comp": "IndexColor", "name": "ColorIndex", "type": "uint32" },
+    { "comp": "IndexFace", "name": "FaceIndex", "type": "uint32" },
+    { "comp": "IndexFaction", "name": "FactionIndex", "type": "uint32" },
+    { "comp": "IndexHand", "name": "HandIndex", "type": "uint32" },
+    { "comp": "IndexItem", "name": "ItemIndex", "type": "uint32" },
+    { "comp": "IndexNode", "name": "NodeIndex", "type": "uint32" },
+    { "comp": "IndexNPC", "name": "NPCIndex", "type": "uint32", "indexed": true },
+    { "comp": "IndexKami", "name": "KamiIndex", "type": "uint32", "indexed": true },
+    { "comp": "IndexQuest", "name": "QuestIndex", "type": "uint32" },
+    { "comp": "IndexRecipe", "name": "RecipeIndex", "type": "uint32", "indexed": true },
+    { "comp": "IndexRelationship", "name": "RelationshipIndex", "type": "uint32" },
+    { "comp": "IndexRoom", "name": "RoomIndex", "type": "uint32", "indexed": true },
+    { "comp": "IndexSkill", "name": "SkillIndex", "type": "uint32" },
+    { "comp": "IsComplete", "name": "IsComplete", "type": "bool" },
+    { "comp": "IsKill", "name": "IsKill", "type": "bool" },
+    { "comp": "IsRegistry", "name": "IsRegistry", "type": "bool" },
+    { "comp": "IsRepeatable", "name": "IsRepeatable", "type": "bool" },
+    { "comp": "Keys", "name": "Keys", "type": "uint32[]" },
+    { "comp": "Level", "name": "Level", "type": "uint256" },
+    { "comp": "Location", "name": "Location", "type": "Coord" },
+    { "comp": "LogicType", "name": "LogicType", "type": "string" },
+    { "comp": "Max", "name": "Max", "type": "uint256" },
+    { "comp": "MediaURI", "name": "MediaURI", "type": "string" },
+    { "comp": "Name", "name": "Name", "type": "string", "indexed": true },
+    { "comp": "Power", "name": "Power", "type": "Stat" },
+    { "comp": "ProxyPermissionsERC721", "name": "ProxyPermissionsERC721", "type": "bool" },
+    { "comp": "Rarity", "name": "Rarity", "type": "uint256" },
+    { "comp": "Rate", "name": "Rate", "type": "uint256" },
+    { "comp": "Reroll", "name": "Reroll", "type": "uint256" },
+    { "comp": "SkillPoint", "name": "SkillPoint", "type": "uint256" },
+    { "comp": "Slots", "name": "Slots", "type": "Stat" },
+    { "comp": "Stamina", "name": "Stamina", "type": "Stat" },
+    { "comp": "State", "name": "State", "type": "string", "indexed": true },
+    { "comp": "Subtype", "name": "Subtype", "type": "string" },
+    { "comp": "Time", "name": "Time", "type": "uint256" },
+    { "comp": "TimeLastAction", "name": "LastActionTime", "type": "uint256" },
+    { "comp": "TimeLast", "name": "LastTime", "type": "uint256" },
+    { "comp": "Timelock", "name": "Timelock", "type": "TimelockOp" },
+    { "comp": "TimeReset", "name": "ResetTime", "type": "uint256" },
+    { "comp": "TimeStart", "name": "StartTime", "type": "uint256" },
+    { "comp": "Type", "name": "Type", "type": "string", "indexed": true },
+    { "comp": "Value", "name": "Value", "type": "uint256" },
+    { "comp": "Values", "name": "Values", "type": "uint256[]" },
+    { "comp": "Violence", "name": "Violence", "type": "Stat" },
+    { "comp": "Weights", "name": "Weights", "type": "uint256[]" },
+    { "comp": "Whitelist", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
-      "writeAccess": ["HasFlagComponent", "IdHolderComponent", "TypeComponent"]
+      "writeAccess": ["HasFlag", "IdHolder", "Type"]
     },
     { "name": "_CreatePetSystem", "writeAccess": ["*"] },
     {
       "name": "_ConfigSetSystem",
-      "writeAccess": ["ValueComponent"]
+      "writeAccess": ["Value"]
     },
     {
       "name": "_FactionRegistrySystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IsRegistryComponent",
-        "IndexFactionComponent",
-        "NameComponent",
-        "DescriptionComponent",
-        "MediaURIComponent"
-      ]
+      "writeAccess": ["EntityType", "IsRegistry", "IndexFaction", "Name", "Description", "MediaURI"]
     },
     {
       "name": "_GoalRegistrySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "DescriptionComponent",
-        "IDParentComponent",
-        "IsCompleteComponent",
-        "IndexComponent",
-        "IndexRoomComponent",
-        "LevelComponent",
-        "LogicTypeComponent",
-        "KeysComponent",
-        "NameComponent",
-        "TypeComponent",
-        "ValueComponent",
-        "WeightsComponent",
-        "SubtypeComponent"
+        "EntityType",
+        "Description",
+        "IDParent",
+        "IsComplete",
+        "Index",
+        "IndexRoom",
+        "Level",
+        "LogicType",
+        "Keys",
+        "Name",
+        "Type",
+        "Value",
+        "Weights",
+        "Subtype"
       ]
     },
     {
       "name": "_ItemRegistrySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "DescriptionComponent",
-        "ExperienceComponent",
-        "ForComponent",
-        "HasFlagComponent",
-        "IDFromComponent",
-        "IdHolderComponent",
-        "IDToComponent",
-        "IsRegistryComponent",
-        "IndexItemComponent",
-        "IndexRoomComponent",
-        "HealthComponent",
-        "HarmonyComponent",
-        "PowerComponent",
-        "KeysComponent",
-        "WeightsComponent",
-        "NameComponent",
-        "MediaURIComponent",
-        "TypeComponent",
-        "SlotsComponent",
-        "StaminaComponent",
-        "ViolenceComponent"
+        "EntityType",
+        "Description",
+        "Experience",
+        "For",
+        "HasFlag",
+        "IDFrom",
+        "IdHolder",
+        "IDTo",
+        "IsRegistry",
+        "IndexItem",
+        "IndexRoom",
+        "Health",
+        "Harmony",
+        "Power",
+        "Keys",
+        "Weights",
+        "Name",
+        "MediaURI",
+        "Type",
+        "Slots",
+        "Stamina",
+        "Violence"
       ]
     },
     {
       "name": "_ListingRegistrySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IDParentComponent",
-        "IndexComponent",
-        "IndexItemComponent",
-        "IndexNPCComponent",
-        "LogicTypeComponent",
-        "TypeComponent",
-        "ValueComponent",
-        "SubtypeComponent"
+        "EntityType",
+        "IDParent",
+        "Index",
+        "IndexItem",
+        "IndexNPC",
+        "LogicType",
+        "Type",
+        "Value",
+        "Subtype"
       ]
     },
     {
       "name": "_NodeRegistrySystem",
       "writeAccess": [
-        "AffinityComponent",
-        "DescriptionComponent",
-        "EntityTypeComponent",
-        "ForComponent",
-        "IDParentComponent",
-        "IndexComponent",
-        "IndexNodeComponent",
-        "IndexRoomComponent",
-        "IsRegistryComponent",
-        "LogicTypeComponent",
-        "KeysComponent",
-        "NameComponent",
-        "TypeComponent",
-        "ValueComponent",
-        "WeightsComponent",
-        "SubtypeComponent"
+        "Affinity",
+        "Description",
+        "EntityType",
+        "For",
+        "IDParent",
+        "Index",
+        "IndexNode",
+        "IndexRoom",
+        "IsRegistry",
+        "LogicType",
+        "Keys",
+        "Name",
+        "Type",
+        "Value",
+        "Weights",
+        "Subtype"
       ]
     },
     {
       "name": "_NPCRegistrySystem",
-      "writeAccess": ["EntityTypeComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
+      "writeAccess": ["EntityType", "IndexNPC", "IndexRoom", "Name"]
     },
     {
       "name": "_QuestRegistrySystem",
@@ -195,74 +188,66 @@
     {
       "name": "_RecipeRegistrySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "ExperienceComponent",
-        "IDFromComponent",
-        "IDParentComponent",
-        "IDToComponent",
-        "IndexRecipeComponent",
-        "IndexComponent",
-        "IsRegistryComponent",
-        "LogicTypeComponent",
-        "KeysComponent",
-        "StaminaComponent",
-        "SubtypeComponent",
-        "ValuesComponent",
-        "ValueComponent",
-        "TypeComponent"
+        "EntityType",
+        "Experience",
+        "IDFrom",
+        "IDParent",
+        "IDTo",
+        "IndexRecipe",
+        "Index",
+        "IsRegistry",
+        "LogicType",
+        "Keys",
+        "Stamina",
+        "Subtype",
+        "Values",
+        "Value",
+        "Type"
       ]
     },
     {
       "name": "_RelationshipRegistrySystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IsRegistryComponent",
-        "IndexNPCComponent",
-        "IndexRelationshipComponent",
-        "NameComponent",
-        "BlacklistComponent",
-        "WhitelistComponent"
-      ]
+      "writeAccess": ["EntityType", "IsRegistry", "IndexNPC", "IndexRelationship", "Name", "Blacklist", "Whitelist"]
     },
     {
       "name": "_RoomRegistrySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IDParentComponent",
-        "IDRoomComponent",
-        "IndexRoomComponent",
-        "IndexComponent",
-        "DescriptionComponent",
-        "ExitsComponent",
-        "LocationComponent",
-        "LogicTypeComponent",
-        "NameComponent",
-        "TypeComponent",
-        "SubtypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "IDParent",
+        "IDRoom",
+        "IndexRoom",
+        "Index",
+        "Description",
+        "Exits",
+        "Location",
+        "LogicType",
+        "Name",
+        "Type",
+        "Subtype",
+        "Value"
       ]
     },
     {
       "name": "_SkillRegistrySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IdSourceComponent",
-        "IDParentComponent",
-        "IDTypeComponent",
-        "IsRegistryComponent",
-        "IndexSkillComponent",
-        "IndexComponent",
-        "CostComponent",
-        "DescriptionComponent",
-        "ForComponent",
-        "LevelComponent",
-        "LogicTypeComponent",
-        "MaxComponent",
-        "MediaURIComponent",
-        "NameComponent",
-        "SubtypeComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "IdSource",
+        "IDParent",
+        "IDType",
+        "IsRegistry",
+        "IndexSkill",
+        "Index",
+        "Cost",
+        "Description",
+        "For",
+        "Level",
+        "LogicType",
+        "Max",
+        "MediaURI",
+        "Name",
+        "Subtype",
+        "Type",
+        "Value"
       ]
     },
     {
@@ -271,145 +256,111 @@
     },
     {
       "name": "AccountFundSystem",
-      "writeAccess": ["IdHolderComponent", "IDTypeComponent", "TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["IdHolder", "IDType", "TimeLast", "Value"]
     },
     {
       "name": "AccountUseFoodSystem",
-      "writeAccess": ["StaminaComponent", "TimeLastComponent", "TimeLastActionComponent", "ValueComponent"]
+      "writeAccess": ["Stamina", "TimeLast", "TimeLastAction", "Value"]
     },
     {
       "name": "AccountUseTeleportSystem",
-      "writeAccess": ["IndexRoomComponent", "TimeLastComponent", "TimeLastActionComponent", "ValueComponent"]
+      "writeAccess": ["IndexRoom", "TimeLast", "TimeLastAction", "Value"]
     },
     {
       "name": "AccountMoveSystem",
-      "writeAccess": [
-        "IndexRoomComponent",
-        "StaminaComponent",
-        "TimeLastComponent",
-        "TimeLastActionComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["IndexRoom", "Stamina", "TimeLast", "TimeLastAction", "Value"]
     },
     {
       "name": "AccountRegisterSystem",
       "writeAccess": [
-        "IndexAccountComponent",
-        "AddressOperatorComponent",
-        "AddressOwnerComponent",
-        "CacheOperatorComponent",
-        "IndexRoomComponent",
-        "EntityTypeComponent",
-        "NameComponent",
-        "StaminaComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "IndexAccount",
+        "AddressOperator",
+        "AddressOwner",
+        "CacheOperator",
+        "IndexRoom",
+        "EntityType",
+        "Name",
+        "Stamina",
+        "TimeLastAction",
+        "TimeLast",
+        "TimeStart",
+        "Value"
       ]
     },
     {
       "name": "AccountSetNameSystem",
-      "writeAccess": ["NameComponent", "TimeLastComponent"]
+      "writeAccess": ["Name", "TimeLast"]
     },
     {
       "name": "AccountSetOperatorSystem",
-      "writeAccess": ["AddressOperatorComponent", "CacheOperatorComponent", "TimeLastComponent"]
+      "writeAccess": ["AddressOperator", "CacheOperator", "TimeLast"]
     },
     {
       "name": "AccountSetFarcasterDataSystem",
-      "writeAccess": ["FarcasterIndexComponent", "MediaURIComponent", "TimeLastComponent"]
+      "writeAccess": ["FarcasterIndex", "MediaURI", "TimeLast"]
     },
     {
       "name": "CraftSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "ExperienceComponent",
-        "IndexItemComponent",
-        "IDOwnsInventoryComponent",
-        "ValueComponent",
-        "StaminaComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent"
+        "EntityType",
+        "Experience",
+        "IndexItem",
+        "IDOwnsInventory",
+        "Value",
+        "Stamina",
+        "TimeLastAction",
+        "TimeLast"
       ]
     },
     {
       "name": "DroptableRevealSystem",
       "writeAccess": [
-        "BlockRevealComponent",
-        "EntityTypeComponent",
-        "IdHolderComponent",
-        "IdSourceComponent",
-        "IDOwnsInventoryComponent",
-        "IndexItemComponent",
-        "IndexComponent",
-        "TypeComponent",
-        "TimeComponent",
-        "ValueComponent",
-        "ValuesComponent"
+        "BlockReveal",
+        "EntityType",
+        "IdHolder",
+        "IdSource",
+        "IDOwnsInventory",
+        "IndexItem",
+        "Index",
+        "Type",
+        "Time",
+        "Value",
+        "Values"
       ]
     },
     { "name": "EchoKamisSystem", "writeAccess": ["*"] },
-    { "name": "EchoRoomSystem", "writeAccess": ["IndexRoomComponent"] },
+    { "name": "EchoRoomSystem", "writeAccess": ["IndexRoom"] },
     {
       "name": "ItemBurnSystem",
-      "writeAccess": ["TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["TimeLast", "Value"]
     },
     {
       "name": "FriendAcceptSystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IdSourceComponent",
-        "IDParentComponent",
-        "IdTargetComponent",
-        "StateComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendBlockSystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IdSourceComponent",
-        "IDParentComponent",
-        "IdTargetComponent",
-        "StateComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendCancelSystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IdSourceComponent",
-        "IDParentComponent",
-        "IdTargetComponent",
-        "StateComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendRequestSystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IdSourceComponent",
-        "IDParentComponent",
-        "IdTargetComponent",
-        "StateComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "GoalContributeSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IdHolderComponent",
-        "IDTypeComponent",
-        "IDOwnsInventoryComponent",
-        "IndexItemComponent",
-        "IsCompleteComponent",
-        "TimeLastComponent",
-        "ValueComponent"
+        "EntityType",
+        "IdHolder",
+        "IDType",
+        "IDOwnsInventory",
+        "IndexItem",
+        "IsComplete",
+        "TimeLast",
+        "Value"
       ]
     },
     {
@@ -419,32 +370,24 @@
     {
       "name": "ListingBuySystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IdHolderComponent",
-        "IDOwnsInventoryComponent",
-        "IDTypeComponent",
-        "IndexComponent",
-        "IndexItemComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "IdHolder",
+        "IDOwnsInventory",
+        "IDType",
+        "Index",
+        "IndexItem",
+        "TimeLast",
+        "Type",
+        "Value"
       ]
     },
     {
       "name": "ListingSellSystem",
-      "writeAccess": ["IdHolderComponent", "IndexComponent", "TimeLastComponent", "TypeComponent", "ValueComponent"]
+      "writeAccess": ["IdHolder", "Index", "TimeLast", "Type", "Value"]
     },
     {
       "name": "LootboxCommitSystem",
-      "writeAccess": [
-        "BlockRevealComponent",
-        "IdSourceComponent",
-        "IdHolderComponent",
-        "IndexItemComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["BlockReveal", "IdSource", "IdHolder", "IndexItem", "TimeLast", "Type", "Value"]
     },
     {
       "name": "Kami721IsInWorldSystem",
@@ -456,199 +399,174 @@
     },
     {
       "name": "KamiGachaMintSystem",
-      "writeAccess": [
-        "BlockRevealComponent",
-        "IDOwnsKamiComponent",
-        "IdHolderComponent",
-        "RerollComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["BlockReveal", "IDOwnsKami", "IdHolder", "Reroll", "TimeLast", "Type", "Value"]
     },
     {
       "name": "KamiGachaRerollSystem",
-      "writeAccess": [
-        "BlockRevealComponent",
-        "IDOwnsKamiComponent",
-        "IdHolderComponent",
-        "RerollComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "StateComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["BlockReveal", "IDOwnsKami", "IdHolder", "Reroll", "TimeLast", "Type", "State", "Value"]
     },
     {
       "name": "KamiGachaRevealSystem",
-      "writeAccess": [
-        "BlockRevealComponent",
-        "IdHolderComponent",
-        "IDOwnsKamiComponent",
-        "RerollComponent",
-        "StateComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"]
     },
     {
       "name": "KamiLevelSystem",
       "writeAccess": [
-        "ExperienceComponent",
-        "HealthComponent",
-        "LevelComponent",
-        "ProxyPermissionsERC721Component",
-        "RateComponent",
-        "SkillPointComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "Experience",
+        "Health",
+        "Level",
+        "ProxyPermissionsERC721",
+        "Rate",
+        "SkillPoint",
+        "TimeLast",
+        "TimeStart",
+        "Value"
       ]
     },
     {
       "name": "KamiNameSystem",
-      "writeAccess": ["HasFlagComponent", "NameComponent", "TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"]
     },
     {
       "name": "KamiUseFoodSystem",
       "writeAccess": [
-        "IdHolderComponent",
-        "IDTypeComponent",
-        "ExperienceComponent",
-        "HarmonyComponent",
-        "HasFlagComponent",
-        "HealthComponent",
-        "PowerComponent",
-        "RateComponent",
-        "SlotsComponent",
-        "ValueComponent",
-        "ViolenceComponent",
-        "TimeLastComponent",
-        "TimeResetComponent",
-        "TimeStartComponent"
+        "IdHolder",
+        "IDType",
+        "Experience",
+        "Harmony",
+        "HasFlag",
+        "Health",
+        "Power",
+        "Rate",
+        "Slots",
+        "Value",
+        "Violence",
+        "TimeLast",
+        "TimeReset",
+        "TimeStart"
       ]
     },
     {
       "name": "KamiUseRenamePotionSystem",
-      "writeAccess": ["HasFlagComponent", "TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["HasFlag", "TimeLast", "Value"]
     },
     {
       "name": "KamiUseReviveSystem",
-      "writeAccess": ["HealthComponent", "StateComponent", "TimeLastComponent", "ValueComponent"]
+      "writeAccess": ["Health", "State", "TimeLast", "Value"]
     },
     {
       "name": "KamiUseSkillResetSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "HealthComponent",
-        "IdHolderComponent",
-        "IDParentComponent",
-        "IDTypeComponent",
-        "IdSourceComponent",
-        "IDOwnsSkillComponent",
-        "IndexSkillComponent",
-        "LevelComponent",
-        "SkillPointComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TimeResetComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "Health",
+        "IdHolder",
+        "IDParent",
+        "IDType",
+        "IdSource",
+        "IDOwnsSkill",
+        "IndexSkill",
+        "Level",
+        "SkillPoint",
+        "TimeLast",
+        "TimeStart",
+        "TimeReset",
+        "Type",
+        "Value"
       ]
     },
     {
       "name": "HarvestCollectSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "ExperienceComponent",
-        "HealthComponent",
-        "IdHolderComponent",
-        "IDTypeComponent",
-        "IDOwnsInventoryComponent",
-        "IndexComponent",
-        "IndexItemComponent",
-        "RateComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "Experience",
+        "Health",
+        "IdHolder",
+        "IDType",
+        "IDOwnsInventory",
+        "Index",
+        "IndexItem",
+        "Rate",
+        "TimeLastAction",
+        "TimeLast",
+        "TimeStart",
+        "Type",
+        "Value"
       ]
     },
     {
       "name": "HarvestLiquidateSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IdHolderComponent",
-        "IdSourceComponent",
-        "IDTypeComponent",
-        "IDOwnsInventoryComponent",
-        "IdTargetComponent",
-        "IndexComponent",
-        "IndexItemComponent",
-        "IndexNodeComponent",
-        "IsKillComponent",
-        "ExperienceComponent",
-        "HealthComponent",
-        "RateComponent",
-        "StateComponent",
-        "TimeComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "IdHolder",
+        "IdSource",
+        "IDType",
+        "IDOwnsInventory",
+        "IdTarget",
+        "Index",
+        "IndexItem",
+        "IndexNode",
+        "IsKill",
+        "Experience",
+        "Health",
+        "Rate",
+        "State",
+        "Time",
+        "TimeLastAction",
+        "TimeLast",
+        "Type",
+        "Value"
       ]
     },
     {
       "name": "HarvestStartSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IDOwnsInventoryComponent",
-        "IdHolderComponent",
-        "IdSourceComponent",
-        "IndexItemComponent",
-        "HealthComponent",
-        "RateComponent",
-        "StateComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeResetComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "EntityType",
+        "IDOwnsInventory",
+        "IdHolder",
+        "IdSource",
+        "IndexItem",
+        "Health",
+        "Rate",
+        "State",
+        "TimeLastAction",
+        "TimeLast",
+        "TimeReset",
+        "TimeStart",
+        "Value"
       ]
     },
     {
       "name": "HarvestStopSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IDOwnsInventoryComponent",
-        "ExperienceComponent",
-        "HealthComponent",
-        "IdHolderComponent",
-        "IDTypeComponent",
-        "IndexComponent",
-        "IndexItemComponent",
-        "RateComponent",
-        "StateComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "IDOwnsInventory",
+        "Experience",
+        "Health",
+        "IdHolder",
+        "IDType",
+        "Index",
+        "IndexItem",
+        "Rate",
+        "State",
+        "TimeLastAction",
+        "TimeLast",
+        "TimeStart",
+        "Type",
+        "Value"
       ]
     },
     {
       "name": "QuestAcceptSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IDOwnsQuestComponent",
-        "IndexQuestComponent",
-        "IsCompleteComponent",
-        "IsRepeatableComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "EntityType",
+        "IDOwnsQuest",
+        "IndexQuest",
+        "IsComplete",
+        "IsRepeatable",
+        "TimeLastAction",
+        "TimeLast",
+        "TimeStart",
+        "Value"
       ]
     },
     {
@@ -658,26 +576,20 @@
     {
       "name": "QuestDropSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "IDOwnsQuestComponent",
-        "IndexQuestComponent",
-        "IsCompleteComponent",
-        "IsRepeatableComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "EntityType",
+        "IDOwnsQuest",
+        "IndexQuest",
+        "IsComplete",
+        "IsRepeatable",
+        "TimeLastAction",
+        "TimeLast",
+        "TimeStart",
+        "Value"
       ]
     },
     {
       "name": "RelationshipAdvanceSystem",
-      "writeAccess": [
-        "EntityTypeComponent",
-        "IDOwnsRelationshipComponent",
-        "IndexNPCComponent",
-        "IndexRelationshipComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["EntityType", "IDOwnsRelationship", "IndexNPC", "IndexRelationship", "TimeLast"]
     },
     {
       "name": "ScavengeClaimSystem",
@@ -686,19 +598,19 @@
     {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
-        "EntityTypeComponent",
-        "HealthComponent",
-        "IDParentComponent",
-        "IDTypeComponent",
-        "IdSourceComponent",
-        "IDOwnsSkillComponent",
-        "IndexSkillComponent",
-        "LevelComponent",
-        "SkillPointComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "EntityType",
+        "Health",
+        "IDParent",
+        "IDType",
+        "IdSource",
+        "IDOwnsSkill",
+        "IndexSkill",
+        "Level",
+        "SkillPoint",
+        "TimeLast",
+        "TimeStart",
+        "Type",
+        "Value"
       ]
     },
     {

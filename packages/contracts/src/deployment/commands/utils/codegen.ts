@@ -203,7 +203,9 @@ export async function generateComponentSchemas(options?: { clear?: boolean }) {
   ).components;
   // adding ids
   components.map((comp) => {
-    const id = extractIdFromFile(path.join(baseContractsDir, 'src/components', comp.comp + '.sol'));
+    const id = extractIdFromFile(
+      path.join(baseContractsDir, 'src/components', comp.comp + 'Component.sol')
+    );
     comp.id = id;
     comp.encodedID = keccak256(id || '');
   });
@@ -228,7 +230,7 @@ export function createComponents(world: World) {
 ${components
   .map(
     (comp) =>
-      `    ${comp.name}: ${parseCompTypeDef(comp.type, comp.FEtype)}(world, '${comp.name}', '${comp.id}'),`
+      `    ${comp.name}: ${parseCompTypeDef(comp.type, comp.FEtype)}(world, '${comp.name}', '${comp.id}'${comp.indexed ? ', true' : ''}),`
   )
   .join('\n')}
 
