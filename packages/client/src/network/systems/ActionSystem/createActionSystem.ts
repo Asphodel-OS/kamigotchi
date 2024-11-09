@@ -87,7 +87,8 @@ export function createActionSystem<M = undefined>(
       updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
       if (tx) {
-        const txConfirmed = await tx.wait().catch((e: any) => handleError(e, request));
+        // const txConfirmed = await tx.wait().catch((e: any) => handleError(e, request));
+        const txConfirmed = await tx.wait();
         if (request.awaitConfirmation) await txConfirmed;
       }
 
