@@ -4,6 +4,6 @@ export function defineStringComponent(world: World, name: string, contractId: st
   return defineComponent<{ value: Type.String }, Metadata>(
     world,
     { value: Type.String },
-    { id: name, metadata: { contractId: contractId } }
+    { id: name, metadata: { contractId: contractId }, indexed: true }
   );
 }
