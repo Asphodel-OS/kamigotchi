@@ -151,7 +151,7 @@ export function registerFundOperatorModal() {
         const textColor = fundState == isFunding ? 'white' : 'black';
         return (
           <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFunding(fundState)}>
-            <Description style={{ color: textColor }}> {balance} ETH </Description>
+            <Description style={{ color: textColor }}> {balance} ONYX </Description>
             <SubDescription style={{ color: textColor }}> {text} </SubDescription>
           </BoxButton>
         );
@@ -178,7 +178,7 @@ export function registerFundOperatorModal() {
             else setStatusText('This should last you for quite a while');
           } else {
             const remainBal = curBal - amount;
-            setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
+            setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ONYX left');
           }
         }
       }, [amount, OwnerBalance, OperatorBalance, isFunding]);

@@ -148,7 +148,7 @@ export function registerGasHarasser() {
           id='gas-harasser'
           divName='gasHarasser'
           title='Embedded wallet is empty!'
-          errorPrimary={`pls feed me pls a crumb of wei ._.`}
+          errorPrimary={`pls feed me pls a crumb of onyx ._.`}
         >
           <Tooltip text={[account.operatorAddress, '(click to copy)']} align='center'>
             <Description onClick={() => copy(account.operatorAddress)}>
