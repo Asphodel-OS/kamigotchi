@@ -22,12 +22,12 @@ contract KamiUseFoodSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.onlyType(components, itemIndex, "FOOD");
+    LibItem.verifyType(components, itemIndex, "FOOD");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks
-    LibKami.assertAccount(components, kamiID, accID);
-    LibKami.assertRoom(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
+    LibKami.verifyRoom(components, kamiID, accID);
     require(!LibKami.onCooldown(components, kamiID), "kami on cooldown");
     require(
       LibKami.isResting(components, kamiID) || LibKami.isHarvesting(components, kamiID),

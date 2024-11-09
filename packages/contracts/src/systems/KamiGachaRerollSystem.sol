@@ -18,12 +18,12 @@ contract KamiGachaRerollSystem is System {
   function reroll(uint256[] memory kamiIDs) external payable returns (uint256[] memory) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     require(accID != 0, "no account detected");
-    LibKami.assertAccount(components, kamiIDs, accID);
+    LibKami.verifyAccount(components, kamiIDs, accID);
     require(LibKami.isResting(components, kamiIDs), "not resting");
 
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);
-    LibGacha.onlyNotMaxRerolls(components, prevRerolls);
+    LibGacha.verifyMaxRerolls(components, prevRerolls);
     if (msg.value < LibGacha.calcRerollsCost(components, prevRerolls)) revert("not enough payment");
 
     // send pet into pool

@@ -26,14 +26,14 @@ contract HarvestCollectSystem is System {
     uint256 kamiID = LibHarvest.getKami(components, id);
 
     // standard checks (ownership, cooldown, state)
-    LibKami.assertAccount(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
     require(LibKami.isHarvesting(components, kamiID), "FarmCollect: kami must be harvesting");
     require(!LibKami.onCooldown(components, kamiID), "FarmCollect: kami on cooldown");
 
     // health check
     LibKami.sync(components, kamiID);
     require(LibKami.isHealthy(components, kamiID), "FarmCollect: kami starving..");
-    LibKami.assertRoom(components, kamiID, accID);
+    LibKami.verifyRoom(components, kamiID, accID);
 
     // process collection
     uint256 output = LibHarvest.claim(components, id, accID);

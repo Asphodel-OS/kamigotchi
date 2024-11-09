@@ -21,11 +21,11 @@ contract KamiUseReviveSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.onlyType(components, itemIndex, "REVIVE");
+    LibItem.verifyType(components, itemIndex, "REVIVE");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks
-    LibKami.assertAccount(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
     require(LibKami.isDead(components, kamiID), "pet not dead");
 
     // use item

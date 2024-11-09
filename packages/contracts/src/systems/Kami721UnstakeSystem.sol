@@ -51,7 +51,7 @@ contract Kami721UnstakeSystem is System {
     require(LibAccount.getRoom(components, accID) == ROOM, "Kami721Stake: must be in room 12");
 
     // checks before action
-    LibKami.assertAccount(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
     require(LibKami.isResting(components, kamiID), "Kami721Unstake: must be resting");
 
     // actions to be taken upon bridging out

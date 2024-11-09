@@ -21,7 +21,7 @@ contract KamiLevelSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (type check, ownership, roomIndex)
-    LibKami.assertAccount(components, id, accID);
+    LibKami.verifyAccount(components, id, accID);
     require(LibKami.isResting(components, id), "PetLevel: kami not resting");
 
     // check that the pet meets the experience requirement

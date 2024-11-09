@@ -23,7 +23,7 @@ contract ItemBurnSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // checks
-    LibItem.onlyBurnable(components, indices);
+    LibItem.verifyBurnable(components, indices);
 
     // burning
     LibInventory.decForBatch(components, accID, indices, amts); // implicit inventory balance check

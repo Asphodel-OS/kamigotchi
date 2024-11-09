@@ -20,7 +20,7 @@ contract KamiNameSystem is System {
     (uint256 id, string memory name) = abi.decode(arguments, (uint256, string));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    LibKami.assertAccount(components, id, accID);
+    LibKami.verifyAccount(components, id, accID);
     require(LibKami.getRoom(components, id) == ROOM, "PetName: must be in room 11");
     require(bytes(name).length > 0, "PetName: name cannot be empty");
     require(bytes(name).length <= 16, "PetName: name can be at most 16 characters");

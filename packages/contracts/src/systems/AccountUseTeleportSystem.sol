@@ -20,8 +20,8 @@ contract AccountUseTeleportSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.onlyType(components, itemIndex, "TELEPORT");
-    LibItem.onlyForAccount(components, itemIndex);
+    LibItem.verifyType(components, itemIndex, "TELEPORT");
+    LibItem.verifyForAccount(components, itemIndex);
 
     // use items
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check

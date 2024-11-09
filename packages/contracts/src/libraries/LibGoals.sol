@@ -240,11 +240,11 @@ library LibGoals {
   ////////////////////
   // CHECKERS
 
-  function onlyClaimable(IUintComp components, uint256 goalID, uint256 accID) internal view {
+  function verifyClaimable(IUintComp components, uint256 goalID, uint256 accID) internal view {
     if (!canClaim(components, goalID, accID)) revert("cannot claim from this goal");
   }
 
-  function onlyContributable(
+  function verifyContributable(
     IUintComp components,
     uint32 goalIndex,
     uint256 goalID,

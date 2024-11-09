@@ -29,7 +29,7 @@ contract HarvestStopSystem is System {
     uint256 kamiID = LibHarvest.getKami(components, id);
 
     // standard checks (ownership, cooldown, state)
-    LibKami.assertAccount(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
     require(LibKami.isHarvesting(components, kamiID), "FarmStop: kami must be harvesting");
     require(!LibKami.onCooldown(components, kamiID), "FarmStop: kami on cooldown");
 
@@ -38,7 +38,7 @@ contract HarvestStopSystem is System {
     require(LibKami.isHealthy(components, kamiID), "FarmStop: kami starving..");
 
     // roomIndex check
-    LibKami.assertRoom(components, kamiID, accID);
+    LibKami.verifyRoom(components, kamiID, accID);
 
     // claim balance and increase experience
     uint256 output = LibHarvest.claim(components, id, accID);

@@ -25,7 +25,7 @@ contract HarvestLiquidateSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    LibKami.assertAccount(components, killerID, accID);
+    LibKami.verifyAccount(components, killerID, accID);
     require(LibKami.isHarvesting(components, killerID), "kami must be harvesting");
 
     // basic requirements (state and idle time)

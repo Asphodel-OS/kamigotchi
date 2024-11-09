@@ -21,11 +21,11 @@ contract KamiUseRenamePotionSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.onlyType(components, itemIndex, "RENAME_POTION");
+    LibItem.verifyType(components, itemIndex, "RENAME_POTION");
     LibItem.checkForPet(components, itemIndex);
 
     // pet checks
-    LibKami.assertAccount(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
     require(LibKami.isResting(components, kamiID), "kami not resting"); // implicit location check
 
     // use item

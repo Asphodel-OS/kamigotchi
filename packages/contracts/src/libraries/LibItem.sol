@@ -154,14 +154,14 @@ library LibItem {
   // CHECKERS
 
   /// @notice check if entity is an item of specific type
-  function onlyType(IUintComp components, uint32 index, string memory type_) internal view {
+  function verifyType(IUintComp components, uint32 index, string memory type_) internal view {
     uint256 id = genID(index);
     if (!LibEntityType.isShape(components, id, "ITEM")) revert("thats not an item");
     if (!getCompByID(components, TypeCompID).eqString(id, type_))
       revert(LibString.concat("thats not item type ", type_));
   }
 
-  function onlyType(
+  function verifyType(
     IUintComp components,
     uint32[] memory indices,
     string memory type_
@@ -173,13 +173,13 @@ library LibItem {
       revert(LibString.concat("thats not item type ", type_));
   }
 
-  function onlyBurnable(IUintComp components, uint32[] memory indices) internal view {
+  function verifyBurnable(IUintComp components, uint32[] memory indices) internal view {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
   }
 
-  function onlyForAccount(IUintComp components, uint32 index) internal view {
+  function verifyForAccount(IUintComp components, uint32 index) internal view {
     if (!LibFor.isForAccount(components, genID(index))) revert("that's not for accounts");
   }
 

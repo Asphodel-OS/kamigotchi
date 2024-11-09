@@ -25,7 +25,7 @@ contract HarvestStartSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    LibKami.assertAccount(components, kamiID, accID);
+    LibKami.verifyAccount(components, kamiID, accID);
     require(LibKami.isResting(components, kamiID), "FarmStart: pet must be resting");
     require(!LibKami.onCooldown(components, kamiID), "FarmStart: kami on cooldown");
 

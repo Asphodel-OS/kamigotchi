@@ -21,7 +21,7 @@ contract LootboxCommitSystem is System {
 
     // checks
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    LibItem.onlyType(components, index, "LOOTBOX");
+    LibItem.verifyType(components, index, "LOOTBOX");
     if (amt > 10) revert("max 10 reveal at once");
 
     // decrease and commit

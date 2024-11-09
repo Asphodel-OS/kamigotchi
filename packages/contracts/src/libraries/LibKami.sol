@@ -160,12 +160,12 @@ library LibKami {
 
   /// @notice revert if  a kami is not owned by an account
   /// @dev implicit isKami check - only kamis are mapped to IDOwnsKamiComponent
-  function assertAccount(IUintComp components, uint256 id, uint256 accID) internal view {
+  function verifyAccount(IUintComp components, uint256 id, uint256 accID) internal view {
     if (IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) != accID)
       revert("kami not urs");
   }
 
-  function assertAccount(IUintComp components, uint256[] memory ids, uint256 accID) internal view {
+  function verifyAccount(IUintComp components, uint256[] memory ids, uint256 accID) internal view {
     uint256[] memory owners = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(
       ids
     );
@@ -173,7 +173,7 @@ library LibKami {
   }
 
   /// @notice revert if kami is not in same room as account
-  function assertRoom(IUintComp components, uint256 kamiID, uint256 accID) internal view {
+  function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) internal view {
     string memory state = getState(components, kamiID);
 
     bool sameRoom;
@@ -191,8 +191,8 @@ library LibKami {
     if (!sameRoom) revert("kami too far");
   }
 
-  function assertRoom(IUintComp components, uint256 kamiID) internal view {
-    return assertRoom(components, kamiID, getAccount(components, kamiID));
+  function verifyRoom(IUintComp components, uint256 kamiID) internal view {
+    return verifyRoom(components, kamiID, getAccount(components, kamiID));
   }
 
   // Check whether a kami is dead.

@@ -163,7 +163,7 @@ library LibGacha {
   }
 
   /// @notice testnet2 function, rerolls are free but limited
-  function onlyNotMaxRerolls(IUintComp components, uint256[] memory counts) internal view {
+  function verifyMaxRerolls(IUintComp components, uint256[] memory counts) internal view {
     uint256 max = LibConfig.get(components, "GACHA_MAX_REROLLS");
     for (uint256 i; i < counts.length; i++) if (counts[i] >= max) revert("too many rerolls");
   }
