@@ -174,7 +174,7 @@ library LibRecipe {
   /////////////////
   // CHECKERS
 
-  function passesRequirements(
+  function verifyRequirements(
     IUintComp components,
     uint32 recipeIndex,
     uint256 accID

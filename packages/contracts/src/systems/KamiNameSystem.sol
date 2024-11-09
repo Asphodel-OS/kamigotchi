@@ -21,10 +21,10 @@ contract KamiNameSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     LibKami.verifyAccount(components, id, accID);
-    require(LibKami.getRoom(components, id) == ROOM, "PetName: must be in room 11");
-    require(bytes(name).length > 0, "PetName: name cannot be empty");
-    require(bytes(name).length <= 16, "PetName: name can be at most 16 characters");
-    require(LibKami.getByName(components, name) == 0, "PetName: name taken");
+    if (LibKami.getRoom(components, id) != ROOM) revert("PetName: must be in room 11");
+    if (bytes(name).length == 0) revert("PetName: name cannot be empty");
+    if (bytes(name).length > 16) revert("PetName: name can be at most 16 characters");
+    if (LibKami.getByName(components, name) != 0) revert("PetName: name taken");
 
     // checks and sets nameability
     require(LibKami.useNameable(components, id), "PetName: cannot be named");

@@ -369,7 +369,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("pet not dead");
+      vm.expectRevert("kami not DEAD");
       _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
@@ -379,7 +379,7 @@ contract FeedingTest is SetupTemplate {
       harvestIDs[i] = _startHarvest(kamiIDs[i], _nodeID);
       _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("pet not dead");
+      vm.expectRevert("kami not DEAD");
       _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
@@ -387,7 +387,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(1 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("pet not dead");
+      vm.expectRevert("kami not DEAD");
       _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
@@ -395,7 +395,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(100 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("pet not dead");
+      vm.expectRevert("kami not DEAD");
       _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
@@ -419,7 +419,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("pet not dead");
+      vm.expectRevert("kami not DEAD");
       _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
     }
   }

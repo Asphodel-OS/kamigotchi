@@ -136,6 +136,10 @@ library LibRoom {
     return roomComp.safeGet(aID) == roomComp.safeGet(bID);
   }
 
+  function verifySharedRoom(IUintComp components, uint256 aID, uint256 bID) internal view {
+    if (!sharesRoom(components, aID, bID)) revert("not in same room");
+  }
+
   /////////////////
   // GETTERS
 

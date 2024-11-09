@@ -26,7 +26,7 @@ contract CraftSystem is System {
 
     // check requirements
     LibAssigner.checkFor(components, assignerID, regID, accID);
-    LibRecipe.passesRequirements(components, index, accID);
+    LibRecipe.verifyRequirements(components, index, accID);
 
     LibRecipe.beforeCraft(components, regID, amt, accID);
     (uint32[] memory itemIndices, uint256[] memory amts) = LibRecipe.craft(

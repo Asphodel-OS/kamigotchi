@@ -48,7 +48,7 @@ contract NodeTest is SetupTemplate {
     // cannot add level 1 pet to node
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
-    vm.expectRevert("FarmStart: node reqs not met");
+    vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up
@@ -69,7 +69,7 @@ contract NodeTest is SetupTemplate {
     // cannot add level 1 account to node
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
-    vm.expectRevert("FarmStart: node reqs not met");
+    vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up
@@ -91,7 +91,7 @@ contract NodeTest is SetupTemplate {
     // cannot add, level 1 acc and pet
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
-    vm.expectRevert("FarmStart: node reqs not met");
+    vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up pet
@@ -100,7 +100,7 @@ contract NodeTest is SetupTemplate {
     // cannot add, level 1 acc but level 2 pet
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
-    vm.expectRevert("FarmStart: node reqs not met");
+    vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
 
     // leveling up account

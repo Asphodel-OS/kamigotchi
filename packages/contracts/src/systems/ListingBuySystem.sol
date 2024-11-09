@@ -24,20 +24,15 @@ contract ListingBuySystem is System {
     );
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 merchantID = LibNPC.get(components, merchantIndex);
-    require(merchantID != 0, "merchant does not exist");
-    require(
-      LibNPC.sharesRoomWith(components, merchantID, accID),
-      "Listing.Buy(): must be in same room as npc"
-    );
+    if (merchantID == 0) revert("merchant does not exist");
+    LibNPC.verifyRoom(components, merchantID, accID);
 
     uint256 total;
     for (uint256 i; i < itemIndices.length; i++) {
       uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
       require(listingID != 0, "listing does not exist");
-      require(
-        LibListing.meetsRequirements(components, listingID, accID),
-        "Listing.Buy(): reqs not met"
-      );
+      if (listingID == 0) revert("listing does not exist");
+      LibListing.verifyRequirements(components, listingID, accID);
 
       total += LibListing.buy(components, listingID, accID, itemIndices[i], amts[i]);
       LibListing.logIncItemBuy(components, accID, itemIndices[i], amts[i]);

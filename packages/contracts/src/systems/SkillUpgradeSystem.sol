@@ -23,28 +23,25 @@ contract SkillUpgradeSystem is System {
 
     // check that the skill exists
     uint256 regID = LibSkillRegistry.getByIndex(components, skillIndex);
-    require(regID != 0, "SkillUpgrade: skill not found");
+    if (regID == 0) revert("SkillUpgrade: skill not found");
 
     // entity type check
     /// @dev calls raw LibFor instead of LibSkill.isFor for gas savings
     // require(LibSkill.isFor(components, regID, holderID), "SkillUpgrade: invalid target");
     uint256 forEntity = LibFor.get(components, regID);
-    require(LibFor.isTarget(components, holderID, forEntity), "SkillUpgrade: invalid target");
+    if (!LibFor.isTarget(components, holderID, forEntity)) revert("SkillUpgrade: invalid target");
 
     // generic requirements
     if (LibFor.isAccount(forEntity)) {
-      require(accID == holderID, "SkillUpgrade: not ur account");
+      if (accID != holderID) revert("SkillUpgrade: not ur account");
     } else if (LibFor.isPet(forEntity)) {
-      require(accID == LibKami.getAccount(components, holderID), "SkillUpgrade: not ur pet");
-      require(LibKami.isResting(components, holderID), "SkillUpgrade: kami not resting");
+      LibKami.verifyAccount(components, holderID, accID);
+      LibKami.verifyState(components, holderID, "RESTING");
       LibKami.sync(components, holderID);
     }
 
     // points are decremented when checking prerequisites
-    require(
-      LibSkill.meetsPrerequisites(components, skillIndex, holderID),
-      "SkillUpgrade: unmet prerequisites"
-    );
+    LibSkill.verifyPrerequisites(components, skillIndex, holderID);
 
     // upgrading skill
     uint256 id = LibSkill.upgradeFor(components, skillIndex, holderID);

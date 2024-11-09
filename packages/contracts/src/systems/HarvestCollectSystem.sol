@@ -27,12 +27,12 @@ contract HarvestCollectSystem is System {
 
     // standard checks (ownership, cooldown, state)
     LibKami.verifyAccount(components, kamiID, accID);
-    require(LibKami.isHarvesting(components, kamiID), "FarmCollect: kami must be harvesting");
-    require(!LibKami.onCooldown(components, kamiID), "FarmCollect: kami on cooldown");
+    LibKami.verifyState(components, kamiID, "HARVESTING");
+    LibKami.verifyCooldown(components, kamiID);
 
     // health check
     LibKami.sync(components, kamiID);
-    require(LibKami.isHealthy(components, kamiID), "FarmCollect: kami starving..");
+    LibKami.verifyHealthy(components, kamiID);
     LibKami.verifyRoom(components, kamiID, accID);
 
     // process collection

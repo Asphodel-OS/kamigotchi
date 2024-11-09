@@ -275,6 +275,30 @@ library LibQuests {
   /////////////////
   // CHECKERS
 
+  function verifyNotCompleted(IUintComp components, uint256 id) internal view {
+    if (isCompleted(components, id)) revert("quest alr completed");
+  }
+
+  function verifyIsQuest(IUintComp components, uint256 id) internal view {
+    if (!isQuest(components, id)) revert("not a quest");
+  }
+
+  function verifyOwner(IUintComp components, uint256 questID, uint256 accID) internal view {
+    if (getOwner(components, questID) != accID) revert("not ur quest");
+  }
+
+  function verifyObjectives(IUintComp components, uint256 questID, uint256 accID) internal {
+    if (!checkObjectives(components, questID, accID)) revert("quest objs not met");
+  }
+
+  function verifyRequirements(IUintComp components, uint32 index, uint256 accID) internal view {
+    if (!checkRequirements(components, index, accID)) revert("reqs not met");
+  }
+
+  function verifyRepeatable(IUintComp components, uint32 index, uint256 questID) internal view {
+    if (!checkRepeat(components, index, questID)) revert("repeat cons not met");
+  }
+
   function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
     return LibEntityType.isShape(components, id, "QUEST");
   }

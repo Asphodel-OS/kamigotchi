@@ -22,11 +22,11 @@ contract KamiLevelSystem is System {
 
     // standard checks (type check, ownership, roomIndex)
     LibKami.verifyAccount(components, id, accID);
-    require(LibKami.isResting(components, id), "PetLevel: kami not resting");
+    LibKami.verifyState(components, id, "RESTING");
 
     // check that the pet meets the experience requirement
     uint256 levelCost = LibExperience.calcLevelCost(components, id);
-    require(LibExperience.get(components, id) >= levelCost, "PetLevel: need more experience");
+    if (LibExperience.get(components, id) < levelCost) revert("PetLevel: need more experience");
 
     // sync pet health
     LibKami.sync(components, id);

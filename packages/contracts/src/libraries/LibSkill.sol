@@ -118,6 +118,11 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
+  function verifyPrerequisites(IUintComp components, uint32 skillIndex, uint256 holderID) internal {
+    if (!meetsPrerequisites(components, skillIndex, holderID))
+      revert("SkillUpgrade: unmet prerequisites");
+  }
+
   function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
     return SkillPointComponent(getAddrByID(components, SPCompID)).has(id);
   }

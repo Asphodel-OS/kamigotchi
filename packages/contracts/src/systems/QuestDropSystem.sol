@@ -16,9 +16,9 @@ contract QuestDropSystem is System {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    require(LibQuests.isQuest(components, questID), "Quest: not a quest");
-    require(!LibQuests.isCompleted(components, questID), "Quests: alr completed");
-    require(accID == LibQuests.getOwner(components, questID), "Quest: not ur quest");
+    LibQuests.verifyOwner(components, questID, accID);
+    LibQuests.verifyIsQuest(components, questID);
+    LibQuests.verifyNotCompleted(components, questID);
 
     LibQuests.drop(components, questID);
 

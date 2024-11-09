@@ -28,11 +28,9 @@ contract KamiUseFoodSystem is System {
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
     LibKami.verifyRoom(components, kamiID, accID);
-    require(!LibKami.onCooldown(components, kamiID), "kami on cooldown");
-    require(
-      LibKami.isResting(components, kamiID) || LibKami.isHarvesting(components, kamiID),
-      "pet must be alive"
-    );
+    LibKami.verifyCooldown(components, kamiID);
+    if (!(LibKami.isResting(components, kamiID) || LibKami.isHarvesting(components, kamiID)))
+      revert("pet must be alive");
 
     // use item
     LibKami.sync(components, kamiID);

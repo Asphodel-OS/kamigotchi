@@ -26,7 +26,7 @@ contract KamiUseRenamePotionSystem is System {
 
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
-    require(LibKami.isResting(components, kamiID), "kami not resting"); // implicit location check
+    LibKami.verifyState(components, kamiID, "RESTING"); // implicit location check
 
     // use item
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check

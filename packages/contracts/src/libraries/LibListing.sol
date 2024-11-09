@@ -85,7 +85,7 @@ library LibListing {
     uint256 amt
   ) internal returns (uint256 total) {
     uint256 price = getBuyPrice(components, listingID);
-    if (price == 0) revert("Listing.Buy(): invalid listing");
+    if (price == 0) revert("invalid listing");
 
     total = amt * price;
     LibInventory.incFor(components, accID, itemIndex, amt);
@@ -101,7 +101,7 @@ library LibListing {
     uint256 amt
   ) internal returns (uint256 total) {
     uint256 price = getSellPrice(components, listingID);
-    if (price == 0) revert("Listing.Sell(): invalid listing");
+    if (price == 0) revert("invalid listing");
 
     total = amt * price;
     LibInventory.decFor(components, accID, itemIndex, amt);
@@ -110,6 +110,14 @@ library LibListing {
 
   /////////////////
   // CHECKERS
+
+  function verifyRequirements(
+    IUintComp components,
+    uint256 listingID,
+    uint256 accID
+  ) internal view {
+    if (!meetsRequirements(components, listingID, accID)) revert("reqs not met");
+  }
 
   function meetsRequirements(
     IUintComp components,

@@ -33,6 +33,10 @@ library LibNPC {
   /////////////////
   // CHECKERS
 
+  function verifyRoom(IUintComp components, uint256 id, uint256 accID) internal view {
+    if (!sharesRoomWith(components, id, accID)) revert("must be in same room as npc");
+  }
+
   // Check whether a user account shares a room with the specified merchant
   // Merchants with roomIndex 0 are considered global and are always accessible
   function sharesRoomWith(

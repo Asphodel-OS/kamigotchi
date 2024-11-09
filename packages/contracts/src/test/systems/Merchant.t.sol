@@ -171,11 +171,11 @@ contract NPCTest is SetupTemplate {
         amts[0] = uint32(amt);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Buy(): must be in same room as npc");
+        vm.expectRevert("must be in same room as npc");
         _ListingBuySystem.executeTyped(listings2[j].npcIndex, itemIndices, amts);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Sell(): must be in same room as npc");
+        vm.expectRevert("must be in same room as npc");
         _ListingSellSystem.executeTyped(listings2[j].npcIndex, itemIndices, amts);
       }
     }
@@ -197,11 +197,11 @@ contract NPCTest is SetupTemplate {
         amts[0] = uint32(amt);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Buy(): must be in same room as npc");
+        vm.expectRevert("must be in same room as npc");
         _ListingBuySystem.executeTyped(listings1[j].npcIndex, itemIndices, amts);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Sell(): must be in same room as npc");
+        vm.expectRevert("must be in same room as npc");
         _ListingSellSystem.executeTyped(listings1[j].npcIndex, itemIndices, amts);
 
         _buyFromListing(i, listingIDs2[j], amt);

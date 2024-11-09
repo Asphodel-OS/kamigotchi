@@ -172,6 +172,14 @@ library LibKami {
     for (uint256 i; i < ids.length; i++) if (owners[i] != accID) revert("kami not urs");
   }
 
+  function verifyCooldown(IUintComp components, uint256 id) internal view {
+    if (onCooldown(components, id)) revert("kami on cooldown");
+  }
+
+  function verifyHealthy(IUintComp components, uint256 id) internal view {
+    if (!isHealthy(components, id)) revert("kami starving..");
+  }
+
   /// @notice revert if kami is not in same room as account
   function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) internal view {
     string memory state = getState(components, kamiID);
@@ -193,6 +201,11 @@ library LibKami {
 
   function verifyRoom(IUintComp components, uint256 kamiID) internal view {
     return verifyRoom(components, kamiID, getAccount(components, kamiID));
+  }
+
+  function verifyState(IUintComp components, uint256 id, string memory state) internal view {
+    if (!getCompByID(components, StateCompID).eqString(id, state))
+      revert(LibString.concat("kami not ", state));
   }
 
   // Check whether a kami is dead.

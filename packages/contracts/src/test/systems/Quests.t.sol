@@ -72,14 +72,14 @@ contract QuestsTest is SetupTemplate {
     _assertQuestAccount(_getAccount(0), questID);
 
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: accepted before");
+    vm.expectRevert("accepted before");
     _QuestAcceptSystem.executeTyped(0, 1);
 
     // check that quest cant be accepted more than once
     _completeQuest(0, questID);
 
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: accepted before");
+    vm.expectRevert("accepted before");
     _QuestAcceptSystem.executeTyped(0, 1);
   }
 
@@ -96,13 +96,13 @@ contract QuestsTest is SetupTemplate {
 
     // accept quest - second time, uncompleted, within time
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: repeat cons not met");
+    vm.expectRevert("repeat cons not met");
     _QuestAcceptSystem.executeTyped(0, 1);
 
     // accept quest - second time, completed, within time
     _completeQuest(0, questID);
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: repeat cons not met");
+    vm.expectRevert("repeat cons not met");
     _QuestAcceptSystem.executeTyped(0, 1);
 
     // accept quest - second time, completed, after time
@@ -114,7 +114,7 @@ contract QuestsTest is SetupTemplate {
 
     // accept quest - third time, completed, within time
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: repeat cons not met");
+    vm.expectRevert("repeat cons not met");
     _QuestAcceptSystem.executeTyped(0, 1);
 
     // accept quest - third time, completed, after time
@@ -200,7 +200,7 @@ contract QuestsTest is SetupTemplate {
 
     // check quest cant be accepted when failing requirements
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: reqs not met");
+    vm.expectRevert("reqs not met");
     _QuestAcceptSystem.executeTyped(0, 1);
 
     // give the account the required coin, check if quest assigned
@@ -210,7 +210,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -219,7 +219,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed twice
     vm.prank(operator);
-    vm.expectRevert("Quests: alr completed");
+    vm.expectRevert("quest alr completed");
     _QuestCompleteSystem.executeTyped(questID);
   }
 
@@ -240,11 +240,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
     _fundAccount(0, 9);
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -255,7 +255,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed twice
     vm.prank(operator);
-    vm.expectRevert("Quests: alr completed");
+    vm.expectRevert("quest alr completed");
     _QuestCompleteSystem.executeTyped(questID);
   }
 
@@ -270,11 +270,11 @@ contract QuestsTest is SetupTemplate {
 
     // check quest cant be accepted when failing requirements
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: reqs not met");
+    vm.expectRevert("reqs not met");
     _QuestAcceptSystem.executeTyped(0, 2);
     uint256 reqQuest = _acceptQuest(0, 1);
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: reqs not met");
+    vm.expectRevert("reqs not met");
     _QuestAcceptSystem.executeTyped(0, 2);
 
     // fufill requirements
@@ -297,7 +297,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be accepted in wrong room
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: reqs not met");
+    vm.expectRevert("reqs not met");
     _QuestAcceptSystem.executeTyped(0, 1);
 
     // move to correct room, accept quest
@@ -307,11 +307,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
     _moveAccount(0, 2);
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -335,11 +335,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
     _mintKami(0);
     vm.prank(operator);
-    vm.expectRevert("Quest: objs not met");
+    vm.expectRevert("quest objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -359,7 +359,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be accepted without requirements
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: reqs not met");
+    vm.expectRevert("reqs not met");
     _QuestAcceptSystem.executeTyped(0, 2);
 
     // finish required quest, accept new

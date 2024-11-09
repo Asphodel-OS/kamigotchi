@@ -260,7 +260,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when RESTING
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("kami must be harvesting");
+      vm.expectRevert("kami not HARVESTING");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(victimHarvestIDs[i], _kamiIDs[playerIndex][i]);
     }
@@ -289,7 +289,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when DEAD
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("kami must be harvesting");
+      vm.expectRevert("kami not HARVESTING");
       vm.prank(_getOperator(playerIndex));
       _HarvestLiquidateSystem.executeTyped(victimHarvestIDs[i], _kamiIDs[playerIndex][i]);
     }

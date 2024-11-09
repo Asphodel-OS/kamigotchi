@@ -26,7 +26,7 @@ contract KamiUseReviveSystem is System {
 
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
-    require(LibKami.isDead(components, kamiID), "pet not dead");
+    LibKami.verifyState(components, kamiID, "DEAD");
 
     // use item
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check

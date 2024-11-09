@@ -26,15 +26,13 @@ contract HarvestLiquidateSystem is System {
 
     // standard checks (ownership, cooldown, state)
     LibKami.verifyAccount(components, killerID, accID);
-    require(LibKami.isHarvesting(components, killerID), "kami must be harvesting");
-
-    // basic requirements (state and idle time)
-    require(!LibKami.onCooldown(components, killerID), "kami on cooldown");
-    require(LibHarvest.isActive(components, victimHarvID), "harvest inactive");
+    LibKami.verifyState(components, killerID, "HARVESTING");
+    LibKami.verifyCooldown(components, killerID);
+    if (!LibHarvest.isActive(components, victimHarvID)) revert("harvest inactive");
 
     // health check
     LibKami.sync(components, killerID);
-    require(LibKami.isHealthy(components, killerID), "kami starving..");
+    LibKami.verifyHealthy(components, killerID);
 
     // check that the two kamis share the same node
     uint256 harvID = LibKami.getHarvest(components, killerID);
@@ -45,7 +43,8 @@ contract HarvestLiquidateSystem is System {
     // check that the pet is capable of liquidating the target harvest
     uint256 victimID = LibHarvest.getKami(components, victimHarvID);
     LibKami.sync(components, victimID);
-    require(LibKill.isLiquidatableBy(components, victimID, killerID), "kami lacks violence (weak)");
+    if (!LibKill.isLiquidatableBy(components, victimID, killerID))
+      revert("kami lacks violence (weak)");
 
     // calculate musu/experience for victim
     uint256 bounty = LibHarvest.getBalance(components, victimHarvID);

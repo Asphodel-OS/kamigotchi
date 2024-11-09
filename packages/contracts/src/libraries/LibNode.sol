@@ -134,6 +134,15 @@ library LibNode {
     return LibString.eq(getType(components, id), "HARVEST");
   }
 
+  function verifyRequirements(
+    IUintComp components,
+    uint32 nodeIndex,
+    uint256 accID,
+    uint256 kamiID
+  ) internal view {
+    if (!checkReqs(components, nodeIndex, accID, kamiID)) revert("node reqs not met");
+  }
+
   /////////////////
   // GETTERS
 

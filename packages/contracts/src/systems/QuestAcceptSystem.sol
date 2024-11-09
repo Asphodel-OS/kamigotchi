@@ -17,26 +17,23 @@ contract QuestAcceptSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 assignerID, uint32 index) = abi.decode(arguments, (uint256, uint32));
     uint256 regID = LibQuestRegistry.getByIndex(components, index);
-    require(regID != 0, "Quest not found");
+    if (regID == 0) revert("Quest not found");
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check requirements
     LibAssigner.checkFor(components, assignerID, regID, accID);
-    require(LibQuests.checkRequirements(components, index, accID), "QuestAccept: reqs not met");
+    LibQuests.verifyRequirements(components, index, accID);
 
     uint256 questID = LibQuests.getAccQuestIndex(components, accID, index);
     if (LibQuests.isRepeatable(components, regID)) {
       // repeatable quests - accepted before check is implicit
       // repeatable quests can only have 0 or 1 instances
-      require(
-        LibQuests.checkRepeat(components, index, questID),
-        "QuestAccept: repeat cons not met"
-      );
+      LibQuests.verifyRepeatable(components, index, questID);
       questID = LibQuests.assignRepeatable(world, components, index, questID, accID);
     } else {
       // not repeatable - check that quest has not been accepted before
-      require(questID == 0, "QuestAccept: accepted before");
+      if (questID != 0) revert("accepted before");
       questID = LibQuests.assign(world, components, index, accID);
     }
 
