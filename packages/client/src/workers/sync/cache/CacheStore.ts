@@ -22,6 +22,7 @@ type StateReport = {
     lastBlock: number;
     lastEntity: number;
     lastComponent: number;
+    kamigazeNonce: number;
   };
 };
 
@@ -35,6 +36,7 @@ export function createCacheStore() {
   const lastKamigazeBlock = 0;
   const lastKamigazeEntity = 0;
   const lastKamigazeComponent = 0;
+  const kamigazeNonce = 0;
 
   return {
     components,
@@ -46,6 +48,7 @@ export function createCacheStore() {
     lastKamigazeBlock,
     lastKamigazeEntity,
     lastKamigazeComponent,
+    kamigazeNonce,
   };
 }
 
@@ -136,6 +139,7 @@ export async function saveCacheStoreToIndexDb(cache: ECSCache, store: CacheStore
   await cache.set('LastKamigazeBlock', 'current', store.lastKamigazeBlock);
   await cache.set('LastKamigazeEntity', 'current', store.lastKamigazeEntity);
   await cache.set('LastKamigazeComponent', 'current', store.lastKamigazeComponent);
+  await cache.set('KamigazeNonce', 'current', store.kamigazeNonce);
 }
 
 export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheStore> {
@@ -160,6 +164,7 @@ export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheSto
   const lastKamigazeBlock = (await cache.get('LastKamigazeBlock', 'current')) ?? 0;
   const lastKamigazeEntity = (await cache.get('LastKamigazeEntity', 'current')) ?? 0;
   const lastKamigazeComponent = (await cache.get('LastKamigazeComponent', 'current')) ?? 0;
+  const kamigazeNonce = (await cache.get('KamigazeNonce', 'current')) ?? 0;
 
   return {
     state,
@@ -171,6 +176,7 @@ export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheSto
     lastKamigazeBlock,
     lastKamigazeEntity,
     lastKamigazeComponent,
+    kamigazeNonce,
   };
 }
 
@@ -192,6 +198,7 @@ export function getStateCache(
     LastKamigazeBlock: number;
     LastKamigazeEntity: number;
     LastKamigazeComponent: number;
+    KamigazeNonce: number;
   }>(
     getCacheId('ECSCache', chainId, worldAddress, version), // Store a separate cache for each World contract address
     [
@@ -202,6 +209,7 @@ export function getStateCache(
       'LastKamigazeBlock',
       'LastKamigazeEntity',
       'LastKamigazeComponent',
+      'KamigazeNonce',
     ],
     version,
     idb
@@ -241,6 +249,7 @@ export function getStateReport(cacheStore: CacheStore): StateReport {
       lastBlock: cacheStore.lastKamigazeBlock,
       lastEntity: cacheStore.lastKamigazeEntity,
       lastComponent: cacheStore.lastKamigazeComponent,
+      kamigazeNonce: cacheStore.kamigazeNonce,
     },
   };
 }

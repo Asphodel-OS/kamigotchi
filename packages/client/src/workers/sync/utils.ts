@@ -39,13 +39,12 @@ const debug = parentDebug.extend('syncUtils');
 
 /**
  * KAMIGAZE INTEGRATION
- */
+ **/
 
 export function createSnapshotClient(url: string): KamigazeServiceClient {
   return createClient(KamigazeServiceDefinition, createChannel(url));
 }
 
-// TODO: chunk this according to expected size of payload
 export async function fetchStateFromKamigaze(
   cacheStore: CacheStore,
   kamigazeClient: KamigazeServiceClient,
@@ -56,11 +55,17 @@ export async function fetchStateFromKamigaze(
   const chunkPercentage = Math.ceil(100 / numChunks);
 
   let currentBlock = cacheStore.lastKamigazeBlock;
+  let currentNonce = cacheStore.kamigazeNonce;
   let initialLoad = currentBlock == 0;
 
+  //block
   let BlockResponse = await kamigazeClient.getStateBlock({});
+  if (cacheStore.kamigazeNonce != BlockResponse.nonce) {
+    cacheStore = createCacheStore();
+  }
   storeBlock(cacheStore, BlockResponse);
   cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
+  cacheStore.kamigazeNonce = BlockResponse.nonce;
 
   // Components
   // remove from the cache any component added by the rpc sync
