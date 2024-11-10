@@ -97,7 +97,7 @@ const Footer = styled.div<{ noBorder?: boolean }>`
 
 const Children = styled.div<{ noPadding?: boolean }>`
   position: relative;
-  overflow-y: auto;
+  overflow-y: scroll;
   max-height: 100%;
   height: 100%;
 
