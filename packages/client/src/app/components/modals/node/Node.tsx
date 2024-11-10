@@ -47,7 +47,7 @@ export function registerNodeModal() {
     {
       colStart: 33,
       colEnd: 67,
-      rowStart: 12,
+      rowStart: 3,
       rowEnd: 99,
     },
 
