@@ -36,6 +36,13 @@ import { CacheStore, createCacheStore, storeEvent } from './cache';
 import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
+interface FetchOptions {
+  cacheStore: CacheStore;
+  kamigazeClient: KamigazeServiceClient;
+  decode: ReturnType<typeof createDecode>;
+  numChunks?: number;
+  setPercentage: (percentage: number) => void;
+}
 
 /**
  * KAMIGAZE INTEGRATION
@@ -50,68 +57,118 @@ export async function fetchStateFromKamigaze(
   kamigazeClient: KamigazeServiceClient,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
-  setPercentage?: (percentage: number) => void
+  setPercentage: (percentage: number) => void
 ): Promise<CacheStore> {
-  const chunkPercentage = Math.ceil(100 / numChunks);
-
   let currentBlock = cacheStore.lastKamigazeBlock;
   let currentNonce = cacheStore.kamigazeNonce;
   let initialLoad = currentBlock == 0;
+  let currentProgress = 0;
+
+  const options: FetchOptions = { cacheStore, kamigazeClient, decode, numChunks, setPercentage };
 
   //block
   let BlockResponse = await kamigazeClient.getStateBlock({});
   if (cacheStore.kamigazeNonce != BlockResponse.nonce) {
+    console.log('New nonce found, full state load required');
     cacheStore = createCacheStore();
+    initialLoad = true;
   }
+
+  try {
+    await fetchComponents(options);
+    if (!initialLoad) {
+      await fetchStateRemovals(options);
+    }
+    await fetchStateValues(options);
+    await fetchEntities(options);
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+
   storeBlock(cacheStore, BlockResponse);
   cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
   cacheStore.kamigazeNonce = BlockResponse.nonce;
-
-  // Components
-  // remove from the cache any component added by the rpc sync
-  cacheStore.components.splice(cacheStore.lastKamigazeComponent + 1);
-  let ComponentsResponse = await kamigazeClient.getComponents({
-    fromIdx: cacheStore.lastKamigazeComponent,
-  });
-  storeComponents(cacheStore, ComponentsResponse.components);
-  cacheStore.lastKamigazeComponent = cacheStore.components.length - 1;
-
-  // State Removal
-  if (!initialLoad) {
-    let StateRemovalsReponse = await kamigazeClient.getState({
-      fromBlock: currentBlock,
-      numChunks: numChunks,
-      removals: true,
-    });
-    for await (const responseChunk of StateRemovalsReponse) {
-      removeValues(cacheStore, responseChunk.state);
-    }
-  }
-
-  // State Values
-  let StateValuesResponse = await kamigazeClient.getState({
-    fromBlock: currentBlock,
-    numChunks: numChunks,
-    removals: false,
-  });
-  for await (const responseChunk of StateValuesResponse) {
-    storeValues(cacheStore, responseChunk.state, decode);
-  }
-
-  // Entities
-  let EntitiesResponse = kamigazeClient.getEntities({
-    fromIdx: cacheStore.lastKamigazeEntity,
-    numChunks: numChunks,
-  });
-  // remove from the cache any entity added by the rpc sync
-  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
-  for await (const responseChunk of EntitiesResponse) {
-    storeEntities(cacheStore, responseChunk.entities);
-  }
-  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
-
   return cacheStore;
 }
+
+async function fetchComponents({ cacheStore, kamigazeClient, setPercentage }: FetchOptions) {
+  // remove from the cache any component added by the rpc sync
+  cacheStore.components.splice(cacheStore.lastKamigazeComponent + 1);
+
+  const ComponentsResponse = await kamigazeClient.getComponents({
+    fromIdx: cacheStore.lastKamigazeComponent,
+  });
+
+  storeComponents(cacheStore, ComponentsResponse.components);
+  cacheStore.lastKamigazeComponent = cacheStore.components.length - 1;
+  setPercentage(5);
+}
+
+async function fetchStateRemovals({
+  cacheStore,
+  kamigazeClient,
+  numChunks = 10,
+  setPercentage,
+}: FetchOptions) {
+  let percent = 5;
+  const StateRemovalsResponse = await kamigazeClient.getState({
+    fromBlock: cacheStore.lastKamigazeBlock,
+    numChunks,
+    removals: true,
+  });
+  for await (const responseChunk of StateRemovalsResponse) {
+    removeValues(cacheStore, responseChunk.state);
+    setPercentage(percent);
+    percent += 3;
+  }
+}
+
+async function fetchStateValues({
+  cacheStore,
+  kamigazeClient,
+  decode,
+  numChunks = 10,
+  setPercentage,
+}: FetchOptions) {
+  let percent = 40;
+  const StateValuesResponse = await kamigazeClient.getState({
+    fromBlock: cacheStore.lastKamigazeBlock,
+    numChunks,
+    removals: false,
+  });
+
+  for await (const responseChunk of StateValuesResponse) {
+    storeValues(cacheStore, responseChunk.state, decode);
+    setPercentage(percent);
+    percent += 3;
+  }
+}
+
+async function fetchEntities({
+  cacheStore,
+  kamigazeClient,
+  numChunks = 10,
+  setPercentage,
+}: FetchOptions) {
+  // remove from the cache any entity added by the rpc sync
+  let percent = 75;
+  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
+
+  const EntitiesResponse = kamigazeClient.getEntities({
+    fromIdx: cacheStore.lastKamigazeEntity,
+    numChunks,
+  });
+
+  for await (const responseChunk of EntitiesResponse) {
+    storeEntities(cacheStore, responseChunk.entities);
+    setPercentage(percent);
+    percent += 3;
+  }
+
+  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
+}
+
 export function storeBlock(cacheStore: CacheStore, block: BlockResponse) {
   cacheStore.blockNumber = block.blockNumber;
   console.log('Stored block');

@@ -9,6 +9,7 @@ export enum SyncState {
   GAPFILL,
   INITIALIZE,
   LIVE,
+  FAILED,
 }
 
 export type SyncStatus = {
