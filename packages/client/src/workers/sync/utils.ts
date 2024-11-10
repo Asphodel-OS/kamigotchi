@@ -89,6 +89,7 @@ export async function fetchStateFromKamigaze(
   storeBlock(cacheStore, BlockResponse);
   cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
   cacheStore.kamigazeNonce = BlockResponse.nonce;
+
   return cacheStore;
 }
 

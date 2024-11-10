@@ -257,7 +257,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         this.setLoadingState({
           state: SyncState.FAILED,
           msg: `Failed to Retrieve State, Try Again Later`,
-          percentage: 0,
         });
         return;
       }
