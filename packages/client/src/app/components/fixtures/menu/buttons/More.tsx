@@ -92,6 +92,7 @@ export const MoreMenuButton = () => {
           { text: 'Logout', disabled, image: logoutIcon, onClick: handleLogout },
         ]}
         scale={4.5}
+        radius={0.6}
         scaleOrientation='vh'
       />
     </Tooltip>
