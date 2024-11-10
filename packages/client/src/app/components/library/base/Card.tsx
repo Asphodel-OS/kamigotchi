@@ -44,20 +44,18 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 `;
 
 const Image = styled.img<{ scale: number }>`
-  border-style: solid;
-  border-width: 0vw 0.15vw 0vw 0vw;
-  border-color: black;
+  border-right: solid black 0.15vw;
   border-radius: 0.45vw 0vw 0vw 0.45vw;
   object-fit: cover;
   object-position: 100% 0;
+
+  height: ${({ scale }) => scale}vw;
+  width: ${({ scale }) => scale}vw;
 
   cursor: pointer;
   &:hover {
     opacity: 0.75;
   }
-
-  height: ${({ scale }) => scale}vw;
-  width: ${({ scale }) => scale}vw;
 `;
 
 const Container = styled.div`

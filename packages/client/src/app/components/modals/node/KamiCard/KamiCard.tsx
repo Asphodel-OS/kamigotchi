@@ -119,52 +119,51 @@ const TitleBar = styled.div`
 `;
 
 const TitleText = styled.div`
-  font-family: Pixel;
+  justify-content: flex-start;
+
   font-size: 1vw;
   text-align: left;
-  justify-content: flex-start;
-  cursor: pointer;
 
+  cursor: pointer;
   &:hover {
     opacity: 0.6;
   }
 `;
 
 const TitleCorner = styled.div`
-  flex-grow: 1;
-
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: right;
-  gap: 0.3vw;
-
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-grow: 1;
+
+  gap: 0.3vw;
+
+  font-size: 1vw;
+  text-align: right;
 `;
 
 const Content = styled.div`
-  flex-grow: 1;
-  padding: 0.2vw;
-
   display: flex;
   flex-flow: row nowrap;
   align-items: stretch;
+  flex-grow: 1;
+
+  padding: 0.2vw;
 `;
 
 const ContentColumn = styled.div`
-  flex-grow: 1;
-  margin: 0.2vw;
-  padding-top: 0.2vw;
   display: flex;
   flex-flow: column nowrap;
+  flex-grow: 1;
+
+  margin: 0.2vw;
+  padding-top: 0.2vw;
 `;
 
 const ContentSubtext = styled.div`
   color: #333;
   flex-grow: 1;
 
-  font-family: Pixel;
   text-align: right;
   font-size: 0.7vw;
 
@@ -189,7 +188,6 @@ const ContentActions = styled.div`
 const TextBig = styled.p`
   padding: 0.2vw;
 
-  font-family: Pixel;
   font-size: 0.75vw;
   line-height: 0.9vw;
   text-align: left;
@@ -206,9 +204,9 @@ const TextBig = styled.p`
 `;
 
 const TextMedium = styled.p`
+  padding-left: 0.5vw;
+
   font-size: 0.6vw;
-  font-family: Pixel;
   line-height: 1vw;
   text-align: left;
-  padding-left: 0.5vw;
 `;

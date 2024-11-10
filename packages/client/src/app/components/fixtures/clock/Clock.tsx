@@ -3,10 +3,9 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
+import { getColor } from 'app/components/library/base/measures/Battery';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
-
-import { getColor } from 'app/components/library/base/measures/Battery';
 import { ClockIcons } from 'assets/images/icons/clock';
 import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { Stat } from 'network/shapes/Stats';
