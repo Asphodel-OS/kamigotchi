@@ -93,9 +93,9 @@ export function registerClock() {
             <TicksPosition>{Ticks()}</TicksPosition>
             <BandColor rotation={rotateBand} />
             <Time rotation={rotateClock} viewBox='0 0 30 5'>
-              <path id='MyPath' fill='none' d='M 3 4 Q 15 -4 25 5.8' pathLength='2' />
+              <path id='MyPath' fill='none' d='M 2.3 4.5 Q 10.5 -4 25 5.7' pathLength='2' />
               <text fill='white' font-size='2' dominant-baseline='hanging' text-anchor='middle'>
-                <textPath href='#MyPath' startOffset='0.9'>
+                <textPath href='#MyPath' startOffset='0.8'>
                   {getKamiTime(Date.now())}
                 </textPath>
               </text>
@@ -173,7 +173,7 @@ const Time = styled.svg<{ rotation: number }>`
     1px 0 black,
     0 -1px black;
   display: block;
-  bottom: 2vh;
+  bottom: 1.5vh;
   position: absolute;
   ${({ rotation }) => `transform: rotate(${-rotation}deg);`};
 `;
