@@ -20,7 +20,7 @@ export function registerMapModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 99,
+      rowEnd: 79,
     },
 
     // Requirement
@@ -105,6 +105,7 @@ export function registerMapModal() {
           canExit
           noPadding
           truncate
+          scrollBarColor='#cbba3d #e1e1b5'
         >
           <Grid
             index={roomIndex}

@@ -14,13 +14,14 @@ interface Props {
   noInternalBorder?: boolean;
   noPadding?: boolean;
   truncate?: boolean;
+  scrollBarColor?: string;
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
   const { id, children, header, footer } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate } = props;
+  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
   const { modals } = useVisibility();
 
   return (
@@ -32,7 +33,9 @@ export const ModalWrapper = (props: Props) => {
           </ButtonRow>
         )}
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
-        <Children noPadding={noPadding}>{children}</Children>
+        <Children scrollBarColor={scrollBarColor} noPadding={noPadding}>
+          {children}
+        </Children>
         {footer && <Footer noBorder={noInternalBorder}>{footer}</Footer>}
       </Content>
     </Wrapper>
@@ -95,16 +98,18 @@ const Footer = styled.div<{ noBorder?: boolean }>`
   flex-flow: column nowrap;
 `;
 
-const Children = styled.div<{ noPadding?: boolean }>`
+const Children = styled.div<{
+  noPadding?: boolean;
+  scrollBarColor?: string;
+}>`
   position: relative;
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
-
+  ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
-
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
 `;
 
