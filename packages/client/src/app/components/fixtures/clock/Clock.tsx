@@ -78,10 +78,21 @@ export function registerClock() {
         return () => clearInterval(interval);
       }, []);
 
+      const Ticks = () => {
+        let tickList = [];
+        for (let i = 0; i < 36; i++) {
+          tickList.push(<Tick rotationZ={i} />);
+        }
+        return tickList;
+      };
+
+      //Render
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <Circle rotation={rotateClock}>
+            <TicksPosition>{Ticks()}</TicksPosition>
             <BandColor rotation={rotateBand} />
+            <Time rotation={rotateClock}>{getKamiTime(Date.now())}</Time>
             <Tooltip text={getClockTooltip()}>
               <Phases>
                 <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
@@ -130,6 +141,29 @@ const Circle = styled.div<{ rotation: number }>`
   overflow: hidden;
   transform-origin: center;
   ${({ rotation }) => `transform: rotate(${rotation}deg);`}
+`;
+//
+
+const TicksPosition = styled.div`
+  position: absolute;
+  left: 12.5vh;
+  bottom: 12.5vh;
+  transform: rotate(16deg);
+`;
+const Tick = styled.div<{ rotationZ: number }>`
+  width: 0.1vh;
+  height: 0.5vh;
+  background-color: grey;
+  position: absolute;
+  transform-origin: 0px 7.5vh;
+  transform: ${({ rotationZ }) => `translateY(-7.5vh) rotateZ(calc(${rotationZ} * 360deg / 36))`};
+  z-index: 1200;
+`;
+const Time = styled.div<{ rotation: number }>`
+  position: absolute;
+  bottom: 10vh;
+  font-size: 1vh;
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
 
 const ClockOverlay = styled.div`
