@@ -181,14 +181,16 @@ const Time = styled.svg`
   top: 1.5vh;
   left: 6vh;
 `;
+//left: 25%;
 const StaminaText = styled.div`
   position: absolute;
   z-index: 1;
   font-size: 1vh;
   bottom: 3vh;
   color: #efff1d;
-  left: 1vh;
-  font-weight: bold;
+  --b: 165%;
+  right: calc(100% - var(--b) / 2);
+
   text-shadow:
     -1px 0 black,
     0 1px black,
