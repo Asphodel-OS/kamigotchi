@@ -115,6 +115,9 @@ export function registerClock() {
           <ClockOverlay />
           <Tooltip text={getStaminaTooltip(stamina)}>
             <SmallCircle>
+              <StaminaText>
+                {stamina.sync}/{stamina.total}
+              </StaminaText>
               <SmallCircleFill height={calcStaminaPercent(stamina)} />
             </SmallCircle>
           </Tooltip>
@@ -175,11 +178,23 @@ const Time = styled.svg`
   width: 14vh;
   height: 4vh;
   position: absolute;
-      top: 1.5vh;
-    left: 6vh;
-}
+  top: 1.5vh;
+  left: 6vh;
 `;
-
+const StaminaText = styled.div`
+  position: absolute;
+  z-index: 1;
+  font-size: 1vh;
+  bottom: 3vh;
+  color: #efff1d;
+  left: 1vh;
+  font-weight: bold;
+  text-shadow:
+    -1px 0 black,
+    0 1px black,
+    1px 0 black,
+    0 -1px black;
+`;
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
   background-position: center;
