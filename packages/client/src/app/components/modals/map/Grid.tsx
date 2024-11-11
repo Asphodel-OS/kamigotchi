@@ -200,7 +200,6 @@ const Container = styled.div`
 const Background = styled.img`
   width: 100%;
   height: 100%;
-  border-radius: 0px 0px 1.05vw 1.05vw;
   image-rendering: pixelated;
 `;
 
