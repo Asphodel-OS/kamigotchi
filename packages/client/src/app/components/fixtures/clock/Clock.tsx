@@ -105,7 +105,7 @@ export function registerClock() {
             </Tooltip>
           </Circle>
           <Time viewBox='0 0 30 4'>
-            <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 2.5' pathLength='2' />
+            <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 1.8' pathLength='2' />
             <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
               <textPath href='#MyPath' startOffset='0.9'>
                 {getKamiTime(Date.now())}
