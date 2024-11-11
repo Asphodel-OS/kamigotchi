@@ -92,14 +92,6 @@ export function registerClock() {
           <Circle rotation={rotateClock}>
             <TicksPosition>{Ticks()}</TicksPosition>
             <BandColor rotation={rotateBand} />
-            <Time rotation={rotateClock} viewBox='0 0 30 5'>
-              <path id='MyPath' fill='none' d='M 2.3 4.5 Q 10.5 -4 25 5.7' pathLength='2' />
-              <text fill='white' font-size='2' dominant-baseline='hanging' text-anchor='middle'>
-                <textPath href='#MyPath' startOffset='0.8'>
-                  {getKamiTime(Date.now())}
-                </textPath>
-              </text>
-            </Time>
             <Tooltip text={getClockTooltip()}>
               <Phases>
                 <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
@@ -112,6 +104,14 @@ export function registerClock() {
               </Phases>
             </Tooltip>
           </Circle>
+          <Time viewBox='0 0 30 4'>
+            <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 2.5' pathLength='2' />
+            <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
+              <textPath href='#MyPath' startOffset='0.9'>
+                {getKamiTime(Date.now())}
+              </textPath>
+            </text>
+          </Time>
           <ClockOverlay />
           <Tooltip text={getStaminaTooltip(stamina)}>
             <SmallCircle>
@@ -127,7 +127,7 @@ export function registerClock() {
 const Container = styled.div`
   pointer-events: auto;
   position: absolute;
-  left: 4;
+  left: 0vh;
   z-index: -1;
 `;
 
@@ -166,16 +166,18 @@ const Tick = styled.div<{ rotationZ: number }>`
   transform: ${({ rotationZ }) => `translateY(-7.5vh) rotateZ(calc(${rotationZ} * 360deg / 36))`};
   z-index: 1200;
 `;
-const Time = styled.svg<{ rotation: number }>`
+const Time = styled.svg`
   text-shadow:
     -1px 0 black,
     0 1px black,
     1px 0 black,
     0 -1px black;
-  display: block;
-  bottom: 1.5vh;
+  width: 14vh;
+  height: 4vh;
   position: absolute;
-  ${({ rotation }) => `transform: rotate(${-rotation}deg);`};
+      top: 1.5vh;
+    left: 6vh;
+}
 `;
 
 const ClockOverlay = styled.div`
