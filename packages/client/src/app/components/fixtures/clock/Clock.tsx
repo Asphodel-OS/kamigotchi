@@ -92,7 +92,14 @@ export function registerClock() {
           <Circle rotation={rotateClock}>
             <TicksPosition>{Ticks()}</TicksPosition>
             <BandColor rotation={rotateBand} />
-            <Time rotation={rotateClock}>{getKamiTime(Date.now())}</Time>
+            <Time rotation={rotateClock} viewBox='0 0 30 5'>
+              <path id='MyPath' fill='none' d='M 3 4 Q 15 -4 25 5.8' pathLength='2' />
+              <text fill='white' font-size='2' dominant-baseline='hanging' text-anchor='middle'>
+                <textPath href='#MyPath' startOffset='0.9'>
+                  {getKamiTime(Date.now())}
+                </textPath>
+              </text>
+            </Time>
             <Tooltip text={getClockTooltip()}>
               <Phases>
                 <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
@@ -159,11 +166,16 @@ const Tick = styled.div<{ rotationZ: number }>`
   transform: ${({ rotationZ }) => `translateY(-7.5vh) rotateZ(calc(${rotationZ} * 360deg / 36))`};
   z-index: 1200;
 `;
-const Time = styled.div<{ rotation: number }>`
+const Time = styled.svg<{ rotation: number }>`
+  text-shadow:
+    -1px 0 black,
+    0 1px black,
+    1px 0 black,
+    0 -1px black;
+  display: block;
+  bottom: 2vh;
   position: absolute;
-  bottom: 10vh;
-  font-size: 1vh;
-  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`};
 `;
 
 const ClockOverlay = styled.div`
