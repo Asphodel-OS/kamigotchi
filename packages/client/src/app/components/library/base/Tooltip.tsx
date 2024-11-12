@@ -9,10 +9,11 @@ interface Props {
   align?: 'left' | 'right' | 'center';
   title?: boolean;
   popOverDirection?: 'left' | 'right' | 'bottom' | 'top';
+  color?: string;
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, text, direction, title, popOverDirection } = props;
+  const { children, text, direction, title, popOverDirection, color } = props;
   const conjoinedText = () => {
     return !title ? (
       text.join('\n')
@@ -28,7 +29,6 @@ export const Tooltip = (props: Props) => {
   const flexGrow = props.grow ? '1' : '0';
   const align = props.align ?? 'left';
   const [active, setActive] = useState('none');
-
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -36,12 +36,17 @@ export const Tooltip = (props: Props) => {
       onMouseEnter={() => setActive('flex')}
       onMouseLeave={() => setActive('none')}
     >
-      {children}
       {active && (
-        <PopOverText popOverDirection={popOverDirection} active={active} align={align}>
+        <PopOverText
+          popOverDirection={popOverDirection}
+          active={active}
+          align={align}
+          color={color}
+        >
           {conjoinedText()}
         </PopOverText>
       )}
+      {children}
     </MyToolTip>
   );
 };
@@ -57,6 +62,7 @@ const PopOverText = styled.div<{
   align: string;
   active: string;
   popOverDirection?: string;
+  color?: string;
 }>`
   display: ${({ active }) => active};
   border-style: solid;
@@ -75,6 +81,7 @@ const PopOverText = styled.div<{
   position: fixed;
   --tooltip-margin: 30px;
   text-align: ${({ align }) => align};
+  ${({ color }) => color && `background-color:${color}`}
   ${({ popOverDirection }) => {
     if (popOverDirection === 'top')
       return `      
