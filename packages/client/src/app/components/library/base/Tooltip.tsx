@@ -8,12 +8,13 @@ interface Props {
   direction?: 'row' | 'column';
   align?: 'left' | 'right' | 'center';
   title?: boolean;
-  popOverDirection?: 'left' | 'right' | 'bottom' | 'top';
+  popOverDirection?: string[];
   color?: string;
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, text, direction, title, popOverDirection, color } = props;
+  const { children, text, direction } = props;
+  const { align, title, popOverDirection, color } = props;
   const conjoinedText = () => {
     return !title ? (
       text.join('\n')
@@ -27,7 +28,6 @@ export const Tooltip = (props: Props) => {
     );
   };
   const flexGrow = props.grow ? '1' : '0';
-  const align = props.align ?? 'left';
   const [active, setActive] = useState('none');
   return (
     <MyToolTip
@@ -59,9 +59,9 @@ const MyToolTip = styled.div<{ flexGrow: string; direction?: string }>`
 `;
 
 const PopOverText = styled.div<{
-  align: string;
+  align?: string;
   active: string;
-  popOverDirection?: string;
+  popOverDirection?: string[];
   color?: string;
 }>`
   display: ${({ active }) => active};
@@ -80,25 +80,11 @@ const PopOverText = styled.div<{
   white-space: pre-line;
   position: fixed;
   --tooltip-margin: 30px;
-  text-align: ${({ align }) => align};
-  ${({ color }) => color && `background-color:${color}`}
+  text-align: ${({ align }) => align ?? 'left'};
+  ${({ color }) => color && `background-color:${color};`}
   ${({ popOverDirection }) => {
-    if (popOverDirection === 'top')
-      return `      
-          transform:translateY(-102%);
-        `;
-    if (popOverDirection === 'bottom')
-      return `      
-              transform:translateY(29%);
-            `;
-
-    if (popOverDirection === 'left')
-      return `      
-                      transform:translateX(-102%);
-                    `;
-    if (popOverDirection === 'right')
-      return `      
-                      transform:translateX(14%);
-                    `;
+    if (popOverDirection)
+      return `transform:${popOverDirection.includes('left') ? `translateX(-102%)` : popOverDirection.includes('right') ? `translateX(14%)` : ''} 
+                      ${popOverDirection.includes('top') ? `translateY(-102%)` : popOverDirection.includes('bottom') ? `translateY(29%)` : ''};`;
   }}
 `;

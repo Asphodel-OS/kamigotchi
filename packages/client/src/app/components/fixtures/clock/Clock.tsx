@@ -89,7 +89,7 @@ export function registerClock() {
       //Render
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <Tooltip text={getClockTooltip()}>
+          <Tooltip popOverDirection={['right']} text={getClockTooltip()}>
             <Circle rotation={rotateClock}>
               <TicksPosition>{Ticks()}</TicksPosition>
               <BandColor rotation={rotateBand} />
@@ -113,7 +113,7 @@ export function registerClock() {
             </text>
           </Time>
           <ClockOverlay />
-          <Tooltip text={getStaminaTooltip(stamina)}>
+          <Tooltip popOverDirection={['bottom']} text={getStaminaTooltip(stamina)}>
             <SmallCircle>
               <StaminaText>
                 {stamina.sync}/{stamina.total}
@@ -150,6 +150,7 @@ const Circle = styled.div<{ rotation: number }>`
   z-index: -1;
   transform-origin: center;
   ${({ rotation }) => `transform: rotate(${rotation}deg);`}
+  overflow:hidden;
 `;
 
 const TicksPosition = styled.div`
