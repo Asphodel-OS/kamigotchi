@@ -152,7 +152,6 @@ const Circle = styled.div<{ rotation: number }>`
   transform-origin: center;
   ${({ rotation }) => `transform: rotate(${rotation}deg);`}
 `;
-//
 
 const TicksPosition = styled.div`
   position: absolute;
@@ -160,6 +159,7 @@ const TicksPosition = styled.div`
   bottom: 12.5vh;
   transform: rotate(16deg);
 `;
+
 const Tick = styled.div<{ rotationZ: number }>`
   width: 0.1vh;
   height: 0.5vh;
@@ -169,6 +169,7 @@ const Tick = styled.div<{ rotationZ: number }>`
   transform: ${({ rotationZ }) => `translateY(-7.5vh) rotateZ(calc(${rotationZ} * 360deg / 36))`};
   z-index: 1200;
 `;
+
 const Time = styled.svg`
   text-shadow:
     -1px 0 black,
@@ -181,7 +182,7 @@ const Time = styled.svg`
   top: 1.5vh;
   left: 6vh;
 `;
-//left: 25%;
+
 const StaminaText = styled.div`
   position: absolute;
   z-index: 1;
@@ -197,6 +198,7 @@ const StaminaText = styled.div`
     1px 0 black,
     0 -1px black;
 `;
+
 const ClockOverlay = styled.div`
   background-image: url(${ClockIcons.overlay});
   background-position: center;
