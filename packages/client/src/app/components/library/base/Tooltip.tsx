@@ -39,7 +39,7 @@ export const Tooltip = (props: Props) => {
   }, [setDimensions]);
 
   //console.log(`height ${JSON.stringify(dimensions)}`);
-
+  console.log(`window.scrollY ${window.scrollY}`);
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -55,6 +55,7 @@ export const Tooltip = (props: Props) => {
           active={active}
           align={align}
           color={color}
+          dimensions={dimensions}
         >
           {conjoinedText()}
         </PopOverText>
@@ -76,6 +77,7 @@ const PopOverText = styled.div<{
   active: string;
   popOverDirection?: string[];
   color?: string;
+  dimensions?: any;
 }>`
   display: ${({ active }) => active};
   border-style: solid;
@@ -94,9 +96,9 @@ const PopOverText = styled.div<{
   position: fixed;
   text-align: ${({ align }) => align ?? 'left'};
   ${({ color }) => color && `background-color:${color};`}
-  ${({ popOverDirection }) => {
+  ${({ popOverDirection, dimensions }) => {
     if (popOverDirection)
-      return `transform:${popOverDirection.includes('left') ? `translateX(-102%)` : popOverDirection.includes('right') ? `translateX(14%)` : ''} 
-                      ${popOverDirection.includes('top') ? `translateY(-148px)` : popOverDirection.includes('bottom') ? `translateY(29%)` : ''};`;
+      return `transform:${popOverDirection.includes('left') ? `translateX(${-dimensions.width * 0.25}vh)` : popOverDirection.includes('right') ? `translateX(${dimensions.width * 0.08}vh)` : ''} 
+                      ${popOverDirection.includes('top') ? `translateY(${-dimensions.height * 0.25}vh)` : popOverDirection.includes('bottom') ? `translateY(${dimensions.height * 0.08}vh)` : ''};`;
   }}
 `;
