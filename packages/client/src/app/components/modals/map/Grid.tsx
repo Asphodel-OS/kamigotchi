@@ -175,7 +175,7 @@ export const Grid = (props: Props) => {
                 ];
 
                 tile = (
-                  <Tooltip key={j} text={description} grow>
+                  <Tooltip id='map' popOverDirection={['top']} key={j} text={description} grow>
                     {tile}
                   </Tooltip>
                 );

@@ -10,11 +10,12 @@ interface Props {
   title?: boolean;
   popOverDirection?: string[];
   color?: string;
+  id?: string;
 }
 
 export const Tooltip = (props: Props) => {
   const { children, text, direction } = props;
-  const { align, title, popOverDirection, color } = props;
+  const { align, title, popOverDirection, color, id } = props;
   const conjoinedText = () => {
     return !title ? (
       text.join('\n')
@@ -33,10 +34,12 @@ export const Tooltip = (props: Props) => {
 
   const [dimensions, setDimensions] = useState<DOMRect | undefined>();
   const [myInnerHeight, setMyInnerHeight] = useState<any>();
+  const [myInnerWidth, setMyInnerWidth] = useState<any>();
 
   useEffect(() => {
     const handleWindowResize = () => {
       setMyInnerHeight(window.innerHeight);
+      setMyInnerWidth(window.innerWidth);
       setDimensions(ref.current?.getBoundingClientRect());
       console.log('resize');
     };
@@ -63,6 +66,8 @@ export const Tooltip = (props: Props) => {
           color={color}
           dimensions={dimensions}
           innerHeight={myInnerHeight}
+          innerWidth={myInnerWidth}
+          id={id}
         >
           {conjoinedText()}
         </PopOverText>
@@ -86,6 +91,8 @@ const PopOverText = styled.div<{
   color?: string;
   dimensions?: any;
   innerHeight?: any;
+  innerWidth?: any;
+  id?: string;
 }>`
   display: ${({ active }) => active};
   border-style: solid;
@@ -104,15 +111,17 @@ const PopOverText = styled.div<{
   position: fixed;
   text-align: ${({ align }) => align ?? 'left'};
 
-  ${({ dimensions, innerHeight }) =>
+  ${({ dimensions, innerHeight, id }) =>
     innerHeight &&
     dimensions &&
+    id === 'map' &&
     `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));`};
 
   ${({ color }) => color && `background-color:${color};`}
-  ${({ popOverDirection, dimensions }) => {
-    if (popOverDirection && dimensions)
-      return `transform:${popOverDirection.includes('left') ? `translateX(${-dimensions.width * 0.25}vh)` : popOverDirection.includes('right') ? `translateX(${dimensions.width * 0.08}vh)` : ''} 
-                      ${popOverDirection.includes('top') ? `translateY(${-dimensions.height * 0.25}vh)` : popOverDirection.includes('bottom') ? `translateY(${dimensions.height * 0.08}vh)` : ''};`;
+
+  ${({ popOverDirection, dimensions, id }) => {
+    if (popOverDirection && dimensions && id !== 'map')
+      return `${popOverDirection.includes('left') ? `translateX(${-dimensions.width * 0.25}vh)` : popOverDirection.includes('right') ? `right:max(0px,calc(${innerWidth}px * 0.53 + ${dimensions.left}px));` : ''} 
+                      ${popOverDirection.includes('top') ? `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));` : popOverDirection.includes('bottom') ? `translateY(${dimensions.height * 0.08}vh)` : ''};`;
   }}
 `;
