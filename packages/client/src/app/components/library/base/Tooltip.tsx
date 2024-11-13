@@ -97,7 +97,7 @@ const PopOverText = styled.div<{
   text-align: ${({ align }) => align ?? 'left'};
   ${({ color }) => color && `background-color:${color};`}
   ${({ popOverDirection, dimensions }) => {
-    if (popOverDirection)
+    if (popOverDirection && dimensions)
       return `transform:${popOverDirection.includes('left') ? `translateX(${-dimensions.width * 0.25}vh)` : popOverDirection.includes('right') ? `translateX(${dimensions.width * 0.08}vh)` : ''} 
                       ${popOverDirection.includes('top') ? `translateY(${-dimensions.height * 0.25}vh)` : popOverDirection.includes('bottom') ? `translateY(${dimensions.height * 0.08}vh)` : ''};`;
   }}
