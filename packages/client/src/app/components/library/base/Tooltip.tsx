@@ -50,7 +50,7 @@ export const Tooltip = (props: Props) => {
     <MyToolTip
       flexGrow={flexGrow}
       direction={direction}
-      onMouseEnter={() => setActive('flex')}
+      onMouseEnter={() => text[0] !== '' && setActive('flex')}
       onMouseLeave={() => setActive('none')}
       id='tool'
       ref={ref}
