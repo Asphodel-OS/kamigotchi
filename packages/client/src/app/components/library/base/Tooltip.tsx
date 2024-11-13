@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -34,12 +34,17 @@ export const Tooltip = (props: Props) => {
   const [dimensions, setDimensions] = useState<DOMRect | undefined>();
   const [myInnerHeight, setMyInnerHeight] = useState<any>();
 
-  const handleWindowResize = () => {
-    setMyInnerHeight(window.innerHeight);
-    setDimensions(ref.current?.getBoundingClientRect());
-  };
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setMyInnerHeight(window.innerHeight);
+      setDimensions(ref.current?.getBoundingClientRect());
+      console.log('resize');
+    };
 
-  window.addEventListener('resize', handleWindowResize);
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, []);
 
   return (
     <MyToolTip
@@ -102,7 +107,7 @@ const PopOverText = styled.div<{
   ${({ dimensions, innerHeight }) =>
     innerHeight &&
     dimensions &&
-    `top:max(0px,calc(${innerHeight}px * 0.1 + ${dimensions.top}px));`};
+    `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));`};
 
   ${({ color }) => color && `background-color:${color};`}
   ${({ popOverDirection, dimensions }) => {
