@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -29,17 +29,18 @@ export const Tooltip = (props: Props) => {
   };
   const flexGrow = props.grow ? '1' : '0';
   const [active, setActive] = useState('none');
-
-  const [dimensions, setDimensions] = useState<DOMRect | undefined>();
   const ref: any = useRef(null);
 
-  useEffect(() => {
-    //left, top, right, bottom, x, y, width, and height
-    setDimensions(ref.current?.getBoundingClientRect());
-  }, [setDimensions]);
+  const [dimensions, setDimensions] = useState<DOMRect | undefined>();
+  const [myInnerHeight, setMyInnerHeight] = useState<any>();
 
-  //console.log(`height ${JSON.stringify(dimensions)}`);
-  console.log(`window.scrollY ${window.scrollY}`);
+  const handleWindowResize = () => {
+    setMyInnerHeight(window.innerHeight);
+    setDimensions(ref.current?.getBoundingClientRect());
+  };
+
+  window.addEventListener('resize', handleWindowResize);
+
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -56,6 +57,7 @@ export const Tooltip = (props: Props) => {
           align={align}
           color={color}
           dimensions={dimensions}
+          innerHeight={myInnerHeight}
         >
           {conjoinedText()}
         </PopOverText>
@@ -78,6 +80,7 @@ const PopOverText = styled.div<{
   popOverDirection?: string[];
   color?: string;
   dimensions?: any;
+  innerHeight?: any;
 }>`
   display: ${({ active }) => active};
   border-style: solid;
@@ -95,6 +98,12 @@ const PopOverText = styled.div<{
   white-space: pre-line;
   position: fixed;
   text-align: ${({ align }) => align ?? 'left'};
+
+  ${({ dimensions, innerHeight }) =>
+    innerHeight &&
+    dimensions &&
+    `top:max(0px,calc(${innerHeight}px * 0.1 + ${dimensions.top}px));`};
+
   ${({ color }) => color && `background-color:${color};`}
   ${({ popOverDirection, dimensions }) => {
     if (popOverDirection && dimensions)
