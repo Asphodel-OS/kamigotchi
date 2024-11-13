@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -29,12 +29,25 @@ export const Tooltip = (props: Props) => {
   };
   const flexGrow = props.grow ? '1' : '0';
   const [active, setActive] = useState('none');
+
+  const [dimensions, setDimensions] = useState<DOMRect | undefined>();
+  const ref: any = useRef(null);
+
+  useEffect(() => {
+    //left, top, right, bottom, x, y, width, and height
+    setDimensions(ref.current?.getBoundingClientRect());
+  }, [setDimensions]);
+
+  //console.log(`height ${JSON.stringify(dimensions)}`);
+
   return (
     <MyToolTip
       flexGrow={flexGrow}
       direction={direction}
       onMouseEnter={() => setActive('flex')}
       onMouseLeave={() => setActive('none')}
+      id='tool'
+      ref={ref}
     >
       {active && (
         <PopOverText
@@ -51,7 +64,7 @@ export const Tooltip = (props: Props) => {
   );
 };
 
-const MyToolTip = styled.div<{ flexGrow: string; direction?: string }>`
+const MyToolTip = styled.div<{ flexGrow: string; direction?: string; ref?: any }>`
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
   display: flex;
@@ -79,12 +92,11 @@ const PopOverText = styled.div<{
   line-height: 1.25vw;
   white-space: pre-line;
   position: fixed;
-  --tooltip-margin: 30px;
   text-align: ${({ align }) => align ?? 'left'};
   ${({ color }) => color && `background-color:${color};`}
   ${({ popOverDirection }) => {
     if (popOverDirection)
       return `transform:${popOverDirection.includes('left') ? `translateX(-102%)` : popOverDirection.includes('right') ? `translateX(14%)` : ''} 
-                      ${popOverDirection.includes('top') ? `translateY(-102%)` : popOverDirection.includes('bottom') ? `translateY(29%)` : ''};`;
+                      ${popOverDirection.includes('top') ? `translateY(-148px)` : popOverDirection.includes('bottom') ? `translateY(29%)` : ''};`;
   }}
 `;
