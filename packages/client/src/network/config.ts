@@ -90,8 +90,8 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc: 'json-rpc.preyominet.initia.tech',
-    wsRpc: 'json-rpc-websocket.preyominet.initia.tech',
+    jsonRpc: 'https://json-rpc.preyominet.initia.tech',
+    wsRpc: 'wss://json-rpc-websocket.preyominet.initia.tech',
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
     streamServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
