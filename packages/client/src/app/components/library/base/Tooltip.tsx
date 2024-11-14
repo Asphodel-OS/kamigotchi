@@ -41,14 +41,13 @@ export const Tooltip = (props: Props) => {
       setMyInnerHeight(window.innerHeight);
       setMyInnerWidth(window.innerWidth);
       setDimensions(ref.current?.getBoundingClientRect());
-      console.log('resize');
     };
 
     window.addEventListener('resize', handleWindowResize);
 
     return () => window.removeEventListener('resize', handleWindowResize);
-  }, []);
-  console.log(`myInnerWidth ${myInnerWidth}`);
+  });
+  //console.log(`dimensions ${JSON.stringify(dimensions)} `);
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -109,12 +108,24 @@ const PopOverText = styled.div<{
   line-height: 1.25vw;
   white-space: pre-line;
   position: fixed;
+  pointer-events: none;
   text-align: ${({ align }) => align ?? 'left'};
   ${({ color }) => color && `background-color:${color};`}
-  ${({ dimensions, innerWidth, innerHeight }) => {
-    if (dimensions && innerWidth && innerHeight)
-      if (dimensions.right >= innerWidth - 40)
-        return `${`left:calc(${dimensions.x}px - ${dimensions.width}px ); `}`;
-    if (dimensions.bottom >= innerHeight - 50) return `${`bottom:calc(${dimensions.height}px ); `}`;
+
+  ${({ dimensions, innerHeight, id }) =>
+    innerHeight &&
+    dimensions &&
+    id === 'map' &&
+    `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));`};
+
+  ${({ dimensions, innerWidth }) => {
+    if (dimensions && innerWidth)
+      if (dimensions.right + dimensions.width + 50 >= innerWidth)
+        return `${`right:calc( ${dimensions.width}px ); `}`;
+  }}
+  ${({ dimensions, innerHeight, id }) => {
+    if (dimensions && innerHeight && id !== 'map')
+      if (dimensions.bottom + dimensions.height >= innerHeight)
+        return `${`bottom:calc(${dimensions.height}px ); `}`;
   }}
 `;
