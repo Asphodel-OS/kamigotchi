@@ -48,7 +48,7 @@ export const Tooltip = (props: Props) => {
 
     return () => window.removeEventListener('resize', handleWindowResize);
   }, []);
-
+  console.log(`myInnerWidth ${myInnerWidth}`);
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -110,18 +110,11 @@ const PopOverText = styled.div<{
   white-space: pre-line;
   position: fixed;
   text-align: ${({ align }) => align ?? 'left'};
-
-  ${({ dimensions, innerHeight, id }) =>
-    innerHeight &&
-    dimensions &&
-    id === 'map' &&
-    `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));`};
-
   ${({ color }) => color && `background-color:${color};`}
-
-  ${({ popOverDirection, dimensions, id }) => {
-    if (popOverDirection && dimensions && id !== 'map')
-      return `${popOverDirection.includes('left') ? `translateX(${-dimensions.width * 0.25}vh)` : popOverDirection.includes('right') ? `right:max(0px,calc(${innerWidth}px * 0.53 + ${dimensions.left}px));` : ''} 
-                      ${popOverDirection.includes('top') ? `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));` : popOverDirection.includes('bottom') ? `translateY(${dimensions.height * 0.08}vh)` : ''};`;
+  ${({ dimensions, innerWidth, innerHeight }) => {
+    if (dimensions && innerWidth && innerHeight)
+      if (dimensions.right >= innerWidth - 40)
+        return `${`left:calc(${dimensions.x}px - ${dimensions.width}px ); `}`;
+    if (dimensions.bottom >= innerHeight - 50) return `${`bottom:calc(${dimensions.height}px ); `}`;
   }}
 `;
