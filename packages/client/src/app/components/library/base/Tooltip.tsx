@@ -47,7 +47,8 @@ export const Tooltip = (props: Props) => {
 
     return () => window.removeEventListener('resize', handleWindowResize);
   });
-  console.log(`dimensions ${JSON.stringify(dimensions)}     scrollPosition ${scrollPosition}`);
+  //console.log(`dimensions ${JSON.stringify(dimensions)}     scrollPosition ${scrollPosition}`);
+  console.log(` scrollPosition on tooltip   ${scrollPosition}`);
   return (
     <MyToolTip
       flexGrow={flexGrow}

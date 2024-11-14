@@ -12,6 +12,7 @@ const REFRESH_TIME = 3333;
 interface Props {
   quests: BaseQuest[];
   actions: QuestModalActions;
+  scrollPosition?: number;
   utils: {
     populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
@@ -25,7 +26,7 @@ interface Props {
 }
 
 export const OngoingQuests = (props: Props) => {
-  const { quests, utils, actions, imageCache, isVisible } = props;
+  const { quests, utils, actions, imageCache, isVisible, scrollPosition } = props;
   const { populate, parseObjectives } = utils;
   const { modals } = useVisibility();
   const [cleaned, setCleaned] = useState<Quest[]>([]);
@@ -73,6 +74,7 @@ export const OngoingQuests = (props: Props) => {
           utils={utils}
           actions={actions}
           imageCache={imageCache}
+          scrollPosition={scrollPosition}
         />
       ))}
     </div>

@@ -17,11 +17,12 @@ interface Props {
     getItemBalance: (index: number) => number;
   };
   imageCache: Map<string, JSX.Element>;
+  scrollPosition?: number;
 }
 
 // Quest Card
 export const QuestCard = (props: Props) => {
-  const { quest, status, actions, utils, imageCache } = props;
+  const { quest, status, actions, utils, imageCache, scrollPosition } = props;
   const { accept, complete, burnItems } = actions;
   const { describeEntity, getItemBalance } = utils;
 
@@ -60,8 +61,9 @@ export const QuestCard = (props: Props) => {
     const key = `reward-${reward.target.type}-${reward.target.index}`;
     if (!imageCache.has(key)) {
       const entity = describeEntity(reward.target.type, reward.target.index || 0);
+      console.log(` scrollPosition on questcard   ${scrollPosition}`);
       const component = (
-        <Tooltip key={key} text={[entity.name]} direction='row'>
+        <Tooltip scrollPosition={scrollPosition} key={key} text={[entity.name]} direction='row'>
           <Image src={entity.image} size={1.5} />
         </Tooltip>
       );

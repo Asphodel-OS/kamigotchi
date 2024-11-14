@@ -15,6 +15,7 @@ interface Props {
   };
   mode: TabType;
   actions: QuestModalActions;
+  scrollPosition?: number;
   utils: {
     getItemBalance: (index: number) => number;
     populate: (quest: BaseQuest) => Quest;
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export const List = (props: Props) => {
-  const { quests, mode, actions, utils } = props;
+  const { quests, mode, actions, utils, scrollPosition } = props;
   const { available, ongoing, completed } = quests;
   const [imageCache, _] = useState(new Map<string, JSX.Element>());
 
@@ -39,6 +40,7 @@ export const List = (props: Props) => {
         utils={utils}
         imageCache={imageCache}
         isVisible={mode === 'AVAILABLE'}
+        scrollPosition={scrollPosition}
       />
       <AcceptedTab
         quests={{ ongoing, completed }}
@@ -46,13 +48,13 @@ export const List = (props: Props) => {
         utils={utils}
         imageCache={imageCache}
         isVisible={mode === 'ONGOING'}
+        scrollPosition={scrollPosition}
       />
     </Container>
   );
 };
 
 const Container = styled.div`
-  overflow-y: scroll;
   height: 100%;
   padding: 0.6vw;
 `;

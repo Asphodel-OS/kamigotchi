@@ -11,6 +11,7 @@ const STALE_TIME = 5000;
 interface Props {
   quests: BaseQuest[];
   actions: QuestModalActions;
+  scrollPosition?: number;
   utils: {
     populate: (quest: BaseQuest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
@@ -21,7 +22,7 @@ interface Props {
 }
 
 export const CompletedQuests = (props: Props) => {
-  const { quests, actions, utils, imageCache, isVisible } = props;
+  const { quests, actions, utils, imageCache, isVisible, scrollPosition } = props;
   const { describeEntity, populate, getItemBalance } = utils;
   const { modals } = useVisibility();
   const [cleaned, setCleaned] = useState<Quest[]>([]);
@@ -55,6 +56,7 @@ export const CompletedQuests = (props: Props) => {
           utils={{ describeEntity, getItemBalance }}
           actions={actions}
           imageCache={imageCache}
+          scrollPosition={scrollPosition}
         />
       ))}
     </div>

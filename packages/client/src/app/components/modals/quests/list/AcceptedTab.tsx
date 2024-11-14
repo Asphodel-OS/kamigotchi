@@ -24,10 +24,11 @@ interface Props {
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
+  scrollPosition?: number;
 }
 
 export const AcceptedTab = (props: Props) => {
-  const { quests, actions, utils, imageCache, isVisible } = props;
+  const { quests, actions, utils, imageCache, isVisible, scrollPosition } = props;
   const { ongoing, completed } = quests;
   const [showCompleted, setShowCompleted] = useState(false);
   const emptyText = ['No ongoing quests.', 'Get a job?'];
@@ -41,6 +42,7 @@ export const AcceptedTab = (props: Props) => {
         utils={utils}
         imageCache={imageCache}
         isVisible={isVisible}
+        scrollPosition={scrollPosition}
       />
       <CollapseText onClick={() => setShowCompleted(!showCompleted)}>
         {showCompleted ? '- Completed -' : '- Completed (collapsed) -'}
@@ -51,6 +53,7 @@ export const AcceptedTab = (props: Props) => {
         utils={utils}
         imageCache={imageCache}
         isVisible={showCompleted}
+        scrollPosition={scrollPosition}
       />
     </Container>
   );

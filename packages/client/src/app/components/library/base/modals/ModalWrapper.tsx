@@ -93,6 +93,7 @@ const Content = styled.div<{ truncate?: boolean }>`
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
+  overflow: hidden;
 `;
 
 const ButtonRow = styled.div`

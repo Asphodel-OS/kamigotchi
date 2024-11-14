@@ -193,6 +193,7 @@ export function registerQuestsModal() {
         complete: completeQuest,
         burnItems: burnQuestItems,
       };
+      const [scrollPosition, setScrollPosition] = useState(0);
 
       return (
         <ModalWrapper
@@ -201,6 +202,7 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
+          setScrollPosition={setScrollPosition}
           footer={
             <Footer
               account={account}
@@ -222,6 +224,7 @@ export function registerQuestsModal() {
             mode={tab}
             actions={transactions}
             utils={utils}
+            scrollPosition={scrollPosition}
           />
         </ModalWrapper>
       );

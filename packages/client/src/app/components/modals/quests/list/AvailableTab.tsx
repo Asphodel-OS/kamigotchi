@@ -16,10 +16,11 @@ interface Props {
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
+  scrollPosition?: number;
 }
 
 export const AvailableTab = (props: Props) => {
-  const { quests, actions, utils, imageCache, isVisible } = props;
+  const { quests, actions, utils, imageCache, isVisible, scrollPosition } = props;
   const display = isVisible ? 'block' : 'none';
 
   return (
@@ -33,6 +34,7 @@ export const AvailableTab = (props: Props) => {
           utils={utils}
           actions={actions}
           imageCache={imageCache}
+          scrollPosition={scrollPosition}
         />
       ))}
     </Container>
