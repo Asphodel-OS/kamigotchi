@@ -68,7 +68,7 @@ export async function fetchStateFromKamigaze(
   let BlockResponse = await kamigazeClient.getStateBlock({});
   if (cacheStore.kamigazeNonce != BlockResponse.nonce) {
     console.log('New nonce found, full state load required');
-    cacheStore = createCacheStore();
+    options.cacheStore = createCacheStore();
     initialLoad = true;
   }
 
