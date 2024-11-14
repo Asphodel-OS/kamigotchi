@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { Modals, useVisibility } from 'app/stores';
@@ -15,14 +15,29 @@ interface Props {
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  setScrollPosition?: any;
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
   const { id, children, header, footer } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
+  const {
+    canExit,
+    noInternalBorder,
+    noPadding,
+    overlay,
+    truncate,
+    scrollBarColor,
+    setScrollPosition,
+  } = props;
   const { modals } = useVisibility();
+  const elementRef: any = useRef(null);
+  const handleScroll = () => {
+    if (elementRef.current.scrollTop !== null) {
+      setScrollPosition(elementRef.current.scrollTop);
+    }
+  };
 
   return (
     <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay}>
@@ -33,7 +48,13 @@ export const ModalWrapper = (props: Props) => {
           </ButtonRow>
         )}
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
-        <Children scrollBarColor={scrollBarColor} noPadding={noPadding}>
+        <Children
+          onScroll={handleScroll}
+          ref={elementRef}
+          id='id'
+          scrollBarColor={scrollBarColor}
+          noPadding={noPadding}
+        >
           {children}
         </Children>
         {footer && <Footer noBorder={noInternalBorder}>{footer}</Footer>}
@@ -72,7 +93,6 @@ const Content = styled.div<{ truncate?: boolean }>`
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
-  overflow: hidden;
 `;
 
 const ButtonRow = styled.div`

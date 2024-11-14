@@ -97,6 +97,7 @@ export function registerMapModal() {
       ///////////////////
       // RENDER
       const accountKamis = queryKamisByAccount(components, account.id);
+      const [scrollPosition, setScrollPosition] = useState(0);
 
       return (
         <ModalWrapper
@@ -106,6 +107,7 @@ export function registerMapModal() {
           noPadding
           truncate
           scrollBarColor='#cbba3d #e1e1b5'
+          setScrollPosition={setScrollPosition}
         >
           <Grid
             index={roomIndex}
@@ -114,6 +116,7 @@ export function registerMapModal() {
             accountKamis={accountKamis}
             actions={{ move }}
             utils={{ ...utils, setHoveredRoom }}
+            scrollPosition={scrollPosition}
           />
         </ModalWrapper>
       );

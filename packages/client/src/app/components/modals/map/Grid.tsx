@@ -16,6 +16,7 @@ interface Props {
   zone: number;
   rooms: Map<number, Room>;
   accountKamis: EntityIndex[];
+  scrollPosition: number;
   actions: {
     move: (roomIndex: number) => void;
   };
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export const Grid = (props: Props) => {
-  const { index, zone, rooms, actions, utils, accountKamis } = props;
+  const { index, zone, rooms, actions, utils, accountKamis, scrollPosition } = props;
   const { queryNodeKamis, queryAccountsByRoom, setHoveredRoom, getKamiLocation, getBaseKami } =
     utils;
   const [grid, setGrid] = useState<Room[][]>([]);
@@ -175,7 +176,13 @@ export const Grid = (props: Props) => {
                 ];
 
                 tile = (
-                  <Tooltip id='map' popOverDirection={['top']} key={j} text={description} grow>
+                  <Tooltip
+                    scrollPosition={scrollPosition}
+                    popOverDirection={['top']}
+                    key={j}
+                    text={description}
+                    grow
+                  >
                     {tile}
                   </Tooltip>
                 );

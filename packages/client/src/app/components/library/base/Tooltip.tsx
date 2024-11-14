@@ -10,12 +10,12 @@ interface Props {
   title?: boolean;
   popOverDirection?: string[];
   color?: string;
-  id?: string;
+  scrollPosition?: number;
 }
 
 export const Tooltip = (props: Props) => {
   const { children, text, direction } = props;
-  const { align, title, popOverDirection, color, id } = props;
+  const { align, title, popOverDirection, color, scrollPosition } = props;
   const conjoinedText = () => {
     return !title ? (
       text.join('\n')
@@ -47,7 +47,7 @@ export const Tooltip = (props: Props) => {
 
     return () => window.removeEventListener('resize', handleWindowResize);
   });
-  //console.log(`dimensions ${JSON.stringify(dimensions)} `);
+  console.log(`dimensions ${JSON.stringify(dimensions)}     scrollPosition ${scrollPosition}`);
   return (
     <MyToolTip
       flexGrow={flexGrow}
@@ -66,7 +66,7 @@ export const Tooltip = (props: Props) => {
           dimensions={dimensions}
           innerHeight={myInnerHeight}
           innerWidth={myInnerWidth}
-          id={id}
+          scrollPosition={scrollPosition}
         >
           {conjoinedText()}
         </PopOverText>
@@ -91,7 +91,7 @@ const PopOverText = styled.div<{
   dimensions?: any;
   innerHeight?: any;
   innerWidth?: any;
-  id?: string;
+  scrollPosition?: number;
 }>`
   display: ${({ active }) => active};
   border-style: solid;
@@ -112,20 +112,19 @@ const PopOverText = styled.div<{
   text-align: ${({ align }) => align ?? 'left'};
   ${({ color }) => color && `background-color:${color};`}
 
-  ${({ dimensions, innerHeight, id }) =>
-    innerHeight &&
-    dimensions &&
-    id === 'map' &&
-    `top:max(0px,calc(-${innerHeight}px * 0.1 + ${dimensions.top}px));`};
-
+  ${({ scrollPosition, dimensions, innerHeight }) =>
+    scrollPosition && dimensions && innerHeight && `transform:translateY( -${scrollPosition}px );`}
+`;
+/*
   ${({ dimensions, innerWidth }) => {
     if (dimensions && innerWidth)
       if (dimensions.right + dimensions.width + 50 >= innerWidth)
         return `${`right:calc( ${dimensions.width}px ); `}`;
   }}
-  ${({ dimensions, innerHeight, id }) => {
-    if (dimensions && innerHeight && id !== 'map')
+  ${({ dimensions, innerHeight }) => {
+    if (dimensions && innerHeight)
       if (dimensions.bottom * 2 >= innerHeight)
         return `${`bottom:calc(${dimensions.height}px ); `}`;
   }}
-`;
+
+*/
