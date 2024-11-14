@@ -90,10 +90,8 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     devMode: false,
-    jsonRpc:
-      'https://maze-jsonrpc-s2-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
-    wsRpc:
-      'wss://maze-ws-s2-9ce4b2ff-e329-459d-8baa-ae49f95f33b2.public-think-factory.newmetric.xyz',
+    jsonRpc: 'json-rpc.preyominet.initia.tech',
+    wsRpc: 'json-rpc-websocket.preyominet.initia.tech',
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
     streamServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
