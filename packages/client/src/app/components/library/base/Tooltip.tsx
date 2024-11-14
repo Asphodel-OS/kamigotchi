@@ -125,7 +125,7 @@ const PopOverText = styled.div<{
   }}
   ${({ dimensions, innerHeight, id }) => {
     if (dimensions && innerHeight && id !== 'map')
-      if (dimensions.bottom + dimensions.height >= innerHeight)
+      if (dimensions.bottom * 2 >= innerHeight)
         return `${`bottom:calc(${dimensions.height}px ); `}`;
   }}
 `;
