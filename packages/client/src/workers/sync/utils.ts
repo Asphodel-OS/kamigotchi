@@ -60,9 +60,7 @@ export async function fetchStateFromKamigaze(
   setPercentage: (percentage: number) => void
 ): Promise<CacheStore> {
   let currentBlock = cacheStore.lastKamigazeBlock;
-  let currentNonce = cacheStore.kamigazeNonce;
   let initialLoad = currentBlock == 0;
-  let currentProgress = 0;
 
   const options: FetchOptions = { cacheStore, kamigazeClient, decode, numChunks, setPercentage };
 
@@ -86,11 +84,11 @@ export async function fetchStateFromKamigaze(
     throw error;
   }
 
-  storeBlock(cacheStore, BlockResponse);
-  cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
-  cacheStore.kamigazeNonce = BlockResponse.nonce;
+  storeBlock(options.cacheStore, BlockResponse);
+  options.cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
+  options.cacheStore.kamigazeNonce = BlockResponse.nonce;
 
-  return cacheStore;
+  return options.cacheStore;
 }
 
 async function fetchComponents({ cacheStore, kamigazeClient, setPercentage }: FetchOptions) {
