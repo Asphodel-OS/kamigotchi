@@ -38,7 +38,7 @@ export async function fetchBlock(
   provider: JsonRpcProvider,
   minBlockNumber?: number
 ): Promise<Block> {
-  console.log(`fetching block (min ${minBlockNumber})`);
+  // console.log(`fetching block (min ${minBlockNumber})`);
   for (const _ of range(10)) {
     const blockPromise = async () => {
       const rawBlock = await provider.perform('getBlock', {
@@ -53,8 +53,8 @@ export async function fetchBlock(
       await sleep(50);
       continue;
     } else {
-      console.log(`\tretrieved block ${block.number}`);
-      console.log(`\twith ${block.transactions.length} txs`);
+      // console.log(`\tretrieved block ${block.number}`);
+      // console.log(`\twith ${block.transactions.length} txs`);
       return block;
     }
   }
