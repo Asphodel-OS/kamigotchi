@@ -30,7 +30,7 @@ export const Tooltip = (props: Props) => {
     );
   };
   const flexGrow = props.grow ? '1' : '0';
-  const [showDisplay, setShowDisplay] = useState('none');
+  const [showDisplay, setShowDisplay] = useState(false);
   const [active, setActive] = useState(false);
 
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -65,8 +65,8 @@ export const Tooltip = (props: Props) => {
 
     if (active) {
       timeoutId = setTimeout(() => {
-        setShowDisplay('flex');
-      }, delay);
+        setShowDisplay(true);
+      }, delay ?? 350);
     }
     return () => {
       clearTimeout(timeoutId);
@@ -74,7 +74,7 @@ export const Tooltip = (props: Props) => {
   }, [active, delay]);
 
   const handleMouseEnter = () => {
-    setShowDisplay('none');
+    setShowDisplay(false);
     if (text[0] !== '') {
       setActive(true);
     }
@@ -115,11 +115,12 @@ const MyToolTip = styled.div<{ flexGrow: string; direction?: string; ref?: any }
 
 const PopOverText = styled.div<{
   align?: string;
-  showDisplay: string;
+  showDisplay: boolean;
   color?: string;
   tooltipPosition?: any;
 }>`
-  display: ${({ showDisplay }) => showDisplay};
+  display: flex;
+  ${({ showDisplay }) => (showDisplay ? `opacity:100;` : `opacity:0;`)};
   border-style: solid;
   z-index: 100;
   border-width: 0.15vw;
