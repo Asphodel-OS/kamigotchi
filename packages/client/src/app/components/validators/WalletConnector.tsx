@@ -11,7 +11,7 @@ import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { wagmiConfig } from 'clients/wagmi';
-import { defaultChain } from 'constants/chains';
+import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
 import { abbreviateAddress } from 'utils/address';
 
@@ -51,7 +51,7 @@ export function registerWalletConnecter() {
       // update network settings/validations on relevant network updates
       useEffect(() => {
         if (!ready) return;
-        const chainMatches = chain?.id === defaultChain.id;
+        const chainMatches = chain?.id === DefaultChain.id;
         if (!isConnected) {
           setState('disconnected');
           setSelectedAddress('');
@@ -147,7 +147,7 @@ export function registerWalletConnecter() {
 
       const handleClick = () => {
         if (state === 'disconnected') connect({ connector: connectors[0] });
-        else if (state === 'wrongChain') switchChain(wagmiConfig, { chainId: defaultChain.id });
+        else if (state === 'wrongChain') switchChain(wagmiConfig, { chainId: DefaultChain.id });
         else if (state === 'unauthenticated') login();
       };
 
@@ -181,7 +181,7 @@ export function registerWalletConnecter() {
 
       const getDescription = () => {
         if (state === 'disconnected') return 'You must connect one to continue.';
-        if (state === 'wrongChain') return `Please connect to ${defaultChain.name} network.`;
+        if (state === 'wrongChain') return `Please connect to ${DefaultChain.name} network.`;
         if (state === 'unauthenticated') return 'You must log in to continue.';
         return '';
       };

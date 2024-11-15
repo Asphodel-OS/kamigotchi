@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { OpenInNewIcon } from 'assets/images/icons/misc';
+import { DefaultChain } from 'constants/chains';
 import { NetworkLayer } from 'network/';
 import { ActionState, ActionStateString } from 'network/systems/ActionSystem/constants';
 
@@ -83,14 +84,14 @@ export const Logs = (props: Props) => {
   };
 
   const ExplorerButton = (hash: string | undefined) => {
-    if (!hash) return <></>;
+    const explorerUrl = DefaultChain?.blockExplorers?.default?.url ?? '';
+    if (!hash || !explorerUrl) return <></>;
+
     return (
       <Tooltip text={[`View on block explorer`]}>
         <OpenIcon
           src={OpenInNewIcon}
-          onClick={() =>
-            window.open(`https://scan.testnet.initia.xyz/preyominet-1/txs/${hash}`, '_blank')
-          }
+          onClick={() => window.open(`${explorerUrl}/txs/${hash}`, '_blank')}
         />
       </Tooltip>
     );
@@ -100,6 +101,7 @@ export const Logs = (props: Props) => {
     const actionData = getComponentValueStrict(ActionComponent, entityIndex);
     const state = ActionStateString[actionData.state as ActionState];
     const metadata = actionData.metadata ?? '';
+
     return (
       <Row key={`action${entityIndex}`}>
         <RowSegment>

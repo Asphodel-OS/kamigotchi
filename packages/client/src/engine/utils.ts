@@ -30,14 +30,15 @@ export function formatComponentID(componentID: string | BigNumber): string {
  * Fetch the latest Ethereum block
  *
  * @param provider ethers JsonRpcProvider
- * @param requireMinimumBlockNumber Minimal required block number.
+ * @param minBlockNumber Minimal required block number.
  * If the latest block number is below this number, the method waits for 1300ms and tries again, for at most 10 times.
  * @returns Promise resolving with the latest Ethereum block
  */
 export async function fetchBlock(
   provider: JsonRpcProvider,
-  requireMinimumBlockNumber?: number
+  minBlockNumber?: number
 ): Promise<Block> {
+  console.log(`fetching block (min ${minBlockNumber})`);
   for (const _ of range(10)) {
     const blockPromise = async () => {
       const rawBlock = await provider.perform('getBlock', {
@@ -46,13 +47,16 @@ export async function fetchBlock(
       });
       return provider.formatter.block(rawBlock);
     };
-    const block = await callWithRetry<Block>(blockPromise, [], 10, 1000);
-    if (requireMinimumBlockNumber && block.number < requireMinimumBlockNumber) {
-      await sleep(300);
+
+    const block = await callWithRetry<Block>(blockPromise, [], 10, 25);
+    if (minBlockNumber && block.number < minBlockNumber) {
+      await sleep(50);
       continue;
     } else {
+      console.log(`\tretrieved block ${block.number}`);
+      console.log(`\twith ${block.transactions.length} txs`);
       return block;
     }
   }
-  throw new Error('Could not fetch a block with blockNumber ' + requireMinimumBlockNumber);
+  throw new Error('Could not fetch a block with blockNumber ' + minBlockNumber);
 }

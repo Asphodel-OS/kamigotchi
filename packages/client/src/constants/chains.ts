@@ -1,5 +1,5 @@
 import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
-import { Chain, localhost, optimism } from '@wagmi/core/chains';
+import { Chain, localhost } from '@wagmi/core/chains';
 
 const rawYominet = {
   id: 4471190363524365,
@@ -22,6 +22,6 @@ const yominet = addRpcUrlOverrideToChain(rawYominet, import.meta.env.VITE_RPC_TR
 export const chainConfigs: Map<string, Chain> = new Map();
 chainConfigs.set('development', localhost);
 chainConfigs.set('staging', yominet);
-chainConfigs.set('production', optimism);
+chainConfigs.set('production', yominet);
 
-export const defaultChain = chainConfigs.get(import.meta.env.MODE ?? '')!;
+export const DefaultChain = chainConfigs.get(import.meta.env.MODE ?? '')!;

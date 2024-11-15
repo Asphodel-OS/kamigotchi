@@ -425,10 +425,10 @@ export function createFetchSystemCallsFromEvents(provider: JsonRpcProvider) {
   const { fetchBlock, clearBlock } = createBlockCache(provider);
 
   // fetch the call data of a transaction by its hash/block number
+  // Q(jb): are we even using this function?
   const fetchSystemCallData = async (txHash: string, blockNumber: number) => {
     const block = await fetchBlock(blockNumber);
     if (!block) return;
-
     const tx = block.transactions.find((tx) => tx.hash === txHash);
     if (!tx) return;
 

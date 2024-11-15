@@ -38,7 +38,7 @@ export function registerKamiModal() {
       const { network } = layers;
       const { world, components } = network;
 
-      return interval(5000).pipe(
+      return interval(SYNC_TIME).pipe(
         map(() => {
           const account = getAccountFromBurner(network);
           return {

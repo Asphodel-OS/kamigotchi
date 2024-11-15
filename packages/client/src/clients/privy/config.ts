@@ -1,9 +1,9 @@
 import { PrivyClientConfig } from '@privy-io/react-auth';
-import { defaultChain } from 'constants/chains';
+import { DefaultChain } from 'constants/chains';
 
 export const config: PrivyClientConfig = {
-  supportedChains: [defaultChain],
-  defaultChain: defaultChain,
+  supportedChains: [DefaultChain],
+  DefaultChain: DefaultChain,
   embeddedWallets: {
     createOnLogin: 'all-users',
     noPromptOnSignature: true,

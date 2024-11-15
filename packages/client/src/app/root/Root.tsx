@@ -6,7 +6,7 @@ import { WagmiProvider } from 'wagmi';
 
 import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
-import { defaultChain } from 'constants/chains';
+import { DefaultChain } from 'constants/chains';
 import { Layers } from 'network/';
 import { MainWindow } from './components';
 import { NetworkContext, RootContext } from './context';
@@ -27,7 +27,7 @@ export const Root = observer((props: Props) => {
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(`Loaded in { ${mode} } mode (chain ${defaultChain.id}).`);
+    console.log(`Loaded in { ${mode} } mode (chain ${DefaultChain.id}).`);
     localStorage.removeItem('wagmi.store');
   }, []);
 
