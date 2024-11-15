@@ -8,33 +8,33 @@ interface Props {
   direction?: 'row' | 'column';
   align?: 'left' | 'right' | 'center';
   title?: boolean;
-  popOverDirection?: string[];
   color?: string;
-  scrollPosition?: number;
   delay?: number;
 }
 
 export const Tooltip = (props: Props) => {
   const { children, text, direction } = props;
   const { align, title, color, delay } = props;
+  const flexGrow = props.grow ? '1' : '0';
+
+  const [showDisplay, setShowDisplay] = useState(false);
+  const [active, setActive] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
+  const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
+
   const conjoinedText = () => {
     return !title ? (
       text.join('\n')
     ) : (
-      <>
+      <div>
         <div style={{ fontWeight: 'bold', position: 'relative', textAlign: 'center' }}>
           {text[0] + '\n'}
         </div>
-        <div>{text.slice(1).join('\n')}</div>
-      </>
+        {text.slice(1).join('\n')}
+      </div>
     );
   };
-  const flexGrow = props.grow ? '1' : '0';
-  const [showDisplay, setShowDisplay] = useState(false);
-  const [active, setActive] = useState(false);
-
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
 
   const handleMouseMove = (event: React.MouseEvent) => {
     // pointer coordinates
@@ -49,15 +49,22 @@ export const Tooltip = (props: Props) => {
     let tooltipX = clientX + 12;
     let tooltipY = clientY + 12;
 
-    if (tooltipX + tooltipWidth > viewportWidth) {
+    if (tooltipX + tooltipWidth + 20 > viewportWidth) {
       tooltipX = clientX - tooltipWidth;
     }
 
-    if (tooltipY + tooltipHeight > viewportHeight) {
+    if (tooltipY + tooltipHeight + 20 > viewportHeight) {
       tooltipY = viewportHeight - tooltipHeight;
     }
 
     setTooltipPosition({ x: tooltipX, y: tooltipY });
+  };
+
+  const handleMouseEnter = () => {
+    setShowDisplay(false);
+    if (text[0] !== '') {
+      setActive(true);
+    }
   };
 
   useEffect(() => {
@@ -72,13 +79,6 @@ export const Tooltip = (props: Props) => {
       clearTimeout(timeoutId);
     };
   }, [active, delay]);
-
-  const handleMouseEnter = () => {
-    setShowDisplay(false);
-    if (text[0] !== '') {
-      setActive(true);
-    }
-  };
 
   return (
     <MyToolTip
