@@ -141,20 +141,27 @@ export function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
     console.log('No components to store');
     return;
   }
-  if (cacheStore.entities.length == 0) cacheStore.entities.push('0x0');
+
+  const entityDict = new Map<number, string>();
   for (const entity of entities) {
-    var hexId = Uint8ArrayToHexString(entity.id);
+    const hexId = Uint8ArrayToHexString(entity.id);
+    entityDict.set(entity.idx, hexId);
+  }
 
-    //CHECK INDEX
-    if (entity.idx != cacheStore.entities.length) {
-      console.log(
-        `Entity.IDX ${entity.idx} does not match tail of list ${cacheStore.entities.length}`
-      );
-      continue;
+  const maxIdx = Math.max(...entityDict.keys());
+
+  if (cacheStore.entities.length == 0) cacheStore.entities.push('0x0');
+
+  for (let i = cacheStore.entities.length; i <= maxIdx; i++) {
+    const hexId = entityDict.get(i);
+    if (hexId) {
+      // If we have an entity for this idx, add it
+      cacheStore.entities.push(hexId);
+      cacheStore.entityToIndex.set(hexId, i);
+    } else {
+      // If there's a gap, fill it with '0x0'
+      cacheStore.entities.push('0x0');
     }
-
-    cacheStore.entities.push(hexId);
-    cacheStore.entityToIndex.set(hexId, entity.idx);
   }
   console.log('Stored entities');
 }
