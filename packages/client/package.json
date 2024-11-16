@@ -55,7 +55,7 @@
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.13.7",
     "@neynar/nodejs-sdk": "^1.19.0",
-    "@privy-io/react-auth": "1.76.1",
+    "@privy-io/react-auth": "1.94.2",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@rollup/plugin-dsv": "^3.0.4",
     "@stdlib/stats-base-dists-normal-cdf": "^0.0.7",

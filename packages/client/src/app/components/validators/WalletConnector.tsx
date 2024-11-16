@@ -48,6 +48,7 @@ export function registerWalletConnecter() {
       const [isUpdating, setIsUpdating] = useState(false);
       const [state, setState] = useState('');
 
+      console.log(wallets);
       // update network settings/validations on relevant network updates
       useEffect(() => {
         if (!ready) return;
