@@ -81,7 +81,7 @@ export function registerClock() {
       const Ticks = () => {
         let tickList = [];
         for (let i = 0; i < 36; i++) {
-          tickList.push(<Tick rotationZ={i} />);
+          tickList.push(<Tick key={i} rotationZ={i} />);
         }
         return tickList;
       };
@@ -89,7 +89,7 @@ export function registerClock() {
       //Render
       return (
         <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <Tooltip popOverDirection={['right']} text={getClockTooltip()}>
+          <Tooltip text={getClockTooltip()}>
             <Circle rotation={rotateClock}>
               <TicksPosition>{Ticks()}</TicksPosition>
               <BandColor rotation={rotateBand} />
@@ -113,12 +113,12 @@ export function registerClock() {
             </text>
           </Time>
           <ClockOverlay />
-          <Tooltip popOverDirection={['bottom']} text={getStaminaTooltip(stamina)}>
+          <Tooltip text={getStaminaTooltip(stamina)}>
             <SmallCircle>
               <StaminaText>
                 {stamina.sync}/{stamina.total}
               </StaminaText>
-              <SmallCircleFill height={calcStaminaPercent(stamina)} />
+              <SmallCircleFill height={calcStaminaPercent(stamina).toString()} />
             </SmallCircle>
           </Tooltip>
         </Container>
@@ -232,10 +232,10 @@ const SmallCircle = styled.div`
   pointer-event: none;
 `;
 
-const SmallCircleFill = styled.div<{ height: number }>`
+const SmallCircleFill = styled.div<{ height: string }>`
   height: ${({ height }) => height}%;
   position: relative;
-  background-color: ${({ height }) => getColor(height)};
+  background-color: ${({ height }) => getColor(parseInt(height))};
   pointer-event: none;
 `;
 
