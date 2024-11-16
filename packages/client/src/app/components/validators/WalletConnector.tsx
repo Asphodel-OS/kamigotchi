@@ -37,7 +37,7 @@ export function registerWalletConnecter() {
       const { address: wagmiAddress, chain, isConnected, status } = useAccount();
       const { connectors, connect } = useConnect();
       const { ready, authenticated, login, logout } = usePrivy();
-      const { wallets } = useWallets();
+      const { wallets, ready: walletsReady } = useWallets();
 
       const { apis, addAPI } = useNetwork();
       const { burnerAddress, setBurnerAddress, setSelectedAddress } = useNetwork();
@@ -48,9 +48,9 @@ export function registerWalletConnecter() {
       const [isUpdating, setIsUpdating] = useState(false);
       const [state, setState] = useState('');
 
-      console.log(wallets);
       // update network settings/validations on relevant network updates
       useEffect(() => {
+        console.log({ walletsReady, wallets });
         if (!ready) return;
         const chainMatches = chain?.id === DefaultChain.id;
         if (!isConnected) {
@@ -63,7 +63,7 @@ export function registerWalletConnecter() {
         if (!isEqual(validations, { authenticated, chainMatches })) {
           setValidations({ authenticated, chainMatches });
         }
-      }, [ready, authenticated, isConnected, chain, wallets]);
+      }, [ready, authenticated, isConnected, chain, wallets, walletsReady]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -143,6 +143,8 @@ export function registerWalletConnecter() {
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
           await updateNetworkLayer(network, provider);
           setBurnerAddress(embeddedAddress);
+        } else {
+          console.warn(`Wallet ${abbreviateAddress(embeddedAddress)} is already connected`);
         }
       };
 
