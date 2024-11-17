@@ -20,7 +20,7 @@ contract WrapCaller {
     LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
   }
 
-  function petSync(uint256 id) public {
+  function kamiSync(uint256 id) public {
     LibKami.sync(components, id);
   }
 }

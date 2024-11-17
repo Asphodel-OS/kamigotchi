@@ -17,6 +17,8 @@ contract GachaTest is SetupTemplate {
     _setConfig("GACHA_REROLL_PRICE", 1);
   }
 
+  function setUpTraits() public override {}
+
   function setUpMint() public override {
     return;
   }

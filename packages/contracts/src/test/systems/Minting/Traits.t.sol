@@ -24,13 +24,11 @@ contract TraitsTest is SetupTemplate {
     _registerAccounts(10);
   }
 
-  function setUpMint() public override {
-    return;
-  }
+  function setUpTraits() public override {}
 
-  function setUpAccounts() public override {
-    return;
-  }
+  function setUpMint() public override {}
+
+  function setUpAccounts() public override {}
 
   /////////////////
   // HELPER FUNCTIONS
