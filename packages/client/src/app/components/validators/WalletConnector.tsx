@@ -132,7 +132,7 @@ export function registerWalletConnecter() {
         const injectedAddress = wallet.address.toLowerCase();
         if (!apis.has(injectedAddress)) {
           console.log(`Establishing APIs for ${abbreviateAddress(injectedAddress)}`);
-          const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
+          const provider = (await wallet.getEthereumProvider()) as ExternalProvider;
           const networkInstance = await createNetworkInstance(provider);
           const systems = network.createSystems(networkInstance);
           addAPI(injectedAddress, systems);
@@ -146,7 +146,7 @@ export function registerWalletConnecter() {
         const embeddedAddress = wallet.address.toLowerCase();
         if (burnerAddress !== embeddedAddress) {
           console.log(`Updating base network ${abbreviateAddress(embeddedAddress)}`);
-          const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
+          const provider = (await wallet.getEthereumProvider()) as ExternalProvider;
           await updateNetworkLayer(network, provider);
           setBurnerAddress(embeddedAddress);
         } else {
