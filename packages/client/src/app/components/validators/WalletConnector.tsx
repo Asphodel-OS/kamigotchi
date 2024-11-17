@@ -131,7 +131,12 @@ export function registerWalletConnecter() {
         const injectedAddress = wallet.address.toLowerCase();
         if (!apis.has(injectedAddress)) {
           console.log(`Establishing APIs for ${abbreviateAddress(injectedAddress)}`);
-          const provider = (await wallet.getEthereumProvider()) as ExternalProvider;
+          let provider;
+          try {
+            provider = (await wallet.getEthereumProvider()) as ExternalProvider;
+          } catch (e) {
+            console.log('Error getting injected provider', e);
+          }
           const networkInstance = await createNetworkInstance(provider);
           const systems = network.createSystems(networkInstance);
           addAPI(injectedAddress, systems);
