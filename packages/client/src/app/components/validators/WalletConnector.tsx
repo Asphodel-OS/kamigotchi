@@ -121,8 +121,9 @@ export function registerWalletConnecter() {
         if (isUpdating || !injectedWallet || !embeddedWallet) return;
 
         // setIsUpdating(true);
-        await updateBaseNetwork(embeddedWallet);
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
         await addNetworkAPI(injectedWallet);
+        await updateBaseNetwork(embeddedWallet);
         // setIsUpdating(false);
       };
 
