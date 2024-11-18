@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { Popover } from '@mui/material';
 import { playClick } from 'utils/sounds';
+import Popover from '../Popover';
 
 export interface Option {
   text: string;
@@ -65,28 +65,21 @@ export function ActionListButton(props: Props) {
     return styles;
   };
 
+  const optionsMap = () => {
+    return options.map((o, i) => (
+      <Entry key={`entry-${i}`} onClick={() => onSelect(o)} disabled={o.disabled}>
+        {o.image && <Icon src={o.image} />}
+        {o.text}
+      </Entry>
+    ));
+  };
+
   return (
-    <div>
+    <Popover position={['right', 'bottom']} content={optionsMap()}>
       <Button ref={toggleRef} id={id} onClick={handleClick} style={setButtonStyles()}>
         {text + ' ▾'}
       </Button>
-      <Popover
-        id={Boolean(anchorEl) ? 'simple-popover' : undefined}
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <Menu>
-          {options.map((o, i) => (
-            <Entry key={`entry-${i}`} onClick={() => onSelect(o)} disabled={o.disabled}>
-              {o.image && <Icon src={o.image} />}
-              {o.text}
-            </Entry>
-          ))}
-        </Menu>
-      </Popover>
-    </div>
+    </Popover>
   );
 }
 
@@ -110,13 +103,6 @@ const Button = styled.button`
   &:active {
     background-color: #bbb;
   }
-`;
-
-const Menu = styled.div`
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  min-width: 7vw;
-  font-size: 0.6vw;
 `;
 
 const Entry = styled.div<{ disabled?: boolean }>`

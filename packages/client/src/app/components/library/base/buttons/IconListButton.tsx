@@ -1,8 +1,8 @@
-import { Popover } from '@mui/material';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
+import Popover from '../Popover';
 import { IconButton } from './IconButton';
 
 interface Props {
@@ -53,6 +53,9 @@ export function IconListButton(props: Props) {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const optionsMap = () => {
+    return options.map((option, i) => MenuItem(option, i));
+  };
 
   const MenuItem = (option: Option, i: number) => {
     return (
@@ -64,7 +67,7 @@ export function IconListButton(props: Props) {
   };
 
   return (
-    <Wrapper>
+    <Popover position={['right', 'bottom']} content={optionsMap()}>
       <IconButton
         img={img}
         text={text}
@@ -76,32 +79,10 @@ export function IconListButton(props: Props) {
         fullWidth={fullWidth}
         balance={balance}
         corner={!balance}
-        ref={toggleRef}
       />
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <Menu>{options.map((option, i) => MenuItem(option, i))}</Menu>
-      </Popover>
-    </Wrapper>
+    </Popover>
   );
 }
-
-const Wrapper = styled.div`
-  width: auto;
-`;
-
-const Menu = styled.div`
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  color: black;
-  min-width: 6vw;
-  width: max-content;
-`;
 
 const MenuOption = styled.div<{ disabled?: boolean }>`
   display: flex;
