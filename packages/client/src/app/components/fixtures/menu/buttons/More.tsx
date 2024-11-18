@@ -25,18 +25,17 @@ export const MoreMenuButton = () => {
   const handleHardRefresh = () => {
     clearCookies();
     clearCache();
-    clearStorage();
     location.reload();
   };
 
   /////////////////
   // INTERACTION
 
-  // clear all indexDBs
+  // clear any indexedDB prefixed with 'ECSCache'
   const clearCache = async () => {
     const dbs = await indexedDB.databases();
     dbs.forEach((db) => {
-      if (db.name) {
+      if (db.name?.startsWith('ECSCache')) {
         const request = indexedDB.deleteDatabase(db.name);
         request.onsuccess = function (event) {
           console.log('Database deleted successfully');
@@ -54,10 +53,6 @@ export const MoreMenuButton = () => {
       const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
       document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
     });
-  };
-
-  const clearStorage = () => {
-    localStorage.clear();
   };
 
   const toggleSettings = () => {
