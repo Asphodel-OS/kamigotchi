@@ -56,7 +56,6 @@ abstract contract SetupTemplate is TestSetupImports {
 
     setUpAccounts();
     setUpAuthRoles();
-    setUpTraits();
     setUpMint();
     setUpItems();
     setUpRooms();
@@ -96,6 +95,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // sets up mint to a default state. override to change/remove behaviour if needed
   function setUpMint() public virtual {
+    _initCommonTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
     __721BatchMinterSystem.batchMint(100);
@@ -132,10 +132,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpTime() public virtual {
     _currTime = 5 minutes;
     vm.warp(_currTime);
-  }
-
-  function setUpTraits() public virtual {
-    _initCommonTraits();
   }
 
   function _fastForward(uint timeDelta) internal {
