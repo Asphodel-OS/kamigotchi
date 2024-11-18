@@ -1,10 +1,5 @@
 import { ExternalProvider } from '@ethersproject/providers';
-import {
-  ConnectedWallet,
-  getEmbeddedConnectedWallet,
-  usePrivy,
-  useWallets,
-} from '@privy-io/react-auth';
+import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
 import { switchChain } from '@wagmi/core';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -56,7 +51,7 @@ export function registerWalletConnecter() {
       // update network settings/validations on relevant network updates
       useEffect(() => {
         console.log({ walletsReady, wallets });
-        if (!ready || !walletsReady) return;
+        if (!ready) return;
         const chainMatches = chain?.id === DefaultChain.id;
         if (!isConnected) {
           setState('disconnected');
@@ -169,7 +164,7 @@ export function registerWalletConnecter() {
 
       // get the wallet labeled as 'embedded' from the list of privy ConnectedWallets
       const getEmbeddedWallet = (wallets: ConnectedWallet[]) => {
-        return getEmbeddedConnectedWallet(wallets);
+        return wallets.find((w) => w.connectorType === 'embedded');
       };
 
       const getTitle = () => {
