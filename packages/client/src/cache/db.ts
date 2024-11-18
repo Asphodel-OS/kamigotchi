@@ -1,7 +1,7 @@
 import { deferred } from 'utils/async';
 
 const INDEXEDDB = self.indexedDB;
-export const VERSION = 4;
+export const VERSION = 5;
 
 /**
  * Initialize an indexedDB database.
