@@ -7,6 +7,7 @@ import { BigNumber, BytesLike } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, map, of } from 'rxjs';
 
+import { grpc } from '@improbable-eng/grpc-web';
 import { createDecoder } from 'engine/encoders';
 import {
   ECSStateReplyV2,
@@ -49,7 +50,7 @@ interface FetchOptions {
  **/
 
 export function createSnapshotClient(url: string): KamigazeServiceClient {
-  return createClient(KamigazeServiceDefinition, createChannel(url));
+  return createClient(KamigazeServiceDefinition, createChannel(url, grpc.WebsocketTransport()));
 }
 
 export async function fetchStateFromKamigaze(
