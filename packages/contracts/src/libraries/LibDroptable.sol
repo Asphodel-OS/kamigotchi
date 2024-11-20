@@ -132,9 +132,14 @@ library LibDroptable {
     WeightsComponent(getAddrByID(components, WeightsCompID)).set(id, weights);
   }
 
-  function unset(IUintComp components, uint256 id) internal {
+  function remove(IUintComp components, uint256 id) internal {
     KeysComponent(getAddrByID(components, KeysCompID)).remove(id);
     WeightsComponent(getAddrByID(components, WeightsCompID)).remove(id);
+  }
+
+  function remove(IUintComp components, uint256[] memory ids) internal {
+    KeysComponent(getAddrByID(components, KeysCompID)).remove(ids);
+    WeightsComponent(getAddrByID(components, WeightsCompID)).remove(ids);
   }
 
   /////////////////

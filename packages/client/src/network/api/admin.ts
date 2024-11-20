@@ -105,7 +105,7 @@ export function createAdminAPI(systems: any) {
   async function createGoalReward(
     goalIndex: number,
     name: string,
-    cutoff: number,
+    tier: number,
     type: string,
     logic: string,
     conIndex: number,
@@ -115,7 +115,7 @@ export function createAdminAPI(systems: any) {
     return systems['system.goal.registry'].addReward(
       defaultAbiCoder.encode(
         ['uint32', 'string', 'uint256', 'string', 'string', 'uint32', 'uint256'],
-        [goalIndex, name, cutoff, type, logic, conIndex, conValue]
+        [goalIndex, name, tier, type, logic, conIndex, conValue]
       )
     );
   }

@@ -81,8 +81,12 @@ library LibReward {
     }
   }
 
-  function removeAll(IUintComp components, uint256[] memory ids) internal {
-    for (uint256 i; i < ids.length; i++) remove(components, ids[i]);
+  function remove(IUintComp components, uint256[] memory ids) internal {
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
+    LibDroptable.remove(components, ids);
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -90,7 +94,7 @@ library LibReward {
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
-    LibDroptable.unset(components, id);
+    LibDroptable.remove(components, id);
   }
 
   /////////////////

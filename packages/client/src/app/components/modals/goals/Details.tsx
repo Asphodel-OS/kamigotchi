@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { HelpIcon, ItemIconHorizontal } from 'app/components/library';
-import { Goal, sortRewards } from 'network/shapes/Goal';
+import { Goal, Tier } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
 
 interface Props {
@@ -10,47 +9,13 @@ interface Props {
   getDescribedEntity: (type: string, index: number) => DetailedEntity;
 }
 
-// type to store a process reward's DetailedEntity and balance
-interface DisplayRwd {
-  entity: DetailedEntity;
-  tier: string; // tier name
-  balance: number;
-}
-
-interface RewardTier {
-  name: string;
-  rewards: DisplayRwd[];
-  cutoff: number;
-}
-
 export const Details = (props: Props) => {
   const { goal, getDescribedEntity } = props;
-
-  const [displayRwds, setDisplayRwds] = useState<RewardTier[]>([]);
-
-  useEffect(() => {
-    const sortedRaw = sortRewards(props.goal.rewards);
-
-    // converts rewards into something displayable
-    const rewards: RewardTier[] = [];
-    sortedRaw.forEach((value, key) => {
-      rewards.push({
-        name: key,
-        rewards: value.map((rwd) => ({
-          entity: getDescribedEntity(rwd.target.type, rwd.target.index ?? 0),
-          tier: key,
-          balance: (rwd.target.value ?? 0) * 1,
-        })),
-        cutoff: value[0].cutoff * 1,
-      });
-    });
-    setDisplayRwds(rewards);
-  }, [goal]);
 
   ////////////////
   // SMALL DISPLAYS
 
-  const TierBox = (tier: RewardTier) => {
+  const TierBox = (tier: Tier) => {
     const helpText =
       tier.cutoff > 0
         ? `Have a contribution score of at least ${tier.cutoff}`
@@ -66,9 +31,9 @@ export const Details = (props: Props) => {
           {tier.rewards.map((reward, i) => (
             <ItemIconHorizontal
               key={`reward-${tier.name}-${i}`}
-              item={reward.entity}
+              item={getDescribedEntity(reward.target.type, reward.target.index ?? 0)}
               size='small'
-              balance={reward.balance}
+              balance={reward.target.value ?? 0}
               styleOverride={{ box: { borderColor: '#444', marginBottom: '0' } }}
             />
           ))}
@@ -91,7 +56,7 @@ export const Details = (props: Props) => {
     <div>
       <SubTitleText>Rewards</SubTitleText>
       <Row style={{ justifyContent: 'flex-start', padding: '1vh 1vw' }}>
-        {displayRwds.map((tier) => {
+        {goal.tiers.map((tier) => {
           return TierBox(tier);
         })}
       </Row>

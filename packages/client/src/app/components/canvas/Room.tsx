@@ -5,7 +5,7 @@ import styled, { keyframes } from 'styled-components';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
-import { Goal } from 'network/shapes/Goal';
+import { Goal } from 'network/shapes/Goals';
 import { getCurrPhase } from 'utils/time';
 
 interface Props {

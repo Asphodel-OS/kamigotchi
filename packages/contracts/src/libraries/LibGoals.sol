@@ -12,14 +12,15 @@ import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComp
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibReference } from "libraries/utils/LibReference.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
@@ -36,14 +37,14 @@ import { LibScore } from "libraries/LibScore.sol";
  *   - Objectives are mapped 1 to 1 with a Goal;
  *   - to achieve a Goal with multiple objectives, create multiple Goals
  * - Requirements (generic account requirements via LibConditional)
- * - Rewards (e.g. coins, items, etc)
- *   - Tiered - eg Bronze, Silver, Gold
+ * - Tiers (e.g. bronze, silver, gold) - uses LibReference
+ *   - Intimidiate entity to split rewards based on contribution
  *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
- *     - Uses LevelComp as the min contribution to qualify for a tier
- *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
- *   - Shape: Condition + Level + Name
- *     - Condition shape handles reward type and quantity
- *     - Logic type is either "REWARD" or "DISPLAY_ONLY"
+ *     - Uses ValueComp as the min contribution to qualify for a tier
+ *       - eg Bronze ValueComp = 100, contribution >= 100 to qualify for Bronze
+ * - Rewards (standard reward shape)
+ *   - Goals track their Rewards through Tiers rather than the goal directly
+ *   - When querying: Goal -> Tier -> Reward
  * - Balance
  *   - Stores current goal progress
  *
@@ -82,6 +83,18 @@ library LibGoals {
     LibConditional.create(components, objID, objective);
   }
 
+  /// @notice creates a reward tier, if it doesn't yet exist
+  function createTier(
+    IUintComp components,
+    uint32 goalIndex,
+    string memory name,
+    uint256 tier // tier 0 signifies display only tier; does not distribute rewards
+  ) internal returns (uint256 id) {
+    id = LibReference.create(components, "goal.tier", tier, genGoalID(goalIndex));
+    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, tier);
+  }
+
   /// @notice adds a requirement to a goal
   function addRequirement(
     IWorld world,
@@ -105,13 +118,13 @@ library LibGoals {
    *
    * RewardIDs override deterministic LibReward generation, to allow for differing reward levels
    */
-  /// @param minContribution needed to qualify for tier; "DISPLAY_ONLY" do not have this
+  /// @param tier needed to qualify for tier; "DISPLAY_ONLY" do not have this
   function addReward(
     IWorld world,
     IUintComp components,
     uint32 goalIndex,
     string memory name,
-    uint256 minContribution, // level comp
+    uint256 tier, // level comp
     string memory logic,
     string memory type_,
     uint32 index,
@@ -119,40 +132,20 @@ library LibGoals {
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
-    uint256 parentID = genRwdParentID(goalIndex);
+    uint256 parentID = genRwdParentID(createTier(components, goalIndex, name, tier));
     if (index == 0) {
       // override index for deterministic ID generation if no index provided
       // for ITEM_DROPTABLE or DISPLAY_ONLY
-      id = genRwdID(
+      id = LibReward.genID(
         parentID,
         type_,
-        LibReward.getIndexOverride(components, parentID, type_), // quantity of same type
-        minContribution
+        LibReward.getIndexOverride(components, parentID, type_) // quantity of same type
       );
     } else {
-      id = genRwdID(parentID, type_, index, minContribution);
+      id = LibReward.genID(parentID, type_, index);
     }
 
-    LibReward._create(
-      components,
-      id,
-      genRwdParentID(goalIndex),
-      type_,
-      index,
-      keys,
-      weights,
-      value
-    );
-
-    // custom touchs for goal rewards
-    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, logic);
-    require(
-      logic.eq("REWARD") || logic.eq("DISPLAY_ONLY"),
-      "LibGoals: invalid reward distribution"
-    );
-    if (!logic.eq("DISPLAY_ONLY"))
-      LevelComponent(getAddrByID(components, LevelCompID)).set(id, minContribution);
+    LibReward._create(components, id, parentID, type_, index, keys, weights, value);
   }
 
   function remove(IUintComp components, uint32 index) internal {
@@ -170,24 +163,21 @@ library LibGoals {
 
     // remove requirements
     uint256[] memory reqIDs = getRequirements(components, index);
-    for (uint256 i = 0; i < reqIDs.length; i++) removeRequirement(components, reqIDs[i]);
+    LibConditional.remove(components, reqIDs);
+
+    // remove tiers
+    uint256[] memory tierIDs = getTiers(components, index);
+    removeTiers(components, tierIDs);
 
     // remove rewards
-    uint256[] memory rewIDs = getRewards(components, index);
-    for (uint256 i = 0; i < rewIDs.length; i++) removeReward(components, rewIDs[i]);
+    uint256[] memory rewIDs = getRewards(components, tierIDs);
+    LibReward.remove(components, rewIDs);
   }
 
-  function removeRequirement(IUintComp components, uint256 id) internal {
-    LibConditional.remove(components, id);
-    NameComponent(getAddrByID(components, NameCompID)).remove(id);
-    LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
-  }
-
-  function removeReward(IUintComp components, uint256 id) internal {
-    LibReward.remove(components, id);
-    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
-    NameComponent(getAddrByID(components, NameCompID)).remove(id);
-    LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
+  function removeTiers(IUintComp components, uint256[] memory ids) internal {
+    LibReference.remove(components, ids);
+    NameComponent(getAddrByID(components, NameCompID)).remove(ids);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
   }
 
   /////////////////
@@ -231,9 +221,8 @@ library LibGoals {
     uint256 goalID,
     uint256 accID
   ) internal {
-    uint256[] memory rwdIDs = queryActiveRewards(components, goalIndex); // non DISPLAY_ONLY rewards
-    filterRewardTiers(components, goalID, accID, rwdIDs); // filter out unqualified tiers
-
+    uint256[] memory activeTiers = getClaimableTiers(components, goalIndex, goalID, accID);
+    uint256[] memory rwdIDs = getRewards(components, activeTiers);
     LibReward.distribute(world, components, rwdIDs, accID);
   }
 
@@ -307,21 +296,6 @@ library LibGoals {
     return comp.get(goalID) == comp.get(accID);
   }
 
-  /// @notice gets rewards from tiers an account can qualify for
-  /// @dev filters directly on rwdIDs, unqualified returns 0
-  function filterRewardTiers(
-    IUintComp components,
-    uint256 goalID,
-    uint256 accID,
-    uint256[] memory rwdIDs
-  ) internal view {
-    LevelComponent levelComp = LevelComponent(getAddrByID(components, LevelCompID));
-
-    uint256 contribution = getContributionAmt(components, goalID, accID);
-    for (uint256 i; i < rwdIDs.length; i++)
-      if (contribution < levelComp.get(rwdIDs[i])) rwdIDs[i] = 0;
-  }
-
   function isComplete(IUintComp components, uint256 id) internal view returns (bool) {
     return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(id);
   }
@@ -367,6 +341,13 @@ library LibGoals {
     return comp.has(id) ? comp.get(id) : 0;
   }
 
+  function getTiers(
+    IUintComp components,
+    uint32 goalIndex
+  ) internal view returns (uint256[] memory) {
+    return LibReference.queryByParent(components, "goal.tier", genGoalID(goalIndex));
+  }
+
   function getRequirements(
     IUintComp components,
     uint32 goalIndex
@@ -376,30 +357,32 @@ library LibGoals {
 
   function getRewards(
     IUintComp components,
-    uint32 goalIndex
+    uint256[] memory tierIDs
   ) internal view returns (uint256[] memory) {
-    return LibReward.queryFor(components, genRwdParentID(goalIndex));
+    uint256[][] memory tierRewards = new uint256[][](tierIDs.length);
+    for (uint256 i; i < tierIDs.length; i++) {
+      tierRewards[i] = LibReward.queryFor(components, genRwdParentID(tierIDs[i]));
+    }
+    return LibArray.flatten(tierRewards);
   }
 
-  ////////////////////
-  // QUERIES
-
-  /// @notice gets rewards that arent only for display using Level check
-  /// @dev only active rewards have a level component (minimum contribution)
-  function queryActiveRewards(
+  /// @notice gets tiers that user qualifies for
+  function getClaimableTiers(
     IUintComp components,
-    uint32 goalIndex
+    uint32 goalIndex,
+    uint256 goalID,
+    uint256 accID
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
+    uint256[] memory tierIDs = getTiers(components, goalIndex);
+    uint256[] memory tiers = ValueComponent(getAddrByID(components, ValueCompID)).safeGet(tierIDs);
 
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getCompByID(components, IDParentCompID),
-      abi.encode(genRwdParentID(goalIndex))
-    );
-    fragments[1] = QueryFragment(QueryType.Has, getCompByID(components, LevelCompID), "");
+    // filter out unreached tiers and display only tiers that are reached
+    uint256 contribution = getContributionAmt(components, goalID, accID);
+    for (uint256 i; i < tierIDs.length; i++) {
+      if (tiers[i] == 0 || contribution < tiers[i]) tierIDs[i] = 0;
+    }
 
-    return LibQuery.query(fragments);
+    return tierIDs;
   }
 
   ////////////////////
@@ -431,17 +414,7 @@ library LibGoals {
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRwdParentID(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("goal.reward", index)));
-  }
-
-  /// @notice overrides LibReward's determinstic ID, to allow for differing reward levels
-  function genRwdID(
-    uint256 parentID,
-    string memory type_,
-    uint32 index,
-    uint256 level
-  ) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("reward.instance", parentID, type_, index, level)));
+  function genRwdParentID(uint256 tierID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("goal.reward", tierID)));
   }
 }

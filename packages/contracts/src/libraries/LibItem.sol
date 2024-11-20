@@ -113,7 +113,7 @@ library LibItem {
     LibStat.unsetStamina(components, id);
     ExperienceComponent(getAddrByID(components, ExpCompID)).remove(id);
 
-    LibDroptable.unset(components, id);
+    LibDroptable.remove(components, id);
     LibFor.unset(components, id);
     LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);

@@ -28,7 +28,7 @@ export const filterRevealable = <T extends Commit>(commits: T[], currBlock: numb
 
 export const canReveal = (commit: Commit, currBlock: number | BigInt): boolean => {
   // indefinite blockhash availability from block 979550 onwards
-  return commit.revealBlock > 979550;
+  return commit.revealBlock > 0;
 };
 
 /////////////////

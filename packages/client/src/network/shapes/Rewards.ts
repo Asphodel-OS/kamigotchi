@@ -31,8 +31,8 @@ export const getReward = (
   } else {
     target = {
       type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-      index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Value, entityIndex)?.value,
+      index: getComponentValue(Index, entityIndex)?.value || (0 as number),
+      value: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
     };
     droptable = NullDT;
   }

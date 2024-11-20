@@ -111,6 +111,15 @@ library LibConditional {
     SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(id);
   }
 
+  function remove(IUintComp components, uint256[] memory ids) internal {
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(ids);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(ids);
+  }
+
   ///////////////////////
   // INTERACTIONS
 

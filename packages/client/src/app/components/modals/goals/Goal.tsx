@@ -17,7 +17,7 @@ import {
   getContributionByHash,
   getContributions,
   getGoalByIndex,
-} from 'network/shapes/Goal';
+} from 'network/shapes/Goals';
 import { Score } from 'network/shapes/Score';
 import { getBalance, getDescribedEntity } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';

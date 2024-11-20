@@ -1,7 +1,7 @@
 import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getAllGoals, getGoalByIndex } from 'network/shapes/Goal';
+import { getAllGoals, getGoalByIndex } from 'network/shapes/Goals';
 
 export const goals = (world: World, components: Components) => {
   return {

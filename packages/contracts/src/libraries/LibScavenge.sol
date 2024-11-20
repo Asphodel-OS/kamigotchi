@@ -71,7 +71,7 @@ library LibScavenge {
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
 
     uint256[] memory rewards = getRewards(components, id);
-    LibReward.removeAll(components, rewards);
+    LibReward.remove(components, rewards);
   }
 
   /////////////////

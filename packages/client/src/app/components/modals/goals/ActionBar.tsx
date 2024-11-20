@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
-import { Goal } from 'network/shapes/Goal';
+import { Goal } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
 
 interface Props {

@@ -4,19 +4,44 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.t.sol";
 
 contract GoalsTest is SetupTemplate {
+  PlayerAccount accLurker;
+  PlayerAccount accSlacker;
+  PlayerAccount accBronze;
+  PlayerAccount accSilver;
+  PlayerAccount accGold;
+
+  function setUp() public override {
+    super.setUp();
+
+    accLurker = _accounts[0]; // does not contribute
+    accSlacker = _accounts[1]; // contributes a little, < bronze
+    accBronze = _accounts[2]; // contributes till bronze
+    accSilver = _accounts[3]; // contributes till silver
+    accGold = _accounts[4]; // contributes till gold
+  }
+
   function testGoalShape() public {
-    uint32 index = 1;
+    uint32 goalIndex = 1;
     uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0));
     uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 1, 0));
     uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 2, 0));
     uint256 rewardID1 = _createGoalReward(1, 0, Condition("type", "REWARD", 1, 0));
     uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 2, 0));
     uint256 rewardID3 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
-    uint256 rewardID4 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
-    uint256 rewardID5 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
+    // uint256 rewardID4 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
+    // uint256 rewardID5 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
+
+    // checking tiers
+    uint256[] memory tiers = LibGoals.getTiers(components, goalIndex);
+    assertEq(tiers.length, 3, "wrong tier count");
+    for (uint256 i; i < tiers.length; i++) {
+      assertEq(LibReward.queryFor(components, LibGoals.genRwdParentID(tiers[i])).length, 1);
+    }
+    uint256[] memory rewards = LibGoals.getRewards(components, tiers);
+    assertEq(rewards.length, 3, "wrong reward count");
 
     vm.prank(deployer);
-    __GoalRegistrySystem.remove(index);
+    __GoalRegistrySystem.remove(goalIndex);
   }
 
   function testGoalCoinBasic() public {
@@ -35,14 +60,6 @@ contract GoalsTest is SetupTemplate {
     uint256 rwdSilver = _createGoalReward(goalIndex, 200, Condition("ITEM", "REWARD", 200, 1));
     uint256 rwdGold = _createGoalReward(goalIndex, 300, Condition("ITEM", "REWARD", 300, 1));
     uint256 rwdDisplay = _createGoalReward(goalIndex, 0, Condition("ITEM", "DISPLAY_ONLY", 3, 1));
-
-    /////
-    // SETTING ACCOUNTS
-    PlayerAccount memory accLurker = _accounts[0]; // does not contribute
-    PlayerAccount memory accSlacker = _accounts[1]; // contributes a little, < bronze
-    PlayerAccount memory accBronze = _accounts[2]; // contributes till bronze
-    PlayerAccount memory accSilver = _accounts[3]; // contributes till silver
-    PlayerAccount memory accGold = _accounts[4]; // contributes till gold
 
     _fundAccount(accSlacker.index, 50);
     _fundAccount(accBronze.index, 100);
@@ -94,33 +111,75 @@ contract GoalsTest is SetupTemplate {
     vm.expectRevert("cannot claim from this goal");
     _GoalClaimSystem.executeTyped(goalIndex);
 
-    // not-even-bronze claims, gets nothing
-    vm.prank(accSlacker.operator);
-    _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(0, _getItemBal(accSlacker.index, 100));
-    assertEq(0, _getItemBal(accSlacker.index, 200));
-    assertEq(0, _getItemBal(accSlacker.index, 300));
+    {
+      // not-even-bronze claims, gets nothing
+      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+        components,
+        goalIndex,
+        goalID,
+        accSlacker.id
+      );
+      assertEq(4, claimableTiers.length, "claimable tiers mismatch");
+      for (uint256 i; i < claimableTiers.length; i++) assertEq(claimableTiers[i], 0);
+      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      assertEq(0, rewards.length, "slacker rewards mismatch");
+      vm.prank(accSlacker.operator);
+      _GoalClaimSystem.executeTyped(goalIndex);
+      assertEq(0, _getItemBal(accSlacker.index, 100), "slacker bronze mismatch");
+      assertEq(0, _getItemBal(accSlacker.index, 200), "slacker silver mismatch");
+      assertEq(0, _getItemBal(accSlacker.index, 300), "slacker gold mismatch");
+    }
 
-    // bronze claims, gets bronze tier
-    vm.prank(accBronze.operator);
-    _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBal(accBronze.index, 100));
-    assertEq(0, _getItemBal(accBronze.index, 200));
-    assertEq(0, _getItemBal(accBronze.index, 300));
+    {
+      // bronze claims, gets bronze tier
+      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+        components,
+        goalIndex,
+        goalID,
+        accBronze.id
+      );
+      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      assertEq(1, rewards.length, "bronzer rewards mismatch");
+      vm.prank(accBronze.operator);
+      _GoalClaimSystem.executeTyped(goalIndex);
+      assertEq(1, _getItemBal(accBronze.index, 100), "bronzer bronze mismatch");
+      assertEq(0, _getItemBal(accBronze.index, 200), "bronzer silver mismatch");
+      assertEq(0, _getItemBal(accBronze.index, 300), "bronzer gold mismatch");
+    }
 
-    // silver claims, gets silver tier
-    vm.prank(accSilver.operator);
-    _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBal(accSilver.index, 100));
-    assertEq(1, _getItemBal(accSilver.index, 200));
-    assertEq(0, _getItemBal(accSilver.index, 300));
+    {
+      // silver claims, gets silver tier
+      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+        components,
+        goalIndex,
+        goalID,
+        accSilver.id
+      );
+      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      assertEq(2, rewards.length, "silverer rewards mismatch");
+      vm.prank(accSilver.operator);
+      _GoalClaimSystem.executeTyped(goalIndex);
+      assertEq(1, _getItemBal(accSilver.index, 100), "silverer bronze mismatch");
+      assertEq(1, _getItemBal(accSilver.index, 200), "silverer silver mismatch");
+      assertEq(0, _getItemBal(accSilver.index, 300), "silverer gold mismatch");
+    }
 
-    // gold claims, gets gold tier
-    vm.prank(accGold.operator);
-    _GoalClaimSystem.executeTyped(goalIndex);
-    assertEq(1, _getItemBal(accGold.index, 100));
-    assertEq(1, _getItemBal(accGold.index, 200));
-    assertEq(1, _getItemBal(accGold.index, 300));
+    {
+      // gold claims, gets gold tier
+      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+        components,
+        goalIndex,
+        goalID,
+        accGold.id
+      );
+      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      assertEq(3, rewards.length, "goldier rewards mismatch");
+      vm.prank(accGold.operator);
+      _GoalClaimSystem.executeTyped(goalIndex);
+      assertEq(1, _getItemBal(accGold.index, 100), "goldier bronze mismatch");
+      assertEq(1, _getItemBal(accGold.index, 200), "goldier silver mismatch");
+      assertEq(1, _getItemBal(accGold.index, 300), "goldier gold mismatch");
+    }
   }
 
   //////////////////

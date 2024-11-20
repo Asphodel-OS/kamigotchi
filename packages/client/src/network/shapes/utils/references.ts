@@ -43,5 +43,5 @@ const genID = (field: string, parentID: EntityID, key?: BigNumberish): EntityID 
 };
 
 const genParentRefID = (field: string, parentID: EntityID): EntityID => {
-  return hashArgs(['reference.parent', field, parentID], ['string', 'uint256'], true);
+  return hashArgs(['reference.parent', field, parentID], ['string', 'string', 'uint256'], true);
 };
