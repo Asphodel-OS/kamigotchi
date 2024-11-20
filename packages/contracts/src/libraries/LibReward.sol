@@ -12,106 +12,73 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibSetter } from "libraries/utils/LibSetter.sol";
-
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
-import { Stat, LibStat } from "libraries/LibStat.sol";
 
 /**
  * @notice
- * Rewards are shapes that indicate some sort of distribution of other shapes. (Calling this shape Reward will change to be more descriptive)
- * - similar to Conditionals in that it matches a DescribedEntity (type + index)
- * - Can give
- *   - bonuses (unimplemented)
- *   - items
- *   - droptable (commit)
- *   - reputation
- *   - quests (unimplemented)
- *   - stats
- *   - flags
+ * Rewards are similar to Conditionals in that it matches a DescribedEntity (type + index)
  *
  * Shape: deterministicID: (hash("reward.instance", parentID, type, index))
  * - Pointer to parent
  * - Type
  * - Index
- * - Value/stat/droptable
+ * - Value
+ *
+ * Two types of rewards: basic (flat items, usually), and Droptable items
+ *
+ * Primarily used by Goals and Quests.
+ * Expected to be on registry entities.
  */
-/// todo: rename to Allocation
 library LibReward {
-  using LibStat for Stat;
-  using LibStat for uint256;
   using LibString for string;
 
   /////////////////
   // SHAPES
 
-  /// @dev allow for ID override
-  function createBase(
+  /// @notice catchall for both reward types
+  function create(
     IUintComp components,
     uint256 parentID,
     string memory type_,
-    uint32 index
-  ) internal returns (uint256 id) {
-    id = genID(parentID, type_, index);
-    require(!LibEntityType.checkAndSet(components, id, "ALLOCATION"), "Allocation already exists");
-
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
-    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
-    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
-  }
-
-  function createBasic(
-    IUintComp components,
-    uint256 parentID,
-    string memory type_,
-    uint32 index,
+    uint32 index, // optional, only for basic
+    uint32[] memory keys, // optional, only for droptable
+    uint256[] memory weights, // optional, only for droptable
     uint256 value
   ) internal returns (uint256 id) {
-    id = createBase(components, parentID, type_, index);
-
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
+    if (index == 0) {
+      // override index for deterministic ID generation if no index provided
+      index = getIndexOverride(components, parentID, type_);
+    }
+    id = genID(parentID, type_, index);
+    _create(components, id, parentID, type_, index, keys, weights, value);
   }
 
-  /// @notice this reward type does nothing. its for display.
-  function createEmpty(
+  /// @notice catchall for both reward types
+  /// @dev allow for ID override
+  function _create(
     IUintComp components,
+    uint256 id,
     uint256 parentID,
-    string memory type_
-  ) internal returns (uint256 id) {
-    uint32 index = getIndexOverride(components, parentID, type_);
-    id = createBase(components, parentID, type_, index);
-  }
+    string memory type_,
+    uint32 index, // optional, only for basic
+    uint32[] memory keys, // optional, only for droptable
+    uint256[] memory weights, // optional, only for droptable
+    uint256 value
+  ) internal {
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
+    require(!valueComp.has(id), "Reward: already exists");
 
-  function createDT(
-    IUintComp components,
-    uint256 parentID,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    uint256 value // rolls
-  ) internal returns (uint256 id) {
-    // droptable indexes = num of DT in rwd, for each to be unique
-    uint32 index = getIndexOverride(components, parentID, "ITEM_DROPTABLE");
-    id = createBase(components, parentID, "ITEM_DROPTABLE", index);
+    // base components
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index); // droptable index = num of DT in rwd
+    valueComp.set(id, value);
 
-    LibDroptable.set(components, id, keys, weights);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
-  }
-
-  function createStat(
-    IUintComp components,
-    uint256 parentID,
-    string memory statType,
-    int32 base,
-    int32 shift,
-    int32 boost,
-    int32 sync
-  ) internal returns (uint256 id) {
-    uint32 index = LibStat.typeToIndex(statType);
-    id = createBase(components, parentID, "STAT", index);
-
-    uint256 value = Stat(base, shift, boost, sync).toUint(); // store in raw form
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
+    // droptable components
+    if (type_.eq("ITEM_DROPTABLE")) {
+      LibDroptable.set(components, id, keys, weights);
+    }
   }
 
   function remove(IUintComp components, uint256[] memory ids) internal {
@@ -123,7 +90,6 @@ library LibReward {
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    LibEntityType.remove(components, id);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
@@ -138,7 +104,7 @@ library LibReward {
     IWorld world,
     IUintComp components,
     uint256[] memory rwdIDs,
-    uint256 mult, // multiplies reward value, optional
+    uint256 multiplier, // multiplies reward value, optional
     uint256 targetID
   ) internal {
     TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
@@ -150,11 +116,10 @@ library LibReward {
       if (rwdID == 0) continue;
 
       string memory type_ = typeComp.get(rwdID);
-      uint256 amt = valueComp.get(rwdID);
+      uint256 amt = valueComp.get(rwdID) * multiplier;
 
-      if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, rwdID, amt, mult, targetID);
-      else if (type_.eq("STAT")) giveStat(components, indexComp.get(rwdID), amt, mult, targetID);
-      else giveBasic(world, components, type_, indexComp.get(rwdID), amt, mult, targetID);
+      if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, rwdID, amt, targetID);
+      else giveBasic(world, components, type_, indexComp.get(rwdID), amt, targetID);
     }
   }
 
@@ -176,10 +141,9 @@ library LibReward {
     string memory type_,
     uint32 index,
     uint256 amount,
-    uint256 mult,
     uint256 targetID // expected to be an account
   ) internal {
-    LibSetter.inc(world, components, type_, index, amount * mult, targetID);
+    LibAccount.incBalanceOf(world, components, targetID, type_, index, amount);
   }
 
   /// @notice distributes droptable rewards by creating a commit
@@ -189,28 +153,9 @@ library LibReward {
     IUintComp components,
     uint256 rewardID,
     uint256 amount,
-    uint256 mult,
     uint256 targetID // expected to be an account
   ) internal {
-    LibDroptable.commit(world, components, rewardID, amount * mult, targetID);
-  }
-
-  /// @notice applies a stat to target
-  /// @dev 1 stat comp = 1 index
-  function giveStat(
-    IUintComp components,
-    uint32 index,
-    uint256 rawStat,
-    uint256 mult,
-    uint256 targetID
-  ) internal {
-    return
-      LibStat.modify(
-        components,
-        LibStat.indexToCompID(index),
-        rawStat.toStat().multiply(mult), // converts raw uint to stat and multiply
-        targetID
-      );
+    LibDroptable.commit(world, components, rewardID, amount, targetID);
   }
 
   ////////////////////

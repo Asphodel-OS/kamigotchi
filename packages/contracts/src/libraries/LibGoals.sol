@@ -12,6 +12,7 @@ import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComp
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -20,7 +21,6 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibReference } from "libraries/utils/LibReference.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
@@ -37,13 +37,13 @@ import { LibScore } from "libraries/LibScore.sol";
  *   - Objectives are mapped 1 to 1 with a Goal;
  *   - to achieve a Goal with multiple objectives, create multiple Goals
  * - Requirements (generic account requirements via LibConditional)
- * - Tiers (e.g. bronze, silver, gold) - uses LibReference
+ * - Tiers (e.g. bronze, silver, gold)
  *   - Intimidiate entity to split rewards based on contribution
  *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
- *     - Uses ValueComp as the min contribution to qualify for a tier
- *       - eg Bronze ValueComp = 100, contribution >= 100 to qualify for Bronze
+ *     - Uses LevelComp as the min contribution to qualify for a tier
+ *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
  * - Rewards (standard reward shape)
- *   - Goals track their Rewards through Tiers rather than the goal directly
+ *   - Points to tiers, rather than the goal directly
  *   - When querying: Goal -> Tier -> Reward
  * - Balance
  *   - Stores current goal progress
@@ -88,11 +88,14 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex,
     string memory name,
-    uint256 tier // tier 0 signifies display only tier; does not distribute rewards
+    uint256 cutoff // cutoff 0 signifies display only tier; does not distribute rewards
   ) internal returns (uint256 id) {
-    id = LibReference.create(components, "goal.tier", tier, genGoalID(goalIndex));
+    id = genTierID(goalIndex, cutoff);
+    if (LibEntityType.checkAndSet(components, id, "GOAL_TIER")) return id; // already exists
+
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, tier);
+    LevelComponent(getAddrByID(components, LevelCompID)).set(id, cutoff);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, genTierParentID(goalIndex));
   }
 
   /// @notice adds a requirement to a goal
@@ -103,6 +106,49 @@ library LibGoals {
     Condition memory requirement
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, requirement, genReqParentID(goalIndex));
+  }
+
+  /// @notice adds a reward to a goal
+  /**  @dev
+   * - Rewards (e.g. coins, items, etc)
+   *   - Tiered - eg Bronze, Silver, Gold
+   *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
+   *     - Uses LevelComp as the min contribution to qualify for a tier
+   *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
+   *   - Shape: Condition + Level + Name
+   *     - Condition shape handles reward type and quantity
+   *     - Logic type is either "REWARD" or "DISPLAY_ONLY"
+   *
+   * RewardIDs override deterministic LibReward generation, to allow for differing reward levels
+   */
+  /// @param cutoff needed to qualify for tier; "DISPLAY_ONLY" do not have this
+  function addReward(
+    IWorld world,
+    IUintComp components,
+    uint32 goalIndex,
+    string memory name,
+    uint256 cutoff, // level comp
+    string memory logic,
+    string memory type_,
+    uint32 index,
+    uint32[] memory keys,
+    uint256[] memory weights,
+    uint256 value
+  ) internal returns (uint256 id) {
+    uint256 parentID = genRwdParentID(createTier(components, goalIndex, name, cutoff));
+    if (index == 0) {
+      // override index for deterministic ID generation if no index provided
+      // for ITEM_DROPTABLE or DISPLAY_ONLY
+      id = LibReward.genID(
+        parentID,
+        type_,
+        LibReward.getIndexOverride(components, parentID, type_) // quantity of same type
+      );
+    } else {
+      id = LibReward.genID(parentID, type_, index);
+    }
+
+    LibReward._create(components, id, parentID, type_, index, keys, weights, value);
   }
 
   function remove(IUintComp components, uint32 index) internal {
@@ -132,9 +178,10 @@ library LibGoals {
   }
 
   function removeTiers(IUintComp components, uint256[] memory ids) internal {
-    LibReference.remove(components, ids);
+    LibEntityType.remove(components, ids);
     NameComponent(getAddrByID(components, NameCompID)).remove(ids);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
+    LevelComponent(getAddrByID(components, LevelCompID)).remove(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
   }
 
   /////////////////
@@ -302,7 +349,10 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return LibReference.queryByParent(components, "goal.tier", genGoalID(goalIndex));
+    return
+      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(
+        genTierParentID(goalIndex)
+      );
   }
 
   function getRequirements(
@@ -331,12 +381,14 @@ library LibGoals {
     uint256 accID
   ) internal view returns (uint256[] memory) {
     uint256[] memory tierIDs = getTiers(components, goalIndex);
-    uint256[] memory tiers = ValueComponent(getAddrByID(components, ValueCompID)).safeGet(tierIDs);
+    uint256[] memory cutoffs = LevelComponent(getAddrByID(components, LevelCompID)).safeGet(
+      tierIDs
+    );
 
     // filter out unreached tiers and display only tiers that are reached
     uint256 contribution = getContributionAmt(components, goalID, accID);
     for (uint256 i; i < tierIDs.length; i++) {
-      if (tiers[i] == 0 || contribution < tiers[i]) tierIDs[i] = 0;
+      if (cutoffs[i] == 0 || contribution < cutoffs[i]) tierIDs[i] = 0;
     }
 
     return tierIDs;
@@ -363,6 +415,14 @@ library LibGoals {
 
   function genObjID(uint256 goalID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.objective", goalID)));
+  }
+
+  function genTierID(uint32 goalIndex, uint256 cutoff) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("goal.tier", goalIndex, cutoff)));
+  }
+
+  function genTierParentID(uint32 goalIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("goal.tiers", goalIndex)));
   }
 
   /// @notice Retrieve the ID of a requirement array
