@@ -5,6 +5,8 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { LibSetter } from "libraries/utils/LibSetter.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -23,7 +25,7 @@ contract _AdminGiveSystem is System, AuthRoles {
       (address, string, uint32, uint256)
     );
     uint256 accID = uint256(uint160(owner));
-    LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
+    LibSetter.inc(world, components, _type, index, amount, accID);
 
     return "";
   }

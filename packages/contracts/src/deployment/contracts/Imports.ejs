@@ -18,11 +18,13 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 <% libraries.forEach(library => { -%>
 import { <%=library%> } from "libraries/<%= library %>.sol";
 <% }); -%>
+
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 import { LibReference } from "libraries/utils/LibReference.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
-import { LibCooldown } from "libraries/utils/LibCooldown.sol";
+import { LibSetter } from "libraries/utils/LibSetter.sol";
 
 // Components
 <% components.forEach(component=> { -%>
