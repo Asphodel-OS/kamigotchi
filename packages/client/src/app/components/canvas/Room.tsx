@@ -88,7 +88,7 @@ export const Room = (props: Props) => {
   return (
     <Wrapper>
       <Container>
-        <Background src={getBackground()} />
+        <Background draggable='false' src={getBackground()} />
         {room.objects.map((object) => getClickbox(object))}
       </Container>
     </Wrapper>
