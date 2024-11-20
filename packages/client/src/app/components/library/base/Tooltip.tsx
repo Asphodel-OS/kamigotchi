@@ -54,7 +54,7 @@ export const Tooltip = (props: Props) => {
     }
 
     if (tooltipY + tooltipHeight + 10 > viewportHeight) {
-      tooltipY = viewportHeight - tooltipHeight - 10;
+      tooltipY = clientY - tooltipHeight - 10;
     }
 
     setTooltipPosition({ x: tooltipX, y: tooltipY });
