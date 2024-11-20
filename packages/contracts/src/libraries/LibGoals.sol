@@ -13,7 +13,6 @@ import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsComple
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
-import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -106,49 +105,6 @@ library LibGoals {
     Condition memory requirement
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, requirement, genReqParentID(goalIndex));
-  }
-
-  /// @notice adds a reward to a goal
-  /**  @dev
-   * - Rewards (e.g. coins, items, etc)
-   *   - Tiered - eg Bronze, Silver, Gold
-   *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
-   *     - Uses LevelComp as the min contribution to qualify for a tier
-   *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
-   *   - Shape: Condition + Level + Name
-   *     - Condition shape handles reward type and quantity
-   *     - Logic type is either "REWARD" or "DISPLAY_ONLY"
-   *
-   * RewardIDs override deterministic LibReward generation, to allow for differing reward levels
-   */
-  /// @param cutoff needed to qualify for tier; "DISPLAY_ONLY" do not have this
-  function addReward(
-    IWorld world,
-    IUintComp components,
-    uint32 goalIndex,
-    string memory name,
-    uint256 cutoff, // level comp
-    string memory logic,
-    string memory type_,
-    uint32 index,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    uint256 value
-  ) internal returns (uint256 id) {
-    uint256 parentID = genRwdParentID(createTier(components, goalIndex, name, cutoff));
-    if (index == 0) {
-      // override index for deterministic ID generation if no index provided
-      // for ITEM_DROPTABLE or DISPLAY_ONLY
-      id = LibReward.genID(
-        parentID,
-        type_,
-        LibReward.getIndexOverride(components, parentID, type_) // quantity of same type
-      );
-    } else {
-      id = LibReward.genID(parentID, type_, index);
-    }
-
-    LibReward._create(components, id, parentID, type_, index, keys, weights, value);
   }
 
   function remove(IUintComp components, uint32 index) internal {

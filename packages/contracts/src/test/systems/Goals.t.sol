@@ -25,20 +25,17 @@ contract GoalsTest is SetupTemplate {
     uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0));
     uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 1, 0));
     uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 2, 0));
-    uint256 rewardID1 = _createGoalReward(1, 0, Condition("type", "REWARD", 1, 0));
-    uint256 rewardID2 = _createGoalReward(1, 100, Condition("type", "REWARD", 2, 0));
-    uint256 rewardID3 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
-    // uint256 rewardID4 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
-    // uint256 rewardID5 = _createGoalReward(1, 200, Condition("type", "DISPLAY_ONLY", 0, 0));
+    uint256 rewardID1 = _createGoalRewardBasic(1, 100, "type", 1, 0);
+    uint256 rewardID2 = _createGoalRewardBasic(1, 200, "type", 2, 0);
+    uint256 rewardID3 = _createGoalRewardDisplay(1, "name");
+    uint256 rewardID4 = _createGoalRewardDisplay(1, "name");
+    uint256 rewardID5 = _createGoalRewardDisplay(1, "name");
 
     // checking tiers
     uint256[] memory tiers = LibGoals.getTiers(components, goalIndex);
     assertEq(tiers.length, 3, "wrong tier count");
-    for (uint256 i; i < tiers.length; i++) {
-      assertEq(LibReward.queryFor(components, LibGoals.genRwdParentID(tiers[i])).length, 1);
-    }
     uint256[] memory rewards = LibGoals.getRewards(components, tiers);
-    assertEq(rewards.length, 3, "wrong reward count");
+    assertEq(rewards.length, 5, "wrong reward count");
 
     vm.prank(deployer);
     __GoalRegistrySystem.remove(goalIndex);
@@ -56,10 +53,10 @@ contract GoalsTest is SetupTemplate {
       0,
       Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt)
     );
-    uint256 rwdBronze = _createGoalReward(goalIndex, 100, Condition("ITEM", "REWARD", 100, 1));
-    uint256 rwdSilver = _createGoalReward(goalIndex, 200, Condition("ITEM", "REWARD", 200, 1));
-    uint256 rwdGold = _createGoalReward(goalIndex, 300, Condition("ITEM", "REWARD", 300, 1));
-    uint256 rwdDisplay = _createGoalReward(goalIndex, 0, Condition("ITEM", "DISPLAY_ONLY", 3, 1));
+    uint256 rwdBronze = _createGoalRewardBasic(goalIndex, 100, "ITEM", 100, 1);
+    uint256 rwdSilver = _createGoalRewardBasic(goalIndex, 200, "ITEM", 200, 1);
+    uint256 rwdGold = _createGoalRewardBasic(goalIndex, 300, "ITEM", 300, 1);
+    uint256 rwdDisplay = _createGoalRewardDisplay(goalIndex, "name");
 
     _fundAccount(accSlacker.index, 50);
     _fundAccount(accBronze.index, 100);
