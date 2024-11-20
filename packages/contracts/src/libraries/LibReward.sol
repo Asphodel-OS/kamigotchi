@@ -13,8 +13,8 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibSetter } from "libraries/utils/LibSetter.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { Stat, LibStat } from "libraries/LibStat.sol";
 
@@ -179,7 +179,7 @@ library LibReward {
     uint256 mult,
     uint256 targetID // expected to be an account
   ) internal {
-    LibAccount.incBalanceOf(world, components, targetID, type_, index, amount * mult);
+    LibSetter.inc(world, components, type_, index, amount * mult, targetID);
   }
 
   /// @notice distributes droptable rewards by creating a commit

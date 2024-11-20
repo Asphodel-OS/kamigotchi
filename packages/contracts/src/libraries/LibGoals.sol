@@ -20,6 +20,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibSetter } from "libraries/utils/LibSetter.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
@@ -165,7 +166,7 @@ library LibGoals {
     // dec account's balance
     string memory type_ = LibConditional.getType(components, objID);
     uint32 index = LibConditional.getIndex(components, objID);
-    LibAccount.decBalanceOf(components, accID, type_, index, amt);
+    LibSetter.dec(components, type_, index, amt, accID);
 
     // inc goal's balance & inc account contribution
     balComp.set(goalID, currBal + amt);
