@@ -25,7 +25,7 @@ contract AccountUseItemSystem is System {
     LibItem.verifyRequirements(components, itemIndex, "USE", accID);
 
     // use items
-    LibAccount.syncStamina(components, accID);
+    LibAccount.sync(components, accID);
     LibInventory.decFor(components, accID, itemIndex, amt); // implicit balance check
     LibItem.applyAllos(world, components, itemIndex, "USE", amt, accID);
 

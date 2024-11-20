@@ -255,7 +255,7 @@ contract HarvestTest is SetupTemplate {
 //      */
 
 //     // setup
-//     _setConfigArray("KAMI_HARV_EFFICACY", [uint32(5), 7, 3, 0, 0, 0, 0, 0]);
+//     _setConfig("KAMI_HARV_EFFICACY", [uint32(5), 7, 3, 0, 0, 0, 0, 0]);
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", nodeAff);
 //     uint kamiID = _mintKami(0);
 //     registerTrait(127, 0, 5, 5, 0, 0, 5, bodyAff, "Test Body", "BODY");
@@ -528,7 +528,7 @@ contract HarvestTest is SetupTemplate {
 
 //   /// @notice tests against a known fixed value - no bonus, no affinity
 //   function testFixedCalcBase() public {
-//     _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
+//     _setConfig("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
 //     uint256 power = 11;
 //     uint256 health = 1000;
 //     uint256 ratioNumerator = ((10 ** 9) * 1000);

@@ -17,8 +17,6 @@ contract TraitsTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
-
     // accounts must be created after new config set
     _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
     _registerAccounts(10);

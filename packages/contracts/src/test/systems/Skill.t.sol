@@ -14,7 +14,7 @@ contract SkillTest is SetupTemplate {
   }
 
   function _initSkillConfigs() internal override {
-    _setConfigArray("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
+    _setConfig("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
   }
 
   ////////////////

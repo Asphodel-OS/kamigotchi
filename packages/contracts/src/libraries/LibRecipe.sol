@@ -144,7 +144,7 @@ library LibRecipe {
   ) internal {
     // pay stamina cost
     int32 stCost = StaminaComponent(getAddrByID(components, StamCompID)).get(recipeID).sync;
-    LibAccount.syncAndUseStamina(components, accID, stCost * amt.toInt32());
+    LibAccount.depleteStamina(components, accID, uint32(stCost) * amt.toUint32());
   }
 
   function craft(

@@ -16,8 +16,6 @@ contract MurderTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
-
     _createNPC(1, 1, "Test NPC");
     _createFoodListings(1);
     _createReviveListings(1);

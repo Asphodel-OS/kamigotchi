@@ -6,6 +6,9 @@ import "tests/utils/SetupTemplate.t.sol";
 contract RoomTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
+
+    // [base stamina, base recovery period per point, base movement cost (in stamina), base experience per move]
+    _setConfig("ACCOUNT_STAMINA", [uint32(20), 300, 1, 0, 0, 0, 0, 0]);
   }
 
   function setUpRooms() public override {

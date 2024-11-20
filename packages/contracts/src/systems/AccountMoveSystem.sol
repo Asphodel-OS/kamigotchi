@@ -28,8 +28,8 @@ contract AccountMoveSystem is System {
       revert("AccMove: inaccessible room");
     }
 
-    // implicit stamina check
-    LibAccount.move(components, accID, toIndex);
+    LibAccount.sync(components, accID);
+    LibAccount.move(components, accID, toIndex); // implicit stamina check
 
     // standard logging and tracking
     LibRoom.logMove(components, accID);

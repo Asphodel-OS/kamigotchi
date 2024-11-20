@@ -21,10 +21,10 @@ import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/Tim
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
@@ -56,7 +56,8 @@ library LibAccount {
       id
     );
 
-    int32 baseStamina = int32(uint32(LibConfig.get(components, "ACCOUNT_STAMINA_BASE")));
+    uint32[8] memory config = LibConfig.getArray(components, "ACCOUNT_STAMINA");
+    int32 baseStamina = int32(config[0]);
     LibStat.setStamina(components, id, Stat(baseStamina, 0, 0, baseStamina));
 
     updateLastActionTs(components, id);
@@ -71,26 +72,37 @@ library LibAccount {
 
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint32 to) internal {
-    syncAndUseStamina(components, id, -1);
+    uint32[8] memory config = LibConfig.getArray(components, "ACCOUNT_STAMINA");
+    depleteStamina(components, id, config[2]);
     IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, to);
-  }
-
-  // Recover's stamina to an account
-  function recover(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
-    return LibStat.sync(components, "STAMINA", amt, id);
-  }
-
-  function syncAndUseStamina(IUintComp components, uint256 id, int32 amt) internal {
-    int32 current = syncStamina(components, id); // splitting up could be cleaner
-    if (current + amt < 0) revert("Account: insufficient stamina");
-    LibStat.sync(components, "STAMINA", amt, id); // optimisable: double sync
+    LibExperience.inc(components, id, config[3]);
   }
 
   // syncs the stamina of an account. rounds down, ruthlessly
-  function syncStamina(IUintComp components, uint256 id) internal returns (int32) {
-    int32 recoveredAmt = calcStaminaRecovery(components, id);
+  function sync(IUintComp components, uint256 id) internal returns (int32) {
+    uint32[8] memory config = LibConfig.getArray(components, "ACCOUNT_STAMINA");
+    uint32 recoveryPeriod = config[1];
+    uint32 timePassed = uint32(block.timestamp - getLastActionTs(components, id));
+    int32 recoveredAmt = int32(timePassed / recoveryPeriod); // rounds down
     updateLastActionTs(components, id);
-    return recover(components, id, recoveredAmt);
+    return recoverStamina(components, id, recoveredAmt);
+  }
+
+  // recover the stamina or an account
+  function recoverStamina(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
+    return LibStat.sync(components, "STAMINA", amt, id);
+  }
+
+  // deplete the stamina of an account. assume it's already synced in this tx
+  function depleteStamina(
+    IUintComp components,
+    uint256 id,
+    uint32 rawAmt
+  ) internal returns (int32) {
+    Stat memory stamina = LibStat.get(components, "STAMINA", id);
+    if (rawAmt > uint32(stamina.sync)) revert("Account: insufficient stamina");
+    int32 amt = -1 * int32(rawAmt);
+    return LibStat.sync(components, "STAMINA", amt, id); // optimisable: double sync
   }
 
   // Update the TimeLastAction of the account. Used to throttle world movement.
@@ -100,15 +112,6 @@ library LibAccount {
 
   function updateLastTs(IUintComp components, uint256 id) internal {
     setLastTs(components, id, block.timestamp);
-  }
-
-  /////////////////
-  // CALCS
-
-  function calcStaminaRecovery(IUintComp components, uint256 id) internal view returns (int32) {
-    uint256 timePassed = block.timestamp - getLastActionTs(components, id);
-    uint256 recoveryPeriod = LibConfig.get(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
-    return int32(uint32(timePassed / recoveryPeriod));
   }
 
   /////////////////

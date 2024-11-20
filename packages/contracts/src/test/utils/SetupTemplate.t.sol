@@ -1041,12 +1041,12 @@ abstract contract SetupTemplate is TestSetupImports {
     __ConfigSetSystem.setValue(key, value);
   }
 
-  function _setConfigArray(string memory key, uint32[8] memory values) internal {
+  function _setConfig(string memory key, uint32[8] memory values) internal {
     vm.prank(deployer);
     __ConfigSetSystem.setValueArray(key, values);
   }
 
-  function _setConfigString(string memory key, string memory value) internal {
+  function _setConfig(string memory key, string memory value) internal {
     vm.prank(deployer);
     __ConfigSetSystem.setValueString(key, value);
   }
@@ -1065,7 +1065,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initBaseConfigs() internal virtual {
-    _setConfigString("BASE_URI", "https://image.asphodel.io/kami/");
+    _setConfig("BASE_URI", "https://image.asphodel.io/kami/");
   }
 
   function _initLeaderboardConfigs() internal virtual {
@@ -1073,8 +1073,8 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initAccountConfigs() internal virtual {
-    _setConfig("ACCOUNT_STAMINA_BASE", 20);
-    _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
+    // [base stamina, base recovery period per point, base movement cost (in stamina), base experience per move]
+    _setConfig("ACCOUNT_STAMINA", [uint32(20), 300, 0, 0, 0, 0, 0, 0]);
   }
 
   function _initFriendConfigs() internal virtual {
@@ -1085,7 +1085,7 @@ abstract contract SetupTemplate is TestSetupImports {
   // Kami Leveling Curve
   function _initLevelingConfigs() internal virtual {
     _setConfig("KAMI_LVL_REQ_BASE", 40);
-    _setConfigArray("KAMI_LVL_REQ_MULT_BASE", [uint32(1259), 3, 0, 0, 0, 0, 0, 0]);
+    _setConfig("KAMI_LVL_REQ_MULT_BASE", [uint32(1259), 3, 0, 0, 0, 0, 0, 0]);
   }
 
   function _initMintConfigs() internal virtual {
@@ -1103,7 +1103,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("KAMI_BASE_SLOTS", 0);
 
     // healing
-    _setConfigArray("KAMI_REST_METABOLISM", [uint32(0), 0, 1200, 3, 0, 0, 1000, 3]);
+    _setConfig("KAMI_REST_METABOLISM", [uint32(0), 0, 1200, 3, 0, 0, 1000, 3]);
 
     // cooldown
     _setConfig("KAMI_STANDARD_COOLDOWN", 180);
@@ -1111,24 +1111,24 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initHarvestConfigs() internal virtual {
     // Harvest Rates
-    _setConfigArray("KAMI_HARV_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]);
-    _setConfigArray("KAMI_HARV_FERTILITY", [uint32(0), 0, 1500, 3, 0, 0, 1000, 3]);
-    _setConfigArray("KAMI_HARV_INTENSITY", [uint32(5), 0, 1920, 0, 0, 0, 40, 0]); // inversed boost
-    _setConfigArray("KAMI_HARV_BOUNTY", [uint32(0), 9, 0, 0, 0, 0, 1000, 3]);
-    _setConfigArray("KAMI_HARV_STRAIN", [uint32(20), 0, 7500, 3, 0, 0, 1000, 3]);
+    _setConfig("KAMI_HARV_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]);
+    _setConfig("KAMI_HARV_FERTILITY", [uint32(0), 0, 1500, 3, 0, 0, 1000, 3]);
+    _setConfig("KAMI_HARV_INTENSITY", [uint32(5), 0, 1920, 0, 0, 0, 40, 0]); // inversed boost
+    _setConfig("KAMI_HARV_BOUNTY", [uint32(0), 9, 0, 0, 0, 0, 1000, 3]);
+    _setConfig("KAMI_HARV_STRAIN", [uint32(20), 0, 7500, 3, 0, 0, 1000, 3]);
   }
 
   function _initLiquidationConfigs() internal virtual {
-    _setConfigArray("KAMI_LIQ_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]); // [neut, up, down, prec]
-    _setConfigArray("KAMI_LIQ_ANIMOSITY", [uint32(0), 0, 400, 3, 0, 0, 0, 0]); // nontraditional AST node
-    _setConfigArray("KAMI_LIQ_THRESHOLD", [uint32(0), 3, 1000, 3, 0, 3, 0, 0]);
-    _setConfigArray("KAMI_LIQ_SALVAGE", [uint32(0), 2, 0, 3, 0, 0, 0, 0]);
-    _setConfigArray("KAMI_LIQ_SPOILS", [uint32(35), 2, 0, 3, 0, 0, 0, 0]);
-    _setConfigArray("KAMI_LIQ_KARMA", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
+    _setConfig("KAMI_LIQ_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]); // [neut, up, down, prec]
+    _setConfig("KAMI_LIQ_ANIMOSITY", [uint32(0), 0, 400, 3, 0, 0, 0, 0]); // nontraditional AST node
+    _setConfig("KAMI_LIQ_THRESHOLD", [uint32(0), 3, 1000, 3, 0, 3, 0, 0]);
+    _setConfig("KAMI_LIQ_SALVAGE", [uint32(0), 2, 0, 3, 0, 0, 0, 0]);
+    _setConfig("KAMI_LIQ_SPOILS", [uint32(35), 2, 0, 3, 0, 0, 0, 0]);
+    _setConfig("KAMI_LIQ_KARMA", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
   }
 
   function _initSkillConfigs() internal virtual {
-    _setConfigArray("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
+    _setConfig("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
   }
 
   ///////////////////////

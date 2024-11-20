@@ -41,7 +41,7 @@ contract AccItemsTest is SetupTemplate {
     // setting stamina
     vm.startPrank(deployer);
     _StaminaComponent.set(alice.id, Stat(20, 0, 0, 20));
-    LibAccount.syncStamina(components, alice.id);
+    LibAccount.sync(components, alice.id);
     int32 start = 15;
     _StaminaComponent.set(alice.id, Stat(20, 0, 0, start));
     vm.stopPrank();
