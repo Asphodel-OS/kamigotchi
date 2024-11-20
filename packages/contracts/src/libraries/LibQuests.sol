@@ -26,7 +26,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 
 /**
  * @notice LibQuests handles quests!
@@ -213,7 +213,7 @@ library LibQuests {
     uint256 accID
   ) internal {
     uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, questIndex);
-    LibReward.distribute(world, components, rewards, accID);
+    LibAllo.distribute(world, components, rewards, accID);
   }
 
   function checkIncrease(

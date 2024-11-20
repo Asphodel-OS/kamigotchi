@@ -9,7 +9,7 @@ import { getAddrByID } from "solecs/utils.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 
 uint256 constant ID = uint256(keccak256("system.node.registry"));
 
@@ -77,7 +77,7 @@ contract _NodeRegistrySystem is System {
     require(scavID != 0, "Node: scav bar does not exist");
 
     uint256 parentID = LibScavenge.genRwdParentID(scavID);
-    return LibReward.createBasic(components, parentID, rwdType, rwdIndex, value);
+    return LibAllo.createBasic(components, parentID, rwdType, rwdIndex, value);
   }
 
   function addScavRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -91,7 +91,7 @@ contract _NodeRegistrySystem is System {
     require(scavID != 0, "Node: scav bar does not exist");
 
     uint256 parentID = LibScavenge.genRwdParentID(scavID);
-    return LibReward.createDT(components, parentID, keys, weights, value);
+    return LibAllo.createDT(components, parentID, keys, weights, value);
   }
 
   function addScavRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -109,7 +109,7 @@ contract _NodeRegistrySystem is System {
     require(scavID != 0, "Node: scav bar does not exist");
 
     uint256 parentID = LibScavenge.genRwdParentID(scavID);
-    return LibReward.createStat(components, parentID, statType, base, shift, boost, sync);
+    return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
   function remove(uint32 index) public onlyOwner {

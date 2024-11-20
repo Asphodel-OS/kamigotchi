@@ -14,7 +14,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 
 /** @notice
  * Scavenge (scav bar) is a point counter that distributes fungible rewards on a linear curve.
@@ -57,7 +57,7 @@ library LibScavenge {
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
 
     uint256[] memory rewards = getRewards(components, id);
-    LibReward.remove(components, rewards);
+    LibAllo.remove(components, rewards);
   }
 
   /////////////////
@@ -102,7 +102,7 @@ library LibScavenge {
     uint256 holderID
   ) internal {
     uint256[] memory rwdIDs = getRewards(components, regID);
-    LibReward.distribute(world, components, rwdIDs, count, holderID);
+    LibAllo.distribute(world, components, rwdIDs, count, holderID);
   }
 
   /////////////////
@@ -132,7 +132,7 @@ library LibScavenge {
     IUintComp components,
     uint256 regID
   ) internal view returns (uint256[] memory) {
-    return LibReward.queryFor(components, genRwdParentID(regID));
+    return LibAllo.queryFor(components, genRwdParentID(regID));
   }
 
   /////////////////

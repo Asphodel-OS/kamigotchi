@@ -20,7 +20,7 @@ import { Stat, LibStat } from "libraries/LibStat.sol";
 
 /**
  * @notice
- * Rewards are shapes that indicate some sort of distribution of other shapes. (Calling this shape Reward will change to be more descriptive)
+ * Allos are shapes that indicate some sort of distribution of other shapes
  * - similar to Conditionals in that it matches a DescribedEntity (type + index)
  * - Can give
  *   - bonuses (unimplemented)
@@ -31,14 +31,14 @@ import { Stat, LibStat } from "libraries/LibStat.sol";
  *   - stats
  *   - flags
  *
- * Shape: deterministicID: (hash("reward.instance", parentID, type, index))
+ * Shape: deterministicID: (hash("reward.instance", parentID, type, index)) // todo: change to allo.instance
  * - Pointer to parent
  * - Type
  * - Index
  * - Value/stat/droptable
  */
 /// todo: rename to Allocation
-library LibReward {
+library LibAllo {
   using LibStat for Stat;
   using LibStat for uint256;
   using LibString for string;

@@ -25,7 +25,7 @@ import { LibSetter } from "libraries/utils/LibSetter.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /**
@@ -131,7 +131,7 @@ library LibGoals {
 
     // remove rewards
     uint256[] memory rewIDs = getRewards(components, tierIDs);
-    LibReward.remove(components, rewIDs);
+    LibAllo.remove(components, rewIDs);
   }
 
   function removeTiers(IUintComp components, uint256[] memory ids) internal {
@@ -184,7 +184,7 @@ library LibGoals {
   ) internal {
     uint256[] memory activeTiers = getClaimableTiers(components, goalIndex, goalID, accID);
     uint256[] memory rwdIDs = getRewards(components, activeTiers);
-    LibReward.distribute(world, components, rwdIDs, accID);
+    LibAllo.distribute(world, components, rwdIDs, accID);
   }
 
   ////////////////////
@@ -325,7 +325,7 @@ library LibGoals {
   ) internal view returns (uint256[] memory) {
     uint256[][] memory tierRewards = new uint256[][](tierIDs.length);
     for (uint256 i; i < tierIDs.length; i++) {
-      tierRewards[i] = LibReward.queryFor(components, genRwdParentID(tierIDs[i]));
+      tierRewards[i] = LibAllo.queryFor(components, genRwdParentID(tierIDs[i]));
     }
     return LibArray.flatten(tierRewards);
   }

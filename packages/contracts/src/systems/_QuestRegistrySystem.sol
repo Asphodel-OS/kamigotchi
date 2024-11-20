@@ -8,7 +8,7 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { LibGetter } from "libraries/utils/LibGetter.sol";
 import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.registry"));
 
@@ -91,7 +91,7 @@ contract _QuestRegistrySystem is System {
 
     // create an empty Quest Reward and set any non-zero fields
     uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
-    return LibReward.createBasic(components, parentID, type_, index, value);
+    return LibAllo.createBasic(components, parentID, type_, index, value);
   }
 
   function addRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -106,7 +106,7 @@ contract _QuestRegistrySystem is System {
 
     // create an empty Quest Reward and set any non-zero fields
     uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
-    return LibReward.createDT(components, parentID, keys, weights, value);
+    return LibAllo.createDT(components, parentID, keys, weights, value);
   }
 
   function addRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -125,7 +125,7 @@ contract _QuestRegistrySystem is System {
 
     // create an empty Quest Reward and set any non-zero fields
     uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
-    return LibReward.createStat(components, parentID, statType, base, shift, boost, sync);
+    return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
   function addAssigner(

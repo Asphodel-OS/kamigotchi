@@ -22,7 +22,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibAssigner } from "libraries/LibAssigner.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 
 // A registry for Quest related entities
 // Quest is copied to an Account, the rest are referenced
@@ -111,7 +111,7 @@ library LibQuestRegistry {
     for (uint256 i; i < reqs.length; i++) LibConditional.remove(components, reqs[i]);
 
     uint256[] memory rwds = getRwdsByQuestIndex(components, questIndex);
-    for (uint256 i; i < rwds.length; i++) LibReward.remove(components, rwds[i]);
+    for (uint256 i; i < rwds.length; i++) LibAllo.remove(components, rwds[i]);
 
     uint256[] memory assigners = LibAssigner.getAll(components, questID);
     for (uint256 i; i < assigners.length; i++)
@@ -160,7 +160,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibReward.queryFor(components, genRwdParentID(index));
+    return LibAllo.queryFor(components, genRwdParentID(index));
   }
 
   /////////////////

@@ -86,7 +86,7 @@ contract ScavengeTest is SetupTemplate {
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     uint256 parentID = LibScavenge.genRwdParentID(scavBarID);
-    id = LibReward.createBasic(components, parentID, type_, rwdIndex, value);
+    id = LibAllo.createBasic(components, parentID, type_, rwdIndex, value);
     vm.stopPrank();
   }
 
@@ -99,7 +99,7 @@ contract ScavengeTest is SetupTemplate {
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     uint256 parentID = LibScavenge.genRwdParentID(scavBarID);
-    id = LibReward.createDT(components, parentID, keys, weights, value);
+    id = LibAllo.createDT(components, parentID, keys, weights, value);
     vm.stopPrank();
   }
 

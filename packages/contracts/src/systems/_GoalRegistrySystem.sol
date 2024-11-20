@@ -7,7 +7,7 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
-import { LibReward } from "libraries/LibReward.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 
 uint256 constant ID = uint256(keccak256("system.goal.registry"));
 
@@ -67,7 +67,7 @@ contract _GoalRegistrySystem is System {
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
     uint256 parentID = LibGoals.genRwdParentID(tierID);
-    uint256 id = LibReward.createBasic(components, parentID, type_, index, value);
+    uint256 id = LibAllo.createBasic(components, parentID, type_, index, value);
     return id;
   }
 
@@ -85,7 +85,7 @@ contract _GoalRegistrySystem is System {
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
     uint256 parentID = LibGoals.genRwdParentID(tierID);
-    uint256 id = LibReward.createDT(components, parentID, keys, weights, value);
+    uint256 id = LibAllo.createDT(components, parentID, keys, weights, value);
     return id;
   }
 
@@ -105,7 +105,7 @@ contract _GoalRegistrySystem is System {
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
     uint256 parentID = LibGoals.genRwdParentID(tierID);
-    uint256 id = LibReward.createStat(components, parentID, statType, base, shift, boost, sync);
+    uint256 id = LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
     return id;
   }
 
@@ -116,7 +116,7 @@ contract _GoalRegistrySystem is System {
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, 0);
     uint256 parentID = LibGoals.genRwdParentID(tierID);
-    uint256 id = LibReward.createEmpty(components, parentID, name);
+    uint256 id = LibAllo.createEmpty(components, parentID, name);
     return id;
   }
 

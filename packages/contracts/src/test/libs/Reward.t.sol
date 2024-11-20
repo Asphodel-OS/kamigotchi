@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-contract RewardTest is SetupTemplate {
+contract AlloTest is SetupTemplate {
   uint256 constant parentID1 = uint256(keccak256(abi.encodePacked("parent")));
 
   function setUp() public override {
@@ -21,13 +21,13 @@ contract RewardTest is SetupTemplate {
 
   function testRewardShapeBasic() public {
     uint256 rewardID = _createReward(parentID1, "ITEM", 1, 1);
-    assertEq(LibReward.genID(parentID1, "ITEM", 1), rewardID);
+    assertEq(LibAllo.genID(parentID1, "ITEM", 1), rewardID);
     uint256 rewardID2 = _createReward(parentID1, "ITEM", 2, 2);
-    assertEq(LibReward.genID(parentID1, "ITEM", 2), rewardID2);
+    assertEq(LibAllo.genID(parentID1, "ITEM", 2), rewardID2);
 
     // test remove individual (expected to be removed all at once)
     vm.startPrank(deployer);
-    LibReward.remove(components, rewardID);
+    LibAllo.remove(components, rewardID);
     vm.stopPrank();
 
     // test update
@@ -42,11 +42,11 @@ contract RewardTest is SetupTemplate {
     uint256[] memory weights = new uint256[](1);
     weights[0] = 1;
     uint256 rewardID = _createReward(parentID1, keys, weights, 1);
-    assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 1), rewardID);
+    assertEq(LibAllo.genID(parentID1, "ITEM_DROPTABLE", 1), rewardID);
     uint256 rewardID2 = _createReward(parentID1, keys, weights, 2);
-    assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 2), rewardID2);
+    assertEq(LibAllo.genID(parentID1, "ITEM_DROPTABLE", 2), rewardID2);
     uint256 rewardID3 = _createReward(parentID1, keys, weights, 3);
-    assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 3), rewardID3);
+    assertEq(LibAllo.genID(parentID1, "ITEM_DROPTABLE", 3), rewardID3);
 
     // no test remove individually - expected to remove all at once
   }
@@ -61,7 +61,7 @@ contract RewardTest is SetupTemplate {
 
     // test remove individual (expected to remove all at once)
     vm.startPrank(deployer);
-    LibReward.remove(components, healthID);
+    LibAllo.remove(components, healthID);
     vm.stopPrank();
 
     // test update
@@ -247,7 +247,7 @@ contract RewardTest is SetupTemplate {
     uint256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibReward.createBasic(components, parentID, type_, index, value);
+    id = LibAllo.createBasic(components, parentID, type_, index, value);
     vm.stopPrank();
   }
 
@@ -259,7 +259,7 @@ contract RewardTest is SetupTemplate {
     uint256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibReward.createDT(components, parentID, keys, weights, value);
+    id = LibAllo.createDT(components, parentID, keys, weights, value);
     vm.stopPrank();
   }
 
@@ -269,7 +269,7 @@ contract RewardTest is SetupTemplate {
     Stat memory value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibReward.createStat(
+    id = LibAllo.createStat(
       components,
       parentID,
       statType,
@@ -282,16 +282,16 @@ contract RewardTest is SetupTemplate {
   }
 
   function _distribute(uint256 parentID, uint256 multiplier, PlayerAccount memory acc) internal {
-    uint256[] memory rewardIDs = LibReward.queryFor(components, parentID);
+    uint256[] memory rewardIDs = LibAllo.queryFor(components, parentID);
     vm.startPrank(deployer);
-    LibReward.distribute(world, components, rewardIDs, multiplier, acc.id);
+    LibAllo.distribute(world, components, rewardIDs, multiplier, acc.id);
     vm.stopPrank();
   }
 
   function _distribute(uint256 parentID, PlayerAccount memory acc) internal {
-    uint256[] memory rewardIDs = LibReward.queryFor(components, parentID);
+    uint256[] memory rewardIDs = LibAllo.queryFor(components, parentID);
     vm.startPrank(deployer);
-    LibReward.distribute(world, components, rewardIDs, acc.id);
+    LibAllo.distribute(world, components, rewardIDs, acc.id);
     vm.stopPrank();
   }
 
