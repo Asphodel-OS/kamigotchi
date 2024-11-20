@@ -4,23 +4,15 @@ import styled from 'styled-components';
 interface Props {
   children: React.ReactNode;
   content: any;
-  position?: string[];
 }
 
 const Popover = (props: Props) => {
-  const { children, content, position } = props;
+  const { children, content } = props;
   const [isVisible, setIsVisible] = useState(false);
-  const [event, setEvent] = useState<any>();
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState<{
-    popX: number;
-    popY: number;
-    childrenX: number;
-    childrenY: number;
-  }>();
-  const [bottom, setBottom] = useState();
+
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (popoverRef.current && triggerRef.current) {
@@ -32,7 +24,6 @@ const Popover = (props: Props) => {
         }
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -89,8 +80,6 @@ const Popover = (props: Props) => {
       </PopoverTrigger>
       <PopoverContent
         isVisible={isVisible}
-        position={position}
-        dimensions={dimensions}
         ref={popoverRef}
         tooltipPosition={tooltipPosition}
         onClick={(e) => {
@@ -134,8 +123,3 @@ const PopoverContent = styled.div<{
   top: ${({ tooltipPosition }) => tooltipPosition.y};
   left: ${({ tooltipPosition }) => tooltipPosition.x};
 `;
-/*${({ position, dimensions }) => {
-    if (position && dimensions)
-      return `transform:${position.includes('left') ? `translateX(calc(${-dimensions.popX}px * 0 +  ${dimensions.childrenX}px * 0))` : position.includes('right') ? `translateX(calc(-${dimensions.popX}px * 1 +  ${dimensions.childrenX}px * 1))` : ''} 
-                    ${position.includes('top') ? `translateY(calc(-${dimensions.popY}px * 1 - ${dimensions.childrenY}px * 0.2))` : position.includes('bottom') ? `translateY(calc(${dimensions.popY}px * 0 + ${dimensions.childrenY}px * 0.9))` : ''};`;
-  }}*/

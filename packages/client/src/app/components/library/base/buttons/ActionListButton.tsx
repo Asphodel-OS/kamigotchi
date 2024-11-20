@@ -75,7 +75,7 @@ export function ActionListButton(props: Props) {
   };
 
   return (
-    <Popover position={['right', 'bottom']} content={optionsMap()}>
+    <Popover content={optionsMap()}>
       <Button ref={toggleRef} id={id} onClick={handleClick} style={setButtonStyles()}>
         {text + ' ▾'}
       </Button>

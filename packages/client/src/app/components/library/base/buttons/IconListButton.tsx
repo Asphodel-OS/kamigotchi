@@ -67,7 +67,7 @@ export function IconListButton(props: Props) {
   };
 
   return (
-    <Popover position={['right', 'bottom']} content={optionsMap()}>
+    <Popover content={optionsMap()}>
       <IconButton
         img={img}
         text={text}
