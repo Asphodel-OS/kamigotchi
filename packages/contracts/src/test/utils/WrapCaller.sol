@@ -17,7 +17,7 @@ contract WrapCaller {
   }
 
   function accIncBalOf(uint256 accID, string memory _type, uint32 index, uint256 amount) external {
-    LibAccount.incBalanceOf(world, components, accID, _type, index, amount);
+    LibSetter.inc(world, components, _type, index, amount, accID);
   }
 
   function kamiSync(uint256 id) public {

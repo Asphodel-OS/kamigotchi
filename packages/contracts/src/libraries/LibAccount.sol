@@ -102,39 +102,6 @@ library LibAccount {
     setLastTs(components, id, block.timestamp);
   }
 
-  // increase the balance of X (type+index) of an account
-  function incBalanceOf(
-    IWorld world,
-    IUintComp components,
-    uint256 holderID,
-    string memory _type,
-    uint32 index,
-    uint256 amount
-  ) internal {
-    if (LibString.eq(_type, "ITEM")) {
-      LibInventory.incFor(components, holderID, index, amount);
-    } else if (LibString.eq(_type, "REPUTATION")) {
-      LibFactions.incRep(components, holderID, index, amount);
-    } else {
-      revert("LibAccount: unknown type");
-    }
-  }
-
-  // decreases the balance of X (type+index) of an account
-  function decBalanceOf(
-    IUintComp components,
-    uint256 holderID,
-    string memory _type,
-    uint32 index,
-    uint256 amount
-  ) public {
-    if (LibString.eq(_type, "ITEM")) {
-      LibInventory.decFor(components, holderID, index, amount);
-    } else {
-      revert("LibAccount: unknown type");
-    }
-  }
-
   /////////////////
   // CALCS
 

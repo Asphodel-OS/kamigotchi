@@ -164,6 +164,10 @@ library LibRoom {
   /////////////////
   // SETTERS
 
+  function set(IUintComp components, uint256 id, uint32 index) internal {
+    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, index);
+  }
+
   function setDescription(IUintComp components, uint256 id, string memory description) internal {
     DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
   }
