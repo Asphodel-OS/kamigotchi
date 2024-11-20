@@ -157,7 +157,7 @@ library LibConditional {
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 value = LibGetter.getBalanceOf(components, targetID, data.type_, data.index);
+    uint256 value = LibGetter.getBal(components, targetID, data.type_, data.index);
     return _checkLogicOperator(value, data.value, logic);
   }
 

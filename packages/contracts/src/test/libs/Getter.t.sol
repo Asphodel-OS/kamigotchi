@@ -43,7 +43,7 @@ contract LibGetterTest is SetupTemplate {
     LibData.set(components, defaultAccID, index, type_, amt);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBalanceOf(components, defaultAccID, type_, index), amt);
+    assertEq(LibGetter.getBal(components, defaultAccID, type_, index), amt);
   }
 
   function testGetItemBal(uint256 amt, uint32 index) public {
@@ -54,7 +54,7 @@ contract LibGetterTest is SetupTemplate {
     LibInventory.incFor(components, defaultAccID, index, amt);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", index), amt);
+    assertEq(LibGetter.getBal(components, defaultAccID, "ITEM", index), amt);
   }
 
   function testGetCoinBal(uint256 amt) public {
@@ -62,7 +62,7 @@ contract LibGetterTest is SetupTemplate {
     LibInventory.setFor(components, defaultAccID, MUSU_INDEX, amt);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
+    assertEq(LibGetter.getBal(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
   }
 
   function testGetLevel(uint256 amt) public {
@@ -70,7 +70,7 @@ contract LibGetterTest is SetupTemplate {
     LibExperience.setLevel(components, defaultAccID, amt);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "LEVEL", 0), amt);
+    assertEq(LibGetter.getBal(components, defaultAccID, "LEVEL", 0), amt);
   }
 
   function testGetNumKamis(uint256 amt) public {
@@ -78,7 +78,7 @@ contract LibGetterTest is SetupTemplate {
 
     if (amt > 0) _mintKamis(defaultAccIndex, amt);
 
-    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI", 0), amt);
+    assertEq(LibGetter.getBal(components, defaultAccID, "KAMI", 0), amt);
   }
 
   function testGetKamiHighestLevel() public {
@@ -92,7 +92,7 @@ contract LibGetterTest is SetupTemplate {
     LibExperience.setLevel(components, kamis[9], 111);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBalanceOf(components, defaultAccID, "KAMI_LEVEL_HIGHEST", 111), 111);
+    assertEq(LibGetter.getBal(components, defaultAccID, "KAMI_LEVEL_HIGHEST", 111), 111);
   }
 
   function testGetSkillLevel(uint32 index, uint256 holderID, uint256 amt) public {
@@ -104,6 +104,6 @@ contract LibGetterTest is SetupTemplate {
     LibSkill.setPoints(components, skillID, amt);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBalanceOf(components, holderID, "SKILL", index), amt);
+    assertEq(LibGetter.getBal(components, holderID, "SKILL", index), amt);
   }
 }

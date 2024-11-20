@@ -70,10 +70,10 @@ contract SkillTest is SetupTemplate {
     assertEq(LibBonus.getForUint256(components, "BONUS_A", kamiID), 17);
     assertEq(LibBonus.getForUint256(components, "BONUS_B", kamiID), 10);
     assertEq(LibSkill.getPoints(components, kamiID), 0);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 1), 1);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 2), 1);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 3), 5);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 4), 2);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 1), 1);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 2), 1);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 3), 5);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 4), 2);
 
     // reset skills
     _resetSkills(alice, kamiID);
@@ -82,10 +82,10 @@ contract SkillTest is SetupTemplate {
     assertEq(LibBonus.getForUint256(components, "BONUS_A", kamiID), 0);
     assertEq(LibBonus.getForUint256(components, "BONUS_B", kamiID), 0);
     assertEq(LibSkill.getPoints(components, kamiID), 12);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 1), 0);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 2), 0);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 3), 0);
-    assertEq(LibGetter.getBalanceOf(components, kamiID, "SKILL", 4), 0);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 1), 0);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 2), 0);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 3), 0);
+    assertEq(LibGetter.getBal(components, kamiID, "SKILL", 4), 0);
   }
 
   // test whether skill upgrades are properly gated by skill point availability

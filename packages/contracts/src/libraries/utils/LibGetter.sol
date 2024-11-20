@@ -38,7 +38,7 @@ library LibGetter {
   // TOP LEVEL
 
   /// @notice get the balance of X (type+index). can be any shape, but usually Account
-  function getBalanceOf(
+  function getBal(
     IUintComp components,
     uint256 id,
     string memory _type,
