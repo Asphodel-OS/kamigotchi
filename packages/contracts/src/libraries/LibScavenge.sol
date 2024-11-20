@@ -50,20 +50,6 @@ library LibScavenge {
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, field);
   }
 
-  /// @notice reward per tier
-  function addReward(
-    IWorld world,
-    IUintComp components,
-    uint256 regID,
-    string memory type_,
-    uint32 rwdIndex,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    uint256 value
-  ) internal returns (uint256 id) {
-    id = LibReward.create(components, genRwdParentID(regID), type_, rwdIndex, keys, weights, value);
-  }
-
   function remove(IUintComp components, uint256 id) internal {
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);

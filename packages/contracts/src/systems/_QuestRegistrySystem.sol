@@ -8,6 +8,7 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { LibGetter } from "libraries/utils/LibGetter.sol";
 import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
+import { LibReward } from "libraries/LibReward.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.registry"));
 
@@ -77,15 +78,11 @@ contract _QuestRegistrySystem is System {
       );
   }
 
-  function addReward(bytes memory arguments) public onlyOwner returns (uint256) {
-    (
-      uint32 questIndex,
-      string memory type_,
-      uint32 index,
-      uint32[] memory keys,
-      uint256[] memory weights,
-      uint256 value
-    ) = abi.decode(arguments, (uint32, string, uint32, uint32[], uint256[], uint256));
+  function addRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 questIndex, string memory type_, uint32 index, uint256 value) = abi.decode(
+      arguments,
+      (uint32, string, uint32, uint256)
+    );
 
     // check that the quest exists
     uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
@@ -93,18 +90,42 @@ contract _QuestRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Quest Reward type cannot be empty");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 id = LibQuestRegistry.createReward(
-      world,
-      components,
-      questIndex,
-      type_,
-      index,
-      keys,
-      weights,
-      value
+    uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
+    return LibReward.createBasic(components, parentID, type_, index, value);
+  }
+
+  function addRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 questIndex, uint32[] memory keys, uint256[] memory weights, uint256 value) = abi.decode(
+      arguments,
+      (uint32, uint32[], uint256[], uint256)
     );
 
-    return id;
+    // check that the quest exists
+    uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
+    require(questID != 0, "Quest does not exist");
+
+    // create an empty Quest Reward and set any non-zero fields
+    uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
+    return LibReward.createDT(components, parentID, keys, weights, value);
+  }
+
+  function addRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 questIndex,
+      string memory statType,
+      int32 base,
+      int32 shift,
+      int32 boost,
+      int32 sync
+    ) = abi.decode(arguments, (uint32, string, int32, int32, int32, int32));
+
+    // check that the quest exists
+    uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
+    require(questID != 0, "Quest does not exist");
+
+    // create an empty Quest Reward and set any non-zero fields
+    uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
+    return LibReward.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
   function addAssigner(

@@ -78,10 +78,8 @@ async function initRequirement(api: AdminAPI, entry: any) {
 // creates both scavBar and its reward at once. assumes each scav bar only has one reward, a DT
 async function initScavBar(api: AdminAPI, entry: any) {
   await api.node.add.scav(Number(entry['Index']), Number(entry['Scav Cost']));
-  await api.node.add.scavReward(
+  await api.node.add.scavReward.droptable(
     Number(entry['Index']),
-    'ITEM_DROPTABLE',
-    0,
     textToNumberArray(entry['Item Drop Indices']),
     textToNumberArray(entry['Item Drop Weights']),
     1

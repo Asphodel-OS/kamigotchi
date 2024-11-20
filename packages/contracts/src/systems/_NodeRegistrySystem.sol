@@ -6,9 +6,10 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { Condition } from "libraries/LibConditional.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
-import { Condition } from "libraries/LibConditional.sol";
+import { LibReward } from "libraries/LibReward.sol";
 
 uint256 constant ID = uint256(keccak256("system.node.registry"));
 
@@ -65,21 +66,50 @@ contract _NodeRegistrySystem is System {
     LibScavenge.create(components, "node", nodeIndex, tierCost);
   }
 
-  function addScavReward(bytes memory arguments) public onlyOwner {
-    (
-      uint32 nodeIndex,
-      string memory rwdType,
-      uint32 rwdIndex,
-      uint32[] memory keys,
-      uint256[] memory weights,
-      uint256 value
-    ) = abi.decode(arguments, (uint32, string, uint32, uint32[], uint256[], uint256));
+  function addScavRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 nodeIndex, string memory rwdType, uint32 rwdIndex, uint256 value) = abi.decode(
+      arguments,
+      (uint32, string, uint32, uint256)
+    );
     require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
 
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    LibScavenge.addReward(world, components, scavID, rwdType, rwdIndex, keys, weights, value);
+    uint256 parentID = LibScavenge.genRwdParentID(scavID);
+    return LibReward.createBasic(components, parentID, rwdType, rwdIndex, value);
+  }
+
+  function addScavRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 nodeIndex, uint32[] memory keys, uint256[] memory weights, uint256 value) = abi.decode(
+      arguments,
+      (uint32, uint32[], uint256[], uint256)
+    );
+    require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
+
+    uint256 scavID = LibNode.getScavBar(components, nodeIndex);
+    require(scavID != 0, "Node: scav bar does not exist");
+
+    uint256 parentID = LibScavenge.genRwdParentID(scavID);
+    return LibReward.createDT(components, parentID, keys, weights, value);
+  }
+
+  function addScavRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 nodeIndex,
+      string memory statType,
+      int32 base,
+      int32 shift,
+      int32 boost,
+      int32 sync
+    ) = abi.decode(arguments, (uint32, string, int32, int32, int32, int32));
+    require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
+
+    uint256 scavID = LibNode.getScavBar(components, nodeIndex);
+    require(scavID != 0, "Node: scav bar does not exist");
+
+    uint256 parentID = LibScavenge.genRwdParentID(scavID);
+    return LibReward.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
   function remove(uint32 index) public onlyOwner {

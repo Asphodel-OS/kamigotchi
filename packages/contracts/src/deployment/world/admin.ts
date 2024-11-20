@@ -119,32 +119,53 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
-  async function createGoalReward(
+  async function createGoalRewardBasic(
     goalIndex: number,
     name: string,
     cutoff: number,
     type: string,
-    logic: string,
     conIndex: number,
-    keys: number[],
-    weights: number[],
     conValue: number
   ) {
     genCall(
       'system.goal.registry',
-      [goalIndex, name, cutoff, type, logic, conIndex, keys, weights, conValue],
-      'addReward',
-      [
-        'uint32',
-        'string',
-        'uint256',
-        'string',
-        'string',
-        'uint32',
-        'uint32[]',
-        'uint256[]',
-        'uint256',
-      ]
+      [goalIndex, name, cutoff, type, conIndex, conValue],
+      'addRewardBasic',
+      ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256']
+    );
+  }
+
+  async function createGoalRewardDisplay(goalIndex: number, name: string) {
+    genCall('system.goal.registry', [goalIndex, name], 'addRewardDisplay', ['uint32', 'string']);
+  }
+
+  async function createGoalRewardDT(
+    goalIndex: number,
+    keys: number[],
+    weights: number[],
+    conValue: number
+  ) {
+    genCall('system.goal.registry', [goalIndex, keys, weights, conValue], 'addRewardDT', [
+      'uint32',
+      'uint32[]',
+      'uint256[]',
+      'uint256',
+    ]);
+  }
+
+  async function createGoalRewardStat(
+    goalIndex: number,
+    statType: string,
+    base: number,
+    shift: number,
+    boost: number,
+    sync: number
+  ) {
+    genCall(
+      'system.goal.registry',
+      [goalIndex, statType, base, shift, boost, sync],
+      'addRewardStat',
+      ['uint32', 'string', 'int32', 'int32', 'int32', 'int32']
     );
   }
 
@@ -284,20 +305,32 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.node.registry', [index, tierCost], 'addScavBar');
   }
 
-  async function addNodeScavReward(
+  async function addNodeScavRewardBasic(
     nodeIndex: number,
     type: string,
     index: number,
+    value: number
+  ) {
+    genCall('system.node.registry', [nodeIndex, type, index, value], 'addScavRewardBasic', [
+      'uint32',
+      'string',
+      'uint32',
+      'uint256',
+    ]);
+  }
+
+  async function addNodeScavRewardDT(
+    nodeIndex: number,
     keys: number[],
     weights: number[],
     value: number
   ) {
-    genCall(
-      'system.node.registry',
-      [nodeIndex, type, index, keys, weights, value],
-      'addScavReward',
-      ['uint32', 'string', 'uint32', 'uint32[]', 'uint256[]', 'uint256']
-    );
+    genCall('system.node.registry', [nodeIndex, keys, weights, value], 'addScavRewardDT', [
+      'uint32',
+      'uint32[]',
+      'uint256[]',
+      'uint256',
+    ]);
   }
 
   // @dev deletes node
@@ -366,22 +399,48 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   // creates a Reward for an existing Quest
-  async function addQuestReward(
+  async function addQuestRewardBasic(
     questIndex: number,
     type: string,
     index: number,
+    value: BigNumberish
+  ) {
+    genCall('system.quest.registry', [questIndex, type, index, value], 'addRewardBasic', [
+      'uint32',
+      'string',
+      'uint32',
+      'uint256',
+    ]);
+  }
+
+  async function addQuestRewardDT(
+    questIndex: number,
     keys: number[],
     weights: number[],
     value: BigNumberish
   ) {
-    genCall('system.quest.registry', [questIndex, type, index, keys, weights, value], 'addReward', [
-      'uint32',
-      'string',
+    genCall('system.quest.registry', [questIndex, keys, weights, value], 'addRewardDT', [
       'uint32',
       'uint32[]',
       'uint256[]',
       'uint256',
     ]);
+  }
+
+  async function addQuestRewardStat(
+    questIndex: number,
+    statType: string,
+    base: number,
+    shift: number,
+    boost: number,
+    sync: number
+  ) {
+    genCall(
+      'system.quest.registry',
+      [questIndex, statType, base, shift, boost, sync],
+      'addRewardStat',
+      ['uint32', 'string', 'int32', 'int32', 'int32', 'int32']
+    );
   }
 
   /////////////////
@@ -677,7 +736,12 @@ export function createAdminAPI(compiledCalls: string[]) {
       create: createGoal,
       add: {
         requirement: createGoalRequirement,
-        reward: createGoalReward,
+        reward: {
+          basic: createGoalRewardBasic,
+          display: createGoalRewardDisplay,
+          droptable: createGoalRewardDT,
+          stat: createGoalRewardStat,
+        },
       },
       delete: deleteGoal,
     },
@@ -693,7 +757,10 @@ export function createAdminAPI(compiledCalls: string[]) {
       add: {
         requirement: createNodeRequirement,
         scav: createNodeScav,
-        scavReward: addNodeScavReward,
+        scavReward: {
+          basic: addNodeScavRewardBasic,
+          droptable: addNodeScavRewardDT,
+        },
       },
       delete: deleteNode,
     },
@@ -737,7 +804,11 @@ export function createAdminAPI(compiledCalls: string[]) {
         add: {
           objective: addQuestObjective,
           requirement: addQuestRequirement,
-          reward: addQuestReward,
+          reward: {
+            basic: addQuestRewardBasic,
+            droptable: addQuestRewardDT,
+            stat: addQuestRewardStat,
+          },
         },
       },
       recipe: {

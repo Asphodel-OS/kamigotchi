@@ -83,20 +83,11 @@ contract ScavengeTest is SetupTemplate {
     string memory type_,
     uint32 rwdIndex,
     uint256 value
-  ) internal returns (uint256) {
+  ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    uint256 id = LibScavenge.addReward(
-      world,
-      components,
-      scavBarID,
-      type_,
-      rwdIndex,
-      new uint32[](0),
-      new uint256[](0),
-      value
-    );
+    uint256 parentID = LibScavenge.genRwdParentID(scavBarID);
+    id = LibReward.createBasic(components, parentID, type_, rwdIndex, value);
     vm.stopPrank();
-    return id;
   }
 
   function _addReward(
@@ -105,20 +96,11 @@ contract ScavengeTest is SetupTemplate {
     uint32[] memory keys,
     uint256[] memory weights,
     uint256 value
-  ) internal returns (uint256) {
+  ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    uint256 id = LibScavenge.addReward(
-      world,
-      components,
-      scavBarID,
-      type_,
-      0,
-      keys,
-      weights,
-      value
-    );
+    uint256 parentID = LibScavenge.genRwdParentID(scavBarID);
+    id = LibReward.createDT(components, parentID, keys, weights, value);
     vm.stopPrank();
-    return id;
   }
 
   /////////////////

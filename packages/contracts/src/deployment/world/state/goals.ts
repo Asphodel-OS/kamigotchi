@@ -14,13 +14,13 @@ export async function initGoals(api: AdminAPI) {
     MUSU_INDEX,
     50000
   );
-  await api.goal.add.reward(1, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
-  await api.goal.add.reward(1, 'Bronze', 50, 'ITEM', 'REWARD', 11201, [], [], 1);
-  await api.goal.add.reward(1, 'Bronze', 50, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(1, 'Silver', 250, 'ITEM', 'REWARD', 11202, [], [], 2);
-  await api.goal.add.reward(1, 'Silver', 250, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(1, 'Gold', 500, 'ITEM', 'REWARD', 11203, [], [], 3);
-  await api.goal.add.reward(1, 'Gold', 500, 'REPUTATION', 'REWARD', 1, [], [], 10);
+  await api.goal.add.reward.display(1, 'Door unlock');
+  await api.goal.add.reward.basic(1, 'Bronze', 50, 'ITEM', 11201, 1);
+  await api.goal.add.reward.basic(1, 'Bronze', 50, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(1, 'Silver', 250, 'ITEM', 11202, 2);
+  await api.goal.add.reward.basic(1, 'Silver', 250, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(1, 'Gold', 500, 'ITEM', 11203, 3);
+  await api.goal.add.reward.basic(1, 'Gold', 500, 'REPUTATION', 1, 10);
 
   await api.goal.create(
     2,
@@ -34,10 +34,10 @@ export async function initGoals(api: AdminAPI) {
     MUSU_INDEX,
     500000
   );
-  await api.goal.add.reward(2, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
-  await api.goal.add.reward(2, 'Bronze', 500, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(2, 'Silver', 2500, 'REPUTATION', 'REWARD', 1, [], [], 10);
-  await api.goal.add.reward(2, 'Gold', 5000, 'REPUTATION', 'REWARD', 1, [], [], 10);
+  await api.goal.add.reward.display(2, 'Door unlock');
+  await api.goal.add.reward.basic(2, 'Bronze', 500, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(2, 'Silver', 2500, 'REPUTATION', 1, 10);
+  await api.goal.add.reward.basic(2, 'Gold', 5000, 'REPUTATION', 1, 10);
 
   await api.goal.create(
     3,
@@ -51,11 +51,11 @@ export async function initGoals(api: AdminAPI) {
     MUSU_INDEX,
     1000000
   );
-  await api.goal.add.reward(3, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
-  await api.goal.add.reward(3, 'Bronze', 1000, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(3, 'Bronze', 1000, 'ITEM', 'REWARD', 11203, [], [], 1);
-  await api.goal.add.reward(3, 'Silver', 5000, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  await api.goal.add.reward(3, 'Gold', 10000, 'REPUTATION', 'REWARD', 1, [], [], 10);
+  await api.goal.add.reward.display(3, 'Door unlock');
+  await api.goal.add.reward.basic(3, 'Bronze', 1000, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(3, 'Bronze', 1000, 'ITEM', 11203, 1);
+  await api.goal.add.reward.basic(3, 'Silver', 5000, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(3, 'Gold', 10000, 'REPUTATION', 1, 10);
 
   // await api.goal.create(
   //   4,
@@ -69,12 +69,12 @@ export async function initGoals(api: AdminAPI) {
   //   11008, // pine cones
   //   1000
   // );
-  // await api.goal.add.reward(4, 'Bronze', 1, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  // await api.goal.add.reward(4, 'Bronze', 1, 'ITEM', 'REWARD', 11005, [], [], 5);
-  // await api.goal.add.reward(4, 'Silver', 5, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  // await api.goal.add.reward(4, 'Silver', 5, 'ITEM', 'REWARD', 20001, [], [], 1);
-  // await api.goal.add.reward(4, 'Gold', 20, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  // await api.goal.add.reward(4, 'Gold', 20, 'ITEM', 'REWARD', 112, [], [], 2);
+  // await api.goal.add.reward.basic(4, 'Bronze', 1, 'REPUTATION', 1, 5);
+  // await api.goal.add.reward.basic(4, 'Bronze', 1, 'ITEM', 11005, 5);
+  // await api.goal.add.reward.basic(4, 'Silver', 5, 'REPUTATION', 1, 5);
+  // await api.goal.add.reward.basic(4, 'Silver', 5, 'ITEM', 20001, 1);
+  // await api.goal.add.reward.basic(4, 'Gold', 20, 'REPUTATION', 1, 5);
+  // await api.goal.add.reward.basic(4, 'Gold', 20, 'ITEM', 112, 2);
 
   await api.goal.create(
     5,
@@ -88,22 +88,12 @@ export async function initGoals(api: AdminAPI) {
     MUSU_INDEX,
     1500000
   );
-  await api.goal.add.reward(
-    5,
-    'Community',
-    0,
-    'Shop Inventory Expanded',
-    'DISPLAY_ONLY',
-    0,
-    [],
-    [],
-    0
-  );
-  await api.goal.add.reward(5, 'Bronze', 1000, 'REPUTATION', 'REWARD', 2, [], [], 5);
-  await api.goal.add.reward(5, 'Bronze', 1000, 'ITEM', 'REWARD', 21100, [], [], 10);
-  await api.goal.add.reward(5, 'Silver', 5000, 'REPUTATION', 'REWARD', 2, [], [], 10);
-  await api.goal.add.reward(5, 'Silver', 5000, 'ITEM', 'REWARD', 11204, [], [], 3);
-  await api.goal.add.reward(5, 'Gold', 20000, 'REPUTATION', 'REWARD', 2, [], [], 10);
+  await api.goal.add.reward.display(5, 'Shop Inventory Expanded');
+  await api.goal.add.reward.basic(5, 'Bronze', 1000, 'REPUTATION', 2, 5);
+  await api.goal.add.reward.basic(5, 'Bronze', 1000, 'ITEM', 21100, 10);
+  await api.goal.add.reward.basic(5, 'Silver', 5000, 'REPUTATION', 2, 10);
+  await api.goal.add.reward.basic(5, 'Silver', 5000, 'ITEM', 11204, 3);
+  await api.goal.add.reward.basic(5, 'Gold', 20000, 'REPUTATION', 2, 10);
 
   await api.goal.create(
     6,
@@ -115,11 +105,11 @@ export async function initGoals(api: AdminAPI) {
     MUSU_INDEX,
     2500000
   );
-  await api.goal.add.reward(6, 'Community', 0, 'Door unlock', 'DISPLAY_ONLY', 0, [], [], 0);
-  await api.goal.add.reward(6, 'Bronze', 2500, 'REPUTATION', 'REWARD', 1, [], [], 10);
-  await api.goal.add.reward(6, 'Bronze', 2500, 'ITEM', 'REWARD', 11204, [], [], 1);
-  await api.goal.add.reward(6, 'Silver', 7500, 'REPUTATION', 'REWARD', 1, [], [], 10);
-  await api.goal.add.reward(6, 'Gold', 25000, 'REPUTATION', 'REWARD', 1, [], [], 5);
+  await api.goal.add.reward.display(6, 'Door unlock');
+  await api.goal.add.reward.basic(6, 'Bronze', 2500, 'REPUTATION', 1, 10);
+  await api.goal.add.reward.basic(6, 'Bronze', 2500, 'ITEM', 11204, 1);
+  await api.goal.add.reward.basic(6, 'Silver', 7500, 'REPUTATION', 1, 10);
+  await api.goal.add.reward.basic(6, 'Gold', 25000, 'REPUTATION', 1, 5);
 
   // await api.goal.create(
   //   7,
@@ -131,9 +121,9 @@ export async function initGoals(api: AdminAPI) {
   //   MUSU_INDEX,
   //   250000
   // );
-  // await api.goal.add.reward(7, 'Bronze', 1000, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  // await api.goal.add.reward(7, 'Silver', 2500, 'REPUTATION', 'REWARD', 1, [], [], 5);
-  // await api.goal.add.reward(7, 'Gold', 5000, 'REPUTATION', 'REWARD', 1, [], [], 5);
+  // await api.goal.add.reward.basic(7, 'Bronze', 1000, 'REPUTATION', 1, 5);
+  // await api.goal.add.reward.basic(7, 'Silver', 2500, 'REPUTATION', 1, 5);
+  // await api.goal.add.reward.basic(7, 'Gold', 5000, 'REPUTATION', 1, 5);
 }
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {

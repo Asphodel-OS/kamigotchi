@@ -25,14 +25,14 @@ contract RewardTest is SetupTemplate {
     uint256 rewardID2 = _createReward(parentID1, "ITEM", 2, 2);
     assertEq(LibReward.genID(parentID1, "ITEM", 2), rewardID2);
 
-    // test remove
+    // test remove individual (expected to be removed all at once)
     vm.startPrank(deployer);
     LibReward.remove(components, rewardID);
     vm.stopPrank();
 
     // test update
-    rewardID = _createReward(parentID1, "ITEM", 1, 2);
-    assertEq(LibReward.genID(parentID1, "ITEM", 1), rewardID);
+    uint256 newRewardID = _createReward(parentID1, "ITEM", 1, 2);
+    assertEq(newRewardID, rewardID);
     assertEq(_ValueComponent.get(rewardID), 2);
   }
 
@@ -41,14 +41,32 @@ contract RewardTest is SetupTemplate {
     keys[0] = 1;
     uint256[] memory weights = new uint256[](1);
     weights[0] = 1;
-    uint256 rewardID = _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 1);
+    uint256 rewardID = _createReward(parentID1, keys, weights, 1);
     assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 1), rewardID);
-    uint256 rewardID2 = _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 2);
+    uint256 rewardID2 = _createReward(parentID1, keys, weights, 2);
     assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 2), rewardID2);
-    uint256 rewardID3 = _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 3);
+    uint256 rewardID3 = _createReward(parentID1, keys, weights, 3);
     assertEq(LibReward.genID(parentID1, "ITEM_DROPTABLE", 3), rewardID3);
 
     // no test remove individually - expected to remove all at once
+  }
+
+  function testRewardShapeStat() public {
+    uint256 healthID = _createRewardStat(parentID1, "HEALTH", Stat(1, 0, 0, 0));
+    uint256 harmonyID = _createRewardStat(parentID1, "HARMONY", Stat(1, 0, 0, 0));
+    uint256 powerID = _createRewardStat(parentID1, "POWER", Stat(1, 0, 0, 0));
+    uint256 slotsID = _createRewardStat(parentID1, "SLOTS", Stat(1, 0, 0, 0));
+    uint256 staminaID = _createRewardStat(parentID1, "STAMINA", Stat(1, 0, 0, 0));
+    uint256 violenceID = _createRewardStat(parentID1, "VIOLENCE", Stat(1, 0, 0, 0));
+
+    // test remove individual (expected to remove all at once)
+    vm.startPrank(deployer);
+    LibReward.remove(components, healthID);
+    vm.stopPrank();
+
+    // test update
+    uint256 newHealthID = _createRewardStat(parentID1, "HEALTH", Stat(2, 0, 0, 0));
+    assertEq(newHealthID, healthID);
   }
 
   function testDistributionBasicSingle() public {
@@ -90,7 +108,7 @@ contract RewardTest is SetupTemplate {
     weights[0] = 9;
     weights[1] = 9;
     weights[2] = 9;
-    _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 1);
+    _createReward(parentID1, keys, weights, 1);
     uint256[] memory commitIDs = new uint256[](2);
 
     // without multiplier
@@ -109,8 +127,16 @@ contract RewardTest is SetupTemplate {
     _DroptableRevealSystem.executeTyped(commitIDs);
 
     // check balances
-    assertEq(_getItemBal(alice, 1) + _getItemBal(alice, 2) + _getItemBal(alice, 3), 1);
-    assertEq(_getItemBal(bob, 1) + _getItemBal(bob, 2) + _getItemBal(bob, 3), 5);
+    assertEq(
+      _getItemBal(alice, 1) + _getItemBal(alice, 2) + _getItemBal(alice, 3),
+      1,
+      "alice wrong item balance"
+    );
+    assertEq(
+      _getItemBal(bob, 1) + _getItemBal(bob, 2) + _getItemBal(bob, 3),
+      5,
+      "bob wrong item balance"
+    );
   }
 
   function testDistributionDTMultiple() public {
@@ -122,12 +148,12 @@ contract RewardTest is SetupTemplate {
     weights1[0] = 9;
     weights1[1] = 9;
     weights1[2] = 9;
-    _createReward(parentID1, "ITEM_DROPTABLE", keys1, weights1, 1);
+    _createReward(parentID1, keys1, weights1, 1);
     uint32[] memory keys2 = new uint32[](1);
     keys2[0] = 4;
     uint256[] memory weights2 = new uint256[](1);
     weights2[0] = 9;
-    _createReward(parentID1, "ITEM_DROPTABLE", keys2, weights2, 7);
+    _createReward(parentID1, keys2, weights2, 7);
     uint256[] memory commitIDs = new uint256[](4);
 
     // without multiplier
@@ -156,6 +182,35 @@ contract RewardTest is SetupTemplate {
     assertEq(_getItemBal(bob, 4), 35);
   }
 
+  function testDistributionStat() public {
+    uint256 healthID = _createRewardStat(parentID1, "HEALTH", Stat(0, 1, 0, 100));
+    uint256 harmonyID = _createRewardStat(parentID1, "HARMONY", Stat(0, 1, 0, 0));
+    uint256 powerID = _createRewardStat(parentID1, "POWER", Stat(0, -1, 0, 0));
+
+    // setting initial stats
+    vm.startPrank(deployer);
+    LibStat.setHealth(components, alice.id, Stat(100, 0, 0, 50));
+    LibStat.setHarmony(components, alice.id, Stat(10, 0, 0, 10));
+    LibStat.setPower(components, alice.id, Stat(10, 0, 0, 10));
+    vm.stopPrank();
+
+    // distribute
+    _distribute(parentID1, alice);
+
+    // checking result
+    assertEq(LibStat.get(components, "HEALTH", alice.id), Stat(100, 1, 0, 101));
+    assertEq(LibStat.get(components, "HARMONY", alice.id), Stat(10, 1, 0, 10));
+    assertEq(LibStat.get(components, "POWER", alice.id), Stat(10, -1, 0, 10));
+
+    // distribute multiple
+    _distribute(parentID1, 5, alice);
+
+    // checking result
+    assertEq(LibStat.get(components, "HEALTH", alice.id), Stat(100, 6, 0, 106));
+    assertEq(LibStat.get(components, "HARMONY", alice.id), Stat(10, 6, 0, 10));
+    assertEq(LibStat.get(components, "POWER", alice.id), Stat(10, -6, 0, 10));
+  }
+
   function testDistributionMixed() public {
     uint32[] memory keys = new uint32[](3);
     keys[0] = 1;
@@ -165,7 +220,7 @@ contract RewardTest is SetupTemplate {
     weights[0] = 9;
     weights[1] = 9;
     weights[2] = 9;
-    _createReward(parentID1, "ITEM_DROPTABLE", keys, weights, 1);
+    _createReward(parentID1, keys, weights, 1);
     _createReward(parentID1, "ITEM", 4, 5);
 
     // initial distribution (no multiplier)
@@ -191,23 +246,38 @@ contract RewardTest is SetupTemplate {
     uint32 index,
     uint256 value
   ) internal returns (uint256 id) {
-    uint32[] memory keys = new uint32[](0);
-    uint256[] memory weights = new uint256[](0);
     vm.startPrank(deployer);
-    id = LibReward.create(components, parentID, type_, index, keys, weights, value);
+    id = LibReward.createBasic(components, parentID, type_, index, value);
     vm.stopPrank();
   }
 
   // droptable reward
   function _createReward(
     uint256 parentID,
-    string memory type_,
     uint32[] memory keys,
     uint256[] memory weights,
     uint256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibReward.create(components, parentID, type_, 0, keys, weights, value);
+    id = LibReward.createDT(components, parentID, keys, weights, value);
+    vm.stopPrank();
+  }
+
+  function _createRewardStat(
+    uint256 parentID,
+    string memory statType,
+    Stat memory value
+  ) internal returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = LibReward.createStat(
+      components,
+      parentID,
+      statType,
+      value.base,
+      value.shift,
+      value.boost,
+      value.sync
+    );
     vm.stopPrank();
   }
 
@@ -229,6 +299,6 @@ contract RewardTest is SetupTemplate {
   // ASSERTIONS
 
   function _asssertCommit(uint256 commitID) internal {
-    assertTrue(LibCommit.isAvailable(components, commitID));
+    assertTrue(_BlockRevealComponent.has(commitID), "commit not available");
   }
 }

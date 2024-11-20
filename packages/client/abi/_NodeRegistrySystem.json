@@ -55,7 +55,7 @@
     },
     {
       "type": "function",
-      "name": "addScavReward",
+      "name": "addScavRewardBasic",
       "inputs": [
         {
           "name": "arguments",
@@ -63,7 +63,51 @@
           "internalType": "bytes"
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "addScavRewardDT",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "addScavRewardStat",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable"
     },
     {
@@ -283,7 +327,9 @@
   "methodIdentifiers": {
     "addRequirement(bytes)": "7e534103",
     "addScavBar(uint32,uint256)": "7ddddb19",
-    "addScavReward(bytes)": "6d8ca511",
+    "addScavRewardBasic(bytes)": "cffc49de",
+    "addScavRewardDT(bytes)": "080e18d5",
+    "addScavRewardStat(bytes)": "256ad62b",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "create(bytes)": "cf5ba53f",

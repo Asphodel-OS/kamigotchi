@@ -478,41 +478,37 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createGoalRequirement(
-    uint32 index,
+    uint32 goalIndex,
     Condition memory condition
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
       __GoalRegistrySystem.addRequirement(
-        abi.encode(index, condition.type_, condition.logic, condition.index, condition.value)
+        abi.encode(goalIndex, condition.type_, condition.logic, condition.index, condition.value)
       );
   }
 
-  function _createGoalReward(
-    uint32 index,
+  // basic reward only
+  function _createGoalRewardBasic(
+    uint32 goalIndex,
     uint256 minCont,
-    Condition memory condition
+    string memory type_,
+    uint32 index,
+    uint256 value
   ) internal returns (uint256) {
-    uint32[] memory keys = new uint32[](1);
-    keys[0] = 1;
-    uint256[] memory weights = new uint256[](1);
-    weights[0] = 1;
-
     vm.prank(deployer);
     return
-      __GoalRegistrySystem.addReward(
-        abi.encode(
-          index,
-          "name",
-          minCont,
-          condition.type_,
-          condition.logic,
-          condition.index,
-          keys,
-          weights,
-          condition.value
-        )
+      __GoalRegistrySystem.addRewardBasic(
+        abi.encode(goalIndex, "name", minCont, type_, index, value)
       );
+  }
+
+  function _createGoalRewardDisplay(
+    uint32 goalIndex,
+    string memory name
+  ) internal returns (uint256) {
+    vm.prank(deployer);
+    return __GoalRegistrySystem.addRewardDisplay(abi.encode(goalIndex, "name"));
   }
 
   function _createRoom(
@@ -725,21 +721,15 @@ abstract contract SetupTemplate is TestSetupImports {
       __QuestRegistrySystem.addRequirement(abi.encode(questIndex, logicType, _type, index, value));
   }
 
+  // basic reward only
   function _createQuestReward(
     uint32 questIndex,
     string memory _type,
     uint32 itemIndex, // can be empty
     uint value // can be empty
   ) public returns (uint256) {
-    uint32[] memory keys = new uint32[](1);
-    keys[0] = 1;
-    uint256[] memory weights = new uint256[](1);
-    weights[0] = 1;
     vm.prank(deployer);
-    return
-      __QuestRegistrySystem.addReward(
-        abi.encode(questIndex, _type, itemIndex, keys, weights, value)
-      );
+    return __QuestRegistrySystem.addRewardBasic(abi.encode(questIndex, _type, itemIndex, value));
   }
 
   /* RELATIONSHIP */
@@ -1137,5 +1127,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function assertEq(Coord memory a, Coord memory b) public {
     assertTrue(a.x == b.x && a.y == b.y && a.z == b.z);
+  }
+
+  function assertEq(Stat memory a, Stat memory b) public {
+    assertEq(a.base, b.base);
+    assertEq(a.shift, b.shift);
+    assertEq(a.boost, b.boost);
+    assertEq(a.sync, b.sync);
   }
 }

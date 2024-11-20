@@ -18,13 +18,28 @@ import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComp
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 
-// LibStat manages the retrieval and update of stats. This library differs from
-// others in the sense that it does not manage a single entity type, but rather
-// any entity that can have stats. Only handles StatComponents.
+// stat types to numerical index
+uint32 constant HEALTH_INDEX = 1;
+uint32 constant HARMONY_INDEX = 2;
+uint32 constant POWER_INDEX = 3;
+uint32 constant SLOTS_INDEX = 4;
+uint32 constant STAMINA_INDEX = 5;
+uint32 constant VIOLENCE_INDEX = 6;
+uint32 constant MAXHEALTH_INDEX = 7; // temporary
+
+/** @notice
+ * LibStat manages the retrieval and update of stats. This library differs from
+ * others in the sense that it does not manage a single entity type, but rather
+ * any entity that can have stats. Only handles StatComponents.
+ *
+ * There are 6 types of stats, which can be converted to numerical indexes if needed.
+ */
 library LibStat {
   using LibComp for StatComponent;
   using LibString for string;
+  using SafeCastLib for int32;
   using SafeCastLib for int256;
+  using SafeCastLib for uint256;
 
   /////////////////
   // INTERACTIONS
@@ -47,6 +62,40 @@ library LibStat {
     return base.sync;
   }
 
+  /// @notice modifies a stat by a given amount
+  function modify(
+    IUintComp components,
+    uint256 statCompID,
+    Stat memory delta,
+    uint256 targetID
+  ) internal {
+    StatComponent statComp = StatComponent(getAddrByID(components, statCompID));
+    return modify(components, statComp, statCompID, delta, targetID);
+  }
+
+  /// @notice modifies a stat by a given amount
+  function modify(
+    IUintComp components,
+    StatComponent statComp,
+    uint256 statCompID,
+    Stat memory delta,
+    uint256 targetID
+  ) internal {
+    Stat memory baseStat = statComp.safeGet(targetID);
+    Stat memory result = add(baseStat, delta);
+
+    // syncing
+    if (delta.sync > 0) {
+      Stat memory withBonus = add(
+        result,
+        getBonuses(components, compIDToType(statCompID), targetID)
+      );
+      result.sync = calcSync(calcTotal(withBonus), result.sync, 0);
+    }
+
+    statComp.set(targetID, result);
+  }
+
   /// @notice Apply the set stats from one entity to another
   /// @dev we do not ever expect Base to be set for a consumable
   function applyAll(IUintComp components, uint256 deltaID, uint256 baseID) internal {
@@ -66,16 +115,7 @@ library LibStat {
     Stat memory delta = statComp.safeGet(deltaID);
     if (StatLib.isZero(delta)) return; // nothing to apply
 
-    Stat memory baseStat = statComp.safeGet(baseID);
-    Stat memory result = add(baseStat, delta);
-
-    // syncing
-    if (delta.sync > 0) {
-      Stat memory withBonus = add(result, getBonuses(components, compIDToType(statCompID), baseID));
-      result.sync = calcSync(calcTotal(withBonus), result.sync, 0);
-    }
-
-    statComp.set(baseID, result);
+    return modify(components, statComp, statCompID, delta, baseID);
   }
 
   // Copy the set stats from one entity to another.
@@ -195,6 +235,19 @@ library LibStat {
   /////////////////
   // SETTERS
 
+  // todo: change int32 value to stat struct
+  function setFor(IUintComp components, uint256 id, string memory type_, int32 value) internal {
+    if (type_.eq("HEALTH")) setHealth(components, id, Stat(0, 0, 0, value));
+    else if (type_.eq("MAXHEALTH"))
+      setHealth(components, id, Stat(0, value, 0, 0)); // todo: integrate to regular health
+    else if (type_.eq("POWER")) setPower(components, id, Stat(0, value, 0, 0));
+    else if (type_.eq("VIOLENCE")) setViolence(components, id, Stat(0, value, 0, 0));
+    else if (type_.eq("HARMONY")) setHarmony(components, id, Stat(0, value, 0, 0));
+    else if (type_.eq("SLOTS")) setSlots(components, id, Stat(0, 0, value, 0));
+    else if (type_.eq("STAMINA")) setStamina(components, id, Stat(0, 0, 0, value));
+    else revert("invalid stat to set");
+  }
+
   // note: setting sync manually for any non-zero value breaks abstraction
   function setSyncZero(IUintComp components, string memory type_, uint256 id) internal {
     Stat memory stat = getWithoutBonus(components, type_, id);
@@ -235,6 +288,15 @@ library LibStat {
   /////////////////
   // UNSETTERS
 
+  function removeAll(IUintComp components, uint256 id) internal {
+    getCompByID(components, HarmonyCompID).remove(id);
+    getCompByID(components, HealthCompID).remove(id);
+    getCompByID(components, PowerCompID).remove(id);
+    getCompByID(components, SlotsCompID).remove(id);
+    getCompByID(components, StaminaCompID).remove(id);
+    getCompByID(components, ViolenceCompID).remove(id);
+  }
+
   function unsetHarmony(IUintComp components, uint256 id) internal {
     getCompByID(components, HarmonyCompID).remove(id);
   }
@@ -268,6 +330,14 @@ library LibStat {
       Stat(base.base, base.shift + toAdd.shift, base.boost + toAdd.boost, base.sync + toAdd.sync);
   }
 
+  function multiply(Stat memory base, uint256 mult) internal pure returns (Stat memory) {
+    return multiply(base, mult.toInt32());
+  }
+
+  function multiply(Stat memory base, int32 mult) internal pure returns (Stat memory) {
+    return Stat(base.base * mult, base.shift * mult, base.boost * mult, base.sync * mult);
+  }
+
   function typeToCompID(string memory type_) internal pure returns (uint256) {
     if (LibString.eq(type_, "HEALTH")) return HealthCompID;
     if (LibString.eq(type_, "POWER")) return PowerCompID;
@@ -289,10 +359,40 @@ library LibStat {
     revert("LibStat: invalid stat type");
   }
 
+  function typeToIndex(string memory type_) internal pure returns (uint32) {
+    if (type_.eq("HEALTH")) return HEALTH_INDEX;
+    if (type_.eq("HARMONY")) return HARMONY_INDEX;
+    if (type_.eq("POWER")) return POWER_INDEX;
+    if (type_.eq("SLOTS")) return SLOTS_INDEX;
+    if (type_.eq("STAMINA")) return STAMINA_INDEX;
+    if (type_.eq("VIOLENCE")) return VIOLENCE_INDEX;
+    if (type_.eq("MAXHEALTH")) return MAXHEALTH_INDEX;
+    revert("LibStat: invalid stat type");
+  }
+
+  function indexToCompID(uint32 index) internal pure returns (uint256) {
+    if (index == HEALTH_INDEX) return HealthCompID;
+    if (index == HARMONY_INDEX) return HarmonyCompID;
+    if (index == POWER_INDEX) return PowerCompID;
+    if (index == SLOTS_INDEX) return SlotsCompID;
+    if (index == STAMINA_INDEX) return StaminaCompID;
+    if (index == VIOLENCE_INDEX) return ViolenceCompID;
+    if (index == MAXHEALTH_INDEX) return HealthCompID;
+    revert("LibStat: invalid stat type");
+  }
+
   function getStatComp(
     IUintComp components,
     string memory type_
   ) internal view returns (StatComponent) {
     return StatComponent(getAddrByID(components, typeToCompID(type_)));
+  }
+
+  function toUint(Stat memory stat) internal pure returns (uint256) {
+    return StatLib.toUint(stat);
+  }
+
+  function toStat(uint256 value) internal pure returns (Stat memory) {
+    return StatLib.toStat(value);
   }
 }

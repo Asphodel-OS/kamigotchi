@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibString } from "solady/utils/LibString.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
-import { LibString } from "solady/utils/LibString.sol";
+import { LibReward } from "libraries/LibReward.sol";
 
 uint256 constant ID = uint256(keccak256("system.goal.registry"));
 
@@ -52,40 +53,71 @@ contract _GoalRegistrySystem is System {
     return LibGoals.addRequirement(world, components, goalIndex, requirement);
   }
 
-  function addReward(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 goalIndex,
       string memory name,
       uint256 cutoff,
-      string memory rwdType,
-      string memory rwdLogic,
-      uint32 rwdIndex,
+      string memory type_,
+      uint32 index,
+      uint256 value
+    ) = abi.decode(arguments, (uint32, string, uint256, string, uint32, uint256));
+
+    require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+
+    uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
+    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 id = LibReward.createBasic(components, parentID, type_, index, value);
+    return id;
+  }
+
+  function addRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 goalIndex,
+      string memory name,
+      uint256 cutoff,
       uint32[] memory keys,
       uint256[] memory weights,
-      uint256 rwdValue
-    ) = abi.decode(
-        arguments,
-        (uint32, string, uint256, string, string, uint32, uint32[], uint256[], uint256)
-      );
-    // check that the goal exists
-    require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
-    require(!LibString.eq(rwdType, ""), "Rwd type cannot be empty");
-    require(!LibString.eq(rwdLogic, ""), "Rwd logic cannot be empty");
+      uint256 value
+    ) = abi.decode(arguments, (uint32, string, uint256, uint32[], uint256[], uint256));
 
-    return
-      LibGoals.addReward(
-        world,
-        components,
-        goalIndex,
-        name,
-        cutoff,
-        rwdLogic,
-        rwdType,
-        rwdIndex,
-        keys,
-        weights,
-        rwdValue
-      );
+    require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+
+    uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
+    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 id = LibReward.createDT(components, parentID, keys, weights, value);
+    return id;
+  }
+
+  function addRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 goalIndex,
+      string memory name,
+      uint256 cutoff,
+      string memory statType,
+      int32 base,
+      int32 shift,
+      int32 boost,
+      int32 sync
+    ) = abi.decode(arguments, (uint32, string, uint256, string, int32, int32, int32, int32));
+
+    require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+
+    uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
+    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 id = LibReward.createStat(components, parentID, statType, base, shift, boost, sync);
+    return id;
+  }
+
+  function addRewardDisplay(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 goalIndex, string memory name) = abi.decode(arguments, (uint32, string));
+
+    require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+
+    uint256 tierID = LibGoals.createTier(components, goalIndex, name, 0);
+    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 id = LibReward.createEmpty(components, parentID, name);
+    return id;
   }
 
   function remove(uint32 goalIndex) public onlyOwner {

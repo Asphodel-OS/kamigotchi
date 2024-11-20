@@ -84,13 +84,7 @@ library LibItem {
   function addStat(IUintComp components, uint256 id, string memory type_, int32 value) internal {
     if (type_.eq("XP"))
       ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, value.toUint256());
-    else if (type_.eq("HEALTH")) LibStat.setHealth(components, id, Stat(0, 0, 0, value));
-    else if (type_.eq("MAXHEALTH")) LibStat.setHealth(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("POWER")) LibStat.setPower(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("VIOLENCE")) LibStat.setViolence(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("HARMONY")) LibStat.setHarmony(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("STAMINA")) LibStat.setStamina(components, id, Stat(0, 0, 0, value));
-    else revert("LibItem: invalid stat");
+    else LibStat.setFor(components, id, type_, value);
   }
 
   /// @notice delete a Registry entry for an item.
@@ -105,12 +99,7 @@ library LibItem {
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
 
-    LibStat.unsetHealth(components, id);
-    LibStat.unsetPower(components, id);
-    LibStat.unsetViolence(components, id);
-    LibStat.unsetHarmony(components, id);
-    LibStat.unsetSlots(components, id);
-    LibStat.unsetStamina(components, id);
+    LibStat.removeAll(components, id);
     ExperienceComponent(getAddrByID(components, ExpCompID)).remove(id);
 
     LibDroptable.remove(components, id);

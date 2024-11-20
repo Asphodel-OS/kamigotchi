@@ -101,6 +101,8 @@
       "writeAccess": [
         "EntityType",
         "Description",
+        "Health",
+        "Harmony",
         "IDParent",
         "IsComplete",
         "Index",
@@ -110,9 +112,13 @@
         "Keys",
         "Name",
         "Type",
+        "Power",
         "Value",
+        "Violence",
         "Weights",
-        "Subtype"
+        "Subtype",
+        "Slots",
+        "Stamina"
       ]
     },
     {

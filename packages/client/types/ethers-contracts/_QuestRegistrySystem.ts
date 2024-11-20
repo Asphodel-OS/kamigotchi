@@ -33,7 +33,9 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
     "addAssigner(uint32,string,uint32)": FunctionFragment;
     "addObjective(bytes)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
-    "addReward(bytes)": FunctionFragment;
+    "addRewardBasic(bytes)": FunctionFragment;
+    "addRewardDT(bytes)": FunctionFragment;
+    "addRewardStat(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
@@ -52,7 +54,9 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
       | "addAssigner"
       | "addObjective"
       | "addRequirement"
-      | "addReward"
+      | "addRewardBasic"
+      | "addRewardDT"
+      | "addRewardStat"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "create"
@@ -83,7 +87,15 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addReward",
+    functionFragment: "addRewardBasic",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRewardDT",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRewardStat",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -137,7 +149,18 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
     functionFragment: "addRequirement",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addReward", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardBasic",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardDT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardStat",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
@@ -265,7 +288,17 @@ export interface _QuestRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -336,7 +369,17 @@ export interface _QuestRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addReward(
+  addRewardBasic(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addRewardDT(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addRewardStat(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -407,7 +450,17 @@ export interface _QuestRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -499,7 +552,17 @@ export interface _QuestRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -571,7 +634,17 @@ export interface _QuestRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -13,6 +13,7 @@ import { getEntityByHash, hashArgs, queryChildrenOf, queryRefsWithParent } from 
 
 export interface Goal {
   id: EntityID;
+  entity: EntityIndex;
   index: number;
   name: string;
   description: string;
@@ -53,6 +54,7 @@ export const getGoal = (world: World, components: Components, entityIndex: Entit
 
   return {
     id: goalID,
+    entity: entityIndex,
     index: goalIndex,
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     description: getComponentValue(Description, entityIndex)?.value || ('' as string),
@@ -61,7 +63,7 @@ export const getGoal = (world: World, components: Components, entityIndex: Entit
     requirements: getGoalRequirements(world, components, goalIndex),
     tiers: getGoalTiers(world, components, goalIndex),
     complete: hasComponent(IsComplete, entityIndex) || (false as boolean),
-    room: (getComponentValue(RoomIndex, entityIndex)?.value || (0 as number)) * 1,
+    room: getComponentValue(RoomIndex, entityIndex)?.value || (0 as number),
   };
 };
 
@@ -90,7 +92,7 @@ const getTier = (world: World, components: Components, entityIndex: EntityIndex)
   const { Name, Value } = components;
   const id = world.entities[entityIndex];
   return {
-    id: id,
+    id,
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     cutoff: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
     rewards: getTierRewards(world, components, id),

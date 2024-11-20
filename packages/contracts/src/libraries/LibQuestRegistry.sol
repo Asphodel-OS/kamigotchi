@@ -76,28 +76,6 @@ library LibQuestRegistry {
     id = LibConditional.createFor(world, components, data, genReqParentID(questIndex));
   }
 
-  /// @notice creates a basic reward entity
-  function createReward(
-    IWorld world,
-    IUintComp components,
-    uint32 questIndex,
-    string memory type_,
-    uint32 index,
-    uint32[] memory keys,
-    uint256[] memory weights,
-    uint256 value
-  ) internal returns (uint256 id) {
-    id = LibReward.create(
-      components,
-      genRwdParentID(questIndex),
-      type_,
-      index,
-      keys,
-      weights,
-      value
-    );
-  }
-
   function addAssigner(
     IUintComp components,
     uint256 questID,

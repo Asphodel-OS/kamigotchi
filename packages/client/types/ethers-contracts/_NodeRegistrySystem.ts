@@ -32,7 +32,9 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   functions: {
     "addRequirement(bytes)": FunctionFragment;
     "addScavBar(uint32,uint256)": FunctionFragment;
-    "addScavReward(bytes)": FunctionFragment;
+    "addScavRewardBasic(bytes)": FunctionFragment;
+    "addScavRewardDT(bytes)": FunctionFragment;
+    "addScavRewardStat(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
@@ -50,7 +52,9 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "addRequirement"
       | "addScavBar"
-      | "addScavReward"
+      | "addScavRewardBasic"
+      | "addScavRewardDT"
+      | "addScavRewardStat"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "create"
@@ -73,7 +77,15 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addScavReward",
+    functionFragment: "addScavRewardBasic",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addScavRewardDT",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addScavRewardStat",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -121,7 +133,15 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "addScavBar", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "addScavReward",
+    functionFragment: "addScavRewardBasic",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addScavRewardDT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addScavRewardStat",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,7 +265,17 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addScavReward(
+    addScavRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addScavRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addScavRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -310,7 +340,17 @@ export interface _NodeRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addScavReward(
+  addScavRewardBasic(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addScavRewardDT(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addScavRewardStat(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -375,10 +415,20 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    addScavReward(
+    addScavRewardBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
+
+    addScavRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addScavRewardStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
@@ -461,7 +511,17 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addScavReward(
+    addScavRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addScavRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addScavRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -527,7 +587,17 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addScavReward(
+    addScavRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addScavRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addScavRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -31,7 +31,10 @@ import type {
 export interface _GoalRegistrySystemInterface extends utils.Interface {
   functions: {
     "addRequirement(bytes)": FunctionFragment;
-    "addReward(bytes)": FunctionFragment;
+    "addRewardBasic(bytes)": FunctionFragment;
+    "addRewardDT(bytes)": FunctionFragment;
+    "addRewardDisplay(bytes)": FunctionFragment;
+    "addRewardStat(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
@@ -48,7 +51,10 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addRequirement"
-      | "addReward"
+      | "addRewardBasic"
+      | "addRewardDT"
+      | "addRewardDisplay"
+      | "addRewardStat"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "create"
@@ -67,7 +73,19 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addReward",
+    functionFragment: "addRewardBasic",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRewardDT",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRewardDisplay",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRewardStat",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -113,7 +131,22 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
     functionFragment: "addRequirement",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addReward", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardBasic",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardDT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardDisplay",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardStat",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
@@ -229,7 +262,22 @@ export interface _GoalRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addRewardDisplay(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -288,7 +336,22 @@ export interface _GoalRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addReward(
+  addRewardBasic(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addRewardDT(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addRewardDisplay(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addRewardStat(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -347,7 +410,22 @@ export interface _GoalRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRewardDisplay(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -427,7 +505,22 @@ export interface _GoalRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addRewardDisplay(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -487,7 +580,22 @@ export interface _GoalRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addReward(
+    addRewardBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRewardDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRewardDisplay(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRewardStat(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
