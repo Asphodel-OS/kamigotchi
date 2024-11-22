@@ -23,10 +23,10 @@ contract KamiUseRenamePotionSystem is System {
     // item checks
     LibItem.verifyType(components, itemIndex, "RENAME_POTION");
     LibItem.checkForPet(components, itemIndex);
+    LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
-    LibKami.verifyState(components, kamiID, "RESTING"); // implicit location check
 
     // use item
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit inventory balance check

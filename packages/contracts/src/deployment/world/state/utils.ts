@@ -73,6 +73,14 @@ export const getItemImage = (str: string): string => {
   return 'images/items/' + name + '.png';
 };
 
+export const parseKamiStateToIndex = (state: string): number => {
+  if (state === 'RESTING') return 1;
+  else if (state === 'HARVESTING') return 2;
+  else if (state === 'DEAD') return 3;
+  else if (state === '721_EXTERNAL') return 4;
+  else return 0;
+};
+
 ///////////////
 // MISC
 

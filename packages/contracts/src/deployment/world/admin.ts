@@ -623,6 +623,22 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
+  async function addItemRequirement(
+    index: number,
+    usecase: string,
+    type_: string,
+    logicType: string,
+    index_: number,
+    value: number
+  ) {
+    genCall(
+      'system.item.registry',
+      [index, usecase, type_, logicType, index_, value],
+      'addRequirement',
+      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256']
+    );
+  }
+
   async function addStat(index: number, type_: string, value: number) {
     genCall('system.item.registry', [index, type_, value], 'addStat');
   }
@@ -789,8 +805,9 @@ export function createAdminAPI(compiledCalls: string[]) {
           consumable: registerConsumable,
         },
         add: {
-          stat: addStat,
+          requirement: addItemRequirement,
           room: setItemRoom,
+          stat: addStat,
         },
         delete: deleteItem,
       },

@@ -315,11 +315,9 @@ library LibGoals {
     IUintComp components,
     uint256[] memory tierIDs
   ) internal view returns (uint256[] memory) {
-    uint256[][] memory tierRewards = new uint256[][](tierIDs.length);
-    for (uint256 i; i < tierIDs.length; i++) {
-      tierRewards[i] = LibAllo.queryFor(components, genRwdParentID(tierIDs[i]));
-    }
-    return LibArray.flatten(tierRewards);
+    uint256[] memory parentIDs = new uint256[](tierIDs.length);
+    for (uint256 i; i < tierIDs.length; i++) parentIDs[i] = genRwdParentID(tierIDs[i]);
+    return LibAllo.queryFor(components, parentIDs);
   }
 
   /// @notice gets tiers that user qualifies for

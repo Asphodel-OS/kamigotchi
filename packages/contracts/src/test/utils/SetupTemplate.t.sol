@@ -643,6 +643,7 @@ abstract contract SetupTemplate is TestSetupImports {
     id = __ItemRegistrySystem.createConsumable(
       abi.encode(index, "KAMI", name, description, "FOOD", mediaURI)
     );
+    __ItemRegistrySystem.addRequirement(abi.encode(index, "USE", "KAMI_CAN_EAT", "BOOL_IS", 0, 0));
     __ItemRegistrySystem.addStat(index, "XP", int32(int(experience)));
     __ItemRegistrySystem.addStat(index, "HEALTH", health);
     vm.stopPrank();
@@ -658,6 +659,9 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(deployer);
     id = __ItemRegistrySystem.createConsumable(
       abi.encode(index, "KAMI", name, description, "REVIVE", mediaURI)
+    );
+    __ItemRegistrySystem.addRequirement(
+      abi.encode(index, "USE", "STATE", "BOOL_IS", LibKami.stateToIndex("DEAD"), 0)
     );
     __ItemRegistrySystem.addStat(index, "HEALTH", health);
     vm.stopPrank();

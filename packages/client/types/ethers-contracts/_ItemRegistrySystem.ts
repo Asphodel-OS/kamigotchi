@@ -30,6 +30,7 @@ import type {
 
 export interface _ItemRegistrySystemInterface extends utils.Interface {
   functions: {
+    "addRequirement(bytes)": FunctionFragment;
     "addStat(uint32,string,int32)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
@@ -50,6 +51,7 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addRequirement"
       | "addStat"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
@@ -68,6 +70,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addRequirement",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "addStat",
     values: [
@@ -131,6 +137,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addRequirement",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addStat", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
@@ -255,6 +265,11 @@ export interface _ItemRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addStat(
       index: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
@@ -331,6 +346,11 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addRequirement(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   addStat(
     index: PromiseOrValue<BigNumberish>,
@@ -409,6 +429,11 @@ export interface _ItemRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addStat(
       index: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
@@ -507,6 +532,11 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addStat(
       index: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
@@ -585,6 +615,11 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addStat(
       index: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
