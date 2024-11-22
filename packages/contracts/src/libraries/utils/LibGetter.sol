@@ -93,6 +93,10 @@ library LibGetter {
     } else if (_type.eq("STATE")) {
       string memory entityType = LibEntityType.get(components, targetID);
       return index == getState(components, entityType, targetID);
+    } else if (_type.eq("KAMI_CAN_EAT")) {
+      // hardcoded.. until we have an OR condition that supports accepting RESTING or HARVESTING
+      string memory state = LibKami.getState(components, targetID);
+      return state.eq("RESTING") || state.eq("HARVESTING");
     } else {
       revert("Unknown bool condition type");
     }

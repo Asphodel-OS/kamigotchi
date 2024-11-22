@@ -23,10 +23,10 @@ contract KamiUseReviveSystem is System {
     // item checks
     LibItem.verifyType(components, itemIndex, "REVIVE");
     LibItem.checkForPet(components, itemIndex);
+    LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
-    LibKami.verifyState(components, kamiID, "DEAD");
 
     // use item
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check

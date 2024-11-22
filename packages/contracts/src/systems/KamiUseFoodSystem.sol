@@ -24,13 +24,12 @@ contract KamiUseFoodSystem is System {
     // item checks
     LibItem.verifyType(components, itemIndex, "FOOD");
     LibItem.checkForPet(components, itemIndex);
+    LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
     LibKami.verifyRoom(components, kamiID, accID);
     LibKami.verifyCooldown(components, kamiID);
-    if (!(LibKami.isResting(components, kamiID) || LibKami.isHarvesting(components, kamiID)))
-      revert("pet must be alive");
 
     // use item
     LibKami.sync(components, kamiID);

@@ -132,11 +132,14 @@
         "IDFrom",
         "IdHolder",
         "IDTo",
+        "IDParent",
         "IsRegistry",
+        "Index",
         "IndexItem",
         "IndexRoom",
         "Health",
         "Harmony",
+        "LogicType",
         "Power",
         "Keys",
         "Weights",
@@ -144,8 +147,10 @@
         "MediaURI",
         "Type",
         "Slots",
+        "Subtype",
         "Stamina",
-        "Violence"
+        "Violence",
+        "Value"
       ]
     },
     {

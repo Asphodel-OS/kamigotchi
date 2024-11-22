@@ -16,6 +16,7 @@ import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeC
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
 
 enum LOGIC {
@@ -230,6 +231,19 @@ library LibConditional {
 
   function queryFor(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     return IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(id);
+  }
+
+  function queryFor(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (uint256[] memory) {
+    IDParentComponent parentComp = IDParentComponent(getAddrByID(components, IDParentCompID));
+
+    uint256[][] memory all = new uint256[][](ids.length);
+    for (uint256 i; i < ids.length; i++) {
+      all[i] = parentComp.getEntitiesWithValue(ids[i]);
+    }
+    return LibArray.flatten(all);
   }
 
   /// @notice queries for conditions with subtype

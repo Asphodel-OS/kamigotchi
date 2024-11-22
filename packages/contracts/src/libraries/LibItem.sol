@@ -20,10 +20,13 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibData } from "libraries/LibData.sol";
-import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
+import { LibReference } from "libraries/utils/LibReference.sol";
+
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
+import { LibData } from "libraries/LibData.sol";
+import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -44,6 +47,11 @@ import { LibScore } from "libraries/LibScore.sol";
  * they follow this pattern (although does not strictly need to):
  *  - Type: defines item behaviour. expected 1 system per type
  *  - For: for kamis/accounts/others
+ *
+ * Items have different behaviour depending on how they are used. e.g. Burning vs Consuming
+ *  - References are used to differenciate between usecases
+ *  - RefID: hash(ACTION, regID)
+ *  - item Requirements and Effects are linked to each use case via a Reference
  *
  * Notable item shapes (defined in _ItemRegistrySystem):
  *  - lootbox: type LOOTBOX, LibDroptable for weights and keys
@@ -80,6 +88,17 @@ library LibItem {
     MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
   }
 
+  function addRequirement(
+    IWorld world,
+    IUintComp components,
+    uint32 index,
+    string memory useCase,
+    Condition memory data
+  ) internal returns (uint256 id) {
+    uint256 refID = LibReference.create(components, useCase, genRefParentID(index));
+    id = LibConditional.createFor(world, components, data, genReqParentID(refID));
+  }
+
   /// @notice adds a stat to an item
   function addStat(IUintComp components, uint256 id, string memory type_, int32 value) internal {
     if (type_.eq("XP"))
@@ -88,10 +107,10 @@ library LibItem {
   }
 
   /// @notice delete a Registry entry for an item.
-  function deleteItem(IUintComp components, uint256 id) internal {
+  function deleteItem(IUintComp components, uint32 index) internal {
+    uint256 id = genID(index);
     LibEntityType.remove(components, id);
-    IndexItemComponent indexComp = IndexItemComponent(getAddrByID(components, IndexItemCompID));
-    indexComp.remove(id);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
 
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
@@ -106,6 +125,12 @@ library LibItem {
     LibFor.unset(components, id);
     LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
+
+    uint256[] memory reqs = getAllRequirements(components, index);
+    LibConditional.remove(components, reqs);
+
+    uint256[] memory refs = getAllReferences(components, index);
+    LibReference.remove(components, refs);
   }
 
   /////////////////
@@ -141,6 +166,17 @@ library LibItem {
 
   /////////////////
   // CHECKERS
+
+  /// @dev requirements looks at conditions outside of the item itself, e.g. kami/account
+  function verifyRequirements(
+    IUintComp components,
+    uint32 index,
+    string memory usecase,
+    uint256 targetID
+  ) internal view {
+    if (!LibConditional.check(components, getReqsFor(components, index, usecase), targetID))
+      revert("Item: Reqs not met");
+  }
 
   /// @notice check if entity is an item of specific type
   function verifyType(IUintComp components, uint32 index, string memory type_) internal view {
@@ -183,17 +219,6 @@ library LibItem {
     return LibString.eq(type_, "REVIVE");
   }
 
-  function isLootbox(IUintComp components, uint32 index) internal view returns (bool) {
-    uint256 id = genID(index);
-    string memory type_ = getType(components, id);
-    return LibString.eq(type_, "LOOTBOX");
-  }
-
-  // check whether an entity is part of a Registry
-  function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRegistryComponent(getAddrByID(components, IsRegCompID)).has(id);
-  }
-
   /////////////////
   // GETTERS
 
@@ -204,6 +229,31 @@ library LibItem {
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     TypeComponent comp = TypeComponent(getAddrByID(components, TypeCompID));
     return comp.has(id) ? comp.get(id) : "";
+  }
+
+  function getReqsFor(
+    IUintComp components,
+    uint32 index,
+    string memory useCase
+  ) internal view returns (uint256[] memory) {
+    uint256 refID = LibReference.genID(useCase, genRefParentID(index));
+    return LibConditional.queryFor(components, genReqParentID(refID));
+  }
+
+  function getAllReferences(
+    IUintComp components,
+    uint32 index
+  ) internal view returns (uint256[] memory) {
+    return LibReference.queryByParent(components, genRefParentID(index));
+  }
+
+  function getAllRequirements(
+    IUintComp components,
+    uint32 index
+  ) internal view returns (uint256[] memory) {
+    uint256[] memory refs = getAllReferences(components, index);
+    for (uint256 i; i < refs.length; i++) refs[i] = genReqParentID(refs[i]);
+    return LibConditional.queryFor(components, refs);
   }
 
   /////////////////
@@ -246,6 +296,14 @@ library LibItem {
   /// @notice Retrieve the ID of a registry entry
   function genID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.item", index)));
+  }
+
+  function genRefParentID(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("item.usecase", index)));
+  }
+
+  function genReqParentID(uint256 refID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("item.requirement", refID)));
   }
 
   /////////////////

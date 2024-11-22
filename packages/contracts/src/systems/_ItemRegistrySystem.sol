@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { Condition } from "libraries/LibConditional.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
@@ -58,6 +59,27 @@ contract _ItemRegistrySystem is System {
     return id;
   }
 
+  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 index,
+      string memory useCase,
+      string memory condType,
+      string memory condLogic,
+      uint32 condIndex,
+      uint256 condValue
+    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+
+    return
+      LibItem.addRequirement(
+        world,
+        components,
+        index,
+        useCase,
+        Condition(condType, condLogic, condIndex, condValue)
+      );
+  }
+
   function addStat(uint32 index, string memory type_, int32 value) public onlyOwner {
     uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
@@ -83,7 +105,7 @@ contract _ItemRegistrySystem is System {
     uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
 
-    LibItem.deleteItem(components, registryID);
+    LibItem.deleteItem(components, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

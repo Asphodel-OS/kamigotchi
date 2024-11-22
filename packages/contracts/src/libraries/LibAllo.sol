@@ -12,6 +12,7 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
 
@@ -243,6 +244,19 @@ library LibAllo {
   ) internal view returns (uint256[] memory) {
     return
       IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
+  }
+
+  function queryFor(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (uint256[] memory) {
+    IDParentComponent parentComp = IDParentComponent(getAddrByID(components, IDParentCompID));
+
+    uint256[][] memory all = new uint256[][](ids.length);
+    for (uint256 i; i < ids.length; i++) {
+      all[i] = parentComp.getEntitiesWithValue(ids[i]);
+    }
+    return LibArray.flatten(all);
   }
 
   function queryByType(

@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { getItemImage, readFile, toRevise } from './utils';
+import { getItemImage, parseKamiStateToIndex, readFile, toRevise } from './utils';
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   const droptablesCSV = await readFile('items/droptables.csv');
@@ -76,6 +76,7 @@ async function setConsumable(api: AdminAPI, item: any) {
     item['Type'].toUpperCase(),
     getItemImage(item['Name'])
   );
+  await addRequirement(api, item);
   await addStat(api, item);
   await setRoom(api, item);
 }
@@ -97,6 +98,21 @@ async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     droptables[Number(item['Droptable']) - 1]['Key'],
     droptables[Number(item['Droptable']) - 1]['Tier'],
     getItemImage(item['Name'])
+  );
+}
+
+async function addRequirement(api: AdminAPI, item: any) {
+  // only adds requirement from type for now. slightly hardcoded for state requirements
+  if (item['For'].toUpperCase() !== 'KAMI') return; // only kami need state requirements
+
+  const [type, logicType, index, value] = itemTypeToRequirement(item['Type'].toUpperCase());
+  await api.registry.item.add.requirement(
+    Number(item['Index']),
+    'USE',
+    type,
+    logicType,
+    index,
+    value
   );
 }
 
@@ -123,4 +139,16 @@ async function setRoom(api: AdminAPI, item: any) {
   const index = Number(item['Index']);
 
   if (Number(item['Room']) > 0) await api.registry.item.add.room(index, Number(item['Room']));
+}
+
+/////////////////
+// UTILS
+
+function itemTypeToRequirement(type: string): [string, string, number, number] {
+  if (type === 'FOOD') return ['KAMI_CAN_EAT', 'BOOL_IS', 0, 0];
+  else if (type === 'REVIVE') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('DEAD'), 0];
+  else if (type === 'RENAME_POTION')
+    return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
+  else if (type === 'SKILL_RESET') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
+  else return ['', '', 0, 0];
 }
