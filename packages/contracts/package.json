@@ -51,7 +51,7 @@
     "codegen:clear": "ts-node src/deployment/commands/clearAutogen.ts",
     "codegen:imports": "pnpm ejs src/deployment/contracts/Imports.ejs -f deploy.json -o src/deployment/contracts/Imports.sol",
     "codegen:deploy": "pnpm ejs src/deployment/contracts/LibDeploy.ejs -f deploy.json -o src/deployment/contracts/LibDeploy.sol",
-    "codegen:tests": "pnpm ejs src/test/utils/TestSetupImports.ejs -f deploy.json -o src/test/utils/TestSetupImports.sol"
+    "codegen:tests": "pnpm ejs src/test/utils/TestSetupImports.t.ejs -f deploy.json -o src/test/utils/TestSetupImports.t.sol"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.1.1",

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "test/utils/SetupTemplate.t.sol";
+import "tests/utils/SetupTemplate.t.sol";
 
 // this test experience gain, leveling and all expected effects due to leveling
 contract ExperienceTest is SetupTemplate {

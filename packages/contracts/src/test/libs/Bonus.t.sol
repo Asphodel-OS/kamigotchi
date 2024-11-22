@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { LibSort } from "solady/utils/LibSort.sol";
 
-import "test/utils/SetupTemplate.t.sol";
+import "tests/utils/SetupTemplate.t.sol";
 
 contract BonusTest is SetupTemplate {
   uint256 constant regParentEntity = uint256(keccak256(abi.encodePacked("parent")));

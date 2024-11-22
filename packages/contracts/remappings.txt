@@ -4,7 +4,7 @@ components/=src/components
 deployment/=src/deployment/contracts
 libraries/=src/libraries
 systems/=src/systems
-test/=src/test
+tests/=src/test
 utils/=src/utils
 tokens/=src/tokens
 

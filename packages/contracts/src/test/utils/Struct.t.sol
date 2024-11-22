@@ -12,7 +12,7 @@ import { StatComponent } from "solecs/components/StatComponent.sol";
 
 import { Coord } from "components/LocationComponent.sol";
 
-import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
+import { EmptyWorld } from "tests/utils/EmptyWorld.t.sol";
 
 contract StructTest is EmptyWorld {
   Uint256BareComponent uintComp;

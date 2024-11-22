@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "test/utils/SetupTemplate.t.sol";
+import "tests/utils/SetupTemplate.t.sol";
 
 contract AlloTest is SetupTemplate {
   uint256 constant parentID1 = uint256(keccak256(abi.encodePacked("parent")));

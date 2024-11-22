@@ -9,7 +9,7 @@ import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";
 import { MUSU_INDEX, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 
-import "./TestSetupImports.sol";
+import "./TestSetupImports.t.sol";
 import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "test/utils/SetupTemplate.t.sol";
+import "tests/utils/SetupTemplate.t.sol";
 
 /// @notice basic system testing for systems that are not directly tested elsewhere
 /** @dev

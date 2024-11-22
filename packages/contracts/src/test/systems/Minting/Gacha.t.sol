@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { GACHA_ID } from "libraries/LibGacha.sol";
-import "test/utils/SetupTemplate.t.sol";
+import "tests/utils/SetupTemplate.t.sol";
 
 /** @dev
  * this focuses on the gacha, with a strong emphasis on checking invarients

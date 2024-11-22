@@ -20,5 +20,5 @@ src/deployment/contracts/GodSystem.s.sol
 src/deployment/contracts/InitWorld.s.sol
 src/deployment/contracts/LibDeploy.sol
 src/deployment/contracts/Imports.sol
-src/test/utils/TestSetupImports.sol
+src/test/utils/TestSetupImports.t.sol
 /types/

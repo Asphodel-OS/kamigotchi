@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
-import "test/utils/SetupTemplate.t.sol";
+import "tests/utils/SetupTemplate.t.sol";
 
 contract LibCooldownTest is SetupTemplate {
   using SafeCastLib for int256;
