@@ -6,6 +6,7 @@ export { getBalance, getBool, getInventoryBalance } from './getter';
 export { getEntityByHash, hashArgs } from './IDs';
 export { getAffinityImage, getItemImage } from './images';
 export { getDescribedEntity, parseQuantity } from './parse';
+export { queryRefChildren, queryRefsWithParent } from './references';
 
 export type { Commit } from './commits';
 export type { ForShapeOptions, ForType } from './for';
