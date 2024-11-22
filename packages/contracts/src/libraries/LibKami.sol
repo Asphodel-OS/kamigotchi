@@ -45,6 +45,15 @@ import { LibStat } from "libraries/LibStat.sol";
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
 uint256 constant METABOLISM_PREC = 9;
 
+// when needed, converts state to uint. do not change order - its live
+enum KamiState {
+  NULL,
+  RESTING,
+  HARVESTING,
+  DEAD,
+  EXTERNAL_721
+}
+
 library LibKami {
   using LibComp for IComponent;
   using LibString for string;
@@ -356,6 +365,10 @@ library LibKami {
     return StateComponent(getAddrByID(components, StateCompID)).get(id);
   }
 
+  function getStateIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return stateToIndex(getState(components, id));
+  }
+
   // Get the traits of a kami, specifically the list of trait registry IDs
   function getTraits(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     uint256[] memory traits = new uint256[](5);
@@ -412,5 +425,14 @@ library LibKami {
 
   function genID(uint32 kamiIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("kami.id", kamiIndex)));
+  }
+
+  function stateToIndex(string memory state) internal pure returns (uint256) {
+    KamiState kamiState;
+    if (state.eq("RESTING")) uint32(KamiState.RESTING);
+    else if (state.eq("HARVESTING")) uint32(KamiState.HARVESTING);
+    else if (state.eq("DEAD")) uint32(KamiState.DEAD);
+    else if (state.eq("721_EXTERNAL")) uint32(KamiState.DEAD);
+    else revert("LibKami: invalid state");
   }
 }

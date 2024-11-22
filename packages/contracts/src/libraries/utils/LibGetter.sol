@@ -11,6 +11,9 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -19,9 +22,9 @@ import { LibFactions } from "libraries/LibFactions.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
-import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
@@ -87,6 +90,9 @@ library LibGetter {
       return LibPhase.get(block.timestamp) == index;
     } else if (_type.eq("COOLDOWN")) {
       return LibCooldown.isActive(components, targetID);
+    } else if (_type.eq("STATE")) {
+      string memory entityType = LibEntityType.get(components, targetID);
+      return index == getState(components, entityType, targetID);
     } else {
       revert("Unknown bool condition type");
     }
@@ -136,5 +142,14 @@ library LibGetter {
       if (level >= minLevel) total++;
     }
     return total;
+  }
+
+  function getState(
+    IUintComp components,
+    string memory entityType,
+    uint256 id
+  ) internal view returns (uint256) {
+    if (entityType.eq("KAMI")) return LibKami.getStateIndex(components, id);
+    else revert("LibGetter: invalid entity state type");
   }
 }
