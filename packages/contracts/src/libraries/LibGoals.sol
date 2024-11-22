@@ -238,7 +238,7 @@ library LibGoals {
     uint256 accID,
     uint256[] memory requirements
   ) internal view returns (bool) {
-    return LibConditional.checkConditions(components, requirements, accID);
+    return LibConditional.check(components, requirements, accID);
   }
 
   function checkRoom(

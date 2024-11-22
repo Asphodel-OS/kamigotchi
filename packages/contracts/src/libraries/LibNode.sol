@@ -126,8 +126,8 @@ library LibNode {
     );
 
     return
-      LibConditional.checkConditions(components, accReqs, accID) &&
-      LibConditional.checkConditions(components, petReqs, kamiID);
+      LibConditional.check(components, accReqs, accID) &&
+      LibConditional.check(components, petReqs, kamiID);
   }
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {

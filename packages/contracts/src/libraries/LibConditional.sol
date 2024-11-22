@@ -124,7 +124,7 @@ library LibConditional {
   // INTERACTIONS
 
   /// @notice checks a batch of conditions
-  function checkConditions(
+  function check(
     IUintComp components,
     uint256[] memory conditionIDs,
     uint256 targetID
@@ -145,13 +145,13 @@ library LibConditional {
     Condition memory data
   ) internal view returns (bool) {
     (HANDLER handler, LOGIC logic) = parseLogic(data);
-    if (handler == HANDLER.CURRENT) return checkCurr(components, targetID, data, logic);
-    else if (handler == HANDLER.BOOLEAN) return checkBool(components, targetID, data, logic);
+    if (handler == HANDLER.CURRENT) return _checkCurr(components, targetID, data, logic);
+    else if (handler == HANDLER.BOOLEAN) return _checkBool(components, targetID, data, logic);
     else revert("Handler not yet implemented");
   }
 
   /// @notice checks for a current value against an account
-  function checkCurr(
+  function _checkCurr(
     IUintComp components,
     uint256 targetID,
     Condition memory data,
@@ -162,7 +162,7 @@ library LibConditional {
   }
 
   /// @notice checks for a boolean value against
-  function checkBool(
+  function _checkBool(
     IUintComp components,
     uint256 targetID,
     Condition memory data,

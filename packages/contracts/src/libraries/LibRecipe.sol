@@ -180,7 +180,7 @@ library LibRecipe {
     uint256 accID
   ) internal view {
     uint256[] memory reqIDs = getRequirements(components, recipeIndex);
-    if (!LibConditional.checkConditions(components, reqIDs, accID)) revert("Recipe: reqs not met");
+    if (!LibConditional.check(components, reqIDs, accID)) revert("Recipe: reqs not met");
   }
 
   /////////////////

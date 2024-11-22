@@ -117,7 +117,7 @@ library LibRoom {
     uint256[] memory conditions = queryGates(components, fromIndex, toIndex);
 
     if (conditions.length == 0) return true;
-    return LibConditional.checkConditions(components, conditions, accID);
+    return LibConditional.check(components, conditions, accID);
   }
 
   /// @notice checks if two locations are adjacent, XY axis only

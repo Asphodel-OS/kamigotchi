@@ -125,7 +125,7 @@ library LibListing {
     uint256 accID
   ) internal view returns (bool) {
     uint256[] memory requirements = LibConditional.queryFor(components, genReqParentID(listingID));
-    return LibConditional.checkConditions(components, requirements, accID);
+    return LibConditional.check(components, requirements, accID);
   }
 
   /////////////////

@@ -173,7 +173,7 @@ library LibQuests {
     uint256 accID
   ) internal view returns (bool) {
     uint256[] memory requirements = LibQuestRegistry.getReqsByQuestIndex(components, questIndex);
-    return LibConditional.checkConditions(components, requirements, accID);
+    return LibConditional.check(components, requirements, accID);
   }
 
   function checkObjectives(
@@ -189,13 +189,13 @@ library LibQuests {
       (HANDLER handler, LOGIC operator) = LibConditional.parseLogic(objs[i]);
 
       if (handler == HANDLER.CURRENT) {
-        result = LibConditional.checkCurr(components, accID, objs[i], operator);
+        result = LibConditional._checkCurr(components, accID, objs[i], operator);
       } else if (handler == HANDLER.INCREASE) {
         result = checkIncrease(components, accID, questID, objIDs[i], objs[i], operator);
       } else if (handler == HANDLER.DECREASE) {
         result = checkDecrease(components, accID, questID, objIDs[i], objs[i], operator);
       } else if (handler == HANDLER.BOOLEAN) {
-        result = LibConditional.checkBool(components, accID, objs[i], operator);
+        result = LibConditional._checkBool(components, accID, objs[i], operator);
       } else {
         revert("Unknown objective handler");
       }
