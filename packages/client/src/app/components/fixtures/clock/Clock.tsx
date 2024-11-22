@@ -168,7 +168,7 @@ const Tick = styled.div<{ rotationZ: number }>`
   position: absolute;
   transform-origin: 0px 7.5vh;
   transform: ${({ rotationZ }) => `translateY(-7.5vh) rotateZ(calc(${rotationZ} * 360deg / 36))`};
-  z-index: 1200;
+  z-index: 1;
 `;
 
 const Time = styled.svg`
@@ -186,7 +186,7 @@ const Time = styled.svg`
 
 const StaminaText = styled.div<{ position: number }>`
   position: absolute;
-  z-index: 200;
+  z-index: 1;
   font-size: 1vh;
   bottom: 3vh;
   color: #dde390;
