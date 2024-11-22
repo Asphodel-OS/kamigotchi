@@ -6,11 +6,11 @@ interface Props {
   content: any;
 }
 
-const Popover = (props: Props) => {
+export const Popover = (props: Props) => {
   const { children, content } = props;
   const [isVisible, setIsVisible] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,21 +31,21 @@ const Popover = (props: Props) => {
   }, []);
 
   const handlePosition = () => {
-    const popoverWidth = popoverRef.current?.offsetWidth || 0;
-    const popoverHeight = popoverRef.current?.offsetHeight || 0;
+    const width = popoverRef.current?.offsetWidth || 0;
+    const height = popoverRef.current?.offsetHeight || 0;
     const childrenPosition = triggerRef.current?.getBoundingClientRect();
     if (childrenPosition) {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      let positionX = childrenPosition.right;
-      let positionY = childrenPosition.bottom - 10;
-      if (positionX + popoverWidth + 10 > viewportWidth) {
-        positionX = childrenPosition.right - popoverWidth - 10;
+      let x = childrenPosition.left;
+      let y = childrenPosition.bottom - 10;
+      if (x + width + 10 > viewportWidth) {
+        x = childrenPosition.right - width;
       }
-      if (positionY + popoverHeight + 10 > viewportHeight) {
-        positionY = childrenPosition.bottom - popoverHeight - 10;
+      if (y + height + 10 > viewportHeight) {
+        y = childrenPosition.bottom - height - 10;
       }
-      setTooltipPosition({ x: positionX, y: positionY });
+      setPopoverPosition({ x, y });
     }
   };
 
@@ -81,7 +81,7 @@ const Popover = (props: Props) => {
       <PopoverContent
         isVisible={isVisible}
         ref={popoverRef}
-        tooltipPosition={tooltipPosition}
+        popoverPosition={popoverPosition}
         onClick={(e) => {
           setIsVisible(false);
         }}
@@ -92,7 +92,6 @@ const Popover = (props: Props) => {
   );
 };
 
-export default Popover;
 const PopoverContainer = styled.div`
   display: flex;
   position: relative;
@@ -100,26 +99,28 @@ const PopoverContainer = styled.div`
 
 const PopoverTrigger = styled.div`
   border: none;
-  padding: 0px;
   cursor: pointer;
-  border-radius: 30px;
+  height: 100%;
+  width: 100%;
 `;
+
 const PopoverContent = styled.div<{
   position?: string[];
   dimensions?: any;
   isVisible?: boolean;
-  tooltipPosition: any;
+  popoverPosition: any;
 }>`
-  ${({ isVisible }) => (isVisible ? `visibility: visible;` : `visibility:hidden;`)};
+  visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
   position: fixed;
-  margin-top: 10px;
+  margin-top: 0.8vh;
   background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
+  border: 0.15vw solid black;
+  box-shadow: 0 0.3vw 0.8vw rgba(0, 0, 0, 0.7);
+  border-radius: 0.45vw;
   z-index: 1000;
   white-space: nowrap;
   max-width: fit-content;
-  top: ${({ tooltipPosition }) => tooltipPosition.y};
-  left: ${({ tooltipPosition }) => tooltipPosition.x};
+  font-size: 0.6vw;
+  top: ${({ popoverPosition }) => popoverPosition.y};
+  left: ${({ popoverPosition }) => popoverPosition.x};
 `;
