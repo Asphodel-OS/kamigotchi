@@ -17,8 +17,8 @@ export const Tooltip = (props: Props) => {
   const { align, title, color, delay } = props;
   const flexGrow = props.grow ? '1' : '0';
 
-  const [showDisplay, setShowDisplay] = useState(false);
-  const [active, setActive] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
@@ -38,61 +38,61 @@ export const Tooltip = (props: Props) => {
 
   const handleMouseMove = (event: React.MouseEvent) => {
     // pointer coordinates
-    const { clientX, clientY } = event;
+    const { clientX: cursorX, clientY: cursorY } = event;
 
-    const tooltipWidth = tooltipRef.current?.offsetWidth || 0;
-    const tooltipHeight = tooltipRef.current?.offsetHeight || 0;
+    const width = tooltipRef.current?.offsetWidth || 0;
+    const height = tooltipRef.current?.offsetHeight || 0;
 
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    let tooltipX = clientX + 12;
-    let tooltipY = clientY + 12;
+    let x = cursorX + 12;
+    let y = cursorY + 12;
 
-    if (tooltipX + tooltipWidth + 10 > viewportWidth) {
-      tooltipX = clientX - tooltipWidth - 10;
+    if (x + width + 10 > viewportWidth) {
+      x = cursorX - width - 10;
     }
 
-    if (tooltipY + tooltipHeight + 10 > viewportHeight) {
-      tooltipY = clientY - tooltipHeight - 10;
+    if (y + height + 10 > viewportHeight) {
+      y = cursorY - height - 10;
     }
 
-    setTooltipPosition({ x: tooltipX, y: tooltipY });
+    setTooltipPosition({ x, y });
   };
 
   const handleMouseEnter = () => {
-    setShowDisplay(false);
+    setIsVisible(false);
     if (text[0] !== '') {
-      setActive(true);
+      setIsActive(true);
     }
   };
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    if (active) {
+    if (isActive) {
       timeoutId = setTimeout(() => {
-        setShowDisplay(true);
+        setIsVisible(true);
       }, delay ?? 350);
     }
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [active, delay]);
+  }, [isActive, delay]);
 
   return (
     <MyToolTip
       flexGrow={flexGrow}
       direction={direction}
       onMouseEnter={() => handleMouseEnter()}
-      onMouseLeave={() => setActive(false)}
+      onMouseLeave={() => setIsActive(false)}
       onMouseMove={(e) => {
         handleMouseMove(e);
       }}
     >
-      {active && (
+      {isActive && (
         <PopOverText
-          showDisplay={showDisplay}
+          isVisible={isVisible}
           align={align}
           color={color}
           tooltipPosition={tooltipPosition}
@@ -115,29 +115,30 @@ const MyToolTip = styled.div<{ flexGrow: string; direction?: string; ref?: any }
 
 const PopOverText = styled.div<{
   align?: string;
-  showDisplay: boolean;
+  isVisible: boolean;
   color?: string;
   tooltipPosition?: any;
 }>`
-  display: flex;
-  ${({ showDisplay }) => (showDisplay ? `opacity:100;` : `opacity:0;`)};
-  border-style: solid;
-  z-index: 100;
-  border-width: 0.15vw;
-  border-color: black;
-  background-color: #fff;
+  background-color: ${({ color }) => color ?? '#fff'};
+  opacity: ${({ isVisible }) => (isVisible ? 100 : 0)};
+  position: fixed;
+
+  border: solid black 0.15vw;
   border-radius: 0.6vw;
-  padding: 0.9vw;
+
   max-width: 36vw;
+  padding: 0.9vw;
+  display: flex;
+  overflow-wrap: anywhere;
+
   color: black;
   font-size: 0.7vw;
-  font-family: Pixel;
   line-height: 1.25vw;
-  white-space: pre-line;
-  position: fixed;
-  pointer-events: none;
   text-align: ${({ align }) => align ?? 'left'};
-  ${({ color }) => color && `background-color:${color};`}
+  white-space: pre-line;
+
+  pointer-events: none;
   top: ${({ tooltipPosition }) => tooltipPosition.y};
   left: ${({ tooltipPosition }) => tooltipPosition.x};
+  z-index: 100;
 `;
