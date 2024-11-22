@@ -6,15 +6,9 @@ import { hashArgs } from './IDs';
 /////////////////
 // QUERIES
 
-export const queryRefsWithParent = (
-  components: Components,
-  field: string,
-  parentID: EntityID
-): EntityIndex[] => {
+export const queryRefsWithParent = (components: Components, parentID: EntityID): EntityIndex[] => {
   const { ParentID } = components;
-
-  const id = genParentRefID(field, parentID);
-  return Array.from(runQuery([HasValue(ParentID, { value: id })]));
+  return Array.from(runQuery([HasValue(ParentID, { value: parentID })]));
 };
 
 export const queryRefChildren = (
@@ -40,8 +34,4 @@ const genID = (field: string, parentID: EntityID, key?: BigNumberish): EntityID 
     ? ['string', 'uint256', 'uint256', 'uint256']
     : ['string', 'uint256', 'uint256'];
   return hashArgs(args, argTypes);
-};
-
-const genParentRefID = (field: string, parentID: EntityID): EntityID => {
-  return hashArgs(['reference.parent', field, parentID], ['string', 'string', 'uint256'], true);
 };

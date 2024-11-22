@@ -8,18 +8,16 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibReference } from "libraries/utils/LibReference.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -40,8 +38,8 @@ import { LibScore } from "libraries/LibScore.sol";
  * - Tiers (e.g. bronze, silver, gold)
  *   - Intimidiate entity to split rewards based on contribution
  *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
- *     - Uses LevelComp as the min contribution to qualify for a tier
- *       - eg Bronze LevelComp = 100, contribution >= 100 to qualify for Bronze
+ *     - Uses ValueComp as the min contribution to qualify for a tier
+ *       - eg Bronze ValueComp = 100, contribution >= 100 to qualify for Bronze
  * - Rewards (standard reward shape)
  *   - Points to tiers, rather than the goal directly
  *   - When querying: Goal -> Tier -> Reward
@@ -90,12 +88,10 @@ library LibGoals {
     string memory name,
     uint256 cutoff // cutoff 0 signifies display only tier; does not distribute rewards
   ) internal returns (uint256 id) {
-    id = genTierID(goalIndex, cutoff);
-    if (LibEntityType.checkAndSet(components, id, "GOAL_TIER")) return id; // already exists
+    id = LibReference.create(components, "goal.tier", cutoff, genTierParentID(goalIndex));
 
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-    LevelComponent(getAddrByID(components, LevelCompID)).set(id, cutoff);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, genTierParentID(goalIndex));
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, cutoff);
   }
 
   /// @notice adds a requirement to a goal
@@ -135,10 +131,9 @@ library LibGoals {
   }
 
   function removeTiers(IUintComp components, uint256[] memory ids) internal {
-    LibEntityType.remove(components, ids);
+    LibReference.remove(components, ids);
     NameComponent(getAddrByID(components, NameCompID)).remove(ids);
-    LevelComponent(getAddrByID(components, LevelCompID)).remove(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
   }
 
   /////////////////
@@ -306,10 +301,7 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return
-      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(
-        genTierParentID(goalIndex)
-      );
+    return LibReference.queryByParent(components, genTierParentID(goalIndex));
   }
 
   function getRequirements(
@@ -338,7 +330,7 @@ library LibGoals {
     uint256 accID
   ) internal view returns (uint256[] memory) {
     uint256[] memory tierIDs = getTiers(components, goalIndex);
-    uint256[] memory cutoffs = LevelComponent(getAddrByID(components, LevelCompID)).safeGet(
+    uint256[] memory cutoffs = ValueComponent(getAddrByID(components, ValueCompID)).safeGet(
       tierIDs
     );
 
@@ -374,12 +366,8 @@ library LibGoals {
     return uint256(keccak256(abi.encodePacked("goal.objective", goalID)));
   }
 
-  function genTierID(uint32 goalIndex, uint256 cutoff) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("goal.tier", goalIndex, cutoff)));
-  }
-
   function genTierParentID(uint32 goalIndex) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("goal.tiers", goalIndex)));
+    return uint256(keccak256(abi.encodePacked("goal.tier", goalIndex)));
   }
 
   /// @notice Retrieve the ID of a requirement array

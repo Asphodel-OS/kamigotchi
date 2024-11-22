@@ -46,9 +46,7 @@ library LibReference {
     uint256 parentID
   ) internal {
     LibEntityType.set(components, id, "REFERENCE");
-
-    uint256 parentRefID = genParentRefID(field, parentID);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentRefID);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -66,11 +64,10 @@ library LibReference {
 
   function queryByParent(
     IUintComp components,
-    string memory field,
     uint256 parentID
   ) internal view returns (uint256[] memory) {
-    uint256 id = genParentRefID(field, parentID);
-    return IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(id);
+    return
+      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
   }
 
   ////////////////
@@ -86,9 +83,5 @@ library LibReference {
     uint256 parentID
   ) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("reference.instance", field, key, parentID)));
-  }
-
-  function genParentRefID(string memory field, uint256 parentID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("reference.parent", field, parentID)));
   }
 }

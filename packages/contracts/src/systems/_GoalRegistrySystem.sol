@@ -116,7 +116,7 @@ contract _GoalRegistrySystem is System {
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, 0);
     uint256 parentID = LibGoals.genRwdParentID(tierID);
-    uint256 id = LibAllo.createEmpty(components, parentID, name);
+    uint256 id = LibAllo.createEmpty(components, parentID, "Community");
     return id;
   }
 

@@ -6,7 +6,7 @@ import { Condition, getCondition } from '../Conditional';
 import { queryConditionsOf } from '../Conditional/queries';
 import { Reward, getReward } from '../Rewards';
 import { Score } from '../Score';
-import { getEntityByHash, hashArgs, queryChildrenOf, queryChildrenOfEntityIndex } from '../utils';
+import { getEntityByHash, hashArgs, queryChildrenOf, queryRefsWithParent } from '../utils';
 
 /////////////////
 // SHAPES
@@ -80,19 +80,19 @@ export const getContribution = (
 };
 
 const getGoalTiers = (world: World, components: Components, goalIndex: number): Tier[] => {
-  const tiers = queryChildrenOfEntityIndex(components, 'goal.tiers', goalIndex).map(
+  const tiers = queryRefsWithParent(components, getTierParentID(goalIndex)).map(
     (entity: EntityIndex) => getTier(world, components, entity)
   );
   return tiers.sort((a, b) => a.cutoff - b.cutoff);
 };
 
 const getTier = (world: World, components: Components, entityIndex: EntityIndex) => {
-  const { Name, Level } = components;
+  const { Name, Value } = components;
   const id = world.entities[entityIndex];
   return {
     id: id,
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    cutoff: (getComponentValue(Level, entityIndex)?.value || (0 as number)) * 1,
+    cutoff: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
     rewards: getTierRewards(world, components, id),
   };
 };
@@ -136,6 +136,10 @@ export const getContributionEntityIndex = (
 
 export const getObjEntityIndex = (world: World, goalID: EntityID): EntityIndex | undefined => {
   return getEntityByHash(world, ['goal.objective', goalID], ['string', 'uint256']);
+};
+
+const getTierParentID = (goalIndex: number): EntityID => {
+  return hashArgs(['goal.tier', goalIndex], ['string', 'uint32']);
 };
 
 const getRwdParentID = (tierID: EntityID): EntityID => {
