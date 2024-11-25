@@ -22,8 +22,7 @@ import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSyst
 import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
-import AccountUseFoodSystem from "../../../../../client/abi/AccountUseFoodSystem.json";
-import AccountUseTeleportSystem from "../../../../../client/abi/AccountUseTeleportSystem.json";
+import AccountUseItemSystem from "../../../../../client/abi/AccountUseItemSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
 import EchoKamisSystem from "../../../../../client/abi/EchoKamisSystem.json";
@@ -48,9 +47,7 @@ import KamiGachaRerollSystem from "../../../../../client/abi/KamiGachaRerollSyst
 import KamiGachaRevealSystem from "../../../../../client/abi/KamiGachaRevealSystem.json";
 import KamiLevelSystem from "../../../../../client/abi/KamiLevelSystem.json";
 import KamiNameSystem from "../../../../../client/abi/KamiNameSystem.json";
-import KamiUseFoodSystem from "../../../../../client/abi/KamiUseFoodSystem.json";
-import KamiUseRenamePotionSystem from "../../../../../client/abi/KamiUseRenamePotionSystem.json";
-import KamiUseReviveSystem from "../../../../../client/abi/KamiUseReviveSystem.json";
+import KamiUseItemSystem from "../../../../../client/abi/KamiUseItemSystem.json";
 import KamiUseSkillResetSystem from "../../../../../client/abi/KamiUseSkillResetSystem.json";
 import ListingBuySystem from "../../../../../client/abi/ListingBuySystem.json";
 import ListingSellSystem from "../../../../../client/abi/ListingSellSystem.json";
@@ -91,8 +88,7 @@ export const SystemAbis = {
   "system.account.set.farcaster": AccountSetFarcasterDataSystem.abi,
   "system.account.set.name": AccountSetNameSystem.abi,
   "system.account.set.operator": AccountSetOperatorSystem.abi,
-  "system.account.use.food": AccountUseFoodSystem.abi,
-  "system.account.use.teleport": AccountUseTeleportSystem.abi,
+  "system.account.use.item": AccountUseItemSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
   "system.echo.kamis": EchoKamisSystem.abi,
@@ -117,9 +113,7 @@ export const SystemAbis = {
   "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,
   "system.kami.level": KamiLevelSystem.abi,
   "system.kami.name": KamiNameSystem.abi,
-  "system.kami.use.food": KamiUseFoodSystem.abi,
-  "system.kami.use.renamePotion": KamiUseRenamePotionSystem.abi,
-  "system.kami.use.revive": KamiUseReviveSystem.abi,
+  "system.kami.use.item": KamiUseItemSystem.abi,
   "system.kami.use.skill.reset": KamiUseSkillResetSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,

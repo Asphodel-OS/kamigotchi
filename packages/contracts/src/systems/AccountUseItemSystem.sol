@@ -9,33 +9,34 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
-uint256 constant ID = uint256(keccak256("system.account.use.food"));
+uint256 constant ID = uint256(keccak256("system.account.use.item"));
 
 // eat one snack
-contract AccountUseFoodSystem is System {
+contract AccountUseItemSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint32 itemIndex = abi.decode(arguments, (uint32));
+    (uint32 itemIndex, uint256 amt) = abi.decode(arguments, (uint32, uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.verifyType(components, itemIndex, "FOOD");
+    LibItem.verifyMaxPerUse(components, amt);
     LibItem.verifyForAccount(components, itemIndex);
+    LibItem.verifyRequirements(components, itemIndex, "USE", accID);
 
     // use items
     LibAccount.syncStamina(components, accID);
-    LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
-    LibItem.applyStats(components, itemIndex, accID);
+    LibInventory.decFor(components, accID, itemIndex, amt); // implicit balance check
+    LibItem.applyAllos(world, components, itemIndex, "USE", amt, accID);
 
     // standard logging and tracking
-    LibItem.logUse(components, accID, itemIndex, 1);
+    LibItem.logUse(components, accID, itemIndex, amt);
     LibAccount.updateLastTs(components, accID);
 
     return "";
   }
 
-  function executeTyped(uint32 itemIndex) public returns (bytes memory) {
-    return execute(abi.encode(itemIndex));
+  function executeTyped(uint32 itemIndex, uint256 amt) public returns (bytes memory) {
+    return execute(abi.encode(itemIndex, amt));
   }
 }

@@ -152,7 +152,7 @@ library LibGetter {
     IUintComp components,
     string memory entityType,
     uint256 id
-  ) internal view returns (uint256) {
+  ) internal view returns (uint32) {
     if (entityType.eq("KAMI")) return LibKami.getStateIndex(components, id);
     else revert("LibGetter: invalid entity state type");
   }

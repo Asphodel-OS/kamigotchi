@@ -623,6 +623,55 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
+  async function addItemAlloBasic(
+    index: number,
+    usecase: string,
+    type: string,
+    index_: number,
+    value: number
+  ) {
+    genCall('system.item.registry', [index, usecase, type, index_, value], 'addAlloBasic', [
+      'uint32',
+      'string',
+      'string',
+      'uint32',
+      'uint256',
+    ]);
+  }
+
+  async function addItemAlloDT(
+    index: number,
+    usecase: string,
+    keys: number[],
+    weights: number[],
+    value: number
+  ) {
+    genCall('system.item.registry', [index, usecase, keys, weights, value], 'addAlloDT', [
+      'uint32',
+      'string',
+      'uint32[]',
+      'uint256[]',
+      'uint256',
+    ]);
+  }
+
+  async function addItemAlloStat(
+    index: number,
+    usecase: string,
+    statType: string,
+    base: number,
+    shift: number,
+    boost: number,
+    sync: number
+  ) {
+    genCall(
+      'system.item.registry',
+      [index, usecase, statType, base, shift, boost, sync],
+      'addAlloStat',
+      ['uint32', 'string', 'string', 'int32', 'int32', 'int32', 'int32']
+    );
+  }
+
   async function addItemRequirement(
     index: number,
     usecase: string,
@@ -637,14 +686,6 @@ export function createAdminAPI(compiledCalls: string[]) {
       'addRequirement',
       ['uint32', 'string', 'string', 'string', 'uint32', 'uint256']
     );
-  }
-
-  async function addStat(index: number, type_: string, value: number) {
-    genCall('system.item.registry', [index, type_, value], 'addStat');
-  }
-
-  async function setItemRoom(index: number, roomIndex: number) {
-    genCall('system.item.registry', [index, roomIndex], 'setRoom');
   }
 
   // @dev deletes an item registry
@@ -806,8 +847,11 @@ export function createAdminAPI(compiledCalls: string[]) {
         },
         add: {
           requirement: addItemRequirement,
-          room: setItemRoom,
-          stat: addStat,
+          allo: {
+            basic: addItemAlloBasic,
+            droptable: addItemAlloDT,
+            stat: addItemAlloStat,
+          },
         },
         delete: deleteItem,
       },

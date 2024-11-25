@@ -116,6 +116,7 @@ library LibAllo {
   }
 
   function remove(IUintComp components, uint256[] memory ids) internal {
+    LibEntityType.remove(components, ids);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);

@@ -21,9 +21,9 @@ import { LibReference } from "libraries/utils/LibReference.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibAllo } from "libraries/LibAllo.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /**

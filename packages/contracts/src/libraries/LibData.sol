@@ -58,6 +58,18 @@ library LibData {
     IUintComp components,
     uint256 holderID,
     uint32[] memory indices,
+    string memory type_,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) dataIDs[i] = getID(holderID, indices[i], type_);
+    return inc(components, dataIDs, amt);
+  }
+
+  function inc(
+    IUintComp components,
+    uint256 holderID,
+    uint32[] memory indices,
     string[] memory types,
     uint256 amt
   ) internal {

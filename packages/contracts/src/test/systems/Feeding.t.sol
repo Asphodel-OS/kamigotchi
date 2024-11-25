@@ -106,7 +106,7 @@ contract FeedingTest is SetupTemplate {
         itemIndex = _getListingItemIndex(_listingIDs[j]);
         for (uint k = 0; k < numPets; k++) {
           vm.expectRevert("kami not urs");
-          _KamiUseFoodSystem.executeTyped(kamiIDs[k], itemIndex);
+          _KamiUseItemSystem.executeTyped(kamiIDs[k], itemIndex);
         }
       }
       vm.stopPrank();
@@ -118,7 +118,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
+        _KamiUseItemSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -164,7 +164,7 @@ contract FeedingTest is SetupTemplate {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("kami not urs");
         vm.prank(_getOperator(i));
-        _KamiUseReviveSystem.executeTyped(kamiIDs[j], itemIndex);
+        _KamiUseItemSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
 
@@ -214,7 +214,7 @@ contract FeedingTest is SetupTemplate {
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("kami too far");
-        _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
+        _KamiUseItemSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -227,7 +227,7 @@ contract FeedingTest is SetupTemplate {
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("kami too far");
-        _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
+        _KamiUseItemSystem.executeTyped(kamiIDs[j], itemIndex);
       }
     }
     vm.stopPrank();
@@ -313,7 +313,7 @@ contract FeedingTest is SetupTemplate {
     //   for (uint j = 0; j < numPets; j++) {
     //     vm.expectRevert("Pet: already full");
     //     vm.prank(_getOperator(playerIndex));
-    //     _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
+    //     _KamiUseItemSystem.executeTyped(kamiIDs[j], itemIndex);
     //   }
     // }
 
@@ -346,7 +346,7 @@ contract FeedingTest is SetupTemplate {
     //   for (uint j = 0; j < numPets; j++) {
     //     vm.expectRevert("Pet: must be resting|harvesting");
     //     vm.prank(_getOperator(playerIndex));
-    //     _KamiUseFoodSystem.executeTyped(kamiIDs[j], itemIndex);
+    //     _KamiUseItemSystem.executeTyped(kamiIDs[j], itemIndex);
     //   }
     // }
   }
@@ -369,8 +369,8 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("kami not DEAD");
-      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
+      vm.expectRevert("Item: Reqs not met");
+      _KamiUseItemSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // (harvesting, full hp) check that we CANNOT revive
@@ -379,24 +379,24 @@ contract FeedingTest is SetupTemplate {
       harvestIDs[i] = _startHarvest(kamiIDs[i], _nodeID);
       _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("kami not DEAD");
-      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
+      vm.expectRevert("Item: Reqs not met");
+      _KamiUseItemSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // (harvesting, partial hp) check that we CANNOT revive
     _fastForward(1 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("kami not DEAD");
-      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
+      vm.expectRevert("Item: Reqs not met");
+      _KamiUseItemSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // (harvesting, no hp) check that we CANNOT revive
     _fastForward(100 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("kami not DEAD");
-      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
+      vm.expectRevert("Item: Reqs not met");
+      _KamiUseItemSystem.executeTyped(kamiIDs[i], itemIndex);
     }
 
     // start harvest for our enemy kamis and kill off the originals
@@ -419,8 +419,8 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("kami not DEAD");
-      _KamiUseReviveSystem.executeTyped(kamiIDs[i], itemIndex);
+      vm.expectRevert("Item: Reqs not met");
+      _KamiUseItemSystem.executeTyped(kamiIDs[i], itemIndex);
     }
   }
 

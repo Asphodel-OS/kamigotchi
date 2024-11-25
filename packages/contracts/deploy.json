@@ -270,12 +270,20 @@
       "writeAccess": ["IdHolder", "IDType", "TimeLast", "Value"]
     },
     {
-      "name": "AccountUseFoodSystem",
-      "writeAccess": ["Stamina", "TimeLast", "TimeLastAction", "Value"]
-    },
-    {
-      "name": "AccountUseTeleportSystem",
-      "writeAccess": ["IndexRoom", "TimeLast", "TimeLastAction", "Value"]
+      "name": "AccountUseItemSystem",
+      "writeAccess": [
+        "BlockReveal",
+        "IdSource",
+        "IdHolder",
+        "IndexItem",
+        "IndexRoom",
+        "TimeLast",
+        "Type",
+        "TimeLast",
+        "TimeLastAction",
+        "Stamina",
+        "Value"
+      ]
     },
     {
       "name": "AccountMoveSystem",
@@ -397,10 +405,6 @@
       "writeAccess": ["IdHolder", "Index", "TimeLast", "Type", "Value"]
     },
     {
-      "name": "LootboxCommitSystem",
-      "writeAccess": ["BlockReveal", "IdSource", "IdHolder", "IndexItem", "TimeLast", "Type", "Value"]
-    },
-    {
       "name": "Kami721IsInWorldSystem",
       "writeAccess": []
     },
@@ -439,7 +443,7 @@
       "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"]
     },
     {
-      "name": "KamiUseFoodSystem",
+      "name": "KamiUseItemSystem",
       "writeAccess": [
         "IdHolder",
         "IDType",
@@ -450,20 +454,13 @@
         "Power",
         "Rate",
         "Slots",
+        "State",
         "Value",
         "Violence",
         "TimeLast",
         "TimeReset",
         "TimeStart"
       ]
-    },
-    {
-      "name": "KamiUseRenamePotionSystem",
-      "writeAccess": ["HasFlag", "TimeLast", "Value"]
-    },
-    {
-      "name": "KamiUseReviveSystem",
-      "writeAccess": ["Health", "State", "TimeLast", "Value"]
     },
     {
       "name": "KamiUseSkillResetSystem",

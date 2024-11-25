@@ -18,7 +18,7 @@
     },
     {
       "type": "function",
-      "name": "addRequirement",
+      "name": "addAlloBasic",
       "inputs": [
         {
           "name": "arguments",
@@ -37,25 +37,59 @@
     },
     {
       "type": "function",
-      "name": "addStat",
+      "name": "addAlloDT",
       "inputs": [
         {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "type_",
-          "type": "string",
-          "internalType": "string"
-        },
-        {
-          "name": "value",
-          "type": "int32",
-          "internalType": "int32"
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "addAlloStat",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "addRequirement",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable"
     },
     {
@@ -222,24 +256,6 @@
     },
     {
       "type": "function",
-      "name": "setRoom",
-      "inputs": [
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "roomIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "setUnburnable",
       "inputs": [
         {
@@ -332,13 +348,20 @@
     },
     {
       "type": "error",
+      "name": "QueryOrderNotSupported",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "Unauthorized",
       "inputs": []
     }
   ],
   "methodIdentifiers": {
+    "addAlloBasic(bytes)": "b39bdf22",
+    "addAlloDT(bytes)": "59ce910b",
+    "addAlloStat(bytes)": "b452abd4",
     "addRequirement(bytes)": "7e534103",
-    "addStat(uint32,string,int32)": "fc81660a",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "create(bytes)": "cf5ba53f",
@@ -351,7 +374,6 @@
     "remove(uint32)": "00d84fd8",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setRoom(uint32,uint32)": "96a2c1d3",
     "setUnburnable(uint32)": "35727b4e",
     "transferOwnership(address)": "f2fde38b"
   }

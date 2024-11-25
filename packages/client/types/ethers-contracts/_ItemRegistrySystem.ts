@@ -30,8 +30,10 @@ import type {
 
 export interface _ItemRegistrySystemInterface extends utils.Interface {
   functions: {
+    "addAlloBasic(bytes)": FunctionFragment;
+    "addAlloDT(bytes)": FunctionFragment;
+    "addAlloStat(bytes)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
-    "addStat(uint32,string,int32)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
@@ -44,15 +46,16 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     "remove(uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "setRoom(uint32,uint32)": FunctionFragment;
     "setUnburnable(uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addAlloBasic"
+      | "addAlloDT"
+      | "addAlloStat"
       | "addRequirement"
-      | "addStat"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "create"
@@ -65,22 +68,25 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
       | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "setRoom"
       | "setUnburnable"
       | "transferOwnership"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "addRequirement",
+    functionFragment: "addAlloBasic",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addStat",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
+    functionFragment: "addAlloDT",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addAlloStat",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRequirement",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -125,10 +131,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setRoom",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setUnburnable",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -138,10 +140,18 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "addAlloBasic",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "addAlloDT", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addAlloStat",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "addRequirement",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addStat", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
@@ -175,7 +185,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     functionFragment: "requestOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setRoom", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setUnburnable",
     data: BytesLike
@@ -265,15 +274,23 @@ export interface _ItemRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addRequirement(
+    addAlloBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addStat(
-      index: PromiseOrValue<BigNumberish>,
-      type_: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
+    addAlloDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addAlloStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -330,12 +347,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setRoom(
-      index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setUnburnable(
       index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -347,15 +358,23 @@ export interface _ItemRegistrySystem extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  addRequirement(
+  addAlloBasic(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addStat(
-    index: PromiseOrValue<BigNumberish>,
-    type_: PromiseOrValue<string>,
-    value: PromiseOrValue<BigNumberish>,
+  addAlloDT(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addAlloStat(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addRequirement(
+    arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -412,12 +431,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setRoom(
-    index: PromiseOrValue<BigNumberish>,
-    roomIndex: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setUnburnable(
     index: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -429,17 +442,25 @@ export interface _ItemRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addRequirement(
+    addAlloBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addStat(
-      index: PromiseOrValue<BigNumberish>,
-      type_: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
+    addAlloDT(
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
+
+    addAlloStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
@@ -486,12 +507,6 @@ export interface _ItemRegistrySystem extends BaseContract {
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
-    setRoom(
-      index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setUnburnable(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -532,15 +547,23 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
-    addRequirement(
+    addAlloBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addStat(
-      index: PromiseOrValue<BigNumberish>,
-      type_: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
+    addAlloDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addAlloStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -597,12 +620,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setRoom(
-      index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setUnburnable(
       index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -615,15 +632,23 @@ export interface _ItemRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
-    addRequirement(
+    addAlloBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addStat(
-      index: PromiseOrValue<BigNumberish>,
-      type_: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
+    addAlloDT(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addAlloStat(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addRequirement(
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -678,12 +703,6 @@ export interface _ItemRegistrySystem extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRoom(
-      index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setUnburnable(

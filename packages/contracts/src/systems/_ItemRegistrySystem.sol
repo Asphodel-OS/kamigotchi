@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibItem } from "libraries/LibItem.sol";
@@ -80,18 +81,51 @@ contract _ItemRegistrySystem is System {
       );
   }
 
-  function addStat(uint32 index, string memory type_, int32 value) public onlyOwner {
-    uint256 registryID = LibItem.getByIndex(components, index);
-    require(registryID != 0, "ItemReg: item does not exist");
+  function addAlloBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 index,
+      string memory useCase,
+      string memory alloType,
+      uint32 alloIndex,
+      uint256 alloValue
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
-    LibItem.addStat(components, registryID, type_, value);
+    uint256 refID = LibItem.createUseCase(components, index, useCase);
+    uint256 parentID = LibItem.genAlloParentID(refID);
+    return LibAllo.createBasic(components, parentID, alloType, alloIndex, alloValue);
   }
 
-  function setRoom(uint32 index, uint32 roomIndex) public onlyOwner {
-    uint256 registryID = LibItem.getByIndex(components, index);
-    require(registryID != 0, "ItemReg: item does not exist");
+  function addAlloDT(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 index,
+      string memory useCase,
+      uint32[] memory keys,
+      uint256[] memory weights,
+      uint256 value
+    ) = abi.decode(arguments, (uint32, string, uint32[], uint256[], uint256));
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
-    LibItem.setRoom(components, registryID, roomIndex);
+    uint256 refID = LibItem.createUseCase(components, index, useCase);
+    uint256 parentID = LibItem.genAlloParentID(refID);
+    return LibAllo.createDT(components, parentID, keys, weights, value);
+  }
+
+  function addAlloStat(bytes memory arguments) public onlyOwner returns (uint256) {
+    (
+      uint32 index,
+      string memory useCase,
+      string memory statType,
+      int32 base,
+      int32 shift,
+      int32 boost,
+      int32 sync
+    ) = abi.decode(arguments, (uint32, string, string, int32, int32, int32, int32));
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+
+    uint256 refID = LibItem.createUseCase(components, index, useCase);
+    uint256 parentID = LibItem.genAlloParentID(refID);
+    return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
   function setUnburnable(uint32 index) public onlyOwner {

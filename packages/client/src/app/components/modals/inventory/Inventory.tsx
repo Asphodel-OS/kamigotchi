@@ -58,7 +58,7 @@ export function registerInventoryModal() {
           params: [kami.id, item.index],
           description: `Feeding ${item.name} to ${kami.name}`,
           execute: async () => {
-            return api.player.pet.use.food(kami.id, item.index);
+            return api.player.pet.use.item(kami.id, item.index);
           },
         });
       };
@@ -69,7 +69,7 @@ export function registerInventoryModal() {
           params: [kami.id, item.index],
           description: `Reviving ${item.name} to ${kami.name}`,
           execute: async () => {
-            return api.player.pet.use.revive(kami.id, item.index);
+            return api.player.pet.use.item(kami.id, item.index);
           },
         });
       };
@@ -80,7 +80,7 @@ export function registerInventoryModal() {
           params: [kami.id, item.index],
           description: `Allowing ${kami.name} to be renamed`,
           execute: async () => {
-            return api.player.pet.use.renamePotion(kami.id, item.index);
+            return api.player.pet.use.item(kami.id, item.index);
           },
         });
       };
@@ -103,7 +103,7 @@ export function registerInventoryModal() {
           params: [item.index],
           description: `Consuming ${item.name}`,
           execute: async () => {
-            return api.player.account.use.food(item.index);
+            return api.player.account.use.item(item.index, 1);
           },
         });
       };
@@ -114,7 +114,7 @@ export function registerInventoryModal() {
           params: [item.index],
           description: `Consuming ${item.name}`,
           execute: async () => {
-            return api.player.account.use.teleport(item.index);
+            return api.player.account.use.item(item.index, 1);
           },
         });
       };
@@ -129,7 +129,7 @@ export function registerInventoryModal() {
           params: [item.index, amount],
           description: `Opening ${amount} ${item.name}`,
           execute: async () => {
-            return api.player.item.lootbox.commit(item.index, amount);
+            return api.player.account.use.item(item.index, amount);
           },
         });
         await waitForActionCompletion(
