@@ -66,7 +66,7 @@ contract _GoalRegistrySystem is System {
     require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
-    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 parentID = LibGoals.genAlloAnchor(tierID);
     uint256 id = LibAllo.createBasic(components, parentID, type_, index, value);
     return id;
   }
@@ -84,7 +84,7 @@ contract _GoalRegistrySystem is System {
     require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
-    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 parentID = LibGoals.genAlloAnchor(tierID);
     uint256 id = LibAllo.createDT(components, parentID, keys, weights, value);
     return id;
   }
@@ -104,7 +104,7 @@ contract _GoalRegistrySystem is System {
     require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, cutoff);
-    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 parentID = LibGoals.genAlloAnchor(tierID);
     uint256 id = LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
     return id;
   }
@@ -115,7 +115,7 @@ contract _GoalRegistrySystem is System {
     require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
 
     uint256 tierID = LibGoals.createTier(components, goalIndex, name, 0);
-    uint256 parentID = LibGoals.genRwdParentID(tierID);
+    uint256 parentID = LibGoals.genAlloAnchor(tierID);
     uint256 id = LibAllo.createEmpty(components, parentID, "Community");
     return id;
   }

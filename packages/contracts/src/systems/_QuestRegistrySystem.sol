@@ -90,7 +90,7 @@ contract _QuestRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Quest Reward type cannot be empty");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
+    uint256 parentID = LibQuestRegistry.genAlloAnchor(questIndex);
     return LibAllo.createBasic(components, parentID, type_, index, value);
   }
 
@@ -105,7 +105,7 @@ contract _QuestRegistrySystem is System {
     require(questID != 0, "Quest does not exist");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
+    uint256 parentID = LibQuestRegistry.genAlloAnchor(questIndex);
     return LibAllo.createDT(components, parentID, keys, weights, value);
   }
 
@@ -124,7 +124,7 @@ contract _QuestRegistrySystem is System {
     require(questID != 0, "Quest does not exist");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 parentID = LibQuestRegistry.genRwdParentID(questIndex);
+    uint256 parentID = LibQuestRegistry.genAlloAnchor(questIndex);
     return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 

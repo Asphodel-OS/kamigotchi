@@ -24,6 +24,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibReference } from "libraries/utils/LibReference.sol";
 
+import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
@@ -45,11 +46,11 @@ import { LibScore } from "libraries/LibScore.sol";
  *
  * Consumable items are a rough grouping of usable items (linked to a system).
  * they follow this pattern (although does not strictly need to):
- *  - Type: defines item behaviour. expected 1 system per type
+ *  - Type: defines item behaviour. expected 1 system per type (deprecated - for FE)
  *  - For: for kamis/accounts/others
  *
  * Items have different behaviour depending on how they are used. e.g. Burning vs Consuming
- *  - References are used to differenciate between usecases
+ *  - Usecase: References are used to differenciate between usecases (e.g. USE, BURN)
  *  - RefID: hash(ACTION, regID)
  *  - item Requirements and Effects are linked to each use case via a Reference
  *
@@ -88,6 +89,18 @@ library LibItem {
     MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
   }
 
+  /** @notice
+   * a Usecase is a grouping entity that collates item behavior for a given usecase (e.g. USE, BURN)
+   *  Registry Entity <-> Usecase group <-> Item behavior (requirements, effects)
+   */
+  function createUseCase(
+    IUintComp components,
+    uint32 index,
+    string memory useCase
+  ) internal returns (uint256) {
+    return LibReference.create(components, useCase, genRefAnchor(index));
+  }
+
   function addRequirement(
     IWorld world,
     IUintComp components,
@@ -95,15 +108,8 @@ library LibItem {
     string memory useCase,
     Condition memory data
   ) internal returns (uint256 id) {
-    uint256 refID = LibReference.create(components, useCase, genRefParentID(index));
-    id = LibConditional.createFor(world, components, data, genReqParentID(refID));
-  }
-
-  /// @notice adds a stat to an item
-  function addStat(IUintComp components, uint256 id, string memory type_, int32 value) internal {
-    if (type_.eq("XP"))
-      ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, value.toUint256());
-    else LibStat.setFor(components, id, type_, value);
+    uint256 refID = createUseCase(components, index, useCase);
+    id = LibConditional.createFor(world, components, data, genReqAnchor(refID));
   }
 
   /// @notice delete a Registry entry for an item.
@@ -129,12 +135,27 @@ library LibItem {
     uint256[] memory reqs = getAllRequirements(components, index);
     LibConditional.remove(components, reqs);
 
+    uint256[] memory allos = getAllAllos(components, index);
+    LibAllo.remove(components, allos);
+
     uint256[] memory refs = getAllReferences(components, index);
     LibReference.remove(components, refs);
   }
 
   /////////////////
   // INTERACTIONS
+
+  function applyAllos(
+    IWorld world,
+    IUintComp components,
+    uint32 index,
+    string memory useCase,
+    uint256 amt,
+    uint256 targetID
+  ) internal {
+    uint256[] memory allos = getAlloFor(components, index, useCase);
+    LibAllo.distribute(world, components, allos, amt, targetID);
+  }
 
   /// @notice apply an item's stat to a target
   function applyStats(IUintComp components, uint32 itemIndex, uint256 targetID) internal {
@@ -166,6 +187,11 @@ library LibItem {
 
   /////////////////
   // CHECKERS
+
+  /// @dev to prevent potential overflows, somehow
+  function verifyMaxPerUse(IUintComp components, uint256 amt) internal view {
+    if (amt > 100) revert("max 100 item use at once");
+  }
 
   /// @dev requirements looks at conditions outside of the item itself, e.g. kami/account
   function verifyRequirements(
@@ -231,20 +257,38 @@ library LibItem {
     return comp.has(id) ? comp.get(id) : "";
   }
 
+  function getAlloFor(
+    IUintComp components,
+    uint32 index,
+    string memory useCase
+  ) internal view returns (uint256[] memory) {
+    uint256 refID = LibReference.genID(useCase, genRefAnchor(index));
+    return LibAllo.queryFor(components, genAlloParentID(refID));
+  }
+
   function getReqsFor(
     IUintComp components,
     uint32 index,
     string memory useCase
   ) internal view returns (uint256[] memory) {
-    uint256 refID = LibReference.genID(useCase, genRefParentID(index));
-    return LibConditional.queryFor(components, genReqParentID(refID));
+    uint256 refID = LibReference.genID(useCase, genRefAnchor(index));
+    return LibConditional.queryFor(components, genReqAnchor(refID));
   }
 
   function getAllReferences(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibReference.queryByParent(components, genRefParentID(index));
+    return LibReference.queryByParent(components, genRefAnchor(index));
+  }
+
+  function getAllAllos(
+    IUintComp components,
+    uint32 index
+  ) internal view returns (uint256[] memory) {
+    uint256[] memory refs = getAllReferences(components, index);
+    for (uint256 i; i < refs.length; i++) refs[i] = genAlloParentID(refs[i]);
+    return LibAllo.queryFor(components, refs);
   }
 
   function getAllRequirements(
@@ -252,7 +296,7 @@ library LibItem {
     uint32 index
   ) internal view returns (uint256[] memory) {
     uint256[] memory refs = getAllReferences(components, index);
-    for (uint256 i; i < refs.length; i++) refs[i] = genReqParentID(refs[i]);
+    for (uint256 i; i < refs.length; i++) refs[i] = genReqAnchor(refs[i]);
     return LibConditional.queryFor(components, refs);
   }
 
@@ -298,24 +342,25 @@ library LibItem {
     return uint256(keccak256(abi.encodePacked("registry.item", index)));
   }
 
-  function genRefParentID(uint32 index) internal pure returns (uint256) {
+  function genRefAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("item.usecase", index)));
   }
 
-  function genReqParentID(uint256 refID) internal pure returns (uint256) {
+  function genAlloParentID(uint256 refID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("item.allo", refID)));
+  }
+
+  function genReqAnchor(uint256 refID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("item.requirement", refID)));
   }
 
   /////////////////
   // DATA LOGGING
 
-  function logUse(IUintComp components, uint256 accID, uint32 itemIndex, uint256 amt) internal {
-    LibData.inc(components, accID, itemIndex, "ITEM_USE", amt);
-  }
-
-  function logFeed(IUintComp components, uint256 accID, uint256 amt) internal {
-    // TODO: merge score and data entities?
-    LibScore.incFor(components, accID, "FEED", amt);
-    LibData.inc(components, accID, 0, "FEED", amt);
+  function logUse(IUintComp components, uint256 accID, uint32 itemIndex, uint256 amt) public {
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = itemIndex;
+    indices[1] = 0; // tracking an account's total item usage
+    LibData.inc(components, accID, indices, "ITEM_USE", amt);
   }
 }

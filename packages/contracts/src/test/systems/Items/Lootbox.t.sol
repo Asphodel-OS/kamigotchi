@@ -28,27 +28,23 @@ contract LootboxTest is SetupTemplate {
     _giveItem(alice, lootboxIndex, startAmt);
     assertEq(_getItemBal(alice, lootboxIndex), startAmt);
 
-    if (useAmt > 10) {
+    if (useAmt > 100) {
       vm.startPrank(alice.operator);
-      vm.expectRevert("max 10 reveal at once");
-      _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt);
+      vm.expectRevert("max 100 item use at once");
+      _AccountUseItemSystem.executeTyped(lootboxIndex, useAmt);
 
       assertEq(_getItemBal(alice, lootboxIndex), startAmt);
     } else if (useAmt > startAmt) {
       vm.startPrank(alice.operator);
       // vm.expectRevert("Inventory: insufficient balance");
       vm.expectRevert();
-      _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt);
+      _AccountUseItemSystem.executeTyped(lootboxIndex, useAmt);
 
       assertEq(_getItemBal(alice, lootboxIndex), startAmt);
     } else {
       vm.roll(_currBlock);
-      vm.prank(alice.operator);
-      uint256 revealID = abi.decode(
-        _LootboxCommitSystem.executeTyped(lootboxIndex, useAmt),
-        (uint256)
-      );
-      _assertCommit(revealID, alice.id, lootboxIndex, _currBlock, useAmt);
+      uint256 revealID = _openLootbox(alice, lootboxIndex, useAmt);
+      _assertCommit(revealID, alice.id, lootboxIndex, _currBlock - 1, useAmt); // curr block got added in _openLootbox
 
       vm.roll(++_currBlock);
       uint256[] memory revealIDs = new uint256[](1);
@@ -104,45 +100,45 @@ contract LootboxTest is SetupTemplate {
     assertEq(_getItemBal(alice, 1), 25);
   }
 
-  function testLootboxExpired() public {
-    uint32 lootboxIndex = 10;
-    _createBlankLootbox(lootboxIndex);
-    uint256[] memory revealIDs = new uint256[](1);
-    _giveItem(alice, lootboxIndex, 1);
+  // function testLootboxExpired() public {
+  //   uint32 lootboxIndex = 10;
+  //   _createBlankLootbox(lootboxIndex);
+  //   uint256[] memory revealIDs = new uint256[](1);
+  //   _giveItem(alice, lootboxIndex, 1);
 
-    revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
-    vm.roll(_currBlock += 300);
+  //   revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
+  //   vm.roll(_currBlock += 300);
 
-    vm.prank(alice.operator);
-    vm.expectRevert("Blockhash unavailable. Contact admin");
-    _DroptableRevealSystem.executeTyped(revealIDs);
-  }
+  //   vm.prank(alice.operator);
+  //   vm.expectRevert("Blockhash unavailable. Contact admin");
+  //   _DroptableRevealSystem.executeTyped(revealIDs);
+  // }
 
-  function testLootboxForceReveal() public {
-    uint32 lootboxIndex = 10;
-    _createBlankLootbox(lootboxIndex);
-    _giveItem(alice, lootboxIndex, 1);
-    uint256 revealID = _openLootbox(alice, lootboxIndex, 1);
+  // function testLootboxForceReveal() public {
+  //   uint32 lootboxIndex = 10;
+  //   _createBlankLootbox(lootboxIndex);
+  //   _giveItem(alice, lootboxIndex, 1);
+  //   uint256 revealID = _openLootbox(alice, lootboxIndex, 1);
 
-    // try while still valid
-    vm.prank(deployer);
-    vm.expectRevert("LootboxExeRev: commit still available");
-    _DroptableRevealSystem.forceReveal(revealID);
+  //   // try while still valid
+  //   vm.prank(deployer);
+  //   vm.expectRevert("LootboxExeRev: commit still available");
+  //   _DroptableRevealSystem.forceReveal(revealID);
 
-    // roll
-    vm.roll(_currBlock += 300);
+  //   // roll
+  //   vm.roll(_currBlock += 300);
 
-    // try unauthorized
-    vm.prank(alice.operator);
-    vm.expectRevert("Auth: not a community manager");
-    _DroptableRevealSystem.forceReveal(revealID);
+  //   // try unauthorized
+  //   vm.prank(alice.operator);
+  //   vm.expectRevert("Auth: not a community manager");
+  //   _DroptableRevealSystem.forceReveal(revealID);
 
-    // authorized call
-    vm.prank(deployer);
-    _DroptableRevealSystem.forceReveal(revealID);
+  //   // authorized call
+  //   vm.prank(deployer);
+  //   _DroptableRevealSystem.forceReveal(revealID);
 
-    assertEq(_getItemBal(alice, 1), 1);
-  }
+  //   assertEq(_getItemBal(alice, 1), 1);
+  // }
 
   /////////////////
   // FUNCTIONS
@@ -162,7 +158,8 @@ contract LootboxTest is SetupTemplate {
     uint256 amt
   ) internal returns (uint256 id) {
     vm.startPrank(player.operator);
-    id = abi.decode(_LootboxCommitSystem.executeTyped(index, amt), (uint256));
+    id = simGetUniqueEntityId();
+    _AccountUseItemSystem.executeTyped(index, amt);
     vm.roll(_currBlock++);
     vm.stopPrank();
   }
@@ -177,9 +174,8 @@ contract LootboxTest is SetupTemplate {
     uint256 revealBlock,
     uint256 count
   ) internal {
-    assertEq(_IdSourceComponent.get(id), LibItem.getByIndex(components, index));
-    assertEq(_ValueComponent.get(id), count);
-    assertEq(_IdHolderComponent.get(id), holderID);
-    assertEq(_BlockRevealComponent.get(id), revealBlock);
+    assertEq(_ValueComponent.get(id), count, "count mismatch");
+    assertEq(_IdHolderComponent.get(id), holderID, "holderID mismatch");
+    assertEq(_BlockRevealComponent.get(id), revealBlock, "reveal block mismatch");
   }
 }

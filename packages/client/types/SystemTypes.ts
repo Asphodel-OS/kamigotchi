@@ -22,8 +22,7 @@ import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem"
 import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
-import { AccountUseFoodSystem } from "./ethers-contracts/AccountUseFoodSystem";
-import { AccountUseTeleportSystem } from "./ethers-contracts/AccountUseTeleportSystem";
+import { AccountUseItemSystem } from "./ethers-contracts/AccountUseItemSystem";
 import { CraftSystem } from "./ethers-contracts/CraftSystem";
 import { DroptableRevealSystem } from "./ethers-contracts/DroptableRevealSystem";
 import { EchoKamisSystem } from "./ethers-contracts/EchoKamisSystem";
@@ -48,9 +47,7 @@ import { KamiGachaRerollSystem } from "./ethers-contracts/KamiGachaRerollSystem"
 import { KamiGachaRevealSystem } from "./ethers-contracts/KamiGachaRevealSystem";
 import { KamiLevelSystem } from "./ethers-contracts/KamiLevelSystem";
 import { KamiNameSystem } from "./ethers-contracts/KamiNameSystem";
-import { KamiUseFoodSystem } from "./ethers-contracts/KamiUseFoodSystem";
-import { KamiUseRenamePotionSystem } from "./ethers-contracts/KamiUseRenamePotionSystem";
-import { KamiUseReviveSystem } from "./ethers-contracts/KamiUseReviveSystem";
+import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
 import { KamiUseSkillResetSystem } from "./ethers-contracts/KamiUseSkillResetSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
@@ -91,8 +88,7 @@ export type SystemTypes = {
   "system.account.set.farcaster": AccountSetFarcasterDataSystem;
   "system.account.set.name": AccountSetNameSystem;
   "system.account.set.operator": AccountSetOperatorSystem;
-  "system.account.use.food": AccountUseFoodSystem;
-  "system.account.use.teleport": AccountUseTeleportSystem;
+  "system.account.use.item": AccountUseItemSystem;
   "system.craft": CraftSystem;
   "system.droptable.item.reveal": DroptableRevealSystem;
   "system.echo.kamis": EchoKamisSystem;
@@ -117,9 +113,7 @@ export type SystemTypes = {
   "system.kami.gacha.reveal": KamiGachaRevealSystem;
   "system.kami.level": KamiLevelSystem;
   "system.kami.name": KamiNameSystem;
-  "system.kami.use.food": KamiUseFoodSystem;
-  "system.kami.use.renamePotion": KamiUseRenamePotionSystem;
-  "system.kami.use.revive": KamiUseReviveSystem;
+  "system.kami.use.item": KamiUseItemSystem;
   "system.kami.use.skill.reset": KamiUseSkillResetSystem;
   "system.listing.buy": ListingBuySystem;
   "system.listing.sell": ListingSellSystem;

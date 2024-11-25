@@ -101,7 +101,7 @@ library LibSkillRegistry {
     uint32 skillIndex,
     Condition memory data
   ) internal returns (uint256) {
-    return LibConditional.createFor(world, components, data, genReqParentID(skillIndex));
+    return LibConditional.createFor(world, components, data, genReqAnchor(skillIndex));
   }
 
   function remove(IUintComp components, uint32 index) internal {
@@ -177,7 +177,7 @@ library LibSkillRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqParentID(index));
+    return LibConditional.queryFor(components, genReqAnchor(index));
   }
 
   function queryBonuses(
@@ -199,7 +199,7 @@ library LibSkillRegistry {
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
   }
 
-  function genReqParentID(uint32 index) internal pure returns (uint256) {
+  function genReqAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.skill.requirement", index)));
   }
 

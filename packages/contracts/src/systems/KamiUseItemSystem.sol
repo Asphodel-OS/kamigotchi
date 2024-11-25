@@ -8,34 +8,40 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
 
-uint256 constant ID = uint256(keccak256("system.kami.use.revive"));
+uint256 constant ID = uint256(keccak256("system.kami.use.item"));
 
-// eat one revive
-contract KamiUseReviveSystem is System {
+// eat one snack
+contract KamiUseItemSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 kamiID, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
+    // pet checks
+    LibKami.verifyAccount(components, kamiID, accID);
+    LibKami.verifyRoom(components, kamiID, accID);
+    LibKami.verifyCooldown(components, kamiID);
+
     // item checks
-    LibItem.verifyType(components, itemIndex, "REVIVE");
     LibItem.checkForPet(components, itemIndex);
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
-    // pet checks
-    LibKami.verifyAccount(components, kamiID, accID);
-
     // use item
+    LibKami.sync(components, kamiID);
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
-    LibKami.revive(components, kamiID);
-    LibItem.applyStats(components, itemIndex, kamiID);
-    LibKami.setLastTs(components, kamiID, block.timestamp); // explicitly, as we don't sync health on this EP
+    LibItem.applyAllos(world, components, itemIndex, "USE", 1, kamiID);
+
+    // reset the pet's intensity
+    if (LibKami.isHarvesting(components, kamiID)) {
+      uint256 harvestID = LibKami.getHarvest(components, kamiID);
+      LibHarvest.resetIntensity(components, harvestID);
+    }
 
     // standard logging and tracking
-    LibKami.logRevive(components, kamiID);
     LibItem.logUse(components, accID, itemIndex, 1);
     LibAccount.updateLastTs(components, accID);
 

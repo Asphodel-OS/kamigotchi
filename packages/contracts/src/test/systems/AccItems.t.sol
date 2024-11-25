@@ -31,12 +31,12 @@ contract AccItemsTest is SetupTemplate {
     __ItemRegistrySystem.createConsumable(
       abi.encode(itemIndex, "ACCOUNT", "name", "description", "FOOD", "media")
     );
-    __ItemRegistrySystem.addStat(itemIndex, "STAMINA", 3);
+    __ItemRegistrySystem.addAlloStat(abi.encode(itemIndex, "USE", "STAMINA", 0, 0, 0, 3));
     vm.stopPrank();
     _giveItem(alice, itemIndex, 1);
 
     // testing item checks
-    assertTypeAndFor(_AccountUseFoodSystem, petFoodIndex);
+    assertTypeAndFor(_AccountUseItemSystem, petFoodIndex);
 
     // setting stamina
     vm.startPrank(deployer);
@@ -48,7 +48,7 @@ contract AccItemsTest is SetupTemplate {
 
     // using item
     vm.prank(alice.operator);
-    _AccountUseFoodSystem.executeTyped(itemIndex);
+    _AccountUseItemSystem.executeTyped(itemIndex, 1);
     assertEq(_StaminaComponent.get(alice.id).sync, start + 3);
   }
 
@@ -59,16 +59,16 @@ contract AccItemsTest is SetupTemplate {
     __ItemRegistrySystem.createConsumable(
       abi.encode(itemIndex, "ACCOUNT", "name", "description", "TELEPORT", "media")
     );
-    __ItemRegistrySystem.setRoom(itemIndex, room);
+    __ItemRegistrySystem.addAlloBasic(abi.encode(itemIndex, "USE", "ROOM", room, 0));
     vm.stopPrank();
     _giveItem(alice, itemIndex, 1);
 
     // testing item checks
-    assertTypeAndFor(_AccountUseTeleportSystem, petTeleportIndex);
+    assertTypeAndFor(_AccountUseItemSystem, petTeleportIndex);
 
     // using item
     vm.prank(alice.operator);
-    _AccountUseTeleportSystem.executeTyped(itemIndex);
+    _AccountUseItemSystem.executeTyped(itemIndex, 1);
     assertEq(_IndexRoomComponent.get(alice.id), room);
   }
 
@@ -78,10 +78,10 @@ contract AccItemsTest is SetupTemplate {
   function assertTypeAndFor(ISystem system, uint32 wrongItem) public {
     vm.prank(alice.operator);
     vm.expectRevert("that's not for accounts");
-    system.execute(abi.encode(wrongItem));
+    system.execute(abi.encode(wrongItem, 1));
 
     vm.prank(alice.operator);
     vm.expectRevert(); // could be different type errors
-    system.execute(abi.encode(wrongTypeItemIndex));
+    system.execute(abi.encode(wrongTypeItemIndex, 1));
   }
 }

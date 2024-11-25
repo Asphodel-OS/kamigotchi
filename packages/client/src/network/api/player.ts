@@ -29,17 +29,8 @@ export function createPlayerAPI(systems: any) {
   }
 
   // feed a pet using a Pet Item
-  function useFoodPet(kamiID: BigNumberish, itemIndex: number) {
-    return systems['system.kami.use.food'].executeTyped(kamiID, itemIndex);
-  }
-
-  // revive a pet using a Revive Item
-  function useRevivePet(kamiID: BigNumberish, reviveIndex: number) {
-    return systems['system.kami.use.revive'].executeTyped(kamiID, reviveIndex);
-  }
-
-  function useRenamePotionPet(kamiID: BigNumberish, itemIndex: number) {
-    return systems['system.kami.use.renamePotion'].executeTyped(kamiID, itemIndex);
+  function useItemPet(kamiID: BigNumberish, itemIndex: number) {
+    return systems['system.kami.use.item'].executeTyped(kamiID, itemIndex);
   }
 
   function useSkillResetPet(kamiID: BigNumberish, itemIndex: number) {
@@ -71,12 +62,8 @@ export function createPlayerAPI(systems: any) {
     });
   }
 
-  function useFoodAccount(itemIndex: number) {
-    return systems['system.account.use.food'].executeTyped(itemIndex);
-  }
-
-  function useTeleportAccount(itemIndex: number) {
-    return systems['system.account.use.teleport'].executeTyped(itemIndex);
+  function useItemAccount(itemIndex: number, amt: number) {
+    return systems['system.account.use.item'].executeTyped(itemIndex, amt);
   }
 
   function moveAccount(roomIndex: number) {
@@ -191,16 +178,6 @@ export function createPlayerAPI(systems: any) {
   // @param amt              amount to sell
   function sellToListing(merchantIndex: number, itemIndices: number[], amts: number[]) {
     return systems['system.listing.sell'].executeTyped(merchantIndex, itemIndices, amts);
-  }
-
-  /////////////////
-  //   LOOTBOX
-
-  // @dev starts a lootbox reveal (commit)
-  // @param index   item index of lootbox
-  // @param amount  amount of lootboxes to open
-  function lootboxCommit(index: number, amount: number) {
-    return systems['system.lootbox.commit'].executeTyped(index, amount);
   }
 
   /////////////////
@@ -346,15 +323,9 @@ export function createPlayerAPI(systems: any) {
       level: levelPet,
       name: namePet,
       skill: { upgrade: upgradePetSkill },
-      use: {
-        food: useFoodPet,
-        renamePotion: useRenamePotionPet,
-        revive: useRevivePet,
-        skillReset: useSkillResetPet,
-      },
+      use: { item: useItemPet, skillReset: useSkillResetPet },
     },
     account: {
-      consume: useFoodAccount,
       fund: fundOperator,
       move: moveAccount,
       register: registerAccount,
@@ -366,8 +337,7 @@ export function createPlayerAPI(systems: any) {
       },
       skill: { upgrade: upgradeAccountSkill },
       use: {
-        food: useFoodAccount,
-        teleport: useTeleportAccount,
+        item: useItemAccount,
       },
     },
     crafting: { craft },
@@ -384,9 +354,6 @@ export function createPlayerAPI(systems: any) {
     },
     item: {
       burn: burnItems,
-      lootbox: {
-        commit: lootboxCommit,
-      },
     },
     goal: {
       contribute: goalContribute,

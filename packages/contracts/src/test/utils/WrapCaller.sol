@@ -16,11 +16,24 @@ contract WrapCaller {
     components = _components;
   }
 
-  function accIncBalOf(uint256 accID, string memory _type, uint32 index, uint256 amount) external {
-    LibSetter.inc(world, components, _type, index, amount, accID);
+  function alloDistribute(uint256[] memory ids, uint256 multiplier, uint256 targetID) public {
+    LibAllo.distribute(world, components, ids, multiplier, targetID);
   }
 
   function kamiSync(uint256 id) public {
     LibKami.sync(components, id);
+  }
+
+  function setterUpdate(
+    string memory _type,
+    uint32 index,
+    uint256 amount,
+    uint256 targetID
+  ) public {
+    LibSetter.update(world, components, _type, index, amount, targetID);
+  }
+
+  function setterDec(string memory _type, uint32 index, uint256 amount, uint256 targetID) public {
+    LibSetter.dec(components, _type, index, amount, targetID);
   }
 }

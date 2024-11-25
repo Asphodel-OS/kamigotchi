@@ -116,6 +116,7 @@ library LibAllo {
   }
 
   function remove(IUintComp components, uint256[] memory ids) internal {
+    LibEntityType.remove(components, ids);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
@@ -180,7 +181,7 @@ library LibAllo {
     uint256 mult,
     uint256 targetID // expected to be an account
   ) internal {
-    LibSetter.inc(world, components, type_, index, amount * mult, targetID);
+    LibSetter.update(world, components, type_, index, amount * mult, targetID);
   }
 
   /// @notice distributes droptable rewards by creating a commit

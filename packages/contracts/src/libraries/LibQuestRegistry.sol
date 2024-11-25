@@ -63,7 +63,7 @@ library LibQuestRegistry {
     string memory name, // this is a crutch to help FE
     Condition memory data
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, data, genObjParentID(questIndex));
+    id = LibConditional.createFor(world, components, data, genObjAnchor(questIndex));
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
@@ -73,7 +73,7 @@ library LibQuestRegistry {
     uint32 questIndex,
     Condition memory data
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, data, genReqParentID(questIndex));
+    id = LibConditional.createFor(world, components, data, genReqAnchor(questIndex));
   }
 
   function addAssigner(
@@ -144,7 +144,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genObjParentID(index));
+    return LibConditional.queryFor(components, genObjAnchor(index));
   }
 
   // get requirements by Quest index
@@ -152,7 +152,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqParentID(index));
+    return LibConditional.queryFor(components, genReqAnchor(index));
   }
 
   // get reward by Quest index
@@ -160,7 +160,7 @@ library LibQuestRegistry {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return LibAllo.queryFor(components, genRwdParentID(index));
+    return LibAllo.queryFor(components, genAlloAnchor(index));
   }
 
   /////////////////
@@ -172,17 +172,17 @@ library LibQuestRegistry {
   }
 
   /// @notice Retrieve the ID of a requirement array
-  function genReqParentID(uint32 index) internal pure returns (uint256) {
+  function genReqAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.requirement", index)));
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRwdParentID(uint32 index) internal pure returns (uint256) {
+  function genAlloAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.reward", index)));
   }
 
   /// @notice Retrieve the ID of a objective array
-  function genObjParentID(uint32 index) internal pure returns (uint256) {
+  function genObjAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.objective", index)));
   }
 }

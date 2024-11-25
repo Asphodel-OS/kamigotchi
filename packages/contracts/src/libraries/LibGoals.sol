@@ -21,9 +21,9 @@ import { LibReference } from "libraries/utils/LibReference.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibAllo } from "libraries/LibAllo.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /**
@@ -101,7 +101,7 @@ library LibGoals {
     uint32 goalIndex,
     Condition memory requirement
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, requirement, genReqParentID(goalIndex));
+    id = LibConditional.createFor(world, components, requirement, genReqAnchor(goalIndex));
   }
 
   function remove(IUintComp components, uint32 index) internal {
@@ -308,7 +308,7 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqParentID(goalIndex));
+    return LibConditional.queryFor(components, genReqAnchor(goalIndex));
   }
 
   function getRewards(
@@ -316,7 +316,7 @@ library LibGoals {
     uint256[] memory tierIDs
   ) internal view returns (uint256[] memory) {
     uint256[] memory parentIDs = new uint256[](tierIDs.length);
-    for (uint256 i; i < tierIDs.length; i++) parentIDs[i] = genRwdParentID(tierIDs[i]);
+    for (uint256 i; i < tierIDs.length; i++) parentIDs[i] = genAlloAnchor(tierIDs[i]);
     return LibAllo.queryFor(components, parentIDs);
   }
 
@@ -369,12 +369,12 @@ library LibGoals {
   }
 
   /// @notice Retrieve the ID of a requirement array
-  function genReqParentID(uint32 index) internal pure returns (uint256) {
+  function genReqAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.requirement", index)));
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRwdParentID(uint256 tierID) internal pure returns (uint256) {
+  function genAlloAnchor(uint256 tierID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.reward", tierID)));
   }
 }

@@ -28,13 +28,13 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface KamiUseReviveSystemInterface extends utils.Interface {
+export interface AccountUseItemSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint32)": FunctionFragment;
+    "executeTyped(uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -176,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface KamiUseReviveSystem extends BaseContract {
+export interface AccountUseItemSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: KamiUseReviveSystemInterface;
+  interface: AccountUseItemSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -222,8 +222,8 @@ export interface KamiUseReviveSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -267,8 +267,8 @@ export interface KamiUseReviveSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    kamiID: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -308,8 +308,8 @@ export interface KamiUseReviveSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -378,8 +378,8 @@ export interface KamiUseReviveSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -424,8 +424,8 @@ export interface KamiUseReviveSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

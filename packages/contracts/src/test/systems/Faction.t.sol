@@ -16,7 +16,7 @@ contract FactionTest is SetupTemplate {
     _createFaction(1, "test", "test");
 
     vm.prank(deployer);
-    ExternalCaller.accIncBalOf(alice.id, "REPUTATION", 1, 111);
+    ExternalCaller.setterUpdate("REPUTATION", 1, 111, alice.id);
     assertEq(LibFactions.getRep(components, alice.id, 1), 111);
   }
 }

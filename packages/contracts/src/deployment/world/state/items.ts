@@ -7,7 +7,7 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
 
   const ignoreTypes = ['OTHER'];
   const baseTypes = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT'];
-  const consumableTypes = ['FOOD', 'REVIVE', 'RENAME_POTION', 'TELEPORT', 'SKILL_RESET'];
+  const consumableTypes = ['FOOD', 'LOOTBOX', 'REVIVE', 'RENAME_POTION', 'TELEPORT', 'SKILL_RESET'];
   for (let i = 0; i < itemsCSV.length; i++) {
     const item = itemsCSV[i];
     if (
@@ -25,7 +25,6 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
 
       if (baseTypes.includes(type)) await setBase(api, item);
       else if (consumableTypes.includes(type)) await setConsumable(api, item);
-      else if (type === 'LOOTBOX') await setLootbox(api, item, droptablesCSV);
       else console.error('Item type not found: ' + type);
     } catch {
       console.error('Could not create item', item['Index']);
@@ -77,28 +76,42 @@ async function setConsumable(api: AdminAPI, item: any) {
     getItemImage(item['Name'])
   );
   await addRequirement(api, item);
-  await addStat(api, item);
-  await setRoom(api, item);
+  await addAllo(api, item);
 }
 
-async function setLootbox(api: AdminAPI, item: any, droptables: any) {
-  await api.registry.item.create.lootbox(
-    Number(item['Index']),
-    item['Name'].trim(),
-    item['Description'],
-    [11201, 11302, 11202, 11201, 11204, 111, 103, 201],
-    [9, 9, 8, 7, 6, 3, 3, 2],
-    getItemImage(item['Name'])
-  );
-  return; // using placeholder lootboxes for now. similar challenges in representation to rooms
-  await api.registry.item.create.lootbox(
-    Number(item['Index']),
-    item['Name'].trim(),
-    item['Description'],
-    droptables[Number(item['Droptable']) - 1]['Key'],
-    droptables[Number(item['Droptable']) - 1]['Tier'],
-    getItemImage(item['Name'])
-  );
+async function addAllo(api: AdminAPI, item: any) {
+  const allos = getAlloInfo(item);
+  for (const allo of allos) {
+    if (allo.basic) {
+      await api.registry.item.add.allo.basic(
+        Number(item['Index']),
+        'USE',
+        allo.type,
+        allo.basic.index,
+        allo.basic.value
+      );
+    }
+    if (allo.droptable) {
+      await api.registry.item.add.allo.droptable(
+        Number(item['Index']),
+        'USE',
+        allo.droptable.key,
+        allo.droptable.weights,
+        allo.droptable.value
+      );
+    }
+    if (allo.stat) {
+      await api.registry.item.add.allo.stat(
+        Number(item['Index']),
+        'USE',
+        allo.type,
+        allo.stat.base,
+        allo.stat.shift,
+        allo.stat.boost,
+        allo.stat.sync
+      );
+    }
+  }
 }
 
 async function addRequirement(api: AdminAPI, item: any) {
@@ -116,33 +129,84 @@ async function addRequirement(api: AdminAPI, item: any) {
   );
 }
 
-async function addStat(api: AdminAPI, item: any) {
-  const index = Number(item['Index']);
-
-  if (Number(item['XP']) > 0) await api.registry.item.add.stat(index, 'XP', Number(item['XP']));
-  if (Number(item['Health']) > 0) {
-    await api.registry.item.add.stat(index, 'HEALTH', Number(item['Health']));
-  }
-  if (Number(item['MaxHealth']) > 0)
-    await api.registry.item.add.stat(index, 'MAXHEALTH', Number(item['MaxHealth']));
-  if (Number(item['Power']) > 0)
-    await api.registry.item.add.stat(index, 'POWER', Number(item['Power']));
-  if (Number(item['Violence']) > 0)
-    await api.registry.item.add.stat(index, 'VIOLENCE', Number(item['Violence']));
-  if (Number(item['Harmony']) > 0)
-    await api.registry.item.add.stat(index, 'HARMONY', Number(item['Harmony']));
-  if (Number(item['Stamina']) > 0)
-    await api.registry.item.add.stat(index, 'STAMINA', Number(item['Stamina']));
-}
-
-async function setRoom(api: AdminAPI, item: any) {
-  const index = Number(item['Index']);
-
-  if (Number(item['Room']) > 0) await api.registry.item.add.room(index, Number(item['Room']));
-}
-
 /////////////////
 // UTILS
+
+type Basic = {
+  index: number;
+  value: number;
+};
+
+type Droptable = {
+  key: number[];
+  weights: number[];
+  value: number;
+};
+
+type Stat = {
+  base: number;
+  shift: number;
+  boost: number;
+  sync: number;
+};
+
+type AlloData = {
+  type: string;
+  basic?: Basic;
+  droptable?: Droptable;
+  stat?: Stat;
+};
+
+function getAlloInfo(item: any): AlloData[] {
+  const allos: AlloData[] = [];
+
+  if (item['Type'].toUpperCase() === 'REVIVE')
+    allos.push({ type: 'STATE', basic: { index: parseKamiStateToIndex('RESTING'), value: 0 } });
+  if (item['Room'] > 0)
+    allos.push({ type: 'ROOM', basic: { index: Number(item['Room']), value: 0 } });
+  if (item['XP'] > 0) allos.push({ type: 'XP', basic: { index: 0, value: Number(item['XP']) } });
+  if (item['Health'] > 0) allos.push(parseStat('HEALTH', Number(item['Health'])));
+  if (item['MaxHealth'] > 0) allos.push(parseStat('MAXHEALTH', Number(item['MaxHealth'])));
+  if (item['Power'] > 0) allos.push(parseStat('POWER', Number(item['Power'])));
+  if (item['Violence'] > 0) allos.push(parseStat('VIOLENCE', Number(item['Violence'])));
+  if (item['Harmony'] > 0) allos.push(parseStat('HARMONY', Number(item['Harmony'])));
+  if (item['Stamina'] > 0) allos.push(parseStat('STAMINA', Number(item['Stamina'])));
+  if (item['UseFlags'] !== '') allos.push(parseFlag(item['UseFlags'].toUpperCase()));
+  if (item['DTIndices'] !== '')
+    allos.push({ type: 'ITEM_DROPTABLE', droptable: parseDroptable(item) });
+
+  return allos;
+}
+
+function parseDroptable(item: any): Droptable {
+  return {
+    key: stringToNumberArray(item['DTIndices']),
+    weights: stringToNumberArray(item['DTWeights']),
+    value: 1,
+  };
+}
+
+function parseFlag(flag: string): AlloData {
+  let value = 1;
+  if (flag.includes('_FALSE')) {
+    value = 0;
+    flag = flag.replace('_FALSE', '');
+  }
+  return { type: `FLAG_${flag.toUpperCase()}`, basic: { index: 0, value: value } };
+}
+
+function parseStat(statType: string, value: number): AlloData {
+  let stat: Stat = { base: 0, shift: 0, boost: 0, sync: 0 };
+  if (statType === 'HEALTH') stat = { base: 0, shift: 0, boost: 0, sync: value } as Stat;
+  else if (statType === 'MAXHEALTH') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
+  else if (statType === 'POWER') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
+  else if (statType === 'VIOLENCE') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
+  else if (statType === 'HARMONY') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
+  else if (statType === 'STAMINA') stat = { base: 0, shift: 0, boost: 0, sync: value } as Stat;
+
+  if (statType === 'MAXHEALTH') statType = 'HEALTH';
+  return { type: statType, stat: stat };
+}
 
 function itemTypeToRequirement(type: string): [string, string, number, number] {
   if (type === 'FOOD') return ['KAMI_CAN_EAT', 'BOOL_IS', 0, 0];
@@ -151,4 +215,9 @@ function itemTypeToRequirement(type: string): [string, string, number, number] {
     return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
   else if (type === 'SKILL_RESET') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
   else return ['', '', 0, 0];
+}
+
+function stringToNumberArray(rawStr: string): number[] {
+  const str = rawStr.slice(1, -1);
+  return str.split(',').map((s) => Number(s.trim()));
 }

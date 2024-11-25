@@ -298,6 +298,10 @@ library LibKami {
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
   }
 
+  function setStateFromIndex(IUintComp components, uint32 index, uint256 id) internal {
+    StateComponent(getAddrByID(components, StateCompID)).set(id, indexToState(index));
+  }
+
   /////////////////
   // GETTERS
 
@@ -365,7 +369,7 @@ library LibKami {
     return StateComponent(getAddrByID(components, StateCompID)).get(id);
   }
 
-  function getStateIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getStateIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return stateToIndex(getState(components, id));
   }
 
@@ -427,12 +431,19 @@ library LibKami {
     return uint256(keccak256(abi.encodePacked("kami.id", kamiIndex)));
   }
 
-  function stateToIndex(string memory state) internal pure returns (uint256) {
-    KamiState kamiState;
-    if (state.eq("RESTING")) uint32(KamiState.RESTING);
-    else if (state.eq("HARVESTING")) uint32(KamiState.HARVESTING);
-    else if (state.eq("DEAD")) uint32(KamiState.DEAD);
-    else if (state.eq("721_EXTERNAL")) uint32(KamiState.DEAD);
+  function stateToIndex(string memory state) internal pure returns (uint32) {
+    if (state.eq("RESTING")) return uint32(KamiState.RESTING);
+    else if (state.eq("HARVESTING")) return uint32(KamiState.HARVESTING);
+    else if (state.eq("DEAD")) return uint32(KamiState.DEAD);
+    else if (state.eq("721_EXTERNAL")) return uint32(KamiState.EXTERNAL_721);
+    else revert("LibKami: invalid state");
+  }
+
+  function indexToState(uint32 index) internal pure returns (string memory) {
+    if (index == uint32(KamiState.RESTING)) return "RESTING";
+    else if (index == uint32(KamiState.HARVESTING)) return "HARVESTING";
+    else if (index == uint32(KamiState.DEAD)) return "DEAD";
+    else if (index == uint32(KamiState.EXTERNAL_721)) return "721_EXTERNAL";
     else revert("LibKami: invalid state");
   }
 }

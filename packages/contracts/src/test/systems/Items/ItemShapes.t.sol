@@ -36,8 +36,8 @@ contract ItemShapeTest is SetupTemplate {
 
     // check reference existence
     assertEq(LibItem.getAllReferences(components, index).length, 2, "reference count mismatch");
-    assertTrue(_IDParentComponent.has(LibReference.genID("USE", LibItem.genRefParentID(index))));
-    assertTrue(_IDParentComponent.has(LibReference.genID("BURN", LibItem.genRefParentID(index))));
+    assertTrue(_IDParentComponent.has(LibReference.genID("USE", LibItem.genRefAnchor(index))));
+    assertTrue(_IDParentComponent.has(LibReference.genID("BURN", LibItem.genRefAnchor(index))));
 
     // check requirement existence
     assertEq(LibItem.getAllRequirements(components, index).length, 3, "total req count mismatch");

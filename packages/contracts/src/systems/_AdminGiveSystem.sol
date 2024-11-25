@@ -25,7 +25,7 @@ contract _AdminGiveSystem is System, AuthRoles {
       (address, string, uint32, uint256)
     );
     uint256 accID = uint256(uint160(owner));
-    LibSetter.inc(world, components, _type, index, amount, accID);
+    LibSetter.update(world, components, _type, index, amount, accID);
 
     return "";
   }

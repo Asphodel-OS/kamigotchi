@@ -76,7 +76,7 @@ contract _NodeRegistrySystem is System {
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 parentID = LibScavenge.genRwdParentID(scavID);
+    uint256 parentID = LibScavenge.genAlloAnchor(scavID);
     return LibAllo.createBasic(components, parentID, rwdType, rwdIndex, value);
   }
 
@@ -90,7 +90,7 @@ contract _NodeRegistrySystem is System {
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 parentID = LibScavenge.genRwdParentID(scavID);
+    uint256 parentID = LibScavenge.genAlloAnchor(scavID);
     return LibAllo.createDT(components, parentID, keys, weights, value);
   }
 
@@ -108,7 +108,7 @@ contract _NodeRegistrySystem is System {
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 parentID = LibScavenge.genRwdParentID(scavID);
+    uint256 parentID = LibScavenge.genAlloAnchor(scavID);
     return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 

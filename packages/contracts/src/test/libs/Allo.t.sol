@@ -20,9 +20,9 @@ contract AlloTest is SetupTemplate {
   }
 
   function testRewardShapeBasic() public {
-    uint256 rewardID = _createReward(parentID1, "ITEM", 1, 1);
+    uint256 rewardID = _createAllo(parentID1, "ITEM", 1, 1);
     assertEq(LibAllo.genID(parentID1, "ITEM", 1), rewardID);
-    uint256 rewardID2 = _createReward(parentID1, "ITEM", 2, 2);
+    uint256 rewardID2 = _createAllo(parentID1, "ITEM", 2, 2);
     assertEq(LibAllo.genID(parentID1, "ITEM", 2), rewardID2);
 
     // test remove individual (expected to be removed all at once)
@@ -31,7 +31,7 @@ contract AlloTest is SetupTemplate {
     vm.stopPrank();
 
     // test update
-    uint256 newRewardID = _createReward(parentID1, "ITEM", 1, 2);
+    uint256 newRewardID = _createAllo(parentID1, "ITEM", 1, 2);
     assertEq(newRewardID, rewardID);
     assertEq(_ValueComponent.get(rewardID), 2);
   }
@@ -41,23 +41,23 @@ contract AlloTest is SetupTemplate {
     keys[0] = 1;
     uint256[] memory weights = new uint256[](1);
     weights[0] = 1;
-    uint256 rewardID = _createReward(parentID1, keys, weights, 1);
+    uint256 rewardID = _createAllo(parentID1, keys, weights, 1);
     assertEq(LibAllo.genID(parentID1, "ITEM_DROPTABLE", 1), rewardID);
-    uint256 rewardID2 = _createReward(parentID1, keys, weights, 2);
+    uint256 rewardID2 = _createAllo(parentID1, keys, weights, 2);
     assertEq(LibAllo.genID(parentID1, "ITEM_DROPTABLE", 2), rewardID2);
-    uint256 rewardID3 = _createReward(parentID1, keys, weights, 3);
+    uint256 rewardID3 = _createAllo(parentID1, keys, weights, 3);
     assertEq(LibAllo.genID(parentID1, "ITEM_DROPTABLE", 3), rewardID3);
 
     // no test remove individually - expected to remove all at once
   }
 
   function testRewardShapeStat() public {
-    uint256 healthID = _createRewardStat(parentID1, "HEALTH", Stat(1, 0, 0, 0));
-    uint256 harmonyID = _createRewardStat(parentID1, "HARMONY", Stat(1, 0, 0, 0));
-    uint256 powerID = _createRewardStat(parentID1, "POWER", Stat(1, 0, 0, 0));
-    uint256 slotsID = _createRewardStat(parentID1, "SLOTS", Stat(1, 0, 0, 0));
-    uint256 staminaID = _createRewardStat(parentID1, "STAMINA", Stat(1, 0, 0, 0));
-    uint256 violenceID = _createRewardStat(parentID1, "VIOLENCE", Stat(1, 0, 0, 0));
+    uint256 healthID = _createAlloStat(parentID1, "HEALTH", Stat(1, 0, 0, 0));
+    uint256 harmonyID = _createAlloStat(parentID1, "HARMONY", Stat(1, 0, 0, 0));
+    uint256 powerID = _createAlloStat(parentID1, "POWER", Stat(1, 0, 0, 0));
+    uint256 slotsID = _createAlloStat(parentID1, "SLOTS", Stat(1, 0, 0, 0));
+    uint256 staminaID = _createAlloStat(parentID1, "STAMINA", Stat(1, 0, 0, 0));
+    uint256 violenceID = _createAlloStat(parentID1, "VIOLENCE", Stat(1, 0, 0, 0));
 
     // test remove individual (expected to remove all at once)
     vm.startPrank(deployer);
@@ -65,12 +65,12 @@ contract AlloTest is SetupTemplate {
     vm.stopPrank();
 
     // test update
-    uint256 newHealthID = _createRewardStat(parentID1, "HEALTH", Stat(2, 0, 0, 0));
+    uint256 newHealthID = _createAlloStat(parentID1, "HEALTH", Stat(2, 0, 0, 0));
     assertEq(newHealthID, healthID);
   }
 
   function testDistributionBasicSingle() public {
-    _createReward(parentID1, "ITEM", 1, 1);
+    _createAllo(parentID1, "ITEM", 1, 1);
 
     // without multiplier
     _distribute(parentID1, alice);
@@ -82,9 +82,9 @@ contract AlloTest is SetupTemplate {
   }
 
   function testDistributionBasicMultiple() public {
-    _createReward(parentID1, "ITEM", 1, 1);
-    _createReward(parentID1, "ITEM", 2, 2);
-    _createReward(parentID1, "ITEM", 3, 3);
+    _createAllo(parentID1, "ITEM", 1, 1);
+    _createAllo(parentID1, "ITEM", 2, 2);
+    _createAllo(parentID1, "ITEM", 3, 3);
 
     // without multiplier
     _distribute(parentID1, alice);
@@ -108,7 +108,7 @@ contract AlloTest is SetupTemplate {
     weights[0] = 9;
     weights[1] = 9;
     weights[2] = 9;
-    _createReward(parentID1, keys, weights, 1);
+    _createAllo(parentID1, keys, weights, 1);
     uint256[] memory commitIDs = new uint256[](2);
 
     // without multiplier
@@ -148,12 +148,12 @@ contract AlloTest is SetupTemplate {
     weights1[0] = 9;
     weights1[1] = 9;
     weights1[2] = 9;
-    _createReward(parentID1, keys1, weights1, 1);
+    _createAllo(parentID1, keys1, weights1, 1);
     uint32[] memory keys2 = new uint32[](1);
     keys2[0] = 4;
     uint256[] memory weights2 = new uint256[](1);
     weights2[0] = 9;
-    _createReward(parentID1, keys2, weights2, 7);
+    _createAllo(parentID1, keys2, weights2, 7);
     uint256[] memory commitIDs = new uint256[](4);
 
     // without multiplier
@@ -183,9 +183,9 @@ contract AlloTest is SetupTemplate {
   }
 
   function testDistributionStat() public {
-    uint256 healthID = _createRewardStat(parentID1, "HEALTH", Stat(0, 1, 0, 100));
-    uint256 harmonyID = _createRewardStat(parentID1, "HARMONY", Stat(0, 1, 0, 0));
-    uint256 powerID = _createRewardStat(parentID1, "POWER", Stat(0, -1, 0, 0));
+    uint256 healthID = _createAlloStat(parentID1, "HEALTH", Stat(0, 1, 0, 100));
+    uint256 harmonyID = _createAlloStat(parentID1, "HARMONY", Stat(0, 1, 0, 0));
+    uint256 powerID = _createAlloStat(parentID1, "POWER", Stat(0, -1, 0, 0));
 
     // setting initial stats
     vm.startPrank(deployer);
@@ -220,8 +220,8 @@ contract AlloTest is SetupTemplate {
     weights[0] = 9;
     weights[1] = 9;
     weights[2] = 9;
-    _createReward(parentID1, keys, weights, 1);
-    _createReward(parentID1, "ITEM", 4, 5);
+    _createAllo(parentID1, keys, weights, 1);
+    _createAllo(parentID1, "ITEM", 4, 5);
 
     // initial distribution (no multiplier)
     uint256[] memory commitIDs = new uint256[](1);
@@ -240,7 +240,7 @@ contract AlloTest is SetupTemplate {
   // UTILS
 
   // basic reward
-  function _createReward(
+  function _createAllo(
     uint256 parentID,
     string memory type_,
     uint32 index,
@@ -252,7 +252,7 @@ contract AlloTest is SetupTemplate {
   }
 
   // droptable reward
-  function _createReward(
+  function _createAllo(
     uint256 parentID,
     uint32[] memory keys,
     uint256[] memory weights,
@@ -263,7 +263,7 @@ contract AlloTest is SetupTemplate {
     vm.stopPrank();
   }
 
-  function _createRewardStat(
+  function _createAlloStat(
     uint256 parentID,
     string memory statType,
     Stat memory value
@@ -283,16 +283,11 @@ contract AlloTest is SetupTemplate {
 
   function _distribute(uint256 parentID, uint256 multiplier, PlayerAccount memory acc) internal {
     uint256[] memory rewardIDs = LibAllo.queryFor(components, parentID);
-    vm.startPrank(deployer);
-    LibAllo.distribute(world, components, rewardIDs, multiplier, acc.id);
-    vm.stopPrank();
+    ExternalCaller.alloDistribute(rewardIDs, multiplier, acc.id);
   }
 
   function _distribute(uint256 parentID, PlayerAccount memory acc) internal {
-    uint256[] memory rewardIDs = LibAllo.queryFor(components, parentID);
-    vm.startPrank(deployer);
-    LibAllo.distribute(world, components, rewardIDs, acc.id);
-    vm.stopPrank();
+    _distribute(parentID, 1, acc);
   }
 
   /////////////////

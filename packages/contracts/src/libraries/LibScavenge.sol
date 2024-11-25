@@ -132,7 +132,7 @@ library LibScavenge {
     IUintComp components,
     uint256 regID
   ) internal view returns (uint256[] memory) {
-    return LibAllo.queryFor(components, genRwdParentID(regID));
+    return LibAllo.queryFor(components, genAlloAnchor(regID));
   }
 
   /////////////////
@@ -161,7 +161,7 @@ library LibScavenge {
     return uint256(keccak256(abi.encodePacked("registry.scavenge", field, index)));
   }
 
-  function genRwdParentID(uint256 regID) internal pure returns (uint256) {
+  function genAlloAnchor(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("scavenge.reward", regID)));
   }
 

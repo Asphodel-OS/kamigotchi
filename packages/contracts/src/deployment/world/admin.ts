@@ -607,19 +607,52 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
-  async function registerLootbox(
+  async function addItemBasic(
     index: number,
-    name: string,
-    description: string,
+    usecase: string,
+    type: string,
+    index_: number,
+    value: number
+  ) {
+    genCall('system.item.registry', [index, usecase, type, index_, value], 'addAlloBasic', [
+      'uint32',
+      'string',
+      'string',
+      'uint32',
+      'uint256',
+    ]);
+  }
+
+  async function addItemDT(
+    index: number,
+    usecase: string,
     keys: number[],
     weights: number[],
-    media: string
+    value: number
+  ) {
+    genCall('system.item.registry', [index, usecase, keys, weights, value], 'addAlloDT', [
+      'uint32',
+      'string',
+      'uint32[]',
+      'uint256[]',
+      'uint256',
+    ]);
+  }
+
+  async function addItemStat(
+    index: number,
+    usecase: string,
+    statType: string,
+    base: number,
+    shift: number,
+    boost: number,
+    sync: number
   ) {
     genCall(
       'system.item.registry',
-      [index, name, description, keys, weights, media],
-      'createLootbox',
-      ['uint32', 'string', 'string', 'uint32[]', 'uint256[]', 'string']
+      [index, usecase, statType, base, shift, boost, sync],
+      'addAlloStat',
+      ['uint32', 'string', 'string', 'int32', 'int32', 'int32', 'int32']
     );
   }
 
@@ -637,14 +670,6 @@ export function createAdminAPI(compiledCalls: string[]) {
       'addRequirement',
       ['uint32', 'string', 'string', 'string', 'uint32', 'uint256']
     );
-  }
-
-  async function addStat(index: number, type_: string, value: number) {
-    genCall('system.item.registry', [index, type_, value], 'addStat');
-  }
-
-  async function setItemRoom(index: number, roomIndex: number) {
-    genCall('system.item.registry', [index, roomIndex], 'setRoom');
   }
 
   // @dev deletes an item registry
@@ -801,13 +826,15 @@ export function createAdminAPI(compiledCalls: string[]) {
       item: {
         create: {
           base: registerBaseItem,
-          lootbox: registerLootbox,
           consumable: registerConsumable,
         },
         add: {
           requirement: addItemRequirement,
-          room: setItemRoom,
-          stat: addStat,
+          allo: {
+            basic: addItemBasic,
+            droptable: addItemDT,
+            stat: addItemStat,
+          },
         },
         delete: deleteItem,
       },

@@ -101,7 +101,7 @@ library LibRecipe {
     uint32 recipeIndex,
     Condition memory data
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, data, genReqParentID(recipeIndex));
+    id = LibConditional.createFor(world, components, data, genReqAnchor(recipeIndex));
   }
 
   function remove(IUintComp components, uint32 recipeIndex, uint256 id) internal {
@@ -217,7 +217,7 @@ library LibRecipe {
     IUintComp components,
     uint32 recipeIndex
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqParentID(recipeIndex));
+    return LibConditional.queryFor(components, genReqAnchor(recipeIndex));
   }
 
   /////////////////
@@ -235,7 +235,7 @@ library LibRecipe {
     return uint256(keccak256(abi.encodePacked("recipe.output", recipeIndex)));
   }
 
-  function genReqParentID(uint32 recipeIndex) internal pure returns (uint256) {
+  function genReqAnchor(uint32 recipeIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("recipe.requirement", recipeIndex)));
   }
 

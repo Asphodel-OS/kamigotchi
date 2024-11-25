@@ -291,7 +291,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _KamiUseFoodSystem.executeTyped(kamiID, foodIndex);
+    _KamiUseItemSystem.executeTyped(kamiID, foodIndex);
   }
 
   // easy function for getting the proper inputs to revive a pet
@@ -300,7 +300,7 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    _KamiUseReviveSystem.executeTyped(kamiID, reviveIndex);
+    _KamiUseItemSystem.executeTyped(kamiID, reviveIndex);
   }
 
   function _startHarvestByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
@@ -644,8 +644,8 @@ abstract contract SetupTemplate is TestSetupImports {
       abi.encode(index, "KAMI", name, description, "FOOD", mediaURI)
     );
     __ItemRegistrySystem.addRequirement(abi.encode(index, "USE", "KAMI_CAN_EAT", "BOOL_IS", 0, 0));
-    __ItemRegistrySystem.addStat(index, "XP", int32(int(experience)));
-    __ItemRegistrySystem.addStat(index, "HEALTH", health);
+    __ItemRegistrySystem.addAlloBasic(abi.encode(index, "USE", "XP", 0, experience));
+    __ItemRegistrySystem.addAlloStat(abi.encode(index, "USE", "HEALTH", 0, 0, 0, health));
     vm.stopPrank();
   }
 
@@ -663,7 +663,10 @@ abstract contract SetupTemplate is TestSetupImports {
     __ItemRegistrySystem.addRequirement(
       abi.encode(index, "USE", "STATE", "BOOL_IS", LibKami.stateToIndex("DEAD"), 0)
     );
-    __ItemRegistrySystem.addStat(index, "HEALTH", health);
+    __ItemRegistrySystem.addAlloBasic(
+      abi.encode(index, "USE", "STATE", LibKami.stateToIndex("RESTING"), 0)
+    );
+    __ItemRegistrySystem.addAlloStat(abi.encode(index, "USE", "HEALTH", 0, 0, 0, health));
     vm.stopPrank();
   }
 
@@ -672,10 +675,13 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory name,
     uint32[] memory keys,
     uint[] memory weights
-  ) public returns (uint256) {
-    vm.prank(deployer);
-    return
-      __ItemRegistrySystem.createLootbox(abi.encode(index, name, "DESCRIPTION", keys, weights, ""));
+  ) public returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = __ItemRegistrySystem.createConsumable(
+      abi.encode(index, "ACCOUNT", name, "description", "LOOTBOX", "media")
+    );
+    __ItemRegistrySystem.addAlloDT(abi.encode(index, "USE", keys, weights, 1));
+    vm.stopPrank();
   }
 
   /* QUESTS */

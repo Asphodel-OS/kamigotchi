@@ -54,7 +54,7 @@ library LibListing {
     uint256 regID,
     Condition memory data
   ) internal returns (uint256) {
-    return LibConditional.createFor(world, components, data, genReqParentID(regID));
+    return LibConditional.createFor(world, components, data, genReqAnchor(regID));
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -67,7 +67,7 @@ library LibListing {
     valueComp.remove(genBuyParentID(id));
     valueComp.remove(genSellParentID(id));
 
-    uint256[] memory requirements = LibConditional.queryFor(components, genReqParentID(id));
+    uint256[] memory requirements = LibConditional.queryFor(components, genReqAnchor(id));
     for (uint256 i; i < requirements.length; i++)
       LibConditional.remove(components, requirements[i]);
   }
@@ -124,7 +124,7 @@ library LibListing {
     uint256 listingID,
     uint256 accID
   ) internal view returns (bool) {
-    uint256[] memory requirements = LibConditional.queryFor(components, genReqParentID(listingID));
+    uint256[] memory requirements = LibConditional.queryFor(components, genReqAnchor(listingID));
     return LibConditional.check(components, requirements, accID);
   }
 
@@ -171,7 +171,7 @@ library LibListing {
     return uint256(keccak256(abi.encodePacked("listing", merchantIndex, itemIndex)));
   }
 
-  function genReqParentID(uint256 regID) internal pure returns (uint256) {
+  function genReqAnchor(uint256 regID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("listing.requirement", regID)));
   }
 
