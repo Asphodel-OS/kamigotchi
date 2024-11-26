@@ -4,15 +4,14 @@ import styled from 'styled-components';
 
 import { IconListButton, Tooltip } from 'app/components/library';
 import { harvestIcon } from 'assets/images/icons/actions';
-import { getRarities } from 'constants/rarities';
 import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
+import { Allo } from 'network/shapes/Allo';
 import { Condition } from 'network/shapes/Conditional';
-import { Droptable, DTDetails, NullDT } from 'network/shapes/Droptable';
 import { canHarvest, isResting, Kami, KamiOptions, onCooldown } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { ScavBar } from 'network/shapes/Scavenge';
-import { getAffinityImage } from 'network/shapes/utils';
+import { DetailedEntity, getAffinityImage } from 'network/shapes/utils';
 import { ScavengeBar } from './ScavengeBar';
 
 interface Props {
@@ -29,7 +28,7 @@ interface Props {
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
     getScavPoints: () => number;
     getScavBar: () => ScavBar | undefined;
-    getDTDetails: (dt: Droptable) => DTDetails[];
+    parseAllos: (scavAllo: Allo[], flatten?: boolean) => DetailedEntity[];
   };
 }
 
@@ -125,13 +124,8 @@ export const Banner = (props: Props) => {
 
   const ItemDrops = () => {
     const nodeDrops = node.drops;
-    const dt = utils.getDTDetails(scavBar?.rewards[0]?.droptable ?? NullDT);
-
-    const DTtext = [
-      'Potential scavenge drops:',
-      '',
-      ...dt.map((entry) => `${entry.object.name} [${getRarities(entry.rarity).title}]`),
-    ];
+    const drops = utils.parseAllos(scavBar?.rewards ?? []);
+    const dropsFlat = utils.parseAllos(scavBar?.rewards ?? [], true);
     return (
       <Row>
         <Label>Drops: </Label>
@@ -139,10 +133,10 @@ export const Banner = (props: Props) => {
           <Icon key={'node-' + nodeDrops[0]?.name} src={nodeDrops[0]?.image ?? ''} />
         </Tooltip>
 
-        <Tooltip text={DTtext}>
+        <Tooltip text={drops.map((entry) => entry.name + '\n' + entry.description)}>
           <Row style={{ borderLeft: 'solid #666 1px', paddingLeft: '0.3vw' }}>
-            {dt.map((entry) => (
-              <Icon key={'scav-' + entry.object.name} src={entry.object.image} />
+            {dropsFlat.map((entry) => (
+              <Icon key={'scav-' + entry.name} src={entry.image} />
             ))}
           </Row>
         </Tooltip>

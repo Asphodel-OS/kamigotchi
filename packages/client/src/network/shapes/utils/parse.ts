@@ -57,3 +57,19 @@ export const parseQuantity = (entity: DetailedEntity, quantity?: number): string
   // default case - includes QUEST
   return quantity !== undefined ? `${quantity * 1} ${entity.name}` : `${entity.name}`;
 };
+
+export const parseKamiStateToIndex = (state: string): number => {
+  if (state === 'RESTING') return 1;
+  else if (state === 'HARVESTING') return 2;
+  else if (state === 'DEAD') return 3;
+  else if (state === '721_EXTERNAL') return 4;
+  else return 0;
+};
+
+export const parseKamiStateFromIndex = (index: number): string => {
+  if (index === 1) return 'RESTING';
+  else if (index === 2) return 'HARVESTING';
+  else if (index === 3) return 'DEAD';
+  else if (index === 4) return '721_EXTERNAL';
+  else return '';
+};

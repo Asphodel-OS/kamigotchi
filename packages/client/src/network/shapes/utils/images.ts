@@ -2,6 +2,7 @@ import { FactionIcons } from 'assets/images/icons/factions';
 import { ItemImages } from 'assets/images/items';
 import { SkillImages } from 'assets/images/skills';
 import { AffinityIcons } from 'constants/affinities';
+import { StatIcons } from 'constants/stats';
 
 export const getAffinityImage = (name: string) => {
   if (!name) return '';
@@ -44,4 +45,12 @@ export const getSkillImage = (name: string) => {
   if (!key) throw new Error(`No skill image found for ${name}`);
 
   return SkillImages[key];
+};
+
+export const getStatImage = (name: string) => {
+  name = name.toLowerCase();
+  const key = name as keyof typeof StatIcons;
+  if (!key) throw new Error(`No stat image found for ${name}`);
+
+  return StatIcons[key];
 };

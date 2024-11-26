@@ -127,8 +127,8 @@ export const Battlepass = (props: Props) => {
     if (hasDetails) {
       tooltip.push(quest.description, '', 'Rewards:');
       quest.rewards.forEach((r) => {
-        const entity = describeEntity(r.target.type, r.target.index || 0);
-        const value = (r.target.value ?? 0) * 1;
+        const entity = describeEntity(r.type, r.index || 0);
+        const value = (r.value ?? 0) * 1;
         tooltip.push(`• ${entity.name} x${value}`);
       });
 

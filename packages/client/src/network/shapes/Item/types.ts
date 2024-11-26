@@ -29,7 +29,6 @@ export const NullItem: Item = {
   entityIndex: 0 as EntityIndex,
   index: 0,
   type: '',
-  is: { consumable: false, lootbox: false },
   for: '',
   image: '',
   name: '',

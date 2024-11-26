@@ -2,9 +2,9 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 
 import { Components } from 'network/';
 import { Account } from '../Account';
+import { Allo, getAllo } from '../Allo';
 import { Condition, getCondition } from '../Conditional';
 import { queryConditionsOf } from '../Conditional/queries';
-import { Reward, getReward } from '../Rewards';
 import { Score } from '../Score';
 import { getEntityByHash, hashArgs, queryChildrenOf, queryRefsWithParent } from '../utils';
 
@@ -28,7 +28,7 @@ export interface Tier {
   id: EntityID;
   name: string;
   cutoff: number;
-  rewards: Reward[];
+  rewards: Allo[];
 }
 
 // Contribution represents details of individual's contribution to a goal
@@ -36,7 +36,7 @@ export interface Contribution extends Score {
   claimed?: boolean;
 }
 
-export interface GoalReward extends Reward {
+export interface GoalReward extends Allo {
   id: EntityID;
   cutoff: number;
   name: string;
@@ -105,9 +105,9 @@ const getGoalRequirements = (
   return queryConditionsOf(world, components, 'goal.requirement', goalIndex);
 };
 
-const getTierRewards = (world: World, components: Components, tierID: EntityID): Reward[] => {
+const getTierRewards = (world: World, components: Components, tierID: EntityID): Allo[] => {
   return queryChildrenOf(components, getRwdParentID(tierID)).map((index: EntityIndex) =>
-    getReward(world, components, index)
+    getAllo(world, components, index)
   );
 };
 

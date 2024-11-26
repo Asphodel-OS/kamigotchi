@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Reward } from '../Rewards';
+import { Allo } from '../Allo';
 import { Objective, getObjectives } from './objective';
 import { query } from './queries';
 import { Requirement, getRequirements } from './requirement';
@@ -27,7 +27,7 @@ export interface Quest extends BaseQuest {
   repeatable: boolean;
   requirements: Requirement[];
   objectives: Objective[];
-  rewards: Reward[];
+  rewards: Allo[];
 }
 
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
