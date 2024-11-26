@@ -68,16 +68,14 @@ export const Tooltip = (props: Props) => {
   };
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof window.setTimeout>;
 
     if (isActive) {
       timeoutId = setTimeout(() => {
         setIsVisible(true);
       }, delay ?? 350);
     }
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    return () => clearTimeout(timeoutId);
   }, [isActive, delay]);
 
   return (
