@@ -11,6 +11,7 @@ import { getInventoryByHolderItem, getItemBalance } from '../Item';
 import { Kami, getKamisByAccount } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
 import { getHolderSkillLevel } from '../Skill';
+import { parseKamiStateToIndex } from './parse';
 
 export const getBalance = (
   world: World,
@@ -84,7 +85,8 @@ export const getBool = (
   }
 
   // account specific, check if holder is account shaped
-  if ('kamis' in holder) {
+  if (holder.ObjectType === 'ACCOUNT') {
+    holder = holder as Account;
     if (type === 'QUEST') {
       return hasCompletedQuest(components, index as number, holder);
     } else if (type === 'ROOM') {
@@ -93,7 +95,13 @@ export const getBool = (
   }
 
   // kami specific, check if holder is kami shaped (nothing here rn)
-  if ('account' in holder) {
+  if (holder.ObjectType === 'KAMI') {
+    holder = holder as Kami;
+    if (type === 'STATE') {
+      return index == parseKamiStateToIndex(holder.state);
+    } else if (type === 'KAMI_CAN_EAT') {
+      return holder.state === 'RESTING' || holder.state === 'HARVESTING';
+    }
   }
 
   // if nothing else doesnt match, return false (should not reach here)

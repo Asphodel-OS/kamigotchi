@@ -26,6 +26,6 @@ export const getAllo = (world: World, components: Components, entityIndex: Entit
     index: getComponentValue(Index, entityIndex)?.value || (0 as number),
     value: rawValue * 1,
     droptable: type.includes('ITEM_DROPTABLE') ? getDroptable(components, entityIndex) : undefined,
-    stat: type.includes('STAT') ? getStatFromUint(BigInt(rawValue)) : undefined,
+    stat: type === 'STAT' ? getStatFromUint(BigInt(rawValue)) : undefined,
   };
 };

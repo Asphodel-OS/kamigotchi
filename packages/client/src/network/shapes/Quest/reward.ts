@@ -1,11 +1,12 @@
-import { World } from '@mud-classic/recs';
+import { EntityID, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Allo, getAllosOf } from '../Allo';
+import { hashArgs } from '../utils';
 
 // Get the Entity Indices of the Rewards of a Quest
-export const getRewards = (world: World, components: Components, questIndex: number): Reward[] => {
-  let results = getAllosOf(world, components, 'registry.quest.reward', questIndex);
+export const getRewards = (world: World, components: Components, questIndex: number): Allo[] => {
+  let results = getAllosOf(world, components, genRwdParentID(questIndex));
   // sort rewards so reputation are always first
   results.sort((x, y) => {
     if (x.type === 'REPUTATION') return -1;
@@ -31,4 +32,8 @@ export const getRewardText = (reward: Allo, name = ''): string => {
   } else {
     return '???';
   }
+};
+
+const genRwdParentID = (questIndex: number): EntityID => {
+  return hashArgs(['registry.quest.reward', questIndex], ['string', 'uint32']);
 };

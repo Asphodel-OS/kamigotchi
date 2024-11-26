@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { KamiCard } from 'app/components/library';
-import { FeedButton, ReviveButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
+import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import {
   Kami,
@@ -20,15 +20,14 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;
-  actions: {
-    feed: (kami: Kami, itemIndex: number) => void;
-    revive: (kami: Kami, reviveIndex: number) => void;
+  display: {
+    UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
   kamis: Kami[];
 }
 
 export const Kards = (props: Props) => {
-  const { actions, account, kamis } = props;
+  const { account, display, kamis } = props;
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode } = useSelected();
 
@@ -102,9 +101,9 @@ export const Kards = (props: Props) => {
 
   // Choose and return the action button to display
   const DisplayedAction = (kami: Kami, account: Account) => {
-    if (isResting(kami)) return FeedButton(kami, account, actions.feed);
-    if (isHarvesting(kami)) return FeedButton(kami, account, actions.feed);
-    if (isDead(kami)) return ReviveButton(kami, account, actions.revive);
+    let icon = feedIcon;
+    if (isDead(kami)) icon = reviveIcon;
+    return display.UseItemButton(kami, account, icon);
   };
 
   return (

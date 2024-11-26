@@ -4,9 +4,11 @@ import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
 import { EmptyText, ModalWrapper } from 'app/components/library';
+import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { BaseAccount, getAccountFromBurner } from 'network/shapes/Account';
+import { feedIcon } from 'assets/images/icons/actions';
+import { Account, BaseAccount, getAccountFromBurner } from 'network/shapes/Account';
 import { Allo, parseAllos } from 'network/shapes/Allo';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { queryDTCommits } from 'network/shapes/Droptable';
@@ -72,6 +74,10 @@ export function registerNodeModal() {
               },
               commits: queryDTCommits(world, components, account.id),
             },
+            display: {
+              UseItemButton: (kami: Kami, account: Account) =>
+                UseItemButton(network, kami, account, feedIcon),
+            },
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
                 getKami(world, components, entity, options),
@@ -94,7 +100,7 @@ export function registerNodeModal() {
       ),
 
     // Render
-    ({ data, network, utils }) => {
+    ({ data, display, network, utils }) => {
       // console.log('Node Modal Data', data);
       const { account, kamiEntities } = data;
       const {
@@ -175,18 +181,6 @@ export function registerNodeModal() {
           description: `Collecting ${kami.name}'s Harvest`,
           execute: async () => {
             return api.player.harvest.collect(kami.harvest!.id);
-          },
-        });
-      };
-
-      // feed a kami
-      const feed = (kami: Kami, itemIndex: number) => {
-        actions.add({
-          action: 'KamiFeed',
-          params: [kami.id, itemIndex],
-          description: `Feeding ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.use.item(kami.id, itemIndex);
           },
         });
       };
@@ -280,7 +274,8 @@ export function registerNodeModal() {
           <Kards
             account={account}
             kamiEntities={kamiEntities}
-            actions={{ collect, feed, liquidate, stop }}
+            actions={{ collect, liquidate, stop }}
+            display={display}
             utils={{ getKami, refreshKami, getOwner }}
           />
         </ModalWrapper>

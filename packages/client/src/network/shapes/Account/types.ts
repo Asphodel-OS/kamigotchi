@@ -19,6 +19,7 @@ import { getData } from '../utils';
 
 // account shape with minimal fields
 export interface BaseAccount {
+  ObjectType: string;
   id: EntityID;
   index: number;
   entityIndex: EntityIndex;
@@ -71,6 +72,7 @@ export interface Friends {
 }
 
 export const NullAccount: Account = {
+  ObjectType: 'ACCOUNT',
   id: '0' as EntityID,
   entityIndex: 0 as EntityIndex,
   index: 0,
@@ -103,6 +105,7 @@ export const getBaseAccount = (
   const { AccountIndex, MediaURI, Name, OperatorAddress, OwnerAddress } = components;
 
   return {
+    ObjectType: 'ACCOUNT',
     id: world.entities[entity],
     entityIndex: entity,
     index: getComponentValue(AccountIndex, entity)?.value as number,
