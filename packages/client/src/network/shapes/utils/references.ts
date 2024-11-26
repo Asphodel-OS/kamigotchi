@@ -19,19 +19,19 @@ export const queryRefChildren = (
 ): EntityIndex[] => {
   const { ParentID } = components;
 
-  const id = genID(field, parentID, key);
+  const id = genRef(field, parentID, key);
   return Array.from(runQuery([HasValue(ParentID, { value: id })]));
 };
 
 /////////////////
 // UTILS
 
-const genID = (field: string, parentID: EntityID, key?: BigNumberish): EntityID => {
+export const genRef = (field: string, parentID: EntityID, key?: BigNumberish): EntityID => {
   const args = key
     ? ['reference.instance', field, key, parentID]
     : ['reference.instance', field, parentID];
   const argTypes = key
-    ? ['string', 'uint256', 'uint256', 'uint256']
-    : ['string', 'uint256', 'uint256'];
+    ? ['string', 'string', 'uint256', 'uint256']
+    : ['string', 'string', 'uint256'];
   return hashArgs(args, argTypes);
 };

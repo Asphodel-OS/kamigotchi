@@ -9,8 +9,9 @@ import {
   DetailedEntity,
   getDescribedEntity,
   getStatImage,
-  parseKamiStateFromIndex,
   parseQuantity,
+  parseQuantityStat,
+  parseStatTypeFromIndex,
 } from '../utils';
 
 export const parseAllos = (
@@ -41,9 +42,16 @@ export const parseAllo = (
 
 const parseBasic = (world: World, components: Components, allo: Allo): DetailedEntity => {
   const details = getDescribedEntity(world, components, allo.type, allo.index);
+  let description = '';
+  if (allo.type === 'STATE') description = parseState(details);
+  else if (allo.type.includes('FLAG_')) {
+    console.log(details);
+    description = parseFlag(allo);
+  } else description = '+' + parseQuantity(details, allo.value);
+
   return {
     ...details,
-    description: parseQuantity(details, allo.value),
+    description,
   };
 };
 
@@ -72,12 +80,8 @@ const parseDroptableIndividual = (
 const parseStat = (allo: Allo): DetailedEntity => {
   const stat = allo.stat ?? NullStat;
 
-  const name = capitalize(parseKamiStateFromIndex(allo.index));
-
-  let quantity = '';
-  if (stat.shift > 0) quantity += `+${stat.shift} max `;
-  if (stat.sync > 0) quantity += `+${stat.sync}`;
-  quantity = quantity.trim();
+  const name = capitalize(parseStatTypeFromIndex(allo.index));
+  const quantity = '+' + parseQuantityStat(name, stat);
 
   return {
     ObjectType: 'STAT',
@@ -85,4 +89,24 @@ const parseStat = (allo: Allo): DetailedEntity => {
     name,
     description: quantity,
   };
+};
+
+///////////////
+// SPECIFIC CASES
+
+const parseState = (details: DetailedEntity): string => {
+  const capsState = details.name.toUpperCase();
+  let description = '';
+  if (capsState === 'RESTING') description = 'Revive';
+  else if (capsState === 'DEAD') description = 'Kill';
+  else if (capsState === '721_EXTERNAL') description = 'Send out of this world';
+  return description;
+};
+
+const parseFlag = (allo: Allo): string => {
+  if (allo.type.toUpperCase() === 'FLAG_NOT_NAMABLE')
+    return 'Enable kami rename'; // rename potion, set namable
+  else if (allo.type.toUpperCase() === 'FLAG_CAN_RESET_SKILLS')
+    return 'Enable skill reset'; // rename potion, set not namable
+  else return 'Set ' + allo.type.toLowerCase().replace('_', ' ');
 };

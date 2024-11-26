@@ -1,14 +1,12 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { interval, map } from 'rxjs';
-import { v4 as uuid } from 'uuid';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { inventoryIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { Account, getAccountFromBurner } from 'network/shapes/Account';
+import { passesConditions } from 'network/shapes/Conditional';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { waitForActionCompletion } from 'network/utils';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 
@@ -27,6 +25,7 @@ export function registerInventoryModal() {
       return interval(1000).pipe(
         map(() => {
           const { network } = layers;
+          const { world, components } = network;
 
           const account = getAccountFromBurner(network, {
             kamis: { flags: true, harvest: true },
@@ -37,105 +36,43 @@ export function registerInventoryModal() {
             data: {
               account: account,
             },
+            utils: {
+              meetsRequirements: (holder: Kami | Account, item: Item) =>
+                passesConditions(world, components, item.requirements.use, holder),
+            },
           };
         })
       );
     },
 
     // Render
-    ({ network, data }) => {
-      const { actions, api, systems, world, localSystems } = network;
-      const { DTRevealer } = localSystems;
+    ({ network, data, utils }) => {
+      const { actions, api } = network;
       const { account } = data;
 
       /////////////////
       // ACTIONS
 
-      // feed a kami
-      const feedKami = (kami: Kami, item: Item) => {
+      const useForKami = (kami: Kami, item: Item) => {
         actions.add({
           action: 'KamiFeed',
           params: [kami.id, item.index],
-          description: `Feeding ${item.name} to ${kami.name}`,
+          description: `Using ${item.name} on ${kami.name}`,
           execute: async () => {
             return api.player.pet.use.item(kami.id, item.index);
           },
         });
       };
 
-      const reviveKami = (kami: Kami, item: Item) => {
-        actions.add({
-          action: 'KamiRevive',
-          params: [kami.id, item.index],
-          description: `Reviving ${item.name} to ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.use.item(kami.id, item.index);
-          },
-        });
-      };
-
-      const renamePotionKami = (kami: Kami, item: Item) => {
-        actions.add({
-          action: 'KamiRenamePotion',
-          params: [kami.id, item.index],
-          description: `Allowing ${kami.name} to be renamed`,
-          execute: async () => {
-            return api.player.pet.use.item(kami.id, item.index);
-          },
-        });
-      };
-
-      const resetSkillKami = (kami: Kami, item: Item) => {
-        actions.add({
-          action: 'Resetting kami skills',
-          params: [kami.id, item.index],
-          description: `Resetting ${kami.name}'s skills`,
-          execute: async () => {
-            return api.player.pet.use.skillReset(kami.id, item.index);
-          },
-        });
-      };
-
-      // feed the account
-      const feedAccount = (item: Item) => {
+      const useForAccount = (item: Item) => {
         actions.add({
           action: 'AccountFeed',
           params: [item.index],
-          description: `Consuming ${item.name}`,
+          description: `Using ${item.name}`,
           execute: async () => {
             return api.player.account.use.item(item.index, 1);
           },
         });
-      };
-
-      const teleportAccount = (item: Item) => {
-        actions.add({
-          action: 'AccountTeleport',
-          params: [item.index],
-          description: `Consuming ${item.name}`,
-          execute: async () => {
-            return api.player.account.use.item(item.index, 1);
-          },
-        });
-      };
-
-      const openLootbox = async (item: Item, amount: number) => {
-        DTRevealer.nameEntity(item.id, item.name); // name for commits
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'LootboxCommit',
-          params: [item.index, amount],
-          description: `Opening ${amount} ${item.name}`,
-          execute: async () => {
-            return api.player.account.use.item(item.index, amount);
-          },
-        });
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
       };
 
       /////////////////
@@ -165,14 +102,10 @@ export function registerInventoryModal() {
             account={account}
             inventories={getInventories()}
             actions={{
-              feedKami,
-              reviveKami,
-              renamePotionKami,
-              feedAccount,
-              teleportAccount,
-              openLootbox,
-              resetSkillKami,
+              useForAccount,
+              useForKami,
             }}
+            utils={utils}
           />
         </ModalWrapper>
       );

@@ -1,7 +1,7 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { CollectButton, FeedButton, StopButton } from 'app/components/library/actions';
+import { CollectButton, StopButton } from 'app/components/library/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami, KamiOptions, calcHealth, calcOutput } from 'network/shapes/Kami';
 import { KamiCard } from '../KamiCard/KamiCard';
@@ -11,8 +11,10 @@ interface Props {
   kamis: Kami[]; // ally kami entities
   actions: {
     collect: (kami: Kami) => void;
-    feed: (kami: Kami, itemIndex: number) => void;
     stop: (kami: Kami) => void;
+  };
+  display: {
+    UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
   };
   utils: {
     getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
@@ -22,8 +24,9 @@ interface Props {
 
 // rendering of an ally kami on this node
 export const AllyKards = (props: Props) => {
-  const { actions, account, kamis } = props;
-  const { collect, feed, stop } = actions;
+  const { actions, display, account, kamis } = props;
+  const { collect, stop } = actions;
+  const { UseItemButton } = display;
 
   /////////////////
   // INTERPRETATION
@@ -50,7 +53,7 @@ export const AllyKards = (props: Props) => {
           description={getDescription(kami)}
           subtext={`yours (\$${calcOutput(kami)})`}
           actions={[
-            FeedButton(kami, account, feed),
+            UseItemButton(kami, account),
             CollectButton(kami, account, collect),
             StopButton(kami, account, stop),
           ]}

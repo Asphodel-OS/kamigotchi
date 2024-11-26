@@ -16,8 +16,11 @@ export {
   parseKamiStateFromIndex,
   parseKamiStateToIndex,
   parseQuantity,
+  parseQuantityStat,
+  parseStatTypeFromIndex,
 } from './parse';
-export { queryRefChildren, queryRefsWithParent } from './references';
+export { genRef, queryRefChildren, queryRefsWithParent } from './references';
+
 export { capitalize } from './strings';
 
 export type { Commit } from './commits';

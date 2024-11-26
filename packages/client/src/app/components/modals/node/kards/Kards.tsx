@@ -16,9 +16,11 @@ interface Props {
   };
   actions: {
     collect: (kami: Kami) => void;
-    feed: (kami: Kami, itemIndex: number) => void;
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
     stop: (kami: Kami) => void;
+  };
+  display: {
+    UseItemButton: (kami: Kami, account: Account) => JSX.Element;
   };
   utils: {
     getKami: (entity: EntityIndex) => Kami;
@@ -28,7 +30,7 @@ interface Props {
 }
 
 export const Kards = (props: Props) => {
-  const { actions, kamiEntities, account, utils } = props;
+  const { actions, kamiEntities, account, display, utils } = props;
   const { modals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -115,7 +117,13 @@ export const Kards = (props: Props) => {
       ref={containerRef}
       style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}
     >
-      <AllyKards account={account} kamis={allies} actions={actions} utils={utils} />
+      <AllyKards
+        account={account}
+        kamis={allies}
+        actions={actions}
+        display={display}
+        utils={utils}
+      />
       <EnemyCards
         allies={allies}
         enemyEntities={enemyEntities}

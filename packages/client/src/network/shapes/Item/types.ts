@@ -9,8 +9,10 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
-import { Stats, getStats } from '../Stats';
+import { Allo, getAllosOf } from '../Allo';
+import { Condition, queryConditionsOfID } from '../Conditional';
 import { DetailedEntity, ForType, getEntityByHash, getFor, getItemImage } from '../utils';
+import { getItemAlloAnchorID, getItemReqAnchorID } from './utils';
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
@@ -19,8 +21,20 @@ export interface Item extends DetailedEntity {
   index: number;
   for: ForType;
   type: string;
-  stats?: Stats;
-  experience?: number; // maybe merge in Stats in future?
+  requirements: ItemRequirements;
+  effects: ItemEffects;
+}
+
+interface ItemRequirements {
+  // burn: Condition[];
+  // craft: Condition[];
+  use: Condition[];
+}
+
+interface ItemEffects {
+  // burn: Allo[];
+  // craft: Allo[];
+  use: Allo[];
 }
 
 export const NullItem: Item = {
@@ -32,6 +46,8 @@ export const NullItem: Item = {
   for: '',
   image: '',
   name: '',
+  requirements: { use: [] },
+  effects: { use: [] },
 };
 
 /**
@@ -42,19 +58,20 @@ export const NullItem: Item = {
  * @param entityIndex - the entity index of the item in the registry
  */
 export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
-  const { Experience, ItemIndex, Type } = components;
+  const { ItemIndex, Type } = components;
 
   const type = getComponentValue(Type, entityIndex)?.value as string;
+  const index = getComponentValue(ItemIndex, entityIndex)?.value as number;
 
   let item: Item = {
     ...getItemDetails(components, entityIndex),
     entityIndex,
     id: world.entities[entityIndex],
-    index: getComponentValue(ItemIndex, entityIndex)?.value as number,
+    index: index,
     type: type,
     for: getFor(components, entityIndex),
-    stats: getStats(world, components, entityIndex),
-    experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
+    requirements: getItemRequirements(world, components, index),
+    effects: getItemEffects(world, components, index),
   };
 
   return item;
@@ -74,6 +91,42 @@ export const getItemDetails = (
     name: name,
     description: getComponentValue(Description, entityIndex)?.value as string,
   };
+};
+
+const getItemRequirements = (
+  world: World,
+  components: Components,
+  itemIndex: number
+): ItemRequirements => {
+  return {
+    use: getUsecaseRequirements(world, components, itemIndex, 'USE'),
+  };
+};
+
+const getItemEffects = (world: World, components: Components, itemIndex: number): ItemEffects => {
+  return {
+    use: getUsecaseAllos(world, components, itemIndex, 'USE'),
+  };
+};
+
+export const getUsecaseRequirements = (
+  world: World,
+  components: Components,
+  itemIndex: number,
+  usecase: string
+): Condition[] => {
+  const parentID = getItemReqAnchorID(itemIndex, usecase);
+  return queryConditionsOfID(world, components, parentID);
+};
+
+export const getUsecaseAllos = (
+  world: World,
+  components: Components,
+  itemIndex: number,
+  usecase: string
+): Allo[] => {
+  const parentID = getItemAlloAnchorID(itemIndex, usecase);
+  return getAllosOf(world, components, parentID);
 };
 
 /////////////////

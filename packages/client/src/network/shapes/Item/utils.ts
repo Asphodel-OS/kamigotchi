@@ -1,10 +1,8 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/items';
-import { getEntityByHash } from '../utils';
+import { genRef, getEntityByHash, hashArgs } from '../utils';
 import { Inventory } from './types';
-
-const IDStore = new Map<string, string>();
 
 // removes MUSU, filters out empty, sorts
 export const cleanInventories = (inventories: Inventory[]): Inventory[] => {
@@ -26,4 +24,18 @@ export const getInventoryEntityIndex = (
     ['inventory.instance', holderID, itemIndex],
     ['string', 'uint256', 'uint32']
   );
+};
+
+export const getItemReqAnchorID = (itemIndex: number, usecase: string): EntityID => {
+  const usecaseID = genRef(usecase, getItemRefParentID(itemIndex));
+  return hashArgs(['item.requirement', usecaseID], ['string', 'uint256']);
+};
+
+export const getItemAlloAnchorID = (itemIndex: number, usecase: string): EntityID => {
+  const usecaseID = genRef(usecase, getItemRefParentID(itemIndex));
+  return hashArgs(['item.allo', usecaseID], ['string', 'uint256']);
+};
+
+const getItemRefParentID = (itemIndex: number): EntityID => {
+  return hashArgs(['item.usecase', itemIndex], ['string', 'uint32']);
 };
