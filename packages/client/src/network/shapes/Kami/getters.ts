@@ -11,7 +11,7 @@ import { Components } from 'network/components';
 import { getHarvest } from 'network/shapes/Harvest';
 import { getHarvestEntity } from 'network/shapes/Harvest/types';
 import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
-import { query } from './queries';
+import { query, queryByName } from './queries';
 import { getKami, Options } from './types';
 
 // get all Kamis
@@ -42,6 +42,11 @@ export const getByAccount = (
 ) => {
   const results = query(components, { account: accountID as EntityID });
   return results.map((index) => getKami(world, components, index, options));
+};
+
+export const getByName = (world: World, components: Components, name: string) => {
+  const results = queryByName(components, name);
+  return results.map((index) => getKami(world, components, index));
 };
 
 // get all Kamis based on their state

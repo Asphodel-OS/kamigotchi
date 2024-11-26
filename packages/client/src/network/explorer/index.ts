@@ -1,9 +1,16 @@
-import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import {
+  Component,
+  EntityID,
+  EntityIndex,
+  World,
+  getComponentValue,
+  getEntitiesWithValue,
+} from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { AccountOptions } from 'network/shapes/Account';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
-import { KamiOptions, getAllKamis, getKamiByIndex } from 'network/shapes/Kami';
+import { KamiOptions, getAllKamis, getKamiByIndex, getKamiByName } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllNPCs, getNPCByIndex } from 'network/shapes/NPCs';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
@@ -40,6 +47,8 @@ export const initExplorer = (world: World, components: Components) => {
     return entity;
   }
 
+  const { EntityType } = components;
+
   return {
     accounts: accounts(world, components),
     configs: configs(world, components),
@@ -51,16 +60,17 @@ export const initExplorer = (world: World, components: Components) => {
       get: (index: number, options?: {}) => {
         return getKamiByIndex(world, components, index, options);
       },
-      entities: () => Array.from(components.IsPet.entities()),
+      getByName: (name: string) => getKamiByName(world, components, name),
+      entities: () => Array.from(getEntitiesWithValue(EntityType, { value: 'KAMI' })),
       indices: () => Array.from(components.KamiIndex.values.value.values()),
     },
 
     nodes: {
-      all: (options?: NodeOptions) => getAllNodes(world, components, options),
+      all: (options?: NodeOptions) => getAllNodes(world, components),
       get: (index: number, options?: {}) => {
-        return getNodeByIndex(world, components, index, options);
+        return getNodeByIndex(world, components, index);
       },
-      entities: () => Array.from(components.IsNode.entities()),
+      entities: () => Array.from(getEntitiesWithValue(EntityType, { value: 'NODE' })),
       indices: () => Array.from(components.NodeIndex.values.value.values()),
     },
 
@@ -69,7 +79,7 @@ export const initExplorer = (world: World, components: Components) => {
       get: (index: number, options?: {}) => {
         return getNPCByIndex(world, components, index);
       },
-      entities: () => Array.from(components.IsNPC.entities()),
+      entities: () => Array.from(getEntitiesWithValue(EntityType, { value: 'NPC' })),
       indices: () => Array.from(components.NPCIndex.values.value.values()),
     },
 
@@ -78,7 +88,7 @@ export const initExplorer = (world: World, components: Components) => {
       get: (index: number, options?: {}) => {
         return getRoomByIndex(world, components, index, options);
       },
-      entities: () => Array.from(components.IsRoom.entities()),
+      entities: () => Array.from(getEntitiesWithValue(EntityType, { value: 'ROOM' })),
       indices: () => Array.from(components.RoomIndex.values.value.values()),
     },
 

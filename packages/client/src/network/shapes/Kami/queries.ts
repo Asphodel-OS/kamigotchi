@@ -40,6 +40,17 @@ export const queryByState = (components: Components, state: string): EntityIndex
   return query(components, { state });
 };
 
+// not included in query options - not used in regular game, skip for performance
+export const queryByName = (components: Components, name: string): EntityIndex[] => {
+  const { Name, EntityType } = components;
+
+  const toQuery: QueryFragment[] = [
+    HasValue(Name, { value: name }),
+    HasValue(EntityType, { value: 'KAMI' }),
+  ];
+  return Array.from(runQuery(toQuery));
+};
+
 //////////////////
 // INTERNAL
 

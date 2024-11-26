@@ -23,12 +23,14 @@ export {
   getAll as getAllKamis,
   getAccount as getKamiAccount,
   getByIndex as getKamiByIndex,
+  getByName as getKamiByName,
   getLocation as getKamiLocation,
   getByAccount as getKamisByAccount,
 } from './getters';
 export {
   getLazyKamis,
   queryAll as queryAllKamis,
+  queryByName as queryKamiByName,
   queryByAccount as queryKamisByAccount,
   queryByIndex as queryKamisByIndex,
   queryByState as queryKamisByState,
