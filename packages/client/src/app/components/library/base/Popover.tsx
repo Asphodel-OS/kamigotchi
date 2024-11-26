@@ -112,7 +112,7 @@ const PopoverContent = styled.div<{
 }>`
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
   position: fixed;
-  margin-top: 10px;
+  margin-top: 1%;
   background-color: white;
   border: 0.15vw solid black;
   box-shadow: 0 0.3vw 0.8vw rgba(0, 0, 0, 0.7);
