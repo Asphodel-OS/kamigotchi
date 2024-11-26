@@ -93,7 +93,7 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     jsonRpc: import.meta.env.VITE_RPC_TRANSPORT_URL,
     wsRpc: import.meta.env.VITE_RPC_WS_URL,
     snapshotServiceUrl: 'https://kamigaze.test.asphodel.io',
-    // streamServiceUrl: 'https://kamigaze.test.asphodel.io',
+    streamServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 4471190363524365,
