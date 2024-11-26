@@ -7,8 +7,9 @@ import { EmptyText, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, getAccountFromBurner } from 'network/shapes/Account';
+import { Allo, parseAllos } from 'network/shapes/Allo';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
-import { Droptable, getDTDetails, queryDTCommits } from 'network/shapes/Droptable';
+import { queryDTCommits } from 'network/shapes/Droptable';
 import {
   Kami,
   KamiOptions,
@@ -85,7 +86,8 @@ export function registerNodeModal() {
                 parseConditionalText(world, components, condition, tracking),
               getScavBarFromHash: (nodeIndex: number) =>
                 getScavBarFromHash(world, components, 'node', nodeIndex),
-              getDTDetails: (dt: Droptable) => getDTDetails(world, components, dt),
+              parseAllos: (scavAllo: Allo[], flatten?: boolean) =>
+                parseAllos(world, components, scavAllo, flatten),
             },
           };
         })

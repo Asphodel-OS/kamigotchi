@@ -2,7 +2,7 @@ import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
-import { Reward } from '../Rewards';
+import { Allo } from '../Allo';
 import { Objective, checkObjective } from './objective';
 import { query } from './queries';
 import { BaseQuest, Quest, populate } from './quest';
@@ -116,14 +116,12 @@ export const filterByNotObjective = (quests: Quest[], faction?: number) => {
   });
 };
 
-// filter a list of Quests (parsed or not) to ones with a Reward matching certain conditions
+// filter a list of Quests (parsed or not) to ones with a Allo matching certain conditions
 export const filterByReward = (quests: Quest[], faction?: number) => {
   return quests.filter((q: Quest) => {
     let result = true;
     if (faction && result) {
-      result = q.rewards.some(
-        (r: Reward) => r.target.type === 'REPUTATION' && r.target.index === faction
-      );
+      result = q.rewards.some((r: Allo) => r.type === 'REPUTATION' && r.index === faction);
     }
     return result;
   });

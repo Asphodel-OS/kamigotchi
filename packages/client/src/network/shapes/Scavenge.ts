@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { Reward, getReward } from './Rewards';
+import { Allo, getAllo } from './Allo';
 import { getEntityByHash, hashArgs, queryChildrenOf } from './utils';
 
 export interface ScavBar {
@@ -8,7 +8,7 @@ export interface ScavBar {
   field: string;
   index: number;
   cost: number;
-  rewards: Reward[];
+  rewards: Allo[];
 }
 
 /////////////////
@@ -37,7 +37,7 @@ export const getScavBar = (
     index: scavIndex ?? (getComponentValue(Index, index)?.value as number) * 1,
     cost: (getComponentValue(Value, index)?.value as number) * 1,
     rewards: queryChildrenOf(components, getRewardParentID(id)).map((rwdIndex: EntityIndex) =>
-      getReward(world, components, rwdIndex)
+      getAllo(world, components, rwdIndex)
     ),
   };
 };

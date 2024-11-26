@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 import { ActionButton, ActionListButton, Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
+import { Allo } from 'network/shapes/Allo';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
-import { Reward } from 'network/shapes/Rewards';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
 
@@ -40,10 +40,10 @@ export const QuestCard = (props: Props) => {
   // get the Faction image of a Quest based on whether it has a REPUTATION reward
   // NOTE: hardcoded to agency for now
   const getFactionStamp = (quest: Quest) => {
-    const reward = quest.rewards.find((r) => r.target.type === 'REPUTATION');
+    const reward = quest.rewards.find((r) => r.type === 'REPUTATION');
     if (!reward) return <></>;
 
-    const key = `faction-${reward.target.type}-${reward.target.index}`;
+    const key = `faction-${reward.type}-${reward.index}`;
     if (!imageCache.has(key)) {
       const icon = getFactionImage('kamigotchi_tourism_agency');
       const component = <Image src={icon} size={1.8} />;
@@ -54,12 +54,12 @@ export const QuestCard = (props: Props) => {
   };
 
   // get the Reward image component of a Quest
-  const getRewardImage = (reward: Reward) => {
-    if (reward.target.type === 'NFT') return <div />;
+  const getRewardImage = (reward: Allo) => {
+    if (reward.type === 'NFT') return <div />;
 
-    const key = `reward-${reward.target.type}-${reward.target.index}`;
+    const key = `reward-${reward.type}-${reward.index}`;
     if (!imageCache.has(key)) {
-      const entity = describeEntity(reward.target.type, reward.target.index || 0);
+      const entity = describeEntity(reward.type, reward.index || 0);
       const component = (
         <Tooltip key={key} text={[entity.name]} direction='row'>
           <Image src={entity.image} size={1.5} />
@@ -155,7 +155,7 @@ export const QuestCard = (props: Props) => {
             <Row key={r.id}>
               <ConditionText>
                 {getRewardImage(r)}
-                {`x${(r.target.value ?? 0) * 1}`}
+                {`x${(r.value ?? 0) * 1}`}
               </ConditionText>
             </Row>
           ))}

@@ -23,6 +23,15 @@ export interface Stats {
   stamina: Stat;
 }
 
+export const NullStat: Stat = {
+  base: 0,
+  shift: 0,
+  boost: 0,
+  sync: 0,
+  rate: 0,
+  total: 0,
+};
+
 // get the stats of an entity
 // get the Stats from the EnityIndex of a Kami
 export const getStats = (
@@ -51,11 +60,15 @@ export const getStats = (
 
 export const getStat = (index: EntityIndex, type: StatComponent, shiftBonus?: number): Stat => {
   const raw = BigInt(getComponentValue(type, index)?.value || 0);
+  return getStatFromUint(raw, shiftBonus);
+};
 
-  const base = Number(BigInt.asIntN(32, (raw >> 192n) & 0xffffffffffffffffn));
-  const shift = Number(BigInt.asIntN(32, (raw >> 128n) & 0xffffffffffffffffn)) + (shiftBonus ?? 0);
-  const boost = Number(BigInt.asIntN(32, (raw >> 64n) & 0xffffffffffffffffn));
-  const sync = Number(BigInt.asIntN(32, raw & 0xffffffffffffffffn));
+export const getStatFromUint = (value: bigint, shiftBonus?: number): Stat => {
+  const base = Number(BigInt.asIntN(32, (value >> 192n) & 0xffffffffffffffffn));
+  const shift =
+    Number(BigInt.asIntN(32, (value >> 128n) & 0xffffffffffffffffn)) + (shiftBonus ?? 0);
+  const boost = Number(BigInt.asIntN(32, (value >> 64n) & 0xffffffffffffffffn));
+  const sync = Number(BigInt.asIntN(32, value & 0xffffffffffffffffn));
 
   return {
     base: base,

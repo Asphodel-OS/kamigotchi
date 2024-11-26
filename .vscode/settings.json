@@ -22,5 +22,6 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.detectIndentation": true
-  }
+  },
+  "cSpell.words": ["Allo", "Allos"]
 }

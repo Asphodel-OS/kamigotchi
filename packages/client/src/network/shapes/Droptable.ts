@@ -1,4 +1,5 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { getRarities } from 'constants/rarities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getItemDetailsByIndex } from './Item';
@@ -72,12 +73,12 @@ export const getDTDetails = (
   world: World,
   components: Components,
   droptable: Droptable
-): DTDetails[] => {
-  const details: DTDetails[] = [];
+): DetailedEntity[] => {
+  const details: DetailedEntity[] = [];
   for (let i = 0; i < droptable.keys.length; i++)
     details.push({
-      rarity: droptable.weights[i],
-      object: getItemDetailsByIndex(world, components, droptable.keys[i]),
+      ...getItemDetailsByIndex(world, components, droptable.keys[i]),
+      description: getRarities(droptable.weights[i]).title,
     });
   return details;
 };
