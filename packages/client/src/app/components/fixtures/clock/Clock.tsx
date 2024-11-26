@@ -119,7 +119,7 @@ export function registerClock() {
               {stamina.sync}/{stamina.total}
             </StaminaText>
             <SmallCircle>
-              <SmallCircleFill height={calcStaminaPercent(stamina)} />
+              <SmallCircleFill height={calcStaminaPercent(stamina).toString()} />
             </SmallCircle>
           </Tooltip>
         </Container>
@@ -232,10 +232,10 @@ const SmallCircle = styled.div`
   pointer-event: none;
 `;
 
-const SmallCircleFill = styled.div<{ height: number }>`
+const SmallCircleFill = styled.div<{ height: string }>`
   height: ${({ height }) => height}%;
   position: relative;
-  background-color: ${({ height }) => getColor(height)};
+  background-color: ${({ height }) => getColor(Number(height))};
   pointer-event: none;
 `;
 
