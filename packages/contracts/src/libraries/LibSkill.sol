@@ -15,10 +15,11 @@ import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 
 uint256 constant TREE_POINTS_PER_TIER = 5;
@@ -118,6 +119,11 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
+  function verifyResettable(IUintComp components, uint256 targetID) internal view {
+    if (!LibFlag.has(components, targetID, "CAN_RESET_SKILLS"))
+      revert("cannot reset skills (no flag)");
+  }
+
   function verifyPrerequisites(IUintComp components, uint32 skillIndex, uint256 holderID) internal {
     if (!meetsPrerequisites(components, skillIndex, holderID))
       revert("SkillUpgrade: unmet prerequisites");
@@ -189,6 +195,10 @@ library LibSkill {
 
   function setPoints(IUintComp components, uint256 id, uint256 value) internal {
     SkillPointComponent(getAddrByID(components, SPCompID)).set(id, value);
+  }
+
+  function useReset(IUintComp components, uint256 targetID) internal {
+    LibFlag.set(components, targetID, "CAN_RESET_SKILLS", false);
   }
 
   /////////////////

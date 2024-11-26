@@ -48,7 +48,6 @@ import { KamiGachaRevealSystem } from "./ethers-contracts/KamiGachaRevealSystem"
 import { KamiLevelSystem } from "./ethers-contracts/KamiLevelSystem";
 import { KamiNameSystem } from "./ethers-contracts/KamiNameSystem";
 import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
-import { KamiUseSkillResetSystem } from "./ethers-contracts/KamiUseSkillResetSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
 import { LootboxCommitSystem } from "./ethers-contracts/LootboxCommitSystem";
@@ -57,6 +56,7 @@ import { QuestCompleteSystem } from "./ethers-contracts/QuestCompleteSystem";
 import { QuestDropSystem } from "./ethers-contracts/QuestDropSystem";
 import { RelationshipAdvanceSystem } from "./ethers-contracts/RelationshipAdvanceSystem";
 import { ScavengeClaimSystem } from "./ethers-contracts/ScavengeClaimSystem";
+import { SkillResetSystem } from "./ethers-contracts/SkillResetSystem";
 import { SkillUpgradeSystem } from "./ethers-contracts/SkillUpgradeSystem";
 import { TradeAcceptSystem } from "./ethers-contracts/TradeAcceptSystem";
 import { TradeAddToSystem } from "./ethers-contracts/TradeAddToSystem";
@@ -114,7 +114,6 @@ export type SystemTypes = {
   "system.kami.level": KamiLevelSystem;
   "system.kami.name": KamiNameSystem;
   "system.kami.use.item": KamiUseItemSystem;
-  "system.kami.use.skill.reset": KamiUseSkillResetSystem;
   "system.listing.buy": ListingBuySystem;
   "system.listing.sell": ListingSellSystem;
   "system.lootbox.commit": LootboxCommitSystem;
@@ -123,6 +122,7 @@ export type SystemTypes = {
   "system.Quest.Drop": QuestDropSystem;
   "system.relationship.advance": RelationshipAdvanceSystem;
   "system.scavenge.claim": ScavengeClaimSystem;
+  "system.skill.reset": SkillResetSystem;
   "system.skill.upgrade": SkillUpgradeSystem;
   "system.trade.accept": TradeAcceptSystem;
   "system.trade.add": TradeAddToSystem;

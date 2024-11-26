@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface KamiUseSkillResetSystemInterface extends utils.Interface {
+export interface SkillResetSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
@@ -176,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface KamiUseSkillResetSystem extends BaseContract {
+export interface SkillResetSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: KamiUseSkillResetSystemInterface;
+  interface: SkillResetSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -222,7 +222,7 @@ export interface KamiUseSkillResetSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
+      targetID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -267,7 +267,7 @@ export interface KamiUseSkillResetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    kamiID: PromiseOrValue<BigNumberish>,
+    targetID: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -308,7 +308,7 @@ export interface KamiUseSkillResetSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
+      targetID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -378,7 +378,7 @@ export interface KamiUseSkillResetSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
+      targetID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -424,7 +424,7 @@ export interface KamiUseSkillResetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      kamiID: PromiseOrValue<BigNumberish>,
+      targetID: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -48,7 +48,6 @@ import KamiGachaRevealSystem from "../abi/KamiGachaRevealSystem.json";
 import KamiLevelSystem from "../abi/KamiLevelSystem.json";
 import KamiNameSystem from "../abi/KamiNameSystem.json";
 import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
-import KamiUseSkillResetSystem from "../abi/KamiUseSkillResetSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
 import LootboxCommitSystem from "../abi/LootboxCommitSystem.json";
@@ -57,6 +56,7 @@ import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
 import QuestDropSystem from "../abi/QuestDropSystem.json";
 import RelationshipAdvanceSystem from "../abi/RelationshipAdvanceSystem.json";
 import ScavengeClaimSystem from "../abi/ScavengeClaimSystem.json";
+import SkillResetSystem from "../abi/SkillResetSystem.json";
 import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
@@ -114,7 +114,6 @@ export const SystemAbis = {
   "system.kami.level": KamiLevelSystem.abi,
   "system.kami.name": KamiNameSystem.abi,
   "system.kami.use.item": KamiUseItemSystem.abi,
-  "system.kami.use.skill.reset": KamiUseSkillResetSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,
   "system.lootbox.commit": LootboxCommitSystem.abi,
@@ -123,6 +122,7 @@ export const SystemAbis = {
   "system.Quest.Drop": QuestDropSystem.abi,
   "system.relationship.advance": RelationshipAdvanceSystem.abi,
   "system.scavenge.claim": ScavengeClaimSystem.abi,
+  "system.skill.reset": SkillResetSystem.abi,
   "system.skill.upgrade": SkillUpgradeSystem.abi,
   "system.trade.accept": TradeAcceptSystem.abi,
   "system.trade.add": TradeAddToSystem.abi,

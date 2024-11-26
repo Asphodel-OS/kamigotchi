@@ -463,26 +463,6 @@
       ]
     },
     {
-      "name": "KamiUseSkillResetSystem",
-      "writeAccess": [
-        "EntityType",
-        "Health",
-        "IdHolder",
-        "IDParent",
-        "IDType",
-        "IdSource",
-        "IDOwnsSkill",
-        "IndexSkill",
-        "Level",
-        "SkillPoint",
-        "TimeLast",
-        "TimeStart",
-        "TimeReset",
-        "Type",
-        "Value"
-      ]
-    },
-    {
       "name": "HarvestCollectSystem",
       "writeAccess": [
         "EntityType",
@@ -602,6 +582,26 @@
     {
       "name": "ScavengeClaimSystem",
       "writeAccess": ["*"]
+    },
+    {
+      "name": "SkillResetSystem",
+      "writeAccess": [
+        "EntityType",
+        "Health",
+        "IdHolder",
+        "IDParent",
+        "IDType",
+        "IdSource",
+        "IDOwnsSkill",
+        "IndexSkill",
+        "Level",
+        "SkillPoint",
+        "TimeLast",
+        "TimeStart",
+        "TimeReset",
+        "Type",
+        "Value"
+      ]
     },
     {
       "name": "SkillUpgradeSystem",

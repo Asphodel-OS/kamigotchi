@@ -67,7 +67,7 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "kamiID",
+          "name": "targetID",
           "type": "uint256",
           "internalType": "uint256"
         },
