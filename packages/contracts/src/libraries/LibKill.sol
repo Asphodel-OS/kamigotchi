@@ -60,9 +60,9 @@ library LibKill {
     uint32 spoils,
     uint32 strain,
     uint32 karma,
-    uint64 endTs
+    uint64 endTs,
+    uint32 nodeIndex
   );
-
   /////////////////
   // INTERACTIONS
 
@@ -246,7 +246,7 @@ library LibKill {
   ) public {
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
 
-    emitLog(components, killerID, victimID, bals);
+    emitLog(components, killerID, victimID, bals, nodeIndex);
 
     _logKill(world, components, killerID, victimID, nodeIndex, bals);
     _logTotals(components, accID, nodeIndex);
@@ -296,10 +296,12 @@ library LibKill {
     IUintComp components,
     uint256 killerID,
     uint256 victimID,
-    KillBalance memory bals
+    KillBalance memory bals,
+    uint32 nodeIndex
   ) internal {
     Stat memory killerHp = LibStat.get(components, "HEALTH", killerID);
     Stat memory victimHp = LibStat.get(components, "HEALTH", victimID);
+
     emit KamiLiquidated(
       LibKami.getIndex(components, killerID),
       killerHp.sync,
@@ -312,7 +314,8 @@ library LibKill {
       bals.spoils.toUint32(),
       bals.strain.toUint32(),
       bals.karma.toUint32(),
-      block.timestamp.toUint64()
+      block.timestamp.toUint64(),
+      nodeIndex
     );
   }
 }
