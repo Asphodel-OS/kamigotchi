@@ -181,7 +181,6 @@ const StatsContainer = styled.div`
   background-color: #999;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
 
   height: 100%;
   width: 19.3vw;

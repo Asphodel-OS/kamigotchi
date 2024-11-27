@@ -19,7 +19,7 @@ export const Overlay = styled.div<OverlayProps>`
   ${({ right }) => right !== undefined && `right: ${right}vw;`}
   ${({ left }) => left !== undefined && `left: ${left}vw;`}
   ${({ translateX, translateY }) =>
-    `transform: translate(${translateX ?? 0}%, ${translateY ?? 0}%);`}
+    translateX && translateY && `transform: translate(${translateX}%, ${translateY}%);`}
 
   display: flex;
   flex-flow: row nowrap;
