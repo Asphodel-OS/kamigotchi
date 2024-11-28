@@ -31,13 +31,13 @@ interface getArgs {
   type?: string;
   options?: any;
 }
-const descriptionMap = new Map<string, (args: getArgs) => DetailedEntity>();
-descriptionMap.set('ITEM', getItem);
-descriptionMap.set('FACTION', getFaction);
-descriptionMap.set('QUEST', getQuest);
-descriptionMap.set('REPUTATION', getReputation);
-descriptionMap.set('SKILL', getSkill);
-descriptionMap.set('STATE', getState);
+// const descriptionMap = new Map<string, (args: getArgs) => DetailedEntity>();
+// descriptionMap.set('ITEM', getItem);
+// descriptionMap.set('FACTION', getFaction);
+// descriptionMap.set('QUEST', getQuest);
+// descriptionMap.set('REPUTATION', getReputation);
+// descriptionMap.set('SKILL', getSkill);
+// descriptionMap.set('STATE', getState);
 export const getDescribedEntity = (
   world: World,
   components: Components,
@@ -45,8 +45,15 @@ export const getDescribedEntity = (
   index: number,
   options?: any
 ): DetailedEntity => {
-  if (descriptionMap.has(type))
-    return descriptionMap.get(type)!({ world, components, index, type, options });
+  const args: getArgs = { world, components, index, type, options };
+  // if (descriptionMap.has(type))
+  //   return descriptionMap.get(type)!({ world, components, index, type, options });
+  if (type === 'ITEM') return getItem(args);
+  else if (type === 'FACTION') return getFaction(args);
+  else if (type === 'QUEST') return getQuest(args);
+  else if (type === 'REPUTATION') return getReputation(args);
+  else if (type === 'SKILL') return getSkill(args);
+  else if (type === 'STATE') return getState(args);
   else return { ObjectType: type, image: helpIcon, name: type };
 };
 
