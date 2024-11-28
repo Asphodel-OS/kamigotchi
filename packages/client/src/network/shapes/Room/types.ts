@@ -106,8 +106,8 @@ export const getRoom = (
   if (options?.players) {
     const accountResults = Array.from(
       runQuery([
-        HasValue(EntityType, { value: 'ACCOUNT' }),
         HasValue(RoomIndex, { value: room.index }),
+        HasValue(EntityType, { value: 'ACCOUNT' }),
       ])
     );
 

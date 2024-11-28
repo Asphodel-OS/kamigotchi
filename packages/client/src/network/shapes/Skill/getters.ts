@@ -48,7 +48,8 @@ export const getSkillByIndex = (
   index: number,
   options?: Options
 ): Skill => {
-  const entity = querySkillByIndex(components, index, options);
+  const entity = querySkillByIndex(world, index);
+  if (!entity) return NullSkill;
   return getSkill(world, components, entity, options);
 };
 

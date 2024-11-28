@@ -18,7 +18,6 @@ export {
   checkObjective as checkQuestObjective,
   getObjective as getQuestObjective,
   getObjectives as getQuestObjectives,
-  querySnapshotObjective,
 } from './objective';
 export {
   queryAccepted as queryAcceptedQuests,

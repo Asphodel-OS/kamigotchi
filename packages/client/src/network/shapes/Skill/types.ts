@@ -1,12 +1,4 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { getSkillBonuses } from '.';
@@ -64,28 +56,11 @@ export const getSkill = (
   entityIndex: EntityIndex,
   options?: Options
 ): Skill => {
-  const {
-    EntityType,
-    IsRegistry,
-    Cost,
-    Description,
-    Level,
-    Max,
-    MediaURI,
-    Name,
-    Type,
-    SkillIndex,
-    SkillPoint,
-  } = components;
+  const { Cost, Description, Level, Max, Name, Type, SkillIndex, SkillPoint } = components;
 
   const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
-  const registryIndex = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      HasValue(EntityType, { value: 'SKILL' }),
-      HasValue(SkillIndex, { value: skillIndex }),
-    ])
-  )[0];
+  const registryIndex = getRegistryEntity(world, skillIndex);
+  if (!registryIndex) return NullSkill;
 
   const name = getComponentValue(Name, registryIndex)?.value || ('' as string);
 
@@ -137,6 +112,10 @@ export const getRequirement = (
 
 //////////////////
 // IDs
+
+export const getRegistryEntity = (world: World, index: number): EntityIndex | undefined => {
+  return getEntityByHash(world, ['registry.skill', index], ['string', 'uint32']);
+};
 
 export const getInstanceEntity = (
   world: World,

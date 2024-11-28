@@ -101,11 +101,11 @@ export const getKamiDeaths = (
 // query kill logs where a input Kamiis the victim
 export const queryKamiDeaths = (components: Components, kami: BaseKami): EntityIndex[] => {
   const { IsKill, TargetID } = components;
-  return Array.from(runQuery([Has(IsKill), HasValue(TargetID, { value: kami.id })]));
+  return Array.from(runQuery([HasValue(TargetID, { value: kami.id }), Has(IsKill)]));
 };
 
 // query kill logs where the input Kami is the aggressor
 export const queryKamiKills = (components: Components, kami: BaseKami): EntityIndex[] => {
   const { IsKill, SourceID } = components;
-  return Array.from(runQuery([Has(IsKill), HasValue(SourceID, { value: kami.id })]));
+  return Array.from(runQuery([HasValue(SourceID, { value: kami.id }), Has(IsKill)]));
 };

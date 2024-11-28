@@ -428,6 +428,7 @@ library LibKami {
   // UTILS
 
   function genID(uint32 kamiIndex) internal pure returns (uint256) {
+    // todo: change to kami.index
     return uint256(keccak256(abi.encodePacked("kami.id", kamiIndex)));
   }
 

@@ -49,6 +49,7 @@ export const queryByName = (components: Components, name: string) => {
 };
 
 // query for an account entity by its operator address
+// todo: query directly with OperatorCacheComponent (operator address => accID)
 export const queryByOperator = (components: Components, operator: string) => {
   const results = query(components, { operator });
   if (results.length == 0) return;
@@ -56,6 +57,7 @@ export const queryByOperator = (components: Components, operator: string) => {
 };
 
 // query for an account entity by its owner address
+// todo: query directly! accID = formatEntityID(ownerAddr)
 export const queryByOwner = (components: Components, owner: string) => {
   const results = query(components, { owner });
   if (results.length == 0) return;

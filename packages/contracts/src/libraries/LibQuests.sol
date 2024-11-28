@@ -421,7 +421,6 @@ library LibQuests {
     string memory _type,
     uint32 index
   ) internal pure returns (uint256) {
-    // world2: flatten naming (leftover from LibHash)
     return
       uint256(
         keccak256(abi.encodePacked("quest.objective.snapshot", questID, logicType, _type, index))

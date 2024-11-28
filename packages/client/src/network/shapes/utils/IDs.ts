@@ -9,6 +9,7 @@ export const getEntityByHash = (
   args: any[],
   argTypes: string[]
 ): EntityIndex | undefined => {
+  for (let i = 0; i < args.length; i++) if (args[i] === undefined) return;
   return world.entityToIndex.get(hashArgs(args, argTypes));
 };
 

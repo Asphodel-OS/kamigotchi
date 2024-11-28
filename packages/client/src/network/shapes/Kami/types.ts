@@ -13,7 +13,7 @@ import { Harvest, getHarvestForKami } from '../Harvest';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { Traits, getKamiTraits } from '../Trait';
-import { DetailedEntity } from '../utils';
+import { DetailedEntity, getEntityByHash } from '../utils';
 import { calcHealthRate } from './functions';
 
 export interface BaseKami extends DetailedEntity {
@@ -191,3 +191,10 @@ export const getKami = (
 
   return kami;
 };
+
+////////////////
+// IDs
+
+export function getKamiEntity(world: World, index: number): EntityIndex | undefined {
+  return getEntityByHash(world, ['kami.id', index], ['string', 'uint32']);
+}

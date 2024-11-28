@@ -83,9 +83,9 @@ export const checkCurrent = (
   target: Target,
   holder: Account | Kami
 ): ((opt: any) => Status) => {
-  const accVal = getBalance(world, components, holder.entityIndex, target.index, target.type) || 0;
-
   return (opt: any) => {
+    const accVal =
+      getBalance(world, components, holder.entityIndex, target.index, target.type) || 0;
     return {
       target: target.value,
       current: accVal,
@@ -100,9 +100,8 @@ export const checkBoolean = (
   target: Target,
   holder: Account | Kami
 ): ((opt: any) => Status) => {
-  const result = getBool(world, components, holder, target.index, target.value, target.type);
-
   return (opt: any) => {
+    const result = getBool(world, components, holder, target.index, target.value, target.type);
     return {
       completable: opt === 'IS' ? result : !result,
     };

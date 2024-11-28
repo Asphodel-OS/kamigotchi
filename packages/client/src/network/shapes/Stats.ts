@@ -32,6 +32,15 @@ export const NullStat: Stat = {
   total: 0,
 };
 
+export const NullStats: Stats = {
+  health: NullStat,
+  power: NullStat,
+  violence: NullStat,
+  harmony: NullStat,
+  slots: NullStat,
+  stamina: NullStat,
+};
+
 // get the stats of an entity
 // get the Stats from the EnityIndex of a Kami
 export const getStats = (

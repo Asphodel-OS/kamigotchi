@@ -10,7 +10,7 @@ import {
 import { Components } from 'network/';
 import { queryConditionsOf } from '../Conditional/queries';
 import { queryChildrenOf } from '../utils';
-import { Options, Requirement, getBonusParentID } from './types';
+import { Options, Requirement, getBonusParentID, getRegistryEntity } from './types';
 
 /////////////////
 // GETTERS
@@ -28,16 +28,8 @@ export const queryHolderSkills = (
   return querySkillsX(components, { holder: holder }, options);
 };
 
-export const querySkillByIndex = (
-  components: Components,
-  index: number,
-  options?: Options
-): EntityIndex => {
-  const { IsRegistry, SkillIndex } = components;
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(SkillIndex, { value: index })])
-  );
-  return entityIndices[0];
+export const querySkillByIndex = (world: World, index: number): EntityIndex | undefined => {
+  return getRegistryEntity(world, index);
 };
 
 /////////////////

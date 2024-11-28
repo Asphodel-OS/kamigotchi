@@ -8,6 +8,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { getEntityByHash } from './utils';
 
 // standardized shape of a FE NPC Entity
 export interface NPC {
@@ -33,10 +34,8 @@ export const getNPC = (world: World, components: Components, entityIndex: Entity
 
 // the Merchant Index here is actually an NPCIndex
 export const getNPCByIndex = (world: World, components: Components, index: number) => {
-  const { EntityType, NPCIndex } = components;
-  const entityIndex = Array.from(
-    runQuery([HasValue(EntityType, { value: 'NPC' }), HasValue(NPCIndex, { value: index })])
-  )[0];
+  const entityIndex = getNPCIndex(world, index);
+  if (!entityIndex) return;
   return getNPC(world, components, entityIndex);
 };
 
@@ -44,4 +43,8 @@ export const getAllNPCs = (world: World, components: Components) => {
   const { EntityType } = components;
   const entityIndices = Array.from(runQuery([HasValue(EntityType, { value: 'NPC' })]));
   return entityIndices.map((entityIndex) => getNPC(world, components, entityIndex));
+};
+
+const getNPCIndex = (world: World, npcIndex: number) => {
+  return getEntityByHash(world, ['NPC', npcIndex], ['string', 'uint32']);
 };

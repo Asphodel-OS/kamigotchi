@@ -1,11 +1,4 @@
-import {
-  EntityID,
-  EntityIndex,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
@@ -18,7 +11,7 @@ import {
   checkerSwitch,
   getCondition,
 } from '../Conditional';
-import { getData, queryChildrenOfEntityIndex } from '../utils';
+import { getData, getEntityByHash, queryChildrenOfEntityIndex } from '../utils';
 import { Quest } from './quest';
 
 /////////////////
@@ -51,20 +44,6 @@ export const getObjectives = (
   return queryChildrenOfEntityIndex(components, 'registry.quest.objective', questIndex).map(
     (index) => getObjective(world, components, index)
   );
-};
-
-/////////////////
-// QUERIES
-
-export const querySnapshotObjective = (
-  world: World,
-  components: Components,
-  questID: EntityID
-): Objective => {
-  const { OwnsQuestID } = components;
-  // world2: update snapshot to flattened ID
-  const entityIndices = Array.from(runQuery([HasValue(OwnsQuestID, { value: questID })]));
-  return getObjective(world, components, entityIndices[0]); // should only be one
 };
 
 /////////////////
@@ -101,16 +80,15 @@ const checkIncrease = (
   quest: Quest,
   account: Account
 ): ((opt: any) => Status) => {
-  const prevVal = querySnapshotObjective(world, components, quest.id).target.value as number;
-  const currVal = getData(
-    world,
-    components,
-    account.id,
-    objective.target.type,
-    objective.target.index
-  );
-
   return (opt: any) => {
+    const prevVal = getSnapshotValue(world, components, quest.id, objective);
+    const currVal = getData(
+      world,
+      components,
+      account.id,
+      objective.target.type,
+      objective.target.index
+    );
     return {
       target: objective.target.value,
       current: currVal - prevVal,
@@ -130,16 +108,15 @@ const checkDecrease = (
   quest: Quest,
   account: Account
 ): ((opt: any) => Status) => {
-  const prevVal = querySnapshotObjective(world, components, quest.id).target.value as number;
-  const currVal = getData(
-    world,
-    components,
-    account.id,
-    objective.target.type,
-    objective.target.index
-  );
-
   return (opt: any) => {
+    const prevVal = getSnapshotValue(world, components, quest.id, objective);
+    const currVal = getData(
+      world,
+      components,
+      account.id,
+      objective.target.type,
+      objective.target.index
+    );
     return {
       target: objective.target.value,
       current: prevVal - currVal,
@@ -150,4 +127,32 @@ const checkDecrease = (
       ),
     };
   };
+};
+
+/////////////////
+// UTILS
+
+const getSnapshotValue = (
+  world: World,
+  components: Components,
+  questID: EntityID,
+  obj: Objective
+): number => {
+  const entityIndex = getSnapshotEntity(world, questID, obj);
+  if (!entityIndex) return 0;
+
+  const { Value } = components;
+  return ((getComponentValue(Value, entityIndex)?.value as number) || 0) * 1;
+};
+
+const getSnapshotEntity = (
+  world: World,
+  questID: EntityID,
+  obj: Objective
+): EntityIndex | undefined => {
+  return getEntityByHash(
+    world,
+    ['quest.objective.snapshot', questID, obj.logic, obj.target.type, obj.target.index || 0],
+    ['string', 'uint256', 'string', 'string', 'uint32']
+  );
 };

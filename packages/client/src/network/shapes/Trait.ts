@@ -1,16 +1,9 @@
-import {
-  Component,
-  EntityIndex,
-  Has,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityIndex, Has, World, getComponentValue, runQuery } from '@mud-classic/recs';
 
 import { Affinity } from 'constants/affinities';
 import { Components } from 'network/';
-import { Stats, getStats } from './Stats';
+import { NullStats, Stats, getStats } from './Stats';
+import { getEntityByHash } from './utils';
 
 // standardized shape of Traits on an Entity
 export interface Trait {
@@ -28,13 +21,12 @@ export interface Traits {
   hand: Trait;
 }
 
-export interface TraitEntities {
-  backgroundIndex: EntityIndex;
-  bodyIndex: EntityIndex;
-  colorIndex: EntityIndex;
-  faceIndex: EntityIndex;
-  handIndex: EntityIndex;
-}
+export const NullTrait: Trait = {
+  name: '',
+  affinity: Affinity.Normal,
+  rarity: 0,
+  stats: NullStats,
+};
 
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
@@ -53,21 +45,12 @@ export const getTraitByIndex = (
   world: World,
   components: Components,
   index: number,
-  type?: string
+  type: string
 ): Trait => {
-  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = components;
+  const entityIndex = getRegistryEntity(world, index, type);
+  if (!entityIndex) return NullTrait;
 
-  const getPointer = (type: Component) => {
-    return Array.from(runQuery([Has(IsRegistry), HasValue(type, { value: index })]))[0];
-  };
-
-  if (type === 'BODY') return getTrait(world, components, getPointer(BodyIndex));
-  else if (type === 'BACKGROUND') return getTrait(world, components, getPointer(BackgroundIndex));
-  else if (type === 'COLOR') return getTrait(world, components, getPointer(ColorIndex));
-  else if (type === 'FACE') return getTrait(world, components, getPointer(FaceIndex));
-  else if (type === 'HAND') return getTrait(world, components, getPointer(HandIndex));
-
-  return {} as Trait; // should not reach here
+  return getTrait(world, components, entityIndex);
 };
 
 export const getRegistryTraits = (world: World, components: Components): Trait[] => {
@@ -83,35 +66,29 @@ export const getRegistryTraits = (world: World, components: Components): Trait[]
   return entityIndices.map((index) => getTrait(world, components, index));
 };
 
-export const getTraits = (world: World, components: Components, indices: TraitEntities): Traits => {
-  return {
-    background: getTrait(world, components, indices.backgroundIndex),
-    body: getTrait(world, components, indices.bodyIndex),
-    color: getTrait(world, components, indices.colorIndex),
-    face: getTrait(world, components, indices.faceIndex),
-    hand: getTrait(world, components, indices.handIndex),
-  };
-};
-
 // get the traits of a kami entity
 export const getKamiTraits = (
   world: World,
   components: Components,
   entity: EntityIndex
 ): Traits => {
-  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = components;
+  const { BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = components;
 
-  const getTraitPointer = (type: Component) => {
-    const traitIndex = getComponentValue(type, entity)?.value as number;
-    return Array.from(runQuery([Has(IsRegistry), HasValue(type, { value: traitIndex })]))[0];
-  };
+  const backgroundIndex = getComponentValue(BackgroundIndex, entity)?.value as number;
+  const bodyIndex = getComponentValue(BodyIndex, entity)?.value as number;
+  const colorIndex = getComponentValue(ColorIndex, entity)?.value as number;
+  const faceIndex = getComponentValue(FaceIndex, entity)?.value as number;
+  const handIndex = getComponentValue(HandIndex, entity)?.value as number;
 
-  const traitIndices: TraitEntities = {
-    backgroundIndex: getTraitPointer(BackgroundIndex),
-    bodyIndex: getTraitPointer(BodyIndex),
-    colorIndex: getTraitPointer(ColorIndex),
-    faceIndex: getTraitPointer(FaceIndex),
-    handIndex: getTraitPointer(HandIndex),
+  return {
+    background: getTraitByIndex(world, components, backgroundIndex, 'BACKGROUND'),
+    body: getTraitByIndex(world, components, bodyIndex, 'BODY'),
+    color: getTraitByIndex(world, components, colorIndex, 'COLOR'),
+    face: getTraitByIndex(world, components, faceIndex, 'FACE'),
+    hand: getTraitByIndex(world, components, handIndex, 'HAND'),
   };
-  return getTraits(world, components, traitIndices);
 };
+
+function getRegistryEntity(world: World, index: number, type: string): EntityIndex | undefined {
+  return getEntityByHash(world, ['registry.trait', type, index], ['string', 'string', 'uint32']);
+}

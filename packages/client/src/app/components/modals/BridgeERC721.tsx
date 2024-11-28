@@ -1,4 +1,3 @@
-import { HasValue, runQuery } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
@@ -10,7 +9,7 @@ import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
-import { Kami, getKami } from 'network/shapes/Kami';
+import { Kami, getKamiByIndex } from 'network/shapes/Kami';
 
 export function registerERC721BridgeModal() {
   registerUIComponent(
@@ -134,30 +133,20 @@ export function registerERC721BridgeModal() {
       useEffect(() => {
         const getEOAKamis = (): Kami[] => {
           // get indices of external kamis
-          const getIndices = (): bigint[] => {
-            return erc721List ? [...erc721List] : [];
+          const getIndices = (): number[] => {
+            return erc721List ? [...erc721List.map((i) => Number(i))] : [];
           };
 
           // get kamis from index
-          const getKamis = (indices: bigint[]): Kami[] => {
+          const getKamis = (indices: number[]): Kami[] => {
             let kamis: Kami[] = [];
-            let petIndex;
             for (let i = 0; i < indices.length; i++) {
-              petIndex = ('0x' + indices[i].toString(16).padStart(2, '0')) as unknown as number;
-              const entityID = Array.from(
-                runQuery([
-                  HasValue(EntityType, { value: 'KAMI' }),
-                  HasValue(KamiIndex, { value: petIndex }),
-                ])
-              )[0];
-
-              kamis.push(
-                getKami(world, components, entityID, {
-                  // deaths: true,
-                  harvest: true,
-                  traits: true,
-                })
-              );
+              const kami = getKamiByIndex(world, components, indices[i], {
+                // deaths: true,
+                harvest: true,
+                traits: true,
+              });
+              if (kami) kamis.push(kami);
             }
 
             return kamis;
