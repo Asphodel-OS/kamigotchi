@@ -1,8 +1,7 @@
 import { AdminAPI } from '../admin';
-import { getItemImage, parseKamiStateToIndex, readFile, toRevise } from './utils';
+import { getItemImage, parseKamiStateToIndex, readFile, toDelete, toRevise } from './utils';
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
-  const droptablesCSV = await readFile('items/droptables.csv');
   const itemsCSV = await readFile('items/items.csv');
 
   const ignoreTypes = ['OTHER'];
@@ -32,7 +31,16 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
-export async function deleteItems(api: AdminAPI, indices: number[]) {
+export async function deleteItems(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const itemsCSV = await readFile('items/items.csv');
+    for (let i = 0; i < itemsCSV.length; i++) {
+      if (toDelete(itemsCSV[i])) indices.push(Number(itemsCSV[i]['Index']));
+    }
+  }
+
   for (let i = 0; i < indices.length; i++) {
     try {
       await api.registry.item.delete(indices[i]);

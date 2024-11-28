@@ -24,8 +24,15 @@ const run = async () => {
 
   // generate init script and calls
   if (idType === 'ADDRESS')
-    await deprecateByAddress(`[${systems}]`, world, getDeployerKey(mode), getRpc(mode)!);
-  else await deprecateByID(`[${systems}]`, world, getDeployerKey(mode), getRpc(mode)!);
+    await deprecateByAddress(
+      `[${systems}]`,
+      world,
+      getDeployerKey(mode),
+      getRpc(mode)!,
+      argv.forgeOpts
+    );
+  else
+    await deprecateByID(`[${systems}]`, world, getDeployerKey(mode), getRpc(mode)!, argv.forgeOpts);
 
   if (mode === 'DEV') setAutoMine(false);
 };

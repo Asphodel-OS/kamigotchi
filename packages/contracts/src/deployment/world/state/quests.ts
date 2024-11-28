@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { GACHA_TICKET_INDEX, parseToInitCon, readFile, toRevise } from './utils';
+import { GACHA_TICKET_INDEX, parseToInitCon, readFile, toDelete, toRevise } from './utils';
 
 export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
   const questCSV = await readFile('quests/quests.csv');
@@ -42,7 +42,16 @@ export async function initLocalQuests(api: AdminAPI) {
   api.registry.quest.add.reward.basic(1000000, 'ITEM', GACHA_TICKET_INDEX, 111); // 111 tickets
 }
 
-export async function deleteQuests(api: AdminAPI, indices: number[]) {
+export async function deleteQuests(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const questsCSV = await readFile('quests/quests.csv');
+    for (let i = 0; i < questsCSV.length; i++) {
+      if (toDelete(questsCSV[i])) indices.push(Number(questsCSV[i]['Index']));
+    }
+  }
+
   for (let i = 0; i < indices.length; i++) {
     try {
       await api.registry.quest.delete(indices[i]);

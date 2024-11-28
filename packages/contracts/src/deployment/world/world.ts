@@ -80,7 +80,7 @@ export class WorldState {
     } as SubFunc,
     items: {
       init: (indices?: number[]) => this.genCalls((api) => initItems(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteItems(api, indices || [])),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteItems(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseItems(api, indices)),
     } as SubFunc,
     listings: {
@@ -92,7 +92,7 @@ export class WorldState {
     } as SubFunc,
     nodes: {
       init: (indices?: number[]) => this.genCalls((api) => initNodes(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteNodes(api, indices || [])),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteNodes(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseNodes(api, indices)),
     } as SubFunc,
     mint: {
@@ -100,7 +100,7 @@ export class WorldState {
     } as SubFunc,
     quests: {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices || [])),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseQuests(api, indices)),
     } as SubFunc,
     recipes: {
@@ -113,12 +113,12 @@ export class WorldState {
     } as SubFunc,
     rooms: {
       init: (indices?: number[]) => this.genCalls((api) => initRooms(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteRooms(api, indices || [])),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteRooms(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseRooms(api, indices)),
     } as SubFunc,
     skills: {
       init: (indices?: number[]) => this.genCalls((api) => initSkills(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteSkills(api, indices || [])),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteSkills(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseSkills(api, indices)),
     } as SubFunc,
     traits: {

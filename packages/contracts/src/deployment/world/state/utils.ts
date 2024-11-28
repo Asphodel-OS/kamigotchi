@@ -10,6 +10,10 @@ export const GACHA_TICKET_INDEX = 2;
 ///////////////
 // GENERAL
 
+export const toDelete = (entry: any): boolean => {
+  return entry['Status'] === 'Revise Deployment' || entry['Status'] === 'Ingame';
+};
+
 /// @dev check if entry should be revised. assume all entries that are valid should be revised
 export const toRevise = (entry: any): boolean => {
   return (

@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { readFile, textToNumberArray, toRevise } from './utils';
+import { readFile, textToNumberArray, toDelete, toRevise } from './utils';
 
 export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
   // nodes data are stored in rooms csv
@@ -23,7 +23,21 @@ export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
-export async function deleteNodes(api: AdminAPI, indices: number[]) {
+export async function deleteNodes(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const nodesCSV = await readFile('rooms/rooms.csv');
+    for (let i = 0; i < nodesCSV.length; i++) {
+      if (
+        toDelete(nodesCSV[i]) &&
+        nodesCSV[i]['Enabled'] === 'true' &&
+        nodesCSV[i]['Node'] !== 'NONE'
+      )
+        indices.push(Number(nodesCSV[i]['Index']));
+    }
+  }
+
   for (let i = 0; i < indices.length; i++) {
     try {
       await api.node.delete(indices[i]);

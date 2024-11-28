@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { readFile, toRevise } from './utils';
+import { readFile, toDelete, toRevise } from './utils';
 
 // inits all skills or by optional indices parameter
 export async function initSkills(api: AdminAPI, indices?: number[]) {
@@ -22,7 +22,16 @@ export async function initSkills(api: AdminAPI, indices?: number[]) {
   }
 }
 
-export async function deleteSkills(api: AdminAPI, indices: number[]) {
+export async function deleteSkills(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const skillsCSV = await readFile('skills/skills.csv');
+    for (let i = 0; i < skillsCSV.length; i++) {
+      if (toDelete(skillsCSV[i])) indices.push(Number(skillsCSV[i]['Index']));
+    }
+  }
+
   for (let i = 0; i < indices.length; i++) {
     try {
       await api.registry.skill.delete(indices[i]);

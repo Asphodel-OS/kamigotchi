@@ -1,5 +1,5 @@
 import { AdminAPI } from '../admin';
-import { getGoalID, readFile, toRevise } from './utils';
+import { getGoalID, readFile, toDelete, toRevise } from './utils';
 
 // hardcoded gates - placeholder until notion is up
 const gates = {
@@ -25,7 +25,16 @@ export async function initRooms(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
-export async function deleteRooms(api: AdminAPI, indices: number[]) {
+export async function deleteRooms(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const roomsCSV = await readFile('rooms/rooms.csv');
+    for (let i = 0; i < roomsCSV.length; i++) {
+      if (toDelete(roomsCSV[i])) indices.push(Number(roomsCSV[i]['Index']));
+    }
+  }
+
   for (let i = 0; i < indices.length; i++) {
     try {
       await api.room.delete(indices[i]);
