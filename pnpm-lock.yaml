@@ -101,8 +101,8 @@ importers:
         specifier: ^1.19.0
         version: 1.19.3(debug@4.3.4)(typescript@5.4.2)(utf-8-validate@5.0.10)
       '@privy-io/react-auth':
-        specifier: 1.94.2
-        version: 1.94.2(@solana/web3.js@1.95.4)(@types/react@17.0.78)(bs58@4.0.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)(utf-8-validate@5.0.10)
+        specifier: 1.95.2
+        version: 1.95.2(@solana/web3.js@1.95.4)(@types/react@17.0.78)(bs58@4.0.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)(utf-8-validate@5.0.10)
       '@protobuf-ts/grpcweb-transport':
         specifier: ^2.7.0
         version: 2.9.4
@@ -3838,12 +3838,6 @@ packages:
     dependencies:
       '@noble/hashes': 1.3.3
 
-  /@noble/curves@1.4.0:
-    resolution: {integrity: sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg==}
-    dependencies:
-      '@noble/hashes': 1.4.0
-    dev: false
-
   /@noble/curves@1.6.0:
     resolution: {integrity: sha512-TlaHRXDehJuRNR9TfZDNQ45mMEd5dwUwmicsafcIX4SsNiqnCHKjE/1alYPd/lDRVhxdhUAlv8uEhMCI5zjIJQ==}
     engines: {node: ^14.21.3 || >=16}
@@ -4089,15 +4083,15 @@ packages:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
-  /@privy-io/api-base@1.4.0:
-    resolution: {integrity: sha512-8Pm/8bx6WvNt8uLtYOOj9acYL+JjUJxeChlBEvSywmre1l5o8naK6J4SeAb5v8b8p4178VNI4AYhd+rFh4HCsA==}
+  /@privy-io/api-base@1.4.1:
+    resolution: {integrity: sha512-q98uQGVBIY5SBHjJWL/udpbxM9ISpZl8Lwwjd0p0XHSMJMOgEhS4GLjcO7l3clfNrqL0fAuinQaa+seCaYOzng==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     dependencies:
       zod: 3.23.8
     dev: false
 
-  /@privy-io/js-sdk-core@0.34.1(utf-8-validate@5.0.10)(viem@2.21.45):
-    resolution: {integrity: sha512-YkTPa/CYPwdnXSFNWovp2dm1YqLAIBw464ll8D0ggEID8l91suAVh+q+eC9p4EQ3xdRkHmjrs1Tc+JUhbzS/Rw==}
+  /@privy-io/js-sdk-core@0.35.1(utf-8-validate@5.0.10)(viem@2.21.45):
+    resolution: {integrity: sha512-KuE6bQ1KMw4fgK3nPClTfiC55byu/AVWyBQwrRKDh0Jacw0L8eLRhGoQtRcJOKqwa+LukiSBf6cgutlxdRVZqQ==}
     peerDependencies:
       permissionless: ^0.2.10
       viem: ^2.21.36
@@ -4113,8 +4107,8 @@ packages:
       '@ethersproject/providers': 5.7.2(utf-8-validate@5.0.10)
       '@ethersproject/transactions': 5.7.0
       '@ethersproject/units': 5.7.0
-      '@privy-io/api-base': 1.4.0
-      '@privy-io/public-api': 2.15.0(utf-8-validate@5.0.10)
+      '@privy-io/api-base': 1.4.1
+      '@privy-io/public-api': 2.15.2(utf-8-validate@5.0.10)
       eventemitter3: 5.0.1
       fetch-retry: 5.0.6
       jose: 4.15.5
@@ -4128,11 +4122,11 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@privy-io/public-api@2.15.0(utf-8-validate@5.0.10):
-    resolution: {integrity: sha512-VU/7YOrr78nyKe8sVZ90Av17xCupAogY7q/hAyCrt14eu3HO7bYgxnNs2Ayk/hUhJ3QNoSDZ8uBdaMXHDwYqhA==}
+  /@privy-io/public-api@2.15.2(utf-8-validate@5.0.10):
+    resolution: {integrity: sha512-p8D2TPI0A319+tF5R8XvaaaKbXopltcd1d0/zELB6pXY5kkd1sCv9RZy+b52aweQgh3rvGrUo/lmlM11QRNPog==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     dependencies:
-      '@privy-io/api-base': 1.4.0
+      '@privy-io/api-base': 1.4.1
       bs58: 5.0.0
       ethers: 5.7.2(utf-8-validate@5.0.10)
       libphonenumber-js: 1.10.58
@@ -4142,8 +4136,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@privy-io/react-auth@1.94.2(@solana/web3.js@1.95.4)(@types/react@17.0.78)(bs58@4.0.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)(utf-8-validate@5.0.10):
-    resolution: {integrity: sha512-JlsTP4+n2JhHJrzuPmtUF2XEJyUfGr2SYYDbhRXULxAwA0oAnou+gu2andTdGiY/j33bjY2pOAgFM0hAv3lFdQ==}
+  /@privy-io/react-auth@1.95.2(@solana/web3.js@1.95.4)(@types/react@17.0.78)(bs58@4.0.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.2)(utf-8-validate@5.0.10):
+    resolution: {integrity: sha512-JWJmpH16vEN5NlneniCzYmKWDnUSAtQKKwnf149/fJLKBv+AaArrUNsOcuckmspCcamAGBFNB/n8ovGDYQBqYA==}
     peerDependencies:
       '@abstract-foundation/agw-client': ^0.0.1-beta.17
       '@solana/web3.js': ^1.95.3
@@ -4174,7 +4168,7 @@ packages:
       '@heroicons/react': 2.1.1(react@18.2.0)
       '@marsidev/react-turnstile': 0.4.1(react-dom@18.2.0)(react@18.2.0)
       '@metamask/eth-sig-util': 6.0.2
-      '@privy-io/js-sdk-core': 0.34.1(utf-8-validate@5.0.10)(viem@2.21.45)
+      '@privy-io/js-sdk-core': 0.35.1(utf-8-validate@5.0.10)(viem@2.21.45)
       '@simplewebauthn/browser': 9.0.1
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.4)
       '@solana/wallet-standard-wallet-adapter-base': 1.1.2(@solana/web3.js@1.95.4)(bs58@4.0.1)
@@ -4182,7 +4176,7 @@ packages:
       '@solana/web3.js': 1.95.4(utf-8-validate@5.0.10)
       '@wallet-standard/app': 1.1.0
       '@walletconnect/ethereum-provider': 2.17.2(@types/react@17.0.78)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10)
-      '@walletconnect/modal': 2.6.2(@types/react@17.0.78)(react@18.2.0)
+      '@walletconnect/modal': 2.7.0(@types/react@17.0.78)(react@18.2.0)
       base64-js: 1.5.1
       dotenv: 16.4.5
       encoding: 0.1.13
@@ -4989,10 +4983,6 @@ packages:
   /@scure/base@1.1.5:
     resolution: {integrity: sha512-Brj9FiG2W1MRQSTB212YVPRrcbjkv48FoZi/u4l/zds/ieRrqsh7aUf6CLwkAq61oKXr/ZlTzlY66gLIj3TFTQ==}
 
-  /@scure/base@1.1.7:
-    resolution: {integrity: sha512-PPNYBslrLNNUQ/Yad37MHYsNQtK67EhWb6WtSvNLLPo7SdVZgkUjD6Dg+5On7zNwmskf8OX7I7Nx5oN+MIWE0g==}
-    dev: false
-
   /@scure/base@1.1.9:
     resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
     dev: false
@@ -5017,7 +5007,7 @@ packages:
     dependencies:
       '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0
-      '@scure/base': 1.1.7
+      '@scure/base': 1.1.9
     dev: false
 
   /@scure/bip39@1.2.1:
@@ -5120,7 +5110,7 @@ packages:
     resolution: {integrity: sha512-dPObl4ntmfOc0VAGGyyFvrqhL8UkHXmVsgbj0K9RcznKV4KB3MgjGwzo8CTSX5El5lkb0rDeEzFqvToJXRz3dw==}
     engines: {node: '>=16'}
     dependencies:
-      '@noble/curves': 1.4.0
+      '@noble/curves': 1.6.0
       '@solana/wallet-standard-chains': 1.1.0
       '@solana/wallet-standard-features': 1.2.0
     dev: false
@@ -5166,7 +5156,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.25.0
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
       '@solana/buffer-layout': 4.0.1
       agentkeepalive: 4.5.0
       bigint-buffer: 1.1.5
@@ -8223,7 +8213,7 @@ packages:
     resolution: {integrity: sha512-c27loCv9QkZinsa5ProX751khO9DJl/AcB5c2KNtA6NRvHKS0PgLfcftz72KVq504vB0Gku5s2kUZzDBvQWvHg==}
     engines: {node: '>=4'}
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /astral-regex@1.0.0:
@@ -8243,7 +8233,7 @@ packages:
   /async-mutex@0.2.6:
     resolution: {integrity: sha512-Hs4R+4SPgamu6rSGW8C7cV9gaWUKEHykfzCCvIRuaVv636Ju10ZdeUbvb4TBEW0INuq2DHZqXbK4Nd3yG4RaRw==}
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /async-mutex@0.3.2:
@@ -11154,7 +11144,7 @@ packages:
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.18.0(utf-8-validate@5.0.10)
+      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     dev: false
 
   /iterare@1.2.1:
@@ -14168,7 +14158,7 @@ packages:
       ast-types: 0.15.2
       esprima: 4.0.1
       source-map: 0.6.1
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /reduce-flatten@2.0.0:
@@ -14362,7 +14352,7 @@ packages:
       buffer: 6.0.3
       eventemitter3: 5.0.1
       uuid: 8.3.2
-      ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
@@ -15906,7 +15896,7 @@ packages:
       ox: 0.1.2(typescript@5.4.2)
       typescript: 5.4.2
       webauthn-p256: 0.0.10
-      ws: 8.18.0(utf-8-validate@5.0.10)
+      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -16432,23 +16422,7 @@ packages:
       utf-8-validate: 5.0.10
     dev: false
 
-  /ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10):
-    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-    dependencies:
-      bufferutil: 4.0.8
-      utf-8-validate: 5.0.10
-    dev: false
-
-  /ws@8.18.0(utf-8-validate@5.0.10):
+  /ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
@@ -16460,6 +16434,7 @@ packages:
       utf-8-validate:
         optional: true
     dependencies:
+      bufferutil: 4.0.8
       utf-8-validate: 5.0.10
     dev: false
 
