@@ -145,8 +145,25 @@ export const getAccount = (
     },
   };
 
-  // prevent further queries if account hasnt loaded yet
-  if (!account.ownerEOA) return account;
+  // prevent further queries if account hasnt loaded yet, with empty optionals
+  if (!account.ownerEOA) {
+    return {
+      ...account,
+      friends: {
+        friends: [],
+        incomingReqs: [],
+        outgoingReqs: [],
+        blocked: [],
+        limits: { friends: 0, requests: 0 },
+      },
+      inventories: [],
+      skills: [],
+      stats: {
+        kills: 0,
+        coin: 0,
+      },
+    };
+  }
 
   /////////////////
   // OPTIONAL DATA
