@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { ActionButton, Tooltip } from 'app/components/library';
 import { SkillTrees, TierRequirements } from 'constants/skills/trees';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
@@ -12,6 +12,9 @@ interface Props {
   kami: Kami;
   skills: Map<number, Skill>;
   setDisplayed: (skillIndex: number) => void;
+  actions: {
+    reset: (kami: Kami) => void;
+  };
   utils: {
     getUpgradeError: (index: number) => string[] | undefined;
     getTreePoints: (tree: string) => number;
@@ -20,7 +23,7 @@ interface Props {
 
 // TODO: deprecate use of TierRequirements constant
 export const Matrix = (props: Props) => {
-  const { kami, skills, setDisplayed, utils } = props;
+  const { kami, skills, setDisplayed, actions, utils } = props;
   const [mode, setMode] = useState('Predator');
 
   // whenever the tree mode changes assign the skill at root node
@@ -57,9 +60,14 @@ export const Matrix = (props: Props) => {
             </Row>
           );
         })}
-        <PointsText>
-          {kami.skillPoints} unused point{kami.skillPoints != 1 ? 's' : ''}
-        </PointsText>
+        <FloatBox>
+          {kami.flags?.skillReset && (
+            <ActionButton text='Reset' onClick={() => actions.reset(kami)} />
+          )}
+          <PointsText>
+            {kami.skillPoints} point{kami.skillPoints != 1 ? 's' : ''}
+          </PointsText>
+        </FloatBox>
       </Content>
     </Container>
   );
@@ -106,15 +114,23 @@ const RowNumber = styled.div`
   font-size: 1.2vw;
 `;
 
-const PointsText = styled.div`
+const FloatBox = styled.div`
   position: absolute;
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  background-color: #ffffff;
   bottom: 0.8vw;
   right: 0.8vw;
-  padding: 0.6vw;
-  opacity: 1;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  gap: 0.4vw;
+`;
+
+const PointsText = styled.div`
+  border: solid black 0.15vw;
+  border-radius: 0.45vw;
+  background-color: #ffffff;
+  padding: 0.4vw 0.6vw;
+  height: 2.1vw;
 
   color: black;
   font-family: Pixel;

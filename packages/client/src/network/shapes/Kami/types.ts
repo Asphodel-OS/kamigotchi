@@ -54,6 +54,7 @@ export interface Kami extends BaseKami {
   skillPoints: number;
   flags?: {
     namable: boolean;
+    skillReset: boolean;
   };
   harvest?: Harvest;
   skills?: Skill[];
@@ -142,6 +143,7 @@ export const getKami = (
   if (options?.flags) {
     kami.flags = {
       namable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
+      skillReset: hasFlag(world, components, id, 'CAN_RESET_SKILLS'),
     };
   }
 

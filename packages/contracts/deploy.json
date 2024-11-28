@@ -588,6 +588,7 @@
       "writeAccess": [
         "EntityType",
         "Health",
+        "HasFlag",
         "IdHolder",
         "IDParent",
         "IDType",

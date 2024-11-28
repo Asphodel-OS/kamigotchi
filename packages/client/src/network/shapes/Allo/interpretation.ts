@@ -45,7 +45,6 @@ const parseBasic = (world: World, components: Components, allo: Allo): DetailedE
   let description = '';
   if (allo.type === 'STATE') description = parseState(details);
   else if (allo.type.includes('FLAG_')) {
-    console.log(details);
     description = parseFlag(allo);
   } else description = '+' + parseQuantity(details, allo.value);
 

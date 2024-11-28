@@ -33,16 +33,6 @@ export function createPlayerAPI(systems: any) {
     return systems['system.kami.use.item'].executeTyped(kamiID, itemIndex);
   }
 
-  function useSkillResetPet(kamiID: BigNumberish, itemIndex: number) {
-    return systems['system.kami.use.skill.reset'].executeTyped(kamiID, itemIndex);
-  }
-
-  // upgrade a pet's skill
-  // NOTE: not used, not implemented
-  function upgradePetSkill(kamiID: BigNumberish, skillIndex: number) {
-    return systems['system.kami.skill.upgrade'].executeTyped(kamiID, skillIndex);
-  }
-
   /////////////////
   //   ACCOUNT
 
@@ -94,10 +84,6 @@ export function createPlayerAPI(systems: any) {
   // @dev set the Farcaster-associated data for an account
   function setAccountFarcasterData(fid: number, imageURI: string) {
     return systems['system.account.set.farcaster'].executeTyped(fid, imageURI);
-  }
-
-  function upgradeAccountSkill(skillIndex: number) {
-    return systems['system.account.skill.upgrade'].executeTyped(skillIndex);
   }
 
   /////////////////
@@ -225,6 +211,10 @@ export function createPlayerAPI(systems: any) {
     return systems['system.skill.upgrade'].executeTyped(entityID, skillIndex);
   }
 
+  function resetSkill(entityID: BigNumberish) {
+    return systems['system.skill.reset'].executeTyped(entityID);
+  }
+
   /////////////////
   // RELATIONSHIP
 
@@ -322,8 +312,7 @@ export function createPlayerAPI(systems: any) {
     pet: {
       level: levelPet,
       name: namePet,
-      skill: { upgrade: upgradePetSkill },
-      use: { item: useItemPet, skillReset: useSkillResetPet },
+      use: { item: useItemPet },
     },
     account: {
       fund: fundOperator,
@@ -335,7 +324,6 @@ export function createPlayerAPI(systems: any) {
         name: setAccountName,
         operator: setAccountOperator,
       },
-      skill: { upgrade: upgradeAccountSkill },
       use: {
         item: useItemAccount,
       },
@@ -383,6 +371,7 @@ export function createPlayerAPI(systems: any) {
     },
     skill: {
       upgrade: upgradeSkill,
+      reset: resetSkill,
     },
     relationship: {
       advance: advanceRelationship,

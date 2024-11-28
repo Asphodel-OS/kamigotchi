@@ -18,7 +18,7 @@ contract SkillResetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 targetID, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
+    uint256 targetID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // verify resettable
@@ -40,12 +40,11 @@ contract SkillResetSystem is System {
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
-    LibAccount.updateLastTs(components, accID);
 
     return "";
   }
 
-  function executeTyped(uint256 targetID, uint32 itemIndex) public returns (bytes memory) {
-    return execute(abi.encode(targetID, itemIndex));
+  function executeTyped(uint256 targetID) public returns (bytes memory) {
+    return execute(abi.encode(targetID));
   }
 }

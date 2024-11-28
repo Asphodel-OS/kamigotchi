@@ -17,6 +17,7 @@ interface Props {
   skills: Skill[]; // registry skills
   actions: {
     upgrade: (skill: Skill) => void;
+    reset: (kami: Kami) => void;
   };
   utils: {
     getUpgradeError: (index: number, registry: Map<number, Skill>) => string[] | undefined;
@@ -70,6 +71,7 @@ export const Skills = (props: Props) => {
         kami={kami}
         skills={skillMap}
         setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
+        actions={actions}
         utils={{
           getUpgradeError: (index: number) => utils.getUpgradeError(index, skillMap),
           getTreePoints: utils.getTreePoints,
