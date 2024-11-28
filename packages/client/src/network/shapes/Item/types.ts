@@ -1,17 +1,10 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
 import { Allo, getAllosOf } from '../Allo';
 import { Condition, queryConditionsOfID } from '../Conditional';
 import { DetailedEntity, ForType, getEntityByHash, getFor, getItemImage } from '../utils';
+import { getItemByIndex } from './queries';
 import { getItemAlloAnchorID, getItemReqAnchorID } from './utils';
 
 // The standard shape of a FE Item Entity
@@ -146,18 +139,15 @@ export const getInventory = (
   components: Components,
   entityIndex: EntityIndex
 ): Inventory => {
-  const { Value, IsRegistry, ItemIndex } = components;
+  const { Value, ItemIndex } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, entityIndex)?.value as number;
-  const registryEntityIndex = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
-  )[0];
 
   const inventory = {
     id: world.entities[entityIndex],
     entityIndex: entityIndex,
-    item: getItem(world, components, registryEntityIndex),
+    item: getItemByIndex(world, components, itemIndex),
     balance: (getComponentValue(Value, entityIndex)?.value as number) * 1,
   };
 
