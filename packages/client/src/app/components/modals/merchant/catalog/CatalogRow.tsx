@@ -63,7 +63,6 @@ const Container = styled.div<ContainerProps>`
   cursor: pointer;
   &:hover {
     animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => 1 + effectScale});
   }
   &:active {
     animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
