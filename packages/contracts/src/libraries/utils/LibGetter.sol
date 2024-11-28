@@ -78,7 +78,7 @@ library LibGetter {
     string memory _type,
     uint32 index,
     uint256 value
-  ) internal view returns (bool result) {
+  ) public view returns (bool result) {
     if (_type.eq("COMPLETE_COMP")) {
       // check if entity has isCompleteComp, with expectedValue acting as entityID
       return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(value);
