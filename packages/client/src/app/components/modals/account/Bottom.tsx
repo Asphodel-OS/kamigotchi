@@ -83,7 +83,7 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const EmptyText = styled.div`

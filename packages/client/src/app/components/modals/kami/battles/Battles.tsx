@@ -137,7 +137,7 @@ export const Battles = (props: Props) => {
   // RENDERING
 
   return (
-    <Container style={{ overflowY: 'scroll' }}>
+    <Container style={{ overflowY: 'auto' }}>
       <Overlay top={0.7} right={0.75}>
         <Text>Kills: {logs.filter(isKill).length}</Text>
       </Overlay>

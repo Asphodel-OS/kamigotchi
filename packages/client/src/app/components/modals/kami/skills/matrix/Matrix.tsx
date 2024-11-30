@@ -87,7 +87,7 @@ const Content = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const Row = styled.div<{ locked: boolean }>`

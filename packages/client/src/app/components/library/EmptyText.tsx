@@ -21,7 +21,7 @@ export const EmptyText = (props: Props) => {
 };
 
 const Container = styled.div`
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100%;
   padding: 0.6vw;
 

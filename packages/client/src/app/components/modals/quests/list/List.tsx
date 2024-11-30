@@ -52,7 +52,6 @@ export const List = (props: Props) => {
 };
 
 const Container = styled.div`
-  overflow-y: scroll;
   height: 100%;
   padding: 0.6vw;
 `;
