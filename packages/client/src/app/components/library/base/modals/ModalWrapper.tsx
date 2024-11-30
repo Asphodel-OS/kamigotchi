@@ -104,7 +104,7 @@ const Children = styled.div<{
   scrollBarColor?: string;
 }>`
   position: relative;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 100%;
   height: 100%;
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
