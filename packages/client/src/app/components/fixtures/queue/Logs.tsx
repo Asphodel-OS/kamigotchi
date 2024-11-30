@@ -135,7 +135,7 @@ const Content = styled.div`
   background-color: #ddd;
   margin: 0.2vw;
   padding: 0.2vw;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   display: flex;
   flex-direction: column;
