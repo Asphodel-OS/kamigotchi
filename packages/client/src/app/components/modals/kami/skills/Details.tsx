@@ -156,7 +156,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const ImageSection = styled.div`
