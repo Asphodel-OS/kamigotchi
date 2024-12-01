@@ -85,7 +85,7 @@ export function registerNotificationFixture() {
 const Wrapper = styled.div`
   margin: 0.2vw;
   display: block;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const Contents = styled.div`
