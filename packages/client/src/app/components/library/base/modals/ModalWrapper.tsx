@@ -15,18 +15,19 @@ interface Props {
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  width?: string;
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
   const { id, children, header, footer } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
+  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor, width } = props;
   const { modals } = useVisibility();
 
   return (
     <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay}>
-      <Content truncate={truncate}>
+      <Content truncate={truncate} width={width}>
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />
@@ -60,13 +61,13 @@ const Wrapper = styled.div<Wrapper>`
   justify-content: center;
 `;
 
-const Content = styled.div<{ truncate?: boolean }>`
+const Content = styled.div<{ truncate?: boolean; width?: string }>`
   position: relative;
   background-color: white;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
 
-  width: 100%;
+  ${({ width }) => (width ? `width:${width};` : `width: 100%;`)}
   ${({ truncate }) => (truncate ? `max-height: 100%;` : `height: 100%;`)}
 
   display: flex;

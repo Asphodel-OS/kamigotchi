@@ -19,9 +19,9 @@ export function registerCraftingModal() {
 
     // Grid Config
     {
-      colStart: 20,
+      colStart: 35,
       colEnd: 80,
-      rowStart: 25,
+      rowStart: 15,
       rowEnd: 85,
     },
 
@@ -94,6 +94,7 @@ export function registerCraftingModal() {
           id='crafting'
           header={<ModalHeader title='Crafting' icon={craftIcon} />}
           canExit
+          width='min-content'
         >
           <Content>
             {recipes.length > 0 ? (
@@ -119,11 +120,11 @@ export function registerCraftingModal() {
 const Content = styled.div`
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: flex-start;
 
   gap: 0.6vw;
 
   width: 100%;
   max-hight: 95%;
-  overflow-y: scroll;
+  padding: 0.5vw;
 `;

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
+import { CraftButton } from 'app/components/library/actions/CraftButton';
 import { Recipe } from 'network/shapes/Recipe';
 import { useState } from 'react';
-import { ActionRow } from './ActionRow';
 import { Equation } from './Equation';
 
 interface Props {
@@ -25,8 +25,14 @@ export const Kard = (props: Props) => {
 
   return (
     <Container>
-      <Equation amt={amt} recipe={recipe} utils={utils} />
-      <ActionRow
+      <Equation
+        amt={amt}
+        recipe={recipe}
+        data={data}
+        actions={actions}
+        utils={{ ...utils, setAmt }}
+      />
+      <CraftButton
         amt={amt}
         recipe={recipe}
         data={data}
@@ -39,15 +45,11 @@ export const Kard = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-
-  display: flex;
-  flex-flow: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  height: max-content;
+  width: max-content;
 
   border: solid black 0.2vw;
-  border-radius: 1.2vw;
-  padding: 0.8vw;
-  margin: 0.8vh 0.8vw;
+  border-radius: 0.4vw;
+
   background-color: #fff;
 `;

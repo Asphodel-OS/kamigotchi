@@ -2,17 +2,25 @@ import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { Ingredient, Recipe } from 'network/shapes/Recipe';
+import { ActionRow } from './ActionRow';
 
 interface Props {
   amt: number;
   recipe: Recipe;
+  data: {
+    stamina: number;
+  };
+  actions: {
+    craft: (recipe: Recipe, amount: number) => void;
+  };
   utils: {
     getItemBalance: (index: number) => number;
+    setAmt: (amt: number) => void;
   };
 }
 
 export const Equation = (props: Props) => {
-  const { recipe, utils } = props;
+  const { amt, actions, data, recipe, utils } = props;
 
   const EqIcon = (ingredient: Ingredient, output: boolean) => {
     const enoughBalance =
@@ -33,30 +41,33 @@ export const Equation = (props: Props) => {
   const OutputDisplay = (ingredients: Ingredient[]) => {
     const plusIcon = (i: number) => <Text key={`plus-${i}`}>+</Text>;
     return (
-      <ExpressionBox>
+      <ExpressionBoxOutput>
         {ingredients
           .flatMap((ingredient, i) => [EqIcon(ingredient, true), plusIcon(i)])
           .slice(0, -1)}
-      </ExpressionBox>
+      </ExpressionBoxOutput>
     );
   };
 
   const InputDisplay = (ingredients: Ingredient[]) => {
     const plusIcon = (i: number) => <Text key={`plus-${i}`}>+</Text>;
     return (
-      <ExpressionBox>
+      <ExpressionBoxInput>
         <Text>=</Text>
         {ingredients
           .flatMap((ingredient, i) => [EqIcon(ingredient, false), plusIcon(i)])
           .slice(0, -1)}
-      </ExpressionBox>
+      </ExpressionBoxInput>
     );
   };
 
   return (
     <Container>
       {OutputDisplay(recipe.outputs)}
-      {InputDisplay(recipe.inputs)}
+      <div>
+        <ActionRow amt={amt} recipe={recipe} data={data} actions={actions} utils={{ ...utils }} />
+        {InputDisplay(recipe.inputs)}
+      </div>
     </Container>
   );
 };
@@ -64,10 +75,9 @@ export const Equation = (props: Props) => {
 const Container = styled.div`
   display: flex;
   flex-flow: row;
-  justify-content: flex-start;
-  align-items: flex-end;
-
-  gap: 0.2vw;
+  align-items: center;
+  align-items: center;
+  height: 100%;
 `;
 
 const VariableBox = styled.div<{ disabled: boolean }>`
@@ -76,18 +86,28 @@ const VariableBox = styled.div<{ disabled: boolean }>`
   justify-content: center;
   align-items: flex-end;
 
-  padding: 0.2vw;
-
   ${({ disabled }) => disabled && 'opacity: 0.6;'}
 `;
 
-const ExpressionBox = styled.div`
+const ExpressionBoxOutput = styled.div`
   display: flex;
   flex-flow: row;
   justify-content: flex-start;
   align-items: center;
+  border: solid black 0.2vw;
+  border-width: 0 0.2vw 0 0;
+  padding: 0.5vw 1vw 0 1vw;
+  height: 6.5vw;
+`;
 
-  gap: 0.2vw;
+const ExpressionBoxInput = styled.div`
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  border: solid black 0.2vw;
+  border-width: 0.2vw 0 0 0;
+  padding: 0.3vw 5vw 1.5vw 0.3vw;
 `;
 
 const Text = styled.div`

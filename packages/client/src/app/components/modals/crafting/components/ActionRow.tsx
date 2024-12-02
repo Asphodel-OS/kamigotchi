@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { staminaIcon, xpIcon } from 'assets/images/icons/stats';
 import { Recipe } from 'network/shapes/Recipe';
 import { playClick } from 'utils/sounds';
@@ -21,22 +21,7 @@ interface Props {
 }
 
 export const ActionRow = (props: Props) => {
-  const { amt, actions, data, recipe, utils } = props;
-
-  /////////////////
-  // DATA VALIDATION
-
-  const enoughInputs = () => {
-    for (let i = 0; i < recipe.inputs.length; i++) {
-      const have = utils.getItemBalance(recipe.inputs[i].index);
-      if (have < recipe.inputs[i].amount * amt) return false;
-    }
-    return true;
-  };
-
-  const enoughStamina = () => {
-    return data.stamina >= recipe.cost.stamina * amt;
-  };
+  const { amt, recipe, utils } = props;
 
   /////////////////
   // INTERACTIONS
@@ -55,59 +40,43 @@ export const ActionRow = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  const CraftButton = () => {
-    let errorText = '';
-    if (!enoughInputs()) errorText = 'Not enough items';
-    else if (!enoughStamina()) errorText = 'Not enough stamina';
-
-    return (
-      <ButtonDiv>
-        <ActionButton
-          text={`Craft ${amt > 1 ? `(${amt})` : ''}`}
-          onClick={() => actions.craft(recipe, 1)}
-          size='medium'
-          tooltip={[errorText]}
-          disabled={!enoughInputs() || !enoughStamina()}
-          noBorder
-        />
-        {/* <Stepper>
-          <StepperButton onClick={handleInc} style={{ borderBottom: '0.15vw solid black' }}>
-            +
-          </StepperButton>
-          <StepperButton onClick={handleDec}>-</StepperButton>
-        </Stepper> */}
-      </ButtonDiv>
-    );
-  };
-
   return (
     <Container>
-      <Tooltip text={[`Grants ${recipe.experience} xp`]}>
-        <DescriptionRow>
-          <Icon src={xpIcon} />
-          <SubText>{recipe.experience * amt}</SubText>
-        </DescriptionRow>
-      </Tooltip>
-      <Tooltip text={[`Uses ${recipe.cost.stamina * -1} stamina`]}>
-        <DescriptionRow>
-          <Icon src={staminaIcon} />
-          <SubText>{recipe.cost.stamina * amt}</SubText>
-        </DescriptionRow>
-      </Tooltip>
-      {CraftButton()}
+      <div style={{ fontSize: '1vw' }}>Name</div>
+      <Icons>
+        <Tooltip text={[`Grants ${recipe.experience} xp`]}>
+          <DescriptionRow>
+            <Icon src={xpIcon} />
+            <SubText>{recipe.experience * amt}</SubText>
+          </DescriptionRow>
+        </Tooltip>
+        <Tooltip text={[`Uses ${recipe.cost.stamina * -1} stamina`]}>
+          <DescriptionRow>
+            <Icon src={staminaIcon} />
+            <SubText>{recipe.cost.stamina * amt}</SubText>
+          </DescriptionRow>
+        </Tooltip>
+      </Icons>
     </Container>
   );
 };
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 0.2vw;
+`;
+
+const Icons = styled.div`
+  display: flex;
   flex-flow: row;
   justify-content: flex-end;
   align-items: center;
-
+  flex-direction: row;
+  padding: 0 0.5vw 0.2vw 0;
   gap: 0.6vw;
-  width: 100%;
-  padding-top: 1.2vw;
 `;
 
 const Icon = styled.img`
@@ -129,18 +98,6 @@ const DescriptionRow = styled.div`
   align-items: center;
 
   gap: 0.2vw;
-`;
-
-const ButtonDiv = styled.div`
-  display: flex;
-  flex-flow: row;
-  justify-content: flex-start;
-  align-items: center;
-
-  border: solid black 0.15vw;
-  border-radius: 0.4vw;
-
-  overflow: hidden;
 `;
 
 const Stepper = styled.div`
