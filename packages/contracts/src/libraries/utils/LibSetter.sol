@@ -50,7 +50,7 @@ library LibSetter {
       LibFactions.incRep(components, targetID, index, amt);
     } else if (_type.eq("ROOM")) {
       LibRoom.set(components, targetID, index);
-    } else if (_type.startsWith("FLAG")) {
+    } else if (_type.startsWith("FLAG_")) {
       // setting, not increasing
       setFlag(components, _type, amt, targetID);
     } else if (_type.eq("STATE")) {

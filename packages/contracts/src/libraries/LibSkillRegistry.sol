@@ -92,7 +92,7 @@ library LibSkillRegistry {
     string memory type_,
     int256 value
   ) internal returns (uint256) {
-    return LibBonus.registryCreate(components, genBonusParentID(skillIndex), type_, value);
+    return LibBonus.registryCreate(components, genBonusAnchor(skillIndex), type_, value);
   }
 
   function addRequirement(
@@ -184,7 +184,7 @@ library LibSkillRegistry {
     IUintComp components,
     uint32 skillIndex
   ) internal view returns (uint256[] memory) {
-    return LibBonus.queryByParent(components, genBonusParentID(skillIndex));
+    return LibBonus.queryByParent(components, genBonusAnchor(skillIndex));
   }
 
   ////////////////////
@@ -203,7 +203,7 @@ library LibSkillRegistry {
     return uint256(keccak256(abi.encodePacked("registry.skill.requirement", index)));
   }
 
-  function genBonusParentID(uint32 index) internal pure returns (uint256) {
+  function genBonusAnchor(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.skill.bonus", index)));
   }
 

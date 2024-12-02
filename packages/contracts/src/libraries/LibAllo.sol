@@ -139,7 +139,7 @@ library LibAllo {
   function distribute(
     IWorld world,
     IUintComp components,
-    uint256[] memory rwdIDs,
+    uint256[] memory alloIDs,
     uint256 mult, // multiplies reward value, optional
     uint256 targetID
   ) internal {
@@ -147,16 +147,16 @@ library LibAllo {
     IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
 
-    for (uint256 i; i < rwdIDs.length; i++) {
-      uint256 rwdID = rwdIDs[i];
-      if (rwdID == 0) continue;
+    for (uint256 i; i < alloIDs.length; i++) {
+      uint256 alloID = alloIDs[i];
+      if (alloID == 0) continue;
 
-      string memory type_ = typeComp.get(rwdID);
-      uint256 amt = valueComp.get(rwdID);
+      string memory type_ = typeComp.get(alloID);
+      uint256 amt = valueComp.get(alloID);
 
-      if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, rwdID, amt, mult, targetID);
-      else if (type_.eq("STAT")) giveStat(components, indexComp.get(rwdID), amt, mult, targetID);
-      else giveBasic(world, components, type_, indexComp.get(rwdID), amt, mult, targetID);
+      if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, alloID, amt, mult, targetID);
+      else if (type_.eq("STAT")) giveStat(components, indexComp.get(alloID), amt, mult, targetID);
+      else giveBasic(world, components, type_, indexComp.get(alloID), amt, mult, targetID);
     }
   }
 
@@ -164,10 +164,10 @@ library LibAllo {
   function distribute(
     IWorld world,
     IUintComp components,
-    uint256[] memory rwdIDs,
+    uint256[] memory alloIDs,
     uint256 targetID
   ) internal {
-    distribute(world, components, rwdIDs, 1, targetID);
+    distribute(world, components, alloIDs, 1, targetID);
   }
 
   /// @notice distributes basic rewards to an entity
@@ -189,12 +189,12 @@ library LibAllo {
   function giveDT(
     IWorld world,
     IUintComp components,
-    uint256 rewardID,
+    uint256 alloID,
     uint256 amount,
     uint256 mult,
     uint256 targetID // expected to be an account
   ) internal {
-    LibDroptable.commit(world, components, rewardID, amount * mult, targetID);
+    LibDroptable.commit(world, components, alloID, amount * mult, targetID);
   }
 
   /// @notice applies a stat to target

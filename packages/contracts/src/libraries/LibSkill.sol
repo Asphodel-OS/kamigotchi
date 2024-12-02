@@ -63,7 +63,7 @@ library LibSkill {
     useCost(components, regID, id, targetID);
 
     // upgrading bonuses
-    LibBonus.incBy(components, LibSkillRegistry.genBonusParentID(skillIndex), id, targetID, 1);
+    LibBonus.incBy(components, LibSkillRegistry.genBonusAnchor(skillIndex), id, targetID, 1);
   }
 
   /// @notice resets all skills, refund skill points
