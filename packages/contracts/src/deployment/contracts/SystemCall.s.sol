@@ -6,6 +6,7 @@ import { ISystem } from "solecs/interfaces/ISystem.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { BoolComponent } from "solecs/components/BoolComponent.sol";
 import { Uint32Component } from "solecs/components/Uint32Component.sol";
 import { StringComponent } from "solecs/components/StringComponent.sol";
 
@@ -36,6 +37,10 @@ contract SystemCall is Script {
 
   function _call(uint256 systemID, bytes memory args) public returns (bytes memory) {
     return _getSys(systemID).execute(args);
+  }
+
+  function _getBoolComp(string memory id) public returns (BoolComponent) {
+    return BoolComponent(_getCompAddr(id));
   }
 
   function _getUintComp(string memory id) public returns (IUintComp) {
