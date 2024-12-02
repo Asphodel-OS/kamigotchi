@@ -62,7 +62,7 @@ export const Tooltip = (props: Props) => {
 
   const handleMouseEnter = (event: React.MouseEvent) => {
     handleMouseMove(event);
-    setIsVisible(false);
+
     if (text[0] !== '') {
       setIsActive(true);
     }
@@ -84,7 +84,9 @@ export const Tooltip = (props: Props) => {
       flexGrow={flexGrow}
       direction={direction}
       onMouseEnter={(e) => handleMouseEnter(e)}
-      onMouseLeave={(e) => setIsActive(false)}
+      onMouseLeave={(e) => {
+        setIsActive(false), setIsVisible(false);
+      }}
       onMouseMove={(e) => {
         handleMouseMove(e);
       }}
