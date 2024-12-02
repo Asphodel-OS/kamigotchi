@@ -97,15 +97,19 @@ contract _ItemRegistrySystem is System {
   }
 
   function addAlloBonus(bytes memory arguments) public onlyOwner returns (uint256) {
-    (uint32 index, string memory useCase, string memory bonusType, int256 bonusValue) = abi.decode(
-      arguments,
-      (uint32, string, string, int256)
-    );
+    (
+      uint32 index,
+      string memory useCase,
+      string memory bonusType,
+      string memory endType,
+      uint256 duration,
+      int256 bonusValue
+    ) = abi.decode(arguments, (uint32, string, string, string, uint256, int256));
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
     uint256 parentID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createBonus(components, parentID, bonusType, bonusValue);
+    return LibAllo.createBonus(components, parentID, bonusType, endType, duration, bonusValue);
   }
 
   function addAlloDT(bytes memory arguments) public onlyOwner returns (uint256) {

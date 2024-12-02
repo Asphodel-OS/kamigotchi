@@ -10,26 +10,56 @@ contract BonusTest is SetupTemplate {
   uint256 constant regParentEntity2 = uint256(keccak256(abi.encodePacked("parent2")));
   uint256 constant holderEntity = uint256(keccak256(abi.encodePacked("holder")));
   uint256 constant holderEntity2 = uint256(keccak256(abi.encodePacked("holder2")));
+  uint256 constant holderAnchor = uint256(keccak256(abi.encodePacked("holderAnchor")));
+  uint256 constant holderAnchor2 = uint256(keccak256(abi.encodePacked("holderAnchor2")));
 
   uint256 internal parentCounter;
 
   function setUp() public override {
     setUpWorld();
+
     vm.startPrank(deployer);
   }
 
+  /////////////////
+  // SHAPES
+
   function testBonusShape() public {
-    uint256 regID = LibBonus.registryCreate(components, regParentEntity, "BONUS_TYPE", 1);
+    uint256 regID = _createRegistry(regParentEntity, "BONUS_TYPE", "", 0, 1);
 
     // assigning to holder
-    uint256 instanceID = LibBonus.assign(components, regID, "BONUS_TYPE", holderEntity);
-    LibBonus.incBy(components, regParentEntity, holderEntity, 1);
+    uint256 instanceID = LibBonus.assign(components, regID, holderAnchor, holderEntity);
+    _incBy(regParentEntity, holderAnchor, holderEntity, 1);
     assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 1);
+    _assertInstanceShape(instanceID);
 
     // assigning to holder2
-    LibBonus.incBy(components, regParentEntity, holderEntity2, 2);
+    _incBy(regParentEntity, holderAnchor2, holderEntity2, 2);
     assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity2), 2);
+
+    // unassigning holder
+    LibBonus.unassign(components, instanceID);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 0);
+    _assertInstanceNoShape(instanceID);
   }
+
+  function testBonusTempActionShape() public {
+    uint256 tempRegID = _createRegistry(regParentEntity, "TEMP_BONUS", "UPON_HARVEST_ACTION", 0, 3);
+    uint256 permRegID = _createRegistry(regParentEntity, "FULL_BONUS", "", 0, 2);
+
+    // assigning to holder
+    _incBy(regParentEntity, holderAnchor, holderEntity, 1);
+    assertEq(LibBonus.getFor(components, "TEMP_BONUS", holderEntity), 3);
+    assertEq(LibBonus.getFor(components, "FULL_BONUS", holderEntity), 2);
+
+    // do action, remove temporary bonus
+    LibBonus.unassignBy(components, "UPON_HARVEST_ACTION", holderEntity);
+    assertEq(LibBonus.getFor(components, "TEMP_BONUS", holderEntity), 0);
+    assertEq(LibBonus.getFor(components, "FULL_BONUS", holderEntity), 2);
+  }
+
+  /////////////////
+  // QUERIES
 
   function testBonusQuery() public {
     uint256[] memory ofParent1 = new uint256[](3);
@@ -41,19 +71,19 @@ contract BonusTest is SetupTemplate {
     uint256 regParent = uint256(keccak256(abi.encode("registry.1"))); // registry parent, eg. skill registry
     uint256 regParent2 = uint256(keccak256(abi.encode("registry.2"))); // registry parent, eg. skill registry
 
-    uint256 tempID = LibBonus.registryCreate(components, regParent, _genType(1), 1);
+    uint256 tempID = _createRegistry(regParent, _genType(1), "", 0, 1);
     ofParent1[0] = tempID;
     ofType1[0] = tempID;
-    tempID = LibBonus.registryCreate(components, regParent, _genType(3), 2);
+    tempID = _createRegistry(regParent, _genType(3), "", 0, 2);
     ofParent1[1] = tempID;
     // not checking for type 3
-    tempID = LibBonus.registryCreate(components, regParent, _genType(4), 3);
+    tempID = _createRegistry(regParent, _genType(4), "", 0, 3);
     ofParent1[2] = tempID;
     // not checking for type 4
-    tempID = LibBonus.registryCreate(components, regParent2, _genType(1), 4);
+    tempID = _createRegistry(regParent2, _genType(1), "", 0, 4);
     ofParent2[0] = tempID;
     ofType1[1] = tempID;
-    tempID = LibBonus.registryCreate(components, regParent2, _genType(2), 5);
+    tempID = _createRegistry(regParent2, _genType(2), "", 0, 5);
     ofParent2[1] = tempID;
     ofType2[0] = tempID;
     LibSort.insertionSort(ofParent1);
@@ -76,8 +106,8 @@ contract BonusTest is SetupTemplate {
     }
 
     // assigning
-    LibBonus.incBy(components, regParent, localParent, holderEntity, 1);
-    LibBonus.incBy(components, regParent2, localParent2, holderEntity, 1);
+    _incBy(regParent, localParent, holderEntity, 1);
+    _incBy(regParent2, localParent2, holderEntity, 1);
 
     // querying
     {
@@ -85,12 +115,8 @@ contract BonusTest is SetupTemplate {
       uint256[] memory queriedParent2 = _getSource(
         LibBonus.queryByParent(components, localParent2)
       );
-      uint256[] memory queriedType1 = _getSource(
-        LibBonus.queryByType(components, _genType(1), holderEntity)
-      );
-      uint256[] memory queriedType2 = _getSource(
-        LibBonus.queryByType(components, _genType(2), holderEntity)
-      );
+      uint256[] memory queriedType1 = _getSource(_queryByType(_genType(1), holderEntity));
+      uint256[] memory queriedType2 = _getSource(_queryByType(_genType(2), holderEntity));
       LibSort.insertionSort(queriedParent1);
       LibSort.insertionSort(queriedParent2);
       LibSort.insertionSort(queriedType1);
@@ -129,7 +155,7 @@ contract BonusTest is SetupTemplate {
     levels[5] = 1;
     uint256[] memory regIDs = new uint256[](6);
     for (uint256 i; i < 6; i++)
-      regIDs[i] = LibBonus.registryCreate(components, regParentEntity, _genType(i), values[i]);
+      regIDs[i] = _createRegistry(regParentEntity, _genType(i), "", 0, values[i]);
 
     // asserting parent query
     {
@@ -139,26 +165,18 @@ contract BonusTest is SetupTemplate {
         assertEq(childIDs[i], regIDs[i], "individual parent query mismatch");
     }
 
-    // assigning one to holder prior
-    _createAndSetBonus(regIDs[0], _genType(0), holderEntity, 1);
+    // forcefully assigning one to holder prior
+    _setBonusLevel(LibBonus.assign(components, regIDs[0], holderAnchor, holderEntity), 1);
     assertEq(LibBonus.getFor(components, _genType(0), holderEntity), 2, "type 0 mismatch");
-    assertEq(
-      LibBonus.queryByType(components, _genType(0), holderEntity).length,
-      1,
-      "type 0 length"
-    );
-    assertEq(
-      LibBonus.queryByType(components, _genType(1), holderEntity).length,
-      0,
-      "type 1 length"
-    );
+    assertEq(_queryByType(_genType(0), holderEntity).length, 1, "type 0 length mismatch");
+    assertEq(_queryByType(_genType(1), holderEntity).length, 0, "type 1 length mismatch");
 
     // assigning to holder
-    LibBonus.incBy(components, regParentEntity, holderEntity, 1);
+    _incBy(regParentEntity, holderAnchor, holderEntity, 1);
 
     // setting levels
     for (uint256 i; i < regIDs.length; i++)
-      _setBonusLevel(LibBonus.genInstanceID(regIDs[i], holderEntity), levels[i]);
+      _setBonusLevel(LibBonus.genInstanceID(regIDs[i], holderEntity, 0), levels[i]);
 
     // checking total
     for (uint256 i; i < regIDs.length; i++) {
@@ -188,12 +206,11 @@ contract BonusTest is SetupTemplate {
     uint256[] memory regParentIDs = new uint256[](6);
     for (uint256 i; i < 6; i++) {
       regParentIDs[i] = _genParentEntity();
-      LibBonus.registryCreate(components, regParentIDs[i], "BONUS_TYPE", values[i]);
+      _createRegistry(regParentIDs[i], "BONUS_TYPE", "", 0, values[i]);
     }
 
     // assigning from parents
-    for (uint256 i; i < 6; i++)
-      LibBonus.incBy(components, regParentIDs[i], holderEntity, levels[i]);
+    for (uint256 i; i < 6; i++) _incBy(regParentIDs[i], holderAnchor, holderEntity, levels[i]);
 
     // asserting total
     assertEq(
@@ -205,6 +222,24 @@ contract BonusTest is SetupTemplate {
 
   /////////////////
   // UTILS
+
+  function _createRegistry(
+    uint256 parentID,
+    string memory type_,
+    string memory endAnchor, // leave blank if permanent
+    uint256 duration, // leave blank if not timed
+    int256 value
+  ) internal returns (uint256 id) {
+    // vm.startPrank(deployer);
+    id = LibBonus.regCreate(components, parentID, type_, endAnchor, duration, value);
+    // vm.stopPrank();
+  }
+
+  function _incBy(uint256 regParentID, uint256 anchorID, uint256 holderID, uint256 amt) internal {
+    // vm.startPrank(deployer);
+    LibBonus.incBy(components, regParentID, anchorID, holderID, amt);
+    // vm.stopPrank();
+  }
 
   function _genParentEntity() internal returns (uint256) {
     return uint256(keccak256(abi.encodePacked("parent", parentCounter++)));
@@ -226,14 +261,11 @@ contract BonusTest is SetupTemplate {
     _LevelComponent.set(id, level);
   }
 
-  function _createAndSetBonus(
-    uint256 regID,
+  function _queryByType(
     string memory type_,
-    uint256 holderID,
-    uint256 level
-  ) internal returns (uint256 id) {
-    id = LibBonus.assign(components, regID, type_, holderID);
-    _setBonusLevel(id, level);
+    uint256 holderID
+  ) internal view returns (uint256[] memory) {
+    return LibBonus.queryByType(components, type_, holderID);
   }
 
   function _sum(
@@ -242,5 +274,22 @@ contract BonusTest is SetupTemplate {
   ) internal pure returns (int256 total) {
     for (uint256 i; i < values.length; i++)
       total += LibBonus.calcSingle(uint256(values[i]), levels[i]);
+  }
+
+  /////////////////
+  // ASSERTIONS
+
+  function _assertInstanceShape(uint256 id) internal {
+    assertTrue(_IdSourceComponent.has(id));
+    assertTrue(_IDTypeComponent.has(id));
+    assertTrue(_IDParentComponent.has(id));
+    assertTrue(_LevelComponent.has(id));
+  }
+
+  function _assertInstanceNoShape(uint256 id) internal {
+    assertFalse(_IdSourceComponent.has(id));
+    assertFalse(_IDTypeComponent.has(id));
+    assertFalse(_IDParentComponent.has(id));
+    assertFalse(_LevelComponent.has(id));
   }
 }

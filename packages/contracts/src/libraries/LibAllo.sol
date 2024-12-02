@@ -22,7 +22,7 @@ import { Stat, LibStat } from "libraries/LibStat.sol";
 
 /**
  * @notice
- * Allos are shapes that indicate some sort of distribution of other shapes
+ * Allos are shapes that indicate some sort of a one time distribution of other shapes
  * - similar to Conditionals in that it matches a DescribedEntity (type + index)
  * - Can give
  *   - bonuses (unimplemented)
@@ -88,11 +88,15 @@ library LibAllo {
     IUintComp components,
     uint256 parentID,
     string memory bonusType,
+    string memory endType,
+    uint256 duration,
     int256 value
   ) internal returns (uint256 id) {
     // create base each time, multiple bonuses to same allo
     id = createBase(components, parentID, "BONUS", 1, true);
-    uint256 bonusID = LibBonus.registryCreate(components, id, bonusType, value);
+
+    require(!endType.eq(""), "Allo: bonus must be temporary");
+    uint256 bonusID = LibBonus.regCreate(components, id, bonusType, endType, duration, value);
   }
 
   /// @notice this reward type does nothing. its for display.
@@ -214,7 +218,7 @@ library LibAllo {
     uint256 mult,
     uint256 targetID
   ) internal {
-    LibBonus.incBy(components, alloID, targetID, mult);
+    LibBonus.incByTemporary(components, alloID, targetID, mult);
   }
 
   /// @notice distributes droptable rewards by creating a commit

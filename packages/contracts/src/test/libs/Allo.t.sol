@@ -37,8 +37,20 @@ contract AlloTest is SetupTemplate {
   }
 
   function testAlloShapeBonus() public {
-    uint256 bonusID = _createAlloBonus(parentID1, "STAT_HEALTH_SHIFT", 10);
-    uint256 bonusID1 = _createAlloBonus(parentID1, "STAT_POWER_SHIFT", 5);
+    uint256 bonusID = _createAlloBonus(
+      parentID1,
+      "STAT_HEALTH_SHIFT",
+      "UPON_HARVEST_OR_FEED",
+      0,
+      10
+    );
+    uint256 bonusID1 = _createAlloBonus(
+      parentID1,
+      "STAT_POWER_SHIFT",
+      "UPON_HARVEST_OR_FEED",
+      0,
+      5
+    );
 
     // assert shape - only 1 bonus allo entity
     assertEq(bonusID, bonusID1, "allo bonusID mismatch");
@@ -115,8 +127,20 @@ contract AlloTest is SetupTemplate {
   }
 
   function testAlloDistributionBonus() public {
-    uint256 bonusID = _createAlloBonus(parentID1, "STAT_HEALTH_SHIFT", 10);
-    uint256 bonusID1 = _createAlloBonus(parentID1, "STAT_POWER_SHIFT", 5);
+    uint256 bonusID = _createAlloBonus(
+      parentID1,
+      "STAT_HEALTH_SHIFT",
+      "UPON_HARVEST_OR_FEED",
+      0,
+      10
+    );
+    uint256 bonusID1 = _createAlloBonus(
+      parentID1,
+      "STAT_POWER_SHIFT",
+      "UPON_HARVEST_OR_FEED",
+      0,
+      5
+    );
     uint256 petID = _mintKami(alice);
     int32 totalHealth = LibStat.getTotal(components, "HEALTH", petID);
     int32 totalPower = LibStat.getTotal(components, "POWER", petID);
@@ -317,10 +341,12 @@ contract AlloTest is SetupTemplate {
   function _createAlloBonus(
     uint256 parentID,
     string memory bonusType,
+    string memory endType,
+    uint256 duration,
     int256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibAllo.createBonus(components, parentID, bonusType, value);
+    id = LibAllo.createBonus(components, parentID, bonusType, endType, duration, value);
     vm.stopPrank();
   }
 

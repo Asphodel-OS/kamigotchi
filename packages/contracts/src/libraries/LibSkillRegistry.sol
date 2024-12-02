@@ -92,7 +92,8 @@ library LibSkillRegistry {
     string memory type_,
     int256 value
   ) internal returns (uint256) {
-    return LibBonus.registryCreate(components, genBonusAnchor(skillIndex), type_, value);
+    // skill bonuses are permanent, linked to skill instance
+    return LibBonus.regCreate(components, genBonusAnchor(skillIndex), type_, "", 0, value);
   }
 
   function addRequirement(
