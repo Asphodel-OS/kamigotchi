@@ -44,7 +44,7 @@ export function registerCraftingModal() {
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, world.entities[accountEntity], index),
             },
-            assignerID: getNPCByIndex(world, components, 1).id, // temp placeholder
+            assignerID: getNPCByIndex(world, components, 1)?.id || '0x00', // temp placeholder
           };
         })
       ),
