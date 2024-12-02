@@ -8,9 +8,12 @@ import { StatComponent } from "solecs/components/StatComponent.sol";
 
 import { Stat, StatLib } from "solecs/components/types/Stat.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
+
 /// @notice a library for useful component operations
 library LibComp {
   using LibString for string;
+  using LibArray for uint256[][];
 
   /////////////////
   // CHECKS
@@ -71,5 +74,30 @@ library LibComp {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i; i < entities.length; i++) values[i] = abi.encode(value);
     component.set(entities, values);
+  }
+
+  ////////////////////
+  // QUERIES
+
+  function getEntitiesWithValue(
+    IComp comp,
+    bytes[] memory values
+  ) internal view returns (uint256[] memory) {
+    uint256[][] memory all = new uint256[][](values.length);
+    for (uint256 i; i < values.length; i++) {
+      all[i] = comp.getEntitiesWithValue(values[i]);
+    }
+    return all.flatten();
+  }
+
+  function getEntitiesWithValue(
+    IUintComp comp,
+    uint256[] memory values
+  ) internal view returns (uint256[] memory) {
+    uint256[][] memory all = new uint256[][](values.length);
+    for (uint256 i; i < values.length; i++) {
+      all[i] = comp.getEntitiesWithValue(values[i]);
+    }
+    return all.flatten();
   }
 }

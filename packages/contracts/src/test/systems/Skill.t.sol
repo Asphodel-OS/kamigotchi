@@ -256,10 +256,11 @@ contract SkillTest is SetupTemplate {
   // UTILS
 
   function _resetSkills(PlayerAccount memory acc, uint256 targetID) internal {
-    _giveItem(acc, resetItemIndex, 1);
-
-    vm.startPrank(acc.operator);
-    _KamiUseSkillResetSystem.executeTyped(targetID, resetItemIndex);
+    vm.startPrank(deployer);
+    LibFlag.set(components, targetID, "CAN_RESET_SKILLS", true);
     vm.stopPrank();
+
+    vm.prank(acc.operator);
+    _SkillResetSystem.executeTyped(targetID);
   }
 }

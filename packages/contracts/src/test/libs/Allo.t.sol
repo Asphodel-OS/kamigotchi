@@ -19,7 +19,7 @@ contract AlloTest is SetupTemplate {
     _createGenericItem(4);
   }
 
-  function testRewardShapeBasic() public {
+  function testAlloShapeBasic() public {
     uint256 rewardID = _createAllo(parentID1, "ITEM", 1, 1);
     assertEq(LibAllo.genID(parentID1, "ITEM", 1), rewardID);
     uint256 rewardID2 = _createAllo(parentID1, "ITEM", 2, 2);
@@ -36,7 +36,22 @@ contract AlloTest is SetupTemplate {
     assertEq(_ValueComponent.get(rewardID), 2);
   }
 
-  function testRewardShapeDT() public {
+  function testAlloShapeBonus() public {
+    uint256 bonusID = _createAlloBonus(parentID1, "STAT_HEALTH_SHIFT", 10);
+    uint256 bonusID1 = _createAlloBonus(parentID1, "STAT_POWER_SHIFT", 5);
+
+    // assert shape - only 1 bonus allo entity
+    assertEq(bonusID, bonusID1, "allo bonusID mismatch");
+    assertEq(LibAllo.queryFor(components, parentID1).length, 1, "allo bonus count mismatch");
+
+    // removal
+    vm.startPrank(deployer);
+    LibAllo.remove(components, bonusID);
+    vm.stopPrank();
+    assertEq(LibAllo.queryFor(components, parentID1).length, 0, "removed bonus count mismatch");
+  }
+
+  function testAlloShapeDT() public {
     uint32[] memory keys = new uint32[](1);
     keys[0] = 1;
     uint256[] memory weights = new uint256[](1);
@@ -51,7 +66,7 @@ contract AlloTest is SetupTemplate {
     // no test remove individually - expected to remove all at once
   }
 
-  function testRewardShapeStat() public {
+  function testAlloShapeStat() public {
     uint256 healthID = _createAlloStat(parentID1, "HEALTH", Stat(1, 0, 0, 0));
     uint256 harmonyID = _createAlloStat(parentID1, "HARMONY", Stat(1, 0, 0, 0));
     uint256 powerID = _createAlloStat(parentID1, "POWER", Stat(1, 0, 0, 0));
@@ -69,7 +84,7 @@ contract AlloTest is SetupTemplate {
     assertEq(newHealthID, healthID);
   }
 
-  function testDistributionBasicSingle() public {
+  function testAlloDistributionBasicSingle() public {
     _createAllo(parentID1, "ITEM", 1, 1);
 
     // without multiplier
@@ -81,7 +96,7 @@ contract AlloTest is SetupTemplate {
     assertEq(_getItemBal(bob, 1), 2);
   }
 
-  function testDistributionBasicMultiple() public {
+  function testAlloDistributionBasicMultiple() public {
     _createAllo(parentID1, "ITEM", 1, 1);
     _createAllo(parentID1, "ITEM", 2, 2);
     _createAllo(parentID1, "ITEM", 3, 3);
@@ -99,7 +114,25 @@ contract AlloTest is SetupTemplate {
     assertEq(_getItemBal(bob, 3), 15);
   }
 
-  function testDistributionDTSingle() public {
+  function testAlloDistributionBonus() public {
+    uint256 bonusID = _createAlloBonus(parentID1, "STAT_HEALTH_SHIFT", 10);
+    uint256 bonusID1 = _createAlloBonus(parentID1, "STAT_POWER_SHIFT", 5);
+    uint256 petID = _mintKami(alice);
+    int32 totalHealth = LibStat.getTotal(components, "HEALTH", petID);
+    int32 totalPower = LibStat.getTotal(components, "POWER", petID);
+
+    // giving allo to pet
+    vm.startPrank(deployer);
+    uint256[] memory alloIDs = LibAllo.queryFor(components, parentID1);
+    LibAllo.distribute(world, components, alloIDs, petID);
+    vm.stopPrank();
+
+    // checking pet stats
+    assertEq(LibStat.getTotal(components, "HEALTH", petID), totalHealth + 10);
+    assertEq(LibStat.getTotal(components, "POWER", petID), totalPower + 5);
+  }
+
+  function testAlloDistributionDTSingle() public {
     uint32[] memory keys = new uint32[](3);
     keys[0] = 1;
     keys[1] = 2;
@@ -139,7 +172,7 @@ contract AlloTest is SetupTemplate {
     );
   }
 
-  function testDistributionDTMultiple() public {
+  function testAlloDistributionDTMultiple() public {
     uint32[] memory keys1 = new uint32[](3);
     keys1[0] = 1;
     keys1[1] = 2;
@@ -182,7 +215,7 @@ contract AlloTest is SetupTemplate {
     assertEq(_getItemBal(bob, 4), 35);
   }
 
-  function testDistributionStat() public {
+  function testAlloDistributionStat() public {
     uint256 healthID = _createAlloStat(parentID1, "HEALTH", Stat(0, 1, 0, 100));
     uint256 harmonyID = _createAlloStat(parentID1, "HARMONY", Stat(0, 1, 0, 0));
     uint256 powerID = _createAlloStat(parentID1, "POWER", Stat(0, -1, 0, 0));
@@ -211,7 +244,7 @@ contract AlloTest is SetupTemplate {
     assertEq(LibStat.get(components, "POWER", alice.id), Stat(10, -6, 0, 10));
   }
 
-  function testDistributionMixed() public {
+  function testAlloDistributionMixed() public {
     uint32[] memory keys = new uint32[](3);
     keys[0] = 1;
     keys[1] = 2;
@@ -278,6 +311,16 @@ contract AlloTest is SetupTemplate {
       value.boost,
       value.sync
     );
+    vm.stopPrank();
+  }
+
+  function _createAlloBonus(
+    uint256 parentID,
+    string memory bonusType,
+    int256 value
+  ) internal returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = LibAllo.createBonus(components, parentID, bonusType, value);
     vm.stopPrank();
   }
 

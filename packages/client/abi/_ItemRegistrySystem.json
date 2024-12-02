@@ -37,6 +37,25 @@
     },
     {
       "type": "function",
+      "name": "addAlloBonus",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "addAlloDT",
       "inputs": [
         {
@@ -359,6 +378,7 @@
   ],
   "methodIdentifiers": {
     "addAlloBasic(bytes)": "b39bdf22",
+    "addAlloBonus(bytes)": "eb04c569",
     "addAlloDT(bytes)": "59ce910b",
     "addAlloStat(bytes)": "b452abd4",
     "addRequirement(bytes)": "7e534103",

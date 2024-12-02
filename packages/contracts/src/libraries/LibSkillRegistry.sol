@@ -125,7 +125,7 @@ library LibSkillRegistry {
     for (uint256 i; i < reqs.length; i++) LibConditional.remove(components, reqs[i]);
 
     uint256[] memory bonuses = queryBonuses(components, index);
-    for (uint256 i; i < bonuses.length; i++) LibBonus.registryRemove(components, bonuses[i]);
+    LibBonus.regRemove(components, bonuses);
   }
 
   /////////////////

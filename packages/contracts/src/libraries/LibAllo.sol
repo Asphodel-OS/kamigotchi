@@ -12,10 +12,11 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
 
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { Stat, LibStat } from "libraries/LibStat.sol";
 
@@ -40,6 +41,7 @@ import { Stat, LibStat } from "libraries/LibStat.sol";
  */
 /// todo: rename to Allocation
 library LibAllo {
+  using LibComp for IUintComp;
   using LibStat for Stat;
   using LibStat for uint256;
   using LibString for string;
@@ -47,16 +49,19 @@ library LibAllo {
   /////////////////
   // SHAPES
 
-  /// @dev allow for ID override
+  /// @dev some allo types can be overridden
   function createBase(
     IUintComp components,
     uint256 parentID,
     string memory type_,
-    uint32 index
+    uint32 index,
+    bool canOverride
   ) internal returns (uint256 id) {
     id = genID(parentID, type_, index);
-    require(!LibEntityType.checkAndSet(components, id, "ALLOCATION"), "Allocation already exists");
-
+    if (!canOverride) {
+      require(!LibEntityType.has(components, id), "Allocation already exists");
+    }
+    LibEntityType.set(components, id, "ALLOCATION");
     IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
@@ -69,9 +74,25 @@ library LibAllo {
     uint32 index,
     uint256 value
   ) internal returns (uint256 id) {
-    id = createBase(components, parentID, type_, index);
+    id = createBase(components, parentID, type_, index, false);
 
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
+  }
+
+  /// @notice creates a allo that gives bonuses
+  /** @dev
+   *   acts differently from other allos. There is only 1 BonusAllo entity per parent.
+   *   this is to fit the LibBonus pattern, with multiple bonuses to an anchor
+   */
+  function createBonus(
+    IUintComp components,
+    uint256 parentID,
+    string memory bonusType,
+    int256 value
+  ) internal returns (uint256 id) {
+    // create base each time, multiple bonuses to same allo
+    id = createBase(components, parentID, "BONUS", 1, true);
+    uint256 bonusID = LibBonus.registryCreate(components, id, bonusType, value);
   }
 
   /// @notice this reward type does nothing. its for display.
@@ -81,7 +102,7 @@ library LibAllo {
     string memory type_
   ) internal returns (uint256 id) {
     uint32 index = getIndexOverride(components, parentID, type_);
-    id = createBase(components, parentID, type_, index);
+    id = createBase(components, parentID, type_, index, false);
   }
 
   function createDT(
@@ -93,7 +114,7 @@ library LibAllo {
   ) internal returns (uint256 id) {
     // droptable indexes = num of DT in rwd, for each to be unique
     uint32 index = getIndexOverride(components, parentID, "ITEM_DROPTABLE");
-    id = createBase(components, parentID, "ITEM_DROPTABLE", index);
+    id = createBase(components, parentID, "ITEM_DROPTABLE", index, false);
 
     LibDroptable.set(components, id, keys, weights);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
@@ -109,7 +130,7 @@ library LibAllo {
     int32 sync
   ) internal returns (uint256 id) {
     uint32 index = LibStat.typeToIndex(statType);
-    id = createBase(components, parentID, "STAT", index);
+    id = createBase(components, parentID, "STAT", index, false);
 
     uint256 value = Stat(base, shift, boost, sync).toUint(); // store in raw form
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
@@ -122,6 +143,7 @@ library LibAllo {
     IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
     LibDroptable.remove(components, ids);
+    LibBonus.regRemoveByAnchor(components, ids);
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -131,6 +153,7 @@ library LibAllo {
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
     LibDroptable.remove(components, id);
+    LibBonus.regRemoveByAnchor(components, id);
   }
 
   /////////////////
@@ -152,10 +175,11 @@ library LibAllo {
       if (alloID == 0) continue;
 
       string memory type_ = typeComp.get(alloID);
-      uint256 amt = valueComp.get(alloID);
+      uint256 amt = valueComp.safeGet(alloID);
 
       if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, alloID, amt, mult, targetID);
       else if (type_.eq("STAT")) giveStat(components, indexComp.get(alloID), amt, mult, targetID);
+      else if (type_.eq("BONUS")) giveBonus(components, alloID, mult, targetID);
       else giveBasic(world, components, type_, indexComp.get(alloID), amt, mult, targetID);
     }
   }
@@ -182,6 +206,15 @@ library LibAllo {
     uint256 targetID // expected to be an account
   ) internal {
     LibSetter.update(world, components, type_, index, amount * mult, targetID);
+  }
+
+  function giveBonus(
+    IUintComp components,
+    uint256 alloID,
+    uint256 mult,
+    uint256 targetID
+  ) internal {
+    LibBonus.incBy(components, alloID, targetID, mult);
   }
 
   /// @notice distributes droptable rewards by creating a commit
@@ -243,21 +276,14 @@ library LibAllo {
     IUintComp components,
     uint256 parentID
   ) internal view returns (uint256[] memory) {
-    return
-      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
+    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
   }
 
   function queryFor(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    IDParentComponent parentComp = IDParentComponent(getAddrByID(components, IDParentCompID));
-
-    uint256[][] memory all = new uint256[][](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      all[i] = parentComp.getEntitiesWithValue(ids[i]);
-    }
-    return LibArray.flatten(all);
+    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(ids);
   }
 
   function queryByType(

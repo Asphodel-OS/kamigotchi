@@ -31,6 +31,7 @@ import type {
 export interface _ItemRegistrySystemInterface extends utils.Interface {
   functions: {
     "addAlloBasic(bytes)": FunctionFragment;
+    "addAlloBonus(bytes)": FunctionFragment;
     "addAlloDT(bytes)": FunctionFragment;
     "addAlloStat(bytes)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
@@ -53,6 +54,7 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addAlloBasic"
+      | "addAlloBonus"
       | "addAlloDT"
       | "addAlloStat"
       | "addRequirement"
@@ -74,6 +76,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addAlloBasic",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addAlloBonus",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -141,6 +147,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "addAlloBasic",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addAlloBonus",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addAlloDT", data: BytesLike): Result;
@@ -279,6 +289,11 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addAlloBonus(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addAlloDT(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -363,6 +378,11 @@ export interface _ItemRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addAlloBonus(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addAlloDT(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -443,6 +463,11 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   callStatic: {
     addAlloBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addAlloBonus(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -552,6 +577,11 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addAlloBonus(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addAlloDT(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -633,6 +663,11 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   populateTransaction: {
     addAlloBasic(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addAlloBonus(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -92,13 +92,23 @@ library LibBonus {
     IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
   }
 
+  function regRemoveByAnchor(IUintComp components, uint256[] memory anchorIDs) internal {
+    uint256[] memory ids = queryByParent(components, anchorIDs);
+    return regRemove(components, ids);
+  }
+
+  function regRemoveByAnchor(IUintComp components, uint256 anchorID) internal {
+    uint256[] memory ids = queryByParent(components, anchorID);
+    regRemove(components, ids);
+  }
+
   /// @notice removes a registry entry
-  function registryRemove(IUintComp components, uint256 id) internal {
-    LibEntityType.remove(components, id);
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
-    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+  function regRemove(IUintComp components, uint256[] memory ids) internal {
+    LibEntityType.remove(components, ids);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
   }
 
   /// @notice removes a bonus instance
@@ -238,6 +248,13 @@ library LibBonus {
     uint256 parentID
   ) internal view returns (uint256[] memory) {
     return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
+  }
+
+  function queryByParent(
+    IUintComp components,
+    uint256[] memory parentIDs
+  ) internal view returns (uint256[] memory) {
+    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentIDs);
   }
 
   function queryByType(

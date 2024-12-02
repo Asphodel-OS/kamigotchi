@@ -92,8 +92,20 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloParentID(refID);
+    uint256 parentID = LibItem.genAlloAnchor(refID);
     return LibAllo.createBasic(components, parentID, alloType, alloIndex, alloValue);
+  }
+
+  function addAlloBonus(bytes memory arguments) public onlyOwner returns (uint256) {
+    (uint32 index, string memory useCase, string memory bonusType, int256 bonusValue) = abi.decode(
+      arguments,
+      (uint32, string, string, int256)
+    );
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+
+    uint256 refID = LibItem.createUseCase(components, index, useCase);
+    uint256 parentID = LibItem.genAlloAnchor(refID);
+    return LibAllo.createBonus(components, parentID, bonusType, bonusValue);
   }
 
   function addAlloDT(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -107,7 +119,7 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloParentID(refID);
+    uint256 parentID = LibItem.genAlloAnchor(refID);
     return LibAllo.createDT(components, parentID, keys, weights, value);
   }
 
@@ -124,7 +136,7 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloParentID(refID);
+    uint256 parentID = LibItem.genAlloAnchor(refID);
     return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 

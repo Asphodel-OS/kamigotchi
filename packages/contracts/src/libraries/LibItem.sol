@@ -113,7 +113,7 @@ library LibItem {
   }
 
   /// @notice delete a Registry entry for an item.
-  function deleteItem(IUintComp components, uint32 index) internal {
+  function deleteItem(IUintComp components, uint32 index) public {
     uint256 id = genID(index);
     LibEntityType.remove(components, id);
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
@@ -263,7 +263,7 @@ library LibItem {
     string memory useCase
   ) internal view returns (uint256[] memory) {
     uint256 refID = LibReference.genID(useCase, genRefAnchor(index));
-    return LibAllo.queryFor(components, genAlloParentID(refID));
+    return LibAllo.queryFor(components, genAlloAnchor(refID));
   }
 
   function getReqsFor(
@@ -287,7 +287,7 @@ library LibItem {
     uint32 index
   ) internal view returns (uint256[] memory) {
     uint256[] memory refs = getAllReferences(components, index);
-    for (uint256 i; i < refs.length; i++) refs[i] = genAlloParentID(refs[i]);
+    for (uint256 i; i < refs.length; i++) refs[i] = genAlloAnchor(refs[i]);
     return LibAllo.queryFor(components, refs);
   }
 
@@ -346,7 +346,7 @@ library LibItem {
     return uint256(keccak256(abi.encodePacked("item.usecase", index)));
   }
 
-  function genAlloParentID(uint256 refID) internal pure returns (uint256) {
+  function genAlloAnchor(uint256 refID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("item.allo", refID)));
   }
 
