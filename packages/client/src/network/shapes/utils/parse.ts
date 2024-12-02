@@ -67,7 +67,7 @@ export const parseQuantity = (entity: DetailedEntity, quantity?: number): string
   if (entity.ObjectType === 'ITEM') {
     // filter out musu from pluralization
     if (entity.name.toLowerCase().includes('musu')) return `${(quantity ?? 0) * 1} ${entity.name}`;
-    return pluralize(entity.name, quantity ?? 0, true);
+    return pluralize(entity.name, (quantity ?? 0) * 1, true);
   }
 
   // default case - includes QUEST
