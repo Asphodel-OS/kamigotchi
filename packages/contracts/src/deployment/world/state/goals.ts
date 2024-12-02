@@ -57,24 +57,24 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(3, 'Silver', 5000, 'REPUTATION', 1, 5);
   await api.goal.add.reward.basic(3, 'Gold', 10000, 'REPUTATION', 1, 10);
 
-  // await api.goal.create(
-  //   4,
-  //   'Shrine to Nature',
-  //   `It’s unclear what this object is. It looks like…. some sort of idol has sprouted from the cockpit?
+  await api.goal.create(
+    4,
+    'Shrine to Nature',
+    `It looks like some sort of idol has sprouted from the cockpit… 
 
-  //   Once again, you sense this object needs… tribute. But its purpose is unclear. And for some reason, it needs Pine Cones. `,
-  //   54,
-  //   'ITEM',
-  //   'CURR_MIN',
-  //   11008, // pine cones
-  //   1000
-  // );
-  // await api.goal.add.reward.basic(4, 'Bronze', 1, 'REPUTATION', 1, 5);
-  // await api.goal.add.reward.basic(4, 'Bronze', 1, 'ITEM', 11005, 5);
-  // await api.goal.add.reward.basic(4, 'Silver', 5, 'REPUTATION', 1, 5);
-  // await api.goal.add.reward.basic(4, 'Silver', 5, 'ITEM', 20001, 1);
-  // await api.goal.add.reward.basic(4, 'Gold', 20, 'REPUTATION', 1, 5);
-  // await api.goal.add.reward.basic(4, 'Gold', 20, 'ITEM', 112, 2);
+The idol needs tribute. Provide it with the resources it needs, and another way will open in the forest.`,
+    54,
+    'ITEM',
+    'CURR_MIN',
+    104, // pine cones
+    2500
+  );
+  await api.goal.add.reward.basic(4, 'Bronze', 1, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(4, 'Bronze', 1, 'ITEM', 11203, 1);
+  await api.goal.add.reward.basic(4, 'Silver', 5, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(4, 'Silver', 5, 'ITEM', 100001, 1);
+  await api.goal.add.reward.basic(4, 'Gold', 20, 'REPUTATION', 1, 5);
+  await api.goal.add.reward.basic(4, 'Gold', 20, 'ITEM', 11110, 1);
 
   await api.goal.create(
     5,

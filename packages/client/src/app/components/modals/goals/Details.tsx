@@ -31,9 +31,9 @@ export const Details = (props: Props) => {
           {tier.rewards.map((reward, i) => (
             <ItemIconHorizontal
               key={`reward-${tier.name}-${i}`}
-              item={getDescribedEntity(reward.target.type, reward.target.index ?? 0)}
+              item={getDescribedEntity(reward.type, reward.index ?? 0)}
               size='small'
-              balance={reward.target.value ?? 0}
+              balance={reward.value ?? 0}
               styleOverride={{ box: { borderColor: '#444', marginBottom: '0' } }}
             />
           ))}
