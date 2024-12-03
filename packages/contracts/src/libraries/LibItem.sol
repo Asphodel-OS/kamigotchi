@@ -189,7 +189,7 @@ library LibItem {
   // CHECKERS
 
   /// @dev to prevent potential overflows, somehow
-  function verifyMaxPerUse(IUintComp components, uint256 amt) internal view {
+  function verifyMaxPerUse(IUintComp components, uint256 amt) public view {
     if (amt > 100) revert("max 100 item use at once");
   }
 
@@ -199,13 +199,13 @@ library LibItem {
     uint32 index,
     string memory usecase,
     uint256 targetID
-  ) internal view {
+  ) public view {
     if (!LibConditional.check(components, getReqsFor(components, index, usecase), targetID))
       revert("Item: Reqs not met");
   }
 
   /// @notice check if entity is an item of specific type
-  function verifyType(IUintComp components, uint32 index, string memory type_) internal view {
+  function verifyType(IUintComp components, uint32 index, string memory type_) public view {
     uint256 id = genID(index);
     if (!LibEntityType.isShape(components, id, "ITEM")) revert("thats not an item");
     if (!getCompByID(components, TypeCompID).eqString(id, type_))
@@ -216,7 +216,7 @@ library LibItem {
     IUintComp components,
     uint32[] memory indices,
     string memory type_
-  ) internal view returns (bool) {
+  ) public view returns (bool) {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     if (!LibEntityType.isShape(components, ids, "ITEM")) revert("thats not an item");
@@ -224,17 +224,17 @@ library LibItem {
       revert(LibString.concat("thats not item type ", type_));
   }
 
-  function verifyBurnable(IUintComp components, uint32[] memory indices) internal view {
+  function verifyBurnable(IUintComp components, uint32[] memory indices) public view {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
   }
 
-  function verifyForAccount(IUintComp components, uint32 index) internal view {
+  function verifyForAccount(IUintComp components, uint32 index) public view {
     if (!LibFor.isForAccount(components, genID(index))) revert("that's not for accounts");
   }
 
-  function checkForPet(IUintComp components, uint32 index) internal view {
+  function checkForPet(IUintComp components, uint32 index) public view {
     if (!LibFor.isForPet(components, genID(index))) revert("that's not for kamis");
   }
 

@@ -272,7 +272,7 @@ library LibHarvest {
     uint256 accID,
     uint32 nodeIndex,
     uint256 prodID
-  ) internal {
+  ) public {
     uint32[] memory indices = new uint32[](2);
     indices[0] = 0;
     indices[1] = nodeIndex;
@@ -295,7 +295,7 @@ library LibHarvest {
     string memory affinity,
     uint32 itemIndex,
     uint256 amt
-  ) internal {
+  ) public {
     uint32[] memory indices = new uint32[](3);
     indices[0] = nodeIndex;
     indices[1] = itemIndex;

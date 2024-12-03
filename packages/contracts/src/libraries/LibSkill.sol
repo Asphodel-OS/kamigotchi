@@ -119,12 +119,16 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
-  function verifyResettable(IUintComp components, uint256 targetID) internal view {
+  function verifyResettable(IUintComp components, uint256 targetID) public view {
     if (!LibFlag.has(components, targetID, "CAN_RESET_SKILLS"))
       revert("cannot reset skills (no flag)");
   }
 
-  function verifyPrerequisites(IUintComp components, uint32 skillIndex, uint256 holderID) internal {
+  function verifyPrerequisites(
+    IUintComp components,
+    uint32 skillIndex,
+    uint256 holderID
+  ) public view {
     if (!meetsPrerequisites(components, skillIndex, holderID))
       revert("SkillUpgrade: unmet prerequisites");
   }
@@ -260,7 +264,7 @@ library LibSkill {
   //////////////////////
   // LOGGING
 
-  function logUsePoint(IUintComp components, uint256 holderID) internal {
+  function logUsePoint(IUintComp components, uint256 holderID) public {
     LibData.inc(components, holderID, 0, "SKILL_POINTS_USE", 1);
   }
 

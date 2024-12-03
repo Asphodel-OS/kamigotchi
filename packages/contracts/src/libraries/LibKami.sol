@@ -192,26 +192,26 @@ library LibKami {
 
   /// @notice revert if  a kami is not owned by an account
   /// @dev implicit isKami check - only kamis are mapped to IDOwnsKamiComponent
-  function verifyAccount(IUintComp components, uint256 id, uint256 accID) internal view {
+  function verifyAccount(IUintComp components, uint256 id, uint256 accID) public view {
     if (IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) != accID)
       revert("kami not urs");
   }
 
-  function verifyAccount(IUintComp components, uint256[] memory ids, uint256 accID) internal view {
+  function verifyAccount(IUintComp components, uint256[] memory ids, uint256 accID) public view {
     uint256[] memory accs = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(ids);
     for (uint256 i; i < ids.length; i++) if (accs[i] != accID) revert("kami not urs");
   }
 
-  function verifyCooldown(IUintComp components, uint256 id) internal view {
+  function verifyCooldown(IUintComp components, uint256 id) public view {
     if (LibCooldown.isActive(components, id)) revert("kami on cooldown");
   }
 
-  function verifyHealthy(IUintComp components, uint256 id) internal view {
+  function verifyHealthy(IUintComp components, uint256 id) public view {
     if (!isHealthy(components, id)) revert("kami starving..");
   }
 
   /// @notice revert if kami is not in same room as account
-  function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) internal view {
+  function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) public view {
     string memory state = getState(components, kamiID);
 
     bool sameRoom;
@@ -226,11 +226,11 @@ library LibKami {
     if (!sameRoom) revert("kami too far");
   }
 
-  function verifyRoom(IUintComp components, uint256 kamiID) internal view {
+  function verifyRoom(IUintComp components, uint256 kamiID) public view {
     return verifyRoom(components, kamiID, getAccount(components, kamiID));
   }
 
-  function verifyState(IUintComp components, uint256 id, string memory state) internal view {
+  function verifyState(IUintComp components, uint256 id, string memory state) public view {
     if (!getCompByID(components, StateCompID).eqString(id, state))
       revert(LibString.concat("kami not ", state));
   }
@@ -239,7 +239,7 @@ library LibKami {
     IUintComp components,
     uint256[] memory ids,
     string memory state
-  ) internal view {
+  ) public view {
     if (!getCompByID(components, StateCompID).eqString(ids, state))
       revert(LibString.concat("kami not ", state));
   }
@@ -404,7 +404,7 @@ library LibKami {
   /////////////////
   // LOGGING
 
-  function logNameChange(IUintComp components, uint256 accID) internal {
+  function logNameChange(IUintComp components, uint256 accID) public {
     LibData.inc(components, accID, 0, "KAMI_NAME", 1);
   }
 

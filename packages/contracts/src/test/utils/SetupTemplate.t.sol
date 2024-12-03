@@ -180,7 +180,8 @@ abstract contract SetupTemplate is TestSetupImports {
     uint256 accID = _getAccount(playerIndex);
     vm.startPrank(deployer);
     LibInventory.incFor(components, accID, MUSU_INDEX, amount);
-    LibInventory.logItemTotal(components, accID, MUSU_INDEX, amount);
+    // LibInventory.logItemTotal(components, accID, MUSU_INDEX, amount);
+    LibData.inc(components, accID, MUSU_INDEX, "ITEM_TOTAL", amount);
     vm.stopPrank();
   }
 
@@ -424,7 +425,8 @@ abstract contract SetupTemplate is TestSetupImports {
   function _giveItem(PlayerAccount memory acc, uint32 itemIndex, uint256 amt) internal {
     vm.startPrank(deployer);
     LibInventory.incFor(components, acc.id, itemIndex, amt);
-    LibInventory.logItemTotal(components, acc.id, itemIndex, amt);
+    // LibInventory.logItemTotal(components, acc.id, itemIndex, amt);
+    LibData.inc(components, acc.id, itemIndex, "ITEM_TOTAL", amt);
     vm.stopPrank();
   }
 

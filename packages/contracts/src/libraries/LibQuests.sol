@@ -275,32 +275,28 @@ library LibQuests {
   /////////////////
   // CHECKERS
 
-  function verifyNotCompleted(IUintComp components, uint256 id) internal view {
+  function verifyNotCompleted(IUintComp components, uint256 id) public view {
     if (isCompleted(components, id)) revert("quest alr completed");
   }
 
-  function verifyIsQuest(IUintComp components, uint256 id) internal view {
-    if (!isQuest(components, id)) revert("not a quest");
+  function verifyIsQuest(IUintComp components, uint256 id) public view {
+    if (!LibEntityType.isShape(components, id, "QUEST")) revert("not a quest");
   }
 
-  function verifyOwner(IUintComp components, uint256 questID, uint256 accID) internal view {
+  function verifyOwner(IUintComp components, uint256 questID, uint256 accID) public view {
     if (getOwner(components, questID) != accID) revert("not ur quest");
   }
 
-  function verifyObjectives(IUintComp components, uint256 questID, uint256 accID) internal {
+  function verifyObjectives(IUintComp components, uint256 questID, uint256 accID) public {
     if (!checkObjectives(components, questID, accID)) revert("quest objs not met");
   }
 
-  function verifyRequirements(IUintComp components, uint32 index, uint256 accID) internal view {
+  function verifyRequirements(IUintComp components, uint32 index, uint256 accID) public view {
     if (!checkRequirements(components, index, accID)) revert("reqs not met");
   }
 
-  function verifyRepeatable(IUintComp components, uint32 index, uint256 questID) internal view {
+  function verifyRepeatable(IUintComp components, uint32 index, uint256 questID) public view {
     if (!checkRepeat(components, index, questID)) revert("repeat cons not met");
-  }
-
-  function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibEntityType.isShape(components, id, "QUEST");
   }
 
   function isRepeatable(IUintComp components, uint256 id) internal view returns (bool) {
@@ -339,7 +335,7 @@ library LibQuests {
     uint32 questIndex
   ) internal view returns (uint256) {
     uint256 id = genQuestID(questIndex, accID);
-    return isQuest(components, id) ? id : 0;
+    return LibEntityType.isShape(components, id, "QUEST") ? id : 0;
   }
 
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -399,11 +395,11 @@ library LibQuests {
   ////////////////////
   // LOGGING
 
-  function logComplete(IUintComp components, uint256 accID) internal {
+  function logComplete(IUintComp components, uint256 accID) public {
     LibData.inc(components, accID, 0, "QUEST_COMPLETE", 1);
   }
 
-  function logCompleteRepeatable(IUintComp components, uint256 accID, uint256 questID) internal {
+  function logCompleteRepeatable(IUintComp components, uint256 accID, uint256 questID) public {
     if (isRepeatable(components, questID))
       LibData.inc(components, accID, 0, "QUEST_REPEATABLE_COMPLETE", 1);
   }

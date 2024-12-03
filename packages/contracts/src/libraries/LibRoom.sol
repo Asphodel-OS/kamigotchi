@@ -84,8 +84,8 @@ library LibRoom {
   /////////////////
   // CHECKERS
 
-  function isRoom(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibEntityType.isShape(components, id, "ROOM");
+  function verifySharedRoom(IUintComp components, uint256 aID, uint256 bID) public view {
+    if (!sharesRoom(components, aID, bID)) revert("not in same room");
   }
 
   /// @notice Checks whether a path from Room A to Room B is valid
@@ -136,10 +136,6 @@ library LibRoom {
     return roomComp.safeGet(aID) == roomComp.safeGet(bID);
   }
 
-  function verifySharedRoom(IUintComp components, uint256 aID, uint256 bID) internal view {
-    if (!sharesRoom(components, aID, bID)) revert("not in same room");
-  }
-
   /////////////////
   // GETTERS
 
@@ -185,7 +181,7 @@ library LibRoom {
 
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256 id = genID(index);
-    return isRoom(components, id) ? id : 0;
+    return LibEntityType.isShape(components, id, "ROOM") ? id : 0;
   }
 
   function queryByLocation(
@@ -243,7 +239,7 @@ library LibRoom {
   //////////////////////
   // LOGGING
 
-  function logMove(IUintComp components, uint256 holderID) internal {
+  function logMove(IUintComp components, uint256 holderID) public {
     LibData.inc(components, holderID, 0, "MOVE", 1);
   }
 

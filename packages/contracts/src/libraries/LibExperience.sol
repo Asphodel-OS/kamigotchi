@@ -103,7 +103,7 @@ library LibExperience {
   /////////////////
   // LOGGING
 
-  function logPetLevelInc(IUintComp components, uint256 holderID) internal {
+  function logPetLevelInc(IUintComp components, uint256 holderID) public {
     LibData.inc(components, holderID, 0, "KAMI_LEVELS_TOTAL", 1);
   }
 }

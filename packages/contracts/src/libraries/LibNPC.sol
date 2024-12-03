@@ -33,7 +33,7 @@ library LibNPC {
   /////////////////
   // CHECKERS
 
-  function verifyRoom(IUintComp components, uint256 id, uint256 accID) internal view {
+  function verifyRoom(IUintComp components, uint256 id, uint256 accID) public view {
     if (!sharesRoomWith(components, id, accID)) revert("must be in same room as npc");
   }
 

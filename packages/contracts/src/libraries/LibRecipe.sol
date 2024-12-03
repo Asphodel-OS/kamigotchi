@@ -174,11 +174,7 @@ library LibRecipe {
   /////////////////
   // CHECKERS
 
-  function verifyRequirements(
-    IUintComp components,
-    uint32 recipeIndex,
-    uint256 accID
-  ) internal view {
+  function verifyRequirements(IUintComp components, uint32 recipeIndex, uint256 accID) public view {
     uint256[] memory reqIDs = getRequirements(components, recipeIndex);
     if (!LibConditional.check(components, reqIDs, accID)) revert("Recipe: reqs not met");
   }
@@ -242,7 +238,7 @@ library LibRecipe {
   /////////////////
   // LOGGING
 
-  function logCraft(IUintComp components, uint256 accID, uint32 recipeIndex, uint256 amt) internal {
+  function logCraft(IUintComp components, uint256 accID, uint32 recipeIndex, uint256 amt) public {
     LibData.inc(components, accID, recipeIndex, "CRAFT_TOTAL", amt);
   }
 }

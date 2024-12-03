@@ -243,18 +243,18 @@ library LibKill {
     uint256 victimID,
     uint256 nodeID,
     KillBalance memory bals
-  ) internal {
+  ) public {
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
 
     emitLog(components, killerID, victimID, bals);
 
-    logKill(world, components, killerID, victimID, nodeIndex, bals);
-    logTotals(components, accID, nodeIndex);
-    logVictim(components, accID, LibKami.getAccount(components, victimID));
+    _logKill(world, components, killerID, victimID, nodeIndex, bals);
+    _logTotals(components, accID, nodeIndex);
+    _logVictim(components, accID, LibKami.getAccount(components, victimID));
   }
 
   // creates a kill log. pretty sure we don't need to do anything with the library aside from this
-  function logKill(
+  function _logKill(
     IWorld world,
     IUintComp components,
     uint256 killerID,
@@ -276,7 +276,7 @@ library LibKill {
     LibData.setArray(components, id, 0, "KILL_BOUNTIES", bounties);
   }
 
-  function logTotals(IUintComp components, uint256 accID, uint32 nodeIndex) internal {
+  function _logTotals(IUintComp components, uint256 accID, uint32 nodeIndex) internal {
     uint32[] memory indices = new uint32[](3);
     indices[1] = nodeIndex;
     string[] memory types = new string[](3);
@@ -287,7 +287,7 @@ library LibKill {
     LibData.inc(components, accID, indices, types, 1);
   }
 
-  function logVictim(IUintComp components, uint256 accID, uint256 accVicID) internal {
+  function _logVictim(IUintComp components, uint256 accID, uint256 accVicID) internal {
     LibData.inc(components, accVicID, 0, "LIQUIDATED_VICTIM", 1);
     LibData.inc(components, accID, LibAccount.getIndex(components, accVicID), "LIQ_TARGET_ACC", 1);
   }

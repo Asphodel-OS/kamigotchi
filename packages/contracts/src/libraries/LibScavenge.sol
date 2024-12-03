@@ -144,7 +144,7 @@ library LibScavenge {
     uint32 index,
     uint256 amt,
     uint256 accID
-  ) internal {
+  ) public {
     LibData.inc(
       components,
       accID,

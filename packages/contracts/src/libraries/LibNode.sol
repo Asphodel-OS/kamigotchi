@@ -111,6 +111,15 @@ library LibNode {
   //////////////
   // CHECKERS
 
+  function verifyRequirements(
+    IUintComp components,
+    uint32 nodeIndex,
+    uint256 accID,
+    uint256 kamiID
+  ) public view {
+    if (!checkReqs(components, nodeIndex, accID, kamiID)) revert("node reqs not met");
+  }
+
   function checkReqs(
     IUintComp components,
     uint32 nodeIndex,
@@ -132,15 +141,6 @@ library LibNode {
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getType(components, id), "HARVEST");
-  }
-
-  function verifyRequirements(
-    IUintComp components,
-    uint32 nodeIndex,
-    uint256 accID,
-    uint256 kamiID
-  ) internal view {
-    if (!checkReqs(components, nodeIndex, accID, kamiID)) revert("node reqs not met");
   }
 
   /////////////////

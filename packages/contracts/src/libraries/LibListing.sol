@@ -111,11 +111,7 @@ library LibListing {
   /////////////////
   // CHECKERS
 
-  function verifyRequirements(
-    IUintComp components,
-    uint256 listingID,
-    uint256 accID
-  ) internal view {
+  function verifyRequirements(IUintComp components, uint256 listingID, uint256 accID) public view {
     if (!meetsRequirements(components, listingID, accID)) revert("reqs not met");
   }
 
@@ -123,7 +119,7 @@ library LibListing {
     IUintComp components,
     uint256 listingID,
     uint256 accID
-  ) internal view returns (bool) {
+  ) public view returns (bool) {
     uint256[] memory requirements = LibConditional.queryFor(components, genReqAnchor(listingID));
     return LibConditional.check(components, requirements, accID);
   }

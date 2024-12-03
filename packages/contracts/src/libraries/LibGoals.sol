@@ -185,7 +185,7 @@ library LibGoals {
   ////////////////////
   // CHECKERS
 
-  function verifyClaimable(IUintComp components, uint256 goalID, uint256 accID) internal view {
+  function verifyClaimable(IUintComp components, uint256 goalID, uint256 accID) public view {
     if (!canClaim(components, goalID, accID)) revert("cannot claim from this goal");
   }
 
@@ -194,7 +194,7 @@ library LibGoals {
     uint32 goalIndex,
     uint256 goalID,
     uint256 accID
-  ) internal view {
+  ) public view {
     if (!canContribute(components, goalIndex, goalID, accID))
       revert("cannot contribute to this goal");
   }
@@ -345,7 +345,7 @@ library LibGoals {
   // LOGGING
 
   /// @notice log overall goal contirbution, not specific goal
-  function logContribution(IUintComp components, uint256 accID, uint256 amt) internal {
+  function logContribution(IUintComp components, uint256 accID, uint256 amt) public {
     LibData.inc(components, accID, 0, "GOAL_CONTRIBUTION", amt);
   }
 

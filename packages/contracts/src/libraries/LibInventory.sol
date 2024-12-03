@@ -269,15 +269,10 @@ library LibInventory {
   }
 
   /////////////////
-  // DATA LOGGING
+  // LOGGING
 
   /// @notice log increase for item total
-  function logItemTotal(
-    IUintComp components,
-    uint256 accID,
-    uint32 itemIndex,
-    uint256 amt
-  ) internal {
+  function logItemTotal(IUintComp components, uint256 accID, uint32 itemIndex, uint256 amt) public {
     LibData.inc(components, accID, itemIndex, "ITEM_TOTAL", amt);
   }
 
@@ -286,7 +281,7 @@ library LibInventory {
     uint256 accID,
     uint32[] memory itemIndices,
     uint256[] memory amts
-  ) internal {
+  ) public {
     LibData.inc(components, accID, itemIndices, "ITEM_TOTAL", amts);
   }
 }
