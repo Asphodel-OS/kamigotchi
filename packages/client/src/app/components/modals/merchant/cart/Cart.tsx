@@ -59,7 +59,7 @@ export const Cart = (props: Props) => {
         ))}
       </Items>
       {cart.length > 0 ? (
-        <ButtonWrapper>
+        <Checkout>
           <BuyButton onClick={() => handleBuy(cart)} disabled={calcTotalPrice() > account.coin}>
             <Total>
               <Icon src={ItemImages.musu} />
@@ -67,7 +67,7 @@ export const Cart = (props: Props) => {
             </Total>
             <Text>Buy</Text>
           </BuyButton>
-        </ButtonWrapper>
+        </Checkout>
       ) : (
         <EmptyText>Your cart is empty.</EmptyText>
       )}
@@ -77,12 +77,15 @@ export const Cart = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  user-select: none;
+  border-right: solid black 0.15vw;
+  height: 100%;
+  width: 10%;
 
   display: flex;
   flex-flow: column nowrap;
+
+  flex-grow: 2;
   overflow-y: auto;
-  width: 20vw;
 `;
 
 const Title = styled.div`
@@ -101,29 +104,38 @@ const Title = styled.div`
 `;
 
 const Items = styled.div`
-  padding: 7.5vh 0.6vw;
+  padding: 7.5vh 1vw;
   display: flex;
-  flex-flow: column;
-
-  flex-wrap: wrap;
-  flex-direction: row;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
-const ButtonWrapper = styled.div<BuyButtonProps>`
+const Checkout = styled.div`
   position: absolute;
-  top: 90%;
-  right: 64%;
+  border-radius: 0 0 0.25vw 0;
+  width: 66%;
+  height: 4.5vh;
+  bottom: 0;
+  right: 0;
+  padding: 1.8vw 0.6vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 interface BuyButtonProps {
   disabled?: boolean;
 }
+
 const BuyButton = styled.div<BuyButtonProps>`
   border: solid 0.15vw black;
   border-radius: 0.4vw;
-  position: fixed;
 
-  width: 12%;
+  width: 100%;
   margin: 0.6vh 0;
   padding: 0.6vh 0.9vw;
   gap: 0.9vw;
