@@ -5,11 +5,13 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
-
 import { Base64 } from "solady/utils/Base64.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { Kami721 } from "tokens/Kami721.sol";
+
+import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
+import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
@@ -30,23 +32,23 @@ library LibKami721 {
 
   /// @notice  stakes a kami, out of game -> in game ('bridging in')
   /// @dev     checks are performed in system
-  function stake(IUintComp components, address from, uint256 tokenID) internal {
+  function stake(IUintComp components, address owner, uint256 kamiIndex) internal {
     Kami721 token = getContract(components);
-    token.stakeToken(from, tokenID);
+    token.stakeToken(owner, kamiIndex);
   }
 
   /// @notice  unstakes a kami, in game -> out of game
   /// @dev     checks are performed in system
-  function unstake(IUintComp components, address to, uint256 tokenID) internal {
+  function unstake(IUintComp components, address to, uint256 kamiIndex) internal {
     Kami721 token = getContract(components);
-    token.unstakeToken(to, tokenID);
+    token.unstakeToken(to, kamiIndex);
   }
 
   /// @notice  emits a metadata update event. to be called whenever metadata changes
   /// @dev     no state changes, only emits event. for marketplaces
-  function updateEvent(IUintComp components, uint256 tokenID) internal {
+  function updateEvent(IUintComp components, uint256 kamiIndex) internal {
     Kami721 token = getContract(components);
-    token.emitMetadataUpdate(tokenID);
+    token.emitMetadataUpdate(kamiIndex);
   }
 
   /////////////////////////
@@ -58,8 +60,16 @@ library LibKami721 {
     return Kami721(addr);
   }
 
-  function getEOAOwner(IUintComp components, uint256 tokenID) internal view returns (address) {
-    return getContract(components).ownerOf(tokenID);
+  function getEOAOwner(IUintComp components, uint256 kamiIndex) internal view returns (address) {
+    return getContract(components).ownerOf(kamiIndex);
+  }
+
+  function getMediaURI(IUintComp components, uint256 id) internal view returns (string memory) {
+    return MediaURIComponent(getAddrByID(components, MediaURICompID)).get(id);
+  }
+
+  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
+    return NameComponent(getAddrByID(components, NameCompID)).get(id);
   }
 
   ////////////////////////
@@ -89,7 +99,7 @@ library LibKami721 {
           "{",
           '"external_url": "https://kamigotchi.io", ',
           '"name": "',
-          LibKami.getName(components, kamiID),
+          getName(components, kamiID),
           '", ',
           '"description": ',
           '"a lil network spirit :3", ',
@@ -98,7 +108,7 @@ library LibKami721 {
           _getStats(components, kamiID),
           "], ",
           '"image": "',
-          LibKami.getMediaURI(components, kamiID),
+          getMediaURI(components, kamiID),
           '"',
           "}"
         )

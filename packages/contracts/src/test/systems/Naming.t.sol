@@ -17,7 +17,7 @@ contract NamingTest is SetupTemplate {
     // rename once
     vm.prank(alice.operator);
     _KamiNameSystem.executeTyped(kamiID, "test");
-    assertEq(LibKami.getName(components, kamiID), "test");
+    assertEq(LibKami721.getName(components, kamiID), "test");
 
     // rename again
     vm.prank(alice.operator);

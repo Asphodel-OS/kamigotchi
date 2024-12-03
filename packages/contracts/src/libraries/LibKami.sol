@@ -11,38 +11,29 @@ import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexKamiComponent, ID as IndexKamiCompID } from "components/IndexKamiComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
-import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
-import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibAffinity } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
-import { LibItem } from "libraries/LibItem.sol";
 import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
-import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // placeholders for config values
-string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
 uint256 constant METABOLISM_PREC = 9;
 
 // when needed, converts state to uint. do not change order - its live
@@ -54,6 +45,36 @@ enum KamiState {
   EXTERNAL_721
 }
 
+/**
+ * @notice library kamis!
+ *
+ * Shape (implemented in BatchMinter):
+ * - EntityType: KAMI
+ * - IDOwnsKami: Owner (usually Account, but can be other entities)
+ * - IndexKami
+ * - Name
+ * - State [RESTING, HARVESTING, DEAD, 721_EXTERNAL]
+ * - MediaURI
+ * - TimeStart
+ * - TimeLast
+ * - Experience
+ * - Level
+ * - SkillPoints
+ * - Traits
+ *   - IndexFace
+ *   - IndexHand
+ *   - IndexBody
+ *   - IndexBackground
+ *   - IndexColor
+ * - Stats
+ *   - Health
+ *   - Power
+ *   - Violence
+ *   - Harmony
+ *   - Slots
+ * - Flags
+ *   - NOT_NAMABLE: default false (kamis can be named by default)
+ */
 library LibKami {
   using LibComp for IComponent;
   using LibString for string;
@@ -63,19 +84,7 @@ library LibKami {
   using SafeCastLib for uint256;
 
   ///////////////////////
-  // ENTITY INTERACTIONS
-
-  /// @notice bridging a kami Outside => MUD. Does not handle account details
-  function stake(IUintComp components, uint256 id, uint256 accID) internal {
-    setState(components, id, "RESTING");
-    setOwner(components, id, accID);
-  }
-
-  /// @notice bridging a kami MUD => Outside. Does not handle account details
-  function unstake(IUintComp components, uint256 id) internal {
-    setState(components, id, "721_EXTERNAL");
-    setOwner(components, id, 0);
-  }
+  // INTERACTIONS
 
   // Drains HP from a kami. Opposite of healing
   function drain(IUintComp components, uint256 id, int32 amt) internal {
@@ -114,14 +123,6 @@ library LibKami {
     }
 
     setLastTs(components, id, block.timestamp);
-  }
-
-  // transfer ERC721 kami
-  // NOTE: transfers are disabled in game
-  function transfer(IUintComp components, uint32 index, uint256 accID) internal {
-    // does not need to check for previous owner, ERC721 handles it
-    uint256 id = getByIndex(components, index);
-    setOwner(components, id, accID);
   }
 
   /////////////////
@@ -175,14 +176,12 @@ library LibKami {
   }
 
   function verifyAccount(IUintComp components, uint256[] memory ids, uint256 accID) internal view {
-    uint256[] memory owners = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(
-      ids
-    );
-    for (uint256 i; i < ids.length; i++) if (owners[i] != accID) revert("kami not urs");
+    uint256[] memory accs = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(ids);
+    for (uint256 i; i < ids.length; i++) if (accs[i] != accID) revert("kami not urs");
   }
 
   function verifyCooldown(IUintComp components, uint256 id) internal view {
-    if (onCooldown(components, id)) revert("kami on cooldown");
+    if (LibCooldown.isActive(components, id)) revert("kami on cooldown");
   }
 
   function verifyHealthy(IUintComp components, uint256 id) internal view {
@@ -195,12 +194,9 @@ library LibKami {
 
     bool sameRoom;
     if (state.eq("HARVESTING")) {
-      uint256 harvestID = getHarvest(components, kamiID);
-      uint256 nodeID = LibHarvest.getNode(components, harvestID);
+      uint256 nodeID = LibHarvest.getNode(components, getHarvest(components, kamiID));
       IndexRoomComponent roomComp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
-      uint32 nodeRoom = roomComp.safeGet(nodeID);
-      uint32 accRoom = roomComp.safeGet(accID);
-      sameRoom = nodeRoom == accRoom;
+      sameRoom = roomComp.safeGet(nodeID) == roomComp.safeGet(accID);
     } else if (state.eq("721_EXTERNAL")) {
       sameRoom = false; // outside
     } else sameRoom = true;
@@ -246,20 +242,6 @@ library LibKami {
     return getCompByID(components, StateCompID).eqString(ids, "RESTING");
   }
 
-  // Check whether a kami is on cooldown after its last Standard Action
-  function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibCooldown.isActive(components, id);
-  }
-
-  /// @notice Check if a kami can be named, rename
-  /**  @dev
-   * checks for NOT_NAMEABLE flag
-   * inverse check for upgradability shapes & to save gas on kami creation
-   */
-  function useNameable(IUintComp components, uint256 id) internal returns (bool) {
-    return !LibFlag.getAndSet(components, id, "NOT_NAMEABLE", true);
-  }
-
   /////////////////
   // SETTERS
 
@@ -277,21 +259,8 @@ library LibKami {
     TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, ts);
   }
 
-  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
-    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, uri);
-  }
-
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-  }
-
-  /// @dev using NOT_NAMEABLE flag
-  function setNameable(IUintComp components, uint256 id, bool can) internal {
-    LibFlag.set(components, id, "NOT_NAMEABLE", !can);
-  }
-
-  function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
-    TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, timeStart);
   }
 
   function setState(IUintComp components, uint256 id, string memory state) internal {
@@ -313,11 +282,6 @@ library LibKami {
   // get the entity ID of the kami account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).safeGet(id);
-  }
-
-  // null string might not be very useful, may be better for a has check
-  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(id);
   }
 
   // get the last time a kami commited a Standard Action
@@ -344,14 +308,6 @@ library LibKami {
       uint256 accID = getAccount(components, id);
       roomIndex = LibAccount.getRoom(components, accID);
     }
-  }
-
-  function getMediaURI(IUintComp components, uint256 id) internal view returns (string memory) {
-    return MediaURIComponent(getAddrByID(components, MediaURICompID)).get(id);
-  }
-
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddrByID(components, NameCompID)).get(id);
   }
 
   // get the entity ID of the kami owner
@@ -412,11 +368,41 @@ library LibKami {
     return results.length > 0 ? results[0] : 0;
   }
 
-  ////////////////////
+  /////////////////
+  // FLAGS
+
+  /// @notice Check if a kami can be named, rename
+  /**  @dev
+   * checks for NOT_NAMEABLE flag
+   * inverse check for upgradability shapes & to save gas on kami creation
+   */
+  function useNameable(IUintComp components, uint256 id) internal returns (bool) {
+    return !LibFlag.getAndSet(components, id, "NOT_NAMEABLE", true);
+  }
+
+  /// @dev using NOT_NAMEABLE flag
+  function setNameable(IUintComp components, uint256 id, bool can) internal {
+    LibFlag.set(components, id, "NOT_NAMEABLE", !can);
+  }
+
+  /////////////////
+  // 721
+
+  function stake(IUintComp components, uint256 id, uint256 accID) internal {
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("RESTING"));
+    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(id, accID);
+  }
+
+  function unstake(IUintComp components, uint256 id) internal {
+    StateComponent(getAddrByID(components, StateCompID)).set(id, string("721_EXTERNAL"));
+    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(id, 0);
+  }
+
+  /////////////////
   // LOGGING
 
   function logRevive(IUintComp components, uint256 id) internal {
-    uint256 accID = LibKami.getAccount(components, id);
+    uint256 accID = getAccount(components, id);
     LibData.inc(components, accID, 0, "KAMI_REVIVE", 1);
   }
 

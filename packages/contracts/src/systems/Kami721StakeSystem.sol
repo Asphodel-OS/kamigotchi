@@ -46,8 +46,8 @@ contract Kami721StakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 tokenID = abi.decode(arguments, (uint256));
-    uint256 kamiID = LibKami.getByIndex(components, uint32(tokenID));
+    uint256 tokenIndex = abi.decode(arguments, (uint256));
+    uint256 kamiID = LibKami.getByIndex(components, uint32(tokenIndex));
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // account checks
@@ -55,12 +55,12 @@ contract Kami721StakeSystem is System {
     require(LibAccount.getRoom(components, accID) == ROOM, "Kami721Stake: must be in room 12");
 
     // checks before action
-    require(LibKami721.getEOAOwner(components, tokenID) == msg.sender, "Kami721Stake: not urs");
+    require(LibKami721.getEOAOwner(components, tokenIndex) == msg.sender, "Kami721Stake: not urs");
     require(LibKami.getAccount(components, kamiID) == 0, "Kami721Stake: already linked");
     require(!LibKami.isInWorld(components, kamiID), "Kami721Stake: already in world");
 
     LibKami.stake(components, kamiID, accID);
-    LibKami721.stake(components, msg.sender, tokenID);
+    LibKami721.stake(components, msg.sender, tokenIndex);
 
     // standard logging and tracking
     LibAccount.logIncKamisStaked(world, components, accID, 1);
@@ -68,7 +68,7 @@ contract Kami721StakeSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 tokenID) public returns (bytes memory) {
-    return execute(abi.encode(tokenID));
+  function executeTyped(uint256 tokenIndex) public returns (bytes memory) {
+    return execute(abi.encode(tokenIndex));
   }
 }

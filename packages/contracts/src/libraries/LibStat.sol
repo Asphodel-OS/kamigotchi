@@ -235,19 +235,6 @@ library LibStat {
   /////////////////
   // SETTERS
 
-  // todo: change int32 value to stat struct
-  function setFor(IUintComp components, uint256 id, string memory type_, int32 value) internal {
-    if (type_.eq("HEALTH")) setHealth(components, id, Stat(0, 0, 0, value));
-    else if (type_.eq("MAXHEALTH"))
-      setHealth(components, id, Stat(0, value, 0, 0)); // todo: integrate to regular health
-    else if (type_.eq("POWER")) setPower(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("VIOLENCE")) setViolence(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("HARMONY")) setHarmony(components, id, Stat(0, value, 0, 0));
-    else if (type_.eq("SLOTS")) setSlots(components, id, Stat(0, 0, value, 0));
-    else if (type_.eq("STAMINA")) setStamina(components, id, Stat(0, 0, 0, value));
-    else revert("invalid stat to set");
-  }
-
   // note: setting sync manually for any non-zero value breaks abstraction
   function setSyncZero(IUintComp components, string memory type_, uint256 id) internal {
     Stat memory stat = getWithoutBonus(components, type_, id);

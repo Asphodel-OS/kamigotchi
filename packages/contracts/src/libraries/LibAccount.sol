@@ -232,13 +232,8 @@ library LibAccount {
 
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    uint256[] memory results = LibEntityType.queryWithValue(
-      components,
-      "ACCOUNT",
-      getCompByID(components, AddrOwnerCompID),
-      abi.encode(owner)
-    );
-    return (results.length > 0) ? results[0] : 0;
+    uint256 id = uint256(uint160(owner));
+    return LibEntityType.isShape(components, id, "ACCOUNT") ? id : 0;
   }
 
   // Get kamis owned

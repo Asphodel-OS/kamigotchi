@@ -222,7 +222,7 @@ export interface Kami721UnstakeSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -266,7 +266,7 @@ export interface Kami721UnstakeSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    tokenID: PromiseOrValue<BigNumberish>,
+    tokenIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -306,7 +306,7 @@ export interface Kami721UnstakeSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -375,7 +375,7 @@ export interface Kami721UnstakeSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -420,7 +420,7 @@ export interface Kami721UnstakeSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

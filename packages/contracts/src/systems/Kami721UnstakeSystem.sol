@@ -42,8 +42,8 @@ contract Kami721UnstakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 tokenID = abi.decode(arguments, (uint256));
-    uint256 kamiID = LibKami.getByIndex(components, uint32(tokenID));
+    uint256 tokenIndex = abi.decode(arguments, (uint256));
+    uint256 kamiID = LibKami.getByIndex(components, uint32(tokenIndex));
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // account checks
@@ -56,7 +56,7 @@ contract Kami721UnstakeSystem is System {
 
     // actions to be taken upon bridging out
     LibKami.unstake(components, kamiID);
-    LibKami721.unstake(components, msg.sender, tokenID);
+    LibKami721.unstake(components, msg.sender, tokenIndex);
 
     // standard logging and tracking
     LibData.inc(components, accID, 0, "KAMI721_UNSTAKE", 1);
@@ -64,7 +64,7 @@ contract Kami721UnstakeSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 tokenID) public returns (bytes memory) {
-    return execute(abi.encode(tokenID));
+  function executeTyped(uint256 tokenIndex) public returns (bytes memory) {
+    return execute(abi.encode(tokenIndex));
   }
 }
