@@ -31,6 +31,7 @@ import FriendAcceptSystem from "../../../../../client/abi/FriendAcceptSystem.jso
 import FriendBlockSystem from "../../../../../client/abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../../../../../client/abi/FriendCancelSystem.json";
 import FriendRequestSystem from "../../../../../client/abi/FriendRequestSystem.json";
+import GetterSystem from "../../../../../client/abi/GetterSystem.json";
 import GoalClaimSystem from "../../../../../client/abi/GoalClaimSystem.json";
 import GoalContributeSystem from "../../../../../client/abi/GoalContributeSystem.json";
 import HarvestCollectSystem from "../../../../../client/abi/HarvestCollectSystem.json";
@@ -97,6 +98,7 @@ export const SystemAbis = {
   "system.friend.block": FriendBlockSystem.abi,
   "system.friend.cancel": FriendCancelSystem.abi,
   "system.friend.request": FriendRequestSystem.abi,
+  "system.getter": GetterSystem.abi,
   "system.goal.claim": GoalClaimSystem.abi,
   "system.goal.contribute": GoalContributeSystem.abi,
   "system.harvest.collect": HarvestCollectSystem.abi,

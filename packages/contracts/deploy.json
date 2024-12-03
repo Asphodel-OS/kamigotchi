@@ -370,6 +370,7 @@
       "name": "FriendRequestSystem",
       "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
     },
+    { "name": "GetterSystem", "writeAccess": [] },
     {
       "name": "GoalContributeSystem",
       "writeAccess": [

@@ -38,6 +38,7 @@ export type { FriendBlockSystem } from "./FriendBlockSystem";
 export type { FriendCancelSystem } from "./FriendCancelSystem";
 export type { FriendRequestSystem } from "./FriendRequestSystem";
 export type { FromPrototypeComponent } from "./FromPrototypeComponent";
+export type { GetterSystem } from "./GetterSystem";
 export type { GoalClaimSystem } from "./GoalClaimSystem";
 export type { GoalContributeSystem } from "./GoalContributeSystem";
 export type { HarmonyComponent } from "./HarmonyComponent";
@@ -221,6 +222,7 @@ export { FriendBlockSystem__factory } from "./factories/FriendBlockSystem__facto
 export { FriendCancelSystem__factory } from "./factories/FriendCancelSystem__factory";
 export { FriendRequestSystem__factory } from "./factories/FriendRequestSystem__factory";
 export { FromPrototypeComponent__factory } from "./factories/FromPrototypeComponent__factory";
+export { GetterSystem__factory } from "./factories/GetterSystem__factory";
 export { GoalClaimSystem__factory } from "./factories/GoalClaimSystem__factory";
 export { GoalContributeSystem__factory } from "./factories/GoalContributeSystem__factory";
 export { HarmonyComponent__factory } from "./factories/HarmonyComponent__factory";
