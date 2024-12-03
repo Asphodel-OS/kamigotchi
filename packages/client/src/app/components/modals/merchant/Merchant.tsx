@@ -101,6 +101,7 @@ const Body = styled.div`
   margin: 0 1.2vw 1.2vw 1.2vw;
   min-height: 70%;
   user-select: none;
+  overflow: hidden;
 
   display: flex;
   flex-flow: row nowrap;

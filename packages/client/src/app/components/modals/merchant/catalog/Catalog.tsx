@@ -43,7 +43,6 @@ export const Catalog = (props: Props) => {
 const Container = styled.div`
   position: relative;
   border-right: solid black 0.15vw;
-  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;

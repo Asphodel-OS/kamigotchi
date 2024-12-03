@@ -78,7 +78,7 @@ export const Cart = (props: Props) => {
 const Container = styled.div`
   position: relative;
   border-right: solid black 0.15vw;
-  height: 100%;
+
   width: 10%;
 
   display: flex;
