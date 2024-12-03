@@ -47,8 +47,10 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-  overflow-y: scroll;
+
   flex-grow: 2;
+  overflow-y: auto;
+  padding-bottom: 5.5vw;
 `;
 
 const Title = styled.div`
@@ -68,8 +70,8 @@ const Title = styled.div`
 
 const Items = styled.div`
   padding: 7.5vh 0.6vw 0.6vw 0.6vw;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
-  overflow-y: scroll;
+
+  display: grid;
+  grid-auto-flow: row;
+  grid-row-gap: 2%;
 `;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { clickFx, hoverFx } from 'app/styles/effects';
+import { clickFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/NPCs';
 import { playClick } from 'utils/sounds';
@@ -24,25 +24,23 @@ export const CatalogRow = (props: Props) => {
 
   const isInCart = props.cart.some((c) => c.listing.item.index === listing.item.index);
   return (
-    <Container
-      key={listing.item.index}
-      onClick={() => handleClick()}
-      isInCart={isInCart}
-      effectScale={0.02}
-    >
-      <Tooltip text={[listing.item.description ?? '']}>
+    <Tooltip text={[listing.item.description ?? '']}>
+      <Container
+        key={listing.item.index}
+        onClick={() => handleClick()}
+        isInCart={isInCart}
+        effectScale={0.02}
+      >
         <Image src={listing.item.image} isInCart={isInCart} />
-      </Tooltip>
-      <Tooltip text={[listing.item.description ?? '']}>
         <Details>
           <Text>{listing.item.name}</Text>
           <Text>
             <Icon src={ItemImages.musu} />
             {listing.buyPrice}
           </Text>
-        </Details>
-      </Tooltip>
-    </Container>
+        </Details>{' '}
+      </Container>
+    </Tooltip>
   );
 };
 
@@ -54,16 +52,13 @@ interface ContainerProps {
 const Container = styled.div<ContainerProps>`
   border: 0.15vw solid black;
   border-radius: 0.4vw;
-  margin: 0.4vw;
 
   display: flex;
   flex-direction: row nowrap;
   align-items: center;
 
   cursor: pointer;
-  &:hover {
-    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-  }
+
   &:active {
     animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
