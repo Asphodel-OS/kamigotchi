@@ -83,9 +83,7 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-
   flex-grow: 2;
-  overflow-y: auto;
 `;
 
 const Title = styled.div`
@@ -110,6 +108,7 @@ const Items = styled.div`
   justify-content: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-gutter: stable;
 `;
 
 const Checkout = styled.div`
