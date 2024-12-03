@@ -104,7 +104,7 @@ const Title = styled.div`
 `;
 
 const Items = styled.div`
-  padding: 7.5vh 1vw;
+  padding: 7.5vh 1vw 3.5vw 0;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -119,7 +119,7 @@ const Checkout = styled.div`
   height: 4.5vh;
   bottom: 0;
   right: 0;
-  padding: 1.8vw 0.6vw;
+  padding: 0 0.6vw 1.8vw 0;
 
   display: flex;
   flex-flow: row nowrap;
