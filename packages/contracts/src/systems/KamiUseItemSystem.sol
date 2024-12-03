@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.use.item"));
@@ -36,10 +34,7 @@ contract KamiUseItemSystem is System {
     LibItem.applyAllos(world, components, itemIndex, "USE", 1, kamiID);
 
     // reset the pet's intensity
-    if (LibKami.isHarvesting(components, kamiID)) {
-      uint256 harvestID = LibKami.getHarvest(components, kamiID);
-      LibHarvest.resetIntensity(components, harvestID);
-    }
+    LibKami.resetIntensity(components, kamiID);
 
     // standard logging and tracking
     LibItem.logUse(components, accID, itemIndex, 1);

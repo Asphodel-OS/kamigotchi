@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./Item.t.sol";
 
 // this test experience gain, leveling and all expected effects due to leveling
-contract ItemBurnerTest is SetupTemplate {
-  function setUpItems() public override {}
-
+contract ItemBurnerTest is ItemTemplate {
   function testBurnBasic() public {
     _createGenericItem(1); // burnable
     _createGenericItem(2); // not burnable
@@ -54,7 +52,4 @@ contract ItemBurnerTest is SetupTemplate {
     vm.expectRevert("item not burnable");
     _ItemBurnSystem.executeTyped(indices, amts);
   }
-
-  /////////////////
-  // UTILS
 }

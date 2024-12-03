@@ -104,11 +104,6 @@ library LibKami {
     LibStat.setSyncZero(components, "HEALTH", id);
   }
 
-  // Update a kami's state to RESTING
-  function revive(IUintComp components, uint256 id) internal {
-    StateComponent(getAddrByID(components, StateCompID)).set(id, string("RESTING"));
-  }
-
   // Update the current health of a kami as well as any active harvest
   function sync(IUintComp components, uint256 id) public {
     string memory state = getState(components, id);
@@ -123,6 +118,33 @@ library LibKami {
     }
 
     setLastTs(components, id, block.timestamp);
+  }
+
+  /////////////////
+  // FLAGS
+
+  /// @notice Check if a kami can be named, rename
+  /**  @dev
+   * checks for NOT_NAMEABLE flag
+   * inverse check for upgradability shapes & to save gas on kami creation
+   */
+  function useNameable(IUintComp components, uint256 id) internal returns (bool) {
+    return !LibFlag.getAndSet(components, id, "NOT_NAMEABLE", true);
+  }
+
+  /// @dev using NOT_NAMEABLE flag
+  function setNameable(IUintComp components, uint256 id, bool can) internal {
+    LibFlag.set(components, id, "NOT_NAMEABLE", !can);
+  }
+
+  ////////////////
+  // HARVESTS
+
+  /// @dev only resets if harvesting
+  function resetIntensity(IUintComp components, uint256 id) internal {
+    if (isState(components, id, "HARVESTING")) {
+      LibHarvest.resetIntensity(components, getHarvest(components, getHarvest(components, id)));
+    }
   }
 
   /////////////////
@@ -213,14 +235,21 @@ library LibKami {
       revert(LibString.concat("kami not ", state));
   }
 
-  // Check whether a kami is dead.
-  function isDead(IUintComp components, uint256 id) internal view returns (bool) {
-    return getCompByID(components, StateCompID).eqString(id, "DEAD");
+  function verifyState(
+    IUintComp components,
+    uint256[] memory ids,
+    string memory state
+  ) internal view {
+    if (!getCompByID(components, StateCompID).eqString(ids, state))
+      revert(LibString.concat("kami not ", state));
   }
 
-  // Check whether a kami is harvesting.
-  function isHarvesting(IUintComp components, uint256 id) internal view returns (bool result) {
-    return getCompByID(components, StateCompID).eqString(id, "HARVESTING");
+  function isState(
+    IUintComp components,
+    uint256 id,
+    string memory state
+  ) internal view returns (bool) {
+    return getCompByID(components, StateCompID).eqString(id, state);
   }
 
   // Check whether the current health of a kami is greater than 0. Assume health synced this block.
@@ -231,15 +260,6 @@ library LibKami {
   // Check whether a kami's ERC721 token is in the game world
   function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
     return !getCompByID(components, StateCompID).eqString(id, "721_EXTERNAL");
-  }
-
-  // Check whether a kami is resting.
-  function isResting(IUintComp components, uint256 id) internal view returns (bool) {
-    return getCompByID(components, StateCompID).eqString(id, "RESTING");
-  }
-
-  function isResting(IUintComp components, uint256[] memory ids) internal view returns (bool) {
-    return getCompByID(components, StateCompID).eqString(ids, "RESTING");
   }
 
   /////////////////
@@ -369,23 +389,6 @@ library LibKami {
   }
 
   /////////////////
-  // FLAGS
-
-  /// @notice Check if a kami can be named, rename
-  /**  @dev
-   * checks for NOT_NAMEABLE flag
-   * inverse check for upgradability shapes & to save gas on kami creation
-   */
-  function useNameable(IUintComp components, uint256 id) internal returns (bool) {
-    return !LibFlag.getAndSet(components, id, "NOT_NAMEABLE", true);
-  }
-
-  /// @dev using NOT_NAMEABLE flag
-  function setNameable(IUintComp components, uint256 id, bool can) internal {
-    LibFlag.set(components, id, "NOT_NAMEABLE", !can);
-  }
-
-  /////////////////
   // 721
 
   function stake(IUintComp components, uint256 id, uint256 accID) internal {
@@ -400,11 +403,6 @@ library LibKami {
 
   /////////////////
   // LOGGING
-
-  function logRevive(IUintComp components, uint256 id) internal {
-    uint256 accID = getAccount(components, id);
-    LibData.inc(components, accID, 0, "KAMI_REVIVE", 1);
-  }
 
   function logNameChange(IUintComp components, uint256 accID) internal {
     LibData.inc(components, accID, 0, "KAMI_NAME", 1);

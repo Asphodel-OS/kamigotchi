@@ -292,6 +292,7 @@ contract FeedingTest is SetupTemplate {
       itemIndex = _getListingItemIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
+        _healKami(kamiIDs[j], 20); // healup kami, if was starving
         _stopHarvest(harvestIDs[j]);
         _fastForward(_idleRequirement);
         _feedPet(kamiIDs[j], itemIndex);

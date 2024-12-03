@@ -52,7 +52,7 @@ contract Kami721UnstakeSystem is System {
 
     // checks before action
     LibKami.verifyAccount(components, kamiID, accID);
-    require(LibKami.isResting(components, kamiID), "Kami721Unstake: must be resting");
+    LibKami.verifyState(components, kamiID, "RESTING");
 
     // actions to be taken upon bridging out
     LibKami.unstake(components, kamiID);

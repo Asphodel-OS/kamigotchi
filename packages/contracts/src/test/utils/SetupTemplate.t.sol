@@ -445,6 +445,17 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   /////////////////
+  // STAT MANIPULATION
+
+  function _healKami(uint256 kamiID, int32 amt) internal {
+    ExternalCaller.kamiSync(kamiID);
+    vm.startPrank(deployer);
+    LibKami.heal(components, kamiID, amt);
+    vm.stopPrank();
+    ExternalCaller.kamiSync(kamiID);
+  }
+
+  /////////////////
   // WORLD POPULATION
 
   function _createFaction(
@@ -667,20 +678,6 @@ abstract contract SetupTemplate is TestSetupImports {
       abi.encode(index, "USE", "STATE", LibKami.stateToIndex("RESTING"), 0)
     );
     __ItemRegistrySystem.addAlloStat(abi.encode(index, "USE", "HEALTH", 0, 0, 0, health));
-    vm.stopPrank();
-  }
-
-  function _createLootbox(
-    uint32 index,
-    string memory name,
-    uint32[] memory keys,
-    uint[] memory weights
-  ) public returns (uint256 id) {
-    vm.startPrank(deployer);
-    id = __ItemRegistrySystem.createConsumable(
-      abi.encode(index, "ACCOUNT", name, "description", "LOOTBOX", "media")
-    );
-    __ItemRegistrySystem.addAlloDT(abi.encode(index, "USE", keys, weights, 1));
     vm.stopPrank();
   }
 

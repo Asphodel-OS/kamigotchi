@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./Item.t.sol";
 
-// this test experience gain, leveling and all expected effects due to leveling
-contract LootboxTest is SetupTemplate {
+contract LootboxTest is ItemTemplate {
   function setUp() public override {
     super.setUp();
 
@@ -99,46 +98,6 @@ contract LootboxTest is SetupTemplate {
 
     assertEq(_getItemBal(alice, 1), 25);
   }
-
-  // function testLootboxExpired() public {
-  //   uint32 lootboxIndex = 10;
-  //   _createBlankLootbox(lootboxIndex);
-  //   uint256[] memory revealIDs = new uint256[](1);
-  //   _giveItem(alice, lootboxIndex, 1);
-
-  //   revealIDs[0] = _openLootbox(alice, lootboxIndex, 1);
-  //   vm.roll(_currBlock += 300);
-
-  //   vm.prank(alice.operator);
-  //   vm.expectRevert("Blockhash unavailable. Contact admin");
-  //   _DroptableRevealSystem.executeTyped(revealIDs);
-  // }
-
-  // function testLootboxForceReveal() public {
-  //   uint32 lootboxIndex = 10;
-  //   _createBlankLootbox(lootboxIndex);
-  //   _giveItem(alice, lootboxIndex, 1);
-  //   uint256 revealID = _openLootbox(alice, lootboxIndex, 1);
-
-  //   // try while still valid
-  //   vm.prank(deployer);
-  //   vm.expectRevert("LootboxExeRev: commit still available");
-  //   _DroptableRevealSystem.forceReveal(revealID);
-
-  //   // roll
-  //   vm.roll(_currBlock += 300);
-
-  //   // try unauthorized
-  //   vm.prank(alice.operator);
-  //   vm.expectRevert("Auth: not a community manager");
-  //   _DroptableRevealSystem.forceReveal(revealID);
-
-  //   // authorized call
-  //   vm.prank(deployer);
-  //   _DroptableRevealSystem.forceReveal(revealID);
-
-  //   assertEq(_getItemBal(alice, 1), 1);
-  // }
 
   /////////////////
   // FUNCTIONS

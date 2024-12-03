@@ -238,13 +238,6 @@ library LibItem {
     if (!LibFor.isForPet(components, genID(index))) revert("that's not for kamis");
   }
 
-  // NOTE: temporary function as we decide how to identify revives with out type_
-  function isRevive(IUintComp components, uint32 index) internal view returns (bool) {
-    uint256 id = genID(index);
-    string memory type_ = getType(components, id);
-    return LibString.eq(type_, "REVIVE");
-  }
-
   /////////////////
   // GETTERS
 

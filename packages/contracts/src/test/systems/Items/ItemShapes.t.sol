@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./Item.t.sol";
 
 // this test experience gain, leveling and all expected effects due to leveling
-contract ItemShapeTest is SetupTemplate {
+contract ItemShapeTest is ItemTemplate {
   function setUp() public override {
     super.setUp();
 
     vm.roll(_currBlock++);
   }
-
-  function setUpItems() public override {}
 
   /////////////////
   // TESTS

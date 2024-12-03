@@ -19,7 +19,7 @@ contract KamiGachaRerollSystem is System {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     require(accID != 0, "no account detected");
     LibKami.verifyAccount(components, kamiIDs, accID);
-    require(LibKami.isResting(components, kamiIDs), "not resting");
+    LibKami.verifyState(components, kamiIDs, "RESTING");
 
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);

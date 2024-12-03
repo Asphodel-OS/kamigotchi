@@ -75,7 +75,7 @@ contract MurderTest is SetupTemplate {
     );
     assertEq(_getHarvestBounty(aProdID), 0, "victim prod balance >0");
     assertEq(_getItemBal(alice, MUSU_INDEX), salvage, "victim balance mismatch");
-    assertTrue(LibKami.isDead(components, victimID), "victim not dead");
+    assertTrue(LibKami.isState(components, victimID, "DEAD"), "victim not dead");
     assertFalse(LibHarvest.isActive(components, aProdID), "victim harvest not stopped");
   }
 
