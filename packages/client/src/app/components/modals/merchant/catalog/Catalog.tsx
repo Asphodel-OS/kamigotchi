@@ -74,4 +74,5 @@ const Items = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
+  scrollbar-color: transparent transparent;
 `;
