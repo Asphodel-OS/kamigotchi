@@ -4,10 +4,10 @@ import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
 import { getAccountFromBurner } from 'network/shapes/Account';
 import { Listing, getNPCListingsFiltered } from 'network/shapes/Listings';
-import { NPC, getNPCByIndex } from 'network/shapes/NPCs';
+import { NPC, NullNPC, getNPCByIndex } from 'network/shapes/NPCs';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
 import { Header } from './header';
@@ -40,28 +40,31 @@ export function registerMerchantModal() {
 
           return {
             data: { account },
-            functions: { getNPC, getListings },
+            utils: { getNPC, getListings },
             network,
           };
         })
       ),
 
     // Render
-    ({ data, functions, network }) => {
-      // console.log('mMerchant: data', data);
+    ({ data, utils, network }) => {
       const { account } = data;
-      const { getNPC, getListings } = functions;
+      const { getNPC, getListings } = utils;
       const { actions, api } = network;
       const { npcIndex } = useSelected();
-      const [merchant, setMerchant] = useState<NPC>(getNPC(npcIndex));
+      const { modals } = useVisibility();
+
+      const [merchant, setMerchant] = useState<NPC>(NullNPC);
       const [listings, setListings] = useState<Listing[]>([]);
       const [cart, setCart] = useState<CartItem[]>([]);
 
       // updates from selected Merchant updates
       useEffect(() => {
-        setMerchant(getNPC(npcIndex));
+        if (!modals.merchant || npcIndex == merchant.index) return;
+        const newMerchant = getNPC(npcIndex) ?? NullNPC;
+        setMerchant(newMerchant);
         setListings(getListings(npcIndex));
-      }, [npcIndex]);
+      }, [modals.merchant, npcIndex]);
 
       // buy from a listing
       const buy = (cart: CartItem[]) => {

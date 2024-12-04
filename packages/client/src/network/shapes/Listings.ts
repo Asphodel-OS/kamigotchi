@@ -90,22 +90,9 @@ export const queryNPCListingEntities = (
 /////////////////
 // UTILS
 
-// sorts listing by type of effect, then by price
-// NOTE(jb): lol
+// sorts listing by item index
 export const sortListings = (listings: Listing[]): Listing[] => {
-  return listings.sort((a, b) => {
-    const aStats = a.item.stats;
-    const bStats = b.item.stats;
-    if (!aStats) return 1;
-    if (!bStats) return -1;
-
-    if (aStats.health.sync > 0 && bStats.health.sync === 0) return -1;
-    else if (aStats.health.sync === 0 && bStats.health.sync > 0) return 1;
-
-    const healthDiff = aStats.health.sync - bStats.health.sync;
-    const staminaDiff = aStats.stamina.sync - bStats.stamina.sync;
-    return healthDiff + staminaDiff;
-  });
+  return listings.sort((a, b) => a.item.index - b.item.index);
 };
 
 //////////////////

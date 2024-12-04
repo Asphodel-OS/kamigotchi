@@ -19,6 +19,14 @@ export interface NPC {
   roomIndex: number;
 }
 
+export const NullNPC: NPC = {
+  id: '0' as EntityID,
+  index: 0,
+  entityIndex: 0 as EntityIndex,
+  name: '',
+  roomIndex: 0,
+};
+
 // get an Merchant from its EntityIndex
 export const getNPC = (world: World, components: Components, entityIndex: EntityIndex): NPC => {
   const { RoomIndex, NPCIndex, Name } = components;

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { clickFx } from 'app/styles/effects';
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
-import { Listing } from 'network/shapes/NPCs';
+import { Listing } from 'network/shapes/Listings';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
 
@@ -58,7 +58,10 @@ const Container = styled.div<ContainerProps>`
   align-items: center;
 
   cursor: pointer;
-
+  &:hover {
+    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
+    transform: scale(${({ effectScale }) => 1 + effectScale});
+  }
   &:active {
     animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
   }
@@ -70,7 +73,6 @@ const Image = styled.img<{ isInCart: boolean }>`
   border-radius: 0.25vw 0 0 0.25vw;
   width: 4.5vw;
   padding: 0.45vw;
-  font-family: Pixel;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
 `;

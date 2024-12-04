@@ -77,8 +77,6 @@ export const Cart = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  border-right: solid black 0.15vw;
-
   width: 10%;
 
   display: flex;
@@ -91,21 +89,23 @@ const Title = styled.div`
   background-color: #ddd;
   border-radius: 0 0.25vw 0 0;
   width: 100%;
-  padding: 2.4vh 1.2vw;
+  padding: 1.2vw;
   opacity: 0.9;
 
   color: black;
-  font-family: Pixel;
   font-size: 1.2vw;
   text-align: left;
   z-index: 1;
 `;
 
 const Items = styled.div`
-  padding: 7.5vh 1vw 3.5vw 0;
+  padding: 0.6vw;
+  padding-top: 4.2vw;
+  gap: 0.6vw;
+
   display: flex;
   flex-flow: column nowrap;
-  justify-content: flex-start;
+
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
