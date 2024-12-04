@@ -99,8 +99,7 @@ const Title = styled.div`
 `;
 
 const Items = styled.div`
-  padding: 0.6vw;
-  padding-top: 4.2vw;
+  padding: 4.2vw 0.3vw 3.5vw 0.9vw;
   gap: 0.6vw;
 
   display: flex;
@@ -109,6 +108,7 @@ const Items = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
+  scrollbar-color: transparent transparent;
 `;
 
 const Checkout = styled.div`
