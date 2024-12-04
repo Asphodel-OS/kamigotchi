@@ -4,6 +4,7 @@ import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
 import { ChatMenuButton, InventoryMenuButton, MoreMenuButton, QuestMenuButton } from './buttons';
+import { CraftingButton } from './buttons/CraftingButton';
 
 export function registerMenuRight() {
   registerUIComponent(
@@ -21,6 +22,7 @@ export function registerMenuRight() {
         <>
           <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
             <InventoryMenuButton />
+            <CraftingButton />
             <QuestMenuButton />
             <ChatMenuButton />
             <MoreMenuButton />

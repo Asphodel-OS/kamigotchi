@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
-import { IconButton, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { craftIcon } from 'assets/images/icons/actions';
 import { ItemImages } from 'assets/images/items';
 
 interface Props {
@@ -15,7 +14,6 @@ export const MusuRow = (props: Props) => {
 
   return (
     <Container key='musu'>
-      <IconButton img={craftIcon} text='Crafting' onClick={() => setModals({ crafting: true })} />
       <div style={{ display: 'flex', flexFlow: 'row', width: '50%', justifyContent: 'flex-end' }}>
         <Tooltip text={['MUSU']}>
           <Icon src={ItemImages.musu} />
@@ -31,7 +29,7 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column no-wrap;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   width: 100%;
 `;
@@ -46,7 +44,7 @@ const Balance = styled.div`
   border: solid #666 0.15vw;
   border-radius: 0.3vw;
   padding: 0.5vw;
-  width: 50%;
+  width: 100%;
 
   display: flex;
   flex-flow: row nowrap;

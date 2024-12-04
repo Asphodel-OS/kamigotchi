@@ -75,12 +75,20 @@ export const Equation = (props: Props) => {
 const Container = styled.div`
   display: flex;
   flex-flow: row;
+  -webkit-box-align: center;
+  align-items: flex-start;
+  height: 100%;
+  width: 100%;
+`;
+/*
+  display: flex;
+  flex-flow: row;
   align-items: center;
   align-items: center;
   height: 100%;
   width: 100%;
-`;
 
+*/
 const VariableBox = styled.div<{ disabled: boolean }>`
   display: flex;
   flex-flow: row;
@@ -93,14 +101,50 @@ const VariableBox = styled.div<{ disabled: boolean }>`
 const ExpressionBoxOutput = styled.div`
   display: flex;
   flex-flow: row;
+  -webkit-box-pack: start;
+  justify-content: center;
+  -webkit-box-align: center;
+  border-style: solid;
+  border-color: black;
+  border-image: initial;
+  border-width: 0px 0.2vw 0px 0px;
+  padding: 0.5vw 0.5vw 1vw 1vw;
+  min-height: 6.5vw;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+`;
+/*
+    display: flex;
+    flex-flow: row;
+    -webkit-box-pack: start;
+    justify-content: center;
+    -webkit-box-align: center;
+    border-style: solid;
+    border-color: black;
+    border-image: initial;
+    border-width: 0px 0.2vw 0px 0px;
+    padding: 0.5vw 0.5vw 1vw 1vw;
+    min-height: 6.5vw;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+
+
+*/
+
+/*
+  display: flex;
+  flex-flow: row;
   justify-content: flex-start;
   align-items: center;
   border: solid black 0.2vw;
   border-width: 0 0.2vw 0 0;
   padding: 0.5vw 1vw 0 1vw;
   height: 6.5vw;
-`;
-
+*/
 const ExpressionBoxInput = styled.div`
   display: flex;
   flex-flow: row;
