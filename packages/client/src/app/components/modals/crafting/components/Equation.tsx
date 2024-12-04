@@ -64,7 +64,7 @@ export const Equation = (props: Props) => {
   return (
     <Container>
       {OutputDisplay(recipe.outputs)}
-      <div>
+      <div style={{ width: '100%' }}>
         <ActionRow amt={amt} recipe={recipe} data={data} actions={actions} utils={{ ...utils }} />
         {InputDisplay(recipe.inputs)}
       </div>
@@ -78,6 +78,7 @@ const Container = styled.div`
   align-items: center;
   align-items: center;
   height: 100%;
+  width: 100%;
 `;
 
 const VariableBox = styled.div<{ disabled: boolean }>`
@@ -108,6 +109,7 @@ const ExpressionBoxInput = styled.div`
   border: solid black 0.2vw;
   border-width: 0.2vw 0 0 0;
   padding: 0.3vw 5vw 1.5vw 0.3vw;
+  width: 100%;
 `;
 
 const Text = styled.div`

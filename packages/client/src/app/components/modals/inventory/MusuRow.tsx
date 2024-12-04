@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { IconButton, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { craftIcon } from 'assets/images/icons/actions';
 import { ItemImages } from 'assets/images/items';
 
 interface Props {
@@ -14,7 +15,7 @@ export const MusuRow = (props: Props) => {
 
   return (
     <Container key='musu'>
-      <ActionButton text='Crafting' onClick={() => setModals({ crafting: true })} />
+      <IconButton img={craftIcon} text='Crafting' onClick={() => setModals({ crafting: true })} />
       <div style={{ display: 'flex', flexFlow: 'row', width: '50%', justifyContent: 'flex-end' }}>
         <Tooltip text={['MUSU']}>
           <Icon src={ItemImages.musu} />

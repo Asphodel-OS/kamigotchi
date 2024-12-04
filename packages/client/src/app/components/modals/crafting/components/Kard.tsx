@@ -46,7 +46,7 @@ export const Kard = (props: Props) => {
 const Container = styled.div`
   position: relative;
   height: max-content;
-  width: max-content;
+  width: 100%;
 
   border: solid black 0.2vw;
   border-radius: 0.4vw;

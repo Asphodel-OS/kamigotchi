@@ -67,6 +67,7 @@ const Container = styled.div`
   justify-content: space-between;
   flex-direction: row;
   padding: 0.2vw;
+  width: 100%;
 `;
 
 const Icons = styled.div`
