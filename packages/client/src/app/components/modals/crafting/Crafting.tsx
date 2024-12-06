@@ -6,10 +6,10 @@ import { interval, map } from 'rxjs';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
-import { getStamina, queryAccountFromBurner } from 'network/shapes/Account';
-import { getItemBalance } from 'network/shapes/Item';
+import { getAccountFromBurner, getStamina } from 'network/shapes/Account';
+import { getItemBalance, Inventory } from 'network/shapes/Item';
 import { getNPCByIndex } from 'network/shapes/NPCs';
-import { Ingredient, Recipe, getRecipesByAssigner } from 'network/shapes/Recipe';
+import { getRecipesByAssigner, Ingredient, Recipe } from 'network/shapes/Recipe';
 import styled from 'styled-components';
 import { Kard } from './components/Kard';
 
@@ -31,18 +31,20 @@ export function registerCraftingModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-
-          const accountEntity = queryAccountFromBurner(network);
-          const stamina = getStamina(world, components, accountEntity).sync;
+          const account = getAccountFromBurner(network, {
+            inventory: true,
+          });
+          const stamina = getStamina(world, components, account.entityIndex).sync;
 
           return {
             network,
+            account,
             data: {
               stamina: stamina,
             },
             utils: {
               getItemBalance: (index: number) =>
-                getItemBalance(world, components, world.entities[accountEntity], index),
+                getItemBalance(world, components, world.entities[account.entityIndex], index),
             },
             assignerID: getNPCByIndex(world, components, 1)?.id || '0x00', // temp placeholder
           };
@@ -50,17 +52,43 @@ export function registerCraftingModal() {
       ),
 
     // Render
-    ({ data, network, utils, assignerID }) => {
+    ({ data, network, utils, assignerID, account }) => {
       const { actions, api, components, world } = network;
       // const { assignerID } = useSelected();
       const [recipes, setRecipes] = useState<Recipe[]>([]);
+      const [filter, setFilter] = useState<boolean>(false);
+
+      let checkIngredients = (inventory: Inventory[], recipe: Ingredient[]) => {
+        const itemsIndex = inventory.map((inventoryItem) => Number(inventoryItem.entityIndex));
+        return recipe.every((v) => itemsIndex.includes(v.index));
+      };
+
+      const getInventories = () => {
+        const raw = [...(account.inventories ?? [])];
+        const cleaned = raw.filter((inv) => !!inv.item.index);
+        return cleaned;
+      };
 
       // updates from selected Node updates
       useEffect(() => {
-        setRecipes(getRecipesByAssigner(world, components, assignerID as EntityID));
-      }, [assignerID]);
+        const recipes = getRecipesByAssigner(world, components, assignerID as EntityID);
+        if (filter === false) {
+          setRecipes(recipes);
+        } else {
+          const available: Recipe[] = [];
+          const notAvailable: Recipe[] = [];
+          getRecipesByAssigner(world, components, assignerID as EntityID).map((recipe) => {
+            if (checkIngredients(getInventories(), recipe.inputs) === true) {
+              available.push(recipe);
+            } else {
+              notAvailable.push(recipe);
+            }
+          });
+          setRecipes(available.concat(notAvailable));
+        }
+      }, [assignerID, filter]);
 
-      /////////////////
+      //////////////////////////////////
       // INTERPRETATION
 
       const getIngredientsText = (ingredients: Ingredient[], multiplier: number) => {
@@ -97,6 +125,13 @@ export function registerCraftingModal() {
           width='min-content'
         >
           <Content>
+            <button
+              onClick={() => {
+                setFilter(!filter);
+              }}
+            >
+              Filter
+            </button>
             {recipes.length > 0 ? (
               recipes.map((recipe: Recipe) => (
                 <Kard
