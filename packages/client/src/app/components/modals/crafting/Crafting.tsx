@@ -7,7 +7,7 @@ import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
 import { getAccountFromBurner, getStamina } from 'network/shapes/Account';
-import { getItemBalance, Inventory } from 'network/shapes/Item';
+import { getItemBalance, Inventory, queryInventories } from 'network/shapes/Item';
 import { getNPCByIndex } from 'network/shapes/NPCs';
 import { getRecipesByAssigner, Ingredient, Recipe } from 'network/shapes/Recipe';
 import styled from 'styled-components';
@@ -31,9 +31,7 @@ export function registerCraftingModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network, {
-            inventory: true,
-          });
+          const account = getAccountFromBurner(network);
           const stamina = getStamina(world, components, account.entityIndex).sync;
 
           return {
@@ -60,13 +58,7 @@ export function registerCraftingModal() {
 
       let checkIngredients = (inventory: Inventory[], recipe: Ingredient[]) => {
         const itemsIndex = inventory.map((inventoryItem) => Number(inventoryItem.entityIndex));
-        return recipe.every((v) => itemsIndex.includes(v.index));
-      };
-
-      const getInventories = () => {
-        const raw = [...(account.inventories ?? [])];
-        const cleaned = raw.filter((inv) => !!inv.item.index);
-        return cleaned;
+        return recipe.every((ingredient) => itemsIndex.includes(ingredient.index));
       };
 
       // updates from selected Node updates
@@ -78,7 +70,12 @@ export function registerCraftingModal() {
           const available: Recipe[] = [];
           const notAvailable: Recipe[] = [];
           getRecipesByAssigner(world, components, assignerID as EntityID).map((recipe) => {
-            if (checkIngredients(getInventories(), recipe.inputs) === true) {
+            if (
+              checkIngredients(
+                queryInventories(world, components, { owner: account.id }),
+                recipe.inputs
+              ) === true
+            ) {
               available.push(recipe);
             } else {
               notAvailable.push(recipe);
@@ -126,11 +123,12 @@ export function registerCraftingModal() {
         >
           <Content>
             <button
+              style={{ padding: '0.5vw' }}
               onClick={() => {
                 setFilter(!filter);
               }}
             >
-              Filter
+              Order by Availability
             </button>
             {recipes.length > 0 ? (
               recipes.map((recipe: Recipe) => (
