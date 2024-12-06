@@ -49,6 +49,8 @@ library LibKill {
   using SafeCastLib for uint256;
 
   event KamiLiquidated(
+    uint64 endTs,
+    uint32 nodeIndex,
     uint32 indexed sourceIndex,
     int32 sourceHealth,
     int32 sourceHealthTotal,
@@ -59,9 +61,7 @@ library LibKill {
     uint32 salvage,
     uint32 spoils,
     uint32 strain,
-    uint32 karma,
-    uint64 endTs,
-    uint32 nodeIndex
+    uint32 karma
   );
   /////////////////
   // INTERACTIONS
@@ -292,6 +292,14 @@ library LibKill {
     LibData.inc(components, accID, LibAccount.getIndex(components, accVicID), "LIQ_TARGET_ACC", 1);
   }
 
+  function calculateHealthValues(
+    IUintComp components,
+    uint256 kamiID
+  ) internal view returns (int32, int32) {
+    Stat memory hp = LibStat.get(components, "HEALTH", kamiID);
+    return (hp.sync, LibStat.getTotal(components, "HEALTH", kamiID));
+  }
+
   function emitLog(
     IUintComp components,
     uint256 killerID,
@@ -299,23 +307,31 @@ library LibKill {
     KillBalance memory bals,
     uint32 nodeIndex
   ) internal {
-    Stat memory killerHp = LibStat.get(components, "HEALTH", killerID);
-    Stat memory victimHp = LibStat.get(components, "HEALTH", victimID);
+    // Combine health calculations into structs to reduce stack variables
+    (int32 killerHealthSync, int32 killerHealthTotal) = calculateHealthValues(components, killerID);
+    (int32 victimHealthSync, int32 victimHealthTotal) = calculateHealthValues(components, victimID);
+
+    // Combine balance conversion into uint32 before the emit to reduce stack usage
+    uint32 bountyU32 = bals.bounty.toUint32();
+    uint32 salvageU32 = bals.salvage.toUint32();
+    uint32 spoilsU32 = bals.spoils.toUint32();
+    uint32 strainU32 = bals.strain.toUint32();
+    uint32 karmaU32 = bals.karma.toUint32();
 
     emit KamiLiquidated(
-      LibKami.getIndex(components, killerID),
-      killerHp.sync,
-      LibStat.getTotal(components, "HEALTH", killerID),
-      LibKami.getIndex(components, victimID),
-      victimHp.sync,
-      LibStat.getTotal(components, "HEALTH", victimID),
-      bals.bounty.toUint32(),
-      bals.salvage.toUint32(),
-      bals.spoils.toUint32(),
-      bals.strain.toUint32(),
-      bals.karma.toUint32(),
       block.timestamp.toUint64(),
-      nodeIndex
+      nodeIndex,
+      LibKami.getIndex(components, killerID),
+      killerHealthSync,
+      killerHealthTotal,
+      LibKami.getIndex(components, victimID),
+      victimHealthSync,
+      victimHealthTotal,
+      bountyU32,
+      salvageU32,
+      spoilsU32,
+      strainU32,
+      karmaU32
     );
   }
 }
