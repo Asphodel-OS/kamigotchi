@@ -6,7 +6,7 @@ import { interval, map } from 'rxjs';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
-import { getAccountFromBurner, getStamina } from 'network/shapes/Account';
+import { getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getItemBalance, Inventory, queryInventories } from 'network/shapes/Item';
 import { getNPCByIndex } from 'network/shapes/NPCs';
 import { getRecipesByAssigner, Ingredient, Recipe } from 'network/shapes/Recipe';
@@ -31,18 +31,18 @@ export function registerCraftingModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network);
-          const stamina = getStamina(world, components, account.entityIndex).sync;
+          const accountEntityIndex = queryAccountFromBurner(network);
+          const stamina = getStamina(world, components, accountEntityIndex).sync;
 
           return {
             network,
-            account,
+            accountEntityIndex,
             data: {
               stamina: stamina,
             },
             utils: {
               getItemBalance: (index: number) =>
-                getItemBalance(world, components, world.entities[account.entityIndex], index),
+                getItemBalance(world, components, world.entities[accountEntityIndex], index),
             },
             assignerID: getNPCByIndex(world, components, 1)?.id || '0x00', // temp placeholder
           };
@@ -50,7 +50,7 @@ export function registerCraftingModal() {
       ),
 
     // Render
-    ({ data, network, utils, assignerID, account }) => {
+    ({ data, network, utils, assignerID, accountEntityIndex }) => {
       const { actions, api, components, world } = network;
       // const { assignerID } = useSelected();
       const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -72,7 +72,9 @@ export function registerCraftingModal() {
           getRecipesByAssigner(world, components, assignerID as EntityID).map((recipe) => {
             if (
               checkIngredients(
-                queryInventories(world, components, { owner: account.id }),
+                queryInventories(world, components, {
+                  owner: world.entities[accountEntityIndex],
+                }),
                 recipe.inputs
               ) === true
             ) {
