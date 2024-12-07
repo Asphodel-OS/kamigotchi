@@ -312,11 +312,11 @@ library LibKill {
     (int32 victimHealthSync, int32 victimHealthTotal) = calculateHealthValues(components, victimID);
 
     // Combine balance conversion into uint32 before the emit to reduce stack usage
-    uint32 bountyU32 = bals.bounty.toUint32();
-    uint32 salvageU32 = bals.salvage.toUint32();
-    uint32 spoilsU32 = bals.spoils.toUint32();
-    uint32 strainU32 = bals.strain.toUint32();
-    uint32 karmaU32 = bals.karma.toUint32();
+    uint32 bounty = bals.bounty.toUint32();
+    uint32 salvage = bals.salvage.toUint32();
+    uint32 spoils = bals.spoils.toUint32();
+    uint32 strain = bals.strain.toUint32();
+    uint32 karma = bals.karma.toUint32();
 
     emit KamiLiquidated(
       block.timestamp.toUint64(),
@@ -327,11 +327,11 @@ library LibKill {
       LibKami.getIndex(components, victimID),
       victimHealthSync,
       victimHealthTotal,
-      bountyU32,
-      salvageU32,
-      spoilsU32,
-      strainU32,
-      karmaU32
+      bounty,
+      salvage,
+      spoils,
+      strain,
+      karma
     );
   }
 }
