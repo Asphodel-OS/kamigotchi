@@ -12,18 +12,20 @@ contract CraftingTest is SetupTemplate {
   function setUpItems() public override {}
 
   function testRecipeShape() public {
-    uint32[] memory iIndices = new uint32[](1);
-    iIndices[0] = 1;
-    uint32[] memory oIndices = new uint32[](1);
-    oIndices[0] = 1;
-    uint256[] memory iAmounts = new uint256[](1);
-    iAmounts[0] = 1;
-    uint256[] memory oAmounts = new uint256[](1);
-    oAmounts[0] = 1;
+    uint32[] memory inputIndices = new uint32[](1);
+    inputIndices[0] = 1;
+    uint32[] memory outputIndices = new uint32[](1);
+    outputIndices[0] = 1;
+    uint256[] memory inputAmts = new uint256[](1);
+    inputAmts[0] = 1;
+    uint256[] memory outputAmts = new uint256[](1);
+    outputAmts[0] = 1;
 
     // base shape
     vm.prank(deployer);
-    __RecipeRegistrySystem.create(abi.encode(1, iIndices, iAmounts, oIndices, oAmounts, 1, 1));
+    __RecipeRegistrySystem.create(
+      abi.encode(1, inputIndices, inputAmts, outputIndices, outputAmts, 1, 1)
+    );
 
     // assigner
     vm.prank(deployer);
@@ -40,18 +42,18 @@ contract CraftingTest is SetupTemplate {
 
   function testCraftSingle() public {
     uint32 recipeIndex = 1;
-    uint32[] memory iIndices = new uint32[](1);
-    iIndices[0] = 1;
-    uint32[] memory oIndices = new uint32[](1);
-    oIndices[0] = 2;
-    uint256[] memory iAmounts = new uint256[](1);
-    iAmounts[0] = 3;
-    uint256[] memory oAmounts = new uint256[](1);
-    oAmounts[0] = 5;
+    uint32[] memory inputIndices = new uint32[](1);
+    inputIndices[0] = 1;
+    uint32[] memory outputIndices = new uint32[](1);
+    outputIndices[0] = 2;
+    uint256[] memory inputAmts = new uint256[](1);
+    inputAmts[0] = 3;
+    uint256[] memory outputAmts = new uint256[](1);
+    outputAmts[0] = 5;
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 1, 1)
+      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 1, 10)
     );
 
     // not enough ingredients
@@ -81,24 +83,24 @@ contract CraftingTest is SetupTemplate {
 
   function testCraftMultipleInputs() public {
     uint32 recipeIndex = 1;
-    uint32[] memory iIndices = new uint32[](4);
-    iIndices[0] = 1;
-    iIndices[1] = 2;
-    iIndices[2] = 3;
-    iIndices[3] = 4;
-    uint32[] memory oIndices = new uint32[](1);
-    oIndices[0] = 10;
-    uint256[] memory iAmounts = new uint256[](4);
-    iAmounts[0] = 2;
-    iAmounts[1] = 3;
-    iAmounts[2] = 5;
-    iAmounts[3] = 7;
-    uint256[] memory oAmounts = new uint256[](1);
-    oAmounts[0] = 11;
+    uint32[] memory inputIndices = new uint32[](4);
+    inputIndices[0] = 1;
+    inputIndices[1] = 2;
+    inputIndices[2] = 3;
+    inputIndices[3] = 4;
+    uint32[] memory outputIndices = new uint32[](1);
+    outputIndices[0] = 10;
+    uint256[] memory inputAmts = new uint256[](4);
+    inputAmts[0] = 2;
+    inputAmts[1] = 3;
+    inputAmts[2] = 5;
+    inputAmts[3] = 7;
+    uint256[] memory outputAmts = new uint256[](1);
+    outputAmts[0] = 11;
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 0, 0)
+      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
     );
 
     // not enough ingredients (all missing)
@@ -123,22 +125,22 @@ contract CraftingTest is SetupTemplate {
 
   function testCraftMultipleOutputs() public {
     uint32 recipeIndex = 1;
-    uint32[] memory iIndices = new uint32[](1);
-    iIndices[0] = 1;
-    uint32[] memory oIndices = new uint32[](3);
-    oIndices[0] = 11;
-    oIndices[1] = 12;
-    oIndices[2] = 13;
-    uint256[] memory iAmounts = new uint256[](1);
-    iAmounts[0] = 1;
-    uint256[] memory oAmounts = new uint256[](3);
-    oAmounts[0] = 2;
-    oAmounts[1] = 3;
-    oAmounts[2] = 5;
+    uint32[] memory inputIndices = new uint32[](1);
+    inputIndices[0] = 1;
+    uint32[] memory outputIndices = new uint32[](3);
+    outputIndices[0] = 11;
+    outputIndices[1] = 12;
+    outputIndices[2] = 13;
+    uint256[] memory inputAmts = new uint256[](1);
+    inputAmts[0] = 1;
+    uint256[] memory outputAmts = new uint256[](3);
+    outputAmts[0] = 2;
+    outputAmts[1] = 3;
+    outputAmts[2] = 5;
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 0, 0)
+      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
     );
 
     // not enough ingredients
@@ -160,30 +162,30 @@ contract CraftingTest is SetupTemplate {
     for (uint i = 0; i < startBal.length; i++) startBal[i] = _random() / 2;
     uint256 inputLength = (_randomArrayLength() % 11) + 1;
     uint256 outputLength = (_randomArrayLength() % 19) + 1;
-    uint32[] memory iIndices = new uint32[](inputLength);
-    uint256[] memory iAmounts = new uint256[](inputLength);
+    uint32[] memory inputIndices = new uint32[](inputLength);
+    uint256[] memory inputAmts = new uint256[](inputLength);
     for (uint i = 0; i < inputLength; i++) {
-      // iIndices[i] = uint32((_random() % 11) + 1);
-      iIndices[i] = uint32(i + 1);
-      iAmounts[i] = _random() % 11;
+      // inputIndices[i] = uint32((_random() % 11) + 1);
+      inputIndices[i] = uint32(i + 1);
+      inputAmts[i] = _random() % 11;
     }
-    uint32[] memory oIndices = new uint32[](outputLength);
-    uint256[] memory oAmounts = new uint256[](outputLength);
+    uint32[] memory outputIndices = new uint32[](outputLength);
+    uint256[] memory outputAmts = new uint256[](outputLength);
     for (uint i = 0; i < outputLength; i++) {
-      // oIndices[i] = uint32((_random() % 19) + 1);
-      oIndices[i] = uint32(i + 1);
-      oAmounts[i] = _random() % 19;
+      // outputIndices[i] = uint32((_random() % 19) + 1);
+      outputIndices[i] = uint32(i + 1);
+      outputAmts[i] = _random() % 19;
     }
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 0, 0)
+      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
     );
 
     // give ingredients
     for (uint i = 0; i < startBal.length; i++) _giveItem(alice, uint32(i), startBal[i]);
 
-    if (!_enoughIngredients(alice, iIndices, iAmounts, amtToCraft)) {
+    if (!_enoughIngredients(alice, inputIndices, inputAmts, amtToCraft)) {
       // not enough ingredients, failure
       vm.prank(alice.operator);
       vm.expectRevert();
@@ -193,11 +195,11 @@ contract CraftingTest is SetupTemplate {
       _craft(alice, recipeIndex, amtToCraft);
 
       // subtract input from startBal
-      for (uint i = 0; i < iIndices.length; i++)
-        startBal[iIndices[i]] -= (iAmounts[i] * amtToCraft);
+      for (uint i = 0; i < inputIndices.length; i++)
+        startBal[inputIndices[i]] -= (inputAmts[i] * amtToCraft);
       // add output to startBal
-      for (uint i = 0; i < oIndices.length; i++)
-        startBal[oIndices[i]] += (oAmounts[i] * amtToCraft);
+      for (uint i = 0; i < outputIndices.length; i++)
+        startBal[outputIndices[i]] += (outputAmts[i] * amtToCraft);
     }
 
     // check balances
@@ -209,22 +211,28 @@ contract CraftingTest is SetupTemplate {
       );
   }
 
-  function testCraftCostFuzz(uint8 amtToCraft, int8 stCost, int8 initialSt) public {
-    vm.assume(stCost > 0);
-
+  function testCraftCostFuzz(uint8 amtToCraft, uint8 stCost, int8 initialSt) public {
     uint32 recipeIndex = 1;
-    uint32[] memory iIndices = new uint32[](1);
-    iIndices[0] = 1;
-    uint32[] memory oIndices = new uint32[](1);
-    oIndices[0] = 2;
-    uint256[] memory iAmounts = new uint256[](1);
-    iAmounts[0] = 3;
-    uint256[] memory oAmounts = new uint256[](1);
-    oAmounts[0] = 5;
+    uint32[] memory inputIndices = new uint32[](1);
+    inputIndices[0] = 1;
+    uint32[] memory outputIndices = new uint32[](1);
+    outputIndices[0] = 2;
+    uint256[] memory inputAmts = new uint256[](1);
+    inputAmts[0] = 3;
+    uint256[] memory outputAmts = new uint256[](1);
+    outputAmts[0] = 5;
 
     vm.startPrank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, iIndices, iAmounts, oIndices, oAmounts, 1, int32(int(stCost)))
+      abi.encode(
+        recipeIndex,
+        inputIndices,
+        inputAmts,
+        outputIndices,
+        outputAmts,
+        1,
+        int32(uint32(stCost))
+      )
     );
     LibStat.setSyncZero(components, "STAMINA", alice.id);
     int32 currSt = LibStat.sync(components, "STAMINA", initialSt, alice.id);
@@ -232,8 +240,8 @@ contract CraftingTest is SetupTemplate {
     _giveItem(alice, 1, 3 * uint256(amtToCraft));
 
     // expected values
-    uint256 expectedAmt = amtToCraft * oAmounts[0];
-    int32 expectedStCost = int32(int(stCost)) * int32(int(uint256(amtToCraft)));
+    uint256 expectedAmt = amtToCraft * outputAmts[0];
+    int32 expectedStCost = int32(uint32(stCost)) * int32(uint32(amtToCraft));
 
     if (expectedStCost > currSt) {
       vm.prank(alice.operator);
@@ -257,12 +265,12 @@ contract CraftingTest is SetupTemplate {
 
   function _enoughIngredients(
     PlayerAccount memory acc,
-    uint32[] memory iIndices,
-    uint256[] memory iAmounts,
+    uint32[] memory inputIndices,
+    uint256[] memory inputAmts,
     uint256 amt
   ) internal view returns (bool) {
-    for (uint i = 0; i < iIndices.length; i++)
-      if (_getItemBal(acc, iIndices[i]) < iAmounts[i] * amt) return false;
+    for (uint i = 0; i < inputIndices.length; i++)
+      if (_getItemBal(acc, inputIndices[i]) < inputAmts[i] * amt) return false;
     return true;
   }
 }

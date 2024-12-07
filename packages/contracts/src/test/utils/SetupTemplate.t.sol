@@ -1074,7 +1074,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initAccountConfigs() internal virtual {
     // [base stamina, base recovery period per point, base movement cost (in stamina), base experience per move]
-    _setConfig("ACCOUNT_STAMINA", [uint32(20), 300, 0, 0, 0, 0, 0, 0]);
+    _setConfig("ACCOUNT_STAMINA", [uint32(100), 60, 5, 5, 0, 0, 0, 0]);
   }
 
   function _initFriendConfigs() internal virtual {

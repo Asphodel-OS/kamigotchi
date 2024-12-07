@@ -68,7 +68,7 @@ library LibRecipe {
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
     IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)).set(id, recipeIndex);
     ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, experience);
-    StaminaComponent(getAddrByID(components, StamCompID)).set(id, Stat(0, 0, 0, staminaCost * -1));
+    StaminaComponent(getAddrByID(components, StamCompID)).set(id, Stat(0, 0, 0, staminaCost));
 
     // set inputs
     uint256 inputID = genInputID(recipeIndex);

@@ -17,7 +17,7 @@ contract AccountTest is SetupTemplate {
     vm.stopPrank();
 
     // [base stamina, base recovery period per point, base movement cost (in stamina), base experience per move]
-    _setConfig("ACCOUNT_STAMINA", [uint32(20), 300, 1, 0, 0, 0, 0, 0]);
+    _setConfig("ACCOUNT_STAMINA", [uint32(100), 60, 5, 5, 0, 0, 0, 0]);
   }
 
   function setUpAccounts() public override {
@@ -57,24 +57,22 @@ contract AccountTest is SetupTemplate {
     reverter.getByOperator(components, prevOperator);
   }
 
-  // function testStaminaUse(uint32 amt, uint16 rawBase, uint16 start, uint32 timeDelta) public {
-  //   uint256 base = uint256(rawBase);
+  // // Q(jb): wtf are we even trying to test here?
+  // // and why arent we using vm.assume to constrain the test against overflows?
+  // function testStaminaUse(uint32 amt, uint32 base, uint32 start, uint32 timeDelta) public {
+  //   vm.assume(base > start);
+
   //   // check overflows
-  //   // vm.assume(amt > 2147483648);
-  //   int32 overflowCheck;
+  //   uint32 overflowCheck;
   //   uint256 recoveryPeriod = uint256(LibConfig.getArray(components, "ACCOUNT_STAMINA")[1]);
   //   unchecked {
-  //     overflowCheck = amt + uint32(uint256(timeDelta) / recoveryPeriod);
+  //     overflowCheck = amt + (timeDelta / recoveryPeriod);
   //   }
-  //   vm.assume(overflowCheck > amt);
-  //   unchecked {
-  //     overflowCheck = amt + =int(base);
-
   //   vm.assume(overflowCheck > amt);
 
   //   // setup
   //   vm.startPrank(deployer);
-  //   Stat memory baseStat = Stat(int(base), 0, 0, int(uint256(start)));
+  //   Stat memory baseStat = Stat(int32(base), 0, 0, int32(start));
   //   LibStat.setStamina(components, alice.id, baseStat);
   //   LibStat.setStamina(components, bob.id, baseStat);
   //   LibAccount.setLastActionTs(components, alice.id, block.timestamp);
