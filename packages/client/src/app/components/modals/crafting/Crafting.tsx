@@ -6,8 +6,8 @@ import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
 import { getStamina, queryAccountFromBurner } from 'network/shapes/Account';
-import { getItemBalance, Inventory, queryInventories } from 'network/shapes/Item';
-import { getAllRecipes, Ingredient, Recipe } from 'network/shapes/Recipe';
+import { getItemBalance } from 'network/shapes/Item';
+import { getAllRecipesNoLevel, haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import styled from 'styled-components';
 import { Kard } from './components/Kard';
 
@@ -41,39 +41,29 @@ export function registerCraftingModal() {
             utils: {
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, world.entities[accountEntityIndex], index),
+              haveIngredients: (recipe: Recipe) =>
+                haveIngredients(world, components, recipe, world.entities[accountEntityIndex]),
             },
           };
         })
       ),
 
     // Render
-    ({ data, network, utils, accountEntityIndex }) => {
+    ({ data, network, utils }) => {
       const { actions, api, components, world } = network;
       const [recipes, setRecipes] = useState<Recipe[]>([]);
       const [filter, setFilter] = useState<boolean>(false);
 
-      let checkIngredients = (inventory: Inventory[], recipe: Ingredient[]) => {
-        const itemsIndex = inventory.map((inventoryItem) => Number(inventoryItem.entityIndex));
-        return recipe.every((ingredient) => itemsIndex.includes(ingredient.index));
-      };
-
       // updates from selected Node updates
       useEffect(() => {
-        const recipes = getAllRecipes(world, components);
+        const recipes = getAllRecipesNoLevel(world, components);
         if (filter === false) {
           setRecipes(recipes);
         } else {
           const available: Recipe[] = [];
           const notAvailable: Recipe[] = [];
-          getAllRecipes(world, components).map((recipe) => {
-            if (
-              checkIngredients(
-                queryInventories(world, components, {
-                  owner: world.entities[accountEntityIndex],
-                }),
-                recipe.inputs
-              ) === true
-            ) {
+          recipes.map((recipe) => {
+            if (utils.haveIngredients(recipe)) {
               available.push(recipe);
             } else {
               notAvailable.push(recipe);

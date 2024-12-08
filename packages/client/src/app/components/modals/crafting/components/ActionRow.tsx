@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
 import { staminaIcon, xpIcon } from 'assets/images/icons/stats';
-import { Recipe } from 'network/shapes/Recipe';
+import { Ingredient, Recipe } from 'network/shapes/Recipe';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -40,9 +40,14 @@ export const ActionRow = (props: Props) => {
   /////////////////
   // DISPLAY
 
+  const RecipeName = (recipe: Recipe) => {
+    const itemNames = recipe.outputs.map((output: Ingredient) => output.item.name);
+    return itemNames.join(' + ');
+  };
+
   return (
     <Container>
-      <div style={{ fontSize: '1vw' }}>Name</div>
+      <div style={{ fontSize: '1vw' }}>{RecipeName(recipe)}</div>
       <Icons>
         <Tooltip text={[`Grants ${recipe.experience} xp`]}>
           <DescriptionRow>

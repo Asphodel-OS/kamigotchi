@@ -19,6 +19,7 @@ interface Props {
 export const CraftButton = (props: Props) => {
   const { amt, actions, data, recipe, utils } = props;
   let errorText = '';
+
   /////////////////
   // DATA VALIDATION
 

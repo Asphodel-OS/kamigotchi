@@ -1,9 +1,10 @@
 import { EntityID, EntityIndex, Has, World, getComponentValue, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getItemDetailsByIndex } from './Item';
-import { getStat } from './Stats';
-import { DetailedEntity, getEntityByHash } from './utils';
+import { Condition, queryConditionsOf } from '../Conditional';
+import { getItemDetailsByIndex } from '../Item';
+import { getStat } from '../Stats';
+import { DetailedEntity, getEntityByHash } from '../utils';
 
 /////////////////
 // GETTERS
@@ -34,6 +35,7 @@ export interface Recipe {
   cost: {
     stamina: number;
   };
+  requirements: Condition[];
 }
 
 export interface Ingredient {
@@ -62,6 +64,7 @@ export const getRecipe = (
     cost: {
       stamina: getStat(entityIndex, Stamina).sync * 1,
     },
+    requirements: queryConditionsOf(world, components, 'recipe.requirement', recipeIndex),
   };
 
   return recipe;
@@ -104,19 +107,20 @@ export const NullRecipe: Recipe = {
   cost: {
     stamina: 0,
   },
+  requirements: [],
 };
 
 //////////////////
 // IDs
 
-const getRegEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
+export const getRegEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
   return getEntityByHash(world, ['registry.recipe', recipeIndex], ['string', 'uint32']);
 };
 
-const getInputEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
+export const getInputEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
   return getEntityByHash(world, ['recipe.input', recipeIndex], ['string', 'uint32']);
 };
 
-const getOutputEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
+export const getOutputEntity = (world: World, recipeIndex: number): EntityIndex | undefined => {
   return getEntityByHash(world, ['recipe.output', recipeIndex], ['string', 'uint32']);
 };
