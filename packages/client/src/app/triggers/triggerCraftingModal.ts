@@ -15,6 +15,7 @@ export const triggerCraftingModal = (assignerID: string) => {
         goal: false,
         node: false,
         dialogue: false,
+        merchant: false,
       },
     });
   }

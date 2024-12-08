@@ -11,6 +11,8 @@ interface Props {
     craft: (recipe: Recipe, amount: number) => void;
   };
   utils: {
+    meetsRequirements: (recipe: Recipe) => boolean;
+    displayRequirements: (recipe: Recipe) => string;
     getItemBalance: (index: number) => number;
     setAmt: (amt: number) => void;
   };
@@ -35,7 +37,9 @@ export const CraftButton = (props: Props) => {
     return data.stamina >= recipe.cost.stamina * amt;
   };
 
-  if (!enoughInputs()) errorText = 'Not enough items';
+  if (!utils.meetsRequirements(recipe))
+    errorText = 'Requires: \n' + utils.displayRequirements(recipe);
+  else if (!enoughInputs()) errorText = 'Not enough items';
   else if (!enoughStamina()) errorText = 'Not enough stamina';
 
   return (

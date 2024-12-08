@@ -5,9 +5,10 @@ import { interval, map } from 'rxjs';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
-import { getStamina, queryAccountFromBurner } from 'network/shapes/Account';
+import { getAccountFromBurner, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
+import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance } from 'network/shapes/Item';
-import { getAllRecipesNoLevel, haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
+import { getAllRecipes, haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import styled from 'styled-components';
 import { Kard } from './components/Kard';
 
@@ -29,6 +30,9 @@ export function registerCraftingModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
+
+          const account = getAccountFromBurner(network); // sorry: this is not great practice, was stuffed in
+
           const accountEntityIndex = queryAccountFromBurner(network);
           const stamina = getStamina(world, components, accountEntityIndex).sync;
 
@@ -39,6 +43,12 @@ export function registerCraftingModal() {
               stamina: stamina,
             },
             utils: {
+              meetsRequirements: (recipe: Recipe) =>
+                passesConditions(world, components, recipe.requirements, account),
+              displayRequirements: (recipe: Recipe) =>
+                recipe.requirements
+                  .map((req) => parseConditionalText(world, components, req))
+                  .join(', '),
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, world.entities[accountEntityIndex], index),
               haveIngredients: (recipe: Recipe) =>
@@ -56,7 +66,7 @@ export function registerCraftingModal() {
 
       // updates from selected Node updates
       useEffect(() => {
-        const recipes = getAllRecipesNoLevel(world, components);
+        const recipes = getAllRecipes(world, components);
         if (filter === false) {
           setRecipes(recipes);
         } else {

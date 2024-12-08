@@ -14,6 +14,8 @@ interface Props {
     craft: (recipe: Recipe, amount: number) => void;
   };
   utils: {
+    meetsRequirements: (recipe: Recipe) => boolean;
+    displayRequirements: (recipe: Recipe) => string;
     getItemBalance: (index: number) => number;
   };
 }

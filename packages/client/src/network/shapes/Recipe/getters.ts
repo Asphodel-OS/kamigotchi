@@ -9,11 +9,6 @@ export const getAllRecipes = (world: World, components: Components): Recipe[] =>
   return entities.map((index) => getRecipe(world, components, index));
 };
 
-export const getAllRecipesNoLevel = (world: World, components: Components): Recipe[] => {
-  // hardcoded to hide recipes that require account levels. to update !
-  return getAllRecipes(world, components).filter((recipe) => recipe.requirements.length === 0);
-};
-
 export const getRecipeByIndex = (world: World, components: Components, index: number): Recipe => {
   const entityIndex = getRegEntity(world, index);
   if (!entityIndex) return NullRecipe;

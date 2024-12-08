@@ -67,19 +67,32 @@ async function createRecipe(api: AdminAPI, entry: any) {
     Number(entry['Stamina Cost']) / 5 // TODO: change to base 100, not base20
   );
 
-  // await addRequirement(api, entry);
+  await addRequirement(api, entry);
 }
 
 async function addRequirement(api: AdminAPI, entry: any) {
-  // only min level requirement
-  const minLevel = Number(entry['Minimum Account Level'] ?? 1);
-  if (minLevel > 1) {
+  // level requirement
+  // SKIPPED level requirement until account levels are in
+  // const minLevel = Number(entry['Minimum Account Level'] ?? 1);
+  // if (minLevel > 1) {
+  //   await api.registry.recipe.add.requirement(
+  //     Number(entry['Index']),
+  //     'LEVEL',
+  //     'CURR_MIN',
+  //     0,
+  //     minLevel
+  //   );
+  // }
+
+  // tool requirement
+  const toolIndex = Number(entry['Tool Index'] ?? 0);
+  if (toolIndex > 0) {
     await api.registry.recipe.add.requirement(
       Number(entry['Index']),
-      'LEVEL',
+      'ITEM',
       'CURR_MIN',
-      0,
-      minLevel
+      toolIndex,
+      1
     );
   }
 }
