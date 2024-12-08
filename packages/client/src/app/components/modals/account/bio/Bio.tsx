@@ -97,16 +97,18 @@ export const Bio = (props: Props) => {
 
   const MockupBar = () => {
     const mockupProgress = () => {
-      let currentProgress = 90;
+      let currentProgress = 40;
       return currentProgress;
     };
 
     return (
       <BarAndLevel>
-        <Level style={{ fontSize: '0.6vw' }}>Lv 20</Level>
-        <Bar>
-          <Progress width={mockupProgress()} />
-        </Bar>
+        <Level style={{ fontSize: '0.6vw' }}>Lvl 1</Level>
+        <Tooltip text={['40%']}>
+          <Bar>
+            <Progress width={mockupProgress()} />
+          </Bar>
+        </Tooltip>
       </BarAndLevel>
     );
   };
@@ -238,7 +240,9 @@ const BarAndLevel = styled.div`
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  margin-top: 0.7vw;
+  --width: 12.5vw;
+  position: relative;
+  right: 6%;
 `;
 
 const Level = styled.div`
@@ -264,7 +268,7 @@ const Level = styled.div`
 `;
 
 const Bar = styled.div`
-  width: 80%;
+  width: var(--width);
   background-color: #f0f0f0;
   border: 0.15vw solid #c2c0bf;
   height: 1vw;
