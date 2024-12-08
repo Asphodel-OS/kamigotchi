@@ -20,7 +20,7 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/essence_of_daffodil_native.png,113,Esse
 Items%201b9894152b7f4649a68169aa3a6bcffe/shredded_mint_native.png,114,Shredded Mint,For Implementation,ITEM,Material,,,,,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/black_poppy_extract_native.png,115,Black Poppy Extract,For Implementation,ITEM,Material,,,,,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/screwdriver_native.png,201,Screwdriver,Ingame,ITEM,Material,,,,,,,,For driving screws. May be of practical use….,,,,,,,,,,,No,11003
-Items%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,11001,Red Gakki Ribbon,Ingame,ITEM,Consumable,,,,,Kami,,,"Capable of raising a Kamigotchi from the dead. 
+Items%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,11001,Red Gakki Ribbon,Ingame,ITEM,Revive,,,,,Kami,,,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. ",10,,,,,,,,,,No,110
 ,11001,,Ingame,EFFECT,,STATE,,RESTING,,,,,Set kami state to resting,,,,,,,,,,,No,11007
@@ -57,18 +57,18 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,11304,Gakki Cookie
 ,11304,,Ingame,EFFECT,,STAT,,HEALTH,100,,,,Restores 100 Health,,,,,,,,,,,No,105
 Items%201b9894152b7f4649a68169aa3a6bcffe/resin_native.png,11311,Resin,Ingame,ITEM,Food,,,,,Kami,,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…",35,,,,,,,,,,No,118
 ,11311,,Ingame,EFFECT,,STAT,,HEALTH,35,,,,Restores 35 Health,,,,,,,,,,,No,105
-Items%201b9894152b7f4649a68169aa3a6bcffe/xp_potion_native.png,11401,XP Potion,For Implementation,ITEM,Food,,,,,Kami,,,Give to a Kami to increase their XP by 1000.,,,,,,,,,,,No,
-,11401,,Ingame,EFFECT,,ITEM,106,,1,Kami,,,Give x1 glass jar,,,,,,,,,,,No,11007
+Items%201b9894152b7f4649a68169aa3a6bcffe/xp_potion_native.png,11401,XP Potion,For Implementation,ITEM,Consumable,,,,,Kami,,,Give to a Kami to increase their XP by 1000.,,,,,,,,,,,No,
+,11401,,Ingame,EFFECT,,ITEM,103,,1,Kami,,,Give x1 plastic bottle,,,,,,,,,,,No,11007
 ,11401,,Ingame,EFFECT,,XP,,,1000,Kami,,,Gives 1000 XP,,,,,,,,,,,No,105
-Items%201b9894152b7f4649a68169aa3a6bcffe/greater_xp_potion_v2_native.png,11402,Greater XP Potion,For Implementation,ITEM,Food,,,,,Kami,,,Give to a Kami to increase their XP by 15000.,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/greater_xp_potion_v2_native.png,11402,Greater XP Potion,For Implementation,ITEM,Consumable,,,,,Kami,,,Give to a Kami to increase their XP by 15000.,,,,,,,,,,,No,
 ,11402,,Ingame,EFFECT,,ITEM,106,,1,Kami,,,Give x1 glass jar,,,,,,,,,,,No,11007
 ,11402,,Ingame,EFFECT,,XP,,,15000,Kami,,,Gives 15000 XP,,,,,,,,,,,No,105
-Items%201b9894152b7f4649a68169aa3a6bcffe/respec_potion_native.png,11403,Respec Potion,For Implementation,ITEM,Food,,,,,Kami,,,"Give to a Kami to reset their skill points. ",,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/respec_potion_native.png,11403,Respec Potion,For Implementation,ITEM,Consumable,,,,,Kami,,,"Give to a Kami to reset their skill points. ",,,,,,,,,,,No,
 ,11403,,Ingame,EFFECT,,FLAG,,CAN_RESET_SKILLS,1,Kami,,,set Can_Reset_SKill flag to true,,,,,,,,,,,No,11007
-,11403,,Ingame,EFFECT,,ITEM,106,,1,Kami,,,Give x1 glass jar,,,,,,,,,,,No,11007
+,11403,,Ingame,EFFECT,,ITEM,103,,1,Kami,,,Give x1 plastic bottle,,,,,,,,,,,No,11007
 Items%201b9894152b7f4649a68169aa3a6bcffe/grace_potion_native.png,11404,"Grace Potion 
-",Not Implemented,ITEM,Food,,,,,Kami,,,"Give to a Kami to decrease loss of health during the next Harvest by 33%. ",,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/bounty_potion_native.png,11405,Bless Potion,Not Implemented,ITEM,Food,,,,,Kami,,,Give to a Kami to increase the MUSU gained from the next Harvest by 33%.,,,,,,,,,,,No,
+",Not Implemented,ITEM,Consumable,,,,,Kami,,,"Give to a Kami to decrease loss of health during the next Harvest by 33%. ",,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/bounty_potion_native.png,11405,Bless Potion,Not Implemented,ITEM,Consumable,,,,,Kami,,,Give to a Kami to increase the MUSU gained from the next Harvest by 33%.,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/lootbox_native.png,21001,Giftbox,Ingame,ITEM,Lootbox,,,,,Account,,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! ",,,,,,,,,,,No,10001
 ,21001,,Ingame,EFFECT,,ITEM_DROPTABLE,,,1,Account,"[11201, 11302, 11202, 11201, 11204, 111, 103, 201]","[9, 9, 8, 7, 6, 3, 3, 2]",droptable,,,,,,,,,,,No,11007
 ,21002,Giftchest,Not Implemented,ITEM,,,,,,,,,,,,,,,,,,,,No,10002

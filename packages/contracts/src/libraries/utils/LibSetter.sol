@@ -43,7 +43,7 @@ library LibSetter {
     uint256 targetID
   ) public {
     if (_type.eq("ITEM")) {
-      LibInventory.incFor(components, targetID, index, amt);
+      incInv(components, targetID, index, amt);
     } else if (_type.eq("XP")) {
       LibExperience.inc(components, targetID, amt);
     } else if (_type.eq("REPUTATION")) {
@@ -77,6 +77,14 @@ library LibSetter {
 
   ///////////////
   // INTERNAL
+
+  /// @notice increases inventory balance. if target is a kami, update it's owners balance
+  function incInv(IUintComp components, uint256 targetID, uint32 index, uint256 amt) internal {
+    if (LibEntityType.isShape(components, targetID, "KAMI")) {
+      targetID = LibKami.getAccount(components, targetID);
+    }
+    LibInventory.incFor(components, targetID, index, amt);
+  }
 
   /// @notice sets flag as true if value > 0, false if value == 0
   function setFlag(

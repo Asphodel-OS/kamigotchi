@@ -37,10 +37,12 @@ export const CraftButton = (props: Props) => {
     return data.stamina >= recipe.cost.stamina * amt;
   };
 
+  let enabled = false;
   if (!utils.meetsRequirements(recipe))
     errorText = 'Requires: \n' + utils.displayRequirements(recipe);
   else if (!enoughInputs()) errorText = 'Not enough items';
   else if (!enoughStamina()) errorText = 'Not enough stamina';
+  else enabled = true;
 
   return (
     <ButtonDiv>
@@ -49,7 +51,7 @@ export const CraftButton = (props: Props) => {
         onClick={() => actions.craft(recipe, 1)}
         size='medium'
         tooltip={[errorText]}
-        disabled={!enoughInputs() || !enoughStamina()}
+        disabled={!enabled}
         noBorder
       />
       {/* <Stepper>

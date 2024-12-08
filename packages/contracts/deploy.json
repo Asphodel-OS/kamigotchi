@@ -445,23 +445,7 @@
     },
     {
       "name": "KamiUseItemSystem",
-      "writeAccess": [
-        "IdHolder",
-        "IDType",
-        "Experience",
-        "Harmony",
-        "HasFlag",
-        "Health",
-        "Power",
-        "Rate",
-        "Slots",
-        "State",
-        "Value",
-        "Violence",
-        "TimeLast",
-        "TimeReset",
-        "TimeStart"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "HarvestCollectSystem",

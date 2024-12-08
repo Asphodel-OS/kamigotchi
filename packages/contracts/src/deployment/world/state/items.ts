@@ -85,7 +85,7 @@ async function addAllo(api: AdminAPI, entry: any) {
       dt.value
     );
   } else if (entry['ConType'].toUpperCase() === 'STAT') {
-    const [statType, stat] = parseStat2(entry);
+    const [statType, stat] = parseStat(entry);
     await api.registry.item.add.allo.stat(
       Number(entry['Index']),
       'USE',
@@ -141,43 +141,7 @@ async function setConsumable(api: AdminAPI, entry: any) {
     getItemImage(entry['Name'])
   );
   await addRequirement(api, entry); // hardcoded based on item types. to update
-  // await addAllo(api, entry);
 }
-
-// async function addAllo(api: AdminAPI, item: any) {
-//   const allos = getAlloInfo(item);
-//   for (const allo of allos) {
-//     if (allo.basic) {
-//       await api.registry.item.add.allo.basic(
-//         Number(item['Index']),
-//         'USE',
-//         allo.type,
-//         allo.basic.index,
-//         allo.basic.value
-//       );
-//     }
-//     if (allo.droptable) {
-//       await api.registry.item.add.allo.droptable(
-//         Number(item['Index']),
-//         'USE',
-//         allo.droptable.key,
-//         allo.droptable.weights,
-//         allo.droptable.value
-//       );
-//     }
-//     if (allo.stat) {
-//       await api.registry.item.add.allo.stat(
-//         Number(item['Index']),
-//         'USE',
-//         allo.type,
-//         allo.stat.base,
-//         allo.stat.shift,
-//         allo.stat.boost,
-//         allo.stat.sync
-//       );
-//     }
-//   }
-// }
 
 /////////////////
 // UTILS
@@ -207,27 +171,6 @@ type AlloData = {
   stat?: Stat;
 };
 
-function getAlloInfo(item: any): AlloData[] {
-  const allos: AlloData[] = [];
-
-  if (item['Type'].toUpperCase() === 'REVIVE')
-    allos.push({ type: 'STATE', basic: { index: parseKamiStateToIndex('RESTING'), value: 0 } });
-  if (item['Room'] > 0)
-    allos.push({ type: 'ROOM', basic: { index: Number(item['Room']), value: 0 } });
-  if (item['XP'] > 0) allos.push({ type: 'XP', basic: { index: 0, value: Number(item['XP']) } });
-  if (item['Health'] > 0) allos.push(parseStat('HEALTH', Number(item['Health'])));
-  if (item['MaxHealth'] > 0) allos.push(parseStat('MAXHEALTH', Number(item['MaxHealth'])));
-  if (item['Power'] > 0) allos.push(parseStat('POWER', Number(item['Power'])));
-  if (item['Violence'] > 0) allos.push(parseStat('VIOLENCE', Number(item['Violence'])));
-  if (item['Harmony'] > 0) allos.push(parseStat('HARMONY', Number(item['Harmony'])));
-  if (item['Stamina'] > 0) allos.push(parseStat('STAMINA', Number(item['Stamina'])));
-  // if (item['UseFlags'] !== '') allos.push(parseFlag(item['UseFlags'].toUpperCase()));
-  if (item['DTIndices'] !== '')
-    allos.push({ type: 'ITEM_DROPTABLE', droptable: parseDroptable(item) });
-
-  return allos;
-}
-
 function parseBasic(entry: any): [string, number, number] {
   // type, index, value
   let type = entry['ConType'].toUpperCase();
@@ -256,23 +199,9 @@ function parseFlag(flag: string): [string, number, number] {
     flag = flag.replace('_FALSE', '');
   }
   return [`FLAG_${flag.toUpperCase()}`, 0, value];
-  // return { type: `FLAG_${flag.toUpperCase()}`, basic: { index: 0, value: value } };
 }
 
-function parseStat(statType: string, value: number): AlloData {
-  let stat: Stat = { base: 0, shift: 0, boost: 0, sync: 0 };
-  if (statType === 'HEALTH') stat = { base: 0, shift: 0, boost: 0, sync: value } as Stat;
-  else if (statType === 'MAXHEALTH') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
-  else if (statType === 'POWER') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
-  else if (statType === 'VIOLENCE') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
-  else if (statType === 'HARMONY') stat = { base: 0, shift: value, boost: 0, sync: 0 } as Stat;
-  else if (statType === 'STAMINA') stat = { base: 0, shift: 0, boost: 0, sync: value } as Stat;
-
-  if (statType === 'MAXHEALTH') statType = 'HEALTH';
-  return { type: statType, stat: stat };
-}
-
-function parseStat2(entry: any): [string, Stat] {
+function parseStat(entry: any): [string, Stat] {
   let statType = entry['ConIndex (String)'].toUpperCase();
   const value = Number(entry['ConValue']);
   let stat: Stat = { base: 0, shift: 0, boost: 0, sync: 0 };
@@ -290,10 +219,8 @@ function parseStat2(entry: any): [string, Stat] {
 function itemTypeToRequirement(type: string): [string, string, number, number] {
   if (type === 'FOOD') return ['KAMI_CAN_EAT', 'BOOL_IS', 0, 0];
   else if (type === 'REVIVE') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('DEAD'), 0];
-  else if (type === 'RENAME_POTION')
-    return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
-  else if (type === 'SKILL_RESET') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
-  else return ['', '', 0, 0];
+  else if (type === 'CONSUMABLE') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
+  else throw new Error('Item type not found: ' + type);
 }
 
 function stringToNumberArray(rawStr: string): number[] {
