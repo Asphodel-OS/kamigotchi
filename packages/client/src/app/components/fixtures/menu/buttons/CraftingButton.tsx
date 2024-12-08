@@ -14,6 +14,7 @@ export const CraftingButton = () => {
     nameKami: false,
     quests: false,
     settings: false,
+    node: false,
   };
 
   return (
