@@ -97,14 +97,14 @@ export const Bio = (props: Props) => {
 
   const MockupBar = () => {
     const mockupProgress = () => {
-      let currentProgress = 40;
+      let currentProgress = 0;
       return currentProgress;
     };
 
     return (
       <BarAndLevel>
         <Level style={{ fontSize: '0.6vw' }}>Lvl 1</Level>
-        <Tooltip text={['40%']}>
+        <Tooltip text={['0/40']}>
           <Bar>
             <Progress width={mockupProgress()} />
           </Bar>
