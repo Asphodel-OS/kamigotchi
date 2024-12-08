@@ -1,7 +1,6 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, Has, World, getComponentValue, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { queryActions } from './Assigner';
 import { getItemDetailsByIndex } from './Item';
 import { getStat } from './Stats';
 import { DetailedEntity, getEntityByHash } from './utils';
@@ -9,20 +8,17 @@ import { DetailedEntity, getEntityByHash } from './utils';
 /////////////////
 // GETTERS
 
+export const getAllRecipes = (world: World, components: Components): Recipe[] => {
+  const { RecipeIndex, IsRegistry } = components;
+  const entities = Array.from(runQuery([Has(RecipeIndex), Has(IsRegistry)]));
+  return entities.map((index) => getRecipe(world, components, index));
+};
+
 export const getRecipeByIndex = (world: World, components: Components, index: number): Recipe => {
   const entityIndex = getRegEntity(world, index);
   if (!entityIndex) return NullRecipe;
 
   return getRecipe(world, components, entityIndex, index);
-};
-
-export const getRecipesByAssigner = (
-  world: World,
-  components: Components,
-  assignerID: EntityID
-): Recipe[] => {
-  const entities = queryActions(world, components, assignerID, { recipe: true });
-  return entities.map((entityIndex) => getRecipe(world, components, entityIndex));
 };
 
 /////////////////

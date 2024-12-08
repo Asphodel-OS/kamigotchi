@@ -1,4 +1,3 @@
-import { EntityID } from '@mud-classic/recs';
 import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
@@ -8,8 +7,7 @@ import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
 import { getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { getItemBalance, Inventory, queryInventories } from 'network/shapes/Item';
-import { getNPCByIndex } from 'network/shapes/NPCs';
-import { getRecipesByAssigner, Ingredient, Recipe } from 'network/shapes/Recipe';
+import { getAllRecipes, Ingredient, Recipe } from 'network/shapes/Recipe';
 import styled from 'styled-components';
 import { Kard } from './components/Kard';
 
@@ -44,15 +42,13 @@ export function registerCraftingModal() {
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, world.entities[accountEntityIndex], index),
             },
-            assignerID: getNPCByIndex(world, components, 1)?.id || '0x00', // temp placeholder
           };
         })
       ),
 
     // Render
-    ({ data, network, utils, assignerID, accountEntityIndex }) => {
+    ({ data, network, utils, accountEntityIndex }) => {
       const { actions, api, components, world } = network;
-      // const { assignerID } = useSelected();
       const [recipes, setRecipes] = useState<Recipe[]>([]);
       const [filter, setFilter] = useState<boolean>(false);
 
@@ -63,13 +59,13 @@ export function registerCraftingModal() {
 
       // updates from selected Node updates
       useEffect(() => {
-        const recipes = getRecipesByAssigner(world, components, assignerID as EntityID);
+        const recipes = getAllRecipes(world, components);
         if (filter === false) {
           setRecipes(recipes);
         } else {
           const available: Recipe[] = [];
           const notAvailable: Recipe[] = [];
-          getRecipesByAssigner(world, components, assignerID as EntityID).map((recipe) => {
+          getAllRecipes(world, components).map((recipe) => {
             if (
               checkIngredients(
                 queryInventories(world, components, {
@@ -85,7 +81,7 @@ export function registerCraftingModal() {
           });
           setRecipes(available.concat(notAvailable));
         }
-      }, [assignerID, filter]);
+      }, [filter]);
 
       //////////////////////////////////
       // INTERPRETATION
@@ -108,7 +104,7 @@ export function registerCraftingModal() {
           params: [recipe.id, amount],
           description: `Crafting ${getIngredientsText(recipe.outputs, amount)}`,
           execute: async () => {
-            return api.player.crafting.craft(assignerID, recipe.index, amount);
+            return api.player.crafting.craft(0, recipe.index, amount);
           },
         });
       };

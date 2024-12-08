@@ -1,5 +1,12 @@
 import { AdminAPI } from '../admin';
-import { GACHA_TICKET_INDEX, parseToInitCon, readFile, toDelete, toRevise } from './utils';
+import {
+  GACHA_TICKET_INDEX,
+  parseToInitCon,
+  readFile,
+  toCreate,
+  toDelete,
+  toRevise,
+} from './utils';
 
 export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
   const questCSV = await readFile('quests/quests.csv');
@@ -15,12 +22,7 @@ export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
       continue;
 
     try {
-      if (
-        quest['Status'] !== 'For Implementation' &&
-        quest['Status'] !== 'Revise Deployment' &&
-        quest['Status'] !== 'Ingame' // a lil clunky to accommodate notion
-      )
-        continue;
+      if (!toCreate(quest)) continue;
       if (quest['Class'] === 'Quest' || quest['Class'] === '') await initQuest(api, quest);
       else if (quest['Class'] === 'Requirement') await initQuestRequirement(api, quest);
       else if (quest['Class'] === 'Objective') await initQuestObjective(api, quest);

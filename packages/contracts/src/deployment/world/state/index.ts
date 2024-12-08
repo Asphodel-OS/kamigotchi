@@ -58,6 +58,7 @@ export { deleteListings, initListings } from './listings';
 export { deleteNodes, initNodes, reviseNodes } from './nodes';
 export { initNpcs } from './npcs';
 export { deleteQuests, initLocalQuests, initQuests, reviseQuests } from './quests';
+export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
 export { deleteRelationships, initRelationships } from './relationships';
 export { deleteRooms, initRooms, reviseRooms } from './rooms';
 export { deleteSkills, initSkills, reviseSkills } from './skills';

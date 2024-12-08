@@ -13,6 +13,7 @@ import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex, getKamiByName } from 'network/shapes/Kami';
 import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllNPCs, getNPCByIndex } from 'network/shapes/NPCs';
+import { getAllRecipes, getRecipeByIndex } from 'network/shapes/Recipe';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
 import { getRegistrySkills, getSkillByIndex } from 'network/shapes/Skill';
 import { getRegistryTraits, getTraitByIndex } from 'network/shapes/Trait';
@@ -99,6 +100,11 @@ export const initExplorer = (world: World, components: Components) => {
       all: () => getAllItems(world, components),
       get: (index: number) => getItemByIndex(world, components, index),
       indices: () => [...new Set(Array.from(components.ItemIndex.values.value.values()))],
+    },
+
+    recipes: {
+      all: () => getAllRecipes(world, components),
+      get: (index: number) => getRecipeByIndex(world, components, index),
     },
 
     quests: quests(world, components),

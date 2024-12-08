@@ -3,18 +3,24 @@ import astrolabe_disk from './astrolabe_disk.png';
 import best_ice_cream from './best_ice_cream.png';
 import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
+import black_poppy_extract from './black_poppy_extract.png';
+import bless_potion from './bless_potion.png';
 import cheeseburger from './cheeseburger.png';
 import daffodil from './daffodil.png';
+import essence_of_daffodil from './essence_of_daffodil.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
 import gaokerena_mochi from './gaokerena_mochi.png';
 import glass_jar from './glass_jar.png';
+import grace_potion from './grace_potion.png';
+import greater_xp_potion from './greater_xp_potion.png';
 import holy_dust from './holy_dust.png';
 import ice_cream from './ice_cream.png';
 import kami_mochi from './kami_mochi.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
+import microplastics from './microplastics.png';
 import mint from './mint.png';
 import musu from './musu.png';
 import pine_cone from './pine_cone.png';
@@ -25,11 +31,13 @@ import pomegranate from './pomegranate.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import resin from './resin.png';
+import respec_potion from './respec_potion.png';
 import ring_of_spirits from './ring_of_spirits.png';
 import ring_of_water_breathing from './ring_of_water_breathing.png';
 import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
 import scroll_of_shop_teleportation from './scroll_of_shop_teleportation.png';
+import shredded_mint from './shredded_mint.png';
 import stone from './stone.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
 import wooden_stick from './wooden_stick.png';
@@ -37,6 +45,7 @@ import xp_candy_huge from './xp_candy_huge.png';
 import xp_candy_large from './xp_candy_large.png';
 import xp_candy_medium from './xp_candy_medium.png';
 import xp_candy_small from './xp_candy_small.png';
+import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
   giftbox: agency_giftbox,
@@ -44,11 +53,15 @@ export const ItemImages = {
   better_ice_cream: better_ice_cream,
   best_ice_cream: best_ice_cream,
   black_poppy: black_poppy,
+  black_poppy_extract: black_poppy_extract,
+  bless_potion: bless_potion,
   cheeseburger: cheeseburger,
   daffodil: daffodil,
+  essence_of_daffodil: essence_of_daffodil,
   gacha_ticket: gacha_ticket,
   gakki_cookie_sticks: gakki_cookie_sticks,
   gaokerena_mochi: gaokerena_mochi,
+  grace_potion: grace_potion,
   holy_dust: holy_dust,
   ice_cream: ice_cream,
   glass_jar: glass_jar,
@@ -57,6 +70,7 @@ export const ItemImages = {
   mana_mochi: mana_mochi,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   mint: mint,
+  microplastics: microplastics,
   musu: musu,
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
@@ -66,16 +80,20 @@ export const ItemImages = {
   red_amber_crystal: red_amber_crystal,
   red_gakki_ribbon: red_gakki_ribbon,
   resin: resin,
+  respec_potion: respec_potion,
   ring_of_spirits: ring_of_spirits,
   ring_of_water_breathing: ring_of_water_breathing,
   scrap_metal: scrap_metal,
   screwdriver: screwdriver,
   scroll_of_shop_teleportation: scroll_of_shop_teleportation,
   stone: stone,
+  shredded_mint: shredded_mint,
   sunset_apple_mochi: sunset_apple_mochi,
   wooden_stick: wooden_stick,
   xp_candy_huge: xp_candy_huge,
   xp_candy_large: xp_candy_large,
   xp_candy_medium: xp_candy_medium,
   xp_candy_small: xp_candy_small,
+  xp_potion: xp_potion,
+  greater_xp_potion: greater_xp_potion,
 };

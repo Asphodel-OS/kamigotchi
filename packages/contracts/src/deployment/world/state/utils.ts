@@ -10,6 +10,14 @@ export const GACHA_TICKET_INDEX = 2;
 ///////////////
 // GENERAL
 
+export const toCreate = (entry: any): boolean => {
+  return (
+    entry['Status'] === 'Revise Deployment' ||
+    entry['Status'] === 'Ingame' ||
+    entry['Status'] === 'For Implementation'
+  );
+};
+
 export const toDelete = (entry: any): boolean => {
   return entry['Status'] === 'Revise Deployment' || entry['Status'] === 'Ingame';
 };

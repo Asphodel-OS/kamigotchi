@@ -1,44 +1,108 @@
 import { AdminAPI } from '../admin';
-import { getRegID } from './utils';
+import { readFile, toCreate, toDelete, toRevise } from './utils';
 
-export async function initRecipes(api: AdminAPI) {
+export async function initRecipes(api: AdminAPI, overrideIndices?: number[]) {
+  const recipesCSV = await readFile('crafting/recipes.csv');
+
+  for (let i = 0; i < recipesCSV.length; i++) {
+    const entry = recipesCSV[i];
+
+    // skip if indices are overridden and recipe isn't included
+    if (
+      overrideIndices &&
+      overrideIndices.length > 0 &&
+      !overrideIndices.includes(Number(entry['Index']))
+    )
+      continue;
+
+    if (!toCreate(entry)) continue;
+    await createRecipe(api, entry);
+  }
+}
+
+export async function deleteRecipes(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const recipesCSV = await readFile('crafting/recipes.csv');
+    for (let i = 0; i < recipesCSV.length; i++) {
+      if (toDelete(recipesCSV[i])) indices.push(Number(recipesCSV[i]['Index']));
+    }
+  }
+
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      await api.registry.recipe.delete(indices[i]);
+    } catch {
+      console.error('Could not delete recipe ' + indices[i]);
+    }
+  }
+}
+
+export async function reviseRecipes(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const recipesCSV = await readFile('crafting/recipes.csv');
+    for (let i = 0; i < recipesCSV.length; i++) {
+      if (toRevise(recipesCSV[i])) indices.push(Number(recipesCSV[i]['Index']));
+    }
+  }
+  await deleteRecipes(api, indices);
+  await initRecipes(api, indices);
+}
+
+////////////////
+// SUB-SHAPES
+
+async function createRecipe(api: AdminAPI, entry: any) {
+  const [iIndices, iAmts] = getInputArrays(entry);
   await api.registry.recipe.create(
-    1,
-    [101, 102, 103], // input indices
-    [50, 180, 320], // input amounts
-    [110], // output indices
-    [1], // output amounts
-    50, // xp
-    1 // stamina cost
+    Number(entry['Index']),
+    iIndices,
+    iAmts,
+    [Number(entry['Output Index'])],
+    [Number(entry['Output Amount'])],
+    Number(entry['Account XP Output']),
+    Number(entry['Stamina Cost']) / 5 // TODO: change to base 100, not base20
   );
-  await api.registry.recipe.add.assigner(1, getRegID(1, 'NPC'));
-  await api.registry.recipe.create(
-    2,
-    [107, 108, 109], // input indices
-    [160, 90, 50], // input amounts
-    [11002], // output indices
-    [2], // output amounts
-    160, // xp
-    4 // stamina cost
-  );
-  await api.registry.recipe.add.assigner(2, getRegID(1, 'NPC'));
-  await api.registry.recipe.create(
-    3,
-    [110, 111, 112], // input indices
-    [100, 50, 100], // input amounts
-    [11003], // output indices
-    [3], // output amounts
-    100, // xp
-    2 // stamina cost
-  );
-  await api.registry.recipe.create(
-    4,
-    [110, 111, 112], // input indices
-    [100, 50, 100], // input amounts
-    [11004, 11005], // output indices
-    [4, 1], // output amounts
-    100, // xp
-    2 // stamina cost
-  );
-  await api.registry.recipe.add.assigner(4, getRegID(1, 'NPC'));
+
+  // await addRequirement(api, entry);
+}
+
+async function addRequirement(api: AdminAPI, entry: any) {
+  // only min level requirement
+  const minLevel = Number(entry['Minimum Account Level'] ?? 1);
+  if (minLevel > 1) {
+    await api.registry.recipe.add.requirement(
+      Number(entry['Index']),
+      'LEVEL',
+      'CURR_MIN',
+      0,
+      minLevel
+    );
+  }
+}
+
+/////////////////
+// UTILS
+
+function getInputArrays(entry: any): [number[], number[]] {
+  const indices = [];
+  const amounts = [];
+
+  if (entry['Input 1 Index'] !== '') {
+    indices.push(Number(entry['Input 1 Index']));
+    amounts.push(Number(entry['Input 1 Amount']));
+  }
+  if (entry['Input 2 Index'] !== '') {
+    indices.push(Number(entry['Input 2 Index']));
+    amounts.push(Number(entry['Input 2 Amount']));
+  }
+  if (entry['Input 3 Index'] !== '') {
+    indices.push(Number(entry['Input 3 Index']));
+    amounts.push(Number(entry['Input 3 Amount']));
+  }
+
+  return [indices, amounts];
 }

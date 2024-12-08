@@ -5,6 +5,7 @@ import {
   deleteListings,
   deleteNodes,
   deleteQuests,
+  deleteRecipes,
   deleteRelationships,
   deleteRooms,
   deleteSkills,
@@ -20,6 +21,7 @@ import {
   initNodes,
   initNpcs,
   initQuests,
+  initRecipes,
   initRelationships,
   initRooms,
   initSkills,
@@ -28,12 +30,12 @@ import {
   reviseItems,
   reviseNodes,
   reviseQuests,
+  reviseRecipes,
   reviseRooms,
   reviseSkills,
 } from './state';
 
 import { AdminAPI, createAdminAPI } from './admin';
-import { initRecipes } from './state/recipes';
 
 export type WorldAPI = typeof WorldState.prototype.api;
 
@@ -104,7 +106,9 @@ export class WorldState {
       revise: (indices?: number[]) => this.genCalls((api) => reviseQuests(api, indices)),
     } as SubFunc,
     recipes: {
-      init: (indices?: number[]) => this.genCalls((api) => initRecipes(api)),
+      init: (indices?: number[]) => this.genCalls((api) => initRecipes(api, indices)),
+      delete: (indices?: number[]) => this.genCalls((api) => deleteRecipes(api, indices)),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseRecipes(api, indices)),
     },
     relationships: {
       init: () => this.genCalls(initRelationships),
