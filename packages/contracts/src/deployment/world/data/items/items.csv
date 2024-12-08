@@ -83,8 +83,8 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,21203,Best I
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_water_breathing_native.png,22801,Ring of Water Breathing,Not Implemented,ITEM,Ring,,,,,,,,Allows the bearer to travel underwater.,,,,,,,,,,,No,12001
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,22802,Ring of Spirits,Not Implemented,ITEM,Ring,,,,,,,,,,,,,,,,,,,No,12002
 Items%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,22803,Badge,Not Implemented,ITEM,Ring,,,,,,,,,,,,,,,,,,,No,13000
-Items%201b9894152b7f4649a68169aa3a6bcffe/spice_grinder_native.png,23100,Spice Grinder,For Implementation,ITEM,Other,,,,,,,,Can be used to break down ingredients.,,,,,,,,,,,No,
-Items%201b9894152b7f4649a68169aa3a6bcffe/portable_burner_native.png,23101,Portable Burner,For Implementation,ITEM,Other,,,,,,,,"Can be used to make Potions at a riverside. ",,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/spice_grinder_native.png,23100,Spice Grinder,For Implementation,ITEM,Misc,,,,,,,,Can be used to break down ingredients.,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/portable_burner_native.png,23101,Portable Burner,For Implementation,ITEM,Misc,,,,,,,,"Can be used to make Potions at a riverside. ",,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/astrolabe_disk_native.png,100001,Astrolabe Disk,Ingame,ITEM,Key Item,,,,,,,,"Some sort of golden disk. Purpose: completely unknown. 
 
 You feel like you should hold on to it. ",,,,,,,,,,,No,20001

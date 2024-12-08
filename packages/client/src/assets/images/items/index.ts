@@ -28,6 +28,7 @@ import pine_pollen from './pine_pollen.png';
 import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import pomegranate from './pomegranate.png';
+import portable_burner from './portable_burner.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import resin from './resin.png';
@@ -38,6 +39,7 @@ import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
 import scroll_of_shop_teleportation from './scroll_of_shop_teleportation.png';
 import shredded_mint from './shredded_mint.png';
+import spice_grinder from './spice_grinder.png';
 import stone from './stone.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
 import wooden_stick from './wooden_stick.png';
@@ -76,6 +78,7 @@ export const ItemImages = {
   pine_pollen: pine_pollen,
   plastic_bottle: plastic_bottle,
   pomegranate: pomegranate,
+  portable_burner: portable_burner,
   pom_pom_fruit_candy: pom_pom_fruit_candy,
   red_amber_crystal: red_amber_crystal,
   red_gakki_ribbon: red_gakki_ribbon,
@@ -86,8 +89,9 @@ export const ItemImages = {
   scrap_metal: scrap_metal,
   screwdriver: screwdriver,
   scroll_of_shop_teleportation: scroll_of_shop_teleportation,
-  stone: stone,
+  spice_grinder: spice_grinder,
   shredded_mint: shredded_mint,
+  stone: stone,
   sunset_apple_mochi: sunset_apple_mochi,
   wooden_stick: wooden_stick,
   xp_candy_huge: xp_candy_huge,
