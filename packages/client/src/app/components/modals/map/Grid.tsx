@@ -55,6 +55,10 @@ export const Grid = (props: Props) => {
   // set the grid whenever the room zone changes
   useEffect(() => {
     const dimensions = Zones[zone];
+    if (!dimensions) {
+      setGrid([]);
+      return;
+    }
 
     // create each row
     const grid = new Array<Room[]>();
