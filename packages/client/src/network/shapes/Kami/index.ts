@@ -10,7 +10,10 @@ export {
   getByAccount as getKamisByAccount,
 } from './getters';
 export { getHarvest as getKamiHarvest, queryHarvest as queryKamiHarvest } from './harvest';
-export { getProgress as getKamiProgress } from './progress';
+export {
+  calcExperienceRequirement as calcKamiExpRequirement,
+  getProgress as getKamiProgress,
+} from './progress';
 export {
   queryByName as queryKamiByName,
   query as queryKamis,

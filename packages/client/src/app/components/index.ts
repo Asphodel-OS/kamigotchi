@@ -11,6 +11,7 @@ import { registerGachaModal } from './modals/gacha';
 import { registerGoalModal } from './modals/goals';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
+import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
@@ -62,7 +63,7 @@ export function registerModals() {
   registerEMABoardModal();
   registerFundOperatorModal();
   registerGachaModal();
-  // registerKamiModal();
+  registerKamiModal();
   registerLeaderboardModal();
   registerRevealModal();
   registerMerchantModal();

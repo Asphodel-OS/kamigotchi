@@ -5,7 +5,6 @@ import { getConfigFieldValue, getConfigFieldValueArray } from '../Config';
 export interface Progress {
   level: number;
   experience: number;
-  total: number;
 }
 
 export const getProgress = (
@@ -18,7 +17,6 @@ export const getProgress = (
   return {
     level,
     experience: (getComponentValue(Experience, entity)?.value ?? 0) * 1,
-    total: calcExperienceRequirement(world, components, level),
   };
 };
 

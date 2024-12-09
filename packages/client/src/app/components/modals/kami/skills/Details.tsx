@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { parseBonusText, parseRequirementText } from 'app/cache/skill/functions';
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Skill, parseBonusText, parseRequirementText } from 'network/shapes/Skill';
+import { Skill } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {
