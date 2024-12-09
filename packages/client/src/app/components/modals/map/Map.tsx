@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { Account, getAccount } from 'app/cache/account';
+import { getKami } from 'app/cache/kami';
 import { getRoom, getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -14,7 +15,7 @@ import {
   queryRoomAccounts,
 } from 'network/shapes/Account';
 import { Condition, passesConditions } from 'network/shapes/Conditional';
-import { getBaseKami, getKamiLocation } from 'network/shapes/Kami';
+import { getKamiLocation } from 'network/shapes/Kami';
 import { queryNodeByIndex, queryNodeKamis } from 'network/shapes/Node';
 import { queryRoomByIndex, queryRooms, Room } from 'network/shapes/Room';
 import { getRoomIndex } from 'network/shapes/utils/component';
@@ -37,22 +38,22 @@ export function registerMapModal() {
           const { network } = layers;
           const { world, components } = network;
           const accountEntity = queryAccountFromEmbedded(network);
+          const accountOptions = { live: 2 }; // what other options do we need here?
           const roomOptions = { exits: 3600 };
 
           return {
             network,
             data: {
-              accountEntity,
+              account: getAccount(world, components, accountEntity, accountOptions),
               accountKamis: queryAccountKamis(world, components, accountEntity),
             },
             utils: {
-              getAccount: () => getAccount(world, components, accountEntity),
+              getAccount: () => getAccount(world, components, accountEntity, accountOptions),
               getRoom: (entity: EntityIndex) => getRoom(world, components, entity, roomOptions),
               getRoomByIndex: (index: number) => getRoomByIndex(world, components, index),
               getRoomIndex: () => getRoomIndex(components, accountEntity),
-              getBaseKami: (kamiEntity: EntityIndex) => getBaseKami(world, components, kamiEntity),
-              getKamiLocation: (kamiEntity: EntityIndex) =>
-                getKamiLocation(world, components, kamiEntity),
+              getKami: (entity: EntityIndex) => getKami(world, components, entity),
+              getKamiLocation: (entity: EntityIndex) => getKamiLocation(world, components, entity),
               passesConditions: (account: Account, gates: Condition[]) =>
                 passesConditions(world, components, gates, account),
               queryAccountKamis: () => queryAccountKamis(world, components, accountEntity),
@@ -70,11 +71,10 @@ export function registerMapModal() {
     // Render
     ({ network, data, utils }) => {
       const { getRoom, getRoomByIndex, queryAllRooms } = utils;
-      const { actions, api, components, world } = network;
+      const { actions, api } = network;
       const { roomIndex } = useSelected();
       const { modals } = useVisibility();
 
-      const [hoveredRoom, setHoveredRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
 
@@ -123,12 +123,14 @@ export function registerMapModal() {
           scrollBarColor='#cbba3d #e1e1b5'
         >
           <Grid
-            index={roomIndex}
-            zone={zone}
-            rooms={roomMap}
-            accountKamis={data.accountKamis}
+            data={{
+              ...data,
+              roomIndex,
+              zone,
+              rooms: roomMap,
+            }}
             actions={{ move }}
-            utils={{ ...utils, setHoveredRoom }}
+            utils={utils}
           />
         </ModalWrapper>
       );
