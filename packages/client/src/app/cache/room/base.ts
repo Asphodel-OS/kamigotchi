@@ -19,7 +19,8 @@ export const get = (
   options?: Options
 ): Room => {
   if (!RoomCache.has(entity)) process(world, components, entity);
-  const room = RoomCache.get(entity)!;
+  const room = RoomCache.get(entity) ?? NullRoom;
+  if (room.index == 0 || !options) return room;
 
   // populate the exits as requested
   if (options?.exits) {

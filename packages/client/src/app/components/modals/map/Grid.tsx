@@ -45,20 +45,13 @@ export const Grid = (props: Props) => {
 
   // set the grid whenever the room zone changes
   useEffect(() => {
-    const z = rooms.get(index)?.location.z;
-    if (!z) return;
-    if (z === 2) {
-      setGrid([]);
-      return;
-    }
-
+    console.log(rooms);
     // establish the grid size
     let maxX = 0;
     let maxY = 0;
     let minX = 9999;
     let minY = 9999;
     for (const [_, room] of rooms) {
-      if (room.location.z !== z) continue;
       if (room.location.x > maxX) maxX = room.location.x;
       if (room.location.y > maxY) maxY = room.location.y;
       if (room.location.x < minX) minX = room.location.x;
@@ -78,7 +71,6 @@ export const Grid = (props: Props) => {
     const xOffset = minX - 1;
     const yOffset = minY;
     for (const [_, room] of rooms) {
-      if (room.location.z !== z) continue;
       grid[room.location.y - yOffset][room.location.x - xOffset] = room;
     }
 

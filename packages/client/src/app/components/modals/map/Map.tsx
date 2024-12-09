@@ -69,40 +69,32 @@ export function registerMapModal() {
 
     // Render
     ({ network, data, utils }) => {
-      const { queryAllRooms } = utils;
+      const { getRoom, getRoomByIndex, queryAllRooms } = utils;
       const { actions, api, components, world } = network;
       const { roomIndex } = useSelected();
       const { modals } = useVisibility();
 
-      const [lastTick, setLastTick] = useState(Date.now());
       const [hoveredRoom, setHoveredRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
 
-      // ticking
-      useEffect(() => {
-        const updateTick = () => setLastTick(Date.now());
-        const timerId = setInterval(updateTick, 1000);
-        return () => clearInterval(timerId);
-      }, []);
-
       // query the set of rooms whenever the zone changes
       // NOTE: roomIndex is controlled by canvas/Scene.tsx
       useEffect(() => {
-        const newRoom = getRoomByIndex(world, components, roomIndex);
-        if (zone == newRoom.location.z) return;
+        if (!modals.map) return;
+        const newRoom = getRoomByIndex(roomIndex);
+        const newZone = newRoom.location.z;
+        if (zone == newZone) return;
 
         const roomMap = new Map<number, Room>();
         const roomEntities = queryAllRooms();
-        const rooms = roomEntities.map((entity) => getRoom(world, components, entity));
-        for (const room of rooms) {
-          if (room.location.z == zone) {
-            roomMap.set(room.index, room);
-          }
-        }
-        setZone(zone);
+        const rooms = roomEntities.map((entity) => getRoom(entity));
+        const filteredRooms = rooms.filter((room) => room.location.z == newZone);
+        filteredRooms.forEach((r) => roomMap.set(r.index, r));
+
+        setZone(newZone);
         setRoomMap(roomMap);
-      }, [modals.map, roomIndex, lastTick]);
+      }, [modals.map, roomIndex]);
 
       ///////////////////
       // ACTIONS
