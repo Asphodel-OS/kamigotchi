@@ -66,8 +66,8 @@ export const getScoresByType = (world: World, components: Components, type: Enti
   const queryFragments = [HasValue(TypeID, { value: type })] as QueryFragment[];
 
   // retrieve the relevant entities and their shapes
-  const scoreEntityIndices = Array.from(runQuery(queryFragments));
-  const scores = scoreEntityIndices.map((index) => getScore(world, components, index));
+  const scoreEntities = Array.from(runQuery(queryFragments));
+  const scores = scoreEntities.map((index) => getScore(world, components, index));
 
   return scores.sort((a, b) => b.score - a.score);
 };

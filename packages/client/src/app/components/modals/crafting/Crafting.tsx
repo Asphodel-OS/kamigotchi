@@ -36,7 +36,7 @@ export function registerCraftingModal() {
           const accountID = world.entities[accountEntity];
           const account = getAccount(world, components, accountEntity, { live: 2 });
           const stamina = getStamina(world, components, accountEntity).sync;
-          console.log(account);
+
           return {
             network,
             accountEntity,

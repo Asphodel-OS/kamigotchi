@@ -33,10 +33,14 @@ export const UseItemButton = (
     });
   };
 
-  const disabled = !!tooltip;
+  let disabled = !!tooltip;
   if (!disabled) {
     tooltip = `Feed Kami`;
     options = getOptions(world, components, kami, account, triggerAction);
+    if (options.length === 0) {
+      tooltip = `No items to feed`;
+      disabled = true;
+    }
   }
 
   return (
@@ -68,8 +72,8 @@ const getOptions = (
 ) => {
   let inventories = account.inventories ?? [];
   inventories = filterInventories(inventories, undefined, 'KAMI');
-  inventories = inventories.filter((inv) =>
-    passesConditions(world, components, inv.item.requirements.use, kami)
+  inventories = inventories.filter(
+    (inv) => !!inv.item && passesConditions(world, components, inv.item.requirements.use, kami)
   );
 
   const options = inventories.map((inv: Inventory) => {
@@ -80,6 +84,7 @@ const getOptions = (
 };
 
 // get a single IconListButton Option for feeding a Kami
+// assume the item is a valid feeding option
 const getOption = (
   world: World,
   components: Components,
@@ -87,8 +92,6 @@ const getOption = (
   inv: Inventory,
   triggerAction: Function
 ) => {
-  if (!inv || !inv.item) return { text: '', onClick: () => {} };
-
   // its not querying use correctly!
   const effectsText = parseAllos(world, components, inv.item.effects.use)
     .map((entry) => `${entry.description}`)
