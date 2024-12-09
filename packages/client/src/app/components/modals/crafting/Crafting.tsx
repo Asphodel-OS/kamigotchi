@@ -34,8 +34,9 @@ export function registerCraftingModal() {
 
           const accountEntity = queryAccountFromEmbedded(network);
           const accountID = world.entities[accountEntity];
+          const account = getAccount(world, components, accountEntity, { live: 2 });
           const stamina = getStamina(world, components, accountEntity).sync;
-
+          console.log(account);
           return {
             network,
             accountEntity,
@@ -44,12 +45,7 @@ export function registerCraftingModal() {
             },
             utils: {
               meetsRequirements: (recipe: Recipe) =>
-                passesConditions(
-                  world,
-                  components,
-                  recipe.requirements,
-                  getAccount(world, components, accountEntity, { live: 2 })
-                ),
+                passesConditions(world, components, recipe.requirements, account),
               displayRequirements: (recipe: Recipe) =>
                 recipe.requirements
                   .map((req) => parseConditionalText(world, components, req))

@@ -29,8 +29,8 @@ export const get = (
   options?: Options
 ) => {
   if (!AccountCache.has(entity)) process(world, components, entity);
-  const acc = AccountCache.get(entity)!;
-  if (!acc || acc.index == 0 || !options) return acc;
+  const acc = AccountCache.get(entity) ?? NullAccount;
+  if (acc.index == 0 || !options) return acc;
 
   const now = Date.now();
 

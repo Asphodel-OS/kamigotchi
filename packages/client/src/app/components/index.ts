@@ -12,7 +12,6 @@ import { registerGoalModal } from './modals/goals';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
 import { registerLeaderboardModal } from './modals/leaderboard';
-import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
@@ -47,6 +46,7 @@ export function registerModals() {
   // menu modals
   registerAccountModal();
   registerChatModal();
+  registerCraftingModal();
   registerHelpModal();
   registerInventoryModal();
   registerMapModal();
@@ -57,7 +57,6 @@ export function registerModals() {
 
   // scene modals
   registerDialogueModal();
-  registerCraftingModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
   registerFundOperatorModal();
