@@ -29,7 +29,7 @@ export function registerPartyModal() {
           const accountEntity = queryAccountFromEmbedded(network);
           const accRefreshOptions = {
             live: 0,
-            inventories: 2,
+            inventory: 2,
           };
           const kamiRefreshOptions = {
             live: 0,

@@ -3,6 +3,7 @@ import { EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Account, getAccount, NullAccount } from 'network/shapes/Account';
 import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account/queries';
+import { getMusuBalance } from 'network/shapes/Item';
 import { getLastActionTime, getLastTime, getRoomIndex } from 'network/shapes/utils/component';
 import { getFriends, getInventories, getStats } from './getters';
 
@@ -16,7 +17,7 @@ export const StatsUpdateTs = new Map<EntityIndex, number>();
 
 interface Options {
   live?: number;
-  inventories?: number;
+  inventory?: number;
   friends?: number;
   stats?: number;
 }
@@ -61,11 +62,12 @@ export const get = (
   }
 
   // populate the inventories as requested
-  if (options.inventories !== undefined) {
+  if (options.inventory !== undefined) {
     const updateTs = InventoriesUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
-    if (updateDelta > options.inventories) {
+    if (updateDelta > options.inventory) {
       acc.inventories = getInventories(world, components, entity);
+      acc.coin = getMusuBalance(world, components, entity);
       InventoriesUpdateTs.set(entity, now);
     }
   }

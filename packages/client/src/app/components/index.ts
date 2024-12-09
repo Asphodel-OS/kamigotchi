@@ -12,6 +12,7 @@ import { registerGoalModal } from './modals/goals';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
 import { registerLeaderboardModal } from './modals/leaderboard';
+import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
