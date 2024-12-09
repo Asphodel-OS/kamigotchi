@@ -13,6 +13,7 @@ export interface Exit {
   blocked?: boolean;
 }
 
+// get the exit between two rooms along with its gates
 const getExit = (
   world: World,
   components: Components,
@@ -26,6 +27,7 @@ const getExit = (
   };
 };
 
+// get the exits for a room
 export const getExitsFor = (world: World, components: Components, room: Room): Exit[] => {
   const { Exits } = components;
   const specialExits = (getComponentValue(Exits, room.entity)?.value as number[]) || [];

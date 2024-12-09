@@ -33,9 +33,6 @@ export const getAccessibleKamis = (account: Account, kamis: Kami[]): Kami[] => {
 };
 
 /////////////////
-// REQUIREMENTS
-
-/////////////////
 // STAMINA
 
 // does not include bonuses

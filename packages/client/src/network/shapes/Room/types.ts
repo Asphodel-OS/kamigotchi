@@ -22,7 +22,7 @@ export interface Room {
   // owner?: Account; // not implemented
 }
 
-export const emptyRoom: Room = {
+export const NullRoom: Room = {
   index: 0,
   entity: 0 as EntityIndex,
   id: '' as EntityID,

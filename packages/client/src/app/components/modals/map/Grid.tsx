@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
 import { BaseKami } from 'network/shapes/Kami/types';
-import { emptyRoom, Room } from 'network/shapes/Room';
+import { NullRoom, Room } from 'network/shapes/Room';
 import { playClick } from 'utils/sounds';
 import { FloatingMapKami } from './FloatingMapKami';
 
@@ -22,7 +22,7 @@ interface Props {
   utils: {
     queryNodeByIndex: (index: number) => EntityIndex;
     queryNodeKamis: (nodeEntity: EntityIndex) => EntityIndex[];
-    queryAccountsByRoom: (roomIndex: number) => EntityIndex[];
+    queryRoomAccounts: (roomIndex: number) => EntityIndex[];
     setHoveredRoom: (roomIndex: number) => void;
     getKamiLocation: (kamiIndex: EntityIndex) => number | undefined;
     getBaseKami: (kamiIndex: EntityIndex) => BaseKami;
@@ -34,7 +34,7 @@ export const Grid = (props: Props) => {
   const {
     queryNodeByIndex,
     queryNodeKamis,
-    queryAccountsByRoom,
+    queryRoomAccounts,
     setHoveredRoom,
     getKamiLocation,
     getBaseKami,
@@ -71,7 +71,7 @@ export const Grid = (props: Props) => {
     const grid = new Array<Room[]>();
     for (let i = 0; i < height; i++) {
       grid[i] = new Array<Room>(width);
-      grid[i].fill(emptyRoom);
+      grid[i].fill(NullRoom);
     }
 
     // push the rooms into their respective locations
@@ -123,7 +123,7 @@ export const Grid = (props: Props) => {
   const updateRoomStats = (roomIndex: number) => {
     if (roomIndex != 0) {
       setHoveredRoom(roomIndex);
-      setPlayers(queryAccountsByRoom(roomIndex));
+      setPlayers(queryRoomAccounts(roomIndex));
       const nodeEntity = queryNodeByIndex(roomIndex);
       setKamis(queryNodeKamis(nodeEntity));
     }

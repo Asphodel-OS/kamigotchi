@@ -20,8 +20,8 @@ export {
   queryByOperator as queryAccountByOperator,
   queryByOwner as queryAccountByOwner,
   queryFromEmbedded as queryAccountFromEmbedded,
-  queryAllByRoom as queryAccountsByRoom,
   queryAll as queryAllAccounts,
+  queryAllByRoom as queryRoomAccounts,
 } from './queries';
 export { getStats as getAccountStats } from './stats';
 export { NullAccount, getAccount, getBaseAccount } from './types';

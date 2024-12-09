@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Account, getAccount } from 'network/shapes/Account';
+import { Account, getAccount, NullAccount } from 'network/shapes/Account';
 import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account/queries';
 import { getLastActionTime, getLastTime, getRoomIndex } from 'network/shapes/utils/component';
 import { getFriends, getInventories, getStats } from './getters';
@@ -30,7 +30,7 @@ export const get = (
 ) => {
   if (!AccountCache.has(entity)) process(world, components, entity);
   const acc = AccountCache.get(entity)!;
-  if (!options) return acc;
+  if (!acc || acc.index == 0 || !options) return acc;
 
   const now = Date.now();
 
@@ -91,5 +91,5 @@ export const process = (world: World, components: Components, entity: EntityInde
     OperatorCache.set(acc.operatorAddress, entity);
     OwnerCache.set(acc.ownerAddress, entity);
   }
-  return acc;
+  return acc || NullAccount;
 };
