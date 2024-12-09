@@ -37,7 +37,6 @@ export const Tooltip = (props: Props) => {
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
-    // pointer coordinates
     const { clientX: cursorX, clientY: cursorY } = event;
 
     const width = tooltipRef.current?.offsetWidth || 0;
@@ -114,14 +113,22 @@ const MyToolTip = styled.div<{ flexGrow: string; direction?: string; ref?: any }
   cursor: help;
 `;
 
-const PopOverText = styled.div<{
+interface PopOverProps {
   align?: string;
   isVisible: boolean;
   color?: string;
   tooltipPosition?: any;
-}>`
-  background-color: ${({ color }) => color ?? '#fff'};
-  opacity: ${({ isVisible }) => (isVisible ? 100 : 0)};
+}
+
+const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
+  style: {
+    backgroundColor: props.color ?? '#fff',
+    opacity: props.isVisible ? 1 : 0,
+    textAlign: props.align ?? 'left',
+    top: props.tooltipPosition.y,
+    left: props.tooltipPosition.x,
+  },
+}))<PopOverProps>`
   position: fixed;
 
   border: solid black 0.15vw;
@@ -135,11 +142,10 @@ const PopOverText = styled.div<{
   color: black;
   font-size: 0.7vw;
   line-height: 1.25vw;
-  text-align: ${({ align }) => align ?? 'left'};
+
   white-space: pre-line;
 
   pointer-events: none;
-  top: ${({ tooltipPosition }) => tooltipPosition.y};
-  left: ${({ tooltipPosition }) => tooltipPosition.x};
+
   z-index: 100;
 `;
