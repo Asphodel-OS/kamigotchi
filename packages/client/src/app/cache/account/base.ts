@@ -36,20 +36,22 @@ export const get = (
 
   // TODO: add stamina here
   // populate the live changing fields as requested
-  if (options.live != undefined) {
+  if (options.live !== undefined) {
     const updateTs = LiveUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.live) {
-      acc.time.last = now;
-      acc.time.action = getLastActionTime(components, entity);
-      acc.time.last = getLastTime(components, entity);
       acc.roomIndex = getRoomIndex(components, entity);
+      acc.time = {
+        creation: acc?.time?.creation ?? 0,
+        action: getLastActionTime(components, entity),
+        last: getLastTime(components, entity),
+      };
       LiveUpdateTs.set(entity, now);
     }
   }
 
   // populate the friends as requested
-  if (options.friends != undefined) {
+  if (options.friends !== undefined) {
     const updateTs = FriendsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.friends) {
@@ -59,7 +61,7 @@ export const get = (
   }
 
   // populate the inventories as requested
-  if (options.inventories != undefined) {
+  if (options.inventories !== undefined) {
     const updateTs = InventoriesUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.inventories) {
@@ -68,7 +70,7 @@ export const get = (
     }
   }
 
-  if (options.stats != undefined) {
+  if (options.stats !== undefined) {
     const updateTs = StatsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.stats) {

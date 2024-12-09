@@ -148,7 +148,7 @@ export function registerEMABoardModal() {
 
       return (
         <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
-          <List>{KamiList(account.kamis)}</List>
+          <List>{KamiList(account.kamis ?? [])}</List>
         </ModalWrapper>
       );
     }

@@ -11,6 +11,7 @@ import {
   getLastTime,
   getOperatorAddress,
   getOwnerAddress,
+  getRoomIndex,
   getStartTime,
 } from '../utils/component';
 import { Friends, getFriends } from './friends';
@@ -110,7 +111,7 @@ export const getAccount = (
   entity: EntityIndex,
   options?: Options
 ): Account => {
-  const { FarcasterIndex, LastTime, RoomIndex, StartTime } = components;
+  const { FarcasterIndex, RoomIndex } = components;
 
   const bareAcc = getBaseAccount(world, components, entity);
   const id = bareAcc.id;
@@ -119,7 +120,7 @@ export const getAccount = (
     ...bareAcc,
     fid: getComponentValue(FarcasterIndex, entity)?.value as number,
     coin: getMusuBalance(world, components, entity),
-    roomIndex: getComponentValue(RoomIndex, entity)?.value as number,
+    roomIndex: getRoomIndex(components, entity),
     reputation: {
       agency: getReputation(world, components, id, 1), // get agency rep
     },

@@ -1,5 +1,10 @@
+export { getExitsFor as getExitsForRoom } from './exit';
 export { getAllRooms, getRoomByIndex } from './functions';
-export { queryGates, queryRoomsEntitiesX, queryRoomsX } from './queries';
-export type { QueryOptions } from './queries';
+export { getGates } from './gate';
+export { getRoomsX } from './getters';
 export { emptyRoom, getRoom } from './types';
-export type { Coord, Room, RoomOptions } from './types';
+
+export type { Exit } from './exit';
+export type { QueryOptions } from './queries';
+export type { Room, RoomOptions } from './types';
+export type { Coord } from './utils';
