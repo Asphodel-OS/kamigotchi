@@ -47,8 +47,7 @@ export function registerInventoryModal() {
             utils: {
               getAccount: () => getAccount(world, components, accountEntity),
               getInventories: () => getAccountInventories(world, components, accountEntity),
-              getKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, true),
+              getKamis: () => getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
               meetsRequirements: (holder: Kami | Account, item: Item) =>
                 passesConditions(world, components, item.requirements.use, holder),
               getMusuBalance: () => getMusuBalance(world, components, accountEntity),

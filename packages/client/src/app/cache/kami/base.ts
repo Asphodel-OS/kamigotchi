@@ -56,8 +56,7 @@ export const get = (
   world: World,
   components: Components,
   entity: EntityIndex,
-  options?: RefreshOptions,
-  debug?: boolean
+  options?: RefreshOptions
 ) => {
   if (!KamiCache.has(entity)) process(world, components, entity);
   const kami = KamiCache.get(entity)!;
@@ -125,11 +124,7 @@ export const get = (
       // the nested Node object this way
       if (kami.harvest && kami.harvest.state === 'ACTIVE') {
         kami.harvest.node = getHarvestNode(world, components, kami.harvest.entity);
-        if (debug) {
-          console.log(`retrieved harvest for ${kami.name} (kami ${kami.index})`, kami.harvest);
-        }
         updateHarvestRate(kami);
-        if (debug) console.log('updated harvest rate');
       }
       HarvestUpdateTs.set(entity, now);
     }

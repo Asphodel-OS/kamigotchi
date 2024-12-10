@@ -53,8 +53,7 @@ export function registerPartyModal() {
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
-              getKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, true),
+              getKamis: () => getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
             },
           };
         })
