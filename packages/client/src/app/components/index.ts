@@ -35,9 +35,9 @@ import {
 
 export { registerLoadingState } from './boot';
 export { registerScene } from './canvas';
+export { registerActionQueue };
 
 export function registerFixtures() {
-  registerActionQueue();
   registerClock();
   registerMenuLeft();
   registerMenuRight();

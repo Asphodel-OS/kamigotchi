@@ -4,7 +4,7 @@ import { concat, map } from 'rxjs';
 
 import { registerUIComponent } from 'app/root';
 import { GodID, SyncState } from 'engine/constants';
-import { registerModals } from '..';
+import { registerFixtures, registerModals, registerScene, registerValidators } from '..';
 import { BootScreen } from './BootScreen';
 
 export function registerLoadingState() {
@@ -46,8 +46,13 @@ export function registerLoadingState() {
 
       useEffect(() => {
         if (state === SyncState.LIVE) {
-          setTimeout(() => setIsVisible(false), 500);
+          // TODO: this is really hacky. move this logic elsewhere on SyncState sub
+          registerValidators();
+          registerFixtures();
+          registerScene();
           registerModals();
+          console.log('State Live, Registering Modals');
+          setTimeout(() => setIsVisible(false), 3333);
         }
       }, [state]);
 
