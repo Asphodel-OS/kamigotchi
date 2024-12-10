@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
 import axios from 'axios';
 import { useState } from 'react';
@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
 import { copy } from 'app/utils';
-import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './shared';
@@ -16,6 +15,7 @@ const TOTAL_FAUCETS = 2;
 
 interface Props {
   address: {
+    isTaken: boolean; // whether owner address is taken
     selected: string;
     burner: string;
   };
@@ -24,6 +24,7 @@ interface Props {
   };
   utils: {
     setStep: (step: number) => void;
+    queryAccountByName: (name: string) => EntityIndex | undefined;
     toggleFixtures: (toggle: boolean) => void;
     waitForActionCompletion: (action: EntityID) => Promise<void>;
   };
@@ -36,29 +37,26 @@ export const Registration = (props: Props) => {
   const [faucetSymbol, setFaucetSymbol] = useState<string>('🚰');
   const [faucetIndex, setFaucetIndex] = useState<number>(Math.floor(TOTAL_FAUCETS * Math.random()));
 
-  const isNameTaken = (username: string) => {
-    return NameCache.has(username);
-  };
-
-  const isOperaterTaken = (address: string) => {
-    return OperatorCache.has(address);
+  const isNameTaken = () => {
+    const account = utils.queryAccountByName(name);
+    return !!account;
   };
 
   /////////////////
   // INTERACTION
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && !isNameTaken(name)) {
-      handleAccountCreation();
+    if (event.key === 'Enter' && !isNameTaken()) {
+      handleAccountCreation(name);
     }
   };
 
-  const handleAccountCreation = async () => {
+  const handleAccountCreation = async (username: string) => {
     playSignup();
     utils.toggleFixtures(true);
 
     try {
-      const actionID = actions.createAccount(name);
+      const actionID = actions.createAccount(username);
       if (!actionID) throw new Error('Account creation failed');
       await utils.waitForActionCompletion(actionID);
     } catch (e) {
@@ -106,9 +104,9 @@ export const Registration = (props: Props) => {
       'Your account Operator (embedded wallet) is managed by Privy.',
       '',
       `It behaves like a session key. And is used to approve\
-        in-game actions without the need for explicit signatures.\
-        It cannot be used to authorize account level changes\
-        or migrate assets in and out of your account.`,
+          in-game actions without the need for explicit signatures.\
+          It cannot be used to authorize account level changes\
+          or migrate assets in and out of your account.`,
     ];
 
     return (
@@ -138,9 +136,9 @@ export const Registration = (props: Props) => {
   };
 
   const getSubmitTooltip = () => {
-    if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
-    else if (isNameTaken(name)) return 'That name is already taken.';
+    if (address.isTaken) return 'That Operator address is already taken.';
     else if (name === '') return `Name cannot be empty.`;
+    else if (isNameTaken()) return 'That name is already taken.';
     else if (/\s/.test(name)) return `Name cannot contain whitespace.`;
     return 'Register';
   };
@@ -161,8 +159,8 @@ export const Registration = (props: Props) => {
         <Tooltip text={[getSubmitTooltip()]}>
           <ActionButton
             text='→'
-            disabled={getSubmitTooltip() !== 'Register'}
-            onClick={() => handleAccountCreation()}
+            disabled={address.isTaken || name === '' || isNameTaken() || /\s/.test(name)}
+            onClick={() => handleAccountCreation(name)}
           />
         </Tooltip>
       </Row>

@@ -1,23 +1,25 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Harvest } from '../Harvest';
+import { KamiBonuses, getKamiBonuses } from '../Bonus';
+import {
+  KamiConfig,
+  getConfigFieldValue,
+  getConfigFieldValueArray,
+  getKamiConfig,
+} from '../Config';
+import { hasFlag } from '../Flag';
+import { Harvest, getHarvestForKami } from '../Harvest';
+import { Skill, getHolderSkills } from '../Skill';
+import { Stats, getStats } from '../Stats';
+import { Traits, getKamiTraits } from '../Trait';
 import { DetailedEntity, getEntityByHash } from '../utils';
-import { getRerolls } from '../utils/component';
-import { Bonuses, getBonuses } from './bonuses';
-import { Configs, getConfigs } from './configs';
-import { Flags, getFlags } from './flags';
-import { getHarvest } from './harvest';
-import { Progress, getProgress } from './progress';
-import { Skills, getSkills } from './skills';
-import { Stats, getStats } from './stats';
-import { Times, getTimes } from './times';
-import { Traits, getTraits } from './traits';
+import { calcHealthRate } from './functions';
 
 export interface BaseKami extends DetailedEntity {
   id: EntityID;
   index: number;
-  entity: EntityIndex;
+  entityIndex: EntityIndex;
 }
 
 // minimal gacha kami. reduced querying for performance
@@ -28,60 +30,75 @@ export interface GachaKami extends BaseKami {
 
 // standardized shape of a Kami Entity
 export interface Kami extends BaseKami {
-  state: string; // what do? // belongs with LastTime, LastActionTime and last health sync
-  bonuses?: Bonuses;
-  config?: Configs;
-  flags?: Flags;
+  level: number;
+  state: string;
+
+  // less necessary
+  experience: {
+    current: number;
+    threshold: number;
+  };
+  stats: Stats;
+  bonuses: KamiBonuses;
+  config: KamiConfig;
+  time: {
+    cooldown: {
+      last: number;
+      requirement: number;
+    };
+    last: number;
+    start: number;
+  };
+
+  // much less necessary
+  skillPoints: number;
+  flags?: {
+    namable: boolean;
+    skillReset: boolean;
+  };
   harvest?: Harvest;
-  progress?: Progress;
-  rerolls?: number;
-  skills?: Skills;
-  stats?: Stats;
-  time?: Times;
+  skills?: Skill[];
   traits?: Traits;
+  rerolls?: number;
 }
 
 // optional data to populate for a Kami Entity
 export interface Options {
-  bonus?: boolean;
-  config?: boolean;
   flags?: boolean;
   harvest?: boolean;
-  progress?: boolean;
-  rerolls?: boolean;
   skills?: boolean;
-  stats?: boolean;
-  time?: boolean;
   traits?: boolean;
+  rerolls?: boolean;
 }
 
 // gets a Kami from EntityIndex with just the bare minimum of data
 export const getBaseKami = (
   world: World,
   components: Components,
-  entity: EntityIndex
+  entityIndex: EntityIndex
 ): BaseKami => {
   const { KamiIndex, Name, MediaURI } = components;
   return {
     ObjectType: 'KAMI',
-    entity,
-    id: world.entities[entity],
-    index: getComponentValue(KamiIndex, entity)?.value as number,
-    name: getComponentValue(Name, entity)?.value as string,
-    image: getComponentValue(MediaURI, entity)?.value as string,
+    entityIndex,
+    id: world.entities[entityIndex],
+    index: getComponentValue(KamiIndex, entityIndex)?.value as number,
+    name: getComponentValue(Name, entityIndex)?.value as string,
+    image: getComponentValue(MediaURI, entityIndex)?.value as string,
   };
 };
 
 export const getGachaKami = (
   world: World,
   components: Components,
-  entity: EntityIndex
+  entityIndex: EntityIndex
 ): GachaKami => {
   const { Level } = components;
+
   return {
-    ...getBaseKami(world, components, entity),
-    level: (getComponentValue(Level, entity)?.value ?? 0) * 1,
-    stats: getStats(world, components, entity), // skips bonus calcs
+    ...getBaseKami(world, components, entityIndex),
+    level: (getComponentValue(Level, entityIndex)?.value ?? 0) * 1,
+    stats: getStats(world, components, entityIndex), // skips bonus calcs
   };
 };
 
@@ -89,25 +106,88 @@ export const getGachaKami = (
 export const getKami = (
   world: World,
   components: Components,
-  entity: EntityIndex,
+  entityIndex: EntityIndex,
   options?: Options
 ): Kami => {
-  const { State } = components;
+  const { Experience, LastTime, LastActionTime, Level, Reroll, SkillPoint, StartTime, State } =
+    components;
+
+  const id = world.entities[entityIndex];
+
+  // populate the base Kami data
   const kami: Kami = {
-    ...getBaseKami(world, components, entity),
-    state: getComponentValue(State, entity)?.value as string,
+    ...getBaseKami(world, components, entityIndex),
+    level: (getComponentValue(Level, entityIndex)?.value ?? 0) * 1,
+    experience: {
+      current: (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) * 1,
+      threshold: 0,
+    },
+    state: getComponentValue(State, entityIndex)?.value as string,
+    time: {
+      cooldown: {
+        last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
+        requirement: getConfigFieldValue(world, components, 'KAMI_STANDARD_COOLDOWN'),
+      },
+      last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
+      start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
+    },
+    skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
+    stats: getStats(world, components, entityIndex, id),
+    bonuses: getKamiBonuses(world, components, entityIndex),
+    config: getKamiConfig(world, components),
   };
 
-  if (options?.bonus) kami.bonuses = getBonuses(world, components, entity);
-  if (options?.config) kami.config = getConfigs(world, components);
-  if (options?.flags) kami.flags = getFlags(world, components, entity);
-  if (options?.harvest) kami.harvest = getHarvest(world, components, entity);
-  if (options?.progress) kami.progress = getProgress(world, components, entity);
-  if (options?.rerolls) kami.rerolls = getRerolls(components, entity);
-  if (options?.skills) kami.skills = getSkills(world, components, entity);
-  if (options?.stats) kami.stats = getStats(world, components, entity);
-  if (options?.time) kami.time = getTimes(components, entity);
-  if (options?.traits) kami.traits = getTraits(world, components, entity);
+  /////////////////
+  // OPTIONAL DATA
+
+  if (options?.flags) {
+    kami.flags = {
+      namable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
+      skillReset: hasFlag(world, components, id, 'CAN_RESET_SKILLS'),
+    };
+  }
+
+  // populate Skills
+  if (options?.skills) {
+    kami.skills = getHolderSkills(world, components, kami.id);
+  }
+
+  // populate Traits
+  if (options?.traits) kami.traits = getKamiTraits(world, components, entityIndex);
+
+  // populate Harvest
+  // NOTE: harvests should come after traits for harvest calcs to work correctly
+  if (options?.harvest) {
+    kami.harvest = getHarvestForKami(world, components, kami, { node: true });
+  }
+
+  if (options?.rerolls) {
+    kami.rerolls = (getComponentValue(Reroll, entityIndex)?.value ?? (0 as number)) * 1;
+  }
+
+  /////////////////
+  // ADJUSTMENTS
+
+  kami.time.cooldown.requirement += kami.bonuses.general.cooldown;
+
+  // only works if harvest is set
+  kami.stats.health.rate = calcHealthRate(kami); // TODO: stop relying on this field
+
+  // TODO: move these over to functions.ts now that we've standardized calcs
+  // experience threshold calculation according to level
+  if (kami.level) {
+    const experienceBase = getConfigFieldValue(world, components, 'KAMI_LVL_REQ_BASE');
+    const expereinceExponentArr = getConfigFieldValueArray(
+      world,
+      components,
+      'KAMI_LVL_REQ_MULT_BASE'
+    );
+    const experienceExponent = expereinceExponentArr[0];
+    const exponentPrecision = 10 ** expereinceExponentArr[1];
+    kami.experience.threshold = Math.floor(
+      experienceBase * ((1.0 * experienceExponent) / exponentPrecision) ** (kami.level - 1)
+    );
+  }
 
   return kami;
 };

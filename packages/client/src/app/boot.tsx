@@ -2,7 +2,12 @@ import ReactDOM from 'react-dom/client';
 
 import 'app/styles/font.css';
 import { Layers } from 'network/';
-import { registerActionQueue, registerLoadingState } from './components';
+import {
+  registerFixtures,
+  registerLoadingState,
+  registerScene,
+  registerValidators,
+} from './components';
 import { Root } from './root/Root';
 
 export const mountReact: { current: (mount: boolean) => void } = {
@@ -21,6 +26,7 @@ export function boot() {
   const root = ReactDOM.createRoot(rootElement);
   root.render(<Root setLayers={setLayers} mountReact={mountReact} />);
   registerLoadingState();
-  // TODO: register this with other fixtures once subscriptions are fixed
-  registerActionQueue();
+  registerScene();
+  registerFixtures();
+  registerValidators();
 }

@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { formatEntityID } from 'engine/utils';
 import { BigNumber } from 'ethers';
 import { Components } from 'network/';
+import { hashArgs } from '../utils';
 
 export interface Bonus {
   id: EntityID;
@@ -39,10 +40,14 @@ export const getBonusValueSingle = (
   precision: number = 0
 ): number => {
   const { Level, Value } = components;
+
   const regEntity = getRegistryEntity(world, components, entity);
-  const base = (getComponentValue(Value, regEntity)?.value as number) ?? 0;
-  const level = (getComponentValue(Level, entity)?.value || 1) * 1;
-  return calcValue(base, level, precision);
+
+  return calcValue(
+    getComponentValue(Value, regEntity)?.value as number, // base
+    (getComponentValue(Level, entity)?.value || 1) * 1, // mult
+    precision
+  );
 };
 
 const calcValue = (base: number, mult: number, precision: number = 0): number => {
@@ -72,4 +77,8 @@ const getRegistryEntity = (
     regEntity = rawRegID;
   }
   return regEntity;
+};
+
+export const getTypeID = (field: string, holderID: EntityID): string => {
+  return hashArgs(['bonus.type', field, holderID], ['string', 'string', 'uint256']);
 };

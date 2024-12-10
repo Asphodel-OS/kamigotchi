@@ -51,7 +51,6 @@ export const getScavBarFromHash = (
   scavField: string,
   scavIndex: number
 ): ScavBar | undefined => {
-  if (!scavIndex) return;
   const id = getRegIndex(world, scavField, scavIndex);
   return id ? getScavBar(world, components, id, scavField, scavIndex) : undefined;
 };
@@ -64,7 +63,6 @@ export const getScavPoints = (
   holderID: EntityID
 ): number => {
   const { Value } = components;
-  if (!scavIndex) return 0;
   const id = getInstanceID(world, scavField, scavIndex, holderID);
   return id ? (getComponentValue(Value, id)?.value as number) * 1 : 0;
 };

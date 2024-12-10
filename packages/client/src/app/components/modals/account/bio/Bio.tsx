@@ -55,8 +55,8 @@ export const Bio = (props: Props) => {
   // RENDERING
 
   const AddressDisplay = () => {
-    if (!account.ownerAddress) return null;
-    const address = account.ownerAddress;
+    if (!account.ownerEOA) return null;
+    const address = account.ownerEOA;
     const addrPrefix = address.slice(0, 6);
     const addrSuffix = address.slice(-4);
     return (

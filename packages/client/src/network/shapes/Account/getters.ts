@@ -1,9 +1,8 @@
 import { EntityID, World } from '@mud-classic/recs';
 
 import { Components, NetworkLayer } from 'network/';
-import { NullAccount } from './constants';
 import { queryAll, queryByIndex, queryByName, queryByOperator, queryByOwner } from './queries';
-import { Options, getAccount, getBaseAccount } from './types';
+import { NullAccount, Options, getAccount, getBaseAccount } from './types';
 
 // get all accounts
 export const getAll = (world: World, components: Components, options?: Options) => {
@@ -48,10 +47,10 @@ export const getByIndex = (
 export const getByOperator = (
   world: World,
   components: Components,
-  operatorAddress: string,
+  operatorEOA: string,
   options?: Options
 ) => {
-  const entity = queryByOperator(components, operatorAddress);
+  const entity = queryByOperator(components, operatorEOA);
   if (!entity) return NullAccount;
   return getAccount(world, components, entity, options);
 };
@@ -60,10 +59,10 @@ export const getByOperator = (
 export const getByOwner = (
   world: World,
   components: Components,
-  ownerAddress: string,
+  ownerEOA: string,
   options?: Options
 ) => {
-  const entity = queryByOwner(components, ownerAddress);
+  const entity = queryByOwner(components, ownerEOA);
   if (!entity) return NullAccount;
   return getAccount(world, components, entity, options);
 };

@@ -1,8 +1,7 @@
 export { getBonusValue, getBonusesByParent } from './getters';
-export {
-  queryForParent as queryBonusForParent,
-  queryForType as queryBonusForType,
-} from './queries';
+export { getBonuses as getKamiBonuses } from './kami';
+export type { Bonuses as KamiBonuses } from './kami';
+export { queryBonusForParent, queryBonusForType } from './queries';
 export { getBonus } from './types';
 
 export type { Bonus } from './types';

@@ -73,7 +73,7 @@ export const Tooltip = (props: Props) => {
 
     if (isActive) {
       timeoutId = setTimeout(() => {
-        if (text.length > 0) setIsVisible(true);
+        setIsVisible(true);
       }, delay ?? 350);
     }
     return () => clearTimeout(timeoutId);
@@ -83,7 +83,6 @@ export const Tooltip = (props: Props) => {
     <MyToolTip
       flexGrow={flexGrow}
       direction={direction}
-      disabled={text.length === 0}
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={(e) => {
         setIsActive(false), setIsVisible(false);
@@ -108,16 +107,11 @@ export const Tooltip = (props: Props) => {
   );
 };
 
-const MyToolTip = styled.div<{
-  flexGrow: string;
-  disabled?: boolean;
-  direction?: string;
-  ref?: any;
-}>`
+const MyToolTip = styled.div<{ flexGrow: string; direction?: string; ref?: any }>`
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
   display: flex;
-  cursor: ${({ disabled }) => (disabled ? 'cursor' : 'help')};
+  cursor: help;
 `;
 
 const PopOverText = styled.div<{

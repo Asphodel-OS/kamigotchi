@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
 import { Tooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/base/measures/Battery';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { calcPercent } from 'utils/math';
+import { calcStaminaPercent, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
+import { Stat } from 'network/shapes/Stats';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
 export function registerClock() {
@@ -26,49 +25,30 @@ export function registerClock() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountOptions = { config: 3600, live: 2 };
+          const accountEntity = queryAccountFromBurner(network);
 
           return {
             data: {
-              account: getAccount(world, components, accountEntity, accountOptions),
-            },
-            utils: {
-              calcCurrentStamina: (account: Account) => calcCurrentStamina(account),
+              stamina: getStamina(world, components, accountEntity),
             },
           };
         })
       );
     },
-    ({ data, utils }) => {
-      const { account } = data;
-      const { calcCurrentStamina } = utils;
+    ({ data }) => {
+      const { stamina } = data;
       const { fixtures } = useVisibility();
-      const [staminaCurr, setStaminaCurr] = useState(0);
       const [rotateClock, setRotateClock] = useState(0);
       const [rotateBand, setRotateBand] = useState(0);
-      const [lastTick, setLastTick] = useState(Date.now());
-
-      // ticking
-      useEffect(() => {
-        const tick = () => setLastTick(Date.now());
-        const timerID = setInterval(tick, 1000);
-        return () => clearInterval(timerID);
-      }, []);
-
-      // update the current stamina on each tick
-      useEffect(() => {
-        const staminaCurr = calcCurrentStamina(account);
-        setStaminaCurr(staminaCurr);
-      }, [account.stamina, lastTick]);
 
       /////////////////
       // INTERPRETATION
 
-      const getStaminaTooltip = () => {
-        const staminaTotal = account.stamina.total;
+      const getStaminaTooltip = (stamina: Stat) => {
+        const staminaCurr = stamina.sync;
+        const staminaTotal = stamina.total;
         const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
-        const recoveryPeriod = account.config?.stamina.recovery ?? '??';
+        const recoveryPeriod = Math.round(1 / stamina.rate);
         return [
           `Account Stamina (${staminaString})`,
           '',
@@ -133,13 +113,13 @@ export function registerClock() {
             </text>
           </Time>
           <ClockOverlay />
-          <Tooltip text={getStaminaTooltip()}>
+          <Tooltip text={getStaminaTooltip(stamina)}>
             {' '}
-            <StaminaText position={staminaCurr.toString().length}>
-              {staminaCurr}/{account.stamina.total}
+            <StaminaText position={stamina.sync.toString().length}>
+              {stamina.sync}/{stamina.total}
             </StaminaText>
             <SmallCircle>
-              <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
+              <SmallCircleFill height={calcStaminaPercent(stamina).toString()} />
             </SmallCircle>
           </Tooltip>
         </Container>
@@ -252,7 +232,7 @@ const SmallCircle = styled.div`
   pointer-event: none;
 `;
 
-const SmallCircleFill = styled.div<{ height: number }>`
+const SmallCircleFill = styled.div<{ height: string }>`
   height: ${({ height }) => height}%;
   position: relative;
   background-color: ${({ height }) => getColor(Number(height))};
