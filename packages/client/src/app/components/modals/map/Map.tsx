@@ -52,7 +52,8 @@ export function registerMapModal() {
               getRoom: (entity: EntityIndex) => getRoom(world, components, entity, roomOptions),
               getRoomByIndex: (index: number) => getRoomByIndex(world, components, index),
               getRoomIndex: () => getRoomIndex(components, accountEntity),
-              getKami: (entity: EntityIndex) => getKami(world, components, entity),
+              getKami: (entity: EntityIndex) =>
+                getKami(world, components, entity, { live: 2, harvest: 10 }),
               getKamiLocation: (entity: EntityIndex) => getKamiLocation(world, components, entity),
               passesConditions: (account: Account, gates: Condition[]) =>
                 passesConditions(world, components, gates, account),
