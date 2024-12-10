@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBonusResetter } from "libraries/LibBonusResetter.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -46,7 +46,7 @@ contract HarvestCollectSystem is System {
     LibNode.scavenge(components, nodeIndex, output, accID); // implicit existance check
 
     // reset action bonuses
-    LibBonusResetter.uponHarvestAction(components, kamiID);
+    LibBonus.resetUponHarvestAction(components, kamiID);
 
     // standard logging and tracking
     LibScore.incFor(components, accID, "COLLECT", output);

@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKill, KillBalance } from "libraries/LibKill.sol";
@@ -75,6 +76,7 @@ contract HarvestLiquidateSystem is System {
 
     // kill the target and shut off the harvest
     LibKami.kill(components, victimID);
+    LibBonus.resetUponHarvestAction(components, victimID);
     LibHarvest.stop(components, victimHarvID);
     LibKami.setLastActionTs(components, killerID, block.timestamp);
 

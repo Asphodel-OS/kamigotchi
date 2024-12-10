@@ -282,6 +282,14 @@ library LibBonus {
   }
 
   //////////////
+  // RESETTERS
+
+  /// @notice resets upon harvest action (collect, feed, stop)
+  function resetUponHarvestAction(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "UPON_HARVEST_ACTION", holderID);
+  }
+
+  //////////////
   // IDs
 
   function genRegID(uint256 parentID, string memory type_) internal pure returns (uint256) {

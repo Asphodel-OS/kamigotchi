@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBonusResetter } from "libraries/LibBonusResetter.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -30,7 +30,7 @@ contract KamiUseItemSystem is System {
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // reset action bonuses
-    LibBonusResetter.uponHarvestAction(components, kamiID);
+    LibBonus.resetUponHarvestAction(components, kamiID);
 
     // use item
     LibKami.sync(components, kamiID);
