@@ -1,15 +1,17 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
+import { getAccountKamis } from 'app/cache/account';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getKamis } from 'network/shapes/Account/kamis';
 import { getInventoryByHolderItem } from 'network/shapes/Inventory';
 import { Kami } from 'network/shapes/Kami';
+import { useEffect, useState } from 'react';
 
 export function registerEMABoardModal() {
   registerUIComponent(
@@ -29,29 +31,30 @@ export function registerEMABoardModal() {
           const { world, components } = network;
           const accountEntity = queryAccountFromEmbedded(network);
           const accountID = world.entities[accountEntity];
-          const kamis = getKamis(world, components, accountEntity, {
-            harvest: true,
-            flags: true,
-          });
           const dust = getInventoryByHolderItem(world, components, accountID, HOLY_DUST_INDEX);
 
           return {
             network,
             data: {
-              accountEntity: accountEntity,
+              accountEntity,
               dustAmt: dust.balance,
-              kamis: kamis,
+            },
+            utils: {
+              getAccountKamis: (accEntity: EntityIndex) =>
+                getAccountKamis(world, components, accEntity),
             },
           };
         })
       ),
 
     // Render
-    ({ network, data }) => {
-      const { dustAmt, kamis } = data;
+    ({ network, data, utils }) => {
+      const { dustAmt, accountEntity } = data;
       const { actions, api } = network;
+      const { getAccountKamis } = utils;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
+      const [kamis, setKamis] = useState<any[]>([]);
 
       const promptRename = (kami: Kami) => {
         setKami(kami.entity);
@@ -86,8 +89,6 @@ export function registerEMABoardModal() {
       // set the button based on whether
       const RenameButton = (kami: Kami) => {
         let tooltipText = '';
-        console.log(`kami.stats ${JSON.stringify(kami.state)}`);
-
         if (isHarvesting(kami)) tooltipText = 'too far away';
         else if (isDead(kami)) tooltipText = 'the dead cannot hear you';
         else if (!canName(kami)) tooltipText = 'cannot rename. use some holy dust!';
@@ -129,6 +130,10 @@ export function registerEMABoardModal() {
         );
       };
 
+      useEffect(() => {
+        KamiList();
+      }, [modals.emaBoard, accountEntity]);
+
       // Rendering of Individual Kami Cards in the Name Modal
       const Kard = (kami: Kami) => {
         let description = [] as string[];
@@ -148,13 +153,13 @@ export function registerEMABoardModal() {
         );
       };
 
-      const KamiList = (kamis: Kami[]) => {
-        return kamis.map((kami: Kami) => Kard(kami));
+      const KamiList = () => {
+        setKamis(getAccountKamis(accountEntity));
       };
 
       return (
         <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
-          <List>{KamiList(kamis) ?? []}</List>
+          <List>{kamis.map((kami) => Kard(kami)) ?? []}</List>
         </ModalWrapper>
       );
     }
