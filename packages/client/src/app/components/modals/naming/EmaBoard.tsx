@@ -6,7 +6,8 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getKamis } from 'network/shapes/Account/kamis';
 import { getInventoryByHolderItem } from 'network/shapes/Inventory';
 import { Kami } from 'network/shapes/Kami';
 
@@ -26,17 +27,20 @@ export function registerEMABoardModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromEmbedded(network, {
-            inventory: true,
-            kamis: { flags: true },
+          const accountEntity = queryAccountFromEmbedded(network);
+          const accountID = world.entities[accountEntity];
+          const kamis = getKamis(world, components, accountEntity, {
+            harvest: true,
+            flags: true,
           });
-          const dust = getInventoryByHolderItem(world, components, account.id, HOLY_DUST_INDEX);
+          const dust = getInventoryByHolderItem(world, components, accountID, HOLY_DUST_INDEX);
 
           return {
             network,
             data: {
-              account: account,
+              accountEntity: accountEntity,
               dustAmt: dust.balance,
+              kamis: kamis,
             },
           };
         })
@@ -44,7 +48,7 @@ export function registerEMABoardModal() {
 
     // Render
     ({ network, data }) => {
-      const { account, dustAmt } = data;
+      const { dustAmt, kamis } = data;
       const { actions, api } = network;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
@@ -82,6 +86,8 @@ export function registerEMABoardModal() {
       // set the button based on whether
       const RenameButton = (kami: Kami) => {
         let tooltipText = '';
+        console.log(`kami.stats ${JSON.stringify(kami.state)}`);
+
         if (isHarvesting(kami)) tooltipText = 'too far away';
         else if (isDead(kami)) tooltipText = 'the dead cannot hear you';
         else if (!canName(kami)) tooltipText = 'cannot rename. use some holy dust!';
@@ -148,7 +154,7 @@ export function registerEMABoardModal() {
 
       return (
         <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
-          <List>{KamiList(account.kamis ?? [])}</List>
+          <List>{KamiList(kamis) ?? []}</List>
         </ModalWrapper>
       );
     }
