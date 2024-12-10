@@ -2,7 +2,7 @@ import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { getAccount, getStamina } from 'app/cache/account';
+import { calcCurrentStamina, getAccount } from 'app/cache/account';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
@@ -34,14 +34,13 @@ export function registerCraftingModal() {
 
           const accountEntity = queryAccountFromEmbedded(network);
           const accountID = world.entities[accountEntity];
-          const account = getAccount(world, components, accountEntity, { live: 2 });
-          const stamina = getStamina(world, components, accountEntity).sync;
+          const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
 
           return {
             network,
             accountEntity,
             data: {
-              stamina: stamina,
+              stamina: calcCurrentStamina(account),
             },
             utils: {
               meetsRequirements: (recipe: Recipe) =>

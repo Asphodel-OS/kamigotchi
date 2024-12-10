@@ -1,9 +1,10 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Account, getAccount, NullAccount } from 'network/shapes/Account';
+import { Account, getAccount, getAccountConfigs, NullAccount } from 'network/shapes/Account';
 import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account/queries';
 import { getMusuBalance } from 'network/shapes/Item';
+import { getStamina } from 'network/shapes/Stats';
 import { getLastActionTime, getLastTime, getRoomIndex } from 'network/shapes/utils/component';
 import { getFriends, getInventories, getStats } from './getters';
 
@@ -11,14 +12,16 @@ import { getFriends, getInventories, getStats } from './getters';
 export const AccountCache = new Map<EntityIndex, Account>(); // account entity -> account
 
 export const LiveUpdateTs = new Map<EntityIndex, number>();
+export const ConfigsUpdateTs = new Map<EntityIndex, number>();
 export const FriendsUpdateTs = new Map<EntityIndex, number>();
 export const InventoriesUpdateTs = new Map<EntityIndex, number>();
 export const StatsUpdateTs = new Map<EntityIndex, number>();
 
 interface Options {
   live?: number;
-  inventory?: number;
+  config?: number;
   friends?: number;
+  inventory?: number;
   stats?: number;
 }
 
@@ -42,12 +45,22 @@ export const get = (
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.live) {
       acc.roomIndex = getRoomIndex(components, entity);
+      acc.stamina = getStamina(components, entity);
       acc.time = {
         creation: acc?.time?.creation ?? 0,
         action: getLastActionTime(components, entity),
         last: getLastTime(components, entity),
       };
       LiveUpdateTs.set(entity, now);
+    }
+  }
+
+  if (options.config !== undefined) {
+    const updateTs = ConfigsUpdateTs.get(entity) ?? 0;
+    const updateDelta = (now - updateTs) / 1000; // convert to seconds
+    if (updateDelta > options.config) {
+      acc.config = getAccountConfigs(world, components);
+      ConfigsUpdateTs.set(entity, now);
     }
   }
 

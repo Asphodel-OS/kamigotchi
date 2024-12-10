@@ -1,10 +1,11 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { getReputation } from '../Faction';
 import { Inventory } from '../Inventory';
 import { getMusuBalance } from '../Item';
 import { Kami, KamiOptions } from '../Kami';
+import { getStamina, Stat } from '../Stats';
 import {
   getAccountIndex,
   getLastActionTime,
@@ -14,6 +15,7 @@ import {
   getRoomIndex,
   getStartTime,
 } from '../utils/component';
+import { Configs, getConfigs } from './configs';
 import { Friends, getFriends } from './friends';
 import { getInventories } from './inventories';
 import { getKamis } from './kamis';
@@ -35,6 +37,7 @@ export interface BaseAccount {
 export interface Account extends BaseAccount {
   fid: number;
   coin: number;
+  stamina: Stat;
   roomIndex: number;
   reputation: {
     agency: number;
@@ -44,45 +47,25 @@ export interface Account extends BaseAccount {
     action: number;
     creation: number;
   };
+
+  config?: Configs;
   kamis?: Kami[];
   friends?: Friends;
   inventories?: Inventory[];
   stats?: {
+    // TODO: rename this
     kills: number;
     coin: number;
   };
 }
 
 export interface Options {
+  config?: boolean;
   friends?: boolean;
   inventory?: boolean;
   kamis?: boolean | KamiOptions;
   stats?: boolean;
 }
-
-export const NullAccount: Account = {
-  ObjectType: 'ACCOUNT',
-  id: '0' as EntityID,
-  entity: 0 as EntityIndex,
-  index: 0,
-  operatorAddress: '',
-  ownerAddress: '',
-  fid: 0,
-  name: '',
-  pfpURI: '',
-
-  coin: 0,
-  roomIndex: 0,
-  reputation: {
-    agency: 0,
-  },
-  time: {
-    last: 0,
-    action: 0,
-    creation: 0,
-  },
-  kamis: [],
-};
 
 // get a BaseAccount from its EntityIndex
 export const getBaseAccount = (
@@ -90,7 +73,7 @@ export const getBaseAccount = (
   components: Components,
   entity: EntityIndex
 ): BaseAccount => {
-  const { AccountIndex, MediaURI, Name, OperatorAddress, OwnerAddress } = components;
+  const { MediaURI, Name } = components;
 
   return {
     ObjectType: 'ACCOUNT',
@@ -111,7 +94,7 @@ export const getAccount = (
   entity: EntityIndex,
   options?: Options
 ): Account => {
-  const { FarcasterIndex, RoomIndex } = components;
+  const { FarcasterIndex } = components;
 
   const bareAcc = getBaseAccount(world, components, entity);
   const id = bareAcc.id;
@@ -120,6 +103,7 @@ export const getAccount = (
     ...bareAcc,
     fid: getComponentValue(FarcasterIndex, entity)?.value as number,
     coin: getMusuBalance(world, components, entity),
+    stamina: getStamina(components, entity),
     roomIndex: getRoomIndex(components, entity),
     reputation: {
       agency: getReputation(world, components, id, 1), // get agency rep
@@ -137,6 +121,7 @@ export const getAccount = (
   /////////////////
   // OPTIONAL DATA
 
+  if (options?.config) account.config = getConfigs(world, components);
   if (options?.friends) account.friends = getFriends(world, components, entity);
   if (options?.inventory) account.inventories = getInventories(world, components, entity);
   if (options?.kamis) {

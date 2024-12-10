@@ -1,3 +1,5 @@
+export { getConfigs as getAccountConfigs } from './configs';
+export { NullAccount } from './constants';
 export { getFriends as getAccountFriends } from './friends';
 export {
   getByID as getAccountByID,
@@ -24,6 +26,6 @@ export {
   queryAllByRoom as queryRoomAccounts,
 } from './queries';
 export { getStats as getAccountStats } from './stats';
-export { NullAccount, getAccount, getBaseAccount } from './types';
+export { getAccount, getBaseAccount } from './types';
 
 export type { Account, Options as AccountOptions, BaseAccount } from './types';

@@ -1,8 +1,9 @@
 import { EntityID, World } from '@mud-classic/recs';
 
 import { Components, NetworkLayer } from 'network/';
+import { NullAccount } from './constants';
 import { queryAll, queryByIndex, queryByName, queryByOperator, queryByOwner } from './queries';
-import { NullAccount, Options, getAccount, getBaseAccount } from './types';
+import { Options, getAccount, getBaseAccount } from './types';
 
 // get all accounts
 export const getAll = (world: World, components: Components, options?: Options) => {
