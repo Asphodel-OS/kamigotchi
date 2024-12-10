@@ -21,10 +21,12 @@ export const getKamis = (
   world: World,
   components: Components,
   entity: EntityIndex,
-  kamiOptions?: KamiRefreshOptions
+  kamiOptions?: KamiRefreshOptions,
+  debug?: boolean
 ) => {
   const kamiEntities = queryAccountKamis(world, components, entity);
-  return kamiEntities.map((kEntity) => getKami(world, components, kEntity, kamiOptions));
+  if (debug) console.log('querying accounts kamis', kamiEntities);
+  return kamiEntities.map((kEntity) => getKami(world, components, kEntity, kamiOptions, debug));
 };
 
 // get all Inventory objects for an Account entity
