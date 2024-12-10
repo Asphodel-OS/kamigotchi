@@ -147,7 +147,7 @@ Lethe Asphodel,24,Feeding them up…,Ingame,Quest,,,,,,,No,5,,"As you've probabl
 
 Now you're getting into the groove of it. Feed Kamigotchi thirty times in total to show me you understand how eating works.",,Have completed Got MUSU? (15),Feed a Kamigotchi 30 times,2x Giftbox,,,
 Lethe Asphodel,24,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (15),15,,No,,,,,,,,,,
-Lethe Asphodel,24,,Ingame,Objective,FEED,MIN,INC,Feed a Kamigotchi 30 times,,30,No,,,,,,,,,,
+Lethe Asphodel,24,,Ingame,Objective,ITEM_USE,MIN,INC,Feed a Kamigotchi 30 times,0,30,No,,,,,,,,,,
 Lethe Asphodel,24,,Ingame,Reward,ITEM,,,2x Giftbox,21001,2,No,,,,,,,,,,
 Lethe Asphodel,25,A Serious Hiker,Ingame,Quest,,,,,,,No,5,,"Exploration is a key part of mastering this world. Have you taken the time to really look around?
 
@@ -253,12 +253,14 @@ Next up, I need you to search the core of the scrapyard to the west. Maybe you'l
 There's one other rare flower I need. It can be found around the centre of the forest.... but I regret to inform you that it's even rarer than mint. Best of luck!",,"Have completed ""Elusive Herbs"" (36)",Give 1 Black Poppy,15 REPUTATION,,,
 "Lethe Asphodel, Nedu",45,,Ingame,Requirement,QUEST,COMPLETE,,"Have completed ""Elusive Herbs"" (36)",36,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",45,,Ingame,Objective,ITEM_BURN,MIN,INC,Give 1 Black Poppy,109,1,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",46,Alongside the stream...,Ingame,Quest,,,,Give 3 Daffodils,,,No,5,,"It looks like filling the Torii Gate with MUSU has opened up a new area by the riverside. I think you should be able to find Daffodils there. Do you mind wandering down to take a look? Yes, I know, even more flowers..... I'm starting a collection.",,Holy Gate Collab Quest Completed,Give 3 Daffodils,2 XP Candy (Large),,,
+"Lethe Asphodel, Nedu",46,Alongside the stream...,Ingame,Quest,,,,Give 3 Daffodils,,,No,5,,"It looks like filling the Torii Gate with MUSU has opened up a new area by the riverside. I think you should be able to find Daffodils there. Do you mind wandering down to take a look? Yes, I know, even more flowers..... I'm starting a collection.",,Holy Gate Collab Quest Completed // Complete Got MUSU? (15),Give 3 Daffodils,2 XP Candy (Large),,,
 "Lethe Asphodel, Nedu",46,,Ingame,Requirement,GOAL,COMPLETE,,Holy Gate Collab Quest Completed,6,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",46,,Ingame,Requirement,QUEST,COMPLETE,,Complete Got MUSU? (15),15,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",46,,Ingame,Objective,ITEM_BURN,MIN,INC,Give 3 Daffodils,110,3,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",46,,Ingame,Reward,ITEM,,,2 XP Candy (Large),11203,2,No,,,,,,,,,,
-"Lethe Asphodel, Nedu",47,Defiance of Common Sense,Ingame,Quest,,,,Give 15 Scrolls of Shop Teleportation,,,No,5,,"It seems that Mina has now started selling some sort of teleportation device. That shouldn't be possible at all. I'm going to need a whole bunch of these to reverse engineer whatever she's up to..... Can you go and grab me 15, please?",,Expanding Inventory Collab Quest Completed,Give 15 Scrolls of Shop Teleportation,1 XP Candy (Huge),,,
+"Lethe Asphodel, Nedu",47,Defiance of Common Sense,Ingame,Quest,,,,Give 15 Scrolls of Shop Teleportation,,,No,5,,"It seems that Mina has now started selling some sort of teleportation device. That shouldn't be possible at all. I'm going to need a whole bunch of these to reverse engineer whatever she's up to..... Can you go and grab me 15, please?",,Expanding Inventory Collab Quest Completed // Complete Got MUSU? (15),Give 15 Scrolls of Shop Teleportation,1 XP Candy (Huge),,,
 "Lethe Asphodel, Nedu",47,,Ingame,Requirement,GOAL,COMPLETE,,Expanding Inventory Collab Quest Completed,5,,No,,,,,,,,,,
+"Lethe Asphodel, Nedu",47,,Ingame,Requirement,QUEST,COMPLETE,,Complete Got MUSU? (15),15,,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",47,,Ingame,Objective,ITEM_BURN,MIN,INC,"Give 15 Scrolls of Shop Teleportation ",21100,15,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",47,,Ingame,Reward,ITEM,,,1 XP Candy (Huge),11204,1,No,,,,,,,,,,
 "Lethe Asphodel, Nedu",48,A whole team...,Ingame,Quest,,,,"Have 3 Level 5 Kamigotchi ",,,No,5,,"Raising one Kamigotchi is great, but frankly, you're going to need a squad to survive out here. 
@@ -310,6 +312,30 @@ Well, it's nice to see you back. This time round, a few of the rewards have been
 "Nedu, Lethe Asphodel",57,,For Implementation,Requirement,COMPLETE_COMP,COMPLETE,,Used T1 Pomegranate (deployer assigned; always returns false),,,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",57,,For Implementation,Objective,MOVE,MIN,INC,Move once,,1,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",57,,For Implementation,Reward,ITEM,,,1x Red Gakki Ribbon,11001,1,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",58,Resource Processing,For Implementation,Quest,,,,Have 1 Spice Grinder (not give),,,No,5,,"Mina's begun selling items that can be used for Crafting..... With these, you'll be able to turn some of the things your Kamigotchi find when Scavenging into other items.
+
+If you want to break down herbs and use them to make potions, you'll need a Spice Grinder. Go and buy one... it's pricy, but it'll be worth it.",,"Completed ""Even More Musu"" (40)",Have 1 Spice Grinder (not give),1 Plastic Bottle,,,
+,58,,For Implementation,Requirement,QUEST,COMPLETE,,"Completed ""Even More Musu"" (40)",40,,No,,,,,,,,,,
+,58,,For Implementation,Objective,ITEM_BUY_TOTAL,MIN,INC,Buy a Spice Grinder from Mina’s Store,23100,1,No,,,,,,,,,,
+,58,,For Implementation,Reward,ITEM,,,1x Plastic Bottle,103,1,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",59,Supplementing your Health,For Implementation,Quest,,,,Give 1000 Pine Pollen,,,No,5,,"I'm sure by now you've noticed that herbs and flowers can be found in many areas of this world. Some of these can be broken down, and the raw material used to make potions or other items.
+
+Pine Pollen is very important - when extracted from Pinecones, it can be used to make potions that give Kamigotchi raw XP. I need some for my own health, so break down a few Pinecones and bring some to me. I'm sure these XP Candy will make up for your loss.…",,"Completed ""Resource Processing"" (58)","Give 1000 Pine Pollen ",3 Huge XP Candy,,,
+"Nedu, Lethe Asphodel",59,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 1000 Pine Pollen,107,1000,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",59,,For Implementation,Reward,ITEM,,,3x Huge XP Candy,11204,3,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",60,Industrial XP,For Implementation,Quest,,,,Give 5 XP Potions,,,No,5,,"Raw Pine Pollen can be processed into potions at a riverside, if you have a Portable Burner... which you'll also need to buy from Mina. This is how all potions are made.
+
+I want samples of these potions. Bring me 5, and I'll give you something very special... a Mana Mochi.",,"Completed ""Supplementing Your Health"" (59)",Give 5 XP Potions,1 Mana Mochi,,,
+"Nedu, Lethe Asphodel",60,,For Implementation,Requirement,QUEST,COMPLETE,,"Completed ""Supplementing Your Health"" (59)",59,,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",60,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 5 XP Potions,11401,5,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",60,,For Implementation,Reward,ITEM,,,1x Mana Mochi,11140,1,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",61,They're Inside You,For Implementation,Quest,,,,Give 1500 Microplastics,,,No,5,,"If you have spare Plastic Bottles, you can also use the grinder to break them down into precious Microplastics. These don't have any direct uses just yet, but I find them beautiful.... Please, bring some to me. I have a little Reputation left to spare.",,Completed “Industrial XP” (60),Give 1500 Microplastics,,,,
+"Nedu, Lethe Asphodel",61,,For Implementation,Requirement,QUEST,COMPLETE,,Completed “Industrial XP” (60),60,,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",61,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 1500 Microplastics,112,1500,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",62,Even More Experience,For Implementation,Quest,,,,Give 1 Greater XP Potion,,,No,10,,"Although XP Potions are very effective, they're strictly less efficient than the more powerful Greater XP Potions. Greater potions require far more Pine Pollen, however..... as well as Glass Jars. You can find them over by the plane crash...
+If you need Reputation, I can award you 10 in exchange for one of those Greater XP Potions.",,Completed “They’re Inside You” (61),Give 1 Greater XP Potion,,,,
+"Nedu, Lethe Asphodel",62,,For Implementation,Requirement,QUEST,COMPLETE,,Completed “They’re Inside You” (61),61,,No,,,,,,,,,,
+"Nedu, Lethe Asphodel",62,,For Implementation,Objective,ITEM_BURN,MIN,INC,Give 1 Greater XP Potion,11402,1,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,Shelved,Requirement,QUEST,COMPLETE,,Have completed An Unforgiving World (10),10,,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,Shelved,Objective,LIQ_TARGET_ACC,MIN,INC,Liquidate one of Plotchy's Kamigotchi,101,1,No,,,,,,,,,,
 "Nedu, Lethe Asphodel",10001,,Shelved,Reward,ITEM,,,5x Giftbox,21001,5,No,,,,,,,,,,
@@ -319,7 +345,7 @@ Well, it's nice to see you back. This time round, a few of the rewards have been
 Have you found yourself without the means to carry on? Well, here's a Ribbon, just for you…",,Have completed An Unforgiving World (10),,1x Red Gakki Ribbon,,,
 ,10002,,Ingame,Requirement,ROOM,IS,,At room 11,11,,No,,,,,,,,,,
 ,10002,,Ingame,Reward,ITEM,,,1 Revive,11001,1,No,,,,,,,,,,
-,10003,An apology...,Ingame,Quest,,,,,,,No,5,,"The whole world stopped for a little while earlier today... and some of you may have been liquidated unfairly as a result. Here's a little bit of XP and reputation to help with the lost time. Sorry!",,Have completed An Unforgiving World (10),,1x Red Gakki Ribbon,,,
-,10003,,Ingame,Requirement,BLOCKTIME,MAX,,,,1733774400,No,,,,,,,,,,
-,10003,,Ingame,Reward,ITEM,,,5 Revive,11001,5,No,,,,,,,,,,
-,10003,,Ingame,Reward,ITEM,,,1 large xp candy,11204,1,No,,,,,,,,,,
+,10003,"An apology... ",For Implementation,Quest,,,,,,,No,5,,The whole world stopped for a little while earlier today.... and some of you may have been liquidated unfairly as a result. Here's a little bit of XP and reputation to help with the lost time. Sorry!,,,,,,,
+,10003,,For Implementation,Requirement,BLOCKTIME,MAX,,Before 12/9/24 8pm GMT,,1733774400,No,,,,,,,,,,
+,10003,,For Implementation,Reward,ITEM,,,,11001,5,No,,,,,,,,,,
+,10003,,For Implementation,Reward,ITEM,,,,11204,1,No,,,,,,,,,,
