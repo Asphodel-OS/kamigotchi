@@ -101,8 +101,9 @@ export const Grid = (props: Props) => {
       names.length > 1
         ? (text = `${names.slice(0, -1).join(', ') + ' and ' + names.slice(-1)} are `)
         : (text = `${names} is `);
+      text += 'Harvesting on this tile.';
     }
-    return text + 'Harvesting on this tile.';
+    return text;
   };
 
   const getTooltip = (room: Room) => {
