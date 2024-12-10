@@ -82,6 +82,7 @@ export const getLocation = (world: World, components: Components, entity: Entity
   const harvestEntity = queryHarvest(world, entity);
   if (harvestEntity) {
     const harvestInfo = getHarvest(world, components, harvestEntity, { node: true });
+
     return harvestInfo.state === 'ACTIVE' ? harvestInfo.node?.index : undefined;
   }
 };
