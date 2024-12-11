@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { ScavBar, calcScavClaimable } from 'network/shapes/Scavenge';
+import { ScavBar } from 'network/shapes/Scavenge';
 import { useEffect, useState } from 'react';
 
 const SYNC_TIME = 1500;
@@ -13,13 +14,16 @@ interface Props {
     claim: (scavenge: ScavBar) => void;
   };
   utils: {
-    getPoints: () => number;
+    getPoints: (entity: EntityIndex) => number;
+    queryScavInstance: () => EntityIndex | undefined;
   };
 }
 
 export const ScavengeBar = (props: Props) => {
   const { scavenge, actions, utils } = props;
+  const { getPoints, queryScavInstance } = utils;
   const { modals } = useVisibility();
+
   const [lastSync, setLastSync] = useState(Date.now());
   const [points, setPoints] = useState(0);
   const [rolls, setRolls] = useState(0);
@@ -39,30 +43,27 @@ export const ScavengeBar = (props: Props) => {
   useEffect(() => {
     if (!modals.node || !scavenge) return;
     update();
-  }, [lastSync]);
-
-  // update the stats whenever the scav bar changes
-  useEffect(() => update(), [scavenge.index]);
+  }, [lastSync, scavenge.index]);
 
   const update = () => {
-    const currPoints = utils.getPoints();
-    const claimable = calcScavClaimable(scavenge.cost, currPoints);
-    setPoints(currPoints);
-    setRolls(claimable);
-  };
+    const instanceEntity = queryScavInstance();
+    if (!instanceEntity) {
+      setRolls(0);
+      setPoints(0);
+      return;
+    }
 
-  /////////////////
-  // INTERPRETATION
-
-  const getPercent = () => {
-    if (!scavenge) return 0;
-    return ((points % scavenge.cost) / scavenge.cost) * 100;
+    const currPoints = getPoints(instanceEntity);
+    const rolls = Math.floor(currPoints / scavenge.cost);
+    const remainder = currPoints % scavenge.cost;
+    setPoints(remainder);
+    setRolls(rolls);
   };
 
   return (
     <Container>
-      <ProgressBar percent={getPercent()}>
-        {rolls} rolls + {points % scavenge.cost}/{scavenge.cost}
+      <ProgressBar percent={(points / scavenge.cost) * 100}>
+        {rolls} rolls + {points}
       </ProgressBar>
       <ActionButton
         onClick={() => actions.claim(scavenge)}

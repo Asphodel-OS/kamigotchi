@@ -42,8 +42,9 @@ interface Props {
 export const Banner = (props: Props) => {
   const { data, utils, actions } = props;
   const { account, node } = data;
-  const { claim, addKami } = actions;
-  const { getAccountKamis, getScavenge, getValue, queryScavRegistry } = utils;
+  const { addKami } = actions;
+  const { getAccountKamis, getScavenge, getValue } = utils;
+  const { queryScavRegistry, queryScavInstance } = utils;
   const { parseConditionalText, passesNodeReqs } = utils;
 
   const { modals } = useVisibility();
@@ -156,7 +157,10 @@ export const Banner = (props: Props) => {
         <ScavengeBar
           scavenge={scavenge}
           actions={actions}
-          utils={{ getPoints: () => getValue(scavenge.entity) }}
+          utils={{
+            getPoints: getValue,
+            queryScavInstance: () => queryScavInstance(scavenge.index, account.id),
+          }}
         />
       )}
     </Container>
