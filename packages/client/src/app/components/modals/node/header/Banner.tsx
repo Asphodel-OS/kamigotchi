@@ -62,11 +62,9 @@ export const Banner = (props: Props) => {
   useEffect(() => {
     if (!modals.node) return;
     const scavEntity = queryScavRegistry(node.index);
-    console.log(`updating scavenge with entity ${scavEntity}`);
     if (scavEntity) {
       const scavenge = getScavenge(scavEntity);
       setScavenge(scavenge);
-      console.log(`scavenge updated`, scavenge);
     }
   }, [node.index, modals.node]);
 
@@ -99,6 +97,11 @@ export const Banner = (props: Props) => {
     return reason;
   };
 
+  const getNodeImage = () => {
+    const roomObject = rooms[node.index] ?? rooms[0];
+    return roomObject.backgrounds[0];
+  };
+
   const canAdd = (kami: Kami) => {
     return canHarvest(kami) && passesNodeReqs(kami);
   };
@@ -127,26 +130,10 @@ export const Banner = (props: Props) => {
     );
   };
 
-  const NodeImage = () => {
-    if (!rooms[node.index] && node.index == 0) return <div />;
-    const url = rooms[node.index].backgrounds[0];
-    return <Image src={url} />;
-  };
-
-  // expected max 1 requirement for now
-  const RequirementText = () => {
-    if (node.requirements.length == 0) return <div />;
-    return (
-      <Footer>
-        <FooterText>{parseConditionalText(node.requirements[0], false)}</FooterText>
-      </Footer>
-    );
-  };
-
   return (
     <Container key={node.name}>
       <Content>
-        {NodeImage()}
+        <Image src={getNodeImage()} />
         <Details>
           <Name>{node.name}</Name>
           <Row>
@@ -158,7 +145,11 @@ export const Banner = (props: Props) => {
           </Row>
           <Description>{node.description}</Description>
         </Details>
-        {RequirementText()}
+        {node.requirements.length > 0 && (
+          <Footer>
+            <FooterText>{parseConditionalText(node.requirements[0], false)}</FooterText>
+          </Footer>
+        )}
       </Content>
       <ButtonRow>{AddButton(kamis)}</ButtonRow>
       {scavenge.entity != 0 && (

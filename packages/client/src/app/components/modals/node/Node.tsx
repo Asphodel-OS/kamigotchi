@@ -106,7 +106,7 @@ export function registerNodeModal() {
               getNode: (index: number) => getNodeByIndex(world, components, index),
               getScavenge: (entity: EntityIndex) => getScavenge(world, components, entity),
               getValue: (entity: EntityIndex) => getValue(components, entity),
-              parseAllos: (allos: Allo[]) => parseAllos(world, components, allos),
+              parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
               queryScavRegistry: (index: number) => queryScavRegistry(world, 'node', index),
               queryScavInstance: (index: number, holderID: EntityID) =>
                 queryScavInstance(world, 'node', index, holderID),
@@ -123,7 +123,6 @@ export function registerNodeModal() {
 
     // Render
     ({ data, display, network, utils }) => {
-      // console.log('Node Modal Data', data);
       const { kamiEntities } = data;
       const {
         actions,
@@ -154,9 +153,9 @@ export function registerNodeModal() {
 
       // updates from selected Node updates
       useEffect(() => {
-        if (!nodeIndex) setModals({ node: false }); // NullNode
-        console.log(`node index changed to ${nodeIndex}`);
-        setNode(getNode(nodeIndex));
+        const node = getNode(nodeIndex);
+        if (!node.index) setModals({ node: false }); // NullNode
+        setNode(node);
       }, [nodeIndex]);
 
       /////////////////

@@ -24,9 +24,7 @@ export const get = (
   const id = world.entities[entity];
 
   const rewardAnchor = queryRewardAnchor(id);
-  console.log(`reward anchor ${rewardAnchor}`);
   const rewardEntities = queryChildrenOf(components, rewardAnchor);
-  console.log(`reward entities`, rewardEntities);
   return {
     id,
     entity,
