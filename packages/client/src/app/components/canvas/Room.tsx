@@ -35,7 +35,7 @@ export const Room = (props: Props) => {
       if (bgm) bgm.stop();
       newBgm.play();
       setBgm(newBgm);
-      newBgm?.fade(0, 1, 1000);
+      newBgm?.fade(0, 1, 3000);
     }
 
     setRoom(newRoom);
