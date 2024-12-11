@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { parseBonusText, parseRequirementText } from 'app/cache/skill/functions';
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Skill, parseBonusText, parseRequirementText } from 'network/shapes/Skill';
+import { Skill } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -35,9 +36,10 @@ export const Details = (props: Props) => {
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
-    const skill = skills.get(index);
-    setSkill(skill); // registry skill instance
-    setKSkill(kami.skills?.find((s) => s.index * 1 === skill?.index)); // kami skill instance
+    const skill = skills.get(index); // registry skill instance
+    const kamiSkill = kami.skills?.tree.find((s) => s.index == index);
+    setSkill(skill);
+    setKSkill(kamiSkill);
     setDisabledReason(owner.index !== account.index ? ['not ur kami'] : upgradeError);
   }, [index, kami]);
 

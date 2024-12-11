@@ -1,0 +1,36 @@
+import { Has, HasValue, World, runQuery } from '@mud-classic/recs';
+
+import { Components } from 'network/components';
+import { DetailedEntity } from '../utils';
+import { queryByIndex } from './queries';
+import { Item, NullItem, getItem, getItemDetails } from './types';
+
+/**
+ * get an item in the registry by index
+ * @param world - the world object
+ * @param components - the list (as object) of registered components in the world
+ * @param index - the item index of the registry instance
+ */
+
+export const getByIndex = (world: World, components: Components, index: number): Item => {
+  const entityIndex = queryByIndex(world, index);
+  return entityIndex ? getItem(world, components, entityIndex) : NullItem;
+};
+
+export const getDetailsByIndex = (
+  world: World,
+  components: Components,
+  index: number
+): DetailedEntity => {
+  const entityIndex = queryByIndex(world, index);
+  return entityIndex ? getItemDetails(components, entityIndex) : NullItem;
+};
+
+// get all items in the registry
+export const getAll = (world: World, components: Components): Item[] => {
+  const { IsRegistry, EntityType } = components;
+  const entityIndices = Array.from(
+    runQuery([Has(IsRegistry), HasValue(EntityType, { value: 'ITEM' })])
+  );
+  return entityIndices.map((entityIndex) => getItem(world, components, entityIndex));
+};

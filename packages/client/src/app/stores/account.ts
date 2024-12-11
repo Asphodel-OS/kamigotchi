@@ -7,7 +7,7 @@ import { create } from 'zustand';
 // as well as the validations run on
 interface State {
   account: Account;
-  farcaster: Farcaster;
+  farcaster: Farcaster; // kinda gross to have this in here
   validations: Validations;
 }
 
@@ -23,26 +23,29 @@ interface Actions {
 // represents the key meta details of a kami account
 export interface Account {
   id: EntityID;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   index: number;
   name: string;
   ownerAddress: string;
   operatorAddress: string;
 }
 
-export interface Farcaster {
-  id: number;
-  signer: string; // neynar signer uuid
-}
-
 export const emptyAccountDetails = (): Account => ({
   id: '' as EntityID,
-  entityIndex: 0 as EntityIndex,
+  entity: 0 as EntityIndex,
   index: 0,
   name: '',
   ownerAddress: '',
   operatorAddress: '',
 });
+
+////////////////
+// FARCASTER
+
+export interface Farcaster {
+  id: number;
+  signer: string; // neynar signer uuid
+}
 
 ////////////////
 // VALIDATIONS

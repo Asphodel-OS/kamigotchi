@@ -1,15 +1,18 @@
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
+import { TabType } from '../Kami';
 
 interface Props {
-  tab: string;
-  setTab: (tab: string) => void;
+  tab: TabType;
+  setTab: (tab: TabType) => void;
 }
 
 export const Tabs = (props: Props) => {
+  const { tab } = props;
+
   // layer on a sound effect
-  const setTab = async (tab: string) => {
+  const setTab = async (tab: TabType) => {
     playClick();
     props.setTab(tab);
   };
@@ -17,20 +20,20 @@ export const Tabs = (props: Props) => {
   return (
     <Container>
       <Button
-        onClick={() => setTab('traits')}
-        disabled={props.tab === 'traits'}
+        onClick={() => setTab('TRAITS')}
+        disabled={tab === 'TRAITS'}
         style={{ borderRight: 'solid black .15vw' }}
       >
         Traits
       </Button>
       <Button
-        onClick={() => setTab('skills')}
-        disabled={props.tab === 'skills'}
+        onClick={() => setTab('SKILLS')}
+        disabled={tab === 'SKILLS'}
         style={{ borderRight: 'solid black .15vw' }}
       >
         Skills
       </Button>
-      <Button onClick={() => setTab('battles')} disabled={props.tab === 'battles'}>
+      <Button onClick={() => setTab('BATTLES')} disabled={tab === 'BATTLES'}>
         Battles
       </Button>
     </Container>

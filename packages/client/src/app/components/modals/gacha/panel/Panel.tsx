@@ -12,7 +12,7 @@ interface Props {
   gachaBalance: number;
   actions: {
     mint: (balance: number) => Promise<boolean>;
-    reroll: (kamis: BaseKami[], price: bigint) => () => Promise<void>;
+    reroll: (kamis: BaseKami[], price: bigint) => Promise<void>;
   };
   controls: {
     filters: Filter[];

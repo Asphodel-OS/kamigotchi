@@ -7,22 +7,26 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { useBalance, useBlockNumber } from 'wagmi';
 
+import { getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX } from 'constants/items';
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValue } from 'network/shapes/Config';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { getItemBalance } from 'network/shapes/Item';
-import { Kami, KamiOptions, queryKamisByAccount } from 'network/shapes/Kami';
+import { Kami, KamiOptions, queryKamis } from 'network/shapes/Kami';
 import { BaseKami, GachaKami, getGachaKami, getKami } from 'network/shapes/Kami/types';
 import { Commit, filterRevealable } from 'network/shapes/utils';
+import { getOwnerAddress } from 'network/shapes/utils/component';
 import { playVend } from 'utils/sounds';
 import { MainDisplay } from './display/MainDisplay';
 import { Panel } from './panel/Panel';
-import { Commits } from './reroll/Commits';
-import { Reroll } from './reroll/Reroll';
 import { DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
+
+// TODO: rely on cache for these instead
+const kamiCache = new Map<EntityIndex, GachaKami>();
+const kamiBlockCache = new Map<EntityIndex, JSX.Element>();
 
 export function registerGachaModal() {
   registerUIComponent(
@@ -38,33 +42,35 @@ export function registerGachaModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network, {
-            kamis: { traits: true, rerolls: true },
-          });
+          const accountEntity = queryAccountFromEmbedded(network);
+          const accountID = world.entities[accountEntity];
 
+          // TODO: boot the poolKamis query to MainDisplay once we consolidate tab views under it
           return {
             network,
             data: {
-              account,
-              accKamis: account.kamis,
-              gachaBalance: getItemBalance(world, components, account.id, GACHA_TICKET_INDEX),
-              partyKamis: queryKamisByAccount(components, account.id),
-              poolKamis: queryKamisByAccount(components, GACHA_ID),
-              commits: queryGachaCommits(world, components, account.id),
+              accountEntity,
+              ownerAddress: getOwnerAddress(components, accountEntity),
+              gachaBalance: getItemBalance(world, components, accountID, GACHA_TICKET_INDEX),
+              poolKamis: queryKamis(components, { account: GACHA_ID }),
+              commits: queryGachaCommits(world, components, accountID),
               maxRerolls: getConfigFieldValue(world, components, 'GACHA_MAX_REROLLS'),
             },
             utils: {
               getKami: (entity: EntityIndex, options?: KamiOptions) =>
                 getKami(world, components, entity, options),
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
+              getAccountKamis: () =>
+                getAccountKamis(world, components, accountEntity, { live: 0, rerolls: 0 }),
+              getRerollCost: (kami: Kami) => calcRerollCost(world, components, kami),
             },
           };
         })
       ),
     ({ network, data, utils }) => {
-      const { actions, components, world, api } = network;
-      const { account, accKamis, commits, gachaBalance, poolKamis, partyKamis } = data;
-      const { modals, setModals } = useVisibility();
+      const { actions, world, api } = network;
+      const { ownerAddress, commits, gachaBalance, poolKamis } = data;
+      const { setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
 
@@ -76,15 +82,13 @@ export function registerGachaModal() {
 
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [kamiCache, _] = useState<Map<EntityIndex, GachaKami>>(new Map());
-      const [kamiBlockCache, __] = useState<Map<EntityIndex, JSX.Element>>(new Map());
 
       /////////////////
       // SUBSCRIPTIONS
 
       // Owner ETH Balance
       const { data: ownerEthBalance } = useBalance({
-        address: account.ownerEOA as `0x${string}`,
+        address: ownerAddress as `0x${string}`,
       });
 
       // open the party modal when the reveal is triggered
@@ -113,13 +117,6 @@ export function registerGachaModal() {
 
         tx();
       }, [commits]);
-
-      //////////////////
-      // INTERPRETATION
-
-      const getRerollCost = (kami: Kami) => {
-        return calcRerollCost(world, components, kami);
-      };
 
       /////////////////
       // ACTIONS
@@ -205,7 +202,7 @@ export function registerGachaModal() {
         return false;
       };
 
-      const handleReroll = (kamis: BaseKami[], price: bigint) => async () => {
+      const handleReroll = async (kamis: BaseKami[], price: bigint) => {
         if (kamis.length === 0) return;
         try {
           setWaitingToReveal(true);
@@ -226,32 +223,6 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const MainDisplay1 = () => {
-        if (tab === 'REROLL')
-          return (
-            <Reroll
-              actions={{ handleReroll }}
-              data={{
-                maxRerolls: data.maxRerolls,
-                kamis: accKamis.filter((kami) => kami.state === 'RESTING') || [],
-                balance: ownerEthBalance?.value || 0n, // bigint used for dealing with wei
-              }}
-              utils={{ getRerollCost }}
-            />
-          );
-        else if (tab === 'REVEAL')
-          return (
-            <Commits
-              actions={{ revealTx }}
-              data={{
-                commits: commits || [],
-                blockNumber: Number(blockNumber),
-              }}
-            />
-          );
-        else return <div />;
-      };
-
       return (
         <ModalWrapper
           id='gacha'
@@ -266,12 +237,13 @@ export function registerGachaModal() {
           overlay
         >
           <Container>
-            {MainDisplay1()}
             <MainDisplay
               tab={tab}
+              blockNumber={blockNumber ?? 0n}
               controls={{ limit, filters, sorts }}
+              actions={{ handleReroll, revealTx }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
-              data={{ poolEntities: poolKamis, partyEntities: partyKamis }}
+              data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
               utils={utils}
             />
             <Panel
