@@ -2,7 +2,6 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAccessibleKamis } from 'app/cache/account';
 import { cleanInventories, Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, Tooltip } from 'app/components/library';
 import { Option } from 'app/components/library/base/buttons/IconListButton';
@@ -31,7 +30,7 @@ interface Props {
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
   const { actions, utils, accountEntity } = props;
-  const { getAccount, getInventories, getKamis } = utils;
+  const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
   const { modals } = useVisibility();
 
   const [lastRefresh, setLastRefresh] = useState(Date.now());
@@ -64,29 +63,28 @@ export const ItemGrid = (props: Props) => {
     setInventories(inventories);
 
     // get, and set account kamis
-    const rawKamis = getKamis();
-    setKamis(rawKamis);
+    setKamis(getKamis());
   };
 
   /////////////////
   // INTERPRETATION
 
   const getItemActions = (item: Item, bal: number): Option[] => {
-    if (item.for && item.for === 'KAMI') return getKamiActions(item);
-    else if (item.for && item.for === 'ACCOUNT') return getAccountActions(item, bal);
+    if (item.for && item.for === 'KAMI') return getKamiOptions(item);
+    else if (item.for && item.for === 'ACCOUNT') return getAccountOptions(item, bal);
     else return [];
   };
 
-  const getKamiActions = (item: Item): Option[] => {
-    const kamis = getKamis().filter((kami) => utils.meetsRequirements(kami, item));
-    return kamis.map((kami) => ({
+  const getKamiOptions = (item: Item): Option[] => {
+    const available = kamis.filter((kami) => meetsRequirements(kami, item));
+    return available.map((kami) => ({
       text: kami.name,
       onClick: () => actions.useForKami(kami, item),
     }));
   };
 
-  const getAccountActions = (item: Item, bal: number): Option[] => {
-    if (!utils.meetsRequirements(account, item)) return [];
+  const getAccountOptions = (item: Item, bal: number): Option[] => {
+    if (!meetsRequirements(account, item)) return [];
     const count = Math.min(Math.max(bal, 2), 10);
     const options = [{ text: 'Use', onClick: () => actions.useForAccount(item, 1) }];
     if (bal > 1) {
@@ -95,15 +93,15 @@ export const ItemGrid = (props: Props) => {
     return options;
   };
 
-  // get the list of kamis that a specific item can be used on
-  const getAvailableKamis = (item: Item): Kami[] => {
-    let kamis2 = getAccessibleKamis(account, kamis);
-    if (item.type === 'REVIVE') kamis2 = kamis2.filter((kami) => kami.state === 'DEAD');
-    if (item.type === 'FOOD') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
-    if (item.type === 'RENAME_POTION') kamis2 = kamis2.filter((kami) => !kami.flags?.namable);
-    if (item.type === 'SKILL_RESET') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
-    return kamis2;
-  };
+  // // get the list of kamis that a specific item can be used on
+  // const getAvailableKamis = (item: Item): Kami[] => {
+  //   let kamis2 = getAccessibleKamis(account, kamis);
+  //   if (item.type === 'REVIVE') kamis2 = kamis2.filter((kami) => kami.state === 'DEAD');
+  //   if (item.type === 'FOOD') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
+  //   if (item.type === 'RENAME_POTION') kamis2 = kamis2.filter((kami) => !kami.flags?.namable);
+  //   if (item.type === 'SKILL_RESET') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
+  //   return kamis2;
+  // };
 
   /////////////////
   // DISPLAY

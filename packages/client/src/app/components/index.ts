@@ -16,7 +16,6 @@ import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
-import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerRevealModal } from './modals/reveal/Reveal';
@@ -52,7 +51,7 @@ export function registerModals() {
   registerHelpModal();
   registerInventoryModal();
   registerMapModal();
-  registerNodeModal();
+  // registerNodeModal();
   registerPartyModal();
   registerQuestsModal();
   registerSettingsModal();

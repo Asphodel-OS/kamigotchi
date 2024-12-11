@@ -22,9 +22,9 @@ export const get = (
   index?: number
 ): ScavBar => {
   const id = world.entities[entity];
-
   const rewardAnchor = queryRewardAnchor(id);
   const rewardEntities = queryChildrenOf(components, rewardAnchor);
+
   return {
     id,
     entity,
