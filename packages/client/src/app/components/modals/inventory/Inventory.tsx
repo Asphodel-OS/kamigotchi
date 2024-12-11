@@ -3,7 +3,6 @@ import { interval, map } from 'rxjs';
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useAccount } from 'app/stores';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { passesConditions } from 'network/shapes/Conditional';
@@ -28,7 +27,6 @@ export function registerInventoryModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const { debug } = useAccount.getState();
           const accountEntity = queryAccountFromEmbedded(network);
           const kamiRefreshOptions = {
             live: 0,
@@ -49,8 +47,7 @@ export function registerInventoryModal() {
             utils: {
               getAccount: () => getAccount(world, components, accountEntity),
               getInventories: () => getAccountInventories(world, components, accountEntity),
-              getKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
+              getKamis: () => getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
               meetsRequirements: (holder: Kami | Account, item: Item) =>
                 passesConditions(world, components, item.requirements.use, holder),
               getMusuBalance: () => getMusuBalance(world, components, accountEntity),

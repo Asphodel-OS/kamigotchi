@@ -9,12 +9,10 @@ interface State {
   account: Account;
   farcaster: Farcaster; // kinda gross to have this in here
   validations: Validations;
-  debug: Debug;
 }
 
 interface Actions {
   setAccount: (data: Account) => void;
-  setDebug: (data: Debug) => void;
   setFarcaster: (data: Farcaster) => void;
   setValidations: (data: Validations) => void;
 }
@@ -41,10 +39,6 @@ export const emptyAccountDetails = (): Account => ({
   operatorAddress: '',
 });
 
-interface Debug {
-  cache: boolean;
-}
-
 ////////////////
 // FARCASTER
 
@@ -69,7 +63,6 @@ interface Validations {
 export const useAccount = create<State & Actions>((set) => {
   const initialState: State = {
     account: emptyAccountDetails(),
-    debug: { cache: false },
     farcaster: { id: 0, signer: '' },
     validations: {
       accountExists: false,
@@ -80,7 +73,6 @@ export const useAccount = create<State & Actions>((set) => {
   return {
     ...initialState,
     setAccount: (data: Account) => set((state: State) => ({ ...state, account: data })),
-    setDebug: (data: Debug) => set((state: State) => ({ ...state, debug: data })),
     setFarcaster: (data: Farcaster) => set((state: State) => ({ ...state, farcaster: data })),
     setValidations: (data: Validations) => set((state: State) => ({ ...state, validations: data })),
   };

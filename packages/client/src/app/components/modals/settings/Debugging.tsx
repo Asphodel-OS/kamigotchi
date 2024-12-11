@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
-import { useAccount, useVisibility } from 'app/stores';
+import { useVisibility } from 'app/stores';
 
 interface Props {
   actions: {
@@ -12,12 +12,7 @@ interface Props {
 
 export const Debugging = (props: Props) => {
   const { actions } = props;
-  const { debug, setDebug } = useAccount();
   const { modals, setModals } = useVisibility();
-
-  const toggleDebug = () => {
-    setDebug({ cache: !debug.cache });
-  };
 
   const FieldRow = (label: string, buttonText: string, onClick: () => void) => {
     return (
@@ -39,7 +34,6 @@ export const Debugging = (props: Props) => {
         {FieldRow('Commits Modal', 'Open', () => setModals({ reveal: true }))}
         {FieldRow('Sync kamis', 'sync', actions.echoKamis)}
         {FieldRow('Sync location', 'sync', actions.echoRoom)}
-        {FieldRow('Cache Debugging', debug.cache ? 'turn off' : 'turn on', toggleDebug)}
       </Section>
     </Container>
   );

@@ -56,12 +56,10 @@ export const get = (
   world: World,
   components: Components,
   entity: EntityIndex,
-  options?: RefreshOptions,
-  debug?: boolean
+  options?: RefreshOptions
 ) => {
   if (!KamiCache.has(entity)) process(world, components, entity);
   const kami = KamiCache.get(entity)!;
-  if (debug) console.log(`===retrieving kami ${kami.index} ${kami.name}===`);
   if (!options) return kami;
 
   const now = Date.now();
@@ -71,7 +69,7 @@ export const get = (
     const updateTs = LiveUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.live) {
-      if (debug) console.log(`  updating live kami state`);
+      console.log(`updating live state for kami ${kami.index} ${kami.name}`);
       kami.state = getState(components, entity);
       kami.time = {
         start: kami.time?.start ?? 0,
@@ -90,7 +88,7 @@ export const get = (
     const updateTs = BonusesUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.bonuses) {
-      if (debug) console.log(`  updating kami bonuses`);
+      console.log(`updating bonuses for kami ${kami.index} ${kami.name}`);
       kami.bonuses = getKamiBonuses(world, components, entity);
       BonusesUpdateTs.set(entity, now);
     }
@@ -101,7 +99,7 @@ export const get = (
     const updateTs = ConfigsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.config) {
-      if (debug) console.log(`  updating kami config`);
+      console.log(`updating config for kami ${kami.index} ${kami.name}`);
       kami.config = getKamiConfigs(world, components);
       ConfigsUpdateTs.set(entity, now);
     }
@@ -112,7 +110,7 @@ export const get = (
     const updateTs = FlagsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.flags) {
-      if (debug) console.log(`  updating kami flags`);
+      console.log(`updating flags for kami ${kami.index} ${kami.name}`);
       kami.flags = getKamiFlags(world, components, entity);
       FlagsUpdateTs.set(entity, now);
     }
@@ -124,7 +122,7 @@ export const get = (
     const updateTs = HarvestUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.harvest) {
-      if (debug) console.log(`  updating kami harvest`);
+      console.log(`updating harvest for kami ${kami.index} ${kami.name}`);
       kami.harvest = getKamiHarvest(world, components, entity);
       // NOTE: this pattern is a remnant for how calcs are currently run
       // ideally we want to flatten the shapes and avoid automatically populating
@@ -142,7 +140,7 @@ export const get = (
     const updateTs = ProgressUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.progress) {
-      if (debug) console.log(`  updating kami progress`);
+      console.log(`updating progress for kami ${kami.index} ${kami.name}`);
       kami.progress = getKamiProgress(world, components, entity);
       ProgressUpdateTs.set(entity, now);
     }
@@ -153,7 +151,7 @@ export const get = (
     const updateTs = RerollsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.rerolls) {
-      if (debug) console.log(`  updating kami rerolls`);
+      console.log(`updating rerolls for kami ${kami.index} ${kami.name}`);
       kami.rerolls = getRerolls(components, entity);
       RerollsUpdateTs.set(entity, now);
     }
@@ -165,7 +163,7 @@ export const get = (
     const updateTs = SkillsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.skills) {
-      if (debug) console.log(`  updating kami skills`);
+      console.log(`updating skills for kami ${kami.index} ${kami.name}`);
       kami.skills = getKamiSkills(world, components, entity);
       SkillsUpdateTs.set(entity, now);
     }
@@ -176,7 +174,7 @@ export const get = (
     const updateTs = StatsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.stats) {
-      if (debug) console.log(`  updating kami stats`);
+      console.log(`updating stats for kami ${kami.index} ${kami.name}`);
       kami.stats = getKamiStats(world, components, entity, true);
       StatsUpdateTs.set(entity, now);
     }
@@ -187,7 +185,7 @@ export const get = (
     const updateTs = TimeUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.time) {
-      if (debug) console.log(`  updating kami times`);
+      console.log(`updating times for kami ${kami.index} ${kami.name}`);
       kami.time = getKamiTimes(components, entity);
       TimeUpdateTs.set(entity, now);
     }
@@ -198,15 +196,13 @@ export const get = (
     const updateTs = TraitsUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.traits) {
-      if (debug) console.log(`  updating kami traits`);
+      console.log(`updating traits for kami ${kami.index} ${kami.name}`);
       kami.traits = getKamiTraits(world, components, entity);
       TraitsUpdateTs.set(entity, now);
     }
   }
 
-  if (debug) console.log(`  updating health rate`);
   updateHealthRate(kami);
-  if (debug) console.log(`finished retrieving kami ${kami.index} ${kami.name}`);
   return kami;
 };
 

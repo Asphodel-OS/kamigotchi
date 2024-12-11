@@ -4,7 +4,6 @@ import { getAccount, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
-import { useAccount } from 'app/stores';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -26,7 +25,6 @@ export function registerPartyModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const { debug } = useAccount.getState();
 
           const accountEntity = queryAccountFromEmbedded(network);
           const accRefreshOptions = {
@@ -55,8 +53,7 @@ export function registerPartyModal() {
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
-              getKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
+              getKamis: () => getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
             },
           };
         })
