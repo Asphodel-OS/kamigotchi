@@ -3,11 +3,11 @@ import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 
-export const getLevel = (components: Components, entity: EntityIndex): number => {
+export const getLevel = (components: Components, entity: EntityIndex, fallback = 0): number => {
   const { Level } = components;
   const result = getComponentValue(Level, entity)?.value;
   if (result === undefined) console.warn('undefined Level for entity', entity);
-  return (result ?? 0) * 1;
+  return (result ?? fallback) * 1;
 };
 
 export const getMediaURI = (components: Components, entity: EntityIndex): string => {
@@ -55,7 +55,8 @@ export const getType = (components: Components, entity: EntityIndex): string => 
 export const getValue = (components: Components, entity: EntityIndex): number => {
   const { Value } = components;
   const result = getComponentValue(Value, entity)?.value;
-  if (result === undefined) console.warn('undefined Value for entity', entity);
+  // TODO: uncomment this once harvests default to 0 value
+  // if (result === undefined) console.warn('undefined Value for entity', entity);
   return (result ?? 0) * 1;
 };
 

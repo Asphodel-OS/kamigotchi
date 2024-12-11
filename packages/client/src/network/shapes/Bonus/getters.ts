@@ -11,7 +11,7 @@ export const getBonusValue = (
   precision: number = 0
 ): number => {
   const values = getBonusValuesForType(world, components, field, holderID, precision);
-  return values.reduce((acc, curr) => acc + curr, 0);
+  return values.reduce((sum, curr) => sum + curr, 0);
 };
 
 export const getBonusValuesForType = (
