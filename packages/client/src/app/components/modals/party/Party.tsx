@@ -36,7 +36,7 @@ export function registerPartyModal() {
             bonuses: 5, // set this to 3600 once we get explicit triggers for updates
             config: 3600,
             flags: 10, // set this to 3600 once we get explicit triggers for updates
-            harvest: 2, // set this to 60 once we get explicit triggers for updates
+            harvest: 5, // set this to 60 once we get explicit triggers for updates
             skills: 5, // set this to 3600 once we get explicit triggers for updates
             stats: 3600,
             traits: 3600,
@@ -53,8 +53,7 @@ export function registerPartyModal() {
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
-              getKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, true),
+              getKamis: () => getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
             },
           };
         })

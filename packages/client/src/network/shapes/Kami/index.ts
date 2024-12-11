@@ -15,14 +15,14 @@ export {
   getProgress as getKamiProgress,
 } from './progress';
 export {
-  queryByName as queryKamiByName,
+  queryByIndex as queryKamiByIndex,
   query as queryKamis,
   queryByState as queryKamisByState,
 } from './queries';
 export { getStats as getKamiStats } from './stats';
 export { getTimes as getKamiTimes } from './times';
 export { getTraits as getKamiTraits, queryTraits as queryKamiTraits } from './traits';
-export { getBaseKami, getGachaKami, getKami, getKamiEntity } from './types';
+export { getBaseKami, getGachaKami, getKami } from './types';
 
 export type { KillLog } from './battle';
 export type { Bonuses as KamiBonuses } from './bonuses';

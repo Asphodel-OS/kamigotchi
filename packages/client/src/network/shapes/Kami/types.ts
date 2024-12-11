@@ -1,9 +1,16 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Harvest } from '../Harvest';
-import { DetailedEntity, getEntityByHash } from '../utils';
-import { getRerolls } from '../utils/component';
+import { DetailedEntity } from '../utils';
+import {
+  getKamiIndex,
+  getLevel,
+  getMediaURI,
+  getName,
+  getRerolls,
+  getState,
+} from '../utils/component';
 import { Bonuses, getBonuses } from './bonuses';
 import { Configs, getConfigs } from './configs';
 import { Flags, getFlags } from './flags';
@@ -56,65 +63,47 @@ export interface Options {
 }
 
 // gets a Kami from EntityIndex with just the bare minimum of data
-export const getBaseKami = (
-  world: World,
-  components: Components,
-  entity: EntityIndex
-): BaseKami => {
-  const { KamiIndex, Name, MediaURI } = components;
+export const getBaseKami = (world: World, comps: Components, entity: EntityIndex): BaseKami => {
   return {
     ObjectType: 'KAMI',
     entity,
     id: world.entities[entity],
-    index: getComponentValue(KamiIndex, entity)?.value as number,
-    name: getComponentValue(Name, entity)?.value as string,
-    image: getComponentValue(MediaURI, entity)?.value as string,
+    index: getKamiIndex(comps, entity),
+    name: getName(comps, entity),
+    image: getMediaURI(comps, entity),
   };
 };
 
-export const getGachaKami = (
-  world: World,
-  components: Components,
-  entity: EntityIndex
-): GachaKami => {
-  const { Level } = components;
+export const getGachaKami = (world: World, comps: Components, entity: EntityIndex): GachaKami => {
   return {
-    ...getBaseKami(world, components, entity),
-    level: (getComponentValue(Level, entity)?.value ?? 0) * 1,
-    stats: getStats(world, components, entity), // skips bonus calcs
+    ...getBaseKami(world, comps, entity),
+    level: getLevel(comps, entity),
+    stats: getStats(world, comps, entity), // skips bonus calcs
   };
 };
 
 // get a Kami from its EnityIndex. includes options for which data to include
 export const getKami = (
   world: World,
-  components: Components,
+  comps: Components,
   entity: EntityIndex,
   options?: Options
 ): Kami => {
-  const { State } = components;
   const kami: Kami = {
-    ...getBaseKami(world, components, entity),
-    state: getComponentValue(State, entity)?.value as string,
+    ...getBaseKami(world, comps, entity),
+    state: getState(comps, entity),
   };
 
-  if (options?.bonus) kami.bonuses = getBonuses(world, components, entity);
-  if (options?.config) kami.config = getConfigs(world, components);
-  if (options?.flags) kami.flags = getFlags(world, components, entity);
-  if (options?.harvest) kami.harvest = getHarvest(world, components, entity);
-  if (options?.progress) kami.progress = getProgress(world, components, entity);
-  if (options?.rerolls) kami.rerolls = getRerolls(components, entity);
-  if (options?.skills) kami.skills = getSkills(world, components, entity);
-  if (options?.stats) kami.stats = getStats(world, components, entity);
-  if (options?.time) kami.time = getTimes(components, entity);
-  if (options?.traits) kami.traits = getTraits(world, components, entity);
+  if (options?.bonus) kami.bonuses = getBonuses(world, comps, entity);
+  if (options?.config) kami.config = getConfigs(world, comps);
+  if (options?.flags) kami.flags = getFlags(world, comps, entity);
+  if (options?.harvest) kami.harvest = getHarvest(world, comps, entity);
+  if (options?.progress) kami.progress = getProgress(world, comps, entity);
+  if (options?.rerolls) kami.rerolls = getRerolls(comps, entity);
+  if (options?.skills) kami.skills = getSkills(world, comps, entity);
+  if (options?.stats) kami.stats = getStats(world, comps, entity);
+  if (options?.time) kami.time = getTimes(comps, entity);
+  if (options?.traits) kami.traits = getTraits(world, comps, entity);
 
   return kami;
 };
-
-////////////////
-// IDs
-
-export function getKamiEntity(world: World, index: number): EntityIndex | undefined {
-  return getEntityByHash(world, ['kami.id', index], ['string', 'uint32']);
-}

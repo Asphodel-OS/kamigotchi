@@ -3,6 +3,27 @@ import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 
+export const getLevel = (components: Components, entity: EntityIndex): number => {
+  const { Level } = components;
+  const result = getComponentValue(Level, entity)?.value;
+  if (result === undefined) console.warn('undefined Level for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+export const getMediaURI = (components: Components, entity: EntityIndex): string => {
+  const { MediaURI } = components;
+  const result = getComponentValue(MediaURI, entity)?.value;
+  if (result === undefined) console.warn('undefined MediaURI for entity', entity);
+  return result ?? '';
+};
+
+export const getName = (components: Components, entity: EntityIndex): string => {
+  const { Name } = components;
+  const result = getComponentValue(Name, entity)?.value;
+  if (result === undefined) console.warn('undefined Name for entity', entity);
+  return result ?? '';
+};
+
 export const getRerolls = (components: Components, entity: EntityIndex): number => {
   const { Reroll } = components;
   const result = getComponentValue(Reroll, entity)?.value;
@@ -100,6 +121,13 @@ export const getItemIndex = (components: Components, entity: EntityIndex): numbe
   const { ItemIndex } = components;
   const result = getComponentValue(ItemIndex, entity)?.value;
   if (result === undefined) console.warn('undefined ItemIndex for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+export const getKamiIndex = (components: Components, entity: EntityIndex): number => {
+  const { KamiIndex } = components;
+  const result = getComponentValue(KamiIndex, entity)?.value;
+  if (result === undefined) console.warn('undefined KamiIndex for entity', entity);
   return (result ?? 0) * 1;
 };
 
