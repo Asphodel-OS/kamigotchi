@@ -28,7 +28,6 @@ export const Room = (props: Props) => {
   useEffect(() => {
     if (index == room.index) return;
     const newRoom = rooms[index];
-
     const music = newRoom.music;
     if (!music) bgm?.stop();
     else if (music.path !== room.music?.path) {
@@ -36,6 +35,7 @@ export const Room = (props: Props) => {
       if (bgm) bgm.stop();
       newBgm.play();
       setBgm(newBgm);
+      newBgm?.fade(0, 1, 1000);
     }
 
     setRoom(newRoom);
