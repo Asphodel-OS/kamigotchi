@@ -34,7 +34,7 @@ export const getType = (components: Components, entity: EntityIndex): string => 
 export const getValue = (components: Components, entity: EntityIndex): number => {
   const { Value } = components;
   const result = getComponentValue(Value, entity)?.value;
-  if (result === undefined) console.warn('undefined Value for entity', entity);
+  // if (result === undefined) console.warn('undefined Value for entity', entity);
   return (result ?? 0) * 1;
 };
 

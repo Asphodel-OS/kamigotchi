@@ -4,14 +4,12 @@ import styled from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { Account, BaseAccount } from 'network/shapes/Account';
-import { Inventory } from 'network/shapes/Inventory';
 import { Kami } from 'network/shapes/Kami';
 import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
 
 interface Props {
   account: Account;
-  inventories: Inventory[];
   kamiEntities: {
     account: EntityIndex[];
     node: EntityIndex[];

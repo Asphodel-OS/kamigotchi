@@ -3,25 +3,21 @@ import { getEntityByHash, hashArgs } from '../utils';
 
 export const queryRegistry = (
   world: World,
-  field: string,
-  nodeIndex: number
+  type: string,
+  index: number
 ): EntityIndex | undefined => {
-  return getEntityByHash(
-    world,
-    ['registry.scavenge', field, nodeIndex],
-    ['string', 'string', 'uint32']
-  );
+  return getEntityByHash(world, ['registry.scavenge', type, index], ['string', 'string', 'uint32']);
 };
 
 export const queryInstance = (
   world: World,
-  field: string,
-  nodeIndex: number,
+  type: string,
+  index: number,
   holderID: EntityID
 ): EntityIndex | undefined => {
   return getEntityByHash(
     world,
-    ['scavenge.instance', field, nodeIndex, holderID],
+    ['scavenge.instance', type, index, holderID],
     ['string', 'string', 'uint32', 'uint256']
   );
 };

@@ -17,7 +17,7 @@ export const FriendsUpdateTs = new Map<EntityIndex, number>();
 export const InventoriesUpdateTs = new Map<EntityIndex, number>();
 export const StatsUpdateTs = new Map<EntityIndex, number>();
 
-interface Options {
+export interface Options {
   live?: number;
   config?: number;
   friends?: number;

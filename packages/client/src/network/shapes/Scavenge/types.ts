@@ -19,18 +19,29 @@ export const get = (
   components: Components,
   entity: EntityIndex,
   type?: string,
-  scavIndex?: number
+  index?: number
 ): ScavBar => {
   const id = world.entities[entity];
 
   const rewardAnchor = queryRewardAnchor(id);
+  console.log(`reward anchor ${rewardAnchor}`);
   const rewardEntities = queryChildrenOf(components, rewardAnchor);
+  console.log(`reward entities`, rewardEntities);
   return {
     id,
     entity,
     type: type ?? getType(components, entity),
-    index: scavIndex ?? getIndex(components, entity),
+    index: index ?? getIndex(components, entity),
     cost: getValue(components, entity),
     rewards: rewardEntities.map((entiti: EntityIndex) => getAllo(world, components, entiti)),
   };
+};
+
+export const NullScavenge: ScavBar = {
+  id: '0' as EntityID,
+  entity: 0 as EntityIndex,
+  index: 0,
+  type: '',
+  cost: 100,
+  rewards: [],
 };

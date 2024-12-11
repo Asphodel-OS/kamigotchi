@@ -8,9 +8,9 @@ import { useEffect, useState } from 'react';
 const SYNC_TIME = 1500;
 
 interface Props {
-  scavBar: ScavBar;
+  scavenge: ScavBar;
   actions: {
-    claim: (scavBar: ScavBar) => void;
+    claim: (scavenge: ScavBar) => void;
   };
   utils: {
     getPoints: () => number;
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const ScavengeBar = (props: Props) => {
-  const { scavBar, actions, utils } = props;
+  const { scavenge, actions, utils } = props;
   const { modals } = useVisibility();
   const [lastSync, setLastSync] = useState(Date.now());
   const [points, setPoints] = useState(0);
@@ -37,16 +37,16 @@ export const ScavengeBar = (props: Props) => {
 
   // periodically update the number of rolls and points if modal is open
   useEffect(() => {
-    if (!modals.node || !scavBar) return;
+    if (!modals.node || !scavenge) return;
     update();
   }, [lastSync]);
 
   // update the stats whenever the scav bar changes
-  useEffect(() => update(), [scavBar.index]);
+  useEffect(() => update(), [scavenge.index]);
 
   const update = () => {
     const currPoints = utils.getPoints();
-    const claimable = calcScavClaimable(scavBar.cost, currPoints);
+    const claimable = calcScavClaimable(scavenge.cost, currPoints);
     setPoints(currPoints);
     setRolls(claimable);
   };
@@ -55,17 +55,17 @@ export const ScavengeBar = (props: Props) => {
   // INTERPRETATION
 
   const getPercent = () => {
-    if (!scavBar) return 0;
-    return ((points % scavBar.cost) / scavBar.cost) * 100;
+    if (!scavenge) return 0;
+    return ((points % scavenge.cost) / scavenge.cost) * 100;
   };
 
   return (
     <Container>
       <ProgressBar percent={getPercent()}>
-        {rolls} rolls + {points % scavBar.cost}/{scavBar.cost}
+        {rolls} rolls + {points % scavenge.cost}/{scavenge.cost}
       </ProgressBar>
       <ActionButton
-        onClick={() => actions.claim(scavBar)}
+        onClick={() => actions.claim(scavenge)}
         text={`Scavenge`}
         size='medium'
         disabled={rolls == 0}

@@ -1,9 +1,10 @@
 export { calcClaimable as calcScavClaimable, getPoints as getScavPoints } from './functions';
-export { getByFieldAndIndex as getScavBarFromHash } from './getters';
+export { getByFieldAndIndex as getScavengeFromHash } from './getters';
 export {
   queryInstance as queryScavInstance,
+  queryRegistry as queryScavRegistry,
   queryRewardAnchor as queryScavRewardAnchor,
 } from './queries';
-export { get as getScavBar } from './types';
+export { NullScavenge, get as getScavenge } from './types';
 
 export type { ScavBar } from './types';

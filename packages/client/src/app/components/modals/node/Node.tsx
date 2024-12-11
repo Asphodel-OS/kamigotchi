@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
+import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { EmptyText, ModalWrapper } from 'app/components/library';
@@ -28,7 +28,13 @@ import {
   queryNodeByIndex,
   queryNodeKamis,
 } from 'network/shapes/Node';
-import { getScavBarFromHash, getScavPoints, ScavBar } from 'network/shapes/Scavenge/';
+import {
+  getScavenge,
+  queryScavInstance,
+  queryScavRegistry,
+  ScavBar,
+} from 'network/shapes/Scavenge/';
+import { getValue } from 'network/shapes/utils/component';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
 import { Kards } from './kards/Kards';
@@ -79,7 +85,6 @@ export function registerNodeModal() {
             network,
             data: {
               accountEntity,
-              inventories: getAccountInventories(world, components, accountEntity),
               kamiEntities: {
                 account: queryAccountKamis(world, components, accountEntity),
                 node: queryNodeKamis(world, components, nodeEntity),
@@ -96,18 +101,21 @@ export function registerNodeModal() {
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiRefreshOptions),
+              getOwner: (kamiEntity: EntityIndex) =>
+                getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
               getNode: (index: number) => getNodeByIndex(world, components, index),
-              getOwner: (kamiEntity: EntityIndex) => getKamiAccount(world, components, kamiEntity),
+              getScavenge: (entity: EntityIndex) => getScavenge(world, components, entity),
+              getValue: (entity: EntityIndex) => getValue(components, entity),
+              parseAllos: (allos: Allo[]) => parseAllos(world, components, allos),
+              queryScavRegistry: (index: number) => queryScavRegistry(world, 'node', index),
+              queryScavInstance: (index: number, holderID: EntityID) =>
+                queryScavInstance(world, 'node', index, holderID),
 
               // node header functions..
               // TODO: clean up this mess
-              getScavPoints: () => getScavPoints(world, components, 'node', nodeIndex, accountID), // TODO: query by entity index?
               passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
               parseConditionalText: (condition: Condition, tracking?: boolean) =>
                 parseConditionalText(world, components, condition, tracking),
-              getScavBar: () => getScavBarFromHash(world, components, 'node', nodeIndex),
-              parseAllos: (scavAllo: Allo[], flatten?: boolean) =>
-                parseAllos(world, components, scavAllo, flatten),
             },
           };
         })
@@ -116,7 +124,7 @@ export function registerNodeModal() {
     // Render
     ({ data, display, network, utils }) => {
       // console.log('Node Modal Data', data);
-      const { accountEntity, inventories, kamiEntities } = data;
+      const { kamiEntities } = data;
       const {
         actions,
         api,
@@ -147,6 +155,7 @@ export function registerNodeModal() {
       // updates from selected Node updates
       useEffect(() => {
         if (!nodeIndex) setModals({ node: false }); // NullNode
+        console.log(`node index changed to ${nodeIndex}`);
         setNode(getNode(nodeIndex));
       }, [nodeIndex]);
 
@@ -248,7 +257,6 @@ export function registerNodeModal() {
           )}
           <Kards
             account={account}
-            inventories={inventories}
             kamiEntities={kamiEntities}
             actions={{ collect, liquidate, stop }}
             display={display}

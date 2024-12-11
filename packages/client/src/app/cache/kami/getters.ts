@@ -7,7 +7,7 @@ import { NullHarvest } from 'network/shapes/Harvest';
 import { queryKamiHarvest, queryKamiTraits } from 'network/shapes/Kami';
 import { queryHolderSkills } from 'network/shapes/Skill';
 import { getKamiOwnerID, getSkillPoints } from 'network/shapes/utils/component';
-import { getAccount } from '../account';
+import { AccountOptions, getAccount } from '../account';
 import { getHarvest } from '../harvest';
 import { getSkill } from '../skill';
 import { getTrait } from '../trait';
@@ -20,11 +20,16 @@ export const KamiToOwner = new Map<EntityIndex, EntityIndex>(); // kami entity -
 export const KamiToHarvest = new Map<EntityIndex, EntityIndex>(); // kami entity -> harvest entity
 
 // get the Account object that owns a Kami entity
-export const getKamiAccount = (world: World, components: Components, entity: EntityIndex) => {
+export const getKamiAccount = (
+  world: World,
+  components: Components,
+  entity: EntityIndex,
+  options?: AccountOptions
+) => {
   const ownerID = getKamiOwnerID(components, entity);
   const accountEntity = world.entityToIndex.get(ownerID);
   if (!accountEntity) return NullAccount;
-  return getAccount(world, components, accountEntity);
+  return getAccount(world, components, accountEntity, options);
 };
 
 // get the Flags settings for a Kami entity

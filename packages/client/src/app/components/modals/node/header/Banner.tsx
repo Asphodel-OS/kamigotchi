@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -12,8 +12,9 @@ import { Allo } from 'network/shapes/Allo';
 import { Condition } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
-import { ScavBar } from 'network/shapes/Scavenge';
+import { NullScavenge, ScavBar } from 'network/shapes/Scavenge';
 import { DetailedEntity, getAffinityImage } from 'network/shapes/utils';
+import { ItemDrops } from './ItemDrops';
 import { ScavengeBar } from './ScavengeBar';
 
 interface Props {
@@ -23,17 +24,18 @@ interface Props {
     kamiEntities: EntityIndex[];
   };
   actions: {
-    claim: (scavBar: ScavBar) => void;
+    claim: (scavenge: ScavBar) => void;
     addKami: (kami: Kami) => void;
   };
   utils: {
-    getAccount: () => Account;
     getAccountKamis: () => Kami[];
-    getScavBar: () => ScavBar | undefined;
-    getScavPoints: () => number;
-    parseAllos: (scavAllo: Allo[], flatten?: boolean) => DetailedEntity[];
+    getScavenge: (entity: EntityIndex) => ScavBar;
+    getValue: (entity: EntityIndex) => number;
+    parseAllos: (scavAllo: Allo[]) => DetailedEntity[];
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
     passesNodeReqs: (kami: Kami) => boolean;
+    queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
+    queryScavRegistry: (index: number) => EntityIndex | undefined;
   };
 }
 
@@ -41,12 +43,12 @@ export const Banner = (props: Props) => {
   const { data, utils, actions } = props;
   const { account, node } = data;
   const { claim, addKami } = actions;
-  const { getAccountKamis, getScavBar, getScavPoints } = utils;
-  const { parseAllos, parseConditionalText, passesNodeReqs } = utils;
+  const { getAccountKamis, getScavenge, getValue, queryScavRegistry } = utils;
+  const { parseConditionalText, passesNodeReqs } = utils;
 
   const { modals } = useVisibility();
-  const [scavBar, setScavBar] = useState<ScavBar | undefined>(undefined);
   const [kamis, setKamis] = useState<Kami[]>([]);
+  const [scavenge, setScavenge] = useState<ScavBar>(NullScavenge);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   // set refresh rate on mount
@@ -56,16 +58,21 @@ export const Banner = (props: Props) => {
     return () => clearInterval(refreshInterval);
   }, []);
 
-  // update the scav bar whenever the node changes
+  // update the scavenge whenever the node changes
   useEffect(() => {
     if (!modals.node) return;
-    setScavBar(getScavBar());
-  }, [node.index]);
+    const scavEntity = queryScavRegistry(node.index);
+    console.log(`updating scavenge with entity ${scavEntity}`);
+    if (scavEntity) {
+      const scavenge = getScavenge(scavEntity);
+      setScavenge(scavenge);
+      console.log(`scavenge updated`, scavenge);
+    }
+  }, [node.index, modals.node]);
 
   // keep the account kamis up to date whenever the account changes
   useEffect(() => {
-    if (!modals.node) return;
-    setKamis(getAccountKamis());
+    if (modals.node) setKamis(getAccountKamis());
   }, [lastRefresh]);
 
   // update the scavbar for its points every onc
@@ -136,28 +143,6 @@ export const Banner = (props: Props) => {
     );
   };
 
-  const ItemDrops = () => {
-    const nodeDrops = node.drops;
-    const drops = parseAllos(scavBar?.rewards ?? []);
-    const dropsFlat = parseAllos(scavBar?.rewards ?? [], true);
-    return (
-      <Row>
-        <Label>Drops: </Label>
-        <Tooltip text={[nodeDrops[0]?.name ?? '']}>
-          <Icon key={'node-' + nodeDrops[0]?.name} src={nodeDrops[0]?.image ?? ''} />
-        </Tooltip>
-
-        <Tooltip text={drops.map((entry) => entry.name + '\n' + entry.description)}>
-          <Row style={{ borderLeft: 'solid #666 1px', paddingLeft: '0.3vw' }}>
-            {dropsFlat.map((entry) => (
-              <Icon key={'scav-' + entry.name} src={entry.image} />
-            ))}
-          </Row>
-        </Tooltip>
-      </Row>
-    );
-  };
-
   return (
     <Container key={node.name}>
       <Content>
@@ -169,18 +154,18 @@ export const Banner = (props: Props) => {
             <Tooltip text={[node.affinity ?? '']}>
               <Icon src={getAffinityImage(node.affinity)} />
             </Tooltip>
-            {ItemDrops()}
+            <ItemDrops node={node} scavenge={scavenge} utils={utils} />
           </Row>
           <Description>{node.description}</Description>
         </Details>
         {RequirementText()}
       </Content>
       <ButtonRow>{AddButton(kamis)}</ButtonRow>
-      {scavBar && (
+      {scavenge.entity != 0 && (
         <ScavengeBar
-          scavBar={scavBar}
-          actions={{ claim: claim }}
-          utils={{ getPoints: getScavPoints }}
+          scavenge={scavenge}
+          actions={actions}
+          utils={{ getPoints: () => getValue(scavenge.entity) }}
         />
       )}
     </Container>
