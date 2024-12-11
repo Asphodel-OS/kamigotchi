@@ -1,61 +1,66 @@
 import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
-import { Components } from 'network/comps';
+import { Components } from 'network/components';
 import { getHarvest } from 'network/shapes/Harvest';
+import { getHarvestEntity } from 'network/shapes/Harvest/types';
 import { BaseAccount, getBaseAccount, NullAccount } from '../Account';
-import { NullKami } from './constants';
-import { queryHarvest } from './harvest';
-import { query, queryByIndex } from './queries';
-import { getKami, Options } from './types';
-
-/*
- * TODO: clean up this file, it's a tad disgusting
- */
+import { query, queryByName } from './queries';
+import { getKami, getKamiEntity, Options } from './types';
 
 // get all Kamis
-export const getAll = (world: World, comps: Components, options?: Options) => {
-  return query(comps, {}).map((index) => getKami(world, comps, index, options));
+export const getAll = (world: World, components: Components, options?: Options) => {
+  return query(components, {}).map((index) => getKami(world, components, index, options));
 };
 
 // get a Kami by its index (token ID)
 // TODO: handle failed queries with a default NullKami
-export const getByIndex = (world: World, comps: Components, index: number, options?: Options) => {
-  const results = query(comps, { index: index });
-  if (results.length == 0) return NullKami;
+export const getByIndex = (
+  world: World,
+  components: Components,
+  index: number,
+  options?: Options
+) => {
+  const results = query(components, { index: index });
+  if (results.length == 0) return;
   const entity = results[0];
-  return getKami(world, comps, entity, options);
+  return getKami(world, components, entity, options);
 };
 
 // gat all Kamis owned by an Account based on its ID
 export const getByAccount = (
   world: World,
-  comps: Components,
+  components: Components,
   accountID: string,
   options?: Options
 ) => {
-  const results = query(comps, { account: accountID as EntityID });
-  return results.map((index) => getKami(world, comps, index, options));
+  const results = query(components, { account: accountID as EntityID });
+  return results.map((index) => getKami(world, components, index, options));
 };
 
-export const getByName = (world: World, comps: Components, name: string) => {
-  const results = query(comps, { name });
-  return results.map((index) => getKami(world, comps, index));
+export const getByName = (world: World, components: Components, name: string) => {
+  const results = queryByName(components, name);
+  return results.map((index) => getKami(world, components, index));
 };
 
 // get all Kamis based on their state
-export const getByState = (world: World, comps: Components, state: string, options?: Options) => {
-  const results = query(comps, { state });
-  return results.map((index) => getKami(world, comps, index, options));
+export const getByState = (
+  world: World,
+  components: Components,
+  state: string,
+  options?: Options
+) => {
+  const results = query(components, { state });
+  return results.map((index) => getKami(world, components, index, options));
 };
 
 ////////////////
 // OTHER GETTERS
 
 // get the BaseAccount entity that owns a Kami, queried by kami index
-export const getAccount = (world: World, comps: Components, index: number): BaseAccount => {
-  const { OwnsKamiID } = comps;
+export const getAccount = (world: World, components: Components, index: number): BaseAccount => {
+  const { OwnsKamiID } = components;
 
-  const kamiEntity = queryByIndex(world, comps, index);
+  const kamiEntity = getKamiEntity(world, index);
   if (!kamiEntity) return NullAccount;
 
   const rawAccID = getComponentValue(OwnsKamiID, kamiEntity)?.value ?? '';
@@ -65,14 +70,14 @@ export const getAccount = (world: World, comps: Components, index: number): Base
   const accEntity = world.entityToIndex.get(accID);
   if (!accEntity) return NullAccount;
 
-  return getBaseAccount(world, comps, accEntity);
+  return getBaseAccount(world, components, accEntity);
 };
-
 // get Kami harvesting location
-export const getLocation = (world: World, comps: Components, entity: EntityIndex) => {
-  const harvestEntity = queryHarvest(world, entity);
+export const getLocation = (world: World, components: Components, entity: EntityIndex) => {
+  const harvestEntity = getHarvestEntity(world, world.entities[entity]);
   if (harvestEntity) {
-    const harvestInfo = getHarvest(world, comps, harvestEntity, { node: true });
+    const harvestInfo = getHarvest(world, components, harvestEntity, { node: true });
+
     return harvestInfo.state === 'ACTIVE' ? harvestInfo.node?.index : undefined;
   }
 };

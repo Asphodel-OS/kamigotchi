@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
-import { Kami } from 'network/shapes/Kami';
 import { Blocked } from './blocked/Blocked';
 import { Friends } from './friends/Friends';
 import { Kamis } from './party/Kamis';
@@ -21,20 +19,16 @@ interface Props {
     cancelFren: (friendship: Friendship) => void;
     requestFren: (account: BaseAccount) => void;
   };
-  utils: {
-    getAccountKamis: (accEntity: EntityIndex) => Kami[];
-  };
 }
 
 export const Bottom = (props: Props) => {
-  const { tab, data, actions, utils } = props;
-  const { account } = data;
+  const { tab, data, actions } = props;
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
   // re-render and persist their state, rather than remounting
   return (
     <Container>
-      {tab === 'party' && <Kamis account={account} utils={utils} />}
+      {tab === 'party' && <Kamis kamis={data.account.kamis} />}
       {tab === 'frens' && (
         <Friends
           key='friends'

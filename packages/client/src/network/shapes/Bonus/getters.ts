@@ -1,6 +1,7 @@
 import { EntityID, World } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { queryForParent, queryForType } from './queries';
+import { queryChildrenOf } from '../utils';
+import { queryBonusForType } from './queries';
 import { Bonus, getBonus, getBonusValueSingle } from './types';
 
 export const getBonusValue = (
@@ -11,7 +12,7 @@ export const getBonusValue = (
   precision: number = 0
 ): number => {
   const values = getBonusValuesForType(world, components, field, holderID, precision);
-  return values.reduce((sum, curr) => sum + curr, 0);
+  return values.reduce((acc, curr) => acc + curr, 0);
 };
 
 export const getBonusValuesForType = (
@@ -21,8 +22,8 @@ export const getBonusValuesForType = (
   holderID: EntityID,
   precision: number = 0
 ): number[] => {
-  const entities = queryForType(components, field, holderID);
-  return entities.map((entity) => getBonusValueSingle(world, components, entity, precision));
+  const instances = queryBonusForType(components, field, holderID);
+  return instances.map((instance) => getBonusValueSingle(world, components, instance, precision));
 };
 
 export const getBonusesByParent = (
@@ -30,6 +31,7 @@ export const getBonusesByParent = (
   components: Components,
   parentID: EntityID
 ): Bonus[] => {
-  const entities = queryForParent(components, parentID);
-  return entities.map((entity) => getBonus(world, components, entity));
+  return queryChildrenOf(components, parentID).map((instance) =>
+    getBonus(world, components, instance)
+  );
 };

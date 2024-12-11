@@ -1,26 +1,20 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { getAccount } from 'app/cache/account';
-import { getKami } from 'app/cache/kami';
-import {
-  getHolderSkillTreePoints,
-  getSkillTreePointsRequirement,
-  getSkillUpgradeError,
-} from 'app/cache/skill';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { BaseAccount, NullAccount, getAccountFromBurner } from 'network/shapes/Account';
+import { Kami, getKamiAccount, getKamiBattles, getKamiByIndex } from 'network/shapes/Kami';
 import {
-  Kami,
-  calcKamiExpRequirement,
-  getKamiAccount,
-  getKamiBattles,
-  queryKamis,
-} from 'network/shapes/Kami';
-import { Skill, getRegistrySkills } from 'network/shapes/Skill';
+  Skill,
+  getHolderTreePoints,
+  getRegistrySkills,
+  getSkillUpgradeError,
+  getTreePointsRequirement,
+} from 'network/shapes/Skill';
+import { waitForActionCompletion } from 'network/utils';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
@@ -28,7 +22,6 @@ import { Skills } from './skills/Skills';
 import { Traits } from './traits/Traits';
 
 const SYNC_TIME = 1000;
-export type TabType = 'TRAITS' | 'SKILLS' | 'BATTLES';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -47,31 +40,12 @@ export function registerKamiModal() {
 
       return interval(SYNC_TIME).pipe(
         map(() => {
-          const accountEntity = queryAccountFromEmbedded(network);
-          const account = getAccount(world, components, accountEntity, { live: 2 });
-          const kamiOptions = {
-            live: 2,
-            flags: 10,
-            progress: 5,
-            skills: 2,
-            stats: 5,
-            traits: 3600,
-          };
-
+          const account = getAccountFromBurner(network);
           return {
             network,
             data: { account },
             utils: {
-              calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
-              getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
               getOwner: (index: number) => getKamiAccount(world, components, index),
-              getUpgradeError: (registry: Map<number, Skill>, index: number, kami: Kami) =>
-                getSkillUpgradeError(world, components, index, kami, registry),
-              getTreePoints: (tree: string, holderID: EntityID) =>
-                getHolderSkillTreePoints(world, components, tree, holderID),
-              getTreeRequirement: (skill: Skill) =>
-                getSkillTreePointsRequirement(world, components, skill),
-              queryKamiByIndex: (index: number) => queryKamis(components, { index })[0],
             },
           };
         })
@@ -80,20 +54,11 @@ export function registerKamiModal() {
 
     // Render
     ({ data, network, utils }) => {
-      const { actions, api, components, world } = network;
       const { account } = data;
-      const {
-        getKami,
-        getOwner,
-        queryKamiByIndex,
-        getUpgradeError,
-        getTreePoints,
-        getTreeRequirement,
-      } = utils;
+      const { actions, api, components, world } = network;
       const { kamiIndex } = useSelected();
       const { modals } = useVisibility();
-
-      const [tab, setTab] = useState<TabType>('TRAITS');
+      const [tab, setTab] = useState('traits');
       const [kami, setKami] = useState<Kami>();
       const [owner, setOwner] = useState<BaseAccount>(NullAccount);
       const [lastSync, setLastSync] = useState(Date.now());
@@ -108,26 +73,41 @@ export function registerKamiModal() {
         return () => clearInterval(timerId);
       }, []);
 
-      // update the Kami Object whenever the index changes or on each cycle
+      // update the Kami Entity whenever the index changes
       useEffect(() => {
-        if (!modals.kami) return;
+        if (kamiIndex == kami?.index) return;
         const newKami = getSelectedKami(kamiIndex);
         setKami(newKami);
 
-        const newOwner = getOwner(kamiIndex);
+        const newOwner = utils.getOwner(kamiIndex);
         if (newOwner.index != owner.index) setOwner(newOwner);
-      }, [kamiIndex, lastSync]);
+      }, [kamiIndex]);
+
+      // refresh kami data every second
+      useEffect(() => {
+        if (!modals.kami) return;
+        setKami(getSelectedKami(kamiIndex));
+      }, [lastSync]);
 
       /////////////////
       // DATA FETCHING
 
       const getSelectedKami = (index: number) => {
-        const kamiEntity = queryKamiByIndex(index);
-        return getKami(kamiEntity);
+        return getKamiByIndex(world, components, index, {
+          skills: true,
+          traits: true,
+          flags: true,
+        });
       };
 
       /////////////////
       // ACTION
+
+      // awaits the result of an action and then updates the kami data
+      const updateKamiAfterAction = async (actionIndex: EntityIndex) => {
+        await waitForActionCompletion(actions!.Action, actionIndex);
+        setKami(getSelectedKami(kamiIndex));
+      };
 
       const levelUp = (kami: Kami) => {
         const actionIndex = actions.add({
@@ -138,6 +118,7 @@ export function registerKamiModal() {
             return api.player.pet.level(kami.id);
           },
         });
+        // updateKamiAfterAction(actionIndex);
       };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
@@ -149,6 +130,7 @@ export function registerKamiModal() {
             return api.player.skill.upgrade(kami.id, skill.index);
           },
         });
+        // updateKamiAfterAction(actionIndex);
       };
 
       const resetSkill = (kami: Kami) => {
@@ -160,6 +142,7 @@ export function registerKamiModal() {
             return api.player.skill.reset(kami.id);
           },
         });
+        // updateKamiAfterAction(actionIndex);
       };
 
       /////////////////
@@ -170,38 +153,34 @@ export function registerKamiModal() {
         <ModalWrapper
           id='kami'
           header={[
-            <Header
-              key='banner'
-              data={{ account, kami, owner }}
-              actions={{ levelUp }}
-              utils={utils}
-            />,
+            <Header key='banner' data={{ account, kami, owner }} actions={{ levelUp }} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
           overlay
           noPadding
         >
-          {tab === 'TRAITS' && <Traits kami={kami} />}
-          {tab === 'SKILLS' && (
+          {tab === 'traits' && <Traits kami={kami} />}
+          {tab === 'skills' && (
             <Skills
               data={{ account, kami, owner }}
               skills={getRegistrySkills(world, components)}
               actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill), reset: resetSkill }}
               utils={{
-                getUpgradeError: (registry: Map<number, Skill>, index: number) =>
-                  getUpgradeError(registry, index, kami),
-                getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
-                getTreeRequirement,
+                getUpgradeError: (index: number, registry: Map<number, Skill>) =>
+                  getSkillUpgradeError(world, components, index, kami, registry),
+                getTreePoints: (tree: string) =>
+                  getHolderTreePoints(world, components, tree, kami.id),
+                getTreeRequirement: (skill: Skill) =>
+                  getTreePointsRequirement(world, components, skill),
               }}
             />
           )}
-          {tab === 'BATTLES' && (
+          {tab === 'battles' && (
             <Battles
               kami={kami}
-              tab={tab}
               utils={{
-                getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entity),
+                getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entityIndex),
               }}
             />
           )}

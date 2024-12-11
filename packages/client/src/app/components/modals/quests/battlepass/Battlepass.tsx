@@ -8,7 +8,7 @@ import { parseConditionalUnits } from 'network/shapes/Conditional/interpretation
 import { meetsRequirements, Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
-import { calcPercentCompletion } from 'utils/math';
+import { getPercentCompletion } from 'utils/math';
 import { Milestone } from './Milestone';
 
 const Colors = {
@@ -105,7 +105,7 @@ export const Battlepass = (props: Props) => {
 
   const getMilestonePosition = (quest: Quest) => {
     const needed = getRepObjective(quest);
-    return calcPercentCompletion(needed, maxRep);
+    return getPercentCompletion(needed, maxRep);
   };
 
   // get a registry Quest and check its completion status against the

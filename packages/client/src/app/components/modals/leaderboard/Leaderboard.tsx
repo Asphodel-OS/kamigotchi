@@ -6,8 +6,9 @@ import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { Details, LeaderboardKey, leaderboardsDetails } from 'constants/leaderboards/leaderboards';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'network/shapes/Score';
+
 import { Filters } from './Filters';
 import { Table } from './Table';
 
@@ -26,7 +27,7 @@ export function registerLeaderboardModal() {
       return interval(3000).pipe(
         map(() => {
           const { network } = layers;
-          const account = getAccountFromEmbedded(network);
+          const account = getAccountFromBurner(network);
           return {
             network,
             data: { account },

@@ -2,7 +2,7 @@ import { World } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
-import { getBalance, getBool } from 'network/shapes/utils';
+import { getBalance, getBool } from 'network/shapes/utils/getter';
 import { Account } from '../Account';
 import { Kami } from '../Kami';
 import { ForShapeOptions, ForType } from '../utils';
@@ -84,7 +84,8 @@ export const checkCurrent = (
   holder: Account | Kami
 ): ((opt: any) => Status) => {
   return (opt: any) => {
-    const accVal = getBalance(world, components, holder.entity, target.index, target.type) || 0;
+    const accVal =
+      getBalance(world, components, holder.entityIndex, target.index, target.type) || 0;
     return {
       target: target.value,
       current: accVal,

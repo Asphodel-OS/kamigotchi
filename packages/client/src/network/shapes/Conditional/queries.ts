@@ -1,17 +1,18 @@
 import { EntityID, World } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { queryChildrenOf, queryChildrenOfIndex } from '../utils';
+import { queryChildrenOf, queryChildrenOfEntityIndex } from '../utils';
 import { Condition, Options, getCondition } from './types';
 
 export function queryConditionsOf(
   world: World,
   components: Components,
-  type: string,
+  field: string,
   index: number,
   options?: Options
 ): Condition[] {
-  const childEntities = queryChildrenOfIndex(components, type, index);
-  return childEntities.map((entityIndex) => getCondition(world, components, entityIndex, options));
+  return queryChildrenOfEntityIndex(components, field, index).map((entityIndex) =>
+    getCondition(world, components, entityIndex, options)
+  );
 }
 
 export function queryConditionsOfID(
@@ -20,6 +21,7 @@ export function queryConditionsOfID(
   ptrID: EntityID,
   options?: Options
 ): Condition[] {
-  const childEntities = queryChildrenOf(components, ptrID);
-  return childEntities.map((entityIndex) => getCondition(world, components, entityIndex, options));
+  return queryChildrenOf(components, ptrID).map((entityIndex) =>
+    getCondition(world, components, entityIndex, options)
+  );
 }

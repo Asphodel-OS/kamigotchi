@@ -5,11 +5,10 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import {
   Contribution,
   Goal,
@@ -42,55 +41,40 @@ export function registerGoalModal() {
       return interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const account = getAccount(world, components, accountEntity, { inventory: 5 });
-
+          const account = getAccountFromBurner(network, {
+            inventory: true,
+          });
           return {
             network,
             data: { account },
-            utils: {
-              canClaim: (goal: Goal, contribution: Contribution) => canClaim(goal, contribution),
-              canContribute: (goal: Goal) => canContribute(world, components, goal, account),
-              getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
-                getBalance(world, components, holder, index, type),
-              getContribution: (goal: Goal) =>
-                getContributionByHash(world, components, goal, account),
-              getContributions: (goal: Goal) => getContributions(world, components, goal.id),
-              getDescribedEntity: (type: string, index: number) =>
-                getDescribedEntity(world, components, type, index),
-            },
           };
         })
       );
     },
 
     // Render
-    ({ network, data, utils }) => {
+    ({ network, data }) => {
       const { actions, api, world, components } = network;
-      const { account } = data;
-      const { canContribute, getContribution, getContributions } = utils;
       const { modals } = useVisibility();
       const { goalIndex } = useSelected(); // only support 1 goal type for now
-
+      const [currGoal, setCurrGoal] = useState<Goal>();
       const [tab, setTab] = useState('GOAL');
       const [step, setStep] = useState(0);
-      const [goal, setGoal] = useState<Goal>();
       const [accContribution, setAccContribution] = useState<Contribution>();
       const [scores, setScores] = useState<Score[]>([]);
 
       // update details based on selected
       useEffect(() => {
-        if (!modals.goal) return;
-        const goal = getGoalByIndex(world, components, goalIndex[0]);
-        setGoal(goal);
+        if (modals.goal) {
+          // only 1 goal type for now, potentially support multiple in the future
+          const goal = getGoalByIndex(world, components, goalIndex[0]);
+          const accCon = getContributionByHash(world, components, goal, data.account);
+          setCurrGoal(goal);
+          setAccContribution(accCon);
 
-        const accountContribution = getContribution(goal);
-        setAccContribution(accountContribution);
-
-        const contributions = getContributions(goal);
-        setScores(contributions);
-      }, [goalIndex, modals.goal, step, account.coin]);
+          setScores(getContributions(world, components, goal.id));
+        }
+      }, [goalIndex, modals.goal, step, data.account.coin]);
 
       /////////////////
       // INTERACTIONS
@@ -137,25 +121,28 @@ export function registerGoalModal() {
       // DISPLAY
 
       const MainBox = () => {
-        if (goal === undefined) return <Header>Goal not found</Header>;
+        if (currGoal === undefined) return <Header>Goal not found</Header>;
 
         return (
           <>
             <Details
-              goal={goal}
+              goal={currGoal}
               getDescribedEntity={(type, index) =>
                 getDescribedEntity(world, components, type, index)
               }
             />
             <Progress
               actions={{ contributeTx, claimTx }}
-              account={account}
+              account={data.account}
               accContribution={accContribution}
-              goal={goal}
+              goal={currGoal}
               utils={{
-                ...utils,
-                canContribute: () => canContribute(goal),
-                canClaim: () => canClaim(goal, accContribution),
+                canContribute: () => canContribute(world, components, currGoal, data.account),
+                canClaim: () => canClaim(currGoal, accContribution),
+                getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
+                  getBalance(world, components, holder, index, type),
+                getDescribedEntity: (type: string, index: number) =>
+                  getDescribedEntity(world, components, type, index),
               }}
             />
           </>

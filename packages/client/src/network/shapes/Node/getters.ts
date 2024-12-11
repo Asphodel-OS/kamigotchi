@@ -3,9 +3,8 @@ import { HasValue, World, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { queryConditionsOf } from '../Conditional/queries';
-import { NullNode } from './constants';
 import { queryByIndex } from './queries';
-import { BaseNode, Node, getBaseNode, getNode } from './types';
+import { BaseNode, Node, NullNode, getBaseNode, getNode } from './types';
 
 export const getBaseByIndex = (world: World, components: Components, index: number): BaseNode => {
   const entityIndex = queryByIndex(world, index);

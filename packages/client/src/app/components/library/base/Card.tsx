@@ -35,17 +35,19 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
   border: 0.15vw solid black;
   border-radius: 0.6vw;
-
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  color: black;
 
   display: flex;
   flex-flow: row nowrap;
+
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 const Image = styled.img<{ scale: number }>`
   border-right: solid black 0.15vw;
   border-radius: 0.45vw 0vw 0vw 0.45vw;
   object-fit: cover;
+  object-position: 100% 0;
 
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;

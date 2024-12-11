@@ -16,7 +16,7 @@ export const Searched = (props: Props) => {
   const Actions = (account: BaseAccount) => {
     return (
       <ActionListButton
-        id={`options-${account.entity}`}
+        id={`options-${account.entityIndex}`}
         text=''
         options={[
           { text: 'Add', onClick: () => actions.requestFren(account) },
