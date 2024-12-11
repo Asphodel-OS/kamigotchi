@@ -63,7 +63,7 @@ export const ScavengeBar = (props: Props) => {
   return (
     <Container>
       <ProgressBar percent={(points / scavenge.cost) * 100}>
-        {rolls} rolls + {points} / {scavenge.cost}
+        {rolls} rolls + {points}
       </ProgressBar>
       <ActionButton
         onClick={() => actions.claim(scavenge)}
