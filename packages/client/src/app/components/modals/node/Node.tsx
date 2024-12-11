@@ -28,7 +28,7 @@ import {
   queryNodeByIndex,
   queryNodeKamis,
 } from 'network/shapes/Node';
-import { getScavBarFromHash, getScavPoints, ScavBar } from 'network/shapes/Scavenge';
+import { getScavBarFromHash, getScavPoints, ScavBar } from 'network/shapes/Scavenge/';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
 import { Kards } from './kards/Kards';
@@ -209,7 +209,7 @@ export function registerNodeModal() {
         actions.add({
           id: actionID,
           action: 'ScavengeClaim',
-          params: [scavBar.field, scavBar.index], // actual param: scavBar.id
+          params: [scavBar.type, scavBar.index], // actual param: scavBar.id
           description: `Claiming scavenge at node ${scavBar.index}`,
           execute: async () => {
             return api.player.scavenge.claim(scavBar.id);

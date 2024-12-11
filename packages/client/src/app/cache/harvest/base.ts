@@ -3,11 +3,11 @@ import { EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Harvest, getHarvest } from 'network/shapes/Harvest';
 import {
-  getBalance,
   getLastTime,
   getResetTime,
   getStartTime,
   getState,
+  getValue,
 } from 'network/shapes/utils/component';
 import { getKami } from '../kami';
 import { getNode } from '../node';
@@ -38,7 +38,7 @@ export const get = (world: World, comps: Components, entity: EntityIndex, option
     const updateTs = HarvestLastTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.live) {
-      harvest.balance = getBalance(comps, entity);
+      harvest.balance = getValue(comps, entity);
       harvest.state = getState(comps, entity);
       harvest.time = {
         start: getStartTime(comps, entity),
