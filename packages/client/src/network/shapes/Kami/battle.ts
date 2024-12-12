@@ -44,8 +44,8 @@ export const getKill = (
   // identify the Source and Target Kamis
   const sourceID = formatEntityID(getComponentValue(SourceID, entityIndex)?.value ?? '');
   const targetID = formatEntityID(getComponentValue(TargetID, entityIndex)?.value ?? '');
-  const sourceEntity = world.entityToIndex.get(sourceID) as EntityIndex;
-  const targetEntity = world.entityToIndex.get(targetID) as EntityIndex;
+  const sourceEntityIndex = world.entityToIndex.get(sourceID) as EntityIndex;
+  const targetEntityIndex = world.entityToIndex.get(targetID) as EntityIndex;
 
   const killLog: KillLog = {
     id,
@@ -54,8 +54,8 @@ export const getKill = (
     balance: bounties[0],
     bounty: bounties[1],
     time: (getComponentValue(Time, entityIndex)?.value as number) * 1,
-    source: getBaseKami(world, components, sourceEntity),
-    target: getBaseKami(world, components, targetEntity),
+    source: getBaseKami(world, components, sourceEntityIndex),
+    target: getBaseKami(world, components, targetEntityIndex),
   };
 
   return killLog;

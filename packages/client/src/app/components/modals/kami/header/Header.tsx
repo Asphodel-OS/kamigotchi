@@ -15,24 +15,21 @@ import { KamiImage } from './KamiImage';
 const excludedStats = ['stamina', 'slots'];
 
 interface Props {
-  actions: {
-    levelUp: (kami: Kami) => void;
-  };
   data: {
     account: Account;
     owner: BaseAccount;
     kami: Kami;
   };
-  utils: {
-    calcExpRequirement: (level: number) => number;
+  actions: {
+    levelUp: (kami: Kami) => void;
   };
 }
 
 export const Header = (props: Props) => {
-  const { data, utils } = props;
+  const { data } = props;
   const { account, kami, owner } = data;
   const { setAccount } = useSelected();
-  const { setModals } = useVisibility();
+  const { modals, setModals } = useVisibility();
 
   const isMine = () => {
     return owner.index == account.index;
@@ -75,7 +72,7 @@ export const Header = (props: Props) => {
 
   return (
     <Container>
-      <KamiImage data={data} actions={props.actions} utils={utils} />
+      <KamiImage data={data} actions={props.actions} />
       <Content>
         <Title size={2.4}>{kami.name}</Title>
         <Row>
@@ -84,7 +81,7 @@ export const Header = (props: Props) => {
             <AffinityCard trait='hand' />
           </AffinityContainer>
           <StatsContainer>
-            {Object.entries(kami.stats ?? {})
+            {Object.entries(kami.stats)
               .filter(([key]) => !excludedStats.includes(key))
               .map(([name, value]) => {
                 const description = StatDescriptions[name as keyof typeof StatDescriptions];

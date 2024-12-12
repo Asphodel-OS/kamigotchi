@@ -11,7 +11,7 @@ import {
   checkerSwitch,
   getCondition,
 } from '../Conditional';
-import { getData, getEntityByHash, queryChildrenOfIndex } from '../utils';
+import { getData, getEntityByHash, queryChildrenOfEntityIndex } from '../utils';
 import { Quest } from './quest';
 
 /////////////////
@@ -41,8 +41,8 @@ export const getObjectives = (
   components: Components,
   questIndex: number
 ): Objective[] => {
-  return queryChildrenOfIndex(components, 'registry.quest.objective', questIndex).map((index) =>
-    getObjective(world, components, index)
+  return queryChildrenOfEntityIndex(components, 'registry.quest.objective', questIndex).map(
+    (index) => getObjective(world, components, index)
   );
 };
 

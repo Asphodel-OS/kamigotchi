@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { EntityIndex } from '@mud-classic/recs';
-import { getAccount, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useSelected, useVisibility } from 'app/stores';
@@ -10,9 +8,9 @@ import { operatorIcon } from 'assets/images/icons/menu';
 import {
   Account,
   BaseAccount,
+  getAccountByIndex,
   getAllBaseAccounts,
   NullAccount,
-  queryAccountByIndex,
 } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Bottom } from './Bottom';
@@ -32,45 +30,35 @@ export function registerAccountModal() {
     // Requirement
     (layers) => {
       const { network } = layers;
-      const { world, components } = network;
-
-      const accountOptions = {
-        friends: 60,
-        stats: 60,
-      };
 
       return interval(3333).pipe(
         map(() => {
           return {
             network,
-            utils: {
-              getAccount: (entity: EntityIndex) =>
-                getAccount(world, components, entity, accountOptions),
-              getAccountKamis: (accEntity: EntityIndex) =>
-                getAccountKamis(world, components, accEntity),
-            },
           };
         })
       );
     },
     // Render
-    ({ network, utils }) => {
+    ({ network }) => {
       const { actions, api, components, world } = network;
-      const { getAccount } = utils;
-
       const { account: player } = useAccount();
       const { accountIndex } = useSelected();
       const { modals } = useVisibility();
 
-      const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
       const [account, setAccount] = useState<Account>(NullAccount);
+      const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
 
       // update data of the selected account when account index or data changes
       useEffect(() => {
         if (!modals.account) return;
-        const accountEntity = queryAccountByIndex(components, accountIndex);
-        const account = getAccount(accountEntity ?? (0 as EntityIndex));
-        setAccount(account);
+        const accountOptions = {
+          friends: true,
+          inventory: true,
+          kamis: true,
+          stats: true,
+        };
+        setAccount(getAccountByIndex(world, components, accountIndex, accountOptions));
       }, [accountIndex, modals.account]);
 
       // set the default tab when account index switches
@@ -101,10 +89,10 @@ export function registerAccountModal() {
       const blockFren = (account: BaseAccount) => {
         actions.add({
           action: 'BlockFriend',
-          params: [account.ownerAddress],
+          params: [account.ownerEOA],
           description: `Blocking ${account.name}`,
           execute: async () => {
-            return api.player.social.friend.block(account.ownerAddress);
+            return api.player.social.friend.block(account.ownerEOA);
           },
         });
       };
@@ -125,10 +113,10 @@ export function registerAccountModal() {
       const requestFren = (account: BaseAccount) => {
         actions.add({
           action: 'RequestFriend',
-          params: [account.ownerAddress],
+          params: [account.ownerEOA],
           description: `Sending ${account.name} Friend Request`,
           execute: async () => {
-            return api.player.social.friend.request(account.ownerAddress);
+            return api.player.social.friend.request(account.ownerEOA);
           },
         });
       };
@@ -162,7 +150,6 @@ export function registerAccountModal() {
               getAllAccs: () => getAllBaseAccounts(world, components),
             }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
-            utils={utils}
           />
         </ModalWrapper>
       );

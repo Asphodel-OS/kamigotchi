@@ -37,7 +37,7 @@ export const getHolderSkills = (
   holder: EntityID,
   options?: Options
 ): Skill[] => {
-  return queryHolderSkills(components, holder).map((entityIndex) =>
+  return queryHolderSkills(components, holder, options).map((entityIndex) =>
     getSkill(world, components, entityIndex, options)
   );
 };

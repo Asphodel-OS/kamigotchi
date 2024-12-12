@@ -1,4 +1,14 @@
 export {
+  getHolderTreePoints,
+  getInstance as getSkillInstance,
+  getUpgradeError as getSkillUpgradeError,
+  getTreePointsRequirement,
+  isMaxxed as isSkillMaxxed,
+  meetsCost as meetsSkillCost,
+  parseBonusText,
+  parseRequirementText,
+} from './functions';
+export {
   getHolderSkillByIndex,
   getHolderSkillLevel,
   getHolderSkills,

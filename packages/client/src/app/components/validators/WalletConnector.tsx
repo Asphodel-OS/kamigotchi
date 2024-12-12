@@ -39,7 +39,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { network } = layers;
-      const { address: wagmiAddress, chain, isConnected } = useAccount();
+      const { address: wagmiAddress, chain, isConnected, status } = useAccount();
       const { connectors, connect } = useConnect();
       const { ready, authenticated, login, logout } = usePrivy();
       const { wallets, ready: walletsReady } = useWallets();
@@ -93,7 +93,7 @@ export function registerWalletConnecter() {
 
         // when the injected wallet is disconnected
         if (!isConnected) {
-          console.warn('Wallet disconnected. Logging out.');
+          console.log('Wallet disconnected. Logging out.');
           logout();
           return;
         }
@@ -103,7 +103,7 @@ export function registerWalletConnecter() {
         if (injectedWallet) {
           const injectedAddress = injectedWallet.address;
           if (injectedAddress !== wagmiAddress) {
-            console.warn(`Change in injected wallet detected. Logging out.`);
+            console.log(`Change in injected wallet detected. Logging out.`);
             logout();
             return;
           }

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { settingsIcon } from 'assets/images/icons/menu';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import { queryDTCommits } from 'network/shapes/Droptable';
 import { useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
@@ -28,7 +28,7 @@ export function registerRevealModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromEmbedded(network);
+          const account = getAccountFromBurner(network);
           const commits = queryDTCommits(world, components, account.id);
 
           return {

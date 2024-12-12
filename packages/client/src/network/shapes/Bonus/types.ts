@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { formatEntityID } from 'engine/utils';
 import { BigNumber } from 'ethers';
 import { Components } from 'network/';
-import { getLevel, getType } from '../utils/component';
+import { hashArgs } from '../utils';
 
 export interface Bonus {
   id: EntityID;
@@ -13,33 +13,41 @@ export interface Bonus {
 
 export const getBonus = (
   world: World,
-  comps: Components,
+  components: Components,
   entity: EntityIndex,
   precision: number = 0
 ): Bonus => {
-  const { ParentID } = comps;
-  const regEntity = getRegistryEntity(world, comps, entity);
+  const { Level, ParentID, Type, Value } = components;
+
+  const regEntity = getRegistryEntity(world, components, entity);
 
   return {
     id: world.entities[entity],
-    type: getType(comps, regEntity),
-    value: getBonusValueSingle(world, comps, entity, precision),
+    type: (getComponentValue(Type, regEntity)?.value as string) || '',
+    value: calcValue(
+      getComponentValue(Value, regEntity)?.value as number, // base
+      (getComponentValue(Level, entity)?.value || 1) * 1, // mult
+      precision
+    ),
     parent: getComponentValue(ParentID, entity)?.value as EntityID,
   };
 };
 
 export const getBonusValueSingle = (
   world: World,
-  comps: Components,
+  components: Components,
   entity: EntityIndex,
-  precision = 0
+  precision: number = 0
 ): number => {
-  const { Value } = comps;
-  const registryEntity = getRegistryEntity(world, comps, entity);
-  const base = getComponentValue(Value, registryEntity)?.value;
-  if (base === undefined) console.warn(`bonus entity missing Value`, world.entities[entity]);
-  const level = getLevel(comps, entity, 1);
-  return calcValue(base ?? 0, level, precision);
+  const { Level, Value } = components;
+
+  const regEntity = getRegistryEntity(world, components, entity);
+
+  return calcValue(
+    getComponentValue(Value, regEntity)?.value as number, // base
+    (getComponentValue(Level, entity)?.value || 1) * 1, // mult
+    precision
+  );
 };
 
 const calcValue = (base: number, mult: number, precision: number = 0): number => {
@@ -50,11 +58,12 @@ const calcValue = (base: number, mult: number, precision: number = 0): number =>
 ////////////////////
 // UTILS
 
-// NOTE: this feels like a bit of a codesmell. we probably want to know in
-// advance whether we're calling a registry vs an instance and route through
-// different retrieval functions on the getBonuslevel
-const getRegistryEntity = (world: World, comps: Components, entity: EntityIndex): EntityIndex => {
-  const { IsRegistry, SourceID } = comps;
+const getRegistryEntity = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): EntityIndex => {
+  const { IsRegistry, SourceID } = components;
 
   let regEntity: EntityIndex;
   if (IsRegistry.values.value.has(entity)) {
@@ -68,4 +77,8 @@ const getRegistryEntity = (world: World, comps: Components, entity: EntityIndex)
     regEntity = rawRegID;
   }
   return regEntity;
+};
+
+export const getTypeID = (field: string, holderID: EntityID): string => {
+  return hashArgs(['bonus.type', field, holderID], ['string', 'string', 'uint256']);
 };

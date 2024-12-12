@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { calcPercentCompletion } from 'utils/math';
+import { getPercentCompletion } from 'utils/math';
 
 interface Props {
   total: number;
@@ -20,7 +20,7 @@ export const ProgressBar = (props: Props) => {
     <Container>
       <Tooltip text={[`${current}/${total}`]} grow>
         <Bar
-          percent={calcPercentCompletion(current, total)}
+          percent={getPercentCompletion(current, total)}
           height={height ?? 1.2}
           bgColor={colors.background}
           fgColor={colors.progress}

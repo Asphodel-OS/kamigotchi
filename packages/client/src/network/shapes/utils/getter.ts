@@ -7,8 +7,7 @@ import { numberToHex } from 'utils/hex';
 import { getCurrPhase } from 'utils/time';
 import { Account } from '../Account';
 import { getReputation } from '../Faction';
-import { getInventoryByHolderItem } from '../Inventory';
-import { getItemBalance } from '../Item';
+import { getInventoryByHolderItem, getItemBalance } from '../Item';
 import { Kami, getKamisByAccount } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
 import { getHolderSkillLevel } from '../Skill';
@@ -48,15 +47,13 @@ export const getBalance = (
     } else if (type === 'KAMI_LEVEL_HIGHEST') {
       let top = 0;
       getKamisByAccount(world, components, holderID).forEach((kami) => {
-        const level = kami.progress?.level ?? 0;
-        if (level > top) top = level;
+        if (kami.level > top) top = kami.level;
       });
       return top;
     } else if (type === 'KAMI_LEVEL_QUANTITY') {
       let total = 0;
       getKamisByAccount(world, components, holderID).forEach((kami) => {
-        const level = kami.progress?.level ?? 0;
-        if (level >= (index ?? 0)) total++;
+        if (kami.level >= (index ?? 0)) total++;
       });
       return total;
     } else if (type === 'ROOM') {

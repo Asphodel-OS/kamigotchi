@@ -3,44 +3,44 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountKamis } from 'app/cache/account';
-import { getKami, getKamiAccount } from 'app/cache/kami';
-import { getNodeByIndex } from 'app/cache/node';
 import { EmptyText, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { feedIcon } from 'assets/images/icons/actions';
-import {
-  Account,
-  NullAccount,
-  queryAccountFromEmbedded,
-  queryAccountKamis,
-} from 'network/shapes/Account';
+import { Account, BaseAccount, getAccountFromBurner } from 'network/shapes/Account';
 import { Allo, parseAllos } from 'network/shapes/Allo';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { queryDTCommits } from 'network/shapes/Droptable';
-import { Kami } from 'network/shapes/Kami';
+import {
+  Kami,
+  KamiOptions,
+  getKami,
+  getKamiAccount,
+  queryKamisByAccount,
+  updateKamiHarvestRate,
+} from 'network/shapes/Kami';
 import {
   Node,
   NullNode,
+  getNodeByIndex,
   passesNodeReqs,
-  queryNodeByIndex,
   queryNodeKamis,
 } from 'network/shapes/Node';
-import {
-  getScavenge,
-  queryScavInstance,
-  queryScavRegistry,
-  ScavBar,
-} from 'network/shapes/Scavenge/';
-import { getValue } from 'network/shapes/utils/component';
+import { ScavBar, getScavBarFromHash, getScavPoints } from 'network/shapes/Scavenge';
+import { getKamiTraits } from 'network/shapes/Trait';
+import { getLastTime } from 'network/shapes/utils/time';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
 import { Kards } from './kards/Kards';
 
-// live kami data staleness limit in seconds
-const LIVE_UPDATE_LIMIT = 2;
+const HARVEST_STALE_LIMIT = 60 * 1000; // 1 minute
+
+// cache for harvest rates of enemy kamis
+const KamiCache = new Map<EntityIndex, Kami>();
+const KamiLastTs = new Map<EntityIndex, number>(); // kami index -> last update ts
+const HarvestUpdateTs = new Map<EntityIndex, number>();
+const OwnerCache = new Map<EntityIndex, BaseAccount>();
 
 export function registerNodeModal() {
   registerUIComponent(
@@ -62,60 +62,38 @@ export function registerNodeModal() {
           const { world, components } = network;
           const { nodeIndex } = useSelected.getState();
 
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountID = world.entities[accountEntity];
-          const accountRefreshOptions = {
-            live: LIVE_UPDATE_LIMIT,
-            inventories: LIVE_UPDATE_LIMIT,
-          };
-
-          const nodeEntity = queryNodeByIndex(world, nodeIndex);
-          const kamiRefreshOptions = {
-            live: LIVE_UPDATE_LIMIT,
-            bonuses: 3600,
-            config: 3600,
-            harvest: LIVE_UPDATE_LIMIT,
-            progress: 3600,
-            skills: 3600,
-            stats: 3600,
-            traits: 3600,
-          };
+          const account = getAccountFromBurner(network, { inventory: true });
 
           return {
             network,
             data: {
-              accountEntity,
+              account,
               kamiEntities: {
-                account: queryAccountKamis(world, components, accountEntity),
-                node: queryNodeKamis(world, components, nodeEntity),
+                account: queryKamisByAccount(components, account.id),
+                node: queryNodeKamis(world, components, nodeIndex),
               },
-              commits: queryDTCommits(world, components, accountID), // TODO: query by entity index?
+              commits: queryDTCommits(world, components, account.id),
             },
             display: {
               UseItemButton: (kami: Kami, account: Account) =>
                 UseItemButton(network, kami, account, feedIcon),
             },
             utils: {
-              getAccount: () => getAccount(world, components, accountEntity, accountRefreshOptions),
-              getAccountKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, kamiRefreshOptions),
-              getOwner: (kamiEntity: EntityIndex) =>
-                getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
-              getNode: (index: number) => getNodeByIndex(world, components, index),
-              getScavenge: (entity: EntityIndex) => getScavenge(world, components, entity),
-              getValue: (entity: EntityIndex) => getValue(components, entity),
-              parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
-              queryScavRegistry: (index: number) => queryScavRegistry(world, 'node', index),
-              queryScavInstance: (index: number, holderID: EntityID) =>
-                queryScavInstance(world, 'node', index, holderID),
-
-              // node header functions..
-              // TODO: clean up this mess
-              passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
+              getKami: (entity: EntityIndex, options?: KamiOptions) =>
+                getKami(world, components, entity, options),
+              getKamiTraits: (entity: EntityIndex) => getKamiTraits(world, components, entity),
+              getLastTime: (entity: EntityIndex) => getLastTime(components, entity),
+              getOwner: (kamiIndex: number) => getKamiAccount(world, components, kamiIndex),
+              getScavPoints: (nodeIndex: number) =>
+                getScavPoints(world, components, 'node', nodeIndex, account.id),
+              passesNodeReqs: (kami: Kami) =>
+                passesNodeReqs(world, components, nodeIndex, account, kami),
               parseConditionalText: (condition: Condition, tracking?: boolean) =>
                 parseConditionalText(world, components, condition, tracking),
+              getScavBarFromHash: (nodeIndex: number) =>
+                getScavBarFromHash(world, components, 'node', nodeIndex),
+              parseAllos: (scavAllo: Allo[], flatten?: boolean) =>
+                parseAllos(world, components, scavAllo, flatten),
             },
           };
         })
@@ -123,40 +101,74 @@ export function registerNodeModal() {
 
     // Render
     ({ data, display, network, utils }) => {
-      const { kamiEntities } = data;
+      // console.log('Node Modal Data', data);
+      const { account, kamiEntities } = data;
       const {
         actions,
         api,
+        components,
         world,
         localSystems: { DTRevealer },
       } = network;
-      const { getAccount, getNode } = utils;
       const { nodeIndex } = useSelected();
-      const { modals, setModals } = useVisibility();
-
-      const [account, setAccount] = useState<Account>(NullAccount);
+      const { setModals } = useVisibility();
       const [node, setNode] = useState<Node>(NullNode);
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
-
-      // ticking
-      useEffect(() => {
-        const refreshClock = () => setLastRefresh(Date.now());
-        const timerId = setInterval(refreshClock, 1000);
-        return () => clearInterval(timerId);
-      }, []);
-
-      // refresh account data whenever the modal is opened
-      useEffect(() => {
-        if (!modals.node) return;
-        setAccount(getAccount());
-      }, [modals.node, lastRefresh]);
 
       // updates from selected Node updates
       useEffect(() => {
-        const node = getNode(nodeIndex);
-        if (!node.index) setModals({ node: false }); // NullNode
+        let node = getNodeByIndex(world, components, nodeIndex);
+        if (node.index == 0) setModals({ node: false }); // NullNode
         setNode(node);
       }, [nodeIndex]);
+
+      /////////////////
+      // CACHE OPERATIONS
+
+      // retrieve a kami's most recent data and update it on the cache
+      const processKami = (entity: EntityIndex, options?: KamiOptions) => {
+        const kamiOptions = { harvest: true, traits: true };
+        const kami = utils.getKami(entity, kamiOptions);
+        KamiCache.set(entity, kami);
+        KamiLastTs.set(entity, kami.time.last);
+        HarvestUpdateTs.set(entity, Date.now());
+        return kami;
+      };
+
+      // get a kami from the cache or live pool
+      const getKami = (entity: EntityIndex) => {
+        if (!KamiLastTs.has(entity)) processKami(entity);
+        return KamiCache.get(entity)!;
+      };
+
+      // refresh a kami as needed and return the most recent instance
+      const refreshKami = (kami: Kami) => {
+        const entityIndex = kami.entityIndex;
+
+        // reprocess any updated kamis
+        const lastTime = utils.getLastTime(entityIndex);
+        const lastUpdate = KamiLastTs.get(entityIndex)!;
+        const wasUpdated = lastTime > lastUpdate;
+        if (wasUpdated) kami = processKami(entityIndex);
+
+        // recalculate rates for any stale harvests
+        const now = Date.now();
+        const lastHarvestUpdate = HarvestUpdateTs.get(entityIndex) ?? 0;
+        if (now - lastHarvestUpdate > HARVEST_STALE_LIMIT) {
+          updateKamiHarvestRate(kami);
+          HarvestUpdateTs.set(entityIndex, now);
+        }
+        return kami;
+      };
+
+      // get and cache owner lookups. if owner is null, update the cache
+      const getOwner = (kami: Kami) => {
+        let owner = OwnerCache.get(kami.entityIndex);
+        if (!owner || !owner.index) {
+          owner = utils.getOwner(kami.index);
+          OwnerCache.set(kami.entityIndex, owner);
+        }
+        return owner;
+      };
 
       /////////////////
       // ACTIONS
@@ -210,14 +222,13 @@ export function registerNodeModal() {
         });
       };
 
-      // claim the scavenge at the given scavenge bar
-      const claim = async (scavBar: ScavBar) => {
+      const scavClaim = async (scavBar: ScavBar) => {
         DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
           action: 'ScavengeClaim',
-          params: [scavBar.type, scavBar.index], // actual param: scavBar.id
+          params: [scavBar.field, scavBar.index], // actual param: scavBar.id
           description: `Claiming scavenge at node ${scavBar.index}`,
           execute: async () => {
             return api.player.scavenge.claim(scavBar.id);
@@ -239,9 +250,15 @@ export function registerNodeModal() {
           header={[
             <Banner
               key='banner'
-              data={{ account, node, kamiEntities: kamiEntities.account }}
-              actions={{ claim, addKami: (kami) => start(kami, node) }}
-              utils={utils}
+              account={account}
+              node={node}
+              kamiEntities={kamiEntities.account}
+              actions={{ scavClaim, addKami: (kami) => start(kami, node) }}
+              utils={{
+                ...utils,
+                getScavPoints: () => utils.getScavPoints(node.index),
+                getScavBar: () => utils.getScavBarFromHash(node.index),
+              }}
             />,
           ]}
           canExit
@@ -259,7 +276,7 @@ export function registerNodeModal() {
             kamiEntities={kamiEntities}
             actions={{ collect, liquidate, stop }}
             display={display}
-            utils={utils}
+            utils={{ getKami, refreshKami, getOwner }}
           />
         </ModalWrapper>
       );

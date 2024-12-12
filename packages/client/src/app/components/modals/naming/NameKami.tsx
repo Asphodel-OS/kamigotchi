@@ -2,13 +2,10 @@ import { EntityIndex } from '@mud-classic/recs';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { getKami } from 'app/cache/kami';
 import { InputSingleTextForm, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
-import { NullKami } from 'network/shapes/Kami/constants';
-import { useEffect, useState } from 'react';
+import { Kami, getKami } from 'network/shapes/Kami';
 
 export function registerNameKamiModal() {
   registerUIComponent(
@@ -24,35 +21,16 @@ export function registerNameKamiModal() {
     (layers) =>
       interval(1000).pipe(
         map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const kamiRefreshOptions = { live: 2, flags: 5 };
-
-          return {
-            network,
-            utils: {
-              queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, kamiRefreshOptions),
-            },
-          };
+          return { network: layers.network };
         })
       ),
 
     // Render
-    ({ network, utils }) => {
-      const { actions, api } = network;
-      const { getKami, queryKamiByIndex } = utils;
+    ({ network }) => {
+      const { actions, api, components, world } = network;
       const { modals, setModals } = useVisibility();
       const { kamiIndex } = useSelected();
-
-      const [kami, setKami] = useState<Kami>(NullKami);
-
-      useEffect(() => {
-        const kamiEntity = queryKamiByIndex(kamiIndex);
-        const kami = kamiEntity ? getKami(kamiEntity) : NullKami;
-        setKami(kami);
-      }, [kamiIndex]);
+      const kami = getKami(world, components, kamiIndex as EntityIndex);
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {

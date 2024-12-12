@@ -1,32 +1,17 @@
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  account: Account;
-  utils: {
-    getAccountKamis: (accEntity: EntityIndex) => Kami[];
-  };
+  kamis: Kami[];
 }
 
 export const Kamis = (props: Props) => {
-  const { account, utils } = props;
-  const { getAccountKamis } = utils;
-
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
-  const [kamis, setKamis] = useState<Kami[]>([]);
-
-  useEffect(() => {
-    const kamis = getAccountKamis(account.entity);
-    setKamis(kamis);
-  }, [account.entity]);
 
   const kamiOnClick = (kami: Kami) => {
     const sameKami = kamiIndex === kami.index;
@@ -37,10 +22,10 @@ export const Kamis = (props: Props) => {
     playClick();
   };
 
-  if (kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
+  if (props.kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
   return (
     <Container key='grid'>
-      {kamis.map((kami) => (
+      {props.kamis.map((kami) => (
         <Tooltip key={kami.index} text={[kami.name]}>
           <CellContainer id={`grid-${kami.id}`}>
             <Image onClick={() => kamiOnClick(kami)} src={kami.image} />

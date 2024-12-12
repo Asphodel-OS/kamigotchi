@@ -29,7 +29,7 @@ export const ActionBar = (props: Props) => {
 
   const accBalance = () => {
     return utils.getBalance(
-      account.entity,
+      account.entityIndex,
       goal.objective.target.index,
       goal.objective.target.type
     );

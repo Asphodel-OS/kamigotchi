@@ -11,7 +11,7 @@ import { Components } from 'network/';
 import { AccountOptions } from 'network/shapes/Account';
 import { getAllItems, getItemByIndex } from 'network/shapes/Item';
 import { KamiOptions, getAllKamis, getKamiByIndex, getKamiByName } from 'network/shapes/Kami';
-import { getAllNodes, getNodeByIndex } from 'network/shapes/Node';
+import { NodeOptions, getAllNodes, getNodeByIndex } from 'network/shapes/Node';
 import { getAllNPCs, getNPCByIndex } from 'network/shapes/NPCs';
 import { getAllRecipes, getRecipeByIndex } from 'network/shapes/Recipe';
 import { getAllRooms, getRoomByIndex } from 'network/shapes/Room';
@@ -67,8 +67,8 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     nodes: {
-      all: () => getAllNodes(world, components),
-      get: (index: number) => {
+      all: (options?: NodeOptions) => getAllNodes(world, components),
+      get: (index: number, options?: {}) => {
         return getNodeByIndex(world, components, index);
       },
       entities: () => Array.from(getEntitiesWithValue(EntityType, { value: 'NODE' })),

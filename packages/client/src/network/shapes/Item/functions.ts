@@ -1,24 +1,20 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-
+import { EntityID, World, getComponentValue } from '@mud-classic/recs';
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/index';
-import { queryInventoryInstance } from '../Inventory';
+import { Inventory } from './types';
+import { getInventoryEntityIndex } from './utils';
 
 /////////////////
 // GETTERS
-// TODO: move these to.. app/cache/inventory/helpers.ts?
 
-// get the MUSU balance of a holder entity
 export const getMusuBalance = (
   world: World,
   components: Components,
-  entity: EntityIndex
+  holderID: EntityID
 ): number => {
-  const id = world.entities[entity];
-  return getItemBalance(world, components, id, MUSU_INDEX);
+  return getItemBalance(world, components, holderID, MUSU_INDEX);
 };
 
-// TODO: make this an Inventory function
 export const getItemBalance = (
   world: World,
   components: Components,
@@ -26,6 +22,22 @@ export const getItemBalance = (
   itemIndex: number
 ): number => {
   const { Value } = components;
-  const entityIndex = queryInventoryInstance(world, holderID ?? 0, itemIndex);
+  const entityIndex = getInventoryEntityIndex(world, holderID ?? 0, itemIndex);
   return entityIndex ? (getComponentValue(Value, entityIndex)?.value ?? 0) * 1 : 0;
+};
+
+////////////////
+// UTILS
+
+export const filterInventories = (
+  inventories: Inventory[],
+  type_?: string,
+  for_?: string,
+  min = 1
+): Inventory[] => {
+  return inventories.filter((inv) => {
+    const forMatches = for_ ? inv.item.for === for_ : true;
+    const isMatches = type_ ? inv.item.type === type_ : true;
+    return forMatches && isMatches && inv.balance >= min;
+  });
 };

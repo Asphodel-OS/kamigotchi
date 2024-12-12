@@ -32,14 +32,6 @@ export const Matrix = (props: Props) => {
     setDisplayed(rootNode);
   }, [mode, skills.size]);
 
-  // get the text for the skill points display
-  const getPointsText = () => {
-    const points = kami.skills?.points;
-    if (points === undefined) return '?? points';
-    if (points == 1) return '1 point';
-    else return `${points} points`;
-  };
-
   return (
     <Container>
       <Menu options={Array.from(SkillTrees.keys())} mode={mode} setMode={setMode} />
@@ -72,7 +64,9 @@ export const Matrix = (props: Props) => {
           {kami.flags?.skillReset && (
             <ActionButton text='Reset' onClick={() => actions.reset(kami)} />
           )}
-          <PointsText>{getPointsText()}</PointsText>
+          <PointsText>
+            {kami.skillPoints} point{kami.skillPoints != 1 ? 's' : ''}
+          </PointsText>
         </FloatBox>
       </Content>
     </Container>

@@ -1,17 +1,45 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { AccountCache, getAccount } from 'app/cache/account';
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { emptyAccountDetails, useAccount, useNetwork, useVisibility } from 'app/stores';
-import { GodID, SyncState } from 'engine/constants';
-import { getBaseAccount, queryAccountFromEmbedded, queryAllAccounts } from 'network/shapes/Account';
+import {
+  Account as KamiAccount,
+  emptyAccountDetails,
+  useAccount,
+  useNetwork,
+  useVisibility,
+} from 'app/stores';
+import {
+  Account,
+  getAccount,
+  queryAccountByName,
+  queryAccountByOwner,
+} from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
 import { Registration } from './Registration';
 import { BackButton, Description, Row } from './shared';
+
+/**
+ * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
+ * based on the connected wallet address. Unfortunately, this means listening to both changes
+ * in the Connector's address through State hooks, as well as to subscribed world components
+ * on the Requirement step that may result in the creation of an account in-world.
+ *
+ * The requirement step determines the Account's EntityIndex using a mirrored address saved on the
+ * zustand store as wagmi's useAccount() is unavailable outside of React components. It is also
+ * necessary to properly update the modal whenever the page is refreshed, causing a repopulation of
+ * the world client-side.
+ *
+ * The modal component then takes this index as a prop and simply listens to it. Nothing more. It
+ * instead relies on a hook to the Same zustand store item for the Same connected account because
+ * it's possible either side may be stale.
+ *
+ * Let's not fool ourselves into thinking this is an elegant solution by any measure. It is an
+ * abomination birthed out of necessity and should be treated as such.
+ */
 
 export function registerAccountRegistrar() {
   registerUIComponent(
@@ -26,75 +54,102 @@ export function registerAccountRegistrar() {
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
-      const { LoadingState } = components;
+      const { AccountIndex, EntityType, Name, OperatorAddress, OwnerAddress } = components;
+
+      // TODO?: replace this with getAccount shape
+      const getAccountDetails = (entityIndex: EntityIndex): KamiAccount => {
+        if (!entityIndex) return emptyAccountDetails();
+        return {
+          id: world.entities[entityIndex],
+          entityIndex: entityIndex,
+          index: getComponentValue(AccountIndex, entityIndex)?.value as number,
+          ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
+          operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+          name: getComponentValue(Name, entityIndex)?.value as string,
+        };
+      };
+
+      // takes in a standard Account shape and converts it to a Kami Account shape
+      // defaults any missing values to the current Kami Account in the store.
+      const getKamiAccount = (account: Account, fallback: KamiAccount): KamiAccount => {
+        return {
+          id: account.id ?? fallback.id,
+          entityIndex: account.entityIndex ?? fallback.entityIndex,
+          index: account.index ?? fallback.index,
+          ownerAddress: account.ownerEOA ?? fallback.ownerAddress,
+          operatorAddress: account.operatorEOA ?? fallback.operatorAddress,
+          name: account.name ?? fallback.name,
+        };
+      };
+
+      const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
+        const accountIndex = Array.from(
+          runQuery([
+            HasValue(OwnerAddress, { value: ownerAddress }),
+            HasValue(EntityType, { value: 'ACCOUNT' }),
+          ])
+        )[0];
+        return accountIndex;
+      };
 
       // race condition present when updating by components, updates every second instead
       return interval(1000).pipe(
         map(() => {
-          const accountEntity = queryAccountFromEmbedded(network);
-
-          // load accounts after the data has loaded
-          const GodEntityIndex = world.entityToIndex.get(GodID) as EntityIndex;
-          const loadingState = getComponentValue(LoadingState, GodEntityIndex);
-          if (loadingState?.state === SyncState.LIVE) {
-            const accountEntities = queryAllAccounts(components);
-
-            // NOTE: this is meant to get the accounts only once after loading
-            // the game. an off by one error here likely indicates we attempt to
-            // load the account prematurely elsewhere
-            if (accountEntities.length > AccountCache.size) {
-              accountEntities.map((entity) => getAccount(world, components, entity));
-            }
-          }
-
+          const { selectedAddress } = useNetwork.getState();
+          const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
+          const accountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
+          const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
             data: {
-              accountEntity,
+              accountFromWorldUpdate,
+              operatorAddresses,
             },
-            network,
             utils: {
-              getBaseAccount: (entity: EntityIndex) => getBaseAccount(world, components, entity),
+              queryAccountByName: (name: string) => queryAccountByName(components, name),
+              getKamiAccount,
               waitForActionCompletion: (action: EntityID) =>
                 waitForActionCompletion(
                   network.actions.Action,
                   world.entityToIndex.get(action) as EntityIndex
                 ),
             },
+            network,
           };
         })
       );
     },
 
-    ({ data, network, utils }) => {
-      const { accountEntity } = data;
-      const { getBaseAccount } = utils;
-      const { actions } = network;
+    ({ data, utils, network }) => {
+      const { accountFromWorldUpdate, operatorAddresses } = data;
+      const { getKamiAccount, queryAccountByName } = utils;
+      const { actions, components, world } = network;
 
       const {
-        burnerAddress, // embedded
-        selectedAddress, // injected
+        burnerAddress,
+        selectedAddress,
         apis,
         validations: networkValidations,
       } = useNetwork();
       const { toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { setAccount } = useAccount();
+      const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
       const { validations, setValidations } = useAccount();
       const [step, setStep] = useState(0);
 
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
+        const accountEntity = queryAccountByOwner(components, selectedAddress);
         if (!!accountEntity == validations.accountExists) return; // no change
         if (accountEntity) {
-          const account = getBaseAccount(accountEntity);
-          setAccount({ ...account });
+          const account = getAccount(world, components, accountEntity);
+          setKamiAccount(getKamiAccount(account, kamiAccount));
           setValidations({ ...validations, accountExists: true });
         } else {
-          setAccount(emptyAccountDetails());
+          setKamiAccount(emptyAccountDetails());
           setValidations({ accountExists: false, operatorMatches: false, operatorHasGas: false });
         }
-      }, [selectedAddress, accountEntity]);
+      }, [selectedAddress, accountFromWorldUpdate]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -164,6 +219,7 @@ export function registerAccountRegistrar() {
             <br />
             <Description>Kamigotchi are key to this world.</Description>
             <Description>You will need them to progress.</Description>
+
             <br />
             <Row>
               <BackButton step={step} setStep={setStep} />
@@ -181,10 +237,12 @@ export function registerAccountRegistrar() {
             address={{
               selected: selectedAddress,
               burner: burnerAddress,
+              isTaken: operatorAddresses.has(burnerAddress),
             }}
             actions={{ createAccount }}
             utils={{
               setStep,
+              queryAccountByName,
               toggleFixtures,
               waitForActionCompletion: utils.waitForActionCompletion,
             }}

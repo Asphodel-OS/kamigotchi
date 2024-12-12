@@ -2,11 +2,10 @@ import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { calcCurrentStamina, getAccount } from 'app/cache/account';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountFromBurner, getStamina, queryAccountFromBurner } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance } from 'network/shapes/Item';
 import { getAllRecipes, haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
@@ -32,15 +31,16 @@ export function registerCraftingModal() {
           const { network } = layers;
           const { world, components } = network;
 
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountID = world.entities[accountEntity];
-          const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
+          const account = getAccountFromBurner(network); // sorry: this is not great practice, was stuffed in
+
+          const accountEntityIndex = queryAccountFromBurner(network);
+          const stamina = getStamina(world, components, accountEntityIndex).sync;
 
           return {
             network,
-            accountEntity,
+            accountEntityIndex,
             data: {
-              stamina: calcCurrentStamina(account),
+              stamina: stamina,
             },
             utils: {
               meetsRequirements: (recipe: Recipe) =>
@@ -50,9 +50,9 @@ export function registerCraftingModal() {
                   .map((req) => parseConditionalText(world, components, req))
                   .join(', '),
               getItemBalance: (index: number) =>
-                getItemBalance(world, components, accountID, index),
+                getItemBalance(world, components, world.entities[accountEntityIndex], index),
               haveIngredients: (recipe: Recipe) =>
-                haveIngredients(world, components, recipe, accountID),
+                haveIngredients(world, components, recipe, world.entities[accountEntityIndex]),
             },
           };
         })

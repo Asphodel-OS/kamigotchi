@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountFromBurner } from 'network/shapes/Account';
 import { Listing, getNPCListingsFiltered } from 'network/shapes/Listings';
 import { NPC, NullNPC, getNPCByIndex } from 'network/shapes/NPCs';
 import { Cart } from './cart';
@@ -33,7 +33,7 @@ export function registerMerchantModal() {
           const { network } = layers;
           const { components, world } = network;
 
-          const account = getAccountFromEmbedded(network, { inventory: true });
+          const account = getAccountFromBurner(network, { inventory: true });
           const getNPC = (npcIndex: number) => getNPCByIndex(world, components, npcIndex);
           const getListings = (npcIndex: number) =>
             getNPCListingsFiltered(world, components, npcIndex, account);

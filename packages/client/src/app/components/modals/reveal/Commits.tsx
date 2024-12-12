@@ -4,7 +4,6 @@ import { ActionButton } from 'app/components/library';
 
 import { EntityID } from '@mud-classic/recs';
 import { Commit, canReveal } from 'network/shapes/utils';
-import { getTimeDeltaString } from 'utils/time';
 
 interface Props {
   actions: {
@@ -27,7 +26,19 @@ export const Commits = (props: Props) => {
 
   const getCommitTimeFrom = (commit: Commit): string => {
     const secDelta = (data.blockNumber - commit.revealBlock) * 2;
-    return getTimeDeltaString(secDelta);
+
+    if (secDelta > 86400) {
+      const days = Math.floor(secDelta / 86400);
+      const hours = Math.floor((secDelta % 86400) / 3600);
+      return `${days} days ${hours} hours ago`;
+    } else if (secDelta > 3600) {
+      const hours = Math.floor(secDelta / 3600);
+      const minutes = Math.floor((secDelta % 3600) / 60);
+      return `${hours} hours ${minutes} minutes ago`;
+    } else {
+      const minutes = Math.floor(secDelta / 60);
+      return `${minutes} minutes  ago`;
+    }
   };
 
   /////////////////

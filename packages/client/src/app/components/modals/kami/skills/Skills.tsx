@@ -20,17 +20,16 @@ interface Props {
     reset: (kami: Kami) => void;
   };
   utils: {
-    getUpgradeError: (registry: Map<number, Skill>, index: number) => string[] | undefined;
+    getUpgradeError: (index: number, registry: Map<number, Skill>) => string[] | undefined;
     getTreePoints: (tree: string) => number;
     getTreeRequirement: (skill: Skill) => number;
   };
 }
 
 export const Skills = (props: Props) => {
+  // console.log('mSkill:', props.kami);
   const { data, skills, actions, utils } = props;
   const { account, kami, owner } = data;
-  const { getUpgradeError, getTreePoints, getTreeRequirement } = utils;
-
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
@@ -61,8 +60,12 @@ export const Skills = (props: Props) => {
         index={displayed}
         skills={skillMap}
         actions={{ upgrade: actions.upgrade }}
-        upgradeError={getUpgradeError(skillMap, displayed)}
-        utils={{ ...utils, getSkillImage }}
+        upgradeError={utils.getUpgradeError(displayed, skillMap)}
+        utils={{
+          getSkillImage,
+          getTreePoints: utils.getTreePoints,
+          getTreeRequirement: (skill: Skill) => utils.getTreeRequirement(skill),
+        }}
       />
       <Matrix
         kami={kami}
@@ -70,8 +73,8 @@ export const Skills = (props: Props) => {
         setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
         actions={actions}
         utils={{
-          getUpgradeError: (index: number) => getUpgradeError(skillMap, index),
-          getTreePoints,
+          getUpgradeError: (index: number) => utils.getUpgradeError(index, skillMap),
+          getTreePoints: utils.getTreePoints,
         }}
       />
     </Wrapper>

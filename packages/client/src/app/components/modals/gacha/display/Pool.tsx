@@ -4,8 +4,9 @@ import styled from 'styled-components';
 
 import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Kami, KamiOptions, KamiStats } from 'network/shapes/Kami';
+import { Kami, KamiOptions } from 'network/shapes/Kami';
 import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
+import { Stats } from 'network/shapes/Stats';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../types';
 import { KamiBlock } from './KamiBlock';
@@ -79,7 +80,7 @@ export const Pool = (props: Props) => {
 
   // get the react component of a KamiBlock displayed in the pool
   const getKamiBlock = (kami: GachaKami) => {
-    const entity = kami.entity;
+    const entity = kami.entityIndex;
     if (!kamiBlocks.has(entity)) {
       const tooltip = [
         `Health: ${kami.stats.health.total}`,
@@ -109,7 +110,7 @@ export const Pool = (props: Props) => {
         if (filter.field === 'INDEX') return kami.index >= filter.min && kami.index <= filter.max;
         if (filter.field === 'LEVEL') return kami.level >= filter.min && kami.level <= filter.max;
         else {
-          const value = kami.stats[filter.field.toLowerCase() as keyof KamiStats].total;
+          const value = kami.stats[filter.field.toLowerCase() as keyof Stats].total;
           return value >= filter.min && value <= filter.max;
         }
       });
@@ -131,8 +132,8 @@ export const Pool = (props: Props) => {
           aStat = a[field as keyof GachaKami] as number;
           bStat = b[field as keyof GachaKami] as number;
         } else {
-          aStat = a.stats[field as keyof KamiStats].total;
-          bStat = b.stats[field as keyof KamiStats].total;
+          aStat = a.stats[field as keyof Stats].total;
+          bStat = b.stats[field as keyof Stats].total;
         }
         const diff = aStat - bStat;
         if (diff != 0) return diff * direction;

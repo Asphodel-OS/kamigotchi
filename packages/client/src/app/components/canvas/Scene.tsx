@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
-import { getAccount } from 'app/cache/account';
 import { registerUIComponent } from 'app/root';
-import { useSelected } from 'app/stores';
+import { useAccount, useNetwork, useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountByOwner } from 'network/shapes/Account';
 import { getGoalByIndex } from 'network/shapes/Goals';
-import { getRoomIndex } from 'network/shapes/utils/component';
 import { Room } from './Room';
 
 // The Scene paints the wallpaper and the room. It updates the selected room
@@ -28,44 +25,27 @@ export function registerScene() {
       const { network } = layers;
       const { world, components } = network;
 
-      // TODO: subscribe this on network layer updates to the embedded address
       return interval(1000).pipe(
         map(() => {
-          const accountEntity = queryAccountFromEmbedded(network);
+          const { selectedAddress } = useNetwork.getState();
+          const account = getAccountByOwner(world, components, selectedAddress);
+          const goals = [getGoalByIndex(world, components, 1)];
           return {
-            data: {
-              accountEntity,
-            },
-            utils: {
-              getAccount: (entity: EntityIndex) => getAccount(world, components, entity),
-              getGoalByIndex: (index: number) => getGoalByIndex(world, components, index),
-              getRoomIndex: (entity: EntityIndex) => getRoomIndex(components, entity),
-            },
+            data: { account, goals },
           };
         })
       );
     },
 
-    ({ data, utils }) => {
-      const { accountEntity } = data;
-      const { getRoomIndex } = utils;
+    ({ data }) => {
+      const { account, goals } = data;
       const { roomIndex, setRoom } = useSelected();
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
+      const { validations } = useAccount();
 
-      // ticking
       useEffect(() => {
-        const timerId = setInterval(() => {
-          setLastRefresh(Date.now());
-        }, 250);
-        return () => clearInterval(timerId);
-      }, []);
-
-      // update the room index on each interval and whenever the account changes
-      useEffect(() => {
-        if (!accountEntity) return;
-        const roomIndex = getRoomIndex(accountEntity);
-        setRoom(roomIndex);
-      }, [accountEntity, lastRefresh]);
+        const newRoomIndex = account?.roomIndex ?? 0;
+        if (roomIndex != newRoomIndex) setRoom(newRoomIndex);
+      }, [account, validations]);
 
       /////////////////
       // DISPLAY
@@ -73,7 +53,7 @@ export function registerScene() {
       return (
         <Wrapper>
           <Container>
-            <Room index={roomIndex} />
+            <Room index={roomIndex} goals={goals} />
             <Wallpaper src={backgrounds.long2} />
           </Container>
         </Wrapper>
