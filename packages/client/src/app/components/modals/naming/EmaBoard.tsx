@@ -1,7 +1,6 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { getAccountKamis } from 'app/cache/account';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -9,7 +8,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getInventoryByHolderItem } from 'network/shapes/Inventory';
+import { getByHolderItem } from 'network/shapes/Inventory/getters';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 
@@ -31,17 +30,15 @@ export function registerEMABoardModal() {
           const { world, components } = network;
           const accountEntity = queryAccountFromEmbedded(network);
           const accountID = world.entities[accountEntity];
-          const dust = getInventoryByHolderItem(world, components, accountID, HOLY_DUST_INDEX);
-
+          const dust = getByHolderItem(world, components, accountID, HOLY_DUST_INDEX).balance;
           return {
             network,
             data: {
               accountEntity,
-              dustAmt: dust.balance,
+              dustAmt: dust,
             },
             utils: {
-              getAccountKamis: (accEntity: EntityIndex) =>
-                getAccountKamis(world, components, accEntity),
+              getAccountKamis: () => getAccountKamis(world, components, accountEntity),
             },
           };
         })
@@ -154,7 +151,7 @@ export function registerEMABoardModal() {
       };
 
       const KamiList = () => {
-        setKamis(getAccountKamis(accountEntity));
+        setKamis(getAccountKamis());
       };
 
       return (
