@@ -63,7 +63,7 @@ export const AccountCard = (props: Props) => {
 
   const Title = () => {
     return (
-      <Tooltip text={[account.ownerEOA]}>
+      <Tooltip text={[account.ownerAddress]}>
         <TitleText key='title' onClick={() => handleClick()}>
           {account.name}
         </TitleText>

@@ -1,4 +1,4 @@
-export { genID, queryChildrenOf, queryChildrenOfEntityIndex } from './children';
+export { genID, queryChildrenOf, queryChildrenOfIndex } from './children';
 export { canReveal, filterRevealable } from './commits';
 export { getData, getDataArray, unpackArray32 } from './data';
 export { getFor } from './for';

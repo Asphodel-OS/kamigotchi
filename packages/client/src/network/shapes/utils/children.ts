@@ -13,7 +13,7 @@ export const queryChildrenOf = (components: Components, parentID: EntityID): Ent
   return Array.from(runQuery(toQuery));
 };
 
-export const queryChildrenOfEntityIndex = (
+export const queryChildrenOfIndex = (
   components: Components,
   field: string,
   index: number

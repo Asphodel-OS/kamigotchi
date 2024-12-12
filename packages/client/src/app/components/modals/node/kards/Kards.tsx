@@ -23,14 +23,14 @@ interface Props {
     UseItemButton: (kami: Kami, account: Account) => JSX.Element;
   };
   utils: {
-    getKami: (entity: EntityIndex) => Kami;
-    refreshKami: (kami: Kami) => Kami;
-    getOwner: (kami: Kami) => BaseAccount;
+    getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
+    getOwner: (kamiEntity: EntityIndex) => BaseAccount;
   };
 }
 
 export const Kards = (props: Props) => {
   const { actions, kamiEntities, account, display, utils } = props;
+  const { getKami } = utils;
   const { modals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -38,12 +38,13 @@ export const Kards = (props: Props) => {
   const [alliesUpdating, setAlliesUpdating] = useState(false);
   const [allyEntities, setAllyEntities] = useState<EntityIndex[]>([]);
   const [enemyEntities, setEnemyEntities] = useState<EntityIndex[]>([]);
-  const [visibleEnemies, setVisibleEnemies] = useState(0);
+  const [visibleEnemies, setVisibleEnemies] = useState(0); // count of visible enemies
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   // ticking
   useEffect(() => {
-    const timerId = setInterval(() => setLastRefresh(Date.now()), 250);
+    const refreshClock = () => setLastRefresh(Date.now());
+    const timerId = setInterval(refreshClock, 2500);
     return () => clearInterval(timerId);
   }, []);
 
@@ -63,19 +64,15 @@ export const Kards = (props: Props) => {
   useEffect(() => {
     if (!modals.node) return;
     setAlliesUpdating(true);
-    setAllies(allyEntities.map((entity) => utils.getKami(entity)));
+    setAllies(allyEntities.map((entity) => getKami(entity, true)));
     setAlliesUpdating(false);
   }, [modals.node, allyEntities]);
 
   // check to refresh ally data at each interval
   useEffect(() => {
     if (!modals.node || alliesUpdating) return;
-    let alliesStale = false;
-    const newAllies = allies.map((kami) => utils.refreshKami(kami));
-    for (let i = 0; i < allies.length; i++) {
-      if (newAllies[i] != allies[i]) alliesStale = true;
-    }
-    if (alliesStale) setAllies(newAllies);
+    const newAllies = allies.map((ally) => getKami(ally.entity));
+    setAllies(newAllies);
   }, [modals.node, lastRefresh]);
 
   // scrolling effects for enemy kards
@@ -117,13 +114,7 @@ export const Kards = (props: Props) => {
       ref={containerRef}
       style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}
     >
-      <AllyKards
-        account={account}
-        kamis={allies}
-        actions={actions}
-        display={display}
-        utils={utils}
-      />
+      <AllyKards account={account} kamis={allies} actions={actions} display={display} />
       <EnemyCards
         allies={allies}
         enemyEntities={enemyEntities}

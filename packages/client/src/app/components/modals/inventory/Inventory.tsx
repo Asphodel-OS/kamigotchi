@@ -1,11 +1,13 @@
 import { interval, map } from 'rxjs';
 
+import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
+import { useAccount } from 'app/stores';
 import { inventoryIcon } from 'assets/images/icons/menu';
-import { Account, getAccountFromBurner } from 'network/shapes/Account';
+import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { passesConditions } from 'network/shapes/Conditional';
-import { Item } from 'network/shapes/Item';
+import { getMusuBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -26,19 +28,32 @@ export function registerInventoryModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
+          const { debug } = useAccount.getState();
+          const accountEntity = queryAccountFromEmbedded(network);
+          const kamiRefreshOptions = {
+            live: 0,
+            bonuses: 5,
+            config: 3600,
+            flags: 10,
+            harvest: 2,
+            skills: 5,
+            stats: 3600,
+            traits: 3600,
+          };
 
-          const account = getAccountFromBurner(network, {
-            kamis: { flags: true, harvest: true },
-            inventory: true,
-          });
           return {
             network,
             data: {
-              account: account,
+              accountEntity,
             },
             utils: {
+              getAccount: () => getAccount(world, components, accountEntity),
+              getInventories: () => getAccountInventories(world, components, accountEntity),
+              getKamis: () =>
+                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
               meetsRequirements: (holder: Kami | Account, item: Item) =>
                 passesConditions(world, components, item.requirements.use, holder),
+              getMusuBalance: () => getMusuBalance(world, components, accountEntity),
             },
           };
         })
@@ -48,7 +63,8 @@ export function registerInventoryModal() {
     // Render
     ({ network, data, utils }) => {
       const { actions, api } = network;
-      const { account } = data;
+      const { accountEntity } = data;
+      const { getMusuBalance } = utils;
 
       /////////////////
       // ACTIONS
@@ -65,24 +81,18 @@ export function registerInventoryModal() {
       };
 
       const useForAccount = (item: Item) => {
+        // really hacky way to determine if we're using a giftbox
+        let actionKey = 'Using';
+        if (item.name === 'Giftbox') actionKey = 'Opening';
+
         actions.add({
           action: 'AccountFeed',
           params: [item.index],
-          description: `Using ${item.name}`,
+          description: `${actionKey} ${item.name}`,
           execute: async () => {
             return api.player.account.use.item(item.index, 1);
           },
         });
-      };
-
-      /////////////////
-      // INTERPRETATION
-
-      // get the list of inventories for an account including gacha tickets
-      const getInventories = () => {
-        const raw = [...(account.inventories ?? [])];
-        const cleaned = raw.filter((inv) => !!inv.item.index);
-        return cleaned;
       };
 
       /////////////////
@@ -92,19 +102,15 @@ export function registerInventoryModal() {
         <ModalWrapper
           id='inventory'
           header={<ModalHeader title='Inventory' icon={inventoryIcon} />}
-          footer={<MusuRow key='musu' balance={account.coin} />}
+          footer={<MusuRow key='musu' balance={getMusuBalance()} />}
           canExit
           overlay
           truncate
         >
           <ItemGrid
             key='grid'
-            account={account}
-            inventories={getInventories()}
-            actions={{
-              useForAccount,
-              useForKami,
-            }}
+            accountEntity={accountEntity}
+            actions={{ useForAccount, useForKami }}
             utils={utils}
           />
         </ModalWrapper>

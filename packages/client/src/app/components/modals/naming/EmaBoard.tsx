@@ -6,8 +6,8 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
-import { getAccountFromBurner } from 'network/shapes/Account';
-import { getInventoryByHolderItem } from 'network/shapes/Item';
+import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { getInventoryByHolderItem } from 'network/shapes/Inventory';
 import { Kami } from 'network/shapes/Kami';
 
 export function registerEMABoardModal() {
@@ -26,7 +26,7 @@ export function registerEMABoardModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromBurner(network, {
+          const account = getAccountFromEmbedded(network, {
             inventory: true,
             kamis: { flags: true },
           });
@@ -50,7 +50,7 @@ export function registerEMABoardModal() {
       const { setKami } = useSelected();
 
       const promptRename = (kami: Kami) => {
-        setKami(kami.entityIndex);
+        setKami(kami.entity);
         setModals({ emaBoard: false, nameKami: true });
       };
 
@@ -148,7 +148,7 @@ export function registerEMABoardModal() {
 
       return (
         <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
-          <List>{KamiList(account.kamis)}</List>
+          <List>{KamiList(account.kamis ?? [])}</List>
         </ModalWrapper>
       );
     }

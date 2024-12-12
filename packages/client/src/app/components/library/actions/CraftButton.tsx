@@ -20,6 +20,7 @@ interface Props {
 
 export const CraftButton = (props: Props) => {
   const { amt, actions, data, recipe, utils } = props;
+  const { meetsRequirements, displayRequirements, getItemBalance, setAmt } = utils;
   let errorText = '';
 
   /////////////////
@@ -27,7 +28,7 @@ export const CraftButton = (props: Props) => {
 
   const enoughInputs = () => {
     for (let i = 0; i < recipe.inputs.length; i++) {
-      const have = utils.getItemBalance(recipe.inputs[i].index);
+      const have = getItemBalance(recipe.inputs[i].index);
       if (have < recipe.inputs[i].amount * amt) return false;
     }
     return true;
@@ -38,8 +39,7 @@ export const CraftButton = (props: Props) => {
   };
 
   let enabled = false;
-  if (!utils.meetsRequirements(recipe))
-    errorText = 'Requires: \n' + utils.displayRequirements(recipe);
+  if (!meetsRequirements(recipe)) errorText = 'Requires: \n' + displayRequirements(recipe);
   else if (!enoughInputs()) errorText = 'Not enough items';
   else if (!enoughStamina()) errorText = 'Not enough stamina';
   else enabled = true;

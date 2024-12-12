@@ -1,0 +1,1 @@
+export { KamiCard } from './KamiCard';

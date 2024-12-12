@@ -1,9 +1,9 @@
 import styled, { keyframes } from 'styled-components';
 
+import { Skill, getSkillInstance, parseBonusText } from 'app/cache/skill';
 import { Tooltip } from 'app/components/library';
 import { SkillImages } from 'assets/images/skills';
 import { Kami } from 'network/shapes/Kami';
-import { Skill, getSkillInstance, parseBonusText } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
 interface Props {

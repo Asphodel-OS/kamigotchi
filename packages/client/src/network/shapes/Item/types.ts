@@ -3,8 +3,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { Components } from 'network/components';
 import { Allo, getAllosOf } from '../Allo';
 import { Condition, queryConditionsOfID } from '../Conditional';
-import { DetailedEntity, ForType, getEntityByHash, getFor, getItemImage } from '../utils';
-import { getItemByIndex } from './queries';
+import { DetailedEntity, ForType, getFor, getItemImage } from '../utils';
 import { getItemAlloAnchorID, getItemReqAnchorID } from './utils';
 
 // The standard shape of a FE Item Entity
@@ -120,40 +119,4 @@ export const getUsecaseAllos = (
 ): Allo[] => {
   const parentID = getItemAlloAnchorID(itemIndex, usecase);
   return getAllosOf(world, components, parentID);
-};
-
-/////////////////
-// INVENTORY
-
-// standardized shape of a FE Inventory Entity
-export interface Inventory {
-  id: EntityID;
-  entityIndex: EntityIndex;
-  balance: number;
-  item: Item;
-}
-
-// get an Inventory from its EntityIndex
-export const getInventory = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex
-): Inventory => {
-  const { Value, ItemIndex } = components;
-
-  // retrieve item details based on the registry
-  const itemIndex = getComponentValue(ItemIndex, entityIndex)?.value as number;
-
-  const inventory = {
-    id: world.entities[entityIndex],
-    entityIndex: entityIndex,
-    item: getItemByIndex(world, components, itemIndex),
-    balance: (getComponentValue(Value, entityIndex)?.value as number) * 1,
-  };
-
-  return inventory;
-};
-
-export const getRegEntityIndex = (world: World, itemIndex: number): EntityIndex | undefined => {
-  return getEntityByHash(world, ['registry.item', itemIndex], ['string', 'uint32']);
 };

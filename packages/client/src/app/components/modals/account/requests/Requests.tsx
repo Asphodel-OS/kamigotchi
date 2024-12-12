@@ -60,7 +60,7 @@ export const Requests = (props: Props) => {
   // INTERPRETATION
 
   // TODO:  implement a lazy query or something less compute heavy
-  // filters the list of accounts by whether their name/ownerEOA contains a substring
+  // filters the list of accounts by whether their name/ownerAddress contains a substring
   const filterAccounts = (value: string) => {
     const accounts = props.accounts.filter((account) => !knownAccIndices.includes(account.index));
 
@@ -69,7 +69,7 @@ export const Requests = (props: Props) => {
     return accounts.filter(
       (account) =>
         account.name.toLowerCase().includes(value.toLowerCase()) ||
-        account.ownerEOA.toLowerCase().includes(value.toLowerCase())
+        account.ownerAddress.toLowerCase().includes(value.toLowerCase())
     );
   };
 

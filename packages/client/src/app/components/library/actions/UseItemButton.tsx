@@ -1,12 +1,13 @@
 import { World } from '@mud-classic/recs';
+import { filterInventories, Inventory } from 'app/cache/inventory';
+import { calcCooldown, isHarvesting, Kami } from 'app/cache/kami';
 import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { Components } from 'network/components';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
 import { parseAllos } from 'network/shapes/Allo';
 import { passesConditions } from 'network/shapes/Conditional';
-import { filterInventories, Inventory, Item } from 'network/shapes/Item';
-import { calcCooldown, isHarvesting, Kami } from 'network/shapes/Kami';
+import { Item } from 'network/shapes/Item';
 import { Tooltip } from '../base';
 
 // button for feeding a kami
@@ -32,10 +33,14 @@ export const UseItemButton = (
     });
   };
 
-  const disabled = !!tooltip;
+  let disabled = !!tooltip;
   if (!disabled) {
     tooltip = `Feed Kami`;
     options = getOptions(world, components, kami, account, triggerAction);
+    if (options.length === 0) {
+      tooltip = `No items to feed`;
+      disabled = true;
+    }
   }
 
   return (
@@ -67,8 +72,8 @@ const getOptions = (
 ) => {
   let inventories = account.inventories ?? [];
   inventories = filterInventories(inventories, undefined, 'KAMI');
-  inventories = inventories.filter((inv) =>
-    passesConditions(world, components, inv.item.requirements.use, kami)
+  inventories = inventories.filter(
+    (inv) => !!inv.item && passesConditions(world, components, inv.item.requirements.use, kami)
   );
 
   const options = inventories.map((inv: Inventory) => {
@@ -79,6 +84,7 @@ const getOptions = (
 };
 
 // get a single IconListButton Option for feeding a Kami
+// assume the item is a valid feeding option
 const getOption = (
   world: World,
   components: Components,
@@ -86,8 +92,6 @@ const getOption = (
   inv: Inventory,
   triggerAction: Function
 ) => {
-  if (!inv || !inv.item) return { text: '', onClick: () => {} };
-
   // its not querying use correctly!
   const effectsText = parseAllos(world, components, inv.item.effects.use)
     .map((entry) => `${entry.description}`)

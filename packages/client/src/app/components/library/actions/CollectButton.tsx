@@ -1,6 +1,7 @@
+import { calcCooldown, isHarvesting, isStarving } from 'app/cache/kami';
 import { collectIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { calcCooldown, isHarvesting, isStarving, Kami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 import { IconButton, Tooltip } from '../base';
 
 // button for collecting a harvest

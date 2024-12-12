@@ -1,25 +1,29 @@
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { ScavBar, calcScavClaimable } from 'network/shapes/Scavenge';
+import { ScavBar } from 'network/shapes/Scavenge';
 import { useEffect, useState } from 'react';
 
 const SYNC_TIME = 1500;
 
 interface Props {
-  scavBar: ScavBar;
+  scavenge: ScavBar;
   actions: {
-    claim: (scavBar: ScavBar) => void;
+    claim: (scavenge: ScavBar) => void;
   };
   utils: {
-    getPoints: () => number;
+    getPoints: (entity: EntityIndex) => number;
+    queryScavInstance: () => EntityIndex | undefined;
   };
 }
 
 export const ScavengeBar = (props: Props) => {
-  const { scavBar, actions, utils } = props;
+  const { scavenge, actions, utils } = props;
+  const { getPoints, queryScavInstance } = utils;
   const { modals } = useVisibility();
+
   const [lastSync, setLastSync] = useState(Date.now());
   const [points, setPoints] = useState(0);
   const [rolls, setRolls] = useState(0);
@@ -37,35 +41,32 @@ export const ScavengeBar = (props: Props) => {
 
   // periodically update the number of rolls and points if modal is open
   useEffect(() => {
-    if (!modals.node || !scavBar) return;
+    if (!modals.node || !scavenge) return;
     update();
-  }, [lastSync]);
-
-  // update the stats whenever the scav bar changes
-  useEffect(() => update(), [scavBar.index]);
+  }, [lastSync, scavenge.index]);
 
   const update = () => {
-    const currPoints = utils.getPoints();
-    const claimable = calcScavClaimable(scavBar.cost, currPoints);
-    setPoints(currPoints);
-    setRolls(claimable);
-  };
+    const instanceEntity = queryScavInstance();
+    if (!instanceEntity) {
+      setRolls(0);
+      setPoints(0);
+      return;
+    }
 
-  /////////////////
-  // INTERPRETATION
-
-  const getPercent = () => {
-    if (!scavBar) return 0;
-    return ((points % scavBar.cost) / scavBar.cost) * 100;
+    const currPoints = getPoints(instanceEntity);
+    const rolls = Math.floor(currPoints / scavenge.cost);
+    const remainder = currPoints % scavenge.cost;
+    setPoints(remainder);
+    setRolls(rolls);
   };
 
   return (
     <Container>
-      <ProgressBar percent={getPercent()}>
-        {rolls} rolls + {points % scavBar.cost}/{scavBar.cost}
+      <ProgressBar percent={(points / scavenge.cost) * 100}>
+        {rolls} rolls + {points} / {scavenge.cost}
       </ProgressBar>
       <ActionButton
-        onClick={() => actions.claim(scavBar)}
+        onClick={() => actions.claim(scavenge)}
         text={`Scavenge`}
         size='medium'
         disabled={rolls == 0}

@@ -10,12 +10,14 @@ import { getAffinityImage } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { getDateString, getKamiDate, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
+import { TabType } from '../Kami';
 
 const cellStyle = { fontFamily: 'Pixel', fontSize: '.75vw', padding: '0.5vw', border: 0 };
 const headerStyle = { ...cellStyle, fontSize: '.9vw' };
 
 interface Props {
   kami: Kami;
+  tab: TabType;
   utils: {
     getBattles: (kami: Kami) => KillLog[];
   };
@@ -23,14 +25,15 @@ interface Props {
 
 // Rendering of the Kami's Kill/Death Logs
 export const Battles = (props: Props) => {
-  const { kami, utils } = props;
+  const { kami, tab, utils } = props;
   const { setKami, setNode } = useSelected();
   const { modals, setModals } = useVisibility();
   const [logs, setLogs] = useState<KillLog[]>([]);
 
   useEffect(() => {
+    if (!modals.kami || tab !== 'BATTLES') return;
     setLogs(utils.getBattles(kami));
-  }, [modals.kami, kami.index]);
+  }, [modals.kami, kami.index, tab]);
 
   /////////////////
   // INTERPRETATION

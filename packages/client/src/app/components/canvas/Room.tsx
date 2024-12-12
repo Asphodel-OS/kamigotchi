@@ -5,19 +5,17 @@ import styled, { keyframes } from 'styled-components';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
-import { Goal } from 'network/shapes/Goals';
 import { getCurrPhase } from 'utils/time';
 
 interface Props {
   index: number;
-  goals: Goal[];
 }
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
-  const { index, goals } = props;
+  const { index } = props;
   const { modals, setModals } = useVisibility();
   const { setNode } = useSelected();
   const [room, setRoom] = useState(rooms[0]);

@@ -1,31 +1,38 @@
 import styled from 'styled-components';
 
+import { isResting } from 'app/cache/kami';
 import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
 import { Account, BaseAccount } from 'network/shapes/Account';
-import { isResting, Kami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
 
 interface Props {
+  actions: {
+    levelUp: (kami: Kami) => void;
+  };
   data: {
     account: Account;
     kami: Kami;
     owner: BaseAccount;
   };
-  actions: {
-    levelUp: (kami: Kami) => void;
+  utils: {
+    calcExpRequirement: (level: number) => number;
   };
 }
 
 export const KamiImage = (props: Props) => {
-  const { account, kami, owner } = props.data;
-  const { levelUp } = props.actions;
-  const { experience } = kami;
-  const expCurr = experience.current;
-  const expLimit = experience.threshold;
+  const { actions, data, utils } = props;
+  const { account, kami, owner } = data;
+  const { calcExpRequirement } = utils;
+  const { levelUp } = actions;
+
+  const progress = kami.progress;
+  const expCurr = progress ? progress.experience : 0;
+  const expLimit = progress ? calcExpRequirement(progress.level) : 40;
   const percentage = Math.round((expCurr / expLimit) * 1000) / 10;
 
   const getLevelTooltip = () => {
@@ -47,7 +54,7 @@ export const KamiImage = (props: Props) => {
       <Overlay top={0.9} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
-          <Text size={0.9}>{kami.level}</Text>
+          <Text size={0.9}>{progress ? progress.level : '??'}</Text>
         </Grouping>
       </Overlay>
       <Overlay top={0.9} right={0.7}>

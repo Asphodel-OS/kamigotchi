@@ -2,43 +2,36 @@ import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
 import { Commit, canReveal } from 'network/shapes/utils';
+import { getTimeDeltaString } from 'utils/time';
 
+const SECONDS_PER_DAY = 86400;
+const SECONDS_PER_HOUR = 3600;
 interface Props {
   actions: {
     revealTx: (commits: Commit[]) => Promise<void>;
   };
+  blockNumber: bigint;
   data: {
     commits: Commit[];
-    blockNumber: number;
   };
 }
 
 export const Commits = (props: Props) => {
+  const blockNumber = Number(props.blockNumber);
+
   /////////////////
   // LOGIC
 
   const getCommitTimeFrom = (commit: Commit): string => {
-    const secDelta = (props.data.blockNumber - commit.revealBlock) * 2;
-
-    if (secDelta > 86400) {
-      const days = Math.floor(secDelta / 86400);
-      const hours = Math.floor((secDelta % 86400) / 3600);
-      return `${days} days ${hours} hours ago`;
-    } else if (secDelta > 3600) {
-      const hours = Math.floor(secDelta / 3600);
-      const minutes = Math.floor((secDelta % 3600) / 60);
-      return `${hours} hours ${minutes} minutes ago`;
-    } else {
-      const minutes = Math.floor(secDelta / 60);
-      return `${minutes} minutes  ago`;
-    }
+    const secDelta = (blockNumber - commit.revealBlock) * 2;
+    return getTimeDeltaString(secDelta);
   };
 
   /////////////////
   // DISPLAY
 
   const Cell = (commit: Commit) => {
-    return canReveal(commit, props.data.blockNumber) ? ActiveCell(commit) : ExpiredCell(commit);
+    return canReveal(commit, blockNumber) ? ActiveCell(commit) : ExpiredCell(commit);
   };
 
   const ActiveCell = (commit: Commit) => {

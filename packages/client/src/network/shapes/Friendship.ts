@@ -57,45 +57,39 @@ export const getFriendship = (
 export const getAccFriends = (
   world: World,
   components: Components,
-  account: Account,
+  entity: EntityIndex,
   accountOptions?: any
 ): Friendship[] => {
-  return queryFriendshipX(
-    world,
-    components,
-    { account: account.id, state: 'FRIEND' },
-    accountOptions
-  );
+  const id = world.entities[entity];
+  return queryFriendshipX(world, components, { account: id, state: 'FRIEND' }, accountOptions);
 };
 
 export const getAccIncomingRequests = (
   world: World,
   components: Components,
-  account: Account
+  entity: EntityIndex
 ): Friendship[] => {
-  return queryFriendshipX(world, components, { target: account.id, state: 'REQUEST' });
+  const id = world.entities[entity];
+  return queryFriendshipX(world, components, { target: id, state: 'REQUEST' });
 };
 
 export const getAccOutgoingRequests = (
   world: World,
   components: Components,
-  account: Account
+  entity: EntityIndex
 ): Friendship[] => {
-  return queryFriendshipX(world, components, { account: account.id, state: 'REQUEST' });
+  const id = world.entities[entity];
+  return queryFriendshipX(world, components, { account: id, state: 'REQUEST' });
 };
 
 export const getAccBlocked = (
   world: World,
   components: Components,
-  account: Account,
+  entity: EntityIndex,
   accountOptions?: any
 ): Friendship[] => {
-  return queryFriendshipX(
-    world,
-    components,
-    { account: account.id, state: 'BLOCKED' },
-    accountOptions
-  );
+  const id = world.entities[entity];
+  return queryFriendshipX(world, components, { account: id, state: 'BLOCKED' }, accountOptions);
 };
 
 export interface FriendshipOptions {

@@ -5,7 +5,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { settingsIcon } from 'assets/images/icons/menu';
 
-import { getAccountFromBurner } from 'network/shapes/Account';
+import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { Account } from './Account';
 import { Debugging } from './Debugging';
 import { Volume } from './Volume';
@@ -24,7 +24,7 @@ export function registerSettingsModal() {
       interval(5000).pipe(
         map(() => {
           const { network } = layers;
-          const account = getAccountFromBurner(network);
+          const account = getAccountFromEmbedded(network);
 
           return {
             network: network,

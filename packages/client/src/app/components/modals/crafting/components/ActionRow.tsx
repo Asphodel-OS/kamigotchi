@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { staminaIcon, xpIcon } from 'assets/images/icons/stats';
+import { StatIcons } from 'assets/images/icons/stats';
 import { Ingredient, Recipe } from 'network/shapes/Recipe';
 import { playClick } from 'utils/sounds';
 
@@ -51,13 +51,13 @@ export const ActionRow = (props: Props) => {
       <Icons>
         <Tooltip text={[`Grants ${recipe.experience} xp`]}>
           <DescriptionRow>
-            <Icon src={xpIcon} />
+            <Icon src={StatIcons.xp} />
             <SubText>{recipe.experience * amt}</SubText>
           </DescriptionRow>
         </Tooltip>
         <Tooltip text={[`Uses ${recipe.cost.stamina * -1} stamina`]}>
           <DescriptionRow>
-            <Icon src={staminaIcon} />
+            <Icon src={StatIcons.stamina} />
             <SubText>{recipe.cost.stamina * amt}</SubText>
           </DescriptionRow>
         </Tooltip>

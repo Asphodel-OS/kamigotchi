@@ -52,7 +52,8 @@ export const getStats = (
   const { Harmony, Health, Power, Slots, Stamina, Violence } = components;
 
   const getBonus = (type: string) => {
-    return bonusHolderID ? getBonusValue(world, components, type, bonusHolderID) : 0;
+    if (!bonusHolderID) return 0;
+    return getBonusValue(world, components, type, bonusHolderID);
   };
 
   let stats = {
@@ -67,9 +68,15 @@ export const getStats = (
   return stats;
 };
 
-export const getStat = (index: EntityIndex, type: StatComponent, shiftBonus?: number): Stat => {
-  const raw = BigInt(getComponentValue(type, index)?.value || 0);
+export const getStat = (entity: EntityIndex, type: StatComponent, shiftBonus?: number): Stat => {
+  const raw = BigInt(getComponentValue(type, entity)?.value || 0);
   return getStatFromUint(raw, shiftBonus);
+};
+
+// get the constructed Stamina stat value of an entity
+export const getStamina = (components: Components, entity: EntityIndex): Stat => {
+  const { Stamina } = components;
+  return getStat(entity, Stamina);
 };
 
 export const getStatFromUint = (value: bigint, shiftBonus?: number): Stat => {
@@ -85,12 +92,6 @@ export const getStatFromUint = (value: bigint, shiftBonus?: number): Stat => {
     boost: boost,
     sync: sync,
     rate: 0,
-    total: (1 + boost / 1000) * (base + shift),
+    total: (1 + boost / 1e3) * (base + shift),
   };
-};
-
-export const sync = (stat: Stat, amt: number): number => {
-  stat.sync = Math.max(0, stat.sync + amt);
-  stat.sync = Math.min(stat.total, stat.sync + amt);
-  return stat.sync;
 };

@@ -1,13 +1,15 @@
-import { IconListButton } from 'app/components/library';
-import { liquidateIcon } from 'assets/images/icons/actions';
 import {
   calcLiqKarma,
   calcLiqStrain,
   calcLiqThreshold,
   canLiquidate,
   canMog,
-} from 'network/shapes/Harvest';
-import { isStarving, Kami, onCooldown } from 'network/shapes/Kami';
+  isStarving,
+  onCooldown,
+} from 'app/cache/kami';
+import { IconListButton } from 'app/components/library';
+import { liquidateIcon } from 'assets/images/icons/actions';
+import { Kami } from 'network/shapes/Kami';
 import { Tooltip } from '../base';
 
 // button for liquidating a harvest
