@@ -33,6 +33,7 @@ export function queryByIndex(
   comps: Components,
   index: number
 ): EntityIndex | undefined {
+  if (index == 0) return undefined;
   const entity = getEntityByHash(world, ['kami.id', index], ['string', 'uint32']);
   if (entity) return entity;
   console.warn(`queryByIndex: kami ${index} not found by hash`);

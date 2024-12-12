@@ -54,7 +54,6 @@ export function registerAccountRegistrar() {
             network,
             utils: {
               getBaseAccount: (entity: EntityIndex) => getBaseAccount(world, components, entity),
-              getAccount: (entity: EntityIndex) => getAccount(world, components, entity),
               waitForActionCompletion: (action: EntityID) =>
                 waitForActionCompletion(
                   network.actions.Action,
@@ -79,7 +78,7 @@ export function registerAccountRegistrar() {
       } = useNetwork();
       const { toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { setAccount: setKamiAccount } = useAccount();
+      const { setAccount } = useAccount();
       const { validations, setValidations } = useAccount();
       const [step, setStep] = useState(0);
 
@@ -89,10 +88,10 @@ export function registerAccountRegistrar() {
         if (!!accountEntity == validations.accountExists) return; // no change
         if (accountEntity) {
           const account = getBaseAccount(accountEntity);
-          setKamiAccount({ ...account });
+          setAccount({ ...account });
           setValidations({ ...validations, accountExists: true });
         } else {
-          setKamiAccount(emptyAccountDetails());
+          setAccount(emptyAccountDetails());
           setValidations({ accountExists: false, operatorMatches: false, operatorHasGas: false });
         }
       }, [selectedAddress, accountEntity]);
