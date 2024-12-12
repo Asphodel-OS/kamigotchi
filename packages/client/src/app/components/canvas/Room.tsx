@@ -13,6 +13,8 @@ interface Props {
   goals: Goal[];
 }
 
+const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
+
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index, goals } = props;
@@ -31,9 +33,11 @@ export const Room = (props: Props) => {
     const music = newRoom.music;
     if (!music) bgm?.stop();
     else if (music.path !== room.music?.path) {
-      const newBgm = new Howl({ src: [music.path], loop: true });
+      RoomsBgm.get(music.path) ??
+        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true }));
+      const newBgm = RoomsBgm.get(music.path);
       if (bgm) bgm.stop();
-      newBgm.play();
+      newBgm?.play();
       setBgm(newBgm);
       newBgm?.fade(0, 1, 3000);
     }
