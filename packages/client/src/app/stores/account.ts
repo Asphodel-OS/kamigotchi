@@ -7,12 +7,14 @@ import { create } from 'zustand';
 // as well as the validations run on
 interface State {
   account: Account;
-  farcaster: Farcaster;
+  farcaster: Farcaster; // kinda gross to have this in here
   validations: Validations;
+  debug: Debug;
 }
 
 interface Actions {
   setAccount: (data: Account) => void;
+  setDebug: (data: Debug) => void;
   setFarcaster: (data: Farcaster) => void;
   setValidations: (data: Validations) => void;
 }
@@ -23,26 +25,33 @@ interface Actions {
 // represents the key meta details of a kami account
 export interface Account {
   id: EntityID;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   index: number;
   name: string;
   ownerAddress: string;
   operatorAddress: string;
 }
 
-export interface Farcaster {
-  id: number;
-  signer: string; // neynar signer uuid
-}
-
 export const emptyAccountDetails = (): Account => ({
   id: '' as EntityID,
-  entityIndex: 0 as EntityIndex,
+  entity: 0 as EntityIndex,
   index: 0,
   name: '',
   ownerAddress: '',
   operatorAddress: '',
 });
+
+interface Debug {
+  cache: boolean;
+}
+
+////////////////
+// FARCASTER
+
+export interface Farcaster {
+  id: number;
+  signer: string; // neynar signer uuid
+}
 
 ////////////////
 // VALIDATIONS
@@ -60,6 +69,7 @@ interface Validations {
 export const useAccount = create<State & Actions>((set) => {
   const initialState: State = {
     account: emptyAccountDetails(),
+    debug: { cache: false },
     farcaster: { id: 0, signer: '' },
     validations: {
       accountExists: false,
@@ -70,6 +80,7 @@ export const useAccount = create<State & Actions>((set) => {
   return {
     ...initialState,
     setAccount: (data: Account) => set((state: State) => ({ ...state, account: data })),
+    setDebug: (data: Debug) => set((state: State) => ({ ...state, debug: data })),
     setFarcaster: (data: Farcaster) => set((state: State) => ({ ...state, farcaster: data })),
     setValidations: (data: Validations) => set((state: State) => ({ ...state, validations: data })),
   };

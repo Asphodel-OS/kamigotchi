@@ -1,9 +1,18 @@
-import harmonyIcon from './harmony.png';
-import healthIcon from './health.png';
-import powerIcon from './power.png';
-import slotsIcon from './slots.png';
-import staminaIcon from './stamina.png';
-import violenceIcon from './violence.png';
-import xpIcon from './xp.png';
+import HarmonyIcon from './harmony.png';
+import HealthIcon from './health.png';
+import PowerIcon from './power.png';
+import SlotsIcon from './slots.png';
+import StaminaIcon from './stamina.png';
+import ViolenceIcon from './violence.png';
+import ExpIcon from './xp.png';
 
-export { harmonyIcon, healthIcon, powerIcon, slotsIcon, staminaIcon, violenceIcon, xpIcon };
+export { ExpIcon, HarmonyIcon, HealthIcon, PowerIcon, SlotsIcon, StaminaIcon, ViolenceIcon };
+export const StatIcons = {
+  health: HealthIcon,
+  power: PowerIcon,
+  violence: ViolenceIcon,
+  harmony: HarmonyIcon,
+  slots: SlotsIcon,
+  stamina: StaminaIcon,
+  xp: ExpIcon,
+};

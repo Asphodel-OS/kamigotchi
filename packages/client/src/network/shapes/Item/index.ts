@@ -1,14 +1,10 @@
-export { filterInventories, getItemBalance, getMusuBalance } from './functions';
+export { getItemBalance, getMusuBalance } from './functions';
 export {
-  getAllItems,
-  getInventoryByHolderItem,
-  getItemByIndex,
-  getItemDetailsByIndex,
-  getItemRegEntity,
-  queryInventories,
-  queryInventoriesByAccount,
-} from './queries';
-export { getInventory, getItem, getItemDetails } from './types';
-export { cleanInventories } from './utils';
+  getAll as getAllItems,
+  getByIndex as getItemByIndex,
+  getDetailsByIndex as getItemDetailsByIndex,
+} from './getters';
+export { queryByIndex as queryItemByIndex } from './queries';
+export { getItem, getItemDetails } from './types';
 
-export type { Inventory, Item } from './types';
+export type { Item } from './types';

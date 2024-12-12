@@ -1,52 +1,80 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton } from 'app/components/library';
+import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { KamiGrid } from '../components/KamiGrid';
+import { TabType } from '../types';
 import { SideBalance } from './SideBalance';
 
 interface Props {
   actions: {
-    handleReroll: (kamis: Kami[], price: bigint) => () => Promise<void>;
+    handleReroll: (kamis: Kami[], price: bigint) => Promise<void>;
   };
+  tab: TabType;
   data: {
-    kamis: Kami[];
+    accountEntity: EntityIndex;
     balance: bigint;
     maxRerolls: number;
   };
   utils: {
     getRerollCost: (kami: Kami) => bigint;
+    getAccountKamis: () => Kami[];
   };
 }
 
 export const Reroll = (props: Props) => {
-  const { actions, data, utils } = props;
-  const { kamis, maxRerolls } = data;
+  const { actions, data, utils, tab } = props;
+  const { accountEntity, maxRerolls, balance } = data;
+  const { getAccountKamis, getRerollCost } = utils;
+  const { modals } = useVisibility();
 
+  const [partyKamis, setPartyKamis] = useState<Kami[]>([]);
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
   const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-  //////////////////
-  // LOGIC
+  // ticking
+  useEffect(() => {
+    const refresh = () => setLastRefresh(Date.now());
+    const timerId = setInterval(refresh, 1000);
+    return () => clearInterval(timerId);
+  }, []);
+
+  // update the list of kamis when the account changes
+  useEffect(() => {
+    if (tab !== 'REROLL' || !modals.gacha) return;
+    const party = getAccountKamis().filter((kami) => kami.state === 'RESTING');
+    setPartyKamis(party);
+  }, [accountEntity, lastRefresh]);
 
   // update the reroll price of each kami when the list changes
   useEffect(() => {
     let price = BigInt(0);
-    selectedKamis.forEach((kami) => (price += utils.getRerollCost(kami)));
+    selectedKamis.forEach((kami) => (price += getRerollCost(kami)));
     setRerollPrice(price);
   }, [selectedKamis]);
 
-  //
+  //////////////////
+  // INTERACTION
+
   const handleReroll = () => {
-    actions.handleReroll(selectedKamis, rerollPrice)();
+    actions.handleReroll(selectedKamis, rerollPrice);
     setSelectedKamis([]);
   };
 
+  //////////////////
+  // INTERPRETATION
+
   const canRerollSelected = () => {
+    let rerollPrice = BigInt(0);
     for (const kami of selectedKamis) {
-      if (kami.rerolls ?? 0 > maxRerolls) return false;
+      if (kami.rerolls ?? 0 >= maxRerolls) return false;
+      rerollPrice += getRerollCost(kami);
     }
+    if (rerollPrice > balance) return false;
     return true;
   };
 
@@ -55,46 +83,20 @@ export const Reroll = (props: Props) => {
 
   const getKamiText = (kami: Kami): string[] => {
     const text = [];
-
-    // traits
     text.push(kami.name);
     text.push('');
-
-    // stats
     text.push(`Re-roll cost: ${props.utils.getRerollCost(kami)} Ξ`);
     text.push(`Re-rolls done: ${kami.rerolls?.toString()} / ${maxRerolls}`);
-
     return text;
   };
 
-  const formatWei = (wei: bigint): string => {
-    // return Number(utils.formatEther(wei)).toFixed(4);
-    return Number(wei).toFixed(2);
-  };
-
-  const FooterButton = (
-    <Footer>
-      {/* <SideBalance balance={formatWei(rerollPrice) + 'Ξ'} title='Re-roll cost' /> */}
-      <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
-      <div style={{ flexGrow: 6 }} />
-      <ActionButton
-        onClick={handleReroll}
-        text='Re-roll'
-        size='large'
-        // disabled={selectedKamis.length === 0 || rerollPrice > props.data.balance}
-        disabled={selectedKamis.length === 0 || canRerollSelected()}
-        fill
-      />
-    </Footer>
-  );
-
   const Grid =
-    props.data.kamis.length > 0 ? (
+    partyKamis.length > 0 ? (
       <KamiGrid
-        kamis={kamis}
+        kamis={partyKamis}
         getKamiText={getKamiText}
-        amtShown={kamis.length} // here if truncation makes sense later
-        grossShowable={kamis.length}
+        amtShown={partyKamis.length} // here if truncation makes sense later
+        grossShowable={partyKamis.length}
         incAmtShown={() => {}}
         select={{
           arr: selectedKamis,
@@ -118,7 +120,17 @@ export const Reroll = (props: Props) => {
   return (
     <OuterBox>
       {Grid}
-      {FooterButton}
+      <Footer>
+        <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
+        <div style={{ flexGrow: 6 }} />
+        <ActionButton
+          onClick={handleReroll}
+          text='Re-roll'
+          size='large'
+          disabled={selectedKamis.length === 0 || canRerollSelected()}
+          fill
+        />
+      </Footer>
     </OuterBox>
   );
 };

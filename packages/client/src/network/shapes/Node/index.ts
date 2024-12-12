@@ -1,3 +1,4 @@
+export { NullNode } from './constants';
 export { passesRequirements as passesNodeReqs } from './functions';
 export {
   getAll as getAllNodes,
@@ -5,7 +6,9 @@ export {
   getByIndex as getNodeByIndex,
   getRequirements as getNodeRequirements,
 } from './getters';
-export { queryByIndex as queryNodeByIndex, queryForKamis as queryNodeKamis } from './queries';
-export { NullNode, getBaseNode, getNode } from './types';
+export { queryHarvests as queryNodeHarvests } from './harvests';
+export { queryKamis as queryNodeKamis } from './kamis';
+export { queryByIndex as queryNodeByIndex } from './queries';
+export { getBaseNode, getNode } from './types';
 
 export type { BaseNode, Node } from './types';

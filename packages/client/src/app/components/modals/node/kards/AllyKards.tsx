@@ -1,10 +1,10 @@
-import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { calcHealth, calcOutput } from 'app/cache/kami';
+import { KamiCard } from 'app/components/library';
 import { CollectButton, StopButton } from 'app/components/library/actions';
 import { Account } from 'network/shapes/Account';
-import { Kami, KamiOptions, calcHealth, calcOutput } from 'network/shapes/Kami';
-import { KamiCard } from '../KamiCard/KamiCard';
+import { Kami } from 'network/shapes/Kami';
 
 interface Props {
   account: Account;
@@ -15,10 +15,6 @@ interface Props {
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
-  };
-  utils: {
-    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
-    refreshKami: (kami: Kami) => Kami;
   };
 }
 
@@ -36,9 +32,9 @@ export const AllyKards = (props: Props) => {
     const health = calcHealth(kami);
     const description = [
       '',
-      `Health: ${health.toFixed()}/${kami.stats.health.total}`,
-      `Harmony: ${kami.stats.harmony.total}`,
-      `Violence: ${kami.stats.violence.total}`,
+      `Health: ${health.toFixed()}/${kami.stats?.health.total ?? 0}`,
+      `Harmony: ${kami.stats?.harmony.total ?? 0}`,
+      `Violence: ${kami.stats?.violence.total ?? 0}`,
     ];
     return description;
   };

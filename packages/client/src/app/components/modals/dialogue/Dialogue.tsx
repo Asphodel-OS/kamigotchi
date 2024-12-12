@@ -8,7 +8,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
-import { queryAccountFromBurner } from 'network/shapes/Account';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
 
@@ -29,7 +29,7 @@ export function registerDialogueModal() {
           const { network } = layers;
           const { world, components } = network;
 
-          const accountEntity = queryAccountFromBurner(network);
+          const accountEntity = queryAccountFromEmbedded(network);
 
           return {
             network: layers.network,
