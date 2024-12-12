@@ -62,6 +62,7 @@ export function registerScene() {
 
       // update the room index on each interval and whenever the account changes
       useEffect(() => {
+        if (!accountEntity) return;
         const roomIndex = getRoomIndex(accountEntity);
         setRoom(roomIndex);
       }, [accountEntity, lastRefresh]);

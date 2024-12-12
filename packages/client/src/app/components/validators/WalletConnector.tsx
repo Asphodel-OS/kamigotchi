@@ -93,7 +93,7 @@ export function registerWalletConnecter() {
 
         // when the injected wallet is disconnected
         if (!isConnected) {
-          console.log('Wallet disconnected. Logging out.');
+          console.warn('Wallet disconnected. Logging out.');
           logout();
           return;
         }
@@ -103,7 +103,7 @@ export function registerWalletConnecter() {
         if (injectedWallet) {
           const injectedAddress = injectedWallet.address;
           if (injectedAddress !== wagmiAddress) {
-            console.log(`Change in injected wallet detected. Logging out.`);
+            console.warn(`Change in injected wallet detected. Logging out.`);
             logout();
             return;
           }
