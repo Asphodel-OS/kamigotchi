@@ -63,7 +63,7 @@ library LibHarvest {
     // safely get and reset existing balance
     ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
     uint256 balance = valComp.safeGet(prodID);
-    if (balance > 0) valComp.remove(prodID);
+    if (balance > 0) valComp.set(prodID, 0);
 
     LibInventory.incFor(components, toID, MUSU_INDEX, balance);
     return balance;
@@ -84,7 +84,7 @@ library LibHarvest {
   // Stops an _existing_ harvest. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("INACTIVE"));
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+    ValueComponent(getAddrByID(components, ValueCompID)).set(id, 0);
   }
 
   // snapshot a harvest's balance and time. return the balance gained
