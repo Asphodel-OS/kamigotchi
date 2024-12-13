@@ -9,15 +9,20 @@ export const getEntityByHash = (
   args: any[],
   argTypes: string[]
 ): EntityIndex | undefined => {
-  for (let i = 0; i < args.length; i++) if (args[i] === undefined) return;
-  return world.entityToIndex.get(hashArgs(args, argTypes));
+  const hash = hashArgs(args, argTypes) ?? '';
+  if (!hash) return undefined;
+  return world.entityToIndex.get(hash);
 };
 
 // get hashed ID without formatting or world check
 export const hashArgs = (args: any[], argTypes: string[], skipFormat?: boolean): EntityID => {
+  if (args.includes(undefined)) {
+    console.warn('hashArgs(): undefined arg(s)', { argTypes, args });
+    return '' as EntityID;
+  }
+
   let id = '';
   const key = args.join('-');
-
   if (IDStore.has(key)) id = IDStore.get(key)!;
   else {
     id = utils.solidityKeccak256(argTypes, args);

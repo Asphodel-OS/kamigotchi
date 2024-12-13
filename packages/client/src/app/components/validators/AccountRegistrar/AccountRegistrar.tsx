@@ -78,8 +78,8 @@ export function registerAccountRegistrar() {
       } = useNetwork();
       const { toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { setAccount } = useAccount();
       const { validations, setValidations } = useAccount();
+      const { setAccount } = useAccount();
       const [step, setStep] = useState(0);
 
       // update the Kami Account and validation based on changes to the
