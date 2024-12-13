@@ -16,10 +16,12 @@ export const getEntityByHash = (
 
 // get hashed ID without formatting or world check
 export const hashArgs = (args: any[], argTypes: string[], skipFormat?: boolean): EntityID => {
-  if (args.includes(undefined)) {
-    console.warn('hashArgs(): undefined arg(s)', { argTypes, args });
-    return '' as EntityID;
-  }
+  args.forEach((arg) => {
+    if (arg === undefined || arg === null || arg === '') {
+      console.warn('hashArgs(): undefined arg', { argTypes, args });
+      return '' as EntityID;
+    }
+  });
 
   let id = '';
   const key = args.join('-');
