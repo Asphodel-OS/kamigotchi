@@ -24,13 +24,14 @@ contract SkillResetSystem is System {
     // verify resettable
     LibSkill.verifyResettable(components, targetID);
 
-    // ownership checks
+    // state and ownership checks
     bool isKami = LibEntityType.isShape(components, targetID, "KAMI");
     if (isKami) {
       LibKami.verifyAccount(components, targetID, accID);
     } else {
       // if not kami, check account ownership
       if (targetID != accID) revert("not ur account");
+      LibKami.verifyState(components, targetID, "RESTING"); // kami must be resting
     }
 
     // reset skills

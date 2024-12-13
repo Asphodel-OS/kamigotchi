@@ -32,6 +32,19 @@ export const Matrix = (props: Props) => {
     setDisplayed(rootNode);
   }, [mode, skills.size]);
 
+  ////////////////////
+  // DISPLAY
+
+  const ResetButton = () => {
+    if (kami.flags?.skillReset) return <></>;
+    <ActionButton
+      text='Reset'
+      onClick={() => actions.reset(kami)}
+      disabled={kami.state !== 'RESTING'}
+      tooltip={kami.state !== 'RESTING' ? ['Must be resting'] : undefined}
+    />;
+  };
+
   // get the text for the skill points display
   const getPointsText = () => {
     const points = kami.skills?.points;
@@ -69,9 +82,7 @@ export const Matrix = (props: Props) => {
           );
         })}
         <FloatBox>
-          {kami.flags?.skillReset && (
-            <ActionButton text='Reset' onClick={() => actions.reset(kami)} />
-          )}
+          {ResetButton()}
           <PointsText>{getPointsText()}</PointsText>
         </FloatBox>
       </Content>
