@@ -36,13 +36,15 @@ export const Matrix = (props: Props) => {
   // DISPLAY
 
   const ResetButton = () => {
-    if (kami.flags?.skillReset) return <></>;
-    <ActionButton
-      text='Reset'
-      onClick={() => actions.reset(kami)}
-      disabled={kami.state !== 'RESTING'}
-      tooltip={kami.state !== 'RESTING' ? ['Must be resting'] : undefined}
-    />;
+    if (!kami.flags?.skillReset) return <></>;
+    return (
+      <ActionButton
+        text='Reset'
+        onClick={() => actions.reset(kami)}
+        disabled={kami.state !== 'RESTING'}
+        tooltip={kami.state !== 'RESTING' ? ['Must be resting'] : undefined}
+      />
+    );
   };
 
   // get the text for the skill points display

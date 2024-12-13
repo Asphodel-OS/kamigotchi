@@ -9,6 +9,8 @@ export interface Bonus {
   type: string;
   value: number;
   parent?: EntityID;
+  endType?: string;
+  duration?: number;
 }
 
 export const getBonus = (
@@ -17,7 +19,8 @@ export const getBonus = (
   entity: EntityIndex,
   precision: number = 0
 ): Bonus => {
-  const { ParentID } = comps;
+  const { ParentID, Subtype } = comps;
+
   const regEntity = getRegistryEntity(world, comps, entity);
 
   return {
@@ -25,6 +28,7 @@ export const getBonus = (
     type: getType(comps, regEntity),
     value: getBonusValueSingle(world, comps, entity, precision),
     parent: getComponentValue(ParentID, entity)?.value as EntityID,
+    endType: getComponentValue(Subtype, entity)?.value as string,
   };
 };
 

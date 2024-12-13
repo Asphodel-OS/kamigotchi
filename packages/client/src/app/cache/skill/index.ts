@@ -4,7 +4,6 @@ export {
   getInstance as getSkillInstance,
   getTreePointsRequirement as getSkillTreePointsRequirement,
   getUpgradeError as getSkillUpgradeError,
-  parseBonusText,
 } from './functions';
 
 export type { Skill } from 'network/shapes/Skill';

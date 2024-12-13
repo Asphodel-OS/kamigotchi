@@ -63,7 +63,6 @@ export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
 async function createItem(api: AdminAPI, entry: any) {
   const ignoreTypes = ['OTHER'];
   const baseTypes = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT'];
-  // const consumableTypes = ['FOOD', 'LOOTBOX', 'REVIVE', 'RENAME_POTION', 'TELEPORT', 'SKILL_RESET'];
   const consumableTypes = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
 
   const type = String(entry['Type']).toUpperCase();
@@ -94,6 +93,15 @@ async function addAllo(api: AdminAPI, entry: any) {
       stat.shift,
       stat.boost,
       stat.sync
+    );
+  } else if (entry['ConType'].toUpperCase() === 'BONUS') {
+    await api.registry.item.add.allo.bonus(
+      Number(entry['Index']),
+      'USE',
+      entry['ConIndex (String)'].toUpperCase(),
+      entry['BonusEndType'],
+      0,
+      Number(entry['ConValue'])
     );
   } else {
     // basic (everything else)
@@ -164,21 +172,14 @@ type Stat = {
   sync: number;
 };
 
-type AlloData = {
-  type: string;
-  basic?: Basic;
-  droptable?: Droptable;
-  stat?: Stat;
-};
-
 function parseBasic(entry: any): [string, number, number] {
   // type, index, value
   let type = entry['ConType'].toUpperCase();
   let index = Number(entry['ConIndex']);
   let value = Number(entry['ConValue']);
 
-  if (type === 'FLAG_') {
-    [type, index, value] = parseFlag(entry['ConIndex'].toUpperCase());
+  if (type === 'FLAG') {
+    [type, index, value] = parseFlag(entry['ConIndex (String)'].toUpperCase());
   }
 
   return [type, index, value];

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { parseBonusText, parseRequirementText } from 'app/cache/skill/functions';
+import { parseRequirementText } from 'app/cache/skill/functions';
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -136,7 +136,7 @@ export const Details = (props: Props) => {
 
       <LabeledList
         label='Bonuses'
-        values={(skill.bonuses ?? []).map((bonus) => parseBonusText(bonus))}
+        values={(skill.bonuses ?? []).map((bonus) => parseBonusText(bonus) + ' per level')}
       />
       <LabeledList
         label='Requirements'

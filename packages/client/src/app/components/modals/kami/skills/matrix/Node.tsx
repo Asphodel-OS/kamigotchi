@@ -1,8 +1,9 @@
 import styled, { keyframes } from 'styled-components';
 
-import { Skill, getSkillInstance, parseBonusText } from 'app/cache/skill';
+import { Skill, getSkillInstance } from 'app/cache/skill';
 import { Tooltip } from 'app/components/library';
 import { SkillImages } from 'assets/images/skills';
+import { parseBonusText } from 'network/shapes/Bonus/interpretation';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
@@ -36,7 +37,7 @@ export const Node = (props: Props) => {
   const name = skill.name;
   const description = skill.description ?? '';
   const bonus = skill.bonuses?.[0];
-  const bonusText = bonus ? parseBonusText(bonus!) : '';
+  const bonusText = bonus ? parseBonusText(bonus!) + ' per level' : '';
 
   const titleText = [`${name} (${cost})`, '', description, '', bonusText];
 

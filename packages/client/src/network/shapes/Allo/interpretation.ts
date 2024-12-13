@@ -2,6 +2,7 @@ import { World } from '@mud-classic/recs';
 import * as placeholder from 'assets/images/icons/placeholder.png';
 import { Components } from 'network/components';
 import { Allo } from '.';
+import { getBonusesByParent, parseBonusText } from '../Bonus';
 import { getDTDetails, NullDT } from '../Droptable';
 import { NullStat } from '../Stats';
 import {
@@ -18,9 +19,9 @@ export const parseAllos = (
   world: World,
   components: Components,
   allos: Allo[],
-  flatten?: boolean
+  flattenDT?: boolean
 ): DetailedEntity[] => {
-  const raw = allos.map((allo) => parseAllo(world, components, allo, flatten));
+  const raw = allos.map((allo) => parseAllo(world, components, allo, flattenDT));
   return raw.flat();
 };
 
@@ -28,10 +29,12 @@ export const parseAllo = (
   world: World,
   components: Components,
   allo: Allo,
-  flatten?: boolean
+  flattenDT?: boolean
 ): DetailedEntity | DetailedEntity[] => {
-  if (allo.droptable) {
-    if (flatten) return parseDroptableIndividual(world, components, allo);
+  if (allo.type === 'BONUS') {
+    return parseBonus(world, components, allo);
+  } else if (allo.droptable) {
+    if (flattenDT) return parseDroptableIndividual(world, components, allo);
     else return parseDroptable(world, components, allo);
   } else if (allo.stat) return parseStat(allo);
   else return parseBasic(world, components, allo);
@@ -52,6 +55,16 @@ const parseBasic = (world: World, components: Components, allo: Allo): DetailedE
     ...details,
     description,
   };
+};
+
+const parseBonus = (world: World, components: Components, allo: Allo): DetailedEntity[] => {
+  const bonuses = getBonusesByParent(world, components, allo.id);
+  return bonuses.map((bonus) => ({
+    ObjectType: 'BONUS',
+    name: parseBonusText(bonus),
+    description: parseBonusText(bonus),
+    image: placeholder,
+  }));
 };
 
 const parseDroptable = (world: World, components: Components, allo: Allo): DetailedEntity => {

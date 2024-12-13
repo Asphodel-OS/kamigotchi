@@ -623,13 +623,20 @@ export function createAdminAPI(compiledCalls: string[]) {
     ]);
   }
 
-  async function addItemBonus(index: number, usecase: string, type: string, value: number) {
-    genCall('system.item.registry', [index, usecase, type, value], 'addAlloBonus', [
-      'uint32',
-      'string',
-      'string',
-      'int256',
-    ]);
+  async function addItemBonus(
+    index: number,
+    usecase: string,
+    bonusType: string,
+    endType: string,
+    duration: number,
+    value: number
+  ) {
+    genCall(
+      'system.item.registry',
+      [index, usecase, bonusType, endType, duration, value],
+      'addAlloBonus',
+      ['uint32', 'string', 'string', 'string', 'uint256', 'int256']
+    );
   }
 
   async function addItemDT(
