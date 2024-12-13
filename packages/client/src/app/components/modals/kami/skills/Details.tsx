@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { parseRequirementText } from 'app/cache/skill/functions';
 import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
+import { parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
