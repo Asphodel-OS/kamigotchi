@@ -19,7 +19,7 @@ import { Configs, getConfigs } from './configs';
 import { Friends, getFriends } from './friends';
 import { getInventories } from './inventories';
 import { getKamis } from './kamis';
-import { getStats } from './stats';
+import { getStats, Stats } from './stats';
 
 // account shape with minimal fields
 export interface BaseAccount {
@@ -52,11 +52,7 @@ export interface Account extends BaseAccount {
   kamis?: Kami[];
   friends?: Friends;
   inventories?: Inventory[];
-  stats?: {
-    // TODO: rename this
-    kills: number;
-    coin: number;
-  };
+  stats?: Stats;
 }
 
 export interface Options {

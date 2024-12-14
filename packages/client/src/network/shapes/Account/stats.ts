@@ -3,6 +3,11 @@ import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/components';
 import { getData } from '../utils';
 
+export interface Stats {
+  kills: number;
+  coin: number;
+}
+
 export const getStats = (world: World, components: Components, entity: EntityIndex) => {
   const id = world.entities[entity];
   return {

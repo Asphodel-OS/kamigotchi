@@ -28,4 +28,5 @@ export {
 export { getStats as getAccountStats } from './stats';
 export { getAccount, getBaseAccount } from './types';
 
+export type { Stats as AccountStats } from './stats';
 export type { Account, Options as AccountOptions, BaseAccount } from './types';
