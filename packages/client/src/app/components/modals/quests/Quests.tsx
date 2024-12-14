@@ -6,7 +6,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { questsIcon } from 'assets/images/icons/menu';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
@@ -43,7 +43,8 @@ export function registerQuestsModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromEmbedded(network, {
+          const accountEntity = queryAccountFromEmbedded(network);
+          const account = getAccount(world, components, accountEntity, {
             kamis: true,
             inventory: true,
           });
@@ -61,6 +62,7 @@ export function registerQuestsModal() {
           return {
             network,
             data: {
+              accountEntity,
               account,
               quests: {
                 registry,

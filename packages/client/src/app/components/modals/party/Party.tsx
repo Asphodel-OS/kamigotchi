@@ -1,7 +1,7 @@
 import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
 import { useAccount } from 'app/stores';
@@ -47,7 +47,7 @@ export function registerPartyModal() {
           return {
             network,
             data: {
-              accountEntity: accountEntity,
+              accountEntity,
             },
             display: {
               UseItemButton: (kami: Kami, account: Account, icon: string) =>
@@ -64,6 +64,8 @@ export function registerPartyModal() {
 
     // Render
     ({ display, data, utils }) => {
+      const { accountEntity } = data;
+
       return (
         <ModalWrapper
           id='party'
@@ -71,7 +73,11 @@ export function registerPartyModal() {
           canExit
           truncate
         >
-          <Kards data={data} display={display} utils={utils} />
+          {!accountEntity ? (
+            <EmptyText text={['Failed to Connect Account']} size={1} />
+          ) : (
+            <Kards data={data} display={display} utils={utils} />
+          )}
         </ModalWrapper>
       );
     }

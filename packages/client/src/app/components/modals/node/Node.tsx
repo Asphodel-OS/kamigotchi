@@ -248,7 +248,7 @@ export function registerNodeModal() {
           truncate
           noPadding
         >
-          {kamiEntities.node.length === 0 && (
+          {kamiEntities.node.length + kamiEntities.account.length === 0 && (
             <EmptyText
               text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
               size={1}

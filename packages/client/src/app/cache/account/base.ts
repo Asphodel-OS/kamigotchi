@@ -23,6 +23,8 @@ export interface Options {
   friends?: number;
   inventory?: number;
   stats?: number;
+  // quests?: number; // TODO
+  // kamis?: number; // TODO: figure out how best to populate subobjects
 }
 
 // get a account from its EnityIndex
