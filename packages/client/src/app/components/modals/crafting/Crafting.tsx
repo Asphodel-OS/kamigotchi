@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { calcCurrentStamina, getAccount } from 'app/cache/account';
+import { getAllRecipes } from 'app/cache/recipes';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { craftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance } from 'network/shapes/Item';
-import { getAllRecipes, haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
+import { haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import styled from 'styled-components';
 import { Kard } from './components/Kard';
 

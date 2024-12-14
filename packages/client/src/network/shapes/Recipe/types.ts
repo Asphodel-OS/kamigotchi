@@ -70,7 +70,7 @@ export const getRecipe = (
   return recipe;
 };
 
-const getIngredients = (
+export const getIngredients = (
   world: World,
   components: Components,
   entityIndex: EntityIndex | undefined
