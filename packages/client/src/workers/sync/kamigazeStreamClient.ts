@@ -1,7 +1,7 @@
 import { grpc } from '@improbable-eng/grpc-web';
 import { awaitPromise } from '@mud-classic/utils';
 import { BigNumber } from 'ethers';
-import { createChannel, createClient } from 'nice-grpc-web';
+import { Channel, createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
 
 import {
@@ -22,10 +22,25 @@ import { createDecode, groupByTxHash } from './utils';
 
 const debug = parentDebug.extend('syncUtils');
 
-export function createKamigazeStreamClient(url: string): KamigazeServiceClient {
-  return createClient(KamigazeServiceDefinition, createChannel(url, grpc.WebsocketTransport()));
-}
+let client: KamigazeServiceClient;
+let channel: Channel;
 
+export function createKamigazeStreamClient(url: string): KamigazeServiceClient {
+  if (client) {
+    closeKamigazeStream();
+  }
+  console.log('[kamigaze] createKamigazeStreamClient client');
+  channel = createChannel(url, grpc.WebsocketTransport());
+  client = createClient(KamigazeServiceDefinition, channel);
+
+  return client;
+}
+export function closeKamigazeStream() {
+  debug('[kamigaze] Closing stream connection');
+
+  channel = null as any;
+  client = null as any;
+}
 /**
  * Create a RxJS stream of {@link NetworkComponentUpdate}s by subscribing to a
  * gRPC streaming service.
@@ -41,31 +56,41 @@ export function createKamigazeStreamService(
   transformWorldEvents: ReturnType<typeof createTransformWorldEventsFromStream>,
   includeSystemCalls: boolean
 ): Observable<NetworkEvent> {
-  const streamServiceClient = createKamigazeStreamClient(streamServiceUrl);
-  const response = streamServiceClient.subscribeToStream({
-    worldAddress,
-    blockNumber: true,
-    blockHash: true,
-    blockTimestamp: true,
-    transactionsConfirmed: false, // do not need txs since each ECSEvent contains the hash
-    ecsEvents: true,
-    ecsEventsIncludeTxMetadata: includeSystemCalls,
-  });
-  // Turn stream responses into rxjs NetworkEvent
-  return from(response).pipe(
-    map(async (responseChunk) => {
-      const events = await transformWorldEvents(responseChunk);
-      debug(`got ${events.length} events from block ${responseChunk.blockNumber}`);
-      if (includeSystemCalls && events.length > 0) {
-        const systemCalls = parseSystemCallsFromStreamEvents(events);
-        return [...events, ...systemCalls];
-      }
+  return new Observable((subscriber) => {
+    const streamServiceClient = createKamigazeStreamClient(streamServiceUrl);
 
-      return events;
-    }),
-    awaitPromise(),
-    concatMap((v) => of(...v))
-  );
+    const response = streamServiceClient.subscribeToStream({
+      worldAddress,
+      blockNumber: true,
+      blockHash: true,
+      blockTimestamp: true,
+      transactionsConfirmed: false, // do not need txs since each ECSEvent contains the hash
+      ecsEvents: true,
+      ecsEventsIncludeTxMetadata: includeSystemCalls,
+    });
+    console.log('[kamigaze] streamServiceClient.subscribeToStream');
+    // Turn stream responses into rxjs NetworkEvent
+    from(response)
+      .pipe(
+        map(async (responseChunk) => {
+          debug('[kamigaze] got events');
+          const events = await transformWorldEvents(responseChunk);
+          if (includeSystemCalls && events.length > 0) {
+            const systemCalls = parseSystemCallsFromStreamEvents(events);
+            return [...events, ...systemCalls];
+          }
+          return events;
+        }),
+        awaitPromise(),
+        concatMap((v) => of(...v))
+      )
+      .subscribe(subscriber);
+
+    // Add channel cleanup to the subscription cleanup
+    return () => {
+      debug('[kamigaze] Cleaning up stream subscription');
+    };
+  });
 }
 
 /**

@@ -9,7 +9,6 @@ import {
 import { computed } from 'mobx';
 import {
   bufferTime,
-  catchError,
   concat,
   concatMap,
   filter,
@@ -19,7 +18,11 @@ import {
   of,
   retry,
   Subject,
+  Subscription,
   take,
+  throwError,
+  timeout,
+  timer,
 } from 'rxjs';
 
 import { VERSION as IDB_VERSION } from 'cache/db';
@@ -40,7 +43,6 @@ import {
   getStateCache,
   loadIndexDbToCacheStore,
   saveCacheStoreToIndexDb,
-  storeEvent,
   storeEvents,
 } from './cache';
 import { getStateReport } from './cache/CacheStore';
@@ -132,14 +134,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       chainId,
       worldContract,
       provider: { options: providerOptions },
-      initialBlockNumber,
       fetchSystemCalls,
-      disableCache,
     } = config;
-
-    // Set default values for config fields
-    const cacheExpiry = config.cache?.expiry || 100;
-    const cacheInterval = config.cache?.interval || 1;
 
     // Set up shared primitives
     performance.mark('setup');
@@ -182,44 +178,81 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       fetchWorldEvents,
       fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
     );
+    let currentSubscription: Subscription;
 
     // Setup Stream Service -> RPC event stream fallback
     const transformWorldEvents = createTransformWorldEventsFromStream(decode);
-    const latestEvent$ = streamServiceUrl
+    let latestEvent$ = streamServiceUrl
       ? createKamigazeStreamService(
           streamServiceUrl,
           worldContract.address,
           transformWorldEvents,
           Boolean(fetchSystemCalls)
-        ).pipe(
-          retry({ delay: 500 }), // Retry once after 5 seconds
-          catchError((err) => {
-            console.error('SyncWorker stream service error, falling back to RPC', err);
-            return latestEventRPC$;
-          })
         )
       : latestEventRPC$;
 
+    // Create the new event stream upon failure
+    const handleStreamReconnection = () => {
+      console.log('[worker] handleEventStreamError');
+      latestEvent$ = streamServiceUrl
+        ? createKamigazeStreamService(
+            streamServiceUrl,
+            worldContract.address,
+            transformWorldEvents,
+            Boolean(fetchSystemCalls)
+          )
+        : latestEventRPC$;
+      if (currentSubscription) currentSubscription.unsubscribe();
+      // Restart the subscription
+      currentSubscription.unsubscribe();
+      currentSubscription = subscribeToEventStream(latestEvent$);
+    };
+
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
-    latestEvent$.subscribe((event) => {
-      // Ignore system calls during initial sync
-      if (!outputLiveEvents) {
-        if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
-        return;
-      }
+    const subscribeToEventStream = (stream$: Observable<any>): Subscription => {
+      console.log('[worker] Subscribing to the event stream');
+      return stream$
+        .pipe(
+          timeout({
+            first: 7000, // Wait 5s for first value
+            each: 10000, // Wait 5s between values
+            with: () =>
+              throwError(() => {
+                console.log('Timeout');
+                return new Error('Stream timeout - no data received for 5s');
+              }),
+          }),
+          map((res) => res),
+          retry({
+            count: 3,
+            delay: (error, retryCount) => {
+              console.log(`retrying kamigaze stream subscription... ${retryCount}`);
+              const delayMs = 2000;
+              return timer(delayMs);
+            },
+          })
+        )
+        .subscribe({
+          next: (event) => {
+            if (!outputLiveEvents) {
+              if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
+              return;
+            }
+            //console.log('got event');
+            this.output$.next(event as NetworkEvent<C>);
+          },
+          error: (error) => {
+            console.log(`[worker] error, attempting to re-subscribe to stream ${error}`, error);
+            handleStreamReconnection();
+          },
+          complete: () => {
+            console.log('[worker] stream completed');
+            handleStreamReconnection();
+          },
+        });
+    };
+    currentSubscription = subscribeToEventStream(latestEvent$);
 
-      // Store cache to indexdb on each interval
-      if (isNetworkComponentUpdateEvent(event)) {
-        const { blockNumber } = event;
-        const blockDiff = blockNumber - cacheStore.current.blockNumber;
-        if (blockDiff > 1 && blockNumber % cacheInterval === 0) {
-          saveCacheStoreToIndexDb(indexedDB, cacheStore.current);
-        }
-        storeEvent(cacheStore.current, event);
-      }
-
-      this.output$.next(event as NetworkEvent<C>);
-    });
     const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
 
     /*

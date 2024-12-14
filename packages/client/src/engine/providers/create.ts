@@ -68,14 +68,12 @@ export async function createReconnectingProvider(config: IComputedValue<Provider
   async function initProviders() {
     // Abort if connection is currently being established
     if (connected.get() === ConnectionState.CONNECTING) return;
-
     // Invalidate current providers
     runInAction(() => connected.set(ConnectionState.CONNECTING));
 
     // Remove listeners from stale providers and close open connections
     const prevProviders = providers.get();
     prevProviders?.json.removeAllListeners();
-    prevProviders?.ws?.removeAllListeners();
     try {
       prevProviders?.ws?._websocket?.close();
     } catch {

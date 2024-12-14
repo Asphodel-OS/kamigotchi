@@ -71,17 +71,12 @@ export function isNetworkComponentUpdateEvent<C extends Components>(
 
 export type SyncWorkerConfig = {
   provider: ProviderConfig;
-  initialBlockNumber: number;
   worldContract: ContractConfig;
   disableCache?: boolean;
   chainId: number;
   snapshotServiceUrl?: string;
   streamServiceUrl?: string;
   fetchSystemCalls?: boolean;
-  cache?: {
-    interval?: number; // block interval of caching state updates
-    expiry?: number; // number of blocks before cache is considered expired
-  };
   snapshotNumChunks?: number;
   pruneOptions?: { playerAddress: string; hashedComponentId: string };
 };
