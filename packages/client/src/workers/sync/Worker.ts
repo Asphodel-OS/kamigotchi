@@ -338,7 +338,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     this.output$
       .pipe(
-        bufferTime(16, null, 50),
+        bufferTime(33, null, 33333),
         filter((updates) => updates.length > 0),
         concatMap((updates) =>
           concat(
