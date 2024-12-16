@@ -8,6 +8,7 @@ export const queryForKiller = (
   components: Components,
   entity: EntityIndex
 ): EntityIndex[] => {
+  if (!entity) return [];
   const { IsKill, SourceID } = components;
   const id = world.entities[entity];
   return Array.from(runQuery([HasValue(SourceID, { value: id }), Has(IsKill)]));
@@ -19,6 +20,7 @@ export const queryForVictim = (
   components: Components,
   entity: EntityIndex
 ): EntityIndex[] => {
+  if (!entity) return [];
   const { IsKill, TargetID } = components;
   const id = world.entities[entity];
   return Array.from(runQuery([HasValue(TargetID, { value: id }), Has(IsKill)]));

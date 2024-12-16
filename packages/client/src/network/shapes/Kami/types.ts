@@ -66,7 +66,7 @@ export interface Options {
 }
 
 // gets a Kami from EntityIndex with just the bare minimum of data
-export const getBaseKami = (world: World, comps: Components, entity: EntityIndex): BaseKami => {
+export const getBase = (world: World, comps: Components, entity: EntityIndex): BaseKami => {
   return {
     ObjectType: 'KAMI',
     entity,
@@ -79,21 +79,21 @@ export const getBaseKami = (world: World, comps: Components, entity: EntityIndex
 
 export const getGachaKami = (world: World, comps: Components, entity: EntityIndex): GachaKami => {
   return {
-    ...getBaseKami(world, comps, entity),
+    ...getBase(world, comps, entity),
     level: getLevel(comps, entity),
     stats: getStats(world, comps, entity), // skips bonus calcs
   };
 };
 
 // get a Kami from its EnityIndex. includes options for which data to include
-export const getKami = (
+export const get = (
   world: World,
   comps: Components,
   entity: EntityIndex,
   options?: Options
 ): Kami => {
   const kami: Kami = {
-    ...getBaseKami(world, comps, entity),
+    ...getBase(world, comps, entity),
     state: getState(comps, entity),
   };
 

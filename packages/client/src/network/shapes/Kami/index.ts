@@ -1,4 +1,4 @@
-export { getKamiBattles } from './battle';
+export { getBattles as getKamiBattles } from './battle';
 export { getBonuses as getKamiBonuses } from './bonuses';
 export { getConfigs as getKamiConfigs } from './configs';
 export {
@@ -22,9 +22,9 @@ export {
 export { getStats as getKamiStats } from './stats';
 export { getTimes as getKamiTimes } from './times';
 export { getTraits as getKamiTraits, queryTraits as queryKamiTraits } from './traits';
-export { getBaseKami, getGachaKami, getKami } from './types';
+export { getBase as getBaseKami, getGachaKami, get as getKami } from './types';
 
-export type { KillLog } from './battle';
+export type { Battles as KamiBattles } from './battle';
 export type { Bonuses as KamiBonuses } from './bonuses';
 export type { Configs as KamiConfigs } from './configs';
 export type { QueryOptions } from './queries';

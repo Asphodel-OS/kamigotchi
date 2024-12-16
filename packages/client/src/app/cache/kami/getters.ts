@@ -4,11 +4,13 @@ import { Components } from 'network/';
 import { NullAccount } from 'network/shapes/Account';
 import { hasFlag } from 'network/shapes/Flag';
 import { NullHarvest } from 'network/shapes/Harvest';
-import { queryKamiHarvest, queryKamiTraits } from 'network/shapes/Kami';
+import { KamiBattles, KamiSkills, queryKamiHarvest, queryKamiTraits } from 'network/shapes/Kami';
+import { queryKillsForKiller, queryKillsForVictim } from 'network/shapes/Kill';
 import { queryHolderSkills } from 'network/shapes/Skill';
 import { getKamiOwnerID, getSkillPoints } from 'network/shapes/utils/component';
 import { AccountOptions, getAccount } from '../account';
 import { getHarvest } from '../harvest';
+import { getKill } from '../kills';
 import { getSkill } from '../skill';
 import { getTrait } from '../trait';
 
@@ -32,7 +34,22 @@ export const getKamiAccount = (
   return getAccount(world, components, accountEntity, options);
 };
 
+// get the Battles a Kami has participated in
+export const getKamiBattles = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): KamiBattles => {
+  const killEntities = queryKillsForKiller(world, components, entity);
+  const deathEntities = queryKillsForVictim(world, components, entity);
+  return {
+    kills: killEntities.map((killEntity) => getKill(world, components, killEntity)),
+    deaths: deathEntities.map((deathEntity) => getKill(world, components, deathEntity)),
+  };
+};
+
 // get the Flags settings for a Kami entity
+// TODO: implement cache for flags
 export const getKamiFlags = (world: World, components: Components, entity: EntityIndex) => {
   const id = world.entities[entity];
   return {
@@ -52,7 +69,11 @@ export const getKamiHarvest = (world: World, components: Components, entity: Ent
 // not yet optimized around querying
 // TODO: retrieve the number of points invested in each skill
 // TODO: put some controls in place to smart refresh parts of a skill on demand
-export const getKamiSkills = (world: World, components: Components, entity: EntityIndex) => {
+export const getKamiSkills = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): KamiSkills => {
   const id = world.entities[entity];
   const skillEntities = queryHolderSkills(components, id);
   const skills = skillEntities.map((skillEntity) => {
