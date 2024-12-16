@@ -1,4 +1,4 @@
-import { calcCooldownRequirement } from 'app/cache/kami';
+import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { Countdown, Tooltip } from '../base';
@@ -26,17 +26,8 @@ export const Cooldown = (props: Props) => {
 
   // update the remaining time on the cooldown
   useEffect(() => {
-    setCurrent(calcRemaining());
+    setCurrent(calcCooldown(kami));
   }, [lastRefresh, total]);
-
-  // calculate the remaining time on the cooldown
-  const calcRemaining = () => {
-    const now = Date.now() / 1000;
-    const lastActionTs = kami.time?.cooldown ?? now;
-    const delta = now - lastActionTs;
-    const remainingTime = total - delta;
-    return remainingTime;
-  };
 
   return (
     <Tooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
