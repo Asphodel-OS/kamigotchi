@@ -3,7 +3,6 @@ export { getBonuses as getKamiBonuses } from './bonuses';
 export { getConfigs as getKamiConfigs } from './configs';
 export {
   getAll as getAllKamis,
-  getAccount as getKamiAccount,
   getByIndex as getKamiByIndex,
   getByName as getKamiByName,
   getLocation as getKamiLocation,

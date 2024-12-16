@@ -1,7 +1,7 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { Kami, KamiOptions } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
 import { Commit } from 'network/shapes/utils';
 import { Commits } from '../reroll/Commits';
@@ -34,7 +34,6 @@ interface Props {
   };
   utils: {
     getGachaKami: (entity: EntityIndex) => GachaKami;
-    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
     getRerollCost: (kami: Kami) => bigint;
     getAccountKamis: () => Kami[];
   };

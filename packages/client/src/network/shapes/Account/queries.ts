@@ -1,6 +1,7 @@
-import { EntityIndex, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
+import { EntityIndex, HasValue, QueryFragment, runQuery, World } from '@mud-classic/recs';
 
 import { Components, NetworkLayer } from 'network/';
+import { getKamiOwnerID } from '../utils/component';
 
 export type QueryOptions = {
   index?: number;
@@ -17,8 +18,8 @@ export const OperatorCache = new Map<string, EntityIndex>(); // account operator
 export const OwnerCache = new Map<string, EntityIndex>(); // account owner to entity index
 
 // query Account entities generally with query options. return matching entity indices
-const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
-  const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress, RoomIndex } = components;
+const query = (comps: Components, options?: QueryOptions): EntityIndex[] => {
+  const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress, RoomIndex } = comps;
 
   const toQuery: QueryFragment[] = [];
   if (options?.index) toQuery.push(HasValue(AccountIndex, { value: options.index }));
@@ -33,14 +34,14 @@ const query = (components: Components, options?: QueryOptions): EntityIndex[] =>
 };
 
 // query for all account entities
-export const queryAll = (components: Components) => {
-  return query(components);
+export const queryAll = (comps: Components) => {
+  return query(comps);
 };
 
 // query for an account entity by its index
-export const queryByIndex = (components: Components, index: number) => {
+export const queryByIndex = (comps: Components, index: number) => {
   if (!IndexCache.has(index)) {
-    const results = query(components, { index });
+    const results = query(comps, { index });
     const length = results.length;
     if (length != 1) console.warn(`found ${length} entities for account index: ${index}`);
     if (length > 0) IndexCache.set(index, results[0]);
@@ -49,9 +50,9 @@ export const queryByIndex = (components: Components, index: number) => {
 };
 
 // query for an account entity by its name
-export const queryByName = (components: Components, name: string) => {
+export const queryByName = (comps: Components, name: string) => {
   if (!NameCache.has(name)) {
-    const results = query(components, { name });
+    const results = query(comps, { name });
     const length = results.length;
     if (length != 1) console.warn(`found ${length} entities for account name: ${name}`);
     if (length > 1) NameCache.set(name, results[0]);
@@ -62,9 +63,9 @@ export const queryByName = (components: Components, name: string) => {
 // query for an account entity by its attached operator address
 // todo: query directly with OperatorCacheComponent (operator address => accID)
 // NOTE: technically this can change during the lifespan of the app
-export const queryByOperator = (components: Components, operator: string) => {
+export const queryByOperator = (comps: Components, operator: string) => {
   if (!OperatorCache.has(operator)) {
-    const results = query(components, { operator });
+    const results = query(comps, { operator });
     const length = results.length;
     if (length != 1) console.warn(`found ${length} entities for account operator: ${operator}`);
     const result = results[0];
@@ -75,9 +76,9 @@ export const queryByOperator = (components: Components, operator: string) => {
 
 // query for an account entity by its owner address
 // todo: query directly! accID = formatEntityID(ownerAddr)
-export const queryByOwner = (components: Components, owner: string) => {
+export const queryByOwner = (comps: Components, owner: string) => {
   if (!OwnerCache.has(owner)) {
-    const results = query(components, { owner });
+    const results = query(comps, { owner });
     const length = results.length;
     if (length != 1) console.warn(`found ${length} entities for account owner: ${owner}`);
     if (length > 1) OwnerCache.set(owner, results[0]);
@@ -86,9 +87,20 @@ export const queryByOwner = (components: Components, owner: string) => {
 };
 
 // query for account entities by a room index
-export const queryAllByRoom = (components: Components, room: number) => {
-  const results = query(components, { room });
+export const queryAllByRoom = (comps: Components, room: number) => {
+  const results = query(comps, { room });
   return results;
+};
+
+// query an Account entity that owns a Kami (by entity)
+export const queryForKami = (
+  world: World,
+  comps: Components,
+  kamiEntity: EntityIndex
+): EntityIndex | undefined => {
+  if (!kamiEntity) return;
+  const id = getKamiOwnerID(comps, kamiEntity);
+  return world.entityToIndex.get(id);
 };
 
 /////////////////

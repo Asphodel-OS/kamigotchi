@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Kami, KamiOptions, KamiStats } from 'network/shapes/Kami';
+import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../types';
@@ -27,7 +27,6 @@ interface Props {
   };
   utils: {
     getGachaKami: (entity: EntityIndex) => GachaKami;
-    getKami: (entity: EntityIndex, options?: KamiOptions) => Kami;
   };
   isVisible: boolean;
 }

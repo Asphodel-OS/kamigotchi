@@ -15,8 +15,7 @@ import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValue } from 'network/shapes/Config';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { getItemBalance } from 'network/shapes/Item';
-import { Kami, KamiOptions, queryKamis } from 'network/shapes/Kami';
-import { BaseKami, GachaKami, getGachaKami, getKami } from 'network/shapes/Kami/types';
+import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
 import { Commit, filterRevealable } from 'network/shapes/utils';
 import { getOwnerAddress } from 'network/shapes/utils/component';
 import { playVend } from 'utils/sounds';
@@ -57,8 +56,6 @@ export function registerGachaModal() {
               maxRerolls: getConfigFieldValue(world, components, 'GACHA_MAX_REROLLS'),
             },
             utils: {
-              getKami: (entity: EntityIndex, options?: KamiOptions) =>
-                getKami(world, components, entity, options),
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
               getAccountKamis: () =>
                 getAccountKamis(world, components, accountEntity, { live: 0, rerolls: 0 }),

@@ -23,6 +23,7 @@ export {
   queryByOwner as queryAccountByOwner,
   queryFromEmbedded as queryAccountFromEmbedded,
   queryAll as queryAllAccounts,
+  queryForKami as queryKamiAccount,
   queryAllByRoom as queryRoomAccounts,
 } from './queries';
 export { getStats as getAccountStats } from './stats';
