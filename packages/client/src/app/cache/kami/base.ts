@@ -143,8 +143,9 @@ export const get = (
     const updateTs = HarvestUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.harvest) {
-      if (debug) console.log(`  updating kami harvest`);
       kami.harvest = getKamiHarvest(world, components, entity);
+      if (debug) console.log(`  updating kami harvest`, kami.harvest);
+
       // NOTE: this pattern is a remnant for how calcs are currently run
       // ideally we want to flatten the shapes and avoid automatically populating
       // the nested Node object this way

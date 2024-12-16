@@ -60,9 +60,10 @@ export const getKamiFlags = (world: World, comps: Components, entity: EntityInde
 // get the Harvest object for a Kami entity
 // NOTE: we set the live update flag based on the context we expect to want this for a Kami
 export const getKamiHarvest = (world: World, comps: Components, entity: EntityIndex) => {
+  if (!entity) return NullHarvest;
   const harvestEntity = queryKamiHarvest(world, entity);
   if (!harvestEntity) return NullHarvest; // not expecting this but prevents crashes
-  return getHarvest(world, comps, harvestEntity, { live: 2 })!;
+  return getHarvest(world, comps, harvestEntity, { live: 2 });
 };
 
 // not yet optimized around querying
