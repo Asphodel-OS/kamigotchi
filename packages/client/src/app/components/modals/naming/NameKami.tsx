@@ -67,7 +67,7 @@ export function registerNameKamiModal() {
       };
 
       // handle naming action response (need to modify for error handling)
-      const handleNameTx = async (name: string) => {
+      const handleNameTx = async (kami: Kami, name: string) => {
         try {
           nameKami(kami, name);
           setModals({ nameKami: false });
@@ -81,7 +81,7 @@ export function registerNameKamiModal() {
           <InputSingleTextForm
             label='new name'
             placeholder={kami ? kami.name : ''}
-            onSubmit={(v: string) => handleNameTx(v)}
+            onSubmit={(v: string) => handleNameTx(kami, v)}
             fullWidth
             hasButton
           />

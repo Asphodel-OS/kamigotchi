@@ -1,14 +1,17 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
+import { getAccountKamis } from 'app/cache/account';
+import { getInventory } from 'app/cache/inventory';
+import { getInventoryEntityIndex } from 'app/cache/inventory/functions';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
-import { getInventoryByHolderItem } from 'network/shapes/Inventory';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { useEffect, useState } from 'react';
 
 export function registerEMABoardModal() {
   registerUIComponent(
@@ -26,28 +29,32 @@ export function registerEMABoardModal() {
         map(() => {
           const { network } = layers;
           const { world, components } = network;
-          const account = getAccountFromEmbedded(network, {
-            inventory: true,
-            kamis: { flags: true },
-          });
-          const dust = getInventoryByHolderItem(world, components, account.id, HOLY_DUST_INDEX);
-
+          const accountEntity = queryAccountFromEmbedded(network);
+          const accountID = world.entities[accountEntity];
+          const inventory = getInventoryEntityIndex(world, accountID, HOLY_DUST_INDEX)!;
+          const dust = getInventory(world, components, inventory).balance;
           return {
             network,
             data: {
-              account: account,
-              dustAmt: dust.balance,
+              accountEntity,
+              dustAmt: dust,
+            },
+            utils: {
+              getAccountKamis: () => getAccountKamis(world, components, accountEntity),
             },
           };
         })
       ),
 
     // Render
-    ({ network, data }) => {
-      const { account, dustAmt } = data;
+    ({ network, data, utils }) => {
+      const { dustAmt, accountEntity } = data;
+      console.log(`dustatm  ${dustAmt}`);
       const { actions, api } = network;
+      const { getAccountKamis } = utils;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
+      const [kamis, setKamis] = useState<any[]>([]);
 
       const promptRename = (kami: Kami) => {
         setKami(kami.entity);
@@ -123,6 +130,10 @@ export function registerEMABoardModal() {
         );
       };
 
+      useEffect(() => {
+        KamiList();
+      }, [modals.emaBoard, accountEntity]);
+
       // Rendering of Individual Kami Cards in the Name Modal
       const Kard = (kami: Kami) => {
         let description = [] as string[];
@@ -142,13 +153,13 @@ export function registerEMABoardModal() {
         );
       };
 
-      const KamiList = (kamis: Kami[]) => {
-        return kamis.map((kami: Kami) => Kard(kami));
+      const KamiList = () => {
+        setKamis(getAccountKamis());
       };
 
       return (
         <ModalWrapper id='emaBoard' header={<Title>Ema Board</Title>} canExit>
-          <List>{KamiList(account.kamis ?? [])}</List>
+          <List>{kamis.map((kami) => Kard(kami)) ?? []}</List>
         </ModalWrapper>
       );
     }
