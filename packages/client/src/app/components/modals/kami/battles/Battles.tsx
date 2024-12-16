@@ -5,7 +5,8 @@ import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
-import { Kami, KillLog } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
+import { KillLog } from 'network/shapes/Kill';
 import { getAffinityImage } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
@@ -18,21 +19,21 @@ const headerStyle = { ...cellStyle, fontSize: '.9vw' };
 interface Props {
   kami: Kami;
   tab: TabType;
-  utils: {
-    getBattles: (kami: Kami) => KillLog[];
-  };
 }
 
 // Rendering of the Kami's Kill/Death Logs
 export const Battles = (props: Props) => {
-  const { kami, tab, utils } = props;
+  const { kami, tab } = props;
   const { setKami, setNode } = useSelected();
   const { modals, setModals } = useVisibility();
   const [logs, setLogs] = useState<KillLog[]>([]);
 
   useEffect(() => {
     if (!modals.kami || tab !== 'BATTLES') return;
-    setLogs(utils.getBattles(kami));
+    const kills = kami.battles?.kills ?? [];
+    const deaths = kami.battles?.deaths ?? [];
+    const battles = [...kills, ...deaths].sort((a, b) => b.time - a.time);
+    setLogs(battles);
   }, [modals.kami, kami.index, tab]);
 
   /////////////////

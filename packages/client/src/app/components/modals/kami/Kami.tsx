@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { getAccount } from 'app/cache/account';
-import { getKami } from 'app/cache/kami';
+import { getKami, getKamiAccount } from 'app/cache/kami';
 import {
   getHolderSkillTreePoints,
   getSkillTreePointsRequirement,
@@ -13,13 +13,7 @@ import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import {
-  Kami,
-  calcKamiExpRequirement,
-  getKamiAccount,
-  getKamiBattles,
-  queryKamis,
-} from 'network/shapes/Kami';
+import { Kami, calcKamiExpRequirement, queryKamis } from 'network/shapes/Kami';
 import { Skill, getRegistrySkills } from 'network/shapes/Skill';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
@@ -51,6 +45,7 @@ export function registerKamiModal() {
           const account = getAccount(world, components, accountEntity, { live: 2 });
           const kamiOptions = {
             live: 2,
+            battles: 30,
             flags: 10,
             progress: 5,
             skills: 2,
@@ -64,7 +59,7 @@ export function registerKamiModal() {
             utils: {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
-              getOwner: (index: number) => getKamiAccount(world, components, index),
+              getOwner: (entity: EntityIndex) => getKamiAccount(world, components, entity),
               getUpgradeError: (registry: Map<number, Skill>, index: number, kami: Kami) =>
                 getSkillUpgradeError(world, components, index, kami, registry),
               getTreePoints: (tree: string, holderID: EntityID) =>
@@ -111,20 +106,18 @@ export function registerKamiModal() {
       // update the Kami Object whenever the index changes or on each cycle
       useEffect(() => {
         if (!modals.kami) return;
-        const newKami = getSelectedKami(kamiIndex);
+        const kamiEntity = queryKamiByIndex(kamiIndex);
+        const newKami = getKami(kamiEntity);
         setKami(newKami);
 
-        const newOwner = getOwner(kamiIndex);
+        const newOwner = getOwner(kamiEntity);
         if (newOwner.index != owner.index) setOwner(newOwner);
       }, [kamiIndex, lastSync]);
 
       /////////////////
       // DATA FETCHING
 
-      const getSelectedKami = (index: number) => {
-        const kamiEntity = queryKamiByIndex(index);
-        return getKami(kamiEntity);
-      };
+      const getSelectedKami = (index: number) => {};
 
       /////////////////
       // ACTION
@@ -196,15 +189,7 @@ export function registerKamiModal() {
               }}
             />
           )}
-          {tab === 'BATTLES' && (
-            <Battles
-              kami={kami}
-              tab={tab}
-              utils={{
-                getBattles: (kami: Kami) => getKamiBattles(world, components, kami.entity),
-              }}
-            />
-          )}
+          {tab === 'BATTLES' && <Battles kami={kami} tab={tab} />}
         </ModalWrapper>
       );
     }
