@@ -31,18 +31,25 @@ const CountdownWrapper = styled.div`
   height: 1.1vw;
 `;
 
-const CountdownCircle = styled.div<{ percent: number; color: string }>`
+interface CountdownCircleProps {
+  percent: number;
+  color: string;
+}
+const CountdownCircle = styled.div.attrs<CountdownCircleProps>((props) => ({
+  style: {
+    background: `conic-gradient(
+   #aaa ${props.percent}%,
+    #aaa ${props.percent}% ${props.percent}%,
+    ${props.color} ${props.percent}%
+      )`,
+  },
+}))<CountdownCircleProps>`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: conic-gradient(
-    #aaa ${(props) => props.percent}%,
-    #aaa ${(props) => props.percent}% ${(props) => props.percent}%,
-    ${(props) => props.color} ${(props) => props.percent}%
-  );
 `;
 
 const InnerCircle = styled.div`
