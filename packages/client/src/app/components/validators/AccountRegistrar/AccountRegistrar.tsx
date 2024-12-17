@@ -93,7 +93,7 @@ export function registerAccountRegistrar() {
           setAccount(emptyAccountDetails());
           setValidations({ accountExists: false, operatorMatches: false, operatorHasGas: false });
         }
-      }, [selectedAddress, accountEntity]);
+      }, [accountEntity]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
