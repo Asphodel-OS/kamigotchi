@@ -5,7 +5,6 @@ import { Components } from 'network/';
 import { getItemDetailsByIndex } from './Item';
 import { Commit, DetailedEntity, getEntityByHash } from './utils';
 import { queryHolderCommits } from './utils/commits';
-import { getKeys, getWeights } from './utils/component';
 
 export interface Droptable {
   keys: number[];
@@ -41,10 +40,11 @@ export const NullDTLog: DTLog = {
   results: [],
 };
 
-export const getDroptable = (components: Components, entity: EntityIndex): Droptable => {
+export const getDroptable = (components: Components, index: EntityIndex): Droptable => {
+  const { Keys, Weights } = components;
   return {
-    keys: getKeys(components, entity),
-    weights: getWeights(components, entity),
+    keys: getComponentValue(Keys, index)?.value as number[],
+    weights: getComponentValue(Weights, index)?.value as number[],
   };
 };
 

@@ -1,26 +1,38 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
+import { Allo, getAllosOf } from '../Allo';
+import { Condition, queryConditionsOfID } from '../Conditional';
 import { DetailedEntity, ForType, getFor, getItemImage } from '../utils';
-import { getDescription, getItemIndex, getName, getType } from '../utils/component';
-import { Effects, getEffects } from './effects';
-import { getRequirements, Requirements } from './requirements';
+import { getItemAlloAnchorID, getItemReqAnchorID } from './utils';
 
 // The standard shape of a FE Item Entity
 export interface Item extends DetailedEntity {
   id: EntityID;
-  entity: EntityIndex;
+  entityIndex: EntityIndex;
   index: number;
   for: ForType;
   type: string;
-  requirements: Requirements;
-  effects: Effects;
+  requirements: ItemRequirements;
+  effects: ItemEffects;
+}
+
+interface ItemRequirements {
+  // burn: Condition[];
+  // craft: Condition[];
+  use: Condition[];
+}
+
+interface ItemEffects {
+  // burn: Allo[];
+  // craft: Allo[];
+  use: Allo[];
 }
 
 export const NullItem: Item = {
   ObjectType: 'ITEM',
   id: '0' as EntityID,
-  entity: 0 as EntityIndex,
+  entityIndex: 0 as EntityIndex,
   index: 0,
   type: '',
   for: '',
@@ -30,37 +42,81 @@ export const NullItem: Item = {
   effects: { use: [] },
 };
 
-export const getItemDetails = (comps: Components, entity: EntityIndex): DetailedEntity => {
-  const name = getName(comps, entity) ?? 'Unknown Item';
-  return {
-    ObjectType: 'ITEM',
-    name,
-    description: getDescription(comps, entity),
-    image: getItemImage(name),
-  };
-};
-
 /**
  * Gets info about an item from an SC item registry
  * Supplements additional data for FE consumption if available
  * @param world - the world object
- * @param comps - the list (as object) of registered comps in the world
- * @param entity - the entity index of the item in the registry
+ * @param components - the list (as object) of registered components in the world
+ * @param entityIndex - the entity index of the item in the registry
  */
-export const getItem = (world: World, comps: Components, entity: EntityIndex): Item => {
-  if (!entity) return NullItem;
-  const index = getItemIndex(comps, entity);
+export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
+  const { ItemIndex, Type } = components;
+
+  const type = getComponentValue(Type, entityIndex)?.value as string;
+  const index = getComponentValue(ItemIndex, entityIndex)?.value as number;
 
   let item: Item = {
-    ...getItemDetails(comps, entity),
-    entity,
-    id: world.entities[entity],
-    index,
-    type: getType(comps, entity),
-    for: getFor(comps, entity),
-    requirements: getRequirements(world, comps, index),
-    effects: getEffects(world, comps, index),
+    ...getItemDetails(components, entityIndex),
+    entityIndex,
+    id: world.entities[entityIndex],
+    index: index,
+    type: type,
+    for: getFor(components, entityIndex),
+    requirements: getItemRequirements(world, components, index),
+    effects: getItemEffects(world, components, index),
   };
 
   return item;
+};
+
+export const getItemDetails = (
+  components: Components,
+  entityIndex: EntityIndex
+): DetailedEntity => {
+  const { Name, Description } = components;
+
+  const name = (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item';
+
+  return {
+    ObjectType: 'ITEM',
+    image: getItemImage(name),
+    name: name,
+    description: getComponentValue(Description, entityIndex)?.value as string,
+  };
+};
+
+const getItemRequirements = (
+  world: World,
+  components: Components,
+  itemIndex: number
+): ItemRequirements => {
+  return {
+    use: getUsecaseRequirements(world, components, itemIndex, 'USE'),
+  };
+};
+
+const getItemEffects = (world: World, components: Components, itemIndex: number): ItemEffects => {
+  return {
+    use: getUsecaseAllos(world, components, itemIndex, 'USE'),
+  };
+};
+
+export const getUsecaseRequirements = (
+  world: World,
+  components: Components,
+  itemIndex: number,
+  usecase: string
+): Condition[] => {
+  const parentID = getItemReqAnchorID(itemIndex, usecase);
+  return queryConditionsOfID(world, components, parentID);
+};
+
+export const getUsecaseAllos = (
+  world: World,
+  components: Components,
+  itemIndex: number,
+  usecase: string
+): Allo[] => {
+  const parentID = getItemAlloAnchorID(itemIndex, usecase);
+  return getAllosOf(world, components, parentID);
 };
