@@ -115,11 +115,6 @@ export function registerKamiModal() {
       }, [kamiIndex, lastSync]);
 
       /////////////////
-      // DATA FETCHING
-
-      const getSelectedKami = (index: number) => {};
-
-      /////////////////
       // ACTION
 
       const levelUp = (kami: Kami) => {

@@ -85,7 +85,6 @@ export function registerAccountRegistrar() {
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
-        if (!!accountEntity == validations.accountExists) return; // no change
         if (accountEntity) {
           const account = getBaseAccount(accountEntity);
           setAccount({ ...account });
@@ -94,7 +93,7 @@ export function registerAccountRegistrar() {
           setAccount(emptyAccountDetails());
           setValidations({ accountExists: false, operatorMatches: false, operatorHasGas: false });
         }
-      }, [selectedAddress, accountEntity]);
+      }, [accountEntity]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
