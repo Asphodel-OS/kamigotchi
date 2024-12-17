@@ -1,7 +1,8 @@
-import { EntityIndex, Has, runQuery, World } from '@mud-classic/recs';
+import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { getRecipe, Recipe } from 'network/shapes/Recipe';
+import { queryForAllRecipes } from 'network/shapes/Recipe/queries';
 
 export const RecipeCache = new Map<EntityIndex, Recipe>();
 
@@ -16,8 +17,5 @@ export const process = (world: World, components: Components, entity: EntityInde
 };
 
 export const getAll = (world: World, components: Components) => {
-  const { RecipeIndex, IsRegistry } = components;
-  const entities = Array.from(runQuery([Has(RecipeIndex), Has(IsRegistry)]));
-  const result = entities.map((entity) => get(world, components, entity));
-  return result;
+  return queryForAllRecipes(components).map((entity) => get(world, components, entity));
 };

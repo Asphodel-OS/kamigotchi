@@ -3,6 +3,12 @@ import { EntityIndex, Has, HasValue, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { getIndex } from '../utils/component';
 
+// get all recipes
+export const queryForAllRecipes = (components: Components): EntityIndex[] => {
+  const { RecipeIndex, IsRegistry } = components;
+  return Array.from(runQuery([Has(RecipeIndex), Has(IsRegistry)]));
+};
+
 // recipes given by npc
 export const queryForRecipebyNpc = (components: Components, entity: EntityIndex): EntityIndex[] => {
   if (!entity) return [];
