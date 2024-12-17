@@ -5,12 +5,14 @@ import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
 import black_poppy_extract from './black_poppy_extract.png';
 import bless_potion from './bless_potion.png';
+import candle from './candle.png';
 import cheeseburger from './cheeseburger.png';
 import daffodil from './daffodil.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
 import gaokerena_mochi from './gaokerena_mochi.png';
+import gingerbread_cookie from './gingerbread_cookie.png';
 import glass_jar from './glass_jar.png';
 import grace_potion from './grace_potion.png';
 import greater_xp_potion from './greater_xp_potion.png';
@@ -22,6 +24,7 @@ import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import microplastics from './microplastics.png';
 import mint from './mint.png';
+import mistletoe from './mistletoe.png';
 import musu from './musu.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
@@ -100,4 +103,7 @@ export const ItemImages = {
   xp_candy_small: xp_candy_small,
   xp_potion: xp_potion,
   greater_xp_potion: greater_xp_potion,
+  candle: candle,
+  gingerbread_cookie: gingerbread_cookie,
+  mistletoe: mistletoe,
 };
