@@ -18,8 +18,6 @@ export const process = (world: World, components: Components, entity: EntityInde
 export const getAll = (world: World, components: Components) => {
   const { RecipeIndex, IsRegistry } = components;
   const entities = Array.from(runQuery([Has(RecipeIndex), Has(IsRegistry)]));
-  console.log(`entities.length ${JSON.stringify(entities)}`);
   const result = entities.map((entity) => get(world, components, entity));
-  console.log(`result.length ${JSON.stringify(result)}`);
   return result;
 };
