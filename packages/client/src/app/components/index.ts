@@ -30,6 +30,7 @@ import {
   registerAccountRegistrar,
   registerGasHarasser,
   registerOperatorUpdater,
+  registerWalletConnecter,
 } from './validators';
 
 export { registerLoadingState } from './boot';
@@ -71,7 +72,7 @@ export function registerModals() {
 }
 
 export function registerValidators() {
-  // registerWalletConnecter();
+  registerWalletConnecter();
   registerAccountRegistrar();
   registerOperatorUpdater();
   registerGasHarasser();

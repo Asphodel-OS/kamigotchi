@@ -51,11 +51,19 @@ export function registerWalletConnecter() {
       const { validators, setValidators } = useVisibility();
 
       const [isUpdating, setIsUpdating] = useState(false);
+      const [lastTick, setLastTick] = useState(Date.now());
       const [state, setState] = useState('');
+
+      // ticking
+      useEffect(() => {
+        const updateTick = () => setLastTick(Date.now());
+        const interval = setInterval(() => updateTick(), 1000);
+        return () => clearInterval(interval);
+      }, []);
 
       // update network settings/validations on relevant network updates
       useEffect(() => {
-        console.log({ walletsReady, wallets });
+        // console.log({ walletsReady, wallets });
         if (!ready || !walletsReady) return;
         const chainMatches = chain?.id === DefaultChain.id;
         if (!isConnected) {
@@ -68,7 +76,7 @@ export function registerWalletConnecter() {
         if (!isEqual(validations, { authenticated, chainMatches })) {
           setValidations({ authenticated, chainMatches });
         }
-      }, [ready, authenticated, isConnected, chain, wallets, walletsReady]);
+      }, [ready, authenticated, isConnected, chain, wallets, walletsReady, lastTick]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -120,10 +128,10 @@ export function registerWalletConnecter() {
         const embeddedWallet = getEmbeddedWallet(wallets);
         if (isUpdating || !injectedWallet || !embeddedWallet) return;
 
-        // setIsUpdating(true);
+        setIsUpdating(true);
         await updateBaseNetwork(embeddedWallet);
         await addNetworkAPI(injectedWallet);
-        // setIsUpdating(false);
+        setIsUpdating(false);
       };
 
       // update the network store with the injected wallet's api
@@ -153,8 +161,6 @@ export function registerWalletConnecter() {
           const provider = (await wallet.getEthereumProvider()) as ExternalProvider;
           await updateNetworkLayer(network, provider);
           setBurnerAddress(embeddedAddress);
-        } else {
-          console.warn(`Wallet ${abbreviateAddress(embeddedAddress)} is already connected`);
         }
       };
 
