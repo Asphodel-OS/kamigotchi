@@ -11,7 +11,7 @@ import {
   checkerSwitch,
   getCondition,
 } from '../Conditional';
-import { genID, getData, getEntityByHash, queryChildrenOf } from '../utils';
+import { getData, getEntityByHash, queryChildrenOfIndex } from '../utils';
 import { Quest } from './quest';
 
 /////////////////
@@ -41,9 +41,9 @@ export const getObjectives = (
   components: Components,
   questIndex: number
 ): Objective[] => {
-  const id = genID('registry.quest.objective', questIndex);
-  const childEntities = queryChildrenOf(components, id);
-  return childEntities.map((index) => getObjective(world, components, index));
+  return queryChildrenOfIndex(components, 'registry.quest.objective', questIndex).map((index) =>
+    getObjective(world, components, index)
+  );
 };
 
 /////////////////

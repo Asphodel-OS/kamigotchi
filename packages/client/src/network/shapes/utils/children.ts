@@ -13,6 +13,14 @@ export const queryChildrenOf = (components: Components, parentID: EntityID): Ent
   return Array.from(runQuery(toQuery));
 };
 
+export const queryChildrenOfIndex = (
+  components: Components,
+  field: string,
+  index: number
+): EntityIndex[] => {
+  return queryChildrenOf(components, genID(field, index));
+};
+
 /////////////////
 // UTILS
 
