@@ -1,5 +1,5 @@
 import { World } from '@mud-classic/recs';
-import { filterInventories, Inventory } from 'app/cache/inventory';
+import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
 import { calcCooldown, isHarvesting, Kami } from 'app/cache/kami';
 import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { Components } from 'network/components';
@@ -71,6 +71,7 @@ const getOptions = (
   triggerAction: Function
 ) => {
   let inventories = account.inventories ?? [];
+  inventories = cleanInventories(inventories);
   inventories = filterInventories(inventories, undefined, 'KAMI');
   inventories = inventories.filter(
     (inv) => !!inv.item && passesConditions(world, components, inv.item.requirements.use, kami)

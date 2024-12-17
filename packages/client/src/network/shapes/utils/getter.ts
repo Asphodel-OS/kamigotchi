@@ -111,6 +111,7 @@ export const getBool = (
   return false;
 };
 
+// TODO: deprecate this completely
 export const getInventoryBalance = (
   world: World,
   components: Components,

@@ -1,10 +1,8 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { MUSU_INDEX } from 'constants/items';
 import { Inventory } from 'network/shapes/Inventory';
-import { getEntityByHash } from 'network/shapes/utils';
 
 // removes MUSU, filters out empty, sorts
-export const cleanInventories = (inventories: Inventory[]): Inventory[] => {
+export const clean = (inventories: Inventory[]): Inventory[] => {
   return inventories
     .filter((inv) => !!inv && !!inv.item) // skip empty
     .filter((inv) => inv.item.index !== MUSU_INDEX) // skip musu
@@ -12,15 +10,16 @@ export const cleanInventories = (inventories: Inventory[]): Inventory[] => {
     .sort((a: Inventory, b: Inventory) => (a.item.index > b.item.index ? 1 : -1)); //sort
 };
 
-// get the entity index of an inventory by deterministic combo (holderID, itemIndex)
-export const getInventoryEntityIndex = (
-  world: World,
-  holderID: EntityID,
-  itemIndex: number
-): EntityIndex | undefined => {
-  return getEntityByHash(
-    world,
-    ['inventory.instance', holderID, itemIndex],
-    ['string', 'uint256', 'uint32']
-  );
+// filter a set of inventories by type, for and balance
+export const filter = (
+  inventories: Inventory[],
+  type_?: string,
+  for_?: string,
+  min = 1
+): Inventory[] => {
+  return inventories.filter((inv) => {
+    const forMatches = for_ ? inv.item.for === for_ : true;
+    const isMatches = type_ ? inv.item.type === type_ : true;
+    return forMatches && isMatches && inv.balance >= min;
+  });
 };
