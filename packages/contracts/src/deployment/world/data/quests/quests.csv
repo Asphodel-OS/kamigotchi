@@ -147,7 +147,7 @@ Lethe Asphodel,24,Feeding them up…,Ingame,Quest,,,,,,,No,5,,"As you've probabl
 
 Now you're getting into the groove of it. Feed Kamigotchi thirty times in total to show me you understand how eating works.",,Have completed Got MUSU? (15),Feed a Kamigotchi 30 times,2x Giftbox,,,
 Lethe Asphodel,24,,Ingame,Requirement,QUEST,COMPLETE,,Have completed Got MUSU? (15),15,,No,,,,,,,,,,
-Lethe Asphodel,24,,Ingame,Objective,ITEM_USE,MIN,INC,Feed a Kamigotchi 30 times,0,30,No,,,,,,,,,,
+Lethe Asphodel,24,,Ingame,Objective,KAMI_ITEM_USE,MIN,INC,Feed a Kamigotchi 30 times,0,30,No,,,,,,,,,,
 Lethe Asphodel,24,,Ingame,Reward,ITEM,,,2x Giftbox,21001,2,No,,,,,,,,,,
 Lethe Asphodel,25,A Serious Hiker,Ingame,Quest,,,,,,,No,5,,"Exploration is a key part of mastering this world. Have you taken the time to really look around?
 

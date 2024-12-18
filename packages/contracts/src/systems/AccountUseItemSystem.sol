@@ -30,7 +30,7 @@ contract AccountUseItemSystem is System {
     LibItem.applyAllos(world, components, itemIndex, "USE", amt, accID);
 
     // standard logging and tracking
-    LibItem.logUse(components, accID, itemIndex, amt);
+    LibItem.logUse(components, accID, itemIndex, amt, "ACCOUNT");
     LibAccount.updateLastTs(components, accID);
 
     return "";

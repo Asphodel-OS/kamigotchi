@@ -350,10 +350,18 @@ library LibItem {
   /////////////////
   // DATA LOGGING
 
-  function logUse(IUintComp components, uint256 accID, uint32 itemIndex, uint256 amt) public {
+  function logUse(
+    IUintComp components,
+    uint256 accID,
+    uint32 itemIndex,
+    uint256 amt,
+    string memory targetShape
+  ) public {
     uint32[] memory indices = new uint32[](2);
     indices[0] = itemIndex;
     indices[1] = 0; // tracking an account's total item usage
     LibData.inc(components, accID, indices, "ITEM_USE", amt);
+    // log ACCOUNT_ITEM_USE or KAMI_ITEM_USE
+    LibData.inc(components, accID, 0, targetShape.concat("_ITEM_USE"), amt);
   }
 }

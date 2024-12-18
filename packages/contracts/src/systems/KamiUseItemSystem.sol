@@ -41,7 +41,7 @@ contract KamiUseItemSystem is System {
     LibKami.resetIntensity(components, kamiID);
 
     // standard logging and tracking
-    LibItem.logUse(components, accID, itemIndex, 1);
+    LibItem.logUse(components, accID, itemIndex, 1, "KAMI");
     LibAccount.updateLastTs(components, accID);
 
     return "";
