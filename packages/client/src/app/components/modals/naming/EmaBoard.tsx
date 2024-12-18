@@ -2,14 +2,13 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccountKamis } from 'app/cache/account';
-import { getInventory } from 'app/cache/inventory';
-import { getInventoryEntityIndex } from 'app/cache/inventory/functions';
+import { filterInventories } from 'app/cache/inventory';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { useIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 
@@ -30,9 +29,11 @@ export function registerEMABoardModal() {
           const { network } = layers;
           const { world, components } = network;
           const accountEntity = queryAccountFromEmbedded(network);
-          const accountID = world.entities[accountEntity];
-          const inventory = getInventoryEntityIndex(world, accountID, HOLY_DUST_INDEX)!;
-          const dust = getInventory(world, components, inventory).balance;
+          const inventory = getAccount(world, components, accountEntity, {
+            inventory: true,
+          }).inventories!;
+          const dust = filterInventories(inventory, 'HOLY_DUST_INDEX')[0]?.balance ?? 0;
+          console.log(`dust ${JSON.stringify(dust)}`);
           return {
             network,
             data: {
