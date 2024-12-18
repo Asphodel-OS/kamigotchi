@@ -15,11 +15,13 @@ export const filter = (
   inventories: Inventory[],
   type_?: string,
   for_?: string,
+  index_?: number,
   min = 1
 ): Inventory[] => {
   return inventories.filter((inv) => {
     const forMatches = for_ ? inv.item.for === for_ : true;
     const isMatches = type_ ? inv.item.type === type_ : true;
-    return forMatches && isMatches && inv.balance >= min;
+    const index = index_ ? inv.item.index === index_ : true;
+    return forMatches && isMatches && index && inv.balance >= min;
   });
 };
