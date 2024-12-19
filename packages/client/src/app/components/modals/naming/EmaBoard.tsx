@@ -2,7 +2,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
-import { filterInventories } from 'app/cache/inventory';
+import { filterInventories, Inventory } from 'app/cache/inventory';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
@@ -11,6 +11,8 @@ import { HOLY_DUST_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
+
+const REFRESH_INTERVAL = 2000;
 
 export function registerEMABoardModal() {
   registerUIComponent(
@@ -29,19 +31,19 @@ export function registerEMABoardModal() {
           const { network } = layers;
           const { world, components } = network;
           const accountEntity = queryAccountFromEmbedded(network);
-          const inventory = getAccount(world, components, accountEntity, {
-            inventory: 1,
-          }).inventories!;
-          const dust =
-            filterInventories(inventory, undefined, undefined, HOLY_DUST_INDEX)[0]?.balance ?? 0;
           return {
             network,
             data: {
               accountEntity,
-              dustAmt: dust,
             },
             utils: {
               getAccountKamis: () => getAccountKamis(world, components, accountEntity),
+              getAccount: () =>
+                getAccount(world, components, accountEntity, {
+                  inventory: 1,
+                }).inventories!,
+              filterInventories: (inventory: Inventory[]) =>
+                filterInventories(inventory, undefined, undefined, undefined, HOLY_DUST_INDEX),
             },
           };
         })
@@ -49,12 +51,14 @@ export function registerEMABoardModal() {
 
     // Render
     ({ network, data, utils }) => {
-      const { dustAmt, accountEntity } = data;
+      const { accountEntity } = data;
       const { actions, api } = network;
-      const { getAccountKamis } = utils;
+      const { getAccountKamis, getAccount, filterInventories } = utils;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
       const [kamis, setKamis] = useState<any[]>([]);
+      const [dustAmt, setDustAmt] = useState<number>();
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       const promptRename = (kami: Kami) => {
         setKami(kami.entity);
@@ -131,8 +135,21 @@ export function registerEMABoardModal() {
       };
 
       useEffect(() => {
-        KamiList();
-      }, [modals.emaBoard, accountEntity]);
+        const refreshClock = () => setLastRefresh(Date.now());
+        const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+        return () => clearInterval(timerId);
+      }, []);
+
+      useEffect(() => {
+        if (!modals.emaBoard) return;
+        setKamis(getAccountKamis());
+        let inventory = getAccount();
+        if (inventory) {
+          let dustAmt = filterInventories(inventory)[0]?.balance ?? 0;
+          setDustAmt(dustAmt);
+        }
+        console.log(dustAmt);
+      }, [modals.emaBoard, accountEntity, lastRefresh]);
 
       // Rendering of Individual Kami Cards in the Name Modal
       const Kard = (kami: Kami) => {
@@ -151,10 +168,6 @@ export function registerEMABoardModal() {
             description={description}
           />
         );
-      };
-
-      const KamiList = () => {
-        setKamis(getAccountKamis());
       };
 
       return (
