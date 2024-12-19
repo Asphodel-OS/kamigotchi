@@ -1,6 +1,4 @@
 import {
-  bgPlaytestDay,
-  bgPlaytestEvening,
   // bgPlaytestNight,
   bgXmasNight,
 } from 'assets/images/rooms/57_river-crossing';
@@ -10,7 +8,7 @@ import { Room } from 'constants/rooms';
 
 export const room57: Room = {
   index: 57,
-  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgXmasNight],
+  backgrounds: [bgXmasNight],
   music: {
     key: 'Xmas',
     path: Xmas,

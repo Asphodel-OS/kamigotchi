@@ -1,6 +1,4 @@
 import {
-  bgPlaytestDay,
-  bgPlaytestEvening,
   //bgPlaytestNight,
   bgXmasNight,
 } from 'assets/images/rooms/56_butterfly-forest';
@@ -10,7 +8,7 @@ import { Room } from 'constants/rooms';
 
 export const room56: Room = {
   index: 56,
-  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgXmasNight],
+  backgrounds: [bgXmasNight],
   music: {
     key: 'Xmas',
     path: Xmas,
