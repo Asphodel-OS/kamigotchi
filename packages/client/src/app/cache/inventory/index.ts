@@ -1,4 +1,8 @@
 export { get as getInventory } from './base';
-export { clean as cleanInventories, filter as filterInventories } from './functions';
+export {
+  clean as cleanInventories,
+  filter as filterInventories,
+  getBalance as getInventoryBalance,
+} from './functions';
 
 export type { Inventory } from 'network/shapes/Inventory';

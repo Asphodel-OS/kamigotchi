@@ -2,7 +2,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
-import { filterInventories, Inventory } from 'app/cache/inventory';
+import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
@@ -42,8 +42,8 @@ export function registerEMABoardModal() {
                 getAccount(world, components, accountEntity, {
                   inventory: 1,
                 }).inventories!,
-              filterInventories: (inventory: Inventory[]) =>
-                filterInventories(inventory, undefined, undefined, undefined, HOLY_DUST_INDEX),
+              getInventoryBalance: (inventory: Inventory[]) =>
+                getInventoryBalance(inventory, HOLY_DUST_INDEX),
             },
           };
         })
@@ -53,7 +53,7 @@ export function registerEMABoardModal() {
     ({ network, data, utils }) => {
       const { accountEntity } = data;
       const { actions, api } = network;
-      const { getAccountKamis, getAccount, filterInventories } = utils;
+      const { getAccountKamis, getAccount, getInventoryBalance } = utils;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
       const [kamis, setKamis] = useState<any[]>([]);
@@ -145,8 +145,9 @@ export function registerEMABoardModal() {
         setKamis(getAccountKamis());
         let inventory = getAccount();
         if (inventory) {
-          let dustAmt = filterInventories(inventory)[0]?.balance ?? 0;
+          let dustAmt = getInventoryBalance(inventory);
           setDustAmt(dustAmt);
+          console.log(dustAmt);
         }
         console.log(dustAmt);
       }, [modals.emaBoard, accountEntity, lastRefresh]);
