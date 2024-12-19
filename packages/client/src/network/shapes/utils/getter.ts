@@ -14,6 +14,7 @@ import { hasCompletedQuest } from '../Quest';
 import { getHolderSkillLevel } from '../Skill';
 import { parseKamiStateToIndex } from './parse';
 
+// TODO: clean this horrendous thing up
 export const getBalance = (
   world: World,
   components: Components,
@@ -44,17 +45,17 @@ export const getBalance = (
   // account specific
   if (!isKami) {
     if (type === 'KAMI') {
-      return getKamisByAccount(world, components, holderID).length || 0;
+      return getKamisByAccount(world, components, holderID, { progress: true }).length || 0;
     } else if (type === 'KAMI_LEVEL_HIGHEST') {
       let top = 0;
-      getKamisByAccount(world, components, holderID).forEach((kami) => {
+      getKamisByAccount(world, components, holderID, { progress: true }).forEach((kami) => {
         const level = kami.progress?.level ?? 0;
         if (level > top) top = level;
       });
       return top;
     } else if (type === 'KAMI_LEVEL_QUANTITY') {
       let total = 0;
-      getKamisByAccount(world, components, holderID).forEach((kami) => {
+      getKamisByAccount(world, components, holderID, { progress: true }).forEach((kami) => {
         const level = kami.progress?.level ?? 0;
         if (level >= (index ?? 0)) total++;
       });
