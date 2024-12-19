@@ -14,11 +14,12 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/pine_pollen_native.png,107,Pine Pollen,
 Items%201b9894152b7f4649a68169aa3a6bcffe/red_amber_crystal_native.png,108,Red Amber Crystal,Ingame,ITEM,Material,,,,,,,,,"A crystal of pure red amber, formed deep in the forest.",,,,,,,,,,,No,11010
 Items%201b9894152b7f4649a68169aa3a6bcffe/black_poppy_native.png,109,Black Poppy,Ingame,ITEM,Material,,,,,,,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. ",,,,,,,,,,,No,11011
 Items%201b9894152b7f4649a68169aa3a6bcffe/daffodil_native.png,110,Daffodil,Ingame,ITEM,Material,,,,,,,,,"A reflection of fallen Narcissus… Has its own uses and applications. ",,,,,,,,,,,No,11012
-Items%201b9894152b7f4649a68169aa3a6bcffe/mint_native.png,111,Mint,Ingame,ITEM,Material,,,,,Kami,,,,A herb with many applications. Not often found here….,,,,,,,,,,,No,11007
+Items%201b9894152b7f4649a68169aa3a6bcffe/mint_native.png,111,Mint,Ingame,ITEM,Material,,,,,,,,,A herb with many applications. Not often found here….,,,,,,,,,,,No,11007
 Items%201b9894152b7f4649a68169aa3a6bcffe/microplastics_native.png,112,Microplastics,For Implementation,ITEM,Material,,,,,,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/essence_of_daffodil_native.png,113,Essence of Daffodil,For Implementation,ITEM,Material,,,,,,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/shredded_mint_native.png,114,Shredded Mint,For Implementation,ITEM,Material,,,,,,,,,,,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/black_poppy_extract_native.png,115,Black Poppy Extract,For Implementation,ITEM,Material,,,,,,,,,,,,,,,,,,,,No,
+Items%201b9894152b7f4649a68169aa3a6bcffe/candle.png,116,Candle,For Implementation,ITEM,Material,,,,,,,,,"A half-melted candle, somehow still burning. Perhaps this has some special use.…",,,,,,,,,,,No,
 Items%201b9894152b7f4649a68169aa3a6bcffe/screwdriver_native.png,201,Screwdriver,Ingame,ITEM,Material,,,,,,,,,For driving screws. May be of practical use….,,,,,,,,,,,No,11003
 Items%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,11001,Red Gakki Ribbon,Ingame,ITEM,Revive,,,,,Kami,,,,"Capable of raising a Kamigotchi from the dead. 
 
@@ -55,6 +56,9 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/pom_poms_candy_wip_native.png,11303,Pom
 ,11303,,Ingame,EFFECT,,STAT,,HEALTH,50,,,,,Restores 50 Health,,,,,,,,,,,No,105
 Items%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,11304,Gakki Cookie Sticks,Ingame,ITEM,Food,,,,,Kami,,,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.,100,,,,,,,,,,No,103
 ,11304,,Ingame,EFFECT,,STAT,,HEALTH,100,,,,,Restores 100 Health,,,,,,,,,,,No,105
+Items%201b9894152b7f4649a68169aa3a6bcffe/gingerbread_cookie_native.png,11305,Gingerbread Cookie,For Implementation,ITEM,Food,,,,,Kami,,,,A gingerbread cookie... feed this to a Kamigotchi for some extra experience.,,,,,,,,,,,No,
+,11305,,For Implementation,EFFECT,,XP,,,1000,Kami,,,,Gives 1000 XP,,,,,,,,,,,No,105
+,11305,,Ingame,EFFECT,Consumable,STAT,,HEALTH,25,Kami,,,,Restores 25 Health,,,,,,,,,,,No,105
 Items%201b9894152b7f4649a68169aa3a6bcffe/resin_native.png,11311,Resin,Ingame,ITEM,Food,,,,,Kami,,,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…",35,,,,,,,,,,No,118
 ,11311,,Ingame,EFFECT,,STAT,,HEALTH,35,,,,,Restores 35 Health,,,,,,,,,,,No,105
 Items%201b9894152b7f4649a68169aa3a6bcffe/xp_potion_native.png,11401,XP Potion,For Implementation,ITEM,Food,,,,,Kami,,,,Give to a Kami to increase their XP by 1000.,,,,,,,,,,,No,
@@ -73,6 +77,8 @@ Items%201b9894152b7f4649a68169aa3a6bcffe/grace_potion_native.png,11404,"Grace Po
 Items%201b9894152b7f4649a68169aa3a6bcffe/bounty_potion_native.png,11405,Bless Potion,For Implementation,ITEM,Food,,,,,Kami,,,,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.,,,,,,,,,,,No,
 ,11405,,Ingame,EFFECT,,BONUS,,HARV_BOUNTY_BOOST,250,Kami,UPON_HARVEST_ACTION,,,25% Harvest Bonus,,,,,,,,,,,No,11007
 ,11405,,Ingame,EFFECT,,ITEM,103,,1,Kami,,,,Give x1 plastic bottle,,,,,,,,,,,No,11007
+Items%201b9894152b7f4649a68169aa3a6bcffe/mistletoe.png,11406,Mistletoe,For Implementation,ITEM,Food,,,,,Kami,,,,"Sacred, at this time of year..... can be used on Kami to Bless them!",,,,,,,,,,,No,
+,11406,,For Implementation,EFFECT,,BONUS,,HARV_BOUNTY_BOOST,250,,UPON_HARVEST_ACTION,,,25% Harvest Bonus,,,,,,,,,,,No,11007
 Items%201b9894152b7f4649a68169aa3a6bcffe/lootbox_native.png,21001,Giftbox,Ingame,ITEM,Lootbox,,,,,Account,,,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! ",,,,,,,,,,,No,10001
 ,21001,,Ingame,EFFECT,,ITEM_DROPTABLE,,,1,Account,,"[11201, 11302, 11202, 11201, 11204, 111, 103, 201]","[9, 9, 8, 7, 6, 3, 3, 2]",droptable,,,,,,,,,,,No,11007
 ,21002,Giftchest,Not Implemented,ITEM,,,,,,,,,,,,,,,,,,,,,No,10002
