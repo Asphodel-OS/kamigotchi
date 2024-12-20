@@ -1,4 +1,4 @@
-import { EntityIndex, Has, HasValue, runQuery } from '@mud-classic/recs';
+import { EntityIndex, Has, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { getIndex } from '../utils/component';
@@ -9,23 +9,27 @@ export const queryForAllRecipes = (components: Components): EntityIndex[] => {
   return Array.from(runQuery([Has(RecipeIndex), Has(IsRegistry)]));
 };
 
-// recipes given by npc
-export const queryForRecipebyNpc = (components: Components, entity: EntityIndex): EntityIndex[] => {
-  if (!entity) return [];
-  const { RecipeIndex, NPCIndex } = components;
-  return Array.from(
-    runQuery([HasValue(NPCIndex, { value: getIndex(components, entity) }), Has(RecipeIndex)])
-  );
+// generalised query
+export type QueryOptions = {
+  npcEntityIndex?: EntityIndex;
+  nodeEntityIndex?: EntityIndex;
 };
 
-// recipes given by node
-export const queryForRecipebyNode = (
-  components: Components,
-  entity: EntityIndex
-): EntityIndex[] => {
-  if (!entity) return [];
-  const { RecipeIndex, NodeIndex } = components;
-  return Array.from(
-    runQuery([HasValue(NodeIndex, { value: getIndex(components, entity) }), Has(RecipeIndex)])
-  );
+export const query = (components: Components, options?: QueryOptions): EntityIndex[] => {
+  const { RecipeIndex, NodeIndex, NPCIndex, EntityType } = components;
+
+  const toQuery: QueryFragment[] = [];
+  if (options?.npcEntityIndex != undefined)
+    toQuery.push(
+      HasValue(NPCIndex, { value: getIndex(components, options.npcEntityIndex) }),
+      Has(RecipeIndex)
+    );
+  if (options?.nodeEntityIndex != undefined)
+    toQuery.push(
+      HasValue(NodeIndex, { value: getIndex(components, options.nodeEntityIndex) }),
+      Has(RecipeIndex)
+    );
+  toQuery.push(HasValue(EntityType, { value: 'RECIPE' }));
+  const results = runQuery(toQuery);
+  return Array.from(results);
 };
