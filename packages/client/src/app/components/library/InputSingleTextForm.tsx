@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import PlaceholderIcon from 'assets/images/icons/placeholder.png';
+import { ActionIcons } from 'assets/images/icons/actions';
 import { playClick } from 'utils/sounds';
 import { IconButton, Tooltip } from './base';
 
@@ -21,14 +21,16 @@ interface Props {
 export const InputSingleTextForm = (props: Props) => {
   const { maxLen, fullWidth, label, placeholder, onSubmit } = props;
   const { hasButton, buttonIcon } = props;
-  const disabled = !!props.disabled;
+  const isDisabled = !!props.disabled;
 
   const [value, setValue] = useState(props.initialValue || '');
-  let styleOverride = {};
-  if (fullWidth) styleOverride = { width: '100%' };
 
   /////////////////
   // INTERACTION
+
+  const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && value.length > 0) handleSubmit();
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
@@ -42,24 +44,11 @@ export const InputSingleTextForm = (props: Props) => {
     setValue('');
   };
 
-  const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && value.length > 0) handleSubmit();
-  };
-
   /////////////////
   // INTERPRETATION
 
-  const isButtonDisabled = () => {
-    return disabled || value.length === 0;
-  };
-
-  const getButtonTooltip = () => {
-    if (isButtonDisabled()) return [];
-    return ['submit'];
-  };
-
   return (
-    <Container style={styleOverride}>
+    <Container fullWidth={fullWidth}>
       <InputGroup>
         {label && <Label>{label}</Label>}
         <Input
@@ -68,15 +57,15 @@ export const InputSingleTextForm = (props: Props) => {
           placeholder={placeholder}
           onKeyDown={(e) => catchKeys(e)}
           onChange={(e) => handleChange(e)}
-          disabled={disabled}
+          disabled={isDisabled}
         />
       </InputGroup>
       {hasButton && (
-        <Tooltip text={getButtonTooltip()}>
+        <Tooltip text={isDisabled ? [] : ['submit']}>
           <IconButton
-            img={buttonIcon ?? PlaceholderIcon}
+            img={buttonIcon ?? ActionIcons.chat}
             onClick={() => handleSubmit()}
-            disabled={isButtonDisabled()}
+            disabled={isDisabled || value.length === 0}
           />
         </Tooltip>
       )}
@@ -84,13 +73,13 @@ export const InputSingleTextForm = (props: Props) => {
   );
 };
 
-const Container = styled.div`
-  width: 50%;
+const Container = styled.div<{ fullWidth?: boolean }>`
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : '50%')};
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.3vw;
 `;
 
 const InputGroup = styled.div`
@@ -103,10 +92,9 @@ const InputGroup = styled.div`
 `;
 
 const Label = styled.label`
-  font-family: Pixel;
-  font-size: 10px;
+  font-size: 0.6vw;
   color: #333;
-  margin: 0px 5px;
+  margin: 0.3vw;
   text-align: left;
 `;
 
@@ -117,11 +105,9 @@ const Input = styled.input`
   background-color: #ffffff;
   width: 100%;
   color: black;
-  margin: 0.1vw 0vw;
-  padding: 0.8vw 1vw;
+  padding: 0.75vw 1vw;
 
-  font-family: Pixel;
-  font-size: 0.8vw;
+  font-size: 0.75vw;
   text-align: left;
   text-decoration: none;
 

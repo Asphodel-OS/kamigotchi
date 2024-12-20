@@ -16,8 +16,8 @@ export function registerNameKamiModal() {
     {
       colStart: 33,
       colEnd: 67,
-      rowStart: 30,
-      rowEnd: 57,
+      rowStart: 39,
+      rowEnd: 63,
     },
 
     // Requirement
@@ -43,10 +43,13 @@ export function registerNameKamiModal() {
     ({ network, utils }) => {
       const { actions, api } = network;
       const { getKami, queryKamiByIndex } = utils;
-      const { modals, setModals } = useVisibility();
+      const { setModals } = useVisibility();
       const { kamiIndex } = useSelected();
 
       const [kami, setKami] = useState<Kami>(NullKami);
+
+      /////////////////
+      // SUBSCRIPTIONS
 
       useEffect(() => {
         const kamiEntity = queryKamiByIndex(kamiIndex);
@@ -54,12 +57,15 @@ export function registerNameKamiModal() {
         setKami(kami);
       }, [kamiIndex]);
 
+      /////////////////
+      // ACTIONS
+
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
         actions.add({
           action: 'KamiName',
           params: [kami.id, name],
-          description: `Renaming ${kami.name}`,
+          description: `Renaming ${kami.name} to ${name}`,
           execute: async () => {
             return api.player.pet.name(kami.id, name);
           },
@@ -74,17 +80,23 @@ export function registerNameKamiModal() {
         } catch (e) {}
       };
 
+      /////////////////
+      // RENDER
+
       return (
         <ModalWrapper id='nameKami' canExit>
           <Title>Name your Kami</Title>
-          <Description>A Kami can only be named once. Choose wisely.</Description>
-          <InputSingleTextForm
-            label='new name'
-            placeholder={kami ? kami.name : ''}
-            onSubmit={(v: string) => handleNameTx(kami, v)}
-            fullWidth
-            hasButton
-          />
+          <Description>A Kami can only be named once for free.</Description>
+          <Description>Choose wisely.</Description>
+          <Form>
+            <InputSingleTextForm
+              label={`rename ${kami?.name}`}
+              placeholder={kami ? kami.name : ''}
+              onSubmit={(v: string) => handleNameTx(kami, v)}
+              fullWidth
+              hasButton
+            />
+          </Form>
         </ModalWrapper>
       );
     }
@@ -94,15 +106,19 @@ export function registerNameKamiModal() {
 const Title = styled.div`
   color: #333;
   padding: 1.5vw;
-
-  font-family: Pixel;
   font-size: 1.5vw;
   text-align: center;
 `;
 
 const Description = styled.div`
   color: #333;
-  font-family: Pixel;
   font-size: 0.7vw;
+  line-height: 1.2vw;
   text-align: center;
+`;
+
+const Form = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 1.2vw;
 `;

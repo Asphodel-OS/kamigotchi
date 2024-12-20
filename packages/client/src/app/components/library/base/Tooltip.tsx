@@ -6,7 +6,7 @@ interface Props {
   children: React.ReactNode;
   grow?: boolean;
   direction?: 'row' | 'column';
-  align?: 'left' | 'right' | 'center';
+  alignText?: 'left' | 'right' | 'center';
   title?: boolean;
   color?: string;
   delay?: number;
@@ -14,7 +14,7 @@ interface Props {
 
 export const Tooltip = (props: Props) => {
   const { children, text, direction } = props;
-  const { align, title, color, delay } = props;
+  const { alignText, title, color, delay } = props;
   const flexGrow = props.grow ? '1' : '0';
 
   const [isVisible, setIsVisible] = useState(false);
@@ -79,7 +79,7 @@ export const Tooltip = (props: Props) => {
   }, [isActive, delay]);
 
   return (
-    <MyToolTip
+    <Container
       flexGrow={flexGrow}
       direction={direction}
       disabled={text.length === 0}
@@ -94,7 +94,7 @@ export const Tooltip = (props: Props) => {
       {isActive && (
         <PopOverText
           isVisible={isVisible}
-          align={align}
+          alignText={alignText}
           color={color}
           tooltipPosition={tooltipPosition}
           ref={tooltipRef}
@@ -103,11 +103,11 @@ export const Tooltip = (props: Props) => {
         </PopOverText>
       )}
       {children}
-    </MyToolTip>
+    </Container>
   );
 };
 
-const MyToolTip = styled.div<{
+const Container = styled.div<{
   flexGrow: string;
   disabled?: boolean;
   direction?: string;
@@ -120,7 +120,7 @@ const MyToolTip = styled.div<{
 `;
 
 interface PopOverProps {
-  align?: string;
+  alignText?: string;
   isVisible: boolean;
   color?: string;
   tooltipPosition?: any;
@@ -130,7 +130,7 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
   style: {
     backgroundColor: props.color ?? '#fff',
     opacity: props.isVisible ? 1 : 0,
-    textAlign: props.align ?? 'left',
+    textAlign: props.alignText ?? 'left',
     top: props.tooltipPosition.y,
     left: props.tooltipPosition.x,
   },

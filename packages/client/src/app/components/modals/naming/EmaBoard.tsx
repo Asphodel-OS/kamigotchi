@@ -31,13 +31,16 @@ export function registerEMABoardModal() {
           const { network } = layers;
           const { world, components } = network;
           const accountEntity = queryAccountFromEmbedded(network);
+          const kamiRefreshOptions = { live: 2, flags: 2 };
+
           return {
             network,
             data: {
               accountEntity,
             },
             utils: {
-              getAccountKamis: () => getAccountKamis(world, components, accountEntity, { live: 2 }),
+              getAccountKamis: () =>
+                getAccountKamis(world, components, accountEntity, { live: 2, flags: 2 }),
               getAccount: () => getAccount(world, components, accountEntity, { live: 2 }),
               getDustBalance: (inventory: Inventory[]) =>
                 getInventoryBalance(inventory, HOLY_DUST_INDEX),
@@ -57,8 +60,27 @@ export function registerEMABoardModal() {
       const [dustAmt, setDustAmt] = useState<number>();
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
+      /////////////////
+      // SUBSCRIPTIONS
+
+      useEffect(() => {
+        const refreshClock = () => setLastRefresh(Date.now());
+        const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+        return () => clearInterval(timerId);
+      }, []);
+
+      useEffect(() => {
+        if (!modals.emaBoard || getAccount().roomIndex !== 11) return;
+        setKamis(getAccountKamis());
+        let inventory = getAccount().inventories;
+        if (inventory) {
+          let dustAmt = getDustBalance(inventory);
+          setDustAmt(dustAmt);
+        }
+      }, [modals.emaBoard, accountEntity, lastRefresh]);
+
       const promptRename = (kami: Kami) => {
-        setKami(kami.entity);
+        setKami(kami.index);
         setModals({ emaBoard: false, nameKami: true });
       };
 
@@ -130,22 +152,6 @@ export function registerEMABoardModal() {
           </ButtonsContainer>
         );
       };
-
-      useEffect(() => {
-        const refreshClock = () => setLastRefresh(Date.now());
-        const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-        return () => clearInterval(timerId);
-      }, []);
-
-      useEffect(() => {
-        if (!modals.emaBoard || getAccount().roomIndex !== 11) return;
-        setKamis(getAccountKamis());
-        let inventory = getAccount().inventories;
-        if (inventory) {
-          let dustAmt = getDustBalance(inventory);
-          setDustAmt(dustAmt);
-        }
-      }, [modals.emaBoard, accountEntity, lastRefresh]);
 
       // Rendering of Individual Kami Cards in the Name Modal
       const Kard = (kami: Kami) => {
