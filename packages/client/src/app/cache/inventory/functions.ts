@@ -15,18 +15,16 @@ export const filter = (
   inventories: Inventory[],
   type_?: string,
   for_?: string,
-  index_?: number,
   min = 1
 ): Inventory[] => {
   return inventories.filter((inv) => {
     const forMatches = for_ ? inv.item.for === for_ : true;
     const isMatches = type_ ? inv.item.type === type_ : true;
-    const index = index_ ? inv.item.index === index_ : true;
-    return forMatches && isMatches && index && inv.balance >= min;
+    return forMatches && isMatches && inv.balance >= min;
   });
 };
 
 export const getBalance = (inventories: Inventory[], itemIndex: number): number => {
   const filtered = inventories.filter((inv) => inv.item.index == itemIndex);
-  return filtered ? filtered[0].balance : 0;
+  return filtered ? filtered[0]?.balance : 0;
 };

@@ -37,12 +37,9 @@ export function registerEMABoardModal() {
               accountEntity,
             },
             utils: {
-              getAccountKamis: () => getAccountKamis(world, components, accountEntity),
-              getAccount: () =>
-                getAccount(world, components, accountEntity, {
-                  inventory: 1,
-                }).inventories!,
-              getInventoryBalance: (inventory: Inventory[]) =>
+              getAccountKamis: () => getAccountKamis(world, components, accountEntity, { live: 2 }),
+              getAccount: () => getAccount(world, components, accountEntity, { live: 2 }),
+              getDustBalance: (inventory: Inventory[]) =>
                 getInventoryBalance(inventory, HOLY_DUST_INDEX),
             },
           };
@@ -53,7 +50,7 @@ export function registerEMABoardModal() {
     ({ network, data, utils }) => {
       const { accountEntity } = data;
       const { actions, api } = network;
-      const { getAccountKamis, getAccount, getInventoryBalance } = utils;
+      const { getAccountKamis, getAccount, getDustBalance } = utils;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
       const [kamis, setKamis] = useState<any[]>([]);
@@ -141,15 +138,13 @@ export function registerEMABoardModal() {
       }, []);
 
       useEffect(() => {
-        if (!modals.emaBoard) return;
+        if (!modals.emaBoard || getAccount().roomIndex !== 11) return;
         setKamis(getAccountKamis());
-        let inventory = getAccount();
+        let inventory = getAccount().inventories;
         if (inventory) {
-          let dustAmt = getInventoryBalance(inventory);
+          let dustAmt = getDustBalance(inventory);
           setDustAmt(dustAmt);
-          console.log(dustAmt);
         }
-        console.log(dustAmt);
       }, [modals.emaBoard, accountEntity, lastRefresh]);
 
       // Rendering of Individual Kami Cards in the Name Modal
