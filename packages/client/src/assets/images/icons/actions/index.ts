@@ -1,6 +1,6 @@
 import ChatIcon from './chat.png';
 import CollectIcon from './collect.png';
-import CraftIcon from './crafting_icon.png';
+import CraftIcon from './crafting.png';
 import FeedIcon from './feed.png';
 import HarvestIcon from './harvest.png';
 import LiquidateIcon from './liquidate.png';
