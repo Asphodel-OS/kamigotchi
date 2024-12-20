@@ -7,6 +7,7 @@ import { EmptyText, IconListButton, KamiCard } from 'app/components/library';
 import { LiquidateButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
+import { CooldownIcon } from 'assets/images/icons/battles';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { HealthIcon } from 'assets/images/icons/stats';
 import { BaseAccount } from 'network/shapes/Account';
@@ -19,7 +20,7 @@ const SortMap: Record<KamiSort, string> = {
   health: HealthIcon,
   'health %': ActionIcons.liquidate,
   output: ActionIcons.collect,
-  cooldown: ActionIcons.harvest,
+  cooldown: CooldownIcon,
 };
 
 interface Props {
