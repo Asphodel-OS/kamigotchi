@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { useIcon } from 'assets/images/icons/actions';
+import { UseIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { getInventoryByHolderItem } from 'network/shapes/Inventory';
@@ -108,7 +108,7 @@ export function registerEMABoardModal() {
         if (!disabled) tooltipText = `use holy dust (${dustAmt})`;
 
         const button = (
-          <IconButton img={useIcon} onClick={() => useRenamePotion(kami)} disabled={disabled} />
+          <IconButton img={UseIcon} onClick={() => useRenamePotion(kami)} disabled={disabled} />
         );
 
         return <Tooltip text={[tooltipText]}>{button}</Tooltip>;

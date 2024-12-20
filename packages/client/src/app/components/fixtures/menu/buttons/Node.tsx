@@ -1,5 +1,5 @@
 import { Modals, useSelected } from 'app/stores';
-import { harvestIcon } from 'assets/images/icons/actions';
+import { HarvestIcon } from 'assets/images/icons/actions';
 import { MenuButton } from './MenuButton';
 
 interface Props {
@@ -25,7 +25,7 @@ export const NodeMenuButton = (props: Props) => {
   return (
     <MenuButton
       id='party_button'
-      image={harvestIcon}
+      image={HarvestIcon}
       tooltip={disabled ? 'There is no node here.' : 'Harvest'}
       targetModal='node'
       hideModals={modalsToHide}

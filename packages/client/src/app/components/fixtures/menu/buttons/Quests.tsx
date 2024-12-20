@@ -1,4 +1,4 @@
-import { questsIcon } from 'assets/images/icons/menu';
+import { QuestsIcon } from 'assets/images/icons/menu';
 
 import { Modals } from 'app/stores';
 import { MenuButton } from './MenuButton';
@@ -19,7 +19,7 @@ export const QuestMenuButton = () => {
   return (
     <MenuButton
       id='quests_button'
-      image={questsIcon}
+      image={QuestsIcon}
       tooltip='Quests'
       targetModal='quests'
       hideModals={modalsToHide}

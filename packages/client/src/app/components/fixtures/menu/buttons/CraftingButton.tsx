@@ -1,5 +1,5 @@
 import { Modals } from 'app/stores';
-import { craftIcon } from 'assets/images/icons/actions';
+import { CraftIcon } from 'assets/images/icons/actions';
 import { MenuButton } from './MenuButton';
 
 export const CraftingButton = () => {
@@ -20,7 +20,7 @@ export const CraftingButton = () => {
   return (
     <MenuButton
       id='craft-button'
-      image={craftIcon}
+      image={CraftIcon}
       tooltip='Craft'
       targetModal='crafting'
       hideModals={modalsToHide}

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { kamiIcon } from 'assets/images/icons/menu';
+import { KamiIcon } from 'assets/images/icons/menu';
 
 export const FloatingMapKami = () => {
   return (
@@ -30,7 +30,7 @@ const KamiImage = styled.div`
   height: 100%;
   width: 100%;
   position: relative;
-  background-image: url(${kamiIcon});
+  background-image: url(${KamiIcon});
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;

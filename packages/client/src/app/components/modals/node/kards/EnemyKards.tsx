@@ -7,7 +7,7 @@ import { EmptyText, IconListButton, KamiCard } from 'app/components/library';
 import { LiquidateButton } from 'app/components/library/actions';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { kamiIcon } from 'assets/images/icons/menu';
+import { KamiIcon } from 'assets/images/icons/menu';
 import { HealthIcon } from 'assets/images/icons/stats';
 import { BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
@@ -15,7 +15,7 @@ import { playClick } from 'utils/sounds';
 type KamiSort = 'name' | 'health' | 'health %' | 'output' | 'cooldown';
 const REFRESH_INTERVAL = 1000;
 const SortMap: Record<KamiSort, string> = {
-  name: kamiIcon,
+  name: KamiIcon,
   health: HealthIcon,
   'health %': ActionIcons.liquidate,
   output: ActionIcons.collect,

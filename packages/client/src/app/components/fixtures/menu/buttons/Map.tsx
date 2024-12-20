@@ -1,5 +1,5 @@
 import { Modals } from 'app/stores';
-import { mapIcon } from 'assets/images/icons/menu';
+import { MapIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 export const MapMenuButton = () => {
@@ -20,7 +20,7 @@ export const MapMenuButton = () => {
   return (
     <MenuButton
       id='map_button'
-      image={mapIcon}
+      image={MapIcon}
       tooltip={`Map`}
       targetModal='map'
       hideModals={modalsToHide}

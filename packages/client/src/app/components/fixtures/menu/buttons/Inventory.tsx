@@ -1,5 +1,5 @@
 import { Modals } from 'app/stores';
-import { inventoryIcon } from 'assets/images/icons/menu';
+import { InventoryIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 export const InventoryMenuButton = () => {
@@ -19,7 +19,7 @@ export const InventoryMenuButton = () => {
   return (
     <MenuButton
       id='inventory-button'
-      image={inventoryIcon}
+      image={InventoryIcon}
       tooltip='Inventory'
       targetModal='inventory'
       hideModals={modalsToHide}

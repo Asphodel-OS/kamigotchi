@@ -8,7 +8,7 @@ import { getRoom, getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { mapIcon } from 'assets/images/icons/menu';
+import { MapIcon } from 'assets/images/icons/menu';
 import {
   queryAccountFromEmbedded,
   queryAccountKamis,
@@ -117,7 +117,7 @@ export function registerMapModal() {
       return (
         <ModalWrapper
           id='map'
-          header={<ModalHeader title={roomMap.get(roomIndex)?.name ?? 'Map'} icon={mapIcon} />}
+          header={<ModalHeader title={roomMap.get(roomIndex)?.name ?? 'Map'} icon={MapIcon} />}
           canExit
           noPadding
           truncate

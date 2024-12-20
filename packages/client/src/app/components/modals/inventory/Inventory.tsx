@@ -4,7 +4,7 @@ import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/ac
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount } from 'app/stores';
-import { inventoryIcon } from 'assets/images/icons/menu';
+import { InventoryIcon } from 'assets/images/icons/menu';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { passesConditions } from 'network/shapes/Conditional';
 import { getMusuBalance, Item } from 'network/shapes/Item';
@@ -101,7 +101,7 @@ export function registerInventoryModal() {
       return (
         <ModalWrapper
           id='inventory'
-          header={<ModalHeader title='Inventory' icon={inventoryIcon} />}
+          header={<ModalHeader title='Inventory' icon={InventoryIcon} />}
           footer={<MusuRow key='musu' balance={getMusuBalance()} />}
           canExit
           overlay

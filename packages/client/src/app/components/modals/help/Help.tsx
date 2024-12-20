@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { helpIcon } from 'assets/images/icons/menu';
+import { HelpIcon } from 'assets/images/icons/menu';
 import { Books } from './Books';
 import { Page } from './Page';
 import { CopyInfo } from './copy';
@@ -36,7 +36,7 @@ export function registerHelpModal() {
       return (
         <ModalWrapper
           id='help'
-          header={<ModalHeader title='Help' icon={helpIcon} />}
+          header={<ModalHeader title='Help' icon={HelpIcon} />}
           canExit
           truncate
         >

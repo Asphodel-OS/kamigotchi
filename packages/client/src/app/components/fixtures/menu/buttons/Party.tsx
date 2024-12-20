@@ -1,5 +1,5 @@
 import { Modals } from 'app/stores';
-import { kamiIcon } from 'assets/images/icons/menu';
+import { KamiIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 export const PartyMenuButton = () => {
@@ -19,7 +19,7 @@ export const PartyMenuButton = () => {
   return (
     <MenuButton
       id='party_button'
-      image={kamiIcon}
+      image={KamiIcon}
       tooltip='Party'
       targetModal='party'
       hideModals={modalsToHide}

@@ -1,39 +1,39 @@
-import chatIcon from './chat.png';
-import collectIcon from './collect.png';
-import craftIcon from './crafting_icon.png';
-import feedIcon from './feed.png';
-import harvestIcon from './harvest.png';
-import liquidateIcon from './liquidate.png';
-import logoutIcon from './logout.png';
-import reviveIcon from './revive.png';
-import searchIcon from './search.png';
-import stopIcon from './stop.png';
-import useIcon from './use.png';
+import ChatIcon from './chat.png';
+import CollectIcon from './collect.png';
+import CraftIcon from './crafting_icon.png';
+import FeedIcon from './feed.png';
+import HarvestIcon from './harvest.png';
+import LiquidateIcon from './liquidate.png';
+import LogoutIcon from './logout.png';
+import ReviveIcon from './revive.png';
+import SearchIcon from './search.png';
+import StopIcon from './stop.png';
+import UseIcon from './use.png';
 
 export {
-  chatIcon,
-  collectIcon,
-  craftIcon,
-  feedIcon,
-  harvestIcon,
-  liquidateIcon,
-  logoutIcon,
-  reviveIcon,
-  searchIcon,
-  stopIcon,
-  useIcon,
+  ChatIcon,
+  CollectIcon,
+  CraftIcon,
+  FeedIcon,
+  HarvestIcon,
+  LiquidateIcon,
+  LogoutIcon,
+  ReviveIcon,
+  SearchIcon,
+  StopIcon,
+  UseIcon,
 };
 
 export const ActionIcons = {
-  chat: chatIcon,
-  collect: collectIcon,
-  craft: craftIcon,
-  feed: feedIcon,
-  harvest: harvestIcon,
-  liquidate: liquidateIcon,
-  logout: logoutIcon,
-  revive: reviveIcon,
-  search: searchIcon,
-  stop: stopIcon,
-  use: useIcon,
+  chat: ChatIcon,
+  collect: CollectIcon,
+  craft: CraftIcon,
+  feed: FeedIcon,
+  harvest: HarvestIcon,
+  liquidate: LiquidateIcon,
+  logout: LogoutIcon,
+  revive: ReviveIcon,
+  search: SearchIcon,
+  stop: StopIcon,
+  use: UseIcon,
 };

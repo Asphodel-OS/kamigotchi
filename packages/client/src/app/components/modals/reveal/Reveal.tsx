@@ -6,7 +6,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { settingsIcon } from 'assets/images/icons/menu';
+import { SettingsIcon } from 'assets/images/icons/menu';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { queryDTCommits } from 'network/shapes/Droptable';
 import { useWatchBlockNumber } from 'wagmi';
@@ -113,7 +113,7 @@ export function registerRevealModal() {
       return (
         <ModalWrapper
           id='reveal'
-          header={<ModalHeader title='Commits' icon={settingsIcon} />}
+          header={<ModalHeader title='Commits' icon={SettingsIcon} />}
           overlay
           canExit
         >

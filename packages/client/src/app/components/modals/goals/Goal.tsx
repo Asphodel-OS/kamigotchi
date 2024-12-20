@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { questsIcon } from 'assets/images/icons/menu';
+import { QuestsIcon } from 'assets/images/icons/menu';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
@@ -167,7 +167,7 @@ export function registerGoalModal() {
       return (
         <ModalWrapper
           id='goal'
-          header={<ModalHeader title='Co-op Quest' icon={questsIcon} />}
+          header={<ModalHeader title='Co-op Quest' icon={QuestsIcon} />}
           canExit
           overlay
         >

@@ -1,5 +1,5 @@
 import { calcCooldown, isHarvesting, isStarving } from 'app/cache/kami';
-import { collectIcon } from 'assets/images/icons/actions';
+import { CollectIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { IconButton, Tooltip } from '../base';
@@ -13,7 +13,7 @@ export const CollectButton = (kami: Kami, account: Account, triggerAction: Funct
 
   return (
     <Tooltip key='collect-tooltip' text={[tooltip]}>
-      <IconButton onClick={() => triggerAction(kami)} img={collectIcon} disabled={disabled} />
+      <IconButton onClick={() => triggerAction(kami)} img={CollectIcon} disabled={disabled} />
     </Tooltip>
   );
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { parseRequirementText } from 'app/cache/skill/functions';
-import { ActionButton, HelpIcon, Tooltip } from 'app/components/library';
+import { ActionButton, HelpChip, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
@@ -116,7 +116,7 @@ export const Details = (props: Props) => {
           </Tooltip>
         </div>
         <div style={{ position: 'absolute', top: '.6vw', right: '.6vw' }}>
-          <HelpIcon
+          <HelpChip
             tooltip={[
               `Skill Index: ${skill.index}`,
               `Cost: ${skill.cost} Skill Point(s)`,

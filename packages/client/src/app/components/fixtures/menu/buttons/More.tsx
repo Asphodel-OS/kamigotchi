@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 
 import { IconListButton, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { logoutIcon } from 'assets/images/icons/actions';
-import { helpIcon, moreIcon, resetIcon, settingsIcon } from 'assets/images/icons/menu';
+import { LogoutIcon } from 'assets/images/icons/actions';
+import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
@@ -89,12 +89,12 @@ export const MoreMenuButton = () => {
   return (
     <Tooltip text={['More']}>
       <IconListButton
-        img={moreIcon}
+        img={MoreIcon}
         options={[
-          { text: 'Settings', disabled, image: settingsIcon, onClick: toggleSettings },
-          { text: 'Help', image: helpIcon, onClick: toggleHelp },
-          { text: 'Hard Refresh', image: resetIcon, onClick: handleHardRefresh },
-          { text: 'Logout', disabled, image: logoutIcon, onClick: handleLogout },
+          { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
+          { text: 'Help', image: HelpIcon, onClick: toggleHelp },
+          { text: 'Hard Refresh', image: ResetIcon, onClick: handleHardRefresh },
+          { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         ]}
         scale={4.5}
         radius={0.6}

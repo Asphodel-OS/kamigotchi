@@ -10,7 +10,7 @@ import { EmptyText, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { feedIcon } from 'assets/images/icons/actions';
+import { FeedIcon } from 'assets/images/icons/actions';
 import {
   Account,
   NullAccount,
@@ -93,7 +93,7 @@ export function registerNodeModal() {
             },
             display: {
               UseItemButton: (kami: Kami, account: Account) =>
-                UseItemButton(network, kami, account, feedIcon),
+                UseItemButton(network, kami, account, FeedIcon),
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accountRefreshOptions),

@@ -1,7 +1,7 @@
 import { World } from '@mud-classic/recs';
 import moment from 'moment';
 
-import { helpIcon, questsIcon } from 'assets/images/icons/menu';
+import { HelpIcon, QuestsIcon } from 'assets/images/icons/menu';
 import * as placeholderIcon from 'assets/images/icons/placeholder.png';
 import { Components } from 'network/';
 import pluralize from 'pluralize';
@@ -54,7 +54,7 @@ export const getDescribedEntity = (
   else if (type === 'REPUTATION') return getReputation(args);
   else if (type === 'SKILL') return getSkill(args);
   else if (type === 'STATE') return getState(args);
-  else return { ObjectType: type, image: helpIcon, name: type };
+  else return { ObjectType: type, image: HelpIcon, name: type };
 };
 
 // parses and returns QuantityString from a DetailedEntity
@@ -131,7 +131,7 @@ function getFaction(args: getArgs): DetailedEntity {
 function getQuest(args: getArgs): DetailedEntity {
   return {
     ObjectType: 'QUEST',
-    image: questsIcon,
+    image: QuestsIcon,
     name: getQuestByIndex(args.world, args.components, args.index)?.name ?? `Quest ${args.index}`,
   };
 }

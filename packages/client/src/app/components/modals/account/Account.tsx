@@ -6,7 +6,7 @@ import { getAccount, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useSelected, useVisibility } from 'app/stores';
-import { operatorIcon } from 'assets/images/icons/menu';
+import { OperatorIcon } from 'assets/images/icons/menu';
 import {
   Account,
   BaseAccount,
@@ -142,7 +142,7 @@ export function registerAccountModal() {
       return (
         <ModalWrapper
           id='account'
-          header={<ModalHeader key='header' title='Friends' icon={operatorIcon} />}
+          header={<ModalHeader key='header' title='Friends' icon={OperatorIcon} />}
           canExit
           truncate
         >

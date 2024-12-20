@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { HelpIcon, ItemIconHorizontal } from 'app/components/library';
+import { HelpChip, ItemIconHorizontal } from 'app/components/library';
 import { Goal, Tier } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
 
@@ -24,7 +24,7 @@ export const Details = (props: Props) => {
       <Box key={tier.name} style={{ padding: '0 0.4vw' }}>
         <Row>
           <SmallTitleText>{tier.name}</SmallTitleText>
-          <HelpIcon tooltip={[helpText]} />
+          <HelpChip tooltip={[helpText]} />
         </Row>
 
         <Row>

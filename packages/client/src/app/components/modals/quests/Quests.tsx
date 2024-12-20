@@ -5,7 +5,7 @@ import { interval, map } from 'rxjs';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
-import { questsIcon } from 'assets/images/icons/menu';
+import { QuestsIcon } from 'assets/images/icons/menu';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance } from 'network/shapes/Item';
 import {
@@ -200,7 +200,7 @@ export function registerQuestsModal() {
         <ModalWrapper
           id='quests'
           header={[
-            <ModalHeader key='header' title='Quests' icon={questsIcon} />,
+            <ModalHeader key='header' title='Quests' icon={QuestsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           footer={

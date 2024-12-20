@@ -1,25 +1,39 @@
-import chatIcon from './chat.png';
-import helpIcon from './help.png';
-import inventoryIcon from './inventory.png';
-import kamiIcon from './kami.png';
-import mapIcon from './map.png';
-import moreIcon from './more.png';
-import operatorIcon from './operator.png';
-import questsIcon from './quests.png';
-import resetIcon from './reset.png';
-import settingsIcon from './settings.png';
-import socialIcon from './social.png';
+import ChatIcon from './chat.png';
+import HelpIcon from './help.png';
+import InventoryIcon from './inventory.png';
+import KamiIcon from './kami.png';
+import MapIcon from './map.png';
+import MoreIcon from './more.png';
+import OperatorIcon from './operator.png';
+import QuestsIcon from './quests.png';
+import ResetIcon from './reset.png';
+import SettingsIcon from './settings.png';
+import SocialIcon from './social.png';
 
 export {
-  chatIcon,
-  helpIcon,
-  inventoryIcon,
-  kamiIcon,
-  mapIcon,
-  moreIcon,
-  operatorIcon,
-  questsIcon,
-  resetIcon,
-  settingsIcon,
-  socialIcon,
+  ChatIcon,
+  HelpIcon,
+  InventoryIcon,
+  KamiIcon,
+  MapIcon,
+  MoreIcon,
+  OperatorIcon,
+  QuestsIcon,
+  ResetIcon,
+  SettingsIcon,
+  SocialIcon,
+};
+
+export const MenuIcons = {
+  chat: ChatIcon,
+  help: HelpIcon,
+  inventory: InventoryIcon,
+  kami: KamiIcon,
+  map: MapIcon,
+  more: MoreIcon,
+  operator: OperatorIcon,
+  quests: QuestsIcon,
+  reset: ResetIcon,
+  settings: SettingsIcon,
+  social: SocialIcon,
 };

@@ -5,7 +5,7 @@ import { useLocalStorage } from 'usehooks-ts';
 
 import { FarcasterConnect, InputSingleTextForm } from 'app/components/library';
 import { useAccount } from 'app/stores';
-import { chatIcon } from 'assets/images/icons/actions';
+import { ChatIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { ActionSystem } from 'network/systems';
 import {
@@ -107,7 +107,7 @@ export const InputRow = (props: Props) => {
         onSubmit={onSubmit}
         disabled={!isAuthorized}
         hasButton={isAuthorized}
-        buttonIcon={chatIcon}
+        buttonIcon={ChatIcon}
       />
       {!isAuthorized && (
         <FarcasterConnect account={account} actionSystem={actionSystem} size={2.5} />

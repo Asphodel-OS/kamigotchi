@@ -8,7 +8,7 @@ import {
   onCooldown,
 } from 'app/cache/kami';
 import { IconListButton } from 'app/components/library';
-import { liquidateIcon } from 'assets/images/icons/actions';
+import { LiquidateIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
 import { Tooltip } from '../base';
 
@@ -31,7 +31,7 @@ export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Fun
     <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
       <IconListButton
         key='liquidate-button'
-        img={liquidateIcon}
+        img={LiquidateIcon}
         options={actionOptions}
         disabled={actionOptions.length == 0}
       />

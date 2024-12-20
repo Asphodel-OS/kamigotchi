@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { settingsIcon } from 'assets/images/icons/menu';
+import { SettingsIcon } from 'assets/images/icons/menu';
 
 import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { Account } from './Account';
@@ -63,7 +63,7 @@ export function registerSettingsModal() {
       return (
         <ModalWrapper
           id='settings'
-          header={<ModalHeader title='Settings' icon={settingsIcon} />}
+          header={<ModalHeader title='Settings' icon={SettingsIcon} />}
           canExit
           truncate
         >

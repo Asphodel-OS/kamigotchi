@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { canHarvest, isResting, onCooldown } from 'app/cache/kami';
 import { IconListButton, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { harvestIcon } from 'assets/images/icons/actions';
+import { HarvestIcon } from 'assets/images/icons/actions';
 import { rooms } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
@@ -121,7 +121,7 @@ export const Banner = (props: Props) => {
       <Tooltip text={[getDisabledReason(kamis)]} grow>
         <IconListButton
           key={`harvest-add`}
-          img={harvestIcon}
+          img={HarvestIcon}
           options={actionOptions}
           text='Add Kami to Node'
           disabled={options.length == 0 || account.roomIndex !== node.roomIndex}

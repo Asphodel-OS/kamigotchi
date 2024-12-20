@@ -14,7 +14,7 @@ import {
 } from 'app/cache/kami';
 import { KamiCard } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
+import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { getRateDisplay } from 'utils/rates';
@@ -117,8 +117,8 @@ export const Kards = (props: Props) => {
 
   // Choose and return the action button to display
   const DisplayedAction = (kami: Kami, account: Account) => {
-    let icon = feedIcon;
-    if (isDead(kami)) icon = reviveIcon;
+    let icon = FeedIcon;
+    if (isDead(kami)) icon = ReviveIcon;
     return display.UseItemButton(kami, account, icon);
   };
 

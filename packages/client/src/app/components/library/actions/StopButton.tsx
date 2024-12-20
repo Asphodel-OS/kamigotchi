@@ -1,5 +1,5 @@
 import { calcCooldown, isHarvesting, isStarving } from 'app/cache/kami';
-import { stopIcon } from 'assets/images/icons/actions';
+import { StopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { IconButton, Tooltip } from '../base';
@@ -15,7 +15,7 @@ export const StopButton = (kami: Kami, account: Account, triggerAction: Function
     <Tooltip key='stop-tooltip' text={[tooltip]}>
       <IconButton
         key='stop-button'
-        img={stopIcon}
+        img={StopIcon}
         onClick={() => triggerAction(kami)}
         disabled={disabled}
       />

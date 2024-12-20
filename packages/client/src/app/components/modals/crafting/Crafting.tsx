@@ -6,7 +6,7 @@ import { calcCurrentStamina, getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { craftIcon } from 'assets/images/icons/actions';
+import { CraftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance } from 'network/shapes/Item';
@@ -116,7 +116,7 @@ export function registerCraftingModal() {
       return (
         <ModalWrapper
           id='crafting'
-          header={<ModalHeader title='Crafting' icon={craftIcon} />}
+          header={<ModalHeader title='Crafting' icon={CraftIcon} />}
           canExit
           width='min-content'
         >

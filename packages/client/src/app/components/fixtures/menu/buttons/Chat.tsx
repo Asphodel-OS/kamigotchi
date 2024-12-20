@@ -1,5 +1,5 @@
 import { Modals } from 'app/stores';
-import { chatIcon } from 'assets/images/icons/menu';
+import { ChatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 export const ChatMenuButton = () => {
@@ -19,7 +19,7 @@ export const ChatMenuButton = () => {
   return (
     <MenuButton
       id='chat-button'
-      image={chatIcon}
+      image={ChatIcon}
       tooltip='Chat'
       targetModal='chat'
       hideModals={modalsToHide}

@@ -21,7 +21,7 @@ export { CopyButton } from './CopyButton';
 export { EmptyText } from './EmptyText';
 export { FarcasterConnect } from './FarcasterConnect';
 export { GasGauge } from './GasGauge';
-export { HelpIcon } from './HelpIcon';
+export { HelpChip } from './HelpChip';
 export { InputSingleNumberForm } from './InputSingleNumberForm';
 export { InputSingleTextForm } from './InputSingleTextForm';
 export { ItemIconHorizontal } from './ItemIconHorizontal';

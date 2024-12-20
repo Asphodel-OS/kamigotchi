@@ -1,5 +1,5 @@
 import { Modals, useAccount, useSelected } from 'app/stores';
-import { operatorIcon } from 'assets/images/icons/menu';
+import { OperatorIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 export const AccountMenuButton = () => {
@@ -22,7 +22,7 @@ export const AccountMenuButton = () => {
   return (
     <MenuButton
       id='account_button'
-      image={operatorIcon}
+      image={OperatorIcon}
       tooltip={`Account`}
       targetModal='account'
       hideModals={modalsToHide}

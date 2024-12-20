@@ -5,7 +5,7 @@ import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
 import { useAccount } from 'app/stores';
-import { kamiIcon } from 'assets/images/icons/menu';
+import { KamiIcon } from 'assets/images/icons/menu';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Kards } from './Kards';
@@ -69,7 +69,7 @@ export function registerPartyModal() {
       return (
         <ModalWrapper
           id='party'
-          header={<ModalHeader title='Party' icon={kamiIcon} />}
+          header={<ModalHeader title='Party' icon={KamiIcon} />}
           canExit
           truncate
         >

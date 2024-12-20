@@ -1,4 +1,4 @@
-import { kamiIcon } from 'assets/images/icons/menu';
+import { KamiIcon } from 'assets/images/icons/menu';
 import { StatIcons } from 'constants/stats';
 
 export type TabType = 'MINT' | 'REROLL' | 'REVEAL';
@@ -13,8 +13,8 @@ export interface Sort {
 }
 
 export const DefaultSorts: Sort[] = [
-  { field: 'INDEX', icon: kamiIcon, ascending: true },
-  { field: 'LEVEL', icon: kamiIcon, ascending: true },
+  { field: 'INDEX', icon: KamiIcon, ascending: true },
+  { field: 'LEVEL', icon: KamiIcon, ascending: true },
   { field: 'HEALTH', icon: StatIcons.health, ascending: false },
   { field: 'POWER', icon: StatIcons.power, ascending: false },
   { field: 'VIOLENCE', icon: StatIcons.violence, ascending: false },
@@ -30,7 +30,7 @@ export interface Filter {
 }
 
 export const DefaultFilters: Filter[] = [
-  { field: 'LEVEL', icon: kamiIcon, min: 1, max: 30 },
+  { field: 'LEVEL', icon: KamiIcon, min: 1, max: 30 },
   { field: 'HEALTH', icon: StatIcons.health, min: 50, max: 300 },
   { field: 'POWER', icon: StatIcons.power, min: 10, max: 50 },
   { field: 'VIOLENCE', icon: StatIcons.violence, min: 10, max: 50 },

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { helpIcon } from 'assets/images/icons/menu';
+import { HelpIcon } from 'assets/images/icons/menu';
 import { Tooltip } from './base';
 
 interface Props {
@@ -8,10 +8,10 @@ interface Props {
   size?: string;
 }
 
-export const HelpIcon = (props: Props) => {
+export const HelpChip = (props: Props) => {
   return (
     <Tooltip text={props.tooltip}>
-      <Icon size={props.size ?? 'medium'} src={helpIcon} />
+      <Icon size={props.size ?? 'medium'} src={HelpIcon} />
     </Tooltip>
   );
 };

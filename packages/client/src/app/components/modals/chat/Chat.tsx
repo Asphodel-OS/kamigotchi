@@ -4,7 +4,7 @@ import { interval, map } from 'rxjs';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { chatIcon } from 'assets/images/icons/menu';
+import { ChatIcon } from 'assets/images/icons/menu';
 import moment from 'moment';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { InputRow } from './InputRow';
@@ -65,7 +65,7 @@ export function registerChatModal() {
       return (
         <ModalWrapper
           id='chat'
-          header={<ModalHeader title='Chat' icon={chatIcon} />}
+          header={<ModalHeader title='Chat' icon={ChatIcon} />}
           footer={<InputRow account={account} actions={{ pushCast }} actionSystem={actions} />}
           canExit
         >
