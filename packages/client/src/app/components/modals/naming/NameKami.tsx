@@ -86,7 +86,7 @@ export function registerNameKamiModal() {
       return (
         <ModalWrapper id='nameKami' canExit>
           <Title>Name your Kami</Title>
-          <Description>A Kami can only be named once for free.</Description>
+          <Description>A Kami can only be freely renamed once.</Description>
           <Description>Choose wisely.</Description>
           <Form>
             <InputSingleTextForm
