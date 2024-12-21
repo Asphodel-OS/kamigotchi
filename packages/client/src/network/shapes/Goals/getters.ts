@@ -22,8 +22,8 @@ export const getAllGoals = (world: World, components: Components): Goal[] => {
 };
 
 export const getGoalByIndex = (world: World, components: Components, index: number): Goal => {
-  const entityIndex = getGoalEntityIndex(world, index);
-  if (!entityIndex)
+  const entity = getGoalEntityIndex(world, index);
+  if (!entity)
     return {
       id: '1' as EntityID,
       index: index,
@@ -37,7 +37,7 @@ export const getGoalByIndex = (world: World, components: Components, index: numb
       complete: false,
     };
 
-  return getGoal(world, components, entityIndex);
+  return getGoal(world, components, entity);
 };
 
 export const getContributions = (
@@ -54,9 +54,9 @@ export const getContributionByHash = (
   goal: Goal,
   account: Account
 ): Contribution => {
-  const entityIndex = getContributionEntityIndex(world, goal.id, account.id);
+  const entity = getContributionEntityIndex(world, goal.id, account.id);
 
-  if (!entityIndex) return { account: account, claimed: false, score: 0 };
+  if (!entity) return { account: account, claimed: false, score: 0 };
 
-  return getContribution(components, entityIndex, account);
+  return getContribution(components, entity, account);
 };

@@ -33,7 +33,7 @@ export const getBaseNode = (
   return {
     ObjectType: 'NODE',
     id: world.entities[entity],
-    entity: entity,
+    entity,
     affinity: getComponentValue(Affinity, entity)?.value as string,
     index: getComponentValue(NodeIndex, entity)?.value as number,
     name: getComponentValue(Name, entity)?.value as string,

@@ -5,7 +5,7 @@ import { Allo, getAllo } from '.';
 import { queryChildrenOf } from '../utils';
 
 export const getAllosOf = (world: World, components: Components, parentID: EntityID): Allo[] => {
-  return queryChildrenOf(components, parentID).map((entityIndex: EntityIndex) =>
-    getAllo(world, components, entityIndex)
+  return queryChildrenOf(components, parentID).map((entity: EntityIndex) =>
+    getAllo(world, components, entity)
   );
 };

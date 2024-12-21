@@ -14,18 +14,18 @@ export interface Allo {
 }
 
 // Get a Allo Registry object
-export const getAllo = (world: World, components: Components, entityIndex: EntityIndex): Allo => {
+export const getAllo = (world: World, components: Components, entity: EntityIndex): Allo => {
   const { Value, Index, Type } = components;
 
-  const type = getComponentValue(Type, entityIndex)?.value || ('' as string);
-  const rawValue = getComponentValue(Value, entityIndex)?.value || (0 as number);
+  const type = getComponentValue(Type, entity)?.value || ('' as string);
+  const rawValue = getComponentValue(Value, entity)?.value || (0 as number);
 
   return {
-    id: world.entities[entityIndex],
+    id: world.entities[entity],
     type: type,
-    index: getComponentValue(Index, entityIndex)?.value || (0 as number),
+    index: getComponentValue(Index, entity)?.value || (0 as number),
     value: rawValue * 1,
-    droptable: type.includes('ITEM_DROPTABLE') ? getDroptable(components, entityIndex) : undefined,
+    droptable: type.includes('ITEM_DROPTABLE') ? getDroptable(components, entity) : undefined,
     stat: type === 'STAT' ? getStatFromUint(BigInt(rawValue)) : undefined,
   };
 };

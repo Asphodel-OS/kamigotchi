@@ -40,7 +40,7 @@ export function createDecodeNetworkComponentUpdate<C extends Components>(
   mappings: Mappings<C>
 ): (update: NetworkComponentUpdate) => DecodedNetworkComponentUpdate | undefined {
   return (update: NetworkComponentUpdate) => {
-    const entityIndex =
+    const entity =
       world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
     const componentKey = mappings[update.component];
     if (!componentKey) {
@@ -53,7 +53,7 @@ export function createDecodeNetworkComponentUpdate<C extends Components>(
 
     return {
       ...update,
-      entity: entityIndex,
+      entity,
       component: components[componentKey] as Component<Schema>,
     };
   };
@@ -167,7 +167,7 @@ export function applyNetworkUpdates<C extends Components>(
       if (isNetworkComponentUpdateEvent<C>(update)) {
         if (update.lastEventInTx) txReduced$.next(update.txHash);
 
-        const entityIndex =
+        const entity =
           world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
         const componentKey = mappings[update.component];
         if (!componentKey) {
@@ -177,9 +177,9 @@ export function applyNetworkUpdates<C extends Components>(
 
         if (update.value === undefined) {
           // undefined value means component removed
-          removeComponent(components[componentKey] as Component<Schema>, entityIndex);
+          removeComponent(components[componentKey] as Component<Schema>, entity);
         } else {
-          setComponent(components[componentKey] as Component<Schema>, entityIndex, update.value);
+          setComponent(components[componentKey] as Component<Schema>, entity, update.value);
         }
       } else if (decodeAndEmitSystemCall && isSystemCallEvent(update)) {
         decodeAndEmitSystemCall(update);

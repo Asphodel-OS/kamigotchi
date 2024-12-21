@@ -24,18 +24,18 @@ export function createNotificationSystem<M = undefined>(world: World) {
    */
   function add(toAdd: NotificationData): EntityIndex {
     // Set the action component
-    const entityIndex = createEntity(world, undefined, {
+    const entity = createEntity(world, undefined, {
       id: toAdd.id,
     });
 
-    setComponent(Notification, entityIndex, {
+    setComponent(Notification, entity, {
       title: toAdd.title,
       description: toAdd.description,
       time: toAdd.time.toString(),
       modal: toAdd.modal,
     });
 
-    return entityIndex;
+    return entity;
   }
 
   /**

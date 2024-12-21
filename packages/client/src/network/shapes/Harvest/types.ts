@@ -37,7 +37,7 @@ export const getHarvest = (
   const { State, LastTime, ResetTime, StartTime, Value } = components;
   let harvest: Harvest = {
     id: world.entities[entity],
-    entity: entity,
+    entity,
     rate: 0,
     balance: ((getComponentValue(Value, entity)?.value as number) || 0) * 1,
     state: getComponentValue(State, entity)?.value as string,

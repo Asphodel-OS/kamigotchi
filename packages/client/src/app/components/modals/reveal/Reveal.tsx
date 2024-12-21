@@ -104,9 +104,9 @@ export function registerRevealModal() {
       // UTILS
 
       const getCommitState = (id: EntityID): string => {
-        const entityIndex = world.entityToIndex.get(id);
-        if (!entityIndex) return 'EXPIRED';
-        const state = getComponentValue(State, entityIndex)?.value as string;
+        const entity = world.entityToIndex.get(id);
+        if (!entity) return 'EXPIRED';
+        const state = getComponentValue(State, entity)?.value as string;
         return state ?? 'EXPIRED';
       };
 

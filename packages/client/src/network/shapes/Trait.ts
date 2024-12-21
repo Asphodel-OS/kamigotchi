@@ -57,10 +57,10 @@ export const getTraitByIndex = (
   index: number,
   type: string
 ): Trait => {
-  const entityIndex = getRegistryEntity(world, index, type);
-  if (!entityIndex) return NullTrait;
+  const entity = getRegistryEntity(world, index, type);
+  if (!entity) return NullTrait;
 
-  return getTrait(world, components, entityIndex);
+  return getTrait(world, components, entity);
 };
 
 // get all the Traits from the registry

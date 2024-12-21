@@ -20,7 +20,7 @@ export const get = (world: World, components: Components, entity: EntityIndex) =
 
   return {
     id: world.entities[entity],
-    entityIndex: entity,
+    entity,
     balance: getValue(components, entity),
     item: getItem(world, components, itemEntity),
   };

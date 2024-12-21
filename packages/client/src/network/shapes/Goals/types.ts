@@ -46,36 +46,36 @@ export interface GoalReward extends Allo {
 ///////////////////
 // SHAPES
 
-export const getGoal = (world: World, components: Components, entityIndex: EntityIndex): Goal => {
+export const getGoal = (world: World, components: Components, entity: EntityIndex): Goal => {
   const { Value, Description, Index, IsComplete, Name, RoomIndex } = components;
-  const goalID = world.entities[entityIndex];
-  const goalIndex = getComponentValue(Index, entityIndex)?.value || (0 as number);
+  const goalID = world.entities[entity];
+  const goalIndex = getComponentValue(Index, entity)?.value || (0 as number);
 
   return {
     id: goalID,
     index: goalIndex,
-    name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    description: getComponentValue(Description, entityIndex)?.value || ('' as string),
-    currBalance: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
+    name: getComponentValue(Name, entity)?.value || ('' as string),
+    description: getComponentValue(Description, entity)?.value || ('' as string),
+    currBalance: (getComponentValue(Value, entity)?.value || (0 as number)) * 1,
     objective: getCondition(world, components, getObjEntityIndex(world, goalID)),
     requirements: getGoalRequirements(world, components, goalIndex),
     tiers: getGoalTiers(world, components, goalIndex),
-    complete: hasComponent(IsComplete, entityIndex) || (false as boolean),
-    room: (getComponentValue(RoomIndex, entityIndex)?.value || (0 as number)) * 1,
+    complete: hasComponent(IsComplete, entity) || (false as boolean),
+    room: (getComponentValue(RoomIndex, entity)?.value || (0 as number)) * 1,
   };
 };
 
 export const getContribution = (
   components: Components,
-  entityIndex: EntityIndex,
+  entity: EntityIndex,
   account: Account
 ): Contribution => {
   const { Value, IsComplete } = components;
 
   return {
     account: account,
-    claimed: getComponentValue(IsComplete, entityIndex)?.value || (false as boolean),
-    score: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
+    claimed: getComponentValue(IsComplete, entity)?.value || (false as boolean),
+    score: (getComponentValue(Value, entity)?.value || (0 as number)) * 1,
   };
 };
 
@@ -86,13 +86,13 @@ const getGoalTiers = (world: World, components: Components, goalIndex: number): 
   return tiers.sort((a, b) => a.cutoff - b.cutoff);
 };
 
-const getTier = (world: World, components: Components, entityIndex: EntityIndex) => {
+const getTier = (world: World, components: Components, entity: EntityIndex) => {
   const { Name, Value } = components;
-  const id = world.entities[entityIndex];
+  const id = world.entities[entity];
   return {
     id: id,
-    name: getComponentValue(Name, entityIndex)?.value || ('' as string),
-    cutoff: (getComponentValue(Value, entityIndex)?.value || (0 as number)) * 1,
+    name: getComponentValue(Name, entity)?.value || ('' as string),
+    cutoff: (getComponentValue(Value, entity)?.value || (0 as number)) * 1,
     rewards: getTierRewards(world, components, id),
   };
 };

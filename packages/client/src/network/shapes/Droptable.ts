@@ -54,16 +54,16 @@ export const getDTLogByHash = (
   holderID: EntityID,
   dtID: EntityID
 ): DTLog => {
-  const entityIndex = getLogEntityIndex(world, holderID, dtID);
-  if (!entityIndex) return NullDTLog;
+  const entity = getLogEntityIndex(world, holderID, dtID);
+  if (!entity) return NullDTLog;
 
   const { Values } = components;
-  const amounts = getComponentValue(Values, entityIndex)?.value as number[] | [];
+  const amounts = getComponentValue(Values, entity)?.value as number[] | [];
 
   const droptable = getDroptable(components, world.entityToIndex.get(dtID) as EntityIndex);
 
   return {
-    id: world.entities[entityIndex],
+    id: world.entities[entity],
     results: getDTResults(world, components, droptable, amounts),
   };
 };
@@ -111,10 +111,8 @@ export const queryDTCommits = (
   return commits.map((commit) => {
     return {
       ...commit,
-      parentID: formatEntityID(
-        (getComponentValue(SourceID, commit.entityIndex)?.value || 0).toString()
-      ),
-      rolls: (getComponentValue(Value, commit.entityIndex)?.value as number) * 1,
+      parentID: formatEntityID((getComponentValue(SourceID, commit.entity)?.value || 0).toString()),
+      rolls: (getComponentValue(Value, commit.entity)?.value as number) * 1,
     };
   });
 };

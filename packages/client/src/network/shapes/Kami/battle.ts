@@ -8,14 +8,10 @@ export interface Battles {
   deaths: KillLog[];
 }
 
-// get all kill logs featuring a Kami (by its entityIndex)
-export const getBattles = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex
-): Battles => {
+// get all kill logs featuring a Kami (by its entity)
+export const getBattles = (world: World, components: Components, entity: EntityIndex): Battles => {
   return {
-    kills: getKillsForKiller(world, components, entityIndex),
-    deaths: getKillsForVictim(world, components, entityIndex),
+    kills: getKillsForKiller(world, components, entity),
+    deaths: getKillsForVictim(world, components, entity),
   };
 };

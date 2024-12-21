@@ -29,7 +29,7 @@ export const Catalog = (props: Props) => {
       <Items>
         {listings.map((l) => (
           <CatalogRow
-            key={l.entityIndex}
+            key={l.entity}
             listing={l}
             cart={cart}
             toggle={() => toggleListing(l.item.index)}

@@ -8,23 +8,23 @@ import { queryByIndex } from './queries';
 import { BaseNode, Node, getBaseNode, getNode } from './types';
 
 export const getBaseByIndex = (world: World, components: Components, index: number): BaseNode => {
-  const entityIndex = queryByIndex(world, index);
-  if (!entityIndex) return NullNode;
-  return getBaseNode(world, components, entityIndex);
+  const entity = queryByIndex(world, index);
+  if (!entity) return NullNode;
+  return getBaseNode(world, components, entity);
 };
 
 export const getByIndex = (world: World, components: Components, index: number): Node => {
-  const entityIndex = queryByIndex(world, index);
-  if (!entityIndex) return NullNode;
-  return getNode(world, components, entityIndex);
+  const entity = queryByIndex(world, index);
+  if (!entity) return NullNode;
+  return getNode(world, components, entity);
 };
 
 export const getAll = (world: World, components: Components): Node[] => {
   const { EntityType } = components;
   const entityIndices = Array.from(runQuery([HasValue(EntityType, { value: 'NODE' })]));
 
-  return entityIndices.map((entityIndex) => {
-    return getNode(world, components, entityIndex);
+  return entityIndices.map((entity) => {
+    return getNode(world, components, entity);
   });
 };
 

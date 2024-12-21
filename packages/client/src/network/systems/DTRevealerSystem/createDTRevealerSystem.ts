@@ -63,9 +63,9 @@ export function createDTRevealerSystem(
       commits.push(id);
       revealingCommits.add(id);
 
-      let entityIndex = world.entityToIndex.get(id) as EntityIndex;
-      if (!entityIndex) entityIndex = createEntity(world, undefined, { id: id });
-      setComponent(State, entityIndex, { value: 'REVEALING' });
+      let entity = world.entityToIndex.get(id) as EntityIndex;
+      if (!entity) entity = createEntity(world, undefined, { id: id });
+      setComponent(State, entity, { value: 'REVEALING' });
     });
 
     return commits;
@@ -78,9 +78,9 @@ export function createDTRevealerSystem(
       queuedCommits.delete(commits[i]);
       revealingCommits.add(commits[0]);
 
-      let entityIndex = world.entityToIndex.get(commits[i]) as EntityIndex;
-      if (!entityIndex) entityIndex = createEntity(world, undefined, { id: commits[i] });
-      setComponent(State, entityIndex, { value: 'REVEALING' });
+      let entity = world.entityToIndex.get(commits[i]) as EntityIndex;
+      if (!entity) entity = createEntity(world, undefined, { id: commits[i] });
+      setComponent(State, entity, { value: 'REVEALING' });
     }
   }
 

@@ -11,11 +11,11 @@ import { getData } from '../../shapes/utils';
 export const getCoinStats = (world: World, components: Components, limit = 200, flatten = true) => {
   const { AccountIndex, Name } = components;
   const entities = queryAll(components);
-  const raw = entities.map((entityIndex) => {
-    const id = world.entities[entityIndex];
+  const raw = entities.map((entity) => {
+    const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-      name: getComponentValue(Name, entityIndex)?.value as string,
+      index: getComponentValue(AccountIndex, entity)?.value as number,
+      name: getComponentValue(Name, entity)?.value as string,
       coin: getData(world, components, id, 'ITEM_TOTAL', MUSU_INDEX),
     };
   });
@@ -39,11 +39,11 @@ export const getItemStats = (
 ) => {
   const { AccountIndex, Name } = components;
   const entities = queryAll(components);
-  const raw = entities.map((entityIndex) => {
-    const id = world.entities[entityIndex];
+  const raw = entities.map((entity) => {
+    const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-      name: getComponentValue(Name, entityIndex)?.value as string,
+      index: getComponentValue(AccountIndex, entity)?.value as number,
+      name: getComponentValue(Name, entity)?.value as string,
       amt: getItemBalance(world, components, id, index),
     };
   });
@@ -63,11 +63,11 @@ export const getItemStats = (
 export const getKillStats = (world: World, components: Components, limit = 200, flatten = true) => {
   const { AccountIndex, Name } = components;
   const entities = queryAll(components);
-  const raw = entities.map((entityIndex) => {
-    const id = world.entities[entityIndex];
+  const raw = entities.map((entity) => {
+    const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-      name: getComponentValue(Name, entityIndex)?.value as string,
+      index: getComponentValue(AccountIndex, entity)?.value as number,
+      name: getComponentValue(Name, entity)?.value as string,
       kills: getData(world, components, id, 'LIQUIDATE_TOTAL', 0),
     };
   });
@@ -86,11 +86,11 @@ export const getOverallStats = (world: World, components: Components, limit = 20
   const { AccountIndex, Name } = components;
   const entities = queryAll(components);
   const raw = entities
-    .map((entityIndex) => {
-      const id = world.entities[entityIndex];
+    .map((entity) => {
+      const id = world.entities[entity];
       return {
-        index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-        name: getComponentValue(Name, entityIndex)?.value as string,
+        index: getComponentValue(AccountIndex, entity)?.value as number,
+        name: getComponentValue(Name, entity)?.value as string,
         rep: getReputation(world, components, id, 1),
         musu: getItemBalance(world, components, id, 1),
         stone: getItemBalance(world, components, id, 11002),
@@ -114,11 +114,11 @@ export const getReputationStats = (
 ) => {
   const { AccountIndex, Name } = components;
   const entities = queryAll(components);
-  const raw = entities.map((entityIndex) => {
-    const id = world.entities[entityIndex];
+  const raw = entities.map((entity) => {
+    const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-      name: getComponentValue(Name, entityIndex)?.value as string,
+      index: getComponentValue(AccountIndex, entity)?.value as number,
+      name: getComponentValue(Name, entity)?.value as string,
       reputation: getReputation(world, components, id, 1), // get agency rep
     };
   });

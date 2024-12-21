@@ -48,8 +48,8 @@ export function createActionSystem<M = undefined>(
     }
 
     // Set the action component
-    const entityIndex = createEntity(world, undefined, { id: request.id });
-    setComponent(Action, entityIndex, {
+    const entity = createEntity(world, undefined, { id: request.id });
+    setComponent(Action, entity, {
       description: request.description,
       action: request.action,
       params: request.params ?? [],
@@ -62,10 +62,10 @@ export function createActionSystem<M = undefined>(
     });
 
     // Store the request with the Action System and execute it
-    request.index = entityIndex;
-    requests.set(entityIndex, request);
+    request.index = entity;
+    requests.set(entity, request);
     execute(request);
-    return entityIndex;
+    return entity;
   }
 
   /**

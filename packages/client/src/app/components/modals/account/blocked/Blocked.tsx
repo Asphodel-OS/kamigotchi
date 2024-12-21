@@ -23,7 +23,7 @@ export const Blocked = (props: Props) => {
           description={['hate crime enthusiast']}
           actions={
             <ActionListButton
-              id={`friendship-options-${friendship.entityIndex}`}
+              id={`friendship-options-${friendship.entity}`}
               text=''
               options={[
                 {

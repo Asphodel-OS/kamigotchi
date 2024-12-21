@@ -26,8 +26,8 @@ export const getHolderSkillLevel = (
 // SHAPES
 
 export const getRegistrySkills = (world: World, components: Components): Skill[] => {
-  return querySkillsX(components, { registry: true }).map((entityIndex) =>
-    getSkill(world, components, entityIndex, { bonuses: true, requirements: true })
+  return querySkillsX(components, { registry: true }).map((entity) =>
+    getSkill(world, components, entity, { bonuses: true, requirements: true })
   );
 };
 
@@ -37,8 +37,8 @@ export const getHolderSkills = (
   holder: EntityID,
   options?: Options
 ): Skill[] => {
-  return queryHolderSkills(components, holder).map((entityIndex) =>
-    getSkill(world, components, entityIndex, options)
+  return queryHolderSkills(components, holder).map((entity) =>
+    getSkill(world, components, entity, options)
   );
 };
 

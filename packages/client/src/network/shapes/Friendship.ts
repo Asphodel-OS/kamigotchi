@@ -14,7 +14,7 @@ import { Account, getAccountByID } from './Account';
 
 export interface Friendship {
   id: EntityID;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   account: Account;
   target: Account;
   state: 'REQUEST' | 'FRIEND' | 'BLOCKED';
@@ -23,7 +23,7 @@ export interface Friendship {
 export const getFriendship = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex,
+  entity: EntityIndex,
   accountOptions?: any
 ): Friendship => {
   const { SourceID, TargetID, State } = components;
@@ -31,23 +31,23 @@ export const getFriendship = (
   const account = getAccountByID(
     world,
     components,
-    formatEntityID(getComponentValue(SourceID, entityIndex)?.value ?? ''),
+    formatEntityID(getComponentValue(SourceID, entity)?.value ?? ''),
     accountOptions
   );
 
   const target = getAccountByID(
     world,
     components,
-    formatEntityID(getComponentValue(TargetID, entityIndex)?.value ?? ''),
+    formatEntityID(getComponentValue(TargetID, entity)?.value ?? ''),
     accountOptions
   );
 
   return {
-    id: world.entities[entityIndex],
-    entityIndex: entityIndex,
+    id: world.entities[entity],
+    entity,
     account: account,
     target: target,
-    state: getComponentValue(State, entityIndex)?.value as 'REQUEST' | 'FRIEND' | 'BLOCKED',
+    state: getComponentValue(State, entity)?.value as 'REQUEST' | 'FRIEND' | 'BLOCKED',
   };
 };
 

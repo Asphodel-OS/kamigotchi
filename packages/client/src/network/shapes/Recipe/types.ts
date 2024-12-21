@@ -16,10 +16,10 @@ export const getAllRecipes = (world: World, components: Components): Recipe[] =>
 };
 
 export const getRecipeByIndex = (world: World, components: Components, index: number): Recipe => {
-  const entityIndex = getRegEntity(world, index);
-  if (!entityIndex) return NullRecipe;
+  const entity = getRegEntity(world, index);
+  if (!entity) return NullRecipe;
 
-  return getRecipe(world, components, entityIndex, index);
+  return getRecipe(world, components, entity, index);
 };
 
 /////////////////
@@ -28,7 +28,7 @@ export const getRecipeByIndex = (world: World, components: Components, index: nu
 export interface Recipe {
   id: EntityID;
   index: number;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   inputs: Ingredient[];
   outputs: Ingredient[];
   experience: number;
@@ -47,22 +47,22 @@ export interface Ingredient {
 export const getRecipe = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex,
+  entity: EntityIndex,
   recipeIndex?: number
 ): Recipe => {
   const { Experience, RecipeIndex, Stamina } = components;
 
-  recipeIndex = recipeIndex ?? (getComponentValue(RecipeIndex, entityIndex)?.value as number);
+  recipeIndex = recipeIndex ?? (getComponentValue(RecipeIndex, entity)?.value as number);
 
   let recipe: Recipe = {
-    id: world.entities[entityIndex],
+    id: world.entities[entity],
     index: recipeIndex,
-    entityIndex,
+    entity,
     inputs: getIngredients(world, components, getInputEntity(world, recipeIndex)),
     outputs: getIngredients(world, components, getOutputEntity(world, recipeIndex)),
-    experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
+    experience: (getComponentValue(Experience, entity)?.value as number) * 1,
     cost: {
-      stamina: getStat(entityIndex, Stamina).sync * 1,
+      stamina: getStat(entity, Stamina).sync * 1,
     },
     requirements: queryConditionsOf(world, components, 'recipe.requirement', recipeIndex),
   };
@@ -73,13 +73,13 @@ export const getRecipe = (
 export const getIngredients = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex | undefined
+  entity: EntityIndex | undefined
 ): Ingredient[] => {
-  if (!entityIndex) return [];
+  if (!entity) return [];
 
   const { Keys, Values } = components;
-  const keys = getComponentValue(Keys, entityIndex)?.value as number[] | [];
-  const values = getComponentValue(Values, entityIndex)?.value as number[] | [];
+  const keys = getComponentValue(Keys, entity)?.value as number[] | [];
+  const values = getComponentValue(Values, entity)?.value as number[] | [];
 
   return keys.map((itemIndex, i) => getIngredient(world, components, itemIndex, values[i] * 1));
 };
@@ -100,7 +100,7 @@ const getIngredient = (
 export const NullRecipe: Recipe = {
   id: '0' as EntityID,
   index: 0,
-  entityIndex: 0 as EntityIndex,
+  entity: 0 as EntityIndex,
   inputs: [],
   outputs: [],
   experience: 0,

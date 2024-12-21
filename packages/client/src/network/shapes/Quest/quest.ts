@@ -13,7 +13,7 @@ import { getRewards } from './reward';
 export interface BaseQuest {
   id: EntityID;
   index: number;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   registryEntityIndex: EntityIndex;
   name: string;
   description: string;
@@ -31,25 +31,21 @@ export interface Quest extends BaseQuest {
 }
 
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
-export const get = (world: World, components: Components, entityIndex: EntityIndex): Quest => {
-  const base = getBase(world, components, entityIndex);
+export const get = (world: World, components: Components, entity: EntityIndex): Quest => {
+  const base = getBase(world, components, entity);
   return populate(world, components, base);
 };
 
 // get a lightweight base quest without additional details
-export const getBase = (
-  world: World,
-  components: Components,
-  entityIndex: EntityIndex
-): BaseQuest => {
+export const getBase = (world: World, components: Components, entity: EntityIndex): BaseQuest => {
   const { IsRepeatable, Description, Name, QuestIndex, Time } = components;
-  const index = (getComponentValue(QuestIndex, entityIndex)?.value ?? 0) as number;
+  const index = (getComponentValue(QuestIndex, entity)?.value ?? 0) as number;
   const registryEntityIndex = query(components, { index: index, registry: true })[0];
 
   return {
-    id: world.entities[entityIndex],
+    id: world.entities[entity],
     index,
-    entityIndex,
+    entity,
     registryEntityIndex,
     name: getComponentValue(Name, registryEntityIndex)?.value ?? '',
     description: getComponentValue(Description, registryEntityIndex)?.value ?? '',
@@ -61,12 +57,12 @@ export const getBase = (
 // populate a BareQuest with all the details of a full Quest
 export const populate = (world: World, components: Components, base: BaseQuest): Quest => {
   const { IsComplete, StartTime } = components;
-  const entityIndex = base.entityIndex;
+  const entity = base.entity;
 
   return {
     ...base,
-    startTime: (getComponentValue(StartTime, entityIndex)?.value ?? 0) as number,
-    complete: hasComponent(IsComplete, entityIndex),
+    startTime: (getComponentValue(StartTime, entity)?.value ?? 0) as number,
+    complete: hasComponent(IsComplete, entity),
     requirements: getRequirements(world, components, base.index),
     objectives: getObjectives(world, components, base.index),
     rewards: getRewards(world, components, base.index),
@@ -79,17 +75,17 @@ export const populate = (world: World, components: Components, base: BaseQuest):
 export const getBaseByEntityIndex = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex
+  entity: EntityIndex
 ): BaseQuest => {
-  return getBase(world, components, entityIndex);
+  return getBase(world, components, entity);
 };
 
 export const getByEntityIndex = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex
+  entity: EntityIndex
 ): Quest => {
-  return get(world, components, entityIndex);
+  return get(world, components, entity);
 };
 
 // retrieves a list of Quest Objects from a list of their EntityIndices
@@ -106,7 +102,7 @@ export const getByIndex = (
   components: Components,
   index: number
 ): Quest | undefined => {
-  const entityIndex = query(components, { index: index, registry: true })[0];
-  if (!entityIndex) return;
-  return get(world, components, entityIndex);
+  const entity = query(components, { index: index, registry: true })[0];
+  if (!entity) return;
+  return get(world, components, entity);
 };

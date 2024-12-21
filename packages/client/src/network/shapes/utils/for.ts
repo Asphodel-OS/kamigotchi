@@ -14,10 +14,10 @@ export interface ForShapeOptions {
   kami?: Kami;
 }
 
-export const getFor = (components: Components, entityIndex: EntityIndex): ForType => {
+export const getFor = (components: Components, entity: EntityIndex): ForType => {
   const { For } = components;
 
-  const rawValue = getComponentValue(For, entityIndex)?.value;
+  const rawValue = getComponentValue(For, entity)?.value;
   if (!rawValue) return '';
 
   const value = rawValue.toString();

@@ -17,7 +17,7 @@ export const Friends = (props: Props) => {
   const Actions = (friendship: Friendship) => {
     return (
       <ActionListButton
-        id={`friendship-options-${friendship.entityIndex}`}
+        id={`friendship-options-${friendship.entity}`}
         text=''
         options={[
           {
@@ -35,7 +35,7 @@ export const Friends = (props: Props) => {
       {friendships.length > 0 ? (
         friendships.map((friendship) => (
           <AccountCard
-            key={friendship.entityIndex}
+            key={friendship.entity}
             account={friendship.target}
             description={['hi']}
             actions={Actions(friendship)}

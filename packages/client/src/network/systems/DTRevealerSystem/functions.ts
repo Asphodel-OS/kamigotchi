@@ -26,7 +26,7 @@ export async function notifyResult(
 ) {
   if (!commit) return;
 
-  await waitForRevealed(components, commit.entityIndex);
+  await waitForRevealed(components, commit.entity);
   const resultLog = getDTLogByHash(world, components, commit.holder, commit.parentID);
   sendResultNotif(notifications, commit.parentID, commit.rolls, resultLog);
 }

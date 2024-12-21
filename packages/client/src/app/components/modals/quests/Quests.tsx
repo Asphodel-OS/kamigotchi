@@ -49,14 +49,14 @@ export function registerQuestsModal() {
             inventory: true,
           });
 
-          const registry = queryRegistryQuests(components).map((entityIndex) =>
-            getBaseQuest(world, components, entityIndex)
+          const registry = queryRegistryQuests(components).map((entity) =>
+            getBaseQuest(world, components, entity)
           );
-          const completed = queryCompletedQuests(components, account.id).map((entityIndex) =>
-            getBaseQuest(world, components, entityIndex)
+          const completed = queryCompletedQuests(components, account.id).map((entity) =>
+            getBaseQuest(world, components, entity)
           );
-          const ongoing = queryOngoingQuests(components, account.id).map((entityIndex) =>
-            getBaseQuest(world, components, entityIndex)
+          const ongoing = queryOngoingQuests(components, account.id).map((entity) =>
+            getBaseQuest(world, components, entity)
           );
 
           return {
@@ -73,7 +73,7 @@ export function registerQuestsModal() {
             utils: {
               describeEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
-              getBase: (entityIndex: EntityIndex) => getBaseQuest(world, components, entityIndex),
+              getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, account.id, index),
               filterByAvailable: (

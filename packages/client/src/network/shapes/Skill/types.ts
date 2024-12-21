@@ -53,12 +53,12 @@ export const NullSkill: Skill = {
 export const getSkill = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex,
+  entity: EntityIndex,
   options?: Options
 ): Skill => {
   const { Cost, Description, Level, Max, Name, Type, SkillIndex, SkillPoint } = components;
 
-  const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
+  const skillIndex = getComponentValue(SkillIndex, entity)?.value || (0 as number);
   const registryIndex = getRegistryEntity(world, skillIndex);
   if (!registryIndex) return NullSkill;
 
@@ -66,14 +66,14 @@ export const getSkill = (
 
   let skill: Skill = {
     ObjectType: 'SKILL',
-    id: world.entities[entityIndex],
+    id: world.entities[entity],
     index: skillIndex,
     name: name,
     description: getComponentValue(Description, registryIndex)?.value || ('' as string),
     image: getSkillImage(name),
     cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
     points: {
-      current: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),
+      current: Number(getComponentValue(SkillPoint, entity)?.value || 0),
       max: Number(getComponentValue(Max, registryIndex)?.value || 0),
     },
     tree: getComponentValue(Type, registryIndex)?.value || ('' as string),
@@ -95,17 +95,17 @@ export const getSkill = (
 export const getRequirement = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex
+  entity: EntityIndex
 ): Requirement => {
   const { Value, Index, LogicType, Type } = components;
 
   return {
-    id: world.entities[entityIndex],
-    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
+    id: world.entities[entity],
+    logic: getComponentValue(LogicType, entity)?.value || ('' as string),
     target: {
-      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-      index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Value, entityIndex)?.value,
+      type: getComponentValue(Type, entity)?.value || ('' as string),
+      index: getComponentValue(Index, entity)?.value,
+      value: getComponentValue(Value, entity)?.value,
     },
   };
 };

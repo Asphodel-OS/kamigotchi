@@ -19,7 +19,7 @@ export const Inbound = (props: Props) => {
   const Actions = (friendship: Friendship) => {
     return (
       <ActionListButton
-        id={`friendship-options-${friendship.entityIndex}`}
+        id={`friendship-options-${friendship.entity}`}
         text=''
         options={[
           { text: 'Accept', onClick: () => actions.acceptFren(friendship) },

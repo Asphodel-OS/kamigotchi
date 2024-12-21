@@ -48,9 +48,9 @@ interface AsphoAST {
 export const getBonuses = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex // kami entity index
+  entity: EntityIndex // kami entity index
 ): Bonuses => {
-  const holderID = world.entities[entityIndex];
+  const holderID = world.entities[entity];
 
   const getBonus = (key: string, precision: number): number => {
     return getBonusValue(world, components, key, holderID, precision);

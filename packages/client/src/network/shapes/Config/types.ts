@@ -12,10 +12,10 @@ export const getConfigFieldValue = (
   field: string
 ): number => {
   const { Value } = components;
-  const entityIndex = query(world, field);
-  if (!entityIndex) return 0;
+  const entity = query(world, field);
+  if (!entity) return 0;
 
-  return (getComponentValue(Value, entityIndex)?.value as number) * 1;
+  return (getComponentValue(Value, entity)?.value as number) * 1;
 };
 
 export const getConfigFieldValueAddress = (
@@ -24,10 +24,10 @@ export const getConfigFieldValueAddress = (
   field: string
 ): string => {
   const { Value } = components;
-  const entityIndex = query(world, field);
-  if (!entityIndex) return '0x000000000000000000000000000000000000dEaD';
+  const entity = query(world, field);
+  if (!entity) return '0x000000000000000000000000000000000000dEaD';
 
-  const raw = getComponentValue(Value, entityIndex)?.value;
+  const raw = getComponentValue(Value, entity)?.value;
   if (!raw) return '0x000000000000000000000000000000000000dEaD';
   return numberToHex(raw);
 };
@@ -39,10 +39,10 @@ export const getConfigFieldValueArray = (
   field: string
 ): number[] => {
   const { Value } = components;
-  const entityIndex = query(world, field);
-  if (!entityIndex) return [0];
+  const entity = query(world, field);
+  if (!entity) return [0];
 
-  const raw = getComponentValue(Value, entityIndex)?.value;
+  const raw = getComponentValue(Value, entity)?.value;
   if (!raw) return [];
   return unpackArray32(raw);
 };
@@ -54,10 +54,10 @@ export const getConfigFieldValueWei = (
   field: string
 ): bigint => {
   const { Value } = components;
-  const entityIndex = query(world, field);
-  if (!entityIndex) return 0n;
+  const entity = query(world, field);
+  if (!entity) return 0n;
 
-  const stringVal = (getComponentValue(Value, entityIndex)?.value as number) || 0;
+  const stringVal = (getComponentValue(Value, entity)?.value as number) || 0;
   return BigInt(stringVal);
 };
 

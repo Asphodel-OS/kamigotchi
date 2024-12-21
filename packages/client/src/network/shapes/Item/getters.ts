@@ -13,8 +13,8 @@ import { Item, NullItem, getItem, getItemDetails } from './types';
  */
 
 export const getByIndex = (world: World, components: Components, index: number): Item => {
-  const entityIndex = queryByIndex(world, index);
-  return entityIndex ? getItem(world, components, entityIndex) : NullItem;
+  const entity = queryByIndex(world, index);
+  return entity ? getItem(world, components, entity) : NullItem;
 };
 
 export const getDetailsByIndex = (
@@ -22,8 +22,8 @@ export const getDetailsByIndex = (
   components: Components,
   index: number
 ): DetailedEntity => {
-  const entityIndex = queryByIndex(world, index);
-  return entityIndex ? getItemDetails(components, entityIndex) : NullItem;
+  const entity = queryByIndex(world, index);
+  return entity ? getItemDetails(components, entity) : NullItem;
 };
 
 // get all items in the registry
@@ -32,5 +32,5 @@ export const getAll = (world: World, components: Components): Item[] => {
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(EntityType, { value: 'ITEM' })])
   );
-  return entityIndices.map((entityIndex) => getItem(world, components, entityIndex));
+  return entityIndices.map((entity) => getItem(world, components, entity));
 };

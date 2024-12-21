@@ -97,13 +97,13 @@ export const Logs = (props: Props) => {
     );
   };
 
-  const Log = (entityIndex: EntityIndex) => {
-    const actionData = getComponentValueStrict(ActionComponent, entityIndex);
+  const Log = (entity: EntityIndex) => {
+    const actionData = getComponentValueStrict(ActionComponent, entity);
     const state = ActionStateString[actionData.state as ActionState];
     const metadata = actionData.metadata ?? '';
 
     return (
-      <Row key={`action${entityIndex}`}>
+      <Row key={`action${entity}`}>
         <RowSegment>
           {Status(state, metadata)}
           {Description(actionData)}
@@ -123,7 +123,7 @@ export const Logs = (props: Props) => {
         <Text>TxQueue</Text>
         <Bar />
       </Row>
-      {actionIndices.map((entityIndex) => Log(entityIndex))}
+      {actionIndices.map((entity) => Log(entity))}
     </Content>
   );
 };

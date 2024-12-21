@@ -25,13 +25,13 @@ export interface Objective extends Condition {
 export const getObjective = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex
+  entity: EntityIndex
 ): Objective => {
   const { Name } = components;
 
   return {
-    ...getCondition(world, components, entityIndex),
-    name: getComponentValue(Name, entityIndex)?.value || ('' as string),
+    ...getCondition(world, components, entity),
+    name: getComponentValue(Name, entity)?.value || ('' as string),
   };
 };
 
@@ -138,11 +138,11 @@ const getSnapshotValue = (
   questID: EntityID,
   obj: Objective
 ): number => {
-  const entityIndex = getSnapshotEntity(world, questID, obj);
-  if (!entityIndex) return 0;
+  const entity = getSnapshotEntity(world, questID, obj);
+  if (!entity) return 0;
 
   const { Value } = components;
-  return ((getComponentValue(Value, entityIndex)?.value as number) || 0) * 1;
+  return ((getComponentValue(Value, entity)?.value as number) || 0) * 1;
 };
 
 const getSnapshotEntity = (

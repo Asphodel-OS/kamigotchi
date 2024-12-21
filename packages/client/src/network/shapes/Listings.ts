@@ -22,12 +22,12 @@ export const getNPCListingsFiltered = (
 ): Listing[] => {
   const allListings = queryNPCListingEntities(components, npcIndex);
 
-  const filtered = allListings.filter((entityIndex) => {
-    const reqs = queryConditionsOfID(world, components, getReqPtrID(world.entities[entityIndex]));
+  const filtered = allListings.filter((entity) => {
+    const reqs = queryConditionsOfID(world, components, getReqPtrID(world.entities[entity]));
     return passesConditions(world, components, reqs, account);
   });
 
-  return sortListings(filtered.map((entityIndex) => getListing(world, components, entityIndex)));
+  return sortListings(filtered.map((entity) => getListing(world, components, entity)));
 };
 
 /////////////////
@@ -36,7 +36,7 @@ export const getNPCListingsFiltered = (
 // standardized shape of a FE Listing Entity
 export interface Listing {
   id: EntityID;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   buyPrice: number;
   item: Item;
   NPCIndex: number;
@@ -56,7 +56,7 @@ export const getListing = (world: World, components: Components, index: EntityIn
   const id = world.entities[index];
   let listing: Listing = {
     id: id,
-    entityIndex: index,
+    entity: index,
     buyPrice: getBuyPrice(world, components, id),
     item: item,
     NPCIndex: (getComponentValue(NPCIndex, index)?.value as number) * 1,
@@ -68,10 +68,10 @@ export const getListing = (world: World, components: Components, index: EntityIn
 const getBuyPrice = (world: World, components: Components, listingID: EntityID): number => {
   const { Value } = components;
 
-  const entityIndex = getBuyPtrEntity(world, listingID);
-  if (!entityIndex) return 0;
+  const entity = getBuyPtrEntity(world, listingID);
+  if (!entity) return 0;
 
-  return (getComponentValue(Value, entityIndex)?.value as number) * 1;
+  return (getComponentValue(Value, entity)?.value as number) * 1;
 };
 
 /////////////////

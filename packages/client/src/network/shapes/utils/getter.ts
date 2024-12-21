@@ -82,8 +82,8 @@ export const getBool = (
   if (type === 'COMPLETE_COMP') {
     // converted
     const rawEntityID = formatEntityID(numberToHex(value ?? 0));
-    const entityIndex = world.entityToIndex.get(rawEntityID);
-    return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
+    const entity = world.entityToIndex.get(rawEntityID);
+    return entity !== undefined && hasComponent(IsComplete, entity);
   } else if (type === 'PHASE') {
     return getCurrPhase() == index;
   }

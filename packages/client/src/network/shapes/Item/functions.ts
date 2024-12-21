@@ -26,6 +26,6 @@ export const getItemBalance = (
   itemIndex: number
 ): number => {
   const { Value } = components;
-  const entityIndex = queryInventoryInstance(world, holderID ?? 0, itemIndex);
-  return entityIndex ? (getComponentValue(Value, entityIndex)?.value ?? 0) * 1 : 0;
+  const entity = queryInventoryInstance(world, holderID ?? 0, itemIndex);
+  return entity ? (getComponentValue(Value, entity)?.value ?? 0) * 1 : 0;
 };

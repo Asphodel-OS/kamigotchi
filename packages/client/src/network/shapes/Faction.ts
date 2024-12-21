@@ -15,7 +15,7 @@ import { getFactionImage } from './utils/images';
 // standardized Object shape of a Score Entity
 export interface Faction extends DetailedEntity {
   id: EntityID;
-  entityIndex: EntityIndex;
+  entity: EntityIndex;
   index: number;
 }
 
@@ -23,10 +23,10 @@ export interface Faction extends DetailedEntity {
 // GETTERS
 
 export const getFactionByIndex = (world: World, components: Components, index: number): Faction => {
-  const entityIndex = getEntityIndex(world, index);
-  if (!entityIndex) throw new Error('getFactionByIndex: index not found');
+  const entity = getEntityIndex(world, index);
+  if (!entity) throw new Error('getFactionByIndex: index not found');
 
-  return getFaction(world, components, entityIndex, index);
+  return getFaction(world, components, entity, index);
 };
 
 // reputation details override for faction shape (diff name style)
@@ -35,10 +35,10 @@ export const getReputationDetailsByIndex = (
   components: Components,
   index: number
 ): Faction => {
-  const entityIndex = getEntityIndex(world, index);
-  if (!entityIndex) throw new Error('getFactionRepByIndex: index not found');
+  const entity = getEntityIndex(world, index);
+  if (!entity) throw new Error('getFactionRepByIndex: index not found');
 
-  return getReputationDetails(world, components, entityIndex, index);
+  return getReputationDetails(world, components, entity, index);
 };
 
 export const getAllFactions = (world: World, components: Components): Faction[] => {
@@ -62,10 +62,10 @@ export const getReputation = (
 ): number => {
   const { Value } = components;
 
-  const entityIndex = getRepEntityIndex(world, holderID, factionIndex);
-  if (!entityIndex) return 0;
+  const entity = getRepEntityIndex(world, holderID, factionIndex);
+  if (!entity) return 0;
 
-  return (getComponentValue(Value, entityIndex)?.value as number) * 1;
+  return (getComponentValue(Value, entity)?.value as number) * 1;
 };
 
 // get a Score object from its EnityIndex
@@ -82,7 +82,7 @@ export const getFaction = (
   return {
     ObjectType: 'FACTION',
     id: world.entities[index],
-    entityIndex: index,
+    entity: index,
     index: factionIndex ?? (getComponentValue(FactionIndex, index)?.value as number) * 1,
     name: name,
     description: getComponentValue(Description, index)?.value as string,

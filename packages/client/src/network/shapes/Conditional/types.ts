@@ -37,25 +37,24 @@ export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
 export const getCondition = (
   world: World,
   components: Components,
-  entityIndex: EntityIndex | undefined,
+  entity: EntityIndex | undefined,
   options?: Options
 ): Condition => {
   const { Value, Index, LogicType, Type } = components;
 
-  if (!entityIndex)
-    return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
+  if (!entity) return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
 
   let result: Condition = {
-    id: world.entities[entityIndex],
-    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
+    id: world.entities[entity],
+    logic: getComponentValue(LogicType, entity)?.value || ('' as string),
     target: {
-      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
-      index: getComponentValue(Index, entityIndex)?.value,
-      value: getComponentValue(Value, entityIndex)?.value,
+      type: getComponentValue(Type, entity)?.value || ('' as string),
+      index: getComponentValue(Index, entity)?.value,
+      value: getComponentValue(Value, entity)?.value,
     },
   };
 
-  if (options?.for) result.for = getFor(components, entityIndex);
+  if (options?.for) result.for = getFor(components, entity);
 
   return result;
 };

@@ -28,8 +28,8 @@ export const getAllRecipes = (world: World, components: Components): Recipe[] =>
 };
 
 export const getRecipeByIndex = (world: World, components: Components, index: number): Recipe => {
-  const entityIndex = getRegEntity(world, index);
-  if (!entityIndex) return NullRecipe;
+  const entity = getRegEntity(world, index);
+  if (!entity) return NullRecipe;
 
-  return getRecipe(world, components, entityIndex, index);
+  return getRecipe(world, components, entity, index);
 };
