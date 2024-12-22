@@ -36,19 +36,21 @@ contract _RecipeRegistrySystem is System {
     return LibRecipe.addAssigner(components, regID, index, assignerID);
   }
 
+  /// pulltodo
   function addRequirement(
     uint32 recipeIndex,
     string memory logicType,
     string memory type_,
     uint32 index, // can be empty
-    uint32 value // can be empty
+    uint32 value, // can be empty
+    string memory condFor
   ) public onlyOwner returns (uint256) {
     return
       LibRecipe.createRequirement(
         world,
         components,
         recipeIndex,
-        Condition(logicType, type_, index, value)
+        Condition(logicType, type_, index, value, condFor)
       );
   }
 

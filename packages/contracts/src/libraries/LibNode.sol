@@ -52,11 +52,9 @@ library LibNode {
     IWorld world,
     IUintComp components,
     uint32 nodeIndex,
-    string memory for_,
     Condition memory req
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, req, genReqAnchor(nodeIndex));
-    LibFor.set(components, id, for_);
   }
 
   function addScavBar(

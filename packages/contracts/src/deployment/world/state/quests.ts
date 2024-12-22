@@ -104,7 +104,8 @@ async function initQuestRequirement(api: AdminAPI, entry: any) {
     cond.logicType,
     cond.type,
     cond.index,
-    cond.value
+    cond.value,
+    ''
   );
 }
 
@@ -121,7 +122,8 @@ async function initQuestObjective(api: AdminAPI, entry: any) {
     entry['DeltaType'] + '_' + entry['Operator'],
     cond.type,
     cond.index,
-    cond.value
+    cond.value,
+    ''
   );
 }
 

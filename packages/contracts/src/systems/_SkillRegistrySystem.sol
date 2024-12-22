@@ -63,20 +63,26 @@ contract _SkillRegistrySystem is System {
     return id;
   }
 
+  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 skillIndex,
       string memory type_,
       string memory logicType,
       uint32 index,
-      uint256 value
-    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
+      uint256 value,
+      string memory condFor
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256, string));
 
     require(LibSkillRegistry.getByIndex(components, skillIndex) != 0, "Skill does not exist");
 
-    Condition memory data = Condition(type_, logicType, index, value);
-    uint256 id = LibSkillRegistry.addRequirement(world, components, skillIndex, data);
-    return id;
+    return
+      LibSkillRegistry.addRequirement(
+        world,
+        components,
+        skillIndex,
+        Condition(type_, logicType, index, value, condFor)
+      );
   }
 
   function remove(uint32 index) public onlyOwner {

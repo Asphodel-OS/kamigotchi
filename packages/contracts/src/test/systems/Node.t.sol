@@ -28,7 +28,7 @@ contract NodeTest is SetupTemplate {
       abi.encode(1, "HARVEST", 1, "Test Node", "this is a node", "NORMAL")
     );
     // add requirement
-    __NodeRegistrySystem.addRequirement(abi.encode(1, "ACCOUNT", "ROOM", "BOOL_IS", 1, 0));
+    __NodeRegistrySystem.addRequirement(abi.encode(1, "ROOM", "BOOL_IS", 1, 0, "ACCOUNT"));
     vm.stopPrank();
 
     // try starting basic harvest
@@ -43,7 +43,7 @@ contract NodeTest is SetupTemplate {
     // setup
     uint32 nodeIndex = 1;
     uint256 nodeID = _createHarvestingNode(nodeIndex, 1, "Test Node", "this is a node", "NORMAL");
-    _createNodeRequirement(nodeIndex, "KAMI", "LEVEL", "CURR_MIN", 0, 2);
+    _createNodeRequirement(nodeIndex, "LEVEL", "CURR_MIN", 0, 2, "KAMI");
 
     // cannot add level 1 pet to node
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
@@ -63,8 +63,8 @@ contract NodeTest is SetupTemplate {
     // setup
     uint32 nodeIndex = 1;
     uint256 nodeID = _createHarvestingNode(nodeIndex, 1, "Test Node", "this is a node", "NORMAL");
-    _createNodeRequirement(nodeIndex, "ACCOUNT", "LEVEL", "CURR_MIN", 0, 2);
-    _createNodeRequirement(nodeIndex, "ACCOUNT", "ROOM", "BOOL_IS", 1, 0);
+    _createNodeRequirement(nodeIndex, "LEVEL", "CURR_MIN", 0, 2, "ACCOUNT");
+    _createNodeRequirement(nodeIndex, "ROOM", "BOOL_IS", 1, 0, "ACCOUNT");
 
     // cannot add level 1 account to node
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
@@ -84,9 +84,9 @@ contract NodeTest is SetupTemplate {
     // setup
     uint32 nodeIndex = 1;
     uint256 nodeID = _createHarvestingNode(nodeIndex, 1, "Test Node", "this is a node", "NORMAL");
-    _createNodeRequirement(nodeIndex, "ACCOUNT", "LEVEL", "CURR_MIN", 0, 2);
-    _createNodeRequirement(nodeIndex, "ACCOUNT", "ROOM", "BOOL_IS", 1, 0);
-    _createNodeRequirement(nodeIndex, "KAMI", "LEVEL", "CURR_MIN", 0, 2);
+    _createNodeRequirement(nodeIndex, "LEVEL", "CURR_MIN", 0, 2, "ACCOUNT");
+    _createNodeRequirement(nodeIndex, "ROOM", "BOOL_IS", 1, 0, "ACCOUNT");
+    _createNodeRequirement(nodeIndex, "LEVEL", "CURR_MIN", 0, 2, "KAMI");
 
     // cannot add, level 1 acc and pet
     assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));

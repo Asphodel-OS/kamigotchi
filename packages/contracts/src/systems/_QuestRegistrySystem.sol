@@ -32,6 +32,7 @@ contract _QuestRegistrySystem is System {
     return regID;
   }
 
+  /// pulltodo
   function addObjective(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 questIndex,
@@ -39,8 +40,9 @@ contract _QuestRegistrySystem is System {
       string memory logicType,
       string memory type_,
       uint32 index, // generic index
-      uint256 value
-    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
+      uint256 value,
+      string memory condFor
+    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256, string));
 
     uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
@@ -52,18 +54,20 @@ contract _QuestRegistrySystem is System {
         components,
         questIndex,
         name,
-        Condition(type_, logicType, index, value)
+        Condition(type_, logicType, index, value, condFor)
       );
   }
 
+  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 questIndex,
       string memory logicType,
       string memory type_,
       uint32 index,
-      uint256 value
-    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
+      uint256 value,
+      string memory condFor
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256, string));
 
     uint256 questID = LibQuestRegistry.getByIndex(components, questIndex);
     require(questID != 0, "Quest does not exist");
@@ -74,7 +78,7 @@ contract _QuestRegistrySystem is System {
         world,
         components,
         questIndex,
-        Condition(type_, logicType, index, value)
+        Condition(type_, logicType, index, value, condFor)
       );
   }
 

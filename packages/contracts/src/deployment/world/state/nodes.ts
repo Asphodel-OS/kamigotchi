@@ -81,11 +81,11 @@ async function initNode(api: AdminAPI, entry: any) {
 async function initRequirement(api: AdminAPI, entry: any) {
   await api.node.add.requirement(
     Number(entry['Index']),
-    'KAMI',
     'LEVEL',
     'CURR_MAX',
     0,
-    Number(entry['Level Limit'])
+    Number(entry['Level Limit']),
+    'KAMI'
   );
 }
 

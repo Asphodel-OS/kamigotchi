@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { Coord, LibRoom } from "libraries/LibRoom.sol";
+import { Condition } from "libraries/LibConditional.sol";
 
 uint256 constant ID = uint256(keccak256("system.room.registry"));
 
@@ -35,6 +36,7 @@ contract _RoomRegistrySystem is System {
     return id;
   }
 
+  /// pulltodo
   function addGate(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 roomIndex,
@@ -42,8 +44,9 @@ contract _RoomRegistrySystem is System {
       uint32 conditionIndex,
       uint256 conditionValue,
       string memory type_,
-      string memory logicType
-    ) = abi.decode(arguments, (uint32, uint32, uint32, uint256, string, string));
+      string memory logicType,
+      string memory condFor
+    ) = abi.decode(arguments, (uint32, uint32, uint32, uint256, string, string, string));
 
     require(LibRoom.getByIndex(components, roomIndex) != 0, "Room: does not exist");
     require(
@@ -57,10 +60,7 @@ contract _RoomRegistrySystem is System {
         components,
         roomIndex,
         sourceIndex,
-        conditionIndex,
-        conditionValue,
-        type_,
-        logicType
+        Condition(type_, logicType, conditionIndex, conditionValue, condFor)
       );
   }
 

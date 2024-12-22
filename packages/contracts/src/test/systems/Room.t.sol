@@ -86,7 +86,7 @@ contract RoomTest is SetupTemplate {
     // move
     vm.startPrank(alice.operator);
     for (uint i = 0; i < numMove; i++) {
-      uint32 nextRoom = LibRoom.getIndex(components, alice.id) == 1 ? 2 : 1;
+      uint32 nextRoom = LibRoom.get(components, alice.id) == 1 ? 2 : 1;
       if (i >= baseStamina) vm.expectRevert("Account: insufficient stamina");
       _AccountMoveSystem.executeTyped(nextRoom);
     }
@@ -243,7 +243,7 @@ contract RoomTest is SetupTemplate {
     _createRoom("2", Coord(0, 1, 0), 2);
 
     vm.startPrank(deployer);
-    __RoomRegistrySystem.addGate(abi.encode(2, 0, 0, 0, "ITEM", "CURR_MIN"));
+    __RoomRegistrySystem.addGate(abi.encode(2, 0, 0, 0, "ITEM", "CURR_MIN", ""));
     vm.stopPrank();
 
     _AssertAccRoom(accountIndex, 1);
@@ -261,10 +261,10 @@ contract RoomTest is SetupTemplate {
     _createRoom("4", Coord(11, 10, 10), 4);
     _createRoom("5", Coord(1, 2, 0), 5);
     vm.startPrank(deployer);
-    __RoomRegistrySystem.addGate(abi.encode(2, 0, 10, 1, "ITEM", "CURR_MIN"));
-    __RoomRegistrySystem.addGate(abi.encode(3, 0, 10, 1, "ITEM", "CURR_MIN"));
-    __RoomRegistrySystem.addGate(abi.encode(4, 1, 10, 1, "ITEM", "CURR_MIN"));
-    __RoomRegistrySystem.addGate(abi.encode(5, 1, 10, 1, "ITEM", "CURR_MIN"));
+    __RoomRegistrySystem.addGate(abi.encode(2, 0, 10, 1, "ITEM", "CURR_MIN", ""));
+    __RoomRegistrySystem.addGate(abi.encode(3, 0, 10, 1, "ITEM", "CURR_MIN", ""));
+    __RoomRegistrySystem.addGate(abi.encode(4, 1, 10, 1, "ITEM", "CURR_MIN", ""));
+    __RoomRegistrySystem.addGate(abi.encode(5, 1, 10, 1, "ITEM", "CURR_MIN", ""));
     vm.stopPrank();
 
     uint32 accountIndex = 0;
@@ -312,7 +312,11 @@ contract RoomTest is SetupTemplate {
   function testGoalGate() public {
     uint32 goalIndex = 1;
     uint256 goalAmt = 1111;
-    uint256 goalID = _createGoal(goalIndex, 1, Condition("ITEM", "CURR_MIN", MUSU_INDEX, goalAmt));
+    uint256 goalID = _createGoal(
+      goalIndex,
+      1,
+      Condition("ITEM", "CURR_MIN", MUSU_INDEX, goalAmt, "")
+    );
     _createRoom("1", Coord(1, 1, 0), 1); // original room, goal located here
     _createRoom("2", Coord(0, 1, 0), 2); // room to be gated
     _createRoomGate(2, 0, 0, LibGoals.genGoalID(goalIndex), "COMPLETE_COMP", "BOOL_IS");

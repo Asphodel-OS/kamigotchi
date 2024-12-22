@@ -122,7 +122,8 @@ async function addRequirement(api: AdminAPI, item: any) {
     type,
     logicType,
     index,
-    value
+    value,
+    ''
   );
 }
 

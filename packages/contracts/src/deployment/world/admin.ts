@@ -109,13 +109,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     type: string,
     logic: string,
     conIndex: number,
-    conValue: number
+    conValue: number,
+    conFor: string
   ) {
     genCall(
       'system.goal.registry',
-      [goalIndex, type, logic, conIndex, conValue],
+      [goalIndex, type, logic, conIndex, conValue, conFor],
       'addRequirement',
-      ['uint32', 'string', 'string', 'uint32', 'uint256']
+      ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
@@ -243,13 +244,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     conditionType: string,
     logicType: string,
     index: number,
-    value: BigNumberish
+    value: BigNumberish,
+    for_: string
   ) {
     genCall(
       'system.listing.registry',
-      [merchantIndex, itemIndex, conditionType, logicType, index, value],
+      [merchantIndex, itemIndex, conditionType, logicType, index, value, for_],
       'addRequirement',
-      ['uint32', 'uint32', 'string', 'string', 'uint32', 'uint256']
+      ['uint32', 'uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
@@ -285,19 +287,19 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   async function createNodeRequirement(
     index: number,
-    for_: string,
     type: string,
     logic: string,
     index_: number,
-    value: number
+    value: number,
+    for_: string
   ) {
-    genCall('system.node.registry', [index, for_, type, logic, index_, value], 'addRequirement', [
+    genCall('system.node.registry', [index, type, logic, index_, value, for_], 'addRequirement', [
       'uint32',
-      'string',
       'string',
       'string',
       'uint32',
       'uint256',
+      'string',
     ]);
   }
 
@@ -372,13 +374,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     logicType: string,
     type: string,
     index: number,
-    value: BigNumberish
+    value: BigNumberish,
+    for_: string
   ) {
     genCall(
       'system.quest.registry',
-      [questIndex, name, logicType, type, index, value],
+      [questIndex, name, logicType, type, index, value, for_],
       'addObjective',
-      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256']
+      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
@@ -388,13 +391,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     logicType: string,
     type: string,
     index: number,
-    value: BigNumberish
+    value: BigNumberish,
+    for_: string
   ) {
     genCall(
       'system.quest.registry',
-      [questIndex, logicType, type, index, value],
+      [questIndex, logicType, type, index, value, for_],
       'addRequirement',
-      ['uint32', 'string', 'string', 'uint32', 'uint256']
+      ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
@@ -472,9 +476,10 @@ export function createAdminAPI(compiledCalls: string[]) {
     type: string,
     logic: string,
     index_: number,
-    value: number
+    value: number,
+    for_: string
   ) {
-    genCall('system.recipe.registry', [index, type, logic, index_, value], 'addRequirement');
+    genCall('system.recipe.registry', [index, type, logic, index_, value, for_], 'addRequirement');
   }
 
   async function deleteRecipe(index: number) {
@@ -508,13 +513,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     conditionIndex: number,
     conditionValue: BigNumberish,
     type: string,
-    logicType: string
+    logicType: string,
+    for_: string
   ) {
     genCall(
       'system.room.registry',
-      [roomIndex, sourceIndex, conditionIndex, conditionValue, type, logicType],
+      [roomIndex, sourceIndex, conditionIndex, conditionValue, type, logicType, for_],
       'addGate',
-      ['uint32', 'uint32', 'uint32', 'uint256', 'string', 'string']
+      ['uint32', 'uint32', 'uint32', 'uint256', 'string', 'string', 'string']
     );
   }
 
@@ -561,13 +567,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     type: string,
     logicType: string,
     index: number,
-    value: number
+    value: number,
+    for_: string
   ) {
     genCall(
       'system.skill.registry',
-      [skillIndex, type, logicType, index, value],
+      [skillIndex, type, logicType, index, value, for_],
       'addRequirement',
-      ['uint32', 'string', 'string', 'uint32', 'uint256']
+      ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
@@ -678,13 +685,14 @@ export function createAdminAPI(compiledCalls: string[]) {
     type_: string,
     logicType: string,
     index_: number,
-    value: number
+    value: number,
+    for_: string
   ) {
     genCall(
       'system.item.registry',
-      [index, usecase, type_, logicType, index_, value],
+      [index, usecase, type_, logicType, index_, value, for_],
       'addRequirement',
-      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256']
+      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 

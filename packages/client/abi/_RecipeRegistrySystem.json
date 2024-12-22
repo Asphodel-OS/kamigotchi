@@ -68,6 +68,11 @@
           "name": "value",
           "type": "uint32",
           "internalType": "uint32"
+        },
+        {
+          "name": "condFor",
+          "type": "string",
+          "internalType": "string"
         }
       ],
       "outputs": [
@@ -290,7 +295,7 @@
   ],
   "methodIdentifiers": {
     "addAssigner(uint32,uint256)": "32a3075b",
-    "addRequirement(uint32,string,string,uint32,uint32)": "bc244f02",
+    "addRequirement(uint32,string,string,uint32,uint32,string)": "51e12765",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "create(bytes)": "cf5ba53f",

@@ -37,15 +37,16 @@ contract _NodeRegistrySystem is System {
     return id;
   }
 
+  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 nodeIndex,
-      string memory for_,
       string memory type_,
       string memory logicType,
       uint32 index,
-      uint256 value
-    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
+      uint256 value,
+      string memory for_
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256, string));
 
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
     require(nodeID != 0, "Node does not exist");
@@ -56,8 +57,7 @@ contract _NodeRegistrySystem is System {
         world,
         components,
         nodeIndex,
-        for_,
-        Condition(type_, logicType, index, value)
+        Condition(type_, logicType, index, value, for_)
       );
   }
 

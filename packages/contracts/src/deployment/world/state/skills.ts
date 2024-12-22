@@ -101,6 +101,6 @@ async function initMutualExclusionRequirement(api: AdminAPI, skill: any) {
 
   const values = keys.split(',');
   values.forEach(async (v: string) => {
-    await api.registry.skill.add.requirement(index, 'SKILL', 'CURR_MAX', Number(v), 0);
+    await api.registry.skill.add.requirement(index, 'SKILL', 'CURR_MAX', Number(v), 0, '');
   });
 }

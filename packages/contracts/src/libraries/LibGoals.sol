@@ -12,6 +12,7 @@ import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsComple
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
@@ -147,9 +148,9 @@ library LibGoals {
     uint256 amt
   ) internal returns (uint256) {
     uint256 objID = genObjID(goalID);
-    IUintComp balComp = IUintComp(getAddrByID(components, ValueCompID));
-    uint256 currBal = balComp.safeGet(goalID);
-    uint256 targetBal = balComp.safeGet(objID);
+    IUintComp valComp = IUintComp(getAddrByID(components, ValueCompID));
+    uint256 currBal = valComp.safeGet(goalID);
+    uint256 targetBal = valComp.safeGet(objID);
 
     // cap contribution to target balance
     if (currBal + amt >= targetBal) {
@@ -159,12 +160,12 @@ library LibGoals {
     }
 
     // dec account's balance
-    string memory type_ = LibConditional.getType(components, objID);
-    uint32 index = LibConditional.getIndex(components, objID);
+    string memory type_ = TypeComponent(getAddrByID(components, TypeCompID)).get(objID);
+    uint32 index = IndexComponent(getAddrByID(components, IndexCompID)).safeGet(objID);
     LibSetter.dec(components, type_, index, amt, accID);
 
     // inc goal's balance & inc account contribution
-    balComp.set(goalID, currBal + amt);
+    valComp.set(goalID, currBal + amt);
     incContribution(components, accID, goalID, amt);
 
     return amt;

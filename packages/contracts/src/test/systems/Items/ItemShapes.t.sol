@@ -27,9 +27,9 @@ contract ItemShapeTest is ItemTemplate {
     uint32 index = 1;
     vm.startPrank(deployer);
     __ItemRegistrySystem.create(abi.encode(index, "FOOD", "name", "description", "media"));
-    __ItemRegistrySystem.addRequirement(abi.encode(index, "USE", "type", "BOOL_IS", 1, 0));
-    __ItemRegistrySystem.addRequirement(abi.encode(index, "BURN", "type", "BOOL_IS", 1, 0));
-    __ItemRegistrySystem.addRequirement(abi.encode(index, "BURN", "type", "BOOL_IS", 2, 0));
+    __ItemRegistrySystem.addRequirement(abi.encode(index, "USE", "type", "BOOL_IS", 1, 0, ""));
+    __ItemRegistrySystem.addRequirement(abi.encode(index, "BURN", "type", "BOOL_IS", 1, 0, ""));
+    __ItemRegistrySystem.addRequirement(abi.encode(index, "BURN", "type", "BOOL_IS", 2, 0, ""));
     vm.stopPrank();
 
     // check reference existence

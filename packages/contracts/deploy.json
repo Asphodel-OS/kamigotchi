@@ -136,6 +136,7 @@
       "writeAccess": [
         "EntityType",
         "Experience",
+        "ForString",
         "IDFrom",
         "IDParent",
         "IDTo",
@@ -145,7 +146,6 @@
         "LogicType",
         "Keys",
         "Stamina",
-        "Subtype",
         "Values",
         "Value",
         "Type"
@@ -159,6 +159,7 @@
       "name": "_RoomRegistrySystem",
       "writeAccess": [
         "EntityType",
+        "ForString",
         "IDParent",
         "IDRoom",
         "IndexRoom",
@@ -169,7 +170,6 @@
         "LogicType",
         "Name",
         "Type",
-        "Subtype",
         "Value"
       ]
     },

@@ -92,7 +92,8 @@ async function addRequirement(api: AdminAPI, entry: any) {
       'ITEM',
       'CURR_MIN',
       toolIndex,
-      1
+      1,
+      ''
     );
   }
 }

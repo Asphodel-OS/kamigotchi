@@ -50,13 +50,10 @@ library LibRoom {
     IUintComp components,
     uint32 roomIndex,
     uint32 sourceIndex, // optional: if condition specific from Room A->B
-    uint32 condIndex,
-    uint256 condValue,
-    string memory type_,
-    string memory logicType
+    Condition memory data
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
-    LibConditional.create(components, id, Condition(type_, logicType, condIndex, condValue));
+    LibConditional.create(components, id, data);
 
     IDRoomComponent(getAddrByID(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
     IDParentComponent sourceComp = IDParentComponent(getAddrByID(components, IDParentCompID));
@@ -139,6 +136,14 @@ library LibRoom {
   /////////////////
   // GETTERS
 
+  function get(IUintComp components, uint256 id) internal view returns (uint32) {
+    return IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).safeGet(id);
+  }
+
+  function getLocation(IUintComp components, uint256 id) internal view returns (Coord memory) {
+    return LocationComponent(getAddrByID(components, LocationCompID)).get(id);
+  }
+
   /// @notice Get all the possible exits of a given room.
   /// @dev rooms can exit to adjacent rooms by default; this is for special exits (ie portals from A->B)
   function getSpecialExits(
@@ -147,14 +152,6 @@ library LibRoom {
   ) internal view returns (uint32[] memory) {
     ExitsComponent comp = ExitsComponent(getAddrByID(components, ExitsCompID));
     return comp.has(id) ? comp.get(id) : new uint32[](0);
-  }
-
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).get(id);
-  }
-
-  function getLocation(IUintComp components, uint256 id) internal view returns (Coord memory) {
-    return LocationComponent(getAddrByID(components, LocationCompID)).get(id);
   }
 
   /////////////////

@@ -39,11 +39,11 @@ library LibFor {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (string memory) {
-    return ForStringComponent(getAddrByID(components, ForStringCompID)).get(id);
+    return ForStringComponent(getAddrByID(components, ForStringCompID)).safeGet(id);
   }
 
   function get(IUintComp components, uint256[] memory ids) internal view returns (string[] memory) {
-    return ForStringComponent(getAddrByID(components, ForStringCompID)).get(ids);
+    return ForStringComponent(getAddrByID(components, ForStringCompID)).safeGet(ids);
   }
 
   /////////////////

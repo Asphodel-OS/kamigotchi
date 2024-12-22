@@ -17,7 +17,11 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
+
+import { LibRoom } from "libraries/LibRoom.sol";
 
 enum LOGIC {
   MIN,
@@ -37,8 +41,9 @@ enum HANDLER {
 struct Condition {
   string type_;
   string logic;
-  uint32 index;
-  uint256 value;
+  uint32 index; // can be empty (0)
+  uint256 value; // can be empty (0)
+  string for_; // target shape. can be empty ('')
 }
 
 /** @notice Library for the Condition entity and generalised combination of boolean checks
@@ -48,7 +53,7 @@ struct Condition {
  * - IndexComponent (key)
  * - ValueComponent (value)
  * - IDParentComponent (optional): for reverse mapping
- * - SubtypeComponent (optional): for additional context
+ * - ForComponent (optional): set target shape (ie ROOM, ACCOUNT, KAMI); if original target is KAMI, for=ACCOUNT get kami's owner. empty = no target change
  *
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
  * heavily inspired by Quest condition checks. Does not yet support increase/decrease checks, but can in future
@@ -61,29 +66,16 @@ library LibConditional {
   // SHAPES
 
   /// @notice creates a condition entity owned by another entity
-  /** @dev
-   *   - bare minimum condition entity.
-   *   - other libs are expected to add their own identifying features. Suggested: HolderID
-   */
-  function create(
-    IUintComp components,
-    uint256 id,
-    string memory type_,
-    string memory logicType
-  ) internal {
-    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
-    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, logicType);
-  }
-
-  /// @notice creates a condition entity owned by another entity
   /// @dev overload to set via struct
   function create(IUintComp components, uint256 id, Condition memory details) internal {
-    create(components, id, details.type_, details.logic);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, details.type_);
+    LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).set(id, details.logic);
 
     if (details.index != 0)
       IndexComponent(getAddrByID(components, IndexCompID)).set(id, details.index);
     if (details.value != 0)
       ValueComponent(getAddrByID(components, ValueCompID)).set(id, details.value);
+    if (!details.for_.eq("")) LibFor.set(components, id, details.for_);
   }
 
   /// @notice creates a condition that points to another entity
@@ -99,18 +91,13 @@ library LibConditional {
     IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, pointerID);
   }
 
-  /// @notice adds an optional subtype to a condition
-  function addSubtype(IUintComp components, uint256 id, string memory subtype) internal {
-    SubtypeComponent(getAddrByID(components, SubtypeCompID)).set(id, subtype);
-  }
-
   function remove(IUintComp components, uint256 id) internal {
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
-    SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(id);
+    LibFor.remove(components, id);
   }
 
   function remove(IUintComp components, uint256[] memory ids) internal {
@@ -119,7 +106,7 @@ library LibConditional {
     IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
     IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
-    SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(ids);
+    LibFor.remove(components, ids);
   }
 
   ///////////////////////
@@ -146,10 +133,31 @@ library LibConditional {
     uint256 targetID,
     Condition memory data
   ) internal view returns (bool) {
+    targetID = parseTargetShape(components, targetID, data.for_);
     (HANDLER handler, LOGIC logic) = parseLogic(data);
     if (handler == HANDLER.CURRENT) return _checkCurr(components, targetID, data, logic);
     else if (handler == HANDLER.BOOLEAN) return _checkBool(components, targetID, data, logic);
     else revert("Handler not yet implemented");
+  }
+
+  /// @notice updates target shape based on For type
+  /// @dev can only go from one->one/many->one, not one->many (eg. KAMI->ACCOUNT, but not other way)
+  function parseTargetShape(
+    IUintComp components,
+    uint256 targetID,
+    string memory forShape
+  ) internal view returns (uint256) {
+    if (forShape.eq("")) return targetID; // no change
+
+    if (forShape.eq("ACCOUNT")) {
+      return LibGetter.getAccount(components, targetID);
+    } else if (forShape.eq("ROOM")) {
+      uint32 roomIndex = LibGetter.getRoom(components, targetID);
+      return LibRoom.getByIndex(components, roomIndex);
+    } else if (forShape.eq("KAMI")) {
+      if (LibEntityType.isShape(components, targetID, "KAMI")) return targetID;
+      else revert("LibCon: invalid for (exp kami, not kami)");
+    } else revert("LibCon: invalid for shape");
   }
 
   /// @notice checks for a current value against an account
@@ -181,10 +189,11 @@ library LibConditional {
   function get(IUintComp components, uint256 id) internal view returns (Condition memory) {
     return
       Condition({
-        type_: getType(components, id),
-        logic: getLogic(components, id),
-        index: getIndex(components, id),
-        value: getBalance(components, id)
+        type_: TypeComponent(getAddrByID(components, TypeCompID)).get(id),
+        logic: LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id),
+        index: IndexComponent(getAddrByID(components, IndexCompID)).safeGet(id),
+        value: ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id),
+        for_: LibFor.get(components, id)
       });
   }
 
@@ -202,29 +211,12 @@ library LibConditional {
       conditions[i] = Condition({
         type_: typeComp.get(ids[i]),
         logic: logicComp.get(ids[i]),
-        index: indexComp.has(ids[i]) ? indexComp.get(ids[i]) : 0,
-        value: valueComp.has(ids[i]) ? valueComp.get(ids[i]) : 0
+        index: indexComp.safeGet(ids[i]),
+        value: valueComp.safeGet(ids[i]),
+        for_: LibFor.get(components, ids[i])
       });
     }
     return conditions;
-  }
-
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddrByID(components, ValueCompID));
-    return comp.has(id) ? comp.get(id) : 0;
-  }
-
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    IndexComponent comp = IndexComponent(getAddrByID(components, IndexCompID));
-    return comp.has(id) ? comp.get(id) : 0;
-  }
-
-  function getLogic(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id);
-  }
-
-  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
   }
 
   ///////////////////////

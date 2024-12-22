@@ -85,7 +85,7 @@ library LibGetter {
     } else if (_type.eq("QUEST")) {
       return LibQuests.checkAccQuestComplete(components, index, targetID);
     } else if (_type.eq("ROOM")) {
-      return LibRoom.getIndex(components, targetID) == index;
+      return getRoom(components, targetID) == index;
     } else if (_type.eq("PHASE")) {
       return LibPhase.get(block.timestamp) == index;
     } else if (_type.eq("COOLDOWN")) {
@@ -100,6 +100,26 @@ library LibGetter {
     } else {
       revert("Unknown bool condition type");
     }
+  }
+
+  ///////////////
+  // SHAPE SPECIFIC GETTERS
+
+  /// @dev checks for any many types of entity shapes. if shape is known beforehand, query account directly
+  function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
+    string memory shape = LibEntityType.get(components, id);
+
+    if (shape.eq("ACCOUNT")) return id;
+    else if (shape.eq("KAMI")) return LibKami.getAccount(components, id);
+    else revert("LibGetter: invalid entity shape (no acc)");
+  }
+
+  /// @dev checks for any many types of entity shapes. if shape is known beforehand, query room directly
+  function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
+    string memory shape = LibEntityType.get(components, id);
+
+    if (shape.eq("KAMI")) return LibKami.getRoom(components, id);
+    else return LibRoom.get(components, id);
   }
 
   ///////////////

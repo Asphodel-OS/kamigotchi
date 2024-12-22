@@ -22,9 +22,9 @@ contract GoalsTest is SetupTemplate {
 
   function testGoalShape() public {
     uint32 goalIndex = 1;
-    uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0));
-    uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 1, 0));
-    uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 2, 0));
+    uint256 goalID = _createGoal(1, 0, Condition("type", "logic", 0, 0, ""));
+    uint256 requirementID1 = _createGoalRequirement(1, Condition("type", "logic", 1, 0, ""));
+    uint256 requirementID2 = _createGoalRequirement(1, Condition("type", "logic", 2, 0, ""));
     uint256 rewardID1 = _createGoalRewardBasic(1, 100, "type", 1, 0);
     uint256 rewardID2 = _createGoalRewardBasic(1, 200, "type", 2, 0);
     uint256 rewardID3 = _createGoalRewardDisplay(1, "name");
@@ -51,7 +51,7 @@ contract GoalsTest is SetupTemplate {
     uint256 goalID = _createGoal(
       goalIndex,
       0,
-      Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt)
+      Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt, "")
     );
     uint256 rwdBronze = _createGoalRewardBasic(goalIndex, 100, "ITEM", 100, 1);
     uint256 rwdSilver = _createGoalRewardBasic(goalIndex, 200, "ITEM", 200, 1);

@@ -190,16 +190,17 @@ library LibQuests {
     Condition[] memory objs = LibConditional.get(components, objIDs);
 
     for (uint256 i; i < objs.length; i++) {
+      uint256 targetID = LibConditional.parseTargetShape(components, accID, objs[i].for_);
       (HANDLER handler, LOGIC operator) = LibConditional.parseLogic(objs[i]);
 
       if (handler == HANDLER.CURRENT) {
-        result = LibConditional._checkCurr(components, accID, objs[i], operator);
+        result = LibConditional._checkCurr(components, targetID, objs[i], operator);
       } else if (handler == HANDLER.INCREASE) {
-        result = checkIncrease(components, accID, questID, objIDs[i], objs[i], operator);
+        result = checkIncrease(components, targetID, questID, objIDs[i], objs[i], operator);
       } else if (handler == HANDLER.DECREASE) {
-        result = checkDecrease(components, accID, questID, objIDs[i], objs[i], operator);
+        result = checkDecrease(components, targetID, questID, objIDs[i], objs[i], operator);
       } else if (handler == HANDLER.BOOLEAN) {
-        result = LibConditional._checkBool(components, accID, objs[i], operator);
+        result = LibConditional._checkBool(components, targetID, objs[i], operator);
       } else {
         revert("Unknown objective handler");
       }

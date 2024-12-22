@@ -31,7 +31,7 @@ import type {
 export interface _RecipeRegistrySystemInterface extends utils.Interface {
   functions: {
     "addAssigner(uint32,uint256)": FunctionFragment;
-    "addRequirement(uint32,string,string,uint32,uint32)": FunctionFragment;
+    "addRequirement(uint32,string,string,uint32,uint32,string)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
@@ -73,7 +73,8 @@ export interface _RecipeRegistrySystemInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
@@ -245,6 +246,7 @@ export interface _RecipeRegistrySystem extends BaseContract {
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -309,6 +311,7 @@ export interface _RecipeRegistrySystem extends BaseContract {
     type_: PromiseOrValue<string>,
     index: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BigNumberish>,
+    condFor: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -373,6 +376,7 @@ export interface _RecipeRegistrySystem extends BaseContract {
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -458,6 +462,7 @@ export interface _RecipeRegistrySystem extends BaseContract {
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -523,6 +528,7 @@ export interface _RecipeRegistrySystem extends BaseContract {
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

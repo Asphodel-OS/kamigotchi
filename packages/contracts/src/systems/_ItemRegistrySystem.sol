@@ -60,6 +60,7 @@ contract _ItemRegistrySystem is System {
     return id;
   }
 
+  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 index,
@@ -67,8 +68,9 @@ contract _ItemRegistrySystem is System {
       string memory condType,
       string memory condLogic,
       uint32 condIndex,
-      uint256 condValue
-    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256));
+      uint256 condValue,
+      string memory condFor
+    ) = abi.decode(arguments, (uint32, string, string, string, uint32, uint256, string));
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     return
@@ -77,7 +79,7 @@ contract _ItemRegistrySystem is System {
         components,
         index,
         useCase,
-        Condition(condType, condLogic, condIndex, condValue)
+        Condition(condType, condLogic, condIndex, condValue, condFor)
       );
   }
 

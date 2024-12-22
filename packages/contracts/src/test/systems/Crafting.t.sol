@@ -33,7 +33,7 @@ contract CraftingTest is SetupTemplate {
 
     // requirement
     vm.prank(deployer);
-    __RecipeRegistrySystem.addRequirement(1, "CURR_MIN", "ITEM", 1, 1);
+    __RecipeRegistrySystem.addRequirement(1, "CURR_MIN", "ITEM", 1, 1, "");
 
     // removal
     vm.prank(deployer);

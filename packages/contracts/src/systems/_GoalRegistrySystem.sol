@@ -25,7 +25,7 @@ contract _GoalRegistrySystem is System {
       uint32 objIndex,
       uint256 objValue
     ) = abi.decode(arguments, (uint32, string, string, uint32, string, string, uint32, uint256));
-    Condition memory objective = Condition(objType, objLogic, objIndex, objValue);
+    Condition memory objective = Condition(objType, objLogic, objIndex, objValue, ""); // no for
 
     // check that the goal exists
     require(LibGoals.getByIndex(components, goalIndex) == 0, "Goal alr exist");
@@ -36,15 +36,17 @@ contract _GoalRegistrySystem is System {
     return LibGoals.create(components, goalIndex, name, description, roomIndex, objective);
   }
 
+  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 goalIndex,
       string memory reqType,
       string memory reqLogic,
       uint32 reqIndex,
-      uint256 reqValue
-    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
-    Condition memory requirement = Condition(reqType, reqLogic, reqIndex, reqValue);
+      uint256 reqValue,
+      string memory reqFor
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256, string));
+    Condition memory requirement = Condition(reqType, reqLogic, reqIndex, reqValue, reqFor);
     // check that the goal exists
     require(LibGoals.getByIndex(components, goalIndex) != 0, "Goal does not exist");
     require(!LibString.eq(requirement.type_, ""), "Req type cannot be empty");

@@ -49,5 +49,13 @@ const initRequirement = async (
   index: number,
   value: BigNumberish
 ) => {
-  await api.listing.add.requirement(npcIndex, itemIndex, conditionType, logicType, index, value);
+  await api.listing.add.requirement(
+    npcIndex,
+    itemIndex,
+    conditionType,
+    logicType,
+    index,
+    value,
+    ''
+  );
 };

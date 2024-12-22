@@ -31,6 +31,7 @@ contract _ListingRegistrySystem is System {
     return abi.encode(id);
   }
 
+  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner {
     (
       uint32 npcIndex,
@@ -38,8 +39,9 @@ contract _ListingRegistrySystem is System {
       string memory reqType,
       string memory logicType,
       uint32 index,
-      uint256 value
-    ) = abi.decode(arguments, (uint32, uint32, string, string, uint32, uint256));
+      uint256 value,
+      string memory condFor
+    ) = abi.decode(arguments, (uint32, uint32, string, string, uint32, uint256, string));
 
     require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
     require(LibItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
@@ -51,7 +53,7 @@ contract _ListingRegistrySystem is System {
       world,
       components,
       id,
-      Condition(reqType, logicType, index, value)
+      Condition(reqType, logicType, index, value, condFor)
     );
   }
 
