@@ -89,7 +89,7 @@ library LibQuests {
     setCompleted(components, questID);
     removeSnapshottedObjectives(components, questID);
 
-    uint32 questIndex = getQuestIndex(components, questID);
+    uint32 questIndex = IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(questID);
     distributeRewards(world, components, questIndex, accID);
   }
 
@@ -113,7 +113,9 @@ library LibQuests {
     uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
 
     for (uint256 i; i < objectives.length; i++) {
-      string memory logicType = getLogicType(components, objectives[i]);
+      string memory logicType = LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(
+        objectives[i]
+      );
       (HANDLER handler, ) = LibConditional.parseLogic(logicType);
 
       // snapshot objectives values if logic type needs it
@@ -131,13 +133,13 @@ library LibQuests {
     string memory logicType,
     uint256 accID
   ) internal returns (uint256) {
-    string memory _type = getType(components, conditionID);
-    uint32 index = getIndex(components, conditionID);
+    string memory _type = TypeComponent(getAddrByID(components, TypeCompID)).get(conditionID);
+    uint32 index = IndexComponent(getAddrByID(components, IndexCompID)).safeGet(conditionID);
     uint256 amount = LibData.get(components, accID, index, _type);
 
     // copy an objective
     uint256 id = genObjSnapshotID(questID, logicType, _type, index);
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, questID); // TODO: change to pointerID (world2)
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, questID); // TODO: change to parentID (world3)
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, amount);
     return id;
   }
@@ -161,9 +163,11 @@ library LibQuests {
     if (!isCompleted(components, repeatQuestID)) return false;
 
     // can accept if time passed
-    uint256 timeStart = getTimeStart(components, repeatQuestID);
+    uint256 timeStart = TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(
+      repeatQuestID
+    );
     uint256 regID = LibQuestRegistry.getByIndex(components, questIndex);
-    uint256 duration = getTime(components, regID);
+    uint256 duration = TimeComponent(getAddrByID(components, TimeCompID)).get(regID);
     return block.timestamp > timeStart + duration;
   }
 
@@ -181,7 +185,7 @@ library LibQuests {
     uint256 questID,
     uint256 accID
   ) internal view returns (bool result) {
-    uint32 questIndex = getQuestIndex(components, questID);
+    uint32 questIndex = IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(questID);
     uint256[] memory objIDs = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
     Condition[] memory objs = LibConditional.get(components, objIDs);
 
@@ -224,14 +228,8 @@ library LibQuests {
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 snapshotID = getSnapshotObjective(components, questID, data);
-    if (snapshotID == 0)
-      revert(
-        "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
-      ); // longtext >< for a user call to action
-
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
-    uint256 prevValue = ValueComponent(getAddrByID(components, ValueCompID)).get(snapshotID);
+    uint256 prevValue = getSnapshotValue(components, questID, data);
 
     // overall value decreased - condition not be met, will overflow if checked
     if (prevValue > currValue) return false;
@@ -247,14 +245,8 @@ library LibQuests {
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 snapshotID = getSnapshotObjective(components, questID, data);
-    if (snapshotID == 0)
-      revert(
-        "Quests: obj not found. If quest has been recently upgraded, try dropping and accepting again"
-      ); // longtext >< for a user call to action
-
     uint256 currValue = LibData.get(components, accID, data.index, data.type_);
-    uint256 prevValue = ValueComponent(getAddrByID(components, ValueCompID)).get(snapshotID);
+    uint256 prevValue = getSnapshotValue(components, questID, data);
 
     // overall value increased - condition not be met, will overflow if checked
     if (currValue > prevValue) return false;
@@ -284,7 +276,8 @@ library LibQuests {
   }
 
   function verifyOwner(IUintComp components, uint256 questID, uint256 accID) public view {
-    if (getOwner(components, questID) != accID) revert("not ur quest");
+    if (IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).get(questID) != accID)
+      revert("not ur quest");
   }
 
   function verifyObjectives(IUintComp components, uint256 questID, uint256 accID) public {
@@ -338,47 +331,15 @@ library LibQuests {
     return LibEntityType.isShape(components, id, "QUEST") ? id : 0;
   }
 
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id);
-  }
-
-  function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(id);
-  }
-
-  function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(id);
-  }
-
-  function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).get(id);
-  }
-
-  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddrByID(components, TypeCompID)).get(id);
-  }
-
-  function getTimeStart(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(id);
-  }
-
-  function getTime(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeComponent(getAddrByID(components, TimeCompID)).get(id);
-  }
-
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddrByID(components, IndexCompID)).safeGet(id);
-  }
-
-  ////////////////
-  // UTILS
-
-  function getSnapshotObjective(
+  /// @dev if snapshotted value doesnt exist (ie from registry change), returns 0.
+  /// may autocomplete inc or render dec uncompletable - drop quest if so
+  function getSnapshotValue(
     IUintComp components,
     uint256 questID,
     Condition memory data
   ) internal view returns (uint256) {
-    return genObjSnapshotID(questID, data.logic, data.type_, data.index);
+    uint256 id = genObjSnapshotID(questID, data.logic, data.type_, data.index);
+    return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id);
   }
 
   /////////////////

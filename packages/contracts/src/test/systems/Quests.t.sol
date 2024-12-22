@@ -390,7 +390,7 @@ contract QuestsTest is SetupTemplate {
   // ASSERTIONS
 
   function _assertQuestAccount(uint256 accID, uint256 questID) internal {
-    assertEq(LibQuests.getOwner(components, questID), accID);
+    assertEq(_IDOwnsQuestComponent.get(questID), accID);
   }
 
   function _assertAccNumQuests(uint256 accID, uint256 numQuests) internal {
