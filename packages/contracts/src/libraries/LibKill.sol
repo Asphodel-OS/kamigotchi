@@ -297,7 +297,7 @@ library LibKill {
     uint256 kamiID
   ) internal view returns (int32, int32) {
     Stat memory hp = LibStat.get(components, "HEALTH", kamiID);
-    return (hp.sync, LibStat.getTotal(components, "HEALTH", kamiID));
+    return (hp.sync, LibStat.calcTotal(hp));
   }
 
   function emitLog(
