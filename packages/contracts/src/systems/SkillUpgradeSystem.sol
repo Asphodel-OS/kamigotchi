@@ -15,6 +15,8 @@ uint256 constant ID = uint256(keccak256("system.skill.upgrade"));
 
 // upgrade a skill
 contract SkillUpgradeSystem is System {
+  using LibString for string;
+
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -26,15 +28,14 @@ contract SkillUpgradeSystem is System {
     if (regID == 0) revert("SkillUpgrade: skill not found");
 
     // entity type check
-    /// @dev calls raw LibFor instead of LibSkill.isFor for gas savings
-    // require(LibSkill.isFor(components, regID, holderID), "SkillUpgrade: invalid target");
-    uint256 forEntity = LibFor.get(components, regID);
-    if (!LibFor.isTarget(components, holderID, forEntity)) revert("SkillUpgrade: invalid target");
+    /// @dev calls LibFor directly to save gas
+    string memory forEntity = LibFor.get(components, regID);
+    if (!LibFor.isShape(components, holderID, forEntity)) revert("SkillUpgrade: invalid target");
 
     // generic requirements
-    if (LibFor.isAccount(forEntity)) {
+    if (forEntity.eq("ACCOUNT")) {
       if (accID != holderID) revert("SkillUpgrade: not ur account");
-    } else if (LibFor.isPet(forEntity)) {
+    } else if (forEntity.eq("KAMI")) {
       LibKami.verifyAccount(components, holderID, accID);
       LibKami.verifyState(components, holderID, "RESTING");
       LibKami.sync(components, holderID);

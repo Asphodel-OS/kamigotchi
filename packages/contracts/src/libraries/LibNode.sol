@@ -56,7 +56,7 @@ library LibNode {
     Condition memory req
   ) internal returns (uint256 id) {
     id = LibConditional.createFor(world, components, req, genReqAnchor(nodeIndex));
-    LibFor.setFromString(components, id, for_);
+    LibFor.set(components, id, for_);
   }
 
   function addScavBar(
@@ -85,7 +85,7 @@ library LibNode {
 
   function removeRequirement(IUintComp components, uint256 id) internal {
     LibConditional.remove(components, id);
-    LibFor.unset(components, id);
+    LibFor.remove(components, id);
   }
 
   ///////////////
@@ -129,14 +129,14 @@ library LibNode {
     uint256[] memory reqIDs = getReqs(components, nodeIndex);
     if (reqIDs.length == 0) return true;
 
-    (uint256[] memory accReqs, uint256[] memory petReqs) = LibFor.splitAccAndPet(
-      components,
-      reqIDs
-    );
+    // (uint256[] memory accReqs, uint256[] memory petReqs) = LibFor.splitAccAndPet(
+    //   components,
+    //   reqIDs
+    // );
 
     return
-      LibConditional.check(components, accReqs, accID) &&
-      LibConditional.check(components, petReqs, kamiID);
+      // LibConditional.check(components, accReqs, accID) &&
+      LibConditional.check(components, reqIDs, kamiID);
   }
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {

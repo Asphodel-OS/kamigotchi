@@ -13,7 +13,6 @@ import { SkillPointComponent, ID as SPCompID } from "components/SkillPointCompon
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibFor } from "libraries/utils/LibFor.sol";
 
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
@@ -135,10 +134,6 @@ library LibSkill {
 
   function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
     return SkillPointComponent(getAddrByID(components, SPCompID)).has(id);
-  }
-
-  function isFor(IUintComp components, uint256 regID, uint256 id) internal view returns (bool) {
-    return LibFor.isTargetFor(components, id, regID);
   }
 
   /// @notice check whether the target meets the prerequisites to invest in a skill

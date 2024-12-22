@@ -55,6 +55,14 @@ library LibArray {
     return result;
   }
 
+  function removeZeros(uint256[] memory arr) internal pure returns (uint256[] memory) {
+    uint256 index;
+    for (uint256 i; i < arr.length; i++) {
+      if (arr[i] != 0) arr[index++] = arr[i];
+    }
+    return resize(arr, index);
+  }
+
   /// @notice returns an array with the first X elements
   function resize(uint256[] memory arr, uint256 size) internal pure returns (uint256[] memory) {
     uint256[] memory result = new uint256[](size);

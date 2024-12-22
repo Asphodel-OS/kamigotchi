@@ -1,8 +1,8 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
-import { DetailedEntity, ForType, getFor, getItemImage } from '../utils';
-import { getDescription, getItemIndex, getName, getType } from '../utils/component';
+import { DetailedEntity, getItemImage } from '../utils';
+import { getDescription, getFor, getItemIndex, getName, getType } from '../utils/component';
 import { Effects, getEffects } from './effects';
 import { getRequirements, Requirements } from './requirements';
 
@@ -11,7 +11,7 @@ export interface Item extends DetailedEntity {
   id: EntityID;
   entity: EntityIndex;
   index: number;
-  for: ForType;
+  for: string;
   type: string;
   requirements: Requirements;
   effects: Effects;

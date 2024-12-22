@@ -17,6 +17,13 @@ export const getDescription = (components: Components, entity: EntityIndex): str
   return result ?? '';
 };
 
+export const getFor = (components: Components, entity: EntityIndex): string => {
+  const { ForString } = components;
+  const rawValue = getComponentValue(ForString, entity)?.value as string | '';
+  // for can be empty
+  return rawValue;
+};
+
 export const getLevel = (components: Components, entity: EntityIndex, fallback = 0): number => {
   const { Level } = components;
   const result = getComponentValue(Level, entity)?.value;

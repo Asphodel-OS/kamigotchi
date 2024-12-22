@@ -83,7 +83,7 @@ library LibSkillRegistry {
       TypeComponent(getAddrByID(components, TypeCompID)).set(id, tree);
     }
 
-    LibFor.setFromString(components, id, for_);
+    LibFor.set(components, id, for_);
   }
 
   function addBonus(
@@ -116,7 +116,7 @@ library LibSkillRegistry {
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
     MaxComponent(getAddrByID(components, MaxCompID)).remove(id);
     MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
-    LibFor.unset(components, id);
+    LibFor.remove(components, id);
 
     // remove skill tree - bonus removed below
     LevelComponent(getAddrByID(components, LevelCompID)).remove(id);

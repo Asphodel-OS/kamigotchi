@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 import { Components } from 'network/';
-import { ForType, getFor } from '../utils';
+import { getFor } from '../utils/component';
 
 /**
  * A client equivalent to Conditionals. For supporting other shapes
@@ -11,7 +11,7 @@ export interface Condition {
   logic: string;
   target: Target;
   status?: Status;
-  for?: ForType;
+  for?: string;
 }
 
 // the Target of a Condition (eg Objective, Requirement, Reward)

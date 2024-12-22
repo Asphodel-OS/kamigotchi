@@ -15,8 +15,5 @@ export const passesRequirements = (
 ): boolean => {
   if (!index) return false;
   const requirements = getRequirements(world, components, index);
-  return passesConditionsByFor(world, components, requirements, {
-    // account: account,
-    kami: kami,
-  });
+  return passesConditionsByFor(world, components, requirements);
 };

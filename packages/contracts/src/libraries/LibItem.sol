@@ -128,7 +128,7 @@ library LibItem {
     ExperienceComponent(getAddrByID(components, ExpCompID)).remove(id);
 
     LibDroptable.remove(components, id);
-    LibFor.unset(components, id);
+    LibFor.remove(components, id);
     LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
 
@@ -231,11 +231,11 @@ library LibItem {
   }
 
   function verifyForAccount(IUintComp components, uint32 index) public view {
-    if (!LibFor.isForAccount(components, genID(index))) revert("that's not for accounts");
+    if (!LibFor.get(components, genID(index)).eq("ACCOUNT")) revert("that's not for accounts");
   }
 
   function checkForPet(IUintComp components, uint32 index) public view {
-    if (!LibFor.isForPet(components, genID(index))) revert("that's not for kamis");
+    if (!LibFor.get(components, genID(index)).eq("KAMI")) revert("that's not for kamis");
   }
 
   /////////////////
@@ -297,7 +297,7 @@ library LibItem {
   // SETTERS
 
   function setFor(IUintComp components, uint256 id, string memory for_) internal {
-    LibFor.setFromString(components, id, for_);
+    LibFor.set(components, id, for_);
   }
 
   function setRoom(IUintComp components, uint256 id, uint32 roomIndex) internal {

@@ -4,7 +4,7 @@ import "solecs/components/Uint256Component.sol";
 
 uint256 constant ID = uint256(keccak256("component.for"));
 
-// holds a ComponentID and to gate logic by archetype
+// world3: remove, replace with ForStringComponent
 contract ForComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

@@ -5,7 +5,6 @@ import { Components } from 'network/';
 import { getBalance, getBool } from 'network/shapes/utils';
 import { Account } from '../Account';
 import { Kami } from '../Kami';
-import { ForShapeOptions, ForType } from '../utils';
 import { Condition, HANDLER, OPERATOR, Status, Target } from './types';
 
 ////////////
@@ -26,11 +25,10 @@ export const passesConditions = (
 export const passesConditionsByFor = (
   world: World,
   components: Components,
-  conditions: Condition[],
-  holders: ForShapeOptions
+  conditions: Condition[]
 ): boolean => {
   if (conditions.length == 0) return true;
-  return checkConditionsByFor(world, components, conditions, holders).every(
+  return checkConditionsByFor(world, components, conditions).every(
     (val: Status) => val.completable
   );
 };
@@ -47,16 +45,16 @@ export const checkConditions = (
 export const checkConditionsByFor = (
   world: World,
   components: Components,
-  conditions: Condition[],
-  holders: ForShapeOptions
+  conditions: Condition[]
 ): Status[] => {
   const conds = splitCondByFor(conditions);
   const result: Status[] = [];
 
-  if (holders.account)
-    result.push(...checkConditions(world, components, conds.get('ACCOUNT') ?? [], holders.account));
-  if (holders.kami)
-    result.push(...checkConditions(world, components, conds.get('KAMI') ?? [], holders.kami));
+  // todo: fix with appropriate node checks
+  // if (holders.account)
+  //   result.push(...checkConditions(world, components, conds.get('ACCOUNT') ?? [], holders.account));
+  // if (holders.kami)
+  //   result.push(...checkConditions(world, components, conds.get('KAMI') ?? [], holders.kami));
 
   return result;
 };
@@ -144,9 +142,9 @@ export const checkLogicOperator = (
 // @dev calling func expected to handle For types
 export const splitCondByFor = (
   conds: Condition[],
-  fallbackType?: ForType
-): Map<ForType, Condition[]> => {
-  const result = new Map<ForType, Condition[]>();
+  fallbackType?: string
+): Map<string, Condition[]> => {
+  const result = new Map<string, Condition[]>();
   const fallback = fallbackType ?? '';
 
   for (let i = 0; i < conds.length; i++) {

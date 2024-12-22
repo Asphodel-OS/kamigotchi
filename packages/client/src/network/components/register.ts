@@ -29,6 +29,7 @@ export function createComponents(world: World) {
     Experience: defineNumberComponent(world, 'Experience', 'component.experience'),
     FarcasterIndex: defineNumberComponent(world, 'FarcasterIndex', 'component.index.farcaster', true),
     For: defineNumberComponent(world, 'For', 'component.for'),
+    ForString: defineStringComponent(world, 'ForString', 'component.for.string'),
     HasFlag: defineBoolComponent(world, 'HasFlag', 'component.has.flag', true),
     Harmony: defineStatComponent(world, 'Harmony', 'component.stat.harmony'),
     Health: defineStatComponent(world, 'Health', 'component.stat.health'),
