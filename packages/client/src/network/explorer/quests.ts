@@ -16,7 +16,8 @@ export const quests = (world: World, components: Components) => {
       const quests = entities.map((entity) => getQuest(world, components, entity));
       return quests.sort((a, b) => a.index - b.index);
     },
-    get: (index: number) => getQuestByIndex(world, components, index),
+    get: (entity: EntityIndex) => getQuest(world, components, entity),
+    getByIndex: (index: number) => getQuestByIndex(world, components, index),
     getForAccount: (accountIndex: number) => {
       const accEntity = queryAccountByIndex(components, accountIndex) as EntityIndex;
       const accountID = world.entities[accEntity];

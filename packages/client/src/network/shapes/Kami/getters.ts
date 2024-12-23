@@ -35,9 +35,9 @@ export const getByAccount = (
   return results.map((index) => get(world, comps, index, options));
 };
 
-export const getByName = (world: World, comps: Components, name: string) => {
+export const getByName = (world: World, comps: Components, name: string, options?: Options) => {
   const results = query(comps, { name });
-  return results.map((index) => get(world, comps, index));
+  return results.map((index) => get(world, comps, index, options));
 };
 
 // get all Kamis based on their state

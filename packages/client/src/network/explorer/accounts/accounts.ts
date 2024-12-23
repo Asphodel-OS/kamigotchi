@@ -1,8 +1,9 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import {
   AccountOptions,
+  getAccount,
   getAccountByID,
   getAccountByIndex,
   getAccountByName,
@@ -18,7 +19,7 @@ import {
   getReputationStats,
 } from './stats';
 
-const fullAccountOptions: AccountOptions = {
+const FullAccountOptions: AccountOptions = {
   kamis: true,
   friends: true,
   inventory: true,
@@ -28,13 +29,23 @@ const fullAccountOptions: AccountOptions = {
 export const accounts = (world: World, components: Components) => {
   return {
     all: (options?: AccountOptions) => getAllAccounts(world, components, options),
-    get: (index: number) => getAccountByIndex(world, components, index, fullAccountOptions),
-    getByID: (id: EntityID) => getAccountByID(world, components, id, fullAccountOptions),
-    getByOwner: (owner: string) =>
-      getAccountByOwner(world, components, owner.toLowerCase(), fullAccountOptions),
-    getByOperator: (operator: string) =>
-      getAccountByOperator(world, components, operator.toLowerCase(), fullAccountOptions),
-    getByName: (name: string) => getAccountByName(world, components, name, fullAccountOptions),
+    get: (entity: EntityIndex, options?: AccountOptions) =>
+      getAccount(world, components, entity, options ?? FullAccountOptions),
+    getByIndex: (index: number, options?: AccountOptions) =>
+      getAccountByIndex(world, components, index, options ?? FullAccountOptions),
+    getByID: (id: EntityID, options?: AccountOptions) =>
+      getAccountByID(world, components, id, options ?? FullAccountOptions),
+    getByOwner: (owner: string, options?: AccountOptions) =>
+      getAccountByOwner(world, components, owner.toLowerCase(), options ?? FullAccountOptions),
+    getByOperator: (operator: string, options?: AccountOptions) =>
+      getAccountByOperator(
+        world,
+        components,
+        operator.toLowerCase(),
+        options ?? FullAccountOptions
+      ),
+    getByName: (name: string, options?: AccountOptions) =>
+      getAccountByName(world, components, name, options ?? FullAccountOptions),
     indices: () => Array.from(components.AccountIndex.values.value.values()),
     rankings: {
       musu: (limit?: number) => getItemStats(world, components, limit),
