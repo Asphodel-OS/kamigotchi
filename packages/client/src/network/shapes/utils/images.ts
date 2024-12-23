@@ -5,52 +5,40 @@ import { AffinityIcons } from 'constants/affinities';
 import { StatIcons } from 'constants/stats';
 
 export const getAffinityImage = (name: string) => {
-  if (!name) return '';
-  name = name.toLowerCase();
-  const key = name as keyof typeof AffinityIcons;
+  const key = cleanName(name) as keyof typeof AffinityIcons;
   if (!key) throw new Error(`No affinity image found for ${name}`);
-
   return AffinityIcons[key];
 };
 
-// clean and format name of faction
 export const getFactionImage = (name: string) => {
-  if (!name) return '';
-  name = name.toLowerCase();
-  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
-  const key = name as keyof typeof FactionIcons;
+  const key = cleanName(name) as keyof typeof FactionIcons;
   if (!key) throw new Error(`No faction image found for ${name}`);
-
   return FactionIcons[key];
 };
 
-// clean up name of item to standard format and query out map of item images
 export const getItemImage = (name: string) => {
-  name = name.toLowerCase();
-  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
-  const key = name as keyof typeof ItemImages;
+  const key = cleanName(name) as keyof typeof ItemImages;
   if (!key) throw new Error(`No item image found for ${name}`);
-
   return ItemImages[key];
 };
 
-// clean up name of item to standard format and query out map of item images
 export const getSkillImage = (name: string) => {
-  name = name.toLowerCase();
-  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
-  const key = name as keyof typeof SkillImages;
+  const key = cleanName(name) as keyof typeof SkillImages;
   if (!key) throw new Error(`No skill image found for ${name}`);
-
   return SkillImages[key];
 };
 
 export const getStatImage = (name: string) => {
-  name = name.toLowerCase();
-  const key = name as keyof typeof StatIcons;
+  const key = cleanName(name) as keyof typeof StatIcons;
   if (!key) throw new Error(`No stat image found for ${name}`);
-
   return StatIcons[key];
+};
+
+// clean the name up to image file name format
+const cleanName = (name: string) => {
+  if (!name) return '';
+  name = name.toLowerCase();
+  name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
+  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
+  return name;
 };
