@@ -4,7 +4,7 @@ import { Components } from 'network/';
 import { Account } from '../Account';
 import { Allo, getAllo } from '../Allo';
 import { Condition, getCondition } from '../Conditional';
-import { queryConditionsOf } from '../Conditional/queries';
+import { getConditionsOf } from '../Conditional/queries';
 import { Score } from '../Score';
 import { getEntityByHash, hashArgs, queryChildrenOf, queryRefsWithParent } from '../utils';
 
@@ -102,7 +102,7 @@ const getGoalRequirements = (
   components: Components,
   goalIndex: number
 ): Condition[] => {
-  return queryConditionsOf(world, components, 'goal.requirement', goalIndex);
+  return getConditionsOf(world, components, 'goal.requirement', goalIndex);
 };
 
 const getTierRewards = (world: World, components: Components, tierID: EntityID): Allo[] => {

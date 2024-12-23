@@ -3,7 +3,7 @@ import { Components } from 'network/';
 import { genID, queryChildrenOf } from '../utils';
 import { Condition, Options, getCondition } from './types';
 
-export function queryConditionsOf(
+export function getConditionsOf(
   world: World,
   comps: Components,
   field: string,
@@ -15,7 +15,7 @@ export function queryConditionsOf(
   return childEntities.map((entity) => getCondition(world, comps, entity, options));
 }
 
-export function queryConditionsOfID(
+export function getConditionsOfID(
   world: World,
   comps: Components,
   ptrID: EntityID,

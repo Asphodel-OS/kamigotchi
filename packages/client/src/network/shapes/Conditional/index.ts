@@ -11,7 +11,7 @@ export {
   passesConditionsByFor,
 } from './functions';
 export { parseConditionalText, parseConditionalTracking } from './interpretation';
-export { queryConditionsOf, queryConditionsOfID } from './queries';
+export { getConditionsOf, getConditionsOfID } from './queries';
 export { getCondition } from './types';
 
 export type {

@@ -11,7 +11,7 @@ import {
 import { Components } from 'network/';
 import { Item, getItem } from 'network/shapes/Item';
 import { Account } from './Account';
-import { passesConditions, queryConditionsOfID } from './Conditional';
+import { getConditionsOfID, passesConditions } from './Conditional';
 import { getEntityByHash, hashArgs } from './utils';
 
 export const getNPCListingsFiltered = (
@@ -23,7 +23,7 @@ export const getNPCListingsFiltered = (
   const allListings = queryNPCListingEntities(components, npcIndex);
 
   const filtered = allListings.filter((entity) => {
-    const reqs = queryConditionsOfID(world, components, getReqPtrID(world.entities[entity]));
+    const reqs = getConditionsOfID(world, components, getReqPtrID(world.entities[entity]));
     return passesConditions(world, components, reqs, account);
   });
 

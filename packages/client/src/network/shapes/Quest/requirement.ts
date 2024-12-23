@@ -3,7 +3,7 @@ import { World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Account } from '../Account';
 import { Condition, Status, checkBoolean, checkCurrent, checkerSwitch } from '../Conditional';
-import { queryConditionsOf } from '../Conditional/queries';
+import { getConditionsOf } from '../Conditional/queries';
 
 export interface Requirement extends Condition {}
 
@@ -13,7 +13,7 @@ export const getRequirements = (
   components: Components,
   questIndex: number
 ): Requirement[] => {
-  return queryConditionsOf(world, components, 'registry.quest.requirement', questIndex);
+  return getConditionsOf(world, components, 'registry.quest.requirement', questIndex);
 };
 
 export const checkRequirement = (

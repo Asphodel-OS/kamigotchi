@@ -2,7 +2,7 @@ import { HasValue, World, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
-import { queryConditionsOf } from '../Conditional/queries';
+import { getConditionsOf } from '../Conditional/queries';
 import { NullNode } from './constants';
 import { queryByIndex } from './queries';
 import { BaseNode, Node, getBaseNode, getNode } from './types';
@@ -33,5 +33,5 @@ export const getRequirements = (
   components: Components,
   nodeIndex: number
 ): Condition[] => {
-  return queryConditionsOf(world, components, 'node.requirement', nodeIndex, { for: true });
+  return getConditionsOf(world, components, 'node.requirement', nodeIndex, { for: true });
 };

@@ -1,7 +1,7 @@
 import { EntityID, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
-import { Condition, queryConditionsOfID } from '../Conditional';
+import { Condition, getConditionsOfID } from '../Conditional';
 import { genRef, hashArgs } from '../utils';
 import { genRefParentID } from './utils';
 
@@ -24,7 +24,7 @@ export const getActionRequirements = (
   action: string
 ): Condition[] => {
   const parentID = genRequirementAnchor(index, action);
-  return queryConditionsOfID(world, comps, parentID);
+  return getConditionsOfID(world, comps, parentID);
 };
 
 export const genRequirementAnchor = (index: number, action: string): EntityID => {

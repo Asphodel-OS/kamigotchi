@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, Has, World, getComponentValue, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Condition, queryConditionsOf } from '../Conditional';
+import { Condition, getConditionsOf } from '../Conditional';
 import { getItemDetailsByIndex } from '../Item';
 import { getStat } from '../Stats';
 import { DetailedEntity, getEntityByHash } from '../utils';
@@ -64,7 +64,7 @@ export const getRecipe = (
     cost: {
       stamina: getStat(entity, Stamina).sync * 1,
     },
-    requirements: queryConditionsOf(world, components, 'recipe.requirement', recipeIndex),
+    requirements: getConditionsOf(world, components, 'recipe.requirement', recipeIndex),
   };
 
   return recipe;
