@@ -14,6 +14,8 @@ uint256 constant ID = uint256(keccak256("system.account.move"));
 
 // moves the account to a valid room location
 contract AccountMoveSystem is System {
+  uint256[] internal _schema = [uint256(keccak256("uint32"))];
+
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -43,6 +45,9 @@ contract AccountMoveSystem is System {
     // standard logging and tracking
     LibRoom.logMove(components, accID);
     LibAccount.updateLastTs(components, accID);
+
+    _emitSystemCall(ID, _schema, arguments);
+
     return "";
   }
 

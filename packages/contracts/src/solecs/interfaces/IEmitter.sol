@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.0;
+
+interface IEmitter {
+  function emitSystemCalled(
+    uint256 systemId,
+    uint256[] calldata schema,
+    bytes calldata value
+  ) external;
+}

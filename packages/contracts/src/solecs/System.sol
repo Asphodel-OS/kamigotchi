@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { ISystem } from "./interfaces/ISystem.sol";
 import { IUint256Component } from "./interfaces/IUint256Component.sol";
 import { IWorld } from "./interfaces/IWorld.sol";
-
+import { IEmitter } from "./interfaces/IEmitter.sol";
 import { Ownable } from "solady/auth/Ownable.sol";
 
 /**
@@ -24,5 +24,10 @@ abstract contract System is ISystem, Ownable {
   /// @dev emits event for external devs to listen for; does not remove component permissions
   function deprecate() external override onlyOwner {
     emit SystemDeprecated();
+  }
+
+  function _emitSystemCall(uint256 systemId, uint256[] memory schema, bytes memory value) internal {
+    address emitter = world._emitter();
+    IEmitter(emitter).emitSystemCalled(systemId, schema, value);
   }
 }
