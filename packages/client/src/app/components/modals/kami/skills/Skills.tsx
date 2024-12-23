@@ -28,8 +28,8 @@ interface Props {
 
 export const Skills = (props: Props) => {
   const { data, skills, actions, utils } = props;
-  const { account, kami, owner } = data;
-  const { getUpgradeError, getTreePoints, getTreeRequirement } = utils;
+  const { kami } = data;
+  const { getUpgradeError, getTreePoints } = utils;
 
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [displayed, setDisplayed] = useState(0); // index of displayed skill

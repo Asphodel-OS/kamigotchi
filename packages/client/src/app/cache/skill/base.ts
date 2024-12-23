@@ -7,13 +7,13 @@ import { getSkill as getSkillShape, Skill } from 'network/shapes/Skill';
 const SkillCache = new Map<EntityIndex, Skill>(); // skill registry entity -> Skill
 
 // get the skill for a kami entity
-export const getSkill = (world: World, components: Components, entity: EntityIndex) => {
-  if (!SkillCache.has(entity)) processSkill(world, components, entity);
+export const get = (world: World, components: Components, entity: EntityIndex) => {
+  if (!SkillCache.has(entity)) process(world, components, entity);
   return SkillCache.get(entity)!;
 };
 
 // retrieve a skill's most recent data and update it on the cache
-export const processSkill = (world: World, components: Components, entity: EntityIndex) => {
+export const process = (world: World, components: Components, entity: EntityIndex) => {
   const skill = getSkillShape(world, components, entity);
   SkillCache.set(entity, skill);
   return skill;

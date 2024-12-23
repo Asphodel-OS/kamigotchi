@@ -1,4 +1,4 @@
-export { getSkill, processSkill } from './base';
+export { get as getSkill, process as processSkill } from './base';
 export {
   getHolderTreePoints as getHolderSkillTreePoints,
   getInstance as getSkillInstance,

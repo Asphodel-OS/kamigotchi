@@ -3,6 +3,13 @@ import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 
+export const getCost = (components: Components, entity: EntityIndex): number => {
+  const { Cost } = components;
+  const result = getComponentValue(Cost, entity)?.value;
+  if (result === undefined) console.warn('getCost(): undefined for entity', entity);
+  return result ?? 0;
+};
+
 export const getDescription = (components: Components, entity: EntityIndex): string => {
   const { Description } = components;
   const result = getComponentValue(Description, entity)?.value;
@@ -15,6 +22,13 @@ export const getLevel = (components: Components, entity: EntityIndex, fallback =
   const result = getComponentValue(Level, entity)?.value;
   if (result === undefined) console.warn('getLevel(): undefined for entity', entity);
   return (result ?? fallback) * 1;
+};
+
+export const getMax = (components: Components, entity: EntityIndex): number => {
+  const { Max } = components;
+  const result = getComponentValue(Max, entity)?.value;
+  if (result === undefined) console.warn('getMax(): undefined for entity', entity);
+  return (result ?? 0) * 1;
 };
 
 export const getMediaURI = (components: Components, entity: EntityIndex): string => {
@@ -167,6 +181,13 @@ export const getRoomIndex = (components: Components, entity: EntityIndex): numbe
   const { RoomIndex } = components;
   const result = getComponentValue(RoomIndex, entity)?.value;
   if (result === undefined) console.warn('getRoomIndex(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+export const getSkillIndex = (components: Components, entity: EntityIndex): number => {
+  const { SkillIndex } = components;
+  const result = getComponentValue(SkillIndex, entity)?.value;
+  if (result === undefined) console.warn('getSkillIndex(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 

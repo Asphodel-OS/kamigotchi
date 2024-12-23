@@ -4,8 +4,19 @@ import { Components } from 'network/';
 import { getSkillBonuses } from '.';
 import { Bonus } from '../Bonus';
 import { Condition, queryConditionsOf } from '../Conditional';
-import { DetailedEntity, getEntityByHash, hashArgs } from '../utils';
+import { DetailedEntity, getEntityByHash } from '../utils';
+import {
+  getCost,
+  getDescription,
+  getLevel,
+  getMax,
+  getName,
+  getSkillIndex,
+  getSkillPoints,
+  getType,
+} from '../utils/component';
 import { getSkillImage } from '../utils/images';
+import { queryByIndex } from './queries';
 
 /////////////////
 // SHAPES
@@ -50,34 +61,32 @@ export const NullSkill: Skill = {
 };
 
 // Get a Skill Registry object with bonus and requirements
-export const getSkill = (
+export const get = (
   world: World,
   components: Components,
   entity: EntityIndex,
   options?: Options
 ): Skill => {
-  const { Cost, Description, Level, Max, Name, Type, SkillIndex, SkillPoint } = components;
+  const skillIndex = getSkillIndex(components, entity);
+  const registryEntity = queryByIndex(world, components, skillIndex);
+  if (!registryEntity) return NullSkill;
 
-  const skillIndex = getComponentValue(SkillIndex, entity)?.value || (0 as number);
-  const registryIndex = getRegistryEntity(world, skillIndex);
-  if (!registryIndex) return NullSkill;
-
-  const name = getComponentValue(Name, registryIndex)?.value || ('' as string);
+  const name = getName(components, registryEntity);
 
   let skill: Skill = {
     ObjectType: 'SKILL',
     id: world.entities[entity],
     index: skillIndex,
     name: name,
-    description: getComponentValue(Description, registryIndex)?.value || ('' as string),
+    description: getDescription(components, registryEntity),
     image: getSkillImage(name),
-    cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
+    cost: getCost(components, registryEntity),
     points: {
-      current: Number(getComponentValue(SkillPoint, entity)?.value || 0),
-      max: Number(getComponentValue(Max, registryIndex)?.value || 0),
+      current: getSkillPoints(components, entity),
+      max: getMax(components, registryEntity),
     },
-    tree: getComponentValue(Type, registryIndex)?.value || ('' as string),
-    treeTier: Number(getComponentValue(Level, registryIndex)?.value || 0),
+    tree: getType(components, registryEntity),
+    treeTier: getLevel(components, registryEntity),
   };
 
   if (options?.bonuses) skill.bonuses = getSkillBonuses(world, components, skill.index);
@@ -113,10 +122,6 @@ export const getRequirement = (
 //////////////////
 // IDs
 
-export const getRegistryEntity = (world: World, index: number): EntityIndex | undefined => {
-  return getEntityByHash(world, ['registry.skill', index], ['string', 'uint32']);
-};
-
 export const getInstanceEntity = (
   world: World,
   holderID: EntityID,
@@ -128,8 +133,4 @@ export const getInstanceEntity = (
     ['skill.instance', holderID, index],
     ['string', 'uint256', 'uint32']
   );
-};
-
-export const getBonusParentID = (skillIndex: number): EntityID => {
-  return hashArgs(['registry.skill.bonus', skillIndex], ['string', 'uint32']);
 };
