@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getSkillInstance } from 'app/cache/skill';
-import { parseRequirementText } from 'app/cache/skill/functions';
+import { getSkillInstance } from 'app/cache/skills';
 import { ActionButton, HelpChip, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { parseBonusText } from 'network/shapes/Bonus';
+import { Condition } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
@@ -17,28 +17,30 @@ interface Props {
     owner: BaseAccount;
   };
   index: number;
-  skills: Map<number, Skill>; // registry skills
   upgradeError: string[] | undefined;
   actions: { upgrade: (skill: Skill) => void };
   utils: {
+    getSkill: (index: number) => Skill;
     getSkillImage: (skill: Skill) => string;
     getTreePoints: (tree: string) => number;
     getTreeRequirement: (skill: Skill) => number;
+    parseSkillRequirement: (requirement: Condition) => string;
   };
 }
 
 // The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
-  const { index, data, skills, upgradeError, actions, utils } = props;
+  const { index, data, upgradeError, actions, utils } = props;
   const { account, kami, owner } = data;
-  const { getSkillImage, getTreePoints, getTreeRequirement } = utils;
-  const [skill, setSkill] = useState<Skill | undefined>(skills.get(index)); // registry skill instance
+  const { getSkill, getSkillImage, parseSkillRequirement } = utils;
+  const { getTreePoints, getTreeRequirement } = utils;
+  const [skill, setSkill] = useState<Skill | undefined>(getSkill(index)); // registry skill instance
   const [investment, setInvestment] = useState<number>(0);
   const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
-    const skill = skills.get(index);
+    const skill = getSkill(index);
     setSkill(skill);
 
     const investment = getSkillInstance(kami, index);
@@ -146,7 +148,7 @@ export const Details = (props: Props) => {
         label='Requirements'
         values={[
           parseTreeRequirementText(skill),
-          ...(skill.requirements ?? []).map((req) => parseRequirementText(req, skills)),
+          ...(skill.requirements ?? []).map((req) => parseSkillRequirement(req)),
         ]}
       />
     </Container>

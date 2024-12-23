@@ -7,6 +7,7 @@ import { checkCondition, Condition } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill/types';
 import { getConfigArray } from '../config';
+import { getByIndex } from './base';
 
 export const getInstance = (holder: Kami, index: number) => {
   const investments = holder.skills?.investments ?? [];
@@ -21,11 +22,10 @@ export const getUpgradeError = (
   world: World,
   components: Components,
   index: number,
-  kami: Kami,
-  registry: Map<number, Skill>
+  kami: Kami
 ) => {
   // registry check
-  const rSkill = registry.get(index);
+  const rSkill = getByIndex(world, components, index);
   if (!rSkill) return ['Skill not found'];
 
   // maxed out check
@@ -50,7 +50,7 @@ export const getUpgradeError = (
   // requirements check
   for (let req of rSkill.requirements ?? []) {
     if (!checkCondition(world, components, req, kami).completable)
-      return [`Unmet tier:`, `- ${parseRequirementText(req, registry)}`];
+      return [`Unmet tier:`, `- ${parseRequirementText(world, components, req)}`];
   }
 
   // skill cost
@@ -71,17 +71,18 @@ export const getHolderTreePoints = (
 
 // parse the description of a skill requirement from its components
 export const parseRequirementText = (
-  requirement: Condition,
-  registry: Map<number, Skill>
+  world: World,
+  components: Components,
+  requirement: Condition
 ): string => {
-  const index = (requirement.target.index ?? 0) * 1;
-  const value = (requirement.target.value ?? 0) * 1;
+  const index = requirement.target.index;
+  const value = requirement.target.value;
   const type = requirement.target.type;
 
   if (type === 'LEVEL') {
     return `Kami Lvl${value}`;
   } else if (type === 'SKILL') {
-    const name = registry.get(index!)?.name;
+    const name = getByIndex(world, components, index!)?.name;
     if (value == 0) return `Cannot have [${name}]`;
     return `Lvl${value} [${name}]`;
   } else {

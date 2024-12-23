@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 
-import { Skill, getSkillInstance } from 'app/cache/skill';
+import { Skill, getSkillInstance } from 'app/cache/skills';
 import { Tooltip } from 'app/components/library';
 import { SkillImages } from 'assets/images/skills';
 import { parseBonusText } from 'network/shapes/Bonus/interpretation';

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { SkillImages } from 'assets/images/skills';
 import { Account, BaseAccount } from 'network/shapes/Account';
+import { Condition } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { Details } from './Details';
@@ -14,35 +15,26 @@ interface Props {
     kami: Kami;
     owner: BaseAccount;
   };
-  skills: Skill[]; // registry skills
   actions: {
     upgrade: (skill: Skill) => void;
     reset: (kami: Kami) => void;
   };
   utils: {
-    getUpgradeError: (registry: Map<number, Skill>, index: number) => string[] | undefined;
+    getSkill: (index: number) => Skill;
+    getUpgradeError: (index: number) => string[] | undefined;
     getTreePoints: (tree: string) => number;
     getTreeRequirement: (skill: Skill) => number;
+    parseSkillRequirement: (requirement: Condition) => string;
   };
 }
 
 export const Skills = (props: Props) => {
-  const { data, skills, actions, utils } = props;
+  const { data, actions, utils } = props;
   const { kami } = data;
-  const { getUpgradeError, getTreePoints } = utils;
-
-  const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
+  const { getSkill, getUpgradeError, getTreePoints } = utils;
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
-  // keep a hashmap for easy lookup of Skill Indices => Skill Objects
-  useEffect(() => {
-    const result = skills.reduce(
-      (map, skill) => map.set(skill.index * 1, skill),
-      new Map<number, Skill>()
-    );
-    setSkillMap(result);
-  }, [skills.length]);
-
+  useEffect(() => {}, []);
   ////////////////////
   // INTERPRETATION
 
@@ -59,18 +51,17 @@ export const Skills = (props: Props) => {
       <Details
         data={data}
         index={displayed}
-        skills={skillMap}
         actions={{ upgrade: actions.upgrade }}
-        upgradeError={getUpgradeError(skillMap, displayed)}
+        upgradeError={getUpgradeError(displayed)}
         utils={{ ...utils, getSkillImage }}
       />
       <Matrix
         kami={kami}
-        skills={skillMap}
-        setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
+        setDisplayed={(index: number) => setDisplayed(index)}
         actions={actions}
         utils={{
-          getUpgradeError: (index: number) => getUpgradeError(skillMap, index),
+          getSkill,
+          getUpgradeError,
           getTreePoints,
         }}
       />

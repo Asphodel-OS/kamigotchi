@@ -9,8 +9,8 @@ export {
 } from './getters';
 export {
   queryForHolder as queryHolderSkills,
-  query as queryRegistrySkills,
   queryByIndex as querySkillByIndex,
+  queryRegistry as querySkillRegistry,
 } from './queries';
 export { get as getSkill, getInstanceEntity as getSkillInstanceEntity } from './types';
 

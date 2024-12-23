@@ -6,15 +6,19 @@ import { getAccount } from 'app/cache/account';
 import { getKami, getKamiAccount } from 'app/cache/kami';
 import {
   getHolderSkillTreePoints,
+  getSkillByIndex,
   getSkillTreePointsRequirement,
   getSkillUpgradeError,
-} from 'app/cache/skill';
+  initializeSkills,
+  parseSkillRequirementText,
+} from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { Kami, calcKamiExpRequirement, queryKamis } from 'network/shapes/Kami';
-import { Skill, getRegistrySkills } from 'network/shapes/Skill';
+import { Condition } from 'network/shapes/Conditional';
+import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
+import { Skill } from 'network/shapes/Skill';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
@@ -60,13 +64,17 @@ export function registerKamiModal() {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
               getOwner: (entity: EntityIndex) => getKamiAccount(world, components, entity),
-              getUpgradeError: (registry: Map<number, Skill>, index: number, kami: Kami) =>
-                getSkillUpgradeError(world, components, index, kami, registry),
+              getSkill: (index: number) => getSkillByIndex(world, components, index),
+              getSkillUpgradeError: (index: number, kami: Kami) =>
+                getSkillUpgradeError(world, components, index, kami),
               getTreePoints: (tree: string, holderID: EntityID) =>
                 getHolderSkillTreePoints(world, components, tree, holderID),
               getTreeRequirement: (skill: Skill) =>
                 getSkillTreePointsRequirement(world, components, skill),
+              initializeSkills: () => initializeSkills(world, components),
               queryKamiByIndex: (index: number) => queryKamis(components, { index })[0],
+              parseSkillRequirement: (requirement: Condition) =>
+                parseSkillRequirementText(world, components, requirement),
             },
           };
         })
@@ -75,16 +83,9 @@ export function registerKamiModal() {
 
     // Render
     ({ data, network, utils }) => {
-      const { actions, api, components, world } = network;
+      const { actions, api } = network;
       const { account } = data;
-      const {
-        getKami,
-        getOwner,
-        queryKamiByIndex,
-        getUpgradeError,
-        getTreePoints,
-        getTreeRequirement,
-      } = utils;
+      const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
       const { kamiIndex } = useSelected();
       const { modals } = useVisibility();
 
@@ -92,6 +93,12 @@ export function registerKamiModal() {
       const [kami, setKami] = useState<Kami>();
       const [owner, setOwner] = useState<BaseAccount>(NullAccount);
       const [lastSync, setLastSync] = useState(Date.now());
+
+      // initialize skills on load
+      // TODO: move this to a more appropriate place
+      useEffect(() => {
+        utils.initializeSkills();
+      }, []);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -174,13 +181,11 @@ export function registerKamiModal() {
           {tab === 'SKILLS' && (
             <Skills
               data={{ account, kami, owner }}
-              skills={getRegistrySkills(world, components)}
               actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill), reset: resetSkill }}
               utils={{
-                getUpgradeError: (registry: Map<number, Skill>, index: number) =>
-                  getUpgradeError(registry, index, kami),
+                ...utils,
+                getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),
                 getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
-                getTreeRequirement,
               }}
             />
           )}

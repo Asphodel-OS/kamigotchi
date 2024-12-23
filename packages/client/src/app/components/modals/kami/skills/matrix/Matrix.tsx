@@ -10,12 +10,12 @@ import { Node } from './Node';
 
 interface Props {
   kami: Kami;
-  skills: Map<number, Skill>;
   setDisplayed: (skillIndex: number) => void;
   actions: {
     reset: (kami: Kami) => void;
   };
   utils: {
+    getSkill: (index: number) => Skill;
     getUpgradeError: (index: number) => string[] | undefined;
     getTreePoints: (tree: string) => number;
   };
@@ -23,14 +23,15 @@ interface Props {
 
 // TODO: deprecate use of TierRequirements constant
 export const Matrix = (props: Props) => {
-  const { kami, skills, setDisplayed, actions, utils } = props;
+  const { kami, setDisplayed, actions, utils } = props;
+  const { getSkill } = utils;
   const [mode, setMode] = useState('Predator');
 
   // whenever the tree mode changes assign the skill at root node
   useEffect(() => {
     const rootNode = SkillTrees.get(mode)![0][0];
     setDisplayed(rootNode);
-  }, [mode, skills.size]);
+  }, [mode]);
 
   ////////////////////
   // DISPLAY
@@ -75,7 +76,7 @@ export const Matrix = (props: Props) => {
                   key={index}
                   index={index}
                   kami={kami}
-                  skill={skills.get(index)!}
+                  skill={getSkill(index)}
                   upgradeError={utils.getUpgradeError(index)}
                   setDisplayed={() => setDisplayed(index)}
                 />

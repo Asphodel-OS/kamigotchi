@@ -7,7 +7,7 @@ export const getCost = (components: Components, entity: EntityIndex): number => 
   const { Cost } = components;
   const result = getComponentValue(Cost, entity)?.value;
   if (result === undefined) console.warn('getCost(): undefined for entity', entity);
-  return result ?? 0;
+  return (result ?? 0) * 1;
 };
 
 export const getDescription = (components: Components, entity: EntityIndex): string => {
@@ -20,7 +20,7 @@ export const getDescription = (components: Components, entity: EntityIndex): str
 export const getLevel = (components: Components, entity: EntityIndex, fallback = 0): number => {
   const { Level } = components;
   const result = getComponentValue(Level, entity)?.value;
-  if (result === undefined) console.warn('getLevel(): undefined for entity', entity);
+  if (result === undefined && !fallback) console.warn('getLevel(): undefined for entity', entity);
   return (result ?? fallback) * 1;
 };
 
