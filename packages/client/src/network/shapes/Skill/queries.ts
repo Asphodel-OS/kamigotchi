@@ -9,9 +9,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { queryConditionsOf } from '../Conditional/queries';
 import { getEntityByHash } from '../utils';
-import { Requirement } from './types';
 
 export interface Filters {
   holder?: EntityID;
@@ -57,13 +55,4 @@ export const queryByIndex = (
     if (results.length > 1) console.warn(`found more than one skill registry with index ${index}`);
   }
   return entity;
-};
-
-// Get the Entity Indices of the Requirements of a Skill
-export const querySkillRequirements = (
-  world: World,
-  components: Components,
-  skillIndex: number
-): Requirement[] => {
-  return queryConditionsOf(world, components, 'registry.skill.requirement', skillIndex);
 };

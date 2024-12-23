@@ -120,7 +120,7 @@ export const Details = (props: Props) => {
             tooltip={[
               `Skill Index: ${skill.index}`,
               `Cost: ${skill.cost} Skill Point(s)`,
-              `Max: Level ${skill.points.max}`,
+              `Max: Level ${skill.max}`,
             ]}
           />
         </div>
@@ -129,7 +129,7 @@ export const Details = (props: Props) => {
       <NameSection>
         <Name>{skill.name}</Name>
         <LevelText>
-          [{kSkill?.points.current ?? 0}/{skill.points.max}]
+          [{kSkill?.points.current ?? 0}/{skill.max}]
         </LevelText>
       </NameSection>
 

@@ -1,9 +1,8 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getSkillBonuses } from '.';
 import { Bonus } from '../Bonus';
-import { Condition, queryConditionsOf } from '../Conditional';
+import { Condition, getConditionsOf } from '../Conditional';
 import { DetailedEntity, getEntityByHash } from '../utils';
 import {
   getCost,
@@ -12,110 +11,43 @@ import {
   getMax,
   getName,
   getSkillIndex,
-  getSkillPoints,
   getType,
 } from '../utils/component';
 import { getSkillImage } from '../utils/images';
-import { queryByIndex } from './queries';
-
-/////////////////
-// SHAPES
+import { getBonuses } from './bonuses';
+import { NullSkill } from './constants';
 
 export interface Skill extends DetailedEntity {
   id: EntityID;
   index: number;
-  cost: number;
-  tree: string;
-  treeTier: number;
-  points: {
-    current?: number;
-    max: number;
-  };
-  bonuses?: Bonus[];
-  requirements?: Requirement[];
+  type: string; // which skill tree this skill belongs to
+  tier: number; // the tier of the skill
+  cost: number; // the skillpoing cost of the skill (always 1 now)
+  max: number; // max points that can be spent on this skill
+  bonuses: Bonus[];
+  requirements: Condition[];
 }
-
-export interface Requirement extends Condition {}
-
-export interface Options {
-  requirements?: boolean;
-  bonuses?: boolean;
-}
-
-export const NullSkill: Skill = {
-  ObjectType: 'SKILL',
-  id: '0' as EntityID,
-  index: 0,
-  name: '',
-  description: '',
-  image: '',
-  cost: 0,
-  points: {
-    current: 0,
-    max: 0,
-  },
-  treeTier: 0,
-  tree: 'NONE',
-  bonuses: [],
-  requirements: [],
-};
 
 // Get a Skill Registry object with bonus and requirements
-export const get = (
-  world: World,
-  components: Components,
-  entity: EntityIndex,
-  options?: Options
-): Skill => {
+export const get = (world: World, components: Components, entity: EntityIndex): Skill => {
+  if (!entity) return NullSkill;
+  const name = getName(components, entity);
   const skillIndex = getSkillIndex(components, entity);
-  const registryEntity = queryByIndex(world, components, skillIndex);
-  if (!registryEntity) return NullSkill;
 
-  const name = getName(components, registryEntity);
-
-  let skill: Skill = {
+  return {
     ObjectType: 'SKILL',
     id: world.entities[entity],
     index: skillIndex,
     name: name,
-    description: getDescription(components, registryEntity),
+    description: getDescription(components, entity),
     image: getSkillImage(name),
-    cost: getCost(components, registryEntity),
-    points: {
-      current: getSkillPoints(components, entity),
-      max: getMax(components, registryEntity),
-    },
-    tree: getType(components, registryEntity),
-    treeTier: getLevel(components, registryEntity),
-  };
-
-  if (options?.bonuses) skill.bonuses = getSkillBonuses(world, components, skill.index);
-  if (options?.requirements)
-    skill.requirements = queryConditionsOf(
-      world,
-      components,
-      'registry.skill.requirement',
-      skillIndex
-    );
-  return skill;
-};
-
-// Get a Requirement Registry object
-export const getRequirement = (
-  world: World,
-  components: Components,
-  entity: EntityIndex
-): Requirement => {
-  const { Value, Index, LogicType, Type } = components;
-
-  return {
-    id: world.entities[entity],
-    logic: getComponentValue(LogicType, entity)?.value || ('' as string),
-    target: {
-      type: getComponentValue(Type, entity)?.value || ('' as string),
-      index: getComponentValue(Index, entity)?.value,
-      value: getComponentValue(Value, entity)?.value,
-    },
+    cost: getCost(components, entity),
+    max: getMax(components, entity),
+    // current: getSkillPoints(components, entity),
+    type: getType(components, entity),
+    tier: getLevel(components, entity),
+    bonuses: getBonuses(world, components, skillIndex),
+    requirements: getConditionsOf(world, components, 'registry.skill.requirement', skillIndex),
   };
 };
 
