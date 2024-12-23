@@ -72,8 +72,10 @@ export const Popover = (props: Props) => {
       <PopoverTrigger
         ref={triggerRef}
         onClick={(e) => {
-          handlePosition();
-          setIsVisible(!isVisible);
+          if (content.length !== 0) {
+            handlePosition();
+            setIsVisible(!isVisible);
+          }
         }}
       >
         {children}
