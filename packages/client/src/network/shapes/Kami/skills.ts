@@ -1,17 +1,32 @@
-import { EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/components';
-import { getHolderSkills, Skill } from '../Skill';
+import { queryHolderSkills } from '../Skill';
+import { getSkillIndex, getSkillPoints } from '../utils/component';
+
+export interface Investment {
+  index: number;
+  points: number;
+}
 
 export interface Skills {
   points: number;
-  tree: Skill[];
+  investments: Investment[];
 }
 
 export const getSkills = (world: World, components: Components, entity: EntityIndex): Skills => {
-  const { SkillPoint } = components;
   const id = world.entities[entity];
+
+  // get the skill instance entities associated with this holder
+  const investmentEntities = queryHolderSkills(components, id);
+  const investments = investmentEntities.map((instanceEntity) => {
+    return {
+      index: getSkillIndex(components, instanceEntity),
+      points: getSkillPoints(components, instanceEntity),
+    };
+  });
+
   return {
-    points: (getComponentValue(SkillPoint, entity)?.value ?? 0) * 1,
-    tree: getHolderSkills(world, components, id),
+    points: getSkillPoints(components, entity),
+    investments,
   };
 };

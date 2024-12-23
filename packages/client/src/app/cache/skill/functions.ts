@@ -3,13 +3,14 @@ import { EntityID, World } from '@mud-classic/recs';
 import { isDead, isHarvesting, isOffWorld, isStarving } from 'app/cache/kami';
 import { Components } from 'network/';
 import { getBonusValue } from 'network/shapes/Bonus';
-import { checkCondition } from 'network/shapes/Conditional';
-import { getConfigFieldValueArray } from 'network/shapes/Config';
+import { checkCondition, Condition } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
-import { Requirement, Skill } from 'network/shapes/Skill/types';
+import { Skill } from 'network/shapes/Skill/types';
+import { getConfigArray } from '../config';
 
-export const getInstance = (target: Kami, rSkill: Skill) => {
-  const kSkill = target.skills?.tree.find((s) => s.index === rSkill.index);
+export const getInstance = (holder: Kami, index: number) => {
+  const investments = holder.skills?.investments ?? [];
+  const kSkill = investments.find((s) => s.index === index);
   return kSkill;
 };
 
@@ -28,9 +29,9 @@ export const getUpgradeError = (
   if (!rSkill) return ['Skill not found'];
 
   // maxed out check
-  const maxPoints = rSkill.points.max;
-  const kSkill = kami.skills?.tree.find((s) => s.index === rSkill.index);
-  if ((kSkill?.points.current ?? 0) >= maxPoints) return [`Maxed Out [${maxPoints}/${maxPoints}]`];
+  const maxPoints = rSkill.max;
+  const kSkill = kami.skills?.investments.find((s) => s.index === rSkill.index);
+  if ((kSkill?.points ?? 0) >= maxPoints) return [`Maxed Out [${maxPoints}/${maxPoints}]`];
 
   // status/roomIndex check
   if (isDead(kami)) return [`${kami.name} is Dead`];
@@ -39,8 +40,8 @@ export const getUpgradeError = (
   if (isHarvesting(kami)) return [`${kami.name} is busy Harvesting`];
 
   // tree check
-  if (rSkill.treeTier > 0) {
-    const tree = rSkill.tree;
+  if (rSkill.tier > 0) {
+    const tree = rSkill.type;
     const invested = getHolderTreePoints(world, components, tree, kami.id);
     const reqPts = getTreePointsRequirement(world, components, rSkill);
     if (invested < reqPts) return [`Not enough ${tree} points invested [${invested}/${reqPts}]`];
@@ -49,7 +50,7 @@ export const getUpgradeError = (
   // requirements check
   for (let req of rSkill.requirements ?? []) {
     if (!checkCondition(world, components, req, kami).completable)
-      return [`Unmet Requirement:`, `- ${parseRequirementText(req, registry)}`];
+      return [`Unmet tier:`, `- ${parseRequirementText(req, registry)}`];
   }
 
   // skill cost
@@ -70,7 +71,7 @@ export const getHolderTreePoints = (
 
 // parse the description of a skill requirement from its components
 export const parseRequirementText = (
-  requirement: Requirement,
+  requirement: Condition,
   registry: Map<number, Skill>
 ): string => {
   const index = (requirement.target.index ?? 0) * 1;
@@ -93,9 +94,11 @@ export const parseRequirementText = (
 
 // check whether a skill is maxxed out
 export const isMaxxed = (skill: Skill, holder: Kami) => {
-  const target = skill.points.max;
-  const current = holder.skills?.tree.find((n) => n.index === skill.index)?.points.current || 0;
-  return current < target;
+  const max = skill.max;
+  const investments = holder.skills?.investments ?? [];
+  const investment = investments.find((n) => n.index === skill.index);
+  const current = investment?.points ?? 0;
+  return current >= max;
 };
 
 // check whether a holder has enough skill points to meet the cost of a skill
@@ -113,6 +116,6 @@ export const getTreePointsRequirement = (
   components: Components,
   skill: Skill
 ): number => {
-  const config = getConfigFieldValueArray(world, components, 'KAMI_TREE_REQ');
-  return config[skill.treeTier];
+  const config = getConfigArray(world, components, 'KAMI_TREE_REQ');
+  return config[skill.tier];
 };

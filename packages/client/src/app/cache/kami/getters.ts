@@ -5,13 +5,11 @@ import { NullAccount, queryKamiAccount } from 'network/shapes/Account';
 import { hasFlag } from 'network/shapes/Flag';
 import { NullHarvest } from 'network/shapes/Harvest';
 import { KamiBattles, KamiSkills, queryKamiHarvest, queryKamiTraits } from 'network/shapes/Kami';
+import { getSkills } from 'network/shapes/Kami/skills';
 import { queryKillsForKiller, queryKillsForVictim } from 'network/shapes/Kill';
-import { queryHolderSkills } from 'network/shapes/Skill';
-import { getSkillPoints } from 'network/shapes/utils/component';
 import { AccountOptions, getAccount } from '../account';
 import { getHarvest } from '../harvest';
 import { getKill } from '../kills';
-import { getSkill } from '../skill';
 import { getTrait } from '../trait';
 
 /**
@@ -66,19 +64,9 @@ export const getKamiHarvest = (world: World, comps: Components, entity: EntityIn
   return getHarvest(world, comps, harvestEntity, { live: 2 });
 };
 
-// not yet optimized around querying
-// TODO: retrieve the number of points invested in each skill
-// TODO: put some controls in place to smart refresh parts of a skill on demand
+// get the Skill investment objects for a Kami entity
 export const getKamiSkills = (world: World, comps: Components, entity: EntityIndex): KamiSkills => {
-  const id = world.entities[entity];
-  const skillEntities = queryHolderSkills(comps, id);
-  const skills = skillEntities.map((skillEntity) => {
-    return getSkill(world, comps, skillEntity);
-  });
-  return {
-    tree: skills,
-    points: getSkillPoints(comps, entity),
-  };
+  return getSkills(world, comps, entity);
 };
 
 // get the Traits object for a Kami entity

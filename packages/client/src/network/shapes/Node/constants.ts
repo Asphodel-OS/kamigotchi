@@ -12,7 +12,7 @@ export const NullNode: Node = {
   roomIndex: 0,
   name: 'Empty Node',
   description: 'There is no node in this room.',
-  affinity: '' as string,
+  affinity: 'NORMAL' as string,
   drops: [],
   requirements: [],
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getSkillInstance } from 'app/cache/skill';
 import { parseRequirementText } from 'app/cache/skill/functions';
 import { ActionButton, HelpChip, Tooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
@@ -32,15 +33,17 @@ export const Details = (props: Props) => {
   const { account, kami, owner } = data;
   const { getSkillImage, getTreePoints, getTreeRequirement } = utils;
   const [skill, setSkill] = useState<Skill | undefined>(skills.get(index)); // registry skill instance
-  const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
+  const [investment, setInvestment] = useState<number>(0);
   const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
-    const skill = skills.get(index); // registry skill instance
-    const kamiSkill = kami.skills?.tree.find((s) => s.index == index);
+    const skill = skills.get(index);
     setSkill(skill);
-    setKSkill(kamiSkill);
+
+    const investment = getSkillInstance(kami, index);
+    setInvestment(investment?.points ?? 0);
+
     setDisabledReason(owner.index !== account.index ? ['not ur kami'] : upgradeError);
   }, [index, kami]);
 
@@ -57,9 +60,9 @@ export const Details = (props: Props) => {
   // INTERPRETATION
 
   const parseTreeRequirementText = (skill: Skill): string => {
-    if (skill.treeTier == 0) return '';
-    const tree = skill.tree;
-    const invested = getTreePoints(skill.tree);
+    if (skill.tier == 0) return '';
+    const tree = skill.type;
+    const invested = getTreePoints(skill.type);
     const min = getTreeRequirement(skill);
 
     let text = `Invest >${min} ${tree} points`;
@@ -72,7 +75,7 @@ export const Details = (props: Props) => {
     if (disabledReason) return disabledReason;
 
     const cost = skill?.cost ?? 1;
-    const currLevel = kSkill?.points.current ?? 0;
+    const currLevel = investment;
     const tooltipText = [
       `Upgrade Skill (${cost}pt${cost > 1 ? 's' : ''})`,
       '',
@@ -129,7 +132,7 @@ export const Details = (props: Props) => {
       <NameSection>
         <Name>{skill.name}</Name>
         <LevelText>
-          [{kSkill?.points.current ?? 0}/{skill.max}]
+          [{investment}/{skill.max}]
         </LevelText>
       </NameSection>
 
