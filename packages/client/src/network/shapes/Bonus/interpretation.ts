@@ -6,18 +6,21 @@ import { Bonus } from './types';
 
 // [logictype] [value/type/subtype] [subtype] [type]    [subtype] [constant]
 export const parseBonusText = (bonus: Bonus): string => {
-  let text = '';
+  const value = bonus.value;
+  const type = bonus.type;
+  let text = value > 0 ? '+' : '';
 
   // number formatting
-  if (bonus.type.includes('STAT')) text += bonus.value * 1;
-  else if (bonus.type.startsWith('COOLDOWN')) text += `${bonus.value * 1}s`;
-  else text += `${(bonus.value / 10).toFixed(1)}%`; // default %
+  if (type.includes('STAT')) text += value * 1;
+  else if (type.includes('COOLDOWN')) text += `${value * 1}s`;
+  else if (type.includes('INTENSITY')) text += `${value * 1}musu/hr`;
+  else text += `${(value / 10).toFixed(1)}%`; // default %
 
   // type
-  if (bonus.type.startsWith('STAT')) text += ` ${bonus.type.split('_')[1]}`;
-  else if (bonus.type.endsWith('OFFENSE')) text += ` offensive ${bonus.type.slice(0, -7)}`;
-  else if (bonus.type.endsWith('DEFENSE')) text += ` defensive ${bonus.type.slice(0, -7)}`;
-  else text += ` ${bonus.type}`;
+  if (type.startsWith('STAT')) text += ` ${type.split('_')[1]}`;
+  else if (type.endsWith('OFFENSE')) text += ` offensive ${type.slice(0, -7)}`;
+  else if (type.endsWith('DEFENSE')) text += ` defensive ${type.slice(0, -7)}`;
+  else text += ` ${type}`;
 
   // formatting
   text = text.toLowerCase().replaceAll('_', ' ');
@@ -37,6 +40,6 @@ export const parseBonusText = (bonus: Bonus): string => {
 
 const parseEndtype = (bonus: Bonus): string => {
   if (bonus.endType === 'TIMED') return 'for ' + bonus.duration + 's';
-  else if (bonus.endType === 'UPON_HARVEST_ACTION') return 'till harvest action';
+  else if (bonus.endType === 'UPON_HARVEST_ACTION') return 'til next action';
   else return '';
 };
