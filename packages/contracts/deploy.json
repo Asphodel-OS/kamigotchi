@@ -9,7 +9,7 @@
     { "comp": "Cost", "name": "Cost", "type": "uint256" },
     { "comp": "DescriptionAlt", "name": "DescriptionAlt", "type": "string" },
     { "comp": "Description", "name": "Description", "type": "string" },
-    { "comp": "EntityType", "name": "EntityType", "type": "string" },
+    { "comp": "EntityType", "name": "EntityType", "type": "string", "indexed": true },
     { "comp": "Exits", "name": "Exits", "type": "uint32[]" },
     { "comp": "Experience", "name": "Experience", "type": "uint256" },
     { "comp": "FarcasterIndex", "name": "FarcasterIndex", "type": "uint32", "indexed": true },

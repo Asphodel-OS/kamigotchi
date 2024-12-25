@@ -24,7 +24,7 @@ export function createComponents(world: World) {
     Cost: defineNumberComponent(world, 'Cost', 'component.cost'),
     DescriptionAlt: defineStringComponent(world, 'DescriptionAlt', 'component.description.alt'),
     Description: defineStringComponent(world, 'Description', 'component.description'),
-    EntityType: defineStringComponent(world, 'EntityType', 'component.type.entity'),
+    EntityType: defineStringComponent(world, 'EntityType', 'component.type.entity', true),
     Exits: defineNumberArrayComponent(world, 'Exits', 'component.exits'),
     Experience: defineNumberComponent(world, 'Experience', 'component.experience'),
     FarcasterIndex: defineNumberComponent(world, 'FarcasterIndex', 'component.index.farcaster', true),
