@@ -235,6 +235,23 @@ library LibStat {
   /////////////////
   // SETTERS
 
+  /// @notice updates base value, if updated globally. used for stamina 20->100 surgery
+  /// @dev april doesn't love this pattern. needs to be inserted into systems. maybe config base pattern in future
+  function updateBase(
+    IUintComp components,
+    string memory type_,
+    uint256 id,
+    int32 newBase
+  ) internal {
+    StatComponent statComp = getStatComp(components, type_);
+    Stat memory curr = statComp.get(id);
+    if (curr.base != newBase) {
+      curr.base = newBase;
+      statComp.set(id, curr);
+      sync(components, type_, newBase, id); // sync amount, add new base val (be nice to players!)
+    }
+  }
+
   // note: setting sync manually for any non-zero value breaks abstraction
   function setSyncZero(IUintComp components, string memory type_, uint256 id) internal {
     Stat memory stat = getWithoutBonus(components, type_, id);

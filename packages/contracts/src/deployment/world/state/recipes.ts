@@ -64,7 +64,7 @@ async function createRecipe(api: AdminAPI, entry: any) {
     [Number(entry['Output Index'])],
     [Number(entry['Output Amount'])],
     Number(entry['Account XP Output']),
-    Number(entry['Stamina Cost']) / 5 // TODO: change to base 100, not base20
+    Number(entry['Stamina Cost'])
   );
 
   await addRequirement(api, entry);

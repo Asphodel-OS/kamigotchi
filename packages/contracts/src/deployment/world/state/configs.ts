@@ -16,7 +16,12 @@ export async function initConfigs(api: AdminAPI) {
 // local config settings for faster testing
 export async function initLocalConfigs(api: AdminAPI) {
   await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami');
-  await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
+  await api.config.set.array('ACCOUNT_STAMINA', [
+    100, // total stamina
+    1, // recovery period per point
+    5, // movement cost (in stamina)
+    5, // experience per move
+  ]);
   await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
   await api.config.set.number('KAMI_STANDARD_COOLDOWN', 30);
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100, 0, 0, 0, 1000, 3]);
@@ -43,8 +48,6 @@ async function initAccount(api: AdminAPI) {
     5, // movement cost (in stamina)
     5, // experience per move
   ]);
-  await api.config.set.number('ACCOUNT_STAMINA_BASE', 20);
-  await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 }
 
 async function initFriends(api: AdminAPI) {

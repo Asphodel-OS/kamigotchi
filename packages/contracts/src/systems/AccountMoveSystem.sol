@@ -3,9 +3,12 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { Coord, LibRoom } from "libraries/LibRoom.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.account.move"));
 
@@ -20,6 +23,12 @@ contract AccountMoveSystem is System {
     uint32 currIndex = LibAccount.getRoom(components, accID);
     uint256 currRoomID = LibRoom.getByIndex(components, currIndex);
     uint256 toRoomID = LibRoom.getByIndex(components, toIndex);
+
+    // stamina update (from 20 to 100). world3: remove this
+    int32 configBaseStamina = SafeCastLib.toInt32(
+      LibConfig.getArray(components, "ACCOUNT_STAMINA")[0]
+    );
+    LibStat.updateBase(components, "STAMINA", accID, configBaseStamina);
 
     if (!LibRoom.isReachable(components, toIndex, currRoomID, toRoomID)) {
       revert("AccMove: unreachable room");

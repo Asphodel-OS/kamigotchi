@@ -1,6 +1,6 @@
 import { World } from '@mud-classic/recs';
+import { getConfigArray } from 'app/cache/config';
 import { Components } from 'network/components';
-import { getConfigFieldValue } from '../Config';
 
 export interface Configs {
   level: LevelConfig;
@@ -39,8 +39,9 @@ export const getLevelConfig = (world: World, components: Components): LevelConfi
 
 // TODO: stitch this up with updated stamina config
 export const getStaminaConfig = (world: World, components: Components): StaminaConfig => {
+  const value = getConfigArray(world, components, 'ACCOUNT_STAMINA');
   return {
-    base: getConfigFieldValue(world, components, 'ACCOUNT_STAMINA_BASE'),
-    recovery: getConfigFieldValue(world, components, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
+    base: value[0],
+    recovery: value[1],
   };
 };
