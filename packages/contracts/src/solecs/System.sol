@@ -25,9 +25,4 @@ abstract contract System is ISystem, Ownable {
   function deprecate() external override onlyOwner {
     emit SystemDeprecated();
   }
-
-  function _emitSystemCall(uint256 systemId, uint256[] memory schema, bytes memory value) internal {
-    address emitter = world._emitter();
-    IEmitter(emitter).emitSystemCalled(systemId, schema, value);
-  }
 }

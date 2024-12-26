@@ -3,10 +3,12 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibEmitter } from "libraries/LibEmitter.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { Coord, LibRoom } from "libraries/LibRoom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -14,7 +16,7 @@ uint256 constant ID = uint256(keccak256("system.account.move"));
 
 // moves the account to a valid room location
 contract AccountMoveSystem is System {
-  uint256[] internal _schema = [uint256(keccak256("uint32"))];
+  uint8[] internal _schema = [uint8(LibTypes.SchemaValue.UINT32)];
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -46,7 +48,7 @@ contract AccountMoveSystem is System {
     LibRoom.logMove(components, accID);
     LibAccount.updateLastTs(components, accID);
 
-    _emitSystemCall(ID, _schema, arguments);
+    LibEmitter.emitSystemCall(world, ID, _schema, arguments);
 
     return "";
   }

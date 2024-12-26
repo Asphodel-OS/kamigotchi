@@ -68,6 +68,7 @@ export type DeployOptions = {
   rpc: string;
   deployerPriv: string;
   worldAddress?: string;
+  emitter?: string;
   components?: string;
   systems?: string;
   initWorld?: boolean;
