@@ -6,6 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
@@ -32,6 +33,8 @@ import { LibRoom } from "libraries/LibRoom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 library LibAccount {
+  using SafeCastLib for uint32;
+  using SafeCastLib for int32;
   /////////////////
   // INTERACTIONS
 
@@ -83,7 +86,7 @@ library LibAccount {
     uint32[8] memory config = LibConfig.getArray(components, "ACCOUNT_STAMINA");
     uint32 recoveryPeriod = config[1];
     uint32 timePassed = uint32(block.timestamp - getLastActionTs(components, id));
-    int32 recoveredAmt = int32(timePassed / recoveryPeriod); // rounds down
+    int32 recoveredAmt = timePassed.toInt32() / recoveryPeriod.toInt32(); // rounds down
     updateLastActionTs(components, id);
     return recoverStamina(components, id, recoveredAmt);
   }
@@ -93,15 +96,16 @@ library LibAccount {
     return LibStat.sync(components, "STAMINA", amt, id);
   }
 
-  // deplete the stamina of an account. assume it's already synced in this tx
+  /// @notice deplete the stamina of an account.
+  /// @dev assume it's already synced in this tx
   function depleteStamina(
     IUintComp components,
     uint256 id,
     uint32 rawAmt
   ) internal returns (int32) {
-    Stat memory stamina = LibStat.get(components, "STAMINA", id);
-    if (rawAmt > uint32(stamina.sync)) revert("Account: insufficient stamina");
-    int32 amt = -1 * int32(rawAmt);
+    int32 curr = LibStat.getCurrent(components, "STAMINA", id);
+    if (rawAmt > uint32(curr.toUint256())) revert("Account: insufficient stamina");
+    int32 amt = -1 * rawAmt.toInt32();
     return LibStat.sync(components, "STAMINA", amt, id); // optimisable: double sync
   }
 

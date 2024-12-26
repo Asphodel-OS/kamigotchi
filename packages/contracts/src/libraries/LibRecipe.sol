@@ -45,6 +45,7 @@ struct Table {
  *   - Values (Output quantities)
  */
 library LibRecipe {
+  using SafeCastLib for int32;
   using SafeCastLib for uint256;
 
   /////////////////
@@ -144,7 +145,7 @@ library LibRecipe {
   ) internal {
     // pay stamina cost
     int32 stCost = StaminaComponent(getAddrByID(components, StamCompID)).get(recipeID).sync;
-    LibAccount.depleteStamina(components, accID, uint32(stCost) * amt.toUint32());
+    LibAccount.depleteStamina(components, accID, (stCost.toUint256() * amt).toUint32());
   }
 
   function craft(
