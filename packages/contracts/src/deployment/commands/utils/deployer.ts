@@ -19,6 +19,7 @@ export async function deploy(
   rpc = 'http://localhost:8545',
   reuseComponents?: boolean,
   worldAddress?: string,
+  deployEmitter?: boolean,
   forgeOpts?: string,
   initWorld?: boolean,
   mode?: string
@@ -30,11 +31,12 @@ export async function deploy(
       'src/deployment/contracts/Deploy.s.sol:Deploy',
       '--broadcast',
       '--sig',
-      'deploy(uint256,address,bool,bool, string)',
+      'deploy(uint256,address,bool,bool,bool,string)',
       deployerPriv || constants.AddressZero, // Deployer
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       (reuseComponents || false).toString(), // Reuse components
       (initWorld || false).toString(), // Init world
+      (deployEmitter || false).toString(), // Deploy emitter
       (mode || 'DEV').toString(), // Mode
       '--fork-url',
       rpc,
@@ -48,7 +50,6 @@ export async function deploy(
 
   child.stderr?.on('data', (data) => console.log('stderr:', data.toString()));
   child.stdout?.on('data', (data) => console.log(data.toString()));
-
   // Extract world address from deploy script
   const lines = (await child).stdout?.split('\n');
   const deployedWorldAddress = findLog(lines, 'world: contract IWorld');
@@ -68,9 +69,9 @@ export type DeployOptions = {
   rpc: string;
   deployerPriv: string;
   worldAddress?: string;
-  emitter?: string;
   components?: string;
   systems?: string;
+  deployEmitter?: boolean;
   initWorld?: boolean;
   forgeOpts?: string;
   mode?: string;
@@ -101,6 +102,7 @@ export async function generateAndDeploy(args: DeployOptions) {
       args.rpc,
       reuseComps,
       args.worldAddress,
+      args.deployEmitter,
       args.forgeOpts,
       args.initWorld,
       args.mode

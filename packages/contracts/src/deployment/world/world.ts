@@ -153,4 +153,5 @@ function writeOutput(data: string[]) {
   fs.writeFileSync(path.join(__dirname, '../contracts/', 'initStream.json'), result, {
     encoding: 'utf8',
   });
+  console.log(`** Wrote ${path.join(__dirname, '../contracts/', 'initStream.json')}**`);
 }

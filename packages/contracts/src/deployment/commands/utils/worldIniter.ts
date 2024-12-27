@@ -81,7 +81,6 @@ export async function generateInitScript(
   args?: number[]
 ) {
   const local = mode === 'DEV';
-
   const world = new WorldState();
 
   if (category === 'init') await world.api.init(local);
@@ -99,7 +98,7 @@ export async function generateInitScript(
     // if (!args) throw new Error(`No args provided for ${category}.${action}`);
     await call(args);
   }
-
+  console.log(`** Generated init script **`);
   // generate system calls
   await world.writeCalls();
   await generateInitWorld();

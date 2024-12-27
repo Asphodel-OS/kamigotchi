@@ -16,13 +16,14 @@ const config = 'deploy.json';
 const run = async () => {
   const mode = argv.mode || 'DEV';
   const partialDeployment =
-    argv.partial ?? (argv.components != undefined || argv.systems != undefined);
+    argv.partial ??
+    (argv.components != undefined || argv.systems != undefined || argv.deployEmitter != undefined);
   const world = partialDeployment ? argv.world || getWorld(mode) : undefined;
   // assume world state init if deploying a fresh world, unless explicitly stated
   const init = !partialDeployment || !(argv.skipInit ?? true);
 
   if (mode === 'DEV') setAutoMine(true);
-
+  console.log(`** Deploying to ${mode} **`);
   // generate or clear world init script based on args
   if (init) generateInitScript(mode, 'init', 'init');
   else clearInitWorld();
@@ -34,12 +35,12 @@ const run = async () => {
     worldAddress: world,
     components: argv.components,
     systems: argv.systems,
+    deployEmitter: argv.deployEmitter,
     initWorld: init,
     forgeOpts: argv.forgeOpts,
     mode: argv.mode,
     reuseComponents: argv.reuseComps,
   });
-
   if (init) {
     openurl.open(
       'http://localhost:3000/?worldAddress=' +

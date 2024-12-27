@@ -21,4 +21,6 @@ interface IWorld {
   function init() external;
 
   function _emitter() external view returns (address);
+
+  function updateEmitter(address emitter) external;
 }

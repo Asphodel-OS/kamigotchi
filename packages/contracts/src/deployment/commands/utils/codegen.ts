@@ -113,7 +113,6 @@ export async function generateLibDeploy(
   await generateImports(out);
   // Generate LibDeploy
   console.log('Generating deployment script');
-  await generateImports(out);
   // LibDeploy.sol
   const LibDeploy = await ejs.renderFile(path.join(contractsDir, 'LibDeploy.ejs'), config, {
     async: true,
@@ -214,7 +213,7 @@ ${ids.map((id, index) => `  "${id}": "${systems[index]}",`).join('\n')}
 ${typePaths
   .map((path, index) => `import { ${systems[index]} } from "${path.replace('.ts', '')}";`)
   .join('\n')}
- 
+
 export type SystemTypes = {
 ${systems.map((system, index) => `  "${ids[index]}": ${system};`).join('\n')}
 };

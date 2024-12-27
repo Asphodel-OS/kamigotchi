@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
@@ -22,9 +23,10 @@ import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/Tim
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -264,5 +266,12 @@ library LibAccount {
     uint256 count
   ) internal {
     LibData.inc(components, accID, 0, "KAMI_STAKE", count);
+  }
+
+  function logMove(IWorld world, uint256 systemId, bytes memory values) internal {
+    uint8[] memory _schema = new uint8[](1);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT32);
+
+    LibEmitter.emitSystemCall(world, systemId, _schema, values);
   }
 }

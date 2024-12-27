@@ -35,6 +35,8 @@ contract World is IWorld, Ownable {
 
   event SystemRegistered(uint256 indexed systemId, address indexed system);
 
+  event EmitterUpdated(address indexed emitter);
+
   event ComponentValueSet(
     uint256 indexed componentId,
     address indexed component,
@@ -86,8 +88,12 @@ contract World is IWorld, Ownable {
     return _systems;
   }
 
+  /** @notice
+   * Update the emitter contract address.
+   */
   function updateEmitter(address emitter) public onlyOwner {
     _emitter = emitter;
+    emit EmitterUpdated(emitter);
   }
 
   /** @notice

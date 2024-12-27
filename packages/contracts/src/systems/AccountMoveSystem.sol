@@ -7,7 +7,6 @@ import { LibTypes } from "solecs/LibTypes.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibEmitter } from "libraries/LibEmitter.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { Coord, LibRoom } from "libraries/LibRoom.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -48,7 +47,7 @@ contract AccountMoveSystem is System {
     LibRoom.logMove(components, accID);
     LibAccount.updateLastTs(components, accID);
 
-    LibEmitter.emitSystemCall(world, ID, _schema, arguments);
+    LibAccount.logMove(world, ID, arguments);
 
     return "";
   }
