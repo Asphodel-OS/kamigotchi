@@ -182,6 +182,8 @@ function parseBasic(entry: any): [string, number, number] {
 
   if (type === 'FLAG') {
     [type, index, value] = parseFlag(entry['ConIndex (String)'].toUpperCase());
+  } else if (type === 'STATE') {
+    index = parseKamiStateToIndex(entry['ConIndex (String)'].toUpperCase());
   }
 
   return [type, index, value];
