@@ -9,20 +9,24 @@ import { Account } from '../Account';
 import { getReputation } from '../Faction';
 import { getInventoryByHolderItem } from '../Inventory';
 import { getItemBalance } from '../Item';
-import { Kami, getKamisByAccount } from '../Kami';
+import { Kami, getKamiLocation, getKamisByAccount } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
+import { queryRoomByIndex } from '../Room';
 import { getHolderSkillLevel } from '../Skill';
+import { getEntityType, getKamiOwnerID, getRoomIndex } from './component';
 import { parseKamiStateToIndex } from './parse';
 
 // TODO: clean this horrendous thing up
 export const getBalance = (
   world: World,
   components: Components,
-  holder: EntityIndex,
+  holder: EntityIndex | undefined,
   index: number | undefined,
   type: string,
   isKami?: boolean
 ): number => {
+  if (!holder) return 0;
+
   const { Level, RoomIndex } = components;
   let holderID = world.entities[holder];
 
@@ -71,7 +75,7 @@ export const getBalance = (
 export const getBool = (
   world: World,
   components: Components,
-  holder: Account | Kami,
+  holder: Account | Kami | undefined,
   index: number | undefined,
   value: number | undefined,
   type: string
@@ -87,6 +91,8 @@ export const getBool = (
   } else if (type === 'PHASE') {
     return getCurrPhase() == index;
   }
+
+  if (!holder) return false;
 
   // account specific, check if holder is account shaped
   if (holder.ObjectType === 'ACCOUNT') {
@@ -110,6 +116,35 @@ export const getBool = (
 
   // if nothing else doesnt match, return false (should not reach here)
   return false;
+};
+
+///////////////////
+// SPECIFIC GETTERS
+
+export const getAccountFrom = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): EntityIndex | undefined => {
+  const shape = getEntityType(components, entity);
+  if (shape === 'ACCOUNT')
+    return entity; // already account
+  else if (shape === 'KAMI') return world.entityToIndex.get(getKamiOwnerID(components, entity));
+  else console.warn('getAccountFrom: invalid entity shape (no acc)');
+};
+
+export const getRoomFrom = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): EntityIndex | undefined => {
+  const shape = getEntityType(components, entity);
+
+  let index = 0;
+  if (shape === 'ACCOUNT') index = getRoomIndex(components, entity);
+  else if (shape === 'KAMI') index = getKamiLocation(world, components, entity) ?? 0;
+
+  return index == 0 ? undefined : queryRoomByIndex(components, index);
 };
 
 // TODO: deprecate this completely

@@ -1,10 +1,11 @@
-import { World } from '@mud-classic/recs';
+import { EntityIndex, World } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { getBalance, getBool } from 'network/shapes/utils';
 import { Account } from '../Account';
 import { Kami } from '../Kami';
+import { getAccountFrom, getRoomFrom } from '../utils/getter';
 import { Condition, HANDLER, OPERATOR, Status, Target } from './types';
 
 ////////////
@@ -22,17 +23,6 @@ export const passesConditions = (
   );
 };
 
-export const passesConditionsByFor = (
-  world: World,
-  components: Components,
-  conditions: Condition[]
-): boolean => {
-  if (conditions.length == 0) return true;
-  return checkConditionsByFor(world, components, conditions).every(
-    (val: Status) => val.completable
-  );
-};
-
 export const checkConditions = (
   world: World,
   components: Components,
@@ -42,35 +32,19 @@ export const checkConditions = (
   return conditions.map((condition) => checkCondition(world, components, condition, holder));
 };
 
-export const checkConditionsByFor = (
-  world: World,
-  components: Components,
-  conditions: Condition[]
-): Status[] => {
-  const conds = splitCondByFor(conditions);
-  const result: Status[] = [];
-
-  // todo: fix with appropriate node checks
-  // if (holders.account)
-  //   result.push(...checkConditions(world, components, conds.get('ACCOUNT') ?? [], holders.account));
-  // if (holders.kami)
-  //   result.push(...checkConditions(world, components, conds.get('KAMI') ?? [], holders.kami));
-
-  return result;
-};
-
 export const checkCondition = (
   world: World,
   components: Components,
   condition: Condition,
   holder: Account | Kami
 ): Status => {
+  const holderEntity = parseTargetShape(world, components, holder.entity, condition.for);
   return checkerSwitch(
     condition.logic,
-    checkCurrent(world, components, condition.target, holder),
+    checkCurrent(world, components, condition.target, holderEntity),
     undefined,
     undefined,
-    checkBoolean(world, components, condition.target, holder),
+    checkBoolean(world, components, condition.target, holder), //todo: change getBool to entityIndex
     { completable: false }
   );
 };
@@ -79,10 +53,10 @@ export const checkCurrent = (
   world: World,
   components: Components,
   target: Target,
-  holder: Account | Kami
+  holder: EntityIndex | undefined
 ): ((opt: any) => Status) => {
   return (opt: any) => {
-    const accVal = getBalance(world, components, holder.entity, target.index, target.type) || 0;
+    const accVal = getBalance(world, components, holder, target.index, target.type) || 0;
     return {
       target: target.value,
       current: accVal,
@@ -95,7 +69,7 @@ export const checkBoolean = (
   world: World,
   components: Components,
   target: Target,
-  holder: Account | Kami
+  holder: Account | Kami | undefined
 ): ((opt: any) => Status) => {
   return (opt: any) => {
     const result = getBool(world, components, holder, target.index, target.value, target.type);
@@ -138,22 +112,16 @@ export const checkLogicOperator = (
 //////////////
 // PARSERS
 
-// splits an array of conditions into entities its for
-// @dev calling func expected to handle For types
-export const splitCondByFor = (
-  conds: Condition[],
-  fallbackType?: string
-): Map<string, Condition[]> => {
-  const result = new Map<string, Condition[]>();
-  const fallback = fallbackType ?? '';
-
-  for (let i = 0; i < conds.length; i++) {
-    const forEntity = conds[i].for ?? fallback;
-    if (!result.has(forEntity)) result.set(forEntity, []);
-    result.get(forEntity)!.push(conds[i]);
-  }
-
-  return result;
+export const parseTargetShape = (
+  world: World,
+  components: Components,
+  target: EntityIndex,
+  forShape: string | undefined
+): EntityIndex | undefined => {
+  if (!forShape || forShape === '') return target;
+  else if (forShape === 'ACCOUNT') return getAccountFrom(world, components, target);
+  else if (forShape === 'ROOM') return getRoomFrom(world, components, target);
+  else return target;
 };
 
 // parses common human readable conditions into machine types for init

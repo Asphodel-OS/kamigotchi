@@ -10,6 +10,7 @@ import {
   checkLogicOperator,
   checkerSwitch,
   getCondition,
+  parseTargetShape,
 } from '../Conditional';
 import { genID, getData, getEntityByHash, queryChildrenOf } from '../utils';
 import { Quest } from './quest';
@@ -63,12 +64,14 @@ export const checkObjective = (
     return { completable: true };
   }
 
+  const holderEntity = parseTargetShape(world, components, account.entity, objective.for);
+
   return checkerSwitch(
     objective.logic,
-    checkCurrent(world, components, objective.target, account),
-    checkIncrease(world, components, objective, quest, account),
-    checkDecrease(world, components, objective, quest, account),
-    checkBoolean(world, components, objective.target, account),
+    checkCurrent(world, components, objective.target, holderEntity),
+    checkIncrease(world, components, objective, quest, holderEntity),
+    checkDecrease(world, components, objective, quest, holderEntity),
+    checkBoolean(world, components, objective.target, account), //todo: change getBool to entityIndex
     { completable: false }
   );
 };
@@ -78,17 +81,19 @@ const checkIncrease = (
   components: Components,
   objective: Objective,
   quest: Quest,
-  account: Account
+  holder: EntityIndex | undefined
 ): ((opt: any) => Status) => {
   return (opt: any) => {
     const prevVal = getSnapshotValue(world, components, quest.id, objective);
-    const currVal = getData(
-      world,
-      components,
-      account.id,
-      objective.target.type,
-      objective.target.index
-    );
+    const currVal = holder
+      ? getData(
+          world,
+          components,
+          world.entities[holder],
+          objective.target.type,
+          objective.target.index
+        )
+      : 0;
     return {
       target: objective.target.value,
       current: currVal - prevVal,
@@ -106,17 +111,19 @@ const checkDecrease = (
   components: Components,
   objective: Objective,
   quest: Quest,
-  account: Account
+  holder: EntityIndex | undefined
 ): ((opt: any) => Status) => {
   return (opt: any) => {
     const prevVal = getSnapshotValue(world, components, quest.id, objective);
-    const currVal = getData(
-      world,
-      components,
-      account.id,
-      objective.target.type,
-      objective.target.index
-    );
+    const currVal = holder
+      ? getData(
+          world,
+          components,
+          world.entities[holder],
+          objective.target.type,
+          objective.target.index
+        )
+      : 0;
     return {
       target: objective.target.value,
       current: prevVal - currVal,

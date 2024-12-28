@@ -17,6 +17,13 @@ export const getDescription = (components: Components, entity: EntityIndex): str
   return result ?? '';
 };
 
+export const getEntityType = (components: Components, entity: EntityIndex): string => {
+  const { EntityType } = components;
+  const result = getComponentValue(EntityType, entity)?.value;
+  if (result === undefined) console.warn('getEntityType(): undefined for entity', entity);
+  return result ?? '';
+};
+
 export const getFor = (components: Components, entity: EntityIndex): string => {
   const { ForString } = components;
   const rawValue = getComponentValue(ForString, entity)?.value as string | '';

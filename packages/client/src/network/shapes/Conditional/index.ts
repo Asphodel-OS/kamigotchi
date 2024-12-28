@@ -2,13 +2,12 @@ export {
   checkBoolean,
   checkCondition,
   checkConditions,
-  checkConditionsByFor,
   checkCurrent,
   checkLogicOperator,
   checkerSwitch,
+  parseTargetShape,
   parseToInitCon,
   passesConditions,
-  passesConditionsByFor,
 } from './functions';
 export { parseConditionalText, parseConditionalTracking } from './interpretation';
 export { getConditionsOf, getConditionsOfID } from './queries';

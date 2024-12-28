@@ -1,7 +1,7 @@
 import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { passesConditionsByFor } from '../Conditional';
+import { passesConditions } from '../Conditional';
 import { Kami } from '../Kami';
 import { getRequirements } from './getters';
 
@@ -15,5 +15,5 @@ export const passesRequirements = (
 ): boolean => {
   if (!index) return false;
   const requirements = getRequirements(world, components, index);
-  return passesConditionsByFor(world, components, requirements);
+  return passesConditions(world, components, requirements, kami);
 };
