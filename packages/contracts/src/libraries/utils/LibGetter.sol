@@ -19,6 +19,7 @@ import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFactions } from "libraries/LibFactions.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -98,7 +99,7 @@ library LibGetter {
       string memory state = LibKami.getState(components, targetID);
       return state.eq("RESTING") || state.eq("HARVESTING");
     } else {
-      revert("Unknown bool condition type");
+      return LibFlag.has(components, targetID, _type); // default to flag
     }
   }
 
