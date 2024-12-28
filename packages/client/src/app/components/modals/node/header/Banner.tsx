@@ -29,13 +29,12 @@ interface Props {
   };
   utils: {
     getAccountKamis: () => Kami[];
-    getScavenge: (entity: EntityIndex) => ScavBar;
+    getScavenge: (index: number) => ScavBar;
     getValue: (entity: EntityIndex) => number;
     parseAllos: (scavAllo: Allo[]) => DetailedEntity[];
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
     passesNodeReqs: (kami: Kami) => boolean;
     queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
-    queryScavRegistry: (index: number) => EntityIndex | undefined;
   };
 }
 
@@ -44,7 +43,7 @@ export const Banner = (props: Props) => {
   const { account, node } = data;
   const { addKami } = actions;
   const { getAccountKamis, getScavenge, getValue } = utils;
-  const { queryScavRegistry, queryScavInstance } = utils;
+  const { queryScavInstance } = utils;
   const { parseConditionalText, passesNodeReqs } = utils;
 
   const { modals } = useVisibility();
@@ -62,9 +61,8 @@ export const Banner = (props: Props) => {
   // update the scavenge whenever the node changes
   useEffect(() => {
     if (!modals.node) return;
-    const scavEntity = queryScavRegistry(node.index);
-    if (scavEntity) {
-      const scavenge = getScavenge(scavEntity);
+    const scavenge = getScavenge(node.index);
+    if (scavenge) {
       setScavenge(scavenge);
     }
   }, [node.index, modals.node]);

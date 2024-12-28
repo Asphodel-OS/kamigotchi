@@ -3,6 +3,7 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { Components } from 'network/';
 import { Condition } from '../Conditional';
 import { Item, getItemByIndex } from '../Item';
+import { ScavBar, getScavenge, queryScavRegistry } from '../Scavenge';
 import { DetailedEntity } from '../utils';
 import { NullNode } from './constants';
 import { getRequirements } from './getters';
@@ -21,6 +22,7 @@ export interface Node extends BaseNode {
   roomIndex: number;
   drops: Item[];
   requirements: Condition[];
+  scavenge: ScavBar;
 }
 
 export const getBaseNode = (
@@ -45,6 +47,7 @@ export const getBaseNode = (
 export const getNode = (world: World, components: Components, entity: EntityIndex): Node => {
   const { Description, RoomIndex, NodeIndex, Type } = components;
   const nodeIndex = getComponentValue(NodeIndex, entity)?.value as number;
+  const scavEntity = queryScavRegistry(world, 'node', nodeIndex)!;
   if (!nodeIndex) {
     console.warn(`Index not found for Node Entity ${entity}`);
     return NullNode;
@@ -57,6 +60,7 @@ export const getNode = (world: World, components: Components, entity: EntityInde
     description: getComponentValue(Description, entity)?.value as string,
     drops: [getItemByIndex(world, components, 1)],
     requirements: getRequirements(world, components, nodeIndex),
+    scavenge: getScavenge(world, components, scavEntity),
   };
 
   return node;

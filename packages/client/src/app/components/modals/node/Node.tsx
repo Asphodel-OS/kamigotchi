@@ -28,12 +28,7 @@ import {
   queryNodeByIndex,
   queryNodeKamis,
 } from 'network/shapes/Node';
-import {
-  getScavenge,
-  queryScavInstance,
-  queryScavRegistry,
-  ScavBar,
-} from 'network/shapes/Scavenge/';
+import { queryScavInstance, ScavBar } from 'network/shapes/Scavenge/';
 import { getValue } from 'network/shapes/utils/component';
 import { waitForActionCompletion } from 'network/utils';
 import { Banner } from './header/Banner';
@@ -104,10 +99,9 @@ export function registerNodeModal() {
               getOwner: (kamiEntity: EntityIndex) =>
                 getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
               getNode: (index: number) => getNodeByIndex(world, components, index),
-              getScavenge: (entity: EntityIndex) => getScavenge(world, components, entity),
+              getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
               getValue: (entity: EntityIndex) => getValue(components, entity),
               parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
-              queryScavRegistry: (index: number) => queryScavRegistry(world, 'node', index),
               queryScavInstance: (index: number, holderID: EntityID) =>
                 queryScavInstance(world, 'node', index, holderID),
 
