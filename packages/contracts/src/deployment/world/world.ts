@@ -26,6 +26,7 @@ import {
   initRooms,
   initSkills,
   initTraits,
+  mintToGachaPool,
   reviseFactions,
   reviseItems,
   reviseNodes,
@@ -59,6 +60,9 @@ export class WorldState {
 
   api = {
     init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
+    admin: {
+      batchMint: (amt: number[]) => this.genCalls((api) => mintToGachaPool(api, amt)),
+    },
     all: {
       init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
     },

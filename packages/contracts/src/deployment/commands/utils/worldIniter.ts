@@ -76,28 +76,28 @@ export async function generateSingleCall(
 
 export async function generateInitScript(
   mode: string,
-  categories: Array<keyof WorldAPI>,
-  action: keyof SubFunc,
+  category: keyof WorldAPI,
+  action: keyof SubFunc | keyof WorldAPI['admin'],
   args?: number[]
 ) {
   const local = mode === 'DEV';
 
   const world = new WorldState();
-  if (categories.length === 0) {
-    // init global
-    await world.api.init(local);
-  } else {
-    for (let i = 0; i < categories.length; i++) {
-      const category = categories[i];
-      if (category === 'init') throw new Error(`Cannot double init globally`);
-      const func = world.api[category] as SubFunc; // init special case filtered out
-      if (!func) throw new Error(`No such category ${category}`);
 
-      const call = func[action];
-      if (!call) throw new Error(`No such action ${action} on world.${category}`);
-      // if (!args) throw new Error(`No args provided for ${category}.${action}`);
-      await call(args);
-    }
+  if (category === 'init') await world.api.init(local);
+  else if (category === 'admin') {
+    // special case for admin actions
+    const call = world.api.admin[action as keyof WorldAPI['admin']];
+    if (!call) throw new Error(`No such action ${action} on world.admin`);
+    await call(args || [0]);
+  } else {
+    const func = world.api[category] as SubFunc; // init special case filtered out
+    if (!func) throw new Error(`No such category ${category}`);
+
+    const call = func[action as keyof SubFunc];
+    if (!call) throw new Error(`No such action ${action} on world.${category}`);
+    // if (!args) throw new Error(`No args provided for ${category}.${action}`);
+    await call(args);
   }
 
   // generate system calls
