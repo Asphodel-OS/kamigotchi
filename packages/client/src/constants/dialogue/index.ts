@@ -19,7 +19,6 @@ import dialogues19 from './19_violence-temple';
 import dialogues49 from './49_clearing';
 import dialogues52 from './52_airplane_crash';
 import dialogues54 from './54_plane_interior';
-import dialogues55 from './55_shady-path';
 import { DialogueNode } from './types';
 
 const dialogues00: DialogueNode[] = [
@@ -55,8 +54,7 @@ const dialogueList = dialogues00.concat(
   dialogues19,
   dialogues49,
   dialogues52,
-  dialogues54,
-  dialogues55
+  dialogues54
 );
 
 // aggregated map of all dialogue nodes, referenced by index

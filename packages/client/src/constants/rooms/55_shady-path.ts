@@ -1,3 +1,4 @@
+import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import {
   //bgPlaytestNight,
   bgXmasNight,
@@ -17,7 +18,7 @@ export const room55: Room = {
     {
       name: 'goat',
       coordinates: { x1: 27, y1: 70, x2: 37, y2: 100 },
-      dialogue: 551,
+      onClick: () => triggerGoalModal([8]),
     },
   ],
 };
