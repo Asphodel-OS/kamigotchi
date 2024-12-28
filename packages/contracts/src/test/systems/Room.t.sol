@@ -60,6 +60,10 @@ contract RoomTest is SetupTemplate {
     assertEq(spGates[0], gate1);
 
     vm.prank(deployer);
+    __RoomRegistrySystem.addFlag(1, "TEST_FLAG");
+    assertTrue(LibFlag.has(components, roomID, "TEST_FLAG"));
+
+    vm.prank(deployer);
     __RoomRegistrySystem.remove(1);
     assertEq(LibRoom.getByIndex(components, 1), 0);
     allGates = LibRoom.queryAllGates(components, 1);
@@ -153,89 +157,6 @@ contract RoomTest is SetupTemplate {
     _AccountMoveSystem.executeTyped(1);
     _AssertAccRoom(0, 1);
   }
-
-  // function testAdjacencyFuzz(int16 x1, int16 y1, int16 z1, int16 x2, int16 y2, int16 z2) public {
-  //   // Large inputs are not expected here, hence int16 instead of int32 is ok
-  //   vm.assume(z1 < 2 && z1 > -2);
-  //   vm.assume(z2 < 2 && z2 > -2);
-  //   vm.assume(_isSameLocation(Coord(x1, y1, z1), Coord(x2, y2, z2)));
-
-  //   uint32 accountIndex = 0;
-  //   _createRoom("1", Coord(x1, y1, z1), 1);
-  //   _createRoom("2", Coord(x2, y2, z2), 2);
-
-  //   if (_uncheckedAdjacent(Coord(x1, y1, z1), Coord(x2, y2, z2))) {
-  //     _AssertReachable(1, 2);
-  //     _AssertAccRoom(accountIndex, 1);
-  //     _moveAccount(accountIndex, 2);
-  //     _AssertAccRoom(accountIndex, 2);
-  //     _moveAccount(accountIndex, 1);
-  //   } else {
-  //     // if not adjacent
-  //     _AssertReachable(1, 2, false);
-  //     _AssertAccRoom(accountIndex, 1);
-  //     vm.prank(_operators[_owners[accountIndex]]);
-  //     vm.expectRevert("AccMove: unreachable room");
-  //     _AccountMoveSystem.executeTyped(2);
-  //     _AssertAccRoom(accountIndex, 1);
-  //   }
-  // }
-
-  // function testExitFuzzTrue(
-  //   uint32 exit,
-  //   int16 x1,
-  //   int16 y1,
-  //   int16 z1,
-  //   int16 x2,
-  //   int16 y2,
-  //   int16 z2
-  // ) public {
-  //   vm.assume(z1 < 2 && z1 > -2);
-  //   vm.assume(z2 < 2 && z2 > -2);
-  //   vm.assume(exit != 1 && exit != 0);
-  //   vm.assume(_isSameLocation(Coord(x1, y1, z1), Coord(x2, y2, z2)));
-  //   vm.assume(!LibRoom.isAdjacent(Coord(x1, y1, z1), Coord(x2, y2, z2)));
-
-  //   uint32 accountIndex = 0;
-  //   _createRoom("1", Coord(x1, y1, z1), 1, exit);
-  //   _createRoom("2", Coord(x2, y2, z2), exit);
-
-  //   _AssertReachable(1, exit);
-
-  //   _AssertAccRoom(accountIndex, 1);
-  //   _moveAccount(accountIndex, exit);
-  //   _AssertAccRoom(accountIndex, exit);
-  // }
-
-  // function testExitFuzzFalse(
-  //   uint32 realExit,
-  //   uint32 fakeExit,
-  //   int16 x1,
-  //   int16 y1,
-  //   int16 z1,
-  //   int16 x2,
-  //   int16 y2,
-  //   int16 z2
-  // ) public {
-  //   vm.assume(z1 < 2 && z1 > -2);
-  //   vm.assume(z2 < 2 && z2 > -2);
-  //   vm.assume(realExit != fakeExit);
-  //   vm.assume(realExit != 1 && fakeExit != 1);
-  //   vm.assume(_isSameLocation(Coord(x1, y1, z1), Coord(x2, y2, z2)));
-  //   vm.assume(!LibRoom.isAdjacent(Coord(x1, y1, z1), Coord(x2, y2, z2)));
-
-  //   uint32 accountIndex = 0;
-  //   _createRoom("1", Coord(x1, y1, z1), 1, realExit);
-  //   _createRoom("2", Coord(x2, y2, z2), fakeExit);
-
-  //   _AssertReachable(1, fakeExit, false);
-
-  //   _AssertAccRoom(accountIndex, 1);
-  //   vm.prank(_operators[_owners[accountIndex]]);
-  //   vm.expectRevert("AccMove: unreachable room");
-  //   _AccountMoveSystem.executeTyped(fakeExit);
-  //   _AssertAccRoom(accountIndex, 1);
-  // }
 
   function testOpenedGate() public {
     uint32 accountIndex = 0;

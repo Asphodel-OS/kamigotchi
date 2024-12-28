@@ -24,7 +24,7 @@ const run = async () => {
   if (mode === 'DEV') setAutoMine(true);
 
   // generate or clear world init script based on args
-  if (init) generateInitScript(mode, [], 'init');
+  if (init) generateInitScript(mode, 'init', 'init');
   else clearInitWorld();
 
   const result = await generateAndDeploy({

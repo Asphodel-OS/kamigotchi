@@ -23,6 +23,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 
 library LibRoom {
   /////////////////
@@ -61,7 +62,12 @@ library LibRoom {
     else sourceComp.set(id, 0);
   }
 
-  function remove(IUintComp components, uint256 id) internal returns (uint256) {
+  function addFlag(IUintComp components, uint32 index, string memory flag) internal {
+    LibFlag.setFull(components, genID(index), flag);
+  }
+
+  function remove(IUintComp components, uint32 index) internal {
+    uint256 id = getByIndex(components, index);
     LibEntityType.remove(components, id);
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
     LocationComponent(getAddrByID(components, LocationCompID)).remove(id);
@@ -69,13 +75,18 @@ library LibRoom {
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
     ExitsComponent exitComp = ExitsComponent(getAddrByID(components, ExitsCompID));
     if (exitComp.has(id)) exitComp.remove(id);
-    return id;
+
+    uint256[] memory gates = queryAllGates(components, index);
+    removeGates(components, gates);
+
+    uint256[] memory flags = LibFlag.queryFor(components, id);
+    LibFlag.removeFull(components, flags);
   }
 
-  function removeGate(IUintComp components, uint256 id) internal {
-    IDRoomComponent(getAddrByID(components, IDRoomCompID)).remove(id);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
-    LibConditional.remove(components, id);
+  function removeGates(IUintComp components, uint256[] memory ids) internal {
+    IDRoomComponent(getAddrByID(components, IDRoomCompID)).remove(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    LibConditional.remove(components, ids);
   }
 
   /////////////////

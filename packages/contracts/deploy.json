@@ -86,7 +86,7 @@
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
-      "writeAccess": ["HasFlag", "IdHolder", "Type"]
+      "writeAccess": ["HasFlag", "IDParent", "Type"]
     },
     { "name": "_CreatePetSystem", "writeAccess": ["*"] },
     {
@@ -160,6 +160,7 @@
       "writeAccess": [
         "EntityType",
         "ForString",
+        "HasFlag",
         "IDParent",
         "IDRoom",
         "IndexRoom",

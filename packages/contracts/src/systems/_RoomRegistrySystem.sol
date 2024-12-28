@@ -64,13 +64,15 @@ contract _RoomRegistrySystem is System {
       );
   }
 
+  function addFlag(uint32 index, string memory flag) public onlyOwner {
+    LibRoom.addFlag(components, index, flag);
+  }
+
   function remove(uint32 index) public onlyOwner {
     uint256 roomID = LibRoom.getByIndex(components, index);
     require(roomID != 0, "Room: does not exist");
 
-    LibRoom.remove(components, roomID);
-    uint256[] memory gates = LibRoom.queryAllGates(components, index);
-    for (uint256 i = 0; i < gates.length; i++) LibRoom.removeGate(components, gates[i]);
+    LibRoom.remove(components, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

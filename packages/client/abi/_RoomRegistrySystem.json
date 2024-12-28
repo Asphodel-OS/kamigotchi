@@ -18,6 +18,24 @@
     },
     {
       "type": "function",
+      "name": "addFlag",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "flag",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "addGate",
       "inputs": [
         {
@@ -250,6 +268,7 @@
     }
   ],
   "methodIdentifiers": {
+    "addFlag(uint32,string)": "06cc1c38",
     "addGate(bytes)": "8f59323c",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",

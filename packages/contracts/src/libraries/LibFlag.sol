@@ -9,7 +9,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { HasFlagComponent, ID as HasFlagCompID } from "components/HasFlagComponent.sol";
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 /** @notice
@@ -21,7 +21,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
  * Entity Shape:
  *   - ID: hash(parentID, flagType)
  *   - HasFlag: bool
- *   - [optional] IdHolder: ID (for FE reverse mapping)
+ *   - [optional] IDParent: ID (for reverse mapping)
  *   - [optional] Type: string (for FE reverse mapping)
  */
 library LibFlag {
@@ -34,24 +34,24 @@ library LibFlag {
   /// @dev should be needed for most flags
   function set(
     IUintComp components,
-    uint256 parentID,
+    uint256 holderID,
     string memory flagType,
     bool state
   ) internal returns (uint256 id) {
-    id = genID(parentID, flagType);
+    id = genID(holderID, flagType);
     _set(components, id, state);
   }
 
-  /// @notice sets a flag that can be reversed mapped on FE
-  /// @dev not needed for most flags - only those that are to be listed on FE
+  /// @notice sets a flag that can be reversed mapped
+  /// @dev meant for registry flags
   function setFull(
     IUintComp components,
-    uint256 parentID,
+    uint256 holderID,
     string memory flagType
   ) internal returns (uint256 id) {
-    id = genID(parentID, flagType);
+    id = genID(holderID, flagType);
     _set(components, id, true);
-    IdHolderComponent(getAddrByID(components, IdHolderCompID)).set(id, parentID);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, holderID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, flagType);
   }
 
@@ -61,17 +61,27 @@ library LibFlag {
     else remove(components, id);
   }
 
-  /// @notice removes a flag. does not remove IdHolder or Type (if any)
+  /// @notice removes a flag. does not remove IDParent or Type (if any)
   function remove(IUintComp components, uint256 id) internal {
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
+  }
+
+  function remove(IUintComp components, uint256[] memory ids) internal {
+    HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(ids);
   }
 
   /// @notice deletes a full flag
   function removeFull(IUintComp components, uint256 parentID, string memory flag) internal {
     uint256 id = genID(parentID, flag);
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
-    getCompByID(components, IdHolderCompID).remove(id);
+    getCompByID(components, IDParentCompID).remove(id);
     getCompByID(components, TypeCompID).remove(id);
+  }
+
+  function removeFull(IUintComp components, uint256[] memory ids) internal {
+    HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(ids);
+    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
   }
 
   //////////////////
@@ -127,6 +137,17 @@ library LibFlag {
     uint256[] memory ids = new uint256[](parentIDs.length);
     for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagTypes[i]);
     return getCompByID(components, HasFlagCompID).allHave(ids, state);
+  }
+
+  //////////////////
+  // QUERIES
+
+  function queryFor(
+    IUintComp components,
+    uint256 parentID
+  ) internal view returns (uint256[] memory) {
+    return
+      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
   }
 
   //////////////////

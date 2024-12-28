@@ -57,12 +57,14 @@ contract LibGetterTest is SetupTemplate {
     assertEq(LibGetter.getBal(components, defaultAccID, "ITEM", index), amt);
   }
 
-  function testGetCoinBal(uint256 amt) public {
+  function testGetFlag() public {
     vm.startPrank(deployer);
-    LibInventory.setFor(components, defaultAccID, MUSU_INDEX, amt);
+    uint256 entityID = uint256(keccak256(abi.encodePacked("test.entity")));
+    LibFlag.set(components, entityID, "TEST_FLAG", true);
     vm.stopPrank();
 
-    assertEq(LibGetter.getBal(components, defaultAccID, "ITEM", MUSU_INDEX), amt);
+    assertTrue(LibGetter.getBool(components, entityID, "TEST_FLAG", 0, 0));
+    assertFalse(LibGetter.getBool(components, entityID, "TEST_FLAG_NOT", 0, 0));
   }
 
   function testGetLevel(uint256 amt) public {

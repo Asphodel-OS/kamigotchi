@@ -78,7 +78,7 @@ export type SystemTypes = {
   "system.node.registry": _NodeRegistrySystem;
   "system.npc.registry": _NPCRegistrySystem;
   "system.quest.registry": _QuestRegistrySystem;
-  "system.recipe.registry": _RecipeRegistrySystem;
+  "system.recipe.registry.2": _RecipeRegistrySystem;
   "system.relationship.registry": _RelationshipRegistrySystem;
   "system.room.registry": _RoomRegistrySystem;
   "system.skill.registry": _SkillRegistrySystem;

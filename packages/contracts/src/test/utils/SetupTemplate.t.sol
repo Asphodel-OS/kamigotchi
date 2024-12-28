@@ -257,6 +257,10 @@ abstract contract SetupTemplate is TestSetupImports {
     }
   }
 
+  function _moveAccount(PlayerAccount memory acc, uint32 roomIndex) internal {
+    _moveAccount(acc.index, roomIndex);
+  }
+
   function _moveAccount(uint playerIndex, Coord memory location) internal {
     uint256 roomID = LibRoom.queryByLocation(components, location);
     return _moveAccount(playerIndex, LibRoom.get(components, roomID));
@@ -591,6 +595,11 @@ abstract contract SetupTemplate is TestSetupImports {
       __RoomRegistrySystem.addGate(
         abi.encode(roomIndex, sourceIndex, conditionIndex, conditionValue, logicType, type_, for_)
       );
+  }
+
+  function _createRoomFlag(uint32 roomIndex, string memory flag) internal {
+    vm.prank(deployer);
+    __RoomRegistrySystem.addFlag(roomIndex, flag);
   }
 
   function _createHarvestingNode(

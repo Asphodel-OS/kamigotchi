@@ -49,7 +49,8 @@ export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const itemsCSV = await readFile('items/items.csv');
     for (let i = 0; i < itemsCSV.length; i++) {
-      if (toRevise(itemsCSV[i])) indices.push(Number(itemsCSV[i]['Index']));
+      if (toRevise(itemsCSV[i]) && itemsCSV[i]['Class'] === 'ITEM')
+        indices.push(Number(itemsCSV[i]['Index']));
     }
   }
 

@@ -30,6 +30,7 @@ import type {
 
 export interface _RoomRegistrySystemInterface extends utils.Interface {
   functions: {
+    "addFlag(uint32,string)": FunctionFragment;
     "addGate(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
@@ -46,6 +47,7 @@ export interface _RoomRegistrySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addFlag"
       | "addGate"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
@@ -60,6 +62,10 @@ export interface _RoomRegistrySystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addFlag",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "addGate",
     values: [PromiseOrValue<BytesLike>]
@@ -103,6 +109,7 @@ export interface _RoomRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addGate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
@@ -214,6 +221,12 @@ export interface _RoomRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addGate(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -267,6 +280,12 @@ export interface _RoomRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addFlag(
+    index: PromiseOrValue<BigNumberish>,
+    flag: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   addGate(
     arguments: PromiseOrValue<BytesLike>,
@@ -322,6 +341,12 @@ export interface _RoomRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     addGate(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -397,6 +422,12 @@ export interface _RoomRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addGate(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -452,6 +483,12 @@ export interface _RoomRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addGate(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

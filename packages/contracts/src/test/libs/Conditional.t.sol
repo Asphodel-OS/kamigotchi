@@ -105,6 +105,23 @@ contract ConditionalTest is SetupTemplate {
   }
 
   /////////////////
+  // SPECIFIC CHECKS
+
+  function testConditionalRoomFlag() public {
+    uint256 cond = _create("TEST_FLAG", "BOOL_IS", 0, 0, "ROOM", parentID);
+    conditions.push(cond);
+    _createRoomFlag(1, "TEST_FLAG");
+    _createRoomFlag(3, "TEST_FLAG_NOT");
+
+    _moveAccount(alice, 1);
+    assertTrue(LibConditional.check(components, conditions, alice.id), "room 1 fail"); // room 1
+    _moveAccount(alice, 2);
+    assertFalse(LibConditional.check(components, conditions, alice.id), "room 2 fail"); // room 2
+    _moveAccount(alice, 3);
+    assertFalse(LibConditional.check(components, conditions, alice.id), "room 3 fail"); // room 3
+  }
+
+  /////////////////
   // UTILS
 
   function _create(

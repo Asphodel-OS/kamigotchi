@@ -8,7 +8,8 @@ import { getAddrByID } from "solecs/utils.sol";
 import { LibRecipe } from "libraries/LibRecipe.sol";
 import { Condition } from "libraries/LibConditional.sol";
 
-uint256 constant ID = uint256(keccak256("system.recipe.registry"));
+// world3: remove .2 (original id somehow broke)
+uint256 constant ID = uint256(keccak256("system.recipe.registry.2"));
 
 contract _RecipeRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
