@@ -156,7 +156,9 @@ export function registerDialogueModal() {
       return (
         <ModalWrapper id='dialogue' canExit overlay>
           <Text>
-            {getText(dialogueNode.text[step])}
+            <Letters key={getText(dialogueNode.text[step])}>
+              {getText(dialogueNode.text[step])}
+            </Letters>
             <ButtonRow>
               <BackButton />
               <MiddleButton />
@@ -180,12 +182,24 @@ const Text = styled.div`
   flex-grow: 1;
   flex-flow: column nowrap;
   justify-content: center;
-  align-items: center;
 
   font-family: Pixel;
   font-size: 1.1vw;
-  text-align: center;
   line-height: 1.8vw;
+`;
+
+const Letters = styled.div`
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  width: 100%;
+  animation: type 2s steps(90, end);
+  @keyframes type {
+    from {
+      width: 0;
+    }
+  }
 `;
 
 const ButtonRow = styled.div`
