@@ -153,16 +153,37 @@ export function registerDialogueModal() {
         );
       };
 
+      // TODO change to \n to last ' ' and numberSlices < 49
+      const typeWriter = (text: string) => {
+        let numberSlices = 0;
+        let stringSliced: string[] = [];
+        let allStringsSliced: string[][] = [];
+
+        text.split('').map((letter, index) => {
+          numberSlices++;
+          if (numberSlices < 49 && index < text.length - 1) {
+            stringSliced.push(letter);
+          } else {
+            stringSliced.push(letter);
+            if (letter !== ' ' && numberSlices === 49) {
+              stringSliced.push('-');
+            }
+            numberSlices = 0;
+            allStringsSliced.push(stringSliced);
+            stringSliced = [];
+          }
+        });
+        return allStringsSliced.map((string, index) => (
+          <Strings delay={index} key={text + index}>
+            {string}
+          </Strings>
+        ));
+      };
+
       return (
         <ModalWrapper id='dialogue' canExit overlay>
           <Text>
-            {getText(dialogueNode.text[step])
-              .split('.')
-              .map((string, index) => (
-                <Strings delay={index} key={getText(dialogueNode.text[step]) + index}>
-                  {string !== '' && string.concat('.')}
-                </Strings>
-              ))}
+            {typeWriter(getText(dialogueNode.text[step]))}
             <ButtonRow>
               <BackButton />
               <MiddleButton />
