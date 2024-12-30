@@ -156,9 +156,13 @@ export function registerDialogueModal() {
       return (
         <ModalWrapper id='dialogue' canExit overlay>
           <Text>
-            <Letters key={getText(dialogueNode.text[step])}>
-              {getText(dialogueNode.text[step])}
-            </Letters>
+            {getText(dialogueNode.text[step])
+              .split('.')
+              .map((string, index) => (
+                <Strings delay={index} key={getText(dialogueNode.text[step]) + index}>
+                  {string !== '' && string.concat('.')}
+                </Strings>
+              ))}
             <ButtonRow>
               <BackButton />
               <MiddleButton />
@@ -188,16 +192,16 @@ const Text = styled.div`
   line-height: 1.8vw;
 `;
 
-const Letters = styled.div`
+const Strings = styled.div<{ delay: number }>`
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
-  overflow-wrap: break-word;
-  width: 100%;
-  animation: type 2s steps(90, end);
+  width: 0%;
+  animation: type 2s steps(90, end) forwards;
+  animation-delay: ${({ delay }) => delay * 2}s;
   @keyframes type {
-    from {
-      width: 0;
+    to {
+      width: 100%;
     }
   }
 `;
