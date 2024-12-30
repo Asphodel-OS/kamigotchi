@@ -48,6 +48,7 @@ export function registerDialogueModal() {
       } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
       const [step, setStep] = React.useState(0);
+      const [npc, setNpc] = React.useState('');
 
       // reset the step to 0 whenever the dialogue modal is toggled
       useEffect(() => setStep(0), [modals.dialogue]);
@@ -57,6 +58,7 @@ export function registerDialogueModal() {
         setStep(0);
         setDialogueNode(dialogues[dialogueIndex]);
         setDialogueLength(dialogues[dialogueIndex].text.length);
+        setNpc(dialogues[dialogueIndex].npc || '');
       }, [dialogueIndex]);
 
       //////////////////
@@ -158,7 +160,6 @@ export function registerDialogueModal() {
         let numberSlices = 0;
         let stringSliced: string[] = [];
         let allStringsSliced: string[][] = [];
-
         text.split('').map((letter, index) => {
           numberSlices++;
           if (numberSlices < 49 && index < text.length - 1) {
@@ -181,9 +182,9 @@ export function registerDialogueModal() {
       };
 
       return (
-        <ModalWrapper id='dialogue' canExit overlay>
+        <ModalWrapper id='dialogue' header={npc && <Header>{npc}</Header>} canExit overlay>
           <Text>
-            {typeWriter(getText(dialogueNode.text[step]))}
+            {npc ? typeWriter(getText(dialogueNode.text[step])) : getText(dialogueNode.text[step])}
             <ButtonRow>
               <BackButton />
               <MiddleButton />
@@ -197,8 +198,9 @@ export function registerDialogueModal() {
 }
 
 const Text = styled.div`
-  background-color: #ffc;
-  color: #339;
+  background-color: rgb(238 233 245);
+
+  border-radius: 1vw;
   height: 100%;
   width: 100%;
   padding: 0vw 9vw;
@@ -213,8 +215,15 @@ const Text = styled.div`
   line-height: 1.8vw;
 `;
 
+const Header = styled.div`
+  padding: 1vh;
+  font-size: 1.1vw;
+  color: #a800cf;
+`;
+
 const Strings = styled.div<{ delay: number }>`
   display: inline-block;
+  color: #a800cf;
   white-space: nowrap;
   overflow: hidden;
   width: 0%;

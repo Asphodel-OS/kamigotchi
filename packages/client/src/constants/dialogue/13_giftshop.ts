@@ -15,6 +15,7 @@ export const clock: DialogueNode = {
 export const mina: DialogueNode = {
   index: 132,
   text: [LoyaltyText, `I need your help. Interested in supporting new product development?`],
+  npc: 'Mina',
   action: {
     type: 'goal',
     label: 'Support Mina',
