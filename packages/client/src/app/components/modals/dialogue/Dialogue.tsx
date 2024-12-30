@@ -6,6 +6,8 @@ import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
+
+import { backgrounds } from 'assets/images/backgrounds';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -183,7 +185,7 @@ export function registerDialogueModal() {
 
       return (
         <ModalWrapper id='dialogue' header={npc && <Header>{npc}</Header>} canExit overlay>
-          <Text>
+          <Text npc={npc}>
             {npc ? typeWriter(getText(dialogueNode.text[step])) : getText(dialogueNode.text[step])}
             <ButtonRow>
               <BackButton />
@@ -197,9 +199,9 @@ export function registerDialogueModal() {
   );
 }
 
-const Text = styled.div`
-  background-color: rgb(238 233 245);
-
+const Text = styled.div<{ npc?: string }>`
+  background-color: rgb(245 244 233);
+  ${({ npc }) => npc === 'Mina' && `background-image: url(${backgrounds.mina})`};
   border-radius: 1vw;
   height: 100%;
   width: 100%;
@@ -216,7 +218,7 @@ const Text = styled.div`
 `;
 
 const Header = styled.div`
-  padding: 1vh;
+  padding: 1vw;
   font-size: 1.1vw;
   color: #a800cf;
 `;
