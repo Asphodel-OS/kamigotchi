@@ -7,7 +7,6 @@ import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 
-import { backgrounds } from 'assets/images/backgrounds';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -50,7 +49,7 @@ export function registerDialogueModal() {
       } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
       const [step, setStep] = React.useState(0);
-      const [npc, setNpc] = React.useState('');
+      const [npc, setNpc] = React.useState({ name: '', background: '' });
 
       // reset the step to 0 whenever the dialogue modal is toggled
       useEffect(() => setStep(0), [modals.dialogue]);
@@ -60,7 +59,7 @@ export function registerDialogueModal() {
         setStep(0);
         setDialogueNode(dialogues[dialogueIndex]);
         setDialogueLength(dialogues[dialogueIndex].text.length);
-        setNpc(dialogues[dialogueIndex].npc || '');
+        setNpc(dialogues[dialogueIndex].npc || { name: '', background: '' });
       }, [dialogueIndex]);
 
       //////////////////
@@ -184,9 +183,17 @@ export function registerDialogueModal() {
       };
 
       return (
-        <ModalWrapper id='dialogue' header={npc && <Header>{npc}</Header>} canExit overlay>
+        <ModalWrapper
+          id='dialogue'
+          header={npc.name.length > 0 && <Header>{npc.name}</Header>}
+          canExit
+          overlay
+          noPadding={npc.name.length > 0}
+        >
           <Text npc={npc}>
-            {npc ? typeWriter(getText(dialogueNode.text[step])) : getText(dialogueNode.text[step])}
+            {npc.name.length > 0
+              ? typeWriter(getText(dialogueNode.text[step]))
+              : getText(dialogueNode.text[step])}
             <ButtonRow>
               <BackButton />
               <MiddleButton />
@@ -199,11 +206,15 @@ export function registerDialogueModal() {
   );
 }
 
-const Text = styled.div<{ npc?: string }>`
-  background-color: rgb(245 244 233);
-  ${({ npc }) => npc === 'Mina' && `background-image: url(${backgrounds.mina})`};
-  border-radius: 1vw;
+const Text = styled.div<{ npc?: { name: string; background: string } }>`
+  background-color: rgb(255, 255, 204);
+  text-align: center;
+  ${({ npc }) =>
+    npc &&
+    npc.background.length > 0 &&
+    `background-image: url(${npc?.background}); background-size: cover; text-align: left`};
   height: 100%;
+  min-height: max-content;
   width: 100%;
   padding: 0vw 9vw;
 
