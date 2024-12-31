@@ -50,6 +50,11 @@ export function registerDialogueModal() {
       const [dialogueLength, setDialogueLength] = React.useState(0);
       const [step, setStep] = React.useState(0);
       const [npc, setNpc] = React.useState({ name: '', background: '' });
+      const [typing, setTyping] = React.useState<any>();
+
+      useEffect(() => {
+        setTyping(typeWriter(getText(dialogueNode.text[step])));
+      }, [dialogueNode.text[step]]);
 
       // reset the step to 0 whenever the dialogue modal is toggled
       useEffect(() => setStep(0), [modals.dialogue]);
@@ -156,26 +161,29 @@ export function registerDialogueModal() {
         );
       };
 
-      // TODO change to \n to last ' ' and numberSlices < 49
+      //////////////////
+      // NPCS DIALOGUES
+
       const typeWriter = (text: string) => {
-        let numberSlices = 0;
+        let maxSize = 49;
+        let numberSlices = text.length / maxSize + 1;
+        let sliceStart = 0;
+        let sliceEnd = maxSize;
+        let endLine = [' ', '.', ';', ','];
         let stringSliced: string[] = [];
-        let allStringsSliced: string[][] = [];
-        text.split('').map((letter, index) => {
-          numberSlices++;
-          if (numberSlices < 49 && index < text.length - 1) {
-            stringSliced.push(letter);
-          } else {
-            stringSliced.push(letter);
-            if (letter !== ' ' && numberSlices === 49) {
-              stringSliced.push('-');
-            }
-            numberSlices = 0;
-            allStringsSliced.push(stringSliced);
-            stringSliced = [];
+        for (let i = 0; i <= numberSlices; i++) {
+          if (sliceEnd > text.length) {
+            stringSliced.push(text.slice(sliceStart));
+            break;
           }
-        });
-        return allStringsSliced.map((string, index) => (
+          while (!endLine.includes(text.charAt(sliceEnd))) {
+            sliceEnd--;
+          }
+          stringSliced.push(text.slice(sliceStart, sliceEnd));
+          sliceStart = sliceEnd;
+          sliceEnd += maxSize;
+        }
+        return stringSliced.map((string, index) => (
           <Strings delay={index} key={text + index}>
             {string}
           </Strings>
@@ -191,9 +199,7 @@ export function registerDialogueModal() {
           noPadding={npc.name.length > 0}
         >
           <Text npc={npc}>
-            {npc.name.length > 0
-              ? typeWriter(getText(dialogueNode.text[step]))
-              : getText(dialogueNode.text[step])}
+            {npc.name.length > 0 ? typing : getText(dialogueNode.text[step])}
             <ButtonRow>
               <BackButton />
               <MiddleButton />
