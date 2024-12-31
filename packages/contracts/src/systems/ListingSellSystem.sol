@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibListing } from "libraries/LibListing.sol";
+import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 
 uint256 constant ID = uint256(keccak256("system.listing.sell"));
@@ -28,7 +29,7 @@ contract ListingSellSystem is System {
 
     uint256 total;
     for (uint256 i; i < itemIndices.length; i++) {
-      uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
+      uint256 listingID = LibListingRegistry.get(components, merchantIndex, itemIndices[i]);
       if (listingID == 0) revert("listing does not exist");
       require(LibListing.meetsRequirements(components, listingID, accID), "reqs not met");
 

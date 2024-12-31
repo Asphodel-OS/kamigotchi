@@ -160,6 +160,109 @@
     },
     {
       "type": "function",
+      "name": "setBuyFixed",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setBuyFixed",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setSellFixed",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setSellFixed",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setSellScaled",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "scale",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setSellScaled",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "scale",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -255,6 +358,12 @@
     "remove(uint32,uint32)": "31f3666c",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
+    "setBuyFixed(uint256)": "108cc5c0",
+    "setBuyFixed(uint32,uint32)": "4ebee436",
+    "setSellFixed(uint256)": "0fce74a0",
+    "setSellFixed(uint32,uint32)": "36a8a6f4",
+    "setSellScaled(uint256,uint32)": "f2ffc448",
+    "setSellScaled(uint32,uint32,uint32)": "c8cddcf4",
     "transferOwnership(address)": "f2fde38b"
   }
 }

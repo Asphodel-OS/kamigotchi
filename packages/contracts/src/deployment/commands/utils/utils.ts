@@ -90,7 +90,7 @@ export const parseCompTypeDef = (type: string, override?: string): string => {
   const defBool = ['bool'];
   const defStat = ['Stat'];
   const defString = ['string', 'address', 'Coord'];
-  const defNumber = ['uint32', 'uint256', 'int256', 'number'];
+  const defNumber = ['uint32', 'uint256', 'int32', 'int256', 'number'];
 
   const isArray = type.includes('[]');
   if (isArray) type = type.replace('[]', '');

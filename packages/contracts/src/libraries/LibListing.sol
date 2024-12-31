@@ -1,194 +1,115 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
-import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
+import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-
-import { LibAccount } from "libraries/LibAccount.sol";
-import { Condition, LibConditional } from "libraries/LibConditional.sol";
+import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
-import { LibNPC } from "libraries/LibNPC.sol";
+import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 
 /*
  * LibListing handles all operations interacting with Listings
+ * The Buy Side and Sell Side pricing can be defined in a handful of ways:
+ *   - FIXED: direct read of ValueComp on the actual Listing entity
+ *   - GDA: dynamic price calc based the Balance, TimeStart and Value target of the Listing
+ *   - SCALED (sell only): scaled version of the Buy Side price calc
  */
 library LibListing {
   using LibComp for IUintComp;
-
-  /////////////////
-  // SHAPES
-
-  // creates a merchant listing with the specified parameters
-  function create(
-    IUintComp components,
-    uint32 npcIndex,
-    uint32 itemIndex,
-    uint256 buyPrice,
-    uint256 sellPrice
-  ) internal returns (uint256 id) {
-    id = genID(npcIndex, itemIndex);
-    LibEntityType.set(components, id, "LISTING");
-
-    IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).set(id, npcIndex);
-    IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
-
-    // set buy and sell prices if valid
-    if (buyPrice != 0) setBuyPrice(components, id, buyPrice);
-    if (sellPrice != 0) setSellPrice(components, id, sellPrice);
-  }
-
-  /// @notice creates a requirement for a listing
-  /// @dev requirements apply equally to buy and sell
-  function createRequirement(
-    IWorld world,
-    IUintComp components,
-    uint256 regID,
-    Condition memory data
-  ) internal returns (uint256) {
-    return LibConditional.createFor(world, components, data, genReqAnchor(regID));
-  }
-
-  function remove(IUintComp components, uint256 id) internal {
-    LibEntityType.remove(components, id);
-
-    IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).remove(id);
-    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
-
-    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
-    valueComp.remove(genBuyParentID(id));
-    valueComp.remove(genSellParentID(id));
-
-    uint256[] memory requirements = LibConditional.queryFor(components, genReqAnchor(id));
-    for (uint256 i; i < requirements.length; i++)
-      LibConditional.remove(components, requirements[i]);
-  }
-
-  /////////////////
-  // INTERACTIONS
+  using LibString for string;
 
   // processes a buy for amt of item from a listing to an account. assumes the account already
   // has the appropriate inventory entity
   function buy(
-    IUintComp components,
-    uint256 listingID,
+    IUintComp comps,
+    uint256 id,
     uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 total) {
-    uint256 price = getBuyPrice(components, listingID);
-    if (price == 0) revert("invalid listing");
-
-    total = amt * price;
-    LibInventory.incFor(components, accID, itemIndex, amt);
-    LibInventory.decFor(components, accID, MUSU_INDEX, total);
+    uint256 price = calcBuyPrice(comps, id, amt);
+    if (price == 0) revert("LibListing: invalid buy price");
+    LibInventory.incFor(comps, accID, itemIndex, amt);
+    LibInventory.decFor(comps, accID, MUSU_INDEX, price);
   }
 
   // processes a sell for amt of item from an account to a listing
   function sell(
-    IUintComp components,
-    uint256 listingID,
+    IUintComp comps,
+    uint256 id,
     uint256 accID,
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 total) {
-    uint256 price = getSellPrice(components, listingID);
-    if (price == 0) revert("invalid listing");
-
-    total = amt * price;
-    LibInventory.decFor(components, accID, itemIndex, amt);
-    LibInventory.incFor(components, accID, MUSU_INDEX, total);
+    uint256 price = calcSellPrice(comps, id, amt);
+    if (price == 0) revert("LibListing: invalid sell price");
+    LibInventory.decFor(comps, accID, itemIndex, amt);
+    LibInventory.incFor(comps, accID, MUSU_INDEX, price);
   }
 
   /////////////////
   // CHECKERS
 
-  function verifyRequirements(IUintComp components, uint256 listingID, uint256 accID) public view {
-    if (!meetsRequirements(components, listingID, accID)) revert("reqs not met");
+  function verifyRequirements(IUintComp comps, uint256 id, uint256 accID) public view {
+    if (!meetsRequirements(comps, id, accID)) revert("reqs not met");
   }
 
   function meetsRequirements(
-    IUintComp components,
-    uint256 listingID,
+    IUintComp comps,
+    uint256 id,
     uint256 accID
   ) public view returns (bool) {
-    uint256[] memory requirements = LibConditional.queryFor(components, genReqAnchor(listingID));
-    return LibConditional.check(components, requirements, accID);
+    uint256 requirementAnchor = LibListingRegistry.genReqAnchor(id);
+    uint256[] memory requirements = LibConditional.queryFor(comps, requirementAnchor);
+    return LibConditional.check(comps, requirements, accID);
   }
 
   /////////////////
-  // GETTERS
+  // CALCULATIONS
 
-  // gets an item listing from a merchant by its indices
-  function get(
-    IUintComp components,
-    uint32 merchantIndex,
-    uint32 itemIndex
-  ) internal view returns (uint256 result) {
-    uint256 id = genID(merchantIndex, itemIndex);
-    return LibEntityType.isShape(components, id, "LISTING") ? id : 0;
+  function calcBuyPrice(
+    IUintComp comps,
+    uint256 id,
+    uint256 amt
+  ) internal view returns (uint256 price) {
+    uint256 buyID = LibListingRegistry.genBuyID(id);
+    string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(buyID);
+    if (type_.eq("FIXED")) {
+      return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
+    } else revert("LibListing: invalid buy type");
   }
 
-  function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    uint256 ptr = genBuyParentID(id);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(ptr);
-  }
-
-  function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
-    uint256 ptr = genSellParentID(id);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(ptr);
-  }
-
-  //////////////////
-  // SETTERS
-
-  function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
-    uint256 ptr = genBuyParentID(id);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(ptr, price);
-  }
-
-  function setSellPrice(IUintComp components, uint256 id, uint256 price) internal {
-    uint256 ptr = genSellParentID(id);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(ptr, price);
-  }
-
-  //////////////////
-  // UTILS
-
-  function genID(uint32 merchantIndex, uint32 itemIndex) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("listing", merchantIndex, itemIndex)));
-  }
-
-  function genReqAnchor(uint256 regID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("listing.requirement", regID)));
-  }
-
-  function genBuyParentID(uint256 regID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("listing.buy", regID)));
-  }
-
-  function genSellParentID(uint256 regID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("listing.sell", regID)));
+  // calculate the sell price from the listing entity
+  // NOTE: scaled pricing is defined with 3 degrees of precision
+  function calcSellPrice(
+    IUintComp comps,
+    uint256 id,
+    uint256 amt
+  ) internal view returns (uint256 price) {
+    uint256 sellID = LibListingRegistry.genSellID(id);
+    string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(sellID);
+    if (type_.eq("FIXED")) {
+      return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
+    } else if (type_.eq("SCALED")) {
+      uint32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(sellID);
+      if (scale > 1e3) revert("LibListing: invalid sell scale");
+      return (calcBuyPrice(comps, id, amt) * scale) / 1e3;
+    } else revert("LibListing: invalid sell type");
   }
 
   //////////////////
   // DATA LOGGING
 
   /// @notice log increase for item buy
-  function logIncItemBuy(
-    IUintComp components,
-    uint256 accID,
-    uint32 itemIndex,
-    uint256 amt
-  ) internal {
+  function logIncItemBuy(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {
     uint32[] memory indices = new uint32[](3);
     indices[1] = itemIndex;
     indices[2] = itemIndex;
@@ -197,32 +118,27 @@ library LibListing {
     types[1] = "ITEM_BUY";
     types[2] = "ITEM_TOTAL";
 
-    LibData.inc(components, accID, indices, types, amt);
+    LibData.inc(comps, accID, indices, types, amt);
   }
 
   /// @notice log increase for item sell
-  function logIncItemSell(
-    IUintComp components,
-    uint256 accID,
-    uint32 itemIndex,
-    uint256 amt
-  ) internal {
+  function logIncItemSell(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {
     uint32[] memory indices = new uint32[](2);
     indices[1] = itemIndex;
     string[] memory types = new string[](2);
     types[0] = "ITEM_SELL_TOTAL";
     types[1] = "ITEM_SELL";
 
-    LibData.inc(components, accID, indices, types, amt);
+    LibData.inc(comps, accID, indices, types, amt);
   }
 
   /// @notice log coins spent
-  function logSpendCoin(IUintComp components, uint256 accID, uint256 amt) internal {
-    LibData.inc(components, accID, MUSU_INDEX, "ITEM_SPEND", amt);
+  function logSpendCoin(IUintComp comps, uint256 accID, uint256 amt) internal {
+    LibData.inc(comps, accID, MUSU_INDEX, "ITEM_SPEND", amt);
   }
 
   /// @notice log coin revenue earned
-  function logEarnCoin(IUintComp components, uint256 accID, uint256 amt) internal {
+  function logEarnCoin(IUintComp comps, uint256 accID, uint256 amt) internal {
     uint32[] memory indices = new uint32[](2);
     indices[0] = MUSU_INDEX;
     indices[1] = MUSU_INDEX;
@@ -230,8 +146,8 @@ library LibListing {
     types[0] = "ITEM_REVENUE";
     types[1] = "ITEM_TOTAL";
 
-    LibData.inc(components, accID, indices, types, amt);
+    LibData.inc(comps, accID, indices, types, amt);
 
-    // LibData.inc(components, accID, MUSU_INDEX, "ITEM_REVENUE", amt);
+    // LibData.inc(comps, accID, MUSU_INDEX, "ITEM_REVENUE", amt);
   }
 }

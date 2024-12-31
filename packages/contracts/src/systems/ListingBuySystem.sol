@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibListing } from "libraries/LibListing.sol";
+import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -29,7 +30,7 @@ contract ListingBuySystem is System {
 
     uint256 total;
     for (uint256 i; i < itemIndices.length; i++) {
-      uint256 listingID = LibListing.get(components, merchantIndex, itemIndices[i]);
+      uint256 listingID = LibListingRegistry.get(components, merchantIndex, itemIndices[i]);
       require(listingID != 0, "listing does not exist");
       if (listingID == 0) revert("listing does not exist");
       LibListing.verifyRequirements(components, listingID, accID);

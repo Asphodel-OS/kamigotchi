@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { LibListing } from "libraries/LibListing.sol";
+import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
@@ -15,20 +16,51 @@ uint256 constant ID = uint256(keccak256("system.listing.registry"));
 contract _ListingRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
+  // Q(jb): any reason to keep the abi encode/decode pattern on admin functions?
   function create(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint32 npcIndex, uint32 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
+    (uint32 npcIndex, uint32 itemIndex, uint256 value) = abi.decode(
       arguments,
-      (uint32, uint32, uint256, uint256)
+      (uint32, uint32, uint256)
     );
 
     require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
     require(LibItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
-    uint256 id = LibListing.get(components, npcIndex, itemIndex);
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id == 0, "Listing already exists");
 
-    id = LibListing.create(components, npcIndex, itemIndex, buyPrice, sellPrice);
+    id = LibListingRegistry.create(components, npcIndex, itemIndex, value);
     return abi.encode(id);
+  }
+
+  function setBuyFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+    setBuyFixed(id);
+  }
+
+  function setBuyFixed(uint256 id) public onlyOwner {
+    LibListingRegistry.setBuyFixed(components, id);
+  }
+
+  function setSellFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+    setSellFixed(id);
+  }
+
+  function setSellFixed(uint256 id) public onlyOwner {
+    LibListingRegistry.setSellFixed(components, id);
+  }
+
+  function setSellScaled(uint32 npcIndex, uint32 itemIndex, uint32 scale) public onlyOwner {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+    setSellScaled(id, scale);
+  }
+
+  function setSellScaled(uint256 id, uint32 scale) public onlyOwner {
+    LibListingRegistry.setSellScaled(components, id, scale);
   }
 
   function addRequirement(bytes memory arguments) public onlyOwner {
@@ -45,10 +77,10 @@ contract _ListingRegistrySystem is System {
     require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
     require(LibItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
-    uint256 id = LibListing.get(components, npcIndex, itemIndex);
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
 
-    LibListing.createRequirement(
+    LibListingRegistry.createRequirement(
       world,
       components,
       id,
@@ -57,10 +89,10 @@ contract _ListingRegistrySystem is System {
   }
 
   function remove(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
-    uint256 id = LibListing.get(components, npcIndex, itemIndex);
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
 
-    LibListing.remove(components, id);
+    LibListingRegistry.remove(components, id);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
