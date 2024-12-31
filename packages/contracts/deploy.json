@@ -565,6 +565,7 @@
     "LibNPC",
     "LibKami",
     "LibKami721",
+    "LibOnyx",
     "LibQuestRegistry",
     "LibQuests",
     "LibRelationshipRegistry",

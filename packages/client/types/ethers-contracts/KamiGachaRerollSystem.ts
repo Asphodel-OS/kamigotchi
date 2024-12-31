@@ -235,7 +235,7 @@ export interface KamiGachaRerollSystem extends BaseContract {
 
     reroll(
       kamiIDs: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
@@ -279,7 +279,7 @@ export interface KamiGachaRerollSystem extends BaseContract {
 
   reroll(
     kamiIDs: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
@@ -388,7 +388,7 @@ export interface KamiGachaRerollSystem extends BaseContract {
 
     reroll(
       kamiIDs: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -433,7 +433,7 @@ export interface KamiGachaRerollSystem extends BaseContract {
 
     reroll(
       kamiIDs: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

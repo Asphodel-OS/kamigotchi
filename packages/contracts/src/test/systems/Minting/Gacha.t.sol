@@ -111,10 +111,10 @@ contract GachaTest is SetupTemplate {
     petUserArr2[0] = userPets[0];
     petUserArr2[1] = userPets[1];
     vm.roll(++_currBlock);
-    vm.deal(owner, cost);
+    _mintOnyx(cost, owner);
     vm.prank(owner);
-    vm.expectRevert("not enough payment");
-    _KamiGachaRerollSystem.reroll{ value: cost }(petUserArr2);
+    vm.expectRevert(); // not enough, implicit overflow check
+    _KamiGachaRerollSystem.reroll(petUserArr2);
 
     // reroll first two pets, but correct pricing
     cost = _getRerollCost(1) + _getRerollCost(2);
@@ -177,9 +177,10 @@ contract GachaTest is SetupTemplate {
     uint256[] memory kamiIDs
   ) internal returns (uint256[] memory results) {
     vm.roll(++_currBlock);
-    vm.deal(_owners[accountIndex], cost);
+    _mintOnyx(cost, _owners[accountIndex]);
+    _approveOnyx(_owners[accountIndex], address(_KamiGachaRerollSystem));
     vm.prank(_owners[accountIndex]);
-    results = _KamiGachaRerollSystem.reroll{ value: cost }(kamiIDs);
+    results = _KamiGachaRerollSystem.reroll(kamiIDs);
   }
 
   function _revealSingle(uint256 commitID) internal returns (uint256) {

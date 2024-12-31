@@ -40,6 +40,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // Token vars
   Kami721 _Kami721;
+  OpenMintable _Onyx;
 
   constructor() MudTest() {}
 
@@ -70,6 +71,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpTokens() public virtual {
     vm.startPrank(deployer);
     _Kami721 = Kami721(LibDeployTokens.deployKami721(world, components));
+    _Onyx = OpenMintable(LibDeployTokens.deployOnyx20(world, components));
     vm.stopPrank();
   }
 
@@ -649,6 +651,17 @@ abstract contract SetupTemplate is TestSetupImports {
     return abi.decode(listingID, (uint));
   }
 
+  function _mintOnyx(uint256 amount, address to) internal {
+    OpenMintable onyx = OpenMintable(LibOnyx.getAddress(components));
+    onyx.mint(to, amount);
+  }
+
+  function _approveOnyx(address approver, address approvee) internal {
+    OpenMintable onyx = OpenMintable(LibOnyx.getAddress(components));
+    vm.prank(approver);
+    onyx.approve(approvee, type(uint256).max);
+  }
+
   /////////////////////////////////////////////
   // REGISTRIES
 
@@ -1130,6 +1143,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _initKamiConfigs();
     _initHarvestConfigs();
     _initLiquidationConfigs();
+    _initOnyxConfigs();
     _initSkillConfigs();
   }
 
@@ -1158,8 +1172,8 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initMintConfigs() internal virtual {
-    _setConfig("GACHA_REROLL_PRICE", 0);
-    _setConfig("GACHA_MAX_REROLLS", 100);
+    _setConfig("GACHA_REROLL_PRICE", 1);
+    _setConfig("GACHA_MAX_REROLLS", 1000);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
@@ -1194,6 +1208,11 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("KAMI_LIQ_SALVAGE", [uint32(0), 2, 0, 3, 0, 0, 0, 0]);
     _setConfig("KAMI_LIQ_SPOILS", [uint32(35), 2, 0, 3, 0, 0, 0, 0]);
     _setConfig("KAMI_LIQ_KARMA", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
+  }
+
+  function _initOnyxConfigs() internal virtual {
+    // _setConfig("ONYX_RECEIVER_ADDRESS", 0x000000000000000000000000000000000000dEaD);
+    _setConfig("ONYX_RECEIVER_ADDRESS", 0);
   }
 
   function _initSkillConfigs() internal virtual {

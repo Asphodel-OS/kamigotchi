@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibOnyx } from "libraries/LibOnyx.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.reroll"));
 
@@ -15,7 +16,7 @@ uint256 constant ID = uint256(keccak256("system.kami.gacha.reroll"));
 contract KamiGachaRerollSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function reroll(uint256[] memory kamiIDs) external payable returns (uint256[] memory) {
+  function reroll(uint256[] memory kamiIDs) external returns (uint256[] memory) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     require(accID != 0, "no account detected");
     LibKami.verifyAccount(components, kamiIDs, accID);
@@ -24,7 +25,7 @@ contract KamiGachaRerollSystem is System {
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);
     LibGacha.verifyMaxRerolls(components, prevRerolls);
-    if (msg.value < LibGacha.calcRerollsCost(components, prevRerolls)) revert("not enough payment");
+    LibOnyx.spend(components, LibGacha.calcRerollsCost(components, prevRerolls)); // implicit balance check
 
     // send pet into pool
     LibGacha.depositPets(components, kamiIDs);

@@ -125,7 +125,7 @@
           "internalType": "uint256[]"
         }
       ],
-      "stateMutability": "payable"
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",

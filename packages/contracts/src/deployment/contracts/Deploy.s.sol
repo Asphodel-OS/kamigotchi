@@ -36,7 +36,10 @@ contract Deploy is InitWorld {
       _initWorld(address(world));
 
       // custom local init script
-      if (LibString.eq(MODE, "DEV")) LibLocal.init(world, components, systems);
+      if (LibString.eq(MODE, "DEV")) {
+        LibLocal.init(world, components, systems);
+        LibDeployTokens.deployOnyx20(world, components, deployer); // openMintable erc20, local only
+      }
     }
   }
 }
