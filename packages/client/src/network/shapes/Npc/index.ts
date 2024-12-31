@@ -1,5 +1,7 @@
-export { getListing } from '../Listings';
-export { getAllNPCs, getNPC, getNPCByIndex } from '../npc';
+export { NullNPC } from './constants';
+export { getAll as getAllNPCs, getByIndex as getNPCByIndex } from './getters';
+export { getListings as getNPCListings } from './listings';
+export { queryByIndex as queryNPCByIndex, query as queryNPCs } from './queries';
+export { get as getNPC } from './types';
 
-export type { Listing } from '../Listings';
-export type { Merchant } from '../npc';
+export type { NPC } from './types';

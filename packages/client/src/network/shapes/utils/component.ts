@@ -90,7 +90,7 @@ export const getType = (components: Components, entity: EntityIndex): string => 
 export const getValue = (components: Components, entity: EntityIndex): number => {
   const { Value } = components;
   const result = getComponentValue(Value, entity)?.value;
-  // TODO: uncomment this once harvests default to 0 value
+  // TODO: uncomment this once we have a ValueComponent
   // if (result === undefined) console.warn('getValue(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
@@ -188,6 +188,13 @@ export const getKamiIndex = (components: Components, entity: EntityIndex): numbe
   const { KamiIndex } = components;
   const result = getComponentValue(KamiIndex, entity)?.value;
   if (result === undefined) console.warn('getKamiIndex(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+export const getNPCIndex = (components: Components, entity: EntityIndex): number => {
+  const { NPCIndex } = components;
+  const result = getComponentValue(NPCIndex, entity)?.value;
+  if (result === undefined) console.warn('getNPCIndex(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 

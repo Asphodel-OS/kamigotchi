@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Listing } from 'network/shapes/Listings';
+import { Listing } from 'network/shapes/Listing';
 import { CartItem } from '../types';
 import { CatalogRow } from './CatalogRow';
 

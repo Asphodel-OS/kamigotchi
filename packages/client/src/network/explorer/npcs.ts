@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getAllNPCs, getNPC, getNPCByIndex } from 'network/shapes/NPCs';
+import { getAllNPCs, getNPC, getNPCByIndex } from 'network/shapes/Npc';
 
 export const npcs = (world: World, components: Components) => {
   return {

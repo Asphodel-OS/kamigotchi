@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
+import { getAccount } from 'app/cache/account';
+import { NPC, NullNPC, cleanNPCListings, getNPCByIndex } from 'app/cache/npc';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
-import { Listing, getNPCListingsFiltered } from 'network/shapes/Listings';
-import { NPC, NullNPC, getNPCByIndex } from 'network/shapes/NPCs';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Listing } from 'network/shapes/Listing';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
 import { Header } from './header';
@@ -32,15 +33,17 @@ export function registerMerchantModal() {
         map(() => {
           const { network } = layers;
           const { components, world } = network;
-
-          const account = getAccountFromEmbedded(network, { inventory: true });
-          const getNPC = (npcIndex: number) => getNPCByIndex(world, components, npcIndex);
-          const getListings = (npcIndex: number) =>
-            getNPCListingsFiltered(world, components, npcIndex, account);
+          const accountEntity = queryAccountFromEmbedded(network);
 
           return {
-            data: { account },
-            utils: { getNPC, getListings },
+            data: { accountEntity },
+            utils: {
+              getAccount: () =>
+                getAccount(world, components, accountEntity, { live: 2, inventory: 10 }),
+              getNPC: (index: number) => getNPCByIndex(world, components, index, { listings: 60 }),
+              cleanListings: (listings: Listing[], account: Account) =>
+                cleanNPCListings(world, components, listings, account),
+            },
             network,
           };
         })
@@ -48,23 +51,30 @@ export function registerMerchantModal() {
 
     // Render
     ({ data, utils, network }) => {
-      const { account } = data;
-      const { getNPC, getListings } = utils;
+      const { accountEntity } = data;
+      const { getAccount, getNPC, cleanListings } = utils;
       const { actions, api } = network;
       const { npcIndex } = useSelected();
       const { modals } = useVisibility();
 
+      const [account, setAccount] = useState<Account>(NullAccount);
       const [merchant, setMerchant] = useState<NPC>(NullNPC);
       const [listings, setListings] = useState<Listing[]>([]);
       const [cart, setCart] = useState<CartItem[]>([]);
+
+      // update the account whenever the entity cahnges
+      useEffect(() => {
+        const account = getAccount();
+        setAccount(account);
+      }, [accountEntity]);
 
       // updates from selected Merchant updates
       useEffect(() => {
         if (!modals.merchant || npcIndex == merchant.index) return;
         const newMerchant = getNPC(npcIndex) ?? NullNPC;
         setMerchant(newMerchant);
-        setListings(getListings(npcIndex));
-      }, [modals.merchant, npcIndex]);
+        setListings(cleanListings(newMerchant.listings, account));
+      }, [modals.merchant, npcIndex, account]);
 
       // buy from a listing
       const buy = (cart: CartItem[]) => {
