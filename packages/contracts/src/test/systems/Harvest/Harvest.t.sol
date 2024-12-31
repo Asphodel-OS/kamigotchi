@@ -57,6 +57,22 @@ contract HarvestTest is SetupTemplate {
     assertEq(_getItemBal(alice, 1), expectedTotal, "end total mismatch");
   }
 
+  function testHarvestIntensityReset() public {
+    uint256 prodID = _startHarvestByIndex(aKamiID, 1);
+    _fastForward(_idleRequirement);
+
+    // harvesting for a while, high intensity
+    _fastForward(100 hours);
+    uint256 intensity = LibHarvest.calcIntensity(components, prodID, aKamiID);
+    assertTrue(intensity > 0, "initial intensity mismatch");
+
+    // use item, reset intensity
+    _giveItem(alice, 1, 1);
+    _feedPet(aKamiID, 1);
+    uint256 newIntensity = LibHarvest.calcIntensity(components, prodID, aKamiID);
+    assertTrue(intensity > newIntensity, "intensity reset mismatch");
+  }
+
   /////////////////
   // UTILS
 

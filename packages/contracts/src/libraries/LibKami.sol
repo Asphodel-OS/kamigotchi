@@ -143,7 +143,7 @@ library LibKami {
   /// @dev only resets if harvesting
   function resetIntensity(IUintComp components, uint256 id) internal {
     if (isState(components, id, "HARVESTING")) {
-      LibHarvest.resetIntensity(components, getHarvest(components, getHarvest(components, id)));
+      LibHarvest.resetIntensity(components, getHarvest(components, id));
     }
   }
 
