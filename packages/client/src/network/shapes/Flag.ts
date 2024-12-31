@@ -26,9 +26,10 @@ export interface FlagsFilter {
 export const hasFlag = (
   world: World,
   components: Components,
-  holderID: EntityID,
+  holder: EntityIndex,
   type: string
 ): boolean => {
+  const holderID = world.entities[holder];
   return _has(components, getEntityIndex(world, holderID, type));
 };
 

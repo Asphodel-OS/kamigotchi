@@ -370,6 +370,7 @@ library LibQuests {
   // UTILS
 
   function genQuestID(uint32 index, uint256 accID) internal pure returns (uint256) {
+    // world3: change to 'quest.instance'
     return uint256(keccak256(abi.encodePacked("registry.quest", index, accID)));
   }
 

@@ -31,6 +31,12 @@ export const getFor = (components: Components, entity: EntityIndex): string => {
   return rawValue;
 };
 
+export const getIsComplete = (components: Components, entity: EntityIndex): boolean => {
+  const { IsComplete } = components;
+  const result = getComponentValue(IsComplete, entity)?.value;
+  return result ?? false;
+};
+
 export const getLevel = (components: Components, entity: EntityIndex, fallback = 0): number => {
   const { Level } = components;
   const result = getComponentValue(Level, entity)?.value;

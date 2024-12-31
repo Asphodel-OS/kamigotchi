@@ -12,7 +12,7 @@ export {
   getAllBase as getAllBaseAccounts,
 } from './getters';
 export { queryInventories as queryAccountInventories } from './inventories';
-export { queryKamis as queryAccountKamis } from './kamis';
+export { getKamis as getAccountKamis, queryKamis as queryAccountKamis } from './kamis';
 export {
   NameCache,
   OperatorCache,

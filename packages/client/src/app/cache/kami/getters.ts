@@ -48,10 +48,9 @@ export const getKamiBattles = (
 // get the Flags settings for a Kami entity
 // TODO: implement cache for flags
 export const getKamiFlags = (world: World, comps: Components, entity: EntityIndex) => {
-  const id = world.entities[entity];
   return {
-    namable: !hasFlag(world, comps, id, 'NOT_NAMEABLE'),
-    skillReset: hasFlag(world, comps, id, 'CAN_RESET_SKILLS'),
+    namable: !hasFlag(world, comps, entity, 'NOT_NAMEABLE'),
+    skillReset: hasFlag(world, comps, entity, 'CAN_RESET_SKILLS'),
   };
 };
 

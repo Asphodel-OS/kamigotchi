@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 
 import { Components } from 'network/';
 import { Allo } from '../Allo';
+import { getEntityByHash } from '../utils';
 import { Objective, getObjectives } from './objective';
 import { query } from './queries';
 import { Requirement, getRequirements } from './requirement';
@@ -105,4 +106,16 @@ export const getByIndex = (
   const entity = query(components, { index: index, registry: true })[0];
   if (!entity) return;
   return get(world, components, entity);
+};
+
+///////////////
+// IDs
+
+export const getInstanceEntity = (
+  world: World,
+  index: number,
+  id: EntityID
+): EntityIndex | undefined => {
+  // world3: change to 'quest.instance'
+  return getEntityByHash(world, ['registry.quest', index, id], ['string', 'uint32', 'uint256']);
 };

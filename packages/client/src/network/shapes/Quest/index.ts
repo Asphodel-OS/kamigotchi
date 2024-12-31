@@ -23,6 +23,7 @@ export {
   queryAccepted as queryAcceptedQuests,
   queryCompleted as queryCompletedQuests,
   queryOngoing as queryOngoingQuests,
+  queryInstance as queryQuestInstance,
   queryRegistry as queryRegistryQuests,
 } from './queries';
 export {

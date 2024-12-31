@@ -1,10 +1,11 @@
-import { World } from '@mud-classic/recs';
+import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
 import { Allo } from '../Allo';
+import { getIsComplete } from '../utils/component';
 import { Objective, checkObjective } from './objective';
-import { query } from './queries';
+import { queryInstance } from './queries';
 import { BaseQuest, Quest, populate } from './quest';
 import { checkRequirement } from './requirement';
 
@@ -21,17 +22,13 @@ const canRepeat = (completed: Quest) => {
 };
 
 export const hasCompleted = (
+  world: World,
   components: Components,
   questIndex: number,
-  account: Account
+  holder: EntityIndex
 ): boolean => {
-  const results = query(components, {
-    account: account.id,
-    index: questIndex,
-    completed: true,
-  });
-
-  return results.length > 0;
+  const instance = queryInstance(world, questIndex, holder);
+  return instance !== undefined && getIsComplete(components, instance);
 };
 
 // find a Quest in a list of other Quests by its index

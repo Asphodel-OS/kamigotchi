@@ -6,9 +6,11 @@ import {
   Not,
   QueryFragment,
   runQuery,
+  World,
 } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { getInstanceEntity } from './quest';
 
 export interface QueryOptions {
   account?: EntityID;
@@ -33,6 +35,16 @@ export const query = (components: Components, options: QueryOptions): EntityInde
   }
 
   return Array.from(runQuery(toQuery));
+};
+
+export const queryInstance = (
+  world: World,
+  index: number,
+  holder: EntityIndex
+): EntityIndex | undefined => {
+  const holderID = world.entities[holder];
+  if (!holderID) return;
+  return getInstanceEntity(world, index, holderID);
 };
 
 export const queryAccepted = (components: Components, accountID: EntityID): EntityIndex[] => {

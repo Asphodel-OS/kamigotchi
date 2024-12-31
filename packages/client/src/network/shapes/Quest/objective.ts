@@ -71,7 +71,7 @@ export const checkObjective = (
     checkCurrent(world, components, objective.target, holderEntity),
     checkIncrease(world, components, objective, quest, holderEntity),
     checkDecrease(world, components, objective, quest, holderEntity),
-    checkBoolean(world, components, objective.target, account), //todo: change getBool to entityIndex
+    checkBoolean(world, components, objective.target, account.entity),
     { completable: false }
   );
 };

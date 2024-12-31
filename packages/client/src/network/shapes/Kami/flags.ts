@@ -10,9 +10,8 @@ export interface Flags {
 
 // get the flags of a kami entity
 export const getFlags = (world: World, components: Components, entity: EntityIndex): Flags => {
-  const id = world.entities[entity];
   return {
-    namable: !hasFlag(world, components, id, 'NOT_NAMEABLE'),
-    skillReset: hasFlag(world, components, id, 'CAN_RESET_SKILLS'),
+    namable: !hasFlag(world, components, entity, 'NOT_NAMEABLE'),
+    skillReset: hasFlag(world, components, entity, 'CAN_RESET_SKILLS'),
   };
 };
