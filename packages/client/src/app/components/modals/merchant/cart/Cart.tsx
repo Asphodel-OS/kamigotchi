@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { calcBuyPrice } from 'app/cache/npc/functions';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { Account } from 'network/shapes/Account';
@@ -19,7 +20,7 @@ export const Cart = (props: Props) => {
   const calcTotalPrice = () => {
     let total = 0;
     for (const c of cart) {
-      total += c.listing.buyPrice * c.quantity;
+      total += calcBuyPrice(c.listing, c.quantity);
     }
     return total;
   };

@@ -3,6 +3,13 @@ import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 
+export const getBalance = (components: Components, entity: EntityIndex): number => {
+  const { Balance } = components;
+  const result = getComponentValue(Balance, entity)?.value;
+  if (result === undefined) console.warn('getBalance(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
 export const getCost = (components: Components, entity: EntityIndex): number => {
   const { Cost } = components;
   const result = getComponentValue(Cost, entity)?.value;
@@ -70,6 +77,14 @@ export const getRerolls = (components: Components, entity: EntityIndex): number 
   const result = getComponentValue(Reroll, entity)?.value;
   if (result === undefined) console.warn('getReroll(): undefined for entity', entity);
   return (result ?? 0) * 1;
+};
+
+// assume scale is always defined with 3 decimals
+export const getScale = (components: Components, entity: EntityIndex): number => {
+  const { Scale } = components;
+  const result = getComponentValue(Scale, entity)?.value;
+  if (result === undefined) console.warn('getScale(): undefined for entity', entity);
+  return ((result ?? 0) * 1.0) / 1e3;
 };
 
 export const getSkillPoints = (components: Components, entity: EntityIndex): number => {

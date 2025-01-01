@@ -1,17 +1,22 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Item, getItemByIndex } from 'network/shapes/Item';
+import { getItemByIndex, Item } from 'network/shapes/Item';
 import { Condition, getConditionsOfID } from '../Conditional';
-import { getEntityByHash, hashArgs } from '../utils';
-import { getItemIndex, getValue } from '../utils/component';
+import { hashArgs } from '../utils';
+import { getBalance, getItemIndex, getStartTime, getValue } from '../utils/component';
+import { genBuyEntity, genSellEntity, getPricing, Pricing } from './pricing';
 
 export interface Listing {
   id: EntityID;
   entity: EntityIndex;
   item: Item;
-  buyPrice: number;
+  value: number; // target value of the listing
+  balance: number; // tracking of net balances bought vs sold
+  startTime: number;
   requirements: Condition[];
+  buy?: Pricing;
+  sell?: Pricing;
 }
 
 // get an Listing from its EntityIndex
@@ -23,17 +28,19 @@ export const get = (world: World, comps: Components, entity: EntityIndex): Listi
     id,
     entity,
     item: getItemByIndex(world, comps, itemIndex),
-    buyPrice: getBuyPrice(world, comps, id),
+    value: getValue(comps, entity),
+    balance: getBalance(comps, entity),
+    startTime: getStartTime(comps, entity),
     requirements: getConditionsOfID(world, comps, genReqAnchor(id)),
   };
 
-  return listing;
-};
+  // set pricing entities if they exist
+  const buyEntity = genBuyEntity(world, id);
+  const sellEntity = genSellEntity(world, id);
+  if (buyEntity) listing.buy = getPricing(comps, buyEntity);
+  if (sellEntity) listing.sell = getPricing(comps, sellEntity);
 
-const getBuyPrice = (world: World, comps: Components, id: EntityID): number => {
-  const entity = getEntityByHash(world, ['listing.buy', id], ['string', 'uint256']);
-  if (!entity) return 0;
-  return getValue(comps, entity);
+  return listing;
 };
 
 export const genReqAnchor = (id: EntityID): EntityID => {

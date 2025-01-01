@@ -147,7 +147,6 @@ library LibListing {
     types[1] = "ITEM_TOTAL";
 
     LibData.inc(comps, accID, indices, types, amt);
-
     // LibData.inc(comps, accID, MUSU_INDEX, "ITEM_REVENUE", amt);
   }
 }
