@@ -6,7 +6,6 @@ import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
-
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -215,10 +214,7 @@ export function registerDialogueModal() {
 const Text = styled.div<{ npc?: { name: string; background: string } }>`
   background-color: rgb(255, 255, 204);
   text-align: center;
-  ${({ npc }) =>
-    npc &&
-    npc.background.length > 0 &&
-    `background-image: url(${npc?.background}); background-size: cover; text-align: left`};
+  ${({ npc }) => npc && npc.background.length > 0 && `${npc?.background}; text-align: left`};
   height: 100%;
   min-height: max-content;
   width: 100%;

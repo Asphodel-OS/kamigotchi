@@ -1,4 +1,3 @@
-import { backgrounds } from 'assets/images/backgrounds';
 import { DialogueNode } from '.';
 
 const LoyaltyText = (loyalty: number) => {
@@ -16,7 +15,20 @@ export const clock: DialogueNode = {
 export const mina: DialogueNode = {
   index: 132,
   text: [LoyaltyText, `I need your help. Interested in supporting new product development?`],
-  npc: { name: 'Mina', background: backgrounds.mina },
+  npc: {
+    name: 'Mina',
+    background: `   
+    background-image: radial-gradient(rgb(255 242 255) 20%, transparent 0), 
+                      radial-gradient(rgb(255 242 255) 20%, transparent 0),
+                      linear-gradient(to right, white 40%,rgb(255 242 255)); 
+  
+    background-size: 30px 30px, 
+                     30px 30px,
+                     100% 100%; 
+  
+    background-position: 0 0, 15px 15px;
+ `,
+  },
   action: {
     type: 'goal',
     label: 'Support Mina',
