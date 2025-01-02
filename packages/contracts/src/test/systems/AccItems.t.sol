@@ -77,7 +77,7 @@ contract AccItemsTest is SetupTemplate {
 
   function assertTypeAndFor(ISystem system, uint32 wrongItem) public {
     vm.prank(alice.operator);
-    vm.expectRevert("that's not for accounts");
+    vm.expectRevert("not for ACCOUNT");
     system.execute(abi.encode(wrongItem, 1));
 
     vm.prank(alice.operator);

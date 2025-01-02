@@ -36,7 +36,6 @@ contract _GoalRegistrySystem is System {
     return LibGoals.create(components, goalIndex, name, description, roomIndex, objective);
   }
 
-  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 goalIndex,

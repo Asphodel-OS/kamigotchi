@@ -112,8 +112,12 @@ library LibItem {
     id = LibConditional.createFor(world, components, data, genReqAnchor(refID));
   }
 
+  function addFlag(IUintComp components, uint32 index, string memory flag) internal {
+    LibFlag.setFull(components, genID(index), flag);
+  }
+
   /// @notice delete a Registry entry for an item.
-  function deleteItem(IUintComp components, uint32 index) public {
+  function remove(IUintComp components, uint32 index) public {
     uint256 id = genID(index);
     LibEntityType.remove(components, id);
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
@@ -129,17 +133,27 @@ library LibItem {
 
     LibDroptable.remove(components, id);
     LibFor.remove(components, id);
-    LibFlag.removeFull(components, id, "ITEM_UNBURNABLE");
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
 
-    uint256[] memory reqs = getAllRequirements(components, index);
-    LibConditional.remove(components, reqs);
+    {
+      uint256[] memory flags = LibFlag.queryFor(components, id);
+      LibFlag.removeFull(components, flags);
+    }
 
-    uint256[] memory allos = getAllAllos(components, index);
-    LibAllo.remove(components, allos);
+    {
+      uint256[] memory reqs = getAllRequirements(components, index);
+      LibConditional.remove(components, reqs);
+    }
 
-    uint256[] memory refs = getAllReferences(components, index);
-    LibReference.remove(components, refs);
+    {
+      uint256[] memory allos = getAllAllos(components, index);
+      LibAllo.remove(components, allos);
+    }
+
+    {
+      uint256[] memory refs = getAllReferences(components, index);
+      LibReference.remove(components, refs);
+    }
   }
 
   /////////////////
@@ -188,6 +202,12 @@ library LibItem {
   /////////////////
   // CHECKERS
 
+  /// @notice checks if item skips bonus action resets
+  /// @dev bonus only resets upon USE
+  function bypassBonusReset(IUintComp components, uint32 index) internal view returns (bool) {
+    return LibFlag.has(components, genID(index), "BYPASS_BONUS_RESET");
+  }
+
   /// @dev to prevent potential overflows, somehow
   function verifyMaxPerUse(IUintComp components, uint256 amt) public view {
     if (amt > 100) revert("max 100 item use at once");
@@ -230,12 +250,9 @@ library LibItem {
     if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
   }
 
-  function verifyForAccount(IUintComp components, uint32 index) public view {
-    if (!LibFor.get(components, genID(index)).eq("ACCOUNT")) revert("that's not for accounts");
-  }
-
-  function checkForPet(IUintComp components, uint32 index) public view {
-    if (!LibFor.get(components, genID(index)).eq("KAMI")) revert("that's not for kamis");
+  function verifyForShape(IUintComp components, uint32 index, string memory shape) public view {
+    if (!LibFor.get(components, genID(index)).eq(shape))
+      revert(LibString.concat("not for ", shape));
   }
 
   /////////////////
@@ -302,11 +319,6 @@ library LibItem {
 
   function setRoom(IUintComp components, uint256 id, uint32 roomIndex) internal {
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, roomIndex);
-  }
-
-  /// @notice prevent item from being burned via ItemBurnSystem
-  function setUnburnable(IUintComp components, uint256 id) internal {
-    LibFlag.setFull(components, id, "ITEM_UNBURNABLE");
   }
 
   /////////////////

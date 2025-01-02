@@ -32,7 +32,6 @@ contract _QuestRegistrySystem is System {
     return regID;
   }
 
-  /// pulltodo
   function addObjective(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 questIndex,
@@ -58,7 +57,6 @@ contract _QuestRegistrySystem is System {
       );
   }
 
-  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 questIndex,

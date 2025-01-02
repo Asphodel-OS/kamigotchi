@@ -26,11 +26,12 @@ contract KamiUseItemSystem is System {
     LibKami.verifyCooldown(components, kamiID);
 
     // item checks
-    LibItem.checkForPet(components, itemIndex);
+    LibItem.verifyForShape(components, itemIndex, "KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // reset action bonuses
-    LibBonus.resetUponHarvestAction(components, kamiID);
+    if (!LibItem.bypassBonusReset(components, itemIndex))
+      LibBonus.resetUponHarvestAction(components, kamiID);
 
     // use item
     LibKami.sync(components, kamiID);

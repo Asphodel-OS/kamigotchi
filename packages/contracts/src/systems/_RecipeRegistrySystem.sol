@@ -37,7 +37,6 @@ contract _RecipeRegistrySystem is System {
     return LibRecipe.addAssigner(components, regID, index, assignerID);
   }
 
-  /// pulltodo
   function addRequirement(
     uint32 recipeIndex,
     string memory logicType,

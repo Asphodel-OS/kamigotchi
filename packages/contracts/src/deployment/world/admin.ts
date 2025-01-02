@@ -618,6 +618,33 @@ export function createAdminAPI(compiledCalls: string[]) {
     );
   }
 
+  //// ITEM FLAGS
+
+  async function addItemFlag(index: number, flag: string) {
+    genCall('system.item.registry', [index, flag], 'addFlag');
+  }
+
+  //// ITEM REQUIREMENTS
+
+  async function addItemRequirement(
+    index: number,
+    usecase: string,
+    type_: string,
+    logicType: string,
+    index_: number,
+    value: number,
+    for_: string
+  ) {
+    genCall(
+      'system.item.registry',
+      [index, usecase, type_, logicType, index_, value, for_],
+      'addRequirement',
+      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
+    );
+  }
+
+  //// ITEM ALLOS
+
   async function addItemBasic(
     index: number,
     usecase: string,
@@ -680,23 +707,6 @@ export function createAdminAPI(compiledCalls: string[]) {
       [index, usecase, statType, base, shift, boost, sync],
       'addAlloStat',
       ['uint32', 'string', 'string', 'int32', 'int32', 'int32', 'int32']
-    );
-  }
-
-  async function addItemRequirement(
-    index: number,
-    usecase: string,
-    type_: string,
-    logicType: string,
-    index_: number,
-    value: number,
-    for_: string
-  ) {
-    genCall(
-      'system.item.registry',
-      [index, usecase, type_, logicType, index_, value, for_],
-      'addRequirement',
-      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
@@ -857,6 +867,7 @@ export function createAdminAPI(compiledCalls: string[]) {
           consumable: registerConsumable,
         },
         add: {
+          flag: addItemFlag,
           requirement: addItemRequirement,
           allo: {
             basic: addItemBasic,

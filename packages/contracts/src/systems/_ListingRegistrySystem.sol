@@ -31,7 +31,6 @@ contract _ListingRegistrySystem is System {
     return abi.encode(id);
   }
 
-  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner {
     (
       uint32 npcIndex,

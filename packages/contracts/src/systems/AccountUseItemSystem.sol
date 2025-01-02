@@ -21,7 +21,7 @@ contract AccountUseItemSystem is System {
 
     // item checks
     LibItem.verifyMaxPerUse(components, amt);
-    LibItem.verifyForAccount(components, itemIndex);
+    LibItem.verifyForShape(components, itemIndex, "ACCOUNT");
     LibItem.verifyRequirements(components, itemIndex, "USE", accID);
 
     // use items

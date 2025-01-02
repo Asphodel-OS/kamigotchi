@@ -36,7 +36,6 @@ contract _RoomRegistrySystem is System {
     return id;
   }
 
-  /// pulltodo
   function addGate(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 roomIndex,

@@ -72,6 +72,8 @@ async function createItem(api: AdminAPI, entry: any) {
   if (baseTypes.includes(type)) await setBase(api, entry);
   else if (consumableTypes.includes(type)) await setConsumable(api, entry);
   else console.error('Item type not found: ' + type);
+
+  await addFlag(api, entry);
 }
 
 async function addAllo(api: AdminAPI, entry: any) {
@@ -108,6 +110,14 @@ async function addAllo(api: AdminAPI, entry: any) {
     // basic (everything else)
     const [type, index, value] = parseBasic(entry);
     await api.registry.item.add.allo.basic(Number(entry['Index']), 'USE', type, index, value);
+  }
+}
+
+async function addFlag(api: AdminAPI, entry: any) {
+  const flags = entry['Flags'].split(',').map((f: string) => f.trim());
+  for (let i = 0; i < flags.length; i++) {
+    if (flags[i].length === 0) continue;
+    await api.registry.item.add.flag(Number(entry['Index']), flags[i]);
   }
 }
 

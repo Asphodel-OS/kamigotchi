@@ -9,7 +9,7 @@ contract ItemBurnerTest is ItemTemplate {
     _createGenericItem(1); // burnable
     _createGenericItem(2); // not burnable
     vm.startPrank(deployer);
-    __ItemRegistrySystem.setUnburnable(2);
+    __ItemRegistrySystem.addFlag(2, "ITEM_UNBURNABLE");
     vm.stopPrank();
 
     // not enough inventory

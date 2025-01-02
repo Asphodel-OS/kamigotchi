@@ -44,23 +44,6 @@ contract _ItemRegistrySystem is System {
     return id;
   }
 
-  function createLootbox(bytes memory arguments) public onlyOwner returns (uint256) {
-    (
-      uint32 index,
-      string memory name,
-      string memory description,
-      uint32[] memory keys,
-      uint256[] memory weights,
-      string memory media
-    ) = abi.decode(arguments, (uint32, string, string, uint32[], uint256[], string));
-    require(LibItem.getByIndex(components, index) == 0, "item reg: index used");
-
-    uint256 id = LibItem.createItem(components, index, "LOOTBOX", name, description, media);
-    LibDroptable.set(components, id, keys, weights);
-    return id;
-  }
-
-  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 index,
@@ -81,6 +64,11 @@ contract _ItemRegistrySystem is System {
         useCase,
         Condition(condType, condLogic, condIndex, condValue, condFor)
       );
+  }
+
+  function addFlag(uint32 index, string memory flag) public onlyOwner {
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    LibItem.addFlag(components, index, flag);
   }
 
   function addAlloBasic(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -146,18 +134,11 @@ contract _ItemRegistrySystem is System {
     return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
-  function setUnburnable(uint32 index) public onlyOwner {
-    uint256 registryID = LibItem.getByIndex(components, index);
-    require(registryID != 0, "ItemReg: item does not exist");
-
-    LibItem.setUnburnable(components, registryID);
-  }
-
   function remove(uint32 index) public onlyOwner {
     uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
 
-    LibItem.deleteItem(components, index);
+    LibItem.remove(components, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

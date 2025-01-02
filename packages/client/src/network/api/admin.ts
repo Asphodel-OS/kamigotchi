@@ -403,75 +403,6 @@ export function createAdminAPI(systems: any) {
   /////////////////
   //  ITEMS
 
-  // @dev add a food item registry entry
-  async function registerFood(
-    index: number,
-    name: string,
-    description: string,
-    health: number,
-    experience: number,
-    media: string
-  ) {
-    await sleepIf();
-    return systems['system.item.registry'].createFood(
-      defaultAbiCoder.encode(
-        ['uint32', 'string', 'string', 'int32', 'uint256', 'string'],
-        [index, name, description, health, experience, media]
-      )
-    );
-  }
-
-  async function registerLootbox(
-    index: number,
-    name: string,
-    description: string,
-    keys: number[],
-    weights: number[],
-    media: string
-  ) {
-    await sleepIf();
-    return systems['system.item.registry'].createLootbox(
-      defaultAbiCoder.encode(
-        ['uint32', 'string', 'string', 'uint32[]', 'uint256[]', 'string'],
-        [index, name, description, keys, weights, media]
-      )
-    );
-  }
-
-  // @dev add a misc item in registry entry
-  async function registerConsumable(
-    index: number,
-    name: string,
-    description: string,
-    type_: string,
-    media: string
-  ) {
-    await sleepIf();
-    return systems['system.item.registry'].createConsumable(
-      defaultAbiCoder.encode(
-        ['uint32', 'string', 'string', 'string', 'string'],
-        [index, name, description, type_, media]
-      )
-    );
-  }
-
-  // @dev add a revive item registry entry
-  async function registerRevive(
-    index: number,
-    name: string,
-    description: string,
-    health: number,
-    media: string
-  ) {
-    await sleepIf();
-    return systems['system.item.registry'].createRevive(
-      defaultAbiCoder.encode(
-        ['uint32', 'string', 'string', 'int32', 'string'],
-        [index, name, description, health, media]
-      )
-    );
-  }
-
   // @dev deletes an item registry
   async function deleteItem(index: number) {
     await sleepIf();
@@ -621,12 +552,6 @@ export function createAdminAPI(systems: any) {
     },
     registry: {
       item: {
-        create: {
-          food: registerFood,
-          lootbox: registerLootbox,
-          consumable: registerConsumable,
-          revive: registerRevive,
-        },
         delete: deleteItem,
       },
       trait: {

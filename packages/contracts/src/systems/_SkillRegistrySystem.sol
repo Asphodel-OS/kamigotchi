@@ -63,7 +63,6 @@ contract _SkillRegistrySystem is System {
     return id;
   }
 
-  /// pulltodo
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 skillIndex,
