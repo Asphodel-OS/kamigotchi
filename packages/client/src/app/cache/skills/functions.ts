@@ -75,8 +75,8 @@ export const parseRequirementText = (
   components: Components,
   requirement: Condition
 ): string => {
-  const index = requirement.target.index;
-  const value = requirement.target.value;
+  const index = requirement.target.index || 0;
+  const value = requirement.target.value || 0;
   const type = requirement.target.type;
 
   if (type === 'LEVEL') {
