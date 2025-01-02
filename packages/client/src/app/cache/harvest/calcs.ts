@@ -103,7 +103,7 @@ export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
   const base = config.nudge.value * violence; // commandeering nudge field for this scaling
   const nudge = Math.floor(calcIntensityTime(harvest) / 60);
   const ratio = config.ratio.value; // Intensity Core (Period * scaling to accomodate skill balancing)
-  const boostBonus = kami.bonuses?.harvest.intensity.nudge ?? 0;
+  const boostBonus = kami.bonuses?.harvest.intensity.boost ?? 0;
   const boost = config.boost.value + boostBonus;
   const intensity = ((base + nudge) * boost) / (ratio * 3600);
 

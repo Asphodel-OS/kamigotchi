@@ -93,10 +93,10 @@ export const getBonuses = (
         boost: getBonus('HARV_FERTILITY_BOOST', 3),
       },
       intensity: {
-        nudge: getBonus('HARV_INTENSITY_BOOST', 0),
+        nudge: 0,
         ratio: 0,
         shift: 0,
-        boost: 0,
+        boost: getBonus('HARV_INTENSITY_BOOST', 0),
       },
       bounty: {
         nudge: 0,
