@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { readFile, toCreate, toDelete, toRevise } from './utils';
 
 export async function initRecipes(api: AdminAPI, overrideIndices?: number[]) {

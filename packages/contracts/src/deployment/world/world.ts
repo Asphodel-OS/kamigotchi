@@ -36,7 +36,7 @@ import {
   reviseSkills,
 } from './state';
 
-import { AdminAPI, createAdminAPI } from './admin';
+import { AdminAPI, createAdminAPI } from './api';
 
 export type WorldAPI = typeof WorldState.prototype.api;
 

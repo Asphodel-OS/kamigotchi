@@ -1,0 +1,70 @@
+import { BigNumberish } from 'ethers';
+import { GenCall } from '.';
+
+export function listingAPI(genCall: GenCall) {
+  // create a listing for an npc and item at a target value
+  async function createListing(npcIndex: number, itemIndex: number, value: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, value], 'create', [
+      'uint32',
+      'uint32',
+      'uint256',
+    ]);
+  }
+
+  // add a fixed buy price to a listing
+  async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed', ['uint32', 'uint32']);
+  }
+
+  // add a fixed sell price to a listing
+  async function setListingSellPriceFixed(npcIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed', ['uint32', 'uint32']);
+  }
+
+  // add a scaled sell price to a listing
+  async function setListingSellPriceScaled(npcIndex: number, itemIndex: number, scale: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, scale], 'setSellScaled', [
+      'uint32',
+      'uint32',
+      'uint32',
+    ]);
+  }
+
+  async function setListingRequirement(
+    npcIndex: number,
+    itemIndex: number,
+    conditionType: string,
+    logicType: string,
+    index: number,
+    value: BigNumberish,
+    for_: string
+  ) {
+    genCall(
+      'system.listing.registry',
+      [npcIndex, itemIndex, conditionType, logicType, index, value, for_],
+      'addRequirement',
+      ['uint32', 'uint32', 'string', 'string', 'uint32', 'uint256', 'string']
+    );
+  }
+
+  async function removeListing(npcIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'remove');
+  }
+
+  return {
+    create: createListing,
+    set: {
+      price: {
+        buy: {
+          fixed: setListingBuyPriceFixed,
+        },
+        sell: {
+          fixed: setListingSellPriceFixed,
+          scaled: setListingSellPriceScaled,
+        },
+      },
+      requirement: setListingRequirement,
+    },
+    remove: removeListing,
+  };
+}

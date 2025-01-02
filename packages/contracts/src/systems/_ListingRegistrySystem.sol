@@ -33,6 +33,17 @@ contract _ListingRegistrySystem is System {
     return abi.encode(id);
   }
 
+  // remove a listing if it exists along with all requirements and pricing
+  function remove(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+
+    LibListingRegistry.remove(components, id);
+  }
+
+  /////////////////
+  // PRICING
+
   function setBuyFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
@@ -63,6 +74,9 @@ contract _ListingRegistrySystem is System {
     LibListingRegistry.setSellScaled(components, id, scale);
   }
 
+  /////////////////
+  // REQUIREMENTS
+
   function addRequirement(bytes memory arguments) public onlyOwner {
     (
       uint32 npcIndex,
@@ -86,13 +100,6 @@ contract _ListingRegistrySystem is System {
       id,
       Condition(reqType, logicType, index, value, condFor)
     );
-  }
-
-  function remove(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
-    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
-    require(id != 0, "Listing does not exist");
-
-    LibListingRegistry.remove(components, id);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

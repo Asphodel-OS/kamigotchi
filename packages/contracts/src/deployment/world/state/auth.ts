@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { readFile } from './utils';
 
 export async function initAuth(api: AdminAPI) {

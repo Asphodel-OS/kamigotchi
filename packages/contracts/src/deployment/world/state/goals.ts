@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { MUSU_INDEX } from './utils';
 
 export async function initGoals(api: AdminAPI) {

@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 
 import { initAuth, initLocalAuth } from './auth';
 import { initConfigs, initLocalConfigs } from './configs';

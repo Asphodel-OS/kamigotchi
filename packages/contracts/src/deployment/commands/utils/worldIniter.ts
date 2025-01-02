@@ -3,7 +3,7 @@ import { WorldState } from '../../world/world';
 import { generateInitWorld } from './codegen';
 import execa = require('execa');
 
-import { AdminAPI } from '../../world/admin';
+import { AdminAPI } from '../../world/api';
 import { SystemAbis } from '../../world/mappings/SystemAbis';
 import { SubFunc, WorldAPI } from '../../world/world';
 import { ignoreSolcErrors } from './utils';

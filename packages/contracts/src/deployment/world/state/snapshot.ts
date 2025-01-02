@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 
 import { ethers } from 'ethers';
 import { file as itemData } from '../../commands/data/ItemTransfer.json';

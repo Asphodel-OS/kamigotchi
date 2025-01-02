@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { getGoalID, readFile, toDelete, toRevise } from './utils';
 
 // hardcoded gates - placeholder until notion is up

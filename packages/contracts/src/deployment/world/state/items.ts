@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { getItemImage, parseKamiStateToIndex, readFile, toDelete, toRevise } from './utils';
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {

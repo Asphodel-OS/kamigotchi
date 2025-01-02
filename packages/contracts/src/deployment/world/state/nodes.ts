@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { readFile, textToNumberArray, toDelete, toRevise } from './utils';
 
 export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {

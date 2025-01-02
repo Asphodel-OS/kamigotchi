@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 
 export async function initConfigs(api: AdminAPI) {
   await initBase(api);

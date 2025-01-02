@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 
 export async function initGachaPool(api: AdminAPI, numToMint: number) {
   await api.mint.batchMinter.init();

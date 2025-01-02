@@ -1,7 +1,7 @@
 ////////////////////
 // RELATIONSHIPS
 
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 
 export async function initRelationships(api: AdminAPI) {
   //        /->8->9-\

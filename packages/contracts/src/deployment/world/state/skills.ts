@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { readFile, toDelete, toRevise } from './utils';
 
 // inits all skills or by optional indices parameter

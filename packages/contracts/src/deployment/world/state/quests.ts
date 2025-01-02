@@ -1,4 +1,4 @@
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import {
   GACHA_TICKET_INDEX,
   parseToInitCon,

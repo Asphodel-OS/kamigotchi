@@ -1,8 +1,17 @@
 import { BigNumberish } from 'ethers';
-import { createCall, toUint32FixedArrayLiteral } from '../commands/utils/systemCaller';
-import { SystemAbis } from '../world/mappings/SystemAbis';
+import { createCall, toUint32FixedArrayLiteral } from '../../commands/utils/systemCaller';
+import { SystemAbis } from '../mappings/SystemAbis';
+import { listingAPI } from './listings';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
+
+// i have become what i hate most, woe is jiraheron
+export type GenCall = (
+  systemID: keyof typeof SystemAbis,
+  args: any[],
+  func?: string,
+  encodedTypes?: any
+) => void;
 
 export function createAdminAPI(compiledCalls: string[]) {
   // @dev generates an entry in json for calling systems
@@ -223,23 +232,36 @@ export function createAdminAPI(compiledCalls: string[]) {
   /////////////////
   //  LISTINGS
 
-  // sets the prices for the merchant at the specified roomIndex
-  async function setListing(
-    merchantIndex: number,
-    itemIndex: number,
-    buyPrice: number,
-    sellPrice: number
-  ) {
-    genCall('system.listing.registry', [merchantIndex, itemIndex, buyPrice, sellPrice], 'create', [
+  // create a listing for an npc and item at a target value
+  async function createListing(npcIndex: number, itemIndex: number, value: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, value], 'create', [
       'uint32',
       'uint32',
-      'uint256',
       'uint256',
     ]);
   }
 
-  async function addListingRequirement(
-    merchantIndex: number,
+  // add a fixed buy price to a listing
+  async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed', ['uint32', 'uint32']);
+  }
+
+  // add a fixed sell price to a listing
+  async function setListingSellPriceFixed(npcIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed', ['uint32', 'uint32']);
+  }
+
+  // add a scaled sell price to a listing
+  async function setListingSellPriceScaled(npcIndex: number, itemIndex: number, scale: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, scale], 'setSellScaled', [
+      'uint32',
+      'uint32',
+      'uint32',
+    ]);
+  }
+
+  async function setListingRequirement(
+    npcIndex: number,
     itemIndex: number,
     conditionType: string,
     logicType: string,
@@ -249,14 +271,14 @@ export function createAdminAPI(compiledCalls: string[]) {
   ) {
     genCall(
       'system.listing.registry',
-      [merchantIndex, itemIndex, conditionType, logicType, index, value, for_],
+      [npcIndex, itemIndex, conditionType, logicType, index, value, for_],
       'addRequirement',
       ['uint32', 'uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
   }
 
-  async function removeListing(merchantIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [merchantIndex, itemIndex], 'remove');
+  async function removeListing(npcIndex: number, itemIndex: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'remove');
   }
 
   /////////////////
@@ -824,13 +846,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
       delete: deleteGoal,
     },
-    listing: {
-      set: setListing,
-      add: {
-        requirement: addListingRequirement,
-      },
-      remove: removeListing,
-    },
+    listing: listingAPI(genCall),
     node: {
       create: createNode,
       add: {

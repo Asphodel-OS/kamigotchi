@@ -1,22 +1,51 @@
 import { BigNumberish } from 'ethers';
-import { AdminAPI } from '../admin';
+import { AdminAPI } from '../api';
 import { getGoalID } from './utils';
 
 export async function initListings(api: AdminAPI) {
-  setListing(api, 1, 11301, 60); // gum (S)
-  setListing(api, 1, 11303, 100); // candy (M)
-  setListing(api, 1, 11304, 160); // cookie sticks (L)
-  setListing(api, 1, 11001, 100); // ribbon
+  const create = api.listing.create;
+  const setBuyFixed = api.listing.set.price.buy.fixed;
 
-  setListing(api, 1, 21201, 150); // ice cream (S)
-  setListing(api, 1, 21202, 250); // ice cream (M)
-  setListing(api, 1, 21203, 450); // ice cream (L)
+  // gakki gum (S)
+  create(1, 11301, 60);
+  setBuyFixed(1, 11301);
 
-  setListing(api, 1, 21100, 250); // teleport scroll
+  // pompom candy (M)
+  create(1, 11303, 100);
+  setBuyFixed(1, 11303);
+
+  // cookie sticks (L)
+  create(1, 11304, 160);
+  setBuyFixed(1, 11304);
+
+  // ribbon
+  create(1, 11001, 100);
+  setBuyFixed(1, 11001);
+
+  // ice cream (S)
+  create(1, 21201, 150);
+  setBuyFixed(1, 21201);
+
+  // ice cream (M)
+  create(1, 21202, 250);
+  setBuyFixed(1, 21202);
+
+  // ice cream (L)
+  create(1, 21203, 450);
+  setBuyFixed(1, 21203);
+
+  // teleport scroll
+  create(1, 21100, 250);
+  setBuyFixed(1, 21100);
   initRequirement(api, 1, 21100, 'COMPLETE_COMP', 'BOOL_IS', 0, getGoalID(5)); // require 1 teleport scroll
 
-  setListing(api, 1, 23100, 2500); // space grinder
-  setListing(api, 1, 23101, 4000); // portable burner
+  // spice grinder
+  create(1, 23100, 2500);
+  setBuyFixed(1, 23100);
+
+  // portable burner
+  create(1, 23101, 4000);
+  setBuyFixed(1, 23101);
 }
 
 export async function deleteListings(api: AdminAPI, indices: number[]) {
@@ -30,14 +59,13 @@ export async function deleteListings(api: AdminAPI, indices: number[]) {
   }
 }
 
-async function setListing(
+async function createListing(
   api: AdminAPI,
   merchantIndex: number,
   itemIndex: number,
-  buyPrice: number,
-  sellPrice = 0
+  value: number
 ) {
-  await api.listing.set(merchantIndex, itemIndex, buyPrice, sellPrice);
+  await api.listing.create(merchantIndex, itemIndex, value);
 }
 
 const initRequirement = async (
@@ -49,7 +77,7 @@ const initRequirement = async (
   index: number,
   value: BigNumberish
 ) => {
-  await api.listing.add.requirement(
+  await api.listing.set.requirement(
     npcIndex,
     itemIndex,
     conditionType,
