@@ -50,6 +50,7 @@ export type { HarvestStopSystem } from "./HarvestStopSystem";
 export type { HasFlagComponent } from "./HasFlagComponent";
 export type { HealthComponent } from "./HealthComponent";
 export type { IDFromComponent } from "./IDFromComponent";
+export type { IDOwnsFlagComponent } from "./IDOwnsFlagComponent";
 export type { IDOwnsInventoryComponent } from "./IDOwnsInventoryComponent";
 export type { IDOwnsKamiComponent } from "./IDOwnsKamiComponent";
 export type { IDOwnsQuestComponent } from "./IDOwnsQuestComponent";
@@ -235,6 +236,7 @@ export { HarvestStopSystem__factory } from "./factories/HarvestStopSystem__facto
 export { HasFlagComponent__factory } from "./factories/HasFlagComponent__factory";
 export { HealthComponent__factory } from "./factories/HealthComponent__factory";
 export { IDFromComponent__factory } from "./factories/IDFromComponent__factory";
+export { IDOwnsFlagComponent__factory } from "./factories/IDOwnsFlagComponent__factory";
 export { IDOwnsInventoryComponent__factory } from "./factories/IDOwnsInventoryComponent__factory";
 export { IDOwnsKamiComponent__factory } from "./factories/IDOwnsKamiComponent__factory";
 export { IDOwnsQuestComponent__factory } from "./factories/IDOwnsQuestComponent__factory";

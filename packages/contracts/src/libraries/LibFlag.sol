@@ -9,7 +9,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { HasFlagComponent, ID as HasFlagCompID } from "components/HasFlagComponent.sol";
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDOwnsFlagComponent, ID as IDOwnsFlagCompID } from "components/IDOwnsFlagComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 /** @notice
@@ -51,7 +51,7 @@ library LibFlag {
   ) internal returns (uint256 id) {
     id = genID(holderID, flagType);
     _set(components, id, true);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, holderID);
+    IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).set(id, holderID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, flagType);
   }
 
@@ -74,13 +74,13 @@ library LibFlag {
   function removeFull(IUintComp components, uint256 parentID, string memory flag) internal {
     uint256 id = genID(parentID, flag);
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
-    getCompByID(components, IDParentCompID).remove(id);
+    getCompByID(components, IDOwnsFlagCompID).remove(id);
     getCompByID(components, TypeCompID).remove(id);
   }
 
   function removeFull(IUintComp components, uint256[] memory ids) internal {
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
   }
 
@@ -147,7 +147,7 @@ library LibFlag {
     uint256 parentID
   ) internal view returns (uint256[] memory) {
     return
-      IDParentComponent(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
+      IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).getEntitiesWithValue(parentID);
   }
 
   //////////////////
