@@ -94,6 +94,24 @@
     },
     {
       "type": "function",
+      "name": "addFlag",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "flag",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "addRequirement",
       "inputs": [
         {
@@ -153,25 +171,6 @@
     {
       "type": "function",
       "name": "createConsumable",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "createLootbox",
       "inputs": [
         {
           "name": "arguments",
@@ -275,19 +274,6 @@
     },
     {
       "type": "function",
-      "name": "setUnburnable",
-      "inputs": [
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -381,12 +367,12 @@
     "addAlloBonus(bytes)": "eb04c569",
     "addAlloDT(bytes)": "59ce910b",
     "addAlloStat(bytes)": "b452abd4",
+    "addFlag(uint32,string)": "06cc1c38",
     "addRequirement(bytes)": "7e534103",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "create(bytes)": "cf5ba53f",
     "createConsumable(bytes)": "e96e3836",
-    "createLootbox(bytes)": "b72c6001",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
@@ -394,7 +380,6 @@
     "remove(uint32)": "00d84fd8",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setUnburnable(uint32)": "35727b4e",
     "transferOwnership(address)": "f2fde38b"
   }
 }

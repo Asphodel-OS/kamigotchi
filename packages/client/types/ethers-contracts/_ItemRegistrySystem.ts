@@ -34,12 +34,12 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     "addAlloBonus(bytes)": FunctionFragment;
     "addAlloDT(bytes)": FunctionFragment;
     "addAlloStat(bytes)": FunctionFragment;
+    "addFlag(uint32,string)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
     "createConsumable(bytes)": FunctionFragment;
-    "createLootbox(bytes)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -47,7 +47,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     "remove(uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "setUnburnable(uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -57,12 +56,12 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
       | "addAlloBonus"
       | "addAlloDT"
       | "addAlloStat"
+      | "addFlag"
       | "addRequirement"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "create"
       | "createConsumable"
-      | "createLootbox"
       | "deprecate"
       | "execute"
       | "owner"
@@ -70,7 +69,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
       | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "setUnburnable"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -91,6 +89,10 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "addFlag",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "addRequirement",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -108,10 +110,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "createConsumable",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createLootbox",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
@@ -137,10 +135,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setUnburnable",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -158,6 +152,7 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     functionFragment: "addAlloStat",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addRequirement",
     data: BytesLike
@@ -175,10 +170,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     functionFragment: "createConsumable",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "createLootbox",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -193,10 +184,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setUnburnable",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -304,6 +291,12 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addRequirement(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -324,11 +317,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     createConsumable(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    createLootbox(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -362,11 +350,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setUnburnable(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -393,6 +376,12 @@ export interface _ItemRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addFlag(
+    index: PromiseOrValue<BigNumberish>,
+    flag: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addRequirement(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -413,11 +402,6 @@ export interface _ItemRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   createConsumable(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  createLootbox(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -451,11 +435,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setUnburnable(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -482,6 +461,12 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     addRequirement(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -500,11 +485,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     createConsumable(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    createLootbox(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -531,11 +511,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    setUnburnable(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -592,6 +567,12 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addRequirement(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -612,11 +593,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     createConsumable(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    createLootbox(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -650,11 +626,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setUnburnable(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -682,6 +653,12 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    addFlag(
+      index: PromiseOrValue<BigNumberish>,
+      flag: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addRequirement(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -702,11 +679,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     createConsumable(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createLootbox(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -738,11 +710,6 @@ export interface _ItemRegistrySystem extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setUnburnable(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

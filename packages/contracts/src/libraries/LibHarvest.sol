@@ -202,7 +202,7 @@ library LibHarvest {
     uint256 nudge = calcIntensityDuration(components, id) / 60; // minutes, rounded down
     uint256 ratio = config[2]; // period, in minutes. scaled to accomodate current skill balancing
     uint256 boost = config[6];
-    boost += LibBonus.getForUint256(components, "HARV_INTENSITY_NUDGE", kamiID);
+    boost += LibBonus.getForUint256(components, "HARV_INTENSITY_BOOST", kamiID);
     uint256 precision = 10 ** (RATE_PREC - config[7] + config[3]); // ratio is inverted
     return (precision * (base + nudge) * boost) / (ratio * 3600);
   }
