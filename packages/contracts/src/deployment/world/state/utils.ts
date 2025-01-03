@@ -50,7 +50,7 @@ export const getGoalID = (index: number) => {
   return generateRegID('goal', index);
 };
 
-const generateRegID = (field: string, index: number) => {
+export const generateRegID = (field: string, index: number) => {
   return utils.solidityKeccak256(['string', 'uint32'], [field, index]);
 };
 

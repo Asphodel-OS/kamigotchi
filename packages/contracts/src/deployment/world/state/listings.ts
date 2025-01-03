@@ -1,51 +1,124 @@
 import { BigNumberish } from 'ethers';
 import { AdminAPI } from '../api';
-import { getGoalID } from './utils';
+import { generateRegID, readFile } from './utils';
 
-export async function initListings(api: AdminAPI) {
+export async function initListings(api: AdminAPI, indices?: number[]) {
   const create = api.listing.create;
-  const setBuyFixed = api.listing.set.price.buy.fixed;
+  const setBuy = api.listing.set.price.buy;
+  const setSell = api.listing.set.price.sell;
+  const setRequirement = api.listing.set.requirement;
 
-  // gakki gum (S)
-  create(1, 11301, 60);
-  setBuyFixed(1, 11301);
+  const listingCSV = await readFile('listings/listings.csv');
+  const pricingCSV = await readFile('listings/pricing.csv');
+  const requirementCSV = await readFile('listings/requirements.csv');
 
-  // pompom candy (M)
-  create(1, 11303, 100);
-  setBuyFixed(1, 11303);
+  for (let i = 0; i < listingCSV.length; i++) {
+    const row = listingCSV[i];
 
-  // cookie sticks (L)
-  create(1, 11304, 160);
-  setBuyFixed(1, 11304);
+    // skip if indices are overridden and row isn't included
+    if (indices && !indices.includes(Number(row['Index']))) continue;
 
-  // ribbon
-  create(1, 11001, 100);
-  setBuyFixed(1, 11001);
+    // Initial creation
+    const npcIndex = Number(row['NPC Index']);
+    const itemIndex = Number(row['Item Index']);
+    const targetValue = Number(row['Value']);
+    await create(npcIndex, itemIndex, targetValue);
+    console.log(`created listing with item ${itemIndex} for npc ${npcIndex}`);
 
-  // ice cream (S)
-  create(1, 21201, 150);
-  setBuyFixed(1, 21201);
+    // Set Buy Pricing
+    const buyRef = String(row['Buy Price']);
+    if (buyRef) {
+      const buyKey = buyRef.split(' (')[0];
+      const price = pricingCSV.find((p: any) => p['Shape'] === buyKey);
+      if (price) {
+        const type = String(price['Type']);
+        if (type === 'FIXED') await setBuy.fixed(npcIndex, itemIndex);
+        console.log(`  set buy price ${buyKey}`);
+      } else console.warn(`  Buy Price not found for ref ${buyRef}`);
+    }
 
-  // ice cream (M)
-  create(1, 21202, 250);
-  setBuyFixed(1, 21202);
+    // Set Sell Pricing
+    const sellRef = String(row['Sell Price']);
+    if (sellRef) {
+      const sellKey = sellRef.split(' (')[0];
+      const price = pricingCSV.find((p: any) => p['Shape'] === sellKey);
+      if (price) {
+        const type = String(price['Type']);
+        if (type === 'FIXED') await setSell.fixed(npcIndex, itemIndex);
+        else if (type === 'SCALED') {
+          const scale = Number(price['Scale']) * 1e3;
+          await setSell.scaled(npcIndex, itemIndex, scale);
+        }
+      } else console.warn(`  Sell Price not found for ref ${sellRef}`);
+      console.log(`  set sell price ${sellKey}`);
+    }
 
-  // ice cream (L)
-  create(1, 21203, 450);
-  setBuyFixed(1, 21203);
+    // Set Requirements
+    // Assume if the key is found in the main listing table, it's in the requirements table
+    const reqRefs = String(row['Requirements']).split(', ');
+    for (let i = 0; i < reqRefs.length; i++) {
+      if (!reqRefs[i]) continue;
+      const key = reqRefs[i].split(' (')[0];
+      const req = requirementCSV.find((r: any) => r['Name'] === key);
+      const reqType = String(req['Type']);
+      const reqLogic = String(req['Logic']);
+      const reqIndex = Number(req['Index'] ?? 0);
 
-  // teleport scroll
-  create(1, 21100, 250);
-  setBuyFixed(1, 21100);
-  initRequirement(api, 1, 21100, 'COMPLETE_COMP', 'BOOL_IS', 0, getGoalID(5)); // require 1 teleport scroll
+      // determine the value
+      let reqValue: BigNumberish;
+      const reqValueRaw = req['Value'];
+      if (reqValueRaw) reqValue = Number(reqValueRaw);
+      else {
+        const reqValueField = String(req['ValueField']);
+        const reqValueIndex = Number(req['ValueIndex']);
+        reqValue = generateRegID(reqValueField, reqValueIndex);
+      }
 
-  // spice grinder
-  create(1, 23100, 2500);
-  setBuyFixed(1, 23100);
+      setRequirement(npcIndex, itemIndex, reqType, reqLogic, reqIndex, reqValue, '');
+      console.log(`  set requirement ${key}`);
+    }
+  }
 
-  // portable burner
-  create(1, 23101, 4000);
-  setBuyFixed(1, 23101);
+  // // gakki gum (S)
+  // create(1, 11301, 60);
+  // setBuyFixed(1, 11301);
+
+  // // pompom candy (M)
+  // create(1, 11303, 100);
+  // setBuyFixed(1, 11303);
+
+  // // cookie sticks (L)
+  // create(1, 11304, 160);
+  // setBuyFixed(1, 11304);
+
+  // // ribbon
+  // create(1, 11001, 100);
+  // setBuyFixed(1, 11001);
+
+  // // ice cream (S)
+  // create(1, 21201, 150);
+  // setBuyFixed(1, 21201);
+
+  // // ice cream (M)
+  // create(1, 21202, 250);
+  // setBuyFixed(1, 21202);
+
+  // // ice cream (L)
+  // create(1, 21203, 450);
+  // setBuyFixed(1, 21203);
+
+  // // teleport scroll
+  // create(1, 21100, 250);
+  // setBuyFixed(1, 21100);
+  // initRequirement(api, 1, 21100, 'COMPLETE_COMP', 'BOOL_IS', 0, getGoalID(5)); // require 1 teleport scroll
+
+  // // spice grinder
+  // create(1, 23100, 2500);
+  // setBuyFixed(1, 23100);
+
+  // // portable burner
+  // create(1, 23101, 4000);
+  // setBuyFixed(1, 23101);
 }
 
 export async function deleteListings(api: AdminAPI, indices: number[]) {
