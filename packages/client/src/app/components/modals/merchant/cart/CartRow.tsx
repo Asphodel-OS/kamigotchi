@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
+import { calcBuyPrice } from 'app/cache/npc/functions';
 import { Tooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
-import { Listing } from 'network/shapes/Listings';
+import { Listing } from 'network/shapes/Listing';
 import { playClick } from 'utils/sounds';
 
 export interface Props {
@@ -55,7 +56,7 @@ export const CartRow = (props: Props) => {
       </Stepper>
       <TotalPrice>
         <Icon src={ItemImages.musu} />
-        <Text>{(listing.buyPrice * quantity).toLocaleString()}</Text>
+        <Text>{calcBuyPrice(listing, quantity)}</Text>
       </TotalPrice>
     </Container>
   );

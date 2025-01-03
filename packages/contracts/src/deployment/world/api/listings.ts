@@ -13,21 +13,17 @@ export function listingAPI(genCall: GenCall) {
 
   // add a fixed buy price to a listing
   async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed', ['uint32', 'uint32']);
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed');
   }
 
   // add a fixed sell price to a listing
   async function setListingSellPriceFixed(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed', ['uint32', 'uint32']);
+    genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed');
   }
 
   // add a scaled sell price to a listing
   async function setListingSellPriceScaled(npcIndex: number, itemIndex: number, scale: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex, scale], 'setSellScaled', [
-      'uint32',
-      'uint32',
-      'uint32',
-    ]);
+    genCall('system.listing.registry', [npcIndex, itemIndex, scale], 'setSellScaled');
   }
 
   async function setListingRequirement(

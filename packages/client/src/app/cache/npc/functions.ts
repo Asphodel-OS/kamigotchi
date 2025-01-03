@@ -7,7 +7,7 @@ import { Account } from '../account';
 
 // calculate the buy price of a listing based on amt purchased
 export const calcBuyPrice = (listing: Listing, amt: number) => {
-  if (!listing.buy) return 0;
+  if (!listing.buy || amt == 0) return 0;
   const pricing = listing.buy;
   const value = listing.value;
 
@@ -18,7 +18,7 @@ export const calcBuyPrice = (listing: Listing, amt: number) => {
 
 // calculate the sell price of a listing based on amt sold
 export const calcSellPrice = (listing: Listing, amt: number) => {
-  if (!listing.sell) return 0;
+  if (!listing.sell || amt == 0) return 0;
   const pricing = listing.sell;
   const value = listing.value;
 
