@@ -23,7 +23,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     const itemIndex = Number(row['Item Index']);
     const targetValue = Number(row['Value']);
     await create(npcIndex, itemIndex, targetValue);
-    console.log(`created listing with item ${itemIndex} for npc ${npcIndex}`);
+    console.log(`created listing for npc ${npcIndex} of item ${itemIndex}`);
 
     // Set Buy Pricing
     const buyRef = String(row['Buy Price']);
@@ -54,7 +54,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     }
 
     // Set Requirements
-    // Assume if the key is found in the main listing table, it's in the requirements table
+    // Assume if the key is found, the requirement exists
     const reqRefs = String(row['Requirements']).split(', ');
     for (let i = 0; i < reqRefs.length; i++) {
       if (!reqRefs[i]) continue;
@@ -76,49 +76,10 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
 
       setRequirement(npcIndex, itemIndex, reqType, reqLogic, reqIndex, reqValue, '');
       console.log(`  set requirement ${key}`);
+      console.log(`    type: ${reqType}, logic: ${reqLogic}`);
+      console.log(`    index: ${reqIndex}, value: ${reqValue}`);
     }
   }
-
-  // // gakki gum (S)
-  // create(1, 11301, 60);
-  // setBuyFixed(1, 11301);
-
-  // // pompom candy (M)
-  // create(1, 11303, 100);
-  // setBuyFixed(1, 11303);
-
-  // // cookie sticks (L)
-  // create(1, 11304, 160);
-  // setBuyFixed(1, 11304);
-
-  // // ribbon
-  // create(1, 11001, 100);
-  // setBuyFixed(1, 11001);
-
-  // // ice cream (S)
-  // create(1, 21201, 150);
-  // setBuyFixed(1, 21201);
-
-  // // ice cream (M)
-  // create(1, 21202, 250);
-  // setBuyFixed(1, 21202);
-
-  // // ice cream (L)
-  // create(1, 21203, 450);
-  // setBuyFixed(1, 21203);
-
-  // // teleport scroll
-  // create(1, 21100, 250);
-  // setBuyFixed(1, 21100);
-  // initRequirement(api, 1, 21100, 'COMPLETE_COMP', 'BOOL_IS', 0, getGoalID(5)); // require 1 teleport scroll
-
-  // // spice grinder
-  // create(1, 23100, 2500);
-  // setBuyFixed(1, 23100);
-
-  // // portable burner
-  // create(1, 23101, 4000);
-  // setBuyFixed(1, 23101);
 }
 
 export async function deleteListings(api: AdminAPI, indices: number[]) {
