@@ -61,7 +61,7 @@ export const Banner = (props: Props) => {
   // update the scavenge whenever the node changes
   useEffect(() => {
     if (!modals.node) return;
-    const scavenge = getScavenge(node.index);
+    const scavenge = node.scavenge;
     if (scavenge) {
       setScavenge(scavenge);
     }
