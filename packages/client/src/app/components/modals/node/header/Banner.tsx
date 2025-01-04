@@ -29,7 +29,6 @@ interface Props {
   };
   utils: {
     getAccountKamis: () => Kami[];
-    getScavenge: (index: number) => ScavBar;
     getValue: (entity: EntityIndex) => number;
     parseAllos: (scavAllo: Allo[]) => DetailedEntity[];
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
@@ -42,7 +41,7 @@ export const Banner = (props: Props) => {
   const { data, utils, actions } = props;
   const { account, node } = data;
   const { addKami } = actions;
-  const { getAccountKamis, getScavenge, getValue } = utils;
+  const { getAccountKamis, getValue } = utils;
   const { queryScavInstance } = utils;
   const { parseConditionalText, passesNodeReqs } = utils;
 
