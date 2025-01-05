@@ -11,8 +11,9 @@ import { getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX } from 'constants/items';
+import { ethers } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getConfigFieldValue } from 'network/shapes/Config';
+import { getConfigFieldValue, getConfigFieldValueAddress } from 'network/shapes/Config';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
 import { getItemBalance } from 'network/shapes/Item';
 import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
@@ -54,6 +55,7 @@ export function registerGachaModal() {
               poolKamis: queryKamis(components, { account: GACHA_ID }),
               commits: queryGachaCommits(world, components, accountID),
               maxRerolls: getConfigFieldValue(world, components, 'GACHA_MAX_REROLLS'),
+              onyxAddress: getConfigFieldValueAddress(world, components, 'ONYX_ADDRESS'),
             },
             utils: {
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
@@ -66,7 +68,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, world, api } = network;
-      const { ownerAddress, commits, gachaBalance, poolKamis } = data;
+      const { ownerAddress, commits, gachaBalance, poolKamis, onyxAddress } = data;
       const { setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -79,6 +81,33 @@ export function registerGachaModal() {
 
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
+
+      /////////////////
+      // ONYXApproval
+
+      async function checkOnyxAllowance(onyxAddress: string, threshold: ethers.BigNumber) {
+        console.log(`threshold ${threshold}`);
+        /// turn this intro a func
+        const erc20Interface = new ethers.utils.Interface([
+          'function allowance(address owner, address spender) view returns (uint256)',
+          'function approve(address spender, uint256 amount) returns (bool)',
+        ]);
+        // TODO: get this from other place
+        const contractAddress = '0xd78efab315caf4b4b55dc0a760db864813669c3f';
+        // TODO: get this from other place, signer is fake and wont work for approval?
+        const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
+        const signer = provider.getSigner();
+        console.log(`signer ${await JSON.stringify(signer.getAddress())}`);
+        const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
+        /////
+        try {
+          const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
+          console.log(`allowance ${allowance}`);
+          return allowance.gte(threshold);
+        } catch (error: any) {
+          throw new Error(`Approval failed: ${error.message}`);
+        }
+      }
 
       /////////////////
       // SUBSCRIPTIONS
@@ -122,7 +151,6 @@ export function registerGachaModal() {
       const mintTx = (amount: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
-
         const actionID = uuid() as EntityID;
         actions!.add({
           id: actionID,
@@ -140,7 +168,6 @@ export function registerGachaModal() {
       const rerollTx = (kamis: BaseKami[], price: bigint) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
-
         const actionID = uuid() as EntityID;
         actions!.add({
           id: actionID,
@@ -203,15 +230,20 @@ export function registerGachaModal() {
         if (kamis.length === 0) return;
         try {
           setWaitingToReveal(true);
-          const rerollActionID = rerollTx(kamis, price);
-          if (!rerollActionID) throw new Error('Reroll action failed');
+          const isAllowed = await checkOnyxAllowance(onyxAddress, ethers.BigNumber.from(price));
+          console.log('isAllowed', isAllowed);
+          if (isAllowed) {
+            const rerollActionID = rerollTx(kamis, price);
+            if (!rerollActionID) throw new Error('Reroll action failed');
 
-          await waitForActionCompletion(
-            actions!.Action,
-            world.entityToIndex.get(rerollActionID) as EntityIndex
-          );
-          setTriedReveal(false);
-          playVend();
+            await waitForActionCompletion(
+              actions!.Action,
+              world.entityToIndex.get(rerollActionID) as EntityIndex
+            );
+            setTriedReveal(false);
+            playVend();
+          }
+          // const tx = await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);
         } catch (e) {
           console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
         }
