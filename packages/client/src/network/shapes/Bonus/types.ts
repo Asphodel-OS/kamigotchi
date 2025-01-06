@@ -2,32 +2,36 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { formatEntityID } from 'engine/utils';
 import { BigNumber } from 'ethers';
 import { Components } from 'network/';
-import { getLevel, getType } from '../utils/component';
+import { hashArgs } from '../utils';
+import { getLevel, getType, getValue } from '../utils/component';
 
 export interface Bonus {
   id: EntityID;
+  entity: EntityIndex;
   type: string;
   value: number;
-  parent?: EntityID;
   endType?: string;
   duration?: number;
 }
 
-export const getBonus = (
+export interface BonusInstance extends Bonus {
+  level: number;
+  total: number;
+}
+
+export const getBonusRegistry = (
   world: World,
   comps: Components,
   entity: EntityIndex,
   precision: number = 0
 ): Bonus => {
-  const { ParentID, Subtype } = comps;
-
-  const regEntity = getRegistryEntity(world, comps, entity);
+  const { Subtype } = comps;
 
   return {
     id: world.entities[entity],
-    type: getType(comps, regEntity),
-    value: getBonusValueSingle(world, comps, entity, precision),
-    parent: getComponentValue(ParentID, entity)?.value as EntityID,
+    entity: entity,
+    type: getType(comps, entity),
+    value: getValue(comps, entity),
     endType: getComponentValue(Subtype, entity)?.value as string,
   };
 };
@@ -43,10 +47,10 @@ export const getBonusValueSingle = (
   const base = getComponentValue(Value, registryEntity)?.value;
   if (base === undefined) console.warn(`bonus entity missing Value`, world.entities[entity]);
   const level = getLevel(comps, entity, 1);
-  return calcValue(base ?? 0, level, precision);
+  return calcBonusValue(base ?? 0, level, precision);
 };
 
-const calcValue = (base: number, mult: number, precision: number = 0): number => {
+export const calcBonusValue = (base: number, mult: number, precision: number = 0): number => {
   const raw = BigNumber.from(base);
   return (raw.fromTwos(256).toNumber() / 10 ** precision) * mult;
 };
@@ -72,4 +76,12 @@ const getRegistryEntity = (world: World, comps: Components, entity: EntityIndex)
     regEntity = rawRegID;
   }
   return regEntity;
+};
+
+export const genTypeID = (type: string, holderID: EntityID): EntityID => {
+  return hashArgs(['bonus.type', type, holderID], ['string', 'uint256']);
+};
+
+export const genEndAnchor = (type: string, holderID: EntityID): EntityID => {
+  return hashArgs(['bonus.ending.type', type, holderID], ['string', 'string', 'uint256']);
 };
