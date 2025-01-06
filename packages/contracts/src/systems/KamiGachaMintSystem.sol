@@ -22,14 +22,13 @@ contract KamiGachaMintSystem is System {
     if (accID == 0) revert("no account detected");
 
     // use gacha inventory balance
-    // todo: update this to use itemEffect?
     LibInventory.decFor(components, accID, GACHA_TICKET_INDEX, amount);
 
     // commits random seed for gacha roll
     uint256[] memory results = LibGacha.commitBatch(world, components, amount, accID, block.number);
 
     // standard logging and tracking
-    LibAccount.logIncKamisMinted(world, components, accID, amount);
+    LibGacha.logMint(components, accID, amount);
     LibAccount.updateLastTs(components, accID);
     return abi.encode(results);
   }

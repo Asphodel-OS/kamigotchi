@@ -13,6 +13,7 @@ import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.
 
 import { LibCommit } from "libraries/LibCommit.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
@@ -201,6 +202,17 @@ library LibGacha {
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
     rerolls = rerollComp.safeGet(ids);
     rerollComp.remove(ids);
+  }
+
+  /////////////////
+  // LOGGING
+
+  function logMint(IUintComp components, uint256 accID, uint256 amount) internal {
+    LibData.inc(components, accID, 0, "KAMI_GACHA_MINT", amount);
+  }
+
+  function logReroll(IUintComp components, uint256 accID, uint256 amount) internal {
+    LibData.inc(components, accID, 0, "KAMI_GACHA_REROLL", amount);
   }
 
   /////////////////

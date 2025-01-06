@@ -55,8 +55,6 @@ library LibGetter {
       balance = LibInventory.getBalanceOf(components, id, index);
     } else if (_type.eq("LEVEL")) {
       balance = LibExperience.getLevel(components, id);
-    } else if (_type.eq("KAMI")) {
-      balance = LibAccount.getKamisOwned(components, id).length;
     } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
       balance = getTopLevel(components, LibAccount.getKamisOwned(components, id));
     } else if (_type.eq("KAMI_LEVEL_QUANTITY")) {

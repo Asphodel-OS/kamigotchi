@@ -172,9 +172,6 @@ contract _CreatePetSystem is System {
     uint256 questID = LibQuests.assign(world, components, 1, accID);
     LibQuests.setCompleted(components, questID);
     LibQuests.assign(world, components, 57, accID);
-
-    // logging kami stuff
-    LibAccount.logIncKamisMinted(world, components, accID, 1);
   }
 
   function _create(

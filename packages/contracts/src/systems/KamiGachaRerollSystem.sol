@@ -40,7 +40,7 @@ contract KamiGachaRerollSystem is System {
     LibGacha.setRerollBatch(components, commitIDs, prevRerolls);
 
     // standard logging and tracking
-    LibAccount.logIncKamisRerolled(world, components, accID, kamiIDs.length);
+    LibGacha.logReroll(components, accID, kamiIDs.length);
     LibAccount.updateLastTs(components, accID);
 
     // sending eth to owner

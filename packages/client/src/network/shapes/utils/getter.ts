@@ -46,9 +46,6 @@ export const getBalance = (
     return getHolderSkillLevel(world, components, holderID, index ?? 0);
   } else if (type === 'ROOM') {
     return (getComponentValue(RoomIndex, holder)?.value ?? 0) * 1;
-  } else if (type === 'KAMI') {
-    // get quantity of kamis owned by account (todo: more descriptive)
-    return queryAccountKamis(world, components, holder).length || 0;
   } else if (type === 'KAMI_LEVEL_HIGHEST') {
     const kamis = queryAccountKamis(world, components, holder);
     return getTopLevel(components, kamis);

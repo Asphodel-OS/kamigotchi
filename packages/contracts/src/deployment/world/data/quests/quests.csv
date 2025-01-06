@@ -79,7 +79,7 @@ These tickets can be used to mint Kamigotchi on this testnet. These are testnet-
 
 Seek out the vending machine and get yourself a Kamigotchi. ",,Quest 1 Completed (An Unknown World),Have 1 Kamigotchi,"1x Ghost Gum ",,,
 ,11,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,,,
-,11,,Ingame,Objective,KAMI721_MINT,MIN,CURR,Mint 1 Kami,,1,No,,,,,,,,,,
+,11,,Ingame,Objective,KAMI_GACHA_MINT,MIN,CURR,Mint 1 Kami,,1,No,,,,,,,,,,
 ,11,,Ingame,Reward,ITEM,,,1 Gum,11301,1,No,,,,,,,,,,
 Lethe Asphodel,12,Proving Yourself,Ingame,Quest,,,,,,,No,0,,"You’re doing well. 
 
@@ -156,8 +156,8 @@ Lethe Asphodel,25,,Ingame,Requirement,QUEST,COMPLETE,,Have completed There are m
 Lethe Asphodel,25,,Ingame,Objective,MOVE,MIN,INC,Move 100 times,,100,No,,,,,,,,,,
 Lethe Asphodel,25,,Ingame,Reward,ITEM,,,2x Medium XP Candy,11202,2,No,,,,,,,,,,
 Lethe Asphodel,26,Searching for somebody,Ingame,Quest,,,,Reroll 10 times,,10,No,5,,"Seems like you're struggling to find the right Kamigotchi. Well, here's a consolation prize at least....",,Rerolled at least 10 times,Reroll 100 times,1x Giftbox,,,
-Lethe Asphodel,26,,Ingame,Requirement,KAMI_REROLL,MIN,,Have rerolled at least 3 times,,1,No,,,,,,,,,,
-Lethe Asphodel,26,,Ingame,Objective,KAMI_REROLL,MIN,INC,Reroll 5 times,,5,No,,,,,,,,,,
+Lethe Asphodel,26,,Ingame,Requirement,KAMI_GACHA_REROLL,MIN,,Have rerolled at least 3 times,,1,No,,,,,,,,,,
+Lethe Asphodel,26,,Ingame,Objective,KAMI_GACHA_REROLL,MIN,INC,Reroll 5 times,,5,No,,,,,,,,,,
 Lethe Asphodel,26,,Ingame,Reward,ITEM,,,2x Giftbox,21001,2,No,,,,,,,,,,
 Lethe Asphodel,27,Expanding Your Team,Ingame,Quest,,,,Have 150 REPUTATION,,,No,,,"If you can make it to 150 REPUTATION, I'm comfortable giving you access to another Kamigotchi. It just makes sense to support you more as you help the community.…",,,Have 150 REPUTATION,Gacha Ticket,,,
 ,27,,Ingame,Objective,REPUTATION,MIN,CURR,Have 150 REPUTATION,1,150,No,,,,,,,,,,

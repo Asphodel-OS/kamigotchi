@@ -199,10 +199,6 @@ library LibAccount {
     return AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).get(id);
   }
 
-  function getKamisMinted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibData.get(components, id, 0, "KAMI721_MINT");
-  }
-
   /////////////////
   // QUERIES
 
@@ -259,24 +255,6 @@ library LibAccount {
     uint256 total = LibData.get(components, 0, 0, "TOTAL_NUM_ACCOUNTS") + 1;
     LibData.set(components, 0, 0, "TOTAL_NUM_ACCOUNTS", total);
     return uint32(total);
-  }
-
-  function logIncKamisMinted(
-    IWorld world,
-    IUintComp components,
-    uint256 accID,
-    uint256 count
-  ) internal {
-    LibData.inc(components, accID, 0, "KAMI721_MINT", count);
-  }
-
-  function logIncKamisRerolled(
-    IWorld world,
-    IUintComp components,
-    uint256 accID,
-    uint256 count
-  ) internal {
-    LibData.inc(components, accID, 0, "KAMI_REROLL", count);
   }
 
   function logIncKamisStaked(
