@@ -53,6 +53,7 @@
     "build:systems": "forge build --skip test",
     "codegen:clear": "ts-node src/deployment/commands/clearAutogen.ts",
     "codegen:imports": "pnpm ejs src/deployment/contracts/Imports.ejs -f deploy.json -o src/deployment/contracts/Imports.sol",
+    "codegen:ids": "ts-node src/deployment/commands/genIDs.ts",
     "codegen:deploy": "pnpm ejs src/deployment/contracts/LibDeploy.ejs -f deploy.json -o src/deployment/contracts/LibDeploy.sol",
     "codegen:tests": "pnpm ejs src/test/utils/TestSetupImports.t.ejs -f deploy.json -o src/test/utils/TestSetupImports.t.sol"
   },

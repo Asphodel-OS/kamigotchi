@@ -1,0 +1,330 @@
+{ 
+  "OperatorAddress": {
+    "id": "component.address.operator",
+    "encodedID": "0x8a1264e7094de803414cccf0c32d2bd50f25c909fa2415b38f065f320e4eabe6"
+  },
+  "OwnerAddress": {
+    "id": "component.address.owner",
+    "encodedID": "0x6caa0553213b46b61cbf982ee3246d8a2a4e5b4936a7594770d391463046f22e"
+  },
+  "Affinity": {
+    "id": "component.affiinity",
+    "encodedID": "0xf3e296372a5e5be810386b4a0416d479397a474fb9d4f37f1eed4c72bf11af6d"
+  },
+  "Blacklist": {
+    "id": "component.blacklist",
+    "encodedID": "0xb3f96e7944f99619a1086b9a1272bbdff635f1cac9c8bf7ba6ce1a9aa202f19c"
+  },
+  "RevealBlock": {
+    "id": "component.block.reveal",
+    "encodedID": "0xeb96d6a560bda13fa9b1f5e6458550803932abff9fe730fa1f8c3a6ddcb67e6b"
+  },
+  "OperatorCache": {
+    "id": "component.cache.operator",
+    "encodedID": "0xf9b94d2a933222e58f90359e8ec33041c5f08d7bc4304958d1c52c21991da575"
+  },
+  "Cost": {
+    "id": "component.cost",
+    "encodedID": "0x90dcbc5e087c3256549b6c7bca0f1c5c346b54cf5623c913b88198ba64d2cdbe"
+  },
+  "DescriptionAlt": {
+    "id": "component.description.alt",
+    "encodedID": "0xcbf298920e1169006fb9156cfc43d4e04c712f32632465329f52522a9d323c35"
+  },
+  "Description": {
+    "id": "component.description",
+    "encodedID": "0xfdbdfda9d0933af67d5682f368771753d17c0fef55c57d62a98476dd75090580"
+  },
+  "EntityType": {
+    "id": "component.type.entity",
+    "encodedID": "0x5d88ced8d8e079072bf73f49fc87661b519c50d79482941abb852ba2b10909cd"
+  },
+  "Exits": {
+    "id": "component.exits",
+    "encodedID": "0x858f24fb88a0e63a706be19a7ceb37cafdbc2534e73bfd47f2983a24e9e58857"
+  },
+  "Experience": {
+    "id": "component.experience",
+    "encodedID": "0xf751b4a95c9cfabe52899e09ae113eac17e41cc0cc2dad670d2789ecc1251add"
+  },
+  "FarcasterIndex": {
+    "id": "component.index.farcaster",
+    "encodedID": "0xe52fb4f348048b28b8ab655215c3747cbe8c2c4570c9602cc837a32381780496"
+  },
+  "For": {
+    "id": "component.for",
+    "encodedID": "0x0e980fab8730829e1930c8cdc024ae35650d9eec12d20425b19fc4ade883178c"
+  },
+  "ForString": {
+    "id": "component.for.string",
+    "encodedID": "0xd5a29ec804ba00516f4f308189ea7905739b5e45207909a6df03a0ccbf6aae9f"
+  },
+  "HasFlag": {
+    "id": "component.has.flag",
+    "encodedID": "0xd426585847552196ce5fddb7f2e37e8aa38f62676728e7518835f8440cf91958"
+  },
+  "Harmony": {
+    "id": "component.stat.harmony",
+    "encodedID": "0x5b5054d7f0fe411d96cb1c9605f65b42805d28ce5bb4ce216455e888cdc5373c"
+  },
+  "Health": {
+    "id": "component.stat.health",
+    "encodedID": "0x7f11100822994501b15df98b1bd24b3eb0d73863f512da0bf8f165b0150c537d"
+  },
+  "FromID": {
+    "id": "component.id.from",
+    "encodedID": "0xa95ad5d9865792db0c7d344e1ab96ff451848e8df32d75b494b0c861955ff49e"
+  },
+  "HolderID": {
+    "id": "component.id.holder",
+    "encodedID": "0x5bc28889d745caef68975e56a733199d93efb3f5ae8e4606262ab97c83f72648"
+  },
+  "OwnsFlagID": {
+    "id": "component.id.flag.owns",
+    "encodedID": "0x3bfb44d3d96b02f0d98dd5bd3a2e75077ae5d876f198a438658ad9b9098b2989"
+  },
+  "OwnsInvID": {
+    "id": "component.id.inventory.owns",
+    "encodedID": "0x1ee9964c9c16bbb74f9e401f1ab450f99b2343a602036525f23f0da350bc74d0"
+  },
+  "OwnsQuestID": {
+    "id": "component.id.quest.owns",
+    "encodedID": "0x2a2f9797d308537ff91ca605795dfe371c297d821901e4d3618d6b4064a02d76"
+  },
+  "OwnsRsID": {
+    "id": "component.id.relationship.owns",
+    "encodedID": "0x8a00a3fe170d893759489495eac7080679e507af83a4195e641912c579f56158"
+  },
+  "OwnsSkillID": {
+    "id": "component.id.skill.owns",
+    "encodedID": "0x062cd306ad225a632b22436963e5460cbeffac9c848eb8ae319dc628c6acd64c"
+  },
+  "OwnsKamiID": {
+    "id": "component.id.kami.owns",
+    "encodedID": "0xdb1228220c36234210e3f04b6ac039f5d81c4d6d81f43d9b4a9d70c4d5bcfac1"
+  },
+  "ParentID": {
+    "id": "component.id.parent",
+    "encodedID": "0xbca01f994221da3049c3ee687ab5c6a1ebf40f2011941d5581d9cd500fdf2cd0"
+  },
+  "RoomID": {
+    "id": "component.id.room",
+    "encodedID": "0x78b1ef013cafd65ebaa39f84081e7a0dfd0ac73a9c373c972780715705987a95"
+  },
+  "SourceID": {
+    "id": "component.id.source",
+    "encodedID": "0xc81ce03c0ce7d95786aa8f43fb06c16da8357e856cb08b2052b4bf1807cf8ab3"
+  },
+  "TypeID": {
+    "id": "component.id.type",
+    "encodedID": "0x998873aedc8c829f7e25178374ed9431f396bd26c559d29a5ea6de65722045cc"
+  },
+  "TargetID": {
+    "id": "component.id.target",
+    "encodedID": "0x62e5c3a731a312a02bd0a6e08720624c014a22c9f60c82fede06a9606c505815"
+  },
+  "ToID": {
+    "id": "component.id.to",
+    "encodedID": "0x31ac3bd9ff93491555448947dd00c7535790caec346584c2d495cc80bde8d9f1"
+  },
+  "Index": {
+    "id": "component.index",
+    "encodedID": "0x62adc4221185187a288916c2630b5e1f37e9437c5b68d55bc59b9debc23f19d0"
+  },
+  "AccountIndex": {
+    "id": "component.index.account",
+    "encodedID": "0x70cc041351935ace62b695dbbdf5596e58eca0b3e88afa19b17d006c9a058dc0"
+  },
+  "BackgroundIndex": {
+    "id": "component.index.background",
+    "encodedID": "0x7e27420aa87c5cbb18c784ab6d5674344bec224f17946d4670418a9ad61a8fa5"
+  },
+  "BodyIndex": {
+    "id": "component.index.body",
+    "encodedID": "0xb67326ca4d9276389479ad92732df89fdb51a6722bcc762224a361d37e6a44cf"
+  },
+  "ColorIndex": {
+    "id": "component.index.color",
+    "encodedID": "0x9ec7fdb312cfd917b9499405d9619afea82cbe7bc994a6d9b97aa4a29d95cba4"
+  },
+  "FaceIndex": {
+    "id": "component.index.face",
+    "encodedID": "0x3bcf9f91d55a1da72cd97d60b22f351bd7b605705fcb526dbf324094ea34be3c"
+  },
+  "FactionIndex": {
+    "id": "component.index.faction",
+    "encodedID": "0x723814baf2dfd4398a4349555ce8bbb88a846ac918eb9b1a3ec2dbeaa37ab23e"
+  },
+  "HandIndex": {
+    "id": "component.index.hand",
+    "encodedID": "0xfc3224e0c88a32d827dec77db300ba465decc407b22c4ff1e3dd50db23a15bb6"
+  },
+  "ItemIndex": {
+    "id": "component.index.item",
+    "encodedID": "0xd3da495fedd385ac62763d969054ffb19f1777e687374cceb91f1237ddd6bfb3"
+  },
+  "NodeIndex": {
+    "id": "component.index.node",
+    "encodedID": "0x076fae2ce684ff843e499be243657d8fb16b0eb71350c7a9da8fa7be44c14f3e"
+  },
+  "NPCIndex": {
+    "id": "component.index.npc",
+    "encodedID": "0xb29f21e001e93877c0ca9ea2483697e386afbf8bced0360395102afa8c793eea"
+  },
+  "KamiIndex": {
+    "id": "component.index.kami",
+    "encodedID": "0xcd6257c5a7fd5523bf675476a783746b8e1aed9c92992221af0f776ac5562b34"
+  },
+  "QuestIndex": {
+    "id": "component.index.quest",
+    "encodedID": "0x3879d04bcdb27da7a4f7f7e8a6eb6b202b0f5e22dc66fb53ce3b2fc3d9ed63d4"
+  },
+  "RecipeIndex": {
+    "id": "component.index.recipe",
+    "encodedID": "0xc549816d6c3e6a568535a0df56aff099272d447c7526e27e4b6fcbd3cc7df5ab"
+  },
+  "RelationshipIndex": {
+    "id": "component.index.relationship",
+    "encodedID": "0xc2b7d171254fab709835248d31a7d20c430c60ac71e67f09970923fa584b9291"
+  },
+  "RoomIndex": {
+    "id": "component.index.room",
+    "encodedID": "0x3be9611062b8582cf4b9a4eafe577dbde7dcd7779a1efb46d73e212026c4b0cc"
+  },
+  "SkillIndex": {
+    "id": "component.index.skill",
+    "encodedID": "0x1535e90af6f338896509b09caa109db4f5869e9c19245517da2f1d80a47832a2"
+  },
+  "IsComplete": {
+    "id": "component.is.complete",
+    "encodedID": "0x9522897410526014691d8a863fac7bd2e048ab08176b6e3c6fa8a1f5195164bb"
+  },
+  "IsKill": {
+    "id": "component.is.kill",
+    "encodedID": "0xb6bdcc62626ced423f5f38e4e456e04d992e999e95927e90a162c8101d228a1f"
+  },
+  "IsRegistry": {
+    "id": "component.is.registry",
+    "encodedID": "0xf70dee74a99a7bf98a6058c2e93635b82826d8267ec7a3a05d2f12dcbf92534d"
+  },
+  "IsRepeatable": {
+    "id": "component.is.repeatable",
+    "encodedID": "0x55fc1d6f060c9a0b82cfb50cf47ed24d77ee495eb31e561183a9a9e9c41fd06b"
+  },
+  "Keys": {
+    "id": "component.keys",
+    "encodedID": "0xc6a29e9d963ddf0ecc32d72ae16fddf22661517259c701d58065adfefd57eb02"
+  },
+  "Level": {
+    "id": "component.level",
+    "encodedID": "0xf8911dfd3f908e7a27ff20b80381dc7334f6abc557cdd58de4a9bfb47ebde734"
+  },
+  "Location": {
+    "id": "component.location",
+    "encodedID": "0x1d80d8bc36212886f1cd16bb0e8f17892d2237a9ad83cebdcec1f76b3c52d19f"
+  },
+  "LogicType": {
+    "id": "component.logictype",
+    "encodedID": "0x787589c9eda599ea35279a6d93e360e8fdc5402255545ca394f5033f5e58ed42"
+  },
+  "Max": {
+    "id": "component.max",
+    "encodedID": "0xa16b9e3c7b1cf5ed0d78453246beb22936495b03bbb53987060cf018672ac5bd"
+  },
+  "MediaURI": {
+    "id": "component.mediaURI",
+    "encodedID": "0x4683ab681c8fb08ca17959d67c914890fbdf5a6fce1f72e885b7a2ebe6856afd"
+  },
+  "Name": {
+    "id": "component.name",
+    "encodedID": "0x2acf3c3c6b18ed6530ed0fd161fd0b65f4febe79d1182824d3263e852d29ca03"
+  },
+  "Power": {
+    "id": "component.stat.power",
+    "encodedID": "0x036642765aca64d0dc0aa7a1a5b293901589aec219fb89c7c5e7c042e927386c"
+  },
+  "ProxyPermissionsERC721": {
+    "id": "components.proxy.Permissions.ERC721",
+    "encodedID": "0x684f26c01de9687e37d1e64c56d1ac28a32e93c97f778f9646f4fd78c11a5717"
+  },
+  "Rarity": {
+    "id": "component.rarity",
+    "encodedID": "0x93024875aa0a44d01beef81e003ceec9279e2577bf5f95578dfbb508d780b6c6"
+  },
+  "Rate": {
+    "id": "component.rate",
+    "encodedID": "0x20ab550b15bc644ed0151f9ebe2d55c859a9e4338085826137f0d33968582488"
+  },
+  "Reroll": {
+    "id": "component.reroll",
+    "encodedID": "0xd3d6110f8c07a5a54442b3c3ae6c6c55da5e123d17d83305858b216fc0078e83"
+  },
+  "SkillPoint": {
+    "id": "component.skill.point",
+    "encodedID": "0xa9cdfb538e696edc6dbd04076226eae5d97822d1205fdc5bffebbd98741fdafa"
+  },
+  "Slots": {
+    "id": "component.stat.slots",
+    "encodedID": "0x3e4a46df40b228c2d9f3b8ddde72a1c29045de822f058698341c5adb1d02f17d"
+  },
+  "Stamina": {
+    "id": "component.stat.stamina",
+    "encodedID": "0x1229189cff138f94363a6274f6ec5003a4a6372db248c6985d3b3301024eb8ec"
+  },
+  "State": {
+    "id": "component.state",
+    "encodedID": "0x3630e5d2b4dfc42bb69d52e4eef89343acb69d5153f64efe5860a680a55082e7"
+  },
+  "Subtype": {
+    "id": "component.subtype",
+    "encodedID": "0xa7b4bd2d760054205ea7cf761a119827e2316646eabcbc6653656187e7d030cb"
+  },
+  "Time": {
+    "id": "component.Time",
+    "encodedID": "0x040fc38fe5717491c84059f73f7686f4157d14971215773d341a2ede964d65ac"
+  },
+  "LastActionTime": {
+    "id": "component.Time.LastAction",
+    "encodedID": "0x5f9759544a286ad42df1aa1cab6dca162b48885d3060ac74aecbf8ff4483ad1b"
+  },
+  "LastTime": {
+    "id": "component.Time.Last",
+    "encodedID": "0x342adee7430e96bca6f5d4fe57ba5155dc7271000494e77110c292d51ae887fa"
+  },
+  "Timelock": {
+    "id": "component.Timelock",
+    "encodedID": "0x3f3f63e9cdb5140cea59571af34200e7324c7aff808efe1fc400623499d86f05"
+  },
+  "ResetTime": {
+    "id": "component.Time.Reset",
+    "encodedID": "0xe9a47ac95fcb0b9bf41f159be66a677a5f0eac800ea6adafa4749c9108d191ba"
+  },
+  "StartTime": {
+    "id": "component.Time.Start",
+    "encodedID": "0x9ee42634d52dbd5a24ad226010389fb7306af59bdaec5e20547162dd896dacad"
+  },
+  "Type": {
+    "id": "component.type",
+    "encodedID": "0x024accd0d273ef6123273b21662f5cc055a7d58adf98cc1b060edd029af93f7f"
+  },
+  "Value": {
+    "id": "component.value",
+    "encodedID": "0xb25ea67b55901db62e4b14311a8c1ab178fec3948b4b493a711970a50aa2a2e1"
+  },
+  "Values": {
+    "id": "component.values",
+    "encodedID": "0xfb08db6d59480b008d636f90eaab4796d6e70486db57ea5b6d38235c97e3a3ec"
+  },
+  "Violence": {
+    "id": "component.stat.violence",
+    "encodedID": "0x9d3e17e61f5f07f24e173edb93a8af1d5b797396ea02343c0feee16bdf497d4f"
+  },
+  "Weights": {
+    "id": "component.weights",
+    "encodedID": "0xc5feb1aac7c8c1b30106b97e2241d75b44c975ca1e5f2f5e02394d8d4257f88c"
+  },
+  "Whitelist": {
+    "id": "component.whitelist",
+    "encodedID": "0x4e8e9e1c7a24cab87cf9c93105c2ba1e02c4738f22ecab88b312e4de35819ca6"
+  },
+}
