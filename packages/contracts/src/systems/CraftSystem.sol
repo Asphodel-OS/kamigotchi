@@ -5,7 +5,6 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibAssigner } from "libraries/LibAssigner.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRecipe } from "libraries/LibRecipe.sol";
 
@@ -15,17 +14,13 @@ contract CraftSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 assignerID, uint32 index, uint256 amt) = abi.decode(
-      arguments,
-      (uint256, uint32, uint256)
-    );
+    (uint32 index, uint256 amt) = abi.decode(arguments, (uint32, uint256));
     uint256 regID = LibRecipe.get(components, index);
     if (regID == 0) revert("Recipe: does not exist");
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check requirements
-    LibAssigner.checkFor(components, assignerID, regID, accID);
     LibRecipe.verifyRequirements(components, index, accID);
 
     LibAccount.sync(components, accID);
@@ -45,11 +40,7 @@ contract CraftSystem is System {
     return abi.encode(0);
   }
 
-  function executeTyped(
-    uint256 assignerID,
-    uint32 index,
-    uint256 amt
-  ) public returns (bytes memory) {
-    return execute(abi.encode(assignerID, index, amt));
+  function executeTyped(uint32 index, uint256 amt) public returns (bytes memory) {
+    return execute(abi.encode(index, amt));
   }
 }

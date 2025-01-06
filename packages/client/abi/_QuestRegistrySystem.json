@@ -18,35 +18,6 @@
     },
     {
       "type": "function",
-      "name": "addAssigner",
-      "inputs": [
-        {
-          "name": "questIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "assignerType",
-          "type": "string",
-          "internalType": "string"
-        },
-        {
-          "name": "assignerIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "id",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "addObjective",
       "inputs": [
         {
@@ -355,7 +326,6 @@
     }
   ],
   "methodIdentifiers": {
-    "addAssigner(uint32,string,uint32)": "50465872",
     "addObjective(bytes)": "796c272f",
     "addRequirement(bytes)": "7e534103",
     "addRewardBasic(bytes)": "510b8052",

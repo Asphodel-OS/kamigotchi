@@ -67,11 +67,6 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "assignerID",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
           "name": "index",
           "type": "uint32",
           "internalType": "uint32"
@@ -227,7 +222,7 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint32,uint256)": "a693008c",
+    "executeTyped(uint32,uint256)": "5c817c70",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",

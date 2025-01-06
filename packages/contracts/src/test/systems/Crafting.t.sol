@@ -27,10 +27,6 @@ contract CraftingTest is SetupTemplate {
       abi.encode(1, inputIndices, inputAmts, outputIndices, outputAmts, 1, 1)
     );
 
-    // assigner
-    vm.prank(deployer);
-    __RecipeRegistrySystem.addAssigner(1, 1);
-
     // requirement
     vm.prank(deployer);
     __RecipeRegistrySystem.addRequirement(1, "CURR_MIN", "ITEM", 1, 1, "");
@@ -59,7 +55,7 @@ contract CraftingTest is SetupTemplate {
     // not enough ingredients
     vm.prank(alice.operator);
     vm.expectRevert();
-    _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
+    _CraftSystem.executeTyped(recipeIndex, 1);
 
     // give enough ingredients
     _giveItem(alice, 1, 3);
@@ -71,7 +67,7 @@ contract CraftingTest is SetupTemplate {
     vm.stopPrank();
     vm.prank(alice.operator);
     vm.expectRevert("Account: insufficient stamina");
-    _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
+    _CraftSystem.executeTyped(recipeIndex, 1);
 
     // valid craft
     vm.startPrank(deployer);
@@ -106,7 +102,7 @@ contract CraftingTest is SetupTemplate {
     // not enough ingredients (all missing)
     vm.prank(alice.operator);
     vm.expectRevert();
-    _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
+    _CraftSystem.executeTyped(recipeIndex, 1);
 
     // not enough ingredients (some missing)
     _giveItem(alice, 1, 2);
@@ -114,7 +110,7 @@ contract CraftingTest is SetupTemplate {
     _giveItem(alice, 3, 1);
     vm.prank(alice.operator);
     vm.expectRevert();
-    _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
+    _CraftSystem.executeTyped(recipeIndex, 1);
 
     // valid craft (enough ingredients)
     _giveItem(alice, 3, 4);
@@ -146,7 +142,7 @@ contract CraftingTest is SetupTemplate {
     // not enough ingredients
     vm.prank(alice.operator);
     vm.expectRevert();
-    _CraftSystem.executeTyped(alice.id, recipeIndex, 1);
+    _CraftSystem.executeTyped(recipeIndex, 1);
 
     // valid craft (enough ingredients)
     _giveItem(alice, 1, 1);
@@ -189,7 +185,7 @@ contract CraftingTest is SetupTemplate {
       // not enough ingredients, failure
       vm.prank(alice.operator);
       vm.expectRevert();
-      _CraftSystem.executeTyped(alice.id, recipeIndex, amtToCraft);
+      _CraftSystem.executeTyped(recipeIndex, amtToCraft);
     } else {
       // good craft, success
       _craft(alice, recipeIndex, amtToCraft);
@@ -246,7 +242,7 @@ contract CraftingTest is SetupTemplate {
     if (expectedStCost > currSt) {
       vm.prank(alice.operator);
       vm.expectRevert("Account: insufficient stamina");
-      _CraftSystem.executeTyped(alice.id, recipeIndex, amtToCraft);
+      _CraftSystem.executeTyped(recipeIndex, amtToCraft);
     } else {
       // valid craft
       _craft(alice, recipeIndex, amtToCraft);
@@ -260,7 +256,7 @@ contract CraftingTest is SetupTemplate {
 
   function _craft(PlayerAccount memory acc, uint32 recipeIndex, uint256 amt) internal {
     vm.prank(acc.operator);
-    _CraftSystem.executeTyped(acc.id, recipeIndex, amt);
+    _CraftSystem.executeTyped(recipeIndex, amt);
   }
 
   function _enoughIngredients(

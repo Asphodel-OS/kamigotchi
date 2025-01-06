@@ -89,8 +89,8 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   // CRAFTING
 
-  function craft(assignerID: BigNumberish, recipeIndex: number, amount: number) {
-    return systems['system.craft'].executeTyped(assignerID, recipeIndex, amount);
+  function craft(recipeIndex: number, amount: number) {
+    return systems['system.craft'].executeTyped(recipeIndex, amount);
   }
 
   ////////////////
@@ -194,8 +194,8 @@ export function createPlayerAPI(systems: any) {
 
   // @dev accept a quest for an account
   // @param index   index of the quest
-  function acceptQuest(assignerID: BigNumberish, index: number) {
-    return systems['system.quest.accept'].executeTyped(assignerID, index);
+  function acceptQuest(index: number) {
+    return systems['system.quest.accept'].executeTyped(index);
   }
 
   // @dev complete a quest for an account

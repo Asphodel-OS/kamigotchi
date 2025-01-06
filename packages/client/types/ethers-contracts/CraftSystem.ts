@@ -34,7 +34,7 @@ export interface CraftSystemInterface extends utils.Interface {
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint32,uint256)": FunctionFragment;
+    "executeTyped(uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -71,11 +71,7 @@ export interface CraftSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -226,7 +222,6 @@ export interface CraftSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      assignerID: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -272,7 +267,6 @@ export interface CraftSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    assignerID: PromiseOrValue<BigNumberish>,
     index: PromiseOrValue<BigNumberish>,
     amt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -314,7 +308,6 @@ export interface CraftSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      assignerID: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       amt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -385,7 +378,6 @@ export interface CraftSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      assignerID: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -432,7 +424,6 @@ export interface CraftSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      assignerID: PromiseOrValue<BigNumberish>,
       index: PromiseOrValue<BigNumberish>,
       amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

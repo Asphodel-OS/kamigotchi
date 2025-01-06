@@ -356,7 +356,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _acceptQuest(uint playerIndex, uint32 questIndex) internal virtual returns (uint) {
     vm.prank(_getOperator(playerIndex));
-    return abi.decode(_QuestAcceptSystem.executeTyped(0, questIndex), (uint));
+    return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
   }
 
   function _completeQuest(PlayerAccount memory account, uint32 questIndex) internal {

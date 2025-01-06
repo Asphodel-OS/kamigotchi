@@ -16,7 +16,6 @@ import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
-import { LibAssigner } from "libraries/LibAssigner.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -82,20 +81,6 @@ library LibRecipe {
     valsComp.set(outputID, outputAmts);
   }
 
-  function addAssigner(
-    IUintComp components,
-    uint256 recipeID,
-    uint32 recipeIndex,
-    uint256 assignerID
-  ) internal returns (uint256 id) {
-    id = LibAssigner.create(components, assignerID, recipeID);
-    LibAssigner.addIndex(
-      IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)),
-      recipeIndex,
-      id
-    );
-  }
-
   function createRequirement(
     IWorld world,
     IUintComp components,
@@ -124,10 +109,6 @@ library LibRecipe {
     uint256 outputID = genOutputID(recipeIndex);
     keysComp.remove(outputID);
     valsComp.remove(outputID);
-
-    uint256[] memory assigners = LibAssigner.getAll(components, id);
-    for (uint256 i; i < assigners.length; i++)
-      LibAssigner.remove(components, indexComp, assigners[i]);
 
     uint256[] memory requirements = getRequirements(components, recipeIndex);
     for (uint256 i; i < requirements.length; i++)

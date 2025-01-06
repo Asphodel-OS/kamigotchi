@@ -163,7 +163,7 @@ export function registerQuestsModal() {
           params: [quest.index * 1],
           description: `Accepting Quest ${quest.name}`,
           execute: async () => {
-            return api.player.quests.accept(0, quest.index);
+            return api.player.quests.accept(quest.index);
           },
         });
       };

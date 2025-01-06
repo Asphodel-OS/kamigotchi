@@ -30,7 +30,6 @@ import type {
 
 export interface _QuestRegistrySystemInterface extends utils.Interface {
   functions: {
-    "addAssigner(uint32,string,uint32)": FunctionFragment;
     "addObjective(bytes)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
     "addRewardBasic(bytes)": FunctionFragment;
@@ -51,7 +50,6 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addAssigner"
       | "addObjective"
       | "addRequirement"
       | "addRewardBasic"
@@ -70,14 +68,6 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "addAssigner",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "addObjective",
     values: [PromiseOrValue<BytesLike>]
@@ -137,10 +127,6 @@ export interface _QuestRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addAssigner",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "addObjective",
     data: BytesLike
@@ -271,13 +257,6 @@ export interface _QuestRegistrySystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addAssigner(
-      questIndex: PromiseOrValue<BigNumberish>,
-      assignerType: PromiseOrValue<string>,
-      assignerIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     addObjective(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -351,13 +330,6 @@ export interface _QuestRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  addAssigner(
-    questIndex: PromiseOrValue<BigNumberish>,
-    assignerType: PromiseOrValue<string>,
-    assignerIndex: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   addObjective(
     arguments: PromiseOrValue<BytesLike>,
@@ -433,13 +405,6 @@ export interface _QuestRegistrySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addAssigner(
-      questIndex: PromiseOrValue<BigNumberish>,
-      assignerType: PromiseOrValue<string>,
-      assignerIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addObjective(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -535,13 +500,6 @@ export interface _QuestRegistrySystem extends BaseContract {
   };
 
   estimateGas: {
-    addAssigner(
-      questIndex: PromiseOrValue<BigNumberish>,
-      assignerType: PromiseOrValue<string>,
-      assignerIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     addObjective(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -617,13 +575,6 @@ export interface _QuestRegistrySystem extends BaseContract {
   };
 
   populateTransaction: {
-    addAssigner(
-      questIndex: PromiseOrValue<BigNumberish>,
-      assignerType: PromiseOrValue<string>,
-      assignerIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     addObjective(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

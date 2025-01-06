@@ -19,7 +19,6 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
-import { LibAssigner } from "libraries/LibAssigner.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
@@ -76,20 +75,6 @@ library LibQuestRegistry {
     id = LibConditional.createFor(world, components, data, genReqAnchor(questIndex));
   }
 
-  function addAssigner(
-    IUintComp components,
-    uint256 questID,
-    uint32 questIndex,
-    uint256 assignerID
-  ) internal returns (uint256 id) {
-    id = LibAssigner.create(components, assignerID, questID);
-    LibAssigner.addIndex(
-      IndexQuestComponent(getAddrByID(components, IndexQuestCompID)),
-      questIndex,
-      id
-    );
-  }
-
   function removeQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
     IndexQuestComponent indexQuestComp = IndexQuestComponent(
       getAddrByID(components, IndexQuestCompID)
@@ -112,10 +97,6 @@ library LibQuestRegistry {
 
     uint256[] memory rwds = getRwdsByQuestIndex(components, questIndex);
     for (uint256 i; i < rwds.length; i++) LibAllo.remove(components, rwds[i]);
-
-    uint256[] memory assigners = LibAssigner.getAll(components, questID);
-    for (uint256 i; i < assigners.length; i++)
-      LibAssigner.remove(components, indexQuestComp, assigners[i]);
   }
 
   function removeObjective(IUintComp components, uint256 objectiveID) internal {

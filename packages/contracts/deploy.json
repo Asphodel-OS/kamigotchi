@@ -544,7 +544,6 @@
   ],
   "libraries": [
     "LibAccount",
-    "LibAssigner",
     "LibAllo",
     "LibBonus",
     "LibConditional",

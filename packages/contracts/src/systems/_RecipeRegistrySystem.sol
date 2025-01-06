@@ -31,12 +31,6 @@ contract _RecipeRegistrySystem is System {
     return id;
   }
 
-  function addAssigner(uint32 index, uint256 assignerID) public onlyOwner returns (uint256) {
-    uint256 regID = LibRecipe.get(components, index);
-    require(regID != 0, "Recipe: does not exist");
-    return LibRecipe.addAssigner(components, regID, index, assignerID);
-  }
-
   function addRequirement(
     uint32 recipeIndex,
     string memory logicType,

@@ -130,19 +130,6 @@ contract _QuestRegistrySystem is System {
     return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
   }
 
-  function addAssigner(
-    uint32 questIndex,
-    string memory assignerType,
-    uint32 assignerIndex
-  ) public onlyOwner returns (uint256 id) {
-    uint256 regID = LibQuestRegistry.getByIndex(components, questIndex);
-    require(regID != 0, "Quest does not exist");
-
-    uint256 assignerID = LibGetter.getRegID(components, assignerType, assignerIndex);
-    require(assignerID != 0, "Assigner does not exist");
-    return LibQuestRegistry.addAssigner(components, regID, questIndex, assignerID);
-  }
-
   function remove(uint32 index) public onlyOwner {
     uint256 registryQuestID = LibQuestRegistry.getByIndex(components, index);
     require(registryQuestID != 0, "Quest does not exist");

@@ -18,30 +18,6 @@
     },
     {
       "type": "function",
-      "name": "addAssigner",
-      "inputs": [
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "assignerID",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "addRequirement",
       "inputs": [
         {
@@ -294,7 +270,6 @@
     }
   ],
   "methodIdentifiers": {
-    "addAssigner(uint32,uint256)": "32a3075b",
     "addRequirement(uint32,string,string,uint32,uint32,string)": "51e12765",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",

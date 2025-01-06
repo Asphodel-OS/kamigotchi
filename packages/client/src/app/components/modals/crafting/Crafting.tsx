@@ -105,7 +105,7 @@ export function registerCraftingModal() {
           params: [recipe.id, amount],
           description: `Crafting ${getIngredientsText(recipe.outputs, amount)}`,
           execute: async () => {
-            return api.player.crafting.craft(0, recipe.index, amount);
+            return api.player.crafting.craft(recipe.index, amount);
           },
         });
       };
