@@ -19,7 +19,7 @@ export async function deploy(
   rpc = 'http://localhost:8545',
   reuseComponents?: boolean,
   worldAddress?: string,
-  deployEmitter?: boolean,
+  emitter?: boolean,
   forgeOpts?: string,
   initWorld?: boolean,
   mode?: string
@@ -36,7 +36,7 @@ export async function deploy(
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       (reuseComponents || false).toString(), // Reuse components
       (initWorld || false).toString(), // Init world
-      (deployEmitter || false).toString(), // Deploy emitter
+      (emitter || false).toString(), // Deploy emitter
       (mode || 'DEV').toString(), // Mode
       '--fork-url',
       rpc,
@@ -71,7 +71,7 @@ export type DeployOptions = {
   worldAddress?: string;
   components?: string;
   systems?: string;
-  deployEmitter?: boolean;
+  emitter?: boolean;
   initWorld?: boolean;
   forgeOpts?: string;
   mode?: string;
@@ -102,7 +102,7 @@ export async function generateAndDeploy(args: DeployOptions) {
       args.rpc,
       reuseComps,
       args.worldAddress,
-      args.deployEmitter,
+      args.emitter,
       args.forgeOpts,
       args.initWorld,
       args.mode

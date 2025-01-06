@@ -18,7 +18,7 @@ contract Deploy is InitWorld {
     address worldAddr,
     bool reuseComps,
     bool initWorld,
-    bool deployEmitter,
+    bool emitter,
     string memory MODE
   ) external returns (IWorld world, uint256 startBlock) {
     startBlock = block.number;
@@ -27,7 +27,7 @@ contract Deploy is InitWorld {
 
     DeployResult memory result = LibDeploy.deploy(deployer, worldAddr, reuseComps);
     world = worldAddr == address(0) ? result.world : IWorld(worldAddr);
-    if (worldAddr == address(0) || deployEmitter) {
+    if (worldAddr == address(0) || emitter) {
       LibDeployEmitter.deploy(world);
     }
     // init world using init world script

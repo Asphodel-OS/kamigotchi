@@ -17,7 +17,7 @@ const run = async () => {
   const mode = argv.mode || 'DEV';
   const partialDeployment =
     argv.partial ??
-    (argv.components != undefined || argv.systems != undefined || argv.deployEmitter != undefined);
+    (argv.components != undefined || argv.systems != undefined || argv.emitter != undefined);
   const world = partialDeployment ? argv.world || getWorld(mode) : undefined;
   // assume world state init if deploying a fresh world, unless explicitly stated
   const init = !partialDeployment || !(argv.skipInit ?? true);
@@ -35,7 +35,7 @@ const run = async () => {
     worldAddress: world,
     components: argv.components,
     systems: argv.systems,
-    deployEmitter: argv.deployEmitter,
+    emitter: argv.emitter,
     initWorld: init,
     forgeOpts: argv.forgeOpts,
     mode: argv.mode,
