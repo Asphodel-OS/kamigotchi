@@ -4,6 +4,7 @@ import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getBonusesForEndType } from 'app/cache/bonus';
 import { getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { EmptyText, ModalWrapper } from 'app/components/library';
@@ -94,6 +95,14 @@ export function registerNodeModal() {
               getAccount: () => getAccount(world, components, accountEntity, accountRefreshOptions),
               getAccountKamis: () =>
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
+              getBonuses: (entity: EntityIndex) =>
+                getBonusesForEndType(
+                  world,
+                  components,
+                  'UPON_HARVEST_ACTION',
+                  entity,
+                  LIVE_UPDATE_LIMIT
+                ),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiRefreshOptions),
               getOwner: (kamiEntity: EntityIndex) =>

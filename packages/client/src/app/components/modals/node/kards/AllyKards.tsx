@@ -9,6 +9,7 @@ import { Kami } from 'network/shapes/Kami';
 interface Props {
   account: Account;
   kamis: Kami[]; // ally kami entities
+  bonuses: string[][];
   actions: {
     collect: (kami: Kami) => void;
     stop: (kami: Kami) => void;
@@ -20,7 +21,7 @@ interface Props {
 
 // rendering of an ally kami on this node
 export const AllyKards = (props: Props) => {
-  const { actions, display, account, kamis } = props;
+  const { actions, display, account, kamis, bonuses } = props;
   const { collect, stop } = actions;
   const { UseItemButton } = display;
 
@@ -42,11 +43,12 @@ export const AllyKards = (props: Props) => {
   return (
     <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
       <Title>Allies</Title>
-      {kamis.map((kami: Kami) => (
+      {kamis.map((kami: Kami, i: number) => (
         <KamiCard
           key={kami.index}
           kami={kami}
           description={getDescription(kami)}
+          titleTooltip={bonuses[i]}
           subtext={`yours (\$${calcOutput(kami)})`}
           actions={[
             UseItemButton(kami, account),

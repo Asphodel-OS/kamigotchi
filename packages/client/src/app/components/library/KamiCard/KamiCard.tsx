@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
-import { Card } from 'app/components/library/base/';
+import { Card, Tooltip } from 'app/components/library/base/';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -13,6 +13,7 @@ interface Props {
   kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
+  titleTooltip?: string[];
   subtext?: string;
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
@@ -24,7 +25,7 @@ interface Props {
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
   const { kami, actions, showBattery, showCooldown } = props;
-  const { description, descriptionOnClick } = props;
+  const { description, descriptionOnClick, titleTooltip } = props;
   const { subtext, subtextOnClick } = props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
@@ -62,17 +63,19 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card image={kami.image} imageOnClick={() => handleKamiClick()}>
-      <TitleBar>
-        <TitleText key='title' onClick={() => handleKamiClick()}>
-          {kami.name}
-        </TitleText>
-        <TitleCorner key='corner'>
-          {showCooldown && <Cooldown kami={kami} />}
-          {showBattery && (
-            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
-          )}
-        </TitleCorner>
-      </TitleBar>
+      <Tooltip text={titleTooltip ?? []}>
+        <TitleBar>
+          <TitleText key='title' onClick={() => handleKamiClick()}>
+            {kami.name}
+          </TitleText>
+          <TitleCorner key='corner'>
+            {showCooldown && <Cooldown kami={kami} />}
+            {showBattery && (
+              <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
+            )}
+          </TitleCorner>
+        </TitleBar>
+      </Tooltip>
       <Content>
         <ContentColumn key='column-1'>
           <Description />

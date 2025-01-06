@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { Account, BaseAccount } from 'network/shapes/Account';
+import { BonusInstance, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
@@ -23,6 +24,7 @@ interface Props {
     UseItemButton: (kami: Kami, account: Account) => JSX.Element;
   };
   utils: {
+    getBonuses: (entity: EntityIndex) => BonusInstance[];
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
   };
@@ -30,13 +32,14 @@ interface Props {
 
 export const Kards = (props: Props) => {
   const { actions, kamiEntities, account, display, utils } = props;
-  const { getKami } = utils;
+  const { getKami, getBonuses } = utils;
   const { modals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [allies, setAllies] = useState<Kami[]>([]);
-  const [alliesUpdating, setAlliesUpdating] = useState(false);
+  const [allyBonuses, setAllyBonuses] = useState<string[][]>([]);
   const [allyEntities, setAllyEntities] = useState<EntityIndex[]>([]);
+  const [alliesUpdating, setAlliesUpdating] = useState(false);
   const [enemyEntities, setEnemyEntities] = useState<EntityIndex[]>([]);
   const [visibleEnemies, setVisibleEnemies] = useState(0); // count of visible enemies
   const [lastRefresh, setLastRefresh] = useState(Date.now());
@@ -65,6 +68,7 @@ export const Kards = (props: Props) => {
     if (!modals.node) return;
     setAlliesUpdating(true);
     setAllies(allyEntities.map((entity) => getKami(entity, true)));
+    setAllyBonuses(allyEntities.map((entity) => getBonuses(entity).map(parseBonusText)));
     setAlliesUpdating(false);
   }, [modals.node, allyEntities]);
 
@@ -114,7 +118,13 @@ export const Kards = (props: Props) => {
       ref={containerRef}
       style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}
     >
-      <AllyKards account={account} kamis={allies} actions={actions} display={display} />
+      <AllyKards
+        account={account}
+        kamis={allies}
+        bonuses={allyBonuses}
+        actions={actions}
+        display={display}
+      />
       <EnemyCards
         allies={allies}
         enemyEntities={enemyEntities}
