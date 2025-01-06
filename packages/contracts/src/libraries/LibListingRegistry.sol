@@ -17,17 +17,27 @@ import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
-/*
- * LibListing handles all operations interacting with Listings
+/** @notice
+ * LibListingRegistry handles the creation, removal and update of Listing entities
+ *
+ * Listing entities are shaped as follows:
+ *  - EntityType: LISTING
+ *  - IndexNPC: the merchant's npc index
+ *  - IndexItem: the item index
+ *  - Value: the target price of the listing (not necessarily the actual price)
+ *  - Balance: the number of units bought or sold
+ *  - TimeStart: the time the item was created
+ *
+ * Pricing entities are shaped depending on their type of pricing.
  * The Buy Side and Sell Side pricing can be defined in a handful of ways:
- *   - FIXED: direct read of ValueComp on the actual Listing entity
- *   - GDA: dynamic price calc based the Balance, TimeStart and Value target of the Listing
- *   - SCALED (sell only): scaled version of the Buy Side price calc
+ *  - FIXED: direct read of ValueComp on the actual Listing entity
+ *  - GDA: dynamic price calc based the Balance, TimeStart and Value target of the Listing
+ *  - SCALED: scaled version of the Buy Side price calc (sell only)
  */
 library LibListingRegistry {
   using LibComp for IUintComp;
 
-  // create a merchant listing with the specified parameters
+  /// @notice create a merchant listing with the specified parameters
   function create(
     IUintComp components,
     uint32 npcIndex,
@@ -54,7 +64,7 @@ library LibListingRegistry {
     return LibConditional.createFor(world, components, data, genReqAnchor(regID));
   }
 
-  // remove all data associated with a listing
+  /// @notice remove all data associated with a listing
   function remove(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
     IndexNPCComponent(getAddrByID(components, IndexNPCComponentID)).remove(id);
@@ -72,13 +82,14 @@ library LibListingRegistry {
     }
   }
 
-  // Q(jb): do we need Has checks here and on removeSell()?
+  /// @notice remove the buy pricing
   function removeBuy(IUintComp components, uint256 id) internal {
     uint256 ptr = genBuyID(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ptr);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ptr);
   }
 
+  /// @notice remove the sell pricing
   function removeSell(IUintComp components, uint256 id) internal {
     uint256 ptr = genSellID(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ptr);
@@ -123,8 +134,8 @@ library LibListingRegistry {
   function setSellScaled(IUintComp components, uint256 id, uint32 scale) internal {
     uint256 ptr = genSellID(id);
     setType(components, ptr, "SCALED");
-    if (scale > 1e3) revert("LibListingRegistry: invalid sell scale > 1");
-    if (scale < 0) revert("LibListingRegistry: invalid sell scale < 0");
+    require(scale > 1e3, "LibListingRegistry: invalid sell scale > 1");
+    require(scale < 0, "LibListingRegistry: invalid sell scale < 0");
     ScaleComponent(getAddrByID(components, ScaleCompID)).set(ptr, scale);
   }
 

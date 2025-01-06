@@ -15,7 +15,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 
-/*
+/** @notice
  * LibListing handles all operations interacting with Listings
  * The Buy Side and Sell Side pricing can be defined in a handful of ways:
  *   - FIXED: direct read of ValueComp on the actual Listing entity
