@@ -34,10 +34,7 @@ export {
   getByEntityIndices as getQuestsByEntityIndices,
   populate as populateQuest,
 } from './quest';
-export {
-  checkRequirement as checkQuestRequirement,
-  getRequirements as getQuestRequirements,
-} from './requirement';
+export { getRequirements as getQuestRequirements } from './requirement';
 export { getRewards as getQuestRewards } from './reward';
 
 export type { Objective } from './objective';

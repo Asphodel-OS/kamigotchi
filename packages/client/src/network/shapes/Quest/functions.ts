@@ -3,11 +3,11 @@ import { EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Account } from '../Account';
 import { Allo } from '../Allo';
+import { checkCondition } from '../Conditional';
 import { getIsComplete } from '../utils/component';
 import { Objective, checkObjective } from './objective';
 import { queryInstance } from './queries';
 import { BaseQuest, Quest, populate } from './quest';
-import { checkRequirement } from './requirement';
 
 /////////////////
 // CHECKERS
@@ -182,7 +182,7 @@ export const parseRequirements = (
   quest: Quest
 ): Quest => {
   for (let i = 0; i < quest.requirements.length; i++) {
-    quest.requirements[i].status = checkRequirement(
+    quest.requirements[i].status = checkCondition(
       world,
       components,
       quest.requirements[i],
