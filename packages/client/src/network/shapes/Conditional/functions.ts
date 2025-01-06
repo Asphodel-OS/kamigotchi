@@ -44,7 +44,7 @@ export const checkCondition = (
     checkCurrent(world, components, condition.target, holderEntity),
     undefined,
     undefined,
-    checkBoolean(world, components, condition.target, holder.entity), //todo: change getBool to entityIndex
+    checkBoolean(world, components, condition.target, holderEntity),
     { completable: false }
   );
 };
@@ -69,7 +69,7 @@ export const checkBoolean = (
   world: World,
   components: Components,
   target: Target,
-  holder: EntityIndex
+  holder: EntityIndex | undefined
 ): ((opt: any) => Status) => {
   return (opt: any) => {
     const result = getBool(world, components, holder, target.index, target.value, target.type);

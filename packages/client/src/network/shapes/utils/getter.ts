@@ -63,7 +63,7 @@ export const getBalance = (
 export const getBool = (
   world: World,
   components: Components,
-  holder: EntityIndex,
+  holder: EntityIndex | undefined,
   index: number | undefined,
   value: number | undefined,
   type: string
