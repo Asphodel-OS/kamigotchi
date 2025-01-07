@@ -84,21 +84,24 @@ export function registerGachaModal() {
 
       /////////////////
       // ONYXApproval
-
-      async function checkOnyxAllowance(onyxAddress: string, threshold: ethers.BigNumber) {
-        /// turn this intro a func
+      async function getContract(onyxAddress: string) {
         const erc20Interface = new ethers.utils.Interface([
           'function allowance(address owner, address spender) view returns (uint256)',
           'function approve(address spender, uint256 amount) returns (bool)',
         ]);
-        // TODO: get this from other place
-        const contractAddress = gachaRerollAddress();
+
         // TODO: get this from other place, signer is fake and wont work for approval?
         const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
         const signer = provider.getSigner();
         console.log(`signer ${await JSON.stringify(signer.getAddress())}`);
         const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
-        /////
+        const contractAddress = gachaRerollAddress();
+        return { onyxContract, contractAddress };
+      }
+
+      async function checkOnyxAllowance(onyxAddress: string, threshold: ethers.BigNumber) {
+        const { onyxContract, contractAddress } = await getContract(onyxAddress);
+        console.log(`contractAddress ${contractAddress}   onyxContract ${onyxContract}`);
         try {
           const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
           console.log(`allowance ${allowance}`);
@@ -181,10 +184,7 @@ export function registerGachaModal() {
           params: [kamis.map((n) => n.name)],
           description: `Rerolling ${kamis.length} Kami`,
           execute: async () => {
-            return api.mint.reroll(
-              kamis.map((n) => n.id),
-              price
-            );
+            return api.mint.reroll(kamis.map((n) => n.id));
           },
         });
         return actionID;
@@ -248,8 +248,9 @@ export function registerGachaModal() {
             );
             setTriedReveal(false);
             playVend();
-          }
-          // const tx = await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);
+          } /*
+            const { onyxContract, contractAddress } = await getContract(onyxAddress);
+            await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);*/
         } catch (e) {
           console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
         }
