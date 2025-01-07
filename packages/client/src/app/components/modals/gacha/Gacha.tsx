@@ -69,6 +69,7 @@ export function registerGachaModal() {
     ({ network, data, utils }) => {
       const { actions, world, api } = network;
       const { ownerAddress, commits, gachaBalance, poolKamis, onyxAddress } = data;
+      const { getRerollCost } = utils;
       const { setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -101,10 +102,8 @@ export function registerGachaModal() {
 
       async function checkOnyxAllowance(onyxAddress: string, threshold: ethers.BigNumber) {
         const { onyxContract, contractAddress } = await getContract(onyxAddress);
-        console.log(`contractAddress ${contractAddress}   onyxContract ${onyxContract}`);
         try {
           const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
-          console.log(`allowance ${allowance}`);
           return allowance.gte(threshold);
         } catch (error: any) {
           throw new Error(`Approval failed: ${error.message}`);
@@ -236,26 +235,31 @@ export function registerGachaModal() {
         if (kamis.length === 0) return;
         try {
           setWaitingToReveal(true);
-          const isAllowed = await checkOnyxAllowance(onyxAddress, ethers.BigNumber.from(price));
-          console.log('isAllowed', isAllowed);
-          if (isAllowed) {
-            const rerollActionID = rerollTx(kamis, price);
-            if (!rerollActionID) throw new Error('Reroll action failed');
+          const rerollActionID = rerollTx(kamis, price);
+          if (!rerollActionID) throw new Error('Reroll action failed');
 
-            await waitForActionCompletion(
-              actions!.Action,
-              world.entityToIndex.get(rerollActionID) as EntityIndex
-            );
-            setTriedReveal(false);
-            playVend();
-          } /*
-            const { onyxContract, contractAddress } = await getContract(onyxAddress);
-            await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);*/
+          await waitForActionCompletion(
+            actions!.Action,
+            world.entityToIndex.get(rerollActionID) as EntityIndex
+          );
+          setTriedReveal(false);
+          playVend();
         } catch (e) {
           console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
         }
       };
-
+      const handleSelected = async (kamis: Kami[]) => {
+        /*
+            const { onyxContract, contractAddress } = await getContract(onyxAddress);
+            await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);*/
+        if (kamis.length === 0) return;
+        let price = BigInt(0);
+        kamis.map((kami) => {
+          price += getRerollCost(kami);
+        });
+        const isAllowed = await checkOnyxAllowance(onyxAddress, ethers.BigNumber.from(price));
+        console.log(isAllowed);
+      };
       ///////////////
       // DISPLAY
 
@@ -277,7 +281,7 @@ export function registerGachaModal() {
               tab={tab}
               blockNumber={blockNumber ?? 0n}
               controls={{ limit, filters, sorts }}
-              actions={{ handleReroll, revealTx }}
+              actions={{ handleReroll, revealTx, handleSelected }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
               data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
               utils={utils}

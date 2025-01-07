@@ -12,6 +12,7 @@ import { SideBalance } from './SideBalance';
 interface Props {
   actions: {
     handleReroll: (kamis: Kami[], price: bigint) => Promise<void>;
+    handleSelected: (kamis: Kami[]) => any;
   };
   tab: TabType;
   data: {
@@ -29,6 +30,7 @@ export const Reroll = (props: Props) => {
   const { actions, data, utils, tab } = props;
   const { accountEntity, maxRerolls, balance } = data;
   const { getAccountKamis, getRerollCost } = utils;
+  const { handleSelected } = actions;
   const { modals } = useVisibility();
 
   const [partyKamis, setPartyKamis] = useState<Kami[]>([]);
@@ -93,6 +95,7 @@ export const Reroll = (props: Props) => {
   const Grid =
     partyKamis.length > 0 ? (
       <KamiGrid
+        actions={{ handleSelected }}
         kamis={partyKamis}
         getKamiText={getKamiText}
         amtShown={partyKamis.length} // here if truncation makes sense later

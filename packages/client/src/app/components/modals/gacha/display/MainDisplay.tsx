@@ -20,6 +20,7 @@ interface Props {
   actions: {
     handleReroll: (kamis: Kami[], price: bigint) => Promise<void>;
     revealTx: (commits: Commit[]) => Promise<void>;
+    handleSelected: (kamis: Kami[]) => any;
   };
   caches: {
     kamis: Map<EntityIndex, GachaKami>;
@@ -41,7 +42,7 @@ interface Props {
 
 export const MainDisplay = (props: Props) => {
   const { tab, blockNumber, controls, actions, data, caches, utils } = props;
-  const { handleReroll, revealTx } = actions;
+  const { handleReroll, revealTx, handleSelected } = actions;
   const { poolKamis, commits } = data;
 
   const Content = () => {
@@ -57,7 +58,9 @@ export const MainDisplay = (props: Props) => {
           />
         );
       case 'REROLL':
-        return <Reroll tab={tab} actions={{ handleReroll }} data={data} utils={utils} />;
+        return (
+          <Reroll tab={tab} actions={{ handleReroll, handleSelected }} data={data} utils={utils} />
+        );
       case 'REVEAL':
         return <Commits actions={{ revealTx }} blockNumber={blockNumber} data={{ commits }} />;
       default:

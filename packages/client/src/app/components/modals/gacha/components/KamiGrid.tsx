@@ -3,12 +3,16 @@ import styled from 'styled-components';
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
+import { useEffect } from 'react';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   kamis: Kami[];
   amtShown: number;
   grossShowable: number;
+  actions: {
+    handleSelected: (kamis: Kami[]) => any;
+  };
   incAmtShown: () => void;
   getKamiText?: (kami: Kami) => string[];
   select?: {
@@ -25,6 +29,7 @@ const selectedStyle: any = {
 export const KamiGrid = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
+  const { handleSelected } = props.actions;
 
   const Cell = (kami: Kami) => {
     let selectedIndex =
@@ -54,6 +59,11 @@ export const KamiGrid = (props: Props) => {
       else setModals({ kami: true });
       playClick();
     };
+
+    useEffect(() => {
+      if (!props.select) return;
+      handleSelected(props.select?.arr);
+    }, [props.select]);
 
     return (
       <Tooltip key={kami.index} text={props.getKamiText ? props.getKamiText(kami) : []}>
