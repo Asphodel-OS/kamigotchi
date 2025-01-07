@@ -5,6 +5,13 @@ export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(systems: any) {
   /////////////////
+  // Address
+
+  function gachaRerollAddress() {
+    return systems['system.kami.gacha.reroll'].address;
+  }
+
+  /////////////////
   // ECHO
 
   function echoKamis() {
@@ -305,6 +312,9 @@ export function createPlayerAPI(systems: any) {
   }
 
   return {
+    address: {
+      gachaReroll: gachaRerollAddress,
+    },
     echo: {
       kami: echoKamis,
       room: echoRoom,

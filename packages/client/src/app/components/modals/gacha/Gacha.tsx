@@ -86,14 +86,13 @@ export function registerGachaModal() {
       // ONYXApproval
 
       async function checkOnyxAllowance(onyxAddress: string, threshold: ethers.BigNumber) {
-        console.log(`threshold ${threshold}`);
         /// turn this intro a func
         const erc20Interface = new ethers.utils.Interface([
           'function allowance(address owner, address spender) view returns (uint256)',
           'function approve(address spender, uint256 amount) returns (bool)',
         ]);
         // TODO: get this from other place
-        const contractAddress = '0xd78efab315caf4b4b55dc0a760db864813669c3f';
+        const contractAddress = gachaRerollAddress();
         // TODO: get this from other place, signer is fake and wont work for approval?
         const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
         const signer = provider.getSigner();
@@ -146,6 +145,13 @@ export function registerGachaModal() {
 
       /////////////////
       // ACTIONS
+
+      // get a pet from gacha with Mint20
+      const gachaRerollAddress = () => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+        return api.address.gachaReroll();
+      };
 
       // get a pet from gacha with Mint20
       const mintTx = (amount: number) => {
