@@ -10,9 +10,7 @@ interface Props {
   kamis: Kami[];
   amtShown: number;
   grossShowable: number;
-  actions: {
-    handleSelected: (kamis: Kami[]) => any;
-  };
+
   incAmtShown: () => void;
   getKamiText?: (kami: Kami) => string[];
   select?: {
@@ -29,7 +27,6 @@ const selectedStyle: any = {
 export const KamiGrid = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
-  const { handleSelected } = props.actions;
 
   const Cell = (kami: Kami) => {
     let selectedIndex =
@@ -62,7 +59,6 @@ export const KamiGrid = (props: Props) => {
 
     useEffect(() => {
       if (!props.select) return;
-      handleSelected(props.select?.arr);
     }, [props.select]);
 
     return (

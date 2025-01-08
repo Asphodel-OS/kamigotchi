@@ -11,7 +11,6 @@ import { getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX } from 'constants/items';
-import { ethers } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValue, getConfigFieldValueAddress } from 'network/shapes/Config';
 import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
@@ -84,33 +83,6 @@ export function registerGachaModal() {
       const [waitingToReveal, setWaitingToReveal] = useState(false);
 
       /////////////////
-      // ONYXApproval
-      async function getContract(onyxAddress: string) {
-        const erc20Interface = new ethers.utils.Interface([
-          'function allowance(address owner, address spender) view returns (uint256)',
-          'function approve(address spender, uint256 amount) returns (bool)',
-        ]);
-
-        // TODO: get this from other place, signer is fake and wont work for approval?
-        const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
-        const signer = provider.getSigner();
-        console.log(`signer ${await JSON.stringify(signer.getAddress())}`);
-        const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
-        const contractAddress = gachaRerollAddress();
-        return { onyxContract, contractAddress };
-      }
-
-      async function checkOnyxAllowance(onyxAddress: string, threshold: ethers.BigNumber) {
-        const { onyxContract, contractAddress } = await getContract(onyxAddress);
-        try {
-          const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
-          return allowance.gte(threshold);
-        } catch (error: any) {
-          throw new Error(`Approval failed: ${error.message}`);
-        }
-      }
-
-      /////////////////
       // SUBSCRIPTIONS
 
       // Owner ETH Balance
@@ -147,13 +119,6 @@ export function registerGachaModal() {
 
       /////////////////
       // ACTIONS
-
-      // get a pet from gacha with Mint20
-      const gachaRerollAddress = () => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-        return api.address.gachaReroll();
-      };
 
       // get a pet from gacha with Mint20
       const mintTx = (amount: number) => {
@@ -248,18 +213,7 @@ export function registerGachaModal() {
           console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
         }
       };
-      const handleSelected = async (kamis: Kami[]) => {
-        /*
-            const { onyxContract, contractAddress } = await getContract(onyxAddress);
-            await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);*/
-        if (kamis.length === 0) return;
-        let price = BigInt(0);
-        kamis.map((kami) => {
-          price += getRerollCost(kami);
-        });
-        const isAllowed = await checkOnyxAllowance(onyxAddress, ethers.BigNumber.from(price));
-        console.log(isAllowed);
-      };
+
       ///////////////
       // DISPLAY
 
@@ -281,7 +235,7 @@ export function registerGachaModal() {
               tab={tab}
               blockNumber={blockNumber ?? 0n}
               controls={{ limit, filters, sorts }}
-              actions={{ handleReroll, revealTx, handleSelected }}
+              actions={{ handleReroll, revealTx }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
               data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
               utils={utils}

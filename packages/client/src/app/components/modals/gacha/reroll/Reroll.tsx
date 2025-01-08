@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
+import { BigNumber, ethers } from 'ethers';
 import { Kami } from 'network/shapes/Kami';
 import { KamiGrid } from '../components/KamiGrid';
 import { TabType } from '../types';
@@ -12,13 +13,14 @@ import { SideBalance } from './SideBalance';
 interface Props {
   actions: {
     handleReroll: (kamis: Kami[], price: bigint) => Promise<void>;
-    handleSelected: (kamis: Kami[]) => any;
   };
   tab: TabType;
   data: {
     accountEntity: EntityIndex;
     balance: bigint;
     maxRerolls: number;
+    onyxAddress: string;
+    ownerAddress: string;
   };
   utils: {
     getRerollCost: (kami: Kami) => bigint;
@@ -28,15 +30,54 @@ interface Props {
 
 export const Reroll = (props: Props) => {
   const { actions, data, utils, tab } = props;
-  const { accountEntity, maxRerolls, balance } = data;
+  const { accountEntity, maxRerolls, balance, onyxAddress, ownerAddress } = data;
   const { getAccountKamis, getRerollCost } = utils;
-  const { handleSelected } = actions;
   const { modals } = useVisibility();
-
   const [partyKamis, setPartyKamis] = useState<Kami[]>([]);
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
   const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
   const [lastRefresh, setLastRefresh] = useState(Date.now());
+  // fix this
+  const [isAllowed, setIsAllowed] = useState<boolean>(true);
+  const { selectedAddress, apis } = useNetwork();
+
+  /////////////////
+  // ONYXApproval
+  const gachaRerollAddress = () => {
+    const api = apis.get(selectedAddress);
+    if (!api) return console.error(`API not established for ${selectedAddress}`);
+    return api.address.gachaReroll();
+  };
+  async function getContracts() {
+    const erc20Interface = new ethers.utils.Interface([
+      'function allowance(address owner, address spender) view returns (uint256)',
+      'function approve(address spender, uint256 amount) returns (bool)',
+    ]);
+
+    // TODO: get this from other place, signer is fake and wont work for approval?
+    const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
+    const signer = provider.getSigner();
+    console.log(`signer ${await JSON.stringify(signer.getAddress())}`);
+    const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
+    const contractAddress = gachaRerollAddress();
+    return { onyxContract, contractAddress };
+  }
+
+  async function checkOnyxAllowance(threshold: ethers.BigNumber) {
+    const { onyxContract, contractAddress } = await getContracts();
+    try {
+      const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
+      setIsAllowed(allowance.gte(threshold));
+    } catch (error: any) {
+      setIsAllowed(false);
+      throw new Error(`Approval failed: ${error.message}`);
+    }
+  }
+
+  const handleApprove = async (kamis: Kami[]) => {
+    const { onyxContract, contractAddress } = await getContracts();
+    await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);
+  };
 
   // ticking
   useEffect(() => {
@@ -57,6 +98,8 @@ export const Reroll = (props: Props) => {
     let price = BigInt(0);
     selectedKamis.forEach((kami) => (price += getRerollCost(kami)));
     setRerollPrice(price);
+    checkOnyxAllowance(BigNumber.from(price));
+    console.log(`rerollPrice ${rerollPrice}`);
   }, [selectedKamis]);
 
   //////////////////
@@ -95,7 +138,6 @@ export const Reroll = (props: Props) => {
   const Grid =
     partyKamis.length > 0 ? (
       <KamiGrid
-        actions={{ handleSelected }}
         kamis={partyKamis}
         getKamiText={getKamiText}
         amtShown={partyKamis.length} // here if truncation makes sense later
@@ -119,20 +161,29 @@ export const Reroll = (props: Props) => {
         <EmptyText>(Only happy and healthy kamis can be re-rolled)</EmptyText>
       </div>
     );
-
   return (
     <OuterBox>
       {Grid}
       <Footer>
         <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
         <div style={{ flexGrow: 6 }} />
-        <ActionButton
-          onClick={handleReroll}
-          text='Re-roll'
-          size='large'
-          disabled={selectedKamis.length === 0 || canRerollSelected()}
-          fill
-        />
+        {isAllowed ? (
+          <ActionButton
+            onClick={handleReroll}
+            text='Re-roll'
+            size='large'
+            disabled={selectedKamis.length === 0 || canRerollSelected()}
+            fill
+          />
+        ) : (
+          <ActionButton
+            onClick={handleApprove}
+            text='Approve ONYX'
+            size='large'
+            disabled={selectedKamis.length === 0 || canRerollSelected()}
+            fill
+          />
+        )}
       </Footer>
     </OuterBox>
   );
