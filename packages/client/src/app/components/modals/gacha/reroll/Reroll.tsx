@@ -37,8 +37,9 @@ export const Reroll = (props: Props) => {
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
   const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-  // fix this
+
   const [isAllowed, setIsAllowed] = useState<boolean>(true);
+  const [enoughBalance, setEnoughBalance] = useState<boolean>(true);
   const { selectedAddress, apis } = useNetwork();
 
   /////////////////
@@ -52,6 +53,7 @@ export const Reroll = (props: Props) => {
     const erc20Interface = new ethers.utils.Interface([
       'function allowance(address owner, address spender) view returns (uint256)',
       'function approve(address spender, uint256 amount) returns (bool)',
+      'function balanceOf(address account) view returns (uint256)',
     ]);
 
     // TODO: get this from other place, signer is fake and wont work for approval?
@@ -74,7 +76,18 @@ export const Reroll = (props: Props) => {
     }
   }
 
-  const handleApprove = async (kamis: Kami[]) => {
+  async function checkUserBalance(threshold: ethers.BigNumber) {
+    const { onyxContract, contractAddress } = await getContracts();
+    try {
+      const balance = await onyxContract.balance(ownerAddress, ethers.constants.MaxUint256);
+      setEnoughBalance(balance.gte(threshold));
+    } catch (error: any) {
+      setEnoughBalance(false);
+      throw new Error(`Approval failed: ${error.message}`);
+    }
+  }
+
+  const handleApprove = async () => {
     const { onyxContract, contractAddress } = await getContracts();
     await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);
   };
@@ -99,6 +112,7 @@ export const Reroll = (props: Props) => {
     selectedKamis.forEach((kami) => (price += getRerollCost(kami)));
     setRerollPrice(price);
     checkOnyxAllowance(BigNumber.from(price));
+    isAllowed && checkUserBalance(BigNumber.from(price));
     console.log(`rerollPrice ${rerollPrice}`);
   }, [selectedKamis]);
 
