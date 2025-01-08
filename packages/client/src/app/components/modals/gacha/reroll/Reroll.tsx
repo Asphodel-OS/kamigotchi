@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { ActionButton } from 'app/components/library';
+import { ActionButton, Tooltip } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { BigNumber, ethers } from 'ethers';
 import { Kami } from 'network/shapes/Kami';
@@ -38,8 +38,8 @@ export const Reroll = (props: Props) => {
   const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-  const [isAllowed, setIsAllowed] = useState<boolean>(true);
-  const [enoughBalance, setEnoughBalance] = useState<boolean>(true);
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
+  const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
   const { selectedAddress, apis } = useNetwork();
 
   /////////////////
@@ -77,13 +77,13 @@ export const Reroll = (props: Props) => {
   }
 
   async function checkUserBalance(threshold: ethers.BigNumber) {
-    const { onyxContract, contractAddress } = await getContracts();
+    const { onyxContract } = await getContracts();
     try {
-      const balance = await onyxContract.balance(ownerAddress, ethers.constants.MaxUint256);
+      const balance = await onyxContract.balanceOf(ownerAddress);
       setEnoughBalance(balance.gte(threshold));
     } catch (error: any) {
       setEnoughBalance(false);
-      throw new Error(`Approval failed: ${error.message}`);
+      throw new Error(`Balance check failed: ${error.message}`);
     }
   }
 
@@ -113,7 +113,7 @@ export const Reroll = (props: Props) => {
     setRerollPrice(price);
     checkOnyxAllowance(BigNumber.from(price));
     isAllowed && checkUserBalance(BigNumber.from(price));
-    console.log(`rerollPrice ${rerollPrice}`);
+    //console.log(`rerollPrice ${rerollPrice}`);
   }, [selectedKamis]);
 
   //////////////////
@@ -182,13 +182,19 @@ export const Reroll = (props: Props) => {
         <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
         <div style={{ flexGrow: 6 }} />
         {isAllowed ? (
-          <ActionButton
-            onClick={handleReroll}
-            text='Re-roll'
-            size='large'
-            disabled={selectedKamis.length === 0 || canRerollSelected()}
-            fill
-          />
+          <Tooltip
+            text={isAllowed === true && enoughBalance === false ? ['Not enough balance'] : []}
+          >
+            <ActionButton
+              onClick={handleReroll}
+              text='Re-roll'
+              size='large'
+              disabled={
+                selectedKamis.length === 0 || canRerollSelected() || enoughBalance === false
+              }
+              fill
+            />{' '}
+          </Tooltip>
         ) : (
           <ActionButton
             onClick={handleApprove}

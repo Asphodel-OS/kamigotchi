@@ -67,8 +67,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, world, api } = network;
-      const { ownerAddress, commits, gachaBalance, poolKamis, onyxAddress } = data;
-      const { getRerollCost } = utils;
+      const { ownerAddress, commits, gachaBalance, poolKamis } = data;
       const { setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
