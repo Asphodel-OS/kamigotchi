@@ -82,7 +82,6 @@ export const Reroll = (props: Props) => {
 
   async function checkUserBalance(threshold: ethers.BigNumber) {
     const { onyxContract } = await getContracts();
-    setIsAllowed(false);
     try {
       const balance = await onyxContract.balanceOf(ownerAddress);
       setEnoughBalance(balance.gt(threshold));
@@ -105,6 +104,7 @@ export const Reroll = (props: Props) => {
         return onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
       },
     });
+    setIsAllowed(true);
   };
 
   // ticking
