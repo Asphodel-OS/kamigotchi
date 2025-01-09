@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { ActionButton, Tooltip } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { BigNumber, ethers } from 'ethers';
@@ -26,10 +27,11 @@ interface Props {
     getRerollCost: (kami: Kami) => bigint;
     getAccountKamis: () => Kami[];
   };
+  networkActions: any;
 }
 
 export const Reroll = (props: Props) => {
-  const { actions, data, utils, tab } = props;
+  const { actions, data, utils, tab, networkActions } = props;
   const { accountEntity, maxRerolls, balance, onyxAddress, ownerAddress } = data;
   const { getAccountKamis, getRerollCost } = utils;
   const { modals } = useVisibility();
@@ -59,7 +61,6 @@ export const Reroll = (props: Props) => {
     // TODO: get this from other place, signer is fake and wont work for approval?
     const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
     const signer = provider.getSigner();
-    console.log(`signer ${await JSON.stringify(signer.getAddress())}`);
     const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
     const contractAddress = gachaRerollAddress();
     return { onyxContract, contractAddress };
@@ -69,7 +70,10 @@ export const Reroll = (props: Props) => {
     const { onyxContract, contractAddress } = await getContracts();
     try {
       const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
-      setIsAllowed(allowance.gte(threshold));
+      // using gt instead of gte because threshold 0 needs to be checked
+      if (allowance.gt(threshold)) {
+        setIsAllowed(true);
+      }
     } catch (error: any) {
       setIsAllowed(false);
       throw new Error(`Approval failed: ${error.message}`);
@@ -78,18 +82,29 @@ export const Reroll = (props: Props) => {
 
   async function checkUserBalance(threshold: ethers.BigNumber) {
     const { onyxContract } = await getContracts();
+    setIsAllowed(false);
     try {
       const balance = await onyxContract.balanceOf(ownerAddress);
-      setEnoughBalance(balance.gte(threshold));
+      setEnoughBalance(balance.gt(threshold));
     } catch (error: any) {
       setEnoughBalance(false);
       throw new Error(`Balance check failed: ${error.message}`);
     }
   }
 
-  const handleApprove = async () => {
+  const approveTx = async () => {
+    const api = apis.get(selectedAddress);
+    if (!api) return console.error(`API not established for ${selectedAddress}`);
     const { onyxContract, contractAddress } = await getContracts();
-    await onyxContract.approve(contractAddress, ethers.constants.MaxUint256);
+    const actionID = uuid() as EntityID;
+    networkActions!.add({
+      id: actionID,
+      action: 'ApproveONYX',
+      description: 'Approving ONYX for GachaReroll',
+      execute: async () => {
+        return onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
+      },
+    });
   };
 
   // ticking
@@ -113,7 +128,6 @@ export const Reroll = (props: Props) => {
     setRerollPrice(price);
     checkOnyxAllowance(BigNumber.from(price));
     isAllowed && checkUserBalance(BigNumber.from(price));
-    //console.log(`rerollPrice ${rerollPrice}`);
   }, [selectedKamis]);
 
   //////////////////
@@ -175,13 +189,14 @@ export const Reroll = (props: Props) => {
         <EmptyText>(Only happy and healthy kamis can be re-rolled)</EmptyText>
       </div>
     );
+
   return (
     <OuterBox>
       {Grid}
       <Footer>
         <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
         <div style={{ flexGrow: 6 }} />
-        {isAllowed ? (
+        {isAllowed || selectedKamis.length === 0 ? (
           <Tooltip
             text={isAllowed === true && enoughBalance === false ? ['Not enough balance'] : []}
           >
@@ -197,7 +212,7 @@ export const Reroll = (props: Props) => {
           </Tooltip>
         ) : (
           <ActionButton
-            onClick={handleApprove}
+            onClick={approveTx}
             text='Approve ONYX'
             size='large'
             disabled={selectedKamis.length === 0 || canRerollSelected()}

@@ -238,6 +238,7 @@ export function registerGachaModal() {
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
               data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
               utils={utils}
+              networkActions={actions}
             />
             <Panel
               tab={tab}

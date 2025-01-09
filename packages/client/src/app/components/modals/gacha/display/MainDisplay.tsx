@@ -39,12 +39,13 @@ interface Props {
     getRerollCost: (kami: Kami) => bigint;
     getAccountKamis: () => Kami[];
   };
+  networkActions: any;
 }
 
 export const MainDisplay = (props: Props) => {
-  const { tab, blockNumber, controls, actions, data, caches, utils } = props;
+  const { tab, blockNumber, controls, actions, data, caches, utils, networkActions } = props;
   const { handleReroll, revealTx } = actions;
-  const { poolKamis, commits, onyxAddress } = data;
+  const { poolKamis, commits } = data;
 
   const Content = () => {
     switch (tab) {
@@ -59,7 +60,15 @@ export const MainDisplay = (props: Props) => {
           />
         );
       case 'REROLL':
-        return <Reroll tab={tab} actions={{ handleReroll }} data={data} utils={utils} />;
+        return (
+          <Reroll
+            networkActions={networkActions}
+            tab={tab}
+            actions={{ handleReroll }}
+            data={data}
+            utils={utils}
+          />
+        );
       case 'REVEAL':
         return <Commits actions={{ revealTx }} blockNumber={blockNumber} data={{ commits }} />;
       default:
