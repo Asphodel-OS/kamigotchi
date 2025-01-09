@@ -73,6 +73,8 @@ export const Reroll = (props: Props) => {
       // using gt instead of gte because threshold 0 needs to be checked
       if (allowance.gt(threshold)) {
         setIsAllowed(true);
+      } else {
+        setIsAllowed(false);
       }
     } catch (error: any) {
       setIsAllowed(false);
@@ -104,7 +106,6 @@ export const Reroll = (props: Props) => {
         return onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
       },
     });
-    setIsAllowed(true);
   };
 
   // ticking
