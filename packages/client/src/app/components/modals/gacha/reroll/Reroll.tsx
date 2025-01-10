@@ -96,14 +96,23 @@ export const Reroll = (props: Props) => {
     if (!api) return console.error(`API not established for ${selectedAddress}`);
     const { onyxContract, contractAddress } = await getContracts();
     const actionID = uuid() as EntityID;
-    networkActions!.add({
+    /*networkActions!.add({
       id: actionID,
       action: 'ApproveONYX',
       description: 'Approving ONYX for GachaReroll',
       execute: async () => {
         return onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
       },
-    });
+    }); */
+    const tx = await onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
+    await tx.wait();
+    const receipt = await tx.wait();
+
+    if (receipt.status === 1) {
+      setIsAllowed(true);
+    } else {
+      setIsAllowed(false);
+    }
   };
 
   // ticking
