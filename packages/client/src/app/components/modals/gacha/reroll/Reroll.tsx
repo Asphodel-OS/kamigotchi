@@ -42,7 +42,7 @@ export const Reroll = (props: Props) => {
 
   const [isAllowed, setIsAllowed] = useState<boolean>(false);
   const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
-  const { selectedAddress, apis } = useNetwork();
+  const { selectedAddress, apis, signer } = useNetwork();
 
   /////////////////
   // ONYXApproval
@@ -59,8 +59,6 @@ export const Reroll = (props: Props) => {
     ]);
 
     // TODO: get this from other place, signer is fake and wont work for approval?
-    const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545');
-    const signer = provider.getSigner();
     const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
     const contractAddress = gachaRerollAddress();
     return { onyxContract, contractAddress };
@@ -190,7 +188,7 @@ export const Reroll = (props: Props) => {
         <EmptyText>(Only happy and healthy kamis can be re-rolled)</EmptyText>
       </div>
     );
-
+  console.log(`isAllowed ${isAllowed}`);
   return (
     <OuterBox>
       {Grid}
