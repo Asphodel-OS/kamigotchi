@@ -94,6 +94,7 @@ library LibListingRegistry {
     uint256 ptr = genSellID(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ptr);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ptr);
+    ScaleComponent(getAddrByID(components, ScaleCompID)).remove(ptr);
   }
 
   /////////////////
