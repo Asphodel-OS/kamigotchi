@@ -27,6 +27,7 @@ contract Deploy is InitWorld {
 
     DeployResult memory result = LibDeploy.deploy(deployer, worldAddr, reuseComps);
     world = worldAddr == address(0) ? result.world : IWorld(worldAddr);
+
     if (worldAddr == address(0) || emitter) {
       LibDeployEmitter.deploy(world);
     }

@@ -4,6 +4,7 @@ pragma solidity >=0.8.0;
 import { IWorld } from "../../solecs/interfaces/IWorld.sol";
 import { IEmitter } from "../../solecs/interfaces/IEmitter.sol";
 
+///@notice library for centralized event emission calls to Emitter.sol
 library LibEmitter {
   function emitSystemCall(
     IWorld world,
