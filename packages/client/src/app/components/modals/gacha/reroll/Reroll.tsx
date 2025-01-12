@@ -104,10 +104,11 @@ export const Reroll = (props: Props) => {
         return onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
       },
     }); */
-    const tx = await onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
+    const balance = await onyxContract.balanceOf(ownerAddress);
+    // const tx = await onyxContract.approve(contractAddress, rerollPrice + BigInt(1));
+    const tx = await onyxContract.approve(contractAddress, balance);
     await tx.wait();
     const receipt = await tx.wait();
-
     if (receipt.status === 1) {
       setIsAllowed(true);
     } else {
