@@ -7,4 +7,11 @@ interface IEmitter {
     uint8[] calldata schema,
     bytes calldata value
   ) external;
+
+  function emitMessage(
+    uint32 nodeIndex,
+    uint256 accountIndex,
+    bytes memory message,
+    bool global
+  ) external;
 }

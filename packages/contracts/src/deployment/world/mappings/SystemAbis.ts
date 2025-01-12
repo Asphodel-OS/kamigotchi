@@ -23,6 +23,7 @@ import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetF
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
 import AccountUseItemSystem from "../../../../../client/abi/AccountUseItemSystem.json";
+import ChatSystem from "../../../../../client/abi/ChatSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
 import EchoKamisSystem from "../../../../../client/abi/EchoKamisSystem.json";
@@ -90,6 +91,7 @@ export const SystemAbis = {
   "system.account.set.name": AccountSetNameSystem.abi,
   "system.account.set.operator": AccountSetOperatorSystem.abi,
   "system.account.use.item": AccountUseItemSystem.abi,
+  "system.chat": ChatSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,
   "system.echo.kamis": EchoKamisSystem.abi,

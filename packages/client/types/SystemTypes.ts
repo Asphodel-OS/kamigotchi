@@ -23,6 +23,7 @@ import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarc
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
 import { AccountUseItemSystem } from "./ethers-contracts/AccountUseItemSystem";
+import { ChatSystem } from "./ethers-contracts/ChatSystem";
 import { CraftSystem } from "./ethers-contracts/CraftSystem";
 import { DroptableRevealSystem } from "./ethers-contracts/DroptableRevealSystem";
 import { EchoKamisSystem } from "./ethers-contracts/EchoKamisSystem";
@@ -90,6 +91,7 @@ export type SystemTypes = {
   "system.account.set.name": AccountSetNameSystem;
   "system.account.set.operator": AccountSetOperatorSystem;
   "system.account.use.item": AccountUseItemSystem;
+  "system.chat": ChatSystem;
   "system.craft": CraftSystem;
   "system.droptable.item.reveal": DroptableRevealSystem;
   "system.echo.kamis": EchoKamisSystem;
