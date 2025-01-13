@@ -231,7 +231,7 @@
     },
     {
       "name": "ChatSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["TimeLast", "Value"]
     },
     {
       "name": "CraftSystem",
