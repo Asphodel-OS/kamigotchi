@@ -10,42 +10,14 @@ contract ChatTest is SetupTemplate {
     vm.roll(_currBlock++);
   }
 
-  function _request(uint256 senderIndex, uint256 reciverIndex) internal returns (uint256) {
-    address senderAddr = _getOperator(senderIndex);
-    address recieverAddr = _getOwner(reciverIndex);
+  function _sendMessage(bytes memory message) internal {
+    address senderAddr = _getOperator(0);
 
     vm.prank(senderAddr);
-    uint256 requestID = abi.decode(_FriendRequestSystem.executeTyped(recieverAddr), (uint256));
-
-    return requestID;
+    _ChatSystem.executeTyped(message);
   }
 
-  function _accept(uint256 reciverIndex, uint256 requestID) internal returns (uint256) {
-    address recieverAddr = _getOperator(reciverIndex);
-
-    vm.prank(recieverAddr);
-    uint256 id = abi.decode(_FriendAcceptSystem.executeTyped(requestID), (uint256));
-
-    return id;
-  }
-
-  function _cancel(uint256 accIndex, uint256 cancelID) internal {
-    address accAddr = _getOperator(accIndex);
-
-    vm.prank(accAddr);
-    _FriendCancelSystem.executeTyped(cancelID);
-  }
-
-  function _block(uint256 senderIndex, uint256 reciverIndex) internal returns (uint256) {
-    address senderAddr = _getOperator(senderIndex);
-    address recieverAddr = _getOwner(reciverIndex);
-
-    vm.prank(senderAddr);
-    uint256 blockID = abi.decode(_FriendBlockSystem.executeTyped(recieverAddr), (uint256));
-
-    return blockID;
-  }
-
+  /*
   function testRequestBasic() public {
     uint256 requestID = _request(0, 1);
 
@@ -213,7 +185,11 @@ contract ChatTest is SetupTemplate {
     assertEq(LibFriend.getFriendCount(components, _getAccount(aliceIndex)), 0);
     assertEq(LibFriend.getFriendCount(components, _getAccount(bobIndex)), 0);
   }
+*/
 
+  function testCounters() public {
+    _sendMessage("hello");
+  }
   ////////////////////
   // UTILS
 

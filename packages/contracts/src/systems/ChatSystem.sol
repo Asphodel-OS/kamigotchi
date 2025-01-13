@@ -25,7 +25,7 @@ contract ChatSystem is System {
     return "";
   }
 
-  function executeTyped(string memory message) public returns (bytes memory) {
+  function executeTyped(bytes memory message) public returns (bytes memory) {
     return execute(abi.encode(message));
   }
 }
