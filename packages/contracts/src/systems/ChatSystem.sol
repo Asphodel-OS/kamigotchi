@@ -5,7 +5,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { System } from "solecs/System.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
-import { LibScore } from "libraries/LibScore.sol";
+import { LibData } from "libraries/LibData.sol";
 
 uint256 constant ID = uint256(keccak256("system.chat"));
 
@@ -19,7 +19,7 @@ contract ChatSystem is System {
     uint32 roomId = LibAccount.getRoom(components, accID);
 
     LibAccount.updateLastTs(components, accID);
-    LibScore.incFor(components, accID, "MESSAGES", 1);
+    LibData.inc(components, accID, 0, "MESSAGES", 1);
 
     LibEmitter.emitMessage(world, roomId, accID, message, false);
     return "";
