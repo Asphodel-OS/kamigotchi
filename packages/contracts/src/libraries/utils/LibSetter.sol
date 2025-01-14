@@ -26,6 +26,7 @@ import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
+import { LibVIP } from "libraries/LibVIP.sol";
 
 /** @notice
  * Library for Setting.
@@ -56,6 +57,8 @@ library LibSetter {
     } else if (_type.eq("STATE")) {
       // setting, not increasing
       setState(components, index, targetID);
+    } else if (_type.eq("VIP")) {
+      LibVIP.inc(components, targetID, amt);
     } else {
       LibData.inc(components, targetID, index, _type, amt);
     }

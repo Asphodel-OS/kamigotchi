@@ -37,13 +37,14 @@ contract Deploy is InitWorld {
 
       // deploy tokens
       LibDeployTokens.deployKami721(world, components);
+      LibDeployTokens.deployVIP(world, components);
 
       _initWorld(address(world));
 
       // custom local init script
       if (LibString.eq(MODE, "DEV")) {
         LibLocal.init(world, components, systems);
-        LibDeployTokens.deployOnyx20(world, components, deployer); // openMintable erc20, local only
+        LibDeployTokens.deployOnyx20Local(world, components, deployer); // openMintable erc20, local only
       }
     }
   }

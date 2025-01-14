@@ -378,6 +378,9 @@ importers:
       typescript:
         specifier: ^4.6.2
         version: 4.9.5
+      vip-evm:
+        specifier: github:initia-labs/vip-evm#main
+        version: github.com/initia-labs/vip-evm/3b4f500bd9223a4b731638e917c609a6f9b0a2f0
       wait-on:
         specifier: ^6.0.1
         version: 6.0.1
@@ -16645,6 +16648,12 @@ packages:
     resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/b6a506db2262cad5ff982a87789ee6d1558ec861}
     name: forge-std
     version: 1.7.6
+    dev: true
+
+  github.com/initia-labs/vip-evm/3b4f500bd9223a4b731638e917c609a6f9b0a2f0:
+    resolution: {tarball: https://codeload.github.com/initia-labs/vip-evm/tar.gz/3b4f500bd9223a4b731638e917c609a6f9b0a2f0}
+    name: vip-evm
+    version: 0.0.1
     dev: true
 
   github.com/transmissions11/solmate/c892309933b25c03d32b1b0d674df7ae292ba925:

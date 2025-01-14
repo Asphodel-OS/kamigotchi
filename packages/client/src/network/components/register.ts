@@ -79,6 +79,7 @@ export function createComponents(world: World) {
     Name: defineStringComponent(world, 'Name', 'component.name', true),
     Power: defineStatComponent(world, 'Power', 'component.stat.power'),
     ProxyPermissionsERC721: defineBoolComponent(world, 'ProxyPermissionsERC721', 'components.proxy.Permissions.ERC721'),
+    ProxyVIPScore: defineBoolComponent(world, 'ProxyVIPScore', 'component.proxy.vip.score'),
     Rarity: defineNumberComponent(world, 'Rarity', 'component.rarity'),
     Rate: defineNumberComponent(world, 'Rate', 'component.rate'),
     Reroll: defineNumberComponent(world, 'Reroll', 'component.reroll'),

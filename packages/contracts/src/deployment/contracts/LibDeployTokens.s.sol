@@ -18,7 +18,7 @@ library LibDeployTokens {
   }
 
   /// @dev only for local, to simulate an ERC20. Real onyx is not deployed via this script
-  function deployOnyx20(
+  function deployOnyx20Local(
     IWorld world,
     IUint256Component components,
     address deployer
@@ -33,5 +33,19 @@ library LibDeployTokens {
 
     console.log("ONYX_ADDRESS: ", address(onyx));
     return address(onyx);
+  }
+
+  /// @notice deploys and writes permissions for score contract for initia VIP
+  function deployVIP(IWorld world, IUint256Component components) internal returns (address) {
+    require(!LibConfig.has(components, "VIP_SCORE_ADDRESS"), "vip score already deployed");
+
+    VipScore vipScore = new VipScore();
+    LibConfig.set(components, "VIP_SCORE_ADDRESS", uint256(uint160(address(vipScore))));
+
+    // set permissions for proxy contract
+    vipScore.addAllowList(getAddrByID(components, ProxyVIPScoreComponentID));
+
+    console.log("VIP_SCORE_ADDRESS: ", address(vipScore));
+    return address(vipScore);
   }
 }

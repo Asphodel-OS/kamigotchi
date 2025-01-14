@@ -71,7 +71,8 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpTokens() public virtual {
     vm.startPrank(deployer);
     _Kami721 = Kami721(LibDeployTokens.deployKami721(world, components));
-    _Onyx = OpenMintable(LibDeployTokens.deployOnyx20(world, components, deployer));
+    _Onyx = OpenMintable(LibDeployTokens.deployOnyx20Local(world, components, deployer));
+    LibDeployTokens.deployVIP(world, components);
     vm.stopPrank();
   }
 
@@ -1145,6 +1146,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _initLiquidationConfigs();
     _initOnyxConfigs();
     _initSkillConfigs();
+    _initVIPConfigs();
   }
 
   function _initBaseConfigs() internal virtual {
@@ -1217,6 +1219,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initSkillConfigs() internal virtual {
     _setConfig("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
+  }
+
+  function _initVIPConfigs() internal virtual {
+    _setConfig("VIP_STAGE", [uint32(block.timestamp), 1 days, 0, 0, 0, 0, 0, 0]);
   }
 
   ///////////////////////

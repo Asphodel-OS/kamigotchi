@@ -64,6 +64,7 @@
     { "comp": "Name", "name": "Name", "type": "string", "indexed": true },
     { "comp": "Power", "name": "Power", "type": "Stat" },
     { "comp": "ProxyPermissionsERC721", "name": "ProxyPermissionsERC721", "type": "bool" },
+    { "comp": "ProxyVIPScore", "name": "ProxyVIPScore", "type": "bool" },
     { "comp": "Rarity", "name": "Rarity", "type": "uint256" },
     { "comp": "Rate", "name": "Rate", "type": "uint256" },
     { "comp": "Reroll", "name": "Reroll", "type": "uint256" },
@@ -576,6 +577,7 @@
     "LibSkill",
     "LibStat",
     "LibTimelock",
-    "LibTraitRegistry"
+    "LibTraitRegistry",
+    "LibVIP"
   ]
 }

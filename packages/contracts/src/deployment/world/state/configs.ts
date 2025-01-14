@@ -11,6 +11,7 @@ export async function initConfigs(api: AdminAPI) {
   await initHarvest(api);
   await initLiquidation(api);
   await initSkills(api);
+  await initVIP(api);
 }
 
 // local config settings for faster testing
@@ -102,4 +103,8 @@ async function initLiquidation(api: AdminAPI) {
 
 async function initSkills(api: AdminAPI) {
   await api.config.set.array('KAMI_TREE_REQ', [0, 5, 15, 25, 40, 55, 75, 95]);
+}
+
+async function initVIP(api: AdminAPI) {
+  await api.config.set.array('VIP_STAGE', [1737553572, 1209600, 0, 0, 0, 0, 0, 0]);
 }
