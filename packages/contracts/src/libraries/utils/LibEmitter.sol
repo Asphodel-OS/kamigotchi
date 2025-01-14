@@ -18,13 +18,11 @@ library LibEmitter {
 
   function emitMessage(
     IWorld world,
-    uint32 nodeIndex,
-    uint256 accountIndex,
-    bytes memory message,
-    bool global
+    uint32 roomIndex,
+    uint256 accountId,
+    string memory message
   ) internal {
     address emitter = world._emitter();
-    if (emitter != address(0))
-      IEmitter(emitter).emitMessage(nodeIndex, accountIndex, message, global);
+    if (emitter != address(0)) IEmitter(emitter).emitMessage(roomIndex, accountId, message);
   }
 }

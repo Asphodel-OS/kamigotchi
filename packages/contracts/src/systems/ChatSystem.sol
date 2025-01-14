@@ -13,19 +13,20 @@ contract ChatSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    bytes memory message = abi.decode(arguments, (bytes));
+    string memory message = abi.decode(arguments, (string));
 
+    // get sender account and room where the message was originated from
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint32 roomId = LibAccount.getRoom(components, accID);
+    uint32 roomIndex = LibAccount.getRoom(components, accID);
 
     LibAccount.updateLastTs(components, accID);
     LibData.inc(components, accID, 0, "MESSAGES", 1);
 
-    LibEmitter.emitMessage(world, roomId, accID, message, false);
+    LibEmitter.emitMessage(world, roomIndex, accID, message);
     return "";
   }
 
-  function executeTyped(bytes memory message) public returns (bytes memory) {
+  function executeTyped(string memory message) public returns (bytes memory) {
     return execute(abi.encode(message));
   }
 }

@@ -8,10 +8,5 @@ interface IEmitter {
     bytes calldata value
   ) external;
 
-  function emitMessage(
-    uint32 nodeIndex,
-    uint256 accountIndex,
-    bytes memory message,
-    bool global
-  ) external;
+  function emitMessage(uint32 nodeIndex, uint256 accountId, string memory message) external;
 }
