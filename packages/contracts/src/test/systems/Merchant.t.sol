@@ -287,7 +287,7 @@ contract NPCTest is SetupTemplate {
 
       if (i % 2 == 0) {
         // buy case
-        testData.buyPrice = uint24(LibListingRegistry.calcBuyPrice(components, listingID));
+        testData.buyPrice = uint24(LibListing.calcBuyPrice(components, listingID, 1));
         testData.balanceChange = testData.stockChange * testData.buyPrice;
         if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
           uint32[] memory itemIndices = new uint32[](1);
@@ -312,7 +312,7 @@ contract NPCTest is SetupTemplate {
         }
       } else {
         // sell case
-        testData.sellPrice = uint24(LibListingRegistry.calcSellPrice(components, listingID));
+        testData.sellPrice = uint24(LibListing.calcSellPrice(components, listingID, 1));
         testData.balanceChange = testData.stockChange * testData.sellPrice;
         if (testData.stockChange > _getItemBal(testData.playerIndex, testData.itemIndex)) {
           uint32[] memory itemIndices = new uint32[](1);
