@@ -63,13 +63,13 @@ contract _ListingRegistrySystem is System {
     setSellFixed(id);
   }
 
-  function setSellScaled(uint32 npcIndex, uint32 itemIndex, uint32 scale) public onlyOwner {
+  function setSellScaled(uint32 npcIndex, uint32 itemIndex, int32 scale) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
     setSellScaled(id, scale);
   }
 
-  function setSellScaled(uint256 id, uint32 scale) public onlyOwner {
+  function setSellScaled(uint256 id, int32 scale) public onlyOwner {
     LibListingRegistry.setSellScaled(components, id, scale);
   }
 

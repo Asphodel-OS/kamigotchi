@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
@@ -25,6 +26,7 @@ import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 library LibListing {
   using LibComp for IUintComp;
   using LibString for string;
+  using SafeCastLib for int32;
 
   // processes a buy for amt of item from a listing to an account. assumes the account already
   // has the appropriate inventory entity
@@ -99,9 +101,9 @@ library LibListing {
     if (type_.eq("FIXED")) {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
     } else if (type_.eq("SCALED")) {
-      uint32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(sellID);
-      if (scale > 1e3) revert("LibListing: invalid sell scale");
-      return (calcBuyPrice(comps, id, amt) * scale) / 1e3;
+      int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(sellID);
+      if (scale > 1e3 || scale < 0) revert("LibListing: invalid sell scale");
+      return (calcBuyPrice(comps, id, amt) * scale.toUint256()) / 1e3;
     } else revert("LibListing: invalid sell type");
   }
 

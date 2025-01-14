@@ -225,6 +225,24 @@
       "name": "setSellScaled",
       "inputs": [
         {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "scale",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setSellScaled",
+      "inputs": [
+        {
           "name": "npcIndex",
           "type": "uint32",
           "internalType": "uint32"
@@ -236,26 +254,8 @@
         },
         {
           "name": "scale",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setSellScaled",
-      "inputs": [
-        {
-          "name": "id",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "scale",
-          "type": "uint32",
-          "internalType": "uint32"
+          "type": "int32",
+          "internalType": "int32"
         }
       ],
       "outputs": [],
@@ -362,8 +362,8 @@
     "setBuyFixed(uint32,uint32)": "4ebee436",
     "setSellFixed(uint256)": "0fce74a0",
     "setSellFixed(uint32,uint32)": "36a8a6f4",
-    "setSellScaled(uint256,uint32)": "f2ffc448",
-    "setSellScaled(uint32,uint32,uint32)": "c8cddcf4",
+    "setSellScaled(uint256,int32)": "015a1827",
+    "setSellScaled(uint32,uint32,int32)": "cb868db8",
     "transferOwnership(address)": "f2fde38b"
   }
 }

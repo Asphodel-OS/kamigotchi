@@ -132,7 +132,7 @@ library LibListingRegistry {
   // set the sell price of a listing as a scaled value of the buy price
   // NOTE: scaled pricing is defined with 3 degrees of precision
   // NOTE: we ensure interpreted scale within bounds to avoid economic vulns
-  function setSellScaled(IUintComp components, uint256 id, uint32 scale) internal {
+  function setSellScaled(IUintComp components, uint256 id, int32 scale) internal {
     uint256 ptr = genSellID(id);
     setType(components, ptr, "SCALED");
     require(scale > 1e3, "LibListingRegistry: invalid sell scale > 1");

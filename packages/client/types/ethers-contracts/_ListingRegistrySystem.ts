@@ -45,8 +45,8 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     "setBuyFixed(uint32,uint32)": FunctionFragment;
     "setSellFixed(uint256)": FunctionFragment;
     "setSellFixed(uint32,uint32)": FunctionFragment;
-    "setSellScaled(uint32,uint32,uint32)": FunctionFragment;
-    "setSellScaled(uint256,uint32)": FunctionFragment;
+    "setSellScaled(uint256,int32)": FunctionFragment;
+    "setSellScaled(uint32,uint32,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -67,8 +67,8 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
       | "setBuyFixed(uint32,uint32)"
       | "setSellFixed(uint256)"
       | "setSellFixed(uint32,uint32)"
-      | "setSellScaled(uint32,uint32,uint32)"
-      | "setSellScaled(uint256,uint32)"
+      | "setSellScaled(uint256,int32)"
+      | "setSellScaled(uint32,uint32,int32)"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -127,16 +127,16 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSellScaled(uint32,uint32,uint32)",
+    functionFragment: "setSellScaled(uint256,int32)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSellScaled(uint32,uint32,int32)",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSellScaled(uint256,uint32)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -189,11 +189,11 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setSellScaled(uint32,uint32,uint32)",
+    functionFragment: "setSellScaled(uint256,int32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setSellScaled(uint256,uint32)",
+    functionFragment: "setSellScaled(uint32,uint32,int32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -352,15 +352,15 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setSellScaled(uint32,uint32,uint32)"(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint256,int32)"(
+      id: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setSellScaled(uint256,uint32)"(
-      id: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint32,uint32,int32)"(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -442,15 +442,15 @@ export interface _ListingRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setSellScaled(uint32,uint32,uint32)"(
-    npcIndex: PromiseOrValue<BigNumberish>,
-    itemIndex: PromiseOrValue<BigNumberish>,
+  "setSellScaled(uint256,int32)"(
+    id: PromiseOrValue<BigNumberish>,
     scale: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setSellScaled(uint256,uint32)"(
-    id: PromiseOrValue<BigNumberish>,
+  "setSellScaled(uint32,uint32,int32)"(
+    npcIndex: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
     scale: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -524,15 +524,15 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setSellScaled(uint32,uint32,uint32)"(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint256,int32)"(
+      id: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setSellScaled(uint256,uint32)"(
-      id: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint32,uint32,int32)"(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -643,15 +643,15 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setSellScaled(uint32,uint32,uint32)"(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint256,int32)"(
+      id: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setSellScaled(uint256,uint32)"(
-      id: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint32,uint32,int32)"(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -734,15 +734,15 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setSellScaled(uint32,uint32,uint32)"(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint256,int32)"(
+      id: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setSellScaled(uint256,uint32)"(
-      id: PromiseOrValue<BigNumberish>,
+    "setSellScaled(uint32,uint32,int32)"(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

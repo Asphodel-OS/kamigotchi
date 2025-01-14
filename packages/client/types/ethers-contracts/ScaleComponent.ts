@@ -54,10 +54,10 @@ export interface ScaleComponentInterface extends utils.Interface {
     "requestOwnershipHandover()": FunctionFragment;
     "safeGet(uint256)": FunctionFragment;
     "safeGet(uint256[])": FunctionFragment;
-    "set(uint256[],uint32[])": FunctionFragment;
+    "set(uint256[],int32[])": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "set(uint256[],bytes[])": FunctionFragment;
-    "set(uint256,uint32)": FunctionFragment;
+    "set(uint256,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "writeAccess(address)": FunctionFragment;
@@ -89,10 +89,10 @@ export interface ScaleComponentInterface extends utils.Interface {
       | "requestOwnershipHandover"
       | "safeGet(uint256)"
       | "safeGet(uint256[])"
-      | "set(uint256[],uint32[])"
+      | "set(uint256[],int32[])"
       | "set(uint256,bytes)"
       | "set(uint256[],bytes[])"
-      | "set(uint256,uint32)"
+      | "set(uint256,int32)"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "writeAccess"
@@ -189,7 +189,7 @@ export interface ScaleComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256[],uint32[])",
+    functionFragment: "set(uint256[],int32[])",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
@@ -201,7 +201,7 @@ export interface ScaleComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint32)",
+    functionFragment: "set(uint256,int32)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -305,7 +305,7 @@ export interface ScaleComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256[],uint32[])",
+    functionFragment: "set(uint256[],int32[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -317,7 +317,7 @@ export interface ScaleComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint32)",
+    functionFragment: "set(uint256,int32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -544,7 +544,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number[]]>;
 
-    "set(uint256[],uint32[])"(
+    "set(uint256[],int32[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -562,7 +562,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,int32)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -697,7 +697,7 @@ export interface ScaleComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number[]>;
 
-  "set(uint256[],uint32[])"(
+  "set(uint256[],int32[])"(
     entities: PromiseOrValue<BigNumberish>[],
     values: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -715,7 +715,7 @@ export interface ScaleComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,uint32)"(
+  "set(uint256,int32)"(
     entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -844,7 +844,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number[]>;
 
-    "set(uint256[],uint32[])"(
+    "set(uint256[],int32[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -862,7 +862,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,int32)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1037,7 +1037,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "set(uint256[],uint32[])"(
+    "set(uint256[],int32[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1055,7 +1055,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,int32)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1191,7 +1191,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256[],uint32[])"(
+    "set(uint256[],int32[])"(
       entities: PromiseOrValue<BigNumberish>[],
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1209,7 +1209,7 @@ export interface ScaleComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,int32)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
