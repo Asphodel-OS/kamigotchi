@@ -15,7 +15,7 @@ contract EchoKamisSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    uint256[] memory kamiIDs = LibAccount.getKamisOwned(components, accID);
+    uint256[] memory kamiIDs = LibAccount.getKamis(components, accID);
     for (uint256 i = 0; i < kamiIDs.length; i++) {
       LibEcho.kami(components, kamiIDs[i]);
     }

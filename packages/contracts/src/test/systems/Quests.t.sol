@@ -324,7 +324,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, 0);
     _createQuestRequirement(1, "BOOL_IS", "ROOM", 1, 0);
-    _createQuestObjective(1, "NAME", "INC_MIN", "KAMI721_MINT", 0, 2);
+    _createQuestObjective(1, "NAME", "INC_MIN", "KAMI_GACHA_MINT", 0, 2);
 
     // register account
     address operator = _getOperator(0);

@@ -64,7 +64,7 @@ import { TradeAddToSystem } from "./ethers-contracts/TradeAddToSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
 import { TradeConfirmSystem } from "./ethers-contracts/TradeConfirmSystem";
 import { TradeInitiateSystem } from "./ethers-contracts/TradeInitiateSystem";
- 
+
 export type SystemTypes = {
   "system.Kami721.BatchMint": _721BatchMinterSystem;
   "system._Admin.Give": _AdminGiveSystem;

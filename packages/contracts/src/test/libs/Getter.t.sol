@@ -80,7 +80,7 @@ contract LibGetterTest is SetupTemplate {
 
     if (amt > 0) _mintKamis(defaultAccIndex, amt);
 
-    assertEq(LibGetter.getBal(components, defaultAccID, "KAMI", 0), amt);
+    assertEq(LibGetter.getBal(components, defaultAccID, "KAMI_NUM_OWNED", 0), amt);
   }
 
   function testGetKamiHighestLevel() public {

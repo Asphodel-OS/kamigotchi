@@ -79,7 +79,7 @@ These tickets can be used to mint Kamigotchi on this testnet. These are testnet-
 
 Seek out the vending machine and get yourself a Kamigotchi. ",,Quest 1 Completed (An Unknown World),Have 1 Kamigotchi,"1x Ghost Gum ",,,
 ,11,,Ingame,Requirement,QUEST,COMPLETE,,Quest 1,1,,No,,,,,,,,,,
-,11,,Ingame,Objective,KAMI_GACHA_MINT,MIN,CURR,Mint 1 Kami,,1,No,,,,,,,,,,
+,11,,Ingame,Objective,KAMI_NUM_OWNED,MIN,CURR,Mint 1 Kami,,1,No,,,,,,,,,,
 ,11,,Ingame,Reward,ITEM,,,1 Gum,11301,1,No,,,,,,,,,,
 Lethe Asphodel,12,Proving Yourself,Ingame,Quest,,,,,,,No,0,,"You’re doing well. 
 

@@ -47,7 +47,7 @@ library LibLocal {
   /// @dev pets will be starving by block.timestamp syncs lol
   function initHarvests(IUint256Component components, IUint256Component systems) internal {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    uint256[] memory kamiIDs = LibAccount.getKamisOwned(components, accID);
+    uint256[] memory kamiIDs = LibAccount.getKamis(components, accID);
     uint256 nodeID = LibNode.getByIndex(components, 30);
 
     // enslavement

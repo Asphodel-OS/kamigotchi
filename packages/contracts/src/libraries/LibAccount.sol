@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { TypeLib } from "solecs/components/types/standard.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID, addressToEntity } from "solecs/utils.sol";
@@ -242,12 +243,16 @@ library LibAccount {
   }
 
   // Get kamis owned
-  function getKamisOwned(
-    IUintComp components,
-    uint256 accID
-  ) internal view returns (uint256[] memory) {
+  function getKamis(IUintComp components, uint256 accID) internal view returns (uint256[] memory) {
     return
       IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).getEntitiesWithValue(accID);
+  }
+
+  function getNumKamis(IUintComp components, uint256 accID) internal view returns (uint256) {
+    return
+      IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).size(
+        TypeLib.encodeUint256(accID)
+      );
   }
 
   //////////////////

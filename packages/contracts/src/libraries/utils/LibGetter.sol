@@ -55,10 +55,12 @@ library LibGetter {
       balance = LibInventory.getBalanceOf(components, id, index);
     } else if (_type.eq("LEVEL")) {
       balance = LibExperience.getLevel(components, id);
+    } else if (_type.eq("KAMI_NUM_OWNED")) {
+      balance = LibAccount.getNumKamis(components, id);
     } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
-      balance = getTopLevel(components, LibAccount.getKamisOwned(components, id));
+      balance = getTopLevel(components, LibAccount.getKamis(components, id));
     } else if (_type.eq("KAMI_LEVEL_QUANTITY")) {
-      balance = getMinLevelAmt(components, LibAccount.getKamisOwned(components, id), index);
+      balance = getMinLevelAmt(components, LibAccount.getKamis(components, id), index);
     } else if (_type.eq("SKILL")) {
       balance = LibSkill.getPointsOf(components, id, index);
     } else if (_type.eq("REPUTATION")) {
