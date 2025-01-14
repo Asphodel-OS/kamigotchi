@@ -3,9 +3,9 @@ import { World, getComponentValue } from '@mud-classic/recs';
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { queryAll } from '../../shapes/Account/queries';
+import { getData } from '../../shapes/Data';
 import { getReputation } from '../../shapes/Faction';
 import { getItemBalance } from '../../shapes/Item';
-import { getData } from '../../shapes/utils';
 
 // return the total coin collected stats of all accounts
 export const getCoinStats = (world: World, components: Components, limit = 200, flatten = true) => {

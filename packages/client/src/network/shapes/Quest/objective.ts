@@ -12,7 +12,8 @@ import {
   getCondition,
   parseTargetShape,
 } from '../Conditional';
-import { genID, getData, getEntityByHash, queryChildrenOf } from '../utils';
+import { getData } from '../Data';
+import { genID, getEntityByHash, queryChildrenOf } from '../utils';
 import { Quest } from './quest';
 
 /////////////////

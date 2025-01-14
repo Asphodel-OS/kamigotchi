@@ -1,23 +1,8 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
 
 import { Components } from 'network/';
-import { getEntityByHash } from './IDs';
-
-// unpack a uint32[8] array from a config uint256
-export const unpackArray32 = (packed: BigNumber | number): number[] => {
-  packed = BigNumber.from(packed);
-  const result = [];
-  for (let i = 0; i < 8; i++) {
-    // mask to current
-    const curr = packed.and(BigNumber.from(1).shl(32).sub(1));
-    // push to array
-    result.push(curr.toNumber());
-    // updated packed
-    packed = packed.shr(32);
-  }
-  return result.reverse();
-};
+import { unpackArray32 } from './utils';
+import { getEntityByHash } from './utils/IDs';
 
 // get a DataEntity for an account
 export const getData = (
@@ -58,6 +43,9 @@ export const _getData = (
   }
   return getComponentValue(Value, configEntityIndex)?.value as number;
 };
+
+//////////////////
+// UTILS
 
 const getEntityIndex = (
   world: any,

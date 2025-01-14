@@ -1,6 +1,5 @@
 export { genID, queryChildrenOf } from './children';
 export { canReveal, filterRevealable } from './commits';
-export { getData, getDataArray, unpackArray32 } from './data';
 export { getBalance, getBool, getInventoryBalance } from './getter';
 export { getEntityByHash, hashArgs } from './IDs';
 export {
@@ -10,6 +9,7 @@ export {
   getSkillImage,
   getStatImage,
 } from './images';
+export { unpackArray32 } from './packing';
 export {
   getDescribedEntity,
   parseKamiStateFromIndex,

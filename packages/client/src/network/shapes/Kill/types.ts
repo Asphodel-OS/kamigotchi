@@ -2,9 +2,9 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { getDataArray } from '../Data';
 import { BaseKami, getBaseKami } from '../Kami';
 import { BaseNode, getBaseNodeByIndex } from '../Node';
-import { getDataArray } from '../utils';
 
 // standardized Object shape of a KillLog Entity
 export interface KillLog {

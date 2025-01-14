@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/components';
-import { getData } from '../utils';
+import { getData } from '../Data';
 
 export interface Stats {
   kills: number;
