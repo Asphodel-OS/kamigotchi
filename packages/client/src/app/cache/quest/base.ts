@@ -32,7 +32,7 @@ export const updateAll = (world: World, components: Components, requestSize: num
   lastRequestSize = requestSize;
   queryQuests(components, {}).map((entityIndex) => {
     const quest = get(world, components, entityIndex, lastRequestSize);
-    quest.meetsObjectives = meetsRequirements(quest);
+    quest.meetsRequirements = meetsRequirements(quest);
     quest.meetsObjectives = meetsObjectives(quest);
   });
 };
