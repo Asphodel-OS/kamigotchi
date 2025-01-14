@@ -2,6 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import { getQuestCache } from 'app/cache/quest';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
@@ -13,7 +14,6 @@ import {
   filterQuestsByAvailable,
   filterQuestsByNotObjective,
   filterQuestsByObjective,
-  getBaseQuest,
   parseQuestObjectives,
   parseQuestRequirements,
   parseQuestStatus,
@@ -50,13 +50,13 @@ export function registerQuestsModal() {
           });
 
           const registry = queryRegistryQuests(components).map((entity) =>
-            getBaseQuest(world, components, entity)
+            getQuestCache(world, components, entity, network.actions.requestsSize())
           );
           const completed = queryCompletedQuests(components, account.id).map((entity) =>
-            getBaseQuest(world, components, entity)
+            getQuestCache(world, components, entity, network.actions.requestsSize())
           );
           const ongoing = queryOngoingQuests(components, account.id).map((entity) =>
-            getBaseQuest(world, components, entity)
+            getQuestCache(world, components, entity, network.actions.requestsSize())
           );
 
           return {
@@ -73,7 +73,8 @@ export function registerQuestsModal() {
             utils: {
               describeEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
-              getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
+              getBase: (entity: EntityIndex) =>
+                getQuestCache(world, components, entity, network.actions.requestsSize()),
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, account.id, index),
               filterByAvailable: (
@@ -123,7 +124,7 @@ export function registerQuestsModal() {
 
         isUpdating.current = false;
       }, [modals.quests, registry.length, completed.length, ongoing.length]);
-
+      console.log(`registry length: ${registry.length}`);
       // update the Notifications when the number of available quests changes
       useEffect(() => {
         updateNotifications();

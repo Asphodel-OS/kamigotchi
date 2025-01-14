@@ -24,6 +24,7 @@ export {
   queryCompleted as queryCompletedQuests,
   queryOngoing as queryOngoingQuests,
   queryInstance as queryQuestInstance,
+  query as queryQuests,
   queryRegistry as queryRegistryQuests,
 } from './queries';
 export {

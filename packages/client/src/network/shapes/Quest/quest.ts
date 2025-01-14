@@ -3,6 +3,7 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 import { Components } from 'network/';
 import { Allo } from '../Allo';
 import { getEntityByHash } from '../utils';
+import { meetsObjectives, meetsRequirements } from './functions';
 import { Objective, getObjectives } from './objective';
 import { query } from './queries';
 import { Requirement, getRequirements } from './requirement';
@@ -29,6 +30,8 @@ export interface Quest extends BaseQuest {
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Allo[];
+  meetsRequirements: boolean;
+  meetsObjectives: boolean;
 }
 
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
@@ -59,15 +62,19 @@ export const getBase = (world: World, components: Components, entity: EntityInde
 export const populate = (world: World, components: Components, base: BaseQuest): Quest => {
   const { IsComplete, StartTime } = components;
   const entity = base.entity;
-
-  return {
+  const quest = {
     ...base,
     startTime: (getComponentValue(StartTime, entity)?.value ?? 0) as number,
     complete: hasComponent(IsComplete, entity),
     requirements: getRequirements(world, components, base.index),
     objectives: getObjectives(world, components, base.index),
     rewards: getRewards(world, components, base.index),
+    meetsRequirements: false,
+    meetsObjectives: false,
   };
+  quest.meetsRequirements = meetsRequirements(quest);
+  quest.meetsObjectives = meetsObjectives(quest);
+  return quest;
 };
 
 /////////////////
