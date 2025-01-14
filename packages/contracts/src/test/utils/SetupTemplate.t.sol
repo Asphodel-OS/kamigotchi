@@ -71,7 +71,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpTokens() public virtual {
     vm.startPrank(deployer);
     _Kami721 = Kami721(LibDeployTokens.deployKami721(world, components));
-    _Onyx = OpenMintable(LibDeployTokens.deployOnyx20(world, components));
+    _Onyx = OpenMintable(LibDeployTokens.deployOnyx20(world, components, deployer));
     vm.stopPrank();
   }
 

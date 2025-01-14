@@ -10,7 +10,7 @@ contract ChatTest is SetupTemplate {
     vm.roll(_currBlock++);
   }
 
-  function _sendMessage(bytes memory message, uint256 index) internal {
+  function _sendMessage(string memory message, uint256 index) internal {
     address senderAddr = _getOperator(index);
 
     vm.prank(senderAddr);
