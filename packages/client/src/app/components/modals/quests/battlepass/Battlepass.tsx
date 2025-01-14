@@ -5,7 +5,7 @@ import { ProgressBar } from 'app/components/library/base/measures/ProgressBar';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { parseConditionalUnits } from 'network/shapes/Conditional/interpretation';
-import { meetsRequirements, Quest } from 'network/shapes/Quest';
+import { Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { calcPercentCompletion } from 'utils/math';
@@ -77,7 +77,7 @@ export const Battlepass = (props: Props) => {
   const isAvailable = (quest: Quest) => {
     if (isComplete(quest) || isOngoing(quest)) return false;
     const need = getRepRequirement(quest);
-    return currRep >= need && meetsRequirements(quest);
+    return currRep >= need && quest.meetsRequirements;
   };
 
   const isCompletable = (quest: Quest) => {
