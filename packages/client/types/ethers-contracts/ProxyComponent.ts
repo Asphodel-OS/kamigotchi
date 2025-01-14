@@ -28,8 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ProxyPermissionsERC721ComponentInterface
-  extends utils.Interface {
+export interface ProxyComponentInterface extends utils.Interface {
   functions: {
     "adminFreeze()": FunctionFragment;
     "authorizeWriter(address)": FunctionFragment;
@@ -345,12 +344,12 @@ export type UnauthorizedWriterEvent = TypedEvent<
 export type UnauthorizedWriterEventFilter =
   TypedEventFilter<UnauthorizedWriterEvent>;
 
-export interface ProxyPermissionsERC721Component extends BaseContract {
+export interface ProxyComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ProxyPermissionsERC721ComponentInterface;
+  interface: ProxyComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -121,6 +121,7 @@ export type { OwnedByEntityComponent } from "./OwnedByEntityComponent";
 export type { PositionComponent } from "./PositionComponent";
 export type { PowerComponent } from "./PowerComponent";
 export type { PrototypeTagComponent } from "./PrototypeTagComponent";
+export type { ProxyComponent } from "./ProxyComponent";
 export type { ProxyPermissionsERC721Component } from "./ProxyPermissionsERC721Component";
 export type { QuestAcceptSystem } from "./QuestAcceptSystem";
 export type { QuestCompleteSystem } from "./QuestCompleteSystem";
@@ -310,6 +311,7 @@ export { OwnedByEntityComponent__factory } from "./factories/OwnedByEntityCompon
 export { PositionComponent__factory } from "./factories/PositionComponent__factory";
 export { PowerComponent__factory } from "./factories/PowerComponent__factory";
 export { PrototypeTagComponent__factory } from "./factories/PrototypeTagComponent__factory";
+export { ProxyComponent__factory } from "./factories/ProxyComponent__factory";
 export { ProxyPermissionsERC721Component__factory } from "./factories/ProxyPermissionsERC721Component__factory";
 export { QuestAcceptSystem__factory } from "./factories/QuestAcceptSystem__factory";
 export { QuestCompleteSystem__factory } from "./factories/QuestCompleteSystem__factory";
