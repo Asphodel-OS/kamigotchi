@@ -110,19 +110,7 @@
     },
     {
       "name": "_ListingRegistrySystem",
-      "writeAccess": [
-        "EntityType",
-        "IDParent",
-        "Index",
-        "IndexItem",
-        "IndexNPC",
-        "Balance",
-        "LogicType",
-        "TimeStart",
-        "Type",
-        "Value",
-        "Subtype"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_NodeRegistrySystem",
@@ -319,6 +307,7 @@
         "IDType",
         "Index",
         "IndexItem",
+        "Balance",
         "TimeLast",
         "Type",
         "Value"
@@ -326,7 +315,7 @@
     },
     {
       "name": "ListingSellSystem",
-      "writeAccess": ["IdHolder", "Index", "TimeLast", "Type", "Value"]
+      "writeAccess": ["IdHolder", "Index", "Balance", "TimeLast", "Type", "Value"]
     },
     {
       "name": "Kami721IsInWorldSystem",
