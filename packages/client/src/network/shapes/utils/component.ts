@@ -10,11 +10,25 @@ export const getBalance = (components: Components, entity: EntityIndex): number 
   return (result ?? 0) * 1;
 };
 
+export const getCompound = (components: Components, entity: EntityIndex, precision = 6): number => {
+  const { Compound } = components;
+  const result = getComponentValue(Compound, entity)?.value;
+  if (result === undefined) console.warn('getCompound(): undefined for entity', entity);
+  return ((result ?? 0) * 1.0) / 10 ** precision;
+};
+
 export const getCost = (components: Components, entity: EntityIndex): number => {
   const { Cost } = components;
   const result = getComponentValue(Cost, entity)?.value;
   if (result === undefined) console.warn('getCost(): undefined for entity', entity);
   return (result ?? 0) * 1;
+};
+
+export const getDecay = (components: Components, entity: EntityIndex, precision = 6): number => {
+  const { Decay } = components;
+  const result = getComponentValue(Decay, entity)?.value;
+  if (result === undefined) console.warn('getDecay(): undefined for entity', entity);
+  return ((result ?? 0) * 1.0) / 10 ** precision;
 };
 
 export const getDescription = (components: Components, entity: EntityIndex): string => {
@@ -80,11 +94,11 @@ export const getRerolls = (components: Components, entity: EntityIndex): number 
 };
 
 // assume scale is always defined with 3 decimals
-export const getScale = (components: Components, entity: EntityIndex): number => {
+export const getScale = (components: Components, entity: EntityIndex, precision = 3): number => {
   const { Scale } = components;
   const result = getComponentValue(Scale, entity)?.value;
   if (result === undefined) console.warn('getScale(): undefined for entity', entity);
-  return ((result ?? 0) * 1.0) / 1e3;
+  return ((result ?? 0) * 1.0) / 10 ** precision;
 };
 
 export const getSkillPoints = (components: Components, entity: EntityIndex): number => {

@@ -127,10 +127,12 @@ library LibListingRegistry {
     setType(components, ptr, "FIXED");
   }
 
+  // set the requisite pricing variables for GDA price
+  // compound: 1e6 precision -- decay: 1e6 precision
   function setBuyGDA(IUintComp components, uint256 id, int32 compound, int32 decay) internal {
     uint256 ptr = genBuyID(id);
     setType(components, ptr, "GDA");
-    require(compound >= 0, "LibListingRegistry: compound must be positive");
+    require(compound >= 1e6, "LibListingRegistry: compound > 1 required");
     require(decay >= 0, "LibListingRegistry: decay must be positive");
     CompoundComponent(getAddrByID(components, CompoundCompID)).set(ptr, compound);
     DecayComponent(getAddrByID(components, DecayCompID)).set(ptr, decay);
