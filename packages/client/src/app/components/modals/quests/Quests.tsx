@@ -2,7 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { getQuestCache } from 'app/cache/quest';
+import { getQuest } from 'app/cache/quest';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
@@ -50,13 +50,13 @@ export function registerQuestsModal() {
           });
 
           const registry = queryRegistryQuests(components).map((entity) =>
-            getQuestCache(world, components, entity, network.actions.requestsSize())
+            getQuest(world, components, entity, network.actions.requestsSize())
           );
           const completed = queryCompletedQuests(components, account.id).map((entity) =>
-            getQuestCache(world, components, entity, network.actions.requestsSize())
+            getQuest(world, components, entity, network.actions.requestsSize())
           );
           const ongoing = queryOngoingQuests(components, account.id).map((entity) =>
-            getQuestCache(world, components, entity, network.actions.requestsSize())
+            getQuest(world, components, entity, network.actions.requestsSize())
           );
 
           return {
@@ -74,7 +74,7 @@ export function registerQuestsModal() {
               describeEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
               getBase: (entity: EntityIndex) =>
-                getQuestCache(world, components, entity, network.actions.requestsSize()),
+                getQuest(world, components, entity, network.actions.requestsSize()),
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, account.id, index),
               filterByAvailable: (

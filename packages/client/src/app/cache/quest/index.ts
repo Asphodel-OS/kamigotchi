@@ -1,1 +1,1 @@
-export { get as getQuestCache, process as processQuest } from './base';
+export { get as getQuest, process as processQuest } from './base';
