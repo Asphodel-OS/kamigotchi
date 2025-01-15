@@ -39,13 +39,13 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "remove(uint32,uint32)": FunctionFragment;
+    "removeBuy(uint32,uint32)": FunctionFragment;
+    "removeSell(uint32,uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "setBuyFixed(uint256)": FunctionFragment;
     "setBuyFixed(uint32,uint32)": FunctionFragment;
-    "setSellFixed(uint256)": FunctionFragment;
+    "setBuyGDA(uint32,uint32,int32,int32)": FunctionFragment;
     "setSellFixed(uint32,uint32)": FunctionFragment;
-    "setSellScaled(uint256,int32)": FunctionFragment;
     "setSellScaled(uint32,uint32,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -61,14 +61,14 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "remove"
+      | "removeBuy"
+      | "removeSell"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "setBuyFixed(uint256)"
-      | "setBuyFixed(uint32,uint32)"
-      | "setSellFixed(uint256)"
-      | "setSellFixed(uint32,uint32)"
-      | "setSellScaled(uint256,int32)"
-      | "setSellScaled(uint32,uint32,int32)"
+      | "setBuyFixed"
+      | "setBuyGDA"
+      | "setSellFixed"
+      | "setSellScaled"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -103,6 +103,14 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeBuy",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeSell",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -111,27 +119,24 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setBuyFixed(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setBuyFixed(uint32,uint32)",
+    functionFragment: "setBuyFixed",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSellFixed(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "setBuyGDA",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSellFixed(uint32,uint32)",
+    functionFragment: "setSellFixed",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSellScaled(uint256,int32)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSellScaled(uint32,uint32,int32)",
+    functionFragment: "setSellScaled",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -164,6 +169,8 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "removeBuy", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "removeSell", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -173,27 +180,16 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBuyFixed(uint256)",
+    functionFragment: "setBuyFixed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setBuyGDA", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setSellFixed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBuyFixed(uint32,uint32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSellFixed(uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSellFixed(uint32,uint32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSellScaled(uint256,int32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSellScaled(uint32,uint32,int32)",
+    functionFragment: "setSellScaled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -322,6 +318,18 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeBuy(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeSell(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -330,35 +338,27 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setBuyFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "setBuyFixed(uint32,uint32)"(
+    setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setSellFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
+    setBuyGDA(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      compound: PromiseOrValue<BigNumberish>,
+      decay: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setSellFixed(uint32,uint32)"(
+    setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setSellScaled(uint256,int32)"(
-      id: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "setSellScaled(uint32,uint32,int32)"(
+    setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
@@ -412,6 +412,18 @@ export interface _ListingRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeBuy(
+    npcIndex: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeSell(
+    npcIndex: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -420,35 +432,27 @@ export interface _ListingRegistrySystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setBuyFixed(uint256)"(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "setBuyFixed(uint32,uint32)"(
+  setBuyFixed(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setSellFixed(uint256)"(
-    id: PromiseOrValue<BigNumberish>,
+  setBuyGDA(
+    npcIndex: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
+    compound: PromiseOrValue<BigNumberish>,
+    decay: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setSellFixed(uint32,uint32)"(
+  setSellFixed(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setSellScaled(uint256,int32)"(
-    id: PromiseOrValue<BigNumberish>,
-    scale: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "setSellScaled(uint32,uint32,int32)"(
+  setSellScaled(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     scale: PromiseOrValue<BigNumberish>,
@@ -498,39 +502,43 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    removeBuy(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeSell(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
-    "setBuyFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setBuyFixed(uint32,uint32)"(
+    setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setSellFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
+    setBuyGDA(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      compound: PromiseOrValue<BigNumberish>,
+      decay: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setSellFixed(uint32,uint32)"(
+    setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setSellScaled(uint256,int32)"(
-      id: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setSellScaled(uint32,uint32,int32)"(
+    setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
@@ -613,6 +621,18 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeBuy(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeSell(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -621,35 +641,27 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setBuyFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "setBuyFixed(uint32,uint32)"(
+    setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setSellFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
+    setBuyGDA(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      compound: PromiseOrValue<BigNumberish>,
+      decay: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setSellFixed(uint32,uint32)"(
+    setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setSellScaled(uint256,int32)"(
-      id: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "setSellScaled(uint32,uint32,int32)"(
+    setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
@@ -704,6 +716,18 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    removeBuy(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeSell(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -712,35 +736,27 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBuyFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setBuyFixed(uint32,uint32)"(
+    setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setSellFixed(uint256)"(
-      id: PromiseOrValue<BigNumberish>,
+    setBuyGDA(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      compound: PromiseOrValue<BigNumberish>,
+      decay: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setSellFixed(uint32,uint32)"(
+    setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setSellScaled(uint256,int32)"(
-      id: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setSellScaled(uint32,uint32,int32)"(
+    setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,

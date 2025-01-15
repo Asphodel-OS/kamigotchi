@@ -8,6 +8,8 @@ import { getAddrByID } from "solecs/utils.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { CompoundComponent, ID as CompoundCompID } from "components/CompoundComponent.sol";
+import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
 import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -87,6 +89,8 @@ library LibListingRegistry {
     uint256 ptr = genBuyID(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ptr);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ptr);
+    CompoundComponent(getAddrByID(components, CompoundCompID)).remove(ptr);
+    DecayComponent(getAddrByID(components, DecayCompID)).remove(ptr);
   }
 
   /// @notice remove the sell pricing
@@ -121,6 +125,15 @@ library LibListingRegistry {
   function setBuyFixed(IUintComp components, uint256 id) internal {
     uint256 ptr = genBuyID(id);
     setType(components, ptr, "FIXED");
+  }
+
+  function setBuyGDA(IUintComp components, uint256 id, int32 compound, int32 decay) internal {
+    uint256 ptr = genBuyID(id);
+    setType(components, ptr, "GDA");
+    require(compound >= 0, "LibListingRegistry: compound must be positive");
+    require(decay >= 0, "LibListingRegistry: decay must be positive");
+    CompoundComponent(getAddrByID(components, CompoundCompID)).set(ptr, compound);
+    DecayComponent(getAddrByID(components, DecayCompID)).set(ptr, decay);
   }
 
   // set the sell price of a listing as the Value of the Listing Entity

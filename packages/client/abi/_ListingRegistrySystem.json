@@ -146,6 +146,42 @@
     },
     {
       "type": "function",
+      "name": "removeBuy",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "removeSell",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -163,19 +199,6 @@
       "name": "setBuyFixed",
       "inputs": [
         {
-          "name": "id",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setBuyFixed",
-      "inputs": [
-        {
           "name": "npcIndex",
           "type": "uint32",
           "internalType": "uint32"
@@ -191,20 +214,7 @@
     },
     {
       "type": "function",
-      "name": "setSellFixed",
-      "inputs": [
-        {
-          "name": "id",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setSellFixed",
+      "name": "setBuyGDA",
       "inputs": [
         {
           "name": "npcIndex",
@@ -215,24 +225,34 @@
           "name": "itemIndex",
           "type": "uint32",
           "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setSellScaled",
-      "inputs": [
-        {
-          "name": "id",
-          "type": "uint256",
-          "internalType": "uint256"
         },
         {
-          "name": "scale",
+          "name": "compound",
           "type": "int32",
           "internalType": "int32"
+        },
+        {
+          "name": "decay",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setSellFixed",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
         }
       ],
       "outputs": [],
@@ -356,13 +376,13 @@
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "remove(uint32,uint32)": "31f3666c",
+    "removeBuy(uint32,uint32)": "86477dd5",
+    "removeSell(uint32,uint32)": "b2ba303a",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setBuyFixed(uint256)": "108cc5c0",
     "setBuyFixed(uint32,uint32)": "4ebee436",
-    "setSellFixed(uint256)": "0fce74a0",
+    "setBuyGDA(uint32,uint32,int32,int32)": "2cc5a3b5",
     "setSellFixed(uint32,uint32)": "36a8a6f4",
-    "setSellScaled(uint256,int32)": "015a1827",
     "setSellScaled(uint32,uint32,int32)": "cb868db8",
     "transferOwnership(address)": "f2fde38b"
   }
