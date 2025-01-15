@@ -18,6 +18,7 @@ import grace_potion from './grace_potion.png';
 import greater_xp_potion from './greater_xp_potion.png';
 import holy_dust from './holy_dust.png';
 import ice_cream from './ice_cream.png';
+import initia_icon from './initia_icon.png';
 import kami_mochi from './kami_mochi.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import mana_mochi from './mana_mochi.png';
@@ -53,6 +54,7 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
+  initia: initia_icon,
   giftbox: agency_giftbox,
   astrolabe_disk: astrolabe_disk,
   better_ice_cream: better_ice_cream,
