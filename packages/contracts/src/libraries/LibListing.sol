@@ -14,7 +14,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibCurve } from "libraries/utils/LibCurve.sol";
+import { LibCurve, GDAParams } from "libraries/utils/LibCurve.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
@@ -98,20 +98,15 @@ library LibListing {
     if (type_.eq("FIXED")) {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
     } else if (type_.eq("GDA")) {
-      uint256 targetPrice = ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(id);
-      uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id);
-      int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
-      int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID);
-      int32 decay = DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID);
-
-      int256 costWad = LibCurve.calcGDA(
-        targetPrice,
-        startTs,
-        int256(scale) * 1e12,
-        int256(decay) * 1e12,
-        balance.toUint256(),
+      GDAParams memory params = GDAParams(
+        ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(id),
+        TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id),
+        int256(ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID)) * 1e12,
+        int256(DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID)) * 1e12,
+        BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256(),
         amt
       );
+      int256 costWad = LibCurve.calcGDA(params);
       require(costWad >= 0, "LibListing: negative GDA cost");
       return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
     } else revert("LibListing: invalid buy type");

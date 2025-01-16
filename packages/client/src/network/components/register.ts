@@ -22,7 +22,6 @@ export function createComponents(world: World) {
     Blacklist: defineNumberArrayComponent(world, 'Blacklist', 'component.blacklist'),
     RevealBlock: defineNumberComponent(world, 'RevealBlock', 'component.block.reveal'),
     OperatorCache: defineNumberComponent(world, 'OperatorCache', 'component.cache.operator'),
-    Compound: defineNumberComponent(world, 'Compound', 'component.compound'),
     Cost: defineNumberComponent(world, 'Cost', 'component.cost'),
     Decay: defineNumberComponent(world, 'Decay', 'component.decay'),
     DescriptionAlt: defineStringComponent(world, 'DescriptionAlt', 'component.description.alt'),

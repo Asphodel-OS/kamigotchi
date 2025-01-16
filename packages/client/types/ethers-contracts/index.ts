@@ -20,7 +20,6 @@ export type { BoolBareComponent } from "./BoolBareComponent";
 export type { BoolComponent } from "./BoolComponent";
 export type { CacheOperatorComponent } from "./CacheOperatorComponent";
 export type { ChatSystem } from "./ChatSystem";
-export type { CompoundComponent } from "./CompoundComponent";
 export type { ControlledBridgeSystem } from "./ControlledBridgeSystem";
 export type { CoordComponent } from "./CoordComponent";
 export type { CostComponent } from "./CostComponent";
@@ -212,7 +211,6 @@ export { BoolBareComponent__factory } from "./factories/BoolBareComponent__facto
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";
 export { CacheOperatorComponent__factory } from "./factories/CacheOperatorComponent__factory";
 export { ChatSystem__factory } from "./factories/ChatSystem__factory";
-export { CompoundComponent__factory } from "./factories/CompoundComponent__factory";
 export { ControlledBridgeSystem__factory } from "./factories/ControlledBridgeSystem__factory";
 export { CoordComponent__factory } from "./factories/CoordComponent__factory";
 export { CostComponent__factory } from "./factories/CostComponent__factory";
