@@ -22,6 +22,7 @@ import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem"
 import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
+import { AccountSetPFPSystem } from "./ethers-contracts/AccountSetPFPSystem";
 import { AccountUseItemSystem } from "./ethers-contracts/AccountUseItemSystem";
 import { ChatSystem } from "./ethers-contracts/ChatSystem";
 import { CraftSystem } from "./ethers-contracts/CraftSystem";
@@ -90,6 +91,7 @@ export type SystemTypes = {
   "system.account.set.farcaster": AccountSetFarcasterDataSystem;
   "system.account.set.name": AccountSetNameSystem;
   "system.account.set.operator": AccountSetOperatorSystem;
+  "system.account.set.pfp": AccountSetPFPSystem;
   "system.account.use.item": AccountUseItemSystem;
   "system.chat": ChatSystem;
   "system.craft": CraftSystem;

@@ -218,16 +218,20 @@
       ]
     },
     {
-      "name": "AccountSetNameSystem",
-      "writeAccess": ["Name", "TimeLast"]
+      "name": "AccountSetFarcasterDataSystem",
+      "writeAccess": ["FarcasterIndex", "MediaURI", "TimeLast"]
     },
     {
       "name": "AccountSetOperatorSystem",
       "writeAccess": ["AddressOperator", "CacheOperator", "TimeLast"]
     },
     {
-      "name": "AccountSetFarcasterDataSystem",
-      "writeAccess": ["FarcasterIndex", "MediaURI", "TimeLast"]
+      "name": "AccountSetPFPSystem",
+      "writeAccess": ["MediaURI", "TimeLast"]
+    },
+    {
+      "name": "AccountSetNameSystem",
+      "writeAccess": ["Name", "TimeLast"]
     },
     {
       "name": "ChatSystem",

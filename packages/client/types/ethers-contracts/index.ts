@@ -7,6 +7,7 @@ export type { AccountRegisterSystem } from "./AccountRegisterSystem";
 export type { AccountSetFarcasterDataSystem } from "./AccountSetFarcasterDataSystem";
 export type { AccountSetNameSystem } from "./AccountSetNameSystem";
 export type { AccountSetOperatorSystem } from "./AccountSetOperatorSystem";
+export type { AccountSetPFPSystem } from "./AccountSetPFPSystem";
 export type { AccountUseItemSystem } from "./AccountUseItemSystem";
 export type { AddressBareComponent } from "./AddressBareComponent";
 export type { AddressComponent } from "./AddressComponent";
@@ -197,6 +198,7 @@ export { AccountRegisterSystem__factory } from "./factories/AccountRegisterSyste
 export { AccountSetFarcasterDataSystem__factory } from "./factories/AccountSetFarcasterDataSystem__factory";
 export { AccountSetNameSystem__factory } from "./factories/AccountSetNameSystem__factory";
 export { AccountSetOperatorSystem__factory } from "./factories/AccountSetOperatorSystem__factory";
+export { AccountSetPFPSystem__factory } from "./factories/AccountSetPFPSystem__factory";
 export { AccountUseItemSystem__factory } from "./factories/AccountUseItemSystem__factory";
 export { AddressBareComponent__factory } from "./factories/AddressBareComponent__factory";
 export { AddressComponent__factory } from "./factories/AddressComponent__factory";

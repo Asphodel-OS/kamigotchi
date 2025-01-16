@@ -22,6 +22,7 @@ import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSyst
 import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
+import AccountSetPFPSystem from "../../../../../client/abi/AccountSetPFPSystem.json";
 import AccountUseItemSystem from "../../../../../client/abi/AccountUseItemSystem.json";
 import ChatSystem from "../../../../../client/abi/ChatSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
@@ -90,6 +91,7 @@ export const SystemAbis = {
   "system.account.set.farcaster": AccountSetFarcasterDataSystem.abi,
   "system.account.set.name": AccountSetNameSystem.abi,
   "system.account.set.operator": AccountSetOperatorSystem.abi,
+  "system.account.set.pfp": AccountSetPFPSystem.abi,
   "system.account.use.item": AccountUseItemSystem.abi,
   "system.chat": ChatSystem.abi,
   "system.craft": CraftSystem.abi,

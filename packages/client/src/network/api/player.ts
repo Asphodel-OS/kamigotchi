@@ -69,6 +69,15 @@ export function createPlayerAPI(systems: any) {
     return systems['system.account.register'].executeTyped(operatorAddress, name);
   }
 
+  // @dev set the Farcaster-associated data for an account
+  function setAccountFarcasterData(fid: number, imageURI: string) {
+    return systems['system.account.set.farcaster'].executeTyped(fid, imageURI);
+  }
+
+  function setAccountPFP(kamiID: BigNumberish) {
+    return systems['system.account.set.pfp'].executeTyped(kamiID);
+  }
+
   // @dev renames account. should be called by Owner EOA
   // @param name       name
   function setAccountName(name: string) {
@@ -79,11 +88,6 @@ export function createPlayerAPI(systems: any) {
   // @param operatorAddress   address of the Operator wallet
   function setAccountOperator(operatorAddress: BigNumberish) {
     return systems['system.account.set.operator'].executeTyped(operatorAddress);
-  }
-
-  // @dev set the Farcaster-associated data for an account
-  function setAccountFarcasterData(fid: number, imageURI: string) {
-    return systems['system.account.set.farcaster'].executeTyped(fid, imageURI);
   }
 
   /////////////////
@@ -323,6 +327,7 @@ export function createPlayerAPI(systems: any) {
         farcaster: setAccountFarcasterData,
         name: setAccountName,
         operator: setAccountOperator,
+        pfp: setAccountPFP,
       },
       use: {
         item: useItemAccount,
