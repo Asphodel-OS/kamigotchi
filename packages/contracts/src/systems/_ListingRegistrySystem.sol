@@ -39,6 +39,14 @@ contract _ListingRegistrySystem is System {
     LibListingRegistry.remove(components, id);
   }
 
+  // refresh a listing's tracked balance and start time
+  // optionally update the target value if a non-zero value is provided
+  function refresh(uint32 npcIndex, uint32 itemIndex, uint256 value) public onlyOwner {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+    LibListingRegistry.refresh(components, id, value);
+  }
+
   /////////////////
   // PRICING
 
@@ -105,7 +113,7 @@ contract _ListingRegistrySystem is System {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
 
-    LibListingRegistry.createRequirement(
+    LibListingRegistry.setRequirement(
       world,
       components,
       id,

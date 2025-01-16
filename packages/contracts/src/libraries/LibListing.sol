@@ -107,7 +107,7 @@ library LibListing {
         amt
       );
       int256 costWad = LibCurve.calcGDA(params);
-      require(costWad >= 0, "LibListing: negative GDA cost");
+      require(costWad > 0, "LibListing: negative GDA cost");
       return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
     } else revert("LibListing: invalid buy type");
   }
@@ -125,7 +125,6 @@ library LibListing {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
     } else if (type_.eq("SCALED")) {
       int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(sellID);
-      if (scale > 1e3 || scale < 0) revert("LibListing: invalid sell scale");
       return (calcBuyPrice(comps, id, amt) * scale.toUint256()) / 1e3;
     } else revert("LibListing: invalid sell type");
   }
