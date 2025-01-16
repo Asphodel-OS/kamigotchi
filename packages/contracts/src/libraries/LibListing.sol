@@ -102,7 +102,7 @@ library LibListing {
         ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(id),
         TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id),
         int256(ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID)) * 1e12,
-        int256(DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID)) * 1e12,
+        int256(DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID)) * 1e9,
         BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256(),
         amt
       );

@@ -104,17 +104,21 @@ library LibListingRegistry {
   //////////////////
   // SETTERS
 
+  function setType(IUintComp comps, uint256 id, string memory type_) internal {
+    TypeComponent(getAddrByID(comps, TypeCompID)).set(id, type_);
+  }
+
   // set the buy price of a listing as the Value of the Listing Entity
   function setBuyFixed(IUintComp comps, uint256 id) internal {
     uint256 ptr = genBuyID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(ptr, "FIXED");
+    setType(comps, ptr, "FIXED");
   }
 
   // set the requisite pricing variables for GDA price
-  // scale: 1e6 precision -- decay: 1e6 precision
+  // scale: 1e6 precision -- decay: 1e9 precision
   function setBuyGDA(IUintComp comps, uint256 id, int32 scale, int32 decay) internal {
     uint256 ptr = genBuyID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(ptr, "GDA");
+    setType(comps, ptr, "GDA");
     require(scale >= 1e6, "LibListingRegistry: compound > 1 required");
     require(decay >= 0, "LibListingRegistry: decay must be positive");
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
@@ -124,7 +128,7 @@ library LibListingRegistry {
   // set the sell price of a listing as the Value of the Listing Entity
   function setSellFixed(IUintComp comps, uint256 id) internal {
     uint256 ptr = genSellID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(ptr, "FIXED");
+    setType(comps, ptr, "FIXED");
   }
 
   // set the sell price of a listing as a scaled value of the buy price
@@ -132,9 +136,9 @@ library LibListingRegistry {
   // NOTE: we ensure interpreted scale within bounds to avoid economic vulns
   function setSellScaled(IUintComp comps, uint256 id, int32 scale) internal {
     uint256 ptr = genSellID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(ptr, "SCALED");
-    require(scale > 1e3, "LibListingRegistry: invalid sell scale > 1");
-    require(scale < 0, "LibListingRegistry: invalid sell scale < 0");
+    setType(comps, ptr, "SCALED");
+    require(scale <= 1e6, "LibListingRegistry: invalid sell scale > 1");
+    require(scale >= 0, "LibListingRegistry: invalid sell scale < 0");
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
   }
 

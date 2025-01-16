@@ -128,6 +128,29 @@
     },
     {
       "type": "function",
+      "name": "refresh",
+      "inputs": [
+        {
+          "name": "npcIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "value",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "remove",
       "inputs": [
         {
@@ -375,6 +398,7 @@
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
+    "refresh(uint32,uint32,uint256)": "218c6a7d",
     "remove(uint32,uint32)": "31f3666c",
     "removeBuy(uint32,uint32)": "86477dd5",
     "removeSell(uint32,uint32)": "b2ba303a",

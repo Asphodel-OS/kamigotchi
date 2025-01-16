@@ -38,6 +38,7 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
+    "refresh(uint32,uint32,uint256)": FunctionFragment;
     "remove(uint32,uint32)": FunctionFragment;
     "removeBuy(uint32,uint32)": FunctionFragment;
     "removeSell(uint32,uint32)": FunctionFragment;
@@ -60,6 +61,7 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
       | "execute"
       | "owner"
       | "ownershipHandoverExpiresAt"
+      | "refresh"
       | "remove"
       | "removeBuy"
       | "removeSell"
@@ -97,6 +99,14 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "refresh",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "remove",
@@ -168,6 +178,7 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     functionFragment: "ownershipHandoverExpiresAt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "refresh", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "removeBuy", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "removeSell", data: BytesLike): Result;
@@ -312,6 +323,13 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
 
+    refresh(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -406,6 +424,13 @@ export interface _ListingRegistrySystem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  refresh(
+    npcIndex: PromiseOrValue<BigNumberish>,
+    itemIndex: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   remove(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
@@ -495,6 +520,13 @@ export interface _ListingRegistrySystem extends BaseContract {
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    refresh(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
@@ -615,6 +647,13 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    refresh(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -708,6 +747,13 @@ export interface _ListingRegistrySystem extends BaseContract {
     ownershipHandoverExpiresAt(
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    refresh(
+      npcIndex: PromiseOrValue<BigNumberish>,
+      itemIndex: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     remove(
