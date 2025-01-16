@@ -8,7 +8,6 @@ import { getAddrByID } from "solecs/utils.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
-import { CompoundComponent, ID as CompoundCompID } from "components/CompoundComponent.sol";
 import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
 import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
@@ -66,6 +65,14 @@ library LibListingRegistry {
     return LibConditional.createFor(world, components, data, genReqAnchor(regID));
   }
 
+  /// @notice refresh a listing's tracking data (balance, start time, value)
+  /// @dev target value is only updated if value != 0
+  function refresh(IUintComp comps, uint256 id, uint256 value) internal {
+    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
+    if (value != 0) ValueComponent(getAddrByID(comps, ValueCompID)).set(id, value);
+  }
+
   /// @notice remove all data associated with a listing
   function remove(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
@@ -75,8 +82,8 @@ library LibListingRegistry {
     TimeStartComponent(getAddrByID(components, TimeStartCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
 
-    removeBuy(components, id);
-    removeSell(components, id);
+    removePrice(components, genBuyID(id));
+    removePrice(components, genSellID(id));
 
     uint256[] memory requirements = LibConditional.queryFor(components, genReqAnchor(id));
     for (uint256 i; i < requirements.length; i++) {
@@ -84,21 +91,12 @@ library LibListingRegistry {
     }
   }
 
-  /// @notice remove the buy pricing
-  function removeBuy(IUintComp components, uint256 id) internal {
-    uint256 ptr = genBuyID(id);
-    TypeComponent(getAddrByID(components, TypeCompID)).remove(ptr);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(ptr);
-    CompoundComponent(getAddrByID(components, CompoundCompID)).remove(ptr);
-    DecayComponent(getAddrByID(components, DecayCompID)).remove(ptr);
-  }
-
-  /// @notice remove the sell pricing
-  function removeSell(IUintComp components, uint256 id) internal {
-    uint256 ptr = genSellID(id);
-    TypeComponent(getAddrByID(components, TypeCompID)).remove(ptr);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(ptr);
-    ScaleComponent(getAddrByID(components, ScaleCompID)).remove(ptr);
+  /// @notice clear out the component entries of a pricing entity
+  function removePrice(IUintComp components, uint256 priceID) internal {
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(priceID);
+    DecayComponent(getAddrByID(components, DecayCompID)).remove(priceID);
+    ScaleComponent(getAddrByID(components, ScaleCompID)).remove(priceID);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(priceID);
   }
 
   /////////////////
@@ -128,13 +126,13 @@ library LibListingRegistry {
   }
 
   // set the requisite pricing variables for GDA price
-  // compound: 1e6 precision -- decay: 1e6 precision
-  function setBuyGDA(IUintComp components, uint256 id, int32 compound, int32 decay) internal {
+  // scale: 1e6 precision -- decay: 1e6 precision
+  function setBuyGDA(IUintComp components, uint256 id, int32 scale, int32 decay) internal {
     uint256 ptr = genBuyID(id);
     setType(components, ptr, "GDA");
-    require(compound >= 1e6, "LibListingRegistry: compound > 1 required");
+    require(scale >= 1e6, "LibListingRegistry: compound > 1 required");
     require(decay >= 0, "LibListingRegistry: decay must be positive");
-    CompoundComponent(getAddrByID(components, CompoundCompID)).set(ptr, compound);
+    ScaleComponent(getAddrByID(components, ScaleCompID)).set(ptr, scale);
     DecayComponent(getAddrByID(components, DecayCompID)).set(ptr, decay);
   }
 

@@ -302,6 +302,9 @@ importers:
       '@openzeppelin/contracts':
         specifier: ^4.9.0
         version: 4.9.6
+      '@prb/math':
+        specifier: ^4.1.0
+        version: 4.1.0
       '@types/minimatch':
         specifier: ^5.1.2
         version: 5.1.2
@@ -3470,9 +3473,9 @@ packages:
       '@noble/hashes': 1.4.0
       '@scure/base': 1.1.5
       '@types/debug': 4.1.12
-      debug: 4.3.4(supports-color@5.5.0)
+      debug: 4.3.6
       pony-cause: 2.1.10
-      semver: 7.6.0
+      semver: 7.6.3
       superstruct: 1.0.4
       uuid: 9.0.1
     transitivePeerDependencies:
@@ -3485,7 +3488,7 @@ packages:
       '@motionone/easing': 10.17.0
       '@motionone/types': 10.17.0
       '@motionone/utils': 10.17.0
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@motionone/dom@10.17.0:
@@ -3496,14 +3499,14 @@ packages:
       '@motionone/types': 10.17.0
       '@motionone/utils': 10.17.0
       hey-listen: 1.0.8
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@motionone/easing@10.17.0:
     resolution: {integrity: sha512-Bxe2wSuLu/qxqW4rBFS5m9tMLOw+QBh8v5A7Z5k4Ul4sTj5jAOfZG5R0bn5ywmk+Fs92Ij1feZ5pmC4TeXA8Tg==}
     dependencies:
       '@motionone/utils': 10.17.0
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@motionone/generators@10.17.0:
@@ -3511,14 +3514,14 @@ packages:
     dependencies:
       '@motionone/types': 10.17.0
       '@motionone/utils': 10.17.0
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@motionone/svelte@10.16.4:
     resolution: {integrity: sha512-zRVqk20lD1xqe+yEDZhMYgftsuHc25+9JSo+r0a0OWUJFocjSV9D/+UGhX4xgJsuwB9acPzXLr20w40VnY2PQA==}
     dependencies:
       '@motionone/dom': 10.17.0
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@motionone/types@10.17.0:
@@ -3530,7 +3533,7 @@ packages:
     dependencies:
       '@motionone/types': 10.17.0
       hey-listen: 1.0.8
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@motionone/vue@10.16.4:
@@ -3538,7 +3541,7 @@ packages:
     deprecated: Motion One for Vue is deprecated. Use Oku Motion instead https://oku-ui.com/motion
     dependencies:
       '@motionone/dom': 10.17.0
-      tslib: 2.6.3
+      tslib: 2.8.1
     dev: false
 
   /@mud-classic/recs@0.0.4:
@@ -4081,6 +4084,10 @@ packages:
 
   /@popperjs/core@2.11.8:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+    dev: false
+
+  /@prb/math@4.1.0:
+    resolution: {integrity: sha512-ef5Xrlh3BeX4xT5/Wi810dpEPq2bYPndRxgFIaKSU1F/Op/s8af03kyom+mfU7gEpvfIZ46xu8W0duiHplbBMg==}
     dev: false
 
   /@privy-io/api-base@1.4.1:
@@ -9919,6 +9926,7 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
+    bundledDependencies: false
 
   /event-emitter@0.3.5:
     resolution: {integrity: sha512-D9rRn9y7kLPnJ+hMq7S/nhvoKwwvVJahBi2BPmx3bvbsEdK3W9ii8cBSGjP+72/LnM4n6fo3+dkCX5FeTQruXA==}
@@ -14488,6 +14496,7 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
+    dev: true
 
   /semver@7.6.3:
     resolution: {integrity: sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==}
@@ -15096,6 +15105,7 @@ packages:
 
   /sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     dev: false
 
   /superstruct@1.0.4:
@@ -15378,10 +15388,6 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
-  /tslib@2.6.3:
-    resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
-    dev: false
 
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}

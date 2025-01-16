@@ -6,11 +6,15 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
 import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ID as ValueCompID } from "components/ValueComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibCurve } from "libraries/utils/LibCurve.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
@@ -27,6 +31,7 @@ library LibListing {
   using LibComp for IUintComp;
   using LibString for string;
   using SafeCastLib for int32;
+  using SafeCastLib for uint256;
 
   // processes a buy for amt of item from a listing to an account. assumes the account already
   // has the appropriate inventory entity
@@ -39,6 +44,7 @@ library LibListing {
   ) internal returns (uint256 total) {
     uint256 price = calcBuyPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid buy price");
+    incBalance(comps, id, amt);
     LibInventory.incFor(comps, accID, itemIndex, amt);
     LibInventory.decFor(comps, accID, MUSU_INDEX, price);
   }
@@ -53,6 +59,7 @@ library LibListing {
   ) internal returns (uint256 total) {
     uint256 price = calcSellPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid sell price");
+    decBalance(comps, id, amt);
     LibInventory.decFor(comps, accID, itemIndex, amt);
     LibInventory.incFor(comps, accID, MUSU_INDEX, price);
   }
@@ -77,6 +84,10 @@ library LibListing {
   /////////////////
   // CALCULATIONS
 
+  // calculate the buy price from the listing entity
+  // NOTE: it's possible we want to consolidate the conditional block into
+  // a single calcPrice() at some point. this would allow us to combine
+  // overlapping cases and target arbitrary entities with SCALE types
   function calcBuyPrice(
     IUintComp comps,
     uint256 id,
@@ -86,6 +97,18 @@ library LibListing {
     string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(buyID);
     if (type_.eq("FIXED")) {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
+    } else if (type_.eq("GDA")) {
+      uint256 targetPrice = ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(id);
+      uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id);
+      int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
+      int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID);
+      int32 decay = DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID);
+      require(scale >= 1e6, "LibListing: invalid scale < 1");
+      require(decay >= 0, "LibListing: invalid decay < 0");
+
+      int256 scaleWad = int256(scale) * 1e12;
+      int256 decayWad = int256(decay) * 1e12;
+      LibCurve.calcGDA(targetPrice, startTs, scaleWad, decayWad, balance.toUint256(), amt);
     } else revert("LibListing: invalid buy type");
   }
 
@@ -109,6 +132,22 @@ library LibListing {
 
   //////////////////
   // DATA LOGGING
+
+  /// @notice increase the balance of a listing by certain amount
+  /// @dev how balance is interpreted depends on the type of listing
+  function incBalance(IUintComp comps, uint256 id, uint256 amtRaw) internal {
+    int32 old = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
+    int32 amt = amtRaw.toInt32();
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, old + amt);
+  }
+
+  /// @notice increase the balance of a listing by certain amount
+  /// @dev how balance is interpreted depends on the type of listing
+  function decBalance(IUintComp comps, uint256 id, uint256 amtRaw) internal {
+    int32 old = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
+    int32 amt = amtRaw.toInt32();
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, old - amt);
+  }
 
   /// @notice log increase for item buy
   function logIncItemBuy(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {

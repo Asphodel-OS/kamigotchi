@@ -45,13 +45,15 @@ contract _ListingRegistrySystem is System {
   function removeBuy(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.removeBuy(components, id);
+    uint256 buyID = LibListingRegistry.genBuyID(id);
+    LibListingRegistry.removePrice(components, buyID);
   }
 
   function removeSell(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.removeSell(components, id);
+    uint256 sellID = LibListingRegistry.genSellID(id);
+    LibListingRegistry.removePrice(components, sellID);
   }
 
   function setBuyFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
