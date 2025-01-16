@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import { SD59x18 } from "prb-math/SD59x18.sol";
 import { UD60x18 } from "prb-math/UD60x18.sol";
 import { LibFPConverter } from "libraries/utils/LibFPConverter.sol";
-import { LibSDMath } from "libraries/utils/LibSDMath.sol";
-import { LibUDMath } from "libraries/utils/LibUDMath.sol";
 
 ///@notice an assortment of curve calculations
 library LibCurve {
@@ -13,7 +11,6 @@ library LibCurve {
   using LibFPConverter for UD60x18;
   using LibFPConverter for int256;
   using LibFPConverter for uint256;
-  using LibUDMath for UD60x18;
 
   ///@notice calculate discrete GDA for a given set of parameters
   /// @param targetPrice (1e0) target price

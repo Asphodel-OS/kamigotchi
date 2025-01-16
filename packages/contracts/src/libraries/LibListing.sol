@@ -103,12 +103,17 @@ library LibListing {
       int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
       int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID);
       int32 decay = DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID);
-      require(scale >= 1e6, "LibListing: invalid scale < 1");
-      require(decay >= 0, "LibListing: invalid decay < 0");
 
-      int256 scaleWad = int256(scale) * 1e12;
-      int256 decayWad = int256(decay) * 1e12;
-      LibCurve.calcGDA(targetPrice, startTs, scaleWad, decayWad, balance.toUint256(), amt);
+      int256 costWad = LibCurve.calcGDA(
+        targetPrice,
+        startTs,
+        int256(scale) * 1e12,
+        int256(decay) * 1e12,
+        balance.toUint256(),
+        amt
+      );
+      require(costWad >= 0, "LibListing: negative GDA cost");
+      return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
     } else revert("LibListing: invalid buy type");
   }
 
