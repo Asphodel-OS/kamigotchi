@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.28;
 
 interface IOwnableWritable {
   event AuthorizedWriter(address indexed writer);

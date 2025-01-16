@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.28;
 import "solecs/BareComponent.sol";
 import "solecs/interfaces/IUint256Component.sol";
 import { TypeLib } from "solecs/components/types/standard.sol";

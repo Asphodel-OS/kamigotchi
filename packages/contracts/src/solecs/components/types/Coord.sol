@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 import { TypeLib } from "solecs/components/types/standard.sol";
 

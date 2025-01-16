@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";

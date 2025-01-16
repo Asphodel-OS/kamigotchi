@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 ///@notice library for 36h day/evening/night cycle in Kamigotchi World
 library LibPhase {

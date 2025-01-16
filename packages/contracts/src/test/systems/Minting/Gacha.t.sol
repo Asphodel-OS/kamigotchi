@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 import { GACHA_ID } from "libraries/LibGacha.sol";
 import "tests/utils/SetupTemplate.t.sol";

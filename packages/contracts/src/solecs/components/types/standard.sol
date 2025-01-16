@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 /// @notice a library to handle the standard solidity types
 /// @dev to standardise logic in one place for upgradability and visibility

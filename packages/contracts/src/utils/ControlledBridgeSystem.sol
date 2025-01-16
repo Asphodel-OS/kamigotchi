@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (governance/TimelockController.sol)
 
-pragma solidity ^0.8.17;
+pragma solidity >=0.8.28;
 
 import { RolesAuthority } from "solmate/auth/authorities/RolesAuthority.sol";
 import { System } from "solecs/System.sol";

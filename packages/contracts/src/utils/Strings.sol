@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 library Strings {
   function equal(string memory a, string memory b) internal pure returns (bool) {

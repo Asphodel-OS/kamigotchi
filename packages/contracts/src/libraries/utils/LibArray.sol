@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.28;
 
 /// @notice a general utility library for memory array operations
 library LibArray {
