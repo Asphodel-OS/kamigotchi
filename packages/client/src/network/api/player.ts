@@ -69,11 +69,6 @@ export function createPlayerAPI(systems: any) {
     return systems['system.account.register'].executeTyped(operatorAddress, name);
   }
 
-  // @dev set the Farcaster-associated data for an account
-  function setAccountFarcasterData(fid: number, imageURI: string) {
-    return systems['system.account.set.farcaster'].executeTyped(fid, imageURI);
-  }
-
   function setAccountPFP(kamiID: BigNumberish) {
     return systems['system.account.set.pfp'].executeTyped(kamiID);
   }
@@ -324,7 +319,6 @@ export function createPlayerAPI(systems: any) {
       register: registerAccount,
       refund: refundOwner,
       set: {
-        farcaster: setAccountFarcasterData,
         name: setAccountName,
         operator: setAccountOperator,
         pfp: setAccountPFP,

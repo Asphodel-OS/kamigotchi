@@ -15,7 +15,6 @@ import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKa
 import { IndexKamiComponent, ID as IndexKamiCompID } from "components/IndexKamiComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
@@ -313,10 +312,6 @@ library LibKami {
   // get the last time a kami commited a syncing Action
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
     return TimeLastComponent(getAddrByID(components, TimeLastCompID)).get(id);
-  }
-
-  function getMediaURI(IUintComp components, uint256 id) internal view returns (string memory) {
-    return MediaURIComponent(getAddrByID(components, MediaURICompID)).get(id);
   }
 
   // Get the implied roomIndex of a kami based on its state.

@@ -3,6 +3,9 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddrByID } from "solecs/utils.sol";
+
+import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -20,7 +23,8 @@ contract AccountSetPFPSystem is System {
     LibKami.verifyAccount(components, kamiID, accID);
 
     // setting pfp
-    LibAccount.setMediaURI(components, accID, LibKami.getMediaURI(components, kamiID));
+    MediaURIComponent mediaComp = MediaURIComponent(getAddrByID(components, MediaURICompID));
+    mediaComp.set(accID, mediaComp.get(kamiID));
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);

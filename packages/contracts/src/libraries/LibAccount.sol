@@ -17,7 +17,6 @@ import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/Address
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { CacheOperatorComponent as CacheOpComponent, ID as CacheOpCompID } from "components/CacheOperatorComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
-import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
@@ -133,10 +132,6 @@ library LibAccount {
 
   function setFarcasterIndex(IUintComp components, uint256 id, uint32 fid) internal {
     FarcasterIndexComponent(getAddrByID(components, FarcarsterIndexCompID)).set(id, fid);
-  }
-
-  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
-    MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, uri);
   }
 
   function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {

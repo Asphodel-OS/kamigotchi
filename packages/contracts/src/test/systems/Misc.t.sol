@@ -21,11 +21,6 @@ contract MiscSystemsTest is SetupTemplate {
     _AccountFundSystem.operatorToOwner{ value: 100 }();
   }
 
-  function testAccountSetFarcarsterData() public {
-    vm.prank(alice.owner);
-    _AccountSetFarcasterDataSystem.executeTyped(1, "data");
-  }
-
   function testAccountSetName() public {
     vm.prank(alice.owner);
     _AccountSetNameSystem.executeTyped("name");

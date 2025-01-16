@@ -19,7 +19,6 @@ import _TraitRegistrySystem from "../../../../../client/abi/_TraitRegistrySystem
 import AccountFundSystem from "../../../../../client/abi/AccountFundSystem.json";
 import AccountMoveSystem from "../../../../../client/abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSystem.json";
-import AccountSetFarcasterDataSystem from "../../../../../client/abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
 import AccountSetPFPSystem from "../../../../../client/abi/AccountSetPFPSystem.json";
@@ -88,7 +87,6 @@ export const SystemAbis = {
   "system.account.fund": AccountFundSystem.abi,
   "system.account.move": AccountMoveSystem.abi,
   "system.account.register": AccountRegisterSystem.abi,
-  "system.account.set.farcaster": AccountSetFarcasterDataSystem.abi,
   "system.account.set.name": AccountSetNameSystem.abi,
   "system.account.set.operator": AccountSetOperatorSystem.abi,
   "system.account.set.pfp": AccountSetPFPSystem.abi,

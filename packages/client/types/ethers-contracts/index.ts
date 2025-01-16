@@ -4,7 +4,6 @@
 export type { AccountFundSystem } from "./AccountFundSystem";
 export type { AccountMoveSystem } from "./AccountMoveSystem";
 export type { AccountRegisterSystem } from "./AccountRegisterSystem";
-export type { AccountSetFarcasterDataSystem } from "./AccountSetFarcasterDataSystem";
 export type { AccountSetNameSystem } from "./AccountSetNameSystem";
 export type { AccountSetOperatorSystem } from "./AccountSetOperatorSystem";
 export type { AccountSetPFPSystem } from "./AccountSetPFPSystem";
@@ -195,7 +194,6 @@ export * as factories from "./factories";
 export { AccountFundSystem__factory } from "./factories/AccountFundSystem__factory";
 export { AccountMoveSystem__factory } from "./factories/AccountMoveSystem__factory";
 export { AccountRegisterSystem__factory } from "./factories/AccountRegisterSystem__factory";
-export { AccountSetFarcasterDataSystem__factory } from "./factories/AccountSetFarcasterDataSystem__factory";
 export { AccountSetNameSystem__factory } from "./factories/AccountSetNameSystem__factory";
 export { AccountSetOperatorSystem__factory } from "./factories/AccountSetOperatorSystem__factory";
 export { AccountSetPFPSystem__factory } from "./factories/AccountSetPFPSystem__factory";

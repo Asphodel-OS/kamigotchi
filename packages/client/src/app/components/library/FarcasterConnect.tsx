@@ -59,14 +59,14 @@ export const FarcasterConnect = (props: Props) => {
     const api = apis.get(selectedAddress);
     if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-    actionSystem.add({
-      action: 'ConnectFarcaster',
-      params: [fid, pfpURI],
-      description: `Connecting to Farcaster Account ${fid}`,
-      execute: async () => {
-        return api.account.set.farcaster(fid, pfpURI);
-      },
-    });
+    // actionSystem.add({
+    //   action: 'ConnectFarcaster',
+    //   params: [fid, pfpURI],
+    //   description: `Connecting to Farcaster Account ${fid}`,
+    //   execute: async () => {
+    //     return api.account.set.farcaster(fid, pfpURI);
+    //   },
+    // });
   }
 
   /////////////////

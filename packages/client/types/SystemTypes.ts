@@ -19,7 +19,6 @@ import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
 import { AccountFundSystem } from "./ethers-contracts/AccountFundSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
-import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
 import { AccountSetPFPSystem } from "./ethers-contracts/AccountSetPFPSystem";
@@ -88,7 +87,6 @@ export type SystemTypes = {
   "system.account.fund": AccountFundSystem;
   "system.account.move": AccountMoveSystem;
   "system.account.register": AccountRegisterSystem;
-  "system.account.set.farcaster": AccountSetFarcasterDataSystem;
   "system.account.set.name": AccountSetNameSystem;
   "system.account.set.operator": AccountSetOperatorSystem;
   "system.account.set.pfp": AccountSetPFPSystem;
