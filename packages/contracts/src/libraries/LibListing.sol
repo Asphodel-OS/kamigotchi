@@ -93,6 +93,7 @@ library LibListing {
     uint256 id,
     uint256 amt
   ) internal view returns (uint256 price) {
+    if (amt == 0) return 0;
     uint256 buyID = LibListingRegistry.genBuyID(id);
     string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(buyID);
     if (type_.eq("FIXED")) {
