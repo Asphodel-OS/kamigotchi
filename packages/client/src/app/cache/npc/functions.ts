@@ -3,7 +3,15 @@ import { World } from '@mud-classic/recs';
 import { Components } from 'network/components';
 import { passesConditions } from 'network/shapes/Conditional';
 import { Listing } from 'network/shapes/Listing';
+import { NPC } from 'network/shapes/Npc';
+import { getBalance } from 'network/shapes/utils/component';
 import { Account } from '../account';
+
+export const refreshListings = (components: Components, npc: NPC) => {
+  npc.listings.forEach((l) => {
+    l.balance = getBalance(components, l.entity);
+  });
+};
 
 // calculate the buy price of a listing based on amt purchased
 export const calcBuyPrice = (listing: Listing, amt: number) => {

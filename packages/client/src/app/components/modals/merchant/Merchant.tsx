@@ -3,7 +3,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
-import { NPC, NullNPC, cleanNPCListings, getNPCByIndex } from 'app/cache/npc';
+import { NPC, NullNPC, cleanNPCListings, getNPCByIndex, refreshNPCListings } from 'app/cache/npc';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
@@ -43,6 +43,7 @@ export function registerMerchantModal() {
               getNPC: (index: number) => getNPCByIndex(world, components, index, { listings: 60 }),
               cleanListings: (listings: Listing[], account: Account) =>
                 cleanNPCListings(world, components, listings, account),
+              refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
             },
             network,
           };
@@ -52,7 +53,7 @@ export function registerMerchantModal() {
     // Render
     ({ data, utils, network }) => {
       const { accountEntity } = data;
-      const { getAccount, getNPC, cleanListings } = utils;
+      const { getAccount, getNPC, cleanListings, refreshListings } = utils;
       const { actions, api } = network;
       const { npcIndex } = useSelected();
       const { modals } = useVisibility();
@@ -61,6 +62,20 @@ export function registerMerchantModal() {
       const [merchant, setMerchant] = useState<NPC>(NullNPC);
       const [listings, setListings] = useState<Listing[]>([]);
       const [cart, setCart] = useState<CartItem[]>([]);
+      const [lastTick, setLastTick] = useState(Date.now());
+
+      // ticking
+      useEffect(() => {
+        const refreshClock = () => setLastTick(Date.now());
+        const timerID = setInterval(refreshClock, 1000);
+        return () => clearInterval(timerID);
+      }, []);
+
+      // update the listings on each tick
+      useEffect(() => {
+        if (!modals.merchant || npcIndex != merchant.index) return;
+        refreshListings(merchant);
+      }, [lastTick]);
 
       // update the account whenever the entity cahnges
       useEffect(() => {
