@@ -250,7 +250,7 @@
           "internalType": "uint32"
         },
         {
-          "name": "compound",
+          "name": "scale",
           "type": "int32",
           "internalType": "int32"
         },

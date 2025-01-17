@@ -17,8 +17,8 @@ export const getPricing = (comps: Components, entity: EntityIndex): Pricing => {
   if (pricing.type === 'SCALED') {
     pricing.scale = getScale(comps, entity);
   } else if (pricing.type === 'GDA') {
-    pricing.scale = getScale(comps, entity) / 1e6;
-    pricing.decay = getDecay(comps, entity) / 1e9;
+    pricing.scale = getScale(comps, entity, 6);
+    pricing.decay = getDecay(comps, entity, 9);
   }
 
   return pricing;

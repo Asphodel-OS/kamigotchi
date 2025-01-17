@@ -365,7 +365,7 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      compound: PromiseOrValue<BigNumberish>,
+      scale: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -466,7 +466,7 @@ export interface _ListingRegistrySystem extends BaseContract {
   setBuyGDA(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
-    compound: PromiseOrValue<BigNumberish>,
+    scale: PromiseOrValue<BigNumberish>,
     decay: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -559,7 +559,7 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      compound: PromiseOrValue<BigNumberish>,
+      scale: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -689,7 +689,7 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      compound: PromiseOrValue<BigNumberish>,
+      scale: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -791,7 +791,7 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      compound: PromiseOrValue<BigNumberish>,
+      scale: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

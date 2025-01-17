@@ -96,7 +96,7 @@ export async function deleteListings(api: AdminAPI, indices: number[]) {
   }
 }
 
-async function createListing(
+export async function createListing(
   api: AdminAPI,
   merchantIndex: number,
   itemIndex: number,
@@ -105,7 +105,17 @@ async function createListing(
   await api.listing.create(merchantIndex, itemIndex, value);
 }
 
-const initRequirement = async (
+export async function refreshListing(
+  api: AdminAPI,
+  npcIndex: number,
+  itemIndex: number,
+  value: number
+) {
+  console.log(`refreshing listing ${npcIndex}-${itemIndex} to ${value}`);
+  await api.listing.refresh(npcIndex, itemIndex, value);
+}
+
+export const setRequirement = async (
   api: AdminAPI,
   npcIndex: number,
   itemIndex: number,

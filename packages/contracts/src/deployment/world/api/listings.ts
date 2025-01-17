@@ -11,6 +11,10 @@ export function listingAPI(genCall: GenCall) {
     ]);
   }
 
+  async function refreshListing(npcIndex: number, itemIndex: number, value: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, value], 'refresh');
+  }
+
   // add a fixed buy price to a listing
   async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number) {
     genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed');
@@ -59,6 +63,8 @@ export function listingAPI(genCall: GenCall) {
 
   return {
     create: createListing,
+    refresh: refreshListing,
+    remove: removeListing,
     set: {
       price: {
         buy: {
@@ -72,6 +78,5 @@ export function listingAPI(genCall: GenCall) {
       },
       requirement: setListingRequirement,
     },
-    remove: removeListing,
   };
 }

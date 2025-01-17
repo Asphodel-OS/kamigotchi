@@ -124,7 +124,7 @@ export function registerQuestsModal() {
 
         isUpdating.current = false;
       }, [modals.quests, registry.length, completed.length, ongoing.length]);
-      console.log(`registry length: ${registry.length}`);
+
       // update the Notifications when the number of available quests changes
       useEffect(() => {
         updateNotifications();

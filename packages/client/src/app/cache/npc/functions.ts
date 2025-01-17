@@ -16,8 +16,8 @@ export const calcBuyPrice = (listing: Listing, amt: number) => {
   } else if (pricing.type === 'GDA') {
     const pTarget = listing.value;
     const tDelta = Date.now() / 1000 - listing.startTime;
-    const scale = (pricing?.scale ?? 1) / 1e6;
-    const decay = (pricing?.decay ?? 0) / 1e9;
+    const scale = pricing?.scale ?? 1;
+    const decay = pricing?.decay ?? 0;
     const prevSold = listing.balance ?? 0;
 
     const num1 = pTarget * scale ** prevSold;
