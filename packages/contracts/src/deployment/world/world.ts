@@ -91,9 +91,9 @@ export class WorldState {
       revise: (indices?: number[]) => this.genCalls((api) => reviseItems(api, indices)),
     } as SubFunc,
     listings: {
-      init: () => this.genCalls((api) => initListings(api)),
-      refresh: (itemIndex: number) => this.genCalls((api) => refreshListing(api, 1, itemIndex, 0)),
+      init: (indices?: number[]) => this.genCalls((api) => initListings(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteListings(api, indices || [])),
+      refresh: (itemIndex: number) => this.genCalls((api) => refreshListing(api, 1, itemIndex, 0)),
     },
     npcs: {
       init: () => this.genCalls(initNpcs),

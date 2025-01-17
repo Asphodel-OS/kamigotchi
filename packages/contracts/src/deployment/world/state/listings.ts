@@ -13,11 +13,11 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     const row = listingCSV[i];
 
     // skip if indices are overridden and row isn't included
-    if (indices && !indices.includes(Number(row['Index']))) continue;
+    const itemIndex = Number(row['Item Index']);
+    if (indices && !indices.includes(itemIndex)) continue;
 
     // Initial creation
     const npcIndex = Number(row['NPC Index']);
-    const itemIndex = Number(row['Item Index']);
     const targetValue = Number(row['Value']);
     await api.listing.create(npcIndex, itemIndex, targetValue);
     console.log(`created listing for npc ${npcIndex} of item ${itemIndex}`);
