@@ -26,7 +26,6 @@
     "deprecate:testnet": "pnpm deprecate:script --mode TEST --forgeOpts='-g=300'",
     "world:state:local": "pnpm world:state:script --mode DEV",
     "world:state:testnet": "pnpm world:state:script --mode TEST --forgeOpts='-g=300 --skip-simulation'",
-    "world:state:caldera": "pnpm world:state:script --mode CALDERA",
     "call:system:local": "pnpm call:system:script --mode DEV",
     "call:system:testnet": "pnpm call:system:script --mode TEST --forgeOpts='-g=300 --skip-simulation'",
     "call:god:local": "pnpm call:god:script --mode DEV",

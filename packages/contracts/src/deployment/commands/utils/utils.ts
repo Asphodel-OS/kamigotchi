@@ -8,19 +8,16 @@ import { UintCompABI, WorldABI } from './abis';
 
 export const getDeployerKey = (mode: string) => {
   if (mode === 'TEST') return process.env.TEST_DEPLOYER_PRIV;
-  else if (mode === 'CALDERA') return process.env.TEST_DEPLOYER_PRIV;
   else return process.env.DEV_DEPLOYER_PRIV;
 };
 
 export const getRpc = (mode: string) => {
   if (mode === 'TEST') return process.env.TEST_RPC;
-  else if (mode === 'CALDERA') return process.env.CALDERA_RPC;
   else return process.env.DEV_RPC;
 };
 
 export const getWorld = (mode: string) => {
   if (mode === 'TEST') return process.env.TEST_WORLD;
-  else if (mode === 'CALDERA') return process.env.CALDERA_WORLD;
   else return process.env.DEV_WORLD;
 };
 
