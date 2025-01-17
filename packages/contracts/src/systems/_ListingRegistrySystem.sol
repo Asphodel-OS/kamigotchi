@@ -70,15 +70,10 @@ contract _ListingRegistrySystem is System {
     LibListingRegistry.setBuyFixed(components, id);
   }
 
-  function setBuyGDA(
-    uint32 npcIndex,
-    uint32 itemIndex,
-    int32 compound,
-    int32 decay
-  ) public onlyOwner {
+  function setBuyGDA(uint32 npcIndex, uint32 itemIndex, int32 scale, int32 decay) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.setBuyGDA(components, id, compound, decay);
+    LibListingRegistry.setBuyGDA(components, id, scale, decay);
   }
 
   function setSellFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {

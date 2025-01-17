@@ -125,7 +125,7 @@ library LibListing {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
     } else if (type_.eq("SCALED")) {
       int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(sellID);
-      return (calcBuyPrice(comps, id, amt) * scale.toUint256()) / 1e3;
+      return (calcBuyPrice(comps, id, amt) * scale.toUint256()) / 1e6;
     } else revert("LibListing: invalid sell type");
   }
 

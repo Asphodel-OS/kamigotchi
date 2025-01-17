@@ -16,6 +16,16 @@ export function listingAPI(genCall: GenCall) {
     genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed');
   }
 
+  // add a GDA buy price to a listing
+  async function setListingBuyPriceGDA(
+    npcIndex: number,
+    itemIndex: number,
+    scale: number,
+    decay: number
+  ) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, scale, decay], 'setBuyGDA');
+  }
+
   // add a fixed sell price to a listing
   async function setListingSellPriceFixed(npcIndex: number, itemIndex: number) {
     genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed');
@@ -53,6 +63,7 @@ export function listingAPI(genCall: GenCall) {
       price: {
         buy: {
           fixed: setListingBuyPriceFixed,
+          gda: setListingBuyPriceGDA,
         },
         sell: {
           fixed: setListingSellPriceFixed,
