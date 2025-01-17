@@ -10,13 +10,6 @@ export const getBalance = (components: Components, entity: EntityIndex): number 
   return (result ?? 0) * 1;
 };
 
-export const getCompound = (components: Components, entity: EntityIndex, precision = 6): number => {
-  const { Compound } = components;
-  const result = getComponentValue(Compound, entity)?.value;
-  if (result === undefined) console.warn('getCompound(): undefined for entity', entity);
-  return ((result ?? 0) * 1.0) / 10 ** precision;
-};
-
 export const getCost = (components: Components, entity: EntityIndex): number => {
   const { Cost } = components;
   const result = getComponentValue(Cost, entity)?.value;

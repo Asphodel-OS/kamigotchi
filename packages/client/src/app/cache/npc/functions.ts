@@ -11,8 +11,22 @@ export const calcBuyPrice = (listing: Listing, amt: number) => {
   const pricing = listing.buy;
   const value = listing.value;
 
-  if (pricing.type === 'FIXED') return value * amt;
-  else console.warn('calcBuyPrice(): invalid pricing type', pricing);
+  if (pricing.type === 'FIXED') {
+    return value * amt;
+  } else if (pricing.type === 'GDA') {
+    const pTarget = listing.value;
+    const tDelta = Date.now() / 1000 - listing.startTime;
+    const scale = (pricing?.scale ?? 1) / 1e6;
+    const decay = (pricing?.decay ?? 0) / 1e9;
+    const prevSold = listing.balance ?? 0;
+
+    const num1 = pTarget * scale ** prevSold;
+    const num2 = scale ** (amt - 1.0);
+    const den1 = Math.exp(decay * tDelta);
+    const den2 = scale - 1.0;
+    const priceRaw = (num1 * num2) / (den1 * den2);
+    return Math.ceil(priceRaw);
+  } else console.warn('calcBuyPrice(): invalid pricing type', pricing);
   return 0;
 };
 
@@ -22,9 +36,12 @@ export const calcSellPrice = (listing: Listing, amt: number) => {
   const pricing = listing.sell;
   const value = listing.value;
 
-  if (pricing.type === 'FIXED') return value * amt;
-  else if (pricing.type === 'SCALED') return calcBuyPrice(listing, amt) * pricing.scale;
-  else console.warn('calcSellPrice(): invalid pricing type', pricing);
+  if (pricing.type === 'FIXED') {
+    return value * amt;
+  } else if (pricing.type === 'SCALED') {
+    const scale = pricing?.scale ?? 0;
+    return scale * calcBuyPrice(listing, amt);
+  } else console.warn('calcSellPrice(): invalid pricing type', pricing);
   return 0;
 };
 
