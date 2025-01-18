@@ -5,9 +5,13 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { FarcasterConnect, Tooltip } from 'app/components/library';
 import { MockupBar } from 'app/components/library/base/measures/ExperienceBar';
+import { Popover } from 'app/components/library/base/Popover';
+import { useNetwork } from 'app/stores';
 import { Account } from 'network/shapes/Account';
+import { Kami } from 'network/shapes/Kami';
 import { ActionSystem } from 'network/systems/ActionSystem';
 import { playClick } from 'utils/sounds';
 
@@ -19,12 +23,16 @@ interface Props {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
   };
+  utils: {
+    getAccountKamis: (accEntity: EntityIndex) => Kami[];
+  };
 }
 
 export const Bio = (props: Props) => {
-  const { actionSystem, account, isSelf } = props;
+  const { actionSystem, account, isSelf, utils } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-
+  const { getAccountKamis } = utils;
+  const { selectedAddress, apis } = useNetwork();
   /////////////////
   // TRACKING
 
@@ -96,6 +104,15 @@ export const Bio = (props: Props) => {
     );
   };
 
+  const pfpHandler = () => {
+    const api = apis.get(selectedAddress);
+    return getAccountKamis(account.entity).map((kami) => (
+      <PfpHandler key={kami.id} onClick={() => api?.account.set.pfp(kami.id)}>
+        {kami.name}
+      </PfpHandler>
+    ));
+  };
+
   return (
     <Container key={account.name}>
       <Content>
@@ -113,11 +130,14 @@ export const Bio = (props: Props) => {
         <CoinRow />
         <MockupBar />
       </Content>
+
       <PfpContainer>
-        <Tooltip text={[getLastSeenString()]}>
-          <PfpStatus timeDelta={lastRefresh / 1000 - account.time.last} />
-          <PfpImage src={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'} />
-        </Tooltip>
+        <Popover key='profile' content={pfpHandler()}>
+          <Tooltip text={[getLastSeenString()]}>
+            <PfpStatus timeDelta={lastRefresh / 1000 - account.time.last} />
+            <PfpImage src={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'} />{' '}
+          </Tooltip>{' '}
+        </Popover>
       </PfpContainer>
     </Container>
   );
@@ -215,4 +235,10 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
     else if (props.timeDelta < 1800) return '#fd3';
     else return '#f33';
   }};
+`;
+const PfpHandler = styled.div`
+  padding: 0.5vw;
+  &:hover {
+    cursor: pointer;
+  }
 `;
