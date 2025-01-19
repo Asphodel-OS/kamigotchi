@@ -153,6 +153,7 @@ export function registerAccountModal() {
             actionSystem={actions}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
             utils={utils}
+            api={api}
           />
           <Tabs tab={tab} setTab={setTab} isSelf={isSelf()} />
           <Bottom

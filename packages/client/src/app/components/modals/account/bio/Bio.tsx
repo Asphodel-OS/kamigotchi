@@ -5,11 +5,13 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
-import { FarcasterConnect, Tooltip } from 'app/components/library';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
+import { Tooltip } from 'app/components/library';
 import { MockupBar } from 'app/components/library/base/measures/ExperienceBar';
 import { Popover } from 'app/components/library/base/Popover';
 import { useNetwork } from 'app/stores';
+import { BigNumberish } from 'ethers';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { ActionSystem } from 'network/systems/ActionSystem';
@@ -26,10 +28,11 @@ interface Props {
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
+  api: any;
 }
 
 export const Bio = (props: Props) => {
-  const { actionSystem, account, isSelf, utils } = props;
+  const { actionSystem, account, isSelf, utils, api } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const { getAccountKamis } = utils;
   const { selectedAddress, apis } = useNetwork();
@@ -104,10 +107,25 @@ export const Bio = (props: Props) => {
     );
   };
 
+  const pfpTx = (kamiID: BigNumberish) => {
+    if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+    const actionID = uuid() as EntityID;
+    actionSystem!.add({
+      id: actionID,
+      action: 'UpdatePfp',
+      params: [kamiID],
+      description: `Updating account pfp.`,
+      execute: async () => {
+        return api.player.account.set.pfp(kamiID);
+      },
+    });
+    return actionID;
+  };
+
   const pfpHandler = () => {
-    const api = apis.get(selectedAddress);
     return getAccountKamis(account.entity).map((kami) => (
-      <PfpHandler key={kami.id} onClick={() => api?.account.set.pfp(kami.id)}>
+      <PfpHandler key={kami.id} onClick={() => pfpTx(kami.id)}>
         {kami.name}
       </PfpHandler>
     ));
@@ -119,9 +137,6 @@ export const Bio = (props: Props) => {
         <Identifiers>
           <TitleRow>
             <Title>{account.name}</Title>
-            {isSelf && (
-              <FarcasterConnect account={account} actionSystem={actionSystem} size={1.2} />
-            )}
           </TitleRow>
           <AddressDisplay />
         </Identifiers>
