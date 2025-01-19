@@ -77,6 +77,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
   }
 
   function moveAccount(roomIndex: number) {
+    console.log(`moving to room ${systems['system.account.move'].address}`);
     // hardcode gas limit to 1.2m; approx upper bound for moving room with 1 gate
     return systems['system.account.move'].executeTyped(roomIndex); //, { gasLimit: 1200000 });
   }
@@ -103,6 +104,16 @@ export function createPlayerAPI(txQueue: TxQueue) {
   // @param operatorAddress   address of the Operator wallet
   function setAccountOperator(operatorAddress: BigNumberish) {
     return systems['system.account.set.operator'].executeTyped(operatorAddress);
+  }
+
+  /////////////////
+  // CHAT
+  function sendMessage(message: string) {
+    console.log('AAAAA SEND MESSAGE');
+    console.log(systems['system.chat'].address);
+
+    console.log(systems['system.echo.kamis'].address);
+    return systems['system.chat'].executeTyped(message);
   }
 
   /////////////////
@@ -357,6 +368,9 @@ export function createPlayerAPI(txQueue: TxQueue) {
         block: blockAccount,
         cancel: cancelFriendship,
         request: sendFriendRequest,
+      },
+      chat: {
+        send: sendMessage,
       },
     },
     droptable: {

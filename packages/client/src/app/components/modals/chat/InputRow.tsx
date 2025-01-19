@@ -20,10 +20,11 @@ interface Props {
   actions: {
     pushCast: (cast: CastWithInteractions) => void;
   };
+  api: any;
 }
 
 export const InputRow = (props: Props) => {
-  const { account, actionSystem } = props;
+  const { account, actionSystem, api } = props;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const { farcaster: farcasterAccount } = useAccount(); // client side account representation in store
 
@@ -77,9 +78,16 @@ export const InputRow = (props: Props) => {
   const onSubmit = async (text: string) => {
     try {
       playScribble();
-      await sendCast(text);
       // TODO: play success sound and update message in feed here (to succeeded)
       console.log(`submitted "${text}"`);
+      actionSystem.add({
+        action: 'AccountMove',
+        params: [text],
+        description: `Send Message`,
+        execute: async () => {
+          return api.player.social.chat.send(text);
+        },
+      });
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to
@@ -109,6 +117,7 @@ export const InputRow = (props: Props) => {
         <button
           style={{ padding: `0.5vw` }}
           onClick={() => {
+            onSubmit(text);
             console.log(`message : ${text} `);
           }}
         >
