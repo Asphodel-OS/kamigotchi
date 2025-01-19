@@ -3,9 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { FarcasterConnect, InputSingleTextForm } from 'app/components/library';
 import { useAccount } from 'app/stores';
-import { ChatIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { ActionSystem } from 'network/systems';
 import {
@@ -32,6 +30,7 @@ export const InputRow = (props: Props) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [text, setText] = useState('');
 
   /////////////////
   // SUBSCRIPTION
@@ -100,17 +99,22 @@ export const InputRow = (props: Props) => {
 
   return (
     <Container>
-      <InputSingleTextForm
-        fullWidth
-        maxLen={320}
-        placeholder={getPlaceholder()}
-        onSubmit={onSubmit}
-        disabled={!isAuthorized}
-        hasButton={isAuthorized}
-        buttonIcon={ChatIcon}
+      <input
+        type='text'
+        onBlur={(e) => {
+          setText(e.target.value);
+        }}
       />
       {!isAuthorized && (
-        <FarcasterConnect account={account} actionSystem={actionSystem} size={2.5} />
+        <button
+          style={{ padding: `0.5vw` }}
+          onClick={() => {
+            console.log(`message : ${text} `);
+          }}
+        >
+          {' '}
+          CLICK ME
+        </button>
       )}
     </Container>
   );
