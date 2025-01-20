@@ -115,11 +115,11 @@ library LibListingRegistry {
   }
 
   // set the requisite pricing variables for GDA price
-  // scale: 1e6 precision -- decay: 1e9 precision
+  // scale: 1e9 precision -- decay: 1e9 precision
   function setBuyGDA(IUintComp comps, uint256 id, int32 scale, int32 decay) internal {
     uint256 ptr = genBuyID(id);
     setType(comps, ptr, "GDA");
-    require(scale >= 1e6, "LibListingRegistry: compound > 1 required");
+    require(scale >= 1e9, "LibListingRegistry: compound > 1 required");
     require(decay >= 0, "LibListingRegistry: decay must be positive");
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
     DecayComponent(getAddrByID(comps, DecayCompID)).set(ptr, decay);
@@ -137,7 +137,7 @@ library LibListingRegistry {
   function setSellScaled(IUintComp comps, uint256 id, int32 scale) internal {
     uint256 ptr = genSellID(id);
     setType(comps, ptr, "SCALED");
-    require(scale <= 1e6, "LibListingRegistry: invalid sell scale > 1");
+    require(scale <= 1e9, "LibListingRegistry: invalid sell scale > 1");
     require(scale >= 0, "LibListingRegistry: invalid sell scale < 0");
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
   }

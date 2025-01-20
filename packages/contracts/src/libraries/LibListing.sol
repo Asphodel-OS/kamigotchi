@@ -102,7 +102,7 @@ library LibListing {
       GDAParams memory params = GDAParams(
         ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(id),
         TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id),
-        int256(ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID)) * 1e12,
+        int256(ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID)) * 1e9,
         int256(DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID)) * 1e9,
         BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256(),
         amt
@@ -126,7 +126,7 @@ library LibListing {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
     } else if (type_.eq("SCALED")) {
       int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(sellID);
-      return (calcBuyPrice(comps, id, amt) * scale.toUint256()) / 1e6;
+      return (calcBuyPrice(comps, id, amt) * scale.toUint256()) / 1e9;
     } else revert("LibListing: invalid sell type");
   }
 

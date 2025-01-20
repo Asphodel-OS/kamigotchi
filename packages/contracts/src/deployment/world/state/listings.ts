@@ -31,8 +31,8 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
         const type = String(price['Type']);
         if (type === 'FIXED') await setBuy.fixed(npcIndex, itemIndex);
         else if (type === 'GDA') {
-          const scale = Number(price['Scale']) * 1e6;
-          const decay = Number(price['Decay']) * 1e9;
+          const scale = Math.round(Number(price['Scale']) * 1e9);
+          const decay = Math.round(Number(price['Decay']) * 1e9);
           await setBuy.gda(npcIndex, itemIndex, scale, decay);
         }
         console.log(`  set buy price ${buyKey}`);
@@ -48,11 +48,11 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
         const type = String(price['Type']);
         if (type === 'FIXED') await setSell.fixed(npcIndex, itemIndex);
         else if (type === 'SCALED') {
-          const scale = Number(price['Scale']) * 1e6;
+          const scale = Math.round(Number(price['Scale']) * 1e9);
           await setSell.scaled(npcIndex, itemIndex, scale);
         }
+        console.log(`  set sell price ${sellKey}`);
       } else console.warn(`  Sell Price not found for ref ${sellRef}`);
-      console.log(`  set sell price ${sellKey}`);
     }
 
     // Set Requirements
