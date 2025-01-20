@@ -15,9 +15,9 @@ export interface Pricing {
 export const getPricing = (comps: Components, entity: EntityIndex): Pricing => {
   const pricing: Pricing = { type: getType(comps, entity) as PriceType };
   if (pricing.type === 'SCALED') {
-    pricing.scale = getScale(comps, entity, 6);
+    pricing.scale = getScale(comps, entity, 9);
   } else if (pricing.type === 'GDA') {
-    pricing.scale = getScale(comps, entity, 6);
+    pricing.scale = getScale(comps, entity, 9);
     pricing.decay = getDecay(comps, entity, 9);
   }
 

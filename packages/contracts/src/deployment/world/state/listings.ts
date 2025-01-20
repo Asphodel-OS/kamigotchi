@@ -26,7 +26,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     const buyRef = String(row['Buy Price']);
     if (buyRef) {
       const buyKey = buyRef.split(' (')[0];
-      const price = pricingCSV.find((p: any) => p['Shape'] === buyKey);
+      const price = pricingCSV.find((p: any) => p['Key'] === buyKey);
       if (price) {
         const type = String(price['Type']);
         if (type === 'FIXED') await setBuy.fixed(npcIndex, itemIndex);
