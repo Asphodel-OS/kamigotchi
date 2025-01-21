@@ -39,6 +39,7 @@ export const Bio = (props: Props) => {
   const { getAccountKamis } = utils;
   const { selectedAddress, apis } = useNetwork();
   const [kamiImage, setKamiImage] = useState('https://miladymaker.net/milady/8365.png');
+  const [isLoading, setIsLoading] = useState(false);
   /////////////////
   // TRACKING
 
@@ -115,7 +116,6 @@ export const Bio = (props: Props) => {
 
   const pfpTx = (kamiID: BigNumberish) => {
     if (!api) return console.error(`API not established for ${selectedAddress}`);
-
     const actionID = uuid() as EntityID;
     actionSystem!.add({
       id: actionID,
@@ -131,15 +131,20 @@ export const Bio = (props: Props) => {
 
   const handlePfpChange = async (kami: Kami) => {
     try {
+      setIsLoading(true);
       const pfpTxActionID = pfpTx(kami.id);
-      if (!pfpTxActionID) throw new Error('Pfp change action failed');
-
+      if (!pfpTxActionID) {
+        setIsLoading(false);
+        throw new Error('Pfp change action failed');
+      }
       await waitForActionCompletion(
         actionSystem!.Action,
         world.entityToIndex.get(pfpTxActionID) as EntityIndex
       );
+      setIsLoading(false);
       setKamiImage(kami.image);
     } catch (e) {
+      setIsLoading(false);
       console.log('Bio.tsx: handlePfpChange()  failed', e);
     }
   };
@@ -175,9 +180,10 @@ export const Bio = (props: Props) => {
       <PfpContainer>
         <Popover key='profile' content={kamisDropDown()}>
           <Tooltip text={[getLastSeenString()]}>
-            <PfpStatus timeDelta={lastRefresh / 1000 - account.time.last} />
+            <PfpStatus isLoading={isLoading} timeDelta={lastRefresh / 1000 - account.time.last} />
           </Tooltip>
           <PfpImage
+            isLoading={isLoading}
             draggable='false'
             src={
               kamiImage !== 'https://miladymaker.net/milady/8365.png'
@@ -263,16 +269,30 @@ const PfpContainer = styled.div`
   }
 `;
 
-const PfpImage = styled.img`
+const PfpImage = styled.img<{ isLoading: boolean }>`
   border: solid black 0.15vw;
   border-radius: 10vw;
   width: 10vw;
   height: 10vw;
   object-fit: cover;
   object-position: 100% 0;
+  opacity: 1;
+  ${({ isLoading }) =>
+    isLoading &&
+    `animation: fade 3s linear infinite;
+    z-index: 1;
+    @keyframes fade {
+      0%,
+      100% {
+        opacity: 0.4;
+      }
+      50% {
+        opacity: 1;
+      }
+    }`}
 `;
 
-const PfpStatus = styled.div<{ timeDelta: number }>`
+const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
   border: solid 0.2vw white;
   position: absolute;
   bottom: 0.9vw;
@@ -286,6 +306,19 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
     else if (props.timeDelta < 1800) return '#fd3';
     else return '#f33';
   }};
+  ${({ isLoading }) =>
+    isLoading &&
+    `animation: fade 3s linear infinite;
+    z-index: 1;
+    @keyframes fade {
+      0%,
+      100% {
+        opacity: 0.4;
+      }
+      50% {
+        opacity: 1;
+      }
+    }`}
 `;
 const KamisDropDown = styled.div`
   padding: 0.5vw;
