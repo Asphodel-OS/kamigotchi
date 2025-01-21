@@ -8,13 +8,14 @@ import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { Tooltip } from 'app/components/library';
-import { MockupBar } from 'app/components/library/base/measures/ExperienceBar';
+import { VipScore } from 'app/components/library/base/measures/VipScore';
 import { Popover } from 'app/components/library/base/Popover';
 import { useNetwork } from 'app/stores';
 import { BigNumberish } from 'ethers';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { ActionSystem } from 'network/systems/ActionSystem';
+import { waitForActionCompletion } from 'network/utils';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -29,10 +30,11 @@ interface Props {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
   api: any;
+  world: any;
 }
 
 export const Bio = (props: Props) => {
-  const { actionSystem, account, isSelf, utils, api } = props;
+  const { actionSystem, account, isSelf, utils, api, world } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const { getAccountKamis } = utils;
   const { selectedAddress, apis } = useNetwork();
@@ -87,7 +89,7 @@ export const Bio = (props: Props) => {
     if (!account.time.creation) return null;
     return (
       <DetailRow>
-        <CakeIcon style={{ height: '1vw', width: '1vw' }} />
+        <CakeIcon style={{ height: '1.4vw', width: '1.4vw' }} />
         <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
       </DetailRow>
     );
@@ -96,7 +98,7 @@ export const Bio = (props: Props) => {
   const KillsRow = () => {
     return (
       <DetailRow>
-        <CheckroomIcon style={{ height: '1vw', width: '1vw' }} />
+        <CheckroomIcon style={{ height: '1.4vw', width: '1.4vw' }} />
         <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
       </DetailRow>
     );
@@ -105,7 +107,7 @@ export const Bio = (props: Props) => {
   const CoinRow = () => {
     return (
       <DetailRow>
-        <TollIcon style={{ height: '1vw', width: '1vw' }} />
+        <TollIcon style={{ height: '1.4vw', width: '1.4vw' }} />
         <Description>{account.stats?.coin ?? 0} MUSU Collected</Description>
       </DetailRow>
     );
@@ -127,17 +129,31 @@ export const Bio = (props: Props) => {
     return actionID;
   };
 
-  const pfpHandler = () => {
+  const handlePfpChange = async (kami: Kami) => {
+    try {
+      const pfpTxActionID = pfpTx(kami.id);
+      if (!pfpTxActionID) throw new Error('Pfp change action failed');
+
+      await waitForActionCompletion(
+        actionSystem!.Action,
+        world.entityToIndex.get(pfpTxActionID) as EntityIndex
+      );
+      setKamiImage(kami.image);
+    } catch (e) {
+      console.log('Bio.tsx: handlePfpChange()  failed', e);
+    }
+  };
+
+  const kamisDropDown = () => {
     return getAccountKamis(account.entity).map((kami) => (
-      <PfpHandler
+      <KamisDropDown
         key={kami.id}
         onClick={() => {
-          pfpTx(kami.id);
-          setKamiImage(kami.image);
+          handlePfpChange(kami);
         }}
       >
         {kami.name}
-      </PfpHandler>
+      </KamisDropDown>
     ));
   };
   console.log(`account.pfpURI : ${account.pfpURI}  kamiImage : ${kamiImage}`);
@@ -153,11 +169,11 @@ export const Bio = (props: Props) => {
         <BirthdayRow />
         <KillsRow />
         <CoinRow />
-        <MockupBar />
+        <VipScore />
       </Content>
 
       <PfpContainer>
-        <Popover key='profile' content={pfpHandler()}>
+        <Popover key='profile' content={kamisDropDown()}>
           <Tooltip text={[getLastSeenString()]}>
             <PfpStatus timeDelta={lastRefresh / 1000 - account.time.last} />
           </Tooltip>
@@ -271,7 +287,7 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
     else return '#f33';
   }};
 `;
-const PfpHandler = styled.div`
+const KamisDropDown = styled.div`
   padding: 0.5vw;
   &:hover {
     cursor: pointer;

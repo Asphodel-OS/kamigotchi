@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import initia from '../../../../../assets/images/items/initia_icon.png';
 
-export const MockupBar = () => {
+export const VipScore = () => {
   return (
     <Row>
-      <img style={{ width: `1vw` }} src={initia} alt='initia' />
+      <img style={{ height: '1.3vw', width: '1.3vw' }} src={initia} alt='initia' />
       <div style={{ fontSize: '0.7vw' }}>0 VIP score</div>
     </Row>
   );
