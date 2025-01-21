@@ -25,10 +25,6 @@ export function createActionSystem<M = undefined>(
   const Action = defineActionComponent<M>(world);
   const requests = new Map<EntityIndex, ActionRequest>();
 
-  function requestsSize(): number {
-    return requests.size;
-  }
-
   /**
    * Schedules an Action from an ActionRequest and schedules it for execution.
    * TODO(ja): set the action ID within the add function instead of passing it in on ActionRequest.
@@ -157,7 +153,6 @@ export function createActionSystem<M = undefined>(
 
   return {
     Action,
-    requestsSize,
     add,
     cancel,
     remove,
