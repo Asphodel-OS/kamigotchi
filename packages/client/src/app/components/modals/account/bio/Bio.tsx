@@ -36,6 +36,7 @@ export const Bio = (props: Props) => {
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const { getAccountKamis } = utils;
   const { selectedAddress, apis } = useNetwork();
+  const [kamiImage, setKamiImage] = useState('https://miladymaker.net/milady/8365.png');
   /////////////////
   // TRACKING
 
@@ -55,6 +56,9 @@ export const Bio = (props: Props) => {
     navigator.clipboard.writeText(text);
   };
 
+  useEffect(() => {
+    setKamiImage('https://miladymaker.net/milady/8365.png');
+  }, [account.index]);
   /////////////////
   // INTERPRETATION
 
@@ -125,12 +129,18 @@ export const Bio = (props: Props) => {
 
   const pfpHandler = () => {
     return getAccountKamis(account.entity).map((kami) => (
-      <PfpHandler key={kami.id} onClick={() => pfpTx(kami.id)}>
+      <PfpHandler
+        key={kami.id}
+        onClick={() => {
+          pfpTx(kami.id);
+          setKamiImage(kami.image);
+        }}
+      >
         {kami.name}
       </PfpHandler>
     ));
   };
-
+  console.log(`account.pfpURI : ${account.pfpURI}  kamiImage : ${kamiImage}`);
   return (
     <Container key={account.name}>
       <Content>
@@ -150,8 +160,15 @@ export const Bio = (props: Props) => {
         <Popover key='profile' content={pfpHandler()}>
           <Tooltip text={[getLastSeenString()]}>
             <PfpStatus timeDelta={lastRefresh / 1000 - account.time.last} />
-            <PfpImage src={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'} />{' '}
-          </Tooltip>{' '}
+          </Tooltip>
+          <PfpImage
+            draggable='false'
+            src={
+              kamiImage !== 'https://miladymaker.net/milady/8365.png'
+                ? kamiImage
+                : account.pfpURI ?? kamiImage
+            }
+          />
         </Popover>
       </PfpContainer>
     </Container>
@@ -225,6 +242,9 @@ const PfpContainer = styled.div`
   position: relative;
   width: 10vw;
   height: 10vw;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const PfpImage = styled.img`
