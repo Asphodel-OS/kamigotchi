@@ -57,32 +57,15 @@ export function registerChatModal() {
             const client = getKamidenClient();
 
             // Get initial messages for room 0
-            console.log(`Fetching room messages from room ${account.roomIndex}...`);
+            console.log(`Fetching room messages from room lab entrance roomIndex 6`); // ${account.roomIndex}...`);
+
             try {
-              const response = await client.getRoomMessages({ RoomIndex: account.roomIndex });
+              const response = await client.getRoomMessages({ RoomIndex: 6 });
+              console.log('Messages', response.Messages);
               setKamidenMessages(response.Messages);
             } catch (e) {
               console.log('Error fetching initial messages:', e);
             }
-            /*
-            // Subscribe to new messages
-            console.log('Setting up stream...');
-            const messageStream = client.subscribeToStream({});
-
-            const handleStream = async () => {
-              try {
-                console.log('Starting stream handling...');
-                for await (const streamResponse of messageStream) {
-                  console.log('Received message from stream:', streamResponse);
-                  setKamidenMessages((prev) => [...streamResponse.Messages, ...prev]);
-                }
-              } catch (error) {
-                console.error('Stream error:', error);
-              }
-            };
-
-            handleStream();
-            */
           } catch (error) {
             console.error('Error connecting to Kamiden:', error);
           }
