@@ -6,7 +6,10 @@ let kamidenClient: KamidenServiceClient | null = null;
 
 export function getKamidenClient(): KamidenServiceClient {
   if (!kamidenClient) {
-    const channel = createChannel('http://127.0.0.1', grpc.WebsocketTransport()); //http client
+    const channel = createChannel(
+      'https://kamiden-feed.test.asphodel.io',
+      grpc.WebsocketTransport()
+    ); //http client
     kamidenClient = createClient(KamidenServiceDefinition, channel);
   }
   return kamidenClient;
