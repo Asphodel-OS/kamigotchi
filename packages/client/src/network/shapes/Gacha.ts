@@ -4,19 +4,18 @@ import { utils } from 'ethers';
 import { GasExponent } from 'constants/gas';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { Commit, getHolderCommits } from './Commit';
 import { getConfigFieldValue } from './Config';
 import { Kami } from './Kami';
-import { Commit } from './utils';
-import { queryHolderCommits } from './utils/commits';
 
 export const GACHA_ID = formatEntityID(utils.solidityKeccak256(['string'], ['gacha.id']));
 
-export const queryGachaCommits = (
+export const getGachaCommits = (
   world: World,
   components: Components,
   accountID: EntityID
 ): Commit[] => {
-  return queryHolderCommits(world, components, 'GACHA_COMMIT', accountID);
+  return getHolderCommits(world, components, 'GACHA_COMMIT', accountID);
 };
 
 export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {

@@ -12,11 +12,11 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { getConfigFieldValue } from 'network/shapes/Config';
-import { GACHA_ID, calcRerollCost, queryGachaCommits } from 'network/shapes/Gacha';
+import { GACHA_ID, calcRerollCost, getGachaCommits } from 'network/shapes/Gacha';
 import { getItemBalance } from 'network/shapes/Item';
 import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
-import { Commit, filterRevealable } from 'network/shapes/utils';
 import { getOwnerAddress } from 'network/shapes/utils/component';
 import { playVend } from 'utils/sounds';
 import { MainDisplay } from './display/MainDisplay';
@@ -52,7 +52,7 @@ export function registerGachaModal() {
               ownerAddress: getOwnerAddress(components, accountEntity),
               gachaBalance: getItemBalance(world, components, accountID, GACHA_TICKET_INDEX),
               poolKamis: queryKamis(components, { account: GACHA_ID }),
-              commits: queryGachaCommits(world, components, accountID),
+              commits: getGachaCommits(world, components, accountID),
               maxRerolls: getConfigFieldValue(world, components, 'GACHA_MAX_REROLLS'),
             },
             utils: {
@@ -99,7 +99,7 @@ export function registerGachaModal() {
       // Q(jb): is it necessary to run this as an async
       useEffect(() => {
         const tx = async () => {
-          const filtered = filterRevealable(commits, Number(blockNumber));
+          const filtered = filterRevealableCommits(commits);
           if (!triedReveal && filtered.length > 0) {
             try {
               // wait to give buffer for rpc

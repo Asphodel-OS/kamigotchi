@@ -1,9 +1,9 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Commit } from 'network/shapes/Commit';
 import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
-import { Commit } from 'network/shapes/utils';
 import { Commits } from '../reroll/Commits';
 import { Reroll } from '../reroll/Reroll';
 import { Filter, Sort, TabType } from '../types';

@@ -1,6 +1,5 @@
 export { getCompAddr, getSystemAddr } from './addresses';
 export { genID, queryChildrenOf } from './children';
-export { canReveal, filterRevealable } from './commits';
 export { getBalance, getBool, getInventoryBalance } from './getter';
 export { getEntityByHash, hashArgs } from './IDs';
 export {
@@ -23,5 +22,4 @@ export { genRef, queryRefChildren, queryRefsWithParent } from './references';
 
 export { capitalize } from './strings';
 
-export type { Commit } from './commits';
 export type { DetailedEntity } from './parse';

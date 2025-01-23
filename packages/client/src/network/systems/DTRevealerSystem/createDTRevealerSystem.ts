@@ -7,9 +7,10 @@ import {
   removeComponent,
   setComponent,
 } from '@mud-classic/recs';
+
 import { Components } from 'network/components';
+import { canRevealCommit } from 'network/shapes/Commit';
 import { DTCommit } from 'network/shapes/Droptable';
-import { canReveal } from 'network/shapes/utils/commits';
 import { Observable } from 'rxjs';
 import { ActionState, ActionSystem } from '../ActionSystem';
 import { NotificationSystem } from '../NotificationSystem';
@@ -46,7 +47,7 @@ export function createDTRevealerSystem(
       failures: 0,
     };
     allCommits.set(commit.id, data);
-    if (canReveal(commit, blockNumber)) queuedCommits.add(commit.id);
+    if (canRevealCommit(commit)) queuedCommits.add(commit.id);
   }
 
   function extractQueue(): EntityID[] {

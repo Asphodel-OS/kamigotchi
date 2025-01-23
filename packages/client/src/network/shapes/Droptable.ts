@@ -1,10 +1,11 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+
 import { getRarities } from 'constants/rarities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { Commit, getHolderCommits } from './Commit';
 import { getItemDetailsByIndex } from './Item';
-import { Commit, DetailedEntity, getEntityByHash } from './utils';
-import { queryHolderCommits } from './utils/commits';
+import { DetailedEntity, getEntityByHash } from './utils';
 import { getKeys, getWeights } from './utils/component';
 
 export interface Droptable {
@@ -107,7 +108,7 @@ export const queryDTCommits = (
 ): DTCommit[] => {
   const { SourceID, Value } = components;
 
-  const commits = queryHolderCommits(world, components, 'ITEM_DROPTABLE_COMMIT', holderID);
+  const commits = getHolderCommits(world, components, 'ITEM_DROPTABLE_COMMIT', holderID);
   return commits.map((commit) => {
     return {
       ...commit,

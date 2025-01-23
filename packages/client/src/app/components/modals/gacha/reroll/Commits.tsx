@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
-import { Commit, canReveal } from 'network/shapes/utils';
+import { Commit, canRevealCommit } from 'network/shapes/Commit';
 import { getTimeDeltaString } from 'utils/time';
 
 const SECONDS_PER_DAY = 86400;
@@ -31,7 +31,7 @@ export const Commits = (props: Props) => {
   // DISPLAY
 
   const Cell = (commit: Commit) => {
-    return canReveal(commit, blockNumber) ? ActiveCell(commit) : ExpiredCell(commit);
+    return canRevealCommit(commit) ? ActiveCell(commit) : ExpiredCell(commit);
   };
 
   const ActiveCell = (commit: Commit) => {
