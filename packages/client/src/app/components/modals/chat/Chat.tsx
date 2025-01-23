@@ -2,12 +2,13 @@ import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import { EntityID } from '@mud-classic/recs';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
 
@@ -29,17 +30,25 @@ export function registerChatModal() {
       return interval(3333).pipe(
         map(() => {
           const account = getAccountFromEmbedded(network, { friends: true });
+          const { world, components } = network;
+
+          const { nodeIndex } = useSelected.getState();
           return {
-            data: { account },
+            data: { account, world, components },
+            utils: {
+              getAccountByID: (accountid: EntityID) => getAccountByID(world, components, accountid),
+            },
             network,
+            nodeIndex,
           };
         })
       );
     },
-    ({ data, network }) => {
+    ({ data, network, nodeIndex, utils }) => {
       const { account } = data;
       const { actions, api } = network;
       const { modals } = useVisibility();
+
       const [casts, setCasts] = useState<CastWithInteractions[]>([]);
       const [messages, setMessages] = useState<KamiMessage[]>([]);
       const maxCasts = 100;
@@ -117,7 +126,12 @@ export function registerChatModal() {
           }
           canExit
         >
-          <Feed max={maxCasts} actions={{ pushMessages, setMessages }} />
+          <Feed
+            nodeIndex={nodeIndex}
+            max={maxCasts}
+            utils={utils}
+            actions={{ pushMessages, setMessages }}
+          />
         </ModalWrapper>
       );
     }
