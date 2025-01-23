@@ -1,65 +1,38 @@
-import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { Farcaster } from 'app/stores';
-import { likeCast, unlikeCast } from 'src/clients/neynar';
-import { playClick } from 'utils/sounds';
+import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 
 interface Props {
   data: {
-    account: Farcaster;
-    cast: CastWithInteractions;
-    casts: CastWithInteractions[];
-  };
-  actions: {
-    setCasts: (casts: CastWithInteractions[]) => void;
+    message: KamiMessage;
   };
 }
 
 export const Message = (props: Props) => {
-  const baseUrl = 'https://warpcast.com';
-  const { account, cast, casts } = props.data;
-  const { setCasts } = props.actions;
+  const { message } = props.data;
 
   /////////////////
   // INTERPRETATION
 
-  // checks whether the cast has been liked by the current user
-  const isLiked = (cast: CastWithInteractions) => {
-    const fAccount = account;
-    if (fAccount.id == 0) return false;
-    return !!cast.reactions.likes.find((l) => l.fid == fAccount.id);
-  };
-
   /////////////////
   // INTERACTION
 
-  const handleLike = (cast: CastWithInteractions) => {
-    playClick();
-    if (isLiked(cast)) handleCastUnlike(cast);
-    else handleCastLike(cast);
-  };
-
-  return (
-    <Container>
+  /*
       <Pfp
         src={cast.author.pfp_url}
         onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}
       />
+      */
+  return (
+    <Container>
       <Content>
         <Header>
-          <Author onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}>
-            {cast.author.username}
-          </Author>
-          <Time>
-            {moment(cast.timestamp).format('MM/DD HH:mm')}
-            <Heart color={isLiked(cast) ? 'red' : 'gray'} onClick={() => handleLike(cast)} />
-          </Time>
+          <Author>{message.AccountId}</Author>
+          <Room>{message.RoomIndex}</Room>
+          <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
         </Header>
-        <Body onClick={() => window.open(`${baseUrl}/${cast.author.username}/${cast.hash}`)}>
-          {cast.text}
-        </Body>
+        <Body>{message.Message}</Body>
       </Content>
     </Container>
   );
@@ -68,43 +41,6 @@ export const Message = (props: Props) => {
   // HELPERS
 
   // trigger a like of a cast
-  async function handleCastLike(cast: CastWithInteractions) {
-    const fAccount = account;
-    if (!fAccount.signer) return;
-    const response = await likeCast(fAccount.signer, cast.hash);
-
-    // update the list of casts
-    if (response.success) {
-      cast.reactions.likes.push({ fid: fAccount.id });
-      for (const [i, cast] of casts.entries()) {
-        if (casts.find((c) => c.hash === cast.hash)) {
-          casts[i] = cast;
-          break;
-        }
-      }
-      setCasts(casts);
-    }
-  }
-
-  // trigger an unlike of a cast
-  async function handleCastUnlike(cast: CastWithInteractions) {
-    const fAccount = account;
-    if (!fAccount.signer) return;
-    const response = await unlikeCast(fAccount.signer, cast.hash);
-
-    // update the list of casts
-    if (response.success) {
-      const index = cast.reactions.likes.findIndex((l) => l.fid == fAccount.id);
-      if (index > -1) cast.reactions.likes.splice(index, 1);
-      for (const [i, cast] of casts.entries()) {
-        if (casts.find((c) => c.hash === cast.hash)) {
-          casts[i] = cast;
-          break;
-        }
-      }
-      setCasts(casts);
-    }
-  }
 };
 
 const Container = styled.div`
@@ -160,6 +96,17 @@ const Author = styled.div`
   }
 `;
 
+const Room = styled.div`
+  color: green;
+  font-family: Pixel;
+  font-size: 1vw;
+
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+  }
+`;
+
 const Time = styled.div`
   color: black;
   font-family: Pixel;
@@ -182,31 +129,6 @@ const Body = styled.div`
 
   &:hover {
     opacity: 0.6;
-    cursor: pointer;
-  }
-`;
-
-const Heart = styled.div<{ color: string }>`
-  width: 1.2vw;
-  background:
-    radial-gradient(circle at 60% 65%, ${(props) => props.color} 64%, transparent 65%) top left,
-    radial-gradient(circle at 40% 65%, ${(props) => props.color} 64%, transparent 65%) top right,
-    linear-gradient(to bottom left, ${(props) => props.color} 43%, transparent 43%) bottom left,
-    linear-gradient(to bottom right, ${(props) => props.color} 43%, transparent 43%) bottom right;
-  background-size: 50% 50%;
-  background-repeat: no-repeat;
-  display: inline-block;
-  cursor: pointer;
-
-  margin-bottom: 0.1vw;
-  &::before {
-    content: '';
-    padding-left: 0.3vw;
-    padding-top: 100%;
-    display: block;
-  }
-
-  &::hover {
     cursor: pointer;
   }
 `;
