@@ -6,10 +6,8 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
-import { Message } from 'engine/types/kamiden/kamiden';
-import moment from 'moment';
+import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
-import { getKamidenClient } from 'workers/sync/kamidenStreamClient';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
 
@@ -43,11 +41,13 @@ export function registerChatModal() {
       const { actions, api } = network;
       const { modals } = useVisibility();
       const [casts, setCasts] = useState<CastWithInteractions[]>([]);
+      const [messages, setMessages] = useState<KamiMessage[]>([]);
       const maxCasts = 100;
-      const [kamidenMessages, setKamidenMessages] = useState<Message[]>([]);
+      const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
 
       useEffect(() => {
         console.log('Chat visibility changed:', modals.chat);
+        /*
         if (!modals.chat) return;
 
         // Initialize Kamiden client and fetch initial messages
@@ -72,18 +72,18 @@ export function registerChatModal() {
         };
 
         initKamiden();
-
+        */
         return () => {
           console.log('Cleaning up Kamiden connection - chat closed');
         };
       }, [modals.chat]);
 
       const pushCast = (cast: CastWithInteractions) => {
-        setCasts([cast, ...casts]);
+        //setCasts([cast, ...casts]);
       };
 
       const pushCasts = (newCasts: CastWithInteractions[]) => {
-        const oldCasts = [...casts];
+        /*const oldCasts = [...casts];
 
         // split the new casts into unique and duplicates
         const uniqueCasts = [];
@@ -97,6 +97,15 @@ export function registerChatModal() {
         const allCasts = [...uniqueCasts, ...oldCasts];
         allCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
         setCasts(allCasts);
+        */
+      };
+
+      const pushMessage = (newMessage: KamiMessage) => {
+        //setMessages([newMessage, ...messages]);
+      };
+
+      const pushMessages = (newMessages: KamiMessage[]) => {
+        //setKamidenMessages()
       };
 
       return (
@@ -108,7 +117,7 @@ export function registerChatModal() {
           }
           canExit
         >
-          <Feed max={maxCasts} casts={casts} actions={{ setCasts, pushCasts }} />
+          <Feed max={maxCasts} actions={{ pushMessages, setMessages }} />
         </ModalWrapper>
       );
     }
