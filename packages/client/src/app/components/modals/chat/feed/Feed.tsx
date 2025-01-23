@@ -2,6 +2,8 @@ import { FeedResponse } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityID } from '@mud-classic/recs';
+import { Account } from 'app/cache/account';
 import { useAccount, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { getKamidenClient } from 'workers/sync/kamidenStreamClient';
@@ -9,6 +11,10 @@ import { Message } from './Message';
 
 interface Props {
   max: number; // max number of casts to disable polling at
+  nodeIndex: number;
+  utils: {
+    getAccountByID: (accountid: EntityID) => Account;
+  };
   actions: {
     pushMessages: (messages: KamiMessage[]) => void;
     setMessages: (messages: KamiMessage[]) => void;
@@ -17,7 +23,8 @@ interface Props {
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { max } = props;
+  const { max, nodeIndex, utils } = props;
+
   //const { pushCasts, setCasts } = props.actions;
   const { farcaster } = useAccount();
   const { modals } = useVisibility();
@@ -36,7 +43,7 @@ export const Feed = (props: Props) => {
   useEffect(() => {
     console.log('useEffect []');
     pollNew();
-  }, []);
+  }, [nodeIndex]);
 
   // time-based autopolling of new messages (10s atm)
   // TODO: autoexpand and contract this polling based on detected activity
@@ -84,7 +91,7 @@ export const Feed = (props: Props) => {
     <Wrapper ref={feedRef}>
       {kamidenMessages
         ?.toReversed()
-        .map((message) => <Message key={message.Timestamp} data={{ message }} />)}
+        .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)}
     </Wrapper>
   );
 
@@ -99,7 +106,7 @@ export const Feed = (props: Props) => {
   // poll for recent messages. do not update the Feed state/cursor
   async function pollNew() {
     console.log('feed polling new');
-    const response = await client.getRoomMessages({ RoomIndex: 6 });
+    const response = await client.getRoomMessages({ RoomIndex: nodeIndex });
     console.log('Messages', response.Messages);
     console.log('feed get messages');
     setKamidenMessages(response.Messages.reverse());
@@ -114,6 +121,7 @@ export const Feed = (props: Props) => {
 
 const Wrapper = styled.div`
   width: 100%;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
