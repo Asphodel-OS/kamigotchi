@@ -1,9 +1,14 @@
 import moment from 'moment';
 import styled from 'styled-components';
 
+import { EntityID } from '@mud-classic/recs';
+import { Account } from 'app/cache/account';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 
 interface Props {
+  utils: {
+    getAccountByID: (accountid: EntityID) => Account;
+  };
   data: {
     message: KamiMessage;
   };
@@ -11,6 +16,7 @@ interface Props {
 
 export const Message = (props: Props) => {
   const { message } = props.data;
+  const { getAccountByID } = props.utils;
 
   /////////////////
   // INTERPRETATION
@@ -24,11 +30,13 @@ export const Message = (props: Props) => {
         onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}
       />
       */
+  console.log(` getAccountByID ${JSON.stringify(getAccountByID(message.AccountId as EntityID))}`);
+  console.log(`message.AccountId ${message.AccountId}`);
   return (
     <Container>
       <Content>
         <Header>
-          <Author>{message.AccountId}</Author>
+          <Author>{getAccountByID(message.AccountId as EntityID).name}</Author>
           <Room>{message.RoomIndex}</Room>
           <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
         </Header>
