@@ -57,6 +57,20 @@ library LibInventory {
     create(components, id, holderID, itemIndex);
   }
 
+  function remove(IUintComp components, uint256 id) internal {
+    LibEntityType.remove(components, id);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
+    OwnerComponent(getAddrByID(components, OwnerCompID)).remove(id);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+  }
+
+  function remove(IUintComp components, uint256[] memory ids) internal {
+    LibEntityType.remove(components, ids);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(ids);
+    OwnerComponent(getAddrByID(components, OwnerCompID)).remove(ids);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
+  }
+
   /// @notice checks if inventory exists, creates otherwise
   /**@dev
    * slightly optimises the `check if exist, else create` pattern
@@ -75,7 +89,7 @@ library LibInventory {
     }
   }
 
-  function createForBatch(
+  function createFor(
     IUintComp components,
     uint256 holderID,
     uint32[] memory itemIndices
@@ -104,57 +118,61 @@ library LibInventory {
     return ids;
   }
 
-  /// @notice Delete the inventory instance
-  function del(IUintComp components, uint256 id) internal {
-    LibEntityType.remove(components, id);
-    getCompByID(components, ValueCompID).remove(id);
-    getCompByID(components, IndexItemCompID).remove(id);
-    getCompByID(components, OwnerCompID).remove(id);
-  }
-
   /////////////////
   // INTERACTIONS
 
   /// @notice increase, and creates new inventory if needed
-  function incFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
-    uint256 id = createFor(components, holderID, itemIndex);
+  function incFor(
+    IUintComp components,
+    uint256 holderID,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal returns (uint256 id) {
+    id = createFor(components, holderID, itemIndex);
     ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
     LibData.inc(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
   }
 
-  function incForBatch(
+  function incFor(
     IUintComp components,
     uint256 holderID,
     uint32[] memory itemIndices,
     uint256[] memory amts
-  ) internal {
-    uint256[] memory ids = createForBatch(components, holderID, itemIndices);
+  ) internal returns (uint256[] memory ids) {
+    ids = createFor(components, holderID, itemIndices);
     ValueComponent(getAddrByID(components, ValueCompID)).inc(ids, amts);
     LibData.inc(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
   }
 
   /// @notice decrease, and creates new inventory if needed
   function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
-    uint256 id = createFor(components, holderID, itemIndex);
-    ValueComponent(getAddrByID(components, ValueCompID)).dec(id, amt);
+    uint256 id = genID(holderID, itemIndex);
+
+    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+    uint256 newBal = valComp.safeGet(id) - amt;
+    if (newBal == 0)
+      remove(components, id); // delete entity if zero
+    else valComp.set(id, newBal);
+
     LibData.dec(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
   }
 
-  function decForBatch(
+  function decFor(
     IUintComp components,
     uint256 holderID,
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal {
-    uint256[] memory ids = createForBatch(components, holderID, itemIndices);
-    ValueComponent(getAddrByID(components, ValueCompID)).dec(ids, amts);
-    LibData.dec(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
-  }
+    uint256[] memory ids = genID(holderID, itemIndices);
+    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+    for (uint256 i; i < ids.length; i++) {
+      uint256 newBal = valComp.safeGet(ids[i]) - amts[i];
+      if (newBal == 0)
+        remove(components, ids[i]); // delete entity if zero
+      else valComp.set(ids[i], newBal);
+    }
 
-  /// @notice sets, and creates new inventory if needed
-  function setFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
-    uint256 id = createFor(components, holderID, itemIndex);
-    set(components, id, amt);
+    LibData.dec(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
   }
 
   /// @notice transfers, and creates new inventory if needed
@@ -252,13 +270,7 @@ library LibInventory {
     IUintComp components,
     uint256 holderID
   ) internal view returns (uint256[] memory) {
-    return
-      LibEntityType.queryWithValue(
-        components,
-        "INVENTORY",
-        getCompByID(components, OwnerCompID),
-        abi.encode(holderID)
-      );
+    return OwnerComponent(getAddrByID(components, OwnerCompID)).getEntitiesWithValue(holderID);
   }
 
   /////////////////
@@ -266,6 +278,15 @@ library LibInventory {
 
   function genID(uint256 holderID, uint32 itemIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("inventory.instance", holderID, itemIndex)));
+  }
+
+  function genID(
+    uint256 holderID,
+    uint32[] memory itemIndices
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory ids = new uint256[](itemIndices.length);
+    for (uint256 i; i < itemIndices.length; i++) ids[i] = genID(holderID, itemIndices[i]);
+    return ids;
   }
 
   /////////////////

@@ -26,7 +26,7 @@ contract ItemBurnSystem is System {
     LibItem.verifyBurnable(components, indices);
 
     // burning
-    LibInventory.decForBatch(components, accID, indices, amts); // implicit inventory balance check
+    LibInventory.decFor(components, accID, indices, amts); // implicit inventory balance check
 
     // standard logging and tracking
     LibData.inc(components, accID, indices, "ITEM_BURN", amts);

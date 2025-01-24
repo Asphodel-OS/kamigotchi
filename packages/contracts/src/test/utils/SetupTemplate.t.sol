@@ -429,11 +429,20 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  function _giveItem(PlayerAccount memory acc, uint32 itemIndex, uint256 amt) internal {
+  function _giveItem(
+    PlayerAccount memory acc,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    LibInventory.incFor(components, acc.id, itemIndex, amt);
-    // LibInventory.logItemTotal(components, acc.id, itemIndex, amt);
-    LibData.inc(components, acc.id, itemIndex, "ITEM_TOTAL", amt);
+    id = LibInventory.incFor(components, acc.id, itemIndex, amt);
+    LibData.inc(components, acc.id, itemIndex, "ITEM_TOTAL", amt); // direct call to avoid public call
+    vm.stopPrank();
+  }
+
+  function _decItem(PlayerAccount memory acc, uint32 itemIndex, uint256 amt) internal {
+    vm.startPrank(deployer);
+    LibInventory.decFor(components, acc.id, itemIndex, amt);
     vm.stopPrank();
   }
 

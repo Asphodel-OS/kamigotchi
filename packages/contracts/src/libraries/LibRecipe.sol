@@ -138,10 +138,10 @@ library LibRecipe {
     (Table memory input, Table memory output) = getIO(components, recipeIndex, rolls);
 
     // use inputs (balance implicitly checked)
-    LibInventory.decForBatch(components, accID, input.indices, input.amts);
+    LibInventory.decFor(components, accID, input.indices, input.amts);
 
     // send outputs
-    LibInventory.incForBatch(components, accID, output.indices, output.amts);
+    LibInventory.incFor(components, accID, output.indices, output.amts);
 
     return (output.indices, output.amts);
   }

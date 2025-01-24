@@ -186,8 +186,10 @@
       "name": "AccountUseItemSystem",
       "writeAccess": [
         "BlockReveal",
+        "EntityType",
         "IdSource",
         "IdHolder",
+        "IDOwnsInventory",
         "IndexItem",
         "IndexRoom",
         "TimeLast",
@@ -268,7 +270,7 @@
     { "name": "EchoRoomSystem", "writeAccess": ["IndexRoom"] },
     {
       "name": "ItemBurnSystem",
-      "writeAccess": ["TimeLast", "Value"]
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "TimeLast", "Value"]
     },
     {
       "name": "FriendAcceptSystem",
@@ -321,7 +323,17 @@
     },
     {
       "name": "ListingSellSystem",
-      "writeAccess": ["IdHolder", "Index", "Balance", "TimeLast", "Type", "Value"]
+      "writeAccess": [
+        "EntityType",
+        "IdHolder",
+        "IDOwnsInventory",
+        "IndexItem",
+        "Index",
+        "Balance",
+        "TimeLast",
+        "Type",
+        "Value"
+      ]
     },
     {
       "name": "Kami721IsInWorldSystem",
@@ -333,11 +345,34 @@
     },
     {
       "name": "KamiGachaMintSystem",
-      "writeAccess": ["BlockReveal", "IDOwnsKami", "IdHolder", "Reroll", "TimeLast", "Type", "Value"]
+      "writeAccess": [
+        "BlockReveal",
+        "EntityType",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IdHolder",
+        "IndexItem",
+        "Reroll",
+        "TimeLast",
+        "Type",
+        "Value"
+      ]
     },
     {
       "name": "KamiGachaRerollSystem",
-      "writeAccess": ["BlockReveal", "IDOwnsKami", "IdHolder", "Reroll", "TimeLast", "Type", "State", "Value"]
+      "writeAccess": [
+        "BlockReveal",
+        "EntityType",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IdHolder",
+        "IndexItem",
+        "Reroll",
+        "TimeLast",
+        "Type",
+        "State",
+        "Value"
+      ]
     },
     {
       "name": "KamiGachaRevealSystem",

@@ -24,6 +24,9 @@ contract WrapCaller {
     LibKami.sync(components, id);
   }
 
+  /////////////
+  // SETTERS //
+
   function setterUpdate(
     string memory _type,
     uint32 index,
@@ -35,5 +38,16 @@ contract WrapCaller {
 
   function setterDec(string memory _type, uint32 index, uint256 amount, uint256 targetID) public {
     LibSetter.dec(components, _type, index, amount, targetID);
+  }
+
+  /////////////
+  // INVENTORY //
+
+  function decFor(uint256 accID, uint32 index, uint256 amt) public {
+    LibInventory.decFor(components, accID, index, amt);
+  }
+
+  function decFor(uint256 accID, uint32[] memory indices, uint256[] memory amts) public {
+    LibInventory.decFor(components, accID, indices, amts);
   }
 }
