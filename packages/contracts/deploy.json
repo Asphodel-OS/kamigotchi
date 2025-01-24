@@ -24,10 +24,11 @@
     { "comp": "IdHolder", "name": "HolderID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsFlag", "name": "OwnsFlagID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsInventory", "name": "OwnsInvID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsKami", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
-    { "comp": "IDOwnsKami", "name": "OwnsKamiID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDParent", "name": "ParentID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDRoom", "name": "RoomID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdSource", "name": "SourceID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -572,6 +573,62 @@
       ]
     },
     {
+      "name": "TradeCancelSystem",
+      "writeAccess": [
+        "EntityType",
+        "IdTarget",
+        "IDOwnsInventory",
+        "IDOwnsTrade",
+        "IndexItem",
+        "Keys",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
+    },
+    {
+      "name": "TradeCreateSystem",
+      "writeAccess": [
+        "EntityType",
+        "IdTarget",
+        "IDOwnsInventory",
+        "IDOwnsTrade",
+        "IndexItem",
+        "Keys",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
+    },
+    {
+      "name": "TradeExecuteSystem",
+      "writeAccess": [
+        "EntityType",
+        "IdTarget",
+        "IDOwnsInventory",
+        "IDOwnsTrade",
+        "IndexItem",
+        "Keys",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
+    },
+    {
+      "name": "TradeModifySystem",
+      "writeAccess": [
+        "EntityType",
+        "IdTarget",
+        "IDOwnsInventory",
+        "IDOwnsTrade",
+        "IndexItem",
+        "Keys",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
+    },
+    {
       "name": "_721BatchMinterSystem",
       "writeAccess": ["*"]
     }
@@ -612,6 +669,7 @@
     "LibSkill",
     "LibStat",
     "LibTimelock",
+    "LibTrade",
     "LibTraitRegistry",
     "LibVIP"
   ]

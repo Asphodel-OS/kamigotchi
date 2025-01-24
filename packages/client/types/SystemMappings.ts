@@ -61,11 +61,10 @@ export const systemToId = {
   ScavengeClaimSystem: "system.scavenge.claim",
   SkillResetSystem: "system.skill.reset",
   SkillUpgradeSystem: "system.skill.upgrade",
-  TradeAcceptSystem: "system.trade.accept",
-  TradeAddToSystem: "system.trade.add",
   TradeCancelSystem: "system.trade.cancel",
-  TradeConfirmSystem: "system.trade.confirm",
-  TradeInitiateSystem: "system.trade.initiate",
+  TradeCreateSystem: "system.trade.create",
+  TradeExecuteSystem: "system.trade.execute",
+  TradeModifySystem: "system.trade.modify",
 };
 
 export const idToSystem = {
@@ -130,10 +129,9 @@ export const idToSystem = {
   "system.scavenge.claim": "ScavengeClaimSystem",
   "system.skill.reset": "SkillResetSystem",
   "system.skill.upgrade": "SkillUpgradeSystem",
-  "system.trade.accept": "TradeAcceptSystem",
-  "system.trade.add": "TradeAddToSystem",
   "system.trade.cancel": "TradeCancelSystem",
-  "system.trade.confirm": "TradeConfirmSystem",
-  "system.trade.initiate": "TradeInitiateSystem",
+  "system.trade.create": "TradeCreateSystem",
+  "system.trade.execute": "TradeExecuteSystem",
+  "system.trade.modify": "TradeModifySystem",
 };
   

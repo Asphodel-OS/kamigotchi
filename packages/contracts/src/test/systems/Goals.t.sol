@@ -122,9 +122,9 @@ contract GoalsTest is SetupTemplate {
       assertEq(0, rewards.length, "slacker rewards mismatch");
       vm.prank(accSlacker.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
-      assertEq(0, _getItemBal(accSlacker.index, 100), "slacker bronze mismatch");
-      assertEq(0, _getItemBal(accSlacker.index, 200), "slacker silver mismatch");
-      assertEq(0, _getItemBal(accSlacker.index, 300), "slacker gold mismatch");
+      assertEq(0, _getItemBal(accSlacker, 100), "slacker bronze mismatch");
+      assertEq(0, _getItemBal(accSlacker, 200), "slacker silver mismatch");
+      assertEq(0, _getItemBal(accSlacker, 300), "slacker gold mismatch");
     }
 
     {
@@ -139,9 +139,9 @@ contract GoalsTest is SetupTemplate {
       assertEq(1, rewards.length, "bronzer rewards mismatch");
       vm.prank(accBronze.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
-      assertEq(1, _getItemBal(accBronze.index, 100), "bronzer bronze mismatch");
-      assertEq(0, _getItemBal(accBronze.index, 200), "bronzer silver mismatch");
-      assertEq(0, _getItemBal(accBronze.index, 300), "bronzer gold mismatch");
+      assertEq(1, _getItemBal(accBronze, 100), "bronzer bronze mismatch");
+      assertEq(0, _getItemBal(accBronze, 200), "bronzer silver mismatch");
+      assertEq(0, _getItemBal(accBronze, 300), "bronzer gold mismatch");
     }
 
     {
@@ -156,9 +156,9 @@ contract GoalsTest is SetupTemplate {
       assertEq(2, rewards.length, "silverer rewards mismatch");
       vm.prank(accSilver.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
-      assertEq(1, _getItemBal(accSilver.index, 100), "silverer bronze mismatch");
-      assertEq(1, _getItemBal(accSilver.index, 200), "silverer silver mismatch");
-      assertEq(0, _getItemBal(accSilver.index, 300), "silverer gold mismatch");
+      assertEq(1, _getItemBal(accSilver, 100), "silverer bronze mismatch");
+      assertEq(1, _getItemBal(accSilver, 200), "silverer silver mismatch");
+      assertEq(0, _getItemBal(accSilver, 300), "silverer gold mismatch");
     }
 
     {
@@ -173,9 +173,9 @@ contract GoalsTest is SetupTemplate {
       assertEq(3, rewards.length, "goldier rewards mismatch");
       vm.prank(accGold.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
-      assertEq(1, _getItemBal(accGold.index, 100), "goldier bronze mismatch");
-      assertEq(1, _getItemBal(accGold.index, 200), "goldier silver mismatch");
-      assertEq(1, _getItemBal(accGold.index, 300), "goldier gold mismatch");
+      assertEq(1, _getItemBal(accGold, 100), "goldier bronze mismatch");
+      assertEq(1, _getItemBal(accGold, 200), "goldier silver mismatch");
+      assertEq(1, _getItemBal(accGold, 300), "goldier gold mismatch");
     }
   }
 

@@ -175,45 +175,6 @@ library LibInventory {
     LibData.dec(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
   }
 
-  /// @notice transfers, and creates new inventory if needed
-  /// @dev avoided some component cache optims for readability
-  function transferFor(
-    IUintComp components,
-    uint256 fromHolder,
-    uint256 toHolder,
-    uint32 itemIndex,
-    uint256 amt
-  ) internal {
-    // raw existence check to cache component
-    uint256 fromID = genID(fromHolder, itemIndex);
-    uint256 toID = genID(toHolder, itemIndex);
-
-    if (!LibEntityType.isShape(components, fromID, "INVENTORY"))
-      create(components, fromID, fromHolder, itemIndex);
-    if (!LibEntityType.isShape(components, toID, "INVENTORY"))
-      create(components, toID, toHolder, itemIndex);
-
-    transfer(components, fromID, toID, amt);
-  }
-
-  /// @notice sets the balance of an inventory instance
-  function set(IUintComp components, uint256 id, uint256 amt) internal {
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, amt);
-  }
-
-  /// @notice Transfer the specified fungible inventory amt from=>to entity
-  function transfer(IUintComp components, uint256 fromID, uint256 toID, uint256 amt) internal {
-    ValueComponent comp = ValueComponent(getAddrByID(components, ValueCompID));
-
-    // removing from
-    uint256 fromBal = comp.get(fromID);
-    if (fromBal < amt) revert("Inventory: insufficient balance");
-    comp.set(fromID, fromBal - amt);
-
-    // adding to
-    comp.set(toID, comp.get(toID) + amt);
-  }
-
   /////////////////
   // GETTERS
 

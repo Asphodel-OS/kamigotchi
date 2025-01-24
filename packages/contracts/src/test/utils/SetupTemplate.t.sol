@@ -407,13 +407,11 @@ abstract contract SetupTemplate is TestSetupImports {
   // GETTERS
 
   function _getItemBal(PlayerAccount memory player, uint32 index) internal view returns (uint256) {
-    return _getItemBal(player.index, index);
+    return _getItemBal(player.id, index);
   }
 
-  function _getItemBal(uint playerIndex, uint32 itemIndex) internal view returns (uint) {
-    uint accID = _getAccount(playerIndex);
-    uint inventoryID = LibInventory.get(components, accID, itemIndex);
-    return inventoryID == 0 ? 0 : LibInventory.getBalance(components, inventoryID);
+  function _getItemBal(uint holderID, uint32 itemIndex) internal view returns (uint) {
+    return LibInventory.getBalanceOf(components, holderID, itemIndex);
   }
 
   /////////////////
@@ -1155,6 +1153,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _initLiquidationConfigs();
     _initOnyxConfigs();
     _initSkillConfigs();
+    _initTradeConfigs();
     _initVIPConfigs();
   }
 
@@ -1228,6 +1227,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initSkillConfigs() internal virtual {
     _setConfig("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
+  }
+
+  function _initTradeConfigs() internal virtual {
+    _setConfig("MAX_TRADES_PER_ACCOUNT", 10);
   }
 
   function _initVIPConfigs() internal virtual {

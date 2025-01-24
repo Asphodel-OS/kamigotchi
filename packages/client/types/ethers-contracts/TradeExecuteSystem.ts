@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface TradeInitiateSystemInterface extends utils.Interface {
+export interface TradeExecuteSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
@@ -176,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface TradeInitiateSystem extends BaseContract {
+export interface TradeExecuteSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TradeInitiateSystemInterface;
+  interface: TradeExecuteSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -222,7 +222,7 @@ export interface TradeInitiateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      toID: PromiseOrValue<BigNumberish>,
+      tradeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -266,7 +266,7 @@ export interface TradeInitiateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    toID: PromiseOrValue<BigNumberish>,
+    tradeID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -306,7 +306,7 @@ export interface TradeInitiateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      toID: PromiseOrValue<BigNumberish>,
+      tradeID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -375,7 +375,7 @@ export interface TradeInitiateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      toID: PromiseOrValue<BigNumberish>,
+      tradeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -420,7 +420,7 @@ export interface TradeInitiateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      toID: PromiseOrValue<BigNumberish>,
+      tradeID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

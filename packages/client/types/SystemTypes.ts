@@ -60,11 +60,10 @@ import { RelationshipAdvanceSystem } from "./ethers-contracts/RelationshipAdvanc
 import { ScavengeClaimSystem } from "./ethers-contracts/ScavengeClaimSystem";
 import { SkillResetSystem } from "./ethers-contracts/SkillResetSystem";
 import { SkillUpgradeSystem } from "./ethers-contracts/SkillUpgradeSystem";
-import { TradeAcceptSystem } from "./ethers-contracts/TradeAcceptSystem";
-import { TradeAddToSystem } from "./ethers-contracts/TradeAddToSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
-import { TradeConfirmSystem } from "./ethers-contracts/TradeConfirmSystem";
-import { TradeInitiateSystem } from "./ethers-contracts/TradeInitiateSystem";
+import { TradeCreateSystem } from "./ethers-contracts/TradeCreateSystem";
+import { TradeExecuteSystem } from "./ethers-contracts/TradeExecuteSystem";
+import { TradeModifySystem } from "./ethers-contracts/TradeModifySystem";
 
 export type SystemTypes = {
   "system.Kami721.BatchMint": _721BatchMinterSystem;
@@ -128,9 +127,8 @@ export type SystemTypes = {
   "system.scavenge.claim": ScavengeClaimSystem;
   "system.skill.reset": SkillResetSystem;
   "system.skill.upgrade": SkillUpgradeSystem;
-  "system.trade.accept": TradeAcceptSystem;
-  "system.trade.add": TradeAddToSystem;
   "system.trade.cancel": TradeCancelSystem;
-  "system.trade.confirm": TradeConfirmSystem;
-  "system.trade.initiate": TradeInitiateSystem;
+  "system.trade.create": TradeCreateSystem;
+  "system.trade.execute": TradeExecuteSystem;
+  "system.trade.modify": TradeModifySystem;
 };

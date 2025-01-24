@@ -35,10 +35,7 @@ contract InventoryTest is SetupTemplate {
     assertEq(_getItemBal(alice, index), 0);
 
     // setting balance
-    vm.startPrank(deployer);
-    uint256 invID = LibInventory.create(components, alice.id, index);
-    LibInventory.set(components, invID, amt);
-    vm.stopPrank();
+    uint256 invID = _giveItem(alice, index, amt);
 
     assertInvExistence(invID, true);
     assertBalance(alice, index, amt);

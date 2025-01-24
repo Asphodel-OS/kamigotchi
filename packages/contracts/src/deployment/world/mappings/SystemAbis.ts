@@ -60,11 +60,10 @@ import RelationshipAdvanceSystem from "../../../../../client/abi/RelationshipAdv
 import ScavengeClaimSystem from "../../../../../client/abi/ScavengeClaimSystem.json";
 import SkillResetSystem from "../../../../../client/abi/SkillResetSystem.json";
 import SkillUpgradeSystem from "../../../../../client/abi/SkillUpgradeSystem.json";
-import TradeAcceptSystem from "../../../../../client/abi/TradeAcceptSystem.json";
-import TradeAddToSystem from "../../../../../client/abi/TradeAddToSystem.json";
 import TradeCancelSystem from "../../../../../client/abi/TradeCancelSystem.json";
-import TradeConfirmSystem from "../../../../../client/abi/TradeConfirmSystem.json";
-import TradeInitiateSystem from "../../../../../client/abi/TradeInitiateSystem.json";
+import TradeCreateSystem from "../../../../../client/abi/TradeCreateSystem.json";
+import TradeExecuteSystem from "../../../../../client/abi/TradeExecuteSystem.json";
+import TradeModifySystem from "../../../../../client/abi/TradeModifySystem.json";
 
 export const SystemAbis = {
   "system.Kami721.BatchMint": _721BatchMinterSystem.abi,
@@ -128,9 +127,8 @@ export const SystemAbis = {
   "system.scavenge.claim": ScavengeClaimSystem.abi,
   "system.skill.reset": SkillResetSystem.abi,
   "system.skill.upgrade": SkillUpgradeSystem.abi,
-  "system.trade.accept": TradeAcceptSystem.abi,
-  "system.trade.add": TradeAddToSystem.abi,
   "system.trade.cancel": TradeCancelSystem.abi,
-  "system.trade.confirm": TradeConfirmSystem.abi,
-  "system.trade.initiate": TradeInitiateSystem.abi,
+  "system.trade.create": TradeCreateSystem.abi,
+  "system.trade.execute": TradeExecuteSystem.abi,
+  "system.trade.modify": TradeModifySystem.abi,
 };

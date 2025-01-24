@@ -28,6 +28,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  *  - Value: the target price of the listing (not necessarily the actual price)
  *  - Balance: the number of units bought or sold
  *  - TimeStart: the time the item was created
+ *  - Price entities - Buy/Sell
  *
  * Pricing entities are shaped depending on their type of pricing.
  * The Buy Side and Sell Side pricing can be defined in a handful of ways:

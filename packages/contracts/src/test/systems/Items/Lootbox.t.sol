@@ -51,8 +51,8 @@ contract LootboxTest is ItemTemplate {
       vm.prank(alice.operator);
       _DroptableRevealSystem.executeTyped(revealIDs);
 
-      assertEq(_getItemBal(0, 1), useAmt);
-      assertEq(_getItemBal(0, lootboxIndex), startAmt - useAmt);
+      assertEq(_getItemBal(alice, 1), useAmt);
+      assertEq(_getItemBal(alice, lootboxIndex), startAmt - useAmt);
     }
   }
 
