@@ -15,12 +15,14 @@ contract AuctionBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint32 itemIndex, uint256 amt) = abi.decode(arguments, (uint32, uint256));
+    (uint32 itemIndex, int32 amt) = abi.decode(arguments, (uint32, int32));
+    require(amt > 0, "AuctionBuy: purchase amount must be positive");
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id != 0, "AuctionBuy: auction does not exist");
-    require(LibAuction.checkRequirements(components, id, accID), "AuctionBuy: reqs not met");
+    require(LibAuction.meetsRequirements(components, id, accID), "AuctionBuy: reqs not met");
+    require(!LibAuction.exceedsLimit(components, id, amt), "AuctionBuy: exceeds auction limit");
 
     // process the buy
     uint256 cost = LibAuction.buy(components, id, accID, amt);

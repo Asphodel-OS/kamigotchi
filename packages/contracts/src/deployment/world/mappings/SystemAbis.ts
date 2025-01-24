@@ -24,7 +24,7 @@ import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem
 import AccountSetOperatorSystem from "../../../../../client/abi/AccountSetOperatorSystem.json";
 import AccountSetPFPSystem from "../../../../../client/abi/AccountSetPFPSystem.json";
 import AccountUseItemSystem from "../../../../../client/abi/AccountUseItemSystem.json";
-import AuctionSystem from "../../../../../client/abi/AuctionSystem.json";
+import AuctionBuySystem from "../../../../../client/abi/AuctionBuySystem.json";
 import ChatSystem from "../../../../../client/abi/ChatSystem.json";
 import CraftSystem from "../../../../../client/abi/CraftSystem.json";
 import DroptableRevealSystem from "../../../../../client/abi/DroptableRevealSystem.json";
@@ -93,7 +93,7 @@ export const SystemAbis = {
   "system.account.set.operator": AccountSetOperatorSystem.abi,
   "system.account.set.pfp": AccountSetPFPSystem.abi,
   "system.account.use.item": AccountUseItemSystem.abi,
-  "system.auction": AuctionSystem.abi,
+  "system.auction": AuctionBuySystem.abi,
   "system.chat": ChatSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,

@@ -93,6 +93,7 @@
   ],
   "systems": [
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
+    { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
       "writeAccess": ["HasFlag", "IDOwnsFlag", "Type"]
@@ -236,6 +237,22 @@
     {
       "name": "AccountSetNameSystem",
       "writeAccess": ["Name", "TimeLast"]
+    },
+    {
+      "name": "AuctionBuySystem",
+      "writeAccess": [
+        "EntityType",
+        "IdHolder",
+        "IDOwnsInventory",
+        "IDType",
+        "Index",
+        "IndexItem",
+        "Balance",
+        "Limit",
+        "TimeReset",
+        "Type",
+        "Value"
+      ]
     },
     {
       "name": "ChatSystem",

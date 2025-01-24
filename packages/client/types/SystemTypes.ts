@@ -24,7 +24,7 @@ import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
 import { AccountSetPFPSystem } from "./ethers-contracts/AccountSetPFPSystem";
 import { AccountUseItemSystem } from "./ethers-contracts/AccountUseItemSystem";
-import { AuctionSystem } from "./ethers-contracts/AuctionSystem";
+import { AuctionBuySystem } from "./ethers-contracts/AuctionBuySystem";
 import { ChatSystem } from "./ethers-contracts/ChatSystem";
 import { CraftSystem } from "./ethers-contracts/CraftSystem";
 import { DroptableRevealSystem } from "./ethers-contracts/DroptableRevealSystem";
@@ -93,7 +93,7 @@ export type SystemTypes = {
   "system.account.set.operator": AccountSetOperatorSystem;
   "system.account.set.pfp": AccountSetPFPSystem;
   "system.account.use.item": AccountUseItemSystem;
-  "system.auction": AuctionSystem;
+  "system.auction": AuctionBuySystem;
   "system.chat": ChatSystem;
   "system.craft": CraftSystem;
   "system.droptable.item.reveal": DroptableRevealSystem;

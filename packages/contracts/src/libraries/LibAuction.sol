@@ -25,24 +25,34 @@ import { LibGDA, Params as GDAParams, CompoundParams as GDACompoundParams } from
 library LibAuction {
   using SafeCastLib for int32;
 
-  function buy(IUintComp comps, uint256 id, uint256 accID, uint256 amt) internal returns (uint256) {
+  function buy(IUintComp comps, uint256 id, uint256 accID, int32 amt) internal returns (uint256) {
     uint256 cost = calcBuy(comps, id, amt);
     uint32 itemIndex = IndexComponent(getAddrByID(comps, IndexCompID)).get(id);
     uint32 payItemIndex = IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(id);
     LibInventory.decFor(comps, accID, payItemIndex, cost);
-    LibInventory.incFor(comps, accID, itemIndex, amt);
+    LibInventory.incFor(comps, accID, itemIndex, amt.toUint256());
+    decBalance(comps, id, amt);
     return cost;
   }
 
+  // TODO: before next world, upgrade int32 comps to use .dec() .inc() like uint256
+  function decBalance(IUintComp comps, uint256 id, int32 amt) internal {
+    int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, balance - amt);
+  }
+
+  /////////////////
+  // CALCS
+
   // caculate the buy price for a specified quatity from an auction
-  function calcBuy(IUintComp comps, uint256 id, uint256 amt) internal view returns (uint256) {
+  function calcBuy(IUintComp comps, uint256 id, int32 amt) internal view returns (uint256) {
     GDAParams memory params = GDAParams(
       ValueComponent(getAddrByID(comps, ValueCompID)).get(id),
       TimeResetComponent(getAddrByID(comps, TimeResetCompID)).get(id),
       int256(ScaleComponent(getAddrByID(comps, ScaleCompID)).get(id)) * 1e9,
       int256(DecayComponent(getAddrByID(comps, DecayCompID)).get(id)) * 1e9,
       BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id).toUint256(),
-      amt
+      amt.toUint256()
     );
 
     int256 costWad = LibGDA.calc(params);
@@ -50,7 +60,18 @@ library LibAuction {
     return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
   }
 
-  function checkRequirements(
+  /////////////////
+  // CHECKERS
+
+  // check whether a purchase amount would exceed the balance remaining in the auction
+  function exceedsLimit(IUintComp comps, uint256 id, int32 amt) internal view returns (bool) {
+    int32 limit = LimitComponent(getAddrByID(comps, LimitCompID)).get(id);
+    int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
+    return balance + amt > limit;
+  }
+
+  // check whether the account meets the requirements to participate in an auction
+  function meetsRequirements(
     IUintComp comps,
     uint256 id,
     uint256 accID

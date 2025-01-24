@@ -37,12 +37,14 @@ contract _AuctionRegistrySystem is System {
     return id;
   }
 
+  // manually reset the auction to a new value (resets time and balance tracking)
   function reset(uint32 itemIndex, uint256 priceTarget) public onlyOwner {
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id != 0, "AuctionRegistry: auction does not exist");
     LibAuctionRegistry.reset(components, id, priceTarget);
   }
 
+  // remove an auction
   function remove(uint32 itemIndex) public onlyOwner {
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id != 0, "AuctionRegistry: auction does not exist");
