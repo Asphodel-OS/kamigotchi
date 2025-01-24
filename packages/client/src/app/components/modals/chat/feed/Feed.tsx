@@ -35,6 +35,10 @@ export const Feed = (props: Props) => {
 
   const feedRef = useRef<HTMLDivElement>(null);
 
+  //0 Node
+  //1 global
+  const [activeTab, setActiveTab] = useState(0);
+
   /////////////////
   // SUBSCRIPTION
 
@@ -89,9 +93,28 @@ export const Feed = (props: Props) => {
 
   return (
     <Wrapper ref={feedRef}>
-      {kamidenMessages
-        ?.toReversed()
-        .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)}
+      <Buttons>
+        <Button
+          disabled={activeTab === 0}
+          onClick={() => {
+            setActiveTab(0);
+          }}
+        >
+          {`Room ${nodeIndex}`}
+        </Button>
+        <Button
+          disabled={activeTab === 1}
+          onClick={() => {
+            setActiveTab(1);
+          }}
+        >
+          {`Global`}
+        </Button>
+      </Buttons>
+      {activeTab === 0 &&
+        kamidenMessages
+          ?.toReversed()
+          .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)}
     </Wrapper>
   );
 
@@ -127,4 +150,22 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   overflow-y: auto;
+`;
+
+const Buttons = styled.div`
+  width: 100%;
+`;
+const Button = styled.button`
+  font-size: 1vw;
+  padding: 0.35vw;
+  border-radius: 0.3vw;
+  margin-right: 1vw;
+  &:hover {
+    cursor: pointer;
+  }
+  &: disabled {
+    background-color: rgb(178, 178, 178);
+    border-radius: 0.3vw;
+    border-color: black;
+  }
 `;
