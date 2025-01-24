@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { useAccount } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { ActionSystem } from 'network/systems';
+import { waitForActionCompletion } from 'network/utils';
 import {
   FarcasterUser,
   createEmptyCast,
@@ -18,13 +21,16 @@ interface Props {
   account: Account;
   actionSystem: ActionSystem;
   actions: {
+    setScrollDown: (scrollDown: boolean) => void;
     pushCast: (cast: CastWithInteractions) => void;
   };
   api: any;
+  world: World;
 }
 
 export const InputRow = (props: Props) => {
-  const { account, actionSystem, api } = props;
+  const { account, actionSystem, api, world } = props;
+  const { setScrollDown } = props.actions;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const { farcaster: farcasterAccount } = useAccount(); // client side account representation in store
 
@@ -75,19 +81,32 @@ export const InputRow = (props: Props) => {
   /////////////////
   // INTERACTION
 
-  const onSubmit = async (text: string) => {
+  const onSubmit = (text: string) => {
+    playScribble();
+    // TODO: play success sound and update message in feed here (to succeeded)
+    console.log(`submitted "${text}"`);
+    const actionID = uuid() as EntityID;
+    actionSystem!.add({
+      id: actionID,
+      action: 'AccountMove',
+      params: [text],
+      description: `Send Message`,
+      execute: async () => {
+        return api.player.social.chat.send(text);
+      },
+    });
+    return actionID;
+  };
+
+  const handleSubmit = async (text: string) => {
     try {
-      playScribble();
-      // TODO: play success sound and update message in feed here (to succeeded)
-      console.log(`submitted "${text}"`);
-      actionSystem.add({
-        action: 'AccountMove',
-        params: [text],
-        description: `Send Message`,
-        execute: async () => {
-          return api.player.social.chat.send(text);
-        },
-      });
+      const rerollActionID = onSubmit(text);
+      if (!rerollActionID) throw new Error('Sending message action failed');
+      await waitForActionCompletion(
+        actionSystem!.Action,
+        world.entityToIndex.get(rerollActionID) as EntityIndex
+      );
+      setScrollDown(true);
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to
@@ -117,7 +136,7 @@ export const InputRow = (props: Props) => {
         <button
           style={{ padding: `0.5vw` }}
           onClick={() => {
-            onSubmit(text);
+            handleSubmit(text);
             console.log(`message : ${text} `);
           }}
         >
