@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
+import { formatEntityID } from 'engine/utils';
 
 interface Props {
   utils: {
@@ -30,14 +31,22 @@ export const Message = (props: Props) => {
         onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}
       />
       */
-  console.log(` getAccountByID ${JSON.stringify(getAccountByID(message.AccountId as EntityID))}`);
+  console.log(
+    ` getAccountByID ${JSON.stringify(getAccountByID(formatEntityID(message.AccountId)))}`
+  );
   console.log(`message.AccountId ${message.AccountId}`);
   return (
     <Container>
       <Content>
         <Header>
-          <Author>{getAccountByID(message.AccountId as EntityID).name}</Author>
           <Room>{message.RoomIndex}</Room>
+          <Pfp
+            src={
+              getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
+              'https://miladymaker.net/milady/8365.png'
+            }
+          />
+          <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
           <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
         </Header>
         <Body>{message.Message}</Body>
