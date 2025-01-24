@@ -40,11 +40,12 @@ export function registerChatModal() {
             },
             network,
             nodeIndex,
+            world,
           };
         })
       );
     },
-    ({ data, network, nodeIndex, utils }) => {
+    ({ data, network, nodeIndex, utils, world }) => {
       const { account } = data;
       const { actions, api } = network;
       const { modals } = useVisibility();
@@ -53,6 +54,7 @@ export function registerChatModal() {
       const [messages, setMessages] = useState<KamiMessage[]>([]);
       const maxCasts = 100;
       const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
+      const [scrollDown, setScrollDown] = useState(false);
 
       useEffect(() => {
         console.log('Chat visibility changed:', modals.chat);
@@ -122,15 +124,22 @@ export function registerChatModal() {
           id='chat'
           header={<ModalHeader title='Chatxd' icon={ChatIcon} />}
           footer={
-            <InputRow account={account} actions={{ pushCast }} actionSystem={actions} api={api} />
+            <InputRow
+              account={account}
+              actions={{ pushCast, setScrollDown }}
+              actionSystem={actions}
+              api={api}
+              world={world}
+            />
           }
           canExit
         >
           <Feed
+            scrollDown={scrollDown}
             nodeIndex={nodeIndex}
             max={maxCasts}
             utils={utils}
-            actions={{ pushMessages, setMessages }}
+            actions={{ pushMessages, setMessages, setScrollDown }}
           />
         </ModalWrapper>
       );
