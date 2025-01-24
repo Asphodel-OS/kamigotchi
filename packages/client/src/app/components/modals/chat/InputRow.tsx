@@ -126,23 +126,26 @@ export const InputRow = (props: Props) => {
 
   return (
     <Container>
-      <input
-        type='text'
+      <InputBox
+        placeholder='Write a message...'
+        id='inputBox'
+        cols={60}
+        rows={5}
         onBlur={(e) => {
           setText(e.target.value);
         }}
       />
       {!isAuthorized && (
-        <button
+        <SendButton
           style={{ padding: `0.5vw` }}
           onClick={() => {
             handleSubmit(text);
+            (document.getElementById('inputBox') as HTMLInputElement).value = '';
             console.log(`message : ${text} `);
           }}
         >
-          {' '}
-          CLICK ME
-        </button>
+          Send
+        </SendButton>
       )}
     </Container>
   );
@@ -155,4 +158,16 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 0.6vw;
+`;
+
+const InputBox = styled.textarea`
+  resize: none;
+  padding: 0 0.6vw;
+  line-height: 1.5vh;
+`;
+
+const SendButton = styled.button`
+  position: absolute;
+  right: 1vw;
+  bottom: 1.2vh;
 `;
