@@ -3,7 +3,7 @@ pragma solidity >=0.8.28;
 
 interface IEmitter {
   function emitSystemCalled(
-    uint256 systemId,
+    string calldata identifier,
     uint8[] calldata schema,
     bytes calldata value
   ) external;

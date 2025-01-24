@@ -8,12 +8,12 @@ import { IEmitter } from "../../solecs/interfaces/IEmitter.sol";
 library LibEmitter {
   function emitSystemCall(
     IWorld world,
-    uint256 systemId,
+    string memory identifier,
     uint8[] memory schema,
     bytes memory values
   ) internal {
     address emitter = world._emitter();
-    if (emitter != address(0)) IEmitter(emitter).emitSystemCalled(systemId, schema, values);
+    if (emitter != address(0)) IEmitter(emitter).emitSystemCalled(identifier, schema, values);
   }
 
   function emitMessage(

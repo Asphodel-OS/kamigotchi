@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Coord, CoordLib } from "solecs/components/types/Coord.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.sol";
 // world2: (formally IDPointer) change to IDTarget or IDTo/From
@@ -19,6 +20,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -247,8 +249,14 @@ library LibRoom {
   //////////////////////
   // LOGGING
 
-  function logMove(IUintComp components, uint256 holderID) public {
+  function logMove(IWorld world, IUintComp components, uint32 roomIndex, uint256 holderID) public {
     LibData.inc(components, holderID, 0, "MOVE", 1);
+
+    // emit event
+    uint8[] memory _schema = new uint8[](1);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT32);
+
+    LibEmitter.emitSystemCall(world, "MOVE", _schema, abi.encode(holderID, roomIndex));
   }
 
   //////////////////////

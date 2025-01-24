@@ -44,10 +44,8 @@ contract AccountMoveSystem is System {
     LibAccount.move(components, accID, toIndex); // implicit stamina check
 
     // standard logging and tracking
-    LibRoom.logMove(components, accID);
+    LibRoom.logMove(world, components, toIndex, accID);
     LibAccount.updateLastTs(components, accID);
-
-    LibAccount.logMove(world, ID, arguments);
 
     return "";
   }

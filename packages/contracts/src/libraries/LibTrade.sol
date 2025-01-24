@@ -4,6 +4,7 @@ pragma solidity >=0.8.28;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDOwnsTradeComponent, ID as IDOwnsTradeCompID } from "components/IDOwnsTradeComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
@@ -11,6 +12,7 @@ import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -207,5 +209,7 @@ library LibTrade {
     uint256 seller = IDOwnsTradeComponent(getAddrByID(components, IDOwnsTradeCompID)).get(tradeID);
     LibData.inc(components, buyer, 0, "TRADE_COMPLETE", 1);
     LibData.inc(components, seller, 0, "TRADE_COMPLETE", 1);
+
+    // todo: emit event
   }
 }
