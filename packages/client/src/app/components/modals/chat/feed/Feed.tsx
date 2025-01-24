@@ -94,16 +94,22 @@ export const Feed = (props: Props) => {
   /////////////////
   // RENDER
   useEffect(() => {
+    var element = document.getElementById('feed');
+    if (element) element.scrollTop = element.scrollHeight;
+    setScrollDown(false);
+  }, [scrollDown, activeTab]);
+  useEffect(() => {
     if (scrollDown === true) {
       var element = document.getElementById('feed');
       if (element) element.scrollTop = element.scrollHeight;
       setScrollDown(false);
     }
-  }, [scrollDown]);
+  }, []);
   return (
     <Wrapper ref={feedRef} id='feed'>
       <Buttons>
         <Button
+          position={0}
           disabled={activeTab === 0}
           onClick={() => {
             setActiveTab(0);
@@ -112,6 +118,7 @@ export const Feed = (props: Props) => {
           {`Room ${nodeIndex}`}
         </Button>
         <Button
+          position={8.3}
           disabled={activeTab === 1}
           onClick={() => {
             setActiveTab(1);
@@ -120,10 +127,13 @@ export const Feed = (props: Props) => {
           {`Global`}
         </Button>
       </Buttons>
-      {activeTab === 0 &&
-        kamidenMessages
-          ?.toReversed()
-          .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)}
+      {activeTab === 0 && (
+        <Messages>
+          {kamidenMessages
+            ?.toReversed()
+            .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)}
+        </Messages>
+      )}
     </Wrapper>
   );
 
@@ -162,19 +172,32 @@ const Wrapper = styled.div`
 `;
 
 const Buttons = styled.div`
+  top: 0;
+  left: 0;
+  position: absolute;
   width: 100%;
 `;
-const Button = styled.button`
+
+const Messages = styled.div`
+  width: 100%;
+  margin-top: 1vh;
+`;
+
+const Button = styled.button<{ position: number }>`
+  position: absolute;
+  ${({ position }) => position && `left:${position}vw;`};
   font-size: 1vw;
-  padding: 0.35vw;
-  border-radius: 0.3vw;
-  margin-right: 1vw;
+  padding: 0.4vw;
+  padding-right: 2vw;
+  padding-left: 2vw;
+  border-radius: 0 0 0.8vw 0.8vw;
+  border-top: 0;
   &:hover {
     cursor: pointer;
   }
   &: disabled {
     background-color: rgb(178, 178, 178);
-    border-radius: 0.3vw;
+    z-index: 1;
     border-color: black;
     cursor: default;
   }
