@@ -58,6 +58,7 @@
     { "comp": "IsRepeatable", "name": "IsRepeatable", "type": "bool" },
     { "comp": "Keys", "name": "Keys", "type": "uint32[]" },
     { "comp": "Level", "name": "Level", "type": "uint256" },
+    { "comp": "Limit", "name": "Limit", "type": "int32" },
     { "comp": "Location", "name": "Location", "type": "Coord" },
     { "comp": "LogicType", "name": "LogicType", "type": "string" },
     { "comp": "Max", "name": "Max", "type": "uint256" },

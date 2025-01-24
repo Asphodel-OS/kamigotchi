@@ -14,8 +14,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibCurve, GDAParams } from "libraries/utils/LibCurve.sol";
-
+import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
@@ -107,7 +106,7 @@ library LibListing {
         BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256(),
         amt
       );
-      int256 costWad = LibCurve.calcGDA(params);
+      int256 costWad = LibGDA.calc(params);
       require(costWad > 0, "LibListing: negative GDA cost");
       return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
     } else revert("LibListing: invalid buy type");

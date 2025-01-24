@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: Unlicense
+pragma solidity >=0.8.28;
+
+import { System } from "solecs/System.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+
+import { Condition } from "libraries/LibConditional.sol";
+import { LibItem } from "libraries/LibItem.sol";
+import { LibAuctionRegistry, Params } from "libraries/LibAuctionRegistry.sol";
+
+uint256 constant ID = uint256(keccak256("system.auction.registry"));
+
+// create or update a Listing on a NPC by its Merchnat Index
+contract _AuctionRegistrySystem is System {
+  constructor(IWorld _world, address _components) System(_world, _components) {}
+
+  function create(
+    uint32 itemIndex,
+    uint32 payItemIndex,
+    uint32 priceTarget,
+    int32 limit,
+    int32 decay,
+    int32 scale
+  ) public onlyOwner {
+    require(priceTarget > 0, "price target must be positive");
+    require(limit > 0, "limit must be positive");
+    require(scale > 1e9, "scale must be positive");
+    require(decay > 0, "decay must be positive");
+    require(LibItem.getByIndex(components, itemIndex) != 0, "AuctionRegistry: item does not exist");
+    require(
+      LibItem.getByIndex(components, payItemIndex) != 0,
+      "AuctionRegistry: pay item does not exist"
+    );
+
+    Params memory params = Params(itemIndex, payItemIndex, priceTarget, limit, decay, scale);
+    uint256 id = LibAuctionRegistry.create(params);
+    return id;
+  }
+
+  function reset(uint32 itemIndex, uint256 priceTarget) public onlyOwner {
+    LibAuctionRegistry.reset(components, itemIndex, priceTarget);
+  }
+
+  function remove(uint32 itemIndex) public onlyOwner {
+    LibAuctionRegistry.genID(index);
+    LibAuctionRegistry.remove(components, itemIndex);
+  }
+
+  // add a requirement to participate in an auction
+  function addRequirement(
+    uint32 itemIndex,
+    string memory reqType,
+    string memory logicType,
+    uint32 index,
+    uint256 value,
+    string memory condFor
+  ) public onlyOwner {
+    (components, index, data);
+    uint256 id = LibAuctionRegistry.get(components, itemIndex);
+    require(id != 0, "AuctionBuy: auction does not exist");
+    LibAuctionRegistry.addRequirement(
+      world,
+      components,
+      id,
+      Condition(reqType, logicType, index, value, condFor)
+    );
+  }
+}
