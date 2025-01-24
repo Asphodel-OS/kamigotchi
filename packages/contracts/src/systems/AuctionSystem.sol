@@ -23,12 +23,16 @@ contract AuctionBuySystem is System {
     require(LibAuction.checkRequirements(components, id, accID), "AuctionBuy: reqs not met");
 
     // process the buy
-    uint256 targetPrice = LibAuction.calcBuy(components, id, amt);
+    uint256 cost = LibAuction.buy(components, id, accID, amt);
+    // bytes buyLog = abi.encode(itemIndex, accIndex, amt, cost, block.timestamp);
+    // LibAuction.logBuy(world, ID, buyLog);
 
     // check whether we should reset the curve (to avoid future overflows)
     if (LibAuction.shouldReset(components, id)) {
-      uint256 targetPrice = LibAuction.calcBuy(components, id, amt);
-      LibAuction.reset(components, id, calcTarget(components, id));
+      uint256 targetPrice = LibAuction.calcBuy(components, id, 1);
+      LibAuction.reset(components, id, targetPrice);
+      // bytes resetLog = abi.encode(itemIndex, accIndex, targetPrice, block.timestamp);
+      // LibAuction.logReset(world, ID, resetLog);
     }
     return "";
   }

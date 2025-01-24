@@ -38,12 +38,15 @@ contract _AuctionRegistrySystem is System {
   }
 
   function reset(uint32 itemIndex, uint256 priceTarget) public onlyOwner {
-    LibAuctionRegistry.reset(components, itemIndex, priceTarget);
+    uint256 id = LibAuctionRegistry.get(components, itemIndex);
+    require(id != 0, "AuctionRegistry: auction does not exist");
+    LibAuctionRegistry.reset(components, id, priceTarget);
   }
 
   function remove(uint32 itemIndex) public onlyOwner {
-    LibAuctionRegistry.genID(index);
-    LibAuctionRegistry.remove(components, itemIndex);
+    uint256 id = LibAuctionRegistry.get(components, itemIndex);
+    require(id != 0, "AuctionRegistry: auction does not exist");
+    LibAuctionRegistry.remove(components, id);
   }
 
   // add a requirement to participate in an auction
