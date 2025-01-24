@@ -10,6 +10,7 @@ import { getKamidenClient } from 'workers/sync/kamidenStreamClient';
 import { Message } from './Message';
 
 interface Props {
+  scrollDown: boolean;
   max: number; // max number of casts to disable polling at
   nodeIndex: number;
   utils: {
@@ -18,12 +19,14 @@ interface Props {
   actions: {
     pushMessages: (messages: KamiMessage[]) => void;
     setMessages: (messages: KamiMessage[]) => void;
+    setScrollDown: (scrollDown: boolean) => void;
   };
 }
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { max, nodeIndex, utils } = props;
+  const { max, nodeIndex, utils, scrollDown } = props;
+  const { setScrollDown } = props.actions;
 
   //const { pushCasts, setCasts } = props.actions;
   const { farcaster } = useAccount();
@@ -90,9 +93,15 @@ export const Feed = (props: Props) => {
 
   /////////////////
   // RENDER
-
+  useEffect(() => {
+    if (scrollDown === true) {
+      var element = document.getElementById('feed');
+      if (element) element.scrollTop = element.scrollHeight;
+      setScrollDown(false);
+    }
+  }, [scrollDown]);
   return (
-    <Wrapper ref={feedRef}>
+    <Wrapper ref={feedRef} id='feed'>
       <Buttons>
         <Button
           disabled={activeTab === 0}
@@ -167,5 +176,6 @@ const Button = styled.button`
     background-color: rgb(178, 178, 178);
     border-radius: 0.3vw;
     border-color: black;
+    cursor: default;
   }
 `;
