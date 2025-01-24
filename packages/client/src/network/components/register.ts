@@ -73,6 +73,7 @@ export function createComponents(world: World) {
     IsRepeatable: defineBoolComponent(world, 'IsRepeatable', 'component.is.repeatable'),
     Keys: defineNumberArrayComponent(world, 'Keys', 'component.keys'),
     Level: defineNumberComponent(world, 'Level', 'component.level'),
+    Limit: defineNumberComponent(world, 'Limit', 'component.limit'),
     Location: defineStringComponent(world, 'Location', 'component.location'),
     LogicType: defineStringComponent(world, 'LogicType', 'component.logictype'),
     Max: defineNumberComponent(world, 'Max', 'component.max'),

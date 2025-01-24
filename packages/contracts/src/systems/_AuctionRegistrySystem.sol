@@ -15,13 +15,13 @@ contract _AuctionRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function create(
-    uint32 itemIndex,
+    uint32 itemIndex, // index of the item being auctioned
     uint32 payItemIndex,
     uint32 priceTarget,
     int32 limit,
     int32 decay,
     int32 scale
-  ) public onlyOwner {
+  ) public onlyOwner returns (uint256) {
     require(priceTarget > 0, "price target must be positive");
     require(limit > 0, "limit must be positive");
     require(scale > 1e9, "scale must be positive");
@@ -33,7 +33,7 @@ contract _AuctionRegistrySystem is System {
     );
 
     Params memory params = Params(itemIndex, payItemIndex, priceTarget, limit, decay, scale);
-    uint256 id = LibAuctionRegistry.create(params);
+    uint256 id = LibAuctionRegistry.create(components, params);
     return id;
   }
 
@@ -51,14 +51,13 @@ contract _AuctionRegistrySystem is System {
 
   // add a requirement to participate in an auction
   function addRequirement(
-    uint32 itemIndex,
+    uint32 itemIndex, // index of the item being auctioned
     string memory reqType,
     string memory logicType,
     uint32 index,
     uint256 value,
     string memory condFor
   ) public onlyOwner {
-    (components, index, data);
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id != 0, "AuctionBuy: auction does not exist");
     LibAuctionRegistry.addRequirement(
@@ -67,5 +66,9 @@ contract _AuctionRegistrySystem is System {
       id,
       Condition(reqType, logicType, index, value, condFor)
     );
+  }
+
+  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+    require(false, "not implemented");
   }
 }

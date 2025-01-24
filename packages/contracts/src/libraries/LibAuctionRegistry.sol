@@ -2,10 +2,11 @@
 pragma solidity >=0.8.28;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
-import { ItemIndexComponent, ID as ItemIndexCompID } from "components/ItemIndexComponent.sol";
+import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
@@ -14,8 +15,8 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LimitComponent, ID as LimitCompID } from "components/LimitComponent.sol";
 import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
 
+import { LibConditional, Condition } from "libraries/LibConditional.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibConditional } from "libraries/LibConditional.sol";
 
 struct Params {
   uint32 itemIndex;
@@ -47,7 +48,7 @@ library LibAuctionRegistry {
     uint256 id = genID(params.itemIndex);
     LibEntityType.set(comps, id, "AUCTION");
     IndexComponent(getAddrByID(comps, IndexCompID)).set(id, params.itemIndex);
-    ItemIndexComponent(getAddrByID(comps, ItemIndexCompID)).set(id, params.payItemIndex);
+    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, params.payItemIndex);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, params.priceTarget);
     LimitComponent(getAddrByID(comps, LimitCompID)).set(id, params.limit);
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(id, params.scale);
@@ -64,7 +65,7 @@ library LibAuctionRegistry {
 
     LibEntityType.remove(comps, id);
     IndexComponent(getAddrByID(comps, IndexCompID)).remove(id);
-    ItemIndexComponent(getAddrByID(comps, ItemIndexCompID)).remove(id);
+    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
     LimitComponent(getAddrByID(comps, LimitCompID)).remove(id);
     ScaleComponent(getAddrByID(comps, ScaleCompID)).remove(id);
@@ -73,8 +74,8 @@ library LibAuctionRegistry {
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).remove(id);
 
-    uint256[] memory reqs = getReqsByIndex(components, index);
-    for (uint256 i; i < reqs.length; i++) LibConditional.remove(components, reqs[i]);
+    uint256[] memory reqs = getReqsByIndex(comps, index);
+    for (uint256 i; i < reqs.length; i++) LibConditional.remove(comps, reqs[i]);
   }
 
   // reset the auction to an updated value (resets time and balance tracking)
@@ -82,14 +83,19 @@ library LibAuctionRegistry {
     int32 limit = LimitComponent(getAddrByID(comps, LimitCompID)).get(id);
     int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
     LimitComponent(getAddrByID(comps, LimitCompID)).set(id, limit - balance);
-    BalanceComponent(getAddrByID(components, BalanceCompID)).set(id, 0);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, priceTarget);
-    TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, block.timestamp);
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
+    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, priceTarget);
+    TimeResetComponent(getAddrByID(comps, TimeResetCompID)).set(id, block.timestamp);
   }
 
   // create a requirement for the auction
-  function addRequirement(IUintComp comps, uint256 index, Condition memory data) internal {
-    LibConditional.createFor(world, comps, data, genReqAnchor(index));
+  function addRequirement(
+    IWorld world,
+    IUintComp comps,
+    uint256 id,
+    Condition memory data
+  ) internal {
+    LibConditional.createFor(world, comps, data, genReqAnchor(id));
   }
 
   /////////////////
@@ -109,12 +115,14 @@ library LibAuctionRegistry {
     return isInstance(comps, id) ? id : 0;
   }
 
+  function getReqs(IUintComp comps, uint256 id) internal view returns (uint256[] memory) {
+    return LibConditional.queryFor(comps, genReqAnchor(id));
+  }
+
   // get requirements by Auction (Item) Index
-  function getReqsByIndex(
-    IUintComp components,
-    uint32 index
-  ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqAnchor(index));
+  function getReqsByIndex(IUintComp comps, uint32 index) internal view returns (uint256[] memory) {
+    uint256 id = genID(index);
+    return getReqs(comps, id);
   }
 
   /////////////////
@@ -124,7 +132,7 @@ library LibAuctionRegistry {
     return uint256(keccak256(abi.encodePacked("auction", index)));
   }
 
-  function genReqAnchor(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("auction.requirement", index)));
+  function genReqAnchor(uint256 auctionID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("auction.requirement", auctionID)));
   }
 }

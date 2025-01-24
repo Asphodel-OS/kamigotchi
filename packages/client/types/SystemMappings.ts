@@ -2,6 +2,7 @@
 export const systemToId = {
   _721BatchMinterSystem: "system.Kami721.BatchMint",
   _AdminGiveSystem: "system._Admin.Give",
+  _AuctionRegistrySystem: "system.auction.registry",
   _AuthManageRoleSystem: "system._Auth.Manage.Role",
   _ConfigSetSystem: "system._Config.Set",
   _CreatePetSystem: "system.Kami721.create",
@@ -24,6 +25,7 @@ export const systemToId = {
   AccountSetOperatorSystem: "system.account.set.operator",
   AccountSetPFPSystem: "system.account.set.pfp",
   AccountUseItemSystem: "system.account.use.item",
+  AuctionSystem: "system.auction",
   ChatSystem: "system.chat",
   CraftSystem: "system.craft",
   DroptableRevealSystem: "system.droptable.item.reveal",
@@ -70,6 +72,7 @@ export const systemToId = {
 export const idToSystem = {
   "system.Kami721.BatchMint": "_721BatchMinterSystem",
   "system._Admin.Give": "_AdminGiveSystem",
+  "system.auction.registry": "_AuctionRegistrySystem",
   "system._Auth.Manage.Role": "_AuthManageRoleSystem",
   "system._Config.Set": "_ConfigSetSystem",
   "system.Kami721.create": "_CreatePetSystem",
@@ -92,6 +95,7 @@ export const idToSystem = {
   "system.account.set.operator": "AccountSetOperatorSystem",
   "system.account.set.pfp": "AccountSetPFPSystem",
   "system.account.use.item": "AccountUseItemSystem",
+  "system.auction": "AuctionSystem",
   "system.chat": "ChatSystem",
   "system.craft": "CraftSystem",
   "system.droptable.item.reveal": "DroptableRevealSystem",

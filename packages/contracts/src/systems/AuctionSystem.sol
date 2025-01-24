@@ -5,8 +5,8 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibData } from "libraries/LibData.sol";
-import { LibScore } from "libraries/LibScore.sol";
+import { LibAuction } from "libraries/LibAuction.sol";
+import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.auction"));
 
@@ -30,7 +30,7 @@ contract AuctionBuySystem is System {
     // check whether we should reset the curve (to avoid future overflows)
     if (LibAuction.shouldReset(components, id)) {
       uint256 targetPrice = LibAuction.calcBuy(components, id, 1);
-      LibAuction.reset(components, id, targetPrice);
+      LibAuctionRegistry.reset(components, id, targetPrice);
       // bytes resetLog = abi.encode(itemIndex, accIndex, targetPrice, block.timestamp);
       // LibAuction.logReset(world, ID, resetLog);
     }
