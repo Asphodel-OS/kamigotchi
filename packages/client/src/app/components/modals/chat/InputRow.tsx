@@ -84,7 +84,6 @@ export const InputRow = (props: Props) => {
   const onSubmit = (text: string) => {
     playScribble();
     // TODO: play success sound and update message in feed here (to succeeded)
-    console.log(`submitted "${text}"`);
     const actionID = uuid() as EntityID;
     actionSystem!.add({
       id: actionID,
@@ -141,7 +140,6 @@ export const InputRow = (props: Props) => {
           onClick={() => {
             handleSubmit(text);
             (document.getElementById('inputBox') as HTMLInputElement).value = '';
-            console.log(`message : ${text} `);
           }}
         >
           Send
