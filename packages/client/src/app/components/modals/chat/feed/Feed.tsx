@@ -149,7 +149,9 @@ export const Feed = (props: Props) => {
     console.log('feed polling new');
     const response = await client.getRoomMessages({ RoomIndex: nodeIndex });
     console.log('Messages', response.Messages);
-    console.log('feed get messages');
+    for (const message of response.Messages) {
+      console.log('message', message.Timestamp);
+    }
     setKamidenMessages(response.Messages.reverse());
     /*
     if (modals.chat) {
