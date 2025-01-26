@@ -122,7 +122,7 @@ export function registerChatModal() {
       return (
         <ModalWrapper
           id='chat'
-          header={<ModalHeader title='Chatxd' icon={ChatIcon} />}
+          header={<ModalHeader title='Chat' icon={ChatIcon} />}
           footer={
             <InputRow
               account={account}
