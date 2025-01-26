@@ -31,15 +31,12 @@ export const Message = (props: Props) => {
         onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}
       />
       */
-  console.log(
-    ` getAccountByID ${JSON.stringify(getAccountByID(formatEntityID(message.AccountId)))}`
-  );
+  console.log(` getAccountByID ts ${message.Timestamp}`);
   console.log(`message.AccountId ${message.AccountId}`);
   return (
     <Container>
       <Content>
         <Header>
-          <Room>{message.RoomIndex}</Room>
           <Pfp
             src={
               getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
@@ -47,7 +44,7 @@ export const Message = (props: Props) => {
             }
           />
           <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
-          <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
+          <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
         </Header>
         <Body>{message.Message}</Body>
       </Content>
@@ -104,17 +101,6 @@ const Header = styled.div`
 
 const Author = styled.div`
   color: orange;
-  font-family: Pixel;
-  font-size: 1vw;
-
-  &:hover {
-    opacity: 0.6;
-    cursor: pointer;
-  }
-`;
-
-const Room = styled.div`
-  color: green;
   font-family: Pixel;
   font-size: 1vw;
 
