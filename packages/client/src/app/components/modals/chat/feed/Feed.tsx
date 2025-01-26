@@ -92,19 +92,18 @@ export const Feed = (props: Props) => {
   }, [kamidenMessages.length]);
 
   /////////////////
-  // RENDER
-  useEffect(() => {
+  // SCROLLER
+  const scroller = () => {
     var element = document.getElementById('feed');
     if (element) element.scrollTop = element.scrollHeight;
     setScrollDown(false);
-  }, [scrollDown, activeTab]);
+  };
   useEffect(() => {
-    if (scrollDown === true) {
-      var element = document.getElementById('feed');
-      if (element) element.scrollTop = element.scrollHeight;
-      setScrollDown(false);
-    }
-  }, []);
+    scroller();
+  }, [scrollDown, activeTab, nodeIndex, modals.chat]);
+
+  /////////////////
+  // RENDER
   return (
     <Wrapper ref={feedRef} id='feed'>
       <Buttons>
