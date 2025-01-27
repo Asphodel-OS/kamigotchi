@@ -202,6 +202,7 @@ const Buttons = styled.div`
 const Messages = styled.div`
   width: 100%;
   margin-top: 1vh;
+  overflow-x: hidden;
 `;
 
 const Button = styled.button<{ position: number }>`
