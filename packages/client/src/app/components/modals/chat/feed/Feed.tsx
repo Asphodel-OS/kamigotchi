@@ -213,12 +213,13 @@ const Button = styled.button<{ position: number }>`
   padding-left: 2vw;
   border-radius: 0 0 0.8vw 0.8vw;
   border-top: 0;
+  z-index: 1;
   &:hover {
     cursor: pointer;
   }
   &: disabled {
     background-color: rgb(178, 178, 178);
-    z-index: 1;
+    z-index: 2;
     border-color: black;
     cursor: default;
   }
