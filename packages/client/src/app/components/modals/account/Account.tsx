@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex, getComponentValue, Has, HasValue, runQuery } from '@mud-classic/recs';
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -57,6 +57,7 @@ export function registerAccountModal() {
     ({ network, utils }) => {
       const { actions, api, components, world } = network;
       const { getAccount } = utils;
+      const { ProxyVIPScore, HolderID } = components;
 
       const { account: player } = useAccount();
       const { accountIndex } = useSelected();
@@ -64,7 +65,15 @@ export function registerAccountModal() {
 
       const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
       const [account, setAccount] = useState<Account>(NullAccount);
+      getComponentValue(ProxyVIPScore, account.entity);
 
+      const vipindex = Array.from(
+        runQuery([Has(ProxyVIPScore), HasValue(HolderID, { value: world.entities[accountIndex] })])
+      );
+      vipindex.map((index) =>
+        console.log(`VIP Score query `, getComponentValue(ProxyVIPScore, index)?.value)
+      );
+      console.log(`VIP Score`, getComponentValue(ProxyVIPScore, account.entity)?.value);
       // update data of the selected account when account index or data changes
       useEffect(() => {
         if (!modals.account) return;
