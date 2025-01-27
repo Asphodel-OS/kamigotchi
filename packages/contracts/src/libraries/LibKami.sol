@@ -368,6 +368,16 @@ library LibKami {
     return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regIDs);
   }
 
+  function getBodyAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
+    uint256 regID = LibTraitRegistry.getBodyOf(components, id);
+    return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regID);
+  }
+
+  function getHandAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
+    uint256 regID = LibTraitRegistry.getHandOf(components, id);
+    return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regID);
+  }
+
   /////////////////
   // QUERIES
 

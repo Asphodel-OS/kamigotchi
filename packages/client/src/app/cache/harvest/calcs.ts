@@ -1,5 +1,6 @@
 import { Harvest } from 'network/shapes/Harvest/types';
 import { Kami } from 'network/shapes/Kami';
+import { Efficacy } from 'network/shapes/Kami/configs';
 
 /////////////////
 // DURATION CALCS
@@ -64,33 +65,10 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   if (!kami.config) return 0;
   const config = kami.config.harvest.fertility;
   const ratio = config.ratio.value;
-  const efficacy = config.boost.value + calcEfficacyShift(harvest, kami);
+  const efficacy = config.boost.value + calcEfficacyShifts(harvest, kami);
   const power = kami.stats?.power.total ?? 0;
   const fertility = (power * ratio * efficacy) / 3600;
   return fertility;
-};
-
-// calculate the shift in harvest Efficacy (Fertility Boost)
-export const calcEfficacyShift = (harvest: Harvest, kami: Kami): number => {
-  const node = harvest.node;
-  if (!node || !kami.traits || !node.affinity || node.affinity === 'NORMAL') return 0;
-  if (!kami.config) return 0;
-
-  const affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
-  const config = kami.config.harvest.efficacy;
-  const neutShift = config.base;
-  const upShiftBonus = kami.bonuses?.harvest.fertility.boost ?? 0;
-  const upShift = config.up + upShiftBonus;
-  const downShift = config.down;
-
-  // calculate based on matchups
-  let shift = 0;
-  affinities?.forEach((affinity) => {
-    if (affinity === 'NORMAL') shift += neutShift;
-    else if (affinity === node.affinity) shift += upShift;
-    else shift += downShift;
-  });
-  return shift;
 };
 
 // calculate the intensity rate of a harvest, measured in musu/s
@@ -108,4 +86,56 @@ export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
   const intensity = ((base + nudge) * boost) / (ratio * 3600);
 
   return intensity;
+};
+
+/////////////////
+// EFFICACY
+
+enum Effectiveness {
+  NEUTRAL,
+  UP,
+  DOWN,
+}
+
+// calculate the shift in harvest Efficacy (Fertility Boost)
+export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
+  const node = harvest.node;
+  if (!node || !kami.traits || !node.affinity || node.affinity === 'NORMAL') return 0;
+  if (!kami.config) return 0;
+
+  let shift = 0;
+  const nodeAffinity = node.affinity;
+  const upShiftBonus = kami.bonuses?.harvest.fertility.boost ?? 0;
+
+  // body
+  const bodyAffinity = kami.traits.body.affinity;
+  const bodyEffectiveness = getHarvestEffectiveness(nodeAffinity, bodyAffinity);
+  const bodyConfig = kami.config.harvest.efficacy.body;
+  shift += calcEfficacyShift(bodyEffectiveness, bodyConfig, upShiftBonus);
+
+  // hand
+  const handAffinity = kami.traits.hand.affinity;
+  const handEffectiveness = getHarvestEffectiveness(nodeAffinity, handAffinity);
+  const handConfig = kami.config.harvest.efficacy.hand;
+  shift += calcEfficacyShift(handEffectiveness, handConfig, upShiftBonus);
+
+  return shift;
+};
+
+// calculate the shift in Harvest Efficacy resulting from a trait matchup
+export const calcEfficacyShift = (
+  eff: Effectiveness,
+  config: Efficacy,
+  upShiftBonus: number
+): number => {
+  if (eff === Effectiveness.NEUTRAL) return config.base;
+  else if (eff === Effectiveness.UP) return config.up + upShiftBonus;
+  else return config.down;
+};
+
+// determine how effective a trait matchup is for a harvest
+export const getHarvestEffectiveness = (nodeAff: string, traitAff: string): Effectiveness => {
+  if (traitAff === 'NORMAL') return Effectiveness.NEUTRAL;
+  else if (nodeAff === traitAff) return Effectiveness.UP;
+  else return Effectiveness.DOWN;
 };

@@ -83,8 +83,11 @@ async function initStats(api: AdminAPI) {
 }
 
 async function initHarvest(api: AdminAPI) {
-  // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
-  await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 300, 3]); // [neut, up, down, prec]
+  // efficacy configs [prec, neut, +, -]
+  await api.config.set.array('KAMI_HARV_EFFICACY_BODY', [3, 0, 650, 250]);
+  await api.config.set.array('KAMI_HARV_EFFICACY_HAND', [3, 0, 400, 150]);
+
+  // standard configs [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 1500, 3, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [5, 0, 480, 0, 0, 0, 10, 0]); // nudge is multiplier on base, ratio is inversed
   await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
@@ -92,9 +95,10 @@ async function initHarvest(api: AdminAPI) {
 }
 
 async function initLiquidation(api: AdminAPI) {
-  // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
-  await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
-  await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // nontraditional AST node
+  await api.config.set.array('KAMI_LIQ_EFFICACY', [3, 0, 500, 500]); // [prec, neut, +, -]
+  await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // ratio applies to iCDF
+
+  // standard configs [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_SPOILS', [45, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])

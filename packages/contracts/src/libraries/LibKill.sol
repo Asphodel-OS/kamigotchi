@@ -16,7 +16,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibAffinity } from "libraries/utils/LibAffinity.sol";
+import { LibAffinity, Shifts } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -120,26 +120,16 @@ library LibKill {
   }
 
   // Calculate the affinity multiplier for attacks between two kamis.
-  // We really need to overload the word 'base' a bit less..
   function calcEfficacy(
-    IUintComp components,
+    IUintComp comps,
     uint256 sourceID,
     uint256 targetID,
     uint256 base
   ) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_LIQ_EFFICACY");
-
-    // pull the base efficacy shifts from the config
-    LibAffinity.Shifts memory baseEfficacyShifts = LibAffinity.Shifts({
-      base: config[0].toInt256(),
-      up: config[1].toInt256(),
-      down: -1 * config[2].toInt256() // configs unable to support negative values
-    });
-
     // pull the bonus efficacy shifts from the pets
-    int256 atkBonus = LibBonus.getFor(components, "ATK_THRESHOLD_RATIO", sourceID);
-    int256 defBonus = LibBonus.getFor(components, "DEF_THRESHOLD_RATIO", targetID);
-    LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
+    int256 atkBonus = LibBonus.getFor(comps, "ATK_THRESHOLD_RATIO", sourceID);
+    int256 defBonus = LibBonus.getFor(comps, "DEF_THRESHOLD_RATIO", targetID);
+    Shifts memory bonusEfficacyShifts = Shifts({
       base: atkBonus + defBonus,
       up: atkBonus + defBonus,
       down: atkBonus + defBonus
@@ -147,11 +137,11 @@ library LibKill {
 
     // sum the applied shift with the base efficacy value to get the final value
     int256 efficacy = base.toInt256();
-    string memory targetAff = LibKami.getAffinities(components, targetID)[0];
-    string memory sourceAff = LibKami.getAffinities(components, sourceID)[1];
+    string memory targetAff = LibKami.getBodyAffinity(comps, targetID);
+    string memory sourceAff = LibKami.getHandAffinity(comps, sourceID);
     efficacy += LibAffinity.calcEfficacyShift(
       LibAffinity.getAttackEffectiveness(sourceAff, targetAff),
-      baseEfficacyShifts,
+      LibAffinity.getShifts(comps, "KAMI_LIQ_EFFICACY"),
       bonusEfficacyShifts
     );
 

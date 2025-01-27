@@ -17,17 +17,16 @@ import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetC
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibAffinity } from "libraries/utils/LibAffinity.sol";
-import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibPhase } from "libraries/utils/LibPhase.sol";
-
+import { LibAffinity, Shifts, Effectiveness } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
+import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant RATE_PREC = 6;
@@ -137,41 +136,42 @@ library LibHarvest {
   // Calculate the efficacy of the core harvesting calc (min 0).
   // Efficacy is a Boost on Fertility and precision is set by its (F's) config.
   function calcEfficacy(
-    IUintComp components,
+    IUintComp comps,
     uint256 id,
     uint256 base,
     uint256 kamiID
   ) internal view returns (uint256) {
-    uint256 nodeID = getNode(components, id);
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_EFFICACY");
-
-    // pull the base efficacy shifts from the config
-    LibAffinity.Shifts memory baseEfficacyShifts = LibAffinity.Shifts({
-      base: config[0].toInt256(),
-      up: config[1].toInt256(),
-      down: -1 * config[2].toInt256()
-    });
-
-    // pull the bonus efficacy shifts from the pet
-    LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
+    // retrieve the bonus efficacy shifts from the pet
+    Shifts memory bonusShifts = Shifts({
       base: int(0),
-      up: LibBonus.getFor(components, "HARV_FERTILITY_BOOST", kamiID),
+      up: LibBonus.getFor(comps, "HARV_FERTILITY_BOOST", kamiID),
       down: int(0)
     });
 
-    // sum each applied shift with the base efficacy value to get the final value
     int256 efficacy = base.toInt256();
-    string memory nodeAff = LibNode.getAffinity(components, nodeID);
-    string[] memory petAffs = LibKami.getAffinities(components, kamiID);
-    for (uint256 i = 0; i < petAffs.length; i++) {
-      efficacy += LibAffinity.calcEfficacyShift(
-        LibAffinity.getHarvestEffectiveness(petAffs[i], nodeAff),
-        baseEfficacyShifts,
-        bonusEfficacyShifts
-      );
-    }
+    uint256 nodeID = getNode(comps, id);
+    string memory nodeAff = LibNode.getAffinity(comps, nodeID);
+
+    string memory bodyAff = LibKami.getBodyAffinity(comps, kamiID);
+    efficacy += calcEfficacy(comps, bodyAff, nodeAff, bonusShifts, "KAMI_HARV_EFFICACY_BODY");
+
+    string memory handAff = LibKami.getHandAffinity(comps, kamiID);
+    efficacy += calcEfficacy(comps, handAff, nodeAff, bonusShifts, "KAMI_HARV_EFFICACY_HAND");
 
     return (efficacy < 0) ? 0 : uint(efficacy);
+  }
+
+  // determine the body efficacy shifts from the config
+  function calcEfficacy(
+    IUintComp comps,
+    string memory sourceAff,
+    string memory targetAff,
+    Shifts memory bonusShifts,
+    string memory configKey
+  ) internal view returns (int256) {
+    Effectiveness effectiveness = LibAffinity.getHarvestEffectiveness(sourceAff, targetAff);
+    Shifts memory configShifts = LibAffinity.getShifts(comps, configKey);
+    return LibAffinity.calcEfficacyShift(effectiveness, configShifts, bonusShifts);
   }
 
   // Calculate the rate of harvest, measured in musu/s. Assume active (1e9 precision).

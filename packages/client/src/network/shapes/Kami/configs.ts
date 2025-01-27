@@ -13,7 +13,10 @@ export interface Configs {
 interface HarvestConfig {
   bounty: AsphoAST;
   fertility: AsphoAST;
-  efficacy: Efficacy;
+  efficacy: {
+    body: Efficacy;
+    hand: Efficacy;
+  };
   intensity: AsphoAST;
   strain: AsphoAST;
 }
@@ -49,7 +52,7 @@ interface FixedPointValue {
   value: number;
 }
 
-interface Efficacy {
+export interface Efficacy {
   base: number;
   up: number;
   down: number;
@@ -62,7 +65,10 @@ export const getConfigs = (world: World, components: Components): Configs => {
   return {
     harvest: {
       bounty: getASTNode(world, components, 'KAMI_HARV_BOUNTY'),
-      efficacy: getEfficacyNode(world, components, 'KAMI_HARV_EFFICACY'),
+      efficacy: {
+        body: getEfficacyNode(world, components, 'KAMI_HARV_EFFICACY_BODY'),
+        hand: getEfficacyNode(world, components, 'KAMI_HARV_EFFICACY_HAND'),
+      },
       fertility: getASTNode(world, components, 'KAMI_HARV_FERTILITY'),
       intensity: getASTNode(world, components, 'KAMI_HARV_INTENSITY'),
       strain: getASTNode(world, components, 'KAMI_HARV_STRAIN'),
@@ -112,12 +118,14 @@ export const getASTNode = (world: World, components: Components, key: string): A
   };
 };
 
-// get an efficacy config node from its key
+// get an efficacy config node for liquidation
 export const getEfficacyNode = (world: World, components: Components, key: string): Efficacy => {
   const configArray = getConfigFieldValueArray(world, components, key);
+
+  const precision = 10 ** configArray[0];
   return {
-    base: configArray[0] / 10 ** configArray[3],
-    up: configArray[1] / 10 ** configArray[3],
-    down: -configArray[2] / 10 ** configArray[3],
+    base: configArray[1] / precision,
+    up: configArray[2] / precision,
+    down: -configArray[3] / precision,
   };
 };

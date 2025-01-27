@@ -2,11 +2,22 @@
 pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
+
+enum Effectiveness {
+  Strong,
+  Netural,
+  Weak
+}
+
+struct Shifts {
+  int256 base;
+  int256 up;
+  int256 down;
+}
 
 /*
  * LibAffinity handles the storage and manipulation of affinity multipliers
@@ -15,23 +26,23 @@ import { LibConfig } from "libraries/LibConfig.sol";
  */
 library LibAffinity {
   using LibString for string;
+  using SafeCastLib for uint32;
 
-  enum Effectiveness {
-    Strong,
-    Netural,
-    Weak
+  // derives the shifts from a shift config
+  function getShifts(
+    IUintComp components,
+    string memory key
+  ) internal view returns (Shifts memory) {
+    uint32[8] memory config = LibConfig.getArray(components, key);
+    return
+      Shifts({
+        base: config[1].toInt256(),
+        up: config[2].toInt256(),
+        down: -1 * config[3].toInt256()
+      });
   }
 
-  struct Shifts {
-    int256 base;
-    int256 up;
-    int256 down;
-  }
-
-  //////////////////
-  // INTERACTIONS
-
-  // gets the shift to efficacy from effectiveness using basse config and bonus
+  // gets the shift to efficacy from effectiveness using base config and bonus
   function calcEfficacyShift(
     Effectiveness effectiveness,
     Shifts memory configs,
