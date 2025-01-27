@@ -98,6 +98,7 @@ export const InputRow = (props: Props) => {
   };
 
   const handleSubmit = async (text: string) => {
+    if (text.length === 0) return;
     try {
       const rerollActionID = onSubmit(text);
       if (!rerollActionID) throw new Error('Sending message action failed');
@@ -139,6 +140,7 @@ export const InputRow = (props: Props) => {
           style={{ padding: `0.5vw` }}
           onClick={() => {
             handleSubmit(text);
+            setText('');
             (document.getElementById('inputBox') as HTMLInputElement).value = '';
           }}
         >

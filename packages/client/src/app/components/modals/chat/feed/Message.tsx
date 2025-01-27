@@ -120,9 +120,4 @@ const Body = styled.div`
   font-size: 0.8vw;
   line-height: 1.2vw;
   word-wrap: break-word;
-
-  &:hover {
-    opacity: 0.6;
-    cursor: pointer;
-  }
 `;
