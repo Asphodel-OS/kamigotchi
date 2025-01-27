@@ -135,10 +135,10 @@ export const Feed = (props: Props) => {
             setActiveTab(0);
           }}
         >
-          {`Room ${nodeIndex}`}
+          {`Room`}
         </Button>
         <Button
-          position={8.3}
+          position={6.3}
           disabled={activeTab === 1}
           onClick={() => {
             setActiveTab(1);
