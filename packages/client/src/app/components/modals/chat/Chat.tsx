@@ -63,17 +63,13 @@ export function registerChatModal() {
         };
       }, [modals.chat]);
 
-      const pushCast = (cast: CastWithInteractions) => {
-      };
+      const pushCast = (cast: CastWithInteractions) => {};
 
-      const pushCasts = (newCasts: CastWithInteractions[]) => {
-      };
+      const pushCasts = (newCasts: CastWithInteractions[]) => {};
 
-      const pushMessage = (newMessage: KamiMessage) => {
-      };
+      const pushMessage = (newMessage: KamiMessage) => {};
 
-      const pushMessages = (newMessages: KamiMessage[]) => {
-      };
+      const pushMessages = (newMessages: KamiMessage[]) => {};
 
       return (
         <ModalWrapper
