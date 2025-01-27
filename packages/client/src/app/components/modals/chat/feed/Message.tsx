@@ -141,9 +141,7 @@ const Body = styled.div`
   ::before {
     content: '';
     position: absolute;
-    z-index: 0;
     top: -10px;
-
     height: 20px;
     width: 10px;
     background: rgb(238, 238, 238);
@@ -152,7 +150,6 @@ const Body = styled.div`
   ::after {
     content: '';
     position: absolute;
-    z-index: 1;
     bottom: 0;
     left: -10px;
     width: 10px;
