@@ -49,10 +49,10 @@ export const Feed = (props: Props) => {
   // Add subscription effect
   useEffect(() => {
     console.log('[kamiden] registering message callback for room', nodeIndex);
-    
+
     const unsubscribe = subscribeToMessages((message) => {
       if (message.RoomIndex === nodeIndex) {
-        setKamidenMessages(prev => [message, ...prev]);
+        setKamidenMessages((prev) => [message, ...prev]);
       }
     });
 
@@ -74,7 +74,7 @@ export const Feed = (props: Props) => {
 
   // time-based autopolling of new messages (10s atm)
   // TODO: autoexpand and contract this polling based on detected activity
-/*useEffect(() => {
+  /*useEffect(() => {
     console.log('[modals.chat, kamidenMessages]');
     const pollTimerId = setInterval(pollNew, 10000);
     return function cleanup() {
@@ -156,7 +156,9 @@ export const Feed = (props: Props) => {
           ) : (
             kamidenMessages
               ?.toReversed()
-              .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)
+              .map((message) => (
+                <Message utils={utils} key={message.Timestamp} data={{ message }} />
+              ))
           )}
         </Messages>
       )}
@@ -165,7 +167,6 @@ export const Feed = (props: Props) => {
 
   /////////////////
   // HELPERS
-
 
   // poll for recent messages. do not update the Feed state/cursor
   async function poll() {
