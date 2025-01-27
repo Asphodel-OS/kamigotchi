@@ -46,8 +46,39 @@ export const Feed = (props: Props) => {
   /////////////////
   // SUBSCRIPTION
 
-  // populating the initial feed
-  // TODO: set the scroll position to the bottom whenever the modal is reopened
+  // Add subscription effect
+  useEffect(() => {
+    console.log('[kamiden] setting up message subscription for room');
+    
+    // Set up subscription
+    const subscribe = async () => {
+      try {
+        const stream = client.subscribeToStream({});
+        
+        for await (const response of stream) {
+          for (const message of response.Messages) {
+            console.log('message', message);
+            if (message.RoomIndex === nodeIndex) {
+              setKamidenMessages(prev => [message, ...prev]);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Stream error:', error);
+      }
+    };
+
+    subscribe();
+
+    // Cleanup subscription when component unmounts or nodeIndex changes
+    return () => {
+      console.log('Cleaning up message subscription for room', nodeIndex);
+      // The stream will automatically close when the component unmounts
+      // due to the for-await loop breaking
+    };
+  }, [nodeIndex]);
+
+  // Initial message poll effect (keep existing one)
   useEffect(() => {
     console.log('useEffect []');
     setKamidenMessages([]);
