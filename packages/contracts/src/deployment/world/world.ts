@@ -16,7 +16,9 @@ import {
   initFactions,
   initGachaPool,
   initGoals,
+  initHarvestConfigs,
   initItems,
+  initLiquidationConfigs,
   initListings,
   initNodes,
   initNpcs,
@@ -75,6 +77,8 @@ export class WorldState {
     },
     config: {
       init: () => this.genCalls(initConfigs),
+      initHarvest: () => this.genCalls(initHarvestConfigs),
+      initLiquidation: () => this.genCalls(initLiquidationConfigs),
     } as SubFunc,
     factions: {
       init: () => this.genCalls(initFactions),

@@ -49,7 +49,12 @@ export async function initAllLocal(api: AdminAPI) {
 }
 
 export { initAuth } from './auth';
-export { initConfigs, initLocalConfigs } from './configs';
+export {
+  initConfigs,
+  initHarvest as initHarvestConfigs,
+  initLiquidation as initLiquidationConfigs,
+  initLocalConfigs,
+} from './configs';
 export { deleteFactions, initFactions, reviseFactions } from './factions';
 export { initGachaPool, mintToGachaPool } from './gacha';
 export { deleteGoals, initGoals } from './goals';

@@ -82,7 +82,7 @@ async function initStats(api: AdminAPI) {
   await api.config.set.number('KAMI_STANDARD_COOLDOWN', 180);
 }
 
-async function initHarvest(api: AdminAPI) {
+export async function initHarvest(api: AdminAPI) {
   // efficacy configs [prec, neut, +, -]
   await api.config.set.array('KAMI_HARV_EFFICACY_BODY', [3, 0, 650, 250]);
   await api.config.set.array('KAMI_HARV_EFFICACY_HAND', [3, 0, 400, 150]);
@@ -94,7 +94,7 @@ async function initHarvest(api: AdminAPI) {
   await api.config.set.array('KAMI_HARV_STRAIN', [20, 0, 7500, 3, 0, 0, 1000, 3]); // hijacking nudge here for denominator base value
 }
 
-async function initLiquidation(api: AdminAPI) {
+export async function initLiquidation(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_EFFICACY', [3, 0, 500, 500]); // [prec, neut, +, -]
   await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // ratio applies to iCDF
 
