@@ -89,10 +89,6 @@ export function createPlayerAPI(systems: any) {
   /////////////////
   // CHAT
   function sendMessage(message: string) {
-    console.log('AAAAA SEND MESSAGE');
-    console.log(systems['system.chat'].address);
-
-    console.log(systems['system.echo.kamis'].address);
     return systems['system.chat'].executeTyped(message);
   }
 

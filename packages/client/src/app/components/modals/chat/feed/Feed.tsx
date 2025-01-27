@@ -35,6 +35,7 @@ export const Feed = (props: Props) => {
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
   const [scrollBottom, setScrollBottom] = useState(0);
   const [feed, setFeed] = useState<FeedResponse>();
+  const [isPolling, setIsPolling] = useState(false);
 
   const feedRef = useRef<HTMLDivElement>(null);
 
@@ -49,18 +50,23 @@ export const Feed = (props: Props) => {
   // TODO: set the scroll position to the bottom whenever the modal is reopened
   useEffect(() => {
     console.log('useEffect []');
-    pollNew();
+    setKamidenMessages([]);
+    setIsPolling(true);
+    poll().finally(() => {
+      setIsPolling(false);
+    });
   }, [nodeIndex]);
 
   // time-based autopolling of new messages (10s atm)
   // TODO: autoexpand and contract this polling based on detected activity
-  useEffect(() => {
+/*useEffect(() => {
     console.log('[modals.chat, kamidenMessages]');
     const pollTimerId = setInterval(pollNew, 10000);
     return function cleanup() {
       clearInterval(pollTimerId);
     };
   }, [modals.chat, kamidenMessages]);
+  */
 
   // scrolling effects
   // when scrolling, autopoll when nearing the top and set the scroll position
@@ -128,9 +134,15 @@ export const Feed = (props: Props) => {
       </Buttons>
       {activeTab === 0 && (
         <Messages>
-          {kamidenMessages
-            ?.toReversed()
-            .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)}
+          {isPolling ? (
+            <PollingMessage>Polling chat messages...</PollingMessage>
+          ) : kamidenMessages.length === 0 ? (
+            <PollingMessage>No messages in this room</PollingMessage>
+          ) : (
+            kamidenMessages
+              ?.toReversed()
+              .map((message) => <Message utils={utils} key={message.Timestamp} data={{ message }} />)
+          )}
         </Messages>
       )}
     </Wrapper>
@@ -139,19 +151,11 @@ export const Feed = (props: Props) => {
   /////////////////
   // HELPERS
 
-  // poll for the next feed of messages and update the list of current casts
-  async function pollMore() {
-    console.log('feed poll more');
-  }
 
   // poll for recent messages. do not update the Feed state/cursor
-  async function pollNew() {
-    console.log('feed polling new');
+  async function poll() {
+    console.log('in poll function');
     const response = await client.getRoomMessages({ RoomIndex: nodeIndex });
-    console.log('Messages', response.Messages);
-    for (const message of response.Messages) {
-      console.log('message', message.Timestamp);
-    }
     setKamidenMessages(response.Messages.reverse());
     /*
     if (modals.chat) {
@@ -202,4 +206,11 @@ const Button = styled.button<{ position: number }>`
     border-color: black;
     cursor: default;
   }
+`;
+
+const PollingMessage = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
 `;
