@@ -52,7 +52,7 @@ export const Message = (props: Props) => {
 
 const Container = styled.div`
   padding: 0.9vw 0.9vw;
-  width: 100%;
+  width: 115%;
 
   color: black;
   display: flex;
