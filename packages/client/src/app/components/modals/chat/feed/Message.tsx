@@ -24,15 +24,6 @@ export const Message = (props: Props) => {
 
   /////////////////
   // INTERACTION
-
-  /*
-      <Pfp
-        src={cast.author.pfp_url}
-        onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}
-      />
-      */
-  console.log(` getAccountByID ts ${message.Timestamp}`);
-  console.log(`message.AccountId ${message.AccountId}`);
   return (
     <Container>
       <Content>
