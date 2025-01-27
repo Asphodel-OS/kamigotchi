@@ -1,4 +1,5 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { BigNumber } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
@@ -117,10 +118,10 @@ export const getType = (components: Components, entity: EntityIndex): string => 
 
 export const getValue = (components: Components, entity: EntityIndex): number => {
   const { Value } = components;
-  const result = getComponentValue(Value, entity)?.value;
-  // TODO: uncomment this once we have a ValueComponent
+  const result = getComponentValue(Value, entity)?.value ?? 0;
+  const raw = BigNumber.from(result);
+  return raw.fromTwos(256).toNumber();
   // if (result === undefined) console.warn('getValue(): undefined for entity', entity);
-  return (result ?? 0) * 1;
 };
 
 ////////////////

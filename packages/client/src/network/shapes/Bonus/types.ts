@@ -1,9 +1,9 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+
 import { formatEntityID } from 'engine/utils';
-import { BigNumber } from 'ethers';
 import { Components } from 'network/';
 import { hashArgs } from '../utils';
-import { getLevel, getType, getValue } from '../utils/component';
+import { getLevel, getType, getValue as getValueComp } from '../utils/component';
 
 export interface Bonus {
   id: EntityID;
@@ -19,7 +19,7 @@ export interface BonusInstance extends Bonus {
   total: number;
 }
 
-export const getBonusRegistry = (
+export const getRegistry = (
   world: World,
   comps: Components,
   entity: EntityIndex,
@@ -31,28 +31,23 @@ export const getBonusRegistry = (
     id: world.entities[entity],
     entity: entity,
     type: getType(comps, entity),
-    value: getValue(comps, entity),
+    value: getValueComp(comps, entity),
     endType: getComponentValue(Subtype, entity)?.value as string,
   };
 };
 
-export const getBonusValueSingle = (
+// get the value of a bonus entity
+export const getValue = (
   world: World,
   comps: Components,
   entity: EntityIndex,
   precision = 0
 ): number => {
-  const { Value } = comps;
   const registryEntity = getRegistryEntity(world, comps, entity);
-  const base = getComponentValue(Value, registryEntity)?.value;
+  const base = getValueComp(comps, registryEntity);
   if (base === undefined) console.warn(`bonus entity missing Value`, world.entities[entity]);
   const level = getLevel(comps, entity, 1);
-  return calcBonusValue(base ?? 0, level, precision);
-};
-
-export const calcBonusValue = (base: number, mult: number, precision: number = 0): number => {
-  const raw = BigNumber.from(base);
-  return (raw.fromTwos(256).toNumber() / 10 ** precision) * mult;
+  return (base * level) / 10 ** precision;
 };
 
 ////////////////////

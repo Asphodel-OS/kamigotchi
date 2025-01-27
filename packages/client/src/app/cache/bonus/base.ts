@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Bonus, BonusInstance, calcBonusValue, getBonusRegistry } from 'network/shapes/Bonus';
+import { Bonus, BonusInstance, getBonusRegistry } from 'network/shapes/Bonus';
 import { getLevel, getSourceID } from 'network/shapes/utils/component';
 
 const RegistryCache = new Map<EntityIndex, Bonus>();
@@ -21,14 +21,15 @@ export const getInstance = (
 ): BonusInstance => {
   if (!InstanceToRegistry.has(entity)) {
     const source = getSourceID(components, entity);
-    InstanceToRegistry.set(entity, world.entityToIndex.get(source) || (0 as EntityIndex));
+    const registryEntity = world.entityToIndex.get(source) || (0 as EntityIndex);
+    InstanceToRegistry.set(entity, registryEntity);
   }
   const reg = getRegistry(world, components, InstanceToRegistry.get(entity)!);
   const level = getLevel(components, entity);
   return {
     ...reg,
     level,
-    total: calcBonusValue(reg.value, level),
+    total: reg.value * level,
   };
 };
 

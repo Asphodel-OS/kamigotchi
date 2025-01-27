@@ -1,7 +1,7 @@
 import { EntityID, World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { queryForParent, queryForType } from './queries';
-import { Bonus, getBonusRegistry, getBonusValueSingle } from './types';
+import { Bonus, getRegistry, getValue } from './types';
 
 export const getBonusValue = (
   world: World,
@@ -22,7 +22,7 @@ export const getBonusValuesForType = (
   precision: number = 0
 ): number[] => {
   const entities = queryForType(components, field, holderID);
-  return entities.map((entity) => getBonusValueSingle(world, components, entity, precision));
+  return entities.map((entity) => getValue(world, components, entity, precision));
 };
 
 export const getBonusesByParent = (
@@ -31,5 +31,5 @@ export const getBonusesByParent = (
   parentID: EntityID
 ): Bonus[] => {
   const entities = queryForParent(components, parentID);
-  return entities.map((entity) => getBonusRegistry(world, components, entity));
+  return entities.map((entity) => getRegistry(world, components, entity));
 };

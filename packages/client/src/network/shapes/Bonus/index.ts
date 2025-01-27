@@ -6,10 +6,9 @@ export {
   queryForType as queryBonusForType,
 } from './queries';
 export {
-  calcBonusValue,
   genEndAnchor as genBonusEndAnchor,
   genTypeID as genBonusTypeID,
-  getBonusRegistry,
+  getRegistry as getBonusRegistry,
 } from './types';
 
 export type { Bonus, BonusInstance } from './types';
