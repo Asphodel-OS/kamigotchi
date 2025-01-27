@@ -28,13 +28,15 @@ export const Message = (props: Props) => {
     <Container>
       <Content>
         <Header>
-          <Pfp
-            src={
-              getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
-              'https://miladymaker.net/milady/8365.png'
-            }
-          />
-          <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+          <PfpAuthor>
+            <Pfp
+              src={
+                getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
+                'https://miladymaker.net/milady/8365.png'
+              }
+            />
+            <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+          </PfpAuthor>
           <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
         </Header>
         <Body>{message.Message}</Body>
@@ -87,7 +89,13 @@ const Header = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.4vw;
+
+  gap: 0.6vw;
+`;
+
+const PfpAuthor = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const Author = styled.div`
@@ -120,4 +128,36 @@ const Body = styled.div`
   font-size: 0.8vw;
   line-height: 1.2vw;
   word-wrap: break-word;
+
+  border-radius: 20px;
+  padding: 8px 15px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: inline-block;
+  align-items: flex-start;
+  margin-right: 25%;
+  background-color: #eee;
+  position: relative;
+  ::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: -10px;
+
+    height: 20px;
+    width: 10px;
+    background: rgb(238, 238, 238);
+    border-top-left-radius: 15px;
+  }
+  ::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-right-radius: 10px;
+  }
 `;
