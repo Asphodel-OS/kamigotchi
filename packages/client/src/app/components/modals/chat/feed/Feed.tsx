@@ -6,7 +6,7 @@ import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { useAccount, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
-import { getKamidenClient } from 'workers/sync/kamidenStreamClient';
+import { getKamidenClient, subscribeToMessages } from 'workers/sync/kamidenStreamClient';
 import { Message } from './Message';
 
 interface Props {
@@ -48,33 +48,17 @@ export const Feed = (props: Props) => {
 
   // Add subscription effect
   useEffect(() => {
-    console.log('[kamiden] setting up message subscription for room');
+    console.log('[kamiden] registering message callback for room', nodeIndex);
     
-    // Set up subscription
-    const subscribe = async () => {
-      try {
-        const stream = client.subscribeToStream({});
-        
-        for await (const response of stream) {
-          for (const message of response.Messages) {
-            console.log('message', message);
-            if (message.RoomIndex === nodeIndex) {
-              setKamidenMessages(prev => [message, ...prev]);
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Stream error:', error);
+    const unsubscribe = subscribeToMessages((message) => {
+      if (message.RoomIndex === nodeIndex) {
+        setKamidenMessages(prev => [message, ...prev]);
       }
-    };
+    });
 
-    subscribe();
-
-    // Cleanup subscription when component unmounts or nodeIndex changes
     return () => {
-      console.log('Cleaning up message subscription for room', nodeIndex);
-      // The stream will automatically close when the component unmounts
-      // due to the for-await loop breaking
+      console.log('[kamiden] cleaning up message callback for room', nodeIndex);
+      unsubscribe();
     };
   }, [nodeIndex]);
 
