@@ -158,16 +158,19 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 0.6vw;
+  min-height: 6vh;
 `;
 
 const InputBox = styled.textarea`
   resize: none;
   padding: 0 0.6vw;
   line-height: 1.5vh;
+  width: 100%;
+  min-height: 6vh;
 `;
 
 const SendButton = styled.button`
   position: absolute;
-  right: 1vw;
-  bottom: 1.2vh;
+  right: 0.8vw;
+  bottom: 0.8vw;
 `;
