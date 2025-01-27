@@ -9,6 +9,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
+import { getRoomByIndex } from 'network/shapes/Room';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
 
@@ -37,6 +38,7 @@ export function registerChatModal() {
             data: { account, world, components },
             utils: {
               getAccountByID: (accountid: EntityID) => getAccountByID(world, components, accountid),
+              getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
             },
             network,
             nodeIndex,
@@ -49,6 +51,7 @@ export function registerChatModal() {
       const { account } = data;
       const { actions, api } = network;
       const { modals } = useVisibility();
+      const { getRoomByIndex } = utils;
 
       const [casts, setCasts] = useState<CastWithInteractions[]>([]);
       const [messages, setMessages] = useState<KamiMessage[]>([]);
@@ -74,7 +77,9 @@ export function registerChatModal() {
       return (
         <ModalWrapper
           id='chat'
-          header={<ModalHeader title='Chat' icon={ChatIcon} />}
+          header={
+            <ModalHeader title={`${getRoomByIndex(nodeIndex).name} ChatRoom`} icon={ChatIcon} />
+          }
           footer={
             <InputRow
               account={account}
