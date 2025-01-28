@@ -21,11 +21,12 @@ interface Props {
     setMessages: (messages: KamiMessage[]) => void;
     setScrollDown: (scrollDown: boolean) => void;
   };
+  player: EntityID;
 }
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { max, nodeIndex, utils, scrollDown } = props;
+  const { max, nodeIndex, utils, scrollDown, player } = props;
   const { setScrollDown } = props.actions;
 
   //const { pushCasts, setCasts } = props.actions;
@@ -157,7 +158,7 @@ export const Feed = (props: Props) => {
             kamidenMessages
               ?.toReversed()
               .map((message) => (
-                <Message utils={utils} key={message.Timestamp} data={{ message }} />
+                <Message player={player} utils={utils} key={message.Timestamp} data={{ message }} />
               ))
           )}
         </Messages>
