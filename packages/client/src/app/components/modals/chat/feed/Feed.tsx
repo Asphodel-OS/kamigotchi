@@ -191,6 +191,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const Buttons = styled.div`
@@ -203,7 +204,6 @@ const Buttons = styled.div`
 const Messages = styled.div`
   width: 100%;
   margin-top: 1vh;
-  overflow-x: hidden;
 `;
 
 const Button = styled.button<{ position: number }>`
