@@ -59,6 +59,13 @@ export const getLevel = (components: Components, entity: EntityIndex, fallback =
   return (result ?? fallback) * 1;
 };
 
+export const getLimit = (components: Components, entity: EntityIndex): number => {
+  const { Limit } = components;
+  const result = getComponentValue(Limit, entity)?.value;
+  if (result === undefined) console.warn('getLimit(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
 export const getMax = (components: Components, entity: EntityIndex): number => {
   const { Max } = components;
   const result = getComponentValue(Max, entity)?.value;
