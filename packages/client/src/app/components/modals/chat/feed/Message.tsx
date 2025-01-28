@@ -13,11 +13,13 @@ interface Props {
   data: {
     message: KamiMessage;
   };
+  player: EntityID;
 }
 
 export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
+  const { player } = props;
 
   /////////////////
   // INTERPRETATION
@@ -26,21 +28,39 @@ export const Message = (props: Props) => {
   // INTERACTION
   return (
     <Container>
-      <Content>
-        <Header>
-          <PfpAuthor>
-            <Pfp
-              src={
-                getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
-                'https://miladymaker.net/milady/8365.png'
-              }
-            />
-            <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
-          </PfpAuthor>
-          <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
-        </Header>
-        <Body>{message.Message}</Body>
-      </Content>
+      {player != getAccountByID(formatEntityID(message.AccountId)).id ? (
+        <Content>
+          <Header>
+            <PfpAuthor>
+              <Pfp
+                src={
+                  getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
+                  'https://miladymaker.net/milady/8365.png'
+                }
+              />
+              <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+            </PfpAuthor>
+            <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+          </Header>
+          <Body>{message.Message}</Body>
+        </Content>
+      ) : (
+        <Content>
+          <Header>
+            <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+            <PfpAuthor>
+              <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+              <Pfp
+                src={
+                  getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
+                  'https://miladymaker.net/milady/8365.png'
+                }
+              />{' '}
+            </PfpAuthor>
+          </Header>
+          <BodyMine>{message.Message}</BodyMine>
+        </Content>
+      )}
     </Container>
   );
 
@@ -121,6 +141,7 @@ const Time = styled.div`
 `;
 
 const Body = styled.div`
+  z-index: 1;
   color: black;
   width: 100%;
 
@@ -139,22 +160,46 @@ const Body = styled.div`
   background-color: #eee;
   position: relative;
   ::before {
+    z-index: -1;
     content: '';
     position: absolute;
-    top: -10px;
-    height: 20px;
-    width: 10px;
+    top: -0.8vw;
+    min-height: 2vw;
+    width: 0.7vw;
     background: rgb(238, 238, 238);
-    border-top-left-radius: 15px;
+    border-top-left-radius: 80%;
+    left: 2%;
   }
-  ::after {
+`;
+
+const BodyMine = styled.div`
+  z-index: 1;
+  color: black;
+  width: 100%;
+
+  font-family: Pixel;
+  font-size: 0.8vw;
+  line-height: 1.2vw;
+  word-wrap: break-word;
+
+  border-radius: 1vw;
+  padding: 1vw;
+  margin-top: 1vh;
+  margin-bottom: 5px;
+  display: inline-block;
+  align-items: flex-start;
+  margin-right: 25%;
+  background-color: #eee;
+  position: relative;
+  ::before {
+    z-index: -1;
     content: '';
     position: absolute;
-    bottom: 0;
-    left: -10px;
-    width: 10px;
-    height: 20px;
-    background: white;
-    border-bottom-right-radius: 10px;
+    top: -0.8vw;
+    min-height: 2vw;
+    width: 0.7vw;
+    background: rgb(238, 238, 238);
+    border-top-right-radius: 80%;
+    right: 4%;
   }
 `;
