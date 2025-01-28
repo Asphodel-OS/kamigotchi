@@ -6,11 +6,13 @@ import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { useAccount, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
+import { ActionSystem } from 'network/systems';
 import { getKamidenClient, subscribeToMessages } from 'workers/sync/kamidenStreamClient';
 import { Message } from './Message';
 
 interface Props {
   scrollDown: boolean;
+  api: any;
   max: number; // max number of casts to disable polling at
   nodeIndex: number;
   utils: {
@@ -22,11 +24,12 @@ interface Props {
     setScrollDown: (scrollDown: boolean) => void;
   };
   player: EntityID;
+  actionSystem: ActionSystem;
 }
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { max, nodeIndex, utils, scrollDown, player } = props;
+  const { max, nodeIndex, utils, scrollDown, player, actionSystem, api } = props;
   const { setScrollDown } = props.actions;
 
   //const { pushCasts, setCasts } = props.actions;
@@ -158,7 +161,14 @@ export const Feed = (props: Props) => {
             kamidenMessages
               ?.toReversed()
               .map((message) => (
-                <Message player={player} utils={utils} key={message.Timestamp} data={{ message }} />
+                <Message
+                  api={api}
+                  player={player}
+                  utils={utils}
+                  key={message.Timestamp}
+                  data={{ message }}
+                  actionSystem={actionSystem}
+                />
               ))
           )}
         </Messages>
