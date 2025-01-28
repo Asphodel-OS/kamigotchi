@@ -96,6 +96,7 @@ export function registerChatModal() {
             nodeIndex={nodeIndex}
             max={maxCasts}
             utils={utils}
+            player={account.id}
             actions={{ pushMessages, setMessages, setScrollDown }}
           />
         </ModalWrapper>
