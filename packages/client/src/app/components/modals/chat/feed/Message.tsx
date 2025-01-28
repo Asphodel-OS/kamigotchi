@@ -6,6 +6,7 @@ import { Account } from 'app/cache/account';
 import { useSelected, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
+import { useEffect, useState } from 'react';
 
 interface Props {
   utils: {
@@ -21,6 +22,7 @@ export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
   const { player } = props;
+  const [yours, setYours] = useState(false);
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
 
@@ -31,58 +33,58 @@ export const Message = (props: Props) => {
     setAccount(getAccountByID(formatEntityID(message.AccountId)).index);
     if (!modals.account) setModals({ account: true });
   };
+
+  useEffect(() => {
+    if (player != getAccountByID(formatEntityID(message.AccountId)).id) {
+      setYours(true);
+    }
+  }, [message.AccountId]);
   /////////////////
   // INTERACTION
   return (
     <Container>
-      {player != getAccountByID(formatEntityID(message.AccountId)).id ? (
-        <Content>
-          <Header>
-            <PfpAuthor>
-              <Pfp
-                author={false}
-                onClick={() => {
-                  showUser();
-                }}
-                src={
-                  getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
-                  'https://miladymaker.net/milady/8365.png'
-                }
-              />
-              <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
-            </PfpAuthor>
-            <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
-          </Header>
-          <Body>{message.Message}</Body>
-        </Content>
-      ) : (
-        <Content>
-          <Header>
-            <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
-            <PfpAuthor>
-              <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
-              <Pfp
-                author={true}
-                onClick={() => {
-                  showUser();
-                }}
-                src={
-                  getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
-                  'https://miladymaker.net/milady/8365.png'
-                }
-              />{' '}
-            </PfpAuthor>
-          </Header>
-          <BodyMine>{message.Message}</BodyMine>
-        </Content>
-      )}
+      <Content>
+        <Header>
+          {player != getAccountByID(formatEntityID(message.AccountId)).id ? (
+            <>
+              <PfpAuthor>
+                <Pfp
+                  author={false}
+                  onClick={() => {
+                    showUser();
+                  }}
+                  src={
+                    getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
+                    'https://miladymaker.net/milady/8365.png'
+                  }
+                />
+                <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+              </PfpAuthor>
+              <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+            </>
+          ) : (
+            <>
+              <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+              <PfpAuthor>
+                <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+                <Pfp
+                  author={true}
+                  onClick={() => {
+                    showUser();
+                  }}
+                  src={
+                    getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
+                    'https://miladymaker.net/milady/8365.png'
+                  }
+                />
+              </PfpAuthor>
+            </>
+          )}
+        </Header>
+        <Body yours={yours}>{message.Message}</Body>
+      </Content>
     </Container>
   );
-
-  /////////////////
-  // HELPERS
-
-  // trigger a like of a cast
 };
 
 const Container = styled.div`
@@ -94,6 +96,7 @@ const Container = styled.div`
   flex-flow: row nowrap;
   align-items: flex-start;
   gap: 0.4vw;
+  caret-color: transparent;
 `;
 
 const Content = styled.div`
@@ -152,7 +155,7 @@ const Time = styled.div`
   align-items: center;
 `;
 
-const Body = styled.div`
+const Body = styled.div<{ yours: boolean }>`
   z-index: 0;
   color: black;
   width: 100%;
@@ -169,6 +172,10 @@ const Body = styled.div`
   margin-right: 25%;
   background-color: #eee;
   position: relative;
+
+  ${({ yours }) =>
+    yours
+      ? `
   ::before {
     z-index: -1;
     content: '';
@@ -179,27 +186,8 @@ const Body = styled.div`
     background: rgb(238, 238, 238);
     border-top-left-radius: 80%;
     left: 2%;
-  }
-`;
-
-const BodyMine = styled.div`
-  z-index: 0;
-  color: black;
-  width: 100%;
-
-  font-size: 0.8vw;
-  line-height: 1.2vw;
-  word-wrap: break-word;
-
-  border-radius: 1vw;
-  padding: 1vw;
-  margin: 0.5vh 0 1vh 0;
-  display: inline-block;
-  align-items: flex-start;
-  margin-right: 25%;
-  background-color: #eee;
-  position: relative;
-  ::before {
+  }`
+      : ` ::before {
     z-index: -1;
     content: '';
     position: absolute;
@@ -209,5 +197,5 @@ const BodyMine = styled.div`
     background: rgb(238, 238, 238);
     border-top-right-radius: 80%;
     right: 4%;
-  }
+  } `}
 `;
