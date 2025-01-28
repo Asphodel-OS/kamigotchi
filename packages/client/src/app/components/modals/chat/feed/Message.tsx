@@ -3,12 +3,18 @@ import styled from 'styled-components';
 
 import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
+
+import { ActionListButton } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
+import { BaseAccount } from 'network/shapes/Account';
+import { ActionSystem } from 'network/systems';
 import { useEffect, useState } from 'react';
 
 interface Props {
+  actionSystem: ActionSystem;
+  api: any;
   utils: {
     getAccountByID: (accountid: EntityID) => Account;
   };
@@ -21,7 +27,7 @@ interface Props {
 export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
-  const { player } = props;
+  const { player, actionSystem, api } = props;
   const [yours, setYours] = useState(false);
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
@@ -39,6 +45,18 @@ export const Message = (props: Props) => {
       setYours(true);
     }
   }, [message.AccountId]);
+
+  const blockFren = (account: BaseAccount) => {
+    console.log('block fren');
+    actionSystem.add({
+      action: 'BlockFriend',
+      params: [account.ownerAddress],
+      description: `Blocking ${account.name}`,
+      execute: async () => {
+        return api.player.social.friend.block(account.ownerAddress);
+      },
+    });
+  };
   /////////////////
   // INTERACTION
   return (
@@ -48,6 +66,19 @@ export const Message = (props: Props) => {
           {player != getAccountByID(formatEntityID(message.AccountId)).id ? (
             <>
               <PfpAuthor>
+                <OptionButtons>
+                  <ActionListButton
+                    id={getAccountByID(formatEntityID(message.AccountId)).id}
+                    text=''
+                    size='small'
+                    options={[
+                      {
+                        text: 'Block',
+                        onClick: () => blockFren(getAccountByID(formatEntityID(message.AccountId))),
+                      },
+                    ]}
+                  />
+                </OptionButtons>
                 <Pfp
                   author={false}
                   onClick={() => {
@@ -58,7 +89,10 @@ export const Message = (props: Props) => {
                     'https://miladymaker.net/milady/8365.png'
                   }
                 />
-                <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+
+                <Author author={false}>
+                  {getAccountByID(formatEntityID(message.AccountId)).name}
+                </Author>
               </PfpAuthor>
               <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
             </>
@@ -66,7 +100,9 @@ export const Message = (props: Props) => {
             <>
               <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
               <PfpAuthor>
-                <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
+                <Author author={true}>
+                  {getAccountByID(formatEntityID(message.AccountId)).name}
+                </Author>
                 <Pfp
                   author={true}
                   onClick={() => {
@@ -107,7 +143,16 @@ const Content = styled.div`
   align-items: flex-start;
 `;
 
+const OptionButtons = styled.div`
+  position: relative;
+  left: 2vw;
+  top: 1.4vw;
+  z-index: 1;
+`;
+
 const Pfp = styled.img<{ author: boolean }>`
+  position: relative;
+  left: -3vw;
   width: 3.6vw;
   height: 3.6vw;
   border-radius: 50%;
@@ -119,6 +164,7 @@ const Pfp = styled.img<{ author: boolean }>`
   ${({ author }) =>
     author &&
     `  pointer-events: none;
+    left: 0vw;
   `}
 `;
 
@@ -140,9 +186,15 @@ const PfpAuthor = styled.div`
   gap: 0.5vw;
 `;
 
-const Author = styled.div`
+const Author = styled.div<{ author: boolean }>`
+  position: relative;
+  left: -3vw;
   color: orange;
   font-size: 1vw;
+  ${({ author }) =>
+    author &&
+    `  left:0;
+  `}
 `;
 
 const Time = styled.div`

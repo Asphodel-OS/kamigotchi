@@ -93,11 +93,13 @@ export function registerChatModal() {
         >
           <Feed
             scrollDown={scrollDown}
+            api={api}
             nodeIndex={nodeIndex}
             max={maxCasts}
             utils={utils}
             player={account.id}
             actions={{ pushMessages, setMessages, setScrollDown }}
+            actionSystem={actions}
           />
         </ModalWrapper>
       );
