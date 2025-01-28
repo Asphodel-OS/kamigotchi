@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
+import { useSelected, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
 
@@ -20,10 +21,16 @@ export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
   const { player } = props;
+  const { modals, setModals } = useVisibility();
+  const { setAccount } = useSelected();
 
   /////////////////
   // INTERPRETATION
 
+  const showUser = () => {
+    setAccount(getAccountByID(formatEntityID(message.AccountId)).index);
+    if (!modals.account) setModals({ account: true });
+  };
   /////////////////
   // INTERACTION
   return (
@@ -33,6 +40,10 @@ export const Message = (props: Props) => {
           <Header>
             <PfpAuthor>
               <Pfp
+                author={false}
+                onClick={() => {
+                  showUser();
+                }}
                 src={
                   getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
                   'https://miladymaker.net/milady/8365.png'
@@ -51,6 +62,10 @@ export const Message = (props: Props) => {
             <PfpAuthor>
               <Author>{getAccountByID(formatEntityID(message.AccountId)).name}</Author>
               <Pfp
+                author={true}
+                onClick={() => {
+                  showUser();
+                }}
                 src={
                   getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
                   'https://miladymaker.net/milady/8365.png'
@@ -89,7 +104,7 @@ const Content = styled.div`
   align-items: flex-start;
 `;
 
-const Pfp = styled.img`
+const Pfp = styled.img<{ author: boolean }>`
   width: 3.6vw;
   height: 3.6vw;
   border-radius: 50%;
@@ -97,6 +112,11 @@ const Pfp = styled.img`
     opacity: 0.6;
     cursor: pointer;
   }
+
+  ${({ author }) =>
+    author &&
+    `  pointer-events: none;
+  `}
 `;
 
 const Header = styled.div`
