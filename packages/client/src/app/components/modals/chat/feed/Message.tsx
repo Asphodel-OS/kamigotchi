@@ -90,11 +90,9 @@ const Content = styled.div`
 `;
 
 const Pfp = styled.img`
-  margin-right: 0.4vw;
   width: 3.6vw;
   height: 3.6vw;
   border-radius: 50%;
-
   &:hover {
     opacity: 0.6;
     cursor: pointer;
@@ -116,44 +114,36 @@ const Header = styled.div`
 const PfpAuthor = styled.div`
   display: flex;
   align-items: center;
+  gap: 0.5vw;
 `;
 
 const Author = styled.div`
   color: orange;
-  font-family: Pixel;
   font-size: 1vw;
-
-  &:hover {
-    opacity: 0.6;
-    cursor: pointer;
-  }
 `;
 
 const Time = styled.div`
   color: black;
-  font-family: Pixel;
+
   font-size: 0.9vw;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.4vw;
 `;
 
 const Body = styled.div`
-  z-index: 1;
+  z-index: 0;
   color: black;
   width: 100%;
 
-  font-family: Pixel;
   font-size: 0.8vw;
   line-height: 1.2vw;
   word-wrap: break-word;
 
-  border-radius: 20px;
-  padding: 8px 15px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  border-radius: 1vw;
+  padding: 1vw;
+  margin: 0.5vh 0 1vh 0;
   display: inline-block;
   align-items: flex-start;
   margin-right: 25%;
@@ -173,19 +163,17 @@ const Body = styled.div`
 `;
 
 const BodyMine = styled.div`
-  z-index: 1;
+  z-index: 0;
   color: black;
   width: 100%;
 
-  font-family: Pixel;
   font-size: 0.8vw;
   line-height: 1.2vw;
   word-wrap: break-word;
 
   border-radius: 1vw;
   padding: 1vw;
-  margin-top: 1vh;
-  margin-bottom: 5px;
+  margin: 0.5vh 0 1vh 0;
   display: inline-block;
   align-items: flex-start;
   margin-right: 25%;
