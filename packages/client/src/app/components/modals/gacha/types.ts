@@ -1,8 +1,8 @@
 import { KamiIcon } from 'assets/images/icons/menu';
 import { StatIcons } from 'constants/stats';
 
-export type TabType = 'MINT' | 'REROLL' | 'REVEAL';
-export const TABS: TabType[] = ['MINT', 'REROLL', 'REVEAL'];
+export type TabType = 'MINT' | 'REROLL' | 'AUCTION';
+export const TABS: TabType[] = ['MINT', 'REROLL', 'AUCTION'];
 
 export type Stat = 'INDEX' | 'LEVEL' | 'HEALTH' | 'POWER' | 'VIOLENCE' | 'HARMONY' | 'SLOTS';
 

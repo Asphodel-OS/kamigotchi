@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Commit } from 'network/shapes/Commit';
 import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
-import { Commits } from '../reroll/Commits';
 import { Reroll } from '../reroll/Reroll';
 import { Filter, Sort, TabType } from '../types';
 import { Pool } from './Pool';
@@ -29,7 +28,6 @@ interface Props {
     accountEntity: EntityIndex;
     poolKamis: EntityIndex[];
     maxRerolls: number;
-    commits: Commit[];
     balance: bigint;
   };
   utils: {
@@ -40,9 +38,9 @@ interface Props {
 }
 
 export const MainDisplay = (props: Props) => {
-  const { tab, blockNumber, controls, actions, data, caches, utils } = props;
+  const { tab, controls, actions, data, caches, utils } = props;
   const { handleReroll, revealTx } = actions;
-  const { poolKamis, commits } = data;
+  const { poolKamis } = data;
 
   const Content = () => {
     switch (tab) {
@@ -58,8 +56,8 @@ export const MainDisplay = (props: Props) => {
         );
       case 'REROLL':
         return <Reroll tab={tab} actions={{ handleReroll }} data={data} utils={utils} />;
-      case 'REVEAL':
-        return <Commits actions={{ revealTx }} blockNumber={blockNumber} data={{ commits }} />;
+      case 'AUCTION':
+        return <></>;
       default:
         return null;
     }
