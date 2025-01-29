@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
-import { Popover } from '../Popover';
+import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
 
 interface Props {

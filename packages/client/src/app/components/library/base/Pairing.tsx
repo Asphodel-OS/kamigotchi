@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from './Tooltip';
+import { Tooltip } from './poppers/Tooltip';
 
 const SCALE_DEFAULT = 1.2;
 

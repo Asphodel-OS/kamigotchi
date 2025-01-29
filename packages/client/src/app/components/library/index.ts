@@ -12,6 +12,7 @@ export {
   Pairing,
   Tooltip,
   ValidatorWrapper,
+  Warning,
 } from './base';
 
 export { Overlay } from './styles';

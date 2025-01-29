@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Filter, Sort } from '../../types';
 // import { Filter as FilterComponent } from './Filter';
 // import { Sort as SortComponent } from './Sort';
+import { Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
 import { MintControls } from './mint/MintControls';
 
@@ -26,10 +27,26 @@ interface Props {
 
 //
 export const Controls = (props: Props) => {
-  const { tab, data, controls } = props;
+  const { tab, actions, controls, data } = props;
+  const { reveal } = actions;
   const { commits } = data;
 
-  return <Container>{tab === 'MINT' && <MintControls tab={tab} controls={controls} />}</Container>;
+  return (
+    <Container>
+      {commits.length > 0 && (
+        <Warning
+          text={{
+            value: `You have ${commits.length} unrevealed commit(s)`,
+          }}
+          action={{
+            onClick: () => reveal(commits),
+            label: 'Reveal',
+          }}
+        />
+      )}
+      {tab === 'MINT' && <MintControls tab={tab} controls={controls} />}
+    </Container>
+  );
 };
 
 const Container = styled.div`

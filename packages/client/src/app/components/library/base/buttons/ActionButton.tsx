@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../Tooltip';
+import { Tooltip } from '../poppers/Tooltip';
 
 interface Props {
   onClick: Function;

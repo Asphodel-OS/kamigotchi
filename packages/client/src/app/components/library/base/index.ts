@@ -11,4 +11,5 @@ export { ValidatorWrapper } from './validators/ValidatorWrapper';
 
 export { Card } from './Card';
 export { Pairing } from './Pairing';
-export { Tooltip } from './Tooltip';
+export { Tooltip } from './poppers/Tooltip';
+export { Warning } from './Warning';
