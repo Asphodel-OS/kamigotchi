@@ -10,7 +10,7 @@ import { useBalance, useBlockNumber } from 'wagmi';
 import { getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
-import { GACHA_TICKET_INDEX } from 'constants/items';
+import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { getConfigFieldValue } from 'network/shapes/Config';
@@ -51,6 +51,7 @@ export function registerGachaModal() {
               accountEntity,
               ownerAddress: getOwnerAddress(components, accountEntity),
               gachaBalance: getItemBalance(world, components, accountID, GACHA_TICKET_INDEX),
+              rerollBalance: getItemBalance(world, components, accountID, REROLL_TICKET_INDEX),
               poolKamis: queryKamis(components, { account: GACHA_ID }),
               commits: getGachaCommits(world, components, accountID),
               maxRerolls: getConfigFieldValue(world, components, 'GACHA_MAX_REROLLS'),
@@ -66,7 +67,7 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, world, api } = network;
-      const { ownerAddress, commits, gachaBalance, poolKamis } = data;
+      const { ownerAddress, commits, poolKamis } = data;
       const { setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
       const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -194,13 +195,13 @@ export function registerGachaModal() {
           playVend();
           return true;
         } catch (e) {
-          console.log('Gacha.tsx: handleMint() mint failed', e);
+          console.log('Gacha: handleMint() failed', e);
         }
         return false;
       };
 
       const handleReroll = async (kamis: BaseKami[], price: bigint) => {
-        if (kamis.length === 0) return;
+        if (kamis.length === 0) return false;
         try {
           setWaitingToReveal(true);
           const rerollActionID = rerollTx(kamis, price);
@@ -212,9 +213,11 @@ export function registerGachaModal() {
           );
           setTriedReveal(false);
           playVend();
+          return true;
         } catch (e) {
-          console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
+          console.log('Gacha: handleReroll() failed', e);
         }
+        return false;
       };
 
       ///////////////
@@ -238,7 +241,7 @@ export function registerGachaModal() {
               tab={tab}
               blockNumber={blockNumber ?? 0n}
               controls={{ limit, filters, sorts }}
-              actions={{ handleReroll, revealTx }}
+              actions={{ reroll: handleReroll }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
               data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
               utils={utils}

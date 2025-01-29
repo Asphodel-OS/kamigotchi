@@ -1,22 +1,29 @@
-import { Pairing } from 'app/components/library';
-import { Overlay } from 'app/components/library/styles';
-import { ItemImages } from 'assets/images/items';
 import { useState } from 'react';
 import styled from 'styled-components';
+
+import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { TabType } from '../types';
+
+// action labels for the purchase footer
+const ActionMap = new Map<TabType, string>([
+  ['MINT', 'Mint'],
+  ['REROLL', 'Reroll'],
+  ['AUCTION', 'Bid'],
+]);
 
 interface Props {
   tab: TabType;
   balance: number;
   actions: {
     mint: (amount: number) => Promise<boolean>;
+    reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
   };
 }
 
 export const Footer = (props: Props) => {
   const { tab, balance, actions } = props;
-  const { mint } = actions;
+  const { mint, reroll } = actions;
   const [quantity, setQuantity] = useState(0);
 
   const handleInc = () => {
@@ -29,9 +36,11 @@ export const Footer = (props: Props) => {
     setQuantity(Math.max(0, quantity - 1));
   };
 
-  const handleMint = async () => {
+  const handSubmit = async () => {
     playClick();
-    const success = await mint(quantity);
+    let success = false;
+    if (tab === 'MINT') success = await mint(quantity);
+    else if (tab === 'REROLL') success = await reroll([], BigInt(0));
     if (success) setQuantity(0);
   };
 
@@ -44,29 +53,17 @@ export const Footer = (props: Props) => {
 
   return (
     <Container>
-      <Overlay right={0.75} top={-2.4}>
-        <Pairing
-          icon={ItemImages.gacha_ticket}
-          text={balance.toFixed(1)}
-          tooltip={['Gacha Ticket']}
-          reverse
-        />
-      </Overlay>
       <Quantity type='string' value={quantity} onChange={(e) => handleChange(e)} />
       <Stepper>
-        <StepperButton
-          onClick={handleInc}
-          style={{ borderBottom: '0.15vw solid black' }}
-          disabled={quantity >= balance}
-        >
+        <StepperButton onClick={handleInc} disabled={tab === 'REROLL' || quantity >= balance}>
           +
         </StepperButton>
-        <StepperButton onClick={handleDec} disabled={quantity <= 0}>
+        <StepperButton onClick={handleDec} disabled={tab === 'REROLL' || quantity <= 0}>
           -
         </StepperButton>
       </Stepper>
-      <Submit onClick={handleMint} disabled={quantity <= 0}>
-        Mint
+      <Submit onClick={handSubmit} disabled={quantity <= 0}>
+        {ActionMap.get(tab) ?? 'Mint'}
       </Submit>
     </Container>
   );
@@ -103,6 +100,8 @@ const Quantity = styled.input`
 
 const Stepper = styled.div`
   border-right: 0.15vw solid black;
+  background-color: black;
+  gap: 0.12vw;
   height: 100%;
   width: 6vw;
   display: flex;

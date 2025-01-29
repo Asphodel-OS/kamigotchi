@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { Filter, Sort } from '../../types';
 // import { Filter as FilterComponent } from './Filter';
 // import { Sort as SortComponent } from './Sort';
-import { Warning } from 'app/components/library';
+import { Overlay, Pairing, Warning } from 'app/components/library';
+import { ItemImages } from 'assets/images/items';
 import { Commit } from 'network/shapes/Commit';
 import { MintControls } from './mint/MintControls';
 
@@ -22,14 +23,40 @@ interface Props {
   };
   data: {
     commits: Commit[];
+    gachaBalance: number;
+    rerollBalance: number;
   };
 }
 
 //
 export const Controls = (props: Props) => {
   const { tab, actions, controls, data } = props;
+  const { gachaBalance, rerollBalance } = data;
   const { reveal } = actions;
   const { commits } = data;
+
+  // NOTE: this would be more elegant by processing the relevant item
+  const CurrencyPairing = () => {
+    if (tab === 'MINT')
+      return (
+        <Pairing
+          icon={ItemImages.gacha_ticket}
+          text={gachaBalance.toFixed(1)}
+          tooltip={['Gacha Ticket']}
+          reverse
+        />
+      );
+    else if (tab === 'REROLL')
+      return (
+        <Pairing
+          icon={ItemImages.reroll_ticket}
+          text={rerollBalance.toFixed(1)}
+          tooltip={['Reroll Ticket']}
+          reverse
+        />
+      );
+    else return <></>;
+  };
 
   return (
     <Container>
@@ -45,6 +72,9 @@ export const Controls = (props: Props) => {
         />
       )}
       {tab === 'MINT' && <MintControls tab={tab} controls={controls} />}
+      <Overlay right={0.75} bottom={0.75}>
+        <CurrencyPairing />
+      </Overlay>
     </Container>
   );
 };

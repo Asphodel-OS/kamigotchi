@@ -11,12 +11,13 @@ interface Props {
   tab: TabType;
   setTab: (tab: TabType) => void;
   data: {
-    gachaBalance: number;
     commits: Commit[];
+    gachaBalance: number;
+    rerollBalance: number;
   };
   actions: {
     mint: (balance: number) => Promise<boolean>;
-    reroll: (kamis: BaseKami[], price: bigint) => Promise<void>;
+    reroll: (kamis: BaseKami[], price: bigint) => Promise<boolean>;
     reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
@@ -30,15 +31,14 @@ interface Props {
 }
 
 export const Sidebar = (props: Props) => {
-  const { actions, data, controls } = props;
+  const { actions, data, controls, tab, setTab } = props;
   const { commits, gachaBalance } = data;
 
   return (
     <Container>
-      <Tabs tab={props.tab} setTab={props.setTab} />
-      <Controls tab={props.tab} actions={actions} data={data} controls={controls} />
-      {/* <MintControls tab={props.tab} controls={controls} /> */}
-      <Footer tab={props.tab} actions={actions} balance={gachaBalance} />
+      <Tabs tab={tab} setTab={setTab} />
+      <Controls tab={tab} actions={actions} data={data} controls={controls} />
+      <Footer tab={tab} actions={actions} balance={gachaBalance} />
     </Container>
   );
 };

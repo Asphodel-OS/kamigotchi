@@ -1,7 +1,6 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { Commit } from 'network/shapes/Commit';
 import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
 import { Reroll } from '../reroll/Reroll';
@@ -17,8 +16,7 @@ interface Props {
     sorts: Sort[];
   };
   actions: {
-    handleReroll: (kamis: Kami[], price: bigint) => Promise<void>;
-    revealTx: (commits: Commit[]) => Promise<void>;
+    reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
   };
   caches: {
     kamis: Map<EntityIndex, GachaKami>;
@@ -39,7 +37,7 @@ interface Props {
 
 export const MainDisplay = (props: Props) => {
   const { tab, controls, actions, data, caches, utils } = props;
-  const { handleReroll, revealTx } = actions;
+  const { reroll } = actions;
   const { poolKamis } = data;
 
   const Content = () => {
@@ -55,7 +53,7 @@ export const MainDisplay = (props: Props) => {
           />
         );
       case 'REROLL':
-        return <Reroll tab={tab} actions={{ handleReroll }} data={data} utils={utils} />;
+        return <Reroll tab={tab} actions={{ reroll }} data={data} utils={utils} />;
       case 'AUCTION':
         return <></>;
       default:

@@ -10,6 +10,11 @@ export const clean = (inventories: Inventory[]): Inventory[] => {
     .sort((a: Inventory, b: Inventory) => (a.item.index > b.item.index ? 1 : -1)); //sort
 };
 
+// find an inventory by its index
+export const find = (inventories: Inventory[], index: number): Inventory | undefined => {
+  return inventories.find((inv) => inv.item.index === index);
+};
+
 // filter a set of inventories by type, for and balance
 export const filter = (
   inventories: Inventory[],

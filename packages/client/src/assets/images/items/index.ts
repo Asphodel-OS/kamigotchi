@@ -35,6 +35,7 @@ import pomegranate from './pomegranate.png';
 import portable_burner from './portable_burner.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
+import reroll_ticket from './reroll_ticket.png';
 import resin from './resin.png';
 import respec_potion from './respec_potion.png';
 import ring_of_spirits from './ring_of_spirits.png';
@@ -87,6 +88,7 @@ export const ItemImages = {
   pom_pom_fruit_candy: pom_pom_fruit_candy,
   red_amber_crystal: red_amber_crystal,
   red_gakki_ribbon: red_gakki_ribbon,
+  reroll_ticket: reroll_ticket,
   resin: resin,
   respec_potion: respec_potion,
   ring_of_spirits: ring_of_spirits,
