@@ -128,30 +128,33 @@ library LibTrade {
   // INTERACTIONS
 
   /// @notice transfers items and delete trade order
-  function execute(IUintComp components, uint256 tradeID, uint256 buyer) internal {
+  function execute(IWorld world, IUintComp components, uint256 tradeID, uint256 buyer) internal {
     KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
     ValuesComponent valuesComp = ValuesComponent(getAddrByID(components, ValuesCompID));
     uint256 buyAnchor = genBuyAnchor(tradeID);
     uint256 sellAnchor = genSellAnchor(tradeID);
 
     // send to buyer
-    uint32[] memory indices = keysComp.extract(sellAnchor);
-    uint256[] memory amounts = valuesComp.extract(sellAnchor);
-    LibInventory.decFor(components, sellAnchor, indices, amounts); // take from trade sellOrder
-    LibInventory.incFor(components, buyer, indices, amounts); // give to buyer
+    uint32[] memory sIndices = keysComp.extract(sellAnchor);
+    uint256[] memory sAmts = valuesComp.extract(sellAnchor);
+    LibInventory.decFor(components, sellAnchor, sIndices, sAmts); // take from trade sellOrder
+    LibInventory.incFor(components, buyer, sIndices, sAmts); // give to buyer
 
     // send to seller
     uint256 seller = IDOwnsTradeComponent(getAddrByID(components, IDOwnsTradeCompID)).extract(
       tradeID
     );
-    indices = keysComp.extract(buyAnchor);
-    amounts = valuesComp.extract(buyAnchor);
-    LibInventory.decFor(components, buyer, indices, amounts); // take from buyer
-    LibInventory.incFor(components, seller, indices, amounts); // give to seller
+    uint32[] memory bIndices = keysComp.extract(buyAnchor);
+    uint256[] memory bAmts = valuesComp.extract(buyAnchor);
+    LibInventory.decFor(components, buyer, bIndices, bAmts); // take from buyer
+    LibInventory.incFor(components, seller, bIndices, bAmts); // give to seller
 
     // removing the rest
     LibEntityType.remove(components, tradeID);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).remove(tradeID);
+
+    // emit event
+    emitTrade(world, Order(bIndices, bAmts), Order(sIndices, sAmts), buyer, seller);
   }
 
   /////////////////
@@ -205,11 +208,32 @@ library LibTrade {
     LibData.inc(components, accID, 0, "TRADE_CREATE", 1);
   }
 
-  function logComplete(IWorld world, IUintComp components, uint256 tradeID, uint256 buyer) public {
+  function logComplete(IUintComp components, uint256 tradeID, uint256 buyer) public {
     uint256 seller = IDOwnsTradeComponent(getAddrByID(components, IDOwnsTradeCompID)).get(tradeID);
     LibData.inc(components, buyer, 0, "TRADE_COMPLETE", 1);
     LibData.inc(components, seller, 0, "TRADE_COMPLETE", 1);
+  }
 
-    // todo: emit event
+  function emitTrade(
+    IWorld world,
+    Order memory buyOr,
+    Order memory sellOr,
+    uint256 buyer,
+    uint256 seller
+  ) public {
+    uint8[] memory _schema = new uint8[](6);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256);
+
+    LibEmitter.emitSystemCall(
+      world,
+      "TRADE_EXECUTE",
+      _schema,
+      abi.encode(buyOr.indices, buyOr.amounts, sellOr.indices, sellOr.amounts, buyer, seller)
+    );
   }
 }

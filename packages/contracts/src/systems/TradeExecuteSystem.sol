@@ -21,10 +21,10 @@ contract TradeExecuteSystem is System {
     LibTrade.verifyTarget(components, tradeID, accID);
 
     // logging (before trade deletes)
-    LibTrade.logComplete(world, components, tradeID, accID);
+    LibTrade.logComplete(components, tradeID, accID);
 
     // execute and remove trade
-    LibTrade.execute(components, tradeID, accID);
+    LibTrade.execute(world, components, tradeID, accID);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
