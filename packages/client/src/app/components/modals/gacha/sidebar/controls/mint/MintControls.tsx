@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionListButton, CircleExitButton, EmptyText } from 'app/components/library';
-import { DefaultFilters, DefaultSorts, Filter, Sort } from '../types';
+import { DefaultFilters, DefaultSorts, Filter, Sort } from '../../../types';
 import { Filter as FilterComponent } from './Filter';
 import { Sort as SortComponent } from './Sort';
 
@@ -17,7 +17,7 @@ interface Props {
   };
 }
 
-export const Controls = (props: Props) => {
+export const MintControls = (props: Props) => {
   const { tab, controls } = props;
   const { filters, setFilters, sorts, setSorts, limit, setLimit } = controls;
 

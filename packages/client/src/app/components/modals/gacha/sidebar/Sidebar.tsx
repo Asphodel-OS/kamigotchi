@@ -1,18 +1,23 @@
 import styled from 'styled-components';
 
+import { Commit } from 'network/shapes/Commit';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Filter, Sort, TabType } from '../types';
-import { Controls } from './Controls';
+import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
 import { Tabs } from './Tabs';
 
 interface Props {
   tab: TabType;
   setTab: (tab: TabType) => void;
-  gachaBalance: number;
+  data: {
+    gachaBalance: number;
+    commits: Commit[];
+  };
   actions: {
     mint: (balance: number) => Promise<boolean>;
     reroll: (kamis: BaseKami[], price: bigint) => Promise<void>;
+    reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
     filters: Filter[];
@@ -24,13 +29,15 @@ interface Props {
   };
 }
 
-export const Panel = (props: Props) => {
-  const { actions, gachaBalance, controls } = props;
+export const Sidebar = (props: Props) => {
+  const { actions, data, controls } = props;
+  const { commits, gachaBalance } = data;
 
   return (
     <Container>
       <Tabs tab={props.tab} setTab={props.setTab} />
-      <Controls tab={props.tab} controls={controls} />
+      <Controls tab={props.tab} actions={actions} data={data} controls={controls} />
+      {/* <MintControls tab={props.tab} controls={controls} /> */}
       <Footer tab={props.tab} actions={actions} balance={gachaBalance} />
     </Container>
   );

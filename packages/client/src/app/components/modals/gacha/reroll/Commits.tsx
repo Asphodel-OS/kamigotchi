@@ -1,11 +1,8 @@
 import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
-import { Commit, canRevealCommit } from 'network/shapes/Commit';
-import { getTimeDeltaString } from 'utils/time';
+import { Commit } from 'network/shapes/Commit';
 
-const SECONDS_PER_DAY = 86400;
-const SECONDS_PER_HOUR = 3600;
 interface Props {
   actions: {
     revealTx: (commits: Commit[]) => Promise<void>;
@@ -17,28 +14,10 @@ interface Props {
 }
 
 export const Commits = (props: Props) => {
-  const blockNumber = Number(props.blockNumber);
-
-  /////////////////
-  // LOGIC
-
-  const getCommitTimeFrom = (commit: Commit): string => {
-    const secDelta = (blockNumber - commit.revealBlock) * 2;
-    return getTimeDeltaString(secDelta);
-  };
-
-  /////////////////
-  // DISPLAY
-
-  const Cell = (commit: Commit) => {
-    return canRevealCommit(commit) ? ActiveCell(commit) : ExpiredCell(commit);
-  };
-
   const ActiveCell = (commit: Commit) => {
     return (
       <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
         <ActiveName>Available Commit </ActiveName>
-        {/* <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName> */}
         <Row>
           <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
         </Row>
@@ -46,27 +25,9 @@ export const Commits = (props: Props) => {
     );
   };
 
-  const ExpiredCell = (commit: Commit) => {
-    return (
-      <CellContainer key={`grid-${commit.id}`} id={`grid-${commit.id}`}>
-        <ExpiredName>Expired Commit, {getCommitTimeFrom(commit)}</ExpiredName>
-        <Description>Your kami is stuck, but can be retrieved.</Description>
-        <Description> Please send this commit's ID to support on discord.</Description>
-        <Row>
-          <ActionButton
-            onClick={() => {
-              navigator.clipboard.writeText(commit.id);
-            }}
-            text='Copy ID'
-          />
-        </Row>
-      </CellContainer>
-    );
-  };
-
   return (
     <OuterBox key='grid'>
-      <InnerBox>{props.data.commits.map((commit) => Cell(commit))}</InnerBox>
+      <InnerBox>{props.data.commits.map((commit) => ActiveCell(commit))}</InnerBox>
     </OuterBox>
   );
 };
@@ -112,23 +73,6 @@ const ActiveName = styled.div`
   text-align: left;
   justify-content: flex-start;
   padding: 0.4vh 0vw;
-  color: black;
-`;
-
-const ExpiredName = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: left;
-  justify-content: flex-start;
-  padding: 0.4vh 0vw;
-  color: red;
-`;
-
-const Description = styled.div`
-  font-family: Pixel;
-  text-align: left;
-  font-size: 0.8vw;
-  padding: 0.4vh 0.5vw;
   color: black;
 `;
 

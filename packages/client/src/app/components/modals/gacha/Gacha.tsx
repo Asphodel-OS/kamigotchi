@@ -20,7 +20,7 @@ import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/sha
 import { getOwnerAddress } from 'network/shapes/utils/component';
 import { playVend } from 'utils/sounds';
 import { MainDisplay } from './display/MainDisplay';
-import { Panel } from './panel/Panel';
+import { Sidebar } from './sidebar/Sidebar';
 import { DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
 
 // TODO: rely on cache for these instead
@@ -243,11 +243,11 @@ export function registerGachaModal() {
               data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
               utils={utils}
             />
-            <Panel
+            <Sidebar
               tab={tab}
               setTab={setTab}
-              gachaBalance={gachaBalance}
-              actions={{ mint: handleMint, reroll: handleReroll }}
+              data={data}
+              actions={{ mint: handleMint, reroll: handleReroll, reveal: revealTx }}
               controls={{
                 limit,
                 setLimit,
