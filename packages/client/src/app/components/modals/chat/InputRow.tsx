@@ -183,8 +183,8 @@ const SendButton = styled.button`
 
 const LetterCount = styled.div`
   position: absolute;
-  left: 0.8vw;
-  bottom: 0.8vw;
+  left: 1.3vw;
+  bottom: 0.9vw;
   color: grey;
   font-size: 0.5vw;
 `;
