@@ -147,6 +147,42 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   /////////////////
+  // ERC20
+
+  function _getTokenBal(address tokenAddr, address owner) internal view returns (uint256) {
+    OpenMintable token = OpenMintable(tokenAddr);
+    return token.balanceOf(owner);
+  }
+
+  function _createERC20(string memory name, string memory symbol) internal returns (address) {
+    OpenMintable erc20 = new OpenMintable(name, symbol);
+    return address(erc20);
+  }
+
+  function _approveERC20(address token, address owner, address spender) internal {
+    OpenMintable erc20 = OpenMintable(token);
+    vm.prank(owner);
+    erc20.approve(spender, type(uint256).max);
+  }
+
+  function _approveERC20(address token, address owner) internal {
+    return _approveERC20(token, owner, address(_TokenAllowanceComponent));
+  }
+
+  function _mintERC20(address tokenAddr, uint256 amount, address to) internal {
+    OpenMintable token = OpenMintable(tokenAddr);
+    token.mint(to, amount);
+  }
+
+  function _mintOnyx(uint256 amount, address to) internal {
+    return _mintERC20(LibERC20.getOnyxAddr(components), amount, to);
+  }
+
+  function _approveOnyx(address owner, address spender) internal {
+    return _approveERC20(LibERC20.getOnyxAddr(components), owner, spender);
+  }
+
+  /////////////////
   // EOAs
 
   // get an owner by its (testing) EOA index
@@ -649,25 +685,14 @@ abstract contract SetupTemplate is TestSetupImports {
   function _setListing(
     uint32 npcIndex,
     uint32 itemIndex,
-    uint priceBuy,
-    uint priceSell
-  ) public returns (uint) {
-    vm.prank(deployer);
-    bytes memory listingID = __ListingRegistrySystem.create(
-      abi.encode(npcIndex, itemIndex, priceBuy, priceSell)
-    );
-    return abi.decode(listingID, (uint));
-  }
-
-  function _mintOnyx(uint256 amount, address to) internal {
-    OpenMintable onyx = OpenMintable(LibERC20.getOnyxAddr(components));
-    onyx.mint(to, amount);
-  }
-
-  function _approveOnyx(address approver, address approvee) internal {
-    OpenMintable onyx = OpenMintable(LibERC20.getOnyxAddr(components));
-    vm.prank(approver);
-    onyx.approve(approvee, type(uint256).max);
+    uint basePrice,
+    uint priceSell // todo: fix syntax
+  ) public returns (uint listingID) {
+    vm.startPrank(deployer);
+    listingID = __ListingRegistrySystem.create(abi.encode(npcIndex, itemIndex, basePrice));
+    __ListingRegistrySystem.setBuyFixed(npcIndex, itemIndex);
+    __ListingRegistrySystem.setSellScaled(npcIndex, itemIndex, 5e8); // hardcoded sell price
+    vm.stopPrank();
   }
 
   /////////////////////////////////////////////

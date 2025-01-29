@@ -15,8 +15,7 @@ uint256 constant ID = uint256(keccak256("system.listing.registry"));
 contract _ListingRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  // Q(jb): any reason to keep the abi encode/decode pattern on admin functions?
-  function create(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function create(bytes memory arguments) public onlyOwner returns (uint256) {
     (uint32 npcIndex, uint32 itemIndex, uint256 value) = abi.decode(
       arguments,
       (uint32, uint32, uint256)
@@ -29,7 +28,7 @@ contract _ListingRegistrySystem is System {
     require(id == 0, "Listing already exists");
 
     id = LibListingRegistry.create(components, npcIndex, itemIndex, value);
-    return abi.encode(id);
+    return id;
   }
 
   // remove a listing if it exists along with all requirements and pricing
@@ -62,6 +61,12 @@ contract _ListingRegistrySystem is System {
     require(id != 0, "Listing does not exist");
     uint256 sellID = LibListingRegistry.genSellID(id);
     LibListingRegistry.removePrice(components, sellID);
+  }
+
+  function setBuyCurrency(uint32 npcIndex, uint32 itemIndex, address token) public onlyOwner {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+    LibListingRegistry.setBuyCurrency(components, id, token);
   }
 
   function setBuyFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {

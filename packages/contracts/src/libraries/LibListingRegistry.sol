@@ -17,6 +17,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibERC20 } from "libraries/LibERC20.sol";
 
 /** @notice
  * LibListingRegistry handles the creation, removal and update of Listing entities
@@ -32,12 +33,17 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  *
  * Pricing entities are shaped depending on their type of pricing.
  * The Buy Side and Sell Side pricing can be defined in a handful of ways:
- *  - FIXED: direct read of ValueComp on the actual Listing entity
- *  - GDA: dynamic price calc based the Balance, TimeStart and Value target of the Listing
- *  - SCALED: scaled version of the Buy Side price calc (sell only)
+ *  - Type: FIXED | GDA | SCALED
+ *    - FIXED: direct read of ValueComp on the actual Listing entity
+ *    - GDA: dynamic price calc based the Balance, TimeStart and Value target of the Listing
+ *    - SCALED: scaled version of the Buy Side price calc (sell only)
+ *  - TokenAddress [Optional]: if has, use ERC20 as currency. otherwise, default to MUSU
  */
 library LibListingRegistry {
   using LibComp for IUintComp;
+
+  ////////////
+  // SHAPES
 
   /// @notice create a merchant listing with the specified parameters
   function create(
@@ -61,6 +67,57 @@ library LibListingRegistry {
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
     if (value != 0) ValueComponent(getAddrByID(comps, ValueCompID)).set(id, value);
+  }
+
+  /// @notice sets currency for buy price. defaults to MUSU (items) if ERC20 not set
+  function setBuyCurrency(IUintComp comps, uint256 id, address currency) internal {
+    uint256 ptr = genBuyID(id);
+    LibERC20.setAddress(comps, ptr, currency);
+  }
+
+  /// @notice set the buy price of a listing as the Value of the Listing Entity
+  function setBuyFixed(IUintComp comps, uint256 id) internal {
+    uint256 ptr = genBuyID(id);
+    setType(comps, ptr, "FIXED");
+  }
+
+  /// @notice set the requisite pricing variables for GDA price
+  /// @dev scale: 1e9 precision -- decay: 1e9 precision
+  function setBuyGDA(IUintComp comps, uint256 id, int32 scale, int32 decay) internal {
+    uint256 ptr = genBuyID(id);
+    setType(comps, ptr, "GDA");
+    require(scale >= 1e9, "LibListingRegistry: compound > 1 required");
+    require(decay >= 0, "LibListingRegistry: decay must be positive");
+    ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
+    DecayComponent(getAddrByID(comps, DecayCompID)).set(ptr, decay);
+  }
+
+  /// @notice set the sell price of a listing as the Value of the Listing Entity
+  function setSellFixed(IUintComp comps, uint256 id) internal {
+    uint256 ptr = genSellID(id);
+    setType(comps, ptr, "FIXED");
+  }
+
+  /// @notice set the sell price of a listing as a scaled value of the buy price
+  /// @dev  scaled pricing is defined with 3 degrees of precision
+  /// @dev we ensure interpreted scale within bounds to avoid economic vulns
+  function setSellScaled(IUintComp comps, uint256 id, int32 scale) internal {
+    uint256 ptr = genSellID(id);
+    setType(comps, ptr, "SCALED");
+    require(scale <= 1e9, "LibListingRegistry: invalid sell scale > 1");
+    require(scale >= 0, "LibListingRegistry: invalid sell scale < 0");
+    ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
+  }
+
+  /// @notice create a requirement for a listing
+  /// @dev requirements apply equally to buy and sell
+  function setRequirement(
+    IWorld world,
+    IUintComp comps,
+    uint256 regID,
+    Condition memory data
+  ) internal returns (uint256) {
+    return LibConditional.createFor(world, comps, data, genReqAnchor(regID));
   }
 
   /// @notice remove all data associated with a listing
@@ -87,6 +144,7 @@ library LibListingRegistry {
     DecayComponent(getAddrByID(comps, DecayCompID)).remove(priceID);
     ScaleComponent(getAddrByID(comps, ScaleCompID)).remove(priceID);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(priceID);
+    LibERC20.remove(comps, priceID);
   }
 
   /////////////////
@@ -107,51 +165,6 @@ library LibListingRegistry {
 
   function setType(IUintComp comps, uint256 id, string memory type_) internal {
     TypeComponent(getAddrByID(comps, TypeCompID)).set(id, type_);
-  }
-
-  // set the buy price of a listing as the Value of the Listing Entity
-  function setBuyFixed(IUintComp comps, uint256 id) internal {
-    uint256 ptr = genBuyID(id);
-    setType(comps, ptr, "FIXED");
-  }
-
-  // set the requisite pricing variables for GDA price
-  // scale: 1e9 precision -- decay: 1e9 precision
-  function setBuyGDA(IUintComp comps, uint256 id, int32 scale, int32 decay) internal {
-    uint256 ptr = genBuyID(id);
-    setType(comps, ptr, "GDA");
-    require(scale >= 1e9, "LibListingRegistry: compound > 1 required");
-    require(decay >= 0, "LibListingRegistry: decay must be positive");
-    ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
-    DecayComponent(getAddrByID(comps, DecayCompID)).set(ptr, decay);
-  }
-
-  // set the sell price of a listing as the Value of the Listing Entity
-  function setSellFixed(IUintComp comps, uint256 id) internal {
-    uint256 ptr = genSellID(id);
-    setType(comps, ptr, "FIXED");
-  }
-
-  // set the sell price of a listing as a scaled value of the buy price
-  // NOTE: scaled pricing is defined with 3 degrees of precision
-  // NOTE: we ensure interpreted scale within bounds to avoid economic vulns
-  function setSellScaled(IUintComp comps, uint256 id, int32 scale) internal {
-    uint256 ptr = genSellID(id);
-    setType(comps, ptr, "SCALED");
-    require(scale <= 1e9, "LibListingRegistry: invalid sell scale > 1");
-    require(scale >= 0, "LibListingRegistry: invalid sell scale < 0");
-    ScaleComponent(getAddrByID(comps, ScaleCompID)).set(ptr, scale);
-  }
-
-  /// @notice create a requirement for a listing
-  /// @dev requirements apply equally to buy and sell
-  function setRequirement(
-    IWorld world,
-    IUintComp comps,
-    uint256 regID,
-    Condition memory data
-  ) internal returns (uint256) {
-    return LibConditional.createFor(world, comps, data, genReqAnchor(regID));
   }
 
   //////////////////

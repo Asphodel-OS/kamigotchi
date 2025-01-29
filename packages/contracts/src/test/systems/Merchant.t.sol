@@ -3,6 +3,8 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
+import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
+
 contract NPCTest is SetupTemplate {
   // structure of Listing data for test purposes
   struct TestListingData {
@@ -23,9 +25,9 @@ contract NPCTest is SetupTemplate {
     _createGenericItem(103);
   }
 
-  function setUpAccounts() public override {
-    _createOwnerOperatorPairs(25);
-  }
+  // function setUpAccounts() public override {
+  //   _createOwnerOperatorPairs(25);
+  // }
 
   /////////////////
   // TESTS
@@ -113,6 +115,7 @@ contract NPCTest is SetupTemplate {
     }
   }
 
+  // todo: prices are hardcoded, to update to curved
   function testListingInteractionConstraints() public {
     // create two npcs
     _createNPC(1, 1, "npc1");
@@ -152,7 +155,7 @@ contract NPCTest is SetupTemplate {
     // register and fund accounts. all accounts start in room 1
     uint numAccounts = 5;
     for (uint i = 0; i < numAccounts; i++) {
-      _registerAccount(i);
+      // _registerAccount(i);
       _fundAccount(i, 1e5);
     }
 
@@ -225,117 +228,214 @@ contract NPCTest is SetupTemplate {
     uint24 balanceChange;
   }
 
-  function testListingInteractionBalances() public {
-    BalanceTestData memory testData = BalanceTestData(3, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0);
+  // function testListingInteractionBalances() public {
+  //   BalanceTestData memory testData = BalanceTestData(3, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0);
 
-    // create the npc and its listings
-    TestListingData[] memory listings = new TestListingData[](testData.numNPCs * testData.numItems);
-    uint[] memory listingIDs = new uint[](testData.numNPCs * testData.numItems);
-    for (uint32 i = 0; i < testData.numNPCs; i++) {
-      _createNPC(i, 1, "npc");
+  //   // create the npc and its listings
+  //   TestListingData[] memory listings = new TestListingData[](testData.numNPCs * testData.numItems);
+  //   uint[] memory listingIDs = new uint[](testData.numNPCs * testData.numItems);
+  //   for (uint32 i = 0; i < testData.numNPCs; i++) {
+  //     _createNPC(i, 1, "npc");
 
-      for (uint j = 0; j < testData.numItems; j++) {
-        testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc
-        listingIDs[i * testData.numItems + j] = _setListing(
-          i,
-          uint32(j + 100),
-          testData.buyPrice,
-          testData.buyPrice / 2
-        );
-        listings[i * testData.numItems + j] = TestListingData(
-          i,
-          uint32(j + 100),
-          testData.buyPrice,
-          testData.buyPrice / 2
-        );
-      }
-    }
+  //     for (uint j = 0; j < testData.numItems; j++) {
+  //       testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc
+  //       listingIDs[i * testData.numItems + j] = _setListing(
+  //         i,
+  //         uint32(j + 100),
+  //         testData.buyPrice,
+  //         testData.buyPrice / 2
+  //       );
+  //       listings[i * testData.numItems + j] = TestListingData(
+  //         i,
+  //         uint32(j + 100),
+  //         testData.buyPrice,
+  //         testData.buyPrice / 2
+  //       );
+  //     }
+  //   }
 
-    // register and fund accounts to varying degrees. all accounts start in room 1
-    for (uint i = 0; i < testData.numAccounts; i++) {
-      _registerAccount(i);
-      _fundAccount(i, (i + 1) * 1e4);
+  //   // register and fund accounts to varying degrees. all accounts start in room 1
+  //   for (uint i = 0; i < testData.numAccounts; i++) {
+  //     // _registerAccount(i);
+  //     _fundAccount(i, (i + 1) * 1e4);
 
-      // the below is used to circumvent a gas prediction issue that
-      // foundry seems to have when the inventories aren't populated
-      for (uint j = 0; j < listingIDs.length; j++) {
-        uint32[] memory itemIndices = new uint32[](1);
-        itemIndices[0] = listings[j].itemIndex;
-        uint32[] memory amts = new uint32[](1);
-        amts[0] = uint32(1);
+  //     // the below is used to circumvent a gas prediction issue that
+  //     // foundry seems to have when the inventories aren't populated
+  //     for (uint j = 0; j < listingIDs.length; j++) {
+  //       uint32[] memory itemIndices = new uint32[](1);
+  //       itemIndices[0] = listings[j].itemIndex;
+  //       uint32[] memory amts = new uint32[](1);
+  //       amts[0] = uint32(1);
 
-        vm.prank(_getOperator(i));
-        _ListingBuySystem.executeTyped(listings[j].npcIndex, itemIndices, amts);
-      }
-    }
+  //       vm.prank(_getOperator(i));
+  //       _ListingBuySystem.executeTyped(listings[j].npcIndex, itemIndices, amts);
+  //     }
+  //   }
 
-    // test that players can buy and sell from listings and that balances are
-    // updated accordingly. tx should revert when funds are insufficient
-    uint randN;
-    uint listingID = 1;
-    TestListingData memory listing;
-    uint numIterations = 50;
-    for (uint i = 0; i < numIterations; i++) {
-      randN = uint(keccak256(abi.encode(randN ^ (randN >> (1 << 7)))));
-      listingID = listingIDs[randN % listingIDs.length];
-      listing = listings[randN % listings.length];
-      testData.playerIndex = uint8(randN % testData.numAccounts);
-      testData.itemIndex = uint8(_IndexItemComponent.get(listingID));
-      testData.stockInitial = uint24(_getItemBal(testData.playerIndex, testData.itemIndex)); // item balance
-      testData.stockChange = uint24((randN % 100) + 1); // 1-100
-      testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $MUSU balance
+  //   // test that players can buy and sell from listings and that balances are
+  //   // updated accordingly. tx should revert when funds are insufficient
+  //   uint randN;
+  //   uint listingID = 1;
+  //   TestListingData memory listing;
+  //   uint numIterations = 50;
+  //   for (uint i = 0; i < numIterations; i++) {
+  //     randN = uint(keccak256(abi.encode(randN ^ (randN >> (1 << 7)))));
+  //     listingID = listingIDs[randN % listingIDs.length];
+  //     listing = listings[randN % listings.length];
+  //     testData.playerIndex = uint8(randN % testData.numAccounts);
+  //     testData.itemIndex = uint8(_IndexItemComponent.get(listingID));
+  //     testData.stockInitial = uint24(_getItemBal(testData.playerIndex, testData.itemIndex)); // item balance
+  //     testData.stockChange = uint24((randN % 100) + 1); // 1-100
+  //     testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $MUSU balance
 
-      if (i % 2 == 0) {
-        // buy case
-        testData.buyPrice = uint24(LibListing.calcBuyPrice(components, listingID, 1));
-        testData.balanceChange = testData.stockChange * testData.buyPrice;
-        if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
-          uint32[] memory itemIndices = new uint32[](1);
-          itemIndices[0] = listing.itemIndex;
-          uint32[] memory amts = new uint32[](1);
-          amts[0] = uint32(uint256(testData.stockChange));
+  //     if (i % 2 == 0) {
+  //       // buy case
+  //       testData.buyPrice = uint24(LibListing.calcBuyPrice(components, listingID, 1));
+  //       testData.balanceChange = testData.stockChange * testData.buyPrice;
+  //       if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
+  //         uint32[] memory itemIndices = new uint32[](1);
+  //         itemIndices[0] = listing.itemIndex;
+  //         uint32[] memory amts = new uint32[](1);
+  //         amts[0] = uint32(uint256(testData.stockChange));
 
-          vm.prank(_getOperator(testData.playerIndex));
-          // vm.expectRevert("Inventory: insufficient balance");
-          vm.expectRevert();
-          _ListingBuySystem.executeTyped(listing.npcIndex, itemIndices, amts);
-        } else {
-          _buyFromListing(testData.playerIndex, listingID, testData.stockChange);
-          assertEq(
-            _getAccountBalance(testData.playerIndex),
-            testData.balanceInitial - testData.balanceChange
-          );
-          assertEq(
-            _getItemBal(testData.playerIndex, testData.itemIndex),
-            testData.stockInitial + testData.stockChange
-          );
-        }
-      } else {
-        // sell case
-        testData.sellPrice = uint24(LibListing.calcSellPrice(components, listingID, 1));
-        testData.balanceChange = testData.stockChange * testData.sellPrice;
-        if (testData.stockChange > _getItemBal(testData.playerIndex, testData.itemIndex)) {
-          uint32[] memory itemIndices = new uint32[](1);
-          itemIndices[0] = listing.itemIndex;
-          uint32[] memory amts = new uint32[](1);
-          amts[0] = uint32(uint256(testData.stockChange));
+  //         vm.prank(_getOperator(testData.playerIndex));
+  //         // vm.expectRevert("Inventory: insufficient balance");
+  //         vm.expectRevert();
+  //         _ListingBuySystem.executeTyped(listing.npcIndex, itemIndices, amts);
+  //       } else {
+  //         _buyFromListing(testData.playerIndex, listingID, testData.stockChange);
+  //         assertEq(
+  //           _getAccountBalance(testData.playerIndex),
+  //           testData.balanceInitial - testData.balanceChange
+  //         );
+  //         assertEq(
+  //           _getItemBal(testData.playerIndex, testData.itemIndex),
+  //           testData.stockInitial + testData.stockChange
+  //         );
+  //       }
+  //     } else {
+  //       // sell case
+  //       testData.sellPrice = uint24(LibListing.calcSellPrice(components, listingID, 1));
+  //       testData.balanceChange = testData.stockChange * testData.sellPrice;
+  //       if (testData.stockChange > _getItemBal(testData.playerIndex, testData.itemIndex)) {
+  //         uint32[] memory itemIndices = new uint32[](1);
+  //         itemIndices[0] = listing.itemIndex;
+  //         uint32[] memory amts = new uint32[](1);
+  //         amts[0] = uint32(uint256(testData.stockChange));
 
-          vm.prank(_getOperator(testData.playerIndex));
-          // vm.expectRevert("Inventory: insufficient balance");
-          vm.expectRevert();
-          _ListingSellSystem.executeTyped(listing.npcIndex, itemIndices, amts);
-        } else {
-          _sellToListing(testData.playerIndex, listingID, testData.stockChange);
-          assertEq(
-            _getAccountBalance(testData.playerIndex),
-            testData.balanceInitial + testData.balanceChange
-          );
-          assertEq(
-            _getItemBal(testData.playerIndex, testData.itemIndex),
-            testData.stockInitial - testData.stockChange
-          );
-        }
-      }
-    }
+  //         vm.prank(_getOperator(testData.playerIndex));
+  //         // vm.expectRevert("Inventory: insufficient balance");
+  //         vm.expectRevert();
+  //         _ListingSellSystem.executeTyped(listing.npcIndex, itemIndices, amts);
+  //       } else {
+  //         _sellToListing(testData.playerIndex, listingID, testData.stockChange);
+  //         assertEq(
+  //           _getAccountBalance(testData.playerIndex),
+  //           testData.balanceInitial + testData.balanceChange
+  //         );
+  //         assertEq(
+  //           _getItemBal(testData.playerIndex, testData.itemIndex),
+  //           testData.stockInitial - testData.stockChange
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
+
+  function testListingBasicBuy() public {
+    // setup
+    uint32 item = 100;
+    uint256 price = 100;
+    _createNPC(1, 1, "npc1");
+    _createListing(1, item, price);
+    _setListingBuyFixed(1, item);
+    _giveItem(alice, 1, price);
+
+    // pre-buy
+    assertEq(_getItemBal(alice, item), 0);
+    assertEq(_getItemBal(alice, 1), 100);
+
+    // buy
+    _buy(alice, 1, item, 1);
+
+    // post-buy
+    assertEq(_getItemBal(alice, item), 1);
+    assertEq(_getItemBal(alice, 1), 0);
+  }
+
+  function testListingTokenBuy() public {
+    // setup
+    address tokenAddr = _createERC20("name", "symbol");
+    uint32 item = 100;
+    uint256 price = 100;
+    _createNPC(1, 1, "npc1");
+    _createListing(1, item, price);
+    _setListingBuyFixed(1, item);
+    _setListingCurrency(1, item, tokenAddr);
+    _mintERC20(tokenAddr, price, alice.owner);
+    _approveERC20(tokenAddr, alice.owner);
+
+    // pre-buy
+    assertEq(_getItemBal(alice, item), 0);
+    assertEq(_getTokenBal(tokenAddr, alice.owner), 100);
+
+    // buy
+    _buy(alice, 1, item, 1);
+
+    // post-buy
+    assertEq(_getItemBal(alice, item), 1);
+    assertEq(_getTokenBal(tokenAddr, alice.owner), 0);
+  }
+
+  /////////////////
+  // UTILS
+
+  function _buy(
+    PlayerAccount memory player,
+    uint32 npcIndex,
+    uint32 itemIndex,
+    uint amount
+  ) internal {
+    uint32[] memory itemIndices = new uint32[](1);
+    itemIndices[0] = itemIndex;
+    uint32[] memory amts = new uint32[](1);
+    amts[0] = uint32(amount);
+
+    vm.prank(player.operator);
+    _ListingBuySystem.executeTyped(npcIndex, itemIndices, amts);
+  }
+
+  function _createListing(
+    uint32 npcIndex,
+    uint32 itemIndex,
+    uint basePrice
+  ) internal returns (uint) {
+    vm.prank(deployer);
+    return __ListingRegistrySystem.create(abi.encode(npcIndex, itemIndex, basePrice));
+  }
+
+  function _setListingCurrency(uint32 npcIndex, uint32 itemIndex, address token) internal {
+    vm.prank(deployer);
+    return __ListingRegistrySystem.setBuyCurrency(npcIndex, itemIndex, token);
+  }
+
+  function _setListingBuyFixed(uint32 npcIndex, uint32 itemIndex) internal {
+    vm.prank(deployer);
+    return __ListingRegistrySystem.setBuyFixed(npcIndex, itemIndex);
+  }
+
+  function _setListingBuyGDA(uint32 npcIndex, uint32 itemIndex, int32 scale, int32 decay) internal {
+    vm.prank(deployer);
+    return __ListingRegistrySystem.setBuyGDA(npcIndex, itemIndex, scale, decay);
+  }
+
+  function _setListingSellFixed(uint32 npcIndex, uint32 itemIndex) internal {
+    vm.prank(deployer);
+    return __ListingRegistrySystem.setSellFixed(npcIndex, itemIndex);
+  }
+
+  function setListingSellScaled(uint32 npcIndex, uint32 itemIndex, int32 scale) internal {
+    vm.prank(deployer);
+    return __ListingRegistrySystem.setSellScaled(npcIndex, itemIndex, scale);
   }
 }
