@@ -43,6 +43,13 @@ const StatsUpdateTs = new Map<EntityIndex, number>(); // last update of the stat
 const TimeUpdateTs = new Map<EntityIndex, number>(); // last update of the time sub-object (s)
 const TraitsUpdateTs = new Map<EntityIndex, number>(); // last update of the traits sub-object (s)
 
+// retrieve a kami's most recent data and update it on the cache
+export const process = (world: World, components: Components, entity: EntityIndex) => {
+  const kami = getKami(world, components, entity);
+  KamiCache.set(entity, kami);
+  return kami;
+};
+
 // stale limit to refresh data (seconds)
 export interface RefreshOptions {
   live?: number;
@@ -227,12 +234,5 @@ export const get = (
   if (debug) console.log(`  updating health rate`);
   updateHealthRate(kami);
   if (debug) console.log(`finished retrieving kami ${kami.index} ${kami.name}`);
-  return kami;
-};
-
-// retrieve a kami's most recent data and update it on the cache
-export const process = (world: World, components: Components, entity: EntityIndex) => {
-  const kami = getKami(world, components, entity);
-  KamiCache.set(entity, kami);
   return kami;
 };

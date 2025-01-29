@@ -24,16 +24,3 @@ export const getByIndex = (world: World, components: Components, index: number) 
   if (!entity) return NullNode;
   return get(world, components, entity);
 };
-
-// when updating a harvest rate you need:
-// 1. the kami traits
-// 2. the harvest
-// 3. the node
-
-// when getting the list of feed options for a kami you need:
-// 1. the kami
-// 2. the account
-// 3. the inventory
-
-// when getting the liquidation thresholds you need:
-// two kamis, their traits and harvests

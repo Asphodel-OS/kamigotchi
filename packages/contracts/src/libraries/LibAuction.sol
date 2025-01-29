@@ -31,14 +31,14 @@ library LibAuction {
     uint32 payItemIndex = IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(id);
     LibInventory.decFor(comps, accID, payItemIndex, cost);
     LibInventory.incFor(comps, accID, itemIndex, amt.toUint256());
-    decBalance(comps, id, amt);
+    incBalance(comps, id, amt);
     return cost;
   }
 
   // TODO: before next world, upgrade int32 comps to use .dec() .inc() like uint256
-  function decBalance(IUintComp comps, uint256 id, int32 amt) internal {
+  function incBalance(IUintComp comps, uint256 id, int32 amt) internal {
     int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
-    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, balance - amt);
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, balance + amt);
   }
 
   /////////////////

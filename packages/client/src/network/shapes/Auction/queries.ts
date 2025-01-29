@@ -1,7 +1,7 @@
 import { HasValue, runQuery } from '@mud-classic/recs';
 import { Components } from 'network/components';
 
-interface Options {
+export interface Options {
   inputItem?: number;
   outputItem?: number;
 }
