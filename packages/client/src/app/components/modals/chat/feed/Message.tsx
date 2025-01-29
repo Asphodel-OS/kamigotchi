@@ -21,7 +21,7 @@ interface Props {
   data: {
     message: KamiMessage;
   };
-  player: EntityID;
+  player: Account;
 }
 
 export const Message = (props: Props) => {
@@ -41,7 +41,7 @@ export const Message = (props: Props) => {
   };
 
   useEffect(() => {
-    if (player != getAccountByID(formatEntityID(message.AccountId)).id) {
+    if (player.id != getAccountByID(formatEntityID(message.AccountId)).id) {
       setYours(true);
     }
   }, [message.AccountId]);
@@ -63,14 +63,14 @@ export const Message = (props: Props) => {
     <Container>
       <Content>
         <Header>
-          {player != getAccountByID(formatEntityID(message.AccountId)).id ? (
+          {player.id != getAccountByID(formatEntityID(message.AccountId)).id ? (
             <>
               <PfpAuthor>
                 <OptionButtons>
                   <ActionListButton
                     id={getAccountByID(formatEntityID(message.AccountId)).id}
                     text=''
-                    size='small'
+                    size='verySmall'
                     options={[
                       {
                         text: 'Block',
@@ -145,8 +145,8 @@ const Content = styled.div`
 
 const OptionButtons = styled.div`
   position: relative;
-  left: 2vw;
-  top: 1.4vw;
+  left: 1.9vw;
+  top: 1vw;
   z-index: 1;
 `;
 

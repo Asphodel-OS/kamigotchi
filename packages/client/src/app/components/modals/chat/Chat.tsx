@@ -58,6 +58,19 @@ export function registerChatModal() {
       const maxCasts = 100;
       const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
       const [scrollDown, setScrollDown] = useState(false);
+      const [blocked, setBlocked] = useState<EntityID[]>([]);
+      const BlockedList: EntityID[] = [];
+
+      useEffect(() => {
+        if (data.account.friends?.blocked) {
+          data.account.friends?.blocked.forEach((blockedFren) => {
+            BlockedList.push(blockedFren.target.id);
+          });
+          setBlocked(BlockedList);
+        } else {
+          setBlocked([]);
+        }
+      }, [data.account.friends?.blocked]);
 
       useEffect(() => {
         console.log('Chat visibility changed:', modals.chat);
@@ -93,11 +106,12 @@ export function registerChatModal() {
         >
           <Feed
             scrollDown={scrollDown}
+            blocked={blocked}
             api={api}
             nodeIndex={nodeIndex}
             max={maxCasts}
             utils={utils}
-            player={account.id}
+            player={account}
             actions={{ pushMessages, setMessages, setScrollDown }}
             actionSystem={actions}
           />
