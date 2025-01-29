@@ -131,8 +131,8 @@ export const Feed = (props: Props) => {
   };
   useEffect(() => {
     scroller();
-  }, [scrollDown, activeTab, nodeIndex, modals.chat]);
-  console.log(`blocked ${blocked}`);
+  }, [scrollDown, activeTab, isPolling, modals.chat]);
+
   /////////////////
   // RENDER
   return (

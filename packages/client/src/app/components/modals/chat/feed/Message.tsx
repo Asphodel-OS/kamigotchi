@@ -57,6 +57,17 @@ export const Message = (props: Props) => {
       },
     });
   };
+
+  const requestFren = (account: BaseAccount) => {
+    actionSystem.add({
+      action: 'RequestFriend',
+      params: [account.ownerAddress],
+      description: `Sending ${account.name} Friend Request`,
+      execute: async () => {
+        return api.player.social.friend.request(account.ownerAddress);
+      },
+    });
+  };
   /////////////////
   // INTERACTION
   return (
@@ -72,6 +83,12 @@ export const Message = (props: Props) => {
                     text=''
                     size='verySmall'
                     options={[
+                      {
+                        text: 'Add',
+                        onClick: () =>
+                          requestFren(getAccountByID(formatEntityID(message.AccountId))),
+                      },
+
                       {
                         text: 'Block',
                         onClick: () => blockFren(getAccountByID(formatEntityID(message.AccountId))),
@@ -124,7 +141,7 @@ export const Message = (props: Props) => {
 };
 
 const Container = styled.div`
-  padding: 0.9vw 0.9vw;
+  padding: 0vw 0.9vw;
   width: 115%;
 
   color: black;
