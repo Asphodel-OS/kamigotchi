@@ -31,6 +31,10 @@ library LibConfig {
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
 
+  function setAddress(IUintComp components, string memory field, address value) internal {
+    set(components, field, uint256(uint160(value)));
+  }
+
   /// @notice Set an array of values of a global config field entity
   function setArray(IUintComp components, string memory field, uint32[8] memory values) internal {
     set(components, field, LibPack.packArrU32(values));
@@ -61,6 +65,10 @@ library LibConfig {
     return ValueComponent(getAddrByID(components, ValueCompID)).get(id);
   }
 
+  function getAddress(IUintComp components, string memory field) internal view returns (address) {
+    return address(uint160(get(components, field)));
+  }
+
   /// @notice Retrieves a batch of values (without precision). Assumes all exists
   function get(
     IUintComp components,
@@ -69,6 +77,15 @@ library LibConfig {
     uint256[] memory ids = new uint256[](fields.length);
     for (uint256 i = 0; i < fields.length; i++) ids[i] = genID(fields[i]);
     return ValueComponent(getAddrByID(components, ValueCompID)).get(ids);
+  }
+
+  function getAddr(
+    IUintComp components,
+    string[] memory fields
+  ) internal view returns (address[] memory addrs) {
+    uint256[] memory raws = get(components, fields);
+    addrs = new address[](raws.length);
+    for (uint256 i = 0; i < raws.length; i++) addrs[i] = address(uint160(raws[i]));
   }
 
   /// @notice Retrieve an array of values. Assumes it exists

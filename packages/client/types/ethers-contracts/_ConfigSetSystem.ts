@@ -40,6 +40,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "setValue(string,uint256)": FunctionFragment;
+    "setValueAddress(string,address)": FunctionFragment;
     "setValueArray(string,uint32[8])": FunctionFragment;
     "setValueString(string,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -57,6 +58,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "setValue"
+      | "setValueAddress"
       | "setValueArray"
       | "setValueString"
       | "transferOwnership"
@@ -95,6 +97,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setValue",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setValueAddress",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setValueArray",
@@ -137,6 +143,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setValue", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setValueAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setValueArray",
     data: BytesLike
@@ -275,6 +285,12 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setValueAddress(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setValueArray(
       name: PromiseOrValue<string>,
       values: PromiseOrValue<BigNumberish>[],
@@ -338,6 +354,12 @@ export interface _ConfigSetSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setValueAddress(
+    name: PromiseOrValue<string>,
+    value: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setValueArray(
     name: PromiseOrValue<string>,
     values: PromiseOrValue<BigNumberish>[],
@@ -390,6 +412,12 @@ export interface _ConfigSetSystem extends BaseContract {
     setValue(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setValueAddress(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -485,6 +513,12 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setValueAddress(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setValueArray(
       name: PromiseOrValue<string>,
       values: PromiseOrValue<BigNumberish>[],
@@ -546,6 +580,12 @@ export interface _ConfigSetSystem extends BaseContract {
     setValue(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setValueAddress(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

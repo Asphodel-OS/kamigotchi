@@ -64,6 +64,10 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system._Config.Set', [field, value]);
   }
 
+  async function setConfigAddress(field: string, value: string) {
+    genCall('system._Config.Set', [field, value], 'setValueAddress');
+  }
+
   async function setConfigArray(field: string, value: number[]) {
     const arr = new Array(8);
     arr.fill(0);
@@ -824,6 +828,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     },
     config: {
       set: {
+        address: setConfigAddress,
         array: setConfigArray,
         number: setConfig,
         string: setConfigString,

@@ -41,6 +41,6 @@ library LibVIP {
   }
 
   function getAddress(IUintComp components) internal view returns (address) {
-    return address(uint160(LibConfig.get(components, "VIP_SCORE_ADDRESS")));
+    return LibConfig.getAddress(components, "VIP_SCORE_ADDRESS");
   }
 }

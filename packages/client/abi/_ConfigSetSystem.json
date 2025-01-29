@@ -152,6 +152,24 @@
     },
     {
       "type": "function",
+      "name": "setValueAddress",
+      "inputs": [
+        {
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "value",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "setValueArray",
       "inputs": [
         {
@@ -282,6 +300,7 @@
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "setValue(string,uint256)": "7c2da7aa",
+    "setValueAddress(string,address)": "1bb4b8e3",
     "setValueArray(string,uint32[8])": "348984f3",
     "setValueString(string,string)": "ab7d4d8c",
     "transferOwnership(address)": "f2fde38b"

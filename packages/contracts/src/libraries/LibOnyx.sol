@@ -14,7 +14,7 @@ library LibOnyx {
   // INTERACTIONS
 
   function spend(IUintComp components, uint256 amount) internal {
-    address to = address(uint160(LibConfig.get(components, "ONYX_RECEIVER_ADDRESS")));
+    address to = LibConfig.getAddress(components, "ONYX_RECEIVER_ADDRESS");
     return transfer(components, msg.sender, to, amount);
   }
 
@@ -31,6 +31,6 @@ library LibOnyx {
   }
 
   function getAddress(IUintComp components) internal view returns (address) {
-    return address(uint160(LibConfig.get(components, "ONYX_ADDRESS")));
+    return LibConfig.getAddress(components, "ONYX_ADDRESS");
   }
 }

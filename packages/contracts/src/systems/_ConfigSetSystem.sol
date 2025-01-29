@@ -28,6 +28,10 @@ contract _ConfigSetSystem is System {
     LibConfig.set(components, name, value);
   }
 
+  function setValueAddress(string memory name, address value) public onlyOwner {
+    LibConfig.setAddress(components, name, value);
+  }
+
   function setValueArray(string memory name, uint32[8] memory values) public onlyOwner {
     LibConfig.setArray(components, name, values);
   }

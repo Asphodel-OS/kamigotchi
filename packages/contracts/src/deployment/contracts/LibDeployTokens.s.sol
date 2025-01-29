@@ -11,7 +11,7 @@ library LibDeployTokens {
     require(!LibConfig.has(components, "KAMI721_ADDRESS"), "pet721 already deployed");
 
     Kami721 pet721 = new Kami721(world, "Kamigotchi", "KAMI");
-    LibConfig.set(components, "KAMI721_ADDRESS", uint256(uint160(address(pet721))));
+    LibConfig.setAddress(components, "KAMI721_ADDRESS", address(pet721));
 
     console.log("KAMI721_ADDRESS: ", address(pet721));
     return address(pet721);
@@ -26,7 +26,7 @@ library LibDeployTokens {
     require(!LibConfig.has(components, "ONYX_ADDRESS"), "onyx already deployed");
 
     OpenMintable onyx = new OpenMintable("Onyx", "ONYX");
-    LibConfig.set(components, "ONYX_ADDRESS", uint256(uint160(address(onyx))));
+    LibConfig.setAddress(components, "ONYX_ADDRESS", address(onyx));
 
     // minting onyx to deployer
     onyx.mint(deployer, 1000 ether);
@@ -40,7 +40,7 @@ library LibDeployTokens {
     require(!LibConfig.has(components, "VIP_SCORE_ADDRESS"), "vip score already deployed");
 
     VipScore vipScore = new VipScore();
-    LibConfig.set(components, "VIP_SCORE_ADDRESS", uint256(uint160(address(vipScore))));
+    LibConfig.setAddress(components, "VIP_SCORE_ADDRESS", address(vipScore));
 
     // set permissions for proxy contract
     vipScore.addAllowList(getAddrByID(components, ProxyVIPScoreComponentID));

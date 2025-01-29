@@ -1131,6 +1131,11 @@ abstract contract SetupTemplate is TestSetupImports {
     __ConfigSetSystem.setValue(key, value);
   }
 
+  function _setConfig(string memory key, address value) internal {
+    vm.prank(deployer);
+    __ConfigSetSystem.setValueAddress(key, value);
+  }
+
   function _setConfig(string memory key, uint32[8] memory values) internal {
     vm.prank(deployer);
     __ConfigSetSystem.setValueArray(key, values);
@@ -1221,8 +1226,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initOnyxConfigs() internal virtual {
-    // _setConfig("ONYX_RECEIVER_ADDRESS", 0x000000000000000000000000000000000000dEaD);
-    _setConfig("ONYX_RECEIVER_ADDRESS", 0);
+    _setConfig("ONYX_RECEIVER_ADDRESS", 0x000000000000000000000000000000000000dEaD);
   }
 
   function _initSkillConfigs() internal virtual {
