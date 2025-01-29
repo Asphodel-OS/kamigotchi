@@ -87,7 +87,7 @@ export const InputRow = (props: Props) => {
     const actionID = uuid() as EntityID;
     actionSystem!.add({
       id: actionID,
-      action: 'AccountMove',
+      action: 'SendMessage',
       params: [text],
       description: `Send Message`,
       execute: async () => {
