@@ -660,12 +660,12 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _mintOnyx(uint256 amount, address to) internal {
-    OpenMintable onyx = OpenMintable(LibOnyx.getAddress(components));
+    OpenMintable onyx = OpenMintable(LibERC20.getOnyxAddr(components));
     onyx.mint(to, amount);
   }
 
   function _approveOnyx(address approver, address approvee) internal {
-    OpenMintable onyx = OpenMintable(LibOnyx.getAddress(components));
+    OpenMintable onyx = OpenMintable(LibERC20.getOnyxAddr(components));
     vm.prank(approver);
     onyx.approve(approvee, type(uint256).max);
   }
@@ -1226,7 +1226,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initOnyxConfigs() internal virtual {
-    _setConfig("ONYX_RECEIVER_ADDRESS", 0x000000000000000000000000000000000000dEaD);
+    _setConfig("ERC20_RECEIVER_ADDRESS", deployer);
   }
 
   function _initSkillConfigs() internal virtual {

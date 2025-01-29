@@ -10,6 +10,7 @@ export async function initConfigs(api: AdminAPI) {
   await initStats(api);
   await initHarvest(api);
   await initLiquidation(api);
+  await initTokens(api);
   await initTrade(api);
   await initSkills(api);
   await initVIP(api);
@@ -104,6 +105,13 @@ export async function initLiquidation(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_SPOILS', [45, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 3000, 3, 0, 0, 0, 0]);
+}
+
+async function initTokens(api: AdminAPI) {
+  await api.config.set.address(
+    'ERC20_RECEIVER_ADDRESS',
+    '0x26274225b556D623367ddA1D07120B92F4983d6B'
+  );
 }
 
 async function initTrade(api: AdminAPI) {

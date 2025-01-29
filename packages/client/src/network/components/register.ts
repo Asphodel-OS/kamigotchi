@@ -97,6 +97,8 @@ export function createComponents(world: World) {
     ResetTime: defineNumberComponent(world, 'ResetTime', 'component.Time.Reset'),
     StartTime: defineNumberComponent(world, 'StartTime', 'component.Time.Start'),
     Type: defineStringComponent(world, 'Type', 'component.type', true),
+    TokenAddress: defineStringComponent(world, 'TokenAddress', 'component.token.address'),
+    TokenAllowance: defineBoolComponent(world, 'TokenAllowance', 'component.token.allowance'),
     Value: defineNumberComponent(world, 'Value', 'component.value'),
     Values: defineNumberArrayComponent(world, 'Values', 'component.values'),
     Violence: defineStatComponent(world, 'Violence', 'component.stat.violence'),

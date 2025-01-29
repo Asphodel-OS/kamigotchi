@@ -157,6 +157,8 @@ export type { TimeLastComponent } from "./TimeLastComponent";
 export type { TimeResetComponent } from "./TimeResetComponent";
 export type { TimeStartComponent } from "./TimeStartComponent";
 export type { TimelockComponent } from "./TimelockComponent";
+export type { TokenAddressComponent } from "./TokenAddressComponent";
+export type { TokenAllowanceComponent } from "./TokenAllowanceComponent";
 export type { TradeCancelSystem } from "./TradeCancelSystem";
 export type { TradeCreateSystem } from "./TradeCreateSystem";
 export type { TradeExecuteSystem } from "./TradeExecuteSystem";
@@ -349,6 +351,8 @@ export { TimeLastComponent__factory } from "./factories/TimeLastComponent__facto
 export { TimeResetComponent__factory } from "./factories/TimeResetComponent__factory";
 export { TimeStartComponent__factory } from "./factories/TimeStartComponent__factory";
 export { TimelockComponent__factory } from "./factories/TimelockComponent__factory";
+export { TokenAddressComponent__factory } from "./factories/TokenAddressComponent__factory";
+export { TokenAllowanceComponent__factory } from "./factories/TokenAllowanceComponent__factory";
 export { TradeCancelSystem__factory } from "./factories/TradeCancelSystem__factory";
 export { TradeCreateSystem__factory } from "./factories/TradeCreateSystem__factory";
 export { TradeExecuteSystem__factory } from "./factories/TradeExecuteSystem__factory";

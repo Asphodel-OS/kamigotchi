@@ -194,7 +194,8 @@ library LibAccount {
 
   // get the address of an Account Owner
   function getOwner(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).get(id);
+    // return AddressOwnerComponent(getAddrByID(components, AddrOwnerCompID)).get(id);
+    return address(uint160(id));
   }
 
   /////////////////

@@ -178,7 +178,7 @@ contract GachaTest is SetupTemplate {
   ) internal returns (uint256[] memory results) {
     vm.roll(++_currBlock);
     _mintOnyx(cost, _owners[accountIndex]);
-    _approveOnyx(_owners[accountIndex], address(_KamiGachaRerollSystem));
+    _approveOnyx(_owners[accountIndex], address(_TokenAllowanceComponent));
     vm.prank(_owners[accountIndex]);
     results = _KamiGachaRerollSystem.reroll(kamiIDs);
   }

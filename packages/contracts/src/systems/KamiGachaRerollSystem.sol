@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibOnyx } from "libraries/LibOnyx.sol";
+import { LibERC20 } from "libraries/LibERC20.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.reroll"));
 
@@ -25,7 +25,7 @@ contract KamiGachaRerollSystem is System {
     // get and check price (in wei)
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);
     LibGacha.verifyMaxRerolls(components, prevRerolls);
-    LibOnyx.spend(components, LibGacha.calcRerollsCost(components, prevRerolls)); // implicit balance check
+    LibERC20.spendOnyx(components, LibGacha.calcRerollsCost(components, prevRerolls), accID); // implicit balance check
 
     // send pet into pool
     LibGacha.depositPets(components, kamiIDs);
