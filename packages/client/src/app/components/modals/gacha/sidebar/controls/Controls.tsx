@@ -7,6 +7,7 @@ import { Overlay, Pairing, Warning } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { Commit } from 'network/shapes/Commit';
 import { MintControls } from './mint/MintControls';
+import { RerollControls } from './reroll/RerollControls';
 
 interface Props {
   tab: string;
@@ -71,7 +72,8 @@ export const Controls = (props: Props) => {
           }}
         />
       )}
-      {tab === 'MINT' && <MintControls tab={tab} controls={controls} />}
+      {tab === 'MINT' && <MintControls controls={controls} />}
+      {tab === 'REROLL' && <RerollControls />}
       <Overlay right={0.75} bottom={0.75}>
         <CurrencyPairing />
       </Overlay>

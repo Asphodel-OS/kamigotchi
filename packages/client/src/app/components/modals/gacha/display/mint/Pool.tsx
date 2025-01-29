@@ -7,8 +7,8 @@ import { useSelected, useVisibility } from 'app/stores';
 import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
-import { Filter, Sort } from '../types';
-import { KamiBlock } from './KamiBlock';
+import { Filter, Sort } from '../../types';
+import { KamiBlock } from '../KamiBlock';
 
 const LOADING_TEXT = ['your gacha pool is loading', 'please be patient'];
 

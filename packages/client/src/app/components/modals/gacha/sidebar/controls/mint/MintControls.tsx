@@ -6,7 +6,6 @@ import { Filter as FilterComponent } from './Filter';
 import { Sort as SortComponent } from './Sort';
 
 interface Props {
-  tab: string;
   controls: {
     filters: Filter[];
     setFilters: (filters: Filter[]) => void;
@@ -18,7 +17,7 @@ interface Props {
 }
 
 export const MintControls = (props: Props) => {
-  const { tab, controls } = props;
+  const { controls } = props;
   const { filters, setFilters, sorts, setSorts, limit, setLimit } = controls;
 
   //////////////////

@@ -19,7 +19,7 @@ import { getItemBalance } from 'network/shapes/Item';
 import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
 import { getOwnerAddress } from 'network/shapes/utils/component';
 import { playVend } from 'utils/sounds';
-import { MainDisplay } from './display/MainDisplay';
+import { Display } from './display/Display';
 import { Sidebar } from './sidebar/Sidebar';
 import { DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
 
@@ -237,7 +237,7 @@ export function registerGachaModal() {
           overlay
         >
           <Container>
-            <MainDisplay
+            <Display
               tab={tab}
               blockNumber={blockNumber ?? 0n}
               controls={{ limit, filters, sorts }}

@@ -5,7 +5,7 @@ import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
 import { Reroll } from '../reroll/Reroll';
 import { Filter, Sort, TabType } from '../types';
-import { Pool } from './Pool';
+import { Pool } from './mint/Pool';
 
 interface Props {
   tab: TabType;
@@ -35,7 +35,7 @@ interface Props {
   };
 }
 
-export const MainDisplay = (props: Props) => {
+export const Display = (props: Props) => {
   const { tab, controls, actions, data, caches, utils } = props;
   const { reroll } = actions;
   const { poolKamis } = data;
