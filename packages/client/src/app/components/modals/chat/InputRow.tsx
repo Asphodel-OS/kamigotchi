@@ -38,6 +38,7 @@ export const InputRow = (props: Props) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [text, setText] = useState('');
+  const [textLength, setTextLength] = useState(0);
 
   /////////////////
   // SUBSCRIPTION
@@ -131,21 +132,26 @@ export const InputRow = (props: Props) => {
         id='inputBox'
         cols={60}
         rows={5}
-        onBlur={(e) => {
+        maxLength={200}
+        onChange={(e) => {
           setText(e.target.value);
+          setTextLength(e.target.value.length);
         }}
       />
       {!isAuthorized && (
-        <SendButton
-          style={{ padding: `0.5vw` }}
-          onClick={() => {
-            handleSubmit(text);
-            setText('');
-            (document.getElementById('inputBox') as HTMLInputElement).value = '';
-          }}
-        >
-          Send
-        </SendButton>
+        <>
+          <LetterCount>{textLength}/200</LetterCount>
+          <SendButton
+            style={{ padding: `0.5vw` }}
+            onClick={() => {
+              handleSubmit(text);
+              setText('');
+              (document.getElementById('inputBox') as HTMLInputElement).value = '';
+            }}
+          >
+            Send
+          </SendButton>
+        </>
       )}
     </Container>
   );
@@ -163,7 +169,7 @@ const Container = styled.div`
 
 const InputBox = styled.textarea`
   resize: none;
-  padding: 0 0.6vw;
+  padding: 0.6vw 0.6vw;
   line-height: 1.5vh;
   width: 100%;
   min-height: 6vh;
@@ -173,4 +179,12 @@ const SendButton = styled.button`
   position: absolute;
   right: 0.8vw;
   bottom: 0.8vw;
+`;
+
+const LetterCount = styled.div`
+  position: absolute;
+  left: 0.8vw;
+  bottom: 0.8vw;
+  color: grey;
+  font-size: 0.5vw;
 `;
