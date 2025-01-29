@@ -6,12 +6,14 @@ import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { useAccount, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
+import { formatEntityID } from 'engine/utils';
 import { ActionSystem } from 'network/systems';
 import { getKamidenClient, subscribeToMessages } from 'workers/sync/kamidenStreamClient';
 import { Message } from './Message';
 
 interface Props {
   scrollDown: boolean;
+
   api: any;
   max: number; // max number of casts to disable polling at
   nodeIndex: number;
@@ -23,14 +25,16 @@ interface Props {
     setMessages: (messages: KamiMessage[]) => void;
     setScrollDown: (scrollDown: boolean) => void;
   };
-  player: EntityID;
+  player: Account;
   actionSystem: ActionSystem;
+  blocked: EntityID[];
 }
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { max, nodeIndex, utils, scrollDown, player, actionSystem, api } = props;
+  const { max, nodeIndex, utils, scrollDown, player, actionSystem, api, blocked } = props;
   const { setScrollDown } = props.actions;
+  const { getAccountByID } = props.utils;
 
   //const { pushCasts, setCasts } = props.actions;
   const { farcaster } = useAccount();
@@ -65,6 +69,8 @@ export const Feed = (props: Props) => {
       unsubscribe();
     };
   }, [nodeIndex]);
+
+  //  useEffect(() => {}, [blocked]);
 
   // Initial message poll effect (keep existing one)
   useEffect(() => {
@@ -126,7 +132,7 @@ export const Feed = (props: Props) => {
   useEffect(() => {
     scroller();
   }, [scrollDown, activeTab, nodeIndex, modals.chat]);
-
+  console.log(`blocked ${blocked}`);
   /////////////////
   // RENDER
   return (
@@ -160,16 +166,19 @@ export const Feed = (props: Props) => {
           ) : (
             kamidenMessages
               ?.toReversed()
-              .map((message) => (
-                <Message
-                  api={api}
-                  player={player}
-                  utils={utils}
-                  key={message.Timestamp}
-                  data={{ message }}
-                  actionSystem={actionSystem}
-                />
-              ))
+              .map(
+                (message) =>
+                  !blocked.includes(getAccountByID(formatEntityID(message.AccountId)).id) && (
+                    <Message
+                      api={api}
+                      player={player}
+                      utils={utils}
+                      key={message.Timestamp}
+                      data={{ message }}
+                      actionSystem={actionSystem}
+                    />
+                  )
+              )
           )}
         </Messages>
       )}

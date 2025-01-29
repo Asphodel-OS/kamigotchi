@@ -15,7 +15,7 @@ interface Props {
   id: string;
   text: string;
   options: Option[];
-  size?: 'small' | 'medium';
+  size?: 'small' | 'verySmall' | 'medium';
   disabled?: boolean;
   persist?: boolean; // whether to persist menu on click
 }
@@ -54,6 +54,11 @@ export function ActionListButton(props: Props) {
       styles.fontSize = '.6vw';
       styles.margin = '0vw .12vw';
       styles.padding = '.2vw .5vw';
+      styles.borderRadius = '.3vw';
+    } else if (size === 'verySmall') {
+      styles.fontSize = '.5vw';
+      styles.margin = '0.1vw .2vw';
+      styles.padding = '.01vw .5vw';
       styles.borderRadius = '.3vw';
     } else if (size === 'medium') {
       styles.fontSize = '.8vw';
