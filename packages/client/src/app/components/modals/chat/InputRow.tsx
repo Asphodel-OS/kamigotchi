@@ -108,6 +108,7 @@ export const InputRow = (props: Props) => {
         world.entityToIndex.get(rerollActionID) as EntityIndex
       );
       setScrollDown(true);
+      setText('');
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to
@@ -145,7 +146,8 @@ export const InputRow = (props: Props) => {
             style={{ padding: `0.5vw` }}
             onClick={() => {
               handleSubmit(text);
-              setText('');
+
+              setTextLength(0);
               (document.getElementById('inputBox') as HTMLInputElement).value = '';
             }}
           >
