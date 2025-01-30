@@ -32,8 +32,6 @@ export function registerChatModal() {
         map(() => {
           const account = getAccountFromEmbedded(network, { friends: true });
           const { world, components } = network;
-
-          const { nodeIndex } = useSelected.getState();
           return {
             data: { account, world, components },
             utils: {
@@ -41,22 +39,19 @@ export function registerChatModal() {
               getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
             },
             network,
-            nodeIndex,
             world,
           };
         })
       );
     },
-    ({ data, network, nodeIndex, utils, world }) => {
+    ({ data, network, utils, world }) => {
       const { account } = data;
       const { actions, api } = network;
-      const { modals } = useVisibility();
       const { getRoomByIndex } = utils;
+      const { modals } = useVisibility();
+      const { nodeIndex } = useSelected.getState();
 
-      const [casts, setCasts] = useState<CastWithInteractions[]>([]);
       const [messages, setMessages] = useState<KamiMessage[]>([]);
-      const maxCasts = 100;
-      const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
       const [scrollDown, setScrollDown] = useState(false);
       const [blocked, setBlocked] = useState<EntityID[]>([]);
       const BlockedList: EntityID[] = [];
@@ -81,10 +76,6 @@ export function registerChatModal() {
 
       const pushCast = (cast: CastWithInteractions) => {};
 
-      const pushCasts = (newCasts: CastWithInteractions[]) => {};
-
-      const pushMessage = (newMessage: KamiMessage) => {};
-
       const pushMessages = (newMessages: KamiMessage[]) => {};
 
       return (
@@ -95,6 +86,7 @@ export function registerChatModal() {
           }
           footer={
             <InputRow
+              scrollDown={scrollDown}
               account={account}
               actions={{ pushCast, setScrollDown }}
               actionSystem={actions}
@@ -105,15 +97,14 @@ export function registerChatModal() {
           canExit
         >
           <Feed
+            api={api}
+            actionSystem={actions}
             scrollDown={scrollDown}
             blocked={blocked}
-            api={api}
             nodeIndex={nodeIndex}
-            max={maxCasts}
             utils={utils}
             player={account}
-            actions={{ pushMessages, setMessages, setScrollDown }}
-            actionSystem={actions}
+            actions={{ pushMessages, setMessages }}
           />
         </ModalWrapper>
       );
