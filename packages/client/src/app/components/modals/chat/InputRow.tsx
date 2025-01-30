@@ -18,11 +18,9 @@ import {
 import { playScribble } from 'utils/sounds';
 
 interface Props {
-  scrollDown: boolean;
   account: Account;
   actionSystem: ActionSystem;
   actions: {
-    setScrollDown: (scrollDown: boolean) => void;
     pushCast: (cast: CastWithInteractions) => void;
   };
   api: any;
@@ -30,8 +28,8 @@ interface Props {
 }
 
 export const InputRow = (props: Props) => {
-  const { account, actionSystem, api, world, scrollDown } = props;
-  const { setScrollDown } = props.actions;
+  const { account, actionSystem, api, world } = props;
+
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const { farcaster: farcasterAccount } = useAccount(); // client side account representation in store
 
@@ -111,7 +109,6 @@ export const InputRow = (props: Props) => {
       setText('');
       setTextLength(0);
       (document.getElementById('inputBox') as HTMLInputElement).value = '';
-      setScrollDown(!scrollDown);
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to

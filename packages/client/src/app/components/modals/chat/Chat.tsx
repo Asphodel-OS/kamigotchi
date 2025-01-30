@@ -86,9 +86,8 @@ export function registerChatModal() {
           }
           footer={
             <InputRow
-              scrollDown={scrollDown}
               account={account}
-              actions={{ pushCast, setScrollDown }}
+              actions={{ pushCast }}
               actionSystem={actions}
               api={api}
               world={world}
@@ -99,7 +98,6 @@ export function registerChatModal() {
           <Feed
             api={api}
             actionSystem={actions}
-            scrollDown={scrollDown}
             blocked={blocked}
             nodeIndex={nodeIndex}
             utils={utils}
