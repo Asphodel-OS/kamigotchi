@@ -72,7 +72,7 @@ export const Popover = (props: Props) => {
   }, []);
 
   return (
-    <PopoverContainer onContextMenu={(e) => e.preventDefault()}>
+    <PopoverContainer onContextMenu={(e) => clickMouse === 2 && e.preventDefault()}>
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
