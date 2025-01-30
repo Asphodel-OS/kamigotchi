@@ -11,7 +11,6 @@ import { getKamidenClient, subscribeToMessages } from 'workers/sync/kamidenStrea
 import { Message } from './Message';
 
 interface Props {
-  scrollDown: boolean;
   nodeIndex: number;
   utils: {
     getAccountByID: (accountid: EntityID) => Account;
@@ -34,7 +33,7 @@ interface Props {
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { nodeIndex, utils, scrollDown, player, blocked, actionSystem, api } = props;
+  const { nodeIndex, utils, player, blocked, actionSystem, api } = props;
   const { getAccountByID } = props.utils;
   const { modals } = useVisibility();
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
@@ -77,11 +76,11 @@ export const Feed = (props: Props) => {
   // SCROLLER
   const scroller = () => {
     var element = document.getElementById('feed');
-    if (element) element.scrollTop = element.scrollHeight;
+    if (element) element.scrollTop = element.scrollHeight + 2000;
   };
   useEffect(() => {
     scroller();
-  }, [scrollDown, activeTab, isPolling, modals.chat]);
+  }, [activeTab, isPolling, modals.chat, kamidenMessages]);
 
   /////////////////
   // RENDER
@@ -149,7 +148,7 @@ export const Feed = (props: Props) => {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  margin-top: 1.5vh;
+  margin-top: 1.5vw;
 
   display: flex;
   flex-direction: column;
