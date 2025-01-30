@@ -18,6 +18,7 @@ import {
 import { playScribble } from 'utils/sounds';
 
 interface Props {
+  scrollDown: boolean;
   account: Account;
   actionSystem: ActionSystem;
   actions: {
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export const InputRow = (props: Props) => {
-  const { account, actionSystem, api, world } = props;
+  const { account, actionSystem, api, world, scrollDown } = props;
   const { setScrollDown } = props.actions;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const { farcaster: farcasterAccount } = useAccount(); // client side account representation in store
@@ -107,23 +108,15 @@ export const InputRow = (props: Props) => {
         actionSystem!.Action,
         world.entityToIndex.get(rerollActionID) as EntityIndex
       );
-      setScrollDown(true);
       setText('');
+      setTextLength(0);
+      (document.getElementById('inputBox') as HTMLInputElement).value = '';
+      setScrollDown(!scrollDown);
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to
       console.error('error sending message', e);
     }
-  };
-
-  /////////////////
-  // INTERPRETATION
-
-  const getPlaceholder = () => {
-    // console.log('getting placeholder', isAuthenticated, isAuthorized);
-    if (!isAuthenticated) return 'Connect Farcaster -->';
-    if (!isAuthorized) return 'Link Farcaster Account -->';
-    return 'Cast to /Kamigotchi';
   };
 
   return (
@@ -143,12 +136,8 @@ export const InputRow = (props: Props) => {
         <>
           <LetterCount>{textLength}/200</LetterCount>
           <SendButton
-            style={{ padding: `0.5vw` }}
             onClick={() => {
               handleSubmit(text);
-
-              setTextLength(0);
-              (document.getElementById('inputBox') as HTMLInputElement).value = '';
             }}
           >
             Send
@@ -178,6 +167,7 @@ const InputBox = styled.textarea`
 `;
 
 const SendButton = styled.button`
+  padding: 0.5vw;
   position: absolute;
   right: 0.8vw;
   bottom: 0.8vw;
