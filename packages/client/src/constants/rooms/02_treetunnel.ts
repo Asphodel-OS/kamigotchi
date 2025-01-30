@@ -1,19 +1,19 @@
-/* import {
+import {
   bgPlaytestDay,
   bgPlaytestEvening,
   bgPlaytestNight,
-} from 'assets/images/rooms/2_tree-tunnel';*/
-import { bgXmasDay, bgXmasEvening, bgXmasNight } from 'assets/images/rooms/2_tree-tunnel';
-//import { arrival } from 'assets/sound/ost';
-import { Xmas } from 'assets/sound/ost';
+} from 'assets/images/rooms/2_tree-tunnel';
+
+import { arrival } from 'assets/sound/ost';
+
 import { Room } from 'constants/rooms';
 
 export const room02: Room = {
   index: 2,
-  backgrounds: [bgXmasDay, bgXmasEvening, bgXmasNight],
+  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
-    key: 'Xmas',
-    path: Xmas,
+    key: 'arrival',
+    path: arrival,
   },
   objects: [
     {
