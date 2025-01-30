@@ -9,12 +9,11 @@ import { useSelected, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
 import { BaseAccount } from 'network/shapes/Account';
+
 import { ActionSystem } from 'network/systems';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  actionSystem: ActionSystem;
-  api: any;
   utils: {
     getAccountByID: (accountid: EntityID) => Account;
   };
@@ -22,12 +21,22 @@ interface Props {
     message: KamiMessage;
   };
   player: Account;
+  actionSystem: ActionSystem;
+  api: {
+    player: {
+      social: {
+        friend: { block: (account: string) => void; request: (account: string) => void };
+      };
+    };
+  };
 }
 
 export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
-  const { player, actionSystem, api } = props;
+  const { actionSystem, api } = props;
+
+  const { player } = props;
   const [yours, setYours] = useState(false);
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
@@ -45,6 +54,9 @@ export const Message = (props: Props) => {
       setYours(true);
     }
   }, [message.AccountId]);
+  const getAccount = () => {
+    return getAccountByID(formatEntityID(message.AccountId));
+  };
 
   const blockFren = (account: BaseAccount) => {
     console.log('block fren');
@@ -74,24 +86,23 @@ export const Message = (props: Props) => {
     <Container>
       <Content>
         <Header>
-          {player.id != getAccountByID(formatEntityID(message.AccountId)).id ? (
+          {player.id != getAccount().id ? (
             <>
               <PfpAuthor>
                 <OptionButtons>
                   <ActionListButton
-                    id={getAccountByID(formatEntityID(message.AccountId)).id}
+                    id={getAccount().id}
                     text=''
                     size='verySmall'
                     options={[
                       {
                         text: 'Add',
-                        onClick: () =>
-                          requestFren(getAccountByID(formatEntityID(message.AccountId))),
+                        onClick: () => requestFren(getAccount()),
                       },
 
                       {
                         text: 'Block',
-                        onClick: () => blockFren(getAccountByID(formatEntityID(message.AccountId))),
+                        onClick: () => blockFren(getAccount()),
                       },
                     ]}
                   />
@@ -101,15 +112,10 @@ export const Message = (props: Props) => {
                   onClick={() => {
                     showUser();
                   }}
-                  src={
-                    getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
-                    'https://miladymaker.net/milady/8365.png'
-                  }
+                  src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                 />
 
-                <Author author={false}>
-                  {getAccountByID(formatEntityID(message.AccountId)).name}
-                </Author>
+                <Author author={false}>{getAccount().name}</Author>
               </PfpAuthor>
               <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
             </>
@@ -117,18 +123,13 @@ export const Message = (props: Props) => {
             <>
               <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
               <PfpAuthor>
-                <Author author={true}>
-                  {getAccountByID(formatEntityID(message.AccountId)).name}
-                </Author>
+                <Author author={true}>{getAccount().name}</Author>
                 <Pfp
                   author={true}
                   onClick={() => {
                     showUser();
                   }}
-                  src={
-                    getAccountByID(formatEntityID(message.AccountId)).pfpURI ??
-                    'https://miladymaker.net/milady/8365.png'
-                  }
+                  src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                 />
               </PfpAuthor>
             </>
