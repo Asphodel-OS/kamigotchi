@@ -1,4 +1,3 @@
-import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import {
   bgPlaytestDay,
   bgPlaytestEvening,
@@ -14,11 +13,5 @@ export const room55: Room = {
     key: 'arrival',
     path: arrival,
   },
-  objects: [
-    {
-      name: 'goat',
-      coordinates: { x1: 27, y1: 70, x2: 37, y2: 100 },
-      onClick: () => triggerGoalModal([8]),
-    },
-  ],
+  objects: [],
 };
