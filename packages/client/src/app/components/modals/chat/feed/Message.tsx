@@ -99,9 +99,15 @@ export const Message = (props: Props) => {
   ];
   const optionsMap = () => {
     return options.map((option, i) => (
-      <button style={{ padding: `0.4vw` }} key={`div-${i}`} onClick={() => option.onClick()}>
-        {option.text}
-      </button>
+      <PopOverButtons>
+        <button
+          style={{ padding: `0.4vw`, width: ` 6vw` }}
+          key={`div-${i}`}
+          onClick={() => option.onClick()}
+        >
+          {option.text}
+        </button>
+      </PopOverButtons>
     ));
   };
 
@@ -223,6 +229,12 @@ const Time = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+`;
+
+const PopOverButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 const Body = styled.div<{ yours: boolean }>`
