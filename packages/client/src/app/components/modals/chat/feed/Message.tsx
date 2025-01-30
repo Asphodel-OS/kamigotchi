@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import { EntityID } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 
-import { ActionListButton } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
 import { BaseAccount } from 'network/shapes/Account';
 
+import { Popover } from 'app/components/library/base/Popover';
 import { ActionSystem } from 'network/systems';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   utils: {
@@ -40,20 +40,22 @@ export const Message = (props: Props) => {
   const [yours, setYours] = useState(false);
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
+  const pfpRef = useRef<HTMLDivElement>(null);
 
   /////////////////
   // INTERPRETATION
-
-  const showUser = () => {
-    setAccount(getAccountByID(formatEntityID(message.AccountId)).index);
-    if (!modals.account) setModals({ account: true });
-  };
 
   useEffect(() => {
     if (player.id != getAccountByID(formatEntityID(message.AccountId)).id) {
       setYours(true);
     }
   }, [message.AccountId]);
+
+  const showUser = () => {
+    setAccount(getAccountByID(formatEntityID(message.AccountId)).index);
+    if (!modals.account) setModals({ account: true });
+  };
+
   const getAccount = () => {
     return getAccountByID(formatEntityID(message.AccountId));
   };
@@ -80,40 +82,45 @@ export const Message = (props: Props) => {
       },
     });
   };
+
   /////////////////
   // INTERACTION
+
+  const options = [
+    {
+      text: 'Add',
+      onClick: () => requestFren(getAccount()),
+    },
+
+    {
+      text: 'Block',
+      onClick: () => blockFren(getAccount()),
+    },
+  ];
+  const optionsMap = () => {
+    return options.map((option, i) => (
+      <button style={{ padding: `0.4vw` }} key={`div-${i}`} onClick={() => option.onClick()}>
+        {option.text}
+      </button>
+    ));
+  };
+
   return (
     <Container>
       <Content>
         <Header>
           {player.id != getAccount().id ? (
             <>
-              <PfpAuthor>
-                <OptionButtons>
-                  <ActionListButton
-                    id={getAccount().id}
-                    text=''
-                    size='verySmall'
-                    options={[
-                      {
-                        text: 'Add',
-                        onClick: () => requestFren(getAccount()),
-                      },
-
-                      {
-                        text: 'Block',
-                        onClick: () => blockFren(getAccount()),
-                      },
-                    ]}
+              <PfpAuthor id='pfp-author' ref={pfpRef}>
+                <Popover content={optionsMap()} clickMouse={2}>
+                  <Pfp
+                    author={false}
+                    onClick={() => {
+                      showUser();
+                    }}
+                    src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                   />
-                </OptionButtons>
-                <Pfp
-                  author={false}
-                  onClick={() => {
-                    showUser();
-                  }}
-                  src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
-                />
+                </Popover>
 
                 <Author author={false}>{getAccount().name}</Author>
               </PfpAuthor>
@@ -161,16 +168,9 @@ const Content = styled.div`
   align-items: flex-start;
 `;
 
-const OptionButtons = styled.div`
-  position: relative;
-  left: 1.9vw;
-  top: 1vw;
-  z-index: 1;
-`;
-
 const Pfp = styled.img<{ author: boolean }>`
   position: relative;
-  left: -3vw;
+  left: -0.5vw;
   width: 3.6vw;
   height: 3.6vw;
   border-radius: 50%;
@@ -206,7 +206,7 @@ const PfpAuthor = styled.div`
 
 const Author = styled.div<{ author: boolean }>`
   position: relative;
-  left: -3vw;
+  left: -0.5vw;
   color: orange;
   font-size: 1vw;
   ${({ author }) =>

@@ -5,6 +5,7 @@ interface Props {
   children: React.ReactNode;
   content: any;
   cursor?: string;
+  clickMouse?: 0 | 2;
 }
 
 export const Popover = (props: Props) => {
@@ -14,9 +15,11 @@ export const Popover = (props: Props) => {
   const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
   const cursor = props.cursor ?? 'pointer';
+  const clickMouse = props.clickMouse ?? 0;
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
+      event.preventDefault();
       if (popoverRef.current && triggerRef.current) {
         if (
           !popoverRef.current.contains(event.target) &&
@@ -55,6 +58,15 @@ export const Popover = (props: Props) => {
     setIsVisible(false);
   };
 
+  // stop right click context menu
+  function stopEvent(event: any) {
+    if (event.preventDefault != undefined) event.preventDefault();
+    if (event.stopPropagation != undefined) event.stopPropagation();
+  }
+  document.oncontextmenu = function (e) {
+    stopEvent(e);
+  };
+
   useEffect(() => {
     handlePosition();
     document.body.style.overflow = 'unset';
@@ -74,8 +86,10 @@ export const Popover = (props: Props) => {
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
-        onClick={(e) => {
-          if (content.length !== 0) {
+        contextMenu='return false;'
+        onMouseDown={(e) => {
+          e.preventDefault();
+          if (content.length !== 0 && e.button === clickMouse) {
             handlePosition();
             setIsVisible(!isVisible);
           }
@@ -87,7 +101,8 @@ export const Popover = (props: Props) => {
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
-        onClick={(e) => {
+        onMouseDown={(e) => {
+          e.preventDefault();
           setIsVisible(false);
         }}
       >
