@@ -19,7 +19,6 @@ export const Popover = (props: Props) => {
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      event.preventDefault();
       if (popoverRef.current && triggerRef.current) {
         if (
           !popoverRef.current.contains(event.target) &&
@@ -58,15 +57,6 @@ export const Popover = (props: Props) => {
     setIsVisible(false);
   };
 
-  // stop right click context menu
-  function stopEvent(event: any) {
-    if (event.preventDefault != undefined) event.preventDefault();
-    if (event.stopPropagation != undefined) event.stopPropagation();
-  }
-  document.oncontextmenu = function (e) {
-    stopEvent(e);
-  };
-
   useEffect(() => {
     handlePosition();
     document.body.style.overflow = 'unset';
@@ -82,13 +72,12 @@ export const Popover = (props: Props) => {
   }, []);
 
   return (
-    <PopoverContainer>
+    <PopoverContainer onContextMenu={(e) => e.preventDefault()}>
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
         contextMenu='return false;'
         onMouseDown={(e) => {
-          e.preventDefault();
           if (content.length !== 0 && e.button === clickMouse) {
             handlePosition();
             setIsVisible(!isVisible);
@@ -102,7 +91,6 @@ export const Popover = (props: Props) => {
         ref={popoverRef}
         popoverPosition={popoverPosition}
         onMouseDown={(e) => {
-          e.preventDefault();
           setIsVisible(false);
         }}
       >
