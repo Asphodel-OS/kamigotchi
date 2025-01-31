@@ -7,6 +7,7 @@ import { console } from "forge-std/console.sol";
 
 import { World } from "../World.sol";
 import { IUint256Component } from "../interfaces/IUint256Component.sol";
+import { Emitter } from "../Emitter.sol";
 
 contract BaseTester is DSTestPlus {
   Vm internal immutable vm = Vm(HEVM_ADDRESS);
@@ -20,6 +21,7 @@ contract BaseTester is DSTestPlus {
     vm.startPrank(deployer);
     world = new World();
     world.init();
+    world.updateEmitter(address(new Emitter(world)));
     vm.stopPrank();
   }
 }

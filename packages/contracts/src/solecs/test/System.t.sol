@@ -36,6 +36,7 @@ contract SystemTest is BaseTester {
     systems = world.systems();
 
     system = new SampleSystem(world, address(components));
+    world.registerSystem(address(system), 1);
   }
 
   function testSystemStorage() public {

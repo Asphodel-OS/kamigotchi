@@ -31,6 +31,7 @@ contract Deploy is InitWorld {
     if (worldAddr == address(0) || emitter) {
       LibDeployEmitter.deploy(world);
     }
+
     // init world using init world script
     if (initWorld) {
       _setUp(address(world)); // set up global variables

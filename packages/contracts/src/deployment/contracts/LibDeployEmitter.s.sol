@@ -7,7 +7,7 @@ import { Emitter } from "solecs/Emitter.sol";
 /// @notice depoys a new emitter contract and updates world with it
 library LibDeployEmitter {
   function deploy(IWorld world) internal returns (address) {
-    Emitter emitter = new Emitter();
+    Emitter emitter = new Emitter(world);
     world.updateEmitter(address(emitter));
     console.log("Emitter Address: ", address(emitter));
     return address(emitter);
