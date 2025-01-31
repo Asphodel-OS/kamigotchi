@@ -52,7 +52,6 @@ export function registerChatModal() {
       const { nodeIndex } = useSelected.getState();
 
       const [messages, setMessages] = useState<KamiMessage[]>([]);
-      const [scrollDown, setScrollDown] = useState(false);
       const [blocked, setBlocked] = useState<EntityID[]>([]);
       const BlockedList: EntityID[] = [];
 

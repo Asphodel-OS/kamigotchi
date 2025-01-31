@@ -38,6 +38,7 @@ export const Feed = (props: Props) => {
   const { modals } = useVisibility();
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
   const [isPolling, setIsPolling] = useState(false);
+  const [scrollDown, setScrollDown] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
   //0 Node
   //1 global
@@ -53,6 +54,9 @@ export const Feed = (props: Props) => {
     const unsubscribe = subscribeToMessages((message) => {
       if (message.RoomIndex === nodeIndex) {
         setKamidenMessages((prev) => [message, ...prev]);
+      }
+      if (player.id === message.AccountId) {
+        setScrollDown(!scrollDown);
       }
     });
 
@@ -80,7 +84,7 @@ export const Feed = (props: Props) => {
   };
   useEffect(() => {
     scroller();
-  }, [activeTab, isPolling, modals.chat, kamidenMessages]);
+  }, [activeTab, isPolling, modals.chat, scrollDown]);
 
   /////////////////
   // RENDER
