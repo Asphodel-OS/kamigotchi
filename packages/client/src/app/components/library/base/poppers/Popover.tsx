@@ -76,7 +76,6 @@ export const Popover = (props: Props) => {
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
-        contextMenu='return false;'
         onMouseDown={(e) => {
           if (content.length !== 0 && e.button === clickMouse) {
             handlePosition();
@@ -90,7 +89,7 @@ export const Popover = (props: Props) => {
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
-        onMouseDown={(e) => {
+        onClick={(e) => {
           setIsVisible(false);
         }}
       >
