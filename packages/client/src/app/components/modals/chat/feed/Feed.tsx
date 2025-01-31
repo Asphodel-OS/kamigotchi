@@ -80,7 +80,12 @@ export const Feed = (props: Props) => {
   // SCROLLER
   const scroller = () => {
     var element = document.getElementById('feed');
-    if (element) element.scrollTop = element.scrollHeight + 2000;
+    if (element) element.scrollTop = element.scrollHeight;
+    // when user has scrolled down to the bottom of feed and keeps writing  the scroll automatically goes to the new bottom
+    if (element && element.scrollTop === element.scrollHeight - element.offsetHeight) {
+      element.scrollTop = element.scrollHeight;
+      setScrollDown(false);
+    }
   };
   useEffect(() => {
     scroller();
