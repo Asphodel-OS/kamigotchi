@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
@@ -48,6 +48,21 @@ export function registerClock() {
       const [rotateClock, setRotateClock] = useState(0);
       const [rotateBand, setRotateBand] = useState(0);
       const [lastTick, setLastTick] = useState(Date.now());
+      const [width, height] = useWindowSize();
+      console.log(`width ${width} height ${height}`);
+
+      function useWindowSize() {
+        const [size, setSize] = useState([0, 0]);
+        useLayoutEffect(() => {
+          function updateSize() {
+            setSize([window.innerWidth, window.innerHeight]);
+          }
+          window.addEventListener('resize', updateSize);
+          updateSize();
+          return () => window.removeEventListener('resize', updateSize);
+        }, []);
+        return size;
+      }
 
       // ticking
       useEffect(() => {
@@ -108,51 +123,58 @@ export function registerClock() {
 
       //Render
       return (
-        <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+        <>
           <Tooltip text={getClockTooltip()}>
-            <Circle rotation={rotateClock}>
-              <TicksPosition>{Ticks()}</TicksPosition>
-              <BandColor rotation={rotateBand} />
-              <Phases>
-                <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
-                <IconTwilight
-                  src={ClockIcons.twilight}
-                  iconColor={rotateBand}
-                  rotation={rotateClock}
-                />
-                <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
-              </Phases>
-            </Circle>{' '}
+            <Container style={{ display: fixtures.menu ? 'flex' : 'none' }} resize={width}>
+              <Circle rotation={rotateClock}>
+                <TicksPosition>{Ticks()}</TicksPosition>
+                <BandColor rotation={rotateBand} />
+                <Phases>
+                  <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
+                  <IconTwilight
+                    src={ClockIcons.twilight}
+                    iconColor={rotateBand}
+                    rotation={rotateClock}
+                  />
+                  <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
+                </Phases>
+              </Circle>{' '}
+            </Container>{' '}
           </Tooltip>
-          <Time viewBox='0 0 30 4'>
-            <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 1.8' pathLength='2' />
-            <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
-              <textPath href='#MyPath' startOffset='0.9'>
-                {getKamiTime(Date.now())}
-              </textPath>
-            </text>
-          </Time>
-          <ClockOverlay />
           <Tooltip text={getStaminaTooltip()}>
-            {' '}
-            <StaminaText position={staminaCurr.toString().length}>
-              {staminaCurr}/{account.stamina.total}
-            </StaminaText>
-            <SmallCircle>
-              <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
-            </SmallCircle>
-          </Tooltip>
-        </Container>
+            <Container style={{ display: fixtures.menu ? 'flex' : 'none' }} resize={width}>
+              {' '}
+              <StaminaText position={staminaCurr.toString().length}>
+                {staminaCurr}/{account.stamina.total}
+              </StaminaText>
+              <SmallCircle>
+                <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
+              </SmallCircle>{' '}
+              <ClockOverlay />
+            </Container>
+          </Tooltip>{' '}
+          <Container style={{ display: fixtures.menu ? 'flex' : 'none' }} resize={width}>
+            <Time viewBox='0 0 30 4'>
+              <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 1.8' pathLength='2' />
+              <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
+                <textPath href='#MyPath' startOffset='0.9'>
+                  {getKamiTime(Date.now())}
+                </textPath>
+              </text>
+            </Time>
+          </Container>
+        </>
       );
     }
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ resize: number }>`
   pointer-events: auto;
   position: absolute;
   left: 0vh;
   z-index: -1;
+  ${({ resize }) => `transform:  scale(${(resize / 23) * 0.01});`}
 `;
 
 const Circle = styled.div<{ rotation: number }>`
@@ -170,7 +192,7 @@ const Circle = styled.div<{ rotation: number }>`
   background-size: 17.5vh;
   z-index: -1;
   transform-origin: center;
-  ${({ rotation }) => `transform: rotate(${rotation}deg);`}
+  ${({ rotation }) => `transform: rotate(${rotation}deg) ;`}
   overflow:hidden;
 `;
 
