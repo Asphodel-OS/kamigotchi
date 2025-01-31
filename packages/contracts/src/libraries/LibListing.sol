@@ -18,7 +18,6 @@ import { LibCurve, GDAParams } from "libraries/utils/LibCurve.sol";
 
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibERC20 } from "libraries/LibERC20.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
 
@@ -46,8 +45,8 @@ library LibListing {
     uint256 price = calcBuyPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid buy price");
     incBalance(comps, id, amt);
-    spend(comps, id, price, accID);
-    LibInventory.incFor(comps, accID, itemIndex, amt);
+    LibInventory.incFor(comps, accID, itemIndex, amt); // gain item
+    LibInventory.decFor(comps, accID, MUSU_INDEX, price); // take currecy
   }
 
   /// @notice processes a sell for amt of item from an account to a listing
@@ -61,17 +60,8 @@ library LibListing {
     uint256 price = calcSellPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid sell price");
     decBalance(comps, id, amt);
-    LibInventory.decFor(comps, accID, itemIndex, amt);
-    LibInventory.incFor(comps, accID, MUSU_INDEX, price);
-  }
-
-  /// @notice spends appropriate currency for a listing buy
-  function spend(IUintComp comps, uint256 id, uint256 amt, uint256 accID) internal {
-    uint256 buyID = LibListingRegistry.genBuyID(id);
-    address currency = LibERC20.getAddress(comps, buyID);
-    if (currency == address(0))
-      LibInventory.decFor(comps, accID, MUSU_INDEX, amt); // default to MUSU
-    else LibERC20.spend(comps, currency, amt, accID);
+    LibInventory.decFor(comps, accID, itemIndex, amt); // take item
+    LibInventory.incFor(comps, accID, MUSU_INDEX, price); // gain currency
   }
 
   /////////////////

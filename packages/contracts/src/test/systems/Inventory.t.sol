@@ -139,6 +139,27 @@ contract InventoryTest is SetupTemplate {
     assertInvExistence(alice, 1, false);
   }
 
+  function testInventoryERC20() public {
+    uint32 itemIndex = 1;
+    _createGenericItem(itemIndex);
+    address tokenAddr = _createERC20("TestToken", "TT");
+    _addItemERC20(itemIndex, tokenAddr);
+
+    // trying to increase erc20 balance (fail)
+    vm.expectRevert();
+    ExternalCaller.incFor(alice.id, itemIndex, 1);
+
+    // mint erc20
+    _mintERC20(tokenAddr, 100, alice.owner);
+
+    // spending
+    _approveERC20(tokenAddr, alice.owner);
+    _decItem(alice, itemIndex, 1);
+    assertEq(_getTokenBal(tokenAddr, alice.owner), 99);
+    _decItem(alice, itemIndex, 99);
+    assertEq(_getTokenBal(tokenAddr, alice.owner), 0);
+  }
+
   /////////////////
   // ASSERTIONS
 

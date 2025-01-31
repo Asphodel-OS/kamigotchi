@@ -28,6 +28,7 @@ import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
+import { LibERC20 } from "libraries/LibERC20.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -43,6 +44,7 @@ import { LibScore } from "libraries/LibScore.sol";
  *  - Name
  *  - Description
  *  - MediaURI
+ *  - [Optional] TokenAddress
  *
  * Consumable items are a rough grouping of usable items (linked to a system).
  * they follow this pattern (although does not strictly need to):
@@ -101,6 +103,11 @@ library LibItem {
     return LibReference.create(components, useCase, genRefAnchor(index));
   }
 
+  /// @notice adds an optional token address to represent an ERC20 token
+  function addERC20(IUintComp components, uint32 index, address tokenAddress) internal {
+    LibERC20.setAddress(components, genID(index), tokenAddress);
+  }
+
   function addRequirement(
     IWorld world,
     IUintComp components,
@@ -134,6 +141,7 @@ library LibItem {
     LibDroptable.remove(components, id);
     LibFor.remove(components, id);
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
+    LibERC20.remove(components, id);
 
     {
       uint256[] memory flags = LibFlag.queryFor(components, id);
@@ -257,6 +265,10 @@ library LibItem {
 
   /////////////////
   // GETTERS
+
+  function getTokenAddr(IUintComp components, uint32 index) internal view returns (address) {
+    return LibERC20.getAddress(components, genID(index));
+  }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(id);

@@ -711,6 +711,12 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
+  function _addItemERC20(uint32 index, address tokenAddress) public {
+    vm.startPrank(deployer);
+    LibItem.addERC20(components, index, tokenAddress);
+    vm.stopPrank();
+  }
+
   function _createConsumable(uint32 index, string memory type_) public returns (uint256 id) {
     vm.startPrank(deployer);
     id = __ItemRegistrySystem.createConsumable(

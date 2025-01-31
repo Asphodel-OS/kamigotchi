@@ -63,12 +63,6 @@ contract _ListingRegistrySystem is System {
     LibListingRegistry.removePrice(components, sellID);
   }
 
-  function setBuyCurrency(uint32 npcIndex, uint32 itemIndex, address token) public onlyOwner {
-    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
-    require(id != 0, "Listing does not exist");
-    LibListingRegistry.setBuyCurrency(components, id, token);
-  }
-
   function setBuyFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");

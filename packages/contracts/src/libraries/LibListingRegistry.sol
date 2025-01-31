@@ -17,7 +17,6 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibERC20 } from "libraries/LibERC20.sol";
 
 /** @notice
  * LibListingRegistry handles the creation, removal and update of Listing entities
@@ -67,12 +66,6 @@ library LibListingRegistry {
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
     if (value != 0) ValueComponent(getAddrByID(comps, ValueCompID)).set(id, value);
-  }
-
-  /// @notice sets currency for buy price. defaults to MUSU (items) if ERC20 not set
-  function setBuyCurrency(IUintComp comps, uint256 id, address currency) internal {
-    uint256 ptr = genBuyID(id);
-    LibERC20.setAddress(comps, ptr, currency);
   }
 
   /// @notice set the buy price of a listing as the Value of the Listing Entity
@@ -144,7 +137,6 @@ library LibListingRegistry {
     DecayComponent(getAddrByID(comps, DecayCompID)).remove(priceID);
     ScaleComponent(getAddrByID(comps, ScaleCompID)).remove(priceID);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(priceID);
-    LibERC20.remove(comps, priceID);
   }
 
   /////////////////

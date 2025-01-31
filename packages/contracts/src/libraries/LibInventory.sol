@@ -15,6 +15,7 @@ import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibData } from "libraries/LibData.sol";
+import { LibERC20 } from "libraries/LibERC20.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -128,9 +129,17 @@ library LibInventory {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 id) {
-    id = createFor(components, holderID, itemIndex);
-    ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
-    LibData.inc(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
+    // check if item is symbolink to ERC20
+    address tokenAddr = LibItem.getTokenAddr(components, itemIndex);
+    if (tokenAddr != address(0)) {
+      // is a symbolink ERC20, cannot increase
+      revert("LibInv: cannot increase ERC20");
+    } else {
+      // regular inventory
+      id = createFor(components, holderID, itemIndex);
+      ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
+      LibData.inc(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
+    }
   }
 
   function incFor(
@@ -139,22 +148,30 @@ library LibInventory {
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal returns (uint256[] memory ids) {
-    ids = createFor(components, holderID, itemIndices);
-    ValueComponent(getAddrByID(components, ValueCompID)).inc(ids, amts);
-    LibData.inc(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
+    ids = new uint256[](itemIndices.length);
+    for (uint256 i; i < itemIndices.length; i++)
+      ids[i] = incFor(components, holderID, itemIndices[i], amts[i]);
   }
 
   /// @notice decrease, and creates new inventory if needed
   function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
-    uint256 id = genID(holderID, itemIndex);
+    // check if item is symbolink to ERC20
+    address tokenAddr = LibItem.getTokenAddr(components, itemIndex);
+    if (tokenAddr != address(0)) {
+      // is a symbolink ERC20, spend it
+      LibERC20.spend(components, tokenAddr, amt, holderID);
+    } else {
+      // regular inventory
+      uint256 id = genID(holderID, itemIndex);
 
-    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
-    uint256 newBal = valComp.safeGet(id) - amt;
-    if (newBal == 0)
-      remove(components, id); // delete entity if zero
-    else valComp.set(id, newBal);
+      ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+      uint256 newBal = valComp.safeGet(id) - amt;
+      if (newBal == 0)
+        remove(components, id); // delete entity if zero
+      else valComp.set(id, newBal);
 
-    LibData.dec(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
+      LibData.dec(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
+    }
   }
 
   function decFor(
@@ -163,16 +180,8 @@ library LibInventory {
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal {
-    uint256[] memory ids = genID(holderID, itemIndices);
-    ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
-    for (uint256 i; i < ids.length; i++) {
-      uint256 newBal = valComp.safeGet(ids[i]) - amts[i];
-      if (newBal == 0)
-        remove(components, ids[i]); // delete entity if zero
-      else valComp.set(ids[i], newBal);
-    }
-
-    LibData.dec(components, 0, itemIndices, "ITEM_COUNT_GLOBAL", amts);
+    for (uint256 i; i < itemIndices.length; i++)
+      decFor(components, holderID, itemIndices[i], amts[i]);
   }
 
   /////////////////

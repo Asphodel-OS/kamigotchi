@@ -44,7 +44,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     "removeSell(uint32,uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "setBuyCurrency(uint32,uint32,address)": FunctionFragment;
     "setBuyFixed(uint32,uint32)": FunctionFragment;
     "setBuyGDA(uint32,uint32,int32,int32)": FunctionFragment;
     "setSellFixed(uint32,uint32)": FunctionFragment;
@@ -68,7 +67,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
       | "removeSell"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "setBuyCurrency"
       | "setBuyFixed"
       | "setBuyGDA"
       | "setSellFixed"
@@ -131,14 +129,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setBuyCurrency",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setBuyFixed",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -198,10 +188,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBuyCurrency",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -370,13 +356,6 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setBuyCurrency(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -478,13 +457,6 @@ export interface _ListingRegistrySystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setBuyCurrency(
-    npcIndex: PromiseOrValue<BigNumberish>,
-    itemIndex: PromiseOrValue<BigNumberish>,
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setBuyFixed(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
@@ -577,13 +549,6 @@ export interface _ListingRegistrySystem extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    setBuyCurrency(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
@@ -715,13 +680,6 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setBuyCurrency(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -822,13 +780,6 @@ export interface _ListingRegistrySystem extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBuyCurrency(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setBuyFixed(

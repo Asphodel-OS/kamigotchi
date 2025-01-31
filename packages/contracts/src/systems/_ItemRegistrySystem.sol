@@ -71,6 +71,11 @@ contract _ItemRegistrySystem is System {
     LibItem.addFlag(components, index, flag);
   }
 
+  function addERC20(uint32 index, address tokenAddress) public onlyOwner {
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    LibItem.addERC20(components, index, tokenAddress);
+  }
+
   function addAlloBasic(bytes memory arguments) public onlyOwner returns (uint256) {
     (
       uint32 index,

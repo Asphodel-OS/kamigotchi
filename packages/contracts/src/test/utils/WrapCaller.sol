@@ -43,6 +43,14 @@ contract WrapCaller {
   /////////////
   // INVENTORY //
 
+  function incFor(uint256 accID, uint32 index, uint256 amt) public {
+    LibInventory.incFor(components, accID, index, amt);
+  }
+
+  function incFor(uint256 accID, uint32[] memory indices, uint256[] memory amts) public {
+    LibInventory.incFor(components, accID, indices, amts);
+  }
+
   function decFor(uint256 accID, uint32 index, uint256 amt) public {
     LibInventory.decFor(components, accID, index, amt);
   }

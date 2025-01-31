@@ -94,6 +94,24 @@
     },
     {
       "type": "function",
+      "name": "addERC20",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "tokenAddress",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "addFlag",
       "inputs": [
         {
@@ -367,6 +385,7 @@
     "addAlloBonus(bytes)": "eb04c569",
     "addAlloDT(bytes)": "59ce910b",
     "addAlloStat(bytes)": "b452abd4",
+    "addERC20(uint32,address)": "0e399f30",
     "addFlag(uint32,string)": "06cc1c38",
     "addRequirement(bytes)": "7e534103",
     "cancelOwnershipHandover()": "54d1f13d",

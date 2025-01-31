@@ -367,11 +367,14 @@ contract NPCTest is SetupTemplate {
     // setup
     address tokenAddr = _createERC20("name", "symbol");
     uint32 item = 100;
+    uint32 currency = 1; // item currency - set to 1 to work with musu listing hardcode
+    _createGenericItem(item);
+    _createGenericItem(currency);
+    _addItemERC20(currency, tokenAddr);
     uint256 price = 100;
     _createNPC(1, 1, "npc1");
     _createListing(1, item, price);
     _setListingBuyFixed(1, item);
-    _setListingCurrency(1, item, tokenAddr);
     _mintERC20(tokenAddr, price, alice.owner);
     _approveERC20(tokenAddr, alice.owner);
 
@@ -412,11 +415,6 @@ contract NPCTest is SetupTemplate {
   ) internal returns (uint) {
     vm.prank(deployer);
     return __ListingRegistrySystem.create(abi.encode(npcIndex, itemIndex, basePrice));
-  }
-
-  function _setListingCurrency(uint32 npcIndex, uint32 itemIndex, address token) internal {
-    vm.prank(deployer);
-    return __ListingRegistrySystem.setBuyCurrency(npcIndex, itemIndex, token);
   }
 
   function _setListingBuyFixed(uint32 npcIndex, uint32 itemIndex) internal {
