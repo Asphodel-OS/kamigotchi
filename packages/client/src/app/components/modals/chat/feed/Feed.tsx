@@ -55,8 +55,17 @@ export const Feed = (props: Props) => {
       if (message.RoomIndex === nodeIndex) {
         setKamidenMessages((prev) => [message, ...prev]);
       }
+
       if (player.id === message.AccountId) {
-        setScrollDown(!scrollDown);
+        setScrollDown(true);
+      } else {
+        var element = document.getElementById('feed');
+        if (element) {
+          const isBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 1;
+          if (isBottom) {
+            setScrollDown(true);
+          }
+        }
       }
     });
 
@@ -79,13 +88,19 @@ export const Feed = (props: Props) => {
   /////////////////
   // SCROLLER
   const scroller = () => {
-    var element = document.getElementById('feed');
-    if (element) element.scrollTop = element.scrollHeight;
-    // when user has scrolled down to the bottom of feed and keeps writing  the scroll automatically goes to the new bottom
-    if (element && element.scrollTop === element.scrollHeight - element.offsetHeight) {
-      element.scrollTop = element.scrollHeight;
-      setScrollDown(false);
+    if (scrollDown === false) {
+      return;
     }
+    var element = document.getElementById('feed');
+    if (element) {
+      console.log(`scroll ${element.scrollHeight}`);
+      element.scrollTop = element.scrollHeight;
+    } // when user has scrolled down to the bottom of feed and keeps writing  the scroll automatically goes to the new bottom
+    if (element && element.scrollTop === element.scrollHeight - element.offsetHeight) {
+      console.log('scrolling down');
+      element.scrollTop = element.scrollHeight;
+    }
+    setScrollDown(false);
   };
   useEffect(() => {
     scroller();
@@ -130,7 +145,7 @@ export const Feed = (props: Props) => {
                     <Message
                       player={player}
                       utils={utils}
-                      key={message.Timestamp}
+                      key={(message.Timestamp, message.AccountId)}
                       data={{ message }}
                       api={api}
                       actionSystem={actionSystem}
