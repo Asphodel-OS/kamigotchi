@@ -175,7 +175,7 @@ const Container = styled.div<{ resize: number }>`
   left: 0vh;
   z-index: -1;
   height: fit-content;
-  ${({ resize }) => `transform:  scale(${(resize / 23) * 0.01}); bottom:${resize * 0.01}vh;`}
+  ${({ resize }) => `transform:  scale(${(resize / 24) * 0.01}); bottom:${resize * 0.0094}vh;`}
 `;
 
 const Circle = styled.div<{ rotation: number }>`
