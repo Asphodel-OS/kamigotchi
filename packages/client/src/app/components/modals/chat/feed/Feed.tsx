@@ -88,9 +88,6 @@ export const Feed = (props: Props) => {
   /////////////////
   // SCROLLER
   const scroller = () => {
-    if (scrollDown === false) {
-      return;
-    }
     var element = document.getElementById('feed');
     if (element) {
       element.scrollTop = element.scrollHeight;
@@ -100,10 +97,16 @@ export const Feed = (props: Props) => {
     }
     setScrollDown(false);
   };
+
   useEffect(() => {
     scroller();
-  }, [activeTab, isPolling, modals.chat, scrollDown]);
+  }, [activeTab, isPolling, modals.chat, nodeIndex]);
 
+  useEffect(() => {
+    if (scrollDown === true) {
+      scroller();
+    }
+  }, [scrollDown]);
   /////////////////
   // RENDER
   ///detect if user has reached  top of feed
