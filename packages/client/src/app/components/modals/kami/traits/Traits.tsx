@@ -10,10 +10,10 @@ interface Props {
 }
 const rarityColors: { [index: string]: string } = {
   '0x09': 'grey',
-  '0x08': 'grey',
-  '0x07': 'green',
-  '0x06': 'blue',
-  '0x05': 'purple',
+  '0x08': 'green',
+  '0x07': 'blue',
+  '0x06': 'purple',
+
   '0x04': 'orange',
 };
 export const Traits = (props: Props) => {
