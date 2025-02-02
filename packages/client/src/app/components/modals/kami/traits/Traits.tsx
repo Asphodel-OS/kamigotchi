@@ -8,7 +8,14 @@ import { Trait } from 'network/shapes/Trait';
 interface Props {
   kami: Kami;
 }
-
+const rarityColors: { [index: string]: string } = {
+  '0x09': 'grey',
+  '0x08': 'grey',
+  '0x07': 'green',
+  '0x06': 'blue',
+  '0x05': 'purple',
+  '0x04': 'orange',
+};
 export const Traits = (props: Props) => {
   const statsDetails = new Map(
     Object.entries({
@@ -46,7 +53,7 @@ export const Traits = (props: Props) => {
             const tooltipText = [details?.description ?? ''];
             return (
               <Tooltip key={name} text={tooltipText}>
-                <InfoBox>
+                <InfoBox style={{ backgroundColor: rarityColors[trait.rarity] }}>
                   <InfoIcon src={details?.image} />
                   <InfoNumber>{stat.base}</InfoNumber>
                 </InfoBox>
