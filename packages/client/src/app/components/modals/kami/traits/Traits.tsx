@@ -114,7 +114,7 @@ const InfoBox = styled.div<{ rarity: string }>`
   justify-content: space-between;
 
   &:hover {
-    background-color: #ddd;
+    filter: brightness(120%);
   }
 `;
 
