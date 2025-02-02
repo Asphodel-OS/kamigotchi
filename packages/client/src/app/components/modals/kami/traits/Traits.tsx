@@ -9,12 +9,11 @@ interface Props {
   kami: Kami;
 }
 const rarityColors: { [index: string]: string } = {
-  '0x09': 'grey',
-  '0x08': 'green',
-  '0x07': 'blue',
-  '0x06': 'purple',
-
-  '0x04': 'orange',
+  '0x09': '#c9c7c7',
+  '0x08': '#a1c181',
+  '0x07': '#9cbcd2',
+  '0x06': '#bca0ff',
+  '0x04': '#ffb226',
 };
 export const Traits = (props: Props) => {
   const statsDetails = new Map(
@@ -53,7 +52,7 @@ export const Traits = (props: Props) => {
             const tooltipText = [details?.description ?? ''];
             return (
               <Tooltip key={name} text={tooltipText}>
-                <InfoBox style={{ backgroundColor: rarityColors[trait.rarity] }}>
+                <InfoBox rarity={rarityColors[trait.rarity]}>
                   <InfoIcon src={details?.image} />
                   <InfoNumber>{stat.base}</InfoNumber>
                 </InfoBox>
@@ -103,13 +102,13 @@ const Content = styled.div`
   align-items: center;
 `;
 
-const InfoBox = styled.div`
+const InfoBox = styled.div<{ rarity: string }>`
   border: solid black 0.12vw;
   border-radius: 5px;
   margin: 0.3vw;
   padding: 0.5vw 1vw;
   gap: 0.5vw;
-
+  ${({ rarity }) => `background-color: ${rarity ?? 'white'};`}
   display: flex;
   flex-direction: row nowrap;
   justify-content: space-between;
