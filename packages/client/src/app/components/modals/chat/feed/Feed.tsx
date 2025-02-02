@@ -116,6 +116,7 @@ export const Feed = (props: Props) => {
       console.log(`reached top`);
     }
   };
+
   return (
     <Wrapper ref={feedRef} id='feed' onScroll={handleScroll}>
       <Buttons>
@@ -148,9 +149,10 @@ export const Feed = (props: Props) => {
             kamidenMessages
               ?.toReversed()
               .map(
-                (message) =>
+                (message, index, arr) =>
                   !blocked.includes(getAccountByID(formatEntityID(message.AccountId)).id) && (
                     <Message
+                      previousMessage={index !== 0 ? arr[index - 1].AccountId : ''}
                       player={player}
                       utils={utils}
                       key={(message.Timestamp, message.AccountId)}

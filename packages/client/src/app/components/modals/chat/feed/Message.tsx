@@ -14,6 +14,7 @@ import { ActionSystem } from 'network/systems';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
+  previousMessage: string;
   utils: {
     getAccountByID: (accountid: EntityID) => Account;
   };
@@ -34,7 +35,7 @@ interface Props {
 export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
-  const { actionSystem, api } = props;
+  const { actionSystem, api, previousMessage } = props;
 
   const { player } = props;
   const [yours, setYours] = useState(false);
@@ -114,40 +115,42 @@ export const Message = (props: Props) => {
   return (
     <Container>
       <Content>
-        <Header>
-          {player.id != getAccount().id ? (
-            <>
-              <PfpAuthor id='pfp-author' ref={pfpRef}>
-                <Popover content={optionsMap()} clickMouse={2}>
+        {previousMessage !== message.AccountId && (
+          <Header>
+            {player.id != getAccount().id ? (
+              <>
+                <PfpAuthor id='pfp-author' ref={pfpRef}>
+                  <Popover content={optionsMap()} clickMouse={2}>
+                    <Pfp
+                      author={false}
+                      onClick={() => {
+                        showUser();
+                      }}
+                      src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
+                    />
+                  </Popover>
+
+                  <Author author={false}>{getAccount().name}</Author>
+                </PfpAuthor>
+                <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+              </>
+            ) : (
+              <>
+                <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+                <PfpAuthor>
+                  <Author author={true}>{getAccount().name}</Author>
                   <Pfp
-                    author={false}
+                    author={true}
                     onClick={() => {
                       showUser();
                     }}
                     src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                   />
-                </Popover>
-
-                <Author author={false}>{getAccount().name}</Author>
-              </PfpAuthor>
-              <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
-            </>
-          ) : (
-            <>
-              <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
-              <PfpAuthor>
-                <Author author={true}>{getAccount().name}</Author>
-                <Pfp
-                  author={true}
-                  onClick={() => {
-                    showUser();
-                  }}
-                  src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
-                />
-              </PfpAuthor>
-            </>
-          )}
-        </Header>
+                </PfpAuthor>
+              </>
+            )}
+          </Header>
+        )}
         <Body yours={yours}>{message.Message}</Body>
       </Content>
     </Container>
