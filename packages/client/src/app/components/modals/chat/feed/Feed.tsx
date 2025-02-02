@@ -93,11 +93,9 @@ export const Feed = (props: Props) => {
     }
     var element = document.getElementById('feed');
     if (element) {
-      console.log(`scroll ${element.scrollHeight}`);
       element.scrollTop = element.scrollHeight;
     } // when user has scrolled down to the bottom of feed and keeps writing  the scroll automatically goes to the new bottom
     if (element && element.scrollTop === element.scrollHeight - element.offsetHeight) {
-      console.log('scrolling down');
       element.scrollTop = element.scrollHeight;
     }
     setScrollDown(false);
@@ -108,8 +106,15 @@ export const Feed = (props: Props) => {
 
   /////////////////
   // RENDER
+  ///detect if user has reached  top of feed
+  const handleScroll = (e: any) => {
+    const top = e.target.scrollTop === 0;
+    if (top) {
+      console.log(`reached top`);
+    }
+  };
   return (
-    <Wrapper ref={feedRef} id='feed'>
+    <Wrapper ref={feedRef} id='feed' onScroll={handleScroll}>
       <Buttons>
         <Button
           position={0}
