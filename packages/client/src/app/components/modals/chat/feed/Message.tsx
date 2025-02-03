@@ -102,7 +102,7 @@ export const Message = (props: Props) => {
     return options.map((option, i) => (
       <PopOverButtons>
         <button
-          style={{ padding: `0.4vw`, width: ` 6vw` }}
+          style={{ padding: `0.4vw`, width: ` 100%` }}
           key={`div-${i}`}
           onClick={() => option.onClick()}
         >
