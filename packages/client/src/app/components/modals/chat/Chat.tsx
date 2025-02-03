@@ -84,13 +84,7 @@ export function registerChatModal() {
             <ModalHeader title={`${getRoomByIndex(nodeIndex).name} ChatRoom`} icon={ChatIcon} />
           }
           footer={
-            <InputRow
-              account={account}
-              actions={{ pushCast }}
-              actionSystem={actions}
-              api={api}
-              world={world}
-            />
+            <InputRow actions={{ pushCast }} actionSystem={actions} api={api} world={world} />
           }
           canExit
         >
