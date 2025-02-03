@@ -214,8 +214,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       return stream$
         .pipe(
           timeout({
-            first: 7000, // Wait 5s for first value
-            each: 10000, // Wait 5s between values
+            first: 60000, // Align with cloufront timeout/iddling
+            each: 45000,
             with: () =>
               throwError(() => {
                 console.log('Timeout');
