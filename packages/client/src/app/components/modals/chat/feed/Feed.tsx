@@ -58,13 +58,13 @@ export const Feed = (props: Props) => {
       }
 
       if (player.id === message.AccountId) {
-        setScrollDown(true);
+        setScrollDown(!scrollDown);
       } else {
         var element = document.getElementById('feed');
         if (element) {
           const isBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 1;
           if (isBottom) {
-            setScrollDown(true);
+            setScrollDown(!scrollDown);
           }
         }
       }
@@ -153,10 +153,21 @@ export const Feed = (props: Props) => {
     if (!feedRef.current) return;
     const node = feedRef.current;
     const { clientHeight, scrollHeight } = node;
-
+    console.log('scrollBottom', scrollBottom < 5);
     if (scrollBottom < 5) node.scrollTop = scrollHeight;
     else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
   }, [kamidenMessages.length]);
+  /*    
+    when the player sends a message it scrolls to thebottom   
+  */
+  useEffect(() => {
+    if (!feedRef.current) return;
+    const node = feedRef.current;
+    const { clientHeight, scrollHeight } = node;
+    console.log('scrollBottom', scrollBottom < 5);
+    node.scrollTop = scrollHeight;
+    setScrollDown(false);
+  }, [scrollDown]);
 
   /////////////////
   // RENDER
