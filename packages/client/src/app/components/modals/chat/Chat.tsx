@@ -98,7 +98,6 @@ export function registerChatModal() {
             api={api}
             actionSystem={actions}
             blocked={blocked}
-            nodeIndex={nodeIndex}
             utils={utils}
             player={account}
             actions={{ pushMessages, setMessages }}
