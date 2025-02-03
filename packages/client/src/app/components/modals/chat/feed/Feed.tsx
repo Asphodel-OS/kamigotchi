@@ -39,6 +39,7 @@ export const Feed = (props: Props) => {
   const [isPolling, setIsPolling] = useState(false);
   const [scrollDown, setScrollDown] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
+  const [noMoreMessages, setNoMoreMessages] = useState(false);
   //0 Node
   //1 global
   const [activeTab, setActiveTab] = useState(0);
@@ -106,8 +107,40 @@ export const Feed = (props: Props) => {
       scroller();
     }
   }, [scrollDown]);
+
   /////////////////
-  // RENDER
+  // HELPERS
+  // poll for recent messages. do not update the Feed state/cursor
+  async function poll() {
+    console.log(`in poll function ${Date.now()}`);
+    const response = await client.getRoomMessages({
+      RoomIndex: player.roomIndex,
+      Timestamp: Date.now(),
+    });
+    if (response.Messages.length === 0) {
+      setNoMoreMessages(true);
+      return;
+    } else {
+      setNoMoreMessages(false);
+    }
+    setKamidenMessages(response.Messages.reverse());
+  }
+
+  async function pollMore() {
+    let ts = kamidenMessages[0].Timestamp;
+    console.log(`in pollmore function ${ts}`);
+    const response = await client.getRoomMessages({
+      RoomIndex: player.roomIndex,
+      Timestamp: kamidenMessages[kamidenMessages.length - 1].Timestamp,
+    });
+    if (response.Messages.length === 0) {
+      setNoMoreMessages(true);
+      return;
+    } else {
+      setNoMoreMessages(false);
+    }
+    setKamidenMessages((prev) => [...prev, ...response.Messages.reverse()]);
+  }
   ///detect if user has reached  top of feed
   const handleScroll = (e: any) => {
     const top = e.target.scrollTop === 0;
@@ -116,7 +149,8 @@ export const Feed = (props: Props) => {
       pollMore();
     }
   };
-
+  /////////////////
+  // RENDER
   return (
     <Wrapper ref={feedRef} id='feed' onScroll={handleScroll}>
       <Buttons>
@@ -141,57 +175,45 @@ export const Feed = (props: Props) => {
       </Buttons>
       {activeTab === 0 && (
         <Messages>
-          {isPolling ? (
+          {noMoreMessages === false && kamidenMessages.length !== 0 ? (
             <PollingMessage>Polling chat messages...</PollingMessage>
-          ) : kamidenMessages.length === 0 ? (
-            <PollingMessage>No messages in this room</PollingMessage>
           ) : (
-            kamidenMessages
-              ?.toReversed()
-              .map(
-                (message, index, arr) =>
-                  !blocked.includes(getAccountByID(formatEntityID(message.AccountId)).id) && (
-                    <Message
-                      previousEqual={
-                        index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
-                      }
-                      player={player}
-                      utils={utils}
-                      key={index}
-                      data={{ message }}
-                      api={api}
-                      actionSystem={actionSystem}
-                    />
-                  )
-              )
+            noMoreMessages === true &&
+            kamidenMessages.length !== 0 && (
+              <PollingMessage>No more chat messages...</PollingMessage>
+            )
+          )}
+          {
+            <>
+              <div>
+                {kamidenMessages
+                  ?.toReversed()
+                  .map(
+                    (message, index, arr) =>
+                      !blocked.includes(getAccountByID(formatEntityID(message.AccountId)).id) && (
+                        <Message
+                          previousEqual={
+                            index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
+                          }
+                          player={player}
+                          utils={utils}
+                          key={index}
+                          data={{ message }}
+                          api={api}
+                          actionSystem={actionSystem}
+                        />
+                      )
+                  )}
+              </div>
+            </>
+          }
+          {kamidenMessages.length === 0 && (
+            <PollingMessage>No messages in this room</PollingMessage>
           )}
         </Messages>
       )}
     </Wrapper>
   );
-
-  /////////////////
-  // HELPERS
-
-  // poll for recent messages. do not update the Feed state/cursor
-  async function poll() {
-    console.log(`in poll function ${Date.now()}`);
-    const response = await client.getRoomMessages({
-      RoomIndex: player.roomIndex,
-      Timestamp: Date.now(),
-    });
-    setKamidenMessages(response.Messages.reverse());
-  }
-
-  async function pollMore() {
-    let ts = kamidenMessages[0].Timestamp;
-    console.log(`in pollmore function ${ts}`);
-    const response = await client.getRoomMessages({
-      RoomIndex: player.roomIndex,
-      Timestamp: kamidenMessages[kamidenMessages.length - 1].Timestamp,
-    });
-    setKamidenMessages((prev) => [...prev, ...response.Messages.reverse()]);
-  }
 };
 
 const Wrapper = styled.div`
