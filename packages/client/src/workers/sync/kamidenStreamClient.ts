@@ -12,7 +12,7 @@ let messageCallbacks: ((message: Message) => void)[] = [];
 export function getKamidenClient(): KamidenServiceClient {
   if (!kamidenClient) {
     const channel = createChannel(
-      'http://localhost:80', //'https://kamiden-feed.test.asphodel.io',
+      'https://kamiden-feed.test.asphodel.io',
       grpc.WebsocketTransport()
     );
     kamidenClient = createClient(KamidenServiceDefinition, channel);
