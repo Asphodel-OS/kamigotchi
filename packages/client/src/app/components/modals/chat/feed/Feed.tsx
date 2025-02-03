@@ -113,6 +113,7 @@ export const Feed = (props: Props) => {
     const top = e.target.scrollTop === 0;
     if (top) {
       console.log(`reached top`);
+      pollMore();
     }
   };
 
@@ -174,9 +175,22 @@ export const Feed = (props: Props) => {
 
   // poll for recent messages. do not update the Feed state/cursor
   async function poll() {
-    console.log('in poll function');
-    const response = await client.getRoomMessages({ RoomIndex: player.roomIndex });
+    console.log(`in poll function ${Date.now()}`);
+    const response = await client.getRoomMessages({
+      RoomIndex: player.roomIndex,
+      Timestamp: Date.now(),
+    });
     setKamidenMessages(response.Messages.reverse());
+  }
+
+  async function pollMore() {
+    let ts = kamidenMessages[0].Timestamp;
+    console.log(`in pollmore function ${ts}`);
+    const response = await client.getRoomMessages({
+      RoomIndex: player.roomIndex,
+      Timestamp: kamidenMessages[kamidenMessages.length - 1].Timestamp,
+    });
+    setKamidenMessages((prev) => [...prev, ...response.Messages.reverse()]);
   }
 };
 
