@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
-import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
+import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
+import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
+import { PeriodComponent, ID as PeriodCompID } from "components/PeriodComponent.sol";
+import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { LimitComponent, ID as LimitCompID } from "components/LimitComponent.sol";
-import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
 
 import { LibConditional, Condition } from "libraries/LibConditional.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
@@ -22,9 +23,10 @@ struct Params {
   uint32 itemIndex;
   uint32 payItemIndex; // the payment item accepted by the auction
   uint32 priceTarget; // the target price of the auction
-  int32 limit; // the total left to auction
-  int32 decay; // decay constant of the GDA
-  int32 scale; // scale factor of the GDA
+  int32 period; // reference duration period (in seconds)
+  int32 decay; // price decay per period
+  int32 rate; // number of purchases per period to counteract decay
+  int32 max; // total quantity auctioned
 }
 
 /// @notice LibAuction is for the handling of dedicated item auctions in game.
@@ -43,6 +45,8 @@ struct Params {
 ///  - (Requirement)[]
 
 library LibAuctionRegistry {
+  using SafeCastLib for int32;
+
   // create a global item auction
   function create(IUintComp comps, Params memory params) internal returns (uint256) {
     uint256 id = genID(params.itemIndex);
@@ -50,10 +54,10 @@ library LibAuctionRegistry {
     IndexComponent(getAddrByID(comps, IndexCompID)).set(id, params.itemIndex);
     IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, params.payItemIndex);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, params.priceTarget);
-    LimitComponent(getAddrByID(comps, LimitCompID)).set(id, params.limit);
-    ScaleComponent(getAddrByID(comps, ScaleCompID)).set(id, params.scale);
+    MaxComponent(getAddrByID(comps, MaxCompID)).set(id, params.max.toUint256());
+    PeriodComponent(getAddrByID(comps, PeriodCompID)).set(id, params.period);
     DecayComponent(getAddrByID(comps, DecayCompID)).set(id, params.decay);
-    TimeResetComponent(getAddrByID(comps, TimeResetCompID)).set(id, block.timestamp);
+    RateComponent(getAddrByID(comps, RateCompID)).set(id, params.rate.toUint256());
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
     return id;
@@ -67,25 +71,15 @@ library LibAuctionRegistry {
     IndexComponent(getAddrByID(comps, IndexCompID)).remove(id);
     IndexItemComponent(getAddrByID(comps, IndexItemCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
-    LimitComponent(getAddrByID(comps, LimitCompID)).remove(id);
-    ScaleComponent(getAddrByID(comps, ScaleCompID)).remove(id);
+    MaxComponent(getAddrByID(comps, MaxCompID)).remove(id);
+    PeriodComponent(getAddrByID(comps, PeriodCompID)).remove(id);
     DecayComponent(getAddrByID(comps, DecayCompID)).remove(id);
-    TimeResetComponent(getAddrByID(comps, TimeResetCompID)).remove(id);
+    RateComponent(getAddrByID(comps, RateCompID)).remove(id);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).remove(id);
 
     uint256[] memory reqs = getReqsByIndex(comps, index);
     for (uint256 i; i < reqs.length; i++) LibConditional.remove(comps, reqs[i]);
-  }
-
-  // reset the auction to an updated value (resets time and balance tracking)
-  function reset(IUintComp comps, uint256 id, uint256 priceTarget) internal {
-    int32 limit = LimitComponent(getAddrByID(comps, LimitCompID)).get(id);
-    int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
-    LimitComponent(getAddrByID(comps, LimitCompID)).set(id, limit - balance);
-    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
-    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, priceTarget);
-    TimeResetComponent(getAddrByID(comps, TimeResetCompID)).set(id, block.timestamp);
   }
 
   // create a requirement for the auction

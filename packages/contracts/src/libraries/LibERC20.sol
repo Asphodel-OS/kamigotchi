@@ -4,7 +4,6 @@ pragma solidity >=0.8.28;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
-
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 import { TokenAddressComponent, ID as TokenAddressCompID } from "components/TokenAddressComponent.sol";

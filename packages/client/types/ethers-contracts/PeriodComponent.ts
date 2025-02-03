@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface LimitComponentInterface extends utils.Interface {
+export interface PeriodComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
@@ -404,12 +404,12 @@ export type UnauthorizedWriterEvent = TypedEvent<
 export type UnauthorizedWriterEventFilter =
   TypedEventFilter<UnauthorizedWriterEvent>;
 
-export interface LimitComponent extends BaseContract {
+export interface PeriodComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: LimitComponentInterface;
+  interface: PeriodComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

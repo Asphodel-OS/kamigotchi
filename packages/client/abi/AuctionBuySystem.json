@@ -67,9 +67,14 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "to",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "amt",
+          "type": "uint32",
+          "internalType": "uint32"
         }
       ],
       "outputs": [
@@ -217,7 +222,7 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(uint32,uint32)": "276aaa75",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",

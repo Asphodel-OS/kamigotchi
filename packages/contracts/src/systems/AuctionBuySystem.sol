@@ -15,7 +15,7 @@ contract AuctionBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint32 itemIndex, int32 amt) = abi.decode(arguments, (uint32, int32));
+    (uint32 itemIndex, uint32 amt) = abi.decode(arguments, (uint32, uint32));
     require(amt > 0, "AuctionBuy: purchase amount must be positive");
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
@@ -29,18 +29,10 @@ contract AuctionBuySystem is System {
     // bytes buyLog = abi.encode(itemIndex, accIndex, amt, cost, block.timestamp);
     // LibAuction.logBuy(world, ID, buyLog);
 
-    // check whether we should reset the curve (to avoid future overflows)
-    if (LibAuction.shouldReset(components, id)) {
-      uint256 targetPrice = LibAuction.calcBuy(components, id, 1);
-      LibAuctionRegistry.reset(components, id, targetPrice);
-      // bytes resetLog = abi.encode(itemIndex, accIndex, targetPrice, block.timestamp);
-      // LibAuction.logReset(world, ID, resetLog);
-    }
     return "";
   }
 
-  function executeTyped(uint256 to) public returns (bytes memory) {
-    require(false, "GachaAuctionSystem: not implemented");
-    return execute(abi.encode(to));
+  function executeTyped(uint32 itemIndex, uint32 amt) public returns (bytes memory) {
+    return execute(abi.encode(itemIndex, amt));
   }
 }

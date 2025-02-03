@@ -94,7 +94,7 @@
           "internalType": "uint32"
         },
         {
-          "name": "limit",
+          "name": "period",
           "type": "int32",
           "internalType": "int32"
         },
@@ -104,7 +104,12 @@
           "internalType": "int32"
         },
         {
-          "name": "scale",
+          "name": "rate",
+          "type": "int32",
+          "internalType": "int32"
+        },
+        {
+          "name": "limit",
           "type": "int32",
           "internalType": "int32"
         }
@@ -205,24 +210,6 @@
     },
     {
       "type": "function",
-      "name": "reset",
-      "inputs": [
-        {
-          "name": "itemIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "priceTarget",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -310,7 +297,7 @@
     "addRequirement(uint32,string,string,uint32,uint256,string)": "1576edcb",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
-    "create(uint32,uint32,uint32,int32,int32,int32)": "7611f273",
+    "create(uint32,uint32,uint32,int32,int32,int32,int32)": "4f31d1bc",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
@@ -318,7 +305,6 @@
     "remove(uint32)": "00d84fd8",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "reset(uint32,uint256)": "8a6c37b0",
     "transferOwnership(address)": "f2fde38b"
   }
 }

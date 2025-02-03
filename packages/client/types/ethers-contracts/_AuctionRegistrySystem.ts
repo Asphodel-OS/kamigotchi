@@ -33,7 +33,7 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
     "addRequirement(uint32,string,string,uint32,uint256,string)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
-    "create(uint32,uint32,uint32,int32,int32,int32)": FunctionFragment;
+    "create(uint32,uint32,uint32,int32,int32,int32,int32)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -41,7 +41,6 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
     "remove(uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "reset(uint32,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -58,7 +57,6 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
       | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "reset"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -89,6 +87,7 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -113,10 +112,6 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "requestOwnershipHandover",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "reset",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -152,7 +147,6 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
     functionFragment: "requestOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "reset", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -261,9 +255,10 @@ export interface _AuctionRegistrySystem extends BaseContract {
       itemIndex: PromiseOrValue<BigNumberish>,
       payItemIndex: PromiseOrValue<BigNumberish>,
       priceTarget: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      limit: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -296,12 +291,6 @@ export interface _AuctionRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    reset(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      priceTarget: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -331,9 +320,10 @@ export interface _AuctionRegistrySystem extends BaseContract {
     itemIndex: PromiseOrValue<BigNumberish>,
     payItemIndex: PromiseOrValue<BigNumberish>,
     priceTarget: PromiseOrValue<BigNumberish>,
-    limit: PromiseOrValue<BigNumberish>,
+    period: PromiseOrValue<BigNumberish>,
     decay: PromiseOrValue<BigNumberish>,
-    scale: PromiseOrValue<BigNumberish>,
+    rate: PromiseOrValue<BigNumberish>,
+    limit: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -366,12 +356,6 @@ export interface _AuctionRegistrySystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  reset(
-    itemIndex: PromiseOrValue<BigNumberish>,
-    priceTarget: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -399,9 +383,10 @@ export interface _AuctionRegistrySystem extends BaseContract {
       itemIndex: PromiseOrValue<BigNumberish>,
       payItemIndex: PromiseOrValue<BigNumberish>,
       priceTarget: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      limit: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -427,12 +412,6 @@ export interface _AuctionRegistrySystem extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    reset(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      priceTarget: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -492,9 +471,10 @@ export interface _AuctionRegistrySystem extends BaseContract {
       itemIndex: PromiseOrValue<BigNumberish>,
       payItemIndex: PromiseOrValue<BigNumberish>,
       priceTarget: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      limit: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -527,12 +507,6 @@ export interface _AuctionRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    reset(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      priceTarget: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -563,9 +537,10 @@ export interface _AuctionRegistrySystem extends BaseContract {
       itemIndex: PromiseOrValue<BigNumberish>,
       payItemIndex: PromiseOrValue<BigNumberish>,
       priceTarget: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      limit: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -596,12 +571,6 @@ export interface _AuctionRegistrySystem extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    reset(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      priceTarget: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

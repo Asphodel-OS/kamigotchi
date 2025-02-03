@@ -16,32 +16,27 @@ contract _AuctionRegistrySystem is System {
 
   function create(
     uint32 itemIndex, // index of the item being auctioned
-    uint32 payItemIndex,
-    uint32 priceTarget,
-    int32 limit,
-    int32 decay,
-    int32 scale
+    uint32 payItemIndex, // index of the item used to pay for auction
+    uint32 priceTarget, // initial price target of the item being auctioned
+    int32 period, // reference duration period (in seconds)
+    int32 decay, // price decay per period (1e6)
+    int32 rate, // number of purchases per period to counteract decay
+    int32 limit // total quantity to be auctioned
   ) public onlyOwner returns (uint256) {
     require(priceTarget > 0, "price target must be positive");
+    require(period > 0, "period must be positive");
+    require(decay > 0 && decay < 1e6, "decay must be between 0 and 1");
+    require(rate > 0, "rate must be positive");
     require(limit > 0, "limit must be positive");
-    require(scale > 1e9, "scale must be positive");
-    require(decay > 0, "decay must be positive");
     require(LibItem.getByIndex(components, itemIndex) != 0, "AuctionRegistry: item does not exist");
     require(
       LibItem.getByIndex(components, payItemIndex) != 0,
       "AuctionRegistry: pay item does not exist"
     );
 
-    Params memory params = Params(itemIndex, payItemIndex, priceTarget, limit, decay, scale);
+    Params memory params = Params(itemIndex, payItemIndex, priceTarget, period, decay, rate, limit);
     uint256 id = LibAuctionRegistry.create(components, params);
     return id;
-  }
-
-  // manually reset the auction to a new value (resets time and balance tracking)
-  function reset(uint32 itemIndex, uint256 priceTarget) public onlyOwner {
-    uint256 id = LibAuctionRegistry.get(components, itemIndex);
-    require(id != 0, "AuctionRegistry: auction does not exist");
-    LibAuctionRegistry.reset(components, id, priceTarget);
   }
 
   // remove an auction
