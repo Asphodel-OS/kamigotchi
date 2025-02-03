@@ -11,7 +11,6 @@ import { getKamidenClient, subscribeToMessages } from 'workers/sync/kamidenStrea
 import { Message } from './Message';
 
 interface Props {
-  nodeIndex: number;
   utils: {
     getAccountByID: (accountid: EntityID) => Account;
   };
@@ -33,7 +32,7 @@ interface Props {
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { nodeIndex, utils, player, blocked, actionSystem, api } = props;
+  const { utils, player, blocked, actionSystem, api } = props;
   const { getAccountByID } = props.utils;
   const { modals } = useVisibility();
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
@@ -49,10 +48,10 @@ export const Feed = (props: Props) => {
 
   // Add subscription effect
   useEffect(() => {
-    console.log('[kamiden] registering message callback for room', nodeIndex);
+    console.log('[kamiden] registering message callback for room', player.roomIndex);
 
     const unsubscribe = subscribeToMessages((message) => {
-      if (message.RoomIndex === nodeIndex) {
+      if (message.RoomIndex === player.roomIndex) {
         setKamidenMessages((prev) => [message, ...prev]);
       }
 
@@ -70,10 +69,10 @@ export const Feed = (props: Props) => {
     });
 
     return () => {
-      console.log('[kamiden] cleaning up message callback for room', nodeIndex);
+      console.log('[kamiden] cleaning up message callback for room', player.roomIndex);
       unsubscribe();
     };
-  }, [nodeIndex]);
+  }, [player.roomIndex]);
 
   // Initial message poll effect (keep existing one)
   useEffect(() => {
@@ -83,7 +82,7 @@ export const Feed = (props: Props) => {
     poll().finally(() => {
       setIsPolling(false);
     });
-  }, [nodeIndex]);
+  }, [player.roomIndex]);
 
   /////////////////
   // SCROLLER
@@ -100,7 +99,7 @@ export const Feed = (props: Props) => {
 
   useEffect(() => {
     scroller();
-  }, [activeTab, isPolling, modals.chat, nodeIndex]);
+  }, [activeTab, isPolling, modals.chat, player.roomIndex]);
 
   useEffect(() => {
     if (scrollDown === true) {
@@ -157,7 +156,7 @@ export const Feed = (props: Props) => {
                       }
                       player={player}
                       utils={utils}
-                      key={(message.Timestamp, message.AccountId)}
+                      key={message.Timestamp}
                       data={{ message }}
                       api={api}
                       actionSystem={actionSystem}
@@ -176,7 +175,7 @@ export const Feed = (props: Props) => {
   // poll for recent messages. do not update the Feed state/cursor
   async function poll() {
     console.log('in poll function');
-    const response = await client.getRoomMessages({ RoomIndex: nodeIndex });
+    const response = await client.getRoomMessages({ RoomIndex: player.roomIndex });
     setKamidenMessages(response.Messages.reverse());
   }
 };
