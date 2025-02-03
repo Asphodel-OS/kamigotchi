@@ -21,6 +21,8 @@ export interface Message {
 
 export interface RoomRequest {
   RoomIndex: number;
+  Timestamp: number;
+  Size?: number | undefined;
 }
 
 export interface RoomResponse {
@@ -116,13 +118,19 @@ export const Message: MessageFns<Message> = {
 };
 
 function createBaseRoomRequest(): RoomRequest {
-  return { RoomIndex: 0 };
+  return { RoomIndex: 0, Timestamp: 0, Size: undefined };
 }
 
 export const RoomRequest: MessageFns<RoomRequest> = {
   encode(message: RoomRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(16).uint64(message.Timestamp);
+    }
+    if (message.Size !== undefined) {
+      writer.uint32(24).uint32(message.Size);
     }
     return writer;
   },
@@ -142,6 +150,22 @@ export const RoomRequest: MessageFns<RoomRequest> = {
           message.RoomIndex = reader.uint32();
           continue;
         }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Size = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -157,6 +181,8 @@ export const RoomRequest: MessageFns<RoomRequest> = {
   fromPartial(object: DeepPartial<RoomRequest>): RoomRequest {
     const message = createBaseRoomRequest();
     message.RoomIndex = object.RoomIndex ?? 0;
+    message.Timestamp = object.Timestamp ?? 0;
+    message.Size = object.Size ?? undefined;
     return message;
   },
 };
