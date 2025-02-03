@@ -109,7 +109,7 @@
           "internalType": "int32"
         },
         {
-          "name": "limit",
+          "name": "max",
           "type": "int32",
           "internalType": "int32"
         }

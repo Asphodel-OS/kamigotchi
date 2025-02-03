@@ -258,7 +258,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -323,7 +323,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
     period: PromiseOrValue<BigNumberish>,
     decay: PromiseOrValue<BigNumberish>,
     rate: PromiseOrValue<BigNumberish>,
-    limit: PromiseOrValue<BigNumberish>,
+    max: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -386,7 +386,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -474,7 +474,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -540,7 +540,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
-      limit: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

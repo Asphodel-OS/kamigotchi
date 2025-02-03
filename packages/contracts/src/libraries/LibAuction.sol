@@ -70,9 +70,9 @@ library LibAuction {
 
   // check whether a purchase amount would exceed the balance remaining in the auction
   function exceedsLimit(IUintComp comps, uint256 id, uint32 amt) internal view returns (bool) {
-    uint256 limit = MaxComponent(getAddrByID(comps, MaxCompID)).get(id);
+    uint256 max = MaxComponent(getAddrByID(comps, MaxCompID)).get(id);
     uint256 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id).toUint256();
-    return balance + uint256(amt) > limit;
+    return balance + uint256(amt) > max;
   }
 
   // check whether the account meets the requirements to participate in an auction

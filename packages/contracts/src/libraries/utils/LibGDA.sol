@@ -56,16 +56,16 @@ library LibGDA {
 
   /// @notice calculate the perpetual discrete GDA for a set of inputs
   function calcPerpetual(Params2 memory params) public view returns (int256) {
+    SD59x18 pTarget = params.targetPrice.rawToSD();
     SD59x18 qInitial = params.prevSold.rawToSD();
     SD59x18 qDelta = params.quantity.rawToSD();
-    SD59x18 pTarget = params.targetPrice.rawToSD();
-    SD59x18 tDelta = (block.timestamp - params.startTs).rawToSD();
     SD59x18 period = params.period.rawToSD();
-    SD59x18 rate = params.rate.rawToSD();
+    SD59x18 tDelta = (block.timestamp - params.startTs).rawToSD().div(period);
     SD59x18 decay = params.decay.wadToSD();
+    SD59x18 rate = params.rate.rawToSD();
     SD59x18 one = int256(1).rawToSD();
 
-    SD59x18 num1 = decay.pow(tDelta.div(period).sub(qInitial.div(rate))).mul(pTarget); // p0 * a^(t - n/r)
+    SD59x18 num1 = decay.pow(tDelta.sub(qInitial.div(rate))).mul(pTarget); // p0 * a^(t - n/r)
     SD59x18 num2 = decay.inv().pow(qDelta.div(rate)).sub(one); // a^(-q/r) - 1
     SD59x18 den1 = decay.inv().sub(one); // a^(-1) - 1
 
