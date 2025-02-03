@@ -2,13 +2,19 @@ import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { getAccount } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
-import { getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
+import {
+  Account,
+  getAccountByID,
+  NullAccount,
+  queryAccountFromEmbedded,
+} from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
@@ -30,11 +36,17 @@ export function registerChatModal() {
       const { network } = layers;
       return interval(3333).pipe(
         map(() => {
-          const account = getAccountFromEmbedded(network, { friends: true });
+          const accountEntity = queryAccountFromEmbedded(network);
+          const accountOptions = {
+            friends: 60,
+          };
+
           const { world, components } = network;
           return {
-            data: { account, world, components },
+            data: { accountEntity, world, components },
             utils: {
+              getAccount: (entity: EntityIndex) =>
+                getAccount(world, components, entity, accountOptions),
               getAccountByID: (accountid: EntityID) => getAccountByID(world, components, accountid),
               getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
             },
@@ -45,26 +57,35 @@ export function registerChatModal() {
       );
     },
     ({ data, network, utils, world }) => {
-      const { account } = data;
+      const { accountEntity } = data;
       const { actions, api } = network;
-      const { getRoomByIndex } = utils;
+      const { getRoomByIndex, getAccount } = utils;
       const { modals } = useVisibility();
       const { nodeIndex } = useSelected.getState();
 
       const [messages, setMessages] = useState<KamiMessage[]>([]);
       const [blocked, setBlocked] = useState<EntityID[]>([]);
       const BlockedList: EntityID[] = [];
+      const [account, setAccount] = useState<Account>(NullAccount);
+
+      // update data of the selected account when account index or data changes
+      useEffect(() => {
+        if (!modals.chat) return;
+        // const accountEntity = queryAccountByIndex(components, accountIndex);
+        const account = getAccount(accountEntity ?? (0 as EntityIndex));
+        setAccount(account);
+      }, [accountEntity, modals.chat]);
 
       useEffect(() => {
-        if (data.account.friends?.blocked) {
-          data.account.friends?.blocked.forEach((blockedFren) => {
+        if (account.friends?.blocked) {
+          account.friends?.blocked.forEach((blockedFren) => {
             BlockedList.push(blockedFren.target.id);
           });
           setBlocked(BlockedList);
         } else {
           setBlocked([]);
         }
-      }, [data.account.friends?.blocked]);
+      }, [account.friends?.blocked]);
 
       useEffect(() => {
         console.log('Chat visibility changed:', modals.chat);
