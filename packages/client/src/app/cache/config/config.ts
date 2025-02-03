@@ -1,9 +1,14 @@
 import { World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
-import { getConfigFieldValue, getConfigFieldValueArray } from 'network/shapes/Config';
+import {
+  getConfigFieldValue,
+  getConfigFieldValueAddress,
+  getConfigFieldValueArray,
+} from 'network/shapes/Config';
 
 export const ValueCache = new Map<string, number>();
+export const AddressCache = new Map<string, string>();
 export const ArrayCache = new Map<string, number[]>();
 export const UpdateTs = new Map<string, number>(); // last update ts of config field
 
@@ -16,6 +21,17 @@ export const processValue = (world: World, components: Components, field: string
   const value = getConfigFieldValue(world, components, field);
   ValueCache.set(field, value);
   return value;
+};
+
+export const getAddress = (world: World, components: Components, field: string): string => {
+  if (!AddressCache.has(field)) processAddress(world, components, field);
+  return AddressCache.get(field)!;
+};
+
+export const processAddress = (world: World, components: Components, field: string): string => {
+  const address = getConfigFieldValueAddress(world, components, field);
+  if (address != '0x000000000000000000000000000000000000dEaD') AddressCache.set(field, address);
+  return address;
 };
 
 // get an array type of config field
