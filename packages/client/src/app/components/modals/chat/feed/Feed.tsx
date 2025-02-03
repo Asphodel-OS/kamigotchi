@@ -157,7 +157,7 @@ export const Feed = (props: Props) => {
                       }
                       player={player}
                       utils={utils}
-                      key={message.Timestamp}
+                      key={index}
                       data={{ message }}
                       api={api}
                       actionSystem={actionSystem}
