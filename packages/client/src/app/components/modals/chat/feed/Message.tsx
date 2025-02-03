@@ -14,7 +14,7 @@ import { ActionSystem } from 'network/systems';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
-  previousMessage: string;
+  previousEqual: boolean;
   utils: {
     getAccountByID: (accountid: EntityID) => Account;
   };
@@ -35,7 +35,7 @@ interface Props {
 export const Message = (props: Props) => {
   const { message } = props.data;
   const { getAccountByID } = props.utils;
-  const { actionSystem, api, previousMessage } = props;
+  const { actionSystem, api, previousEqual } = props;
 
   const { player } = props;
   const [yours, setYours] = useState(false);
@@ -115,7 +115,7 @@ export const Message = (props: Props) => {
   return (
     <Container>
       <Content>
-        {previousMessage !== message.AccountId && (
+        {previousEqual === false && (
           <Header>
             {player.id != getAccount().id ? (
               <>
@@ -151,7 +151,9 @@ export const Message = (props: Props) => {
             )}
           </Header>
         )}
-        <Body yours={yours}>{message.Message}</Body>
+        <Body previousEqual={previousEqual} yours={yours}>
+          {message.Message}
+        </Body>
       </Content>
     </Container>
   );
@@ -240,7 +242,7 @@ const PopOverButtons = styled.div`
   align-items: flex-start;
 `;
 
-const Body = styled.div<{ yours: boolean }>`
+const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   z-index: 0;
   color: black;
   width: 100%;
@@ -258,8 +260,9 @@ const Body = styled.div<{ yours: boolean }>`
   background-color: #eee;
   position: relative;
 
-  ${({ yours }) =>
-    yours
+  ${({ yours, previousEqual }) =>
+    previousEqual === false &&
+    (yours
       ? `
   ::before {
     z-index: -1;
@@ -282,5 +285,5 @@ const Body = styled.div<{ yours: boolean }>`
     background: rgb(238, 238, 238);
     border-top-right-radius: 80%;
     right: 4%;
-  } `}
+  } `)}
 `;
