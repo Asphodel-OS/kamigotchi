@@ -43,6 +43,7 @@ export const Feed = (props: Props) => {
   //0 Node
   //1 global
   const [activeTab, setActiveTab] = useState(0);
+  const [scrollBottom, setScrollBottom] = useState(0);
 
   /////////////////
   // SUBSCRIPTION
@@ -80,39 +81,16 @@ export const Feed = (props: Props) => {
     console.log('useEffect []');
     setKamidenMessages([]);
     setIsPolling(true);
-    poll().finally(() => {
+    pollM().finally(() => {
       setIsPolling(false);
     });
   }, [player.roomIndex]);
 
   /////////////////
-  // SCROLLER
-  const scroller = () => {
-    var element = document.getElementById('feed');
-    if (element) {
-      element.scrollTop = element.scrollHeight;
-    } // when user has scrolled down to the bottom of feed and keeps writing  the scroll automatically goes to the new bottom
-    if (element && element.scrollTop === element.scrollHeight - element.offsetHeight) {
-      element.scrollTop = element.scrollHeight;
-    }
-    setScrollDown(false);
-  };
-
-  useEffect(() => {
-    scroller();
-  }, [activeTab, isPolling, modals.chat, player.roomIndex]);
-
-  useEffect(() => {
-    if (scrollDown === true) {
-      scroller();
-    }
-  }, [scrollDown]);
-
-  /////////////////
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
-  async function poll() {
-    console.log(`in poll function ${Date.now()}`);
+  async function pollM() {
+    console.log(`in poll function ${Date.now()} roomindex ${player.roomIndex}`);
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
@@ -126,33 +104,64 @@ export const Feed = (props: Props) => {
     setKamidenMessages(response.Messages.reverse());
   }
 
-  async function pollMore() {
+  async function pollNew() {
+    setIsPolling(true);
     let ts = kamidenMessages[0].Timestamp;
-    console.log(`in pollmore function ${ts}`);
+    console.log(`in pollNew function ${ts}`);
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: kamidenMessages[kamidenMessages.length - 1].Timestamp,
     });
     if (response.Messages.length === 0) {
       setNoMoreMessages(true);
+      setIsPolling(false);
       return;
     } else {
       setNoMoreMessages(false);
     }
     setKamidenMessages((prev) => [...prev, ...response.Messages.reverse()]);
+    setIsPolling(false);
   }
-  ///detect if user has reached  top of feed
-  const handleScroll = (e: any) => {
-    const top = e.target.scrollTop === 0;
-    if (top) {
-      console.log(`reached top`);
-      pollMore();
-    }
-  };
+
+  // scrolling effects
+  // when scrolling, autopoll when nearing the top and set the scroll position
+  // as distance from the bottom to ensure feed visualization stays consistent
+  useEffect(() => {
+    if (!feedRef.current) return;
+    const node = feedRef.current;
+    const handleScroll = async () => {
+      console.log('handleScroll');
+      const isNearTop = node.scrollTop < 20;
+      //  if (!isPolling && isNearTop && feed?.next.cursor) await pollNew();
+      if (!isPolling && isNearTop) {
+        setIsPolling(true);
+        await pollNew();
+      }
+      const { scrollTop, scrollHeight, clientHeight } = node;
+      const scrollBottom = scrollHeight - scrollTop - clientHeight;
+      setScrollBottom(scrollBottom);
+    };
+
+    node.addEventListener('scroll', handleScroll);
+    return () => node.removeEventListener('scroll', handleScroll);
+    // [feed?.next.cursor, isPolling, casts]
+  }, [isPolling, kamidenMessages]);
+
+  // As new casts come in, set scroll position to bottom
+  // if already there. Otherwise hold the line.
+  useEffect(() => {
+    if (!feedRef.current) return;
+    const node = feedRef.current;
+    const { clientHeight, scrollHeight } = node;
+
+    if (scrollBottom < 5) node.scrollTop = scrollHeight;
+    else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
+  }, [kamidenMessages.length]);
+
   /////////////////
   // RENDER
   return (
-    <Wrapper ref={feedRef} id='feed' onScroll={handleScroll}>
+    <Wrapper ref={feedRef} id='feed'>
       <Buttons>
         <Button
           position={0}
