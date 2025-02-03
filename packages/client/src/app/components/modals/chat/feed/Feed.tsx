@@ -152,7 +152,9 @@ export const Feed = (props: Props) => {
                 (message, index, arr) =>
                   !blocked.includes(getAccountByID(formatEntityID(message.AccountId)).id) && (
                     <Message
-                      previousMessage={index !== 0 ? arr[index - 1].AccountId : ''}
+                      previousEqual={
+                        index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
+                      }
                       player={player}
                       utils={utils}
                       key={(message.Timestamp, message.AccountId)}
