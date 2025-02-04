@@ -156,7 +156,7 @@ export const Feed = (props: Props) => {
     const { clientHeight, scrollHeight } = node;
     console.log('scrollBottom', scrollBottom < 5);
     if (scrollBottom < 5) node.scrollTop = scrollHeight;
-    else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
+    // else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
   }, [kamidenMessages.length]);
   /*    
     when the player sends a message it scrolls to thebottom   
