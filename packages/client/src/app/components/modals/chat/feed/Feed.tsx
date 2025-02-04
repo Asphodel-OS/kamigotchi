@@ -45,14 +45,12 @@ export const Feed = (props: Props) => {
   //1 global
   const [activeTab, setActiveTab] = useState(0);
   const [scrollBottom, setScrollBottom] = useState(0);
-  const [onTop, setOnTop] = useState(false);
+
   /////////////////
   // SUBSCRIPTION
 
   // Add subscription effect
   useEffect(() => {
-    console.log('[kamiden] registering message callback for room', player.roomIndex);
-
     const unsubscribe = subscribeToMessages((message) => {
       if (message.RoomIndex === player.roomIndex) {
         setKamidenMessages((prev) => [message, ...prev]);
@@ -72,14 +70,12 @@ export const Feed = (props: Props) => {
     });
 
     return () => {
-      console.log('[kamiden] cleaning up message callback for room', player.roomIndex);
       unsubscribe();
     };
   }, [player.roomIndex]);
 
   // Initial message poll effect (keep existing one)
   useEffect(() => {
-    console.log('useEffect []');
     setKamidenMessages([]);
     setIsPolling(true);
     pollM().finally(() => {
@@ -91,7 +87,6 @@ export const Feed = (props: Props) => {
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
   async function pollM() {
-    console.log(`in poll function ${Date.now()} roomindex ${player.roomIndex}`);
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
@@ -108,7 +103,6 @@ export const Feed = (props: Props) => {
   async function pollNew() {
     setIsPolling(true);
     let ts = kamidenMessages[0].Timestamp;
-    console.log(`in pollNew function ${ts}`);
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: kamidenMessages[kamidenMessages.length - 1].Timestamp,
@@ -131,7 +125,6 @@ export const Feed = (props: Props) => {
     if (!feedRef.current) return;
     const node = feedRef.current;
     const handleScroll = async () => {
-      console.log('handleScroll');
       const isNearTop = node.scrollTop < 20;
       //  if (!isPolling && isNearTop && feed?.next.cursor) await pollNew();
       if (!isPolling && isNearTop) {
@@ -154,7 +147,7 @@ export const Feed = (props: Props) => {
     if (!feedRef.current) return;
     const node = feedRef.current;
     const { clientHeight, scrollHeight } = node;
-    console.log('scrollBottom', scrollBottom < 5);
+
     if (scrollBottom < 5) node.scrollTop = scrollHeight;
     else if (node.scrollTop === 0) {
       node.scrollTop = scrollHeight - scrollBottom - clientHeight;
@@ -167,7 +160,7 @@ export const Feed = (props: Props) => {
     if (!feedRef.current) return;
     const node = feedRef.current;
     const { clientHeight, scrollHeight } = node;
-    console.log('scrollBottom', scrollBottom < 5);
+
     node.scrollTop = scrollHeight;
     setScrollDown(false);
   }, [scrollDown, player.roomIndex, activeTab, modals.chat]);
