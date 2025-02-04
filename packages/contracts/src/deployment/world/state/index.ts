@@ -1,4 +1,5 @@
 import { AdminAPI } from '../api';
+import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
 import { initConfigs, initLocalConfigs } from './configs';
@@ -25,6 +26,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initItems(api);
   await initNpcs(api);
   await initListings(api);
+  await initAuctions(api);
   await initQuests(api);
   await initSkills(api);
   await initTraits(api);

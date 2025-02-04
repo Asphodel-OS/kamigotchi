@@ -15,12 +15,14 @@ export async function initAuctions(api: AdminAPI, indices?: number[]) {
     const payItemIndex = Number(row['Pay Index']);
     const priceTarget = Number(row['Value']);
     const period = Number(row['Period']);
-    const decay = Number(row['Decay']);
+    const decay = Math.round(Number(row['Decay']) * 1e6);
     const rate = Number(row['Rate']);
     const max = Number(row['Supply']);
 
+    const saleItemName = String(row['Sale Item']);
+    const payItemName = String(row['Pay Item']);
     await createAuction(api, itemIndex, payItemIndex, priceTarget, period, decay, rate, max);
-    console.log(`created auction for item ${itemIndex} for item ${payItemIndex} with ${max} units`);
+    console.log(`created auction: ${saleItemName} for ${payItemName} with ${max} units`);
   }
 }
 

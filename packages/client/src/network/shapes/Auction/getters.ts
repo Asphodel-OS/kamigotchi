@@ -4,6 +4,12 @@ import { NullAuction } from './constants';
 import { query } from './queries';
 import { Auction, get } from './types';
 
+// get all auctions
+export const getAll = (world: World, components: Components): Auction[] => {
+  const results = query(components);
+  return results.map((entity) => get(world, components, entity));
+};
+
 // get an auction by the item index of the item it's auctioning
 export const getByIndex = (world: World, components: Components, index: number): Auction => {
   const results = query(components, { outputItem: index });

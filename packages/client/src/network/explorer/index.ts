@@ -3,6 +3,7 @@ import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud
 import { Components } from 'network/';
 import { accounts } from './accounts';
 import { addresses } from './addresses';
+import { auctions } from './auctions';
 import { configs } from './configs';
 import { data } from './data';
 import { factions } from './factions';
@@ -45,6 +46,7 @@ export const initExplorer = (world: World, components: Components) => {
   return {
     accounts: accounts(world, components),
     addresses: addresses(world, components),
+    auctions: auctions(world, components),
     configs: configs(world, components),
     data: data(world, components),
     factions: factions(world, components),
