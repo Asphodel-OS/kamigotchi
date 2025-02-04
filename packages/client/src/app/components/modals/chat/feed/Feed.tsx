@@ -168,7 +168,7 @@ export const Feed = (props: Props) => {
     console.log('scrollBottom', scrollBottom < 5);
     node.scrollTop = scrollHeight;
     setScrollDown(false);
-  }, [scrollDown, player.roomIndex, activeTab]);
+  }, [scrollDown, player.roomIndex, activeTab, modals.chat]);
 
   /////////////////
   // RENDER
