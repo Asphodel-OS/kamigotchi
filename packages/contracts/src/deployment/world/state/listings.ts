@@ -19,7 +19,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     // Initial creation
     const npcIndex = Number(row['NPC Index']);
     const targetValue = Number(row['Value']);
-    await api.listing.create(npcIndex, itemIndex, targetValue);
+    await createListing(api, npcIndex, itemIndex, targetValue);
     console.log(`created listing for npc ${npcIndex} of item ${itemIndex}`);
 
     // Set Buy Pricing

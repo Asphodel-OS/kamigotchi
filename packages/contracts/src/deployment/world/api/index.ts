@@ -1,6 +1,8 @@
 import { BigNumberish } from 'ethers';
+
 import { createCall, toUint32FixedArrayLiteral } from '../../commands/utils/systemCaller';
 import { SystemAbis } from '../mappings/SystemAbis';
+import { auctionAPI } from './auctions';
 import { listingAPI } from './listings';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
@@ -817,15 +819,16 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   return {
     gen: genCall,
+    admin: {
+      give: adminGive,
+    },
     auth: {
       roles: {
         add: addRole,
         remove: removeRole,
       },
     },
-    admin: {
-      give: adminGive,
-    },
+    auction: auctionAPI(genCall),
     config: {
       set: {
         address: setConfigAddress,

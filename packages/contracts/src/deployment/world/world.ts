@@ -40,6 +40,7 @@ import {
 } from './state';
 
 import { AdminAPI, createAdminAPI } from './api';
+import { deleteAuctions, initAuctions } from './state/auctions';
 
 export type WorldAPI = typeof WorldState.prototype.api;
 
@@ -63,15 +64,19 @@ export class WorldState {
 
   api = {
     init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
+    local: {
+      init: () => this.genCalls((api) => initAllLocal(api)),
+    } as SubFunc,
     admin: {
       batchMint: (amt: number[]) => this.genCalls((api) => mintToGachaPool(api, amt)),
     },
     all: {
       init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
     },
-    local: {
-      init: () => this.genCalls((api) => initAllLocal(api)),
-    } as SubFunc,
+    auction: {
+      init: (indices?: number[]) => this.genCalls((api) => initAuctions(api, indices)),
+      delete: (indices: number[]) => this.genCalls((api) => deleteAuctions(api, indices)),
+    },
     auth: {
       init: () => this.genCalls(initAuth),
     },

@@ -23,19 +23,19 @@ contract _AuctionRegistrySystem is System {
     int32 rate, // number of purchases per period to counteract decay
     int32 max // total quantity to be auctioned
   ) public onlyOwner returns (uint256) {
+    uint256 id = LibAuctionRegistry.get(components, itemIndex);
+    require(id == 0, "auction already exists");
+
     require(priceTarget > 0, "price target must be positive");
     require(period > 0, "period must be positive");
     require(decay > 0 && decay < 1e6, "decay must be between 0 and 1");
     require(rate > 0, "rate must be positive");
     require(max > 0, "max must be positive");
-    require(LibItem.getByIndex(components, itemIndex) != 0, "AuctionRegistry: item does not exist");
-    require(
-      LibItem.getByIndex(components, payItemIndex) != 0,
-      "AuctionRegistry: pay item does not exist"
-    );
+    require(LibItem.getByIndex(components, itemIndex) != 0, "auction item does not exist");
+    require(LibItem.getByIndex(components, payItemIndex) != 0, "auction pay item does not exist");
 
     Params memory params = Params(itemIndex, payItemIndex, priceTarget, period, decay, rate, max);
-    uint256 id = LibAuctionRegistry.create(components, params);
+    LibAuctionRegistry.create(components, params); // id should be the same
     return id;
   }
 
