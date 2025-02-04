@@ -1,7 +1,7 @@
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 
 import { useSelected, useVisibility } from 'app/stores';
@@ -16,7 +16,8 @@ import { useEffect, useRef, useState } from 'react';
 interface Props {
   previousEqual: boolean;
   utils: {
-    getAccountByID: (accountid: EntityID) => Account;
+    getAccount: (entityIndex: EntityIndex) => Account;
+    getEntityIndex: (entity: EntityID) => EntityIndex;
   };
   data: {
     message: KamiMessage;
@@ -34,7 +35,7 @@ interface Props {
 
 export const Message = (props: Props) => {
   const { message } = props.data;
-  const { getAccountByID } = props.utils;
+  const { getAccount, getEntityIndex } = props.utils;
   const { actionSystem, api, previousEqual } = props;
 
   const { player } = props;
@@ -45,20 +46,19 @@ export const Message = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
+  const getAccountFunc = () => {
+    return getAccount(getEntityIndex(formatEntityID(message.AccountId)));
+  };
 
   useEffect(() => {
-    if (player.id != getAccountByID(formatEntityID(message.AccountId)).id) {
+    if (player.id != getAccountFunc().id) {
       setYours(true);
     }
   }, [message.AccountId]);
 
   const showUser = () => {
-    setAccount(getAccountByID(formatEntityID(message.AccountId)).index);
+    setAccount(getAccountFunc().index);
     if (!modals.account) setModals({ account: true });
-  };
-
-  const getAccount = () => {
-    return getAccountByID(formatEntityID(message.AccountId));
   };
 
   const blockFren = (account: BaseAccount) => {
@@ -90,12 +90,12 @@ export const Message = (props: Props) => {
   const options = [
     {
       text: 'Add',
-      onClick: () => requestFren(getAccount()),
+      onClick: () => requestFren(getAccountFunc()),
     },
 
     {
       text: 'Block',
-      onClick: () => blockFren(getAccount()),
+      onClick: () => blockFren(getAccountFunc()),
     },
   ];
   const optionsMap = () => {
@@ -117,7 +117,7 @@ export const Message = (props: Props) => {
       <Content>
         {previousEqual === false && (
           <Header>
-            {player.id != getAccount().id ? (
+            {player.id != getAccountFunc().id ? (
               <>
                 <PfpAuthor id='pfp-author' ref={pfpRef}>
                   <Popover content={optionsMap()} clickMouse={2}>
@@ -126,11 +126,11 @@ export const Message = (props: Props) => {
                       onClick={() => {
                         showUser();
                       }}
-                      src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
+                      src={getAccountFunc().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                     />
                   </Popover>
 
-                  <Author author={false}>{getAccount().name}</Author>
+                  <Author author={false}>{getAccountFunc().name}</Author>
                 </PfpAuthor>
                 <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
               </>
@@ -138,13 +138,13 @@ export const Message = (props: Props) => {
               <>
                 <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
                 <PfpAuthor>
-                  <Author author={true}>{getAccount().name}</Author>
+                  <Author author={true}>{getAccountFunc().name}</Author>
                   <Pfp
                     author={true}
                     onClick={() => {
                       showUser();
                     }}
-                    src={getAccount().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
+                    src={getAccountFunc().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                   />
                 </PfpAuthor>
               </>

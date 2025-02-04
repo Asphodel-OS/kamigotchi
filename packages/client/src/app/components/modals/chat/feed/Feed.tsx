@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
@@ -12,7 +12,8 @@ import { Message } from './Message';
 
 interface Props {
   utils: {
-    getAccountByID: (accountid: EntityID) => Account;
+    getAccount: (entityIndex: EntityIndex) => Account;
+    getEntityIndex: (entity: EntityID) => EntityIndex;
   };
   actions: {
     pushMessages: (messages: KamiMessage[]) => void;
@@ -33,7 +34,7 @@ interface Props {
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
   const { utils, player, blocked, actionSystem, api } = props;
-  const { getAccountByID } = props.utils;
+  const { getAccount, getEntityIndex } = props.utils;
   const { modals } = useVisibility();
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
   const [isPolling, setIsPolling] = useState(false);
@@ -167,7 +168,7 @@ export const Feed = (props: Props) => {
     console.log('scrollBottom', scrollBottom < 5);
     node.scrollTop = scrollHeight;
     setScrollDown(false);
-  }, [scrollDown]);
+  }, [scrollDown, player.roomIndex, activeTab]);
 
   /////////////////
   // RENDER
@@ -210,7 +211,9 @@ export const Feed = (props: Props) => {
                   ?.toReversed()
                   .map(
                     (message, index, arr) =>
-                      !blocked.includes(getAccountByID(formatEntityID(message.AccountId)).id) && (
+                      !blocked.includes(
+                        getAccount(getEntityIndex(formatEntityID(message.AccountId))).id
+                      ) && (
                         <Message
                           previousEqual={
                             index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
