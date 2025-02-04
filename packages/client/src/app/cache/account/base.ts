@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account, getAccount, getAccountConfigs, NullAccount } from 'network/shapes/Account';
@@ -17,6 +17,7 @@ export const FriendsUpdateTs = new Map<EntityIndex, number>();
 export const InventoriesUpdateTs = new Map<EntityIndex, number>();
 export const StatsUpdateTs = new Map<EntityIndex, number>();
 export const PfpURITs = new Map<EntityIndex, number>();
+export const IdEntityIndex = new Map<EntityID, EntityIndex>();
 
 export interface Options {
   live?: number;
@@ -124,4 +125,17 @@ export const process = (world: World, components: Components, entity: EntityInde
     OwnerCache.set(acc.ownerAddress, entity);
   }
   return acc || NullAccount;
+};
+
+export const getByID = (world: World, components: Components, id: EntityID, options?: Options) => {
+  const entityIndex = processID(world, components, id);
+  return get(world, components, entityIndex, options);
+};
+export const processID = (world: World, components: Components, id: EntityID) => {
+  let entity = IdEntityIndex.get(id);
+  if (entity === undefined) {
+    entity = world.entityToIndex.get(id)!;
+    IdEntityIndex.set(id, entity);
+  }
+  return entity;
 };

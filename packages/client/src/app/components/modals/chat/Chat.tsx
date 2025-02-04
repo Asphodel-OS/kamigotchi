@@ -3,19 +3,15 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { getAccount } from 'app/cache/account';
+import { getAccount, getAccountByID } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
-import {
-  Account,
-  getAccountByID,
-  NullAccount,
-  queryAccountFromEmbedded,
-} from 'network/shapes/Account';
-import { getRoomByIndex } from 'network/shapes/Room';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+
+import { getRoomByIndex } from 'app/cache/room';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
 
