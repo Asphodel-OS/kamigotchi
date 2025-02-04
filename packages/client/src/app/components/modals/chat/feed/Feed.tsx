@@ -156,7 +156,7 @@ export const Feed = (props: Props) => {
     const { clientHeight, scrollHeight } = node;
     console.log('scrollBottom', scrollBottom < 5);
     if (scrollBottom < 5) node.scrollTop = scrollHeight;
-    else if (onTop === true) {
+    else if (node.scrollTop === 0) {
       node.scrollTop = scrollHeight - scrollBottom - clientHeight;
     }
   }, [kamidenMessages.length]);
@@ -172,15 +172,10 @@ export const Feed = (props: Props) => {
     setScrollDown(false);
   }, [scrollDown, player.roomIndex, activeTab, modals.chat]);
 
-  const handleScroll = (e: any) => {
-    const top = e.target.scrollTop === 0;
-
-    setOnTop(top);
-  };
   /////////////////
   // RENDER
   return (
-    <Wrapper ref={feedRef} id='feed' onScroll={handleScroll}>
+    <Wrapper ref={feedRef} id='feed'>
       <Buttons>
         <Button
           position={0}
