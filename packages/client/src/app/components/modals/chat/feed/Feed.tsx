@@ -45,7 +45,7 @@ export const Feed = (props: Props) => {
   //1 global
   const [activeTab, setActiveTab] = useState(0);
   const [scrollBottom, setScrollBottom] = useState(0);
-
+  const [onTop, setOnTop] = useState(false);
   /////////////////
   // SUBSCRIPTION
 
@@ -156,7 +156,9 @@ export const Feed = (props: Props) => {
     const { clientHeight, scrollHeight } = node;
     console.log('scrollBottom', scrollBottom < 5);
     if (scrollBottom < 5) node.scrollTop = scrollHeight;
-    else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
+    else if (onTop === true) {
+      node.scrollTop = scrollHeight - scrollBottom - clientHeight;
+    }
   }, [kamidenMessages.length]);
   /*    
     when the player sends a message it scrolls to thebottom   
@@ -170,10 +172,15 @@ export const Feed = (props: Props) => {
     setScrollDown(false);
   }, [scrollDown, player.roomIndex, activeTab, modals.chat]);
 
+  const handleScroll = (e: any) => {
+    const top = e.target.scrollTop === 0;
+
+    setOnTop(top);
+  };
   /////////////////
   // RENDER
   return (
-    <Wrapper ref={feedRef} id='feed'>
+    <Wrapper ref={feedRef} id='feed' onScroll={handleScroll}>
       <Buttons>
         <Button
           position={0}
