@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { getAccount, getAccountByID } from 'app/cache/account';
+import { getAccount } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
@@ -43,8 +43,8 @@ export function registerChatModal() {
             utils: {
               getAccount: (entity: EntityIndex) =>
                 getAccount(world, components, entity, accountOptions),
-              getAccountByID: (accountid: EntityID) => getAccountByID(world, components, accountid),
               getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
+              getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
             },
             network,
             world,

@@ -126,16 +126,3 @@ export const process = (world: World, components: Components, entity: EntityInde
   }
   return acc || NullAccount;
 };
-
-export const getByID = (world: World, components: Components, id: EntityID, options?: Options) => {
-  const entityIndex = processID(world, components, id);
-  return get(world, components, entityIndex, options);
-};
-export const processID = (world: World, components: Components, id: EntityID) => {
-  let entity = IdEntityIndex.get(id);
-  if (entity === undefined) {
-    entity = world.entityToIndex.get(id)!;
-    IdEntityIndex.set(id, entity);
-  }
-  return entity;
-};
