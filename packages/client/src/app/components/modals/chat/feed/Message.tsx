@@ -51,9 +51,7 @@ export const Message = (props: Props) => {
   };
 
   useEffect(() => {
-    if (player.id != getAccountFunc().id) {
-      setYours(true);
-    }
+    setYours(player.id !== getAccountFunc().id);
   }, [message.AccountId]);
 
   const showUser = () => {
