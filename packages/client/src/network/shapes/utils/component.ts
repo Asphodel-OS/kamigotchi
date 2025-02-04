@@ -46,24 +46,11 @@ export const getFor = (components: Components, entity: EntityIndex): string => {
   return rawValue;
 };
 
-export const getIsComplete = (components: Components, entity: EntityIndex): boolean => {
-  const { IsComplete } = components;
-  const result = getComponentValue(IsComplete, entity)?.value;
-  return result ?? false;
-};
-
 export const getLevel = (components: Components, entity: EntityIndex, fallback = 0): number => {
   const { Level } = components;
   const result = getComponentValue(Level, entity)?.value;
   if (result === undefined && !fallback) console.warn('getLevel(): undefined for entity', entity);
   return (result ?? fallback) * 1;
-};
-
-export const getLimit = (components: Components, entity: EntityIndex): number => {
-  const { Limit } = components;
-  const result = getComponentValue(Limit, entity)?.value;
-  if (result === undefined) console.warn('getLimit(): undefined for entity', entity);
-  return (result ?? 0) * 1;
 };
 
 export const getMax = (components: Components, entity: EntityIndex): number => {
@@ -85,6 +72,20 @@ export const getName = (components: Components, entity: EntityIndex): string => 
   const result = getComponentValue(Name, entity)?.value;
   if (result === undefined) console.warn('getName(): undefined for entity', entity);
   return result ?? '';
+};
+
+export const getPeriod = (components: Components, entity: EntityIndex): number => {
+  const { Period } = components;
+  const result = getComponentValue(Period, entity)?.value;
+  if (result === undefined) console.warn('getPeriod(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+export const getRate = (components: Components, entity: EntityIndex, precision = 0): number => {
+  const { Rate } = components;
+  const result = getComponentValue(Rate, entity)?.value;
+  if (result === undefined) console.warn('getRate(): undefined for entity', entity);
+  return ((result ?? 0) * 1.0) / 10 ** precision;
 };
 
 export const getRerolls = (components: Components, entity: EntityIndex): number => {
@@ -131,7 +132,22 @@ export const getValue = (components: Components, entity: EntityIndex): number =>
   // if (result === undefined) console.warn('getValue(): undefined for entity', entity);
 };
 
-////////////////
+/////////////////
+// FLAGS
+
+export const getHasFlag = (components: Components, entity: EntityIndex, flag: number): boolean => {
+  const { HasFlag } = components;
+  const result = getComponentValue(HasFlag, entity)?.value;
+  return result ?? false;
+};
+
+export const getIsComplete = (components: Components, entity: EntityIndex): boolean => {
+  const { IsComplete } = components;
+  const result = getComponentValue(IsComplete, entity)?.value;
+  return result ?? false;
+};
+
+/////////////////
 // ARRAYS
 
 export const getKeys = (components: Components, entity: EntityIndex): number[] => {

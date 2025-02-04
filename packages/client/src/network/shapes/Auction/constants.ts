@@ -11,8 +11,9 @@ export const NullAuction: Auction = {
   },
   params: {
     value: 0,
+    period: 0,
     decay: 0,
-    scale: 0,
+    rate: 0,
   },
   supply: {
     sold: 0,
@@ -20,6 +21,5 @@ export const NullAuction: Auction = {
   },
   time: {
     start: 0,
-    reset: 0,
   },
 };

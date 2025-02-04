@@ -25,7 +25,7 @@ struct Params {
   uint32 priceTarget; // the target price of the auction
   int32 period; // reference duration period (in seconds)
   int32 decay; // price decay per period
-  int32 rate; // number of purchases per period to counteract decay
+  int32 rate; // number of sales per period to counteract decay
   int32 max; // total quantity auctioned
 }
 
@@ -34,14 +34,14 @@ struct Params {
 /// Assume, for now, all auctions are implemented as Discrete GDAs.
 /// SHAPE:
 ///  - EntityType: AUCTION
-///  - Index: the index of the item being auctioned
-///  - ItemIndex: the Payment item index of the auction
-///  - Value: the target price of the auction
-///  - Balance: the number of sales since the last reset
-///  - TimeReset: the time the auction was last reset
-///  - Limit: the total amount of the auctioned item
-///  - Scale: the scale factor of the GDA
-///  - Decay: the decay constant of the GDA
+///  - Index: index of the item being auctioned
+///  - ItemIndex: index of the item used as payment
+///  - Max: total amount of the item to auction
+///  - Balance: number of sales since start
+///  - Value: initial target price of the auction
+///  - Period: reference duration period (in seconds)
+///  - Decay: price decay per period (1e6)
+///  - Rate: number of sales per period to counteract decay
 ///  - (Requirement)[]
 
 library LibAuctionRegistry {

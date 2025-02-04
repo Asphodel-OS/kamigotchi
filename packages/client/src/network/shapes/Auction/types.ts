@@ -7,9 +7,9 @@ import {
   getEntityType,
   getIndex,
   getItemIndex,
-  getLimit,
-  getResetTime,
-  getScale,
+  getMax,
+  getPeriod,
+  getRate,
   getStartTime,
   getValue,
 } from '../utils/component';
@@ -25,16 +25,16 @@ export interface Auction {
   };
   params: {
     value: number; // initial target value of pricing curve
-    decay: number; // decay constant of pricing curve
-    scale: number; // scale factor of pricing curve
+    period: number; // reference duration period (in seconds)
+    decay: number; // price decay per period (1e6)
+    rate: number; // number of sales per period to counteract decay
   };
   supply: {
-    sold: number; // supply sold since last reset
-    total: number; // supply remaining after last reset
+    sold: number; // supply sold since start
+    total: number; // total supply to sell
   };
   time: {
     start: number;
-    reset: number;
   };
 }
 
@@ -50,16 +50,16 @@ export const get = (world: World, components: Components, entity: EntityIndex): 
     },
     supply: {
       sold: getBalance(components, entity),
-      total: getLimit(components, entity),
+      total: getMax(components, entity),
     },
     params: {
       value: getValue(components, entity),
-      decay: getDecay(components, entity, 9),
-      scale: getScale(components, entity, 9),
+      decay: getDecay(components, entity, 6),
+      period: getPeriod(components, entity),
+      rate: getRate(components, entity),
     },
     time: {
       start: getStartTime(components, entity),
-      reset: getResetTime(components, entity),
     },
   };
 };
