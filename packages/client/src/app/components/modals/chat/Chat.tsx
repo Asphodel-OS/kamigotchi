@@ -83,13 +83,6 @@ export function registerChatModal() {
         }
       }, [account.friends?.blocked]);
 
-      useEffect(() => {
-        console.log('Chat visibility changed:', modals.chat);
-        return () => {
-          console.log('Cleaning up Kamiden connection - chat closed');
-        };
-      }, [modals.chat]);
-
       const pushCast = (cast: CastWithInteractions) => {};
 
       const pushMessages = (newMessages: KamiMessage[]) => {};

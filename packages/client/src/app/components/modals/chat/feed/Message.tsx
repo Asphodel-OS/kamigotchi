@@ -60,7 +60,6 @@ export const Message = (props: Props) => {
   };
 
   const blockFren = (account: BaseAccount) => {
-    console.log('block fren');
     actionSystem.add({
       action: 'BlockFriend',
       params: [account.ownerAddress],
