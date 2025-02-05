@@ -103,6 +103,7 @@ const InputBox = styled.textarea`
   line-height: 1.5vh;
   width: 100%;
   min-height: 6vh;
+  border-radius: 0.6vw;
 `;
 
 const SendButton = styled.button`
@@ -110,6 +111,7 @@ const SendButton = styled.button`
   position: absolute;
   right: 0.8vw;
   bottom: 0.8vw;
+  border-radius: 0.6vw;
 `;
 
 const LetterCount = styled.div`
