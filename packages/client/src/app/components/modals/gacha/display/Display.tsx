@@ -1,9 +1,11 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
 import { AuctionMode, Filter, Sort, TabType } from '../types';
+import { AuctionDisplay } from './auction/Auction';
 import { Pool } from './mint/Pool';
 import { Reroll } from './reroll/Reroll';
 
@@ -25,11 +27,15 @@ interface Props {
     poolKamis: EntityIndex[];
     maxRerolls: number;
     balance: bigint;
+    auctions: {
+      gacha: Auction;
+      reroll: Auction;
+    };
   };
   state: {
-    tab: TabType;
     mode: AuctionMode;
     setMode: (mode: AuctionMode) => void;
+    tab: TabType;
   };
   utils: {
     getGachaKami: (entity: EntityIndex) => GachaKami;
@@ -42,7 +48,7 @@ export const Display = (props: Props) => {
   const { state, controls, actions, data, caches, utils } = props;
   const { tab, mode, setMode } = state;
   const { reroll } = actions;
-  const { poolKamis } = data;
+  const { auctions, poolKamis } = data;
 
   const Content = () => {
     switch (tab) {
@@ -59,7 +65,12 @@ export const Display = (props: Props) => {
       case 'REROLL':
         return <Reroll tab={tab} actions={{ reroll }} data={data} utils={utils} />;
       case 'AUCTION':
-        return <></>;
+        return (
+          <AuctionDisplay
+            data={{ auctions: { gacha: auctions.gacha, reroll: auctions.reroll } }}
+            state={{ mode, setMode, tab }}
+          />
+        );
       default:
         return null;
     }

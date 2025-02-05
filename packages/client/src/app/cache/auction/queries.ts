@@ -39,7 +39,7 @@ export const query = (components: Components, options?: AuctionOptions) => {
 // a wrapper for query() that assumes just one auction
 export const queryOne = (components: Components, options?: AuctionOptions) => {
   const results = query(components, options);
-  if (!results || results.length == 0) return 0;
+  if (!results || results.length == 0) return 0 as EntityIndex;
   if (results.length > 1) console.warn(`found more than one auction with ${options}`);
   return results[0];
 };

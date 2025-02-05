@@ -1,13 +1,14 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
+import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item } from 'network/shapes/Item';
 import { NullItem } from 'network/shapes/Item/types';
 import { BaseKami } from 'network/shapes/Kami/types';
-import { useEffect, useState } from 'react';
 import { AuctionMode, Filter, Sort, TabType } from '../types';
 import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
@@ -31,6 +32,10 @@ interface Props {
   data: {
     commits: Commit[];
     inventories: Inventory[];
+    auctions: {
+      gacha: Auction;
+      reroll: Auction;
+    };
   };
   state: {
     tick: number;

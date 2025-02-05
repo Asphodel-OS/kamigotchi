@@ -5,10 +5,9 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { useBalance } from 'wagmi';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
-import { getAuction } from 'app/cache/auction';
+import { Auction, getAuctionByIndex } from 'app/cache/auction';
 import { getConfigValue } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
@@ -16,10 +15,10 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { GACHA_ID, calcRerollCost, getGachaCommits } from 'network/shapes/Gacha';
 import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
-import { getOwnerAddress } from 'network/shapes/utils/component';
 import { playVend } from 'utils/sounds';
 import { Display } from './display/Display';
 import { Sidebar } from './sidebar/Sidebar';
@@ -53,18 +52,19 @@ export function registerGachaModal() {
             network,
             data: {
               accountEntity,
-              ownerAddress: getOwnerAddress(components, accountEntity),
-              poolKamis: queryKamis(components, { account: GACHA_ID }),
               commits: getGachaCommits(world, components, accountID),
               maxRerolls: getConfigValue(world, components, 'GACHA_MAX_REROLLS'),
+              poolKamis: queryKamis(components, { account: GACHA_ID }),
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accountOptions),
               getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
-              getAuction: (entity: EntityIndex) => getAuction(world, components, entity),
+              getAuction: (itemIndex: number) =>
+                getAuctionByIndex(world, components, itemIndex, { balance: 2 }),
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
               getItem: (index: number) => getItemByIndex(world, components, index),
               getRerollCost: (kami: Kami) => calcRerollCost(world, components, kami),
+
               // not sure if we  need the below or just a generic getBalance
               getGachaBalance: (inventories: Inventory[]) =>
                 getInventoryBalance(inventories, GACHA_TICKET_INDEX),
@@ -78,8 +78,8 @@ export function registerGachaModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, world, api } = network;
-      const { accountEntity, ownerAddress, commits, poolKamis } = data;
-      const { getAccount } = utils;
+      const { accountEntity, commits, poolKamis } = data;
+      const { getAccount, getAuction } = utils;
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
@@ -94,6 +94,8 @@ export function registerGachaModal() {
       const [tick, setTick] = useState(Date.now());
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
+      const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
+      const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -108,13 +110,12 @@ export function registerGachaModal() {
       // update the data when the modal is opened
       useEffect(() => {
         if (!modals.gacha) return;
+        if (tab === 'AUCTION') {
+          setGachaAuction(getAuction(GACHA_TICKET_INDEX));
+          setRerollAuction(getAuction(REROLL_TICKET_INDEX));
+        }
         setAccount(getAccount());
-      }, [modals.gacha, accountEntity, tick]);
-
-      // Owner ETH Balance
-      const { data: ownerEthBalance } = useBalance({
-        address: ownerAddress as `0x${string}`,
-      });
+      }, [modals.gacha, tab, accountEntity, tick]);
 
       // open the party modal when the reveal is triggered
       useEffect(() => {
@@ -147,7 +148,7 @@ export function registerGachaModal() {
       // ACTIONS
 
       // purchase an item from auction
-      const auctionTx = (item: Item, amt: number) => {
+      const auctionTx = async (item: Item, amt: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
         const actionID = uuid() as EntityID;
@@ -160,6 +161,11 @@ export function registerGachaModal() {
             return api.auction.buy(item.index, amt);
           },
         });
+
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(actionID) as EntityIndex
+        );
       };
 
       // get a pet from gacha with Mint20
@@ -284,7 +290,11 @@ export function registerGachaModal() {
               actions={{ reroll: handleReroll }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
               controls={{ limit, filters, sorts }}
-              data={{ ...data, balance: ownerEthBalance?.value ?? 0n }}
+              data={{
+                ...data,
+                balance: 0n,
+                auctions: { gacha: gachaAuction, reroll: rerollAuction },
+              }}
               state={{ tab, mode, setMode }}
               utils={utils}
             />
@@ -296,7 +306,11 @@ export function registerGachaModal() {
                 reveal: revealTx,
               }}
               controls={{ limit, setLimit, filters, setFilters, sorts, setSorts }}
-              data={{ ...data, inventories: account.inventories ?? [] }}
+              data={{
+                ...data,
+                inventories: account.inventories ?? [],
+                auctions: { gacha: gachaAuction, reroll: rerollAuction },
+              }}
               state={{ tick, tab, setTab, mode, setMode }}
               utils={utils}
             />
@@ -310,7 +324,6 @@ export function registerGachaModal() {
 const Container = styled.div`
   position: relative;
   height: 100%;
-
   display: flex;
   flex-direction: row;
 `;
