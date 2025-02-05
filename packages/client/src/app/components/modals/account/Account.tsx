@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useAccount, useSelected, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
+import { BigNumberish } from 'ethers';
 import {
   Account,
   BaseAccount,
@@ -15,6 +17,8 @@ import {
   queryAccountByIndex,
 } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
+import { Kami } from 'network/shapes/Kami';
+import { waitForActionCompletion } from 'network/utils';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
 import { Bio } from './bio/Bio';
@@ -60,9 +64,12 @@ export function registerAccountModal() {
       const { account: player } = useAccount();
       const { accountIndex } = useSelected();
       const { modals } = useVisibility();
+      const { selectedAddress, apis } = useNetwork();
       const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
       const [account, setAccount] = useState<Account>(NullAccount);
-      const [checkIsSelf, setCheckIsSelf] = useState(false);
+      const [isSelf, setIsSelf] = useState(false);
+      const [isLoading, setIsLoading] = useState(false);
+      const [kamiImage, setKamiImage] = useState('https://miladymaker.net/milady/8365.png');
 
       // update data of the selected account when account index or data changes
       useEffect(() => {
@@ -74,18 +81,11 @@ export function registerAccountModal() {
 
       // set the default tab when account index switches
       useEffect(() => {
-        if (isSelf()) {
-          setCheckIsSelf(true);
-          setTab('frens');
-        } else {
-          setCheckIsSelf(false);
-          setTab('party');
-        }
+        const isSelf = player.index === accountIndex;
+        setIsSelf(isSelf);
+        if (isSelf) setTab('frens');
+        else setTab('party');
       }, [accountIndex]);
-
-      const isSelf = () => {
-        return player.index === accountIndex;
-      };
 
       /////////////////
       // INTERACTION
@@ -137,6 +137,40 @@ export function registerAccountModal() {
         });
       };
 
+      const pfpTx = (kamiID: BigNumberish) => {
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'UpdatePfp',
+          params: [kamiID],
+          description: `Updating account pfp.`,
+          execute: async () => {
+            return api.player.account.set.pfp(kamiID);
+          },
+        });
+        return actionID;
+      };
+
+      const handlePfpChange = async (kami: Kami) => {
+        try {
+          setIsLoading(true);
+          const pfpTxActionID = pfpTx(kami.id);
+          if (!pfpTxActionID) {
+            setIsLoading(false);
+            throw new Error('Pfp change action failed');
+          }
+          await waitForActionCompletion(
+            actions!.Action,
+            world.entityToIndex.get(pfpTxActionID) as EntityIndex
+          );
+          setIsLoading(false);
+          setKamiImage(kami.image);
+        } catch (e) {
+          setIsLoading(false);
+          console.log('Bio.tsx: handlePfpChange()  failed', e);
+        }
+      };
       /////////////////
       // RENDERING
 
@@ -151,17 +185,16 @@ export function registerAccountModal() {
           truncate
         >
           <Bio
-            checkIsSelf={checkIsSelf}
+            isLoading={isLoading}
+            kamiImage={kamiImage}
+            setKamiImage={setKamiImage}
+            handlePfpChange={handlePfpChange}
             key='bio'
             account={account} // account selected for viewing
-            isSelf={isSelf()}
-            actionSystem={actions}
-            actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
+            isSelf={isSelf}
             utils={utils}
-            api={api}
-            world={world}
           />
-          <Tabs tab={tab} setTab={setTab} isSelf={isSelf()} />
+          <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
           <Bottom
             key='bottom'
             tab={tab}

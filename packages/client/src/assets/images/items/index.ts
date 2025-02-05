@@ -54,7 +54,7 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
-  initia: initia_icon,
+  init: initia_icon,
   giftbox: agency_giftbox,
   astrolabe_disk: astrolabe_disk,
   better_ice_cream: better_ice_cream,

@@ -1,46 +1,39 @@
+import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { Tooltip } from 'app/components/library';
 import { Popover } from 'app/components/library/base/Popover';
-import { useNetwork } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { BigNumberish } from 'ethers';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { ActionSystem } from 'network/systems/ActionSystem';
-import { waitForActionCompletion } from 'network/utils';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  checkIsSelf: boolean;
+  isLoading: boolean;
+  kamiImage: string;
+  handlePfpChange: (kami: Kami) => void;
+
   account: Account; // account selected for viewing
   isSelf: boolean;
-  actionSystem: ActionSystem;
-  actions: {
-    sendRequest: (account: Account) => void;
-    acceptRequest: (request: any) => void;
-  };
+
+  setKamiImage: Dispatch<SetStateAction<string>>;
+
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
-  api: any;
-  world: any;
 }
 
 export const Bio = (props: Props) => {
-  const { actionSystem, account, isSelf, utils, api, world, checkIsSelf } = props;
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const { isLoading, account, utils, isSelf, setKamiImage, handlePfpChange, kamiImage } = props;
   const { getAccountKamis } = utils;
-  const { selectedAddress, apis } = useNetwork();
-  const [kamiImage, setKamiImage] = useState('https://miladymaker.net/milady/8365.png');
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+
   /////////////////
   // TRACKING
 
@@ -60,9 +53,6 @@ export const Bio = (props: Props) => {
     navigator.clipboard.writeText(text);
   };
 
-  useEffect(() => {
-    setKamiImage('https://miladymaker.net/milady/8365.png');
-  }, [account.index]);
   /////////////////
   // INTERPRETATION
 
@@ -115,58 +105,28 @@ export const Bio = (props: Props) => {
     );
   };
 
-  const pfpTx = (kamiID: BigNumberish) => {
-    if (!api) return console.error(`API not established for ${selectedAddress}`);
-    const actionID = uuid() as EntityID;
-    actionSystem!.add({
-      id: actionID,
-      action: 'UpdatePfp',
-      params: [kamiID],
-      description: `Updating account pfp.`,
-      execute: async () => {
-        return api.player.account.set.pfp(kamiID);
-      },
-    });
-    return actionID;
-  };
-
-  const handlePfpChange = async (kami: Kami) => {
-    try {
-      setIsLoading(true);
-      const pfpTxActionID = pfpTx(kami.id);
-      if (!pfpTxActionID) {
-        setIsLoading(false);
-        throw new Error('Pfp change action failed');
-      }
-      await waitForActionCompletion(
-        actionSystem!.Action,
-        world.entityToIndex.get(pfpTxActionID) as EntityIndex
-      );
-      setIsLoading(false);
-      setKamiImage(kami.image);
-    } catch (e) {
-      setIsLoading(false);
-      console.log('Bio.tsx: handlePfpChange()  failed', e);
-    }
-  };
-
-  const kamisDropDown = () => {
+  const KamisDropDown = () => {
     let kamis = getAccountKamis(account.entity).map((kami) => (
-      <KamisDropDown
-        disabled={account.pfpURI === kami.image}
+      <KamiDropDown
+        disabled={
+          kamiImage !== 'https://miladymaker.net/milady/8365.png'
+            ? kamiImage === kami.image
+            : account.pfpURI === kami.image
+        }
         key={kami.id}
         onClick={() => {
           handlePfpChange(kami);
         }}
       >
         {kami.name}
-      </KamisDropDown>
+      </KamiDropDown>
     ));
     if (kamis.length === 0) {
       kamis = [<div style={{ padding: `0.5vw` }}>No Kamis</div>];
     }
     return kamis;
   };
+
   const Pfp = () => {
     return (
       <PfpContainer>
@@ -185,6 +145,7 @@ export const Bio = (props: Props) => {
       </PfpContainer>
     );
   };
+
   return (
     <Container key={account.name}>
       <Content>
@@ -198,8 +159,8 @@ export const Bio = (props: Props) => {
         <KillsRow />
         <CoinRow />
       </Content>
-      {checkIsSelf === true ? (
-        <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={kamisDropDown()}>
+      {isSelf ? (
+        <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
           {Pfp()}
         </Popover>
       ) : (
@@ -330,7 +291,7 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
       }
     }`}
 `;
-const KamisDropDown = styled.button`
+const KamiDropDown = styled.button`
   padding: 0.5vw;
   display: flex;
   flex-direction: column;
