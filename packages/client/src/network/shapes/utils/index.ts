@@ -1,3 +1,4 @@
+export { getCompAddr, getSystemAddr } from './addresses';
 export { genID, queryChildrenOf } from './children';
 export { canReveal, filterRevealable } from './commits';
 export { getBalance, getBool, getInventoryBalance } from './getter';

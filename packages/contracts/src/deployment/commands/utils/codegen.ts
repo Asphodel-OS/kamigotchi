@@ -280,7 +280,12 @@ ${components
   )
   .join('\n')}
 
-LoadingState: defineLoadingStateComponent(world),
+  // world components
+  Components: defineStringComponent(world, 'Components', 'world.component.components'),
+  Systems: defineStringComponent(world, 'Systems', 'world.component.systems'),
+
+  // local components
+  LoadingState: defineLoadingStateComponent(world),
   }
 }`;
 
