@@ -172,19 +172,21 @@ export const Feed = (props: Props) => {
       <Buttons>
         <Button
           position={0}
-          disabled={activeTab === 0}
+          disabled={false}
+          /*disabled={activeTab === 0}
           onClick={() => {
             setActiveTab(0);
-          }}
+          }}*/
         >
           {`Room`}
         </Button>
         <Button
           position={6.3}
-          disabled={activeTab === 1}
+          disabled={true}
+          /* disabled={activeTab === 1}
           onClick={() => {
             setActiveTab(1);
-          }}
+          }}*/
         >
           {`Global`}
         </Button>
@@ -256,7 +258,8 @@ const Buttons = styled.div`
 const Messages = styled.div`
   width: 100%;
 `;
-
+// disabled { z-index: 2;
+//hover {  cursor: pointer;
 const Button = styled.button<{ position: number }>`
   position: absolute;
   ${({ position }) => position && `left:${position}vw;`};
@@ -268,11 +271,11 @@ const Button = styled.button<{ position: number }>`
   border-top: 0;
   z-index: 1;
   &:hover {
-    cursor: pointer;
+    cursor: auto;
   }
   &: disabled {
     background-color: rgb(178, 178, 178);
-    z-index: 2;
+    z-index: 0;
     border-color: black;
     cursor: default;
   }
