@@ -1,0 +1,1 @@
+export { getTrade } from './types';
