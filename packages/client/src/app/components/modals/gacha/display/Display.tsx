@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
-import { Reroll } from '../reroll/Reroll';
 import { Filter, Sort, TabType } from '../types';
 import { Pool } from './mint/Pool';
+import { Reroll } from './reroll/Reroll';
 
 interface Props {
   tab: TabType;

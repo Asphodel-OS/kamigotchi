@@ -219,7 +219,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
             with: () =>
               throwError(() => {
                 console.log('Timeout');
-                return new Error('Stream timeout - no data received for 5s');
+                return new Error('Stream timeout - no data received for 60s');
               }),
           }),
           map((res) => res),
