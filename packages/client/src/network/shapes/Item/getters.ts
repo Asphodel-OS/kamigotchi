@@ -2,8 +2,9 @@ import { Has, HasValue, World, runQuery } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
 import { DetailedEntity } from '../utils';
+import { NullItem } from './constants';
 import { queryByIndex } from './queries';
-import { Item, NullItem, getItem, getItemDetails } from './types';
+import { Item, getItem, getItemDetails } from './types';
 
 /**
  * get an item in the registry by index

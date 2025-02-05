@@ -3,6 +3,7 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/components';
 import { DetailedEntity, getItemImage } from '../utils';
 import { getDescription, getFor, getItemIndex, getName, getType } from '../utils/component';
+import { NullItem } from './constants';
 import { Effects, getEffects } from './effects';
 import { getRequirements, Requirements } from './requirements';
 
@@ -16,19 +17,6 @@ export interface Item extends DetailedEntity {
   requirements: Requirements;
   effects: Effects;
 }
-
-export const NullItem: Item = {
-  ObjectType: 'ITEM',
-  id: '0' as EntityID,
-  entity: 0 as EntityIndex,
-  index: 0,
-  type: '',
-  for: '',
-  image: '',
-  name: '',
-  requirements: { use: [] },
-  effects: { use: [] },
-};
 
 export const getItemDetails = (comps: Components, entity: EntityIndex): DetailedEntity => {
   const name = getName(comps, entity) ?? 'Unknown Item';

@@ -9,8 +9,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
-import { Item, getItem } from '../Item';
-import { NullItem } from '../Item/types';
+import { Item, NullItem, getItem } from '../Item';
 
 export const NULL_INVENTORY: Inventory = {
   id: '0' as EntityID,

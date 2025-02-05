@@ -19,6 +19,12 @@ interface Props {
     mint: (amount: number) => Promise<boolean>;
     reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
   };
+  controls: {
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
+    setPrice: (price: number) => void;
+  };
   data: {
     item: Item;
     balance: number;

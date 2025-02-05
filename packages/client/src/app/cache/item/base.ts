@@ -1,8 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Item, getItem, queryItemByIndex } from 'network/shapes/Item';
-import { NullItem } from 'network/shapes/Item/types';
+import { Item, NullItem, getItem, queryItemByIndex } from 'network/shapes/Item';
 
 // we don't expect item registry entities to change much
 const ItemCache = new Map<EntityIndex, Item>(); // item entity -> item

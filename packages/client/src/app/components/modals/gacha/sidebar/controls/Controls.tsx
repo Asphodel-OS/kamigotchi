@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
-import { Filter, Sort, TabType } from '../../types';
-import { MintControls } from './mint/MintControls';
-import { RerollControls } from './reroll/RerollControls';
+import { AuctionMode, Filter, Sort, TabType } from '../../types';
+import { Auction } from './auction/Auction';
+import { Mint } from './mint/Mint';
+import { Reroll } from './reroll/Reroll';
 
 interface Props {
   actions: {
@@ -18,6 +19,10 @@ interface Props {
     setSorts: (sort: Sort[]) => void;
     limit: number;
     setLimit: (limit: number) => void;
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
+    setPrice: (price: number) => void;
   };
   data: {
     commits: Commit[];
@@ -25,8 +30,10 @@ interface Props {
     balance: number;
   };
   state: {
-    tick: number;
+    mode: AuctionMode;
+    setMode: (mode: AuctionMode) => void;
     tab: TabType;
+    tick: number;
   };
 }
 
@@ -50,8 +57,9 @@ export const Controls = (props: Props) => {
           }}
         />
       )}
-      {tab === 'MINT' && <MintControls controls={controls} />}
-      {tab === 'REROLL' && <RerollControls />}
+      {tab === 'MINT' && <Mint controls={controls} />}
+      {tab === 'REROLL' && <Reroll />}
+      {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
       <Overlay right={0.75} bottom={0.75}>
         <Pairing icon={item.image} text={balance.toFixed(1)} tooltip={[item.name]} reverse />
       </Overlay>

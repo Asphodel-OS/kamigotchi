@@ -1,11 +1,16 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { NullItem } from '../Item/types';
+import { NullItem } from '../Item';
 import { Listing } from './types';
 
 export const NullListing: Listing = {
   id: '0' as EntityID,
   entity: 0 as EntityIndex,
   item: NullItem,
-  buyPrice: 0,
+  value: 0,
+  balance: 0,
+  startTime: 0,
   requirements: [],
+  buy: {
+    type: 'FIXED',
+  },
 };

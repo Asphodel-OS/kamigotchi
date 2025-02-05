@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { calcAuctionPrice } from 'app/cache/auction';
 import { useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
 import { Inventory } from 'network/shapes/Inventory';
-import { Item } from 'network/shapes/Item';
-import { NullItem } from 'network/shapes/Item/types';
+import { Item, NullItem } from 'network/shapes/Item';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { AuctionMode, Filter, Sort, TabType } from '../types';
 import { Controls } from './controls/Controls';
@@ -54,13 +54,23 @@ interface Props {
 
 export const Sidebar = (props: Props) => {
   const { actions, data, controls, state, utils } = props;
-  const { commits, inventories } = data;
+  const { auctions, commits, inventories } = data;
   const { tick, tab, setTab, mode, setMode } = state;
   const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
   const { modals } = useVisibility();
 
   const [payItem, setPayItem] = useState<Item>(NullItem);
   const [balance, setBalance] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [quantity, setQuantity] = useState(0);
+
+  // maybe consider controlling this hook and the one below with a dedicated payItem vs buyItem
+  useEffect(() => {
+    if (tab != 'AUCTION') setPrice(quantity);
+    else if (mode === 'GACHA') setPrice(calcAuctionPrice(auctions.gacha, quantity));
+    else if (mode === 'REROLL') setPrice(calcAuctionPrice(auctions.reroll, quantity));
+    else setPrice(0);
+  }, [tab, mode, quantity]);
 
   useEffect(() => {
     if (!modals.gacha) return;
@@ -80,18 +90,23 @@ export const Sidebar = (props: Props) => {
         setBalance(0);
       } else setBalance(0);
     }
-  }, [tick, tab, mode]);
+  }, [tab, mode, tick]);
 
   return (
     <Container>
       <Tabs tab={tab} setTab={setTab} />
       <Controls
         actions={actions}
+        controls={{ ...controls, price, setPrice, quantity, setQuantity }}
         data={{ item: payItem, balance, commits }}
-        controls={controls}
         state={state}
       />
-      <Footer actions={actions} data={{ item: payItem, balance }} state={state} />
+      <Footer
+        actions={actions}
+        controls={{ ...controls, price, setPrice, quantity, setQuantity }}
+        data={{ item: payItem, balance }}
+        state={state}
+      />
     </Container>
   );
 };
