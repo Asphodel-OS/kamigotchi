@@ -3,13 +3,11 @@ import styled from 'styled-components';
 
 import { Kami } from 'network/shapes/Kami';
 import { GachaKami } from 'network/shapes/Kami/types';
-import { Filter, Sort, TabType } from '../types';
+import { AuctionMode, Filter, Sort, TabType } from '../types';
 import { Pool } from './mint/Pool';
 import { Reroll } from './reroll/Reroll';
 
 interface Props {
-  tab: TabType;
-  blockNumber: bigint;
   controls: {
     limit: number;
     filters: Filter[];
@@ -28,6 +26,11 @@ interface Props {
     maxRerolls: number;
     balance: bigint;
   };
+  state: {
+    tab: TabType;
+    mode: AuctionMode;
+    setMode: (mode: AuctionMode) => void;
+  };
   utils: {
     getGachaKami: (entity: EntityIndex) => GachaKami;
     getRerollCost: (kami: Kami) => bigint;
@@ -36,7 +39,8 @@ interface Props {
 }
 
 export const Display = (props: Props) => {
-  const { tab, controls, actions, data, caches, utils } = props;
+  const { state, controls, actions, data, caches, utils } = props;
+  const { tab, mode, setMode } = state;
   const { reroll } = actions;
   const { poolKamis } = data;
 

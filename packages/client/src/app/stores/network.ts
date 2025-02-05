@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { TxQueue } from 'engine/queue';
-import { PlayerAPI, createPlayerAPI } from 'network/api/player';
+import { PlayerAPI, createPlayerAPI } from 'network/api';
 import { SystemTypes } from 'types/SystemTypes';
 
 export interface State {

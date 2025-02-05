@@ -5,7 +5,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
-import { TabType } from '../types';
+import { TabType } from '../../types';
 import { KamiGrid } from './KamiGrid';
 import { SideBalance } from './SideBalance';
 

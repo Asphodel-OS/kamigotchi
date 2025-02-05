@@ -1,16 +1,13 @@
 import styled from 'styled-components';
 
-import { Filter, Sort } from '../../types';
-// import { Filter as FilterComponent } from './Filter';
-// import { Sort as SortComponent } from './Sort';
 import { Overlay, Pairing, Warning } from 'app/components/library';
-import { ItemImages } from 'assets/images/items';
 import { Commit } from 'network/shapes/Commit';
+import { Item } from 'network/shapes/Item';
+import { Filter, Sort, TabType } from '../../types';
 import { MintControls } from './mint/MintControls';
 import { RerollControls } from './reroll/RerollControls';
 
 interface Props {
-  tab: string;
   actions: {
     reveal: (commits: Commit[]) => Promise<void>;
   };
@@ -24,40 +21,21 @@ interface Props {
   };
   data: {
     commits: Commit[];
-    gachaBalance: number;
-    rerollBalance: number;
+    item: Item;
+    balance: number;
+  };
+  state: {
+    tick: number;
+    tab: TabType;
   };
 }
 
 //
 export const Controls = (props: Props) => {
-  const { tab, actions, controls, data } = props;
-  const { gachaBalance, rerollBalance } = data;
+  const { actions, controls, data, state } = props;
   const { reveal } = actions;
-  const { commits } = data;
-
-  // NOTE: this would be more elegant by processing the relevant item
-  const CurrencyPairing = () => {
-    if (tab === 'MINT')
-      return (
-        <Pairing
-          icon={ItemImages.gacha_ticket}
-          text={gachaBalance.toFixed(1)}
-          tooltip={['Gacha Ticket']}
-          reverse
-        />
-      );
-    else if (tab === 'REROLL')
-      return (
-        <Pairing
-          icon={ItemImages.reroll_ticket}
-          text={rerollBalance.toFixed(1)}
-          tooltip={['Reroll Ticket']}
-          reverse
-        />
-      );
-    else return <></>;
-  };
+  const { commits, item, balance } = data;
+  const { tab } = state;
 
   return (
     <Container>
@@ -75,7 +53,7 @@ export const Controls = (props: Props) => {
       {tab === 'MINT' && <MintControls controls={controls} />}
       {tab === 'REROLL' && <RerollControls />}
       <Overlay right={0.75} bottom={0.75}>
-        <CurrencyPairing />
+        <Pairing icon={item.image} text={balance.toFixed(1)} tooltip={[item.name]} reverse />
       </Overlay>
     </Container>
   );

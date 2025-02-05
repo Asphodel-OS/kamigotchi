@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { TabType } from '../types';
+import { AuctionMode, TabType } from '../types';
 
 // action labels for the purchase footer
 const ActionMap = new Map<TabType, string>([
@@ -13,17 +14,28 @@ const ActionMap = new Map<TabType, string>([
 ]);
 
 interface Props {
-  tab: TabType;
-  balance: number;
   actions: {
+    bid: (item: Item, amt: number) => void;
     mint: (amount: number) => Promise<boolean>;
     reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
+  };
+  data: {
+    item: Item;
+    balance: number;
+  };
+  state: {
+    tick: number;
+    tab: TabType;
+    mode: AuctionMode;
   };
 }
 
 export const Footer = (props: Props) => {
-  const { tab, balance, actions } = props;
-  const { mint, reroll } = actions;
+  const { actions, data, state } = props;
+  const { bid, mint, reroll } = actions;
+  const { item, balance } = data;
+  const { mode, tab, tick } = state;
+
   const [quantity, setQuantity] = useState(0);
 
   const handleInc = () => {
@@ -41,6 +53,7 @@ export const Footer = (props: Props) => {
     let success = false;
     if (tab === 'MINT') success = await mint(quantity);
     else if (tab === 'REROLL') success = await reroll([], BigInt(0));
+    else if (tab === 'AUCTION') bid(item, quantity); // TODO: await on success
     if (success) setQuantity(0);
   };
 

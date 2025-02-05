@@ -1,5 +1,6 @@
 import { GasExponent } from 'constants/gas';
 import { BigNumberish, utils } from 'ethers';
+import { auctionsAPI } from './auctions';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
@@ -327,6 +328,7 @@ export function createPlayerAPI(systems: any) {
         item: useItemAccount,
       },
     },
+    auction: auctionsAPI(systems),
     crafting: { craft },
     social: {
       friend: {

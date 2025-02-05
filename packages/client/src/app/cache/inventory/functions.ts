@@ -31,5 +31,6 @@ export const filter = (
 
 export const getBalance = (inventories: Inventory[], itemIndex: number): number => {
   const filtered = inventories.filter((inv) => inv.item.index == itemIndex);
-  return filtered ? filtered[0]?.balance : 0;
+  const balance = filtered ? filtered[0]?.balance : 0;
+  return balance ?? 0;
 };
