@@ -8,6 +8,7 @@ import { getConfigAddress } from 'app/cache/config';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useTokens } from 'app/stores';
 import { useERC20Balance } from 'network/chain';
+import { getCompAddr } from 'network/shapes/utils';
 
 export function registerTokenBalances() {
   registerUIComponent(
@@ -31,11 +32,12 @@ export function registerTokenBalances() {
             tokens: {
               onyx: getConfigAddress(world, components, 'ONYX_ADDRESS') as Address,
             },
+            spender: getCompAddr(world, components, 'component.token.allowance'),
           };
         })
       );
     },
-    ({ tokens }) => {
+    ({ tokens, spender }) => {
       const { account } = useAccount();
       const { setOnyx, setInit } = useTokens();
 
@@ -50,7 +52,7 @@ export function registerTokenBalances() {
       const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
         account.ownerAddress as Address,
         tokens.onyx,
-        '0x0000000000000000000000000000000000000000' // todo: get address of TokenAllowanceComponent
+        spender
       );
 
       return <Wrapper style={{ display: 'block' }}></Wrapper>;
