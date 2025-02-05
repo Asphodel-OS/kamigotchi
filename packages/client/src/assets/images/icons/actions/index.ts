@@ -1,6 +1,7 @@
 import ChatIcon from './chat.png';
 import CollectIcon from './collect.png';
 import CraftIcon from './crafting.png';
+import EditIcon from './edit.png';
 import FeedIcon from './feed.png';
 import HarvestIcon from './harvest.png';
 import LiquidateIcon from './liquidate.png';
@@ -14,6 +15,7 @@ export {
   ChatIcon,
   CollectIcon,
   CraftIcon,
+  EditIcon,
   FeedIcon,
   HarvestIcon,
   LiquidateIcon,
@@ -36,4 +38,5 @@ export const ActionIcons = {
   search: SearchIcon,
   stop: StopIcon,
   use: UseIcon,
+  edit: EditIcon,
 };

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 interface Props {
   children: React.ReactNode;
   content: any;
+  cursor?: string;
 }
 
 export const Popover = (props: Props) => {
@@ -12,6 +13,7 @@ export const Popover = (props: Props) => {
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
   const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
+  const cursor = props.cursor ?? 'pointer';
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -70,6 +72,7 @@ export const Popover = (props: Props) => {
   return (
     <PopoverContainer>
       <PopoverTrigger
+        cursor={cursor}
         ref={triggerRef}
         onClick={(e) => {
           if (content.length !== 0) {
@@ -99,9 +102,9 @@ const PopoverContainer = styled.div`
   position: relative;
 `;
 
-const PopoverTrigger = styled.div`
+const PopoverTrigger = styled.div<{ cursor: string }>`
   border: none;
-  cursor: pointer;
+  cursor: ${({ cursor }) => cursor};
   height: 100%;
   width: 100%;
 `;

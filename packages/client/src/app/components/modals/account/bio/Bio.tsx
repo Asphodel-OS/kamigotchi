@@ -8,9 +8,9 @@ import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { Tooltip } from 'app/components/library';
-import { VipScore } from 'app/components/library/base/measures/VipScore';
 import { Popover } from 'app/components/library/base/Popover';
 import { useNetwork } from 'app/stores';
+import { ActionIcons } from 'assets/images/icons/actions';
 import { BigNumberish } from 'ethers';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -19,6 +19,7 @@ import { waitForActionCompletion } from 'network/utils';
 import { playClick } from 'utils/sounds';
 
 interface Props {
+  checkIsSelf: boolean;
   account: Account; // account selected for viewing
   isSelf: boolean;
   actionSystem: ActionSystem;
@@ -34,7 +35,7 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { actionSystem, account, isSelf, utils, api, world } = props;
+  const { actionSystem, account, isSelf, utils, api, world, checkIsSelf } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const { getAccountKamis } = utils;
   const { selectedAddress, apis } = useNetwork();
@@ -150,8 +151,9 @@ export const Bio = (props: Props) => {
   };
 
   const kamisDropDown = () => {
-    return getAccountKamis(account.entity).map((kami) => (
+    let kamis = getAccountKamis(account.entity).map((kami) => (
       <KamisDropDown
+        disabled={account.pfpURI === kami.image}
         key={kami.id}
         onClick={() => {
           handlePfpChange(kami);
@@ -160,8 +162,29 @@ export const Bio = (props: Props) => {
         {kami.name}
       </KamisDropDown>
     ));
+    if (kamis.length === 0) {
+      kamis = [<div style={{ padding: `0.5vw` }}>No Kamis</div>];
+    }
+    return kamis;
   };
-  console.log(`account.pfpURI : ${account.pfpURI}  kamiImage : ${kamiImage}`);
+  const Pfp = () => {
+    return (
+      <PfpContainer>
+        <PfpImage
+          isLoading={isLoading}
+          draggable='false'
+          src={
+            kamiImage !== 'https://miladymaker.net/milady/8365.png'
+              ? kamiImage
+              : account.pfpURI ?? kamiImage
+          }
+        />
+        <Tooltip text={[getLastSeenString()]}>
+          <PfpStatus isLoading={isLoading} timeDelta={lastRefresh / 1000 - account.time.last} />
+        </Tooltip>
+      </PfpContainer>
+    );
+  };
   return (
     <Container key={account.name}>
       <Content>
@@ -174,25 +197,14 @@ export const Bio = (props: Props) => {
         <BirthdayRow />
         <KillsRow />
         <CoinRow />
-        <VipScore />
       </Content>
-
-      <PfpContainer>
-        <Popover key='profile' content={kamisDropDown()}>
-          <Tooltip text={[getLastSeenString()]}>
-            <PfpStatus isLoading={isLoading} timeDelta={lastRefresh / 1000 - account.time.last} />
-          </Tooltip>
-          <PfpImage
-            isLoading={isLoading}
-            draggable='false'
-            src={
-              kamiImage !== 'https://miladymaker.net/milady/8365.png'
-                ? kamiImage
-                : account.pfpURI ?? kamiImage
-            }
-          />
+      {checkIsSelf === true ? (
+        <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={kamisDropDown()}>
+          {Pfp()}
         </Popover>
-      </PfpContainer>
+      ) : (
+        Pfp()
+      )}
     </Container>
   );
 };
@@ -264,9 +276,6 @@ const PfpContainer = styled.div`
   position: relative;
   width: 10vw;
   height: 10vw;
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const PfpImage = styled.img<{ isLoading: boolean }>`
@@ -277,6 +286,7 @@ const PfpImage = styled.img<{ isLoading: boolean }>`
   object-fit: cover;
   object-position: 100% 0;
   opacity: 1;
+
   ${({ isLoading }) =>
     isLoading &&
     `animation: fade 3s linear infinite;
@@ -300,7 +310,7 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
   width: 1.2vw;
   height: 1.2vw;
   border-radius: 3vw;
-
+  z-index: 1;
   background-color: ${(props) => {
     if (props.timeDelta < 300) return '#6f3';
     else if (props.timeDelta < 1800) return '#fd3';
@@ -320,9 +330,17 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
       }
     }`}
 `;
-const KamisDropDown = styled.div`
+const KamisDropDown = styled.button`
   padding: 0.5vw;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   &:hover {
     cursor: pointer;
+  }
+  &:disabled {
+    cursor: auto;
+    background-color: #ccc;
+    color: #666;
   }
 `;
