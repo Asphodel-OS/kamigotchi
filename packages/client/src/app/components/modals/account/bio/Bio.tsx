@@ -3,7 +3,7 @@ import CakeIcon from '@mui/icons-material/Cake';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
@@ -15,13 +15,9 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   isLoading: boolean;
-  kamiImage: string;
   handlePfpChange: (kami: Kami) => void;
-
   account: Account; // account selected for viewing
   isSelf: boolean;
-
-  setKamiImage: Dispatch<SetStateAction<string>>;
 
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
@@ -29,7 +25,7 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { isLoading, account, utils, isSelf, setKamiImage, handlePfpChange, kamiImage } = props;
+  const { isLoading, account, utils, isSelf, handlePfpChange } = props;
   const { getAccountKamis } = utils;
 
   const [lastRefresh, setLastRefresh] = useState(Date.now());
@@ -108,11 +104,7 @@ export const Bio = (props: Props) => {
   const KamisDropDown = () => {
     let kamis = getAccountKamis(account.entity).map((kami) => (
       <KamiDropDown
-        disabled={
-          kamiImage !== 'https://miladymaker.net/milady/8365.png'
-            ? kamiImage === kami.image
-            : account.pfpURI === kami.image
-        }
+        disabled={account.pfpURI === kami.image}
         key={kami.id}
         onClick={() => {
           handlePfpChange(kami);
@@ -130,15 +122,7 @@ export const Bio = (props: Props) => {
   const Pfp = () => {
     return (
       <PfpContainer>
-        <PfpImage
-          isLoading={isLoading}
-          draggable='false'
-          src={
-            kamiImage !== 'https://miladymaker.net/milady/8365.png'
-              ? kamiImage
-              : account.pfpURI ?? kamiImage
-          }
-        />
+        <PfpImage isLoading={isLoading} draggable='false' src={account.pfpURI} />
         <Tooltip text={[getLastSeenString()]}>
           <PfpStatus isLoading={isLoading} timeDelta={lastRefresh / 1000 - account.time.last} />
         </Tooltip>
@@ -291,6 +275,7 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
       }
     }`}
 `;
+
 const KamiDropDown = styled.button`
   padding: 0.5vw;
   display: flex;

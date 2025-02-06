@@ -69,7 +69,7 @@ export const getMediaURI = (components: Components, entity: EntityIndex): string
   const { MediaURI } = components;
   const result = getComponentValue(MediaURI, entity)?.value;
   if (result === undefined) console.warn('getMediaURI(): undefined for entity', entity);
-  return result ?? '';
+  return result ?? 'https://miladymaker.net/milady/8365.png';
 };
 
 export const getName = (components: Components, entity: EntityIndex): string => {

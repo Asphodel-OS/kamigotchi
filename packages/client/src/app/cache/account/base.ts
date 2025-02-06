@@ -6,7 +6,7 @@ import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account/que
 import { getMusuBalance } from 'network/shapes/Item';
 import { getStamina } from 'network/shapes/Stats';
 import { getLastActionTime, getLastTime, getRoomIndex } from 'network/shapes/utils/component';
-import { getFriends, getInventories, getStats } from './getters';
+import { getFriends, getInventories, getPfp, getStats } from './getters';
 
 // Account caches and Account cache checkers
 export const AccountCache = new Map<EntityIndex, Account>(); // account entity -> account
@@ -16,6 +16,7 @@ export const ConfigsUpdateTs = new Map<EntityIndex, number>();
 export const FriendsUpdateTs = new Map<EntityIndex, number>();
 export const InventoriesUpdateTs = new Map<EntityIndex, number>();
 export const StatsUpdateTs = new Map<EntityIndex, number>();
+export const PfpURITs = new Map<EntityIndex, number>();
 
 export interface Options {
   live?: number;
@@ -23,6 +24,7 @@ export interface Options {
   friends?: number;
   inventory?: number;
   stats?: number;
+  pfp?: number;
   // quests?: number; // TODO
   // kamis?: number; // TODO: figure out how best to populate subobjects
 }
@@ -97,6 +99,19 @@ export const get = (
     }
   }
 
+  if (options.pfp !== undefined) {
+    console.log(`account cache start`);
+    const updateTs = PfpURITs.get(entity) ?? 0;
+    const updateDelta = (now - updateTs) / 1000; // convert to seconds
+    if (updateDelta > options.pfp) {
+      console.log(`account cache if`);
+      acc.pfpURI = getPfp(world, components, entity);
+      console.log(`account cache get ${acc.pfpURI}`);
+      PfpURITs.set(entity, now);
+    }
+  }
+  console.log(`account cache ${options.pfp}`);
+  console.log(`account cache end`);
   return acc;
 };
 

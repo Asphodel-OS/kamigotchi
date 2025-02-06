@@ -40,7 +40,7 @@ export function registerAccountModal() {
 
       const accountOptions = {
         friends: 60,
-        stats: 60,
+        pfp: 1,
       };
 
       return interval(3333).pipe(
@@ -69,15 +69,15 @@ export function registerAccountModal() {
       const [account, setAccount] = useState<Account>(NullAccount);
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
-      const [kamiImage, setKamiImage] = useState('https://miladymaker.net/milady/8365.png');
 
+      console.log('account', account.pfpURI);
       // update data of the selected account when account index or data changes
       useEffect(() => {
         if (!modals.account) return;
         const accountEntity = queryAccountByIndex(components, accountIndex);
         const account = getAccount(accountEntity ?? (0 as EntityIndex));
         setAccount(account);
-      }, [accountIndex, modals.account]);
+      });
 
       // set the default tab when account index switches
       useEffect(() => {
@@ -165,7 +165,6 @@ export function registerAccountModal() {
             world.entityToIndex.get(pfpTxActionID) as EntityIndex
           );
           setIsLoading(false);
-          setKamiImage(kami.image);
         } catch (e) {
           setIsLoading(false);
           console.log('Bio.tsx: handlePfpChange()  failed', e);
@@ -186,8 +185,6 @@ export function registerAccountModal() {
         >
           <Bio
             isLoading={isLoading}
-            kamiImage={kamiImage}
-            setKamiImage={setKamiImage}
             handlePfpChange={handlePfpChange}
             key='bio'
             account={account} // account selected for viewing
