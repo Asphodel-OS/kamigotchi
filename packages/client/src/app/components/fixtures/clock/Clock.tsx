@@ -192,7 +192,18 @@ const Container = styled.div<{ width: number; height: number }>`
     const baseHeight = screen.height;
     const scaleX = width / baseWidth;
     const scaleY = height / baseHeight;
-    const scale = Math.max(Math.min(scaleX * 1.5, scaleY), 0.3); // use the smaller scale to maintain aspect ratio
+    let scale = Math.min(scaleX, scaleY);
+    const xToY = scaleX / scaleY;
+
+    if (scale < 0.8) {
+      scale = 0.8 + (0.8 - scale);
+      if (xToY < 0.75) {
+        scale = scale - (0.85 - xToY);
+      }
+    }
+
+    console.log(`baseWidth ${baseWidth} baseHeight ${baseHeight} widht ${width} height ${height}`);
+    console.log(`scaleX ${scaleX} scaleY ${scaleY} scale ${scale} xToY ${xToY}`);
     return `transform: scale(${scale});bottom: ${scale * 22}vh;`;
   }}
 `;
