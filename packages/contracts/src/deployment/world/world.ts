@@ -73,7 +73,7 @@ export class WorldState {
     all: {
       init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
     },
-    auction: {
+    auctions: {
       init: (indices?: number[]) => this.genCalls((api) => initAuctions(api, indices)),
       delete: (indices: number[]) => this.genCalls((api) => deleteAuctions(api, indices)),
     },

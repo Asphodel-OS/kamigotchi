@@ -41,10 +41,12 @@ export async function createAuction(
 
 export async function deleteAuctions(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
+    const itemIndex = indices[i];
+    console.log(`  Deleting auction for item index ${itemIndex}`);
     try {
-      await api.auction.remove(indices[i]);
+      await api.auction.remove(itemIndex);
     } catch {
-      console.error('Could not delete auction ' + indices[i]);
+      console.error(`  Could not delete auction ${itemIndex}`);
     }
   }
 }
