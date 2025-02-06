@@ -26,7 +26,8 @@ interface Props {
   };
   data: {
     commits: Commit[];
-    item: Item;
+    payItem: Item;
+    saleItem: Item;
     balance: number;
   };
   state: {
@@ -41,7 +42,7 @@ interface Props {
 export const Controls = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { reveal } = actions;
-  const { commits, item, balance } = data;
+  const { commits, payItem, balance } = data;
   const { tab } = state;
 
   return (
@@ -61,7 +62,7 @@ export const Controls = (props: Props) => {
       {tab === 'REROLL' && <Reroll />}
       {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
       <Overlay right={0.75} bottom={0.75}>
-        <Pairing icon={item.image} text={balance.toFixed(1)} tooltip={[item.name]} reverse />
+        <Pairing icon={payItem.image} text={balance.toFixed(1)} tooltip={[payItem.name]} reverse />
       </Overlay>
     </Container>
   );

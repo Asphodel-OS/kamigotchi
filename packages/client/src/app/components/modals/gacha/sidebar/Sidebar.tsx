@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { calcAuctionPrice } from 'app/cache/auction';
 import { useVisibility } from 'app/stores';
-import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
+import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
 import { Inventory } from 'network/shapes/Inventory';
@@ -59,14 +59,15 @@ export const Sidebar = (props: Props) => {
   const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
   const { modals } = useVisibility();
 
-  const [saleItem, setSaleItem] = useState<Item>(NullItem);
   const [payItem, setPayItem] = useState<Item>(NullItem);
+  const [saleItem, setSaleItem] = useState<Item>(NullItem);
+  const [quantity, setQuantity] = useState(0);
   const [balance, setBalance] = useState(0);
   const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0);
 
   // maybe consider controlling this hook and the one below with a dedicated payItem vs buyItem
   useEffect(() => {
+    if (!modals.gacha) return;
     if (tab != 'AUCTION') setPrice(quantity);
     else if (mode === 'GACHA') setPrice(calcAuctionPrice(auctions.gacha, quantity));
     else if (mode === 'REROLL') setPrice(calcAuctionPrice(auctions.reroll, quantity));
@@ -84,12 +85,12 @@ export const Sidebar = (props: Props) => {
     } else {
       // tab === 'AUCTION'
       if (mode === 'GACHA') {
-        setSaleItem(getItem(GACHA_TICKET_INDEX));
         setPayItem(getItem(MUSU_INDEX));
+        setSaleItem(getItem(GACHA_TICKET_INDEX));
         setBalance(getMusuBalance(inventories));
       } else if (mode === 'REROLL') {
+        setPayItem(getItem(ONYX_INDEX));
         setSaleItem(getItem(REROLL_TICKET_INDEX));
-        setPayItem(getItem(MUSU_INDEX));
         setBalance(0);
       } else setBalance(0);
     }
@@ -101,13 +102,13 @@ export const Sidebar = (props: Props) => {
       <Controls
         actions={actions}
         controls={{ ...controls, price, setPrice, quantity, setQuantity }}
-        data={{ item: payItem, balance, commits }}
+        data={{ payItem, saleItem, balance, commits }}
         state={state}
       />
       <Footer
         actions={actions}
         controls={{ ...controls, price, setPrice, quantity, setQuantity }}
-        data={{ saleItem, balance }}
+        data={{ payItem, saleItem, balance }}
         state={state}
       />
     </Container>

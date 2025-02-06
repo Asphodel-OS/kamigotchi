@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -25,6 +26,7 @@ interface Props {
     setPrice: (price: number) => void;
   };
   data: {
+    payItem: Item;
     saleItem: Item;
     balance: number;
   };
@@ -38,9 +40,11 @@ interface Props {
 export const Footer = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { bid, mint, reroll } = actions;
-  const { quantity, setQuantity } = controls;
-  const { saleItem, balance } = data;
+  const { quantity, setQuantity, price } = controls;
+  const { payItem, saleItem, balance } = data;
   const { mode, tab, tick } = state;
+
+  const isDisabled = quantity <= 0 || price > balance;
 
   const handleInc = () => {
     playClick();
@@ -52,7 +56,7 @@ export const Footer = (props: Props) => {
     setQuantity(Math.max(0, quantity - 1));
   };
 
-  const handSubmit = async () => {
+  const handleSubmit = async () => {
     playClick();
     let success = false;
     if (tab === 'MINT') success = await mint(quantity);
@@ -68,19 +72,31 @@ export const Footer = (props: Props) => {
     setQuantity(quantity);
   };
 
+  const getSubmitTooltip = () => {
+    if (price > balance) return ['too poore'];
+    if (quantity <= 0) return ['no items to purchase'];
+
+    let saleDesc = `Purchase ${quantity} ${saleItem.name}`;
+    if (tab === 'MINT') saleDesc = `Mint ${quantity} Kami`;
+    if (tab === 'REROLL') saleDesc = `Reroll ${quantity} Kami`;
+    return [saleDesc, `for ${price} ${payItem.name}`];
+  };
+
   return (
     <Container>
       <Quantity type='string' value={quantity} onChange={(e) => handleChange(e)} />
       <Stepper>
-        <StepperButton onClick={handleInc} disabled={tab === 'REROLL' || quantity >= balance}>
+        <StepperButton onClick={handleInc} disabled={tab === 'REROLL' || price > balance}>
           +
         </StepperButton>
         <StepperButton onClick={handleDec} disabled={tab === 'REROLL' || quantity <= 0}>
           -
         </StepperButton>
       </Stepper>
-      <Submit onClick={handSubmit} disabled={quantity <= 0}>
-        {ActionMap.get(tab) ?? 'Mint'}
+      <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
+        <Tooltip text={getSubmitTooltip()} alignText='center' grow>
+          {ActionMap.get(tab) ?? 'Mint'}
+        </Tooltip>
       </Submit>
     </Container>
   );
@@ -170,16 +186,16 @@ const Submit = styled.div<{ disabled?: boolean }>`
   user-select: none;
 
   ${({ disabled }) =>
-    disabled &&
-    `
-  background-color: #bbb; 
-  cursor: default; 
-  pointer-events: none;`}
-
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
+    disabled
+      ? `
+        background-color: #bbb;
+        pointer-events: auto;
+        cursor: default; `
+      : `
+        &:hover {
+          background-color: #ddd;
+        }
+        &:active {
+          background-color: #bbb;
+        }`}
 `;
