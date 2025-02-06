@@ -187,9 +187,15 @@ const Container = styled.div<{ width: number; height: number }>`
   left: 0vh;
   z-index: -1;
   height: fit-content;
-  ${({ width, height }) => `transform:  scale(${(height / width) * 0.01}); `}
+  ${({ width, height }) => {
+    const baseWidth = 1920; // assuming this is your base width
+    const baseHeight = 1080; // assuming this is your base height
+    const scaleX = width / baseWidth;
+    const scaleY = height / baseHeight;
+    const scale = Math.min(scaleX * 1.3, scaleY); // use the smaller scale to maintain aspect ratio
+    return `transform: scale(${scale});`;
+  }}
 `;
-
 const Circle = styled.div<{ rotation: number }>`
   display: flex;
   flex-direction: column;
