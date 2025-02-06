@@ -125,7 +125,11 @@ export function registerClock() {
       return (
         <>
           <Tooltip text={getClockTooltip()}>
-            <Container style={{ display: fixtures.menu ? 'flex' : 'none' }} resize={width}>
+            <Container
+              style={{ display: fixtures.menu ? 'flex' : 'none' }}
+              width={width}
+              height={height}
+            >
               <Circle rotation={rotateClock}>
                 <TicksPosition>{Ticks()}</TicksPosition>
                 <BandColor rotation={rotateBand} />
@@ -142,7 +146,11 @@ export function registerClock() {
             </Container>{' '}
           </Tooltip>
           <Tooltip text={getStaminaTooltip()}>
-            <Container style={{ display: fixtures.menu ? 'flex' : 'none' }} resize={width}>
+            <Container
+              style={{ display: fixtures.menu ? 'flex' : 'none' }}
+              width={width}
+              height={height}
+            >
               {' '}
               <StaminaText position={staminaCurr.toString().length}>
                 {staminaCurr}/{account.stamina.total}
@@ -153,7 +161,11 @@ export function registerClock() {
               <ClockOverlay />
             </Container>
           </Tooltip>{' '}
-          <Container style={{ display: fixtures.menu ? 'flex' : 'none' }} resize={width}>
+          <Container
+            style={{ display: fixtures.menu ? 'flex' : 'none' }}
+            width={width}
+            height={height}
+          >
             <Time viewBox='0 0 30 4'>
               <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 1.8' pathLength='2' />
               <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
@@ -169,13 +181,13 @@ export function registerClock() {
   );
 }
 
-const Container = styled.div<{ resize: number }>`
+const Container = styled.div<{ width: number; height: number }>`
   pointer-events: auto;
   position: absolute;
   left: 0vh;
   z-index: -1;
   height: fit-content;
-  ${({ resize }) => `transform:  scale(${(resize / 24) * 0.01}); bottom:${resize * 0.0094}vh;`}
+  ${({ width, height }) => `transform:  scale(${(height / width) * 0.01}); `}
 `;
 
 const Circle = styled.div<{ rotation: number }>`
