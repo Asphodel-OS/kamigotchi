@@ -27,6 +27,7 @@ import microplastics from './microplastics.png';
 import mint from './mint.png';
 import mistletoe from './mistletoe.png';
 import musu from './musu.png';
+import onyx from './onyx.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
 import plastic_bottle from './plastic_bottle.png';
@@ -80,6 +81,7 @@ export const ItemImages = {
   mint: mint,
   microplastics: microplastics,
   musu: musu,
+  onyx: onyx,
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
   plastic_bottle: plastic_bottle,
