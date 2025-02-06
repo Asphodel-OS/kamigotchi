@@ -656,6 +656,8 @@
   "libraries": [
     "LibAccount",
     "LibAllo",
+    "LibAuction",
+    "LibAuctionRegistry",
     "LibBonus",
     "LibConditional",
     "LibCommit",

@@ -59,6 +59,7 @@ export const Sidebar = (props: Props) => {
   const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
   const { modals } = useVisibility();
 
+  const [saleItem, setSaleItem] = useState<Item>(NullItem);
   const [payItem, setPayItem] = useState<Item>(NullItem);
   const [balance, setBalance] = useState(0);
   const [price, setPrice] = useState(0);
@@ -70,7 +71,7 @@ export const Sidebar = (props: Props) => {
     else if (mode === 'GACHA') setPrice(calcAuctionPrice(auctions.gacha, quantity));
     else if (mode === 'REROLL') setPrice(calcAuctionPrice(auctions.reroll, quantity));
     else setPrice(0);
-  }, [tab, mode, quantity]);
+  }, [tab, mode, quantity, tick]);
 
   useEffect(() => {
     if (!modals.gacha) return;
@@ -83,9 +84,11 @@ export const Sidebar = (props: Props) => {
     } else {
       // tab === 'AUCTION'
       if (mode === 'GACHA') {
+        setSaleItem(getItem(GACHA_TICKET_INDEX));
         setPayItem(getItem(MUSU_INDEX));
         setBalance(getMusuBalance(inventories));
       } else if (mode === 'REROLL') {
+        setSaleItem(getItem(REROLL_TICKET_INDEX));
         setPayItem(getItem(MUSU_INDEX));
         setBalance(0);
       } else setBalance(0);
@@ -104,7 +107,7 @@ export const Sidebar = (props: Props) => {
       <Footer
         actions={actions}
         controls={{ ...controls, price, setPrice, quantity, setQuantity }}
-        data={{ item: payItem, balance }}
+        data={{ saleItem, balance }}
         state={state}
       />
     </Container>

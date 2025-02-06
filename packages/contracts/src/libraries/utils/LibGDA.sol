@@ -63,13 +63,19 @@ library LibGDA {
     SD59x18 tDelta = (block.timestamp - params.startTs).rawToSD().div(period);
     SD59x18 decay = params.decay.wadToSD();
     SD59x18 rate = params.rate.rawToSD();
-    SD59x18 one = int256(1).rawToSD();
 
-    SD59x18 num1 = decay.pow(tDelta.sub(qInitial.div(rate))).mul(pTarget); // p0 * a^(t - n/r)
-    SD59x18 num2 = decay.inv().pow(qDelta.div(rate)).sub(one); // a^(-q/r) - 1
-    SD59x18 den1 = decay.inv().sub(one); // a^(-1) - 1
+    // calculate spot price = p0 * a^(t - n/r)
+    SD59x18 cost = decay.pow(tDelta.sub(qInitial.div(rate))).mul(pTarget);
 
-    SD59x18 totalCost = num1.mul(num2).div(den1);
-    return totalCost.sdToWad();
+    // calculate cost summation of purchased quantity
+    if (params.quantity > 1) {
+      SD59x18 one = int256(1).rawToSD();
+      SD59x18 scale = decay.pow(-one.div(rate)); // per unit price compound (c = a^(-1/r))
+      SD59x18 num = scale.pow(qDelta).sub(one); // c^q - 1
+      SD59x18 den = scale.sub(one); // c - 1
+      cost = cost.mul(num).div(den);
+    }
+
+    return cost.sdToWad();
   }
 }

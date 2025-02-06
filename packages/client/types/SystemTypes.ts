@@ -93,7 +93,7 @@ export type SystemTypes = {
   "system.account.set.operator": AccountSetOperatorSystem;
   "system.account.set.pfp": AccountSetPFPSystem;
   "system.account.use.item": AccountUseItemSystem;
-  "system.auction": AuctionBuySystem;
+  "system.auction.buy": AuctionBuySystem;
   "system.chat": ChatSystem;
   "system.craft": CraftSystem;
   "system.droptable.item.reveal": DroptableRevealSystem;

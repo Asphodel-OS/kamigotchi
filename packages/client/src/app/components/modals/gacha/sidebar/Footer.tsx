@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Item } from 'network/shapes/Item';
@@ -26,7 +25,7 @@ interface Props {
     setPrice: (price: number) => void;
   };
   data: {
-    item: Item;
+    saleItem: Item;
     balance: number;
   };
   state: {
@@ -37,12 +36,11 @@ interface Props {
 }
 
 export const Footer = (props: Props) => {
-  const { actions, data, state } = props;
+  const { actions, controls, data, state } = props;
   const { bid, mint, reroll } = actions;
-  const { item, balance } = data;
+  const { quantity, setQuantity } = controls;
+  const { saleItem, balance } = data;
   const { mode, tab, tick } = state;
-
-  const [quantity, setQuantity] = useState(0);
 
   const handleInc = () => {
     playClick();
@@ -59,7 +57,7 @@ export const Footer = (props: Props) => {
     let success = false;
     if (tab === 'MINT') success = await mint(quantity);
     else if (tab === 'REROLL') success = await reroll([], BigInt(0));
-    else if (tab === 'AUCTION') bid(item, quantity); // TODO: await on success
+    else if (tab === 'AUCTION') bid(saleItem, quantity); // TODO: await on success
     if (success) setQuantity(0);
   };
 

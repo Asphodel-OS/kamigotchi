@@ -78,7 +78,7 @@ library LibAuctionRegistry {
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).remove(id);
 
-    uint256[] memory reqs = getReqsByIndex(comps, index);
+    uint256[] memory reqs = getReqs(comps, id);
     for (uint256 i; i < reqs.length; i++) LibConditional.remove(comps, reqs[i]);
   }
 
@@ -111,12 +111,6 @@ library LibAuctionRegistry {
 
   function getReqs(IUintComp comps, uint256 id) internal view returns (uint256[] memory) {
     return LibConditional.queryFor(comps, genReqAnchor(id));
-  }
-
-  // get requirements by Auction (Item) Index
-  function getReqsByIndex(IUintComp comps, uint32 index) internal view returns (uint256[] memory) {
-    uint256 id = genID(index);
-    return getReqs(comps, id);
   }
 
   /////////////////

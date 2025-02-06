@@ -93,7 +93,7 @@ export const SystemAbis = {
   "system.account.set.operator": AccountSetOperatorSystem.abi,
   "system.account.set.pfp": AccountSetPFPSystem.abi,
   "system.account.use.item": AccountUseItemSystem.abi,
-  "system.auction": AuctionBuySystem.abi,
+  "system.auction.buy": AuctionBuySystem.abi,
   "system.chat": ChatSystem.abi,
   "system.craft": CraftSystem.abi,
   "system.droptable.item.reveal": DroptableRevealSystem.abi,

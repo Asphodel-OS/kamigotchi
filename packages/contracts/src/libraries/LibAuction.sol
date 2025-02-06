@@ -13,7 +13,7 @@ import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { PeriodComponent, ID as PeriodCompID } from "components/PeriodComponent.sol";
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
-import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
@@ -29,16 +29,6 @@ library LibAuction {
   using SafeCastLib for int256;
   using SafeCastLib for uint256;
 
-  function buy(IUintComp comps, uint256 id, uint256 accID, uint32 amt) internal returns (uint256) {
-    uint256 cost = calcBuy(comps, id, amt);
-    uint32 itemIndex = IndexComponent(getAddrByID(comps, IndexCompID)).get(id);
-    uint32 payItemIndex = IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(id);
-    LibInventory.decFor(comps, accID, payItemIndex, cost);
-    LibInventory.incFor(comps, accID, itemIndex, amt);
-    incBalance(comps, id, amt);
-    return cost;
-  }
-
   // TODO: before next world, upgrade int32 comps to use .dec() .inc() like uint256
   function incBalance(IUintComp comps, uint256 id, uint32 amt) internal {
     int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
@@ -52,12 +42,12 @@ library LibAuction {
   function calcBuy(IUintComp comps, uint256 id, uint32 amt) internal view returns (uint256) {
     GDAParams memory params = GDAParams(
       ValueComponent(getAddrByID(comps, ValueCompID)).get(id),
-      TimeResetComponent(getAddrByID(comps, TimeResetCompID)).get(id),
+      TimeStartComponent(getAddrByID(comps, TimeStartCompID)).get(id),
       int256(PeriodComponent(getAddrByID(comps, PeriodCompID)).get(id)),
       int256(DecayComponent(getAddrByID(comps, DecayCompID)).get(id)) * 1e12,
       RateComponent(getAddrByID(comps, RateCompID)).get(id).toInt256(),
       BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id).toUint256(),
-      amt
+      uint256(amt)
     );
 
     int256 costWad = LibGDA.calcPerpetual(params);
