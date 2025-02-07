@@ -142,8 +142,8 @@ export function registerClock() {
                   />
                   <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
                 </Phases>
-              </Circle>{' '}
-            </Container>{' '}
+              </Circle>
+            </Container>
           </Tooltip>
           <Tooltip text={getStaminaTooltip()}>
             <Container
@@ -151,16 +151,15 @@ export function registerClock() {
               width={width}
               height={height}
             >
-              {' '}
               <StaminaText position={staminaCurr.toString().length}>
                 {staminaCurr}/{account.stamina.total}
               </StaminaText>
               <SmallCircle>
                 <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
-              </SmallCircle>{' '}
+              </SmallCircle>
               <ClockOverlay />
             </Container>
-          </Tooltip>{' '}
+          </Tooltip>
           <Container
             style={{ display: fixtures.menu ? 'flex' : 'none' }}
             width={width}
@@ -194,19 +193,16 @@ const Container = styled.div<{ width: number; height: number }>`
     const scaleY = height / baseHeight;
     let scale = Math.min(scaleX, scaleY);
     const xToY = scaleX / scaleY;
-
-    if (scale < 0.8) {
-      scale = 0.8 + (0.8 - scale);
+    if (scale < 0.8 && scaleY < 0.76) {
+      scale = 0.8 + (0.8 - scaleY);
       if (xToY < 0.75) {
         scale = scale - (0.85 - xToY);
       }
     }
-
-    console.log(`baseWidth ${baseWidth} baseHeight ${baseHeight} widht ${width} height ${height}`);
-    console.log(`scaleX ${scaleX} scaleY ${scaleY} scale ${scale} xToY ${xToY}`);
     return `transform: scale(${scale});bottom: ${scale * 22}vh;`;
   }}
 `;
+
 const Circle = styled.div<{ rotation: number }>`
   display: flex;
   flex-direction: column;
