@@ -83,7 +83,21 @@ export const Room = (props: Props) => {
     let onClick = (() => {}) as React.MouseEventHandler<HTMLDivElement>;
     if (object.dialogue) onClick = () => triggerDialogueModal(object.dialogue!);
     else if (object.onClick) onClick = object.onClick;
-    return <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />;
+
+    return object.name !== 'trading' ? (
+      <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
+    ) : (
+      <Clickbox
+        key={object.name}
+        x1={x1}
+        y1={y1}
+        x2={x2}
+        y2={y2}
+        onClick={() => {
+          setModals({ trading: !modals.trading });
+        }}
+      />
+    );
   };
 
   ///////////////////

@@ -5,8 +5,7 @@ import {
 } from 'assets/images/rooms/2_tree-tunnel';
 
 import { arrival } from 'assets/sound/ost';
-
-import { Room } from 'constants/rooms';
+import { Room } from '.';
 
 export const room02: Room = {
   index: 2,
@@ -30,6 +29,10 @@ export const room02: Room = {
       name: 'shop door',
       coordinates: { x1: 55, y1: 32, x2: 83, y2: 82 },
       dialogue: 23,
+    },
+    {
+      name: 'trading',
+      coordinates: { x1: 100, y1: 52, x2: 1150, y2: 100 },
     },
   ],
 };

@@ -1,0 +1,1 @@
+export { registerTradingModal } from './Trading';
