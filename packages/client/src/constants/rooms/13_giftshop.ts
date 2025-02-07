@@ -2,7 +2,7 @@ import { triggerLeaderboardModal } from 'app/triggers/triggerLeaderboardModal';
 import { triggerShopModal } from 'app/triggers/triggerShopModal';
 import { bgPlaytest } from 'assets/images/rooms/13_giftshop';
 import { shop } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room13: Room = {
   index: 13,

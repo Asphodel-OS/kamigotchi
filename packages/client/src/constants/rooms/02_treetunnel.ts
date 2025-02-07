@@ -3,9 +3,8 @@ import {
   bgPlaytestEvening,
   bgPlaytestNight,
 } from 'assets/images/rooms/2_tree-tunnel';
-
 import { arrival } from 'assets/sound/ost';
-import { Room } from '.';
+import { Room } from './types';
 
 export const room02: Room = {
   index: 2,

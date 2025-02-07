@@ -204,39 +204,29 @@ export function createPlayerAPI(txQueue: TxQueue) {
   /////////////////
   //   TRADE
 
-  // @dev Updates Trade to ACCEPTED, removes IsRequest Component, creates ACTIVE Registers
-  // @param tradeID   entityID of the trade log
-  function acceptTrade(tradeID: BigNumberish) {
-    return systems['system.trade.accept'].executeTyped(tradeID);
+  function createTrade(
+    buyIndices: Number[],
+    buyAmts: BigNumberish[],
+    sellIndices: Number[],
+    sellAmts: BigNumberish[],
+    targetID: BigNumberish
+  ) {
+    return systems['system.trade.create'].executeTyped(
+      buyIndices,
+      buyAmts,
+      sellIndices,
+      sellAmts,
+      targetID
+    );
   }
 
-  // @dev creates an itemInventory entity, assigns to trade register and transfers the
-  // item balance specified amount of the item from the account to trade register
-  // @param tradeID   entityID of the trade log
-  // @param itemType  the id of the item being added, 0 for merit
-  // @param amt       quantity of item being added
-  function addToTrade(tradeID: BigNumberish, itemType: number, amt: number) {
-    return systems['system.trade.add'].executeTyped(tradeID, itemType, amt);
+  function executeTrade(tradeID: BigNumberish) {
+    return systems['system.trade.execute'].executeTyped(tradeID);
   }
 
-  // @dev Updates Trade to CANCELED, updates both Registers ACTIVE->CANCELED
-  // @param tradeID entityID of the trade log
   function cancelTrade(tradeID: BigNumberish) {
     return systems['system.trade.cancel'].executeTyped(tradeID);
   }
-
-  // @dev Updates Trade ACCEPTED->?COMPLETE, updates account's register ACTIVE->CONFIRMED
-  // @param tradeID   entityID of the trade log
-  function confirmTrade(tradeID: BigNumberish) {
-    return systems['system.trade.confirm'].executeTyped(tradeID);
-  }
-
-  // @dev Creates an INITIATED Trade between Account and toID, with IsRequest Component
-  // @param toID  entityID of the trade request receiver
-  function initiateTrade(toID: BigNumberish) {
-    return systems['system.trade.initiate'].executeTyped(toID);
-  }
-
   /////////////////
   //    MINT
 
@@ -346,11 +336,9 @@ export function createPlayerAPI(txQueue: TxQueue) {
       advance: advanceRelationship,
     },
     trade: {
-      accept: acceptTrade,
-      addTo: addToTrade,
+      create: createTrade,
+      execute: executeTrade,
       cancel: cancelTrade,
-      confirm: confirmTrade,
-      initiate: initiateTrade,
     },
     ERC721: {
       deposit: depositERC721,

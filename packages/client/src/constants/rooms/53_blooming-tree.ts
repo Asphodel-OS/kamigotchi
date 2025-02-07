@@ -4,7 +4,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/53_blooming-tree';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room53: Room = {
   index: 53,

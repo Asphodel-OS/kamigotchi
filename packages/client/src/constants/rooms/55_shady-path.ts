@@ -4,7 +4,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/55_shady-path';
 import { arrival } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room55: Room = {
   index: 55,

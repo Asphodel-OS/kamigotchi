@@ -1,6 +1,7 @@
 import { bgPlaytest } from 'assets/images/rooms/1_misty-river';
 import { arrival } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
+
 export const room01: Room = {
   index: 1,
   backgrounds: [bgPlaytest],

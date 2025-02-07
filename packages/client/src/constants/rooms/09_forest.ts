@@ -1,6 +1,6 @@
 import { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight } from 'assets/images/rooms/9_forest';
 import { glitter } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room09: Room = {
   index: 9,

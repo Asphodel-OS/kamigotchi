@@ -1,6 +1,6 @@
 import { bgPlaytest } from 'assets/images/rooms/45_back-exit';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room45: Room = {
   index: 45,

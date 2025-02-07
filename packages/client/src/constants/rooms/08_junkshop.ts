@@ -1,6 +1,6 @@
 import { bgPlaytest } from 'assets/images/rooms/8_junkshop';
 import { abandoned } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room08: Room = {
   index: 8,

@@ -5,7 +5,7 @@ import {
 } from 'assets/images/rooms/56_butterfly-forest';
 import { arrival } from 'assets/sound/ost';
 
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room56: Room = {
   index: 56,

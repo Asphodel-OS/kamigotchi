@@ -5,7 +5,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/10_forest-insect';
 import { glitter } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room10: Room = {
   index: 10,

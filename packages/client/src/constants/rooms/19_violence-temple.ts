@@ -1,6 +1,6 @@
 import { bgPlaytest } from 'assets/images/rooms/19_violence-temple';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room19: Room = {
   index: 19,

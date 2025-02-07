@@ -15,6 +15,7 @@ export const ChatMenuButton = () => {
     quests: false,
     settings: false,
     presale: false,
+    trading: false,
   };
 
   return (

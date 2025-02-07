@@ -4,7 +4,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/47_scrap-paths';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 

@@ -5,7 +5,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/54_plane_interior';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room54: Room = {
   index: 54,

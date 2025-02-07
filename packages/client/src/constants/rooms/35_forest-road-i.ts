@@ -4,7 +4,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/35_forest-road-i';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room35: Room = {
   index: 35,

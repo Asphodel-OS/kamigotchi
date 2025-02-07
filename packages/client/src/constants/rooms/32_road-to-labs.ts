@@ -4,7 +4,7 @@ import {
   bgPlaytestNight,
 } from 'assets/images/rooms/32_road-to-labs';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room32: Room = {
   index: 32,

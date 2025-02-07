@@ -15,6 +15,7 @@ export const QuestMenuButton = () => {
     leaderboard: false,
     settings: false,
     presale: false,
+    trading: false,
   };
 
   return (

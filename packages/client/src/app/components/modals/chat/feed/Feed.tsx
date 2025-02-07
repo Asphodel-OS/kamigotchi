@@ -313,11 +313,26 @@ const Wrapper = styled.div`
   font-size: 0.6vw;
 `;
 
-const Buttons = styled.div`
-  top: 0;
-  left: 0;
-  position: absolute;
-  width: 100%;
+const Buttons = styled.div` <ActiveOffers
+              showMine={showMine}
+              accountEntityIndex={entityIndex}
+              trades={trades}
+              ascending={ascending}
+              search={search}
+              executeTrade={executeTrade}
+              cancelTrade={cancelTrade}
+            />
+            <ManagementTab
+              network={network}
+              utils={utils}
+              showMine={showMine}
+              accountEntityIndex={entityIndex}
+              trades={trades}
+              ascending={ascending}
+              search={search}
+              executeTrade={executeTrade}
+              cancelTrade={cancelTrade}
+            />
 `;
 
 const Messages = styled.div`

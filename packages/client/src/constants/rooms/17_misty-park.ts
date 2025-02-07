@@ -5,7 +5,7 @@ import {
 } from 'assets/images/rooms/17_misty-park';
 import { cave } from 'assets/sound/ost';
 
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room17: Room = {
   index: 17,

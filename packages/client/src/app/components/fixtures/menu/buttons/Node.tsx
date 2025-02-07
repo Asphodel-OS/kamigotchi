@@ -21,6 +21,8 @@ export const NodeMenuButton = (props: Props) => {
     emaBoard: false,
     nameKami: false,
     presale: false,
+
+    trading: false,
   };
 
   return (

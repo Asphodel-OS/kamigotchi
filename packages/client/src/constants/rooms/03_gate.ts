@@ -1,7 +1,7 @@
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight } from 'assets/images/rooms/3_gate';
 import { arrival } from 'assets/sound/ost';
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room03: Room = {
   index: 3,

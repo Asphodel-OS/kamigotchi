@@ -5,7 +5,7 @@ import {
 } from 'assets/images/rooms/57_river-crossing';
 import { arrival } from 'assets/sound/ost';
 
-import { Room } from 'constants/rooms';
+import { Room } from './types';
 
 export const room57: Room = {
   index: 57,
