@@ -49,7 +49,6 @@ export function registerClock() {
       const [rotateBand, setRotateBand] = useState(0);
       const [lastTick, setLastTick] = useState(Date.now());
       const [width, height] = useWindowSize();
-      console.log(`width ${width} height ${height}`);
 
       function useWindowSize() {
         const [size, setSize] = useState([0, 0]);
