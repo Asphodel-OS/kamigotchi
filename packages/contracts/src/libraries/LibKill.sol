@@ -7,6 +7,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
@@ -20,6 +21,7 @@ import { LibAffinity, Shifts } from "libraries/utils/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
@@ -241,6 +243,19 @@ library LibKill {
     _logKill(world, components, killerID, victimID, nodeIndex, bals);
     _logTotals(components, accID, nodeIndex);
     _logVictim(components, accID, LibKami.getAccount(components, victimID));
+
+    uint8[] memory _schema = new uint8[](4);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
+
+    LibEmitter.emitSystemCall(
+      world,
+      "KILL",
+      _schema,
+      abi.encode(accID, killerID, victimID, nodeIndex, bals)
+    );
   }
 
   // creates a kill log. pretty sure we don't need to do anything with the library aside from this

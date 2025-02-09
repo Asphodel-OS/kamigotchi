@@ -7,6 +7,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
@@ -22,6 +23,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -308,6 +310,25 @@ library LibHarvest {
     LibData.inc(components, accID, indices, types, amt);
   }
 
+  function logStop(
+    IWorld world,
+    uint256 holderID,
+    uint256 kamiID,
+    uint32 nodeIndex,
+    uint256 output
+  ) public {
+    uint8[] memory _schema = new uint8[](3);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+
+    LibEmitter.emitSystemCall(
+      world,
+      "HARVEST_STOP",
+      _schema,
+      abi.encode(holderID, kamiID, nodeIndex, output)
+    );
+  }
   /////////////////////
   // UTILS
 
