@@ -15,12 +15,7 @@ export type Components = ReturnType<typeof createComponents>;
 // define functions for registration
 export function createComponents(world: World) {
   return {
-    OperatorAddress: defineStringComponent(
-      world,
-      'OperatorAddress',
-      'component.address.operator',
-      true
-    ),
+    OperatorAddress: defineStringComponent(world, 'OperatorAddress', 'component.address.operator', true),
     OwnerAddress: defineStringComponent(world, 'OwnerAddress', 'component.address.owner', true),
     Affinity: defineStringComponent(world, 'Affinity', 'component.affiinity'),
     Balance: defineNumberComponent(world, 'Balance', 'component.balance'),
@@ -34,12 +29,7 @@ export function createComponents(world: World) {
     EntityType: defineStringComponent(world, 'EntityType', 'component.type.entity', true),
     Exits: defineNumberArrayComponent(world, 'Exits', 'component.exits'),
     Experience: defineNumberComponent(world, 'Experience', 'component.experience'),
-    FarcasterIndex: defineNumberComponent(
-      world,
-      'FarcasterIndex',
-      'component.index.farcaster',
-      true
-    ),
+    FarcasterIndex: defineNumberComponent(world, 'FarcasterIndex', 'component.index.farcaster', true),
     For: defineNumberComponent(world, 'For', 'component.for'),
     ForString: defineStringComponent(world, 'ForString', 'component.for.string'),
     HasFlag: defineBoolComponent(world, 'HasFlag', 'component.has.flag'),
@@ -74,11 +64,7 @@ export function createComponents(world: World) {
     KamiIndex: defineNumberComponent(world, 'KamiIndex', 'component.index.kami', true),
     QuestIndex: defineNumberComponent(world, 'QuestIndex', 'component.index.quest'),
     RecipeIndex: defineNumberComponent(world, 'RecipeIndex', 'component.index.recipe', true),
-    RelationshipIndex: defineNumberComponent(
-      world,
-      'RelationshipIndex',
-      'component.index.relationship'
-    ),
+    RelationshipIndex: defineNumberComponent(world, 'RelationshipIndex', 'component.index.relationship'),
     RoomIndex: defineNumberComponent(world, 'RoomIndex', 'component.index.room', true),
     SkillIndex: defineNumberComponent(world, 'SkillIndex', 'component.index.skill'),
     IsComplete: defineBoolComponent(world, 'IsComplete', 'component.is.complete'),
@@ -93,11 +79,7 @@ export function createComponents(world: World) {
     MediaURI: defineStringComponent(world, 'MediaURI', 'component.mediaURI'),
     Name: defineStringComponent(world, 'Name', 'component.name', true),
     Power: defineStatComponent(world, 'Power', 'component.stat.power'),
-    ProxyPermissionsERC721: defineBoolComponent(
-      world,
-      'ProxyPermissionsERC721',
-      'components.proxy.Permissions.ERC721'
-    ),
+    ProxyPermissionsERC721: defineBoolComponent(world, 'ProxyPermissionsERC721', 'components.proxy.Permissions.ERC721'),
     ProxyVIPScore: defineBoolComponent(world, 'ProxyVIPScore', 'component.proxy.vip.score'),
     Rarity: defineNumberComponent(world, 'Rarity', 'component.rarity'),
     Rate: defineNumberComponent(world, 'Rate', 'component.rate'),
@@ -123,11 +105,11 @@ export function createComponents(world: World) {
     Weights: defineNumberArrayComponent(world, 'Weights', 'component.weights'),
     Whitelist: defineNumberArrayComponent(world, 'Whitelist', 'component.whitelist'),
 
-    // world components
-    Components: defineStringComponent(world, 'Components', 'world.component.components'),
-    Systems: defineStringComponent(world, 'Systems', 'world.component.systems'),
+  // world components
+  Components: defineStringComponent(world, 'Components', 'world.component.components'),
+  Systems: defineStringComponent(world, 'Systems', 'world.component.systems'),
 
-    // local components
-    LoadingState: defineLoadingStateComponent(world),
-  };
+  // local components
+  LoadingState: defineLoadingStateComponent(world),
+  }
 }

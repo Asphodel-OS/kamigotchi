@@ -110,8 +110,7 @@ export const get = (
       PfpURITs.set(entity, now);
     }
   }
-  console.log(`account cache ${options.pfp}`);
-  console.log(`account cache end`);
+
   return acc;
 };
 
