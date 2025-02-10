@@ -17,7 +17,6 @@ import { _RelationshipRegistrySystem } from "./ethers-contracts/_RelationshipReg
 import { _RoomRegistrySystem } from "./ethers-contracts/_RoomRegistrySystem";
 import { _SkillRegistrySystem } from "./ethers-contracts/_SkillRegistrySystem";
 import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
-import { AccountFundSystem } from "./ethers-contracts/AccountFundSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
@@ -86,7 +85,6 @@ export type SystemTypes = {
   "system.room.registry": _RoomRegistrySystem;
   "system.skill.registry": _SkillRegistrySystem;
   "system.trait.registry": _TraitRegistrySystem;
-  "system.account.fund": AccountFundSystem;
   "system.account.move": AccountMoveSystem;
   "system.account.register": AccountRegisterSystem;
   "system.account.set.name": AccountSetNameSystem;

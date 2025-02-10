@@ -17,7 +17,6 @@ import _RelationshipRegistrySystem from "../../../../../client/abi/_Relationship
 import _RoomRegistrySystem from "../../../../../client/abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../../../../../client/abi/_SkillRegistrySystem.json";
 import _TraitRegistrySystem from "../../../../../client/abi/_TraitRegistrySystem.json";
-import AccountFundSystem from "../../../../../client/abi/AccountFundSystem.json";
 import AccountMoveSystem from "../../../../../client/abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../../../client/abi/AccountRegisterSystem.json";
 import AccountSetNameSystem from "../../../../../client/abi/AccountSetNameSystem.json";
@@ -86,7 +85,6 @@ export const SystemAbis = {
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
-  "system.account.fund": AccountFundSystem.abi,
   "system.account.move": AccountMoveSystem.abi,
   "system.account.register": AccountRegisterSystem.abi,
   "system.account.set.name": AccountSetNameSystem.abi,

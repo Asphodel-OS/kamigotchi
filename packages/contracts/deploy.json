@@ -184,10 +184,6 @@
       "writeAccess": ["*"]
     },
     {
-      "name": "AccountFundSystem",
-      "writeAccess": ["IdHolder", "IDType", "TimeLast", "Value"]
-    },
-    {
       "name": "AccountUseItemSystem",
       "writeAccess": [
         "BlockReveal",

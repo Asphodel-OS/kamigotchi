@@ -13,14 +13,6 @@ contract MiscSystemsTest is SetupTemplate {
   /////////////
   // ACCOUNT
 
-  function testAccountFund() public {
-    hoax(alice.owner, 100);
-    _AccountFundSystem.ownerToOperator{ value: 100 }();
-
-    hoax(alice.operator, 100);
-    _AccountFundSystem.operatorToOwner{ value: 100 }();
-  }
-
   function testAccountSetName() public {
     vm.prank(alice.owner);
     _AccountSetNameSystem.executeTyped("name");
