@@ -34,7 +34,7 @@ export function registerFundOperatorModal() {
     ({ network }) => {
       const { actions, world } = network;
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, apis, signers } = useNetwork();
+      const { selectedAddress, apis } = useNetwork();
 
       const [isFunding, setIsFunding] = useState(true);
       const [isDripping, setIsDripping] = useState(false);

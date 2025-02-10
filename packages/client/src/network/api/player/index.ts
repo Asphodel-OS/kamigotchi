@@ -1,6 +1,7 @@
 import { GasExponent } from 'constants/gas';
 import { TxQueue } from 'engine/queue';
 import { BigNumberish, ethers, utils } from 'ethers';
+import { approveERC20 } from 'network/chain';
 import { auctionsAPI } from './auctions';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
@@ -16,6 +17,11 @@ export function createPlayerAPI(txQueue: TxQueue) {
       to: address,
       value: ethers.utils.parseUnits(amount.toString(), 'ether'),
     });
+  }
+
+  // approves full spend
+  function ERC20Approve(token: string, spender: string) {
+    return approveERC20(call, token, spender);
   }
 
   /////////////////
@@ -319,6 +325,9 @@ export function createPlayerAPI(txQueue: TxQueue) {
 
   return {
     send,
+    erc20: {
+      approve: ERC20Approve,
+    },
     echo: {
       kami: echoKamis,
       room: echoRoom,
