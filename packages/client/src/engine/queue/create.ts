@@ -1,4 +1,4 @@
-import { TransactionReceipt } from '@ethersproject/providers';
+import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, mapObject } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
 import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
@@ -27,7 +27,11 @@ type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : nev
 export function create<C extends Contracts>(
   computedContracts: IComputedValue<C> | IObservableValue<C>,
   network: Network
-): { txQueue: TxQueue<C>; dispose: () => void; ready: IComputedValue<boolean | undefined> } {
+): {
+  txQueue: TxQueue;
+  dispose: () => void;
+  ready: IComputedValue<boolean | undefined>;
+} {
   const queue = createPriorityQueue<{
     execute: (
       txOverrides: Overrides
@@ -58,8 +62,6 @@ export function create<C extends Contracts>(
     return { contracts, signer, provider, nonce };
   });
 
-  let utilization = 0;
-
   async function resetNonce() {
     runInAction(() => _nonce.set(null));
     const newNonce = (await network.signer.get()?.getTransactionCount()) ?? null;
@@ -79,60 +81,37 @@ export function create<C extends Contracts>(
   }
 
   // queue up a transaction call in the txQueue
-  function queueCall(
-    target: C[keyof C],
-    prop: keyof C[keyof C],
-    args: unknown[]
+  async function queueCall(
+    txRequest: TransactionRequest,
+    callOverrides?: CallOverrides
   ): Promise<{
     hash: string;
     wait: () => Promise<TransactionReceipt>;
-    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
+    response: Promise<any>;
   }> {
     const [resolve, reject, promise] = deferred<{
       hash: string;
       wait: () => Promise<TransactionReceipt>;
-      response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
+      response: Promise<any>;
     }>();
 
-    // Extract existing overrides from function call
-    const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
-    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as CallOverrides;
-    const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
-
-    // Store state mutability to know when to increase the nonce
-    const fragment = target.interface.fragments.find((fragment) => fragment.name === prop);
-    const stateMutability = fragment && (fragment as { stateMutability?: string }).stateMutability;
+    const { signer } = await awaitValue(readyState); // wait for network if not ready
 
     // skip gas estimation if gasLimit is set
-    const estGasFunction = target.estimateGas[prop as string];
     const estimateGas = () =>
-      callOverrides.gasLimit ? Promise.resolve(callOverrides.gasLimit) : estGasFunction(...args);
+      callOverrides?.gasLimit
+        ? Promise.resolve(callOverrides.gasLimit)
+        : signer!.estimateGas(txRequest);
 
     // Create a function that executes the tx when called
-    const execute = async (txData: Overrides) => {
+    const execute = async (txOverrides: Overrides) => {
       try {
-        const member = target.populateTransaction[prop as string];
-        if (member == undefined) {
-          throw new Error('Member does not exist.');
-        }
-
-        if (!(member instanceof Function)) {
-          throw new Error(
-            `Internal TxQueue error: Member is not a function and should not be proxied. Tried to call "${String(
-              prop
-            )}".`
-          );
-        }
-
         // Populate config and Tx
-        const configOverrides = { ...callOverrides, ...txData };
-        const populatedTx = await member(...argsWithoutOverrides, configOverrides);
-        const tx = await target.signer.sendTransaction(populatedTx);
-        const hash = tx.hash;
+        const populatedTx = { ...txRequest, ...txOverrides, ...callOverrides };
+        const tx = await signer?.sendTransaction(populatedTx!);
+        const hash = tx?.hash || '';
 
-        const response = target.provider.getTransaction(hash) as Promise<
-          ReturnTypeStrict<(typeof target)[typeof prop]>
-        >;
+        const response = signer.provider!.getTransaction(hash);
         // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
         const wait = async () => (await response).wait();
 
@@ -152,17 +131,35 @@ export function create<C extends Contracts>(
       execute,
       cancel: (error?: any) => reject(error ?? new Error('TX_CANCELLED')),
       estimateGas,
-      stateMutability,
+      stateMutability: '',
     });
 
     processQueue(); // Start processing the queue
     return promise; // Promise resolves when the tx is confirmed or rejected
   }
 
+  // queue up a system call in the txQueue
+  async function queueCallSystem(
+    target: C[keyof C],
+    prop: keyof C[keyof C],
+    args: unknown[]
+  ): Promise<{
+    hash: string;
+    wait: () => Promise<TransactionReceipt>;
+    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
+  }> {
+    // Extract existing overrides from function call
+    const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
+    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as CallOverrides;
+    const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
+
+    const populatedTx = await target.populateTransaction[prop as string](...argsWithoutOverrides);
+    return queueCall(populatedTx, callOverrides);
+  }
+
   async function processQueue() {
     const txRequest = queue.next();
     if (!txRequest) return;
-    utilization++; // Increase utilization to track capacity
     processQueue(); // Start processing another request from the queue
 
     // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
@@ -187,9 +184,9 @@ export function create<C extends Contracts>(
         error = e;
       } finally {
         // If tx was submitted, inc nonce regardless of error
-        const isViewTx = txRequest.stateMutability === 'view';
-        const isMutationError = !!error?.transaction && !isViewTx; // wtf does this even mean
-        const doIncNonce = (!error && !isViewTx) || isMutationError;
+        const isMutationError = !!error?.transaction;
+        const isRejectedError = error?.reason?.includes('user rejected transaction'); //
+        const doIncNonce = !isRejectedError && (!error || isMutationError);
 
         const isExpirationError = error?.code === 'NONCE_EXPIRED';
         const isRepeatError = error?.reason?.includes('transaction already imported');
@@ -221,13 +218,11 @@ export function create<C extends Contracts>(
       }
     }
 
-    utilization--;
-
     // Check if there are any transactions waiting to be processed
     processQueue();
   }
 
-  // NOTE(jb): no clue what this actually does
+  // wraps contract call with txQueue
   function proxyContract<Contract extends C[keyof C]>(contract: Contract): Contract {
     return mapObject(contract as any, (value, key) => {
       // Relay all base contract methods to the original target
@@ -237,7 +232,7 @@ export function create<C extends Contracts>(
       if (!(value instanceof Function)) return value;
 
       // Channel all contract specific methods through the queue
-      return (...args: unknown[]) => queueCall(contract, key as keyof BaseContract, args);
+      return (...args: unknown[]) => queueCallSystem(contract, key as keyof BaseContract, args);
     }) as Contract;
   }
 
@@ -250,7 +245,10 @@ export function create<C extends Contracts>(
   const cachedProxiedContracts = cacheUntilReady(proxiedContracts);
 
   return {
-    txQueue: cachedProxiedContracts,
+    txQueue: {
+      call: queueCall, // call tx directly
+      systems: cachedProxiedContracts,
+    },
     dispose,
     ready: computed(() => (readyState ? true : undefined)),
   };

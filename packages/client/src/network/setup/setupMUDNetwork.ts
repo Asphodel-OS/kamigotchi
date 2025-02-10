@@ -87,7 +87,7 @@ export async function setupMUDNetwork<
   world.registerDisposer(network.dispose);
 
   // create the system executor
-  const { systems, getSystemContract } = createSystemExecutor<SystemTypes>(
+  const { txQueue, getSystemContract } = createSystemExecutor<SystemTypes>(
     world,
     network,
     SystemsRegistry,
@@ -146,21 +146,21 @@ export async function setupMUDNetwork<
   }
 
   // allows us to create arbitrary System Executor instances by just passing in a Network
-  function createSystems(network: Network) {
-    const { systems } = createSystemExecutor<SystemTypes>(
+  function createTxQueue(network: Network) {
+    const { txQueue } = createSystemExecutor<SystemTypes>(
       world,
       network,
       SystemsRegistry,
       SystemAbis
     );
-    return systems;
+    return txQueue;
   }
 
   return {
     network,
     startSync,
-    systems,
-    createSystems,
+    txQueue,
+    createTxQueue,
     txReduced$,
   };
 }

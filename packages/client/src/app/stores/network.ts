@@ -2,7 +2,6 @@ import { create } from 'zustand';
 
 import { TxQueue } from 'engine/queue';
 import { PlayerAPI, createPlayerAPI } from 'network/api';
-import { SystemTypes } from 'types/SystemTypes';
 
 export interface State {
   burnerAddress: string;
@@ -13,7 +12,7 @@ export interface State {
 }
 
 interface Actions {
-  addAPI: (address: string, systems: TxQueue<SystemTypes>) => void;
+  addAPI: (address: string, txQueue: TxQueue) => void;
   setSelectedAddress: (address: string) => void;
   setBurnerAddress: (address: string) => void;
   setValidations: (validations: Validations) => void;
@@ -45,10 +44,10 @@ export const useNetwork = create<State & Actions>((set) => {
       set((state: State) => ({ ...state, selectedAddress })),
     setValidations: (validations: Validations) =>
       set((state: State) => ({ ...state, validations })),
-    addAPI: (address: string, systems: TxQueue<SystemTypes>) =>
+    addAPI: (address: string, txQueue: TxQueue) =>
       set((state: State) => ({
         ...state,
-        apis: new Map(state.apis).set(address, createPlayerAPI(systems)),
+        apis: new Map(state.apis).set(address, createPlayerAPI(txQueue)),
       })),
   };
 });

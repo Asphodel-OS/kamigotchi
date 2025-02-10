@@ -34,7 +34,7 @@ export function registerFundOperatorModal() {
     ({ network }) => {
       const { actions, world } = network;
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, apis } = useNetwork();
+      const { selectedAddress, apis, signers } = useNetwork();
 
       const [isFunding, setIsFunding] = useState(true);
       const [isDripping, setIsDripping] = useState(false);
@@ -74,7 +74,7 @@ export function registerFundOperatorModal() {
           params: [amount.toString()],
           description: `Funding Operator ${amount.toString()} ONYX`,
           execute: async () => {
-            return api.account.fund(amount.toString());
+            return api.send(kamiAccount.operatorAddress, amount);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
@@ -90,7 +90,7 @@ export function registerFundOperatorModal() {
           params: [amount.toString()],
           description: `Refunding Owner ${amount.toString()} ONYX`,
           execute: async () => {
-            return network.api.player.account.refund(amount.toString());
+            return network.api.player.send(kamiAccount.ownerAddress, amount);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;

@@ -146,8 +146,8 @@ export function registerWalletConnecter() {
             console.log('Error getting injected provider', e);
           }
           const networkInstance = await createNetworkInstance(provider);
-          const systems = network.createSystems(networkInstance);
-          addAPI(injectedAddress, systems);
+          const txQueue = network.createTxQueue(networkInstance);
+          addAPI(injectedAddress, txQueue);
         }
         setSelectedAddress(injectedAddress);
       };

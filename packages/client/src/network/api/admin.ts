@@ -1,9 +1,12 @@
 import { defaultAbiCoder } from '@ethersproject/abi';
+import { TxQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
-export function createAdminAPI(systems: any) {
+export function createAdminAPI(txQueue: TxQueue) {
+  const { call, systems } = txQueue;
+
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(commitIDs: BigNumberish[]) {

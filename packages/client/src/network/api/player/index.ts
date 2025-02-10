@@ -1,10 +1,23 @@
 import { GasExponent } from 'constants/gas';
-import { BigNumberish, utils } from 'ethers';
+import { TxQueue } from 'engine/queue';
+import { BigNumberish, ethers, utils } from 'ethers';
 import { auctionsAPI } from './auctions';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
-export function createPlayerAPI(systems: any) {
+export function createPlayerAPI(txQueue: TxQueue) {
+  const { call, systems } = txQueue;
+  /////////////////
+  // NON-MUD
+
+  // parses to ether (1e18) for convienience
+  function send(address: string, amount: BigNumberish) {
+    return call({
+      to: address,
+      value: ethers.utils.parseUnits(amount.toString(), 'ether'),
+    });
+  }
+
   /////////////////
   // ECHO
 
@@ -305,6 +318,7 @@ export function createPlayerAPI(systems: any) {
   }
 
   return {
+    send,
     echo: {
       kami: echoKamis,
       room: echoRoom,
@@ -315,10 +329,8 @@ export function createPlayerAPI(systems: any) {
       use: { item: useItemPet },
     },
     account: {
-      fund: fundOperator,
       move: moveAccount,
       register: registerAccount,
-      refund: refundOwner,
       set: {
         name: setAccountName,
         operator: setAccountOperator,

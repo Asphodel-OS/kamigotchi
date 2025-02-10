@@ -94,7 +94,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   world.registerDisposer(dispose);
 
   return {
-    systems: txQueue,
+    txQueue,
     registerSystem,
     getSystemContract: (id: string) => {
       const name = systemIdPreimages[id] as keyof T;

@@ -20,7 +20,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const world = createWorld();
   const components = createComponents(world);
 
-  const { network, startSync, systems, createSystems, txReduced$ } = await setupMUDNetwork<
+  const { network, startSync, txQueue, createTxQueue, txReduced$ } = await setupMUDNetwork<
     //@ts-ignore
     typeof components,
     SystemTypes
@@ -31,7 +31,10 @@ export async function createNetworkLayer(config: SetupContractConfig) {
 
   const actions = createActionSystem(world, txReduced$, provider);
   const notifications = createNotificationSystem(world);
-  const api = { admin: createAdminAPI(systems), player: createPlayerAPI(systems) };
+  const api = {
+    admin: createAdminAPI(txQueue),
+    player: createPlayerAPI(txQueue),
+  };
 
   // local systems
   const DTRevealer = createDTRevealerSystem(
@@ -49,8 +52,8 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     notifications, // global system
     components,
     startSync,
-    systems, // SystemExecutor
-    createSystems, // SystemExecutor factory function
+    txQueue, // SystemExecutor + calls
+    createTxQueue, // SystemExecutor factory function
     api: api,
     localSystems: {
       DTRevealer,
@@ -80,12 +83,12 @@ export async function createNetworkInstance(provider?: ExternalProvider) {
 // Update the network/systems/api of the network layer, if one is provided.
 export async function updateNetworkLayer(layer: NetworkLayer, provider?: ExternalProvider) {
   const networkInstance = await createNetworkInstance(provider);
-  const systems = layer.createSystems(networkInstance);
+  const txQueue = layer.createTxQueue(networkInstance);
   layer.network = networkInstance;
-  layer.systems = systems;
+  layer.txQueue = txQueue;
   layer.api = {
-    admin: createAdminAPI(systems),
-    player: createPlayerAPI(systems),
+    admin: createAdminAPI(txQueue),
+    player: createPlayerAPI(txQueue),
   };
   return layer;
 }

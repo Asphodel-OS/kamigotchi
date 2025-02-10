@@ -101,7 +101,7 @@ export function registerGasHarasser() {
           params: [value.toString()],
           description: `Funding Operator ${value.toLocaleString()} ONYX`,
           execute: async () => {
-            return api.account.fund(value.toString());
+            return api.send(account.operatorAddress, value);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
