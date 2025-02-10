@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -29,6 +30,7 @@ import type {
 
 export interface ChatSystemInterface extends utils.Interface {
   functions: {
+    "addRequirement(string,string,uint32,uint256,string)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
@@ -36,6 +38,7 @@ export interface ChatSystemInterface extends utils.Interface {
     "executeTyped(string)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
+    "removeRequirement()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -43,6 +46,7 @@ export interface ChatSystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addRequirement"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
@@ -50,11 +54,22 @@ export interface ChatSystemInterface extends utils.Interface {
       | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
+      | "removeRequirement"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addRequirement",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
     values?: undefined
@@ -78,6 +93,10 @@ export interface ChatSystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeRequirement",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -90,6 +109,10 @@ export interface ChatSystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addRequirement",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
@@ -107,6 +130,10 @@ export interface ChatSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeRequirement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -202,6 +229,15 @@ export interface ChatSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addRequirement(
+      reqType: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     cancelOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -232,6 +268,10 @@ export interface ChatSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
 
+    removeRequirement(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -245,6 +285,15 @@ export interface ChatSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addRequirement(
+    reqType: PromiseOrValue<string>,
+    logicType: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    condFor: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   cancelOwnershipHandover(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -276,6 +325,10 @@ export interface ChatSystem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  removeRequirement(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -290,6 +343,15 @@ export interface ChatSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addRequirement(
+      reqType: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
     completeOwnershipHandover(
@@ -315,6 +377,8 @@ export interface ChatSystem extends BaseContract {
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    removeRequirement(overrides?: CallOverrides): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -355,6 +419,15 @@ export interface ChatSystem extends BaseContract {
   };
 
   estimateGas: {
+    addRequirement(
+      reqType: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     cancelOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -385,6 +458,10 @@ export interface ChatSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    removeRequirement(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -400,6 +477,15 @@ export interface ChatSystem extends BaseContract {
   };
 
   populateTransaction: {
+    addRequirement(
+      reqType: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      condFor: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     cancelOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -428,6 +514,10 @@ export interface ChatSystem extends BaseContract {
     ownershipHandoverExpiresAt(
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeRequirement(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(

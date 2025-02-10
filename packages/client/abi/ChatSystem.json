@@ -18,6 +18,39 @@
     },
     {
       "type": "function",
+      "name": "addRequirement",
+      "inputs": [
+        {
+          "name": "reqType",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "logicType",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "value",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "condFor",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "cancelOwnershipHandover",
       "inputs": [],
       "outputs": [],
@@ -112,6 +145,13 @@
         }
       ],
       "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "removeRequirement",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -213,6 +253,7 @@
     }
   ],
   "methodIdentifiers": {
+    "addRequirement(string,string,uint32,uint256,string)": "5da7c2d6",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
@@ -220,6 +261,7 @@
     "executeTyped(string)": "765a4b0b",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
+    "removeRequirement()": "7c9052d2",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "transferOwnership(address)": "f2fde38b"

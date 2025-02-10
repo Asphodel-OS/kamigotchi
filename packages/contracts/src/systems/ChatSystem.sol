@@ -3,7 +3,9 @@ pragma solidity >=0.8.28;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { System } from "solecs/System.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConditional, Condition } from "libraries/LibConditional.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibData } from "libraries/LibData.sol";
 
@@ -15,8 +17,13 @@ contract ChatSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     string memory message = abi.decode(arguments, (string));
 
-    // get sender account and room where the message was originated from
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+
+    // meets requirements
+    uint256[] memory reqIDs = LibConditional.queryFor(components, ID);
+    if (!LibConditional.check(components, reqIDs, accID)) revert("can't send messages");
+
+    // get details
     uint32 roomIndex = LibAccount.getRoom(components, accID);
 
     LibAccount.updateLastTs(components, accID);
@@ -28,5 +35,25 @@ contract ChatSystem is System {
 
   function executeTyped(string memory message) public returns (bytes memory) {
     return execute(abi.encode(message));
+  }
+
+  function addRequirement(
+    string memory reqType,
+    string memory logicType,
+    uint32 index,
+    uint256 value,
+    string memory condFor
+  ) public onlyOwner {
+    LibConditional.createFor(
+      world,
+      components,
+      Condition(reqType, logicType, index, value, condFor),
+      ID // use systemID for anchor
+    );
+  }
+
+  function removeRequirement() public onlyOwner {
+    uint256[] memory ids = LibConditional.queryFor(components, ID);
+    LibConditional.remove(components, ids);
   }
 }
