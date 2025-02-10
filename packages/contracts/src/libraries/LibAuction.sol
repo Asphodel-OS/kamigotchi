@@ -19,20 +19,22 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibGDA, Params2 as GDAParams } from "libraries/utils/LibGDA.sol";
 
 /// @notice a library for interacting with dedicated auctions
 /// @dev see LibAuctionRegistry for shape documentation
 library LibAuction {
   using SafeCastLib for int32;
-  using SafeCastLib for uint32;
   using SafeCastLib for int256;
+  using SafeCastLib for uint32;
   using SafeCastLib for uint256;
 
   // TODO: before next world, upgrade int32 comps to use .dec() .inc() like uint256
   function incBalance(IUintComp comps, uint256 id, uint32 amt) internal {
-    int32 balance = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
-    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, balance + amt.toInt32());
+    BalanceComponent balComp = BalanceComponent(getAddrByID(comps, BalanceCompID));
+    int32 balance = balComp.get(id);
+    balComp.set(id, balance + amt.toInt32());
   }
 
   /////////////////
@@ -43,9 +45,9 @@ library LibAuction {
     GDAParams memory params = GDAParams(
       ValueComponent(getAddrByID(comps, ValueCompID)).get(id),
       TimeStartComponent(getAddrByID(comps, TimeStartCompID)).get(id),
-      int256(PeriodComponent(getAddrByID(comps, PeriodCompID)).get(id)),
-      int256(DecayComponent(getAddrByID(comps, DecayCompID)).get(id)) * 1e12,
-      RateComponent(getAddrByID(comps, RateCompID)).get(id).toInt256(),
+      PeriodComponent(getAddrByID(comps, PeriodCompID)).get(id).toUint256(),
+      DecayComponent(getAddrByID(comps, DecayCompID)).get(id).toUint256() * 1e12,
+      RateComponent(getAddrByID(comps, RateCompID)).get(id),
       BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id).toUint256(),
       uint256(amt)
     );
@@ -73,6 +75,30 @@ library LibAuction {
   ) internal view returns (bool) {
     uint256[] memory requirements = LibAuctionRegistry.getReqs(comps, id);
     return LibConditional.check(comps, requirements, accID);
+  }
+
+  // check whether the parameters for a AuctionBuy call are valid
+  function verifyBuyParams(
+    IUintComp comps,
+    uint32 itemIndex,
+    uint32 amt
+  ) internal view returns (uint256) {
+    if (amt < 1) revert("LibAuction: purchase amount must be positive");
+
+    uint256 itemID = LibItem.getByIndex(comps, itemIndex);
+    if (itemID == 0) revert("LibAuction: item does not exist");
+
+    uint256 id = LibAuctionRegistry.get(comps, itemIndex);
+    if (id == 0) revert("LibAuction: auction does not exist for item index");
+
+    if (exceedsLimit(comps, id, amt)) revert("LibAuction: amount exceeds auction limit");
+
+    return id;
+  }
+
+  // check whether the account meets the requirements to interact with an auction
+  function verifyRequirements(IUintComp comps, uint256 id, uint256 accID) internal view {
+    if (!meetsRequirements(comps, id, accID)) revert("LibAuction: reqs not met");
   }
 
   /////////////////

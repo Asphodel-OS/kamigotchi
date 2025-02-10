@@ -17,18 +17,11 @@ contract AuctionBuySystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 itemIndex, uint32 amt) = abi.decode(arguments, (uint32, uint32));
-    require(amt > 0, "AuctionBuy: purchase amount must be positive");
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    require(accID != 0, "AuctionBuy: account not found");
-
-    uint256 id = LibAuctionRegistry.get(components, itemIndex);
-    require(id != 0, "AuctionBuy: auction does not exist");
-    require(LibAuction.meetsRequirements(components, id, accID), "AuctionBuy: reqs not met");
-    require(!LibAuction.exceedsLimit(components, id, amt), "AuctionBuy: exceeds auction limit");
+    uint256 accID = LibAccount.verifyOwner(components);
+    uint256 id = LibAuction.verifyBuyParams(components, itemIndex, amt);
+    LibAuction.verifyRequirements(components, id, accID);
 
     // process the buy
-    // uint256 cost = LibAuction.buy(components, id, accID, amt);
-
     uint256 cost = LibAuction.calcBuy(components, id, amt);
     uint32 payItemIndex = LibInventory.getItemIndex(components, id);
     LibInventory.decFor(components, accID, payItemIndex, cost);

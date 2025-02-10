@@ -101,7 +101,6 @@ export const Logs = (props: Props) => {
     const actionData = getComponentValueStrict(ActionComponent, entity);
     const state = ActionStateString[actionData.state as ActionState];
     const metadata = actionData.metadata ?? '';
-    console.log(actionData);
 
     return (
       <Row key={`action${entity}`}>

@@ -18,9 +18,9 @@ struct Params {
 struct Params2 {
   uint256 targetPrice; // 1e0 precision
   uint256 startTs; // 1e0 precision
-  int256 period; // 1e0 precision (seconds)
-  int256 decay; // 1e18 precision (pre-scaled up from 1e6)
-  int256 rate; // 1e0 precision
+  uint256 period; // 1e0 precision (seconds)
+  uint256 decay; // 1e18 precision (pre-scaled up from 1e6)
+  uint256 rate; // 1e0 precision
   uint256 prevSold; // 1e0 precision
   uint256 quantity; // 1e0 precision (amt to be sold)
 }

@@ -164,6 +164,20 @@ library LibAccount {
     return CacheOpComponent(getAddrByID(components, CacheOpCompID)).has(uint256(uint160(operator)));
   }
 
+  // check whether there is an account with the operator of the msg.sender
+  function verifyOperator(IUintComp comps) internal view returns (uint256) {
+    uint256 id = getByOperator(comps, msg.sender);
+    if (id == 0) revert("LibAccount: account operator not found");
+    return id;
+  }
+
+  // check whether there is an account with the owner of the msg.sender
+  function verifyOwner(IUintComp comps) internal view returns (uint256) {
+    uint256 id = getByOwner(comps, msg.sender);
+    if (id == 0) revert("LibAccount: account owner not found");
+    return id;
+  }
+
   /////////////////
   // GETTERS
 
