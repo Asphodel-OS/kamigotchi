@@ -17,7 +17,6 @@ contract AccountSetOperatorSystem is System {
     if (LibAccount.operatorInUse(components, operator)) revert("Account: Operator already in use");
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    if (accID == 0) revert("Account: does not exist");
 
     address prevOperator = LibAccount.getOperator(components, accID);
     LibAccount.setOperator(components, accID, operator, prevOperator);

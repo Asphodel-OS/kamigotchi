@@ -19,7 +19,6 @@ contract KamiGachaMintSystem is System {
     uint256 amount = abi.decode(arguments, (uint256));
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    if (accID == 0) revert("no account detected");
 
     // use gacha inventory balance
     LibInventory.decFor(components, accID, GACHA_TICKET_INDEX, amount);

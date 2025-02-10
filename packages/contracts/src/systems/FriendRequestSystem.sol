@@ -19,7 +19,6 @@ contract FriendRequestSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    if (targetID == 0) revert("FriendRequest: target no account");
     if (accID == targetID) revert("FriendRequest: cannot fren self");
 
     // friendship specific checks

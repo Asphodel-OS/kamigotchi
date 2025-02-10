@@ -22,7 +22,6 @@ contract FriendBlockSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    if (targetID == 0) revert("FriendBlock: target no account");
     if (accID == targetID) revert("FriendBlock: cannot block self");
 
     // remove existing friendship from target->account

@@ -223,19 +223,21 @@ library LibAccount {
     return (results.length > 0) ? results[0] : 0;
   }
 
-  // Get an account entity by Wallet address. Assume only 1.
-  function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
-    uint256 value = CacheOpComponent(getAddrByID(components, CacheOpCompID)).safeGet(
+  /// @dev implicit existence check
+  function getByOperator(
+    IUintComp components,
+    address operator
+  ) internal view returns (uint256 id) {
+    id = CacheOpComponent(getAddrByID(components, CacheOpCompID)).safeGet(
       uint256(uint160(operator)) // operator address as entityID
     );
-    if (value == 0) revert("Account: Operator not found");
-    return value;
+    if (id == 0) revert("Account: Operator not found");
   }
 
-  // Get the account of an owner. Assume only 1.
-  function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    uint256 id = uint256(uint160(owner));
-    return LibEntityType.isShape(components, id, "ACCOUNT") ? id : 0;
+  /// @dev implicit existence check
+  function getByOwner(IUintComp components, address owner) internal view returns (uint256 id) {
+    id = uint256(uint160(owner));
+    if (!LibEntityType.isShape(components, id, "ACCOUNT")) revert("Account: no account detected");
   }
 
   // Get kamis owned

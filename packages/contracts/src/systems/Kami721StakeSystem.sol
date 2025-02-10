@@ -51,7 +51,6 @@ contract Kami721StakeSystem is System {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // account checks
-    require(accID != 0, "Kami721Stake: no account detected");
     require(LibAccount.getRoom(components, accID) == ROOM, "Kami721Stake: must be in room 12");
 
     // checks before action

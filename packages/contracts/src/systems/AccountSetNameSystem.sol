@@ -16,7 +16,6 @@ contract AccountSetNameSystem is System {
     string memory name = abi.decode(arguments, (string));
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
-    if (accID == 0) revert("Account: does not exist");
     if (bytes(name).length == 0) revert("Account: name cannot be empty");
     if (bytes(name).length > 16) revert("Account: name must be < 16chars");
     if (LibAccount.getByName(components, name) != 0) revert("Account: name taken");

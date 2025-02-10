@@ -70,7 +70,6 @@ export function registerAccountModal() {
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
 
-      console.log('account', account.pfpURI);
       // update data of the selected account when account index or data changes
       useEffect(() => {
         if (!modals.account) return;
