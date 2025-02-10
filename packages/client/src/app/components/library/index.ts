@@ -10,6 +10,7 @@ export {
   ModalHeader,
   ModalWrapper,
   Pairing,
+  Popover,
   Tooltip,
   ValidatorWrapper,
   Warning,

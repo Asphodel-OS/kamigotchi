@@ -6,8 +6,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
-import { Popover } from 'app/components/library/base/Popover';
+import { Popover, Tooltip } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
