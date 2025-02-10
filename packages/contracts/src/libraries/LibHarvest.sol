@@ -310,21 +310,23 @@ library LibHarvest {
     LibData.inc(components, accID, indices, types, amt);
   }
 
-  function logStop(
+  function emitLog(
     IWorld world,
+    string memory identifier,
     uint256 holderID,
     uint256 kamiID,
     uint32 nodeIndex,
     uint256 output
   ) public {
-    uint8[] memory _schema = new uint8[](3);
+    uint8[] memory _schema = new uint8[](4);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
 
     LibEmitter.emitSystemCall(
       world,
-      "HARVEST_STOP",
+      identifier,
       _schema,
       abi.encode(holderID, kamiID, nodeIndex, output)
     );

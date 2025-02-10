@@ -253,8 +253,9 @@ library LibRoom {
     LibData.inc(components, holderID, 0, "MOVE", 1);
 
     // emit event
-    uint8[] memory _schema = new uint8[](1);
-    _schema[0] = uint8(LibTypes.SchemaValue.UINT32);
+    uint8[] memory _schema = new uint8[](2);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
 
     LibEmitter.emitSystemCall(world, "MOVE", _schema, abi.encode(holderID, roomIndex));
   }

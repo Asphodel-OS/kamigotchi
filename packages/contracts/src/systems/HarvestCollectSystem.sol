@@ -59,6 +59,7 @@ contract HarvestCollectSystem is System {
       MUSU_INDEX,
       output
     );
+    LibHarvest.emitLog(world, "HARVEST_COLLECT", accID, kamiID, nodeIndex, output);
     LibAccount.updateLastTs(components, accID);
 
     return abi.encode(output);

@@ -67,7 +67,7 @@ contract HarvestStopSystem is System {
       MUSU_INDEX,
       output
     );
-    LibHarvest.logStop(world, accID, kamiID, nodeIndex, output);
+    LibHarvest.emitLog(world, "HARVEST_STOP", accID, kamiID, nodeIndex, output);
     LibAccount.updateLastTs(components, accID);
 
     return abi.encode(output);

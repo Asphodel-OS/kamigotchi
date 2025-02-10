@@ -50,21 +50,6 @@ library LibKill {
   using SafeCastLib for int256;
   using SafeCastLib for uint256;
 
-  event KamiLiquidated(
-    uint64 endTs,
-    uint32 nodeIndex,
-    uint32 indexed sourceIndex,
-    int32 sourceHealth,
-    int32 sourceHealthTotal,
-    uint32 indexed targetIndex,
-    int32 targetHealth,
-    int32 targetHealthTotal,
-    uint32 bounty,
-    uint32 salvage,
-    uint32 spoils,
-    uint32 strain,
-    uint32 karma
-  );
   /////////////////
   // INTERACTIONS
 
@@ -238,24 +223,11 @@ library LibKill {
   ) public {
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
 
-    emitLog(components, killerID, victimID, bals, nodeIndex);
+    emitLog(world, components, accID, killerID, victimID, bals, nodeIndex);
 
     _logKill(world, components, killerID, victimID, nodeIndex, bals);
     _logTotals(components, accID, nodeIndex);
     _logVictim(components, accID, LibKami.getAccount(components, victimID));
-
-    uint8[] memory _schema = new uint8[](4);
-    _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
-
-    LibEmitter.emitSystemCall(
-      world,
-      "KILL",
-      _schema,
-      abi.encode(accID, killerID, victimID, nodeIndex, bals)
-    );
   }
 
   // creates a kill log. pretty sure we don't need to do anything with the library aside from this
@@ -306,37 +278,86 @@ library LibKill {
   }
 
   function emitLog(
+    IWorld world,
     IUintComp components,
+    uint256 accID,
     uint256 killerID,
     uint256 victimID,
     KillBalance memory bals,
     uint32 nodeIndex
   ) internal {
-    // Combine health calculations into structs to reduce stack variables
-    (int32 killerHealthSync, int32 killerHealthTotal) = calculateHealthValues(components, killerID);
-    (int32 victimHealthSync, int32 victimHealthTotal) = calculateHealthValues(components, victimID);
+    KillEventData memory eventData;
 
-    // Combine balance conversion into uint32 before the emit to reduce stack usage
-    uint32 bounty = bals.bounty.toUint32();
-    uint32 salvage = bals.salvage.toUint32();
-    uint32 spoils = bals.spoils.toUint32();
-    uint32 strain = bals.strain.toUint32();
-    uint32 karma = bals.karma.toUint32();
+    // Fill basic data
+    eventData.accID = accID;
+    eventData.nodeIndex = nodeIndex;
 
-    emit KamiLiquidated(
-      block.timestamp.toUint64(),
-      nodeIndex,
-      LibKami.getIndex(components, killerID),
-      killerHealthSync,
-      killerHealthTotal,
-      LibKami.getIndex(components, victimID),
-      victimHealthSync,
-      victimHealthTotal,
-      bounty,
-      salvage,
-      spoils,
-      strain,
-      karma
+    // Get health and indices
+    (eventData.killerHealthSync, eventData.killerHealthTotal) = calculateHealthValues(
+      components,
+      killerID
     );
+    (eventData.victimHealthSync, eventData.victimHealthTotal) = calculateHealthValues(
+      components,
+      victimID
+    );
+    eventData.killerID = killerID;
+    eventData.victimID = victimID;
+
+    // Convert balances
+    eventData.bounty = bals.bounty;
+    eventData.salvage = bals.salvage;
+    eventData.spoils = bals.spoils;
+
+    bytes memory encoded = _encodeKillEvent(eventData);
+
+    LibEmitter.emitSystemCall(world, "KILL", _schema(), encoded);
+  }
+
+  function _schema() internal pure returns (uint8[] memory) {
+    uint8[] memory _schema = new uint8[](11);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[3] = uint8(LibTypes.SchemaValue.INT32);
+    _schema[4] = uint8(LibTypes.SchemaValue.INT32);
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[6] = uint8(LibTypes.SchemaValue.INT32);
+    _schema[7] = uint8(LibTypes.SchemaValue.INT32);
+    _schema[8] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[9] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[10] = uint8(LibTypes.SchemaValue.UINT256);
+    return _schema;
+  }
+
+  struct KillEventData {
+    uint256 accID;
+    uint32 nodeIndex;
+    uint256 killerID;
+    int32 killerHealthSync;
+    int32 killerHealthTotal;
+    uint256 victimID;
+    int32 victimHealthSync;
+    int32 victimHealthTotal;
+    uint256 bounty;
+    uint256 salvage;
+    uint256 spoils;
+  }
+
+  function _encodeKillEvent(KillEventData memory data) internal pure returns (bytes memory) {
+    return
+      abi.encode(
+        data.accID,
+        data.nodeIndex,
+        data.killerID,
+        data.killerHealthSync,
+        data.killerHealthTotal,
+        data.victimID,
+        data.victimHealthSync,
+        data.victimHealthTotal,
+        data.bounty,
+        data.salvage,
+        data.spoils
+      );
   }
 }
