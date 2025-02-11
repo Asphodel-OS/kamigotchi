@@ -83,12 +83,12 @@ export const Feed = (props: Props) => {
         if (movement.RoomIndex !== player.roomIndex) return;
         if (movement.AccountId === player.id) return;
         let accountName = getAccount(getEntityIndex(formatEntityID(movement.AccountId))).name;
-        setFeedData((prev) => [`**${accountName}** entered the room.`, ...prev]);
+        setFeedData((prev) => [`${accountName} **entered** the room.`, ...prev]);
       });
       feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
         if (harvest.RoomIndex !== player.roomIndex) return;
         let kamiName = getKami(getEntityIndex(formatEntityID(harvest.KamiId))).name;
-        setFeedData((prev) => [`**${kamiName}** finished **harvesting**.`, ...prev]);
+        setFeedData((prev) => [`${kamiName} finished **harvesting**.`, ...prev]);
       });
       feed.Kills.forEach((kill: Kill) => {
         let killerName = getKami(getEntityIndex(formatEntityID(kill.KillerId))).name;
@@ -96,7 +96,7 @@ export const Feed = (props: Props) => {
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
         setFeedData((prev) => [
-          `**${killerName}** liquidated **${victimName}** at ${roomName} for **${spoil}** Musu.`,
+          `*${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} Musu.`,
           ...prev,
         ]);
       });
@@ -347,9 +347,10 @@ const FeedTab = styled.div`
   word-break: break-all;
 `;
 const FeedTabMessage = styled.div<{ color: string }>`
-  ${({ color }) => `color: ${color} `};
+  color: black;
   border-bottom: 0.2vw dashed lightgrey;
-  &:strong {
+  width: 100%;
+  strong {
     font-weight: bold;
     text-shadow: 0 0 1.5px currentColor;
     ${({ color }) => `color: ${color} `};
