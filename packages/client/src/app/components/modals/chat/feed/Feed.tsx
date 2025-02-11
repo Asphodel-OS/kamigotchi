@@ -267,25 +267,22 @@ export const Feed = (props: Props) => {
         </Messages>
       ) : (
         <FeedTab>
-          {feedData?.toReversed().map((message, index, arr) => (
-            <FeedTabMessage
-              color={
-                message.includes('liquidated')
-                  ? '#ff6161'
-                  : message.includes('entered')
-                    ? '#eda910'
-                    : '#b176f1'
-              }
-              key={index}
-            >
-              &#x2022;{' '}
-              {message
-                .split('**')
-                .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
-              {message.includes('liquidated') ? <Musu src={ItemImages.musu} /> : null}
-              {`.`}
-            </FeedTabMessage>
-          ))}
+          {feedData?.toReversed().map((message, index, arr) => {
+            let liquidated = message.includes('liquidated');
+            return (
+              <FeedTabMessage
+                color={liquidated ? '#ff6161' : liquidated ? '#eda910' : '#b176f1'}
+                key={index}
+              >
+                &#x2022;{' '}
+                {message
+                  .split('**')
+                  .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
+                {liquidated ? <Musu src={ItemImages.musu} /> : null}
+                {liquidated && `.`}
+              </FeedTabMessage>
+            );
+          })}
         </FeedTab>
       )}
     </Wrapper>
