@@ -282,9 +282,7 @@ export const Feed = (props: Props) => {
               {message
                 .split('**')
                 .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
-              {message.includes('liquidated') ? (
-                <img style={{ width: `1vw`, height: `1vw` }} src={ItemImages.musu} />
-              ) : null}
+              {message.includes('liquidated') ? <Musu src={ItemImages.musu} /> : null}
               {`.`}
             </FeedTabMessage>
           ))}
@@ -350,15 +348,23 @@ const FeedTab = styled.div`
   line-height: 1.3vw;
   text-align: justify;
   word-break: break-all;
+  width: 100%q;
 `;
 const FeedTabMessage = styled.div<{ color: string }>`
   color: black;
   border-bottom: 0.2vw dashed lightgrey;
   width: 100%;
   font-size: 0.6vw;
+
   strong {
     font-weight: bold;
     text-shadow: 0 0 1.5px currentColor;
     ${({ color }) => `color: ${color} `};
   }
+`;
+const Musu = styled.img`
+  bottom: -0.1vw;
+  position: relative;
+  width: 0.8vw;
+  height: 0.8vw;
 `;
