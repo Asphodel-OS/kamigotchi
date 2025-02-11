@@ -1,5 +1,6 @@
 import { grpc } from '@improbable-eng/grpc-web';
 import {
+  Feed,
   KamidenServiceClient,
   KamidenServiceDefinition,
   Message,
@@ -8,6 +9,7 @@ import { createChannel, createClient } from 'nice-grpc-web';
 
 let kamidenClient: KamidenServiceClient | null = null;
 let messageCallbacks: ((message: Message) => void)[] = [];
+let feedCallbacks: ((feed: Feed) => void)[] = [];
 
 export function getKamidenClient(): KamidenServiceClient {
   if (!kamidenClient) {
@@ -29,8 +31,14 @@ async function setupMessageSubscription() {
     const stream = kamidenClient!.subscribeToStream({});
 
     for await (const response of stream) {
+      // Handle messages
       for (const message of response.Messages) {
         messageCallbacks.forEach((callback) => callback(message));
+      }
+
+      // Handle feed if present
+      if (response.Feed) {
+        feedCallbacks.forEach((callback) => callback(response.Feed!));
       }
     }
   } catch (error) {
@@ -44,5 +52,12 @@ export function subscribeToMessages(callback: (message: Message) => void) {
   messageCallbacks.push(callback);
   return () => {
     messageCallbacks = messageCallbacks.filter((cb) => cb !== callback);
+  };
+}
+
+export function subscribeToFeed(callback: (feed: Feed) => void) {
+  feedCallbacks.push(callback);
+  return () => {
+    feedCallbacks = feedCallbacks.filter((cb) => cb !== callback);
   };
 }
