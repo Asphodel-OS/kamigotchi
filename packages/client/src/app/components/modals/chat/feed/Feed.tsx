@@ -95,7 +95,10 @@ export const Feed = (props: Props) => {
         let victimName = getKami(getEntityIndex(formatEntityID(kill.VictimId))).name;
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
-        console.log(`${killerName} liquidated ${victimName} at ${roomName} for ${spoil} Musu.`);
+        setFeedData((prev) => [
+          `${killerName} liquidated ${victimName} at ${roomName} for ${spoil} Musu.`,
+          ...prev,
+        ]);
       });
     });
 
@@ -206,26 +209,24 @@ export const Feed = (props: Props) => {
       <Buttons>
         <Button
           position={0}
-          disabled={false}
-          /*disabled={activeTab === 0}
+          disabled={activeTab === 0}
           onClick={() => {
             setActiveTab(0);
-          }}*/
+          }}
         >
           {`Room`}
         </Button>
         <Button
           position={6.3}
-          disabled={true}
-          /* disabled={activeTab === 1}
+          disabled={activeTab === 1}
           onClick={() => {
             setActiveTab(1);
-          }}*/
+          }}
         >
-          {`Global`}
+          {`Feed`}
         </Button>
       </Buttons>
-      {activeTab === 0 && (
+      {activeTab === 0 ? (
         <Messages>
           {noMoreMessages === false && kamidenMessages.length !== 0 ? (
             <PollingMessage>Polling chat messages...</PollingMessage>
@@ -263,6 +264,8 @@ export const Feed = (props: Props) => {
             <PollingMessage>No messages in this room</PollingMessage>
           )}
         </Messages>
+      ) : (
+        <></>
       )}
     </Wrapper>
   );
@@ -303,11 +306,11 @@ const Button = styled.button<{ position: number }>`
   border-top: 0;
   z-index: 1;
   &:hover {
-    cursor: auto;
+    cursor: pointer;
   }
   &: disabled {
     background-color: rgb(178, 178, 178);
-    z-index: 0;
+    z-index: 2;
     border-color: black;
     cursor: default;
   }

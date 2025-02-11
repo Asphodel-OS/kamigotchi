@@ -14,7 +14,7 @@ let feedCallbacks: ((feed: Feed) => void)[] = [];
 export function getKamidenClient(): KamidenServiceClient {
   if (!kamidenClient) {
     const channel = createChannel(
-      'https://kamiden-feed.test.asphodel.io',
+      'https://kamiden-feed.test.asphodel.io', //'http://localhost:80', //
       grpc.WebsocketTransport()
     );
     kamidenClient = createClient(KamidenServiceDefinition, channel);
