@@ -5,6 +5,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { Kami } from 'app/cache/kami';
 import { useVisibility } from 'app/stores';
+import { ItemImages } from 'assets/images/items';
 import { HarvestEnd, Message as KamiMessage, Kill, Movement } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
 import { Room } from 'network/shapes/Room';
@@ -96,7 +97,7 @@ export const Feed = (props: Props) => {
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
         setFeedData((prev) => [
-          `${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} Musu.`,
+          `${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} `,
           ...prev,
         ]);
       });
@@ -281,6 +282,10 @@ export const Feed = (props: Props) => {
               {message
                 .split('**')
                 .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
+              {message.includes('liquidated') ? (
+                <img style={{ width: `1vw`, height: `1vw` }} src={ItemImages.musu} />
+              ) : null}
+              {`.`}
             </FeedTabMessage>
           ))}
         </FeedTab>
