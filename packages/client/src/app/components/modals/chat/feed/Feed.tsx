@@ -126,7 +126,7 @@ export const Feed = (props: Props) => {
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
     });
-    console.log('pollM got response', response.Message);
+
     if (response.Messages.length === 0) {
       setNoMoreMessages(true);
       return;
@@ -265,9 +265,22 @@ export const Feed = (props: Props) => {
           )}
         </Messages>
       ) : (
-        <div>
-          {feedData?.toReversed().map((message, index, arr) => <div>{feedData[index]}</div>)}
-        </div>
+        <FeedTab>
+          {feedData?.toReversed().map((message, index, arr) => (
+            <FeedTabMessage
+              color={
+                feedData[index].includes('liquidated')
+                  ? '#ff6161'
+                  : feedData[index].includes('entered')
+                    ? '#eda910'
+                    : '#b176f1'
+              }
+              key={index}
+            >
+              &#x2022; {feedData[index]}
+            </FeedTabMessage>
+          ))}
+        </FeedTab>
       )}
     </Wrapper>
   );
@@ -307,11 +320,12 @@ const Button = styled.button<{ position: number }>`
   border-radius: 0 0 0.8vw 0.8vw;
   border-top: 0;
   z-index: 1;
+  background-color: #c5c5c5;
   &:hover {
     cursor: pointer;
   }
   &: disabled {
-    background-color: rgb(178, 178, 178);
+    background-color: rgb(255, 255, 255);
     z-index: 2;
     border-color: black;
     cursor: default;
@@ -323,4 +337,12 @@ const PollingMessage = styled.div`
   padding: 20px;
   color: #666;
   font-style: italic;
+`;
+const FeedTab = styled.div`
+  line-height: 1.3vw;
+  text-align: justify;
+  word-break: break-all;
+`;
+const FeedTabMessage = styled.div<{ color: string }>`
+  ${({ color }) => `  color: ${color};  border-bottom: 0.2vw dashed lightgrey;`}
 `;
