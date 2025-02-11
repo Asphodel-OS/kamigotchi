@@ -265,7 +265,9 @@ export const Feed = (props: Props) => {
           )}
         </Messages>
       ) : (
-        <></>
+        <div>
+          {feedData?.toReversed().map((message, index, arr) => <div>{feedData[index]}</div>)}
+        </div>
       )}
     </Wrapper>
   );
