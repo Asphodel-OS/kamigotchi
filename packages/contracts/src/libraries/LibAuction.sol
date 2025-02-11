@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
-import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
-import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
-import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
@@ -16,11 +15,12 @@ import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibGDA, Params2 as GDAParams } from "libraries/utils/LibGDA.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
-import { LibGDA, Params2 as GDAParams } from "libraries/utils/LibGDA.sol";
 
 /// @notice a library for interacting with dedicated auctions
 /// @dev see LibAuctionRegistry for shape documentation
@@ -104,18 +104,28 @@ library LibAuction {
   /////////////////
   // LOGGING
 
-  // // log a purchase from the auction
-  // // accIndex, itemIndex, amt, price?, ts
-  // function logBuy(IWorld world, uint256 systemId, bytes memory values) internal {
-  //   uint8[] memory _schema = new uint8[](1);
-  //   _schema[0] = uint8(LibTypes.SchemaValue.UINT32);
-  //   LibEmitter.emitSystemCall(world, systemId, _schema, values);
-  // }
+  struct BuyLog {
+    uint32 itemIndex;
+    uint32 accIndex;
+    uint32 amt;
+    uint256 price;
+  }
 
-  // // log a reset from the auction
-  // // value, ts
-  // function logReset(IUintComp components, uint256 accID, uint256 amt) internal {
-  //   LibData.inc(components, accID, 0, "AUCTION_RESET", amt);
-  //   LibEmitter.emitSystemCall(world, systemId, _schema, values);
-  // }
+  // log a purchase from the auction
+  // accIndex, itemIndex, amt, price?, ts
+  function logBuy(IWorld world, BuyLog memory buy) internal {
+    uint8[] memory _schema = new uint8[](5);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+
+    LibEmitter.emitSystemCall(
+      world,
+      "auction.buy",
+      _schema,
+      abi.encode(buy.itemIndex, buy.accIndex, buy.amt, buy.price, block.timestamp)
+    );
+  }
 }

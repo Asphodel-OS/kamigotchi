@@ -315,19 +315,19 @@ library LibKill {
   }
 
   function _schema() internal pure returns (uint8[] memory) {
-    uint8[] memory _schema = new uint8[](11);
-    _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[3] = uint8(LibTypes.SchemaValue.INT32);
-    _schema[4] = uint8(LibTypes.SchemaValue.INT32);
-    _schema[5] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[6] = uint8(LibTypes.SchemaValue.INT32);
-    _schema[7] = uint8(LibTypes.SchemaValue.INT32);
-    _schema[8] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[9] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[10] = uint8(LibTypes.SchemaValue.UINT256);
-    return _schema;
+    uint8[] memory schema = new uint8[](11);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[1] = uint8(LibTypes.SchemaValue.UINT32);
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[3] = uint8(LibTypes.SchemaValue.INT32);
+    schema[4] = uint8(LibTypes.SchemaValue.INT32);
+    schema[5] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[6] = uint8(LibTypes.SchemaValue.INT32);
+    schema[7] = uint8(LibTypes.SchemaValue.INT32);
+    schema[8] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[9] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[10] = uint8(LibTypes.SchemaValue.UINT256);
+    return schema;
   }
 
   struct KillEventData {

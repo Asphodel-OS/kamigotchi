@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAuction } from "libraries/LibAuction.sol";
-import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.auction.buy"));
@@ -28,10 +27,12 @@ contract AuctionBuySystem is System {
     LibInventory.incFor(components, accID, itemIndex, amt);
     LibAuction.incBalance(components, id, amt);
 
-    // // enable logging to support historic sales date + price history
-    // bytes buyLog = abi.encode(itemIndex, accIndex, amt, cost, block.timestamp);
-    // LibAuction.logBuy(world, ID, buyLog);
+    // enable logging to support historic sales date + price history
+    uint32 accIndex = LibAccount.getIndex(components, accID);
+    LibAuction.BuyLog memory buyLog = LibAuction.BuyLog(itemIndex, accIndex, amt, cost);
+    LibAuction.logBuy(world, buyLog);
 
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

@@ -14,7 +14,6 @@ import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
