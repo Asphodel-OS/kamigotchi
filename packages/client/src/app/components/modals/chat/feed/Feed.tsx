@@ -350,7 +350,7 @@ const FeedTabMessage = styled.div<{ color: string }>`
   
   strong {
     font-weight: bold;
-    text-shadow: 0 0 1px currentColor;
+    text-shadow: 0 0 1.5px currentColor;
     color: inherit;
   }
 `;
