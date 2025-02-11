@@ -96,7 +96,7 @@ export const Feed = (props: Props) => {
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
         setFeedData((prev) => [
-          `*${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} Musu.`,
+          `${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} Musu.`,
           ...prev,
         ]);
       });
