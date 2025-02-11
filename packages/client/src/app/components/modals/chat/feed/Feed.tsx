@@ -277,9 +277,10 @@ export const Feed = (props: Props) => {
               }
               key={index}
             >
-              &#x2022; {message.split('**').map((part, i) => 
-                i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-              )}
+              &#x2022;{' '}
+              {message
+                .split('**')
+                .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
             </FeedTabMessage>
           ))}
         </FeedTab>
@@ -346,11 +347,11 @@ const FeedTab = styled.div`
   word-break: break-all;
 `;
 const FeedTabMessage = styled.div<{ color: string }>`
-  ${({ color }) => `  color: ${color};  border-bottom: 0.2vw dashed lightgrey;`}
-  
-  strong {
+  ${({ color }) => `color: ${color} `};
+  border-bottom: 0.2vw dashed lightgrey;
+  &:strong {
     font-weight: bold;
     text-shadow: 0 0 1.5px currentColor;
-    color: inherit;
+    ${({ color }) => `color: ${color} `};
   }
 `;
