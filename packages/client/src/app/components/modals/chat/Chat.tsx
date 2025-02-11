@@ -4,6 +4,7 @@ import { interval, map } from 'rxjs';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { getAccount } from 'app/cache/account';
+import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
@@ -36,6 +37,7 @@ export function registerChatModal() {
           const accountOptions = {
             friends: 60,
           };
+          const kamiOptions = {};
 
           const { world, components } = network;
           return {
@@ -45,6 +47,7 @@ export function registerChatModal() {
                 getAccount(world, components, entity, accountOptions),
               getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
               getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
+              getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
             },
             network,
             world,
@@ -55,7 +58,7 @@ export function registerChatModal() {
     ({ data, network, utils, world }) => {
       const { accountEntity } = data;
       const { actions, api } = network;
-      const { getRoomByIndex, getAccount } = utils;
+      const { getRoomByIndex, getAccount, getKami } = utils;
       const { modals } = useVisibility();
       const { nodeIndex } = useSelected.getState();
 

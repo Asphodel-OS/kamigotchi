@@ -3,17 +3,25 @@ import styled from 'styled-components';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
+import { Kami } from 'app/cache/kami';
 import { useVisibility } from 'app/stores';
-import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
+import { HarvestEnd, Message as KamiMessage, Kill, Movement } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
+import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
-import { getKamidenClient, subscribeToMessages } from 'workers/sync/kamidenStreamClient';
+import {
+  getKamidenClient,
+  subscribeToFeed,
+  subscribeToMessages,
+} from 'workers/sync/kamidenStreamClient';
 import { Message } from './Message';
 
 interface Props {
   utils: {
     getAccount: (entityIndex: EntityIndex) => Account;
+    getKami: (entityIndex: EntityIndex) => Kami;
     getEntityIndex: (entity: EntityID) => EntityIndex;
+    getRoomByIndex: (nodeIndex: number) => Room;
   };
   actions: {
     pushMessages: (messages: KamiMessage[]) => void;
@@ -34,9 +42,10 @@ interface Props {
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
   const { utils, player, blocked, actionSystem, api } = props;
-  const { getAccount, getEntityIndex } = props.utils;
+  const { getAccount, getEntityIndex, getKami, getRoomByIndex } = props.utils;
   const { modals } = useVisibility();
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
+  const [feedData, setFeedData] = useState<String[]>([]);
   const [isPolling, setIsPolling] = useState(false);
   const [scrollDown, setScrollDown] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
@@ -49,9 +58,9 @@ export const Feed = (props: Props) => {
   /////////////////
   // SUBSCRIPTION
 
-  // Add subscription effect
+  // Add subscription effects
   useEffect(() => {
-    const unsubscribe = subscribeToMessages((message) => {
+    const unsubscribeMessages = subscribeToMessages((message) => {
       if (message.RoomIndex === player.roomIndex) {
         setKamidenMessages((prev) => [message, ...prev]);
       }
@@ -69,8 +78,30 @@ export const Feed = (props: Props) => {
       }
     });
 
+    const unsubscribeFeed = subscribeToFeed((feed) => {
+      feed.Movements.forEach((movement: Movement) => {
+        if (movement.RoomIndex !== player.roomIndex) return;
+        if (movement.AccountId === player.id) return;
+        let accountName = getAccount(getEntityIndex(formatEntityID(movement.AccountId))).name;
+        setFeedData((prev) => [`${accountName} entered the room.`, ...prev]);
+      });
+      feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
+        if (harvest.RoomIndex !== player.roomIndex) return;
+        let kamiName = getKami(getEntityIndex(formatEntityID(harvest.KamiId))).name;
+        setFeedData((prev) => [`${kamiName} finished harvesting.`, ...prev]);
+      });
+      feed.Kills.forEach((kill: Kill) => {
+        let killerName = getKami(getEntityIndex(formatEntityID(kill.KillerId))).name;
+        let victimName = getKami(getEntityIndex(formatEntityID(kill.VictimId))).name;
+        let roomName = getRoomByIndex(kill.RoomIndex).name;
+        let spoil = kill.Spoils;
+        console.log(`${killerName} liquidated ${victimName} at ${roomName} for ${spoil} Musu.`);
+      });
+    });
+
     return () => {
-      unsubscribe();
+      unsubscribeMessages();
+      unsubscribeFeed();
     };
   }, [player.roomIndex]);
 
@@ -87,10 +118,12 @@ export const Feed = (props: Props) => {
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
   async function pollM() {
+    console.log('pollM polling messages');
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
     });
+    console.log('pollM got response', response.Message);
     if (response.Messages.length === 0) {
       setNoMoreMessages(true);
       return;
@@ -101,6 +134,7 @@ export const Feed = (props: Props) => {
   }
 
   async function pollNew() {
+    console.log('pollNew polling messages');
     setIsPolling(true);
     let ts = kamidenMessages[0].Timestamp;
     const response = await client.getRoomMessages({
@@ -201,32 +235,30 @@ export const Feed = (props: Props) => {
               <PollingMessage>No more chat messages...</PollingMessage>
             )
           )}
-          {
-            <>
-              <div>
-                {kamidenMessages
-                  ?.toReversed()
-                  .map(
-                    (message, index, arr) =>
-                      !blocked.includes(
-                        getAccount(getEntityIndex(formatEntityID(message.AccountId))).id
-                      ) && (
-                        <Message
-                          previousEqual={
-                            index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
-                          }
-                          player={player}
-                          utils={utils}
-                          key={index}
-                          data={{ message }}
-                          api={api}
-                          actionSystem={actionSystem}
-                        />
-                      )
-                  )}
-              </div>
-            </>
-          }
+          <>
+            <div>
+              {kamidenMessages
+                ?.toReversed()
+                .map(
+                  (message, index, arr) =>
+                    !blocked.includes(
+                      getAccount(getEntityIndex(formatEntityID(message.AccountId))).id
+                    ) && (
+                      <Message
+                        previousEqual={
+                          index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
+                        }
+                        player={player}
+                        utils={utils}
+                        key={index}
+                        data={{ message }}
+                        api={api}
+                        actionSystem={actionSystem}
+                      />
+                    )
+                )}
+            </div>
+          </>
           {kamidenMessages.length === 0 && (
             <PollingMessage>No messages in this room</PollingMessage>
           )}

@@ -5,10 +5,10 @@
 // source: kamiden.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
-import { type CallContext, type CallOptions } from 'nice-grpc-common';
+import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { type CallContext, type CallOptions } from "nice-grpc-common";
 
-export const protobufPackage = 'kamiden';
+export const protobufPackage = "kamiden";
 
 /** Base type */
 export interface Message {
@@ -25,18 +25,44 @@ export interface RoomRequest {
   Size?: number | undefined;
 }
 
-export interface RoomResponse {
-  Messages: Message[];
+export interface Movement {
+  RoomIndex: number;
+  AccountId: string;
 }
 
-export interface StreamRequest {}
+export interface HarvestEnd {
+  RoomIndex: number;
+  KamiId: string;
+}
+
+export interface Kill {
+  RoomIndex: number;
+  KillerId: string;
+  VictimId: string;
+  Spoils: string;
+}
+
+export interface Feed {
+  Movements: Movement[];
+  HarvestEnds: HarvestEnd[];
+  Kills: Kill[];
+}
+
+export interface RoomResponse {
+  Messages: Message[];
+  Feeds: Feed[];
+}
+
+export interface StreamRequest {
+}
 
 export interface StreamResponse {
   Messages: Message[];
+  Feed: Feed | undefined;
 }
 
 function createBaseMessage(): Message {
-  return { RoomIndex: 0, AccountId: '', Message: '', Timestamp: 0 };
+  return { RoomIndex: 0, AccountId: "", Message: "", Timestamp: 0 };
 }
 
 export const Message: MessageFns<Message> = {
@@ -44,10 +70,10 @@ export const Message: MessageFns<Message> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.AccountId !== '') {
+    if (message.AccountId !== "") {
       writer.uint32(18).string(message.AccountId);
     }
-    if (message.Message !== '') {
+    if (message.Message !== "") {
       writer.uint32(26).string(message.Message);
     }
     if (message.Timestamp !== 0) {
@@ -110,8 +136,8 @@ export const Message: MessageFns<Message> = {
   fromPartial(object: DeepPartial<Message>): Message {
     const message = createBaseMessage();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.AccountId = object.AccountId ?? '';
-    message.Message = object.Message ?? '';
+    message.AccountId = object.AccountId ?? "";
+    message.Message = object.Message ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
@@ -187,14 +213,285 @@ export const RoomRequest: MessageFns<RoomRequest> = {
   },
 };
 
+function createBaseMovement(): Movement {
+  return { RoomIndex: 0, AccountId: "" };
+}
+
+export const Movement: MessageFns<Movement> = {
+  encode(message: Movement, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.RoomIndex !== 0) {
+      writer.uint32(8).uint32(message.RoomIndex);
+    }
+    if (message.AccountId !== "") {
+      writer.uint32(18).string(message.AccountId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Movement {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMovement();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.RoomIndex = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.AccountId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<Movement>): Movement {
+    return Movement.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<Movement>): Movement {
+    const message = createBaseMovement();
+    message.RoomIndex = object.RoomIndex ?? 0;
+    message.AccountId = object.AccountId ?? "";
+    return message;
+  },
+};
+
+function createBaseHarvestEnd(): HarvestEnd {
+  return { RoomIndex: 0, KamiId: "" };
+}
+
+export const HarvestEnd: MessageFns<HarvestEnd> = {
+  encode(message: HarvestEnd, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.RoomIndex !== 0) {
+      writer.uint32(8).uint32(message.RoomIndex);
+    }
+    if (message.KamiId !== "") {
+      writer.uint32(18).string(message.KamiId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): HarvestEnd {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHarvestEnd();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.RoomIndex = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.KamiId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<HarvestEnd>): HarvestEnd {
+    return HarvestEnd.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<HarvestEnd>): HarvestEnd {
+    const message = createBaseHarvestEnd();
+    message.RoomIndex = object.RoomIndex ?? 0;
+    message.KamiId = object.KamiId ?? "";
+    return message;
+  },
+};
+
+function createBaseKill(): Kill {
+  return { RoomIndex: 0, KillerId: "", VictimId: "", Spoils: "" };
+}
+
+export const Kill: MessageFns<Kill> = {
+  encode(message: Kill, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.RoomIndex !== 0) {
+      writer.uint32(8).uint32(message.RoomIndex);
+    }
+    if (message.KillerId !== "") {
+      writer.uint32(18).string(message.KillerId);
+    }
+    if (message.VictimId !== "") {
+      writer.uint32(26).string(message.VictimId);
+    }
+    if (message.Spoils !== "") {
+      writer.uint32(34).string(message.Spoils);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Kill {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKill();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.RoomIndex = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.KillerId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.VictimId = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.Spoils = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<Kill>): Kill {
+    return Kill.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<Kill>): Kill {
+    const message = createBaseKill();
+    message.RoomIndex = object.RoomIndex ?? 0;
+    message.KillerId = object.KillerId ?? "";
+    message.VictimId = object.VictimId ?? "";
+    message.Spoils = object.Spoils ?? "";
+    return message;
+  },
+};
+
+function createBaseFeed(): Feed {
+  return { Movements: [], HarvestEnds: [], Kills: [] };
+}
+
+export const Feed: MessageFns<Feed> = {
+  encode(message: Feed, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Movements) {
+      Movement.encode(v!, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.HarvestEnds) {
+      HarvestEnd.encode(v!, writer.uint32(18).fork()).join();
+    }
+    for (const v of message.Kills) {
+      Kill.encode(v!, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Feed {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseFeed();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Movements.push(Movement.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.HarvestEnds.push(HarvestEnd.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.Kills.push(Kill.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<Feed>): Feed {
+    return Feed.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<Feed>): Feed {
+    const message = createBaseFeed();
+    message.Movements = object.Movements?.map((e) => Movement.fromPartial(e)) || [];
+    message.HarvestEnds = object.HarvestEnds?.map((e) => HarvestEnd.fromPartial(e)) || [];
+    message.Kills = object.Kills?.map((e) => Kill.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseRoomResponse(): RoomResponse {
-  return { Messages: [] };
+  return { Messages: [], Feeds: [] };
 }
 
 export const RoomResponse: MessageFns<RoomResponse> = {
   encode(message: RoomResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.Messages) {
       Message.encode(v!, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.Feeds) {
+      Feed.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -214,6 +511,14 @@ export const RoomResponse: MessageFns<RoomResponse> = {
           message.Messages.push(Message.decode(reader, reader.uint32()));
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.Feeds.push(Feed.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -229,6 +534,7 @@ export const RoomResponse: MessageFns<RoomResponse> = {
   fromPartial(object: DeepPartial<RoomResponse>): RoomResponse {
     const message = createBaseRoomResponse();
     message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
+    message.Feeds = object.Feeds?.map((e) => Feed.fromPartial(e)) || [];
     return message;
   },
 };
@@ -268,13 +574,16 @@ export const StreamRequest: MessageFns<StreamRequest> = {
 };
 
 function createBaseStreamResponse(): StreamResponse {
-  return { Messages: [] };
+  return { Messages: [], Feed: undefined };
 }
 
 export const StreamResponse: MessageFns<StreamResponse> = {
   encode(message: StreamResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.Messages) {
       Message.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.Feed !== undefined) {
+      Feed.encode(message.Feed, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -294,6 +603,14 @@ export const StreamResponse: MessageFns<StreamResponse> = {
           message.Messages.push(Message.decode(reader, reader.uint32()));
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.Feed = Feed.decode(reader, reader.uint32());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -309,6 +626,7 @@ export const StreamResponse: MessageFns<StreamResponse> = {
   fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
     const message = createBaseStreamResponse();
     message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
+    message.Feed = (object.Feed !== undefined && object.Feed !== null) ? Feed.fromPartial(object.Feed) : undefined;
     return message;
   },
 };
@@ -316,12 +634,12 @@ export const StreamResponse: MessageFns<StreamResponse> = {
 /** Replies */
 export type KamidenServiceDefinition = typeof KamidenServiceDefinition;
 export const KamidenServiceDefinition = {
-  name: 'KamidenService',
-  fullName: 'kamiden.KamidenService',
+  name: "KamidenService",
+  fullName: "kamiden.KamidenService",
   methods: {
     /** Requests the latest block number based on the latest ECS state. */
     getRoomMessages: {
-      name: 'GetRoomMessages',
+      name: "GetRoomMessages",
       requestType: RoomRequest,
       requestStream: false,
       responseType: RoomResponse,
@@ -330,7 +648,7 @@ export const KamidenServiceDefinition = {
     },
     /** Stream */
     subscribeToStream: {
-      name: 'SubscribeToStream',
+      name: "SubscribeToStream",
       requestType: StreamRequest,
       requestStream: false,
       responseType: StreamResponse,
@@ -342,56 +660,44 @@ export const KamidenServiceDefinition = {
 
 export interface KamidenServiceImplementation<CallContextExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getRoomMessages(
-    request: RoomRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<RoomResponse>>;
+  getRoomMessages(request: RoomRequest, context: CallContext & CallContextExt): Promise<DeepPartial<RoomResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
 }
 
 export interface KamidenServiceClient<CallOptionsExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getRoomMessages(
-    request: DeepPartial<RoomRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<RoomResponse>;
+  getRoomMessages(request: DeepPartial<RoomRequest>, options?: CallOptions & CallOptionsExt): Promise<RoomResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<StreamResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends globalThis.Array<infer U>
-    ? globalThis.Array<DeepPartial<U>>
-    : T extends ReadonlyArray<infer U>
-      ? ReadonlyArray<DeepPartial<U>>
-      : T extends {}
-        ? { [K in keyof T]?: DeepPartial<T[K]> }
-        : Partial<T>;
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : Partial<T>;
 
 function longToNumber(int64: { toString(): string }): number {
   const num = globalThis.Number(int64.toString());
   if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error('Value is smaller than Number.MIN_SAFE_INTEGER');
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
   }
   return num;
 }
 
-export type ServerStreamingMethodResult<Response> = {
-  [Symbol.asyncIterator](): AsyncIterator<Response, void>;
-};
+export type ServerStreamingMethodResult<Response> = { [Symbol.asyncIterator](): AsyncIterator<Response, void> };
 
 export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
