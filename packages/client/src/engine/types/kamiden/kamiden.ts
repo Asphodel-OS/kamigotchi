@@ -5,10 +5,10 @@
 // source: kamiden.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { type CallContext, type CallOptions } from "nice-grpc-common";
+import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
+import { type CallContext, type CallOptions } from 'nice-grpc-common';
 
-export const protobufPackage = "kamiden";
+export const protobufPackage = 'kamiden';
 
 /** Base type */
 export interface Message {
@@ -28,11 +28,13 @@ export interface RoomRequest {
 export interface Movement {
   RoomIndex: number;
   AccountId: string;
+  Timestamp: number;
 }
 
 export interface HarvestEnd {
   RoomIndex: number;
   KamiId: string;
+  Timestamp: number;
 }
 
 export interface Kill {
@@ -40,6 +42,7 @@ export interface Kill {
   KillerId: string;
   VictimId: string;
   Spoils: string;
+  Timestamp: number;
 }
 
 export interface Feed {
@@ -53,8 +56,7 @@ export interface RoomResponse {
   Feeds: Feed[];
 }
 
-export interface StreamRequest {
-}
+export interface StreamRequest {}
 
 export interface StreamResponse {
   Messages: Message[];
@@ -62,7 +64,7 @@ export interface StreamResponse {
 }
 
 function createBaseMessage(): Message {
-  return { RoomIndex: 0, AccountId: "", Message: "", Timestamp: 0 };
+  return { RoomIndex: 0, AccountId: '', Message: '', Timestamp: 0 };
 }
 
 export const Message: MessageFns<Message> = {
@@ -70,10 +72,10 @@ export const Message: MessageFns<Message> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.AccountId !== "") {
+    if (message.AccountId !== '') {
       writer.uint32(18).string(message.AccountId);
     }
-    if (message.Message !== "") {
+    if (message.Message !== '') {
       writer.uint32(26).string(message.Message);
     }
     if (message.Timestamp !== 0) {
@@ -136,8 +138,8 @@ export const Message: MessageFns<Message> = {
   fromPartial(object: DeepPartial<Message>): Message {
     const message = createBaseMessage();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.AccountId = object.AccountId ?? "";
-    message.Message = object.Message ?? "";
+    message.AccountId = object.AccountId ?? '';
+    message.Message = object.Message ?? '';
     message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
@@ -214,7 +216,7 @@ export const RoomRequest: MessageFns<RoomRequest> = {
 };
 
 function createBaseMovement(): Movement {
-  return { RoomIndex: 0, AccountId: "" };
+  return { RoomIndex: 0, AccountId: '', Timestamp: 0 };
 }
 
 export const Movement: MessageFns<Movement> = {
@@ -222,8 +224,11 @@ export const Movement: MessageFns<Movement> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.AccountId !== "") {
+    if (message.AccountId !== '') {
       writer.uint32(18).string(message.AccountId);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(24).uint64(message.Timestamp);
     }
     return writer;
   },
@@ -251,6 +256,14 @@ export const Movement: MessageFns<Movement> = {
           message.AccountId = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -266,13 +279,14 @@ export const Movement: MessageFns<Movement> = {
   fromPartial(object: DeepPartial<Movement>): Movement {
     const message = createBaseMovement();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.AccountId = object.AccountId ?? "";
+    message.AccountId = object.AccountId ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
 };
 
 function createBaseHarvestEnd(): HarvestEnd {
-  return { RoomIndex: 0, KamiId: "" };
+  return { RoomIndex: 0, KamiId: '', Timestamp: 0 };
 }
 
 export const HarvestEnd: MessageFns<HarvestEnd> = {
@@ -280,8 +294,11 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.KamiId !== "") {
+    if (message.KamiId !== '') {
       writer.uint32(18).string(message.KamiId);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(24).uint64(message.Timestamp);
     }
     return writer;
   },
@@ -309,6 +326,14 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
           message.KamiId = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -324,13 +349,14 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
   fromPartial(object: DeepPartial<HarvestEnd>): HarvestEnd {
     const message = createBaseHarvestEnd();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.KamiId = object.KamiId ?? "";
+    message.KamiId = object.KamiId ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
 };
 
 function createBaseKill(): Kill {
-  return { RoomIndex: 0, KillerId: "", VictimId: "", Spoils: "" };
+  return { RoomIndex: 0, KillerId: '', VictimId: '', Spoils: '', Timestamp: 0 };
 }
 
 export const Kill: MessageFns<Kill> = {
@@ -338,14 +364,17 @@ export const Kill: MessageFns<Kill> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.KillerId !== "") {
+    if (message.KillerId !== '') {
       writer.uint32(18).string(message.KillerId);
     }
-    if (message.VictimId !== "") {
+    if (message.VictimId !== '') {
       writer.uint32(26).string(message.VictimId);
     }
-    if (message.Spoils !== "") {
+    if (message.Spoils !== '') {
       writer.uint32(34).string(message.Spoils);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(40).uint64(message.Timestamp);
     }
     return writer;
   },
@@ -389,6 +418,14 @@ export const Kill: MessageFns<Kill> = {
           message.Spoils = reader.string();
           continue;
         }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -404,9 +441,10 @@ export const Kill: MessageFns<Kill> = {
   fromPartial(object: DeepPartial<Kill>): Kill {
     const message = createBaseKill();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.KillerId = object.KillerId ?? "";
-    message.VictimId = object.VictimId ?? "";
-    message.Spoils = object.Spoils ?? "";
+    message.KillerId = object.KillerId ?? '';
+    message.VictimId = object.VictimId ?? '';
+    message.Spoils = object.Spoils ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
 };
@@ -626,7 +664,8 @@ export const StreamResponse: MessageFns<StreamResponse> = {
   fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
     const message = createBaseStreamResponse();
     message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
-    message.Feed = (object.Feed !== undefined && object.Feed !== null) ? Feed.fromPartial(object.Feed) : undefined;
+    message.Feed =
+      object.Feed !== undefined && object.Feed !== null ? Feed.fromPartial(object.Feed) : undefined;
     return message;
   },
 };
@@ -634,12 +673,12 @@ export const StreamResponse: MessageFns<StreamResponse> = {
 /** Replies */
 export type KamidenServiceDefinition = typeof KamidenServiceDefinition;
 export const KamidenServiceDefinition = {
-  name: "KamidenService",
-  fullName: "kamiden.KamidenService",
+  name: 'KamidenService',
+  fullName: 'kamiden.KamidenService',
   methods: {
     /** Requests the latest block number based on the latest ECS state. */
     getRoomMessages: {
-      name: "GetRoomMessages",
+      name: 'GetRoomMessages',
       requestType: RoomRequest,
       requestStream: false,
       responseType: RoomResponse,
@@ -648,7 +687,7 @@ export const KamidenServiceDefinition = {
     },
     /** Stream */
     subscribeToStream: {
-      name: "SubscribeToStream",
+      name: 'SubscribeToStream',
       requestType: StreamRequest,
       requestStream: false,
       responseType: StreamResponse,
@@ -660,44 +699,56 @@ export const KamidenServiceDefinition = {
 
 export interface KamidenServiceImplementation<CallContextExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getRoomMessages(request: RoomRequest, context: CallContext & CallContextExt): Promise<DeepPartial<RoomResponse>>;
+  getRoomMessages(
+    request: RoomRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<RoomResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
-    context: CallContext & CallContextExt,
+    context: CallContext & CallContextExt
   ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
 }
 
 export interface KamidenServiceClient<CallOptionsExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getRoomMessages(request: DeepPartial<RoomRequest>, options?: CallOptions & CallOptionsExt): Promise<RoomResponse>;
+  getRoomMessages(
+    request: DeepPartial<RoomRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<RoomResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
-    options?: CallOptions & CallOptionsExt,
+    options?: CallOptions & CallOptionsExt
   ): AsyncIterable<StreamResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+    ? globalThis.Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 function longToNumber(int64: { toString(): string }): number {
   const num = globalThis.Number(int64.toString());
   if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
   }
   if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+    throw new globalThis.Error('Value is smaller than Number.MIN_SAFE_INTEGER');
   }
   return num;
 }
 
-export type ServerStreamingMethodResult<Response> = { [Symbol.asyncIterator](): AsyncIterator<Response, void> };
+export type ServerStreamingMethodResult<Response> = {
+  [Symbol.asyncIterator](): AsyncIterator<Response, void>;
+};
 
 export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
