@@ -1,10 +1,10 @@
 import { constants } from 'ethers';
+import { ignoreSolcErrors } from '../utils';
+import { findLog } from '../utils/findLog';
 import { generateLibDeploy } from './codegen';
-import { findLog } from './findLog';
-import { ignoreSolcErrors } from './utils';
 import execa = require('execa');
 
-const contractsDir = __dirname + '/../../contracts/';
+const contractsDir = __dirname + '/../contracts/';
 
 /**
  * Deploy world, components and systems from deploy.json

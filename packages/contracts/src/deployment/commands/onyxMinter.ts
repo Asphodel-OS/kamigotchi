@@ -3,7 +3,7 @@ const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 import { ethers } from 'ethers';
 
-import { getSigner } from './utils/utils';
+import { getSigner } from '../utils';
 
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -mode <mode> -amount <amount>')

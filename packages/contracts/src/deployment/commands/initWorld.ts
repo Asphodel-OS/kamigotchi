@@ -1,10 +1,12 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
+import { constants } from 'ethers';
+import execa from 'execa';
 
+import { generateInitScript } from '../scripts/worldIniter';
+import { getDeployerKey, getRpc, getWorld, ignoreSolcErrors, setAutoMine } from '../utils';
 import { SubFunc, WorldAPI } from '../world/world';
-import { getDeployerKey, getRpc, getWorld, setAutoMine } from './utils/utils';
-import { generateInitScript, initWorld } from './utils/worldIniter';
 
 const argv = yargs(hideBin(process.argv))
   .usage(
@@ -40,3 +42,43 @@ const run = async () => {
 };
 
 run();
+
+//////////////
+// FORGE CALL
+
+async function initWorld(
+  deployerPriv?: string,
+  rpc = 'http://localhost:8545',
+  worldAddress?: string,
+  forgeOpts?: string
+) {
+  const child = execa(
+    'forge',
+    [
+      'script',
+      'src/deployment/contracts/InitWorld.s.sol:InitWorld',
+      '--broadcast',
+      '--sig',
+      'initWorld(uint256,address)',
+      deployerPriv || constants.AddressZero, // Deployer
+      worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
+      '--fork-url',
+      rpc,
+      '--skip',
+      'test',
+      ...ignoreSolcErrors,
+      ...(forgeOpts?.toString().split(/,| /) || []),
+    ],
+    { stdio: ['inherit', 'pipe', 'pipe'] }
+  );
+
+  child.stderr?.on('data', (data) => console.log('stderr:', data.toString()));
+  child.stdout?.on('data', (data) => console.log(data.toString()));
+
+  console.log('---------------------------------------------\n');
+  console.log('World state initialing ');
+  console.log('\n---------------------------------------------');
+  console.log('\n\n');
+
+  return { child: await child };
+}

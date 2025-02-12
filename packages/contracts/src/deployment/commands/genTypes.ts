@@ -1,6 +1,6 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-import { generateComponentSchemas, generateSystemTypes } from './utils/codegen';
+import { generateComponentSchemas, generateSystemTypes } from '../scripts/codegen';
 
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -inputDir <string> -outputDir <string>>')

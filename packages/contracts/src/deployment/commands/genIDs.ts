@@ -1,3 +1,3 @@
-import { generateIDs } from './utils/codegen';
+import { generateIDs } from '../scripts/codegen';
 
 generateIDs();

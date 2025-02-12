@@ -3,10 +3,10 @@ const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 const openurl = require('openurl');
 
-import { clearInitWorld } from './utils/codegen';
-import { generateAndDeploy } from './utils/deployer';
-import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from './utils/utils';
-import { generateInitScript } from './utils/worldIniter';
+import { clearInitWorld } from '../scripts/codegen';
+import { generateAndDeploy } from '../scripts/deployer';
+import { generateInitScript } from '../scripts/worldIniter';
+import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from '../utils';
 
 const argv = yargs(hideBin(process.argv)).argv;
 dotenv.config();

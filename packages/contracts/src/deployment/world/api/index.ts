@@ -1,6 +1,6 @@
 import { BigNumberish } from 'ethers';
 
-import { createCall, toUint32FixedArrayLiteral } from '../../commands/utils/systemCaller';
+import { createCall, toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { SystemAbis } from '../mappings/SystemAbis';
 import { auctionAPI } from './auctions';
 import { listingAPI } from './listings';
