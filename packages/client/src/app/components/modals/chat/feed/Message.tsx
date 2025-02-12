@@ -129,11 +129,11 @@ export const Message = (props: Props) => {
 
                   <Author author={false}>{getAccountFunc().name}</Author>
                 </PfpAuthor>
-                <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+                <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
               </>
             ) : (
               <>
-                <Time>{moment(message.Timestamp * 1000).format('MM/DD HH:mm')}</Time>
+                <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
                 <PfpAuthor>
                   <Author author={true}>{getAccountFunc().name}</Author>
                   <Pfp

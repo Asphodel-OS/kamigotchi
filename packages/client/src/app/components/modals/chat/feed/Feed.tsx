@@ -8,6 +8,7 @@ import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { HarvestEnd, Message as KamiMessage, Kill, Movement } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
+import moment from 'moment';
 import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
 import {
@@ -81,23 +82,31 @@ export const Feed = (props: Props) => {
 
     const unsubscribeFeed = subscribeToFeed((feed) => {
       let feedMessage: string[] = [];
+
       feed.Movements.forEach((movement: Movement) => {
         if (movement.RoomIndex !== player.roomIndex) return;
         if (movement.AccountId === player.id) return;
         let accountName = getAccount(getEntityIndex(formatEntityID(movement.AccountId))).name;
-        feedMessage.push(`${accountName} **entered** the room.`);
+        feedMessage.push(
+          `${moment(movement.Timestamp).format('MM/DD HH:mm')} : ${accountName} **entered** the room.`
+        );
       });
       feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
         if (harvest.RoomIndex !== player.roomIndex) return;
         let kamiName = getKami(getEntityIndex(formatEntityID(harvest.KamiId))).name;
-        feedMessage.push(`${kamiName} finished **harvesting**.`);
+        feedMessage.push(
+          `${moment(harvest.Timestamp).format('MM/DD HH:mm')} : ${kamiName} finished **harvesting**.`
+        );
       });
       feed.Kills.forEach((kill: Kill) => {
         let killerName = getKami(getEntityIndex(formatEntityID(kill.KillerId))).name;
         let victimName = getKami(getEntityIndex(formatEntityID(kill.VictimId))).name;
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
-        feedMessage.push(`${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} `);
+
+        feedMessage.push(
+          `${moment(kill.Timestamp).format('MM/DD HH:mm')} : ${killerName} **liquidated** ${victimName} in ${roomName}.`
+        );
       });
       if (feedData.length >= 50) {
         setFeedData((prev) => [...prev.slice(prev.length - 50, prev.length), ...feedMessage]);
