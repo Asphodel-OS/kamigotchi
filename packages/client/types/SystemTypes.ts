@@ -124,7 +124,7 @@ export type SystemTypes = {
   "system.lootbox.commit": LootboxCommitSystem;
   "system.quest.accept": QuestAcceptSystem;
   "system.quest.complete": QuestCompleteSystem;
-  "system.Quest.Drop": QuestDropSystem;
+  "system.quest.drop": QuestDropSystem;
   "system.relationship.advance": RelationshipAdvanceSystem;
   "system.scavenge.claim": ScavengeClaimSystem;
   "system.skill.reset": SkillResetSystem;

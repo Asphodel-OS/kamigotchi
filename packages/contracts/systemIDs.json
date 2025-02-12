@@ -1,230 +1,230 @@
-{ 
+{
   "_AdminGiveSystem": {
     "id": "system._Admin.Give",
-   "encodedID": "0x35c9e051ba86dabb8fb1bc795056a6053ae302ea916d577db765f16e22b719cc"
+    "encodedID": "0x35c9e051ba86dabb8fb1bc795056a6053ae302ea916d577db765f16e22b719cc"
   },
   "_AuthManageRoleSystem": {
     "id": "system._Auth.Manage.Role",
-   "encodedID": "0xfa9684ace25361f5f40e40125a8684f447957b66a008ef8f8a173bccb6fce62c"
+    "encodedID": "0xfa9684ace25361f5f40e40125a8684f447957b66a008ef8f8a173bccb6fce62c"
   },
   "_CreatePetSystem": {
     "id": "system.Kami721.create",
-   "encodedID": "0xdca10f2e8792bb3d426e9ae88798f80bdf42e5e4e21d6930cf9f211837099aa7"
+    "encodedID": "0xdca10f2e8792bb3d426e9ae88798f80bdf42e5e4e21d6930cf9f211837099aa7"
   },
   "_ConfigSetSystem": {
     "id": "system._Config.Set",
-   "encodedID": "0x77ecdbeff66f6a1ed1858296770772bd6752009b6f5209269552793493aeed37"
+    "encodedID": "0x77ecdbeff66f6a1ed1858296770772bd6752009b6f5209269552793493aeed37"
   },
   "_FactionRegistrySystem": {
     "id": "system.faction.registry",
-   "encodedID": "0x8d8ca8dc9d1183ec732ff17c531ea6dc7bff77278dc1cf35272a79cc3123c118"
+    "encodedID": "0x8d8ca8dc9d1183ec732ff17c531ea6dc7bff77278dc1cf35272a79cc3123c118"
   },
   "_GoalRegistrySystem": {
     "id": "system.goal.registry",
-   "encodedID": "0xc2374ee3f94ece5db237068bf60fe3603f499e1bde80caca63dba33684b42226"
+    "encodedID": "0xc2374ee3f94ece5db237068bf60fe3603f499e1bde80caca63dba33684b42226"
   },
   "_ItemRegistrySystem": {
     "id": "system.item.registry",
-   "encodedID": "0xe540c39ea350313a7676d87bdc33d09680e043842329fa660af0e97dc382711a"
+    "encodedID": "0xe540c39ea350313a7676d87bdc33d09680e043842329fa660af0e97dc382711a"
   },
   "_ListingRegistrySystem": {
     "id": "system.listing.registry",
-   "encodedID": "0x28e07975136b5f2f93fe053b93fadefcea99bb65928f0e90eee63acdd5ca6956"
+    "encodedID": "0x28e07975136b5f2f93fe053b93fadefcea99bb65928f0e90eee63acdd5ca6956"
   },
   "_NodeRegistrySystem": {
     "id": "system.node.registry",
-   "encodedID": "0xc0be51beb31aedc8778d0fcd1ce2c528a2c319720ab9af09005c3aefe5990005"
+    "encodedID": "0xc0be51beb31aedc8778d0fcd1ce2c528a2c319720ab9af09005c3aefe5990005"
   },
   "_NPCRegistrySystem": {
     "id": "system.npc.registry",
-   "encodedID": "0xe2a8251732a877e834ebb611e96c38b304939d9c97ed367ea6e69a91e4b5a436"
+    "encodedID": "0xe2a8251732a877e834ebb611e96c38b304939d9c97ed367ea6e69a91e4b5a436"
   },
   "_QuestRegistrySystem": {
     "id": "system.quest.registry",
-   "encodedID": "0x40655593e868a25950fe329b42743107d2ad12ae762de5235676e5d683ec1e17"
+    "encodedID": "0x40655593e868a25950fe329b42743107d2ad12ae762de5235676e5d683ec1e17"
   },
   "_RecipeRegistrySystem": {
     "id": "system.recipe.registry.2",
-   "encodedID": "0xd4e7c7a5f3f94a7ad9722dbed68c30cbc3fc0300ada84bfc5c3b2b78c816d515"
+    "encodedID": "0xd4e7c7a5f3f94a7ad9722dbed68c30cbc3fc0300ada84bfc5c3b2b78c816d515"
   },
   "_RelationshipRegistrySystem": {
     "id": "system.relationship.registry",
-   "encodedID": "0x94b073cc112d14c992325df6fcd5c88b944b1b62e9b3abee1c5a337206c27784"
+    "encodedID": "0x94b073cc112d14c992325df6fcd5c88b944b1b62e9b3abee1c5a337206c27784"
   },
   "_RoomRegistrySystem": {
     "id": "system.room.registry",
-   "encodedID": "0x26e512ea168a87b6cb17296044dcd040f585136d5c6c14e64337968c5cbb4b1a"
+    "encodedID": "0x26e512ea168a87b6cb17296044dcd040f585136d5c6c14e64337968c5cbb4b1a"
   },
   "_SkillRegistrySystem": {
     "id": "system.skill.registry",
-   "encodedID": "0xbc25ac58ab8b04702b16480ed1fed26ed7b27647b3f3bd3482347f49d0a7c845"
+    "encodedID": "0xbc25ac58ab8b04702b16480ed1fed26ed7b27647b3f3bd3482347f49d0a7c845"
   },
   "_TraitRegistrySystem": {
     "id": "system.trait.registry",
-   "encodedID": "0x9aed45721c10e9f236d229d904b551b00e8ec2648af1d87b70f07715a5f70459"
+    "encodedID": "0x9aed45721c10e9f236d229d904b551b00e8ec2648af1d87b70f07715a5f70459"
   },
   "AccountFundSystem": {
     "id": "system.account.fund",
-   "encodedID": "0x9816b9182de6b2d9e18f3e53b9e08c41dc11106023754512fa722daf78b05896"
+    "encodedID": "0x9816b9182de6b2d9e18f3e53b9e08c41dc11106023754512fa722daf78b05896"
   },
   "AccountUseItemSystem": {
     "id": "system.account.use.item",
-   "encodedID": "0x02594d17a5ffc4ba72c65c5616374156e960547eac12113df1f60b0b21d9e2d5"
+    "encodedID": "0x02594d17a5ffc4ba72c65c5616374156e960547eac12113df1f60b0b21d9e2d5"
   },
   "AccountMoveSystem": {
     "id": "system.account.move",
-   "encodedID": "0xf9b303531494d4003467a5e0d14c8770502040183c6facf992ad01c7e317eaab"
+    "encodedID": "0xf9b303531494d4003467a5e0d14c8770502040183c6facf992ad01c7e317eaab"
   },
   "AccountRegisterSystem": {
     "id": "system.account.register",
-   "encodedID": "0xf38c56f8ddc37f3e83e43016bac5aaa338ebb49ca02232452bd2f5c79a34a067"
+    "encodedID": "0xf38c56f8ddc37f3e83e43016bac5aaa338ebb49ca02232452bd2f5c79a34a067"
   },
   "AccountSetNameSystem": {
     "id": "system.account.set.name",
-   "encodedID": "0x93677c34c7dd974fe23e0f36ff741599f16a73b51e6d50fc3527179131f5b9ea"
+    "encodedID": "0x93677c34c7dd974fe23e0f36ff741599f16a73b51e6d50fc3527179131f5b9ea"
   },
   "AccountSetOperatorSystem": {
     "id": "system.account.set.operator",
-   "encodedID": "0x30e8932dc8e2362f4722824362c3a0895f6dbaa7f643b37560c1b38ea682d667"
+    "encodedID": "0x30e8932dc8e2362f4722824362c3a0895f6dbaa7f643b37560c1b38ea682d667"
   },
   "AccountSetFarcasterDataSystem": {
     "id": "system.account.set.farcaster",
-   "encodedID": "0xd34161e46727cb8efc2f04f8bd1b9f57ad4d38cf0467c0a23e3986643574408c"
+    "encodedID": "0xd34161e46727cb8efc2f04f8bd1b9f57ad4d38cf0467c0a23e3986643574408c"
   },
   "CraftSystem": {
     "id": "system.craft",
-   "encodedID": "0x91c8ca5f3d3d3a29a32ee18a732d1a758b78b1a39fd4442a9e86c11882a3ddf3"
+    "encodedID": "0x91c8ca5f3d3d3a29a32ee18a732d1a758b78b1a39fd4442a9e86c11882a3ddf3"
   },
   "DroptableRevealSystem": {
     "id": "system.droptable.item.reveal",
-   "encodedID": "0xe63e35fb18d6b703fb244bb211f40fa74f8c94730911eee3b90f33c5348211ae"
+    "encodedID": "0xe63e35fb18d6b703fb244bb211f40fa74f8c94730911eee3b90f33c5348211ae"
   },
   "EchoKamisSystem": {
     "id": "system.echo.kamis",
-   "encodedID": "0x048b2e771fd71b035d2e2eef061bf6327834cb83e983441c1b82227c42bcd030"
+    "encodedID": "0x048b2e771fd71b035d2e2eef061bf6327834cb83e983441c1b82227c42bcd030"
   },
   "EchoRoomSystem": {
     "id": "system.echo.room",
-   "encodedID": "0x2d1514b5fef7843953693554a578305b838b35b0568bff18d1f9e83bc8170ebb"
+    "encodedID": "0x2d1514b5fef7843953693554a578305b838b35b0568bff18d1f9e83bc8170ebb"
   },
   "ItemBurnSystem": {
     "id": "system.item.burn",
-   "encodedID": "0xbdaba8a0568bc1028eb8feaf4fc4a55c21a880db12b9226780cc53ca27825618"
+    "encodedID": "0xbdaba8a0568bc1028eb8feaf4fc4a55c21a880db12b9226780cc53ca27825618"
   },
   "FriendAcceptSystem": {
     "id": "system.friend.accept",
-   "encodedID": "0x51d78698a2ed611fb47d78de3c9b8d6f19a46f8f7e8d86ccee946e7053d62c76"
+    "encodedID": "0x51d78698a2ed611fb47d78de3c9b8d6f19a46f8f7e8d86ccee946e7053d62c76"
   },
   "FriendBlockSystem": {
     "id": "system.friend.block",
-   "encodedID": "0xe4636dc3b46e13d0b7b0e1649628116d21a8f73e6af5716ae028eaf79da93ad8"
+    "encodedID": "0xe4636dc3b46e13d0b7b0e1649628116d21a8f73e6af5716ae028eaf79da93ad8"
   },
   "FriendCancelSystem": {
     "id": "system.friend.cancel",
-   "encodedID": "0x1e0f076aa402b2fecc2a89096fd2b6754e207e5c8384541b5da47f7d05ef3ae4"
+    "encodedID": "0x1e0f076aa402b2fecc2a89096fd2b6754e207e5c8384541b5da47f7d05ef3ae4"
   },
   "FriendRequestSystem": {
     "id": "system.friend.request",
-   "encodedID": "0x3d00bbede376f2b6f60d2a6336b80889c091f789b681a236ebb478fc2d902972"
+    "encodedID": "0x3d00bbede376f2b6f60d2a6336b80889c091f789b681a236ebb478fc2d902972"
   },
   "GetterSystem": {
     "id": "system.getter",
-   "encodedID": "0xde291686da058fbcb5e9a4b6a8b07d5decdc9964821cd22748ad21dd0f623d31"
+    "encodedID": "0xde291686da058fbcb5e9a4b6a8b07d5decdc9964821cd22748ad21dd0f623d31"
   },
   "GoalContributeSystem": {
     "id": "system.goal.contribute",
-   "encodedID": "0x72c41d81fb1503526635c627e773b3a92eeb5c05254c828dc6bd736582519759"
+    "encodedID": "0x72c41d81fb1503526635c627e773b3a92eeb5c05254c828dc6bd736582519759"
   },
   "GoalClaimSystem": {
     "id": "system.goal.claim",
-   "encodedID": "0xe6f0765b0495731df1c8acd30f6caa1d39fbb7ea39a1978d095300c816a9683d"
+    "encodedID": "0xe6f0765b0495731df1c8acd30f6caa1d39fbb7ea39a1978d095300c816a9683d"
   },
   "ListingBuySystem": {
     "id": "system.listing.buy",
-   "encodedID": "0xef71c1277e98d72c027c8f894066ed774855edbd43ded8811c7bc5bd166a6320"
+    "encodedID": "0xef71c1277e98d72c027c8f894066ed774855edbd43ded8811c7bc5bd166a6320"
   },
   "ListingSellSystem": {
     "id": "system.listing.sell",
-   "encodedID": "0x0e59fe3ceb2e7941afae9ca62f352498ff65857afc78f41aa6817b36c1b9adb7"
+    "encodedID": "0x0e59fe3ceb2e7941afae9ca62f352498ff65857afc78f41aa6817b36c1b9adb7"
   },
   "Kami721IsInWorldSystem": {
     "id": "system.Kami721.IsInWorld",
-   "encodedID": "0xa38a2d20bc5cd3286ad0a5ccfbdabc8f6e4e00d798802b76b4d28cb9d8c35cd3"
+    "encodedID": "0xa38a2d20bc5cd3286ad0a5ccfbdabc8f6e4e00d798802b76b4d28cb9d8c35cd3"
   },
   "Kami721MetadataSystem": {
     "id": "system.Kami721.Metadata",
-   "encodedID": "0x4076f51dc73d65f1872d082b8edcc19b6e8097448714be3894359496982032d8"
+    "encodedID": "0x4076f51dc73d65f1872d082b8edcc19b6e8097448714be3894359496982032d8"
   },
   "KamiGachaMintSystem": {
     "id": "system.kami.gacha.mint",
-   "encodedID": "0xe919eba3e723393aaec69cce26171484c43f9b021996e42df1f9164699f6717c"
+    "encodedID": "0xe919eba3e723393aaec69cce26171484c43f9b021996e42df1f9164699f6717c"
   },
   "KamiGachaRerollSystem": {
     "id": "system.kami.gacha.reroll",
-   "encodedID": "0x9bfb5984bcacdb14759602922d795519912e64eb01c6899a41eb65b994d68857"
+    "encodedID": "0x9bfb5984bcacdb14759602922d795519912e64eb01c6899a41eb65b994d68857"
   },
   "KamiGachaRevealSystem": {
     "id": "system.kami.gacha.reveal",
-   "encodedID": "0x2b41102dbee0f10f6b37064264f87cc88c2197a85a4fc61fe08fa7452fbd00d7"
+    "encodedID": "0x2b41102dbee0f10f6b37064264f87cc88c2197a85a4fc61fe08fa7452fbd00d7"
   },
   "KamiLevelSystem": {
     "id": "system.kami.level",
-   "encodedID": "0x5b84b4f4f45a066d7e7527ce4cf36c4c8a56da7c1b163d1139e1934b9f2d3a23"
+    "encodedID": "0x5b84b4f4f45a066d7e7527ce4cf36c4c8a56da7c1b163d1139e1934b9f2d3a23"
   },
   "KamiNameSystem": {
     "id": "system.kami.name",
-   "encodedID": "0x505672a725488aecfa1148696bfa9cb13566e8c99737b5816f221964050681b3"
+    "encodedID": "0x505672a725488aecfa1148696bfa9cb13566e8c99737b5816f221964050681b3"
   },
   "KamiUseItemSystem": {
     "id": "system.kami.use.item",
-   "encodedID": "0xb1262e41ad8db7bdcc4c52640b856c24cd1713a44079d2d0c4b692eceebf3f09"
+    "encodedID": "0xb1262e41ad8db7bdcc4c52640b856c24cd1713a44079d2d0c4b692eceebf3f09"
   },
   "HarvestCollectSystem": {
     "id": "system.harvest.collect",
-   "encodedID": "0x8493c9d75b152fc52d462c6389b227634dbf7dab0534ecb90e9cc85ad4e98145"
+    "encodedID": "0x8493c9d75b152fc52d462c6389b227634dbf7dab0534ecb90e9cc85ad4e98145"
   },
   "HarvestLiquidateSystem": {
     "id": "system.harvest.liquidate",
-   "encodedID": "0x743810742beaf8b355d13d6badc55ccd4d31b7c3c930a2eb0339cd37362aff02"
+    "encodedID": "0x743810742beaf8b355d13d6badc55ccd4d31b7c3c930a2eb0339cd37362aff02"
   },
   "HarvestStartSystem": {
     "id": "system.harvest.start",
-   "encodedID": "0x889a517f187477a50ab38d2b87c697dd40cb524faa7a48fe1ce59620bb8d6203"
+    "encodedID": "0x889a517f187477a50ab38d2b87c697dd40cb524faa7a48fe1ce59620bb8d6203"
   },
   "HarvestStopSystem": {
     "id": "system.harvest.stop",
-   "encodedID": "0x2ce6930d030ce775e29350c0200df30632bef67d7b0c72df15cbe7b4be763912"
+    "encodedID": "0x2ce6930d030ce775e29350c0200df30632bef67d7b0c72df15cbe7b4be763912"
   },
   "QuestAcceptSystem": {
     "id": "system.quest.accept",
-   "encodedID": "0xe186a0d9134f37176fc5f797b772b3195045e28b488cc7008850e59f580d9332"
+    "encodedID": "0xe186a0d9134f37176fc5f797b772b3195045e28b488cc7008850e59f580d9332"
   },
   "QuestCompleteSystem": {
     "id": "system.quest.complete",
-   "encodedID": "0x3da8800d2554808dee6ceb605560b5e8808c44e6aa2b2b7fd73c5142f69a5bb1"
+    "encodedID": "0x3da8800d2554808dee6ceb605560b5e8808c44e6aa2b2b7fd73c5142f69a5bb1"
   },
   "QuestDropSystem": {
-    "id": "system.Quest.Drop",
-   "encodedID": "0x25839c49564951b26d22f483bbfd37bb41e67b657cfa5a4de5b292c87ad2a5ee"
+    "id": "system.quest.drop",
+    "encodedID": "0x25839c49564951b26d22f483bbfd37bb41e67b657cfa5a4de5b292c87ad2a5ee"
   },
   "RelationshipAdvanceSystem": {
     "id": "system.relationship.advance",
-   "encodedID": "0xed2c7bf596a173ec086ba5707977b7f4720b67a93bc4b1bfe938da0b7e53c941"
+    "encodedID": "0xed2c7bf596a173ec086ba5707977b7f4720b67a93bc4b1bfe938da0b7e53c941"
   },
   "ScavengeClaimSystem": {
     "id": "system.scavenge.claim",
-   "encodedID": "0x688e3fa170b8b4e4646c37eeea4c877c977d801ff735c03cec4eb263a8be10c5"
+    "encodedID": "0x688e3fa170b8b4e4646c37eeea4c877c977d801ff735c03cec4eb263a8be10c5"
   },
   "SkillResetSystem": {
     "id": "system.skill.reset",
-   "encodedID": "0x5ebda31a66d1c7f5af30bf0d2453f4ff34f83b1e7ed5e5e5438ae01ea678a254"
+    "encodedID": "0x5ebda31a66d1c7f5af30bf0d2453f4ff34f83b1e7ed5e5e5438ae01ea678a254"
   },
   "SkillUpgradeSystem": {
     "id": "system.skill.upgrade",
-   "encodedID": "0x09cef0a10b68723b6093265abba0776ad700c0f456c34e1d9ee5a33dcc15545d"
+    "encodedID": "0x09cef0a10b68723b6093265abba0776ad700c0f456c34e1d9ee5a33dcc15545d"
   },
   "_721BatchMinterSystem": {
     "id": "system.Kami721.BatchMint",
-   "encodedID": "0xc320b5e640af581696f372e55eb3a72bc3050a397fc6f67ceb56f744a8aa03df"
-  },
+    "encodedID": "0xc320b5e640af581696f372e55eb3a72bc3050a397fc6f67ceb56f744a8aa03df"
+  }
 }

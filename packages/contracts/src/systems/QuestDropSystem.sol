@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 
-uint256 constant ID = uint256(keccak256("system.Quest.Drop"));
+uint256 constant ID = uint256(keccak256("system.quest.drop"));
 
 contract QuestDropSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

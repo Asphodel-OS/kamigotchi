@@ -124,7 +124,7 @@ export const SystemAbis = {
   "system.lootbox.commit": LootboxCommitSystem.abi,
   "system.quest.accept": QuestAcceptSystem.abi,
   "system.quest.complete": QuestCompleteSystem.abi,
-  "system.Quest.Drop": QuestDropSystem.abi,
+  "system.quest.drop": QuestDropSystem.abi,
   "system.relationship.advance": RelationshipAdvanceSystem.abi,
   "system.scavenge.claim": ScavengeClaimSystem.abi,
   "system.skill.reset": SkillResetSystem.abi,
