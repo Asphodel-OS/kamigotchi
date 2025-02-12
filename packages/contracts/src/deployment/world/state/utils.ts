@@ -57,6 +57,14 @@ export const generateRegID = (field: string, index: number) => {
 ///////////////
 // PROCESSORS
 
+export const bringEntityToFront = (arr: any[], entityType: string) => {
+  return arr.sort((a, b) => {
+    if (a['Class'] === entityType && b['Class'] !== entityType) return -1;
+    if (b['Class'] === entityType && a['Class'] !== entityType) return 1;
+    return 0;
+  });
+};
+
 export const textToNumberArray = (text: string): number[] => {
   text = text.replaceAll('[', '');
   text = text.replaceAll(']', '');

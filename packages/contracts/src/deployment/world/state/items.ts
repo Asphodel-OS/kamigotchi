@@ -1,8 +1,16 @@
 import { AdminAPI } from '../api';
-import { getItemImage, parseKamiStateToIndex, readFile, toDelete, toRevise } from './utils';
+import {
+  bringEntityToFront,
+  getItemImage,
+  parseKamiStateToIndex,
+  readFile,
+  toDelete,
+  toRevise,
+} from './utils';
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
-  const itemsCSV = await readFile('items/items.csv');
+  const unstoredItemsCSV = await readFile('items/items.csv');
+  const itemsCSV = bringEntityToFront(unstoredItemsCSV, 'ITEM');
 
   for (let i = 0; i < itemsCSV.length; i++) {
     const item = itemsCSV[i];

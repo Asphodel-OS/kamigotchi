@@ -1,5 +1,6 @@
 import { AdminAPI } from '../api';
 import {
+  bringEntityToFront,
   GACHA_TICKET_INDEX,
   parseToInitCon,
   readFile,
@@ -9,7 +10,9 @@ import {
 } from './utils';
 
 export async function initQuests(api: AdminAPI, overrideIndices?: number[]) {
-  const questCSV = await readFile('quests/quests.csv');
+  const unsortedQuestCSV = await readFile('quests/quests.csv');
+  const questCSV = bringEntityToFront(unsortedQuestCSV, 'Quest');
+
   for (let i = 0; i < questCSV.length; i++) {
     const quest = questCSV[i];
 
