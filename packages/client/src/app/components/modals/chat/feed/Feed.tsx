@@ -193,7 +193,7 @@ export const Feed = (props: Props) => {
     else if (node.scrollTop === 0) {
       node.scrollTop = scrollHeight - scrollBottom - clientHeight;
     }
-  }, [kamidenMessages.length]);
+  }, [kamidenMessages.length, feedData.length]);
   /*    
     when the player sends a message it scrolls to thebottom   
   */
@@ -278,7 +278,7 @@ export const Feed = (props: Props) => {
                 color={liquidated ? '#ff6161' : entered ? '#eda910' : '#b176f1'}
                 key={index}
               >
-                &#x2022;{' '}
+                &#x2022;
                 {message
                   .split('**')
                   .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
@@ -350,7 +350,7 @@ const FeedTab = styled.div`
   line-height: 1.3vw;
   text-align: justify;
   word-break: break-all;
-  width: 100%q;
+  width: 100%;
 `;
 const FeedTabMessage = styled.div<{ color: string }>`
   color: black;
