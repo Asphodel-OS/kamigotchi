@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
@@ -18,6 +18,8 @@ import {
 import { Message } from './Message';
 
 interface Props {
+  activeTab: number;
+  setActiveTab: Dispatch<SetStateAction<number>>;
   utils: {
     getAccount: (entityIndex: EntityIndex) => Account;
     getKami: (entityIndex: EntityIndex) => Kami;
@@ -42,7 +44,7 @@ interface Props {
 
 const client = getKamidenClient();
 export const Feed = (props: Props) => {
-  const { utils, player, blocked, actionSystem, api } = props;
+  const { utils, player, blocked, actionSystem, api, activeTab, setActiveTab } = props;
   const { getAccount, getEntityIndex, getKami, getRoomByIndex } = props.utils;
   const { modals } = useVisibility();
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
@@ -51,9 +53,7 @@ export const Feed = (props: Props) => {
   const [scrollDown, setScrollDown] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
   const [noMoreMessages, setNoMoreMessages] = useState(false);
-  //0 Node
-  //1 global
-  const [activeTab, setActiveTab] = useState(0);
+
   const [scrollBottom, setScrollBottom] = useState(0);
 
   /////////////////
@@ -80,27 +80,30 @@ export const Feed = (props: Props) => {
     });
 
     const unsubscribeFeed = subscribeToFeed((feed) => {
+      let feedMessage: string[] = [];
       feed.Movements.forEach((movement: Movement) => {
         if (movement.RoomIndex !== player.roomIndex) return;
         if (movement.AccountId === player.id) return;
         let accountName = getAccount(getEntityIndex(formatEntityID(movement.AccountId))).name;
-        setFeedData((prev) => [`${accountName} **entered** the room.`, ...prev]);
+        feedMessage.push(`${accountName} **entered** the room.`);
       });
       feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
         if (harvest.RoomIndex !== player.roomIndex) return;
         let kamiName = getKami(getEntityIndex(formatEntityID(harvest.KamiId))).name;
-        setFeedData((prev) => [`${kamiName} finished **harvesting**.`, ...prev]);
+        feedMessage.push(`${kamiName} finished **harvesting**.`);
       });
       feed.Kills.forEach((kill: Kill) => {
         let killerName = getKami(getEntityIndex(formatEntityID(kill.KillerId))).name;
         let victimName = getKami(getEntityIndex(formatEntityID(kill.VictimId))).name;
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
-        setFeedData((prev) => [
-          `${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} `,
-          ...prev,
-        ]);
+        feedMessage.push(`${killerName} **liquidated** ${victimName} at ${roomName} for ${spoil} `);
       });
+      if (feedData.length >= 50) {
+        setFeedData((prev) => [...prev.slice(prev.length - 50, prev.length), ...feedMessage]);
+      } else {
+        setFeedData((prev) => [...prev, ...feedMessage]);
+      }
     });
 
     return () => {
@@ -267,11 +270,12 @@ export const Feed = (props: Props) => {
         </Messages>
       ) : (
         <FeedTab>
-          {feedData?.toReversed().map((message, index, arr) => {
+          {feedData?.map((message, index, arr) => {
             let liquidated = message.includes('liquidated');
+            let entered = message.includes('entered');
             return (
               <FeedTabMessage
-                color={liquidated ? '#ff6161' : liquidated ? '#eda910' : '#b176f1'}
+                color={liquidated ? '#ff6161' : entered ? '#eda910' : '#b176f1'}
                 key={index}
               >
                 &#x2022;{' '}
@@ -299,6 +303,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
+  font-size: 0.6vw;
 `;
 
 const Buttons = styled.div`

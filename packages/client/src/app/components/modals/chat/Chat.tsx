@@ -65,7 +65,9 @@ export function registerChatModal() {
       const [messages, setMessages] = useState<KamiMessage[]>([]);
       const [blocked, setBlocked] = useState<EntityID[]>([]);
       const BlockedList: EntityID[] = [];
-      const [account, setAccount] = useState<Account>(NullAccount);
+      const [account, setAccount] = useState<Account>(NullAccount); //0 Node
+      //1 Feed
+      const [activeTab, setActiveTab] = useState(0);
 
       // update data of the selected account when account index or data changes
       useEffect(() => {
@@ -97,11 +99,15 @@ export function registerChatModal() {
             <ModalHeader title={`${getRoomByIndex(nodeIndex).name} ChatRoom`} icon={ChatIcon} />
           }
           footer={
-            <InputRow actions={{ pushCast }} actionSystem={actions} api={api} world={world} />
+            activeTab === 0 && (
+              <InputRow actions={{ pushCast }} actionSystem={actions} api={api} world={world} />
+            )
           }
           canExit
         >
           <Feed
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             api={api}
             actionSystem={actions}
             blocked={blocked}
