@@ -244,7 +244,7 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   color: black;
   width: 100%;
 
-  font-size: 0.8vw;
+  font-size: 0.6vw;
   line-height: 1.2vw;
   word-wrap: break-word;
 
