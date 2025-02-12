@@ -12,11 +12,15 @@ interface Props {
 
 export const Chart = (props: Props) => {
   const { name, auction, onClick } = props;
-
   return (
     <Container onClick={onClick}>
-      <Text>{name}</Text>
-      <Text>current price: {calcAuctionPrice(auction, 1)}</Text>
+      <Title>{name}</Title>
+      <Text>
+        current price: {calcAuctionPrice(auction, 1)} {auction.paymentItem?.name}
+      </Text>
+      <Text>
+        sold: {auction.supply.sold} / {auction.supply.total}
+      </Text>
     </Container>
   );
 };
@@ -43,7 +47,12 @@ const Container = styled.div`
   }
 `;
 
+const Title = styled.div`
+  color: black;
+  font-size: 1.8vw;
+`;
+
 const Text = styled.div`
-  color: black;'
-  font-size: 0.6vw;
+  color: black;
+  font-size: 1.2vw;
 `;

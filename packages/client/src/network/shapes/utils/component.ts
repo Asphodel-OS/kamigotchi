@@ -91,7 +91,7 @@ export const getRate = (components: Components, entity: EntityIndex, precision =
 export const getRerolls = (components: Components, entity: EntityIndex): number => {
   const { Reroll } = components;
   const result = getComponentValue(Reroll, entity)?.value;
-  if (result === undefined) console.warn('getReroll(): undefined for entity', entity);
+  // if (result === undefined) console.warn('getRerolls(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 

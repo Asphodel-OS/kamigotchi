@@ -45,6 +45,7 @@ export function registerGachaModal() {
           const accountEntity = queryAccountFromEmbedded(network);
           const accountID = world.entities[accountEntity];
           const accountOptions = { inventories: 2, live: 2 };
+          const auctionOptions = { items: 3600, balance: 1 };
           const kamiOptions = { live: 0, rerolls: 0 };
 
           // TODO: boot the poolKamis query to MainDisplay once we consolidate tab views under it
@@ -60,7 +61,7 @@ export function registerGachaModal() {
               getAccount: () => getAccount(world, components, accountEntity, accountOptions),
               getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
               getAuction: (itemIndex: number) =>
-                getAuctionByIndex(world, components, itemIndex, { balance: 2 }),
+                getAuctionByIndex(world, components, itemIndex, auctionOptions),
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
               getItem: (index: number) => getItemByIndex(world, components, index),
               getRerollCost: (kami: Kami) => calcRerollCost(world, components, kami),

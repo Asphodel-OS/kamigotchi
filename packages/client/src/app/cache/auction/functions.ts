@@ -3,7 +3,7 @@ import { Auction } from 'network/shapes/Auction';
 // calculate the buy price of a listing based on amt purchased
 // NOTE: this may need to be updated to support 256 bit math
 export const calcPrice = (auction: Auction, amt: number) => {
-  if (auction.items.inIndex == 0) return 0;
+  if (!auction.auctionItem?.index) return 0;
   const value = auction.params.value;
   const period = auction.params.period;
   const decay = auction.params.decay;

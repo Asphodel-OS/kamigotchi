@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
+import { getItemByIndex, Item } from '../Item';
 import {
   getBalance,
   getDecay,
@@ -19,10 +20,8 @@ export interface Auction {
   id: EntityID;
   entity: EntityIndex;
   ObjectType: string;
-  items: {
-    outIndex: number; // item index of the item being auctioned
-    inIndex: number; // item index of the item used as payment
-  };
+  auctionItem?: Item; // item being auctioned
+  paymentItem?: Item; // item used as payment
   params: {
     value: number; // initial target value of pricing curve
     period: number; // reference duration period (in seconds)
@@ -38,16 +37,22 @@ export interface Auction {
   };
 }
 
+export interface Options {
+  auctionItem?: boolean;
+  paymentItem?: boolean;
+}
+
 // get an Auction from its EntityIndex
-export const get = (world: World, components: Components, entity: EntityIndex): Auction => {
-  return {
+export const get = (
+  world: World,
+  components: Components,
+  entity: EntityIndex,
+  options?: Options
+): Auction => {
+  const auction: Auction = {
     id: world.entities[entity],
     entity,
     ObjectType: getEntityType(components, entity),
-    items: {
-      outIndex: getIndex(components, entity),
-      inIndex: getItemIndex(components, entity),
-    },
     supply: {
       sold: getBalance(components, entity),
       total: getMax(components, entity),
@@ -62,4 +67,16 @@ export const get = (world: World, components: Components, entity: EntityIndex): 
       start: getStartTime(components, entity),
     },
   };
+
+  if (options?.auctionItem) {
+    const itemIndex = getIndex(components, entity);
+    auction.auctionItem = getItemByIndex(world, components, itemIndex);
+  }
+
+  if (options?.paymentItem) {
+    const itemIndex = getItemIndex(components, entity);
+    auction.paymentItem = getItemByIndex(world, components, itemIndex);
+  }
+
+  return auction;
 };
