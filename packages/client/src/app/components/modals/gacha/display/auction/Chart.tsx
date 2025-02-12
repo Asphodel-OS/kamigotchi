@@ -12,15 +12,19 @@ interface Props {
 
 export const Chart = (props: Props) => {
   const { name, auction, onClick } = props;
+
+  const getProgressString = () => {
+    if (!auction.auctionItem?.index) return '(not yet live)';
+    return `sold: ${auction.supply.sold} / ${auction.supply.total}`;
+  };
+
   return (
     <Container onClick={onClick}>
       <Title>{name}</Title>
       <Text>
         current price: {calcAuctionPrice(auction, 1)} {auction.paymentItem?.name}
       </Text>
-      <Text>
-        sold: {auction.supply.sold} / {auction.supply.total}
-      </Text>
+      <Text>{getProgressString()}</Text>
     </Container>
   );
 };
