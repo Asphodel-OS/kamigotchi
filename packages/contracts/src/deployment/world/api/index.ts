@@ -1,6 +1,6 @@
 import { BigNumberish } from 'ethers';
 
-import { SystemAbis } from '../../contracts/mappings/SystemAbis';
+import { SystemBytecodes } from '../../contracts/mappings/SystemBytecodes';
 import { createCall, toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
 import { listingAPI } from './listings';
@@ -9,7 +9,7 @@ export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
 // i have become what i hate most, woe is jiraheron
 export type GenCall = (
-  systemID: keyof typeof SystemAbis,
+  systemID: keyof typeof SystemBytecodes,
   args: any[],
   func?: string,
   encodedTypes?: any
@@ -22,7 +22,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   // @param func optional, function name to call instead of executeTyped
   // @param typed optional, if true, skip argument encoding
   function genCall(
-    systemID: keyof typeof SystemAbis,
+    systemID: keyof typeof SystemBytecodes,
     args: any[],
     func?: string,
     encodedTypes?: any[]

@@ -1,7 +1,7 @@
 import { WorldState } from '../world/world';
 import { generateInitWorld } from './codegen';
 
-import { SystemAbis } from '../contracts/mappings/SystemAbis';
+import { SystemBytecodes } from '../contracts/mappings/SystemBytecodes';
 import { AdminAPI } from '../world/api';
 import { SubFunc, WorldAPI } from '../world/world';
 
@@ -14,7 +14,7 @@ export async function generateSingleCall(
 ) {
   const world = new WorldState();
   const toCall = async (api: AdminAPI) => {
-    const system = systemID as keyof typeof SystemAbis;
+    const system = systemID as keyof typeof SystemBytecodes;
     if (!system) throw new Error(`No such system ${systemID}`);
     await api.gen(system, args, func);
   };

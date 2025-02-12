@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
 import { ParamType } from '@ethersproject/abi';
-import { SystemAbis } from '../contracts/mappings/SystemAbis';
+import { SystemBytecodes } from '../contracts/mappings/SystemBytecodes';
 import { idToSystem } from '../contracts/mappings/SystemMappings';
 
 type Call = {
@@ -11,7 +11,7 @@ type Call = {
 };
 
 export const createCall = (
-  systemID: keyof typeof SystemAbis,
+  systemID: keyof typeof SystemBytecodes,
   args: any[],
   encodedArgs: boolean,
   encodedTypes?: ParamType[]
@@ -24,7 +24,7 @@ export const createCall = (
 };
 
 export const encodeArgs = (
-  system: keyof typeof SystemAbis,
+  system: keyof typeof SystemBytecodes,
   args: any[],
   encodedTypes?: ParamType[]
 ) => {
@@ -61,11 +61,11 @@ const getSystemID = (system: string): bigint => {
   return BigInt(ethers.utils.id(system));
 };
 
-const getAbi = (system: keyof typeof SystemAbis) => {
-  return SystemAbis[system];
+const getAbi = (system: keyof typeof SystemBytecodes) => {
+  return SystemBytecodes[system].abi;
 };
 
-const getExecuteTyped = (system: keyof typeof SystemAbis) => {
+const getExecuteTyped = (system: keyof typeof SystemBytecodes) => {
   const abi = getAbi(system).find(
     (abi: any) => abi.type === 'function' && abi.name === 'executeTyped'
   );

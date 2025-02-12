@@ -1,4 +1,6 @@
 import config from '../../../deploy.json';
+import { compToId } from '../contracts/mappings/ComponentMappings';
+import { systemToId } from '../contracts/mappings/SystemMappings';
 
 export const DeployConfig = config;
 
@@ -19,4 +21,13 @@ export const getDeploySystems = (toMatch: string) => {
     systemsArray.includes(system.name)
   );
   return result;
+};
+
+export const getCompIDByName = (name: string) => {
+  if (!name.endsWith('Component')) name += 'Component';
+  return compToId[name as keyof typeof compToId];
+};
+
+export const getSystemIDByName = (name: string) => {
+  return systemToId[name as keyof typeof systemToId];
 };

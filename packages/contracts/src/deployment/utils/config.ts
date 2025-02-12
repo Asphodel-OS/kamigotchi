@@ -11,6 +11,11 @@ export const getDeployerKey = (mode: string) => {
   else return process.env.DEV_DEPLOYER_PRIV;
 };
 
+export const getMultisig = (mode: string) => {
+  if (mode === 'TEST') return process.env.TEST_MULTISIG;
+  else return process.env.DEV_MULTISIG;
+};
+
 export const getRpc = (mode: string) => {
   if (mode === 'TEST') return process.env.TEST_RPC;
   else return process.env.DEV_RPC;

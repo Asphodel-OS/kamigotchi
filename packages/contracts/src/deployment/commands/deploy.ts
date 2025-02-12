@@ -6,7 +6,7 @@ const openurl = require('openurl');
 import { clearInitWorld } from '../scripts/codegen';
 import { generateAndDeploy } from '../scripts/deployer';
 import { generateInitScript } from '../scripts/worldIniter';
-import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from '../utils';
+import { getDeployerKey, getMultisig, getRpc, getWorld, setAutoMine, setTimestamp } from '../utils';
 
 const argv = yargs(hideBin(process.argv)).argv;
 dotenv.config();
@@ -16,6 +16,7 @@ const run = async () => {
   const partialDeployment =
     argv.partial ??
     (argv.components != undefined || argv.systems != undefined || argv.emitter != undefined);
+  const multisig = argv.multisig ?? getMultisig(mode);
   const world = partialDeployment ? argv.world || getWorld(mode) : undefined;
   // assume world state init if deploying a fresh world, unless explicitly stated
   const init = !partialDeployment || !(argv.skipInit ?? true);
@@ -37,6 +38,7 @@ const run = async () => {
     forgeOpts: argv.forgeOpts,
     mode: argv.mode,
     reuseComponents: argv.reuseComps,
+    multisig: multisig,
   });
   if (init) {
     openurl.open(

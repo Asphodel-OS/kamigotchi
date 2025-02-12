@@ -18,6 +18,7 @@ contract Deploy is InitWorld {
     bool reuseComps,
     bool initWorld,
     bool emitter,
+    address multisig,
     string memory MODE
   ) external returns (IWorld world, uint256 startBlock) {
     startBlock = block.number;
@@ -40,6 +41,12 @@ contract Deploy is InitWorld {
       LibDeployTokens.deployVIP(world, components);
 
       _initWorld(address(world));
+    }
+
+    // transfer ownership to multisig
+    if (multisig != address(0)) {
+      console.log("Transferring ownership to multisig");
+      LibDeploy.transferOwner(multisig, world, reuseComps);
     }
   }
 }

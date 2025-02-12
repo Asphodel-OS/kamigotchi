@@ -102,4 +102,24 @@ if(init) system.execute(<%= system.initialize -%>);
 console.log(address(system));
 <% });%>
 }
+
+function transferOwner(address newOwner, IWorld world, bool reuseComps) internal {
+  IUint256Component components = world.components();
+  IUint256Component systems = world.systems();
+  
+  System system;
+  Component component;
+
+  <% systems.forEach(system=> { -%>
+    system = System(getAddrByID(systems, <%= system.name %>ID));
+    system.transferOwnership(newOwner);
+    <% });-%> 
+
+  if (!reuseComps) {
+    <% components.forEach(component=> { -%>
+      component = Component(getAddrByID(components, <%= component.comp %>ComponentID));
+      component.transferOwnership(newOwner);
+      <% });-%>
+    }
+  }
 }

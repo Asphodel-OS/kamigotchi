@@ -75,7 +75,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
     wsRpc: 'ws://localhost:8545',
 
     chainId: 1337,
-    worldAddress: params.get('worldAddress') ?? '0x0165878A594ca255338adfa4d48449f69242Eb8F',
+    worldAddress: params.get('worldAddress') ?? '0xceeDaE2390570eD717A8c07f462D59234b12D39d',
     initialBlockNumber: parseInt(params.get('initialBlockNumber') ?? '0'),
   };
 
