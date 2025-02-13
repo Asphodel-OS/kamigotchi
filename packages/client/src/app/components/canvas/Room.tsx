@@ -113,7 +113,8 @@ const Container = styled.div`
 
 const Background = styled.img`
   width: 100%;
-  height: 100%;
+  min-width: 60vw;
+  height: 100vh;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;

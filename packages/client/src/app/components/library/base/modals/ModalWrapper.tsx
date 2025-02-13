@@ -106,7 +106,7 @@ const Children = styled.div<{
 }>`
   position: relative;
   overflow-y: auto;
-  max-height: 80vh;
+  max-height: 57.9vh;
   height: fit-content;
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
