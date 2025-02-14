@@ -97,12 +97,8 @@ export const Message = (props: Props) => {
   ];
   const optionsMap = () => {
     return options.map((option, i) => (
-      <PopOverButtons>
-        <button
-          style={{ padding: `0.4vw`, width: ` 100%` }}
-          key={`div-${i}`}
-          onClick={() => option.onClick()}
-        >
+      <PopOverButtons key={Math.random()}>
+        <button style={{ padding: `0.4vw`, width: ` 100%` }} onClick={() => option.onClick()}>
           {option.text}
         </button>
       </PopOverButtons>
