@@ -89,7 +89,6 @@ export function registerGachaModal() {
       const [mode, setMode] = useState<AuctionMode>('GACHA');
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
-      const [limit, setLimit] = useState(20);
 
       const [account, setAccount] = useState<Account>(NullAccount);
       const [tick, setTick] = useState(Date.now());
@@ -290,7 +289,7 @@ export function registerGachaModal() {
             <Display
               actions={{ reroll: handleReroll }}
               caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
-              controls={{ limit, filters, sorts }}
+              controls={{ filters, sorts }}
               data={{
                 ...data,
                 balance: 0n,
@@ -306,7 +305,7 @@ export function registerGachaModal() {
                 reroll: handleReroll,
                 reveal: revealTx,
               }}
-              controls={{ limit, setLimit, filters, setFilters, sorts, setSorts }}
+              controls={{ filters, setFilters, sorts, setSorts }}
               data={{
                 ...data,
                 inventories: account.inventories ?? [],

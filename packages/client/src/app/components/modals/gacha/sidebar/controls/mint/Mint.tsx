@@ -10,14 +10,12 @@ interface Props {
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
     setSorts: (sort: Sort[]) => void;
-    limit: number;
-    setLimit: (limit: number) => void;
   };
 }
 
 export const Mint = (props: Props) => {
   const { controls } = props;
-  const { filters, setFilters, sorts, setSorts, limit, setLimit } = controls;
+  const { filters, setFilters, sorts, setSorts } = controls;
 
   //////////////////
   // FILTERING OPS

@@ -1,8 +1,8 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, Overlay, Tooltip } from 'app/components/library';
+import { EmptyText, Overlay } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
@@ -14,7 +14,6 @@ const LOADING_TEXT = ['your gacha pool is loading', 'please be patient'];
 
 interface Props {
   controls: {
-    limit: number;
     sorts: Sort[];
     filters: Filter[];
   };
@@ -33,14 +32,16 @@ interface Props {
 
 export const Pool = (props: Props) => {
   const { controls, caches, data, utils, isVisible } = props;
-  const { limit, filters, sorts } = controls;
+  const { filters, sorts } = controls;
   const { kamiBlocks, kamis } = caches;
   const { entities } = data;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [filtered, setFiltered] = useState<GachaKami[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [limit, setLimit] = useState(20);
 
   // filter (and implicitly populate) the pool of kamis on initial load
   useEffect(() => {
@@ -55,8 +56,25 @@ export const Pool = (props: Props) => {
     if (isOpen) filterKamis();
   }, [filters, entities.length]);
 
+  // scrolling effects for enemy kards
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [filtered.length, limit, modals.gacha]);
+
   //////////////////
   // INTERACTION
+
+  // when scrolling, load more kamis when nearing the bottom of the container
+  const handleScroll = () => {
+    if (isScrolledToBottom()) {
+      const newLimit = Math.min(limit + 20, filtered.length);
+      if (newLimit != limit) setLimit(newLimit);
+    }
+  };
 
   const kamiOnClick = (kami: BaseKami) => {
     const sameKami = kamiIndex === kami.index;
@@ -68,6 +86,14 @@ export const Pool = (props: Props) => {
 
   //////////////////
   // INTERPRETATION
+
+  // check whether the container is scrolled to the bottom
+  const isScrolledToBottom = () => {
+    const current = containerRef.current;
+    if (!current) return false;
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    return scrollTop + clientHeight >= scrollHeight - 10; // 20px threshold
+  };
 
   // returns a kami from the cache, or creates a new one and sets it if not found
   // NOTE: this is safe because we dont expect updates on kamis in the gacha pool
@@ -90,9 +116,12 @@ export const Pool = (props: Props) => {
 
       kamiBlocks.set(
         entity,
-        <Tooltip key={kami.index} text={tooltip}>
-          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
-        </Tooltip>
+        <KamiBlock
+          key={kami.index}
+          kami={kami}
+          onClick={() => kamiOnClick(kami)}
+          tooltip={tooltip}
+        />
       );
     }
     return kamiBlocks.get(entity)!;
@@ -152,7 +181,7 @@ export const Pool = (props: Props) => {
   // DISPLAY
 
   return (
-    <Container style={{ display: props.isVisible ? 'flex' : 'none' }}>
+    <Container ref={containerRef}>
       <Overlay top={0.6} left={0.6}>
         <Text>
           {filtered.length}/{entities.length}
@@ -173,6 +202,7 @@ const Container = styled.div`
   flex-flow: row wrap;
   align-items: flex-start;
   justify-content: center;
+  overflow-y: auto;
 `;
 
 const Text = styled.div`

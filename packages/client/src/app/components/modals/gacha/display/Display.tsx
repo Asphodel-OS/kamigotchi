@@ -11,7 +11,6 @@ import { Reroll } from './reroll/Reroll';
 
 interface Props {
   controls: {
-    limit: number;
     filters: Filter[];
     sorts: Sort[];
   };
@@ -87,6 +86,4 @@ const Container = styled.div`
 
   display: flex;
   flex-direction: row;
-
-  overflow-y: scroll;
 `;

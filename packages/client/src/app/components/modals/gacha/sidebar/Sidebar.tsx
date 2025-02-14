@@ -26,8 +26,6 @@ interface Props {
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
     setSorts: (sort: Sort[]) => void;
-    limit: number;
-    setLimit: (limit: number) => void;
   };
   data: {
     commits: Commit[];
