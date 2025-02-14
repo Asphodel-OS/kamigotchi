@@ -23,7 +23,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initFactions(api);
   await initRooms(api);
   await initNodes(api);
-  await initItems(api);
+  await initItems(api, undefined, true);
   await initNpcs(api);
   await initListings(api);
   await initAuctions(api);

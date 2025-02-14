@@ -7,7 +7,7 @@ const IGNORE_TYPES = ['OTHER'];
 const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL'];
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
 
-export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
+export async function initItems(api: AdminAPI, overrideIndices?: number[], deployAll?: boolean) {
   const itemsCSV = await readFile('items/items.csv');
   const allosCSV = await readFile('items/allos.csv');
 
@@ -27,6 +27,9 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
     // if indices are overridden skip any not included, otherwise check status
     if (overrideIndices) {
       if (!overrideIndices.includes(index)) continue;
+    } else if (deployAll) {
+      const status = row['Status'];
+      if (status !== 'Ready' && status !== 'Ingame') continue;
     } else {
       const status = row['Status'];
       if (status !== 'Ready') continue;
