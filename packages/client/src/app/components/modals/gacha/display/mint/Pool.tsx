@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, Overlay } from 'app/components/library';
+import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
@@ -116,12 +116,9 @@ export const Pool = (props: Props) => {
 
       kamiBlocks.set(
         entity,
-        <KamiBlock
-          key={kami.index}
-          kami={kami}
-          onClick={() => kamiOnClick(kami)}
-          tooltip={tooltip}
-        />
+        <Tooltip key={kami.index} text={tooltip}>
+          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
+        </Tooltip>
       );
     }
     return kamiBlocks.get(entity)!;
