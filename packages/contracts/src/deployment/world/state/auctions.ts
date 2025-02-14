@@ -19,10 +19,13 @@ export async function initAuctions(api: AdminAPI, indices?: number[]) {
     const rate = Number(row['Rate']);
     const max = Number(row['Supply']);
 
-    const saleItemName = String(row['Sale Item']);
-    const payItemName = String(row['Pay Item']);
+    const saleItemName = String(row['Sale Item']).split(' (')[0];
+    const payItemName = String(row['Pay Item']).split(' (')[0];
     await createAuction(api, itemIndex, payItemIndex, priceTarget, period, decay, rate, max);
-    console.log(`created auction: ${saleItemName} for ${payItemName} with ${max} units`);
+    console.log(
+      `created auction: ${saleItemName} for ${priceTarget} ${payItemName} with ${max} units`,
+      `\n  decay ${decay / 1e6} and rate ${rate} per ${period / 3600} hours`
+    );
   }
 }
 

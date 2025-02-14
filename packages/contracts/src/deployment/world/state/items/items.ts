@@ -1,0 +1,136 @@
+import { AdminAPI } from '../../api';
+import { getItemImage, readFile, toDelete, toRevise } from '../utils';
+import { addAllo } from './allos';
+import { addRequirement } from './requirements';
+
+const IGNORE_TYPES = ['OTHER'];
+const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL'];
+const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
+
+export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
+  const itemsCSV = await readFile('items/items.csv');
+  const allosCSV = await readFile('items/allos.csv');
+
+  // construct the map of allos for easier lookup
+  const alloMap = new Map<string, any>();
+  for (let i = 0; i < allosCSV.length; i++) {
+    const row = allosCSV[i];
+    const key = row['Name'].toUpperCase();
+    if (!alloMap.has(key)) alloMap.set(key, row);
+  }
+
+  for (let i = 0; i < itemsCSV.length; i++) {
+    const row = itemsCSV[i];
+    const status = row['Status'];
+    if (status !== 'Ready') continue;
+
+    // skip if indices are overridden and row isn't included
+    const index = Number(row['Index']);
+    if (overrideIndices && !overrideIndices.includes(index)) continue;
+    try {
+      await createItem(api, row);
+    } catch {
+      console.error('Could not create item', index);
+    }
+
+    // process item effects
+    const effectsRaw = row['Effects'];
+    if (!effectsRaw) continue;
+
+    const effects = effectsRaw.split(', ');
+    for (let i = 0; i < effects.length; i++) {
+      const alloName = effects[i].split(' (')[0];
+      const alloRow = alloMap.get(alloName);
+      if (!alloRow) console.warn(`  Could not find allo ${alloName} for item ${index}`);
+      else await addAllo(api, index, alloRow);
+    }
+  }
+}
+
+export async function deleteItems(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const itemsCSV = await readFile('items/items.csv');
+    for (let i = 0; i < itemsCSV.length; i++) {
+      if (toDelete(itemsCSV[i])) indices.push(Number(itemsCSV[i]['Index']));
+    }
+  }
+
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      await api.registry.item.delete(indices[i]);
+    } catch {
+      console.error('Could not delete item ' + indices[i]);
+    }
+  }
+}
+
+export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const itemsCSV = await readFile('items/items.csv');
+    for (let i = 0; i < itemsCSV.length; i++) {
+      if (toRevise(itemsCSV[i]) && itemsCSV[i]['Class'] === 'ITEM')
+        indices.push(Number(itemsCSV[i]['Index']));
+    }
+  }
+
+  await deleteItems(api, indices);
+  await initItems(api, indices);
+}
+
+////////////////
+// SHAPES
+
+async function createItem(api: AdminAPI, entry: any) {
+  const type = String(entry['Type']).toUpperCase();
+  if (IGNORE_TYPES.includes(type)) return;
+
+  if (BASIC_TYPES.includes(type)) await createBasic(api, entry);
+  else if (USE_TYPES.includes(type)) await createConsumable(api, entry);
+  else console.error('Item type not found: ' + type);
+
+  await addFlag(api, entry);
+}
+
+async function addFlag(api: AdminAPI, entry: any) {
+  const flags = entry['Flags'].split(',').map((f: string) => f.trim());
+  for (let i = 0; i < flags.length; i++) {
+    if (flags[i].length === 0) continue;
+    await api.registry.item.add.flag(Number(entry['Index']), flags[i]);
+  }
+}
+
+////////////////
+// SUB-SHAPES
+
+// create a basic item
+async function createBasic(api: AdminAPI, entry: any) {
+  const createAPI = api.registry.item.create;
+  const index = Number(entry['Index']);
+  const type = entry['Type'].toUpperCase();
+  const name = entry['Name'].trim();
+  const description = entry['Description'];
+  const image = getItemImage(name);
+  console.log(`creating ${type} item ${name} (${index})`);
+
+  await createAPI.base(index, type, name, description, image);
+}
+
+// create a consumable item
+// TODO: set requirements more explicitly
+async function createConsumable(api: AdminAPI, entry: any) {
+  const createAPI = api.registry.item.create;
+  const index = Number(entry['Index']);
+  const type = entry['Type'].toUpperCase();
+  const name = entry['Name'].trim();
+  const description = entry['Description'];
+  const image = getItemImage(name);
+  const for_ = (entry['For'] ?? 'KAMI').toUpperCase();
+  console.log(`creating ${type} item ${name} (${index}) for ${for_}`);
+
+  await createAPI.consumable(index, for_, name, description, type, image);
+  await addRequirement(api, entry); // hardcoded based on item types
+}

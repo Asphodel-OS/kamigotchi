@@ -1,104 +1,66 @@
-﻿Image,Status,Class,Index,Name,Type,ConType,ConIndex,ConIndex (String),ConValue,For,Flags,BonusEndType,DTIndices,DTWeights,Description
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/musu.png,Ingame,ITEM,1,MUSU,Misc,,,,,,,,,,Kamigotchi kurrency
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/kamigotchi_ticket_native.png,Ingame,ITEM,2,Gacha Ticket,Misc,,,,,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/passport_yellow.png,Ingame,ITEM,3,Kamigotchi World Passport,NFT,,,,,,,,,,Your path to salvation during playtest. Your ticket to great fortunes.
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/onyx.png,Ingame,ITEM,11,ONYX,Misc,,,,,,,,,,Asphodel’s premium game currency. You want this. You want this so bad.
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/reroll-ticket.png,Ingame,ITEM,12,Reroll Ticket,Misc,,,,,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/wooden_stick_native.png,Ingame,ITEM,101,Wooden Stick,Material,,,,,,,,,,"Wood in its unprocessed form. Grows on trees. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/stone_native.png,Ingame,ITEM,102,Stone,Material,,,,,,,,,,"It’s just a stone. Can be used to get Stone. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/plastic_bottle_native.png,Ingame,ITEM,103,Plastic Bottle,Material,,,,,,,,,,"Can be reprocessed into valuable raw Microplastics. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/pine_cone_native.png,Ingame,ITEM,104,Pine Cone,Material,,,,,,,,,,"It’s a pine cone. 
+﻿Image,Status,Name,Index,Type,For,Flags,Effects,Requirements,Description
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/musu.png,Ingame,MUSU,1,Misc,,,,,Kamigotchi kurrency
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/kamigotchi_ticket_native.png,Ingame,Gacha Ticket,2,Misc,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/passport_yellow.png,Ingame,Kamigotchi World Passport,3,NFT,,,,,Your path to salvation during playtest. Your ticket to great fortunes.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/onyx.png,Ingame,ONYX,11,Misc,,,,,Asphodel’s premium game currency. You want this. You want this so bad.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/reroll-ticket.png,Ingame,Reroll Ticket,12,Misc,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/wooden_stick_native.png,Ingame,Wooden Stick,101,Material,,,,,"Wood in its unprocessed form. Grows on trees. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/stone_native.png,Ingame,Stone,102,Material,,,,,"It’s just a stone. Can be used to get Stone. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/plastic_bottle_native.png,Ingame,Plastic Bottle,103,Material,,,,,"Can be reprocessed into valuable raw Microplastics. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/pine_cone_native.png,Ingame,Pine Cone,104,Material,,,,,"It’s a pine cone. 
 
 Slightly sacred. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/scrap_metal_native.png,Ingame,ITEM,105,Scrap Metal,Material,,,,,,,,,,A small chunk of scrap metal. Maybe useful if processed.
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/glass_jar_native.png,Ingame,ITEM,106,Glass Jar,Material,,,,,,,,,,"A somehow-unbroken jar of clear glass. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/pine_pollen_native.png,Ingame,ITEM,107,Pine Pollen,Material,,,,,,,,,,"Some people think this is very good for you. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/red_amber_crystal_native.png,Ingame,ITEM,108,Red Amber Crystal,Material,,,,,,,,,,"A crystal of pure red amber, formed deep in the forest."
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/black_poppy_native.png,Ingame,ITEM,109,Black Poppy,Material,,,,,,,,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/daffodil_native.png,Ingame,ITEM,110,Daffodil,Material,,,,,,,,,,"A reflection of fallen Narcissus… Has its own uses and applications. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/mint_native.png,Ingame,ITEM,111,Mint,Material,,,,,,,,,,A herb with many applications. Not often found here….
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/microplastics_native.png,For Implementation,ITEM,112,Microplastics,Material,,,,,,,,,,
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/essence_of_daffodil_native.png,For Implementation,ITEM,113,Essence of Daffodil,Material,,,,,,,,,,
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/shredded_mint_native.png,For Implementation,ITEM,114,Shredded Mint,Material,,,,,,,,,,
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/black_poppy_extract_native.png,For Implementation,ITEM,115,Black Poppy Extract,Material,,,,,,,,,,
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/candle.png,For Implementation,ITEM,116,Candle,Material,,,,,,,,,,"A half-melted candle, somehow still burning. Perhaps this has some special use.…"
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/screwdriver_native.png,Ingame,ITEM,201,Screwdriver,Material,,,,,,,,,,For driving screws. May be of practical use….
-,Ingame,EFFECT,11001,,,STAT,,HEALTH,10,,,,,,Restore 10 health
-,Ingame,EFFECT,11001,,,STATE,,RESTING,,,,,,,Set kami state to resting
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/red_ribbons_candy_wip_native.png,Ingame,ITEM,11001,Red Gakki Ribbon,Revive,,,,,Kami,,,,,"Capable of raising a Kamigotchi from the dead. 
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/scrap_metal_native.png,Ingame,Scrap Metal,105,Material,,,,,A small chunk of scrap metal. Maybe useful if processed.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/glass_jar_native.png,Ingame,Glass Jar,106,Material,,,,,"A somehow-unbroken jar of clear glass. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/pine_pollen_native.png,Ingame,Pine Pollen,107,Material,,,,,"Some people think this is very good for you. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/red_amber_crystal_native.png,Ingame,Red Amber Crystal,108,Material,,,,,"A crystal of pure red amber, formed deep in the forest."
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/black_poppy_native.png,Ingame,Black Poppy,109,Material,,,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/daffodil_native.png,Ingame,Daffodil,110,Material,,,,,"A reflection of fallen Narcissus… Has its own uses and applications. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/mint_native.png,Ingame,Mint,111,Material,,,,,A herb with many applications. Not often found here….
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/microplastics_native.png,Ingame,Microplastics,112,Material,,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/essence_of_daffodil_native.png,Ingame,Essence of Daffodil,113,Material,,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/shredded_mint_native.png,Ingame,Shredded Mint,114,Material,,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/black_poppy_extract_native.png,Ingame,Black Poppy Extract,115,Material,,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/candle.png,Ingame,Candle,116,Material,,,,,"A half-melted candle, somehow still burning. Perhaps this has some special use.…"
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/screwdriver_native.png,Ingame,Screwdriver,201,Material,,,,,For driving screws. May be of practical use….
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/red_ribbons_candy_wip_native.png,Ingame,Red Gakki Ribbon,11001,Revive,Kami,,"STATE-RESTING (https://www.notion.so/STATE-RESTING-1980220c3884817ba373c87c10ebbc31?pvs=21), HP+10 (https://www.notion.so/HP-10-1980220c3884812fa0b4d69c3ba70a1d?pvs=21)",,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. "
-,Ingame,EFFECT,11011,,,FLAG,,NOT_NAMEABLE_FALSE,0,,,,,,set Can_Reset_SKill flag to true
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/holy_dust_native.png,Ingame,ITEM,11011,Holy Dust,Consumable,,,,,Kami,,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
-,Ingame,EFFECT,11110,,,STAT,,MAXHEALTH,10,,,,,,+10 max health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/gaokerena_mochi_native.png,Ingame,ITEM,11110,Gaokerena Mochi,Food,,,,,Kami,,,,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
-,Ingame,EFFECT,11120,,,STAT,,POWER,1,,,,,,+1 max power
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/sunset_apple_mochi_native.png,Ingame,ITEM,11120,Sunset Apple Mochi,Food,,,,,Kami,,,,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
-,Ingame,EFFECT,11130,,,STAT,,VIOLENCE,1,,,,,,+1 max violence
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/kami_mochi_native.png,Ingame,ITEM,11130,Kami Mochi,Food,,,,,Kami,,,,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
-,Ingame,EFFECT,11140,,,STAT,,HARMONY,1,,,,,,+1 max harmony
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/mana_mochi_native.png,Ingame,ITEM,11140,Mana Mochi,Food,,,,,Kami,,,,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
-,Ingame,EFFECT,11201,,Consumable,XP,,,25,,,,,,Give 25 xp
-,Ingame,EFFECT,11201,,Consumable,STAT,,HEALTH,5,,,,,,Restore 5 health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/small_xp_candy_native.png,Ingame,ITEM,11201,XP Candy (Small),Food,,,,,Kami,,,,,"Feed this to a Kamigotchi to give them a little bit of experience. "
-,Ingame,EFFECT,11202,,Consumable,XP,,,100,,,,,,Gives 100 XP
-,Ingame,EFFECT,11202,,Consumable,STAT,,HEALTH,10,,,,,,Restores 10 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/medium_xp_candy_native.png,Ingame,ITEM,11202,XP Candy (Medium),Food,,,,,Kami,,,,,"Provides a decent amount of XP when fed to a Kami. "
-,Ingame,EFFECT,11203,,Consumable,XP,,,200,,,,,,Gives 200 XP
-,Ingame,EFFECT,11203,,Consumable,STAT,,HEALTH,20,,,,,,Restores 20 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/large_xp_candy_native.png,Ingame,ITEM,11203,XP Candy (Large),Food,,,,,Kami,,,,,"This gives a lot of XP when fed to a Kamigotchi. "
-,Ingame,EFFECT,11204,,,XP,,,1000,,,,,,Gives 1000 XP
-,Ingame,EFFECT,11204,,,STAT,,HEALTH,50,,,,,,Restores 50 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/huge_xp_candy_native.png,Ingame,ITEM,11204,XP Candy (Huge),Food,,,,,Kami,,,,,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.
-,Ingame,EFFECT,11301,,,STAT,,HEALTH,25,,,,,,Restores 25 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ghost_gum_wip_native.png,Ingame,ITEM,11301,Maple-Flavor Ghost Gum,Food,,,,,Kami,,,,,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
-,Ingame,EFFECT,11302,,,STAT,,HEALTH,50,,,,,,Restores 50 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/cheeseburger_native.png,Ingame,ITEM,11302,Cheeseburger,Food,,,,,Kami,,,,,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
-,Ingame,EFFECT,11303,,,STAT,,HEALTH,50,,,,,,Restores 50 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/pom_poms_candy_wip_native.png,Ingame,ITEM,11303,Pom-Pom Fruit Candy,Food,,,,,Kami,,,,,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
-,Ingame,EFFECT,11304,,,STAT,,HEALTH,100,,,,,,Restores 100 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/gakki_wip_native.png,Ingame,ITEM,11304,Gakki Cookie Sticks,Food,,,,,Kami,,,,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
-,Ingame,EFFECT,11305,,Consumable,STAT,,HEALTH,25,Kami,,,,,Restores 25 Health
-,For Implementation,EFFECT,11305,,,XP,,,1000,Kami,,,,,Gives 1000 XP
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/gingerbread_cookie_native.png,For Implementation,ITEM,11305,Gingerbread Cookie,Food,,,,,Kami,,,,,A gingerbread cookie... feed this to a Kamigotchi for some extra experience.
-,Ingame,EFFECT,11311,,,STAT,,HEALTH,35,,,,,,Restores 35 Health
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/resin_native.png,Ingame,ITEM,11311,Resin,Food,,,,,Kami,,,,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…"
-,Ingame,EFFECT,11401,,,XP,,,1000,Kami,,,,,Gives 1000 XP
-,Ingame,EFFECT,11401,,,ITEM,103,,1,Kami,,,,,Give x1 plastic bottle
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/xp_potion_native.png,For Implementation,ITEM,11401,XP Potion,Food,,,,,Kami,BYPASS_BONUS_RESET,,,,Give to a Kami to increase their XP by 1000.
-,Ingame,EFFECT,11402,,,XP,,,15000,Kami,,,,,Gives 15000 XP
-,Ingame,EFFECT,11402,,,ITEM,106,,1,Kami,,,,,Give x1 glass jar
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/greater_xp_potion_v2_native.png,For Implementation,ITEM,11402,Greater XP Potion,Food,,,,,Kami,BYPASS_BONUS_RESET,,,,Give to a Kami to increase their XP by 15000.
-,Ingame,EFFECT,11403,,,ITEM,103,,1,Kami,,,,,Give x1 plastic bottle
-,Ingame,EFFECT,11403,,,FLAG,,CAN_RESET_SKILLS,1,Kami,,,,,set Can_Reset_SKill flag to true
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/respec_potion_native.png,For Implementation,ITEM,11403,Respec Potion,Food,,,,,Kami,BYPASS_BONUS_RESET,,,,"Give to a Kami to reset their skill points. "
-,Ingame,EFFECT,11404,,,ITEM,103,,1,Kami,,,,,Give x1 plastic bottle
-,Ingame,EFFECT,11404,,,BONUS,,STND_STRAIN_BOOST,-250,Kami,,UPON_HARVEST_ACTION,,,-25% Strain
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/grace_potion_native.png,For Implementation,ITEM,11404,"Grace Potion 
-",Food,,,,,Kami,BYPASS_BONUS_RESET,,,,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
-,Ingame,EFFECT,11405,,,ITEM,103,,1,Kami,,,,,Give x1 plastic bottle
-,Ingame,EFFECT,11405,,,BONUS,,HARV_BOUNTY_BOOST,250,Kami,,UPON_HARVEST_ACTION,,,25% Harvest Bonus
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/bounty_potion_native.png,For Implementation,ITEM,11405,Bless Potion,Food,,,,,Kami,BYPASS_BONUS_RESET,,,,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
-,For Implementation,EFFECT,11406,,,BONUS,,HARV_BOUNTY_BOOST,250,,,UPON_HARVEST_ACTION,,,25% Harvest Bonus
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/mistletoe.png,For Implementation,ITEM,11406,Mistletoe,Food,,,,,Kami,BYPASS_BONUS_RESET,,,,"Sacred, at this time of year..... can be used on Kami to Bless them!"
-,Ingame,EFFECT,21001,,,ITEM_DROPTABLE,,,1,Account,,,"[11201, 11302, 11202, 11201, 11204, 111, 103, 201]","[9, 9, 8, 7, 6, 3, 3, 2]",droptable
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/lootbox_native.png,Ingame,ITEM,21001,Giftbox,Lootbox,,,,,Account,,,,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
-,Not Implemented,ITEM,21002,Giftchest,,,,,,,,,,,
-,Ingame,EFFECT,21100,,,ROOM,13,,,,,,,,Set account to room 13
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/scroll_of_shop_teleportation_native.png,Ingame,ITEM,21100,Scroll of Shop Teleportation,Consumable,,,,,Account,,,,,"Instantly transports the user to Mina’s Shop. Fully insured. "
-,Ingame,EFFECT,21201,,,STAT,,STAMINA,20,,,,,,Restores 4 Stamina
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_small_native.png,Ingame,ITEM,21201,Ice Cream,Food,,,,,Account,,,,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
-,Ingame,EFFECT,21202,,,STAT,,STAMINA,40,,,,,,Restores 8 Stamina
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_medium_native.png,Ingame,ITEM,21202,Better Ice Cream,Food,,,,,Account,,,,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
-,Ingame,EFFECT,21203,,,STAT,,STAMINA,80,,,,,,Restores 16 Stamina
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ice_cream_large_native.png,Ingame,ITEM,21203,Best Ice Cream,Food,,,,,Account,,,,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ring_of_water_breathing_native.png,Not Implemented,ITEM,22801,Ring of Water Breathing,Ring,,,,,,,,,,Allows the bearer to travel underwater.
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,Not Implemented,ITEM,22802,Ring of Spirits,Ring,,,,,,,,,,
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/ring_of_spirits_native.png,Not Implemented,ITEM,22803,Badge,Ring,,,,,,,,,,
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/spice_grinder_native.png,For Implementation,ITEM,23100,Spice Grinder,Misc,,,,,,,,,,Can be used to break down ingredients.
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/portable_burner_native.png,For Implementation,ITEM,23101,Portable Burner,Misc,,,,,,,,,,"Can be used to make Potions at a riverside. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/astrolabe_disk_native.png,Ingame,ITEM,100001,Astrolabe Disk,Key Item,,,,,,,,,,"Some sort of golden disk. Purpose: completely unknown. 
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/holy_dust_native.png,Ingame,Holy Dust,11011,Consumable,Kami,,F_NAMEABLE (https://www.notion.so/F_NAMEABLE-1980220c388481358f9fdf1dfab99bd1?pvs=21),,This sacred dust can be used to rename Kamigotchi… At the proper place.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/gaokerena_mochi_native.png,Ingame,Gaokerena Mochi,11110,Food,Kami,,HEALTH+10 (https://www.notion.so/HEALTH-10-1980220c388481c1b00bd219e849397a?pvs=21),,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/sunset_apple_mochi_native.png,Ingame,Sunset Apple Mochi,11120,Food,Kami,,POWER+1 (https://www.notion.so/POWER-1-1980220c388481429b3aedb8487352c9?pvs=21),,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/kami_mochi_native.png,Ingame,Kami Mochi,11130,Food,Kami,,VIOLENCE+1 (https://www.notion.so/VIOLENCE-1-1980220c388481b8812cdf0f5be3e227?pvs=21),,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/mana_mochi_native.png,Ingame,Mana Mochi,11140,Food,Kami,,HARMONY+1 (https://www.notion.so/HARMONY-1-1980220c3884819cbd15d8d4c7e8056e?pvs=21),,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/small_xp_candy_native.png,Ingame,XP Candy (Small),11201,Food,Kami,,"HP+5 (https://www.notion.so/HP-5-1980220c3884810b97fefebe01764b0f?pvs=21), XP+25 (https://www.notion.so/XP-25-1980220c388481d4a78fe6f64cca019b?pvs=21)",,"Feed this to a Kamigotchi to give them a little bit of experience. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/medium_xp_candy_native.png,Ingame,XP Candy (Medium),11202,Food,Kami,,"XP+100 (https://www.notion.so/XP-100-1980220c3884812583f3e627031cd115?pvs=21), HP+10 (https://www.notion.so/HP-10-1980220c3884812fa0b4d69c3ba70a1d?pvs=21)",,"Provides a decent amount of XP when fed to a Kami. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/large_xp_candy_native.png,Ingame,XP Candy (Large),11203,Food,Kami,,"HP+20 (https://www.notion.so/HP-20-1980220c388481de993ff12cdbcd6617?pvs=21), XP+200 (https://www.notion.so/XP-200-1980220c388481519944eafd85b46f74?pvs=21)",,"This gives a lot of XP when fed to a Kamigotchi. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/huge_xp_candy_native.png,Ingame,XP Candy (Huge),11204,Food,Kami,,"HP+50 (https://www.notion.so/HP-50-1980220c388481bc8a86d79a68451d39?pvs=21), XP+1000 (https://www.notion.so/XP-1000-1980220c38848195816ecff5b6fceb1a?pvs=21)",,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ghost_gum_wip_native.png,Ingame,Maple-Flavor Ghost Gum,11301,Food,Kami,,HP+25 (https://www.notion.so/HP-25-1980220c3884811097cdf451620e7c07?pvs=21),,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/cheeseburger_native.png,Ingame,Cheeseburger,11302,Food,Kami,,HP+50 (https://www.notion.so/HP-50-1980220c388481bc8a86d79a68451d39?pvs=21),,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/pom_poms_candy_wip_native.png,Ingame,Pom-Pom Fruit Candy,11303,Food,Kami,,HP+50 (https://www.notion.so/HP-50-1980220c388481bc8a86d79a68451d39?pvs=21),,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/gakki_wip_native.png,Ingame,Gakki Cookie Sticks,11304,Food,Kami,,HP+100 (https://www.notion.so/HP-100-1980220c3884813e81e0fee4b181a5aa?pvs=21),,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/gingerbread_cookie_native.png,Ingame,Gingerbread Cookie,11305,Food,Kami,,"XP+1000 (https://www.notion.so/XP-1000-1980220c38848195816ecff5b6fceb1a?pvs=21), HP+25 (https://www.notion.so/HP-25-1980220c3884811097cdf451620e7c07?pvs=21)",,A gingerbread cookie... feed this to a Kamigotchi for some extra experience.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/resin_native.png,Ingame,Resin,11311,Food,Kami,,HP+35 (https://www.notion.so/HP-35-1980220c3884816aa978f6b809808b4e?pvs=21),,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…"
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/xp_potion_native.png,Ingame,XP Potion,11401,Food,Kami,BYPASS_BONUS_RESET,"ITEM103 (https://www.notion.so/ITEM103-1980220c388481d89997fd621a803abe?pvs=21), XP+1000 (https://www.notion.so/XP-1000-1980220c38848195816ecff5b6fceb1a?pvs=21)",,Give to a Kami to increase their XP by 1000.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/greater_xp_potion_v2_native.png,Ingame,Greater XP Potion,11402,Food,Kami,BYPASS_BONUS_RESET,"ITEM106 (https://www.notion.so/ITEM106-1980220c38848122926cea41b961c2c8?pvs=21), XP+15000 (https://www.notion.so/XP-15000-1980220c388481a8bd43f9af1e58f147?pvs=21)",,Give to a Kami to increase their XP by 15000.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/respec_potion_native.png,Ingame,Respec Potion,11403,Food,Kami,BYPASS_BONUS_RESET,"F_SKILL_RESET (https://www.notion.so/F_SKILL_RESET-1980220c3884819990e2defa6e3f5e1c?pvs=21), ITEM103 (https://www.notion.so/ITEM103-1980220c388481d89997fd621a803abe?pvs=21)",,"Give to a Kami to reset their skill points. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/grace_potion_native.png,Ingame,"Grace Potion 
+",11404,Food,Kami,BYPASS_BONUS_RESET,"STRAIN-25% (https://www.notion.so/STRAIN-2-5-1980220c388481e68306df9200e04438?pvs=21), ITEM103 (https://www.notion.so/ITEM103-1980220c388481d89997fd621a803abe?pvs=21)",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/bounty_potion_native.png,Ingame,Bless Potion,11405,Food,Kami,BYPASS_BONUS_RESET,"BOUNTY+25% (https://www.notion.so/BOUNTY-2-5-1980220c3884818f8208e0fc1461b9d1?pvs=21), ITEM103 (https://www.notion.so/ITEM103-1980220c388481d89997fd621a803abe?pvs=21)",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/mistletoe.png,Ingame,Mistletoe,11406,Food,Kami,BYPASS_BONUS_RESET,BOUNTY+25% (https://www.notion.so/BOUNTY-2-5-1980220c3884818f8208e0fc1461b9d1?pvs=21),,"Sacred, at this time of year..... can be used on Kami to Bless them!"
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/lootbox_native.png,Ingame,Giftbox,21001,Lootbox,Account,,DT1 (https://www.notion.so/DT1-1980220c3884816ab897deb27bda37d9?pvs=21),,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
+,Not Started,Giftchest,21002,,,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/scroll_of_shop_teleportation_native.png,Ingame,Scroll of Shop Teleportation,21100,Consumable,Account,,MOVE13 (https://www.notion.so/MOVE13-1980220c38848144ad91ecb4d768c693?pvs=21),,"Instantly transports the user to Mina’s Shop. Fully insured. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ice_cream_small_native.png,Ingame,Ice Cream,21201,Food,Account,,SP+20 (https://www.notion.so/SP-20-1980220c38848127be82fb3681bdd96d?pvs=21),,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ice_cream_medium_native.png,Ingame,Better Ice Cream,21202,Food,Account,,SP+40 (https://www.notion.so/SP-40-1980220c3884811ab098dd37f3f9c226?pvs=21),,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ice_cream_large_native.png,Ingame,Best Ice Cream,21203,Food,Account,,SP+80 (https://www.notion.so/SP-80-1980220c388481fdaf77dcb6b66e9fe9?pvs=21),,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ring_of_water_breathing_native.png,Not Started,Ring of Water Breathing,22801,Equip,Account,,,,Allows the bearer to travel underwater.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ring_of_spirits_native.png,Not Started,Ring of Spirits,22802,Equip,Account,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/ring_of_spirits_native.png,Not Started,Badge,22803,Equip,Account,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/spice_grinder_native.png,Ingame,Spice Grinder,23100,Tool,,,,,Can be used to break down ingredients.
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/portable_burner_native.png,Ingame,Portable Burner,23101,Tool,,,,,"Can be used to make Potions at a riverside. "
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/astrolabe_disk_native.png,Ingame,Astrolabe Disk,100001,Key Item,,,,,"Some sort of golden disk. Purpose: completely unknown. 
 
 You feel like you should hold on to it. "
-Item%20Registry%201b9894152b7f4649a68169aa3a6bcffe/pomegranate_native.png,Ingame,ITEM,,Pomegranate,Transferrer,,,,,Kami,,,,,
-,Not Implemented,,,Land Deed,NFT,,,,,,,,,,
+,Not Started,Land Deed,,NFT,,,,,
+Item%20Registry%20v2%201980220c38848035835be0d4905a11df/pomegranate_native.png,Ingame,Pomegranate,,Transferrer,,,,,
