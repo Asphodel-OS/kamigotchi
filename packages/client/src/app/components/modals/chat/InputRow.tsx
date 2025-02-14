@@ -43,7 +43,7 @@ export const InputRow = (props: Props) => {
   };
 
   const handleSubmit = async (text: string) => {
-    if (text.length === 0) return;
+    if (text.trim().length === 0) return;
     try {
       setSending(true);
       const rerollActionID = onSubmit(text);
