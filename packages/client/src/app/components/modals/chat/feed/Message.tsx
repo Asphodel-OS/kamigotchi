@@ -56,7 +56,7 @@ export const Message = (props: Props) => {
 
   const showUser = () => {
     setAccount(getAccountFunc().index);
-    if (!modals.account) setModals({ account: true });
+    if (!modals.account) setModals({ account: true, party: false, map: false });
   };
 
   const blockFren = (account: BaseAccount) => {
