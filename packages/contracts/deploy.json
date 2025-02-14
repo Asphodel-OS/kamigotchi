@@ -244,6 +244,7 @@
         "Index",
         "IndexItem",
         "Balance",
+        "TimeLast",
         "Type",
         "Value"
       ]

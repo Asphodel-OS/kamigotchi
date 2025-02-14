@@ -1,4 +1,6 @@
+import { AdminAPI, createAdminAPI } from './api';
 import {
+  deleteAuctions,
   deleteFactions,
   deleteGoals,
   deleteItems,
@@ -11,6 +13,7 @@ import {
   deleteSkills,
   initAll,
   initAllLocal,
+  initAuctions,
   initAuth,
   initConfigs,
   initFactions,
@@ -30,6 +33,7 @@ import {
   initTraits,
   mintToGachaPool,
   refreshListing,
+  reviseAuctions,
   reviseFactions,
   reviseItems,
   reviseNodes,
@@ -38,9 +42,6 @@ import {
   reviseRooms,
   reviseSkills,
 } from './state';
-
-import { AdminAPI, createAdminAPI } from './api';
-import { deleteAuctions, initAuctions } from './state/auctions';
 
 export type WorldAPI = typeof WorldState.prototype.api;
 
@@ -76,6 +77,7 @@ export class WorldState {
     auctions: {
       init: (indices?: number[]) => this.genCalls((api) => initAuctions(api, indices)),
       delete: (indices: number[]) => this.genCalls((api) => deleteAuctions(api, indices)),
+      revise: (indices: number[]) => this.genCalls((api) => reviseAuctions(api, indices)),
     },
     auth: {
       init: () => this.genCalls(initAuth),
@@ -96,8 +98,8 @@ export class WorldState {
     } as SubFunc,
     items: {
       init: (indices?: number[]) => this.genCalls((api) => initItems(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteItems(api, indices)),
-      revise: (indices?: number[]) => this.genCalls((api) => reviseItems(api, indices)),
+      delete: (indices: number[]) => this.genCalls((api) => deleteItems(api, indices)),
+      revise: (indices: number[]) => this.genCalls((api) => reviseItems(api, indices)),
     } as SubFunc,
     listings: {
       init: (indices?: number[]) => this.genCalls((api) => initListings(api, indices)),

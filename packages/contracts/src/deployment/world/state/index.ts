@@ -50,6 +50,7 @@ export async function initAllLocal(api: AdminAPI) {
   await initLocalQuests(api);
 }
 
+export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';
 export { initAuth } from './auth';
 export {
   initConfigs,

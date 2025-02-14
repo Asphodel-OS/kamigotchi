@@ -1,5 +1,5 @@
 import { AdminAPI } from '../../api';
-import { getItemImage, readFile, toDelete, toRevise } from '../utils';
+import { getItemImage, readFile } from '../utils';
 import { addAllo } from './allos';
 import { addRequirement } from './requirements';
 
@@ -19,18 +19,25 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
     if (!alloMap.has(key)) alloMap.set(key, row);
   }
 
+  // iterate through rows of items
   for (let i = 0; i < itemsCSV.length; i++) {
     const row = itemsCSV[i];
-    const status = row['Status'];
-    if (status !== 'Ready') continue;
-
-    // skip if indices are overridden and row isn't included
     const index = Number(row['Index']);
-    if (overrideIndices && !overrideIndices.includes(index)) continue;
+
+    // if indices are overridden skip any not included, otherwise check status
+    if (overrideIndices) {
+      if (!overrideIndices.includes(index)) continue;
+    } else {
+      const status = row['Status'];
+      if (status !== 'Ready') continue;
+    }
+
+    // attempt item creation
     try {
       await createItem(api, row);
     } catch {
       console.error('Could not create item', index);
+      continue;
     }
 
     // process item effects
@@ -47,18 +54,10 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
-export async function deleteItems(api: AdminAPI, overrideIndices?: number[]) {
-  let indices: number[] = [];
-  if (overrideIndices) indices = overrideIndices;
-  else {
-    const itemsCSV = await readFile('items/items.csv');
-    for (let i = 0; i < itemsCSV.length; i++) {
-      if (toDelete(itemsCSV[i])) indices.push(Number(itemsCSV[i]['Index']));
-    }
-  }
-
+export async function deleteItems(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
     try {
+      console.log(`Deleting item ${indices[i]}`);
       await api.registry.item.delete(indices[i]);
     } catch {
       console.error('Could not delete item ' + indices[i]);
@@ -66,17 +65,7 @@ export async function deleteItems(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
-export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
-  let indices: number[] = [];
-  if (overrideIndices) indices = overrideIndices;
-  else {
-    const itemsCSV = await readFile('items/items.csv');
-    for (let i = 0; i < itemsCSV.length; i++) {
-      if (toRevise(itemsCSV[i]) && itemsCSV[i]['Class'] === 'ITEM')
-        indices.push(Number(itemsCSV[i]['Index']));
-    }
-  }
-
+export async function reviseItems(api: AdminAPI, indices: number[]) {
   await deleteItems(api, indices);
   await initItems(api, indices);
 }

@@ -9,8 +9,8 @@ export async function initAuctions(api: AdminAPI, indices?: number[]) {
   for (let i = 0; i < auctionsCSV.length; i++) {
     const row = auctionsCSV[i];
 
-    const itemIndex = Number(row['Sale Index']);
-    if (indices && !indices.includes(itemIndex)) continue;
+    const saleItemIndex = Number(row['Sale Index']);
+    if (indices && !indices.includes(saleItemIndex)) continue;
 
     const payItemIndex = Number(row['Pay Index']);
     const priceTarget = Number(row['Value']);
@@ -21,11 +21,17 @@ export async function initAuctions(api: AdminAPI, indices?: number[]) {
 
     const saleItemName = String(row['Sale Item']).split(' (')[0];
     const payItemName = String(row['Pay Item']).split(' (')[0];
-    await createAuction(api, itemIndex, payItemIndex, priceTarget, period, decay, rate, max);
-    console.log(
-      `created auction: ${saleItemName} for ${priceTarget} ${payItemName} with ${max} units`,
-      `\n  decay ${decay / 1e6} and rate ${rate} per ${period / 3600} hours`
-    );
+
+    try {
+      console.log(
+        `Creating Auction: ${saleItemName} with ${max} units`,
+        `\n  for ${priceTarget} ${payItemName} decaying at ${decay / 1e6}`,
+        `\n  and emitting ${rate} units per ${period / 3600} hours`
+      );
+      await createAuction(api, saleItemIndex, payItemIndex, priceTarget, period, decay, rate, max);
+    } catch {
+      console.error(`Could not create auction for ${saleItemName}`);
+    }
   }
 }
 
@@ -42,16 +48,22 @@ export async function createAuction(
   await api.auction.create(itemIndex, payItemIndex, priceTarget, period, decay, rate, max);
 }
 
+// delete the specified auctions
 export async function deleteAuctions(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
     const itemIndex = indices[i];
-    console.log(`  Deleting auction for item index ${itemIndex}`);
+    console.log(`Deleting auction for item index ${itemIndex}`);
     try {
       await api.auction.remove(itemIndex);
     } catch {
       console.error(`  Could not delete auction ${itemIndex}`);
     }
   }
+}
+
+export async function reviseAuctions(api: AdminAPI, indices: number[]) {
+  await deleteAuctions(api, indices);
+  await initAuctions(api, indices);
 }
 
 export async function setRequirement(
