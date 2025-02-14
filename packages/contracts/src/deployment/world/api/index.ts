@@ -1,7 +1,7 @@
 import { BigNumberish } from 'ethers';
 
+import { SystemAbis } from '../../contracts/mappings/SystemAbis';
 import { createCall, toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
-import { SystemAbis } from '../mappings/SystemAbis';
 import { auctionAPI } from './auctions';
 import { listingAPI } from './listings';
 

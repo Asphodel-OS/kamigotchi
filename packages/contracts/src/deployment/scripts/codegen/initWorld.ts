@@ -1,27 +1,31 @@
 import ejs from 'ejs';
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
-import { contractsDir } from './paths';
+import { deploymentDir } from './paths';
 
 export async function generateInitWorld() {
-  const callsPath = path.join(contractsDir, 'initStream.json');
+  const callsPath = path.join(deploymentDir, 'contracts/initStream.json');
   const systemCalls = JSON.parse(await readFile(callsPath, { encoding: 'utf8' }));
 
-  const InitWorld = await ejs.renderFile(path.join(contractsDir, 'InitWorld.s.ejs'), systemCalls, {
-    async: true,
-  });
-  const initWorldPath = path.join(contractsDir, 'InitWorld.s.sol');
+  const InitWorld = await ejs.renderFile(
+    path.join(deploymentDir, 'contracts/InitWorld.s.ejs'),
+    systemCalls,
+    {
+      async: true,
+    }
+  );
+  const initWorldPath = path.join(deploymentDir, 'contracts/InitWorld.s.sol');
   await writeFile(initWorldPath, InitWorld);
 }
 
 export async function clearInitWorld() {
   const InitWorld = await ejs.renderFile(
-    path.join(contractsDir, 'InitWorld.s.ejs'),
+    path.join(deploymentDir, 'contracts/InitWorld.s.ejs'),
     { calls: [] },
     {
       async: true,
     }
   );
-  const initWorldPath = path.join(contractsDir, 'InitWorld.s.sol');
+  const initWorldPath = path.join(deploymentDir, 'contracts/InitWorld.s.sol');
   await writeFile(initWorldPath, InitWorld);
 }

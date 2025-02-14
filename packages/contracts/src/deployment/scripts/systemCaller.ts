@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 
 import { ParamType } from '@ethersproject/abi';
-import { SystemAbis } from '../world/mappings/SystemAbis';
-import { idToSystem } from '../world/mappings/SystemMappings';
+import { SystemAbis } from '../contracts/mappings/SystemAbis';
+import { idToSystem } from '../contracts/mappings/SystemMappings';
 
 type Call = {
   system: string;

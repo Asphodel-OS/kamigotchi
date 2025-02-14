@@ -1,8 +1,9 @@
 import ejs from 'ejs';
-import { readFile, writeFile } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import path from 'path';
+import { DeployConfig, getDeployComponents, getDeploySystems } from '../../utils';
 import { generateImports } from './imports';
-import { contractsDir } from './paths';
+import { deploymentDir } from './paths';
 
 /**
  * Generate LibDeploy.sol from deploy.json
@@ -11,34 +12,19 @@ import { contractsDir } from './paths';
  * @param systems optional, only generate deploy code for the given systems
  * @returns path to generated LibDeploy.sol
  */
-export async function generateLibDeploy(
-  configPath: string,
-  out: string,
-  components?: string,
-  systems?: string
-) {
-  // Parse config
-  const config = JSON.parse(await readFile(configPath, { encoding: 'utf8' }));
-
+export async function generateLibDeploy(out: string, components?: string, systems?: string) {
   if (components && systems)
     console.error(
       'cannot update both components and systems at the same time, please update one at a time.'
     );
 
-  // Filter components
+  let config: any;
   if (components) {
-    const componentsArray = components.split(',').map((comp: string) => comp.trim());
-    config.components = config.components.filter((component: any) =>
-      componentsArray.includes(component.comp)
-    );
-    config.systems = [];
-  }
-  // Filter systems
-  if (systems) {
-    const systemsArray = systems.split(',').map((sys: string) => sys.trim());
-    config.systems = config.systems.filter((system: { name: string }) =>
-      systemsArray.includes(system.name)
-    );
+    config = getDeployComponents(components);
+  } else if (systems) {
+    config = getDeploySystems(systems);
+  } else {
+    config = DeployConfig; // full
   }
 
   console.log(`Deploy config: \n`, JSON.stringify(config, null, 2));
@@ -46,9 +32,13 @@ export async function generateLibDeploy(
   // Generate LibDeploy
   console.log('Generating deployment script');
   // LibDeploy.sol
-  const LibDeploy = await ejs.renderFile(path.join(contractsDir, 'LibDeploy.ejs'), config, {
-    async: true,
-  });
+  const LibDeploy = await ejs.renderFile(
+    path.join(deploymentDir, 'contracts/LibDeploy.ejs'),
+    config,
+    {
+      async: true,
+    }
+  );
   const libDeployPath = path.join(out, 'LibDeploy.sol');
   await writeFile(libDeployPath, LibDeploy);
 

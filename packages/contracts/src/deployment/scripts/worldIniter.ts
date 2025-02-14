@@ -1,8 +1,8 @@
 import { WorldState } from '../world/world';
 import { generateInitWorld } from './codegen';
 
+import { SystemAbis } from '../contracts/mappings/SystemAbis';
 import { AdminAPI } from '../world/api';
-import { SystemAbis } from '../world/mappings/SystemAbis';
 import { SubFunc, WorldAPI } from '../world/world';
 
 /// @dev generates a single call piggybacking off initWorld.s.sol

@@ -2,9 +2,9 @@ import { readFile, rm, writeFile } from 'fs/promises';
 import path from 'path';
 import { extractIdFromFile, keccak256 } from '../../utils/ids';
 import {
-  baseContractsDir,
   componentRegisterPath,
   componentSchemaPath,
+  contractsDir,
   deployConfigPath,
 } from './paths';
 
@@ -25,7 +25,7 @@ export async function generateComponentSchemas(options?: { clear?: boolean }) {
   // adding ids
   components.map((comp) => {
     const id = extractIdFromFile(
-      path.join(baseContractsDir, 'src/components', comp.comp + 'Component.sol')
+      path.join(contractsDir, 'src/components', comp.comp + 'Component.sol')
     );
     comp.id = id;
     comp.encodedID = keccak256(id || '');
@@ -66,7 +66,7 @@ ${components
 
   // adding schemas to components[]
   const schemaMap = JSON.parse(
-    await readFile(path.join(baseContractsDir, 'src/solecs/components/types/schema.json'), {
+    await readFile(path.join(contractsDir, 'src/solecs/components/types/schema.json'), {
       encoding: 'utf8',
     })
   );

@@ -11,8 +11,6 @@ import { getDeployerKey, getRpc, getWorld, setAutoMine, setTimestamp } from '../
 const argv = yargs(hideBin(process.argv)).argv;
 dotenv.config();
 
-const config = 'deploy.json';
-
 const run = async () => {
   const mode = argv.mode || 'DEV';
   const partialDeployment =
@@ -29,7 +27,6 @@ const run = async () => {
   else clearInitWorld();
 
   const result = await generateAndDeploy({
-    config: config,
     rpc: getRpc(mode)!,
     deployerPriv: getDeployerKey(mode)!,
     worldAddress: world,

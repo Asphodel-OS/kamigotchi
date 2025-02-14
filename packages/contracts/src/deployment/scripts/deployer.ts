@@ -2,9 +2,8 @@ import { constants } from 'ethers';
 import { ignoreSolcErrors } from '../utils';
 import { findLog } from '../utils/findLog';
 import { generateLibDeploy } from './codegen';
+import { deploymentDir } from './codegen/paths';
 import execa = require('execa');
-
-const contractsDir = __dirname + '/../contracts/';
 
 /**
  * Deploy world, components and systems from deploy.json
@@ -65,7 +64,6 @@ export async function deploy(
 }
 
 export type DeployOptions = {
-  config: string;
   rpc: string;
   deployerPriv: string;
   worldAddress?: string;
@@ -79,7 +77,6 @@ export type DeployOptions = {
 };
 
 export async function generateAndDeploy(args: DeployOptions) {
-  let libDeployPath: string | undefined;
   let deployedWorldAddress: string | undefined;
   let startBlock: string | undefined;
 
@@ -89,12 +86,7 @@ export async function generateAndDeploy(args: DeployOptions) {
 
   try {
     // Generate LibDeploy
-    libDeployPath = await generateLibDeploy(
-      args.config,
-      contractsDir,
-      args.components,
-      args.systems
-    );
+    await generateLibDeploy(deploymentDir + 'contracts/', args.components, args.systems);
 
     // Call deploy script
     const result = await deploy(

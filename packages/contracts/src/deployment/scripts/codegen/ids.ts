@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { extractIdFromFile, keccak256 } from '../../utils/ids';
-import { baseContractsDir, deployConfigPath } from './paths';
+import { contractsDir, deployConfigPath } from './paths';
 
 export async function generateIDs() {
   const config = JSON.parse(await readFile(deployConfigPath, { encoding: 'utf8' }));
@@ -9,7 +9,7 @@ export async function generateIDs() {
   const components: any[] = config.components;
   components.map((comp) => {
     const id = extractIdFromFile(
-      path.join(baseContractsDir, 'src/components', comp.comp + 'Component.sol')
+      path.join(contractsDir, 'src/components', comp.comp + 'Component.sol')
     );
     comp.id = id;
     comp.encodedID = keccak256(id || '');
@@ -27,11 +27,11 @@ export async function generateIDs() {
       )
       .join('\n') +
     '\n}';
-  await writeFile(path.join(baseContractsDir, 'componentIDs.json'), compIDs);
+  await writeFile(path.join(contractsDir, 'componentIDs.json'), compIDs);
 
   const systems: any[] = config.systems;
   systems.map((sys) => {
-    const id = extractIdFromFile(path.join(baseContractsDir, 'src/systems', sys.name + '.sol'));
+    const id = extractIdFromFile(path.join(contractsDir, 'src/systems', sys.name + '.sol'));
     sys.id = id;
     sys.encodedID = keccak256(id || '');
   });
@@ -47,5 +47,5 @@ export async function generateIDs() {
       )
       .join('\n') +
     '\n}';
-  await writeFile(path.join(baseContractsDir, 'systemIDs.json'), sysIDs);
+  await writeFile(path.join(contractsDir, 'systemIDs.json'), sysIDs);
 }
