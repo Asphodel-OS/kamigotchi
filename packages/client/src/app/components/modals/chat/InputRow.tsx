@@ -21,6 +21,7 @@ export const InputRow = (props: Props) => {
   const { actionSystem, api, world } = props;
   const [text, setText] = useState('');
   const [textLength, setTextLength] = useState(0);
+  const [sending, setSending] = useState(false);
 
   /////////////////
   // INTERACTION
@@ -44,30 +45,45 @@ export const InputRow = (props: Props) => {
   const handleSubmit = async (text: string) => {
     if (text.length === 0) return;
     try {
+      setSending(true);
       const rerollActionID = onSubmit(text);
-      if (!rerollActionID) throw new Error('Sending message action failed');
+      if (!rerollActionID) {
+        setSending(false);
+        throw new Error('Sending message action failed');
+      }
       await waitForActionCompletion(
         actionSystem!.Action,
         world.entityToIndex.get(rerollActionID) as EntityIndex
       );
       setText('');
       setTextLength(0);
+      setSending(false);
       (document.getElementById('inputBox') as HTMLInputElement).value = '';
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to
+      setSending(false);
       console.error('error sending message', e);
     }
   };
-
+  const handleEnter = (e: any) => {
+    if (e.keyCode == 13 && e.shiftKey == false) {
+      e.preventDefault();
+      handleSubmit(text);
+    }
+  };
   return (
     <Container>
       <InputBox
+        disabled={sending}
         placeholder='Write a message...'
         id='inputBox'
         cols={60}
         rows={5}
         maxLength={200}
+        onKeyDown={(e) => {
+          handleEnter(e);
+        }}
         onChange={(e) => {
           setText(e.target.value);
           setTextLength(e.target.value.length);
@@ -104,6 +120,9 @@ const InputBox = styled.textarea`
   width: 100%;
   min-height: 6vh;
   border-radius: 0.6vw;
+  &:disabled {
+    background-color: rgb(236, 233, 233);
+  }
 `;
 
 const SendButton = styled.button`
