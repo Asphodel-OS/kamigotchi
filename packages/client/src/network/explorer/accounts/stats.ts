@@ -2,10 +2,26 @@ import { World, getComponentValue } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
+import { getAccountKamis } from 'network/shapes/Account';
 import { queryAll } from '../../shapes/Account/queries';
 import { getData } from '../../shapes/Data';
 import { getReputation } from '../../shapes/Faction';
 import { getItemBalance } from '../../shapes/Item';
+
+export const getKamiCounts = (world: World, components: Components, limit = 200) => {
+  const { AccountIndex, Name } = components;
+  const entities = queryAll(components);
+  const raw = entities.map((entity) => {
+    return {
+      index: getComponentValue(AccountIndex, entity)?.value as number,
+      name: getComponentValue(Name, entity)?.value as string,
+      kamis: getAccountKamis(world, components, entity),
+    };
+  });
+  const ranked = raw.sort((a, b) => b.kamis.length - a.kamis.length);
+  const truncated = ranked.slice(0, limit);
+  return truncated;
+};
 
 // return the total coin collected stats of all accounts
 export const getCoinStats = (world: World, components: Components, limit = 200, flatten = true) => {

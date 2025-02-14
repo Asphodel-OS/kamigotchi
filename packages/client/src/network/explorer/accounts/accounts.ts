@@ -14,6 +14,7 @@ import {
 import {
   getCoinStats,
   getItemStats,
+  getKamiCounts,
   getKillStats,
   getOverallStats,
   getReputationStats,
@@ -48,7 +49,9 @@ export const accounts = (world: World, components: Components) => {
       getAccountByName(world, components, name, options ?? FullAccountOptions),
     indices: () => Array.from(components.AccountIndex.values.value.values()),
     rankings: {
-      musu: (limit?: number) => getItemStats(world, components, limit),
+      item: (index: number, limit?: number) => getItemStats(world, components, index, limit),
+      kami: (limit?: number) => getKamiCounts(world, components, limit),
+      musu: (limit?: number) => getItemStats(world, components, 1, limit),
       reputation: (limit?: number) => getReputationStats(world, components, limit),
     },
     stats: {
