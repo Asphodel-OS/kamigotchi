@@ -1,4 +1,3 @@
-import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -10,9 +9,6 @@ import { playScribble } from 'utils/sounds';
 
 interface Props {
   actionSystem: ActionSystem;
-  actions: {
-    pushCast: (cast: CastWithInteractions) => void;
-  };
   api: any;
   world: World;
 }
@@ -46,14 +42,14 @@ export const InputRow = (props: Props) => {
     if (text.trim().length === 0) return;
     try {
       setSending(true);
-      const rerollActionID = onSubmit(text);
-      if (!rerollActionID) {
+      const actionID = onSubmit(text);
+      if (!actionID) {
         setSending(false);
         throw new Error('Sending message action failed');
       }
       await waitForActionCompletion(
         actionSystem!.Action,
-        world.entityToIndex.get(rerollActionID) as EntityIndex
+        world.entityToIndex.get(actionID) as EntityIndex
       );
       setText('');
       setTextLength(0);

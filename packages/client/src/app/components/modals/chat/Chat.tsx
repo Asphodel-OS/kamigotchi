@@ -1,4 +1,3 @@
-import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -58,7 +57,7 @@ export function registerChatModal() {
     ({ data, network, utils, world }) => {
       const { accountEntity } = data;
       const { actions, api } = network;
-      const { getRoomByIndex, getAccount, getKami } = utils;
+      const { getAccount } = utils;
       const { modals } = useVisibility();
 
       const [messages, setMessages] = useState<KamiMessage[]>([]);
@@ -75,7 +74,7 @@ export function registerChatModal() {
         const account = getAccount(accountEntity ?? (0 as EntityIndex));
         setAccount(account);
       }, [accountEntity, modals.chat]);
-
+      //TODO
       useEffect(() => {
         if (account.friends?.blocked) {
           account.friends?.blocked.forEach((blockedFren) => {
@@ -87,24 +86,11 @@ export function registerChatModal() {
         }
       }, [account.friends?.blocked]);
 
-      const pushCast = (cast: CastWithInteractions) => {};
-
-      const pushMessages = (newMessages: KamiMessage[]) => {};
-
       return (
         <ModalWrapper
           id='chat'
-          header={
-            <ModalHeader
-              title={`${getRoomByIndex(account.roomIndex).name} ChatRoom`}
-              icon={ChatIcon}
-            />
-          }
-          footer={
-            activeTab === 0 && (
-              <InputRow actions={{ pushCast }} actionSystem={actions} api={api} world={world} />
-            )
-          }
+          header={<ModalHeader title={`Chat`} icon={ChatIcon} />}
+          footer={activeTab === 0 && <InputRow actionSystem={actions} api={api} world={world} />}
           canExit
         >
           <Feed
@@ -115,7 +101,7 @@ export function registerChatModal() {
             blocked={blocked}
             utils={utils}
             player={account}
-            actions={{ pushMessages, setMessages }}
+            actions={{ setMessages }}
           />
         </ModalWrapper>
       );

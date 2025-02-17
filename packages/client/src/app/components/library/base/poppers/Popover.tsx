@@ -5,7 +5,7 @@ interface Props {
   children: React.ReactNode;
   content: any;
   cursor?: string;
-  clickMouse?: 0 | 2;
+  mouseButton?: 0 | 2;
 }
 
 export const Popover = (props: Props) => {
@@ -15,7 +15,7 @@ export const Popover = (props: Props) => {
   const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
   const cursor = props.cursor ?? 'pointer';
-  const clickMouse = props.clickMouse ?? 0;
+  const mouseButton = props.mouseButton ?? 0;
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -72,12 +72,12 @@ export const Popover = (props: Props) => {
   }, []);
 
   return (
-    <PopoverContainer onContextMenu={(e) => clickMouse === 2 && e.preventDefault()}>
+    <PopoverContainer onContextMenu={(e) => mouseButton === 2 && e.preventDefault()}>
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
         onMouseDown={(e) => {
-          if (content.length !== 0 && e.button === clickMouse) {
+          if (content.length !== 0 && e.button === mouseButton) {
             handlePosition();
             setIsVisible(!isVisible);
           }

@@ -113,7 +113,7 @@ export const Message = (props: Props) => {
             {player.id != getAccountFunc().id ? (
               <>
                 <PfpAuthor id='pfp-author' ref={pfpRef}>
-                  <Popover content={optionsMap()} clickMouse={2}>
+                  <Popover content={optionsMap()} mouseButton={2}>
                     <Pfp
                       author={false}
                       onClick={() => {

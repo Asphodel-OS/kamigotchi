@@ -28,7 +28,6 @@ interface Props {
     getRoomByIndex: (nodeIndex: number) => Room;
   };
   actions: {
-    pushMessages: (messages: KamiMessage[]) => void;
     setMessages: (messages: KamiMessage[]) => void;
   };
   player: Account;

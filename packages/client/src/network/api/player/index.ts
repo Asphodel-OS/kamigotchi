@@ -77,7 +77,6 @@ export function createPlayerAPI(txQueue: TxQueue) {
   }
 
   function moveAccount(roomIndex: number) {
-    console.log(`moving to room ${systems['system.account.move'].address}`);
     // hardcode gas limit to 1.2m; approx upper bound for moving room with 1 gate
     return systems['system.account.move'].executeTyped(roomIndex); //, { gasLimit: 1200000 });
   }
