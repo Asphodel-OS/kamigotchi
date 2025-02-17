@@ -5,8 +5,13 @@ import { Account, getAccount, getAccountConfigs, NullAccount } from 'network/sha
 import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account/queries';
 import { getMusuBalance } from 'network/shapes/Item';
 import { getStamina } from 'network/shapes/Stats';
-import { getLastActionTime, getLastTime, getRoomIndex } from 'network/shapes/utils/component';
-import { getFriends, getInventories, getPfp, getStats } from './getters';
+import {
+  getLastActionTime,
+  getLastTime,
+  getMediaURI,
+  getRoomIndex,
+} from 'network/shapes/utils/component';
+import { getFriends, getInventories, getStats } from './getters';
 
 // Account caches and Account cache checkers
 export const AccountCache = new Map<EntityIndex, Account>(); // account entity -> account
@@ -100,13 +105,10 @@ export const get = (
   }
 
   if (options.pfp !== undefined) {
-    console.log(`account cache start`);
     const updateTs = PfpURITs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.pfp) {
-      console.log(`account cache if`);
-      acc.pfpURI = getPfp(world, components, entity);
-      console.log(`account cache get ${acc.pfpURI}`);
+      acc.pfpURI = getMediaURI(components, entity);
       PfpURITs.set(entity, now);
     }
   }

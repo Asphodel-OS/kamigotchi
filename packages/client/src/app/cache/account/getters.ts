@@ -8,7 +8,6 @@ import {
   queryAccountInventories,
   queryAccountKamis,
 } from 'network/shapes/Account';
-import { getPfpURI } from 'network/shapes/Account/pfp';
 import { getInventory } from '../inventory';
 import { getKami, KamiRefreshOptions } from '../kami';
 
@@ -46,10 +45,4 @@ export const getStats = (
 ): AccountStats => {
   if (!entity) return { coin: 0, kills: 0 };
   return getAccountStats(world, components, entity);
-};
-
-// get the pfpURI for an Account entity
-export const getPfp = (world: World, components: Components, entity: EntityIndex) => {
-  if (!entity) return '';
-  return getPfpURI(world, components, entity);
 };

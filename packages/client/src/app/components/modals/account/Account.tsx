@@ -40,7 +40,7 @@ export function registerAccountModal() {
 
       const accountOptions = {
         friends: 60,
-        pfp: 1,
+        pfp: 5,
       };
 
       return interval(3333).pipe(
