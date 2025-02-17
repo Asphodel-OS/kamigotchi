@@ -7,7 +7,7 @@ import { getAccount } from 'app/cache/account';
 import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected, useVisibility } from 'app/stores';
+import { useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -35,9 +35,9 @@ export function registerChatModal() {
         map(() => {
           const accountEntity = queryAccountFromEmbedded(network);
           const accountOptions = {
-            friends: 60,
+            friends: 6,
+            live: 1,
           };
-          const kamiOptions = {};
 
           const { world, components } = network;
           return {
@@ -47,7 +47,7 @@ export function registerChatModal() {
                 getAccount(world, components, entity, accountOptions),
               getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
               getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
-              getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
+              getKami: (entity: EntityIndex) => getKami(world, components, entity),
             },
             network,
             world,
@@ -60,7 +60,6 @@ export function registerChatModal() {
       const { actions, api } = network;
       const { getRoomByIndex, getAccount, getKami } = utils;
       const { modals } = useVisibility();
-      const { nodeIndex } = useSelected.getState();
 
       const [messages, setMessages] = useState<KamiMessage[]>([]);
       const [blocked, setBlocked] = useState<EntityID[]>([]);
@@ -96,7 +95,10 @@ export function registerChatModal() {
         <ModalWrapper
           id='chat'
           header={
-            <ModalHeader title={`${getRoomByIndex(nodeIndex).name} ChatRoom`} icon={ChatIcon} />
+            <ModalHeader
+              title={`${getRoomByIndex(account.roomIndex).name} ChatRoom`}
+              icon={ChatIcon}
+            />
           }
           footer={
             activeTab === 0 && (

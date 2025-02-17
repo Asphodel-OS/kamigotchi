@@ -236,7 +236,7 @@ export const Feed = (props: Props) => {
             setActiveTab(1);
           }}
         >
-          {`Feed`}
+          {`Global`}
         </Button>
       </Buttons>
       {activeTab === 0 ? (
@@ -363,7 +363,6 @@ const FeedTab = styled.div`
 `;
 const FeedTabMessage = styled.div<{ color: string }>`
   color: black;
-  border-bottom: 0.2vw dashed lightgrey;
   width: 100%;
   font-size: 0.6vw;
 

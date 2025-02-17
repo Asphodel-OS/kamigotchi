@@ -154,7 +154,7 @@ export const Message = (props: Props) => {
 
 const Container = styled.div`
   padding: 0vw 0.9vw;
-  width: 115%;
+  width: 100%;
 
   color: black;
   display: flex;
@@ -165,7 +165,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  width: 85%;
+  width: 100%;
   color: black;
   display: flex;
   flex-direction: column;
