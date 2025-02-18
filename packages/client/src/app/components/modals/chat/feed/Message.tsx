@@ -49,7 +49,7 @@ export const Message = (props: Props) => {
   const getAccountFunc = () => {
     return getAccount(getEntityIndex(formatEntityID(message.AccountId)));
   };
-
+  // TODO: fix this
   useEffect(() => {
     setYours(player.id !== getAccountFunc().id);
   }, [message.AccountId]);
@@ -97,7 +97,7 @@ export const Message = (props: Props) => {
   ];
   const optionsMap = () => {
     return options.map((option, i) => (
-      <PopOverButtons key={Math.random()}>
+      <PopOverButtons key={i}>
         <button style={{ padding: `0.4vw`, width: ` 100%` }} onClick={() => option.onClick()}>
           {option.text}
         </button>
@@ -123,22 +123,12 @@ export const Message = (props: Props) => {
                     />
                   </Popover>
                   <Body previousEqual={previousEqual} yours={yours}>
-                    {message.Message}
+                    {' '}
                     <Time>
-                      <div
-                        style={{
-                          overflow: `hidden`,
-
-                          whiteSpace: `nowrap`,
-                          textOverflow: `ellipsis`,
-                          maxWidth: `9ch`,
-                          marginRight: `0.5vw`,
-                        }}
-                      >
-                        {getAccountFunc().name}
-                      </div>{' '}
+                      <Name>{getAccountFunc().name}</Name>{' '}
                       {moment(message.Timestamp).format('MM/DD HH:mm')}
                     </Time>
+                    {message.Message}
                   </Body>
                 </PfpAuthor>
               </>
@@ -147,8 +137,8 @@ export const Message = (props: Props) => {
                 <PfpAuthor>
                   {' '}
                   <Body previousEqual={previousEqual} yours={yours}>
+                    <Time> {moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
                     {message.Message}
-                    <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
                   </Body>
                   <Pfp
                     author={true}
@@ -164,8 +154,7 @@ export const Message = (props: Props) => {
         )}
         {previousEqual === true && (
           <Body previousEqual={previousEqual} yours={yours}>
-            {message.Message}
-            <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
+            <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time> {message.Message}
           </Body>
         )}
       </Content>
@@ -232,11 +221,20 @@ const PfpAuthor = styled.div`
 
 const Time = styled.div`
   color: #a3a3a3;
-
   display: flex;
   flex-flow: row;
+  justify-content: flex-start;
+`;
 
-  justify-content: flex-end;
+const Name = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 9ch;
+  margin-right: 0.5vw;
+  justify-content: flex-start;
+  color: black;
+  font-weight: bold;
 `;
 
 const PopOverButtons = styled.div`
