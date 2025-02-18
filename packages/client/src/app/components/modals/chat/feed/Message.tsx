@@ -104,6 +104,7 @@ export const Message = (props: Props) => {
       </PopOverButtons>
     ));
   };
+
   return (
     <Container>
       <Content>
@@ -121,14 +122,34 @@ export const Message = (props: Props) => {
                       src={getAccountFunc().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
                     />
                   </Popover>
+                  <Body previousEqual={previousEqual} yours={yours}>
+                    {message.Message}
+                    <Time>
+                      <div
+                        style={{
+                          overflow: `hidden`,
 
-                  <Author author={false}>{getAccountFunc().name}</Author>
+                          whiteSpace: `nowrap`,
+                          textOverflow: `ellipsis`,
+                          maxWidth: `9ch`,
+                          marginRight: `0.5vw`,
+                        }}
+                      >
+                        {getAccountFunc().name}
+                      </div>{' '}
+                      {moment(message.Timestamp).format('MM/DD HH:mm')}
+                    </Time>
+                  </Body>
                 </PfpAuthor>
               </>
             ) : (
               <>
                 <PfpAuthor>
-                  <Author author={true}>{getAccountFunc().name}</Author>
+                  {' '}
+                  <Body previousEqual={previousEqual} yours={yours}>
+                    {message.Message}
+                    <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
+                  </Body>
                   <Pfp
                     author={true}
                     onClick={() => {
@@ -141,10 +162,12 @@ export const Message = (props: Props) => {
             )}
           </Header>
         )}
-        <Body previousEqual={previousEqual} yours={yours}>
-          {message.Message}
-          <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
-        </Body>
+        {previousEqual === true && (
+          <Body previousEqual={previousEqual} yours={yours}>
+            {message.Message}
+            <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
+          </Body>
+        )}
       </Content>
     </Container>
   );
@@ -189,37 +212,22 @@ const Pfp = styled.img<{ author: boolean }>`
 `;
 
 const Header = styled.div<{ yours: boolean }>`
-  padding-bottom: 0.6vw;
   margin-top: 0.2vw;
   width: 100%;
   color: black;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  ${({ yours }) =>
-    yours
-      ? `  justify-content: space-between;
-  `
-      : `    justify-content: flex-end;`}
 
   gap: 0.6vw;
 `;
 
 const PfpAuthor = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 0.5vw;
-`;
-
-const Author = styled.div<{ author: boolean }>`
-  position: relative;
-  left: -0.5vw;
-  color: orange;
-  font-size: 1vw;
-  ${({ author }) =>
-    author &&
-    `  left:0;
-  `}
+  justify-content: flex-end;
 `;
 
 const Time = styled.div`
@@ -247,11 +255,11 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   word-wrap: break-word;
 
   border-radius: 1vw;
-  padding: 0.4vw;
+  padding: 0.4vw 0.4vw 0.4vw 0.8vw;
   margin: 0.2vh 0 0.2vh 0;
   display: inline-block;
   align-items: flex-start;
-  margin-right: 25%;
+
   background-color: #eee;
   position: relative;
 
@@ -263,22 +271,24 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
     z-index: -1;
     content: '';
     position: absolute;
-    top: -0.8vw;
+   top: 1.7vw;
     min-height: 2vw;
     width: 0.7vw;
     background: rgb(238, 238, 238);
     border-top-left-radius: 80%;
-    left: 2%;
+    left: 0;    
+    rotate: -90deg;
   }`
       : ` ::before {
     z-index: -1;
-    content: '';
+    content: "";
     position: absolute;
-    top: -0.8vw;
+    top: 1.7vw;
     min-height: 2vw;
     width: 0.7vw;
     background: rgb(238, 238, 238);
     border-top-right-radius: 80%;
-    right: 4%;
+    right: 0;  
+    rotate: 90deg;
   } `)}
 `;
