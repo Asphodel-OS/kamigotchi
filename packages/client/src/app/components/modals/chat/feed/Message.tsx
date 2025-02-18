@@ -136,7 +136,7 @@ export const Message = (props: Props) => {
               <>
                 <PfpAuthor>
                   {' '}
-                  <Body previousEqual={previousEqual} yours={yours}>
+                  <Body style={{ width: ` 86%` }} previousEqual={previousEqual} yours={yours}>
                     <Time>
                       <Name>{getAccountFunc().name}</Name>{' '}
                       {moment(message.Timestamp).format('MM/DD HH:mm')}
@@ -215,6 +215,7 @@ const PfpAuthor = styled.div`
   align-items: center;
   gap: 0.5vw;
   justify-content: flex-end;
+  align-items: flex-start;
 `;
 
 const Time = styled.div`
