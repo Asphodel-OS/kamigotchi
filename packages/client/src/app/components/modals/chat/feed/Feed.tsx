@@ -235,7 +235,7 @@ export const Feed = (props: Props) => {
             setActiveTab(1);
           }}
         >
-          {`Global`}
+          {`Feed`}
         </Button>
       </Buttons>
       {activeTab === 0 ? (

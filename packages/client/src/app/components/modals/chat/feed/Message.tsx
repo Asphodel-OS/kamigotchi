@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
@@ -11,7 +12,6 @@ import { BaseAccount } from 'network/shapes/Account';
 
 import { Popover } from 'app/components/library';
 import { ActionSystem } from 'network/systems';
-import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   previousEqual: boolean;
@@ -108,7 +108,7 @@ export const Message = (props: Props) => {
     <Container>
       <Content>
         {previousEqual === false && (
-          <Header>
+          <Header yours={yours}>
             {player.id != getAccountFunc().id ? (
               <>
                 <PfpAuthor id='pfp-author' ref={pfpRef}>
@@ -124,11 +124,9 @@ export const Message = (props: Props) => {
 
                   <Author author={false}>{getAccountFunc().name}</Author>
                 </PfpAuthor>
-                <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
               </>
             ) : (
               <>
-                <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
                 <PfpAuthor>
                   <Author author={true}>{getAccountFunc().name}</Author>
                   <Pfp
@@ -145,6 +143,7 @@ export const Message = (props: Props) => {
         )}
         <Body previousEqual={previousEqual} yours={yours}>
           {message.Message}
+          <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
         </Body>
       </Content>
     </Container>
@@ -189,14 +188,19 @@ const Pfp = styled.img<{ author: boolean }>`
   `}
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ yours: boolean }>`
   padding-bottom: 0.6vw;
+  margin-top: 0.2vw;
   width: 100%;
   color: black;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
+  ${({ yours }) =>
+    yours
+      ? `  justify-content: space-between;
+  `
+      : `    justify-content: flex-end;`}
 
   gap: 0.6vw;
 `;
@@ -219,13 +223,12 @@ const Author = styled.div<{ author: boolean }>`
 `;
 
 const Time = styled.div`
-  color: black;
-
-  font-size: 0.9vw;
+  color: #a3a3a3;
 
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
+  flex-flow: row;
+
+  justify-content: flex-end;
 `;
 
 const PopOverButtons = styled.div`
@@ -244,8 +247,8 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   word-wrap: break-word;
 
   border-radius: 1vw;
-  padding: 1vw;
-  margin: 0.5vh 0 1vh 0;
+  padding: 0.4vw;
+  margin: 0.2vh 0 0.2vh 0;
   display: inline-block;
   align-items: flex-start;
   margin-right: 25%;
