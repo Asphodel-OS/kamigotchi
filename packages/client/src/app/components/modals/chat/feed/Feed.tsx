@@ -63,7 +63,7 @@ export const Feed = (props: Props) => {
   useEffect(() => {
     const unsubscribeMessages = subscribeToMessages((message) => {
       if (message.RoomIndex === player.roomIndex) {
-        setKamidenMessages((prev) => [message, ...prev]);
+        setKamidenMessages((prev) => [...prev, message]);
       }
 
       if (player.id === message.AccountId) {
@@ -124,7 +124,7 @@ export const Feed = (props: Props) => {
   useEffect(() => {
     setKamidenMessages([]);
     setIsPolling(true);
-    pollM().finally(() => {
+    pollMessages().finally(() => {
       setIsPolling(false);
     });
   }, [player.roomIndex]);
@@ -132,8 +132,8 @@ export const Feed = (props: Props) => {
   /////////////////
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
-  async function pollM() {
-    console.log('pollM polling messages');
+  async function pollMessages() {
+    console.log('pollMessages polling messages');
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
@@ -145,16 +145,15 @@ export const Feed = (props: Props) => {
     } else {
       setNoMoreMessages(false);
     }
-    setKamidenMessages(response.Messages.reverse());
+    setKamidenMessages(response.Messages);
   }
 
-  async function pollNew() {
-    console.log('pollNew polling messages');
+  async function pollMoreMessages() {
+    console.log('pollMoreMessages polling messages');
     setIsPolling(true);
-    let ts = kamidenMessages[0].Timestamp;
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
-      Timestamp: kamidenMessages[kamidenMessages.length - 1].Timestamp,
+      Timestamp: kamidenMessages[0].Timestamp,
     });
     if (response.Messages.length === 0) {
       setNoMoreMessages(true);
@@ -163,7 +162,7 @@ export const Feed = (props: Props) => {
     } else {
       setNoMoreMessages(false);
     }
-    setKamidenMessages((prev) => [...prev, ...response.Messages.reverse()]);
+    setKamidenMessages((prev) => [...response.Messages, ...prev]);
     setIsPolling(false);
   }
 
@@ -178,7 +177,7 @@ export const Feed = (props: Props) => {
       //  if (!isPolling && isNearTop && feed?.next.cursor) await pollNew();
       if (!isPolling && isNearTop) {
         setIsPolling(true);
-        await pollNew();
+        await pollMoreMessages();
       }
       const { scrollTop, scrollHeight, clientHeight } = node;
       const scrollBottom = scrollHeight - scrollTop - clientHeight;
@@ -250,26 +249,24 @@ export const Feed = (props: Props) => {
           )}
           <>
             <div>
-              {kamidenMessages
-                ?.toReversed()
-                .map(
-                  (message, index, arr) =>
-                    !blocked.includes(
-                      getAccount(getEntityIndex(formatEntityID(message.AccountId))).id
-                    ) && (
-                      <Message
-                        previousEqual={
-                          index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
-                        }
-                        player={player}
-                        utils={utils}
-                        key={index}
-                        data={{ message }}
-                        api={api}
-                        actionSystem={actionSystem}
-                      />
-                    )
-                )}
+              {kamidenMessages?.map(
+                (message, index, arr) =>
+                  !blocked.includes(
+                    getAccount(getEntityIndex(formatEntityID(message.AccountId))).id
+                  ) && (
+                    <Message
+                      previousEqual={
+                        index !== 0 ? arr[index - 1].AccountId === message.AccountId : false
+                      }
+                      player={player}
+                      utils={utils}
+                      key={index}
+                      data={{ message }}
+                      api={api}
+                      actionSystem={actionSystem}
+                    />
+                  )
+              )}
             </div>
           </>
           {kamidenMessages.length === 0 && (
