@@ -136,7 +136,7 @@ export const Message = (props: Props) => {
               <>
                 <PfpAuthor>
                   {' '}
-                  <Body style={{ width: ` 86%` }} previousEqual={previousEqual} yours={yours}>
+                  <Body previousEqual={previousEqual} yours={yours}>
                     <Time>
                       <Name>{getAccountFunc().name}</Name>{' '}
                       {moment(message.Timestamp).format('MM/DD HH:mm')}
@@ -245,7 +245,7 @@ const PopOverButtons = styled.div`
 const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   z-index: 0;
   color: black;
-  width: 100%;
+  width: 86%;
 
   font-size: 0.6vw;
   line-height: 1.2vw;
