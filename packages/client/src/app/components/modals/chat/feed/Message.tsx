@@ -9,7 +9,7 @@ import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
 import { BaseAccount } from 'network/shapes/Account';
 
-import { Popover } from 'app/components/library/base/Popover';
+import { Popover } from 'app/components/library';
 import { ActionSystem } from 'network/systems';
 import { useEffect, useRef, useState } from 'react';
 
@@ -104,7 +104,6 @@ export const Message = (props: Props) => {
       </PopOverButtons>
     ));
   };
-
   return (
     <Container>
       <Content>
