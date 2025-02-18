@@ -52,7 +52,7 @@ export const Message = (props: Props) => {
   // TODO: fix this
   useEffect(() => {
     setYours(player.id !== getAccountFunc().id);
-  }, [message.AccountId]);
+  }, [message.AccountId, player.id]);
 
   const showUser = () => {
     setAccount(getAccountFunc().index);
@@ -108,7 +108,7 @@ export const Message = (props: Props) => {
   return (
     <Container>
       <Content>
-        {previousEqual === false && (
+        {
           <Header yours={yours}>
             {player.id != getAccountFunc().id ? (
               <>
@@ -151,12 +151,7 @@ export const Message = (props: Props) => {
               </>
             )}
           </Header>
-        )}
-        {previousEqual === true && (
-          <Body previousEqual={previousEqual} yours={yours}>
-            <Time>{moment(message.Timestamp).format('MM/DD HH:mm')}</Time> {message.Message}
-          </Body>
-        )}
+        }
       </Content>
     </Container>
   );
@@ -262,8 +257,7 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   position: relative;
 
   ${({ yours, previousEqual }) =>
-    previousEqual === false &&
-    (yours
+    yours
       ? `
   ::before {
     z-index: -1;
@@ -288,5 +282,5 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
     border-top-right-radius: 80%;
     right: 0;  
     rotate: 90deg;
-  } `)}
+  } `}
 `;
