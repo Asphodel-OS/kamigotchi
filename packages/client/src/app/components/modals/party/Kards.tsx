@@ -103,8 +103,8 @@ export const Kards = (props: Props) => {
       const avgRate = getRateDisplay(harvest.rates.total.average, 2);
       const now = Math.floor(Date.now() / 1000);
       const lastDuration = (now - harvest.time.last) / 3600;
-      tooltip.push(`Average harvest rate: ${avgRate} MUSU/hr`);
-      tooltip.push(`over the last ${lastDuration.toFixed(2)}hours`);
+      tooltip.push(`Average: ${avgRate} MUSU/hr`);
+      tooltip.push(`> over the last ${lastDuration.toFixed(2)}hours`);
     }
     return tooltip;
   };
