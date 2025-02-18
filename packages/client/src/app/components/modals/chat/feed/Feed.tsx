@@ -104,7 +104,7 @@ export const Feed = (props: Props) => {
         let spoil = kill.Spoils;
 
         feedMessage.push(
-          `${moment(kill.Timestamp).format('MM/DD HH:mm')} : ${killerName} **liquidated** ${victimName} in ${roomName}.`
+          `${moment(kill.Timestamp).format('MM/DD HH:mm')} : ${killerName} **liquidated** ${victimName} in ${roomName} for ${spoil} `
         );
       });
       if (feedData.length >= 50) {

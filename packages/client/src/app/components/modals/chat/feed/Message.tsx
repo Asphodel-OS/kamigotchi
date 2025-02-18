@@ -137,7 +137,10 @@ export const Message = (props: Props) => {
                 <PfpAuthor>
                   {' '}
                   <Body previousEqual={previousEqual} yours={yours}>
-                    <Time> {moment(message.Timestamp).format('MM/DD HH:mm')}</Time>
+                    <Time>
+                      <Name>{getAccountFunc().name}</Name>{' '}
+                      {moment(message.Timestamp).format('MM/DD HH:mm')}
+                    </Time>
                     {message.Message}
                   </Body>
                   <Pfp
