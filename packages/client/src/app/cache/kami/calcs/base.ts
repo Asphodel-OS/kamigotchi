@@ -1,4 +1,4 @@
-import { calcHarvestIdleTime, calcHarvestNetBounty, calcHarvestRate } from 'app/cache/harvest';
+import { calcHarvestIdleTime, calcHarvestNetBounty, updateHarvestRates } from 'app/cache/harvest';
 import { Kami } from 'network/shapes/Kami/types';
 
 ////////////////
@@ -116,8 +116,8 @@ export const calcHealthRate = (kami: Kami): number => {
 // calculate the rate of health drain while harvesting
 export const calcHarvestingHealthRate = (kami: Kami): number => {
   if (!kami.harvest) return 0;
-  updateHarvestRate(kami);
-  const rate = calcStrainFromBalance(kami, kami.harvest.rate, false);
+  const avgHarvestRate = updateHarvestRate(kami);
+  const rate = calcStrainFromBalance(kami, avgHarvestRate, false);
   return -1 * rate;
 };
 
@@ -153,9 +153,7 @@ export const calcOutput = (kami: Kami): number => {
 // update the harvest rate on the kami's harvest. do nothing if no harvest
 export const updateHarvestRate = (kami: Kami): number => {
   if (!kami.harvest || kami.harvest.state !== 'ACTIVE') return 0;
-  const rate = calcHarvestRate(kami.harvest, kami);
-  kami.harvest.rate = rate;
-  return rate;
+  return updateHarvestRates(kami.harvest, kami);
 };
 
 ////////////////////

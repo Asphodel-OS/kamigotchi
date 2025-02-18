@@ -1,4 +1,4 @@
-import { Harvest } from 'network/shapes/Harvest/types';
+import { Harvest, RateDetails } from 'network/shapes/Harvest/types';
 import { Kami } from 'network/shapes/Kami';
 import { Efficacy } from 'network/shapes/Kami/configs';
 
@@ -7,7 +7,9 @@ import { Efficacy } from 'network/shapes/Kami/configs';
 
 // calculate the duration since a harvest has been collected from
 export const calcIdleTime = (harvest: Harvest): number => {
-  return Math.floor(Date.now() / 1000 - harvest.time.last);
+  if (!harvest.time.last) return 0;
+  const secondsSinceLast = Date.now() / 1000 - harvest.time.last;
+  return Math.floor(secondsSinceLast); // intensity period
 };
 
 // get the number of seconds passed since the last harvest reset
@@ -25,42 +27,60 @@ export const calcLifeTime = (harvest: Harvest): number => {
 /////////////////
 // OUTPUT CALCS
 
-// update the rate of an input harvest according to current conditions
-export const updateRate = (harvest: Harvest, kami: Kami) => {
-  const rate = calcRate(harvest, kami);
-  harvest.rate = rate;
-  return rate;
-};
-
-// calculate the expected output rate from a harvest
-export const calcRate = (harvest: Harvest, kami: Kami): number => {
-  if (harvest.state !== 'ACTIVE') return 0;
-  if (!kami.config) return 0;
-
-  const config = kami.config?.harvest.bounty;
-  const base = calcFertility(harvest, kami);
-  const nudge = calcIntensity(harvest, kami);
-  const boostBonus = kami.bonuses?.harvest.bounty.boost ?? 0;
-  const boost = config.boost.value + boostBonus;
-  return (base + nudge) * boost;
-};
-
 // Calculate the expected output from a harvest. Round down.
-// NOTE: This does notfactor in maximum gains due to depleted health.
 export const calcBounty = (harvest: Harvest): number => {
-  let output = harvest.balance;
-  const duration = calcIdleTime(harvest);
-  output += Math.floor(duration * harvest.rate);
+  const output = harvest.balance + calcNetBounty(harvest);
   return Math.max(0, output);
 };
 
 // Calculate the bounty since last sync.
 export const calcNetBounty = (harvest: Harvest): number => {
   const duration = calcIdleTime(harvest);
-  return Math.floor(duration * harvest.rate);
+  const rates = harvest.rates;
+  const rate = rates.fertility + rates.intensity.average;
+  return Math.floor(duration * rate);
 };
 
-// calculate the traditional harvesting rate (per hour)
+/////////////////
+// RATE CALCS
+
+// update the rate of an input harvest according to current conditions
+// return the average total rate
+export const updateRates = (harvest: Harvest, kami: Kami) => {
+  if (harvest.state !== 'ACTIVE') return 0;
+  if (!kami.config) return 0;
+  const config = kami.config?.harvest.bounty;
+  const boostBonus = kami.bonuses?.harvest.bounty.boost ?? 0;
+  const boost = config.boost.value + boostBonus;
+
+  const fertility = calcFertility(harvest, kami);
+  const intensity = calcIntensity(harvest, kami);
+
+  harvest.rates = {
+    fertility,
+    intensity,
+    total: {
+      average: boost * (fertility + intensity.average),
+      spot: boost * (fertility + intensity.spot),
+    },
+  };
+  return harvest.rates.total.average;
+};
+
+// // calculate the expected output rate from a harvest
+// export const calcRate = (harvest: Harvest, kami: Kami): number => {
+//   if (harvest.state !== 'ACTIVE') return 0;
+//   if (!kami.config) return 0;
+
+//   const config = kami.config?.harvest.bounty;
+//   const base = calcFertility(harvest, kami);
+//   const nudge = calcIntensity(harvest, kami);
+//   const boostBonus = kami.bonuses?.harvest.bounty.boost ?? 0;
+//   const boost = config.boost.value + boostBonus;
+//   return (base + nudge) * boost;
+// };
+
+// calculate the fertility rate of harvest (per hour)
 export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   if (!kami.config) return 0;
   const config = kami.config.harvest.fertility;
@@ -68,24 +88,38 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   const efficacy = config.boost.value + calcEfficacyShifts(harvest, kami);
   const power = kami.stats?.power.total ?? 0;
   const fertility = (power * ratio * efficacy) / 3600;
-  return fertility;
+  return Math.floor(fertility * 1e6) / 1e6;
 };
 
 // calculate the intensity rate of a harvest, measured in musu/s
-// NOTE: lots of fuckery in this one
-export const calcIntensity = (harvest: Harvest, kami: Kami): number => {
-  if (!kami.config) return 0;
+// NOTE: this is a calc of avg intensity through a harvest, rather than the spot rate
+export const calcIntensity = (harvest: Harvest, kami: Kami): RateDetails => {
+  if (!kami.config) return { spot: 0, average: 0 };
   const config = kami.config.harvest.intensity;
+  const bonus = kami.bonuses?.harvest.intensity;
+
+  const boost = config.boost.value + (bonus?.boost ?? 0);
+  const ratio = config.ratio.value * 3600; // Constant (Period * scaling)
+  const core = boost / ratio;
 
   const violence = kami.stats?.violence.total ?? 0;
   const base = config.nudge.value * violence; // commandeering nudge field for this scaling
-  const nudge = Math.floor(calcIntensityTime(harvest) / 60);
-  const ratio = config.ratio.value; // Intensity Core (Period * scaling to accomodate skill balancing)
-  const boostBonus = kami.bonuses?.harvest.intensity.boost ?? 0;
-  const boost = config.boost.value + boostBonus;
-  const intensity = ((base + nudge) * boost) / (ratio * 3600);
 
-  return intensity;
+  const now = Date.now() / 1000;
+  const lastTs = harvest.time?.last ?? now;
+  const resetTs = harvest.time?.reset ?? now;
+
+  const averageTime = Math.floor((now - resetTs) / 60);
+  const average = core * (base + averageTime);
+
+  // spot intensity. time factor is (tl-tr + 2(t-tl))
+  const spotTime = Math.floor((2 * now - lastTs - resetTs) / 60);
+  const spot = core * (base + spotTime);
+
+  return {
+    average: Math.floor(average * 1e6) / 1e6,
+    spot: Math.floor(spot * 1e6) / 1e6,
+  };
 };
 
 /////////////////

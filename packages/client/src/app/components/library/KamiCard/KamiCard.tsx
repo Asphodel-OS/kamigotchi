@@ -14,6 +14,7 @@ interface Props {
   description: string[];
   descriptionOnClick?: () => void;
   titleTooltip?: string[];
+  contentTooltip?: string[];
   subtext?: string;
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
@@ -25,7 +26,8 @@ interface Props {
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
   const { kami, actions, showBattery, showCooldown } = props;
-  const { description, descriptionOnClick, titleTooltip } = props;
+  const { description, descriptionOnClick } = props;
+  const { titleTooltip, contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
@@ -77,9 +79,11 @@ export const KamiCard = (props: Props) => {
         </TitleBar>
       </Tooltip>
       <Content>
-        <ContentColumn key='column-1'>
-          <Description />
-        </ContentColumn>
+        <Tooltip text={contentTooltip ?? []}>
+          <ContentColumn key='column-1'>
+            <Description />
+          </ContentColumn>
+        </Tooltip>
         <ContentColumn key='column-2'>
           <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>
