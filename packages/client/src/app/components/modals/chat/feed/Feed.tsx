@@ -149,21 +149,28 @@ export const Feed = (props: Props) => {
   }
 
   async function pollMoreMessages() {
+    // Early return if already polling
+    if (isPolling) {
+      console.log('pollMoreMessages: Already polling, skipping');
+      return;
+    }
+
     console.log('pollMoreMessages polling messages');
     setIsPolling(true);
-    const response = await client.getRoomMessages({
-      RoomIndex: player.roomIndex,
-      Timestamp: kamidenMessages[0].Timestamp,
-    });
-    if (response.Messages.length === 0) {
-      setNoMoreMessages(true);
+    try {
+      const response = await client.getRoomMessages({
+        RoomIndex: player.roomIndex,
+        Timestamp: kamidenMessages[0].Timestamp,
+      });
+      if (response.Messages.length === 0) {
+        setNoMoreMessages(true);
+      } else {
+        setNoMoreMessages(false);
+        setKamidenMessages((prev) => [...response.Messages, ...prev]);
+      }
+    } finally {
       setIsPolling(false);
-      return;
-    } else {
-      setNoMoreMessages(false);
     }
-    setKamidenMessages((prev) => [...response.Messages, ...prev]);
-    setIsPolling(false);
   }
 
   // scrolling effects
