@@ -149,13 +149,10 @@ export const Feed = (props: Props) => {
   }
 
   async function pollMoreMessages() {
-    // Early return if already polling
-    if (isPolling) {
-      console.log('pollMoreMessages: Already polling, skipping');
+    if (noMoreMessages) {
+      console.log('pollMoreMessages: no more messages, skipping');
       return;
     }
-
-    console.log('pollMoreMessages polling messages');
     setIsPolling(true);
     try {
       const response = await client.getRoomMessages({
@@ -165,7 +162,6 @@ export const Feed = (props: Props) => {
       if (response.Messages.length === 0) {
         setNoMoreMessages(true);
       } else {
-        setNoMoreMessages(false);
         setKamidenMessages((prev) => [...response.Messages, ...prev]);
       }
     } finally {
