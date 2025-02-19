@@ -109,12 +109,12 @@ const Container = styled.div`
   position: relative;
   width: auto;
   height: auto;
+  height: 100%;
 `;
 
 const Background = styled.img`
   width: 100%;
-  min-width: 60vw;
-  height: 100vh;
+  height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;

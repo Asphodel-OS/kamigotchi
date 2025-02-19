@@ -59,6 +59,7 @@ const Wrapper = styled.div<Wrapper>`
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
+  height: 100%;
 `;
 
 const Content = styled.div<{ truncate?: boolean; width?: string }>`
@@ -106,8 +107,8 @@ const Children = styled.div<{
 }>`
   position: relative;
   overflow-y: auto;
-  max-height: 57.9vh;
-  height: fit-content;
+  max-height: 100%;
+  height: 100%;
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;
