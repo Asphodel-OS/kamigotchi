@@ -100,13 +100,10 @@ export const get = (
   }
 
   if (options.pfp !== undefined) {
-    console.log(`account cache start`);
     const updateTs = PfpURITs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.pfp) {
-      console.log(`account cache if`);
       acc.pfpURI = getPfp(world, components, entity);
-      console.log(`account cache get ${acc.pfpURI}`);
       PfpURITs.set(entity, now);
     }
   }
