@@ -1,61 +1,94 @@
-import { useEffect, useState } from 'react';
+import ChartJS from 'chart.js/auto';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcAuctionCost, calcAuctionPrice } from 'app/cache/auction';
+import { Overlay } from 'app/components/library';
 import { AuctionBuy, getKamidenClient } from 'clients/kamiden';
 import { Auction } from 'network/shapes/Auction';
+import { ChartOptions } from './chartOptions';
 
 const kamidenClient = getKamidenClient();
 
 type Data = {
   balance: number;
+  price: number;
   time: number;
 };
 
 interface Props {
   name: string;
   auction: Auction;
-  // history: number[];
   onClick?: () => void;
 }
 
 export const Chart = (props: Props) => {
   const { name, auction, onClick } = props;
-  const [buys, setBuys] = useState<AuctionBuy[]>([]);
-  const [ticks, setTicks] = useState<number[]>([]);
-  const [balances, setBalances] = useState<number[]>([]);
-  const [prices, setPrices] = useState<number[]>([]);
-  const startTs = auction.time.start;
-  const endTs = Math.floor(Date.now() / 1000);
+  const chartRef = useRef<ChartJS>();
 
+  const [buys, setBuys] = useState<AuctionBuy[]>([]);
+  const [data, setData] = useState<Data[]>([]);
+
+  // TODO: time range controls and smart determination of time bounds
+  const endTs = Math.floor(Date.now() / 1000);
+  const startTs = auction.time.start != 0 ? auction.time.start : endTs;
+
+  // retrieve this auction's buy history
   useEffect(() => {
+    const retrieveBuys = async () => {
+      const response = await kamidenClient.getAuctionBuys({});
+      const buys = response.AuctionBuys;
+      setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
+    };
     retrieveBuys();
   }, [auction.supply.sold]);
 
+  // generate the price history data based on buy history and auction settings
   useEffect(() => {
-    const ticks = genTimeSeries(startTs, endTs, 3600);
+    const ticks = genTimeSeries(startTs, endTs, 3600 * 4);
     const balances = genBalances(ticks);
     const prices = genPrices(ticks, balances);
-    console.log(
-      'ticks',
-      ticks.map((ts, i) => {
-        const timeStr = new Date(ts * 1000).toLocaleString();
-        return [timeStr, balances[i], prices[i]];
-      })
-    );
-    setTicks(ticks);
-    setBalances(balances);
-    setPrices(prices);
-  }, [buys]);
+    const data = ticks.map((ts, i) => {
+      return { time: ts, balance: balances[i], price: prices[i] };
+    });
+    setData(data);
+  }, [buys, auction]);
 
-  /////////////////
-  // RETRIEVAL
+  // format and generate the chart from the data
+  useEffect(() => {
+    if (chartRef.current) chartRef.current.destroy(); // destroy existing chart if it exists
+    const canvas = document.getElementById('priceChart') as HTMLCanvasElement;
+    if (!canvas) return;
 
-  const retrieveBuys = async () => {
-    const response = await kamidenClient.getAuctionBuys({});
-    const buys = response.AuctionBuys;
-    setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
-  };
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // define data
+    const chartData = {
+      labels: data.map((d) => new Date(d.time * 1000).toLocaleString()),
+      datasets: [
+        {
+          label: 'Price',
+          data: data.map((d) => d.price),
+          borderColor: 'rgb(75, 192, 1)',
+          tension: 0.1,
+        },
+      ],
+    };
+
+    // create new chart
+    chartRef.current = new ChartJS(ctx, {
+      type: 'line',
+      data: chartData,
+      options: ChartOptions,
+    });
+
+    // cleanup on unmount
+    return () => {
+      const currentChart = chartRef.current;
+      if (currentChart) currentChart.destroy();
+    };
+  }, [data]);
 
   /////////////////
   // INTERPRETATION
@@ -93,22 +126,28 @@ export const Chart = (props: Props) => {
 
   const getProgressString = () => {
     if (!auction.auctionItem?.index) return '(not yet live)';
-    return `sold: ${auction.supply.sold} / ${auction.supply.total}`;
+    return `${auction.supply.sold} / ${auction.supply.total}`;
   };
 
   return (
     <Container onClick={onClick}>
       <Title>{name}</Title>
-      <Text>
-        current price: {calcAuctionCost(auction, 1)} {auction.paymentItem?.name}
-      </Text>
-      <Text>{getProgressString()}</Text>
+      <Overlay right={1} top={3}>
+        <Text>
+          {calcAuctionCost(auction, 1)} {auction.paymentItem?.name}
+        </Text>
+      </Overlay>
+      <Overlay right={1} top={4.5}>
+        <Text>{getProgressString()}</Text>
+      </Overlay>
+      <ChartContainer>
+        <canvas id='priceChart'></canvas>
+      </ChartContainer>
     </Container>
   );
 };
 
 const Container = styled.div`
-  background-color: white;
   position: relative;
   width: 100%;
 
@@ -127,20 +166,22 @@ const Container = styled.div`
     cursor: pointer;
     text-decoration: underline;
   }
+
+  overflow: scroll;
 `;
 
 const Title = styled.div`
   color: black;
   font-size: 1.8vw;
+  margin: 1.2vw;
 `;
 
 const Text = styled.div`
   color: black;
-  font-size: 1.2vw;
+  font-size: 0.9vw;
 `;
 
 const ChartContainer = styled.div`
   width: 100%;
-  height: 300px;
-  margin: 20px 0;
+  height: 15vw;
 `;
