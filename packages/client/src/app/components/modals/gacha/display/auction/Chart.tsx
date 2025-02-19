@@ -132,12 +132,12 @@ export const Chart = (props: Props) => {
   return (
     <Container onClick={onClick}>
       <Title>{name}</Title>
-      <Overlay right={1} top={3}>
+      <Overlay right={1} top={1.5}>
         <Text>
           {calcAuctionCost(auction, 1)} {auction.paymentItem?.name}
         </Text>
       </Overlay>
-      <Overlay right={1} top={4.5}>
+      <Overlay right={1} top={3}>
         <Text>{getProgressString()}</Text>
       </Overlay>
       <ChartContainer>
@@ -173,7 +173,7 @@ const Container = styled.div`
 const Title = styled.div`
   color: black;
   font-size: 1.8vw;
-  margin: 1.2vw;
+  margin: 0.6vw;
 `;
 
 const Text = styled.div`
