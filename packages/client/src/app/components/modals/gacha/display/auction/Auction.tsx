@@ -26,7 +26,7 @@ export const AuctionDisplay = (props: Props) => {
   return (
     <Container>
       <Chart name='Gacha Tickets' auction={gacha} onClick={() => setMode('GACHA')} />
-      <Chart name='Reroll Tickets' auction={reroll} onClick={() => setMode('REROLL')} />
+      {/* <Chart name='Reroll Tickets' auction={reroll} onClick={() => setMode('REROLL')} /> */}
     </Container>
   );
 };

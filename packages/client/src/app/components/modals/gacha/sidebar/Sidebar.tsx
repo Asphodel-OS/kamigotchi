@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcAuctionPrice } from 'app/cache/auction';
+import { calcAuctionCost } from 'app/cache/auction';
 import { useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Auction } from 'network/shapes/Auction';
@@ -67,8 +67,8 @@ export const Sidebar = (props: Props) => {
   useEffect(() => {
     if (!modals.gacha) return;
     if (tab != 'AUCTION') setPrice(quantity);
-    else if (mode === 'GACHA') setPrice(calcAuctionPrice(auctions.gacha, quantity));
-    else if (mode === 'REROLL') setPrice(calcAuctionPrice(auctions.reroll, quantity));
+    else if (mode === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
+    else if (mode === 'REROLL') setPrice(calcAuctionCost(auctions.reroll, quantity));
     else setPrice(0);
   }, [tab, mode, quantity, tick]);
 

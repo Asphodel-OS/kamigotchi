@@ -7,7 +7,6 @@ interface Props {
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
-    setPrice: (price: number) => void;
   };
   state: {
     mode: AuctionMode;
@@ -19,7 +18,7 @@ interface Props {
 
 export const Auction = (props: Props) => {
   const { controls, state } = props;
-  const { quantity, setQuantity, price, setPrice } = controls;
+  const { quantity, setQuantity, price } = controls;
   const { mode, setMode, tab, tick } = state;
 
   return (
