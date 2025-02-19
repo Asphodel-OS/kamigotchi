@@ -66,6 +66,7 @@
     "antd": "^5.4.3",
     "async-mutex": "^0.3.2",
     "axios": "^1.6.8",
+    "chart.js": "^4.4.7",
     "debug": "^4.3.4",
     "ethers": "^5",
     "google-protobuf": "^3.14.0",
