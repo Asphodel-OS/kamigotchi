@@ -81,7 +81,7 @@ export const Kards = (props: Props) => {
     else if (isResting(kami)) description = ['Resting', `${healthRate} HP/hr`];
     else if (isDead(kami)) description = [`Murdered`];
     else if (isHarvesting(kami) && kami.harvest) {
-      const harvestRate = getRateDisplay(kami.harvest!.rate, 2);
+      const harvestRate = getRateDisplay(kami.harvest.rates.total.spot, 2);
       if (calcHealth(kami) == 0) {
         description = [`Starving.. `, `on ${kami.harvest.node?.name}`];
       } else if (kami.harvest.node != undefined) {
@@ -94,6 +94,19 @@ export const Kards = (props: Props) => {
       }
     }
     return description;
+  };
+
+  const getTooltip = (kami: Kami): string[] => {
+    const tooltip: string[] = [];
+    if (isHarvesting(kami) && kami.harvest) {
+      const harvest = kami.harvest;
+      const avgRate = getRateDisplay(harvest.rates.total.average, 2);
+      const now = Math.floor(Date.now() / 1000);
+      const lastDuration = (now - harvest.time.last) / 3600;
+      tooltip.push(`Average: ${avgRate} MUSU/hr`);
+      tooltip.push(`> over the last ${lastDuration.toFixed(2)}hours`);
+    }
+    return tooltip;
   };
 
   /////////////////
@@ -124,24 +137,20 @@ export const Kards = (props: Props) => {
 
   return (
     <Container>
-      {kamis.length > 0 ? (
-        kamis.map((kami) => {
-          return (
-            <KamiCard
-              key={kami.entity}
-              kami={kami}
-              description={getDescription(kami)}
-              descriptionOnClick={getDescriptionOnClick(kami)}
-              subtext={`${calcOutput(kami)} MUSU`}
-              actions={DisplayedAction(kami, account)}
-              showBattery
-              showCooldown
-            />
-          );
-        })
-      ) : (
-        <EmptyText>You have no kamis. Get some.</EmptyText>
-      )}
+      {kamis.length == 0 && <EmptyText>You have no kamis. Get some.</EmptyText>}
+      {kamis.map((kami) => (
+        <KamiCard
+          key={kami.entity}
+          kami={kami}
+          description={getDescription(kami)}
+          descriptionOnClick={getDescriptionOnClick(kami)}
+          subtext={`${calcOutput(kami)} MUSU`}
+          contentTooltip={getTooltip(kami)}
+          actions={DisplayedAction(kami, account)}
+          showBattery
+          showCooldown
+        />
+      ))}
     </Container>
   );
 };

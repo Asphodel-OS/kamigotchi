@@ -10,8 +10,8 @@ export interface Harvest {
   id: EntityID;
   entity: EntityIndex;
   balance: number;
-  rate: number;
   state: string;
+  rates: HarvestRates;
   time: {
     last: number;
     reset: number;
@@ -19,6 +19,17 @@ export interface Harvest {
   };
   kami?: Kami;
   node?: Node;
+}
+
+interface HarvestRates {
+  fertility: number;
+  intensity: RateDetails;
+  total: RateDetails;
+}
+
+export interface RateDetails {
+  average: number;
+  spot: number;
 }
 
 // optional data to populate for a Harvest Entity
@@ -38,13 +49,24 @@ export const getHarvest = (
   let harvest: Harvest = {
     id: world.entities[entity],
     entity,
-    rate: 0,
-    balance: ((getComponentValue(Value, entity)?.value as number) || 0) * 1,
     state: getComponentValue(State, entity)?.value as string,
+    balance: ((getComponentValue(Value, entity)?.value as number) || 0) * 1,
     time: {
       last: (getComponentValue(LastTime, entity)?.value as number) * 1,
       reset: (getComponentValue(ResetTime, entity)?.value as number) * 1,
       start: (getComponentValue(StartTime, entity)?.value as number) * 1,
+    },
+    // rates are interpreted from harvest/kami/node data
+    rates: {
+      fertility: 0,
+      intensity: {
+        average: 0,
+        spot: 0,
+      },
+      total: {
+        average: 0,
+        spot: 0,
+      },
     },
   };
 

@@ -5,7 +5,7 @@ export {
   calcIdleTime as calcHarvestIdleTime,
   calcLifeTime as calcHarvestLifeTime,
   calcNetBounty as calcHarvestNetBounty,
-  calcRate as calcHarvestRate,
+  updateRates as updateHarvestRates,
 } from './calcs';
 
 export type { Harvest } from 'network/shapes/Harvest';

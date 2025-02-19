@@ -176,7 +176,7 @@ library LibHarvest {
     return LibAffinity.calcEfficacyShift(effectiveness, configShifts, bonusShifts);
   }
 
-  // Calculate the rate of harvest, measured in musu/s. Assume active (1e9 precision).
+  // Calculate the rate of harvest, measured in musu/s. Assume active (1e6 precision).
   function calcFertility(
     IUintComp components,
     uint256 id,
@@ -191,7 +191,7 @@ library LibHarvest {
     return (precision * power * ratio * boost) / 3600;
   }
 
-  // Calculate the intensity of a harvest, measured in musu/s (1e9 precision)
+  // Calculate the intensity of a harvest, measured in musu/s (1e6 precision)
   // NOTE: a bit of a hack, scales violence by commandeering nudge slot
   function calcIntensity(
     IUintComp components,
