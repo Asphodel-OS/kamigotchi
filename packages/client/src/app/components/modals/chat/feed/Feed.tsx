@@ -133,7 +133,6 @@ export const Feed = (props: Props) => {
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
   async function pollMessages() {
-    console.log('pollMessages polling messages');
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
@@ -149,10 +148,8 @@ export const Feed = (props: Props) => {
   }
 
   async function pollMoreMessages() {
-    if (noMoreMessages) {
-      console.log('pollMoreMessages: no more messages, skipping');
-      return;
-    }
+    if (noMoreMessages) return;
+
     setIsPolling(true);
     try {
       const response = await client.getRoomMessages({
