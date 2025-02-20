@@ -8,6 +8,7 @@ interface OverlayProps {
   translateX?: number;
   translateY?: number;
   fullWidth?: boolean;
+  passthrough?: boolean;
 }
 
 export const Overlay = styled.div<OverlayProps>`
@@ -25,4 +26,5 @@ export const Overlay = styled.div<OverlayProps>`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
+  pointer-events: ${({ passthrough }) => (passthrough ? 'none' : 'auto')};
 `;
