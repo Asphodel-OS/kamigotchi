@@ -36,7 +36,7 @@ export const Chart = (props: Props) => {
   // retrieve this auction's buy history
   useEffect(() => {
     const retrieveBuys = async () => {
-      const response = await kamidenClient.getAuctionBuys({});
+      const response = await kamidenClient.getAuctionBuys({ ItemIndex: 2 });
       const buys = response.AuctionBuys;
       setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
     };

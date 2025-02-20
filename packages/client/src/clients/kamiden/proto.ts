@@ -71,7 +71,9 @@ export interface AuctionBuy {
   Timestamp: number;
 }
 
-export interface AuctionBuysRequest {}
+export interface AuctionBuysRequest {
+  ItemIndex?: number | undefined;
+}
 
 export interface AuctionBuysResponse {
   AuctionBuys: AuctionBuy[];
@@ -779,11 +781,14 @@ export const AuctionBuy: MessageFns<AuctionBuy> = {
 };
 
 function createBaseAuctionBuysRequest(): AuctionBuysRequest {
-  return {};
+  return { ItemIndex: undefined };
 }
 
 export const AuctionBuysRequest: MessageFns<AuctionBuysRequest> = {
-  encode(_: AuctionBuysRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: AuctionBuysRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.ItemIndex !== undefined) {
+      writer.uint32(8).uint32(message.ItemIndex);
+    }
     return writer;
   },
 
@@ -794,6 +799,14 @@ export const AuctionBuysRequest: MessageFns<AuctionBuysRequest> = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ItemIndex = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -806,8 +819,9 @@ export const AuctionBuysRequest: MessageFns<AuctionBuysRequest> = {
   create(base?: DeepPartial<AuctionBuysRequest>): AuctionBuysRequest {
     return AuctionBuysRequest.fromPartial(base ?? {});
   },
-  fromPartial(_: DeepPartial<AuctionBuysRequest>): AuctionBuysRequest {
+  fromPartial(object: DeepPartial<AuctionBuysRequest>): AuctionBuysRequest {
     const message = createBaseAuctionBuysRequest();
+    message.ItemIndex = object.ItemIndex ?? undefined;
     return message;
   },
 };
