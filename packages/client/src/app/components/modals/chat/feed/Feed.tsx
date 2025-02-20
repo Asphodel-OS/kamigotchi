@@ -1,21 +1,18 @@
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import moment from 'moment';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { Kami } from 'app/cache/kami';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
+import { getClient } from 'clients/kamiden/client';
+import { subscribeToFeed, subscribeToMessages } from 'clients/kamiden/subscriptions';
 import { HarvestEnd, Message as KamiMessage, Kill, Movement } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
-import moment from 'moment';
 import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
-import {
-  getKamidenClient,
-  subscribeToFeed,
-  subscribeToMessages,
-} from 'workers/sync/kamidenStreamClient';
 import { Message } from './Message';
 
 interface Props {
@@ -42,7 +39,7 @@ interface Props {
   };
 }
 
-const client = getKamidenClient();
+const client = getClient();
 export const Feed = (props: Props) => {
   const { utils, player, blocked, actionSystem, api, activeTab, setActiveTab } = props;
   const { getAccount, getEntityIndex, getKami, getRoomByIndex } = props.utils;

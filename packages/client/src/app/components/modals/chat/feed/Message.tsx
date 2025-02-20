@@ -1,16 +1,14 @@
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
-
+import { Popover } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Message as KamiMessage } from 'engine/types/kamiden/kamiden';
+import { Message as KamiMessage } from 'clients/kamiden/proto';
 import { formatEntityID } from 'engine/utils';
 import { BaseAccount } from 'network/shapes/Account';
-
-import { Popover } from 'app/components/library';
 import { ActionSystem } from 'network/systems';
 
 interface Props {
