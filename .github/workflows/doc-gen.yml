@@ -5,10 +5,10 @@ on:
     branches:
       - main # Change this if your default branch is "main"
     paths:
-      - 'packages/client/network/shapes/**' # Only trigger when files in this directory change
+      - 'packages/client/src/network/shapes/**' # Only trigger when files in this directory change
 
 env:
-  SOURCE_DIR: 'packages/client/network/shapes'
+  SOURCE_DIR: 'packages/client/src/network/shapes'
   TARGET_DIR: 'shapes'
   TARGET_REPO_OWNER: 'Asphodel-OS'
   TARGET_REPO_NAME: 'kamigotchi-entity-shapes'
@@ -38,7 +38,11 @@ jobs:
           echo "Copying files"
           # Copy the specified directory
           mkdir -p ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}
-          cp -r ./kamigotchi/${{ env.SOURCE_DIR }}/* ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}/
+          ls
+          ls **/*
+          cp -r ./source-repo/${{ env.SOURCE_DIR }}/* ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}/
+
+          cd ./${{ env.TARGET_REPO_NAME }}
 
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
@@ -46,12 +50,12 @@ jobs:
           # Check for changes
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit -m "Sync files from Kamigotchi repo
+            git commit -m "Sync Shapes files from Kamigotchi repo
 
             Source Commit: ${{ github.sha }}
             Workflow: ${{ github.workflow }}
             "
             git push
           else
-            echo "No changes to commit" 
+            echo "No changes to commit"
           fi
