@@ -3,13 +3,13 @@ name: Sync Files to Target Repo
 on:
   push:
     branches:
-      - main
+      - main # Change this if your default branch is "main"
     paths:
       - 'packages/client/network/shapes/**' # Only trigger when files in this directory change
 
 env:
   SOURCE_DIR: 'packages/client/network/shapes'
-  TARGET_DIR: 'network'
+  TARGET_DIR: 'shapes'
   TARGET_REPO_OWNER: 'Asphodel-OS'
   TARGET_REPO_NAME: 'kamigotchi-entity-shapes'
 
@@ -27,7 +27,7 @@ jobs:
           ## SETUP SSH KEY
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
-          echo "${{secrets.DEPLOY_KEY}}" > ~/.ssh/id_rsa
+          echo "${{secrets.KAMI_SHAPE_DEPLOY_KEY}}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ls -la ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
@@ -37,11 +37,9 @@ jobs:
           git clone git@github.com:${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME }}.git
           echo "Copying files"
           # Copy the specified directory
-
           mkdir -p ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}
-          cp -r ./source-repo/${{ env.SOURCE_DIR }}/* ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}/
+          cp -r ./kamigotchi/${{ env.SOURCE_DIR }}/* ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}/
 
-          cd ./${{ env.TARGET_REPO_NAME }}
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
 
