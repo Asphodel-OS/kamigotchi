@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'packages/client/network/**' # Only trigger when files in this directory change
+      - 'packages/client/network/shapes/**' # Only trigger when files in this directory change
 
 env:
-  SOURCE_DIR: 'packages/client/network'
+  SOURCE_DIR: 'packages/client/network/shapes'
   TARGET_DIR: 'network'
   TARGET_REPO_OWNER: 'Asphodel-OS'
-  TARGET_REPO_NAME: 'test-target-repo'
+  TARGET_REPO_NAME: 'kamigotchi-entity-shapes'
 
 jobs:
   sync:
@@ -48,7 +48,7 @@ jobs:
           # Check for changes
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit -m "Sync files from test-source-repo
+            git commit -m "Sync files from Kamigotchi repo
 
             Source Commit: ${{ github.sha }}
             Workflow: ${{ github.workflow }}
