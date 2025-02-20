@@ -3,7 +3,7 @@ name: Sync Files to Target Repo
 on:
   push:
     branches:
-      - main # Change this if your default branch is "main"
+      - crt.doc-gen #- main # Change this if your default branch is "main"
     paths:
       - 'packages/client/network/shapes/**' # Only trigger when files in this directory change
 
