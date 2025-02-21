@@ -13,20 +13,15 @@ contract HarvestTrackerTest is SetupTemplate {
     aKamiID = _mintKami(alice);
   }
 
-  function setUpItems() public override {
-    _createFood(1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
-  }
-
   function testTrackHarvestTime() public {
     uint256 startTime = block.timestamp;
     uint32 nodeIndex = 1;
-    _giveItem(alice, 1, 10);
 
     uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
     _fastForward(_idleRequirement + 50);
 
     // feed pet
-    _feedPet(aKamiID, 1);
+    _feedKami(alice, aKamiID);
     _fastForward(_idleRequirement + 50);
 
     // // collect harvest - does not inc time

@@ -5,7 +5,7 @@ import "tests/utils/SetupTemplate.t.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
 contract SkillTest is SetupTemplate {
-  uint32 resetItemIndex = 11001;
+  uint32 resetItemIndex = 7;
 
   function setUp() public override {
     super.setUp();

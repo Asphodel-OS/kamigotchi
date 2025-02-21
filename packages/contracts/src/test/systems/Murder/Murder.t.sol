@@ -7,34 +7,17 @@ import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 contract MurderTest is SetupTemplate {
-  uint[] internal _listingIDs;
-  uint[] internal _foodRegistryIDs;
-  uint[] internal _reviveRegistryIDs;
   uint[] internal _nodeIDs;
   mapping(uint => uint[]) internal _kamiIDs;
 
   function setUp() public override {
     super.setUp();
 
-    _createNPC(1, 1, "Test NPC");
-    _createFoodListings(1);
-    _createReviveListings(1);
-
     _nodeIDs.push(_createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL"));
     _nodeIDs.push(_createHarvestingNode(2, 1, "Test Node", "this is a node", "SCRAP"));
     _nodeIDs.push(_createHarvestingNode(3, 2, "Test Node", "this is a node", "EERIE"));
     _nodeIDs.push(_createHarvestingNode(4, 2, "Test Node", "this is a node", "INSECT"));
     _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
-  }
-
-  function setUpItems() public override {
-    // food (foodIndex, name, health)
-    _foodRegistryIDs.push(_createFood(1, "Gum", "DESCRIPTION", 25, 0, "")); // itemIndex 1
-    _foodRegistryIDs.push(_createFood(2, "Candy", "DESCRIPTION", 50, 0, "")); // itemIndex 2
-    _foodRegistryIDs.push(_createFood(3, "Cookie Sticks", "DESCRIPTION", 100, 0, "")); // itemIndex 3
-
-    // revives (reviveIndex, name, health)
-    _reviveRegistryIDs.push(_createRevive(1000, "Ribbon", "DESCRIPTION", 10, "")); // itemIndex 1000
   }
 
   function setUpNodes() public override {}
@@ -297,7 +280,7 @@ contract MurderTest is SetupTemplate {
 
     // revive our pets and start their harvests
     for (uint i = 0; i < numPets; i++) {
-      _revivePet(_kamiIDs[playerIndex][i], 1000); // hardcoded for now
+      _reviveKami(_kamiIDs[playerIndex][i]);
       _fastForward(_idleRequirement);
       _startHarvest(_kamiIDs[playerIndex][i], nodeID);
     }
@@ -310,7 +293,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CAN can liquidate in succession once idle requirement is met
     for (uint i = 0; i < numPets; i++) {
-      _feedPet(_kamiIDs[playerIndex][i], 2);
+      _feedKami(_kamiIDs[playerIndex][i]);
       _fastForward(_idleRequirement);
       _liquidateHarvest(_kamiIDs[playerIndex][i], supportHarvestIDs[i]);
     }
@@ -366,7 +349,7 @@ contract MurderTest is SetupTemplate {
 
   //     // get the player and pet ready
   //     _moveAccount(playerIndex, LibNode.getRoom(components, nodeID));
-  //     _feedPet(attackerID, 1);
+  //     _feedKami(attackerID, 1);
 
   //     // fast forward by idle requirement
   //     _fastForward(_idleRequirement);
@@ -380,9 +363,9 @@ contract MurderTest is SetupTemplate {
   //       // liquidate, revive, heal
   //       _liquidateHarvest(attackerID, harvestID);
   //       _fastForward(_idleRequirement);
-  //       _revivePet(victimID, 1000);
+  //       _reviveKami(victimID, 1000);
   //       _fastForward(_idleRequirement);
-  //       _feedPet(victimID, 1);
+  //       _feedKami(victimID, 1);
   //       _fastForward(_idleRequirement);
 
   //       // put them on new node
@@ -402,30 +385,10 @@ contract MurderTest is SetupTemplate {
     return existing + increase;
   }
 
-  function _createFoodListings(uint32 npcIndex) internal {
-    uint32 itemIndex;
-    uint[] memory registryIDs = _foodRegistryIDs;
-    for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = _IndexItemComponent.get(registryIDs[i]);
-      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
-    }
-  }
-
-  function _createReviveListings(uint32 npcIndex) internal {
-    uint32 itemIndex;
-    uint[] memory registryIDs = _reviveRegistryIDs;
-    for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = _IndexItemComponent.get(registryIDs[i]);
-      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
-    }
-  }
-
   // stocks an account with a bunch of revives
   function _stockAccount(uint playerIndex) internal {
-    _fundAccount(playerIndex, 1e9);
-    for (uint i = 0; i < _listingIDs.length; i++) {
-      _buyFromListing(playerIndex, _listingIDs[i], 100);
-    }
+    _giveItem(_getPlayerAccount(playerIndex), KAMI_FOOD_INDEX, 100);
+    _giveItem(_getPlayerAccount(playerIndex), KAMI_REVIVE_INDEX, 100);
   }
 
   // checks whether a harvest should be liquidatable by a pet

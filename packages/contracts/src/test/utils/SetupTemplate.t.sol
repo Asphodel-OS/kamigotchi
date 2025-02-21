@@ -34,9 +34,14 @@ abstract contract SetupTemplate is TestSetupImports {
   mapping(address => address) internal _operators; // owner => operator
   uint256 internal _currBlock;
 
+  // Global accounts
   PlayerAccount alice;
   PlayerAccount bob;
   PlayerAccount charlie;
+
+  // Global indices - may be overwritten by tests
+  uint32 KAMI_FOOD_INDEX;
+  uint32 KAMI_REVIVE_INDEX;
 
   // Token vars
   Kami721 _Kami721;
@@ -107,13 +112,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // sets up items to a default state. override to change/remove behaviour if needed
   function setUpItems() public virtual {
-    // food (foodIndex, name, health)
-    _createFood(1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
-    _createFood(2, "Candy", "DESCRIPTION", 50, 0, ""); // itemIndex 2
-    _createFood(3, "Cookie Sticks", "DESCRIPTION", 100, 0, ""); // itemIndex 3
-
-    // revives (reviveIndex, name, health)
-    _createRevive(1000, "Ribbon", "DESCRIPTION", 10, ""); // itemIndex 1000
+    KAMI_FOOD_INDEX = 101;
+    KAMI_REVIVE_INDEX = 11001;
+    _createFood(KAMI_FOOD_INDEX, "Gum", "DESCRIPTION", 25, 0, "");
+    _createRevive(KAMI_REVIVE_INDEX, "Ribbon", "DESCRIPTION", 10, "");
   }
 
   // sets up rooms to a default state. override to change/remove behaviour if needed
@@ -195,6 +197,10 @@ abstract contract SetupTemplate is TestSetupImports {
   function _getOperator(uint playerIndex) internal view returns (address) {
     require(playerIndex < _owners.length, "playerIndex out of bounds");
     return _operators[_owners[playerIndex]];
+  }
+
+  function _getPlayerAccount(uint playerIndex) internal view returns (PlayerAccount memory) {
+    return _accounts[playerIndex];
   }
 
   // create multiple sets of owner/operator pair addresses
@@ -329,22 +335,32 @@ abstract contract SetupTemplate is TestSetupImports {
     _ListingSellSystem.executeTyped(npcIndex, itemIndices, amts);
   }
 
-  // easy function for getting the proper inputs to feed a pet
-  function _feedPet(uint kamiID, uint32 foodIndex) internal {
-    uint accID = LibKami.getAccount(components, kamiID);
-    address operator = LibAccount.getOperator(components, accID);
-
-    vm.prank(operator);
-    _KamiUseItemSystem.executeTyped(kamiID, foodIndex);
+  function _feedKami(PlayerAccount memory acc, uint kamiID) internal virtual {
+    _giveItem(acc, KAMI_FOOD_INDEX, 1);
+    _feedKami(kamiID);
   }
 
-  // easy function for getting the proper inputs to revive a pet
-  function _revivePet(uint kamiID, uint32 reviveIndex) internal {
+  // uses KAMI_FOOD_INDEX. needs to be overwritten if setUpItems is overridden
+  function _feedKami(uint kamiID) internal virtual {
+    require(KAMI_FOOD_INDEX != 0, "KAMI_FOOD_INDEX not set");
     uint accID = LibKami.getAccount(components, kamiID);
-    address operator = LibAccount.getOperator(components, accID);
 
-    vm.prank(operator);
-    _KamiUseItemSystem.executeTyped(kamiID, reviveIndex);
+    vm.prank(LibAccount.getOperator(components, accID));
+    _KamiUseItemSystem.executeTyped(kamiID, KAMI_FOOD_INDEX);
+  }
+
+  function _reviveKami(PlayerAccount memory acc, uint kamiID) internal {
+    _giveItem(acc, KAMI_REVIVE_INDEX, 1);
+    _reviveKami(kamiID);
+  }
+
+  // uses KAMI_REVIVE_INDEX. needs to be overwritten if setUpItems is overridden
+  function _reviveKami(uint kamiID) internal {
+    require(KAMI_REVIVE_INDEX != 0, "KAMI_REVIVE_INDEX not set");
+    uint accID = LibKami.getAccount(components, kamiID);
+
+    vm.prank(LibAccount.getOperator(components, accID));
+    _KamiUseItemSystem.executeTyped(kamiID, KAMI_REVIVE_INDEX);
   }
 
   function _startHarvestByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
@@ -1219,7 +1235,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initMintConfigs() internal virtual {
     _setConfig("GACHA_REROLL_PRICE", 1);
-    _setConfig("GACHA_MAX_REROLLS", 1000);
+    _setConfig("GACHA_MAX_REROLLS", 100000);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
@@ -1240,11 +1256,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initHarvestConfigs() internal virtual {
     // Harvest Rates
-    _setConfig("KAMI_HARV_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]);
     _setConfig("KAMI_HARV_FERTILITY", [uint32(0), 0, 1500, 3, 0, 0, 1000, 3]);
     _setConfig("KAMI_HARV_INTENSITY", [uint32(5), 0, 1920, 0, 0, 0, 40, 0]); // inversed boost
     _setConfig("KAMI_HARV_BOUNTY", [uint32(0), 9, 0, 0, 0, 0, 1000, 3]);
     _setConfig("KAMI_HARV_STRAIN", [uint32(20), 0, 7500, 3, 0, 0, 1000, 3]);
+    _setConfig("KAMI_HARV_EFFICACY_BODY", [uint32(3), 0, 650, 250, 0, 0, 0, 0]);
+    _setConfig("KAMI_HARV_EFFICACY_HAND", [uint32(3), 0, 400, 150, 0, 0, 0, 0]);
   }
 
   function _initLiquidationConfigs() internal virtual {

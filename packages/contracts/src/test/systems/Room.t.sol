@@ -78,8 +78,8 @@ contract RoomTest is SetupTemplate {
     initBasicRooms();
 
     vm.startPrank(deployer);
-    uint256 baseStamina = 11;
-    uint256 numMove = uint256(rawNumMove) % (baseStamina * 2); // limit fuzz
+    uint256 baseStamina = 55;
+    uint256 numMove = uint256(rawNumMove) % ((baseStamina * 2) / 5); // limit fuzz
     LibStat.setStamina(
       components,
       alice.id,
@@ -89,9 +89,9 @@ contract RoomTest is SetupTemplate {
 
     // move
     vm.startPrank(alice.operator);
-    for (uint i = 0; i < numMove; i++) {
+    for (uint i = 0; i < numMove; i += 5) {
       uint32 nextRoom = LibRoom.get(components, alice.id) == 1 ? 2 : 1;
-      if (i >= baseStamina) vm.expectRevert("Account: insufficient stamina");
+      if (i > baseStamina) vm.expectRevert("Account: insufficient stamina");
       _AccountMoveSystem.executeTyped(nextRoom);
     }
   }

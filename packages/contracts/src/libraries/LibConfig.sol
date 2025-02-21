@@ -61,8 +61,7 @@ library LibConfig {
   /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   /// @dev let call revert if value does not exist
   function get(IUintComp components, string memory field) internal view returns (uint256) {
-    uint256 id = genID(field);
-    return ValueComponent(getAddrByID(components, ValueCompID)).get(id);
+    return ValueComponent(getAddrByID(components, ValueCompID)).get(genID(field));
   }
 
   function getAddress(IUintComp components, string memory field) internal view returns (address) {

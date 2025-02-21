@@ -9,8 +9,6 @@ contract ItemTemplate is SetupTemplate {
     super.setUp();
   }
 
-  function setUpItems() public virtual override {}
-
   function _createLootbox(
     uint32 index,
     string memory name,

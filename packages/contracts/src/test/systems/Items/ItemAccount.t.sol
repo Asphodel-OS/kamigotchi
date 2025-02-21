@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./Item.t.sol";
 
-contract AccItemsTest is SetupTemplate {
+contract ItemAccountTest is ItemTemplate {
   uint32 petFoodIndex = 998;
   uint32 petTeleportIndex = 997;
   uint32 wrongTypeItemIndex = 999;
@@ -25,7 +25,7 @@ contract AccItemsTest is SetupTemplate {
     vm.stopPrank();
   }
 
-  function testAccItemFeed() public {
+  function testItemAccFeed() public {
     uint32 itemIndex = 1;
     vm.startPrank(deployer);
     __ItemRegistrySystem.createConsumable(
@@ -52,7 +52,7 @@ contract AccItemsTest is SetupTemplate {
     assertEq(_StaminaComponent.get(alice.id).sync, start + 3);
   }
 
-  function testAccItemTeleport() public {
+  function testItemAccTeleport() public {
     uint32 itemIndex = 1;
     uint32 room = 11;
     vm.startPrank(deployer);
