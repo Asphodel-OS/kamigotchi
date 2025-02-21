@@ -11,6 +11,7 @@ export const NullListing: Listing = {
   startTime: 0,
   requirements: [],
   buy: {
+    currency: NullItem, // musu
     type: 'FIXED',
   },
 };

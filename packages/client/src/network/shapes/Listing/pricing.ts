@@ -1,19 +1,24 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
+import { getItemByIndex, Item } from 'network/shapes/Item';
 import { getEntityByHash } from '../utils';
-import { getDecay, getScale, getType } from '../utils/component';
+import { getDecay, getItemIndex, getScale, getType } from '../utils/component';
 
 type PriceType = 'FIXED' | 'GDA' | 'SCALED';
 
 export interface Pricing {
+  currency: Item;
   type: PriceType;
   decay?: number;
   scale?: number;
 }
 
-export const getPricing = (comps: Components, entity: EntityIndex): Pricing => {
-  const pricing: Pricing = { type: getType(comps, entity) as PriceType };
+export const getPricing = (world: World, comps: Components, entity: EntityIndex): Pricing => {
+  const pricing: Pricing = {
+    currency: getItemByIndex(world, comps, getItemIndex(comps, entity)),
+    type: getType(comps, entity) as PriceType,
+  };
   if (pricing.type === 'SCALED') {
     pricing.scale = getScale(comps, entity, 9);
   } else if (pricing.type === 'GDA') {
