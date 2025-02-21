@@ -16,28 +16,34 @@ export function listingAPI(genCall: GenCall) {
   }
 
   // add a fixed buy price to a listing
-  async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed');
+  async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number, currency: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, currency], 'setBuyFixed');
   }
 
   // add a GDA buy price to a listing
   async function setListingBuyPriceGDA(
     npcIndex: number,
     itemIndex: number,
+    currency: number,
     scale: number,
     decay: number
   ) {
-    genCall('system.listing.registry', [npcIndex, itemIndex, scale, decay], 'setBuyGDA');
+    genCall('system.listing.registry', [npcIndex, itemIndex, currency, scale, decay], 'setBuyGDA');
   }
 
   // add a fixed sell price to a listing
-  async function setListingSellPriceFixed(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed');
+  async function setListingSellPriceFixed(npcIndex: number, itemIndex: number, currency: number) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, currency], 'setSellFixed');
   }
 
   // add a scaled sell price to a listing
-  async function setListingSellPriceScaled(npcIndex: number, itemIndex: number, scale: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex, scale], 'setSellScaled');
+  async function setListingSellPriceScaled(
+    npcIndex: number,
+    itemIndex: number,
+    currency: number,
+    scale: number
+  ) {
+    genCall('system.listing.registry', [npcIndex, itemIndex, currency, scale], 'setSellScaled');
   }
 
   async function setListingRequirement(

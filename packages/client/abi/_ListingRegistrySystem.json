@@ -230,6 +230,11 @@
           "name": "itemIndex",
           "type": "uint32",
           "internalType": "uint32"
+        },
+        {
+          "name": "currency",
+          "type": "uint32",
+          "internalType": "uint32"
         }
       ],
       "outputs": [],
@@ -246,6 +251,11 @@
         },
         {
           "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "currency",
           "type": "uint32",
           "internalType": "uint32"
         },
@@ -276,6 +286,11 @@
           "name": "itemIndex",
           "type": "uint32",
           "internalType": "uint32"
+        },
+        {
+          "name": "currency",
+          "type": "uint32",
+          "internalType": "uint32"
         }
       ],
       "outputs": [],
@@ -292,6 +307,11 @@
         },
         {
           "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "currency",
           "type": "uint32",
           "internalType": "uint32"
         },
@@ -404,10 +424,10 @@
     "removeSell(uint32,uint32)": "b2ba303a",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setBuyFixed(uint32,uint32)": "4ebee436",
-    "setBuyGDA(uint32,uint32,int32,int32)": "2cc5a3b5",
-    "setSellFixed(uint32,uint32)": "36a8a6f4",
-    "setSellScaled(uint32,uint32,int32)": "cb868db8",
+    "setBuyFixed(uint32,uint32,uint32)": "7e2f86f0",
+    "setBuyGDA(uint32,uint32,uint32,int32,int32)": "a6b94935",
+    "setSellFixed(uint32,uint32,uint32)": "97c64f28",
+    "setSellScaled(uint32,uint32,uint32,int32)": "248fa614",
     "transferOwnership(address)": "f2fde38b"
   }
 }

@@ -44,8 +44,11 @@ library LibListing {
     uint256 price = calcBuyPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid buy price");
     incBalance(comps, id, amt);
+
+    // move items
+    uint32 currency = LibListingRegistry.getBuyCurrency(comps, id);
     LibInventory.incFor(comps, accID, itemIndex, amt); // gain item
-    LibInventory.decFor(comps, accID, MUSU_INDEX, price); // take currecy
+    LibInventory.decFor(comps, accID, currency, price); // take currecy
   }
 
   /// @notice processes a sell for amt of item from an account to a listing
@@ -59,8 +62,11 @@ library LibListing {
     uint256 price = calcSellPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid sell price");
     decBalance(comps, id, amt);
+
+    // move items
+    uint32 currency = LibListingRegistry.getSellCurrency(comps, id);
     LibInventory.decFor(comps, accID, itemIndex, amt); // take item
-    LibInventory.incFor(comps, accID, MUSU_INDEX, price); // gain currency
+    LibInventory.incFor(comps, accID, currency, price); // gain currency
   }
 
   /////////////////

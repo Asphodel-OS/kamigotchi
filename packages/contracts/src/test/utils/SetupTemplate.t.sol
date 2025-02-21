@@ -678,37 +678,9 @@ abstract contract SetupTemplate is TestSetupImports {
       );
   }
 
-  function _createNodeRequirement(
-    uint32 nodeIndex,
-    string memory type_,
-    string memory logicType,
-    uint32 index,
-    uint256 value,
-    string memory for_
-  ) internal returns (uint) {
-    vm.prank(deployer);
-    return
-      __NodeRegistrySystem.addRequirement(
-        abi.encode(nodeIndex, type_, logicType, index, value, for_)
-      );
-  }
-
   function _createNPC(uint32 index, uint32 roomIndex, string memory name) public returns (uint) {
     vm.prank(deployer);
     return __NPCRegistrySystem.create(abi.encode(index, name, roomIndex));
-  }
-
-  function _setListing(
-    uint32 npcIndex,
-    uint32 itemIndex,
-    uint basePrice,
-    uint priceSell // todo: fix syntax
-  ) public returns (uint listingID) {
-    vm.startPrank(deployer);
-    listingID = __ListingRegistrySystem.create(abi.encode(npcIndex, itemIndex, basePrice));
-    __ListingRegistrySystem.setBuyFixed(npcIndex, itemIndex);
-    __ListingRegistrySystem.setSellScaled(npcIndex, itemIndex, 5e8); // hardcoded sell price
-    vm.stopPrank();
   }
 
   /////////////////////////////////////////////

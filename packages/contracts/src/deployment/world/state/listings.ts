@@ -28,11 +28,12 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
       const price = pricingCSV.find((p: any) => p['Key'] === buyKey);
       if (price) {
         const type = String(price['Type']);
-        if (type === 'FIXED') await setBuy.fixed(npcIndex, itemIndex);
+        const currency = Number(price['Currency']);
+        if (type === 'FIXED') await setBuy.fixed(npcIndex, itemIndex, currency);
         else if (type === 'GDA') {
           const scale = Math.round(Number(price['Scale']) * 1e9);
           const decay = Math.round(Number(price['Decay']) * 1e9);
-          await setBuy.gda(npcIndex, itemIndex, scale, decay);
+          await setBuy.gda(npcIndex, itemIndex, currency, scale, decay);
         }
         console.log(`  set buy price ${buyKey}`);
       } else console.warn(`  Buy Price not found for ref ${buyKey}`);
@@ -44,10 +45,11 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
       const price = pricingCSV.find((p: any) => p['Key'] === sellKey);
       if (price) {
         const type = String(price['Type']);
-        if (type === 'FIXED') await setSell.fixed(npcIndex, itemIndex);
+        const currency = Number(price['Currency']);
+        if (type === 'FIXED') await setSell.fixed(npcIndex, itemIndex, currency);
         else if (type === 'SCALED') {
           const scale = Math.round(Number(price['Scale']) * 1e9);
-          await setSell.scaled(npcIndex, itemIndex, scale);
+          await setSell.scaled(npcIndex, itemIndex, currency, scale);
         }
         console.log(`  set sell price ${sellKey}`);
       } else console.warn(`  Sell Price not found for ref ${sellKey}`);

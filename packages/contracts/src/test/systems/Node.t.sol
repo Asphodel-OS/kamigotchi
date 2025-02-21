@@ -110,4 +110,22 @@ contract NodeTest is SetupTemplate {
     assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
     _startHarvest(aKamiID, nodeID);
   }
+
+  //////////////
+  // UTILS
+
+  function _createNodeRequirement(
+    uint32 nodeIndex,
+    string memory type_,
+    string memory logicType,
+    uint32 index,
+    uint256 value,
+    string memory for_
+  ) internal returns (uint) {
+    vm.prank(deployer);
+    return
+      __NodeRegistrySystem.addRequirement(
+        abi.encode(nodeIndex, type_, logicType, index, value, for_)
+      );
+  }
 }
