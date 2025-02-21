@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcAuctionCost, calcAuctionPrice } from 'app/cache/auction';
-import { ActionListButton, Overlay } from 'app/components/library';
+import { ActionListButton, Overlay, Tooltip } from 'app/components/library';
 import { AuctionBuy, getKamidenClient } from 'clients/kamiden';
 import { Auction } from 'network/shapes/Auction';
 import { ChartOptions, CrosshairPlugin } from './chartOptions';
@@ -39,12 +39,17 @@ export const Chart = (props: Props) => {
   // retrieve this auction's buy history
   useEffect(() => {
     const retrieveBuys = async () => {
-      const response = await kamidenClient.getAuctionBuys({ ItemIndex: 2 });
-      const buys = response.AuctionBuys;
-      setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
+      const auctionItem = auction.auctionItem;
+      if (auctionItem) {
+        const response = await kamidenClient.getAuctionBuys({
+          ItemIndex: auction.auctionItem?.index,
+        });
+        const buys = response.AuctionBuys;
+        setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
+      }
     };
     retrieveBuys();
-  }, [auction.supply.sold]);
+  }, [auction, auction.supply.sold]);
 
   // generate the price history data based on buy history and auction settings
   useEffect(() => {
@@ -147,15 +152,17 @@ export const Chart = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  const getProgressString = () => {
-    if (!auction.auctionItem?.index) return '(not yet live)';
-    return `${auction.supply.sold} / ${auction.supply.total}`;
-  };
-
   const getStartDTString = () => {
-    if (!auction.time.start) return '(not yet live)';
     const date = new Date(auction.time.start * 1000);
     return date.toLocaleDateString();
+  };
+
+  const getTitleTooltip = () => {
+    return [
+      `Started: ${getStartDTString()}`,
+      `Price: ${calcAuctionCost(auction, 1)} ${auction.paymentItem?.name}`,
+      `Sold: ${auction.supply.sold} / ${auction.supply.total}`,
+    ];
   };
 
   /////////////////
@@ -163,10 +170,9 @@ export const Chart = (props: Props) => {
 
   return (
     <Container>
-      <Title onClick={onClick}>{name}</Title>
-      <Overlay left={0.9} top={3}>
-        <Text size={0.75}>{`Started: ${getStartDTString()}`}</Text>
-      </Overlay>
+      <Tooltip text={getTitleTooltip()}>
+        <Title onClick={onClick}>{name}</Title>
+      </Tooltip>
       <Overlay right={3} top={2.1}>
         <ActionListButton
           id='dt'
@@ -179,14 +185,6 @@ export const Chart = (props: Props) => {
           ]}
         />
       </Overlay>
-      <Overlay right={3.9} top={4.5} passthrough>
-        <Text size={0.9}>
-          {calcAuctionCost(auction, 1)} {auction.paymentItem?.name}
-        </Text>
-      </Overlay>
-      <Overlay right={3.9} top={6} passthrough>
-        <Text size={0.9}>{getProgressString()}</Text>
-      </Overlay>
       <ChartContainer>
         <canvas id={`chart-${name}`}></canvas>
       </ChartContainer>
@@ -197,11 +195,8 @@ export const Chart = (props: Props) => {
 const Container = styled.div`
   position: relative;
   width: 100%;
+  height: 33vh;
 
-  margin-top: 0.6vw;
-  gap: 0.6vw;
-
-  flex-grow: 1;
   display: flex;
   flex-flow: column wrap;
   align-items: center;
@@ -212,7 +207,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   color: black;
-  font-size: 1.8vw;
+  font-size: 1.5vw;
   margin: 0.6vw;
 
   &:hover {
@@ -224,10 +219,11 @@ const Title = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${({ size }) => size}vw;
+  font-size: ${({ size }) => size}vh;
+  line-height: 1.8vh;
 `;
 
 const ChartContainer = styled.div`
   width: 100%;
-  height: 15vw;
+  height: 75%;
 `;

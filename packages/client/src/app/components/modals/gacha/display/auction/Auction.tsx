@@ -26,18 +26,17 @@ export const AuctionDisplay = (props: Props) => {
   return (
     <Container>
       <Chart name='Gacha Tickets' auction={gacha} onClick={() => setMode('GACHA')} />
-      {/* <Chart name='Reroll Tickets' auction={reroll} onClick={() => setMode('REROLL')} /> */}
+      <Chart name='Reroll Tickets' auction={reroll} onClick={() => setMode('REROLL')} />
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  padding: 0.6vw;
   width: 100%;
 
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: space-around;
 `;

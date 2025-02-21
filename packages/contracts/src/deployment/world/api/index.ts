@@ -652,6 +652,10 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.item.registry', [index, flag], 'addFlag');
   }
 
+  async function addItemERC20(index: number, address: string) {
+    genCall('system.item.registry', [index, address], 'addERC20');
+  }
+
   //// ITEM REQUIREMENTS
 
   async function addItemRequirement(
@@ -891,6 +895,7 @@ export function createAdminAPI(compiledCalls: string[]) {
           consumable: registerConsumable,
         },
         add: {
+          erc20: addItemERC20,
           flag: addItemFlag,
           requirement: addItemRequirement,
           allo: {

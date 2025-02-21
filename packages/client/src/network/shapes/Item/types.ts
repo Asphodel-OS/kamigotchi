@@ -2,7 +2,14 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
 import { DetailedEntity, getItemImage } from '../utils';
-import { getDescription, getFor, getItemIndex, getName, getType } from '../utils/component';
+import {
+  getDescription,
+  getFor,
+  getItemIndex,
+  getName,
+  getTokenAddress,
+  getType,
+} from '../utils/component';
 import { NullItem } from './constants';
 import { Effects, getEffects } from './effects';
 import { getRequirements, Requirements } from './requirements';
@@ -12,8 +19,9 @@ export interface Item extends DetailedEntity {
   id: EntityID;
   entity: EntityIndex;
   index: number;
-  for: string;
   type: string;
+  for: string;
+  address?: string;
   requirements: Requirements;
   effects: Effects;
 }
@@ -49,6 +57,8 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     requirements: getRequirements(world, comps, index),
     effects: getEffects(world, comps, index),
   };
+
+  if (item.type === 'ERC20') item.address = getTokenAddress(comps, entity);
 
   return item;
 };

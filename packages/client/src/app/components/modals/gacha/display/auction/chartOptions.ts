@@ -68,9 +68,11 @@ export const CrosshairPlugin = {
   },
   afterDatasetsDraw: (chart: any, args: any, opts: CrosshairOptions) => {
     const { ctx } = chart;
+    if (!chart.crosshairs) return;
+    const { x, y, shouldDraw } = chart.crosshairs;
     const { top, bottom, left, right } = chart.chartArea;
     const { y1: yScale } = chart.scales;
-    const { x, y, shouldDraw } = chart.crosshairs;
+
     if (!shouldDraw) return;
 
     ctx.save();
@@ -99,7 +101,8 @@ export const CrosshairPlugin = {
       ctx.textBaseline = 'middle';
       const price = Math.floor(yScale.getValueForPixel(y));
       ctx.fillText(price, right + rectWidth / 2, y);
-      ctx.restore();
     }
+
+    ctx.restore();
   },
 };

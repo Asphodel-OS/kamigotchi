@@ -4,7 +4,7 @@ import { addAllo } from './allos';
 import { addRequirement } from './requirements';
 
 const IGNORE_TYPES = ['OTHER'];
-const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL'];
+const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC20'];
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[], deployAll?: boolean) {
@@ -84,15 +84,22 @@ async function createItem(api: AdminAPI, entry: any) {
   else if (USE_TYPES.includes(type)) await createConsumable(api, entry);
   else console.error('Item type not found: ' + type);
 
-  await addFlag(api, entry);
+  await addFlags(api, entry);
+  if (type === 'ERC20') await addERC20(api, entry);
 }
 
-async function addFlag(api: AdminAPI, entry: any) {
+async function addFlags(api: AdminAPI, entry: any) {
   const flags = entry['Flags'].split(',').map((f: string) => f.trim());
   for (let i = 0; i < flags.length; i++) {
     if (flags[i].length === 0) continue;
     await api.registry.item.add.flag(Number(entry['Index']), flags[i]);
   }
+}
+
+async function addERC20(api: AdminAPI, entry: any) {
+  const index = Number(entry['Index']);
+  const address = entry['Address'];
+  await api.registry.item.add.erc20(index, address);
 }
 
 ////////////////

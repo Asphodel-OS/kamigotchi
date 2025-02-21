@@ -188,6 +188,13 @@ export const getOperatorAddress = (components: Components, entity: EntityIndex):
   return result ?? '';
 };
 
+export const getTokenAddress = (components: Components, entity: EntityIndex): string => {
+  const { TokenAddress } = components;
+  const result = getComponentValue(TokenAddress, entity)?.value;
+  if (result === undefined) console.warn('getTokenAddress(): undefined for entity', entity);
+  return result ?? '';
+};
+
 ////////////////
 // IDS
 
