@@ -154,4 +154,18 @@ const PopoverContent = styled.div<{
   font-size: 0.6vw;
   top: ${({ popoverPosition }) => popoverPosition.y};
   left: ${({ popoverPosition }) => popoverPosition.x};
+  ::-webkit-scrollbar {
+    background: transparent;
+    width: 0.9vw;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 0.2vw solid transparent;
+    background-clip: padding-box;
+    border-radius: 0.2vw;
+    background-color: rgba(0, 0, 0, 0.15);
+    height: 90%;
+    &:hover {
+      cursor: auto;
+    }
+  }
 `;
