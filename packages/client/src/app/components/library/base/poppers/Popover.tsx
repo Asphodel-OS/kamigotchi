@@ -39,6 +39,19 @@ export const Popover = (props: Props) => {
     };
   }, []);
 
+  useEffect(() => {
+    handlePosition();
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('wheel', handleScroll);
+    window.addEventListener('resize', handlePosition);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('wheel', handleScroll);
+      window.removeEventListener('resize', handlePosition);
+    };
+  }, []);
+
   const handlePosition = () => {
     const width = popoverRef.current?.offsetWidth || 0;
     const height = popoverRef.current?.offsetHeight || 0;
@@ -66,27 +79,10 @@ export const Popover = (props: Props) => {
         !popoverRef.current.contains(event.target) &&
         !triggerRef.current.contains(event.target)
       ) {
-        console.log('scroll');
         setIsVisible(false);
       }
     }
   };
-
-  useEffect(() => {
-    handlePosition();
-    // document.body.style.overflow = 'unset';
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('wheel', handleScroll);
-    window.addEventListener('resize', handlePosition);
-
-    return () => {
-      window.addEventListener('scroll', handleScroll);
-      window.addEventListener('wheel', handleScroll);
-
-      window.removeEventListener('resize', handlePosition);
-    };
-  }, []);
 
   return (
     <PopoverContainer onContextMenu={(e) => mouseButton === 2 && e.preventDefault()}>
