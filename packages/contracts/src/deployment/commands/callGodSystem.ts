@@ -21,8 +21,6 @@ const run = async () => {
   if (mode === 'DEV') setAutoMine(false);
 };
 
-run();
-
 /////////////
 // FORGE CALL
 
@@ -56,3 +54,8 @@ const executeGodSystem = async (
 
   return { child: await child };
 };
+
+/////////////
+// RUN
+
+run();
