@@ -11,34 +11,17 @@ interface Props {
 
 export const Popover = (props: Props) => {
   const { children, content } = props;
-  const [isVisible, setIsVisible] = useState(false);
-  const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
-  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
-  const triggerRef = useRef<HTMLDivElement>(null);
   const cursor = props.cursor ?? 'pointer';
   const mouseButton = props.mouseButton ?? 0;
   const closeOnClick = props.closeOnClick ?? true;
+
+  const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
   const [clickedScrollBar, setClickedScrollBar] = useState(true);
 
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (popoverRef.current && triggerRef.current) {
-        if (
-          (closeOnClick && popoverRef.current.contains(event.target) && !clickedScrollBar) ||
-          (!popoverRef.current.contains(event.target) && !triggerRef.current.contains(event.target))
-        ) {
-          setTimeout(() => {
-            setIsVisible(false);
-          }, 100);
-        }
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
+  // add interaction event listeners
   useEffect(() => {
     handlePosition();
     window.addEventListener('scroll', handleScroll);
@@ -51,6 +34,41 @@ export const Popover = (props: Props) => {
       window.removeEventListener('resize', handlePosition);
     };
   }, []);
+
+  // add close listener (when clicking off the popover or selecting an option)
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      const pRef = popoverRef.current;
+      const tRef = triggerRef.current;
+      if (!pRef || !tRef) return;
+
+      const didSelect = closeOnClick && pRef.contains(event.target) && !clickedScrollBar;
+      const didOffclick = !pRef.contains(event.target) && !tRef.contains(event.target);
+      if (didSelect || didOffclick) {
+        setTimeout(() => setIsVisible(false), 100);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  /////////////////
+  // EVENT HANDLERS
+
+  const handleClick = (event: any) => {
+    const clickX = event.clientX;
+    const pRef = popoverRef.current;
+
+    const rightBound = pRef.getBoundingClientRect().right;
+    const leftBound = rightBound - (pRef.offsetWidth - pRef.clientWidth);
+    if (clickX >= leftBound && clickX <= rightBound) setClickedScrollBar(true);
+    else setClickedScrollBar(false);
+
+    closeOnClick ? setIsVisible(false) : setIsVisible(true);
+  };
 
   const handlePosition = () => {
     const width = popoverRef.current?.offsetWidth || 0;
@@ -100,19 +118,7 @@ export const Popover = (props: Props) => {
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
-        onMouseDown={(e) => {}}
-        onClick={(e) => {
-          if (
-            e.clientX <= popoverRef.current.getBoundingClientRect().right &&
-            e.clientX >=
-              popoverRef.current.getBoundingClientRect().right -
-                (popoverRef.current.offsetWidth - popoverRef.current.clientWidth)
-          )
-            setClickedScrollBar(true);
-          else setClickedScrollBar(false);
-
-          closeOnClick ? setIsVisible(false) : setIsVisible(true);
-        }}
+        onClick={(e) => handleClick(e)}
       >
         {content}
       </PopoverContent>
