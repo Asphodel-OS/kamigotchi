@@ -73,6 +73,22 @@ export async function reviseItems(api: AdminAPI, indices: number[]) {
   await initItems(api, indices);
 }
 
+export async function initLocalItems(api: AdminAPI) {
+  const itemsCSV = await readFile('items/items.csv');
+
+  for (let i = 0; i < itemsCSV.length; i++) {
+    const row = itemsCSV[i];
+    const type = String(row['Type']).toUpperCase();
+
+    // skip if not ready
+    const status = row['Status'];
+    if (status !== 'Ready' && status !== 'Ingame') continue;
+
+    // deploys and attaches local erc20
+    if (type === 'ERC20') await api.setup.attachItemERC20(Number(row['Index']));
+  }
+}
+
 ////////////////
 // SHAPES
 

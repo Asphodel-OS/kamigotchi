@@ -266,12 +266,16 @@ library LibItem {
   /////////////////
   // GETTERS
 
-  function getTokenAddr(IUintComp components, uint32 index) internal view returns (address) {
-    return LibERC20.getAddress(components, genID(index));
-  }
-
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(id);
+  }
+
+  function getName(IUintComp components, uint32 index) internal view returns (string memory) {
+    return NameComponent(getAddrByID(components, NameCompID)).get(genID(index));
+  }
+
+  function getTokenAddr(IUintComp components, uint32 index) internal view returns (address) {
+    return LibERC20.getAddress(components, genID(index));
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {

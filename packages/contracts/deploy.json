@@ -92,6 +92,7 @@
     { "comp": "Whitelist", "name": "Whitelist", "type": "uint32[]" }
   ],
   "systems": [
+    { "name": "__LocalSetupSystem", "writeAccess": ["*"] },
     { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {

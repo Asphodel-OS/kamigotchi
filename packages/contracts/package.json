@@ -61,7 +61,7 @@
     "ds-test": "https://github.com/dapphub/ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f",
     "ethers": "^5.7.1",
     "execa": "^5.1.1",
-    "forge-std": "foundry-rs/forge-std",
+    "forge-std": "github:foundry-rs/forge-std",
     "memmove": "https://github.com/brockelmore/memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2",
     "openurl": "^1.1.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",

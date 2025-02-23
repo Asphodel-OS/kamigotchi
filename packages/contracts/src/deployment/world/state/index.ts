@@ -6,7 +6,7 @@ import { initConfigs, initLocalConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
-import { initItems } from './items';
+import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNodes } from './nodes';
 import { initNpcs } from './npcs';
@@ -35,8 +35,8 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initGoals(api);
 
   if (local) {
-    await initAllLocal(api);
     await initGachaPool(api, 88);
+    await initAllLocal(api);
   } else {
     await initGachaPool(api, 2500);
   }
@@ -48,6 +48,10 @@ export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
   await initLocalQuests(api);
+  await initLocalItems(api);
+  await api.setup.initAccounts();
+  await api.setup.initPets();
+  await api.setup.initHarvests();
 }
 
 export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';

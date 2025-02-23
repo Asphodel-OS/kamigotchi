@@ -10,7 +10,6 @@ import { LibDeployTokens } from "./LibDeployTokens.s.sol";
 import { LibDeployEmitter } from "./LibDeployEmitter.s.sol";
 import { Emitter } from "solecs/Emitter.sol";
 import { InitWorld } from "./InitWorld.s.sol";
-import { LibLocal } from "./LibLocal.s.sol";
 
 contract Deploy is InitWorld {
   function deploy(
@@ -41,12 +40,6 @@ contract Deploy is InitWorld {
       LibDeployTokens.deployVIP(world, components);
 
       _initWorld(address(world));
-
-      // custom local init script
-      if (LibString.eq(MODE, "DEV")) {
-        LibLocal.init(world, components, systems);
-        LibDeployTokens.deployOnyx20Local(world, components, deployer); // openMintable erc20, local only
-      }
     }
   }
 }

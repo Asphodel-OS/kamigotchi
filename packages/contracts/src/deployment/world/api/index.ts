@@ -821,6 +821,25 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.relationship.registry', [indexNPC, indexRelationship], 'remove');
   }
 
+  function attachItemERC20(index: number) {
+    genCall('system.local.setup', [index], 'attachItemERC20');
+  }
+
+  ////////////////
+  // SETUP (LOCAL)
+
+  function initAccounts() {
+    genCall('system.local.setup', [], 'initAccounts');
+  }
+
+  function initPets() {
+    genCall('system.local.setup', [], 'initPets');
+  }
+
+  function initHarvests() {
+    genCall('system.local.setup', [], 'initHarvests');
+  }
+
   return {
     gen: genCall,
     admin: {
@@ -950,6 +969,12 @@ export function createAdminAPI(compiledCalls: string[]) {
       create: createRoom,
       createGate: createRoomGate,
       delete: deleteRoom,
+    },
+    setup: {
+      initAccounts: initAccounts,
+      initPets: initPets,
+      initHarvests: initHarvests,
+      attachItemERC20: attachItemERC20,
     },
   };
 }
