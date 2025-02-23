@@ -35,7 +35,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
           const decay = Math.round(Number(price['Decay']) * 1e9);
           await setBuy.gda(npcIndex, itemIndex, currency, scale, decay);
         }
-        console.log(`  set buy price ${buyKey}`);
+        // console.log(`  set buy price ${buyKey}`);
       } else console.warn(`  Buy Price not found for ref ${buyKey}`);
     }
 
@@ -51,7 +51,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
           const scale = Math.round(Number(price['Scale']) * 1e9);
           await setSell.scaled(npcIndex, itemIndex, currency, scale);
         }
-        console.log(`  set sell price ${sellKey}`);
+        // console.log(`  set sell price ${sellKey}`);
       } else console.warn(`  Sell Price not found for ref ${sellKey}`);
     }
 
@@ -78,13 +78,14 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
 
       const setRequirement = api.listing.set.requirement;
       setRequirement(npcIndex, itemIndex, reqType, reqLogic, reqIndex, reqValue, '');
-      console.log(`  set requirement ${key}`);
-      console.log(`    type: ${reqType}, logic: ${reqLogic}`);
-      console.log(`    index: ${reqIndex}, value: ${reqValue}`);
+      // console.log(`  set requirement ${key}`);
+      // console.log(`    type: ${reqType}, logic: ${reqLogic}`);
+      // console.log(`    index: ${reqIndex}, value: ${reqValue}`);
     }
   }
 }
 
+// indices = item index. todo: upgrade to multiple merchants
 export async function deleteListings(api: AdminAPI, indices: number[]) {
   // assume NPC index = 1 (mina)
   for (let i = 0; i < indices.length; i++) {
@@ -94,6 +95,23 @@ export async function deleteListings(api: AdminAPI, indices: number[]) {
       console.error('Could not delete listing ' + indices[i]);
     }
   }
+}
+
+// indices = item index
+// WARNING: this will reset GDA prices
+export async function reviseListings(api: AdminAPI, overrideIndices?: number[]) {
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    const listingsCSV = await readFile('listings/listings.csv');
+    for (let i = 0; i < listingsCSV.length; i++) {
+      // revise all, using item index
+      indices.push(Number(listingsCSV[i]['Item Index']));
+    }
+  }
+
+  await deleteListings(api, indices);
+  await initListings(api, indices);
 }
 
 export async function createListing(
@@ -111,7 +129,7 @@ export async function refreshListing(
   itemIndex: number,
   value: number
 ) {
-  console.log(`refreshing listing ${npcIndex}-${itemIndex} to ${value}`);
+  // console.log(`refreshing listing ${npcIndex}-${itemIndex} to ${value}`);
   await api.listing.refresh(npcIndex, itemIndex, value);
 }
 
