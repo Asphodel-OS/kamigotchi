@@ -18,15 +18,14 @@ export const Popover = (props: Props) => {
   const cursor = props.cursor ?? 'pointer';
   const mouseButton = props.mouseButton ?? 0;
   const closeOnClick = props.closeOnClick ?? true;
+  const [clickedScrollBar, setClickedScrollBar] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (popoverRef.current && triggerRef.current) {
         if (
-          (closeOnClick && !triggerRef.current.contains(event.target)) ||
-          (!closeOnClick &&
-            !popoverRef.current.contains(event.target) &&
-            !triggerRef.current.contains(event.target))
+          (closeOnClick && popoverRef.current.contains(event.target) && !clickedScrollBar) ||
+          (!popoverRef.current.contains(event.target) && !triggerRef.current.contains(event.target))
         ) {
           setTimeout(() => {
             setIsVisible(false);
@@ -56,6 +55,8 @@ export const Popover = (props: Props) => {
         y = childrenPosition.bottom - height - 10;
       }
       setPopoverPosition({ x, y });
+      if (x <= width && x >= width - popoverRef.current.scrollWidth) setClickedScrollBar(true);
+      else setClickedScrollBar(false);
     }
   };
 
@@ -105,7 +106,17 @@ export const Popover = (props: Props) => {
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
+        onMouseDown={(e) => {}}
         onClick={(e) => {
+          if (
+            e.clientX <= popoverRef.current.getBoundingClientRect().right &&
+            e.clientX >=
+              popoverRef.current.getBoundingClientRect().right -
+                (popoverRef.current.offsetWidth - popoverRef.current.clientWidth)
+          )
+            setClickedScrollBar(true);
+          else setClickedScrollBar(false);
+
           closeOnClick ? setIsVisible(false) : setIsVisible(true);
         }}
       >
