@@ -163,7 +163,6 @@ const PopoverContent = styled.div<{
     background-clip: padding-box;
     border-radius: 0.2vw;
     background-color: rgba(0, 0, 0, 0.15);
-    height: 90%;
     &:hover {
       cursor: auto;
     }
