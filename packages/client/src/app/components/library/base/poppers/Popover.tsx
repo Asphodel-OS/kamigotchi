@@ -18,7 +18,7 @@ export const Popover = (props: Props) => {
   const cursor = props.cursor ?? 'pointer';
   const mouseButton = props.mouseButton ?? 0;
   const closeOnClick = props.closeOnClick ?? true;
-  const [clickedScrollBar, setClickedScrollBar] = useState(false);
+  const [clickedScrollBar, setClickedScrollBar] = useState(true);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -68,8 +68,6 @@ export const Popover = (props: Props) => {
         y = childrenPosition.bottom - height - 10;
       }
       setPopoverPosition({ x, y });
-      if (x <= width && x >= width - popoverRef.current.scrollWidth) setClickedScrollBar(true);
-      else setClickedScrollBar(false);
     }
   };
 
