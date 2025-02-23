@@ -6,6 +6,8 @@ interface Props {
   content: any;
   cursor?: string;
   mouseButton?: 0 | 2;
+  closeOnClick?: boolean;
+  isScrollable?: boolean;
 }
 
 export const Popover = (props: Props) => {
@@ -16,15 +18,21 @@ export const Popover = (props: Props) => {
   const triggerRef = useRef<HTMLDivElement>(null);
   const cursor = props.cursor ?? 'pointer';
   const mouseButton = props.mouseButton ?? 0;
+  const closeOnClick = props.closeOnClick ?? true;
+  const isScrollable = props.isScrollable ?? false;
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (popoverRef.current && triggerRef.current) {
         if (
-          !popoverRef.current.contains(event.target) &&
-          !triggerRef.current.contains(event.target)
+          (closeOnClick && !triggerRef.current.contains(event.target)) ||
+          (!closeOnClick &&
+            !popoverRef.current.contains(event.target) &&
+            !triggerRef.current.contains(event.target))
         ) {
-          setIsVisible(false);
+          setTimeout(() => {
+            setIsVisible(false);
+          }, 100);
         }
       }
     };
@@ -60,13 +68,13 @@ export const Popover = (props: Props) => {
   useEffect(() => {
     handlePosition();
     document.body.style.overflow = 'unset';
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('wheel', handleScroll);
+    !isScrollable && window.addEventListener('scroll', handleScroll);
+    !isScrollable && window.addEventListener('wheel', handleScroll);
     window.addEventListener('resize', handlePosition);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('wheel', handleScroll);
+      !isScrollable && window.removeEventListener('scroll', handleScroll);
+      !isScrollable && window.removeEventListener('wheel', handleScroll);
       window.removeEventListener('resize', handlePosition);
     };
   }, []);
@@ -90,7 +98,7 @@ export const Popover = (props: Props) => {
         ref={popoverRef}
         popoverPosition={popoverPosition}
         onClick={(e) => {
-          setIsVisible(false);
+          closeOnClick ? setIsVisible(false) : setIsVisible(true);
         }}
       >
         {content}
@@ -117,6 +125,9 @@ const PopoverContent = styled.div<{
   isVisible?: boolean;
   popoverPosition: any;
 }>`
+  max-height: 30vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
   position: fixed;
   margin-top: 1%;
