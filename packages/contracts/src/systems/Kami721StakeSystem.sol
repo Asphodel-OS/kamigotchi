@@ -12,7 +12,6 @@ import { LibKami } from "libraries/LibKami.sol";
 uint256 constant ID = uint256(keccak256("system.kami721.stake"));
 uint256 constant ROOM = 12;
 
-/// @notice DEPRECIATED sets a pet outside world => game world
 /** @dev
  * Room 12 is the bridge room, system can only be called there
  *  Invariants:
@@ -22,25 +21,6 @@ uint256 constant ROOM = 12;
  *    After deposit:
  *      1) Pet is linked to Account owned by msg.sender, token owned by Kami721
  *      2) Pet state is not "721_EXTERNAL"
- * 
-    {
-      "name": "Kami721StakeSystem",
-      "writeAccess": [
-        "AddressOperatorComponent",
-        "AddressOwnerComponent",
-        "IDOwnsKamiComponent",
-        "IdHolderComponent",
-        "IsAccountComponent",
-        "IndexRoomComponent",
-        "NameComponent",
-        "ProxyPermissionsERC721Component",
-        "StaminaComponent",
-        "StateComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
  */
 contract Kami721StakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

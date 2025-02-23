@@ -376,6 +376,14 @@
       ]
     },
     {
+      "name": "Kami721StakeSystem",
+      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"]
+    },
+    {
+      "name": "Kami721UnstakeSystem",
+      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"]
+    },
+    {
       "name": "KamiGachaRerollSystem",
       "writeAccess": [
         "BlockReveal",

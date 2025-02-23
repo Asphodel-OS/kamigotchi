@@ -13,7 +13,6 @@ import { LibKami } from "libraries/LibKami.sol";
 uint256 constant ID = uint256(keccak256("system.kami721.unstake"));
 uint256 constant ROOM = 12;
 
-/// @notice DEPRECIATED sets a pet game world => outside world
 /** @dev
  * Room 12 is the bridge room, system can only be called there
  *  Invarients:
@@ -25,18 +24,6 @@ uint256 constant ROOM = 12;
  *      1) Pet is not linked to an Account, owned by EOA
  *      2) Pet state is "721_EXTERNAL"
  *
- *  *     {
-      "name": "Kami721UnstakeSystem",
-      "writeAccess": [
-        "IDOwnsKamiComponent",
-        "IdHolderComponent",
-        "ProxyPermissionsERC721Component",
-        "StateComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
  */
 contract Kami721UnstakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
