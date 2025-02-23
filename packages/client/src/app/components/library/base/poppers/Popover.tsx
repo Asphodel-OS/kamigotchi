@@ -7,7 +7,6 @@ interface Props {
   cursor?: string;
   mouseButton?: 0 | 2;
   closeOnClick?: boolean;
-  isScrollable?: boolean;
 }
 
 export const Popover = (props: Props) => {
@@ -19,7 +18,6 @@ export const Popover = (props: Props) => {
   const cursor = props.cursor ?? 'pointer';
   const mouseButton = props.mouseButton ?? 0;
   const closeOnClick = props.closeOnClick ?? true;
-  const isScrollable = props.isScrollable ?? false;
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -61,20 +59,30 @@ export const Popover = (props: Props) => {
     }
   };
 
-  const handleScroll = () => {
-    setIsVisible(false);
+  const handleScroll = (event: any) => {
+    if (popoverRef.current && triggerRef.current) {
+      if (
+        !popoverRef.current.contains(event.target) &&
+        !triggerRef.current.contains(event.target)
+      ) {
+        console.log('scroll');
+        setIsVisible(false);
+      }
+    }
   };
 
   useEffect(() => {
     handlePosition();
-    document.body.style.overflow = 'unset';
-    !isScrollable && window.addEventListener('scroll', handleScroll);
-    !isScrollable && window.addEventListener('wheel', handleScroll);
+    // document.body.style.overflow = 'unset';
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('wheel', handleScroll);
     window.addEventListener('resize', handlePosition);
 
     return () => {
-      !isScrollable && window.removeEventListener('scroll', handleScroll);
-      !isScrollable && window.removeEventListener('wheel', handleScroll);
+      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('wheel', handleScroll);
+
       window.removeEventListener('resize', handlePosition);
     };
   }, []);
@@ -125,7 +133,7 @@ const PopoverContent = styled.div<{
   isVisible?: boolean;
   popoverPosition: any;
 }>`
-  max-height: 30vh;
+  max-height: 20vh;
   overflow-y: auto;
   overflow-x: hidden;
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};

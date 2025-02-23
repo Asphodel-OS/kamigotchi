@@ -15,7 +15,6 @@ interface Props {
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
-  isScrollable?: boolean;
 }
 
 export interface Option {
@@ -33,7 +32,6 @@ export function IconListButton(props: Props) {
   const scaleOrientation = props.scaleOrientation ?? 'vw';
   const scale = props.scale ?? 2.5;
   const radius = props.radius ?? 0.45;
-  const isScrollable = props.isScrollable ?? false;
 
   const handleOpen = () => {
     if (!disabled && toggleRef.current) {
@@ -69,7 +67,7 @@ export function IconListButton(props: Props) {
   };
 
   return (
-    <Popover content={optionsMap()} isScrollable={isScrollable}>
+    <Popover content={optionsMap()}>
       <IconButton
         img={img}
         text={text}

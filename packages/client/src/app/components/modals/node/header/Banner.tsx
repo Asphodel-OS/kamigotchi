@@ -117,7 +117,6 @@ export const Banner = (props: Props) => {
     return (
       <Tooltip text={[getDisabledReason(kamis)]} grow>
         <IconListButton
-          isScrollable={true}
           key={`harvest-add`}
           img={HarvestIcon}
           options={actionOptions}
