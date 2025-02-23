@@ -3,7 +3,7 @@ import { GenCall } from '.';
 
 export function listingAPI(genCall: GenCall) {
   // create a listing for an npc and item at a target value
-  async function createListing(npcIndex: number, itemIndex: number, value: number) {
+  async function createListing(npcIndex: number, itemIndex: number, value: BigNumberish) {
     genCall('system.listing.registry', [npcIndex, itemIndex, value], 'create', [
       'uint32',
       'uint32',

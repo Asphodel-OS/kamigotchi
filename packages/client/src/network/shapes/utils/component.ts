@@ -127,9 +127,14 @@ export const getType = (components: Components, entity: EntityIndex): string => 
 export const getValue = (components: Components, entity: EntityIndex): number => {
   const { Value } = components;
   const result = getComponentValue(Value, entity)?.value ?? 0;
-  const raw = BigNumber.from(result);
-  return raw.fromTwos(256).toNumber();
-  // if (result === undefined) console.warn('getValue(): undefined for entity', entity);
+  try {
+    // convert if meant to be negative
+    const raw = BigNumber.from(result);
+    return raw.fromTwos(256).toNumber(); // throws if out of bounds
+  } catch {
+    // return raw form otherwise - used for raw uint256 handling
+    return result;
+  }
 };
 
 /////////////////

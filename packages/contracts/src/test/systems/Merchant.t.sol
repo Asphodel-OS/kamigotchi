@@ -288,6 +288,59 @@ contract NPCTest is SetupTemplate {
     assertEq(_getTokenBal(tokenAddr, alice.owner), 0);
   }
 
+  function testGDABasic() public {
+    // setup
+    uint32 item = 100;
+    uint256 startPrice = 100;
+    _createNPC(1, 1, "npc1");
+    _createListing(1, item, startPrice);
+    _setListingBuyGDA(1, item, 1, 1002776250, 8022); // expected starting startPrice 100
+    _giveItem(alice, 1, startPrice);
+
+    // pre-buy
+    assertEq(_getItemBal(alice, item), 0);
+    assertEq(_getItemBal(alice, 1), 100);
+
+    // buy 1 at start price
+    _buy(alice, 1, item, 1);
+    assertEq(_getItemBal(alice, item), 1);
+    assertEq(_getItemBal(alice, 1), 0);
+
+    // buying many more (not checking calcs)
+    _giveItem(alice, 1, 9999999999);
+    _buy(alice, 1, item, 25);
+    for (uint i = 0; i < 25; i++) {
+      _fastForward(100);
+      _buy(alice, 1, item, 1);
+    }
+    for (uint i = 0; i < 25; i++) _buy(alice, 1, item, 3);
+  }
+
+  function testGDABounds(
+    uint256 basePrice,
+    uint32 scale, // 1e9 (lim infinite items)- 2e9 (1 item)
+    uint32 decay //  1 (max time)- 69314718 (1s)
+  ) public {
+    if (scale > 0) scale = (scale % 1e9) + 1e9; // prevent too many rejects
+    vm.assume(scale >= 1e9 && scale <= 2e9);
+    if (decay > 0) decay = (decay % 69314718) + 1; // prevent too many rejects
+    vm.assume(decay >= 1 && decay <= 69314718);
+    vm.assume(basePrice > 0);
+    if (basePrice > 1e30) basePrice = 1e30; // prevent too many rejects
+    vm.assume(basePrice <= 1e30); // support up to 1e12 ERC20 (with 18 decimals)
+
+    // setup
+    uint32 item = 100;
+    uint256 startPrice = 100;
+    _createNPC(1, 1, "npc1");
+    _createListing(1, item, basePrice);
+    _setListingBuyGDA(1, item, 1, int32(scale), int32(decay));
+    _giveItem(alice, 1, 2 ** 256 - 1); // give max uint
+
+    // buy one
+    _buy(alice, 1, item, 1);
+  }
+
   /////////////////
   // UTILS
 

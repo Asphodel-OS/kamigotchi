@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { calcBuyPrice } from 'app/cache/npc/functions';
+import { calcListingBuyPrice } from 'app/cache/npc';
 import { Tooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
@@ -37,7 +37,7 @@ export const CatalogRow = (props: Props) => {
           <Text>{listing.item.name}</Text>
           <Text>
             <Icon src={ItemImages.musu} />
-            {calcBuyPrice(listing, 1)}
+            {calcListingBuyPrice(listing, 1)}
           </Text>
         </Details>{' '}
       </Container>

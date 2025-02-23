@@ -7,7 +7,7 @@ import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
-import { initListings } from './listings';
+import { initListings, initLocalListings } from './listings';
 import { initNodes } from './nodes';
 import { initNpcs } from './npcs';
 import { initLocalQuests, initQuests } from './quests';
@@ -49,6 +49,7 @@ export async function initAllLocal(api: AdminAPI) {
   await initLocalConfigs(api);
   await initLocalQuests(api);
   await initLocalItems(api);
+  await initLocalListings(api); // test onyx listing
   await api.setup.initAccounts();
   await api.setup.initPets();
   await api.setup.initHarvests();

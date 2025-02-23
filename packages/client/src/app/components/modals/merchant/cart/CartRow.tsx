@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { calcBuyPrice } from 'app/cache/npc/functions';
+import { calcListingBuyPrice } from 'app/cache/npc';
 import { Stepper, Tooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/Listing';
@@ -41,7 +41,7 @@ export const CartRow = (props: Props) => {
       <Stepper value={quantity} set={setQuantity} scale={3} min={min} max={max} />
       <TotalPrice>
         <Icon src={ItemImages.musu} />
-        <Text>{calcBuyPrice(listing, quantity)}</Text>
+        <Text>{calcListingBuyPrice(listing, quantity)}</Text>
       </TotalPrice>
     </Container>
   );

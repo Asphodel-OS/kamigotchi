@@ -2,6 +2,8 @@ export { get as getNPC, getByIndex as getNPCByIndex } from './base';
 export {
   calcBuyPrice as calcListingBuyPrice,
   calcSellPrice as calcListingSellPrice,
+} from './calcs';
+export {
   cleanListings as cleanNPCListings,
   filterListings as filterNPCListings,
   refreshListings as refreshNPCListings,

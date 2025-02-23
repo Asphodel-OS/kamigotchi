@@ -1,4 +1,5 @@
 import { BigNumberish } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 import { AdminAPI } from '../api';
 import { generateRegID, readFile } from './utils';
 
@@ -131,6 +132,14 @@ export async function refreshListing(
 ) {
   // console.log(`refreshing listing ${npcIndex}-${itemIndex} to ${value}`);
   await api.listing.refresh(npcIndex, itemIndex, value);
+}
+
+// to test ERC20 listings; sells a brick for 1 ONYX (18dp)
+export async function initLocalListings(api: AdminAPI) {
+  await api.listing.create(1, 101, parseEther('0.05')); // 0.05 onyx
+  await api.listing.set.price.buy.fixed(1, 101, 11); // hardcoded onyx index = 11
+  await api.listing.create(1, 102, parseEther('1')); // 1 onyx
+  await api.listing.set.price.buy.fixed(1, 102, 11); // hardcoded onyx index = 11
 }
 
 export const setRequirement = async (

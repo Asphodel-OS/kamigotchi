@@ -61,6 +61,22 @@ contract MudTest is Test {
     return uint256(keccak256(abi.encodePacked(nonce)));
   }
 
+  function _assumeNoOverflowAdd(uint256 a, uint256 b) internal {
+    uint256 result;
+    unchecked {
+      result = a + b;
+    }
+    vm.assume(result >= a + b);
+  }
+
+  function _assumeNoOverflowMul(uint256 a, uint256 b) internal {
+    uint256 result;
+    unchecked {
+      result = a * b;
+    }
+    vm.assume(result / a == b);
+  }
+
   function _randomUints(uint256 n) internal returns (uint256[] memory a) {
     unchecked {
       _misalignFreeMemoryPointer();
