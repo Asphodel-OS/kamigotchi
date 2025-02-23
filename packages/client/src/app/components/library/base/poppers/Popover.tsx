@@ -138,7 +138,7 @@ const PopoverContent = styled.div<{
   isVisible?: boolean;
   popoverPosition: any;
 }>`
-  max-height: 20vh;
+  max-height: 22vh;
   overflow-y: auto;
   overflow-x: hidden;
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
