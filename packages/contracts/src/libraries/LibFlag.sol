@@ -10,6 +10,7 @@ import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { HasFlagComponent, ID as HasFlagCompID } from "components/HasFlagComponent.sol";
 import { IDOwnsFlagComponent, ID as IDOwnsFlagCompID } from "components/IDOwnsFlagComponent.sol";
+import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 /** @notice
@@ -22,6 +23,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
  *   - ID: hash(parentID, flagType)
  *   - HasFlag: bool
  *   - [optional] IDParent: ID (for reverse mapping)
+ *   - [optional] IDType: ID of parent shape, eg ITEM_BURNABLE (for reverse mapping)
  *   - [optional] Type: string (for FE reverse mapping)
  */
 library LibFlag {
@@ -47,11 +49,16 @@ library LibFlag {
   function setFull(
     IUintComp components,
     uint256 holderID,
+    string memory parentType,
     string memory flagType
   ) internal returns (uint256 id) {
     id = genID(holderID, flagType);
     _set(components, id, true);
     IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).set(id, holderID);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).set(
+      id,
+      genTypeAnchor(parentType, flagType)
+    );
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, flagType);
   }
 
@@ -75,12 +82,14 @@ library LibFlag {
     uint256 id = genID(parentID, flag);
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
     getCompByID(components, IDOwnsFlagCompID).remove(id);
+    getCompByID(components, IDTypeCompID).remove(id);
     getCompByID(components, TypeCompID).remove(id);
   }
 
   function removeFull(IUintComp components, uint256[] memory ids) internal {
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(ids);
     IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).remove(ids);
+    IDTypeComponent(getAddrByID(components, IDTypeCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
   }
 
@@ -155,5 +164,12 @@ library LibFlag {
 
   function genID(uint256 id, string memory flagType) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("has.flag", id, flagType)));
+  }
+
+  function genTypeAnchor(
+    string memory parentType,
+    string memory flagType
+  ) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("flag.type", parentType, flagType)));
   }
 }

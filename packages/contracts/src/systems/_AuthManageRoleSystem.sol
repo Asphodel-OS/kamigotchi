@@ -18,14 +18,14 @@ contract _AuthManageRoleSystem is System {
       (address, string, bool)
     );
 
-    if (status) LibFlag.setFull(components, uint256(uint160(target)), role);
+    if (status) LibFlag.setFull(components, uint256(uint160(target)), "AUTH", role);
     else LibFlag.removeFull(components, uint256(uint160(target)), role);
 
     return new bytes(0);
   }
 
   function addRole(address target, string memory role) public onlyOwner {
-    LibFlag.setFull(components, uint256(uint160(target)), role);
+    LibFlag.setFull(components, uint256(uint160(target)), "AUTH", role);
   }
 
   function removeRole(address target, string memory role) public onlyOwner {

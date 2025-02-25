@@ -97,7 +97,7 @@
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
-      "writeAccess": ["HasFlag", "IDOwnsFlag", "Type"]
+      "writeAccess": ["HasFlag", "IDOwnsFlag", "IDType", "Type"]
     },
     { "name": "_CreatePetSystem", "writeAccess": ["*"] },
     {
@@ -164,6 +164,7 @@
         "HasFlag",
         "IDOwnsFlag",
         "IDParent",
+        "IDType",
         "IDRoom",
         "IndexRoom",
         "Index",

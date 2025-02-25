@@ -65,7 +65,7 @@ library LibRoom {
   }
 
   function addFlag(IUintComp components, uint32 index, string memory flag) internal {
-    LibFlag.setFull(components, genID(index), flag);
+    LibFlag.setFull(components, genID(index), "ROOM", flag);
   }
 
   function remove(IUintComp components, uint32 index) internal {

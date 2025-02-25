@@ -89,6 +89,8 @@ library LibItem {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
     MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
+
+    addFlag(components, index, type_); // additionally store type as flag, for reverse query
   }
 
   /** @notice
@@ -120,7 +122,7 @@ library LibItem {
   }
 
   function addFlag(IUintComp components, uint32 index, string memory flag) internal {
-    LibFlag.setFull(components, genID(index), flag);
+    LibFlag.setFull(components, genID(index), "ITEM", flag);
   }
 
   /// @notice delete a Registry entry for an item.
