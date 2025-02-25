@@ -6,7 +6,11 @@ contract PreAsset {
   mapping(address => uint256) public whitelist;
   mapping(address => uint256) public deposits;
 
-  constructor() {}
+  bool public active;
+
+  constructor() {
+    active = true;
+  }
 
   // Verify user deposit against merkle tree and deposit
   function deposit(uint256 amount_, uint256 limit_, bytes32[] calldata proofs_) external {}
