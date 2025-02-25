@@ -17,6 +17,24 @@ library LibDeployTokens {
     return address(pet721);
   }
 
+  /// @dev only for local, to simulate an ERC20. Real onyx is not deployed via this script
+  function deployOnyx20Local(
+    IWorld world,
+    IUint256Component components,
+    address deployer
+  ) internal returns (address) {
+    require(!LibConfig.has(components, "ONYX_ADDRESS"), "onyx already deployed");
+
+    OpenMintable onyx = new OpenMintable("Onyx", "ONYX");
+    LibConfig.setAddress(components, "ONYX_ADDRESS", address(onyx));
+
+    // minting onyx to deployer
+    onyx.mint(deployer, 1000 ether);
+
+    console.log("ONYX_ADDRESS: ", address(onyx));
+    return address(onyx);
+  }
+
   /// @notice deploys and writes permissions for score contract for initia VIP
   function deployVIP(IWorld world, IUint256Component components) internal returns (address) {
     require(!LibConfig.has(components, "VIP_SCORE_ADDRESS"), "vip score already deployed");

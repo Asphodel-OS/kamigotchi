@@ -1,4 +1,3 @@
-import { constants } from 'ethers';
 import {
   CallContractTransactionInput,
   encodeMulti,
@@ -6,7 +5,7 @@ import {
   MetaTransaction,
   TransactionType,
 } from 'ethers-multisend';
-import { Interface, parseEther } from 'ethers/lib/utils';
+import { Interface } from 'ethers/lib/utils';
 
 import { SystemABI, UintCompABI, WorldABI } from '../../contracts/mappings/worldABIs';
 import {
@@ -123,11 +122,3 @@ const getCompMethod = (unauthorize?: boolean) => {
     payable: false,
   };
 };
-
-const transactions = [
-  {
-    to: constants.AddressZero,
-    value: parseEther('1').toString(),
-    data: '0x',
-  },
-];
