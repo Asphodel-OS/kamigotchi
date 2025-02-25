@@ -3,6 +3,7 @@ pragma solidity >=0.8.28;
 
 import "./Imports.sol";
 import { console } from "forge-std/console.sol";
+import { PreAsset } from "tokens/PreAsset.sol";
 
 /// @notice deploys erc20 and erc721 token contracts
 /// @dev assumes ValueComp is registered. This is only expected to be called during initial world setup
@@ -33,6 +34,15 @@ library LibDeployTokens {
 
     console.log("ONYX_ADDRESS: ", address(onyx));
     return address(onyx);
+  }
+
+  /// @dev only for local, simulates ONYX presale
+  function deployPresale(IWorld world, IUint256Component components) internal returns (address) {
+    PreAsset presale = new PreAsset();
+    LibConfig.setAddress(components, "ONYX_PRESALE_ADDRESS", address(presale));
+
+    console.log("ONYX_PRESALE_ADDRESS: ", address(presale));
+    return address(presale);
   }
 
   /// @notice deploys and writes permissions for score contract for initia VIP

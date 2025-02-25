@@ -41,6 +41,11 @@ contract Deploy is InitWorld {
       LibDeployTokens.deployVIP(world, components);
 
       _initWorld(address(world));
+
+      // local non-mud setup
+      if (LibString.eq(MODE, "DEV")) {
+        LibDeployTokens.deployPresale(world, components);
+      }
     }
 
     // transfer ownership to multisig
