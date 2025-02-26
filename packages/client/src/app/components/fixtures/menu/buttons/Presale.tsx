@@ -1,14 +1,13 @@
-import { Modals, useSelected } from 'app/stores';
-import { HarvestIcon } from 'assets/images/icons/actions';
+import { Modals } from 'app/stores';
+import { ItemImages } from 'assets/images/items';
 import { MenuButton } from './MenuButton';
 
 interface Props {
   disabled?: boolean;
 }
 
-export const NodeMenuButton = (props: Props) => {
+export const PresaleMenuButton = (props: Props) => {
   const { disabled } = props;
-  const { roomIndex, setNode } = useSelected(); // roomIndex == nodeIndex
 
   const modalsToHide: Partial<Modals> = {
     goal: false,
@@ -20,17 +19,19 @@ export const NodeMenuButton = (props: Props) => {
     gacha: false,
     emaBoard: false,
     nameKami: false,
-    presale: false,
+    node: false,
+    chat: false,
+    quests: false,
   };
 
   return (
     <MenuButton
-      id='party_button'
-      image={HarvestIcon}
-      tooltip={disabled ? 'There is no node here.' : 'Harvest'}
-      targetModal='node'
+      id='presale_button'
+      image={ItemImages.onyx}
+      tooltip={disabled ? 'Disabled' : 'Presale'}
+      targetModal='presale'
       hideModals={modalsToHide}
-      onClick={() => setNode(roomIndex)}
+      onClick={() => {}}
       disabled={disabled}
     />
   );

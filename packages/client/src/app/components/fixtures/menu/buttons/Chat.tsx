@@ -14,6 +14,7 @@ export const ChatMenuButton = () => {
     nameKami: false,
     quests: false,
     settings: false,
+    presale: false,
   };
 
   return (

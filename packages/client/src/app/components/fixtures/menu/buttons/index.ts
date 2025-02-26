@@ -6,6 +6,7 @@ import { MapMenuButton } from './Map';
 import { MoreMenuButton } from './More';
 import { NodeMenuButton } from './Node';
 import { PartyMenuButton } from './Party';
+import { PresaleMenuButton } from './Presale';
 import { QuestMenuButton } from './Quests';
 
 export {
@@ -17,5 +18,6 @@ export {
   MoreMenuButton,
   NodeMenuButton,
   PartyMenuButton,
+  PresaleMenuButton,
   QuestMenuButton,
 };

@@ -12,6 +12,7 @@ export const CraftMenuButton = () => {
     leaderboard: false,
     nameKami: false,
     node: false,
+    presale: false,
   };
 
   return (

@@ -1,0 +1,1 @@
+export { registerPresaleModal } from './Presale';

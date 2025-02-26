@@ -19,6 +19,7 @@ import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
+import { registerPresaleModal } from './modals/presale';
 import { registerQuestsModal } from './modals/quests';
 import { registerRevealModal } from './modals/reveal/Reveal';
 import { registerSettingsModal } from './modals/settings';
@@ -58,6 +59,7 @@ export function registerModals() {
   registerPartyModal();
   registerQuestsModal();
   registerSettingsModal();
+  registerPresaleModal();
 
   // scene modals
   registerDialogueModal();
