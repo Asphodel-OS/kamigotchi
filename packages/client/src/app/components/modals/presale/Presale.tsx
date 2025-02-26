@@ -3,8 +3,13 @@ import { interval, map } from 'rxjs';
 import { getAccount } from 'app/cache/account';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
+import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
+import { ethers } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getConfigFieldValueAddress } from 'network/shapes/Config';
+import { getOwnerAddress } from 'network/shapes/utils/component';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 export function registerPresaleModal() {
@@ -28,6 +33,13 @@ export function registerPresaleModal() {
             network,
             data: {
               accountEntity,
+              ownerAddress: getOwnerAddress(components, accountEntity),
+              onyxAddress: getConfigFieldValueAddress(world, components, 'ONYX_ADDRESS'),
+              onyxPresaleAddress: getConfigFieldValueAddress(
+                world,
+                components,
+                'ONYX_PRESALE_ADDRESS'
+              ),
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity),
@@ -40,10 +52,68 @@ export function registerPresaleModal() {
     // Render
     ({ network, data, utils }) => {
       const { actions, api } = network;
-      const { accountEntity } = data;
+      const { accountEntity, onyxAddress, onyxPresaleAddress, ownerAddress } = data;
+      const { selectedAddress, apis, signer } = useNetwork();
+
+      const [isAllowed, setIsAllowed] = useState<boolean>(false);
+      const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
 
       /////////////////
-      // ACTIONS
+      // APPROVAL
+      // TODO: in the future change this to ETH
+
+      async function getContracts() {
+        const erc20Interface = new ethers.utils.Interface([
+          'function allowance(address owner, address spender) view returns (uint256)',
+          'function approve(address spender, uint256 amount) returns (bool)',
+          'function balanceOf(address account) view returns (uint256)',
+        ]);
+
+        const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
+        const contractAddress = onyxPresaleAddress;
+        return { onyxContract, contractAddress };
+      }
+
+      async function checkOnyxAllowance(threshold: ethers.BigNumber) {
+        const { onyxContract, contractAddress } = await getContracts();
+        try {
+          const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
+          if (allowance.gte(threshold)) {
+            setIsAllowed(true);
+          } else {
+            setIsAllowed(false);
+          }
+        } catch (error: any) {
+          setIsAllowed(false);
+          throw new Error(`Approval failed: ${error.message}`);
+        }
+      }
+
+      async function checkUserBalance(threshold: ethers.BigNumber) {
+        const { onyxContract } = await getContracts();
+        try {
+          const balance = await onyxContract.balanceOf(ownerAddress);
+          setEnoughBalance(balance.gte(threshold));
+        } catch (error: any) {
+          setEnoughBalance(false);
+          throw new Error(`Balance check failed: ${error.message}`);
+        }
+      }
+
+      const approveTx = async () => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+        const { onyxContract, contractAddress } = await getContracts();
+        const balance = await onyxContract.balanceOf(ownerAddress);
+        const tx = await onyxContract.approve(contractAddress, balance);
+        await tx.wait();
+
+        if (tx.wait().status === 1) {
+          setIsAllowed(true);
+        } else {
+          setIsAllowed(false);
+        }
+      };
 
       /////////////////
       // DISPLAY

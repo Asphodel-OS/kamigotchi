@@ -1,3 +1,4 @@
+import { Signer } from 'ethers';
 import { create } from 'zustand';
 
 import { TxQueue } from 'engine/queue';
@@ -6,6 +7,7 @@ import { PlayerAPI, createPlayerAPI } from 'network/api';
 export interface State {
   burnerAddress: string;
   selectedAddress: string;
+  signer: Signer | any;
   validations: Validations;
   randNum: number;
   apis: Map<string, PlayerAPI>;
@@ -16,6 +18,7 @@ interface Actions {
   setSelectedAddress: (address: string) => void;
   setBurnerAddress: (address: string) => void;
   setValidations: (validations: Validations) => void;
+  setSigner: (signer: Signer) => void;
 }
 
 // the result of  validations run on network state
@@ -34,6 +37,7 @@ export const useNetwork = create<State & Actions>((set) => {
       authenticated: false,
       chainMatches: false,
     },
+    signer: null,
   };
 
   return {
@@ -49,5 +53,6 @@ export const useNetwork = create<State & Actions>((set) => {
         ...state,
         apis: new Map(state.apis).set(address, createPlayerAPI(txQueue)),
       })),
+    setSigner: (signer: any) => set((state: State) => ({ ...state, signer })),
   };
 });
