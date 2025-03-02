@@ -57,7 +57,7 @@ export function registerPresaleModal() {
 
       const [isAllowed, setIsAllowed] = useState<boolean>(false);
       const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
-      const threshold = BigNumber.from(5);
+      const [amount, setAmount] = useState<BigNumber>(BigNumber.from(0));
 
       /////////////////
       // PRESALE CONTRACT
@@ -85,18 +85,20 @@ export function registerPresaleModal() {
         ]);
 
         const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
-        const contractAddress = onyxPresaleAddress;
-        return { onyxContract, contractAddress };
+
+        return { onyxContract };
       }
 
-      async function checkOnyxAllowance(threshold: ethers.BigNumber) {
-        const { onyxContract, contractAddress } = await getOnyxContract();
+      async function checkOnyxAllowance() {
+        const { onyxContract } = await getOnyxContract();
+        const { presaleContract } = await getPresaleContract();
         try {
-          const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
-          if (allowance.gte(threshold)) {
+          const allowance = await onyxContract.allowance(ownerAddress, onyxPresaleAddress);
+          if (allowance.gte(presaleContract.whitelist(ownerAddress))) {
             setIsAllowed(true);
           } else {
             setIsAllowed(false);
+            approveTx();
           }
         } catch (error: any) {
           setIsAllowed(false);
@@ -104,11 +106,11 @@ export function registerPresaleModal() {
         }
       }
 
-      async function checkUserBalance(threshold: ethers.BigNumber) {
+      async function checkUserBalance(amount: ethers.BigNumber) {
         const { onyxContract } = await getOnyxContract();
         try {
           const balance = await onyxContract.balanceOf(ownerAddress);
-          setEnoughBalance(balance.gte(threshold));
+          setEnoughBalance(balance.gte(amount));
         } catch (error: any) {
           setEnoughBalance(false);
           throw new Error(`Balance check failed: ${error.message}`);
@@ -118,9 +120,9 @@ export function registerPresaleModal() {
       const approveTx = async () => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
-        const { onyxContract, contractAddress } = await getOnyxContract();
+        const { onyxContract } = await getOnyxContract();
         const balance = await onyxContract.balanceOf(ownerAddress);
-        const tx = await onyxContract.approve(contractAddress, balance);
+        const tx = await onyxContract.approve(onyxPresaleAddress, balance);
         await tx.wait();
         if (tx.wait().status === 1) {
           setIsAllowed(true);
@@ -129,12 +131,19 @@ export function registerPresaleModal() {
         }
       };
 
-      const handleClick = () => {
-        checkOnyxAllowance(threshold);
+      const handleApproval = () => {
+        checkOnyxAllowance();
+      };
+      const handleBalance = async (amount: ethers.BigNumber) => {
+        checkUserBalance(amount);
+        if (enoughBalance) {
+          const { presaleContract } = await getPresaleContract();
+          presaleContract.whiteListDeposit(amount);
+        }
       };
       /////////////////
       // DISPLAY
-
+      console.log(amount);
       return (
         <ModalWrapper
           id='presale'
@@ -144,15 +153,46 @@ export function registerPresaleModal() {
           {!accountEntity ? (
             <EmptyText text={['Failed to Connect Account']} size={1} />
           ) : (
-            <Content>
-              <button
-                onClick={() => {
-                  handleClick();
-                }}
-              >
-                Presale
-              </button>
-            </Content>
+            <>
+              <Content>
+                <input
+                  disabled={!isAllowed}
+                  onKeyDown={(e) => {
+                    if (isNaN(Number(e.key))) {
+                      if (
+                        e.key !== 'Backspace' &&
+                        e.key !== 'Delete' &&
+                        e.key !== 'ArrowLeft' &&
+                        e.key !== 'ArrowRight' &&
+                        e.key !== 'ArrowUp' &&
+                        e.key !== 'ArrowDown'
+                      )
+                        e.preventDefault();
+                    }
+                  }}
+                  onChange={(e) => {
+                    setAmount(BigNumber.from(e.target.value));
+                  }}
+                />
+                {!isAllowed ? (
+                  <button
+                    onClick={() => {
+                      handleApproval();
+                    }}
+                  >
+                    Approve
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      handleBalance(amount);
+                    }}
+                  >
+                    Buy
+                  </button>
+                )}
+              </Content>
+            </>
           )}
         </ModalWrapper>
       );
