@@ -138,7 +138,12 @@ export function registerPresaleModal() {
         checkUserBalance(amount);
         if (enoughBalance) {
           const { presaleContract } = await getPresaleContract();
-          presaleContract.whiteListDeposit(amount);
+          if (
+            presaleContract.whiteList(ownerAddress) - presaleContract.deposits(ownerAddress) >=
+            Number(amount)
+          ) {
+            presaleContract.whiteListDeposit(amount);
+          }
         }
       };
       /////////////////
