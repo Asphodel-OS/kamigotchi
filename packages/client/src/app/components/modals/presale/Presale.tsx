@@ -94,11 +94,11 @@ export function registerPresaleModal() {
         const { presaleContract } = await getPresaleContract();
         try {
           const allowance = await onyxContract.allowance(ownerAddress, onyxPresaleAddress);
-          if (allowance.gte(presaleContract.whitelist(ownerAddress))) {
+          if (allowance.gte(await presaleContract.whitelist(ownerAddress))) {
             setIsAllowed(true);
           } else {
-            setIsAllowed(false);
             approveTx();
+            setIsAllowed(false);
           }
         } catch (error: any) {
           setIsAllowed(false);
@@ -122,8 +122,10 @@ export function registerPresaleModal() {
         if (!api) return console.error(`API not established for ${selectedAddress}`);
         const { onyxContract } = await getOnyxContract();
         const balance = await onyxContract.balanceOf(ownerAddress);
+        console.log(`about to approve $`);
         const tx = await onyxContract.approve(onyxPresaleAddress, balance);
         await tx.wait();
+        console.log(`approved $`);
         if (tx.wait().status === 1) {
           setIsAllowed(true);
         } else {
@@ -148,7 +150,7 @@ export function registerPresaleModal() {
       };
       /////////////////
       // DISPLAY
-      console.log(amount);
+
       return (
         <ModalWrapper
           id='presale'
@@ -189,6 +191,7 @@ export function registerPresaleModal() {
                   </button>
                 ) : (
                   <button
+                    disabled={amount <= BigNumber.from(0)}
                     onClick={() => {
                       handleBalance(amount);
                     }}

@@ -45,7 +45,7 @@ export function registerWalletConnecter() {
       const { wallets, ready: walletsReady } = useWallets();
 
       const { apis, addAPI } = useNetwork();
-      const { burnerAddress, setBurnerAddress, setSelectedAddress } = useNetwork();
+      const { burnerAddress, setBurnerAddress, setSelectedAddress, setSigner } = useNetwork();
       const { validations, setValidations } = useNetwork();
       const { toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
@@ -131,6 +131,7 @@ export function registerWalletConnecter() {
         setIsUpdating(true);
         await updateBaseNetwork(embeddedWallet);
         await addNetworkAPI(injectedWallet);
+        setSigner((await injectedWallet.getEthersProvider()).getSigner());
         setIsUpdating(false);
       };
 
