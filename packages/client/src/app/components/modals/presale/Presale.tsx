@@ -5,7 +5,7 @@ import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValueAddress } from 'network/shapes/Config';
 import { getOwnerAddress } from 'network/shapes/utils/component';
@@ -57,12 +57,27 @@ export function registerPresaleModal() {
 
       const [isAllowed, setIsAllowed] = useState<boolean>(false);
       const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
+      const threshold = BigNumber.from(5);
 
       /////////////////
-      // APPROVAL
+      // PRESALE CONTRACT
+
+      async function getPresaleContract() {
+        const erc20Interface = new ethers.utils.Interface([
+          'function whitelist(address) view returns (uint256)',
+          'function deposits(address) view returns (uint256)',
+          'function whitelistDeposit(uint256) external returns (void)',
+          'function claim() external returns (uint256)',
+        ]);
+        const presaleContract = new ethers.Contract(onyxPresaleAddress, erc20Interface, signer);
+        return { presaleContract };
+      }
+
+      /////////////////
+      // ONYX CONTRACT
       // TODO: in the future change this to ETH
 
-      async function getContracts() {
+      async function getOnyxContract() {
         const erc20Interface = new ethers.utils.Interface([
           'function allowance(address owner, address spender) view returns (uint256)',
           'function approve(address spender, uint256 amount) returns (bool)',
@@ -75,7 +90,7 @@ export function registerPresaleModal() {
       }
 
       async function checkOnyxAllowance(threshold: ethers.BigNumber) {
-        const { onyxContract, contractAddress } = await getContracts();
+        const { onyxContract, contractAddress } = await getOnyxContract();
         try {
           const allowance = await onyxContract.allowance(ownerAddress, contractAddress);
           if (allowance.gte(threshold)) {
@@ -90,7 +105,7 @@ export function registerPresaleModal() {
       }
 
       async function checkUserBalance(threshold: ethers.BigNumber) {
-        const { onyxContract } = await getContracts();
+        const { onyxContract } = await getOnyxContract();
         try {
           const balance = await onyxContract.balanceOf(ownerAddress);
           setEnoughBalance(balance.gte(threshold));
@@ -103,11 +118,10 @@ export function registerPresaleModal() {
       const approveTx = async () => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
-        const { onyxContract, contractAddress } = await getContracts();
+        const { onyxContract, contractAddress } = await getOnyxContract();
         const balance = await onyxContract.balanceOf(ownerAddress);
         const tx = await onyxContract.approve(contractAddress, balance);
         await tx.wait();
-
         if (tx.wait().status === 1) {
           setIsAllowed(true);
         } else {
@@ -115,6 +129,9 @@ export function registerPresaleModal() {
         }
       };
 
+      const handleClick = () => {
+        checkOnyxAllowance(threshold);
+      };
       /////////////////
       // DISPLAY
 
@@ -127,7 +144,15 @@ export function registerPresaleModal() {
           {!accountEntity ? (
             <EmptyText text={['Failed to Connect Account']} size={1} />
           ) : (
-            <Content>Presale</Content>
+            <Content>
+              <button
+                onClick={() => {
+                  handleClick();
+                }}
+              >
+                Presale
+              </button>
+            </Content>
           )}
         </ModalWrapper>
       );
