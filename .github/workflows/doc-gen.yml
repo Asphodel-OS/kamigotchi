@@ -3,13 +3,19 @@ name: Sync Files to Target Repo
 on:
   push:
     branches:
-      - main # Change this if your default branch is "main"
+      - main
     paths:
-      - 'packages/client/src/network/**' # Only trigger when files in this directory change
+      - 'packages/client/src/network/**'
+      - 'packages/client/src/workers/**'
+      - 'packages/client/src/engine/**'
+      - 'packages/client/abi/**'
 
 env:
-  SOURCE_DIR: 'packages/client/src/network'
-  TARGET_DIR: 'network'
+  SOURCE_DIRS: >-
+    packages/client/src/network:network
+    packages/client/src/workers:workers
+    packages/client/src/engine:engine
+    packages/client/abi:abi
   TARGET_REPO_OWNER: 'Asphodel-OS'
   TARGET_REPO_NAME: 'kamigotchi-entity-shapes'
 
@@ -35,12 +41,21 @@ jobs:
 
           echo "Cloning target repo"  
           git clone git@github.com:${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME }}.git
-          echo "Copying files"
-          # Copy the specified directory
-          mkdir -p ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}
-          ls
-          ls **/*
-          cp -r ./source-repo/${{ env.SOURCE_DIR }}/* ./${{ env.TARGET_REPO_NAME }}/${{ env.TARGET_DIR }}/
+
+          # Read SOURCE_DIRS line by line
+          echo "${{ env.SOURCE_DIRS }}" | tr ' ' '\n' | while IFS=: read -r source_dir target_dir; do
+            if [ -n "$source_dir" ] && [ -n "$target_dir" ]; then
+              echo "Processing: source=$source_dir target=$target_dir"
+              if [ -d "./source-repo/$source_dir" ]; then
+                echo "Copying from $source_dir to $target_dir"
+                mkdir -p ./${{ env.TARGET_REPO_NAME }}/$target_dir
+                cp -rv ./source-repo/$source_dir/* ./${{ env.TARGET_REPO_NAME }}/$target_dir/
+              else
+                echo "Source directory ./source-repo/$source_dir does not exist"
+                ls -la ./source-repo
+              fi
+            fi
+          done
 
           cd ./${{ env.TARGET_REPO_NAME }}
 
