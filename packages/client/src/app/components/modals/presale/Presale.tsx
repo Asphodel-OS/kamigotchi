@@ -20,7 +20,7 @@ export function registerPresaleModal() {
       colStart: 33,
       colEnd: 70,
       rowStart: 15,
-      rowEnd: 85,
+      rowEnd: 35,
     },
 
     // Requirement
@@ -60,6 +60,17 @@ export function registerPresaleModal() {
       const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
       const [amount, setAmount] = useState<BigNumber>(BigNumber.from(0));
       const [progress, setProgress] = useState<number>(0);
+      const [depositEmpty, setDepositEmpty] = useState<boolean>(false);
+
+      useEffect(() => {
+        setTimeout(() => {
+          getProgress();
+        }, 10000);
+      });
+
+      useEffect(() => {
+        checkDeposits();
+      }, []);
 
       /////////////////
       // PRESALE CONTRACT
@@ -70,6 +81,7 @@ export function registerPresaleModal() {
           'function deposits(address) view returns (uint256)',
           'function whitelistDeposit(uint256) external returns (void)',
           'function claim() external returns (uint256)',
+          'function withdraw() external returns (uint256)',
         ]);
         const presaleContract = new ethers.Contract(onyxPresaleAddress, erc20Interface, signer);
         return { presaleContract };
@@ -135,18 +147,16 @@ export function registerPresaleModal() {
         }
       };
 
-      const handleApproval = () => {
-        checkOnyxAllowance();
-      };
       const handleBalance = async (amount: ethers.BigNumber) => {
         checkUserBalance(amount);
         if (enoughBalance) {
           const { presaleContract } = await getPresaleContract();
           if (
-            presaleContract.whiteList(ownerAddress) - presaleContract.deposits(ownerAddress) >=
+            presaleContract.whitelist(ownerAddress) - presaleContract.deposits(ownerAddress) >=
             Number(amount)
           ) {
-            presaleContract.whiteListDeposit(amount);
+            presaleContract.whitelistDeposit(amount);
+            setDepositEmpty(false);
           }
         }
       };
@@ -154,16 +164,23 @@ export function registerPresaleModal() {
       const getProgress = async () => {
         const { onyxContract } = await getOnyxContract();
         onyxContract.balanceOf(onyxPresaleAddress);
-        setProgress(progress);
+        setProgress(progress / 1000);
+      };
+
+      const widthdraw = async () => {
+        const { presaleContract } = await getPresaleContract();
+        presaleContract.widthdraw();
+        setDepositEmpty(true);
+      };
+
+      const checkDeposits = async () => {
+        const { presaleContract } = await getPresaleContract();
+        setDepositEmpty(presaleContract.deposits(ownerAddress).then((n: BigNumber) => n.eq(0)));
       };
 
       /////////////////
       // DISPLAY
-      useEffect(() => {
-        setTimeout(() => {
-          getProgress();
-        }, 10000);
-      });
+
       return (
         <ModalWrapper
           id='presale'
@@ -199,7 +216,7 @@ export function registerPresaleModal() {
                   {!isAllowed ? (
                     <Button
                       onClick={() => {
-                        handleApproval();
+                        checkOnyxAllowance();
                       }}
                     >
                       Approve
@@ -215,6 +232,15 @@ export function registerPresaleModal() {
                     </Button>
                   )}
                 </InputButton>
+                <Button
+                  style={{ position: `absolute`, right: `1vw`, bottom: `1vw` }}
+                  disabled={depositEmpty}
+                  onClick={() => {
+                    widthdraw();
+                  }}
+                >
+                  Withdraw
+                </Button>
               </Content>
             </>
           )}
@@ -243,14 +269,18 @@ const InputButton = styled.div`
 `;
 
 const Input = styled.input`
-  line-height: 0.6vw;
-  border-radius: 0.3vw;
+  line-height: 0.8vw;
+  border-radius: 0.15vw;
   width: 50%;
 `;
 
 const Button = styled.button`
-  border-radius: 0.3vw;
+  border-radius: 0.15vw;
   background-color: white;
   width: fit-content;
   padding: 0.1vw;
+  &:disabled {
+    background-color: rgb(215 215 215);
+    cursor: auto;
+  }
 `;

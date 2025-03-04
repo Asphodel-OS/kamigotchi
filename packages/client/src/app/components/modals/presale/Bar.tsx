@@ -9,7 +9,7 @@ export const Bar = (props: Props) => {
   const { progress } = props;
 
   return (
-    <Tooltip text={[`${progress}% of 1k`]}>
+    <Tooltip text={[`${progress}%`]}>
       <MyBar>
         <Progress width={progress} />
       </MyBar>
