@@ -2,28 +2,25 @@ import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { calcCurrentStamina, getAccount } from 'app/cache/account';
+import { getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
-import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
+import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance } from 'network/shapes/Item';
-import { haveIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
-import styled from 'styled-components';
-import { Kard } from './components/Kard';
+import { hasIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
+import { Recipes } from './Recipes/Recipes';
 
 export function registerCraftingModal() {
   registerUIComponent(
     'CraftingModal',
-
-    // Grid Config
     {
-      colStart: 35,
-      colEnd: 80,
-      rowStart: 15,
-      rowEnd: 85,
+      colStart: 33,
+      colEnd: 67,
+      rowStart: 3,
+      rowEnd: 99,
     },
 
     // Requirement
@@ -34,15 +31,11 @@ export function registerCraftingModal() {
           const { world, components } = network;
 
           const accountEntity = queryAccountFromEmbedded(network);
-          const accountID = world.entities[accountEntity];
           const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
 
           return {
             network,
-            accountEntity,
-            data: {
-              stamina: calcCurrentStamina(account),
-            },
+            data: { account },
             utils: {
               meetsRequirements: (recipe: Recipe) =>
                 passesConditions(world, components, recipe.requirements, account),
@@ -51,9 +44,9 @@ export function registerCraftingModal() {
                   .map((req) => parseConditionalText(world, components, req))
                   .join(', '),
               getItemBalance: (index: number) =>
-                getItemBalance(world, components, accountID, index),
-              haveIngredients: (recipe: Recipe) =>
-                haveIngredients(world, components, recipe, accountID),
+                getItemBalance(world, components, account.id, index),
+              hasIngredients: (recipe: Recipe) =>
+                hasIngredients(world, components, recipe, account.id),
             },
           };
         })
@@ -61,37 +54,28 @@ export function registerCraftingModal() {
 
     // Render
     ({ data, network, utils }) => {
+      const { account } = data;
       const { actions, api, components, world } = network;
+      const { hasIngredients } = utils;
       const [recipes, setRecipes] = useState<Recipe[]>([]);
-      const [filter, setFilter] = useState<boolean>(false);
+      const [showAll, setShowAll] = useState<boolean>(true);
 
-      // updates from selected Node updates
+      // update the list of recipes depending on the filter
       useEffect(() => {
         const recipes = getAllRecipes(world, components);
-        if (filter === false) {
-          setRecipes(recipes);
-        } else {
-          const available: Recipe[] = [];
-          const notAvailable: Recipe[] = [];
-          recipes.map((recipe) => {
-            if (utils.haveIngredients(recipe)) {
-              available.push(recipe);
-            } else {
-              notAvailable.push(recipe);
-            }
-          });
-          setRecipes(available.concat(notAvailable));
-        }
-      }, [filter]);
+        if (showAll) setRecipes(recipes);
+        else setRecipes(recipes.filter((recipe) => hasIngredients(recipe)));
+      }, [showAll]);
 
-      //////////////////////////////////
+      /////////////////
       // INTERPRETATION
 
       const getIngredientsText = (ingredients: Ingredient[], multiplier: number) => {
         let text = '';
         ingredients.forEach((ingredient) => {
           const amount = ingredient.amount * multiplier;
-          text += pluralize(ingredient.item.name, amount, true) + ' ';
+          const name = ingredient.item?.name ?? 'Unknown';
+          text += pluralize(name, amount, true) + ' ';
         });
         return text;
       };
@@ -118,45 +102,15 @@ export function registerCraftingModal() {
           id='crafting'
           header={<ModalHeader title='Crafting' icon={CraftIcon} />}
           canExit
-          width='min-content'
         >
-          <Content>
-            <button
-              style={{ padding: '0.5vw' }}
-              onClick={() => {
-                setFilter(!filter);
-              }}
-            >
-              Order by Availability
-            </button>
-            {recipes.length > 0 ? (
-              recipes.map((recipe: Recipe) => (
-                <Kard
-                  key={`recipe-${recipe.index}`}
-                  recipe={recipe}
-                  data={data}
-                  actions={{ craft }}
-                  utils={utils}
-                />
-              ))
-            ) : (
-              <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
-            )}
-          </Content>
+          <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Availability' fill />
+          {recipes.length == 0 ? (
+            <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
+          ) : (
+            <Recipes data={{ account, recipes }} actions={{ craft }} utils={utils} />
+          )}
         </ModalWrapper>
       );
     }
   );
 }
-
-const Content = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-
-  gap: 0.6vw;
-
-  width: 100%;
-  max-hight: 95%;
-  padding: 0.5vw;
-`;

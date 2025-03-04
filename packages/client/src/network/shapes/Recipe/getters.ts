@@ -1,25 +1,8 @@
 import { Has, runQuery, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getRecipe, getRegEntity, NullRecipe, Recipe } from './types';
-
-/* note: this is not functional now
-
-// all npcs recipes
-export const getByNpc = (world: World, components: Components, entity: EntityIndex): Recipe[] => {
-  const results = queryForRecipebyNpc(components, entity);
-  return results.map((recipe) =>
-    getRecipe(world, components, recipe, getIndex(components, recipe))
-  );
-};
-
-// all node recipes
-export const getByNode = (world: World, components: Components, entity: EntityIndex): Recipe[] => {
-  const results = queryForRecipebyNode(components, entity);
-  return results.map((recipe) =>
-    getRecipe(world, components, recipe, getIndex(components, recipe))
-  );
-}; */
+import { NullRecipe } from './constants';
+import { getRecipe, getRegEntity, Recipe } from './types';
 
 export const getAllRecipes = (world: World, components: Components): Recipe[] => {
   const { RecipeIndex, IsRegistry } = components;

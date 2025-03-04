@@ -1,31 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
+import { Overlay } from '../styles';
 
 interface Props {
-  image?: string;
   children: React.ReactNode;
-  imageOnClick?: () => void;
+  image?: {
+    icon?: string;
+    onClick?: () => void;
+    overlay?: string;
+    padding?: number;
+    scale?: number;
+  };
   fullWidth?: boolean;
-  scale?: number;
 }
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = (props: Props) => {
-  const { image, children, imageOnClick, fullWidth } = props;
-  const scale = props.scale ?? 9;
+  const { image, children, fullWidth } = props;
+  const scale = image?.scale ?? 9;
 
   // handle image click if there is one
   const handleImageClick = () => {
-    if (imageOnClick) {
-      imageOnClick();
+    if (image?.onClick) {
+      image.onClick();
       playClick();
     }
   };
 
   return (
     <Wrapper fullWidth={fullWidth}>
-      <Image onClick={() => handleImageClick()} src={image} scale={scale} />
+      <ImageContainer scale={scale} padding={image?.padding}>
+        <Overlay bottom={scale * 0.075} right={scale * 0.06}>
+          <Text size={scale * 0.075}>{image?.overlay}</Text>
+        </Overlay>
+        <Image src={image?.icon} onClick={handleImageClick} />
+      </ImageContainer>
       <Container>{children}</Container>
     </Wrapper>
   );
@@ -42,15 +52,22 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
   flex-flow: row nowrap;
 `;
 
-const Image = styled.img<{ scale: number }>`
+const ImageContainer = styled.div<{ scale: number; padding?: number }>`
+  position: relative;
   border-right: solid black 0.15vw;
   border-radius: 0.45vw 0vw 0vw 0.45vw;
-  object-fit: cover;
-
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;
+  padding: ${({ padding }) => padding ?? 0}vw;
+  ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
+`;
 
-  cursor: pointer;
+const Image = styled.img<{ onClick?: () => void }>`
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
   &:hover {
     opacity: 0.75;
   }
@@ -65,4 +82,10 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
+`;
+
+const Text = styled.div<{ size: number }>`
+  color: white;
+  font-size: ${(props) => props.size}vw;
+  text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
 `;

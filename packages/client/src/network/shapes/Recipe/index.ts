@@ -1,6 +1,8 @@
-export { haveIngredients } from './functions';
+export { NullRecipe } from './constants';
+export { hasIngredients } from './functions';
 export { getAllRecipes, getRecipeByIndex } from './getters';
 export { query as queryRecipes } from './queries';
-export { NullRecipe, getRecipe, getRegEntity } from './types';
+export { getRecipe, getRegEntity } from './types';
 
-export type { Ingredient, Recipe } from './types';
+export type { Ingredient } from './ingredients';
+export type { Recipe } from './types';

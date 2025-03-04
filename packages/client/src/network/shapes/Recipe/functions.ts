@@ -4,7 +4,8 @@ import { Components } from 'network/';
 import { getItemBalance } from '../Item';
 import { Recipe } from './types';
 
-export const haveIngredients = (
+// check whether an account has all the ingredients for an redcipe in inventory
+export const hasIngredients = (
   world: World,
   components: Components,
   recipe: Recipe,
