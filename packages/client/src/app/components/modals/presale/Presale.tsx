@@ -9,8 +9,9 @@ import { BigNumber, ethers } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValueAddress } from 'network/shapes/Config';
 import { getOwnerAddress } from 'network/shapes/utils/component';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { Bar } from './Bar';
 
 export function registerPresaleModal() {
   registerUIComponent(
@@ -58,6 +59,7 @@ export function registerPresaleModal() {
       const [isAllowed, setIsAllowed] = useState<boolean>(false);
       const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
       const [amount, setAmount] = useState<BigNumber>(BigNumber.from(0));
+      const [progress, setProgress] = useState<number>(0);
 
       /////////////////
       // PRESALE CONTRACT
@@ -148,9 +150,20 @@ export function registerPresaleModal() {
           }
         }
       };
+
+      const getProgress = async () => {
+        const { onyxContract } = await getOnyxContract();
+        onyxContract.balanceOf(onyxPresaleAddress);
+        setProgress(progress);
+      };
+
       /////////////////
       // DISPLAY
-
+      useEffect(() => {
+        setTimeout(() => {
+          getProgress();
+        }, 10000);
+      });
       return (
         <ModalWrapper
           id='presale'
@@ -162,43 +175,46 @@ export function registerPresaleModal() {
           ) : (
             <>
               <Content>
-                <input
-                  disabled={!isAllowed}
-                  onKeyDown={(e) => {
-                    if (isNaN(Number(e.key))) {
-                      if (
-                        e.key !== 'Backspace' &&
-                        e.key !== 'Delete' &&
-                        e.key !== 'ArrowLeft' &&
-                        e.key !== 'ArrowRight' &&
-                        e.key !== 'ArrowUp' &&
-                        e.key !== 'ArrowDown'
-                      )
-                        e.preventDefault();
-                    }
-                  }}
-                  onChange={(e) => {
-                    setAmount(BigNumber.from(e.target.value));
-                  }}
-                />
-                {!isAllowed ? (
-                  <button
-                    onClick={() => {
-                      handleApproval();
+                <Bar progress={progress} />
+                <InputButton>
+                  <Input
+                    disabled={!isAllowed}
+                    onKeyDown={(e) => {
+                      if (isNaN(Number(e.key))) {
+                        if (
+                          e.key !== 'Backspace' &&
+                          e.key !== 'Delete' &&
+                          e.key !== 'ArrowLeft' &&
+                          e.key !== 'ArrowRight' &&
+                          e.key !== 'ArrowUp' &&
+                          e.key !== 'ArrowDown'
+                        )
+                          e.preventDefault();
+                      }
                     }}
-                  >
-                    Approve
-                  </button>
-                ) : (
-                  <button
-                    disabled={amount <= BigNumber.from(0)}
-                    onClick={() => {
-                      handleBalance(amount);
+                    onChange={(e) => {
+                      setAmount(BigNumber.from(e.target.value));
                     }}
-                  >
-                    Buy
-                  </button>
-                )}
+                  />
+                  {!isAllowed ? (
+                    <Button
+                      onClick={() => {
+                        handleApproval();
+                      }}
+                    >
+                      Approve
+                    </Button>
+                  ) : (
+                    <Button
+                      disabled={amount <= BigNumber.from(0)}
+                      onClick={() => {
+                        handleBalance(amount);
+                      }}
+                    >
+                      Buy
+                    </Button>
+                  )}
+                </InputButton>
               </Content>
             </>
           )}
@@ -210,15 +226,31 @@ export function registerPresaleModal() {
 
 const Content = styled.div`
   display: flex;
-  flex-flow: wrap;
-  -webkit-box-pack: start;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   gap: 0.6vw;
   padding: 0.5vw;
   width: 100%;
   height: 100%;
-  flex-wrap: nowrap;
+  flex-flow: column;
+  overflow: hidden auto;
+  align-items: center;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto;
+`;
+
+const InputButton = styled.div`
+  display: flex;
+  gap: 0.6vw;
+`;
+
+const Input = styled.input`
+  line-height: 0.6vw;
+  border-radius: 0.3vw;
+  width: 50%;
+`;
+
+const Button = styled.button`
+  border-radius: 0.3vw;
+  background-color: white;
+  width: fit-content;
+  padding: 0.1vw;
 `;
