@@ -9,7 +9,7 @@ import { BigNumber, ethers } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getConfigFieldValueAddress } from 'network/shapes/Config';
 import { getOwnerAddress } from 'network/shapes/utils/component';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Bar } from './Bar';
 
@@ -60,7 +60,8 @@ export function registerPresaleModal() {
       const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
       const [amount, setAmount] = useState<BigNumber>(BigNumber.from(0));
       const [progress, setProgress] = useState<number>(0);
-      const [depositEmpty, setDepositEmpty] = useState<boolean>(false);
+      const [depositEmpty, setDepositEmpty] = useState<boolean>(true);
+      const inputRef = useRef<HTMLInputElement>(null);
 
       useEffect(() => {
         setTimeout(() => {
@@ -68,9 +69,13 @@ export function registerPresaleModal() {
         }, 10000);
       });
 
+      // comment this if you want to check the approval button
       useEffect(() => {
+        if (inputRef.current) inputRef.current.value = '';
         checkDeposits();
-      }, []);
+        checkOnyxAllowance();
+        setAmount(BigNumber.from(0));
+      }, [accountEntity]);
 
       /////////////////
       // PRESALE CONTRACT
@@ -111,7 +116,6 @@ export function registerPresaleModal() {
           if (allowance.gte(await presaleContract.whitelist(ownerAddress))) {
             setIsAllowed(true);
           } else {
-            approveTx();
             setIsAllowed(false);
           }
         } catch (error: any) {
@@ -195,6 +199,7 @@ export function registerPresaleModal() {
                 <Bar progress={progress} />
                 <InputButton>
                   <Input
+                    ref={inputRef}
                     disabled={!isAllowed}
                     onKeyDown={(e) => {
                       if (isNaN(Number(e.key))) {
@@ -217,6 +222,7 @@ export function registerPresaleModal() {
                     <Button
                       onClick={() => {
                         checkOnyxAllowance();
+                        approveTx();
                       }}
                     >
                       Approve
