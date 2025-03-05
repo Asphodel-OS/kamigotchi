@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
-import { Card, Tooltip } from '../base';
+import { Card, Tooltip } from './base';
 
 interface Props {
   account: BaseAccount;

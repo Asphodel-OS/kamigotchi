@@ -19,6 +19,7 @@ export {
 
 export { Overlay } from './styles';
 
+export { AccountCard } from './AccountCard';
 export { CopyButton } from './CopyButton';
 export { EmptyText } from './EmptyText';
 export { FarcasterConnect } from './FarcasterConnect';
@@ -29,6 +30,5 @@ export { InputSingleTextForm } from './InputSingleTextForm';
 export { ItemIconHorizontal } from './ItemIconHorizontal';
 export { KamiCard } from './KamiCard';
 export { ProgressBar } from './ProgressBar';
-export { AccountCard } from './styles/AccountCard';
 
 export type { Option as IconListButtonOption } from './base/buttons/IconListButton';
