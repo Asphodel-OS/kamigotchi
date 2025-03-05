@@ -4,7 +4,7 @@ import { Stepper, Tooltip } from 'app/components/library';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { AuctionMode, TabType } from '../types';
+import { TabType } from '../types';
 
 // action labels for the purchase footer
 const ActionMap = new Map<TabType, string>([
@@ -31,9 +31,7 @@ interface Props {
     balance: number;
   };
   state: {
-    tick: number;
     tab: TabType;
-    mode: AuctionMode;
   };
 }
 
@@ -42,19 +40,9 @@ export const Footer = (props: Props) => {
   const { bid, mint, reroll } = actions;
   const { quantity, setQuantity, price } = controls;
   const { payItem, saleItem, balance } = data;
-  const { mode, tab, tick } = state;
+  const { tab } = state;
 
   const isDisabled = quantity <= 0 || price > balance;
-
-  const handleInc = () => {
-    playClick();
-    setQuantity(Math.min(balance, quantity + 1));
-  };
-
-  const handleDec = () => {
-    playClick();
-    setQuantity(Math.max(0, quantity - 1));
-  };
 
   const handleSubmit = async () => {
     playClick();

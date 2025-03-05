@@ -1,16 +1,19 @@
 import styled, { keyframes } from 'styled-components';
 
+// bounce animation on click (typically used with hoverFx)
 export const clickFx = (scale = 0.05, translate = 0) => keyframes`
   0% { transform: scale(${1 + scale}) translateX(${100 * translate * (1 - scale)}%); }
   70% { transform: scale(${1 - scale} translateX(${100 * translate * (1 + scale)}%)); }
   100% { transform: scale(${1 + scale}) translateX(${100 * translate * (1 - scale)}%); }
 `;
 
+// grow animation on hover
 export const hoverFx = (scale = 0.05, translate = 0) => keyframes`
 0% { transform: scale(1) translateX(${100 * translate}%); }
 100% { transform: scale(${1 + scale}) translateX(${100 * translate * (1 - scale)}%); }
 `;
 
+// depress animation used for 3D button click effects
 export const depressFx = (shift = 1, scale = 0) => keyframes`
   0% { 
     transform: scale(1); 
@@ -24,6 +27,7 @@ export const depressFx = (shift = 1, scale = 0) => keyframes`
   }
 `;
 
+// flicker-like pulse animation
 export const pulseFx = keyframes`
   0%, 80%, 90%, 100% {
     background-color: #fff;
@@ -33,20 +37,19 @@ export const pulseFx = keyframes`
   }
 `;
 
-export const glimmerFx = keyframes`
+// radial gradient animation, grows outward and fades over time
+export const radiateFx = keyframes`
   0% {
-    background-position: -100vw;
- 
+    transform: scale(1);
+    opacity: 0;
   }
-  70% {
-    background-position: 100vw;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  20% {
+    transform: scale(1.2);
+    opacity: .2;
   }
   100% {
-    background-position: 100vw;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    transform: scale(1.5);
+    opacity: 0;
   }
 `;
 

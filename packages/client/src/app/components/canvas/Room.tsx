@@ -1,8 +1,9 @@
 import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
+import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { RoomAsset, rooms } from 'constants/rooms';
 import { getCurrPhase } from 'utils/time';
@@ -140,27 +141,12 @@ const Clickbox = styled.div<Coordinates>`
   opacity: 0.2;
 
   &:hover {
-    animation: ${({}) => shimmer} 1.5s linear infinite;
+    animation: ${({}) => radiateFx} 1.5s linear infinite;
     background: radial-gradient(
       closest-side,
       rgba(255, 255, 255, 1) 0%,
       rgba(80, 80, 205, 1) 70%,
       rgba(80, 80, 80, 0) 90%
     );
-  }
-`;
-
-const shimmer = keyframes`
-  0% {
-    transform: scale(1);
-    opacity: 0;
-  }
-  20% {
-    transform: scale(1.2);
-    opacity: .2;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
   }
 `;
