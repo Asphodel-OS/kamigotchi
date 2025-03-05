@@ -60,6 +60,7 @@ const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   width: ${({ scale }) => scale}vw;
   padding: ${({ padding }) => padding ?? 0}vw;
   ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
+  user-select: none;
 `;
 
 const Image = styled.img<{ onClick?: () => void }>`

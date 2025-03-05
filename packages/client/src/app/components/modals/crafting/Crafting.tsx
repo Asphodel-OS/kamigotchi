@@ -103,7 +103,7 @@ export function registerCraftingModal() {
           header={<ModalHeader title='Crafting' icon={CraftIcon} />}
           canExit
         >
-          <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Availability' fill />
+          <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Available' />
           {recipes.length == 0 ? (
             <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
           ) : (
