@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { Stepper, Tooltip } from 'app/components/library';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -85,14 +85,13 @@ export const Footer = (props: Props) => {
   return (
     <Container>
       <Quantity type='string' value={quantity} onChange={(e) => handleChange(e)} />
-      <Stepper>
-        <StepperButton onClick={handleInc} disabled={tab === 'REROLL' || price > balance}>
-          +
-        </StepperButton>
-        <StepperButton onClick={handleDec} disabled={tab === 'REROLL' || quantity <= 0}>
-          -
-        </StepperButton>
-      </Stepper>
+      <Stepper
+        value={quantity}
+        set={setQuantity}
+        scale={6}
+        disableInc={tab === 'REROLL' || price > balance}
+        disableDec={tab === 'REROLL' || quantity <= 0}
+      />
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>
           {ActionMap.get(tab) ?? 'Mint'}
@@ -129,44 +128,6 @@ const Quantity = styled.input`
   font-family: Pixel;
   font-size: 1.2vw;
   text-align: center;
-`;
-
-const Stepper = styled.div`
-  border-right: 0.15vw solid black;
-  background-color: black;
-  gap: 0.12vw;
-  height: 100%;
-  width: 6vw;
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const StepperButton = styled.div<{ disabled?: boolean }>`
-  background-color: #fff;
-  height: 100%;
-  width: 100%;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.2vw;
-
-  cursor: pointer;
-  pointer-events: auto;
-  user-select: none;
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
-  ${({ disabled }) =>
-    disabled &&
-    `
-  background-color: #bbb; 
-  cursor: default; 
-  pointer-events: none;`}
 `;
 
 const Submit = styled.div<{ disabled?: boolean }>`

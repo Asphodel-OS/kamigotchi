@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { calcBuyPrice } from 'app/cache/npc/functions';
-import { Tooltip } from 'app/components/library';
+import { Stepper, Tooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/Listing';
 import { playClick } from 'utils/sounds';
@@ -17,21 +17,11 @@ export interface Props {
 export const CartRow = (props: Props) => {
   const { listing, quantity, setQuantity, remove } = props;
   const max = 100;
-  const min = 0;
+  const min = 1;
 
   const handleRemove = () => {
     playClick();
     remove();
-  };
-
-  const handleInc = () => {
-    playClick();
-    setQuantity(Math.min(max, quantity + 1));
-  };
-
-  const handleDec = () => {
-    playClick();
-    setQuantity(Math.max(min, quantity - 1));
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,12 +38,7 @@ export const CartRow = (props: Props) => {
         <Image src={listing.item.image} />
       </Tooltip>
       <Quantity type='string' value={quantity.toString()} onChange={(e) => handleChange(e)} />
-      <Stepper>
-        <StepperButton onClick={handleInc} style={{ borderBottom: '0.15vw solid black' }}>
-          +
-        </StepperButton>
-        <StepperButton onClick={handleDec}>-</StepperButton>
-      </Stepper>
+      <Stepper value={quantity} set={setQuantity} scale={3} min={min} max={max} />
       <TotalPrice>
         <Icon src={ItemImages.musu} />
         <Text>{calcBuyPrice(listing, quantity)}</Text>
@@ -121,37 +106,6 @@ const Quantity = styled.input`
   font-family: Pixel;
   font-size: 1.2vw;
   text-align: center;
-`;
-
-const Stepper = styled.div`
-  border-right: 0.15vw solid black;
-  height: 100%;
-  width: 3vw;
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const StepperButton = styled.div`
-  background-color: #fff;
-  height: 100%;
-  width: 100%;
-
-  cursor: pointer;
-  pointer-events: auto;
-  user-select: none;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 1.2vw;
-  line-height: 1.5vw;
-  text-align: center;
-
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
 `;
 
 const TotalPrice = styled.div`

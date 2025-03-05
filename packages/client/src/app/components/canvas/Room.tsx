@@ -16,7 +16,7 @@ const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index } = props;
-  const { modals, setModals } = useVisibility();
+  const { setModals } = useVisibility();
   const { setNode } = useSelected();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();

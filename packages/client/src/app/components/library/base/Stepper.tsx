@@ -7,11 +7,14 @@ interface Props {
   scale?: number;
   max?: number;
   min?: number;
+  disableInc?: boolean;
+  disableDec?: boolean;
 }
 
 // just a pair of simple control buttons to adjust a value
 export const Stepper = (props: Props) => {
   const { value, set, max, min, scale = 1 } = props;
+  const { disableInc, disableDec } = props;
 
   const handleInc = () => {
     let newValue = value + 1;
@@ -29,15 +32,10 @@ export const Stepper = (props: Props) => {
 
   return (
     <Container scale={scale}>
-      <Button
-        scale={scale}
-        disabled={!!max && value >= max}
-        onClick={handleInc}
-        style={{ borderBottom: `0.15vw solid black` }}
-      >
+      <Button scale={scale} disabled={!!disableInc || (!!max && value >= max)} onClick={handleInc}>
         +
       </Button>
-      <Button scale={scale} disabled={!!min && value <= min} onClick={handleDec}>
+      <Button scale={scale} disabled={!!disableDec || (!!min && value <= min)} onClick={handleDec}>
         -
       </Button>
     </Container>
@@ -46,8 +44,10 @@ export const Stepper = (props: Props) => {
 
 const Container = styled.div<{ scale: number }>`
   border-right: 0.15vw solid black;
+  background-color: black;
   height: 100%;
   width: ${({ scale }) => scale}vw;
+  gap: 0.12vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -68,8 +68,7 @@ const Button = styled.div<{ scale: number; disabled?: boolean }>`
   user-select: none;
 
   color: black;
-  font-size: ${({ scale }) => scale * 0.4}vw;
-  line-height: ${({ scale }) => scale * 0.5}vw;
+  font-size: ${({ scale }) => 0.6 * scale ** 0.5}vw;
   text-align: center;
 
   &:hover {
