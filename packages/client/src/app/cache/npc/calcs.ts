@@ -1,14 +1,5 @@
-import { Components } from 'network/components';
 import { formatItemBalance } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
-import { NPC } from 'network/shapes/Npc';
-import { getBalance } from 'network/shapes/utils/component';
-
-export const refreshListings = (components: Components, npc: NPC) => {
-  npc.listings.forEach((l) => {
-    l.balance = getBalance(components, l.entity);
-  });
-};
 
 // calculate the buy price of a listing based on amt purchased
 export const calcBuyPrice = (listing: Listing, amt: number) => {
