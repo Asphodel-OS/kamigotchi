@@ -52,7 +52,13 @@ export const RecipeCard = (props: Props) => {
   return (
     <Card
       key={recipe.index}
-      image={{ icon: item.image, scale: 7.5, padding: 1, overlay: `${amt * quantity}` }}
+      image={{
+        icon: item.image,
+        scale: 7.5,
+        padding: 1,
+        overlay: `${amt * quantity}`,
+        tooltip: [item.description ?? ''],
+      }}
       fullWidth
     >
       <TitleBar>
