@@ -11,5 +11,6 @@ export { ModalHeader, ModalWrapper } from './modals';
 export { Pairing } from './Pairing';
 export { Popover } from './poppers/Popover';
 export { Tooltip } from './poppers/Tooltip';
+export { Stepper } from './Stepper';
 export { ValidatorWrapper } from './validators/ValidatorWrapper';
 export { Warning } from './Warning';

@@ -11,6 +11,7 @@ export {
   ModalWrapper,
   Pairing,
   Popover,
+  Stepper,
   Tooltip,
   ValidatorWrapper,
   Warning,

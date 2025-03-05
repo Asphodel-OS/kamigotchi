@@ -85,7 +85,6 @@ const Container = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
-  color: white;
+  color: black;
   font-size: ${(props) => props.size}vw;
-  text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
 `;
