@@ -2,6 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
 import { interval, map } from 'rxjs';
 
+import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
@@ -74,6 +75,7 @@ export function registerQuestsModal() {
               describeEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
               getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
+              getItem: (index: number) => getItemByIndex(world, components, index),
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, account.id, index),
               filterByAvailable: (
@@ -98,7 +100,7 @@ export function registerQuestsModal() {
       const { actions, api, notifications } = network;
       const { account, quests } = data;
       const { ongoing, completed, registry } = quests;
-      const { populate, filterByAvailable, filterOutBattlePass } = utils;
+      const { getItem, populate, filterByAvailable, filterOutBattlePass } = utils;
       const { modals } = useVisibility();
 
       const isUpdating = useRef(false);
@@ -161,7 +163,7 @@ export function registerQuestsModal() {
         actions.add({
           action: 'QuestAccept',
           params: [quest.index * 1],
-          description: `Accepting Quest ${quest.name}`,
+          description: `Accepting Quest: ${quest.name}`,
           execute: async () => {
             return api.player.quests.accept(quest.index);
           },
@@ -172,7 +174,7 @@ export function registerQuestsModal() {
         actions.add({
           action: 'QuestComplete',
           params: [quest.id],
-          description: `Completing Quest ${quest.name}`,
+          description: `Completing Quest: ${quest.name}`,
           execute: async () => {
             return api.player.quests.complete(quest.id);
           },
@@ -180,10 +182,16 @@ export function registerQuestsModal() {
       };
 
       const burnQuestItems = async (indices: number[], amts: number[]) => {
+        let description = 'Giving';
+        for (let i = 0; i < indices.length; i++) {
+          const item = getItem(indices[i]);
+          description += ` ${amts[i]} ${item.name}`;
+        }
+
         actions.add({
           action: 'ItemBurn',
           params: [indices, amts],
-          description: `Burning ${indices.length} items`,
+          description,
           execute: async () => {
             return api.player.item.burn(indices, amts);
           },

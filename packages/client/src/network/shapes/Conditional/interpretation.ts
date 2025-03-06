@@ -30,12 +30,12 @@ export const parseConditionalUnits = (con: Condition): [string, string] => {
   return [tar, curr];
 };
 
+const HIDE_PROGRESS_TYPES = ['QUEST', 'ROOM', 'ITEM_BURN'];
 export const parseConditionalTracking = (con: any): string => {
   const [tar, curr] = parseConditionalUnits(con);
 
   if (con.status?.completable) return ` ✓`;
-  return '';
-  const hideProgress = con.target.type == 'QUEST' || con.target.type == 'ROOM';
+  const hideProgress = HIDE_PROGRESS_TYPES.includes(con.target.type);
   return hideProgress ? '' : ` [${curr}/${tar}]`;
 };
 

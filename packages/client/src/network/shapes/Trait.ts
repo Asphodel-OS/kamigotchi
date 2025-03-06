@@ -1,4 +1,11 @@
-import { EntityIndex, Has, World, getComponentValue, runQuery } from '@mud-classic/recs';
+import {
+  EntityIndex,
+  Has,
+  World,
+  getComponentValue,
+  hasComponent,
+  runQuery,
+} from '@mud-classic/recs';
 
 import { Affinity } from 'constants/affinities';
 import { Components } from 'network/';
@@ -10,7 +17,7 @@ import { getAffinity, getName, getRarity } from './utils/component';
 export interface Trait {
   entity: EntityIndex; // entity index of the kami
   name: string;
-  affinity: Affinity;
+  affinity?: Affinity;
   rarity: number;
   stats: Stats;
 }
@@ -42,13 +49,19 @@ export interface TraitEntities {
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
 export const getTrait = (world: World, comps: Components, entity: EntityIndex): Trait => {
-  return {
+  const { BodyIndex, HandIndex } = comps;
+  const trait: Trait = {
     entity,
     name: getName(comps, entity),
-    affinity: getAffinity(comps, entity),
     rarity: getRarity(comps, entity),
     stats: getStats(world, comps, entity),
   };
+
+  if (hasComponent(BodyIndex, entity) || hasComponent(HandIndex, entity)) {
+    trait.affinity = getAffinity(comps, entity);
+  }
+
+  return trait;
 };
 
 export const getTraitByIndex = (

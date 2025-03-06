@@ -99,35 +99,40 @@ export const QuestCard = (props: Props) => {
     if (!show) return <></>;
 
     const index = objective.target.index ?? 0;
-    // const have = (objective.status?.current ?? 0) * 1;
-    const have = (objective.status?.current ?? 0) * 1;
+    const have = getItemBalance(index);
+    const gave = (objective.status?.current ?? 0) * 1;
     const want = (objective.status?.target ?? 0) * 1;
-    const diff = want - have;
+    const diff = want - gave;
 
     if (diff <= 0) return <></>;
 
     const options = [];
-    if (diff > 0) {
+    if (have > 0) {
       options.push({
         text: 'Give 1',
         onClick: () => burnItems([index], [1]),
-        disabled: have < 1,
       });
     }
-    if (diff > 1) {
+    if (diff > have && have > 1) {
       options.push({
-        text: `Give all (${diff})`,
+        text: `Give ${have}`,
+        onClick: () => burnItems([index], [have]),
+      });
+    }
+    if (have >= diff && diff > 1) {
+      options.push({
+        text: `Give ${diff}`,
         onClick: () => burnItems([index], [diff]),
-        disabled: have < diff,
       });
     }
 
     return (
       <ActionListButton
         id={`quest-item-burn-${objective.id}`}
-        text={`[${have}/${want}]`}
+        text={`[${gave}/${want}]`}
         options={options}
         size='small'
+        disabled={have == 0}
       />
     );
   };
@@ -234,4 +239,5 @@ const Image = styled.img<{ size: number }>`
   height: ${({ size }) => size}vw;
   width: ${({ size }) => size}vw;
   margin-right: ${({ size }) => size * 0.2}vw;
+  user-drag: none;
 `;
