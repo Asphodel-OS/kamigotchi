@@ -107,8 +107,9 @@ library LibListing {
       GDAParams memory params = GDAParams(
         ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(id),
         TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id),
-        int256(ScaleComponent(getAddrByID(comps, ScaleCompID)).safeGet(buyID)) * 1e9,
-        int256(DecayComponent(getAddrByID(comps, DecayCompID)).safeGet(buyID)) * 1e9,
+        PeriodComponent(getAddrByID(comps, PeriodCompID)).get(buyID).toUint256(),
+        DecayComponent(getAddrByID(comps, DecayCompID)).get(buyID).toUint256() * 1e12,
+        RateComponent(getAddrByID(comps, RateCompID)).get(buyID),
         BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256(),
         amt
       );

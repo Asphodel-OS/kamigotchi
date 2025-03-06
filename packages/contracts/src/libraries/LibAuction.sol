@@ -15,7 +15,7 @@ import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibGDA, Params2 as GDAParams } from "libraries/utils/LibGDA.sol";
+import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
@@ -52,7 +52,7 @@ library LibAuction {
       uint256(amt)
     );
 
-    int256 costWad = LibGDA.calcPerpetual(params);
+    int256 costWad = LibGDA.calc(params);
     require(costWad > 0, "LibAuction: negative GDA cost");
     return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
   }

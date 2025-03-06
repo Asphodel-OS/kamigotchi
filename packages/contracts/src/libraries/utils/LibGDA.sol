@@ -8,18 +8,9 @@ import { LibFPConverter } from "libraries/utils/LibFPConverter.sol";
 struct Params {
   uint256 targetPrice; // 1e0 precision
   uint256 startTs; // 1e0 precision
-  int256 scale; // 1e18 precision
-  int256 decay; // 1e18 precision
-  uint256 prevSold; // 1e0 precision
-  uint256 quantity; // 1e0 precision (amt to be sold)
-}
-
-struct Params2 {
-  uint256 targetPrice; // 1e0 precision
-  uint256 startTs; // 1e0 precision
   uint256 period; // 1e0 precision (seconds)
-  uint256 decay; // 1e18 precision (pre-scaled up from 1e6)
-  uint256 rate; // 1e0 precision
+  uint256 decay; // 1e18 precision (price decay per period w/ no buys, pre-scaled up from 1e6)
+  uint256 rate; // 1e0 precision (emitted per period for steady pricing)
   uint256 prevSold; // 1e0 precision
   uint256 quantity; // 1e0 precision (amt to be sold)
 }
@@ -31,30 +22,10 @@ library LibGDA {
   using LibFPConverter for int256;
   using LibFPConverter for uint256;
 
-  /// @notice calculate discrete GDA for a given set of parameters
-  /// @dev this function is prone to overflow but is here until we replace the current
-  /// listing buy/sell system calcs with the update VRGDA calcs
+  /// @notice calculate the perpetual discrete GDA (discrete VRGDA) price for a set of params
   /// @param params (noted in GDAParams struct)
   /// @return (1e18) total cost
   function calc(Params memory params) public view returns (int256) {
-    SD59x18 qDelta = params.quantity.rawToSD();
-    SD59x18 qInitial = params.prevSold.rawToSD();
-    SD59x18 pTarget = params.targetPrice.rawToSD();
-    SD59x18 tDelta = block.timestamp.rawToSD() - params.startTs.rawToSD();
-    SD59x18 scaleFactor = params.scale.wadToSD();
-    SD59x18 decayConstant = params.decay.wadToSD();
-
-    SD59x18 num1 = pTarget.mul(scaleFactor.pow(qInitial));
-    SD59x18 num2 = scaleFactor.pow(qDelta) - int256(1).rawToSD();
-    SD59x18 den1 = decayConstant.mul(tDelta).exp();
-    SD59x18 den2 = scaleFactor - int256(1).rawToSD();
-    SD59x18 totalCost = num1.mul(num2).div(den1.mul(den2));
-
-    return totalCost.sdToWad();
-  }
-
-  /// @notice calculate the perpetual discrete GDA for a set of inputs
-  function calcPerpetual(Params2 memory params) public view returns (int256) {
     SD59x18 pTarget = params.targetPrice.rawToSD();
     SD59x18 qInitial = params.prevSold.rawToSD();
     SD59x18 qDelta = params.quantity.rawToSD();

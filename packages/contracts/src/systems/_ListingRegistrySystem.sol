@@ -63,39 +63,38 @@ contract _ListingRegistrySystem is System {
     LibListingRegistry.removePrice(components, sellID);
   }
 
-  function setBuyFixed(uint32 npcIndex, uint32 itemIndex, uint32 currency) public onlyOwner {
+  function setBuyFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.setBuyFixed(components, id, currency);
+    LibListingRegistry.setBuyFixed(components, id);
   }
 
   function setBuyGDA(
     uint32 npcIndex,
     uint32 itemIndex,
-    uint32 currency,
-    int32 scale,
-    int32 decay
+    uint32 period, // (seconds)
+    int32 decay, // compounding decay over a period
+    int32 rate // the rate of purchases per period to negate decay
   ) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.setBuyGDA(components, id, currency, scale, decay);
+    require(period > 0, "period must be positive");
+    require(decay > 0 && decay < 1e6, "decay must be between 0 and 1");
+    require(rate > 0, "rate must be positive");
+    LibListingRegistry.setBuyGDA(components, id, period, decay, rate);
   }
 
-  function setSellFixed(uint32 npcIndex, uint32 itemIndex, uint32 currency) public onlyOwner {
+  function setSellFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.setSellFixed(components, id, currency);
+    LibListingRegistry.setSellFixed(components, id);
   }
 
-  function setSellScaled(
-    uint32 npcIndex,
-    uint32 itemIndex,
-    uint32 currency,
-    int32 scale
-  ) public onlyOwner {
+  function setSellScaled(uint32 npcIndex, uint32 itemIndex, int32 scale) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
-    LibListingRegistry.setSellScaled(components, id, currency, scale);
+    require(0 <= scale && scale <= 1e9, "scale must be between 0 and 1");
+    LibListingRegistry.setSellScaled(components, id, scale);
   }
 
   /////////////////
