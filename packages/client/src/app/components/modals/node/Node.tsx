@@ -32,7 +32,7 @@ import {
 import { queryScavInstance, ScavBar } from 'network/shapes/Scavenge/';
 import { getValue } from 'network/shapes/utils/component';
 import { waitForActionCompletion } from 'network/utils';
-import { Banner } from './header/Banner';
+import { Header } from './header/Header';
 import { Kards } from './kards/Kards';
 
 // live kami data staleness limit in seconds
@@ -240,7 +240,7 @@ export function registerNodeModal() {
         <ModalWrapper
           id='node'
           header={[
-            <Banner
+            <Header
               key='banner'
               data={{ account, node, kamiEntities: kamiEntities.account }}
               actions={{ claim, addKami: (kami) => start(kami, node) }}

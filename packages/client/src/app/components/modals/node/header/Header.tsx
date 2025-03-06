@@ -37,7 +37,7 @@ interface Props {
   };
 }
 
-export const Banner = (props: Props) => {
+export const Header = (props: Props) => {
   const { data, utils, actions } = props;
   const { account, node } = data;
   const { addKami } = actions;
@@ -170,6 +170,7 @@ const Container = styled.div`
   gap: 0.3vw;
   display: flex;
   flex-flow: column nowrap;
+  user-select: none;
 `;
 
 const Content = styled.div`
@@ -184,6 +185,7 @@ const Image = styled.img`
   border: solid black 0.15vw;
   height: 11vw;
   width: 11vw;
+  user-drag: none;
 `;
 
 const Details = styled.div`
