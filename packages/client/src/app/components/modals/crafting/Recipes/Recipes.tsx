@@ -59,4 +59,6 @@ const Container = styled.div`
   flex-flow: row wrap;
   margin-top: 0.6vw;
   gap: 0.6vw;
+
+  user-select: none;
 `;

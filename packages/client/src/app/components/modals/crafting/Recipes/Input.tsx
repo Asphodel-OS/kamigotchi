@@ -34,6 +34,7 @@ const Image = styled.img<{ scale: number }>`
   height: ${({ scale }) => scale * 3}vw;
   position: relative;
   image-rendering: pixelated;
+  user-drag: none;
 `;
 
 const Quantity = styled.div<{ scale: number }>`

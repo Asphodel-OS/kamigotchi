@@ -56,6 +56,7 @@ const Container = styled.div<{ isHidden: boolean }>`
   pointer-events: all;
   z-index: 10;
   overflow: hidden;
+  user-select: none;
 `;
 
 const Image = styled.img`
@@ -63,6 +64,7 @@ const Image = styled.img`
   height: 100%;
   width: 100%;
   align-self: right;
+  user-drag: none;
 `;
 
 const StatusContainer = styled.div`

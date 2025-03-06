@@ -197,6 +197,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
+  user-select: none;
 `;
 
 const Background = styled.img`
