@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
+import { getRarities } from 'constants/rarities';
 import { StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
 import { Trait } from 'network/shapes/Trait';
@@ -8,13 +9,7 @@ import { Trait } from 'network/shapes/Trait';
 interface Props {
   kami: Kami;
 }
-const rarityColors: { [index: string]: string } = {
-  '0x09': '#c9c7c7',
-  '0x08': '#a1c181',
-  '0x07': '#9cbcd2',
-  '0x06': '#bca0ff',
-  '0x04': '#ffb226',
-};
+
 export const Traits = (props: Props) => {
   const statsDetails = new Map(
     Object.entries({
@@ -52,7 +47,7 @@ export const Traits = (props: Props) => {
             const tooltipText = [details?.description ?? ''];
             return (
               <Tooltip key={name} text={tooltipText}>
-                <InfoBox rarity={rarityColors[trait.rarity]}>
+                <InfoBox color={getRarities(trait.rarity).color}>
                   <InfoIcon src={details?.image} />
                   <InfoNumber>{stat.base}</InfoNumber>
                 </InfoBox>
@@ -103,13 +98,13 @@ const Content = styled.div`
   align-items: center;
 `;
 
-const InfoBox = styled.div<{ rarity: string }>`
+const InfoBox = styled.div<{ color: string }>`
   border: solid black 0.12vw;
   border-radius: 5px;
   margin: 0.3vw;
   padding: 0.5vw 1vw;
   gap: 0.5vw;
-  ${({ rarity }) => `background-color: ${rarity ?? 'white'};`}
+  ${({ color }) => `background-color: ${color ?? 'white'};`}
   display: flex;
   flex-direction: row nowrap;
   justify-content: space-between;

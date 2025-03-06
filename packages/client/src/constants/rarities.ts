@@ -1,57 +1,57 @@
 export const getRarities = (tier: number) => {
-  const result = rarities[tier - 1];
-  return result ?? unknownRarity;
+  if (tier > rarities.length + 1) return rarities[0];
+  return rarities[tier];
 };
 
 const rarities = [
   {
+    // 0
+    title: 'UNKNOWN',
+    color: '#C9C7C7',
+  },
+  {
     // 1
     title: 'Legendary',
-    color: '#F6DDCC',
+    color: '#FFB226',
   },
   {
     // 2
     title: 'Legendary',
-    color: '#F6DDCC',
+    color: '#FFB226',
   },
   {
     // 3
     title: 'Legendary',
-    color: '#F6DDCC',
+    color: '#FFB226',
   },
   {
     // 4
     title: 'Legendary',
-    color: '#F6DDCC',
+    color: '#FFB226',
   },
   {
     // 5
-    title: 'Epic',
-    color: '#E8DAEF',
+    title: 'Exotic',
+    color: '#E888EF',
   },
   {
     // 6
-    title: 'Exotic',
-    color: '#D6EAF8',
+    title: 'Epic',
+    color: '#BCA0ff',
   },
   {
     // 7
     title: 'Rare',
-    color: '#D4EFDF',
+    color: '#9CBCD2',
   },
   {
     // 8
     title: 'Uncommon',
-    color: '#F2F3F4',
+    color: '#A1C181',
   },
   {
     // 9
     title: 'Common',
-    color: '#F2F3F4',
+    color: '#C9C7C7',
   },
 ];
-
-const unknownRarity = {
-  title: 'Unknown',
-  color: '#F2F3F4',
-};

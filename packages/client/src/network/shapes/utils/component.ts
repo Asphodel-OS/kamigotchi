@@ -1,8 +1,16 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { BigNumber } from 'ethers';
 
+import { Affinity } from 'constants/affinities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+
+export const getAffinity = (components: Components, entity: EntityIndex): Affinity => {
+  const { Affinity } = components;
+  const result = getComponentValue(Affinity, entity)?.value;
+  if (result === undefined) console.warn('getAffinity(): undefined for entity', entity);
+  return (result ?? 'NORMAL') as Affinity;
+};
 
 export const getBalance = (components: Components, entity: EntityIndex): number => {
   const { Balance } = components;
@@ -78,6 +86,13 @@ export const getPeriod = (components: Components, entity: EntityIndex): number =
   const { Period } = components;
   const result = getComponentValue(Period, entity)?.value;
   if (result === undefined) console.warn('getPeriod(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+export const getRarity = (components: Components, entity: EntityIndex): number => {
+  const { Rarity } = components;
+  const result = getComponentValue(Rarity, entity)?.value;
+  if (result === undefined) console.warn('getRarity(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 
@@ -157,23 +172,33 @@ export const getIsComplete = (components: Components, entity: EntityIndex): bool
 
 export const getKeys = (components: Components, entity: EntityIndex): number[] => {
   const { Keys } = components;
-  const result = getComponentValue(Keys, entity)?.value;
-  if (result === undefined) console.warn('getKeys(): undefined for entity', entity);
-  return result ?? [];
+  const results = getComponentValue(Keys, entity)?.value;
+  if (results === undefined) {
+    console.warn('getKeys(): undefined for entity', entity);
+    return [];
+  }
+  return results.map((result) => result * 1);
 };
 
 export const getValues = (components: Components, entity: EntityIndex): number[] => {
   const { Values } = components;
-  const result = getComponentValue(Values, entity)?.value;
-  if (result === undefined) console.warn('getValues(): undefined for entity', entity);
-  return result ?? [];
+  const results = getComponentValue(Values, entity)?.value;
+  if (results === undefined) {
+    console.warn('getValues(): undefined for entity', entity);
+    return [];
+  }
+  return results.map((result) => result * 1);
 };
 
 export const getWeights = (components: Components, entity: EntityIndex): number[] => {
   const { Weights } = components;
-  const result = getComponentValue(Weights, entity)?.value;
-  if (result === undefined) console.warn('getWeights(): undefined for entity', entity);
-  return result ?? [];
+  const results = getComponentValue(Weights, entity)?.value;
+  if (results === undefined) {
+    console.warn('getWeights(): undefined for entity', entity);
+    return [];
+  }
+
+  return results.map((result) => result * 1);
 };
 
 ////////////////

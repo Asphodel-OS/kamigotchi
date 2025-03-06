@@ -4,6 +4,7 @@ import { Affinity } from 'constants/affinities';
 import { Components } from 'network/';
 import { NullStats, Stats, getStats } from './Stats';
 import { getEntityByHash } from './utils';
+import { getAffinity, getName, getRarity } from './utils/component';
 
 // standardized shape of Traits on an Entity
 export interface Trait {
@@ -40,32 +41,31 @@ export interface TraitEntities {
 
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
-export const getTrait = (world: World, components: Components, entity: EntityIndex): Trait => {
-  const { Affinity, Name, Rarity } = components;
+export const getTrait = (world: World, comps: Components, entity: EntityIndex): Trait => {
   return {
     entity,
-    name: getComponentValue(Name, entity)?.value || ('' as string),
-    affinity: (getComponentValue(Affinity, entity)?.value ?? '') as Affinity,
-    rarity: getComponentValue(Rarity, entity)?.value || (0 as number),
-    stats: getStats(world, components, entity),
+    name: getName(comps, entity),
+    affinity: getAffinity(comps, entity),
+    rarity: getRarity(comps, entity),
+    stats: getStats(world, comps, entity),
   };
 };
 
 export const getTraitByIndex = (
   world: World,
-  components: Components,
+  comps: Components,
   index: number,
   type: string
 ): Trait => {
   const entity = getRegistryEntity(world, index, type);
   if (!entity) return NullTrait;
 
-  return getTrait(world, components, entity);
+  return getTrait(world, comps, entity);
 };
 
 // get all the Traits from the registry
-export const getRegistryTraits = (world: World, components: Components): Trait[] => {
-  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = components;
+export const getRegistryTraits = (world: World, comps: Components): Trait[] => {
+  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = comps;
 
   const entityIndices = [
     ...Array.from(runQuery([Has(IsRegistry), Has(BackgroundIndex)])),
@@ -74,33 +74,23 @@ export const getRegistryTraits = (world: World, components: Components): Trait[]
     ...Array.from(runQuery([Has(IsRegistry), Has(FaceIndex)])),
     ...Array.from(runQuery([Has(IsRegistry), Has(HandIndex)])),
   ];
-  return entityIndices.map((index) => getTrait(world, components, index));
+  return entityIndices.map((index) => getTrait(world, comps, index));
 };
 
 // get the Traits object from a TraitEntities object of EntityIndices
-export const getTraits = (world: World, components: Components, indices: TraitEntities): Traits => {
+export const getTraits = (world: World, comps: Components, indices: TraitEntities): Traits => {
   return {
-    background: getTrait(world, components, indices.background),
-    body: getTrait(world, components, indices.body),
-    color: getTrait(world, components, indices.color),
-    face: getTrait(world, components, indices.face),
-    hand: getTrait(world, components, indices.hand),
+    background: getTrait(world, comps, indices.background),
+    body: getTrait(world, comps, indices.body),
+    color: getTrait(world, comps, indices.color),
+    face: getTrait(world, comps, indices.face),
+    hand: getTrait(world, comps, indices.hand),
   };
 };
 
-// get the traits of a kami entity
-export const getKamiTraits = (
-  world: World,
-  components: Components,
-  entity: EntityIndex
-): Traits => {
-  const traitEntities = queryTraitsForKami(world, components, entity);
-  return getTraits(world, components, traitEntities);
-};
-
 // query for the trait registry entities for a kami entity
-export const queryTraitsForKami = (world: World, components: Components, entity: EntityIndex) => {
-  const { BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = components;
+export const queryTraitsForKami = (world: World, comps: Components, entity: EntityIndex) => {
+  const { BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = comps;
   const backgroundIndex = getComponentValue(BackgroundIndex, entity)?.value as number;
   const bodyIndex = getComponentValue(BodyIndex, entity)?.value as number;
   const colorIndex = getComponentValue(ColorIndex, entity)?.value as number;
