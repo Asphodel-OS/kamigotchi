@@ -99,30 +99,33 @@ export const QuestCard = (props: Props) => {
     if (!show) return <></>;
 
     const index = objective.target.index ?? 0;
-    const need = (objective.status?.target ?? 0) - (objective.status?.current ?? 0);
-    if (need <= 0) return <></>;
+    // const have = (objective.status?.current ?? 0) * 1;
+    const have = (objective.status?.current ?? 0) * 1;
+    const want = (objective.status?.target ?? 0) * 1;
+    const diff = want - have;
 
-    const have = getItemBalance(index);
+    if (diff <= 0) return <></>;
+
     const options = [];
-    if (need > 0) {
+    if (diff > 0) {
       options.push({
         text: 'Give 1',
         onClick: () => burnItems([index], [1]),
         disabled: have < 1,
       });
     }
-    if (need > 1) {
+    if (diff > 1) {
       options.push({
-        text: `Give all (${need})`,
-        onClick: () => burnItems([index], [need]),
-        disabled: have < need,
+        text: `Give all (${diff})`,
+        onClick: () => burnItems([index], [diff]),
+        disabled: have < diff,
       });
     }
 
     return (
       <ActionListButton
         id={`quest-item-burn-${objective.id}`}
-        text=''
+        text={`[${have}/${want}]`}
         options={options}
         size='small'
       />
@@ -143,8 +146,8 @@ export const QuestCard = (props: Props) => {
         <SubTitle>Objectives</SubTitle>
         {quest.objectives.map((o) => (
           <Row key={o.id}>
-            <ConditionText>{getObjectiveText(o)}</ConditionText>
             {ItemBurnButton(o)}
+            <ConditionText>{getObjectiveText(o)}</ConditionText>
           </Row>
         ))}
       </Section>
