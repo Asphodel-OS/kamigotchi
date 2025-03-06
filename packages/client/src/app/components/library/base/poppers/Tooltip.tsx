@@ -150,8 +150,8 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
   line-height: 1.25vw;
 
   white-space: pre-line;
+  z-index: 1;
 
   pointer-events: none;
-
-  z-index: 100;
+  user-select: none;
 `;

@@ -104,6 +104,7 @@ const Image = styled.img<{ scale: number; orientation: string }>`
   width: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
   height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
   ${({ scale }) => (scale > 4.5 ? 'image-rendering: pixelated;' : '')}
+  user-drag: none;
 `;
 
 const Text = styled.div<{ scale: number; orientation: string }>`

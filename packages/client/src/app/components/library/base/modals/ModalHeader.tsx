@@ -10,14 +10,14 @@ export const ModalHeader = (props: Props) => {
   const { icon, title } = props;
 
   return (
-    <Wrapper>
+    <Container>
       {icon && <Image src={icon} alt={title} />}
       <Title>{title}</Title>
-    </Wrapper>
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
+const Container = styled.div`
   padding: 0.6vw 1vw;
   gap: 0.7vw;
   line-height: 1.5vw;
@@ -26,6 +26,7 @@ const Wrapper = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-start;
+  user-select: none;
 `;
 
 const Title = styled.div`
@@ -38,4 +39,5 @@ const Title = styled.div`
 const Image = styled.img`
   height: 2vw;
   width: auto;
+  user-drag: none;
 `;

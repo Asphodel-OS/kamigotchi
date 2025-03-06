@@ -127,4 +127,5 @@ const Entry = styled.div<{ disabled?: boolean }>`
 
 const Icon = styled.img`
   width: 1.4vw;
+  user-drag: none;
 `;

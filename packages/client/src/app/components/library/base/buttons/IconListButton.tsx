@@ -108,4 +108,5 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 
 const MenuIcon = styled.img`
   height: 1.4vw;
+  user-drag: none;
 `;
