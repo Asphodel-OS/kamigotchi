@@ -56,6 +56,7 @@ export function registerActionQueue() {
 
 const Wrapper = styled.div`
   align-items: left;
+  user-select: none;
 `;
 
 // cancer. just absolute cancer

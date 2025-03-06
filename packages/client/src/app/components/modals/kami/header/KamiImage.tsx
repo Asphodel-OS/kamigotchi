@@ -33,7 +33,7 @@ export const KamiImage = (props: Props) => {
   const progress = kami.progress;
   const expCurr = progress ? progress.experience : 0;
   const expLimit = progress ? calcExpRequirement(progress.level) : 40;
-  const percentage = Math.round((expCurr / expLimit) * 1000) / 10;
+  const percentage = Math.floor((expCurr / expLimit) * 1000) / 10;
 
   const getLevelTooltip = () => {
     if (owner.index != account.index) return 'not ur kami';
@@ -88,6 +88,7 @@ const Image = styled.img`
   border-radius: 0.6vw;
   height: 100%;
   image-rendering: pixelated;
+  user-drag: none;
 `;
 
 const Grouping = styled.div`
@@ -164,4 +165,5 @@ const Button = styled.div<ButtonProps>`
   color: black;
   font-size: 0.8vw;
   text-align: center;
+  user-select: none;
 `;

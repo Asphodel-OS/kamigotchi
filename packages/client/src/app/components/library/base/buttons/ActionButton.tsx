@@ -1,5 +1,6 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
+import { pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 import { Tooltip } from '../poppers/Tooltip';
 
@@ -116,15 +117,6 @@ const Button = styled.button`
   }
 `;
 
-const Pulse = keyframes`
-  0%, 80%, 90%, 100% {
-    background-color: #ffffff;
-  }
-  85%, 95% {
-    background-color: #e8e8e8;
-  }
-`;
-
 const PulseButton = styled(Button)`
-  animation: ${Pulse} 3s ease-in-out infinite;
+  animation: ${pulseFx} 3s ease-in-out infinite;
 `;

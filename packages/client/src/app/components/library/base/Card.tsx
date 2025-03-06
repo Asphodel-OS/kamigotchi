@@ -76,6 +76,9 @@ const Image = styled.img<{ onClick?: () => void }>`
   &:hover {
     opacity: 0.75;
   }
+  user-drag: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
 `;
 
 const Container = styled.div`

@@ -46,6 +46,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  user-select: none;
 `;
 
 const Button = styled.button`
@@ -61,14 +62,14 @@ const Button = styled.button`
 
   cursor: pointer;
   pointer-events: auto;
-  &:active {
-    background-color: #111;
-  }
   &:hover {
     background-color: #ddd;
   }
+  &:active {
+    background-color: #bbb;
+  }
   &:disabled {
-    background-color: #b2b2b2;
+    background-color: #bbb;
     cursor: default;
     pointer-events: none;
   }

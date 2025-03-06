@@ -68,4 +68,5 @@ const Image = styled.img`
   height: 100%;
   width: auto;
   padding: 0.15vh;
+  user-drag: none;
 `;

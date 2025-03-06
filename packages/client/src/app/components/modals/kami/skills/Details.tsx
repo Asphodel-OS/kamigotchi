@@ -182,6 +182,7 @@ const Image = styled.img`
 
   border: solid black 0.15vw;
   border-radius: 0.5vw;
+  user-drag: none;
 `;
 
 const NameSection = styled.div`

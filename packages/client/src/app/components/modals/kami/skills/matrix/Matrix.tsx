@@ -100,6 +100,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
+  user-select: none;
 `;
 
 const Content = styled.div`

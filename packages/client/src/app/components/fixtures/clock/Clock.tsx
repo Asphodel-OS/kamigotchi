@@ -200,6 +200,7 @@ const Container = styled.div<{ width: number; height: number }>`
     }
     return `transform: scale(${scale});bottom: ${scale * 22}vh;`;
   }}
+  user-select: none;
 `;
 
 const Circle = styled.div<{ rotation: number }>`

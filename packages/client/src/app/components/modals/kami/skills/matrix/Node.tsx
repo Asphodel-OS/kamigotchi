@@ -81,6 +81,7 @@ const Image = styled.img`
   width: 100%;
   image-rendering: pixelated;
   pointer-events: auto;
+  user-drag: none;
 `;
 
 const hover = keyframes`

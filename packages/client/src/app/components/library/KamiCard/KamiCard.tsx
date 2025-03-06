@@ -136,6 +136,7 @@ const Content = styled.div`
   align-items: stretch;
 
   padding: 0.2vw;
+  user-select: none;
 `;
 
 const ContentColumn = styled.div`

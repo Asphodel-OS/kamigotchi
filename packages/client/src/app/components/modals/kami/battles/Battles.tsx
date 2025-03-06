@@ -178,6 +178,7 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
+  user-select: none;
 `;
 
 const Cell = styled.div`

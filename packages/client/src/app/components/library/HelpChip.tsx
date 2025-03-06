@@ -18,6 +18,7 @@ export const HelpChip = (props: Props) => {
 
 const Icon = styled.img<{ size: string }>`
   margin: 0.1vh 0.5vw;
+  user-drag: none;
 
   ${({ size }) => {
     if (size === 'small')

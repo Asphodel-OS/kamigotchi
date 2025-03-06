@@ -118,6 +118,7 @@ const Container = styled.div`
   border-bottom: solid black 0.15vw;
   display: flex;
   flex-flow: row nowrap;
+  user-select: none;
 `;
 
 const Content = styled.div`
@@ -232,6 +233,7 @@ const Icon = styled.img<{ size: number }>`
   height: ${(props) => props.size}vw;
   width: ${(props) => props.size}vw;
   filter: drop-shadow(0 0 0.2vw #bbb);
+  user-drag: none;
 `;
 
 const Footer = styled.div`

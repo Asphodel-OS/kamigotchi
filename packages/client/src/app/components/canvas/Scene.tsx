@@ -92,6 +92,7 @@ const Wrapper = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
+  user-select: none;
 `;
 
 const Container = styled.div`
