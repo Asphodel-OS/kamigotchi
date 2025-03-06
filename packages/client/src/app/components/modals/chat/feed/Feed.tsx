@@ -7,9 +7,14 @@ import { Account } from 'app/cache/account';
 import { Kami } from 'app/cache/kami';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
-import { getClient } from 'clients/kamiden/client';
+import {
+  getKamidenClient,
+  HarvestEnd,
+  Message as KamiMessage,
+  Kill,
+  Movement,
+} from 'clients/kamiden';
 import { subscribeToFeed, subscribeToMessages } from 'clients/kamiden/subscriptions';
-import { HarvestEnd, Message as KamiMessage, Kill, Movement } from 'engine/types/kamiden/kamiden';
 import { formatEntityID } from 'engine/utils';
 import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
@@ -39,7 +44,7 @@ interface Props {
   };
 }
 
-const client = getClient();
+const client = getKamidenClient();
 export const Feed = (props: Props) => {
   const { utils, player, blocked, actionSystem, api, activeTab, setActiveTab } = props;
   const { getAccount, getEntityIndex, getKami, getRoomByIndex } = props.utils;
@@ -318,6 +323,7 @@ const Buttons = styled.div`
 const Messages = styled.div`
   width: 100%;
 `;
+
 // disabled { z-index: 2;
 //hover {  cursor: pointer;
 const Button = styled.button<{ position: number }>`
@@ -348,12 +354,14 @@ const PollingMessage = styled.div`
   color: #666;
   font-style: italic;
 `;
+
 const FeedTab = styled.div`
   line-height: 1.3vw;
   text-align: justify;
   word-break: break-all;
   width: 100%;
 `;
+
 const FeedTabMessage = styled.div<{ color: string }>`
   color: black;
   width: 100%;
@@ -363,6 +371,7 @@ const FeedTabMessage = styled.div<{ color: string }>`
     ${({ color }) => `color: ${color} `};
   }
 `;
+
 const Musu = styled.img`
   bottom: -0.1vw;
   position: relative;
