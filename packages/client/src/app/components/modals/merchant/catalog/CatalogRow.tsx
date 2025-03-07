@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { calcListingBuyPrice } from 'app/cache/npc';
 import { Tooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
-import { ItemImages } from 'assets/images/items';
 import { Listing } from 'network/shapes/Listing';
+import { getItemImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
 
@@ -36,7 +36,7 @@ export const CatalogRow = (props: Props) => {
         <Details>
           <Text>{listing.item.name}</Text>
           <Text>
-            <Icon src={ItemImages.musu} />
+            <Icon src={getItemImage(listing.payItem.name)} />
             {calcListingBuyPrice(listing, 1)}
           </Text>
         </Details>{' '}

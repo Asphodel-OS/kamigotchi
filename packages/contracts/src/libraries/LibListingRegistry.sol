@@ -75,14 +75,14 @@ library LibListingRegistry {
   /// @notice set the buy price of a listing as the Value of the Listing Entity
   function setBuyFixed(IUintComp comps, uint256 id) internal {
     uint256 priceID = genBuyID(id);
-    setType(comps, id, "FIXED");
+    setType(comps, priceID, "FIXED");
   }
 
   /// @notice set the requisite pricing variables for GDA price
   /// @dev scale: 1e9 precision -- decay: 1e9 precision
   function setBuyGDA(IUintComp comps, uint256 id, int32 period, int32 decay, int32 rate) internal {
     uint256 priceID = genBuyID(id);
-    setType(comps, id, "GDA");
+    setType(comps, priceID, "GDA");
     PeriodComponent(getAddrByID(comps, PeriodCompID)).set(priceID, period);
     DecayComponent(getAddrByID(comps, DecayCompID)).set(priceID, decay);
     RateComponent(getAddrByID(comps, RateCompID)).set(priceID, rate.toUint256());
@@ -91,7 +91,7 @@ library LibListingRegistry {
   /// @notice set the sell price of a listing as the Value of the Listing Entity
   function setSellFixed(IUintComp comps, uint256 id) internal {
     uint256 priceID = genSellID(id);
-    setType(comps, id, "FIXED");
+    setType(comps, priceID, "FIXED");
   }
 
   /// @notice set the sell price of a listing as a scaled value of the buy price
@@ -99,7 +99,7 @@ library LibListingRegistry {
   /// @dev we ensure interpreted scale within bounds to avoid economic vulns
   function setSellScaled(IUintComp comps, uint256 id, int32 scale) internal {
     uint256 priceID = genSellID(id);
-    setType(comps, id, "SCALED");
+    setType(comps, priceID, "SCALED");
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(priceID, scale);
   }
 

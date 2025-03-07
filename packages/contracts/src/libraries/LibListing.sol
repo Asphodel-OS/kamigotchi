@@ -116,7 +116,7 @@ library LibListing {
         amt
       );
       int256 costWad = LibGDA.calc(params);
-      require(costWad > 0, "LibListing: negative GDA cost");
+      require(costWad > 0, "LibListing: non-positive GDA cost");
       return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
     } else revert("LibListing: invalid buy type");
   }

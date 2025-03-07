@@ -46,8 +46,8 @@ export const get = (world: World, comps: Components, entity: EntityIndex): Listi
   // set pricing entities if they exist
   const buyEntity = genBuyEntity(world, id);
   const sellEntity = genSellEntity(world, id);
-  if (buyEntity) listing.buy = getPricing(world, comps, buyEntity);
-  if (sellEntity) listing.sell = getPricing(world, comps, sellEntity);
+  if (buyEntity) listing.buy = getPricing(comps, buyEntity);
+  if (sellEntity) listing.sell = getPricing(comps, sellEntity);
 
   return listing;
 };

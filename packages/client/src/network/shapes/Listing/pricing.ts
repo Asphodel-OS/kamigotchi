@@ -14,7 +14,7 @@ export interface Pricing {
   scale?: number;
 }
 
-export const getPricing = (world: World, comps: Components, entity: EntityIndex): Pricing => {
+export const getPricing = (comps: Components, entity: EntityIndex): Pricing => {
   const pricing: Pricing = {
     type: getType(comps, entity) as PriceType,
   };

@@ -2,6 +2,7 @@ import { formatItemBalance } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
 
 // calculate the buy price of a listing based on amt purchased
+// TODO: determine rounding rules for erc20 denominations
 export const calcBuyPrice = (listing: Listing, amt: number) => {
   if (!listing.buy || amt == 0) return 0;
   const pricing = listing.buy;
@@ -9,7 +10,7 @@ export const calcBuyPrice = (listing: Listing, amt: number) => {
   const value = formatItemBalance(listing.payItem, listing.value); // handle ERC20 decimals before calc
 
   let result = 0;
-  if (type === 'FIXED') result = value * amt;
+  if (type === 'FIXED') result = Math.round(value * amt * 100) / 100;
   else if (type === 'GDA') result = calcBuyPriceGDA(listing, amt);
   else console.warn('calcBuyPrice(): invalid pricing type', pricing);
 
@@ -17,6 +18,7 @@ export const calcBuyPrice = (listing: Listing, amt: number) => {
 };
 
 // assume we are processing a listing with a GDA-based buy price
+// TODO: determine rounding rules for erc20 denominations
 export const calcBuyPriceGDA = (listing: Listing, amt: number) => {
   const value = formatItemBalance(listing.payItem, listing.value);
   const now = Date.now() / 1000;
