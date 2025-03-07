@@ -33,12 +33,12 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
         const type = String(price['Type']);
         if (type === 'FIXED') await setBuy.fixed(npcIndex, itemIndex);
         else if (type === 'GDA') {
-          const period = Number(row['Period']);
-          const decay = Math.round(Number(row['Decay']) * 1e6);
-          const rate = Number(row['Rate']);
+          const period = Number(price['Period']);
+          const decay = Math.round(Number(price['Decay']) * 1e6);
+          const rate = Number(price['Rate']);
           await setBuy.gda(npcIndex, itemIndex, period, decay, rate, false);
         }
-        // console.log(`  set buy price ${buyKey}`);
+        console.log(`  set buy price ${buyKey}`);
       } else console.warn(`  Buy Price not found for ref ${buyKey}`);
     }
 
@@ -53,7 +53,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
           const scale = Math.round(Number(price['Scale']) * 1e9);
           await setSell.scaled(npcIndex, itemIndex, scale);
         }
-        // console.log(`  set sell price ${sellKey}`);
+        console.log(`  set sell price ${sellKey}`);
       } else console.warn(`  Sell Price not found for ref ${sellKey}`);
     }
 
@@ -80,9 +80,9 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
 
       const setRequirement = api.listing.set.requirement;
       setRequirement(npcIndex, itemIndex, reqType, reqLogic, reqIndex, reqValue, '');
-      // console.log(`  set requirement ${key}`);
-      // console.log(`    type: ${reqType}, logic: ${reqLogic}`);
-      // console.log(`    index: ${reqIndex}, value: ${reqValue}`);
+      console.log(`  set requirement ${key}`);
+      console.log(`    type: ${reqType}, logic: ${reqLogic}`);
+      console.log(`    index: ${reqIndex}, value: ${reqValue}`);
     }
   }
 }
