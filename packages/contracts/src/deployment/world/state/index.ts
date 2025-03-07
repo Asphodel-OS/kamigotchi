@@ -67,7 +67,7 @@ export { deleteFactions, initFactions, reviseFactions } from './factions';
 export { initGachaPool, mintToGachaPool } from './gacha';
 export { deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
-export { deleteListings, initListings, refreshListing, reviseListings } from './listings';
+export { deleteListings, initListings, reviseListings } from './listings';
 export { deleteNodes, initNodes, reviseNodes } from './nodes';
 export { initNpcs } from './npcs';
 export { deleteQuests, initLocalQuests, initQuests, reviseQuests } from './quests';

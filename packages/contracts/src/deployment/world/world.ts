@@ -32,7 +32,6 @@ import {
   initSkills,
   initTraits,
   mintToGachaPool,
-  refreshListing,
   reviseAuctions,
   reviseFactions,
   reviseItems,
@@ -105,7 +104,6 @@ export class WorldState {
     listings: {
       init: (indices?: number[]) => this.genCalls((api) => initListings(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteListings(api, indices || [])),
-      refresh: (itemIndex: number) => this.genCalls((api) => refreshListing(api, 1, itemIndex, 0)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseListings(api, indices)),
     },
     npcs: {
