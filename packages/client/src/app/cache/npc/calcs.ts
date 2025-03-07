@@ -18,14 +18,19 @@ export const calcBuyPrice = (listing: Listing, amt: number) => {
 
 // assume we are processing a listing with a GDA-based buy price
 export const calcBuyPriceGDA = (listing: Listing, amt: number) => {
-  const pricing = listing.buy!;
-
   const value = formatItemBalance(listing.payItem, listing.value);
   const now = Date.now() / 1000;
-  const period = pricing?.period ?? 3600.0;
-  const decay = pricing?.decay ?? 0.0;
-  const rate = pricing?.rate ?? 0.0;
+
+  const pricing = listing.buy!;
+  const period = pricing?.period;
+  const decay = pricing?.decay;
+  const rate = pricing?.rate;
   const prevSold = listing.balance;
+
+  if (!period || !decay || !rate) {
+    console.warn('calcBuyPriceGDA(): invalid GDA pricing for listing', listing);
+    return 0;
+  }
 
   const tDelta = (now - listing.startTime) / period; // # periods
 
