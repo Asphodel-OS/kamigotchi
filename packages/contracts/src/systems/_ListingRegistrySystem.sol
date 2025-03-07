@@ -16,9 +16,9 @@ contract _ListingRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function create(bytes memory arguments) public onlyOwner returns (uint256) {
-    (uint32 npcIndex, uint32 itemIndex, uint256 value) = abi.decode(
+    (uint32 npcIndex, uint32 itemIndex, uint32 currencyIndex, uint256 value) = abi.decode(
       arguments,
-      (uint32, uint32, uint256)
+      (uint32, uint32, uint32, uint256)
     );
 
     require(LibNPC.get(components, npcIndex) != 0, "NPC: does not exist");
@@ -27,7 +27,7 @@ contract _ListingRegistrySystem is System {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id == 0, "Listing already exists");
 
-    id = LibListingRegistry.create(components, npcIndex, itemIndex, value);
+    id = LibListingRegistry.create(components, npcIndex, itemIndex, currencyIndex, value);
     return id;
   }
 
@@ -36,14 +36,6 @@ contract _ListingRegistrySystem is System {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
     LibListingRegistry.remove(components, id);
-  }
-
-  // refresh a listing's tracked balance and start time
-  // optionally update the target value if a non-zero value is provided
-  function refresh(uint32 npcIndex, uint32 itemIndex, uint256 value) public onlyOwner {
-    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
-    require(id != 0, "Listing does not exist");
-    LibListingRegistry.refresh(components, id, value);
   }
 
   /////////////////
@@ -72,16 +64,20 @@ contract _ListingRegistrySystem is System {
   function setBuyGDA(
     uint32 npcIndex,
     uint32 itemIndex,
-    uint32 period, // (seconds)
+    int32 period, // (seconds)
     int32 decay, // compounding decay over a period
-    int32 rate // the rate of purchases per period to negate decay
+    int32 rate, // the rate of purchases per period to negate decay
+    bool reset // whether to reset the tracking values (balance, timeStart)
   ) public onlyOwner {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
+
     require(period > 0, "period must be positive");
     require(decay > 0 && decay < 1e6, "decay must be between 0 and 1");
     require(rate > 0, "rate must be positive");
+
     LibListingRegistry.setBuyGDA(components, id, period, decay, rate);
+    if (reset) LibListingRegistry.reset(components, id);
   }
 
   function setSellFixed(uint32 npcIndex, uint32 itemIndex) public onlyOwner {
@@ -117,12 +113,8 @@ contract _ListingRegistrySystem is System {
     uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
     require(id != 0, "Listing does not exist");
 
-    LibListingRegistry.setRequirement(
-      world,
-      components,
-      id,
-      Condition(reqType, logicType, index, value, condFor)
-    );
+    Condition memory condition = Condition(reqType, logicType, index, value, condFor);
+    LibListingRegistry.setRequirement(world, components, id, condition);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

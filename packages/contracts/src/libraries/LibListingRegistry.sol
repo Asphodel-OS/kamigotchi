@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.28;
 
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { IndexCurrencyComponent, ID as IndexCurrencyCompID } from "components/IndexCurrencyComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
@@ -27,7 +29,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  *  - EntityType: LISTING
  *  - IndexNPC: the merchant's npc index
  *  - IndexItem: the item index
- *  - Index???: index of item used as currency of exchange
+ *  - IndexCurrency: index of item used as currency of exchange
  *  - Value: the target price of the listing (not necessarily the actual price)
  *  - Balance: the number of units bought or sold
  *  - TimeStart: the time the item was created
@@ -41,6 +43,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  */
 library LibListingRegistry {
   using LibComp for IUintComp;
+  using SafeCastLib for int32;
 
   ////////////
   // SHAPES
@@ -57,32 +60,38 @@ library LibListingRegistry {
     LibEntityType.set(comps, id, "LISTING");
     IndexNPCComponent(getAddrByID(comps, IndexNPCComponentID)).set(id, npcIndex);
     IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, itemIndex);
-    // pay item index
+    IndexCurrencyComponent(getAddrByID(comps, IndexCurrencyCompID)).set(id, currencyIndex);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, value);
   }
 
+  // reset the tracking values on a listing, used to adjust dynamic pricing without nuking
+  function reset(IUintComp comps, uint256 id) internal {
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
+    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
+  }
+
   /// @notice set the buy price of a listing as the Value of the Listing Entity
   function setBuyFixed(IUintComp comps, uint256 id) internal {
     uint256 priceID = genBuyID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(priceID, "FIXED");
+    setType(comps, id, "FIXED");
   }
 
   /// @notice set the requisite pricing variables for GDA price
   /// @dev scale: 1e9 precision -- decay: 1e9 precision
   function setBuyGDA(IUintComp comps, uint256 id, int32 period, int32 decay, int32 rate) internal {
     uint256 priceID = genBuyID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(priceID, "GDA");
+    setType(comps, id, "GDA");
     PeriodComponent(getAddrByID(comps, PeriodCompID)).set(priceID, period);
     DecayComponent(getAddrByID(comps, DecayCompID)).set(priceID, decay);
-    RateComponent(getAddrByID(comps, RateCompID)).set(priceID, rate);
+    RateComponent(getAddrByID(comps, RateCompID)).set(priceID, rate.toUint256());
   }
 
   /// @notice set the sell price of a listing as the Value of the Listing Entity
-  function setSellFixed(IUintComp comps, uint256 id, uint32 currency) internal {
+  function setSellFixed(IUintComp comps, uint256 id) internal {
     uint256 priceID = genSellID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(priceID, "FIXED");
+    setType(comps, id, "FIXED");
   }
 
   /// @notice set the sell price of a listing as a scaled value of the buy price
@@ -90,7 +99,7 @@ library LibListingRegistry {
   /// @dev we ensure interpreted scale within bounds to avoid economic vulns
   function setSellScaled(IUintComp comps, uint256 id, int32 scale) internal {
     uint256 priceID = genSellID(id);
-    TypeComponent(getAddrByID(comps, TypeCompID)).set(priceID, "SCALED");
+    setType(comps, id, "SCALED");
     ScaleComponent(getAddrByID(comps, ScaleCompID)).set(priceID, scale);
   }
 
@@ -110,6 +119,7 @@ library LibListingRegistry {
     LibEntityType.remove(comps, id);
     IndexNPCComponent(getAddrByID(comps, IndexNPCComponentID)).remove(id);
     IndexItemComponent(getAddrByID(comps, IndexItemCompID)).remove(id);
+    IndexCurrencyComponent(getAddrByID(comps, IndexCurrencyCompID)).remove(id);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).remove(id);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
@@ -146,15 +156,18 @@ library LibListingRegistry {
     return LibEntityType.isShape(comps, id, "LISTING") ? id : 0;
   }
 
-  function getBuyCurrency(IUintComp comps, uint256 listingID) internal view returns (uint32) {
-    return IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(genBuyID(listingID));
+  function getCurrencyIndex(IUintComp comps, uint256 listingID) internal view returns (uint32) {
+    return IndexCurrencyComponent(getAddrByID(comps, IndexCurrencyCompID)).get(listingID);
   }
 
-  function getSellCurrency(IUintComp comps, uint256 listingID) internal view returns (uint32) {
-    return IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(genSellID(listingID));
+  /////////////////
+  // SETTERS
+
+  function setType(IUintComp comps, uint256 id, string memory type_) internal {
+    TypeComponent(getAddrByID(comps, TypeCompID)).set(id, type_);
   }
 
-  //////////////////
+  /////////////////
   // UTILS
 
   function genID(uint32 merchantIndex, uint32 itemIndex) internal pure returns (uint256) {

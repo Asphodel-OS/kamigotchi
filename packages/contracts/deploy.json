@@ -40,6 +40,7 @@
     { "comp": "IndexBackground", "name": "BackgroundIndex", "type": "uint32" },
     { "comp": "IndexBody", "name": "BodyIndex", "type": "uint32" },
     { "comp": "IndexColor", "name": "ColorIndex", "type": "uint32" },
+    { "comp": "IndexCurrency", "name": "CurrencyIndex", "type": "uint32" },
     { "comp": "IndexFace", "name": "FaceIndex", "type": "uint32" },
     { "comp": "IndexFaction", "name": "FactionIndex", "type": "uint32" },
     { "comp": "IndexHand", "name": "HandIndex", "type": "uint32" },

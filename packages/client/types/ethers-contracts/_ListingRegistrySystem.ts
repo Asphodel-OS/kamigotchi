@@ -38,16 +38,15 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "refresh(uint32,uint32,uint256)": FunctionFragment;
     "remove(uint32,uint32)": FunctionFragment;
     "removeBuy(uint32,uint32)": FunctionFragment;
     "removeSell(uint32,uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "setBuyFixed(uint32,uint32,uint32)": FunctionFragment;
-    "setBuyGDA(uint32,uint32,uint32,int32,int32)": FunctionFragment;
-    "setSellFixed(uint32,uint32,uint32)": FunctionFragment;
-    "setSellScaled(uint32,uint32,uint32,int32)": FunctionFragment;
+    "setBuyFixed(uint32,uint32)": FunctionFragment;
+    "setBuyGDA(uint32,uint32,int32,int32,int32,bool)": FunctionFragment;
+    "setSellFixed(uint32,uint32)": FunctionFragment;
+    "setSellScaled(uint32,uint32,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -61,7 +60,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
       | "execute"
       | "owner"
       | "ownershipHandoverExpiresAt"
-      | "refresh"
       | "remove"
       | "removeBuy"
       | "removeSell"
@@ -101,14 +99,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "refresh",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "remove",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -130,11 +120,7 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setBuyFixed",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setBuyGDA",
@@ -143,21 +129,17 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "setSellFixed",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSellScaled",
     values: [
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -188,7 +170,6 @@ export interface _ListingRegistrySystemInterface extends utils.Interface {
     functionFragment: "ownershipHandoverExpiresAt",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "refresh", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "removeBuy", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "removeSell", data: BytesLike): Result;
@@ -333,13 +314,6 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
 
-    refresh(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -369,30 +343,28 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      reset: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -438,13 +410,6 @@ export interface _ListingRegistrySystem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  refresh(
-    npcIndex: PromiseOrValue<BigNumberish>,
-    itemIndex: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   remove(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
@@ -474,30 +439,28 @@ export interface _ListingRegistrySystem extends BaseContract {
   setBuyFixed(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
-    currency: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setBuyGDA(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
-    currency: PromiseOrValue<BigNumberish>,
-    scale: PromiseOrValue<BigNumberish>,
+    period: PromiseOrValue<BigNumberish>,
     decay: PromiseOrValue<BigNumberish>,
+    rate: PromiseOrValue<BigNumberish>,
+    reset: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSellFixed(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
-    currency: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setSellScaled(
     npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
-    currency: PromiseOrValue<BigNumberish>,
     scale: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -539,13 +502,6 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    refresh(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -571,30 +527,28 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      reset: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -669,13 +623,6 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    refresh(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -705,30 +652,28 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      reset: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -775,13 +720,6 @@ export interface _ListingRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    refresh(
-      npcIndex: PromiseOrValue<BigNumberish>,
-      itemIndex: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     remove(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
@@ -811,30 +749,28 @@ export interface _ListingRegistrySystem extends BaseContract {
     setBuyFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setBuyGDA(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
-      scale: PromiseOrValue<BigNumberish>,
+      period: PromiseOrValue<BigNumberish>,
       decay: PromiseOrValue<BigNumberish>,
+      rate: PromiseOrValue<BigNumberish>,
+      reset: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSellFixed(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setSellScaled(
       npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
-      currency: PromiseOrValue<BigNumberish>,
       scale: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

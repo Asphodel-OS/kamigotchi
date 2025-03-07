@@ -76,6 +76,7 @@ export type { IndexBackgroundComponent } from "./IndexBackgroundComponent";
 export type { IndexBodyComponent } from "./IndexBodyComponent";
 export type { IndexColorComponent } from "./IndexColorComponent";
 export type { IndexComponent } from "./IndexComponent";
+export type { IndexCurrencyComponent } from "./IndexCurrencyComponent";
 export type { IndexFaceComponent } from "./IndexFaceComponent";
 export type { IndexFactionComponent } from "./IndexFactionComponent";
 export type { IndexHandComponent } from "./IndexHandComponent";
@@ -273,6 +274,7 @@ export { IndexBackgroundComponent__factory } from "./factories/IndexBackgroundCo
 export { IndexBodyComponent__factory } from "./factories/IndexBodyComponent__factory";
 export { IndexColorComponent__factory } from "./factories/IndexColorComponent__factory";
 export { IndexComponent__factory } from "./factories/IndexComponent__factory";
+export { IndexCurrencyComponent__factory } from "./factories/IndexCurrencyComponent__factory";
 export { IndexFaceComponent__factory } from "./factories/IndexFaceComponent__factory";
 export { IndexFactionComponent__factory } from "./factories/IndexFactionComponent__factory";
 export { IndexHandComponent__factory } from "./factories/IndexHandComponent__factory";

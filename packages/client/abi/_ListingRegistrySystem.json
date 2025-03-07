@@ -128,29 +128,6 @@
     },
     {
       "type": "function",
-      "name": "refresh",
-      "inputs": [
-        {
-          "name": "npcIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "itemIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "value",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "remove",
       "inputs": [
         {
@@ -230,11 +207,6 @@
           "name": "itemIndex",
           "type": "uint32",
           "internalType": "uint32"
-        },
-        {
-          "name": "currency",
-          "type": "uint32",
-          "internalType": "uint32"
         }
       ],
       "outputs": [],
@@ -255,12 +227,7 @@
           "internalType": "uint32"
         },
         {
-          "name": "currency",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "scale",
+          "name": "period",
           "type": "int32",
           "internalType": "int32"
         },
@@ -268,6 +235,16 @@
           "name": "decay",
           "type": "int32",
           "internalType": "int32"
+        },
+        {
+          "name": "rate",
+          "type": "int32",
+          "internalType": "int32"
+        },
+        {
+          "name": "reset",
+          "type": "bool",
+          "internalType": "bool"
         }
       ],
       "outputs": [],
@@ -286,11 +263,6 @@
           "name": "itemIndex",
           "type": "uint32",
           "internalType": "uint32"
-        },
-        {
-          "name": "currency",
-          "type": "uint32",
-          "internalType": "uint32"
         }
       ],
       "outputs": [],
@@ -307,11 +279,6 @@
         },
         {
           "name": "itemIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "currency",
           "type": "uint32",
           "internalType": "uint32"
         },
@@ -418,16 +385,15 @@
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
-    "refresh(uint32,uint32,uint256)": "218c6a7d",
     "remove(uint32,uint32)": "31f3666c",
     "removeBuy(uint32,uint32)": "86477dd5",
     "removeSell(uint32,uint32)": "b2ba303a",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setBuyFixed(uint32,uint32,uint32)": "7e2f86f0",
-    "setBuyGDA(uint32,uint32,uint32,int32,int32)": "a6b94935",
-    "setSellFixed(uint32,uint32,uint32)": "97c64f28",
-    "setSellScaled(uint32,uint32,uint32,int32)": "248fa614",
+    "setBuyFixed(uint32,uint32)": "4ebee436",
+    "setBuyGDA(uint32,uint32,int32,int32,int32,bool)": "c6e851a3",
+    "setSellFixed(uint32,uint32)": "36a8a6f4",
+    "setSellScaled(uint32,uint32,int32)": "cb868db8",
     "transferOwnership(address)": "f2fde38b"
   }
 }

@@ -8,6 +8,8 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
+import { PeriodComponent, ID as PeriodCompID } from "components/PeriodComponent.sol";
+import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -18,7 +20,7 @@ import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
-import { LibListingRegistry } from "libraries/LibListingRegistry.sol";
+import { LibListingRegistry as LibRegistry } from "libraries/LibListingRegistry.sol";
 
 /** @notice
  * LibListing handles all operations interacting with Listings
@@ -46,9 +48,9 @@ library LibListing {
     incBalance(comps, id, amt);
 
     // move items
-    uint32 currency = LibListingRegistry.getBuyCurrency(comps, id);
+    uint32 currencyIndex = LibRegistry.getCurrencyIndex(comps, id);
     LibInventory.incFor(comps, accID, itemIndex, amt); // gain item
-    LibInventory.decFor(comps, accID, currency, price); // take currecy
+    LibInventory.decFor(comps, accID, currencyIndex, price); // take currecy
   }
 
   /// @notice processes a sell for amt of item from an account to a listing
@@ -64,9 +66,9 @@ library LibListing {
     decBalance(comps, id, amt);
 
     // move items
-    uint32 currency = LibListingRegistry.getSellCurrency(comps, id);
+    uint32 currencyIndex = LibRegistry.getCurrencyIndex(comps, id);
     LibInventory.decFor(comps, accID, itemIndex, amt); // take item
-    LibInventory.incFor(comps, accID, currency, price); // gain currency
+    LibInventory.incFor(comps, accID, currencyIndex, price); // gain currency
   }
 
   /////////////////
@@ -81,7 +83,7 @@ library LibListing {
     uint256 id,
     uint256 accID
   ) public view returns (bool) {
-    uint256 requirementAnchor = LibListingRegistry.genReqAnchor(id);
+    uint256 requirementAnchor = LibRegistry.genReqAnchor(id);
     uint256[] memory requirements = LibConditional.queryFor(comps, requirementAnchor);
     return LibConditional.check(comps, requirements, accID);
   }
@@ -99,7 +101,7 @@ library LibListing {
     uint256 amt
   ) internal view returns (uint256 price) {
     if (amt == 0) return 0;
-    uint256 buyID = LibListingRegistry.genBuyID(id);
+    uint256 buyID = LibRegistry.genBuyID(id);
     string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(buyID);
     if (type_.eq("FIXED")) {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
@@ -126,7 +128,7 @@ library LibListing {
     uint256 id,
     uint256 amt
   ) internal view returns (uint256 price) {
-    uint256 sellID = LibListingRegistry.genSellID(id);
+    uint256 sellID = LibRegistry.genSellID(id);
     string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(sellID);
     if (type_.eq("FIXED")) {
       return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id) * amt;
