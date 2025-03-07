@@ -28,9 +28,14 @@ export function listingAPI(genCall: GenCall) {
     itemIndex: number,
     period: number,
     decay: number,
-    rate: number
+    rate: number,
+    reset?: boolean // whether to reset the tracking values (balance, timeStart)
   ) {
-    genCall('system.listing.registry', [npcIndex, itemIndex, period, decay, rate], 'setBuyGDA');
+    genCall(
+      'system.listing.registry',
+      [npcIndex, itemIndex, period, decay, rate, reset],
+      'setBuyGDA'
+    );
   }
 
   // add a fixed sell price to a listing

@@ -36,7 +36,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
           const period = Number(row['Period']);
           const decay = Math.round(Number(row['Decay']) * 1e6);
           const rate = Number(row['Rate']);
-          await setBuy.gda(npcIndex, itemIndex, period, decay, rate);
+          await setBuy.gda(npcIndex, itemIndex, period, decay, rate, false);
         }
         // console.log(`  set buy price ${buyKey}`);
       } else console.warn(`  Buy Price not found for ref ${buyKey}`);

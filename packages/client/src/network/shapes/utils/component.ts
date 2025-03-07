@@ -266,6 +266,13 @@ export const getAccountIndex = (components: Components, entity: EntityIndex): nu
   return (result ?? 0) * 1;
 };
 
+export const getCurrencyIndex = (components: Components, entity: EntityIndex): number => {
+  const { CurrencyIndex } = components;
+  const result = getComponentValue(CurrencyIndex, entity)?.value;
+  if (result === undefined) console.warn('getCurrencyIndex(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
 export const getItemIndex = (components: Components, entity: EntityIndex): number => {
   const { ItemIndex } = components;
   const result = getComponentValue(ItemIndex, entity)?.value;
