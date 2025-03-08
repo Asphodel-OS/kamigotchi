@@ -13,6 +13,14 @@ contract InitWorld is SystemCall {
 
     _initWorld(worldAddr);
   }
+
+  function initTests(address deployer, address worldAddr) public {
+    _setUp(worldAddr);
+    vm.startPrank(deployer);
+
+    _initWorld(worldAddr);
+    vm.stopPrank();
+  }
   
   function _initWorld( address worldAddr) internal {
     <% calls.forEach(call=> { -%>

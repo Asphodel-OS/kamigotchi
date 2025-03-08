@@ -15,6 +15,7 @@ contract GachaTest is SetupTemplate {
     _initStockTraits();
 
     _setConfig("GACHA_REROLL_PRICE", 1);
+    _setConfig("GACHA_MAX_REROLLS", 100000);
   }
 
   function setUpTraits() public override {}

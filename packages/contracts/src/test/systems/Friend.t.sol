@@ -8,6 +8,9 @@ contract FriendTest is SetupTemplate {
     super.setUp();
 
     vm.roll(_currBlock++);
+
+    _setConfig("FRIENDS_BASE_LIMIT", 5);
+    _setConfig("FRIENDS_REQUEST_LIMIT", 5);
   }
 
   function _request(uint256 senderIndex, uint256 reciverIndex) internal returns (uint256) {

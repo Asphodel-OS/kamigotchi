@@ -6,12 +6,7 @@ import { AdminAPI } from '../world/api';
 import { SubFunc, WorldAPI } from '../world/world';
 
 /// @dev generates a single call piggybacking off initWorld.s.sol
-export async function generateSingleCall(
-  mode: string,
-  systemID: string,
-  func: string,
-  args: any[]
-) {
+export async function genSingleCall(mode: string, systemID: string, func: string, args: any[]) {
   const world = new WorldState();
   const toCall = async (api: AdminAPI) => {
     const system = systemID as keyof typeof SystemBytecodes;
@@ -24,7 +19,7 @@ export async function generateSingleCall(
   await generateInitWorld();
 }
 
-export async function generateInitScript(
+export async function genInitScript(
   mode: string,
   category: keyof WorldAPI,
   action: keyof SubFunc | keyof WorldAPI['admin'],
@@ -53,4 +48,14 @@ export async function generateInitScript(
   // generate system calls
   await world.writeCalls();
   await generateInitWorld();
+}
+
+// generates init script for tests, enabling tests/deployments to share configs
+export async function genInitTests() {
+  const world = new WorldState();
+  await world.api.config.init();
+  await world.writeCalls();
+  await generateInitWorld();
+
+  console.log(`** Generated test init script **`);
 }

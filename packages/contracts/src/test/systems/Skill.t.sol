@@ -13,7 +13,8 @@ contract SkillTest is SetupTemplate {
     _createConsumable(resetItemIndex, "SKILL_RESET");
   }
 
-  function _initSkillConfigs() internal override {
+  function setUpConfigs() public override {
+    super.setUpConfigs();
     _setConfig("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
   }
 

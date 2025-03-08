@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { constants } from 'ethers';
 import execa from 'execa';
 
-import { generateInitScript } from '../scripts/worldIniter';
+import { genInitScript } from '../scripts/worldIniter';
 import { getDeployerKey, getRpc, getWorld, ignoreSolcErrors, setAutoMine } from '../utils';
 import { SubFunc, WorldAPI } from '../world/world';
 
@@ -33,7 +33,7 @@ const run = async () => {
   if (mode === 'DEV') setAutoMine(true);
 
   // generate init script and calls
-  await generateInitScript(mode, category, action, args);
+  await genInitScript(mode, category, action, args);
 
   // running script.sol
   await initWorld(getDeployerKey(mode), getRpc(mode)!, world, argv.forgeOpts);

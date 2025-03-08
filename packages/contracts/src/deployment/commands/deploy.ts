@@ -5,7 +5,7 @@ const openurl = require('openurl');
 
 import { clearInitWorld } from '../scripts/codegen';
 import { generateAndDeploy } from '../scripts/deployer';
-import { generateInitScript } from '../scripts/worldIniter';
+import { genInitScript } from '../scripts/worldIniter';
 import { getDeployerKey, getMultisig, getRpc, getWorld, setAutoMine, setTimestamp } from '../utils';
 
 const argv = yargs(hideBin(process.argv)).argv;
@@ -24,7 +24,7 @@ const run = async () => {
   if (mode === 'DEV') setAutoMine(true);
   console.log(`** Deploying to ${mode} **`);
   // generate or clear world init script based on args
-  if (init) generateInitScript(mode, 'init', 'init');
+  if (init) genInitScript(mode, 'init', 'init');
   else clearInitWorld();
 
   const result = await generateAndDeploy({

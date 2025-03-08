@@ -10,6 +10,11 @@ contract LibSetterTest is SetupTemplate {
     super.setUp();
   }
 
+  function setUpConfigs() public override {
+    super.setUpConfigs();
+    _setConfig("VIP_STAGE", [uint32(block.timestamp), 1 days, 0, 0, 0, 0, 0, 0]);
+  }
+
   function testSetVIP() public {
     ExternalCaller.setterUpdate("VIP", 0, 1, alice.id);
 

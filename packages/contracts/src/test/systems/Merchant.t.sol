@@ -141,17 +141,19 @@ contract NPCTest is SetupTemplate {
       listingIDs1[i] = _createListing(
         listings1[i].npcIndex,
         listings1[i].itemIndex,
+        1,
         listings1[i].priceBuy
       );
-      _setListingBuyFixed(listings1[i].npcIndex, listings1[i].itemIndex, 1); // using musu for currency
-      _setListingSellScaled(listings1[i].npcIndex, listings1[i].itemIndex, 1, 5e8); // half price
+      _setListingBuyFixed(listings1[i].npcIndex, listings1[i].itemIndex); // using musu for currency
+      _setListingSellScaled(listings1[i].npcIndex, listings1[i].itemIndex, 5e8); // half price
       listingIDs2[i] = _createListing(
         listings2[i].npcIndex,
         listings2[i].itemIndex,
+        1,
         listings2[i].priceBuy
       );
-      _setListingBuyFixed(listings2[i].npcIndex, listings2[i].itemIndex, 1);
-      _setListingSellScaled(listings2[i].npcIndex, listings2[i].itemIndex, 1, 5e8); // half price
+      _setListingBuyFixed(listings2[i].npcIndex, listings2[i].itemIndex);
+      _setListingSellScaled(listings2[i].npcIndex, listings2[i].itemIndex, 5e8); // half price
     }
 
     // register and fund accounts. all accounts start in room 1
@@ -220,8 +222,8 @@ contract NPCTest is SetupTemplate {
     uint32 item = 100;
     uint256 price = 100;
     _createNPC(1, 1, "npc1");
-    _createListing(1, item, price);
-    _setListingBuyFixed(1, item, 1);
+    _createListing(1, item, 1, price);
+    _setListingBuyFixed(1, item);
     _giveItem(alice, 1, price);
 
     // pre-buy
@@ -245,8 +247,8 @@ contract NPCTest is SetupTemplate {
     _createGenericItem(currency);
     uint256 price = 100;
     _createNPC(1, 1, "npc1");
-    _createListing(1, item, price);
-    _setListingBuyFixed(1, item, currency);
+    _createListing(1, item, currency, price);
+    _setListingBuyFixed(1, item);
     _giveItem(alice, currency, price);
 
     // pre-buy
@@ -271,8 +273,8 @@ contract NPCTest is SetupTemplate {
     _addItemERC20(currency, tokenAddr);
     uint256 price = 100;
     _createNPC(1, 1, "npc1");
-    _createListing(1, item, price);
-    _setListingBuyFixed(1, item, currency);
+    _createListing(1, item, currency, price);
+    _setListingBuyFixed(1, item);
     _mintERC20(tokenAddr, price, alice.owner);
     _approveERC20(tokenAddr, alice.owner);
 
@@ -293,8 +295,8 @@ contract NPCTest is SetupTemplate {
     uint32 item = 100;
     uint256 startPrice = 100;
     _createNPC(1, 1, "npc1");
-    _createListing(1, item, startPrice);
-    _setListingBuyGDA(1, item, 1, 1002776250, 8022); // expected starting startPrice 100
+    _createListing(1, item, 1, startPrice);
+    _setListingBuyGDA(1, item, 60, 1002776250, 8022); // expected starting startPrice 100
     _giveItem(alice, 1, startPrice);
 
     // pre-buy
@@ -333,8 +335,8 @@ contract NPCTest is SetupTemplate {
     uint32 item = 100;
     uint256 startPrice = 100;
     _createNPC(1, 1, "npc1");
-    _createListing(1, item, basePrice);
-    _setListingBuyGDA(1, item, 1, int32(scale), int32(decay));
+    _createListing(1, item, 1, basePrice);
+    _setListingBuyGDA(1, item, 60, int32(scale), int32(decay));
     _giveItem(alice, 1, 2 ** 256 - 1); // give max uint
 
     // buy one
@@ -362,40 +364,36 @@ contract NPCTest is SetupTemplate {
   function _createListing(
     uint32 npcIndex,
     uint32 itemIndex,
+    uint32 currency,
     uint basePrice
   ) internal returns (uint) {
     vm.prank(deployer);
-    return __ListingRegistrySystem.create(abi.encode(npcIndex, itemIndex, basePrice));
+    return __ListingRegistrySystem.create(abi.encode(npcIndex, itemIndex, currency, basePrice));
   }
 
-  function _setListingBuyFixed(uint32 npcIndex, uint32 itemIndex, uint32 currency) internal {
+  function _setListingBuyFixed(uint32 npcIndex, uint32 itemIndex) internal {
     vm.prank(deployer);
-    return __ListingRegistrySystem.setBuyFixed(npcIndex, itemIndex, currency);
+    return __ListingRegistrySystem.setBuyFixed(npcIndex, itemIndex);
   }
 
   function _setListingBuyGDA(
     uint32 npcIndex,
     uint32 itemIndex,
-    uint32 currency,
+    int32 period,
     int32 scale,
     int32 decay
   ) internal {
     vm.prank(deployer);
-    return __ListingRegistrySystem.setBuyGDA(npcIndex, itemIndex, currency, scale, decay);
+    return __ListingRegistrySystem.setBuyGDA(npcIndex, itemIndex, period, scale, decay, false);
   }
 
-  function _setListingSellFixed(uint32 npcIndex, uint32 itemIndex, uint32 currency) internal {
+  function _setListingSellFixed(uint32 npcIndex, uint32 itemIndex) internal {
     vm.prank(deployer);
-    return __ListingRegistrySystem.setSellFixed(npcIndex, itemIndex, currency);
+    return __ListingRegistrySystem.setSellFixed(npcIndex, itemIndex);
   }
 
-  function _setListingSellScaled(
-    uint32 npcIndex,
-    uint32 itemIndex,
-    uint32 currency,
-    int32 scale
-  ) internal {
+  function _setListingSellScaled(uint32 npcIndex, uint32 itemIndex, int32 scale) internal {
     vm.prank(deployer);
-    return __ListingRegistrySystem.setSellScaled(npcIndex, itemIndex, currency, scale);
+    return __ListingRegistrySystem.setSellScaled(npcIndex, itemIndex, scale);
   }
 }

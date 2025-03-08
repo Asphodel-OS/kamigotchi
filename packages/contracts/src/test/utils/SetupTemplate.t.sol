@@ -10,7 +10,8 @@ import { Coord } from "libraries/LibRoom.sol";
 import { MUSU_INDEX, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 
 import "./TestSetupImports.t.sol";
-import { LibDeployTokens } from "src/deployment/contracts/LibDeployTokens.s.sol";
+import { InitWorld } from "deployment/InitWorld.s.sol";
+import { LibDeployTokens } from "deployment/LibDeployTokens.s.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
@@ -97,9 +98,11 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  // sets up default configs. override to change/remove behaviour if needed
+  // sets up config using init script
+  // Controlled by deployment tooling - update there if we want more than configs in the future
   function setUpConfigs() public virtual {
-    _initAllConfigs();
+    InitWorld initer = new InitWorld();
+    initer.initTests(deployer, address(world));
   }
 
   // sets up mint to a default state. override to change/remove behaviour if needed
@@ -1163,102 +1166,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function _setConfig(string memory key, string memory value) internal {
     vm.prank(deployer);
     __ConfigSetSystem.setValueString(key, value);
-  }
-
-  function _initAllConfigs() internal {
-    _initAccountConfigs();
-    _initBaseConfigs();
-    _initLeaderboardConfigs();
-    _initMintConfigs();
-    _initLevelingConfigs();
-    _initFriendConfigs();
-    _initKamiConfigs();
-    _initHarvestConfigs();
-    _initLiquidationConfigs();
-    _initOnyxConfigs();
-    _initSkillConfigs();
-    _initTradeConfigs();
-    _initVIPConfigs();
-  }
-
-  function _initBaseConfigs() internal virtual {
-    _setConfig("BASE_URI", "https://image.asphodel.io/kami/");
-  }
-
-  function _initLeaderboardConfigs() internal virtual {
-    _setConfig("LEADERBOARD_EPOCH", 1);
-  }
-
-  function _initAccountConfigs() internal virtual {
-    // [base stamina, base recovery period per point, base movement cost (in stamina), base experience per move]
-    _setConfig("ACCOUNT_STAMINA", [uint32(100), 60, 5, 5, 0, 0, 0, 0]);
-  }
-
-  function _initFriendConfigs() internal virtual {
-    _setConfig("FRIENDS_BASE_LIMIT", 5);
-    _setConfig("FRIENDS_REQUEST_LIMIT", 5);
-  }
-
-  // Kami Leveling Curve
-  function _initLevelingConfigs() internal virtual {
-    _setConfig("KAMI_LVL_REQ_BASE", 40);
-    _setConfig("KAMI_LVL_REQ_MULT_BASE", [uint32(1259), 3, 0, 0, 0, 0, 0, 0]);
-  }
-
-  function _initMintConfigs() internal virtual {
-    _setConfig("GACHA_REROLL_PRICE", 1);
-    _setConfig("GACHA_MAX_REROLLS", 100000);
-    _setConfig("MINT_LEGACY_ENABLED", 0);
-  }
-
-  function _initKamiConfigs() internal virtual {
-    // Kami Stats
-    _setConfig("KAMI_BASE_HEALTH", 50);
-    _setConfig("KAMI_BASE_POWER", 10);
-    _setConfig("KAMI_BASE_VIOLENCE", 10);
-    _setConfig("KAMI_BASE_HARMONY", 10);
-    _setConfig("KAMI_BASE_SLOTS", 0);
-
-    // healing
-    _setConfig("KAMI_REST_METABOLISM", [uint32(0), 0, 1200, 3, 0, 0, 1000, 3]);
-
-    // cooldown
-    _setConfig("KAMI_STANDARD_COOLDOWN", 180);
-  }
-
-  function _initHarvestConfigs() internal virtual {
-    // Harvest Rates
-    _setConfig("KAMI_HARV_FERTILITY", [uint32(0), 0, 1500, 3, 0, 0, 1000, 3]);
-    _setConfig("KAMI_HARV_INTENSITY", [uint32(5), 0, 1920, 0, 0, 0, 40, 0]); // inversed boost
-    _setConfig("KAMI_HARV_BOUNTY", [uint32(0), 9, 0, 0, 0, 0, 1000, 3]);
-    _setConfig("KAMI_HARV_STRAIN", [uint32(20), 0, 7500, 3, 0, 0, 1000, 3]);
-    _setConfig("KAMI_HARV_EFFICACY_BODY", [uint32(3), 0, 650, 250, 0, 0, 0, 0]);
-    _setConfig("KAMI_HARV_EFFICACY_HAND", [uint32(3), 0, 400, 150, 0, 0, 0, 0]);
-  }
-
-  function _initLiquidationConfigs() internal virtual {
-    _setConfig("KAMI_LIQ_EFFICACY", [uint32(0), 500, 500, 3, 0, 0, 0, 0]); // [neut, up, down, prec]
-    _setConfig("KAMI_LIQ_ANIMOSITY", [uint32(0), 0, 400, 3, 0, 0, 0, 0]); // nontraditional AST node
-    _setConfig("KAMI_LIQ_THRESHOLD", [uint32(0), 3, 1000, 3, 0, 3, 0, 0]);
-    _setConfig("KAMI_LIQ_SALVAGE", [uint32(0), 2, 0, 3, 0, 0, 0, 0]);
-    _setConfig("KAMI_LIQ_SPOILS", [uint32(35), 2, 0, 3, 0, 0, 0, 0]);
-    _setConfig("KAMI_LIQ_KARMA", [uint32(0), 0, 500, 3, 0, 0, 0, 0]);
-  }
-
-  function _initOnyxConfigs() internal virtual {
-    _setConfig("ERC20_RECEIVER_ADDRESS", deployer);
-  }
-
-  function _initSkillConfigs() internal virtual {
-    _setConfig("KAMI_TREE_REQ", [uint32(0), 5, 15, 25, 40, 55, 75, 95]);
-  }
-
-  function _initTradeConfigs() internal virtual {
-    _setConfig("MAX_TRADES_PER_ACCOUNT", 10);
-  }
-
-  function _initVIPConfigs() internal virtual {
-    _setConfig("VIP_STAGE", [uint32(block.timestamp), 1 days, 0, 0, 0, 0, 0, 0]);
   }
 
   ///////////////////////
