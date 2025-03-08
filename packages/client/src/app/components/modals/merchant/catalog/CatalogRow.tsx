@@ -24,6 +24,11 @@ export const CatalogRow = (props: Props) => {
     toggle();
   };
 
+  const getPricingIcon = (listing: Listing) => {
+    const key = listing.buy?.type.toLowerCase() ?? '';
+    return PricingIcons[key as keyof typeof PricingIcons];
+  };
+
   const isInCart = props.cart.some((c) => c.listing.item.index === listing.item.index);
   return (
     <Tooltip text={[listing.item.description ?? '']}>
@@ -36,9 +41,7 @@ export const CatalogRow = (props: Props) => {
         <Image src={listing.item.image} isInCart={isInCart} />
         <Details>
           <Text>
-            <Icon
-              src={PricingIcons[listing.buy?.type.toLowerCase() as keyof typeof PricingIcons]}
-            />
+            <Icon src={getPricingIcon(listing)} />
             {listing.item.name}
           </Text>
           <Text>
