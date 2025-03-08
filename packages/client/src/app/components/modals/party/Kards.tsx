@@ -17,7 +17,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { getRateDisplay } from 'utils/rates';
+import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 
 const REFRESH_INTERVAL = 2000;

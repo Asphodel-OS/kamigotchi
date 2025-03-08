@@ -9,7 +9,7 @@ import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { calcPercent } from 'utils/math';
+import { calcPercent } from 'utils/numbers';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
 export function registerClock() {

@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 interface Props {
   text: string[];
-  size?: number;
-  gapScale?: number;
+  size?: number; // font size
+  gapScale?: number; // lineheight proportion to font size
 }
 
 export const EmptyText = (props: Props) => {

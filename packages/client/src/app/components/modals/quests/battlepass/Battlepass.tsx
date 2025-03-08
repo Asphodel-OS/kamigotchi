@@ -8,7 +8,7 @@ import { parseConditionalUnits } from 'network/shapes/Conditional/interpretation
 import { meetsRequirements, Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
-import { calcPercentCompletion } from 'utils/math';
+import { calcPercentCompletion } from 'utils/numbers';
 import { Milestone } from './Milestone';
 
 const Colors = {

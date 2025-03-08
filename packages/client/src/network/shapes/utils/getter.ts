@@ -3,7 +3,7 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { getData } from 'network/shapes/Data';
-import { numberToHex } from 'utils/hex';
+import { numberToHex } from 'utils/numbers';
 import { getCurrPhase } from 'utils/time';
 import { Account, queryAccountKamis } from '../Account';
 import { getReputation } from '../Faction';

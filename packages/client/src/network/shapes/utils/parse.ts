@@ -141,7 +141,7 @@ function getReputation(args: getArgs): DetailedEntity {
 }
 
 function getSkill(args: getArgs): DetailedEntity {
-  return getSkillByIndex(args.world, args.components, args.index, args.options);
+  return getSkillByIndex(args.world, args.components, args.index);
 }
 
 function getState(args: getArgs): DetailedEntity {

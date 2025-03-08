@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
-import { parseTokenBalance } from 'utils/balances';
 import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
+
+import { parseTokenBalance } from 'utils/numbers';
 import { abi } from './abi/erc20';
 
 export function useBalance(address: Address, token: Address, spender?: Address) {

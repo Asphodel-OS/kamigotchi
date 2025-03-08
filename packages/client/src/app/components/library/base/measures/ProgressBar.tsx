@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { calcPercentCompletion } from 'utils/math';
+import { calcPercentCompletion } from 'utils/numbers';
 
 interface Props {
   total: number;

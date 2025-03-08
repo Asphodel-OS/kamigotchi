@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = (props: Props) => {
-  const { setModals } = useVisibility();
+  const { balance } = props;
 
   return (
     <Container key='musu'>
@@ -18,7 +17,7 @@ export const MusuRow = (props: Props) => {
         <Tooltip text={['MUSU']}>
           <Icon src={ItemImages.musu} />
         </Tooltip>
-        <Balance>{props.balance}</Balance>
+        <Balance>{balance.toLocaleString()}</Balance>
       </div>
     </Container>
   );

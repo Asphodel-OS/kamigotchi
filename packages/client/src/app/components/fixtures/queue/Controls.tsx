@@ -6,7 +6,7 @@ import { GasGauge, IconButton, Tooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants, GasExponent } from 'constants/gas';
-import { parseTokenBalance } from 'utils/balances';
+import { parseTokenBalance } from 'utils/numbers';
 
 // NOTE: ACTUAL GAS EXPONENT HANDLED IN constants/gas.ts
 // the precision to represent gas numbers at readable scale (e.g. mONYX)
