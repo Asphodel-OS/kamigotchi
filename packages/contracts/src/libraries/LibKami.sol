@@ -106,8 +106,17 @@ library LibKami {
 
   // Update the current health of a kami as well as any active harvest
   function sync(IUintComp components, uint256 id) public {
-    string memory state = getState(components, id);
+    _sync(components, getState(components, id), id);
+    setLastTs(components, id, block.timestamp);
+  }
 
+  function sync(IUintComp components, uint256[] memory ids) public {
+    string[] memory states = StateComponent(getAddrByID(components, StateCompID)).get(ids);
+    for (uint256 i; i < ids.length; i++) _sync(components, states[i], ids[i]);
+    setLastTs(components, ids, block.timestamp);
+  }
+
+  function _sync(IUintComp components, string memory state, uint256 id) public {
     if (state.eq("HARVESTING")) {
       uint256 deltaBalance = LibHarvest.sync(components, getHarvest(components, id));
       uint256 damage = calcStrain(components, id, deltaBalance);
@@ -116,8 +125,6 @@ library LibKami {
       uint256 recovery = calcRecovery(components, id);
       heal(components, id, recovery.toInt32());
     }
-
-    setLastTs(components, id, block.timestamp);
   }
 
   /////////////////
@@ -206,14 +213,34 @@ library LibKami {
     if (LibCooldown.isActive(components, id)) revert("kami on cooldown");
   }
 
+  function verifyCooldown(IUintComp components, uint256[] memory ids) public view {
+    if (LibCooldown.isActive(components, ids)) revert("kami on cooldown");
+  }
+
   function verifyHealthy(IUintComp components, uint256 id) public view {
     if (!isHealthy(components, id)) revert("kami starving..");
   }
 
-  /// @notice revert if kami is not in same room as account
-  function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) public view {
-    string memory state = getState(components, kamiID);
+  function verifyHealthy(IUintComp components, uint256[] memory ids) public view {
+    if (!isHealthy(components, ids)) revert("kami starving..");
+  }
 
+  function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) public view {
+    return _verifyRoom(components, getState(components, kamiID), kamiID, accID);
+  }
+
+  function verifyRoom(IUintComp components, uint256[] memory kamiIDs, uint256 accID) public view {
+    string[] memory states = StateComponent(getAddrByID(components, StateCompID)).get(kamiIDs);
+    for (uint256 i; i < kamiIDs.length; i++) _verifyRoom(components, states[i], kamiIDs[i], accID);
+  }
+
+  /// @notice revert if kami is not in same room as account
+  function _verifyRoom(
+    IUintComp components,
+    string memory state,
+    uint256 kamiID,
+    uint256 accID
+  ) public view {
     bool sameRoom;
     if (state.eq("HARVESTING")) {
       uint256 nodeID = LibHarvest.getNode(components, getHarvest(components, kamiID));
@@ -257,6 +284,14 @@ library LibKami {
     return LibStat.get(components, "HEALTH", id).sync > 0;
   }
 
+  function isHealthy(IUintComp components, uint256[] memory ids) internal view returns (bool) {
+    Stat[] memory stats = LibStat.get(components, "HEALTH", ids);
+    for (uint256 i; i < ids.length; i++) {
+      if (stats[i].sync <= 0) return false;
+    }
+    return true;
+  }
+
   // Check whether a kami's ERC721 token is in the game world
   function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
     return !getCompByID(components, StateCompID).eqString(id, "721_EXTERNAL");
@@ -274,9 +309,17 @@ library LibKami {
     TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).set(id, ts);
   }
 
+  function setLastActionTs(IUintComp components, uint256[] memory ids, uint256 ts) internal {
+    getCompByID(components, TimeLastActCompID).setAll(ids, ts);
+  }
+
   // Update the TimeLast of a kami. used as anchor point for updating Health
   function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
     TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, ts);
+  }
+
+  function setLastTs(IUintComp components, uint256[] memory ids, uint256 ts) internal {
+    getCompByID(components, TimeLastCompID).setAll(ids, ts);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -285,6 +328,10 @@ library LibKami {
 
   function setState(IUintComp components, uint256 id, string memory state) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
+  }
+
+  function setState(IUintComp components, uint256[] memory ids, string memory state) internal {
+    getCompByID(components, StateCompID).setAll(ids, state);
   }
 
   function setStateFromIndex(IUintComp components, uint32 index, uint256 id) internal {

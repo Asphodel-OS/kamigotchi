@@ -161,6 +161,19 @@ library LibStat {
 
   function get(
     IUintComp components,
+    string memory type_,
+    uint256[] memory ids
+  ) internal view returns (Stat[] memory) {
+    StatComponent statComp = getStatComp(components, type_);
+    Stat[] memory stats = new Stat[](ids.length);
+    for (uint256 i; i < ids.length; i++) {
+      stats[i] = get(components, statComp, type_, ids[i]);
+    }
+    return stats;
+  }
+
+  function get(
+    IUintComp components,
     StatComponent statComp,
     string memory type_,
     uint256 id

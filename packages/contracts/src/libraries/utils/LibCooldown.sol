@@ -27,7 +27,9 @@ library LibCooldown {
 
   // if delta positive, increase cooldown. vice versa
   function modify(IUintComp components, uint256 id, int256 delta) internal {
-    IUintComp lastComp = IUintComp(getAddrByID(components, TimeLastActCompID));
+    TimeLastActionComponent lastComp = TimeLastActionComponent(
+      getAddrByID(components, TimeLastActCompID)
+    );
     int256 idleTime = _getIdleTime(lastComp, id);
     int256 cooldown = getCooldown(components, id);
 
@@ -47,23 +49,74 @@ library LibCooldown {
     return idleTime <= idleRequirement;
   }
 
+  /// @dev returns true if a single entity is active
+  function isActive(IUintComp components, uint256[] memory ids) internal view returns (bool) {
+    int256[] memory idleTimes = getIdleTime(components, ids);
+    int256[] memory cooldowns = getCooldown(components, ids);
+    for (uint256 i; i < ids.length; i++) {
+      if (idleTimes[i] <= cooldowns[i]) return true;
+    }
+    return false;
+  }
+
   /////////////////
   // GETTERS
 
   /// @notice get cooldown for entity, including bonus
   function getCooldown(IUintComp components, uint256 id) internal view returns (int256) {
-    int256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN").toInt256();
+    uint256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
+    return _getCooldown(components, base, id);
+  }
+
+  function getCooldown(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (int256[] memory) {
+    uint256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
+    int256[] memory cooldowns = new int256[](ids.length);
+    for (uint256 i; i < ids.length; i++) {
+      cooldowns[i] = _getCooldown(components, base, ids[i]);
+    }
+    return cooldowns;
+  }
+
+  function _getCooldown(
+    IUintComp components,
+    uint256 rawBase,
+    uint256 id
+  ) internal view returns (int256) {
+    int256 base = rawBase.toInt256();
     int256 shift = LibBonus.getFor(components, "STND_COOLDOWN_SHIFT", id);
     int256 cooldown = base + shift;
     return cooldown < int256(0) ? int256(0) : cooldown;
   }
 
   function getIdleTime(IUintComp components, uint256 id) internal view returns (int256) {
-    return _getIdleTime(IUintComp(getAddrByID(components, TimeLastActCompID)), id);
+    return _getIdleTime(TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)), id);
   }
 
-  function _getIdleTime(IUintComp tsComp, uint256 id) internal view returns (int256) {
+  function getIdleTime(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (int256[] memory) {
+    return _getIdleTime(TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)), ids);
+  }
+
+  function _getIdleTime(TimeLastActionComponent tsComp, uint256 id) internal view returns (int256) {
     // time safely remains in int256 bounds
     return block.timestamp.toInt256() - tsComp.safeGet(id).toInt256();
+  }
+
+  function _getIdleTime(
+    TimeLastActionComponent tsComp,
+    uint256[] memory ids
+  ) internal view returns (int256[] memory) {
+    uint256[] memory rawTimes = tsComp.safeGet(ids);
+
+    int256[] memory idleTimes = new int256[](ids.length);
+    for (uint256 i; i < ids.length; i++) {
+      idleTimes[i] = block.timestamp.toInt256() - rawTimes[i].toInt256();
+    }
+    return idleTimes;
   }
 }

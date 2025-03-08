@@ -244,6 +244,13 @@ library LibHarvest {
     return IdHolderComponent(getAddrByID(components, IdHolderCompID)).get(id);
   }
 
+  function getKami(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (uint256[] memory) {
+    return IdHolderComponent(getAddrByID(components, IdHolderCompID)).get(ids);
+  }
+
   // the check here is just a patch to address broken kamis in the current deployment
   function getResetTs(IUintComp components, uint256 id) internal view returns (uint256) {
     TimeResetComponent comp = TimeResetComponent(getAddrByID(components, TimeResetCompID));
@@ -331,6 +338,7 @@ library LibHarvest {
       abi.encode(holderID, kamiID, nodeIndex, output)
     );
   }
+
   /////////////////////
   // UTILS
 

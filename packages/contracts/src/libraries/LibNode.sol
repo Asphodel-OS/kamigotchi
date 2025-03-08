@@ -109,32 +109,20 @@ library LibNode {
   //////////////
   // CHECKERS
 
+  function verifyRequirements(IUintComp components, uint32 nodeIndex, uint256 kamiID) public view {
+    uint256[] memory reqIDs = getReqs(components, nodeIndex);
+    if (!LibConditional.check(components, reqIDs, kamiID)) revert("node reqs not met");
+  }
+
   function verifyRequirements(
     IUintComp components,
     uint32 nodeIndex,
-    uint256 accID,
-    uint256 kamiID
+    uint256[] memory kamiIDs
   ) public view {
-    if (!checkReqs(components, nodeIndex, accID, kamiID)) revert("node reqs not met");
-  }
-
-  function checkReqs(
-    IUintComp components,
-    uint32 nodeIndex,
-    uint256 accID,
-    uint256 kamiID
-  ) internal view returns (bool) {
     uint256[] memory reqIDs = getReqs(components, nodeIndex);
-    if (reqIDs.length == 0) return true;
-
-    // (uint256[] memory accReqs, uint256[] memory petReqs) = LibFor.splitAccAndPet(
-    //   components,
-    //   reqIDs
-    // );
-
-    return
-      // LibConditional.check(components, accReqs, accID) &&
-      LibConditional.check(components, reqIDs, kamiID);
+    for (uint256 i; i < kamiIDs.length; i++) {
+      if (!LibConditional.check(components, reqIDs, kamiIDs[i])) revert("node reqs not met");
+    }
   }
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {

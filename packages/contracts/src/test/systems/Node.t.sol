@@ -46,7 +46,7 @@ contract NodeTest is SetupTemplate {
     _createNodeRequirement(nodeIndex, "LEVEL", "CURR_MIN", 0, 2, "KAMI");
 
     // cannot add level 1 pet to node
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
@@ -55,7 +55,7 @@ contract NodeTest is SetupTemplate {
     _setLevel(aKamiID, 2);
 
     // can now add level 2 pet to node
-    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertTrue(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     _startHarvest(aKamiID, nodeID);
   }
 
@@ -67,7 +67,7 @@ contract NodeTest is SetupTemplate {
     _createNodeRequirement(nodeIndex, "ROOM", "BOOL_IS", 1, 0, "ACCOUNT");
 
     // cannot add level 1 account to node
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
@@ -76,7 +76,7 @@ contract NodeTest is SetupTemplate {
     _setLevel(alice.id, 2);
 
     // can now add level 2 account to node
-    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertTrue(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     _startHarvest(aKamiID, nodeID);
   }
 
@@ -89,7 +89,7 @@ contract NodeTest is SetupTemplate {
     _createNodeRequirement(nodeIndex, "LEVEL", "CURR_MIN", 0, 2, "KAMI");
 
     // cannot add, level 1 acc and pet
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
@@ -98,7 +98,7 @@ contract NodeTest is SetupTemplate {
     _setLevel(aKamiID, 2);
 
     // cannot add, level 1 acc but level 2 pet
-    assertFalse(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
     _HarvestStartSystem.executeTyped(aKamiID, nodeID);
@@ -107,7 +107,7 @@ contract NodeTest is SetupTemplate {
     _setLevel(alice.id, 2);
 
     // all good
-    assertTrue(LibNode.checkReqs(components, nodeIndex, alice.id, aKamiID));
+    assertTrue(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     _startHarvest(aKamiID, nodeID);
   }
 
@@ -127,5 +127,16 @@ contract NodeTest is SetupTemplate {
       __NodeRegistrySystem.addRequirement(
         abi.encode(nodeIndex, type_, logicType, index, value, for_)
       );
+  }
+
+  function checkNodeRequirements(
+    uint32 nodeIndex,
+    uint256 accID,
+    uint256 kamiID
+  ) internal view returns (bool) {
+    uint256[] memory reqIDs = LibNode.getReqs(components, nodeIndex);
+    if (reqIDs.length == 0) return true;
+
+    return LibConditional.check(components, reqIDs, kamiID);
   }
 }
