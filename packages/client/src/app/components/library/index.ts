@@ -22,7 +22,6 @@ export { Overlay } from './styles';
 export { AccountCard } from './AccountCard';
 export { CopyButton } from './CopyButton';
 export { EmptyText } from './EmptyText';
-export { FarcasterConnect } from './FarcasterConnect';
 export { GasGauge } from './GasGauge';
 export { HelpChip } from './HelpChip';
 export { InputSingleNumberForm } from './InputSingleNumberForm';
