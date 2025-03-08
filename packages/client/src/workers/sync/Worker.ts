@@ -277,6 +277,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
       // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
       // I removed it here just to make sure Kamigaze is working as expected
+      // TODO: chunk this in a smart way based on block gap
       try {
         initialState = await fetchStateFromKamigaze(
           initialState,
@@ -304,9 +305,11 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      */
     performance.mark('gapfill');
     const streamStartBlockNumber = await streamStartBlockNumberPromise;
+    const startString = initialState.blockNumber.toLocaleString();
+    const endString = streamStartBlockNumber.toLocaleString();
     this.setLoadingState({
       state: SyncState.GAPFILL,
-      msg: `Closing State Gap From Blocks ${initialState.blockNumber} to ${streamStartBlockNumber}`,
+      msg: `Closing State Gap From Blocks ${startString} to ${endString}`,
       percentage: 0,
     });
 
@@ -330,7 +333,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const cacheStoreSize = cacheStore.current.state.size;
     this.setLoadingState({
       state: SyncState.INITIALIZE,
-      msg: `Initializing with ${cacheStoreSize} state entries`,
+      msg: `Initializing with ${cacheStoreSize.toLocaleString()} state entries`,
       percentage: 0,
     });
 
