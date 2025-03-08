@@ -50,6 +50,8 @@ export const Inbound = (props: Props) => {
 
 const Container = styled.div`
   width: 100%;
+  gap: 0.6vw;
+
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;

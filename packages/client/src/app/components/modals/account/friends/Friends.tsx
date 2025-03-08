@@ -1,4 +1,4 @@
-import { AccountCard, ActionListButton } from 'app/components/library';
+import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import styled from 'styled-components';
@@ -42,10 +42,7 @@ export const Friends = (props: Props) => {
           />
         ))
       ) : (
-        <>
-          <EmptyText>you have no friends</EmptyText>
-          <EmptyText>go touch some grass</EmptyText>
-        </>
+        <EmptyText text={['you have no friends', 'go touch some grass']} />
       )}
     </Container>
   );
@@ -53,17 +50,10 @@ export const Friends = (props: Props) => {
 
 const Container = styled.div`
   width: 100%;
+  gap: 0.6vw;
+
   display: flex;
   flex-flow: wrap;
   justify-content: center;
   align-items: flex-start;
-`;
-
-const EmptyText = styled.div`
-  color: black;
-  margin: 1vw;
-  padding-top: 1vw;
-
-  font-size: 1.2vw;
-  font-family: Pixel;
 `;

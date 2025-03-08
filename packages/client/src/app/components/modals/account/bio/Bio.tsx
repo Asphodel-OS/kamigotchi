@@ -27,20 +27,16 @@ export const Bio = (props: Props) => {
   const { isLoading, account, utils, isSelf, handlePfpChange } = props;
   const { getAccountKamis } = utils;
 
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [tick, setTick] = useState(Date.now());
 
   /////////////////
   // TRACKING
 
   // ticking
   useEffect(() => {
-    const refreshClock = () => {
-      setLastRefresh(Date.now());
-    };
+    const refreshClock = () => setTick(Date.now());
     const timerId = setInterval(refreshClock, 3333);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
+    return () => clearInterval(timerId);
   }, []);
 
   const copyText = (text: string) => {
@@ -72,34 +68,6 @@ export const Bio = (props: Props) => {
     );
   };
 
-  const BirthdayRow = () => {
-    if (!account.time.creation) return null;
-    return (
-      <DetailRow>
-        <CakeIcon style={{ height: '1.4vw', width: '1.4vw' }} />
-        <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
-      </DetailRow>
-    );
-  };
-
-  const KillsRow = () => {
-    return (
-      <DetailRow>
-        <CheckroomIcon style={{ height: '1.4vw', width: '1.4vw' }} />
-        <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
-      </DetailRow>
-    );
-  };
-
-  const CoinRow = () => {
-    return (
-      <DetailRow>
-        <TollIcon style={{ height: '1.4vw', width: '1.4vw' }} />
-        <Description>{account.stats?.coin ?? 0} MUSU Collected</Description>
-      </DetailRow>
-    );
-  };
-
   const KamisDropDown = () => {
     let kamis = getAccountKamis(account.entity).map((kami) => (
       <KamiDropDown
@@ -123,14 +91,14 @@ export const Bio = (props: Props) => {
       <PfpContainer>
         <PfpImage isLoading={isLoading} draggable='false' src={account.pfpURI} />
         <Tooltip text={[getLastSeenString()]}>
-          <PfpStatus isLoading={isLoading} timeDelta={lastRefresh / 1000 - account.time.last} />
+          <PfpStatus isLoading={isLoading} timeDelta={tick / 1000 - account.time.last} />
         </Tooltip>
       </PfpContainer>
     );
   };
 
   return (
-    <Container key={account.name}>
+    <Container>
       <Content>
         <Identifiers>
           <TitleRow>
@@ -138,9 +106,18 @@ export const Bio = (props: Props) => {
           </TitleRow>
           <AddressDisplay />
         </Identifiers>
-        <BirthdayRow />
-        <KillsRow />
-        <CoinRow />
+        <DetailRow>
+          <CakeIcon style={{ height: '1.4vw' }} />
+          <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
+        </DetailRow>
+        <DetailRow>
+          <CheckroomIcon style={{ height: '1.4vw' }} />
+          <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
+        </DetailRow>
+        <DetailRow>
+          <TollIcon style={{ height: '1.4vw' }} />
+          <Description>{(account.stats?.coin ?? 0).toLocaleString()} MUSU Collected</Description>
+        </DetailRow>
       </Content>
       {isSelf ? (
         <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
@@ -154,14 +131,13 @@ export const Bio = (props: Props) => {
 };
 
 const Container = styled.div`
-  color: black;
-  padding: 1.2vw;
+  padding: 0.75vw;
   display: flex;
   flex-flow: row nowrap;
 `;
 
 const Content = styled.div`
-  flex-grow: 1;
+  width: 100%;
   padding: 0.5vw;
 
   display: flex;
@@ -185,8 +161,7 @@ const TitleRow = styled.div`
 
 const Title = styled.div`
   padding-top: 0.15vw;
-  font-family: Pixel;
-  font-size: 1.1vw;
+  font-size: 1.2vw;
 `;
 
 const Subtitle = styled.div`
@@ -201,7 +176,7 @@ const Subtitle = styled.div`
 `;
 
 const DetailRow = styled.div`
-  padding: 0.3vw 0;
+  padding: 0.15vw 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;

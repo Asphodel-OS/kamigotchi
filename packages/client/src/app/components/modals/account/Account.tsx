@@ -41,6 +41,7 @@ export function registerAccountModal() {
       const accountOptions = {
         friends: 60,
         pfp: 5,
+        stats: 5,
       };
 
       return interval(3333).pipe(
