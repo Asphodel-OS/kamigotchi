@@ -3,6 +3,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { AdminAPI } from '../api';
 import { generateRegID, readFile } from './utils';
 
+// TODO: trigger more verbose console logs (e.g. item/npc names) and only on a verbose flag
 export async function initListings(api: AdminAPI, indices?: number[]) {
   const listingCSV = await readFile('listings/listings.csv');
   const pricingCSV = await readFile('listings/pricing.csv');
@@ -23,7 +24,7 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     const currency = Number(row['Currency Index']);
 
     await createListing(api, npcIndex, itemIndex, currency, targetValue);
-    console.log(`created listing for npc ${npcIndex} of item ${itemIndex}`);
+    console.log(`created listing for npc ${npcIndex} of item ${itemIndex} for ${targetValue}`);
 
     // Set Buy Pricing
     const buyKey = String(row['Buy Key']);
