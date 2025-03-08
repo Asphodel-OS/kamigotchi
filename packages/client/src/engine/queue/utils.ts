@@ -1,4 +1,9 @@
-import { BaseProvider, JsonRpcProvider, TransactionRequest } from '@ethersproject/providers';
+import {
+  BaseProvider,
+  JsonRpcProvider,
+  TransactionRequest,
+  TransactionResponse,
+} from '@ethersproject/providers';
 import { extractEncodedArguments } from '@mud-classic/utils';
 import { BigNumber, BigNumberish, Overrides } from 'ethers';
 import { defaultAbiCoder as abi } from 'ethers/lib/utils';
@@ -17,6 +22,20 @@ export async function getRevertReason(txHash: string, provider: BaseProvider): P
   const encodedRevertReason = await provider.call(tx as TransactionRequest);
   const decodedRevertReason = abi.decode(['string'], extractEncodedArguments(encodedRevertReason));
   return decodedRevertReason[0];
+}
+
+export async function waitForTx(txResponse: Promise<TransactionResponse>) {
+  const response = await txResponse;
+  if (response == null) {
+    // todo: review upon mainnet launch
+    /**
+     * Issue: tx response can be null if tx is yet pending or indexed. (tx is unknown, or not in mempool)
+     * Issue is caused by RPC. Review again with new mainnet version, should be fixed.
+     * If necessary, add a wait and try again
+     */
+    console.warn('tx response null');
+  }
+  return response.wait();
 }
 
 export async function getTxGasData(

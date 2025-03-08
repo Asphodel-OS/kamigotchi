@@ -11,7 +11,7 @@ import { Contracts } from 'engine/types';
 import { deferred } from 'utils/async';
 import { createPriorityQueue } from './priorityQueue';
 import { TxQueue } from './types';
-import { getRevertReason, getTxGasData, isOverrides } from './utils';
+import { getRevertReason, getTxGasData, isOverrides, waitForTx } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -111,9 +111,10 @@ export function create<C extends Contracts>(
         const tx = await signer?.sendTransaction(populatedTx!);
         const hash = tx?.hash || '';
 
-        const response = signer.provider!.getTransaction(hash);
+        const response = signer.provider!.getTransaction(hash); // todo: do we need to return response?
+
         // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
-        const wait = async () => (await response).wait();
+        const wait = async () => waitForTx(response);
 
         // Resolved value goes to the initiator of the transaction
         resolve({ hash, wait, response });
