@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { calcListingBuyPrice } from 'app/cache/npc';
 import { Tooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
+import { PricingIcons } from 'assets/images/icons/pricing';
 import { Listing } from 'network/shapes/Listing';
 import { getItemImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
@@ -34,7 +35,12 @@ export const CatalogRow = (props: Props) => {
       >
         <Image src={listing.item.image} isInCart={isInCart} />
         <Details>
-          <Text>{listing.item.name}</Text>
+          <Text>
+            <Icon
+              src={PricingIcons[listing.buy?.type.toLowerCase() as keyof typeof PricingIcons]}
+            />
+            {listing.item.name}
+          </Text>
           <Text>
             <Icon src={getItemImage(listing.payItem.name)} />
             {calcListingBuyPrice(listing, 1)}
@@ -89,7 +95,7 @@ const Details = styled.div`
 
 const Text = styled.div`
   color: black;
-  font-family: Pixel;
+
   font-size: 0.9vw;
   line-height: 1.5vw;
 
@@ -101,5 +107,5 @@ const Text = styled.div`
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
-  margin-right: 0.3vw;
+  margin: 0 0.3vw;
 `;
