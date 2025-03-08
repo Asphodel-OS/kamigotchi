@@ -14,5 +14,6 @@ export const config: PrivyClientConfig = {
     accentColor: '#676FFF',
     logo: import.meta.env.VITE_PRIVY_APP_LOGO,
     showWalletLoginFirst: true,
+    walletList: ['detected_ethereum_wallets'],
   },
 };
