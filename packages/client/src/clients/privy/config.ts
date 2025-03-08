@@ -3,7 +3,7 @@ import { DefaultChain } from 'constants/chains';
 
 export const config: PrivyClientConfig = {
   supportedChains: [DefaultChain],
-  DefaultChain: DefaultChain,
+  defaultChain: DefaultChain,
   embeddedWallets: {
     createOnLogin: 'all-users',
     noPromptOnSignature: true,
