@@ -37,7 +37,7 @@ contract HarvestStartSystem is System {
 
     // check node requirements (if any)
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
-    LibNode.verifyRequirements(components, nodeIndex, accID, kamiID);
+    LibNode.verifyRequirements(components, nodeIndex, kamiID);
 
     // start the harvest, create if none exists
     uint256 id = LibHarvest.getForKami(components, kamiID);
