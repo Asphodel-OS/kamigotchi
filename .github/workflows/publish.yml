@@ -4,20 +4,13 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'packages/client/src/network/**'
-      - 'packages/client/src/workers/**'
-      - 'packages/client/src/engine/**'
-      - 'packages/client/abi/**'
 
 env:
   SOURCE_DIRS: >-
-    packages/client/src/network:network
-    packages/client/src/workers:workers
-    packages/client/src/engine:engine
-    packages/client/abi:abi
+    packages/contracts:contracts
+    packages/client:client
   TARGET_REPO_OWNER: 'Asphodel-OS'
-  TARGET_REPO_NAME: 'kamigotchi-entity-shapes'
+  TARGET_REPO_NAME: 'kamigotchi-public'
 
 jobs:
   sync:
@@ -42,20 +35,13 @@ jobs:
           echo "Cloning target repo"  
           git clone git@github.com:${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME }}.git
 
-          # Read SOURCE_DIRS line by line
-          echo "${{ env.SOURCE_DIRS }}" | tr ' ' '\n' | while IFS=: read -r source_dir target_dir; do
-            if [ -n "$source_dir" ] && [ -n "$target_dir" ]; then
-              echo "Processing: source=$source_dir target=$target_dir"
-              if [ -d "./source-repo/$source_dir" ]; then
-                echo "Copying from $source_dir to $target_dir"
-                mkdir -p ./${{ env.TARGET_REPO_NAME }}/$target_dir
-                cp -rv ./source-repo/$source_dir/* ./${{ env.TARGET_REPO_NAME }}/$target_dir/
-              else
-                echo "Source directory ./source-repo/$source_dir does not exist"
-                ls -la ./source-repo
-              fi
-            fi
-          done
+          rm -rf ./source-repo/.github
+          rm -rf ./source-repo/.git
+          rm -rf ./source-repo/CODEOWNERS
+          rm -rf ./source-repo/packages/contracts/deployment
+          rm -rf ./source-repo/packages/contracts/test
+
+          cp -r ./source-repo/. ./${{ env.TARGET_REPO_NAME }}
 
           cd ./${{ env.TARGET_REPO_NAME }}
 
@@ -65,7 +51,7 @@ jobs:
           # Check for changes
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit -m "Sync Shapes files from Kamigotchi repo
+            git commit -m "Sync packages from Kamigotchi repo
 
             Source Commit: ${{ github.sha }}
             Workflow: ${{ github.workflow }}

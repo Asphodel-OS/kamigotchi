@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "version": "1.0.0",
   "type": "module",
   "private": true,
