@@ -115,7 +115,7 @@ const harvestCollect = (network: NetworkLayer, kami: Kami) => {
     params: [harvest.id],
     description: `Collecting harvest for ${kami.name}`,
     execute: async () => {
-      return api.player.harvest.collect(harvest.id);
+      return api.player.harvest.collect([harvest.id]);
     },
   });
 };
@@ -128,7 +128,7 @@ const harvestStart = (network: NetworkLayer, kami: Kami, node: Node) => {
     params: [kami.id, node.id],
     description: `Deploying ${kami.name} onto ${node.name}`,
     execute: async () => {
-      return api.player.harvest.start(kami.id, node.id);
+      return api.player.harvest.start([kami.id], node.id);
     },
   });
 };
@@ -147,7 +147,7 @@ const harvestStop = (network: NetworkLayer, kami: Kami) => {
     params: [harvest.id],
     description: `Stopping harvest for ${kami.name}`,
     execute: async () => {
-      return api.player.harvest.stop(harvest.id);
+      return api.player.harvest.stop([harvest.id]);
     },
   });
 };
