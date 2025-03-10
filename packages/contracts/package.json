@@ -18,7 +18,7 @@
     "start": "pnpm run-p -l node:local deploy:local",
     "test": "pnpm codegen && forge test --contracts src/test --gas-limit=10000000000 --optimize false",
     "----- SPECIFIC COMMANDS -----": "---------------------------",
-    "deploy:local": "pnpm deploy:script --mode DEV --forgeOpts='--gas-limit 10000000000'",
+    "deploy:local": "pnpm deploy:script --mode DEV",
     "deploy:local:partial": "pnpm deploy:local --mode DEV --skipInit",
     "deploy:testnet": "pnpm deploy:script --mode TEST --forgeOpts='-g=300'",
     "deploy:testnet:partial": "pnpm deploy:testnet --skipInit",

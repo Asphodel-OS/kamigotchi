@@ -43,6 +43,8 @@ export async function deploy(
       rpc,
       '--skip',
       'test',
+      '--gas-limit',
+      '10000000000',
       ...ignoreSolcErrors,
       ...(forgeOpts?.toString().split(/,| /) || []),
     ],
