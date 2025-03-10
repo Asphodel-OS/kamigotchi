@@ -9,6 +9,7 @@ import { registerUIComponent } from 'app/root';
 import { useAccount, useTokens } from 'app/stores';
 import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
+import { useEffect } from 'react';
 
 export function registerTokenBalances() {
   registerUIComponent(
@@ -30,6 +31,7 @@ export function registerTokenBalances() {
 
           return {
             tokens: {
+              // todo: dynamically query based on items with address?
               onyx: getConfigAddress(world, components, 'ONYX_ADDRESS') as Address,
             },
             spender: getCompAddr(world, components, 'component.token.allowance'),
@@ -39,15 +41,19 @@ export function registerTokenBalances() {
     },
     ({ tokens, spender }) => {
       const { account } = useAccount();
-      const { setOnyx, setInit } = useTokens();
+      const { balances, set } = useTokens();
 
       // doesn't seem to work reliably - updates upon Action for additional trigger
       useWatchBlockNumber({
         onBlockNumber: () => {
           refetchOnyx();
-          setOnyx(onyxBal);
+          set(tokens.onyx, onyxBal);
         },
       });
+
+      useEffect(() => {
+        console.log('onyx bal', balances.get(tokens.onyx));
+      }, [balances]);
 
       const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
         account.ownerAddress as Address,

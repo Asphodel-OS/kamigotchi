@@ -4,7 +4,7 @@ import { pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 import { Tooltip } from '../poppers/Tooltip';
 
-interface Props {
+export interface ActionButtonProps {
   onClick: Function;
   text: string;
   disabled?: boolean;
@@ -17,7 +17,7 @@ interface Props {
 }
 
 // ActionButton is a text button that triggers an Action when clicked
-export const ActionButton = (props: Props) => {
+export const ActionButton = (props: ActionButtonProps) => {
   // layer on a sound effect
   const handleClick = async () => {
     playClick();

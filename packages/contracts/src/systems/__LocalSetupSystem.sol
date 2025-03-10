@@ -86,7 +86,8 @@ contract __LocalSetupSystem is System, Script {
     address addr = LibItem.getTokenAddr(components, itemIndex);
     require(addr != address(0), "item no token attached");
     string memory name = LibItem.getName(components, itemIndex);
-    LibItem.addERC20(components, itemIndex, address(new OpenMintable(name, name)));
+    addr = address(new OpenMintable(name, name));
+    LibItem.addERC20(components, itemIndex, addr);
 
     // writing config address if onyx
     if (name.toCase(true).eq("ONYX")) LibConfig.setAddress(components, "ONYX_ADDRESS", addr);

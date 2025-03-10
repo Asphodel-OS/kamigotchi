@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 
 export interface State {
-  onyx: BalPair;
-  init: BalPair;
+  balances: Map<string, BalPair>;
 }
 
 // expects whole number (after decimal processing)
@@ -12,19 +11,21 @@ export interface BalPair {
 }
 
 interface Actions {
-  setOnyx: (onyx: BalPair) => void;
-  setInit: (init: BalPair) => void;
+  set: (token: string, value: BalPair) => void;
+  // setOnyx: (onyx: BalPair) => void;
+  // setInit: (init: BalPair) => void;
 }
 
 export const useTokens = create<State & Actions>((set) => {
   const initialState: State = {
-    onyx: { allowance: 0, balance: 0 },
-    init: { allowance: 0, balance: 0 },
+    balances: new Map(),
   };
 
   return {
     ...initialState,
-    setOnyx: (value: BalPair) => set((state: State) => ({ ...state, onyx: value })),
-    setInit: (value: BalPair) => set((state: State) => ({ ...state, init: value })),
+    set: (token: string, value: BalPair) =>
+      set((state: State) => ({ ...state, balances: new Map(state.balances).set(token, value) })),
+    // setOnyx: (value: BalPair) => set((state: State) => ({ ...state, onyx: value })),
+    // setInit: (value: BalPair) => set((state: State) => ({ ...state, init: value })),
   };
 });

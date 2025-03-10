@@ -1,7 +1,8 @@
 import { GasExponent } from 'constants/gas';
 import { TxQueue } from 'engine/queue';
-import { BigNumberish, ethers, utils } from 'ethers';
+import { BigNumberish, utils } from 'ethers';
 import { approveERC20 } from 'network/chain';
+import { parseEther } from 'viem';
 import { auctionsAPI } from './auctions';
 import { harvestAPI } from './harvest';
 
@@ -9,20 +10,21 @@ export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(txQueue: TxQueue) {
   const { call, systems } = txQueue;
+
   /////////////////
   // NON-MUD
 
-  // parses to ether (1e18) for convienience
-  function send(address: string, amount: BigNumberish) {
+  // parses to wei (1e18) for convienience
+  function send(address: string, amount: number) {
     return call({
       to: address,
-      value: ethers.utils.parseUnits(amount.toString(), 'ether'),
+      value: parseEther(amount.toString()),
     });
   }
 
-  // approves full spend
-  function ERC20Approve(token: string, spender: string) {
-    return approveERC20(call, token, spender);
+  // parses to wei (1e18) for convienience
+  function ERC20Approve(token: string, spender: string, amount: number) {
+    return approveERC20(call, token, spender, parseEther(amount.toString()));
   }
 
   /////////////////

@@ -26,10 +26,10 @@ export function useBalance(address: Address, token: Address, spender?: Address) 
 }
 
 // uses ethersjs for RECS compatibility
-export function approve(addToQueue: any, token: string, spender: string) {
+export function approve(addToQueue: any, token: string, spender: string, amount: BigInt) {
   const iERC20 = new ethers.utils.Interface(abi);
   return addToQueue({
-    data: iERC20.encodeFunctionData('approve', [spender, ethers.constants.MaxUint256]),
+    data: iERC20.encodeFunctionData('approve', [spender, amount]),
     to: token,
   });
 }
