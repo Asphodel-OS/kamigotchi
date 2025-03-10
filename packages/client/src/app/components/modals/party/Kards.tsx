@@ -12,11 +12,12 @@ import {
   isUnrevealed,
   KamiRefreshOptions,
 } from 'app/cache/kami';
-import { KamiCard } from 'app/components/library';
+import { EmptyText, KamiCard } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 
@@ -27,24 +28,28 @@ interface Props {
     accountEntity: EntityIndex;
   };
   display: {
+    HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
   utils: {
     getAccount: () => Account;
     getKamis: (options?: KamiRefreshOptions) => Kami[];
+    getNode: (index: number) => Node;
   };
 }
 
 export const Kards = (props: Props) => {
   const { display, data, utils } = props;
   const { accountEntity } = data;
-  const { getAccount, getKamis } = utils;
+  const { HarvestButton, UseItemButton } = display;
+  const { getAccount, getKamis, getNode } = utils;
 
   const { modals, setModals } = useVisibility();
-  const { nodeIndex, setNode } = useSelected();
+  const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
 
   const [account, setAccount] = useState<Account>(NullAccount);
   const [kamis, setKamis] = useState<Kami[]>([]);
+  const [node, setNode] = useState<Node>(NullNode); // node of the current room
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   // ticking
@@ -54,6 +59,11 @@ export const Kards = (props: Props) => {
     const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
     return () => clearInterval(timerId);
   }, []);
+
+  useEffect(() => {
+    if (nodeIndex == 0) setNode(NullNode);
+    else setNode(getNode(nodeIndex));
+  }, [account.roomIndex]);
 
   // refresh data whenever the modal is opened
   useEffect(() => {
@@ -114,7 +124,7 @@ export const Kards = (props: Props) => {
 
   // toggle the node modal to the selected one
   const selectNode = (index: number) => {
-    if (nodeIndex !== index) setNode(index);
+    if (nodeIndex !== index) setSelectedNode(index);
     if (!modals.node) setModals({ node: true });
     else if (nodeIndex == index) setModals({ node: false });
     playClick();
@@ -129,15 +139,20 @@ export const Kards = (props: Props) => {
   // DISPLAY
 
   // Choose and return the action button to display
-  const DisplayedAction = (kami: Kami, account: Account) => {
-    let icon = FeedIcon;
-    if (isDead(kami)) icon = ReviveIcon;
-    return display.UseItemButton(kami, account, icon);
+  const DisplayedAction = (account: Account, kami: Kami, node: Node) => {
+    let buttons = [];
+    let useIcon = FeedIcon;
+    if (isDead(kami)) useIcon = ReviveIcon;
+    else buttons.push(HarvestButton(account, kami, node));
+    buttons.push(UseItemButton(kami, account, useIcon));
+    return buttons;
   };
 
   return (
     <Container>
-      {kamis.length == 0 && <EmptyText>You have no kamis. Get some.</EmptyText>}
+      {kamis.length == 0 && (
+        <EmptyText text={['Need Kamis?', 'Some have been seen in the Vending Machine.']} />
+      )}
       {kamis.map((kami) => (
         <KamiCard
           key={kami.entity}
@@ -146,7 +161,7 @@ export const Kards = (props: Props) => {
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={`${calcOutput(kami)} MUSU`}
           contentTooltip={getTooltip(kami)}
-          actions={DisplayedAction(kami, account)}
+          actions={DisplayedAction(account, kami, node)}
           showBattery
           showCooldown
         />
@@ -159,14 +174,4 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   gap: 0.45vw;
-`;
-
-const EmptyText = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: center;
-  color: #333;
-  padding: 0.7vh 0vw;
-  margin: 3vh;
-  height: 100%;
 `;

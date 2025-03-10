@@ -39,7 +39,7 @@ export function registerAccountModal() {
       const { world, components } = network;
 
       const accountOptions = {
-        friends: 60,
+        friends: 5,
         pfp: 5,
         stats: 5,
       };

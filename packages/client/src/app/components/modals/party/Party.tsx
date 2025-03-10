@@ -1,13 +1,16 @@
 import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getNodeByIndex } from 'app/cache/node';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
+import { HarvestButton } from 'app/components/library/actions/HarvestButton';
 import { registerUIComponent } from 'app/root';
 import { useAccount } from 'app/stores';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { Node } from 'network/shapes/Node';
 import { Kards } from './Kards';
 
 export function registerPartyModal() {
@@ -50,6 +53,8 @@ export function registerPartyModal() {
               accountEntity,
             },
             display: {
+              HarvestButton: (account: Account, kami: Kami, node: Node) =>
+                HarvestButton({ network, account, kami, node }),
               UseItemButton: (kami: Kami, account: Account, icon: string) =>
                 UseItemButton(network, kami, account, icon),
             },
@@ -57,6 +62,7 @@ export function registerPartyModal() {
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
               getKamis: () =>
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
+              getNode: (index: number) => getNodeByIndex(world, components, index),
             },
           };
         })
