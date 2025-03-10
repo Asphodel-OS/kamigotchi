@@ -25,7 +25,7 @@ export const ProgressBar = (props: Props) => {
   );
 
   return (
-    <Container>
+    <Container style={{ width: props.width ? props.width + '%' : '100%' }}>
       {props.indicator && (
         <Row style={{ width: props.width ? props.width + '%' : '100%' }}>
           <>-</>

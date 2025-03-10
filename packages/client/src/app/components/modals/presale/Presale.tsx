@@ -1,17 +1,24 @@
 import { interval, map } from 'rxjs';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { getAccount } from 'app/cache/account';
-import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
+import { getConfigAddress } from 'app/cache/config';
+import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { BigNumber, ethers } from 'ethers';
+import { useERC20Balance } from 'network/chain';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getConfigFieldValueAddress } from 'network/shapes/Config';
 import { getOwnerAddress } from 'network/shapes/utils/component';
+import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Bar } from './Bar';
+import { Address } from 'viem';
+
+import { ProgressBar } from 'app/components/library';
+import { Rate } from './Rate';
 
 export function registerPresaleModal() {
   registerUIComponent(
@@ -20,7 +27,7 @@ export function registerPresaleModal() {
       colStart: 33,
       colEnd: 70,
       rowStart: 15,
-      rowEnd: 35,
+      rowEnd: 55,
     },
 
     // Requirement
@@ -35,12 +42,14 @@ export function registerPresaleModal() {
             data: {
               accountEntity,
               ownerAddress: getOwnerAddress(components, accountEntity),
-              onyxAddress: getConfigFieldValueAddress(world, components, 'ONYX_ADDRESS'),
-              onyxPresaleAddress: getConfigFieldValueAddress(
+              onyxPresaleAddress: getConfigAddress(
                 world,
                 components,
                 'ONYX_PRESALE_ADDRESS'
-              ),
+              ) as Address,
+            },
+            tokens: {
+              onyx: getConfigAddress(world, components, 'ONYX_ADDRESS') as Address,
             },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity),
@@ -51,21 +60,20 @@ export function registerPresaleModal() {
     },
 
     // Render
-    ({ network, data, utils }) => {
-      const { actions, api } = network;
-      const { accountEntity, onyxAddress, onyxPresaleAddress, ownerAddress } = data;
+    ({ network, data, utils, tokens }) => {
+      const { accountEntity, onyxPresaleAddress, ownerAddress } = data;
       const { selectedAddress, apis, signer } = useNetwork();
+      const { actions, api, components, world } = network;
 
       const [isAllowed, setIsAllowed] = useState<boolean>(false);
-      const [enoughBalance, setEnoughBalance] = useState<boolean>(false);
-      const [amount, setAmount] = useState<BigNumber>(BigNumber.from(0));
+      const [amount, setAmount] = useState<number>(0);
       const [progress, setProgress] = useState<number>(0);
       const [depositEmpty, setDepositEmpty] = useState<boolean>(true);
       const inputRef = useRef<HTMLInputElement>(null);
 
       useEffect(() => {
         setTimeout(() => {
-          getProgress();
+          setProgress(presaleBal.balance);
         }, 10000);
       });
 
@@ -74,7 +82,7 @@ export function registerPresaleModal() {
         if (inputRef.current) inputRef.current.value = '';
         checkDeposits();
         checkOnyxAllowance();
-        setAmount(BigNumber.from(0));
+        setAmount(0);
       }, [accountEntity]);
 
       /////////////////
@@ -95,25 +103,24 @@ export function registerPresaleModal() {
       /////////////////
       // ONYX CONTRACT
       // TODO: in the future change this to ETH
+      //addresses :accountowner and onyx  using onyxpresale as spender
+      const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
+        getAccount(world, components, accountEntity).ownerAddress as Address,
+        tokens.onyx,
+        onyxPresaleAddress
+      );
 
-      async function getOnyxContract() {
-        const erc20Interface = new ethers.utils.Interface([
-          'function allowance(address owner, address spender) view returns (uint256)',
-          'function approve(address spender, uint256 amount) returns (bool)',
-          'function balanceOf(address account) view returns (uint256)',
-        ]);
-
-        const onyxContract = new ethers.Contract(onyxAddress, erc20Interface, signer);
-
-        return { onyxContract };
-      }
+      const { balances: presaleBal, refetch: refetchPresale } = useERC20Balance(
+        onyxPresaleAddress,
+        tokens.onyx
+      );
 
       async function checkOnyxAllowance() {
-        const { onyxContract } = await getOnyxContract();
         const { presaleContract } = await getPresaleContract();
         try {
-          const allowance = await onyxContract.allowance(ownerAddress, onyxPresaleAddress);
-          if (allowance.gte(await presaleContract.whitelist(ownerAddress))) {
+          if (
+            BigNumber.from(onyxBal.allowance).gte(await presaleContract.whitelist(ownerAddress))
+          ) {
             setIsAllowed(true);
           } else {
             setIsAllowed(false);
@@ -124,40 +131,49 @@ export function registerPresaleModal() {
         }
       }
 
-      async function checkUserBalance(amount: ethers.BigNumber) {
-        const { onyxContract } = await getOnyxContract();
-        try {
-          const balance = await onyxContract.balanceOf(ownerAddress);
-          setEnoughBalance(balance.gte(amount));
-        } catch (error: any) {
-          setEnoughBalance(false);
-          throw new Error(`Balance check failed: ${error.message}`);
-        }
-      }
-
-      const approveTx = async () => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-        const { onyxContract } = await getOnyxContract();
-        const balance = await onyxContract.balanceOf(ownerAddress);
-        console.log(`about to approve $`);
-        const tx = await onyxContract.approve(onyxPresaleAddress, balance);
-        await tx.wait();
-        console.log(`approved $`);
-        if (tx.wait().status === 1) {
-          setIsAllowed(true);
-        } else {
+      const approveTx = () => {
+        if (!api) {
           setIsAllowed(false);
+          return console.error(`API not established for ${selectedAddress}`);
+        }
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'ApprovePresale',
+          params: [],
+          description: `Approving ${onyxBal.balance} ONYX`,
+          execute: async () => {
+            return api.player.erc20.approve(tokens.onyx, onyxPresaleAddress);
+          },
+        });
+        return actionID;
+      };
+
+      const handleApproveTx = async () => {
+        try {
+          const approveActionID = approveTx();
+          if (!approveActionID) {
+            setIsAllowed(false);
+            throw new Error('Presale approve action failed');
+          }
+          await waitForActionCompletion(
+            actions!.Action,
+            world.entityToIndex.get(approveActionID) as EntityIndex
+          );
+          setIsAllowed(true);
+        } catch (e) {
+          console.log('Presale.tsx: handleApproveTx() failed', e);
         }
       };
 
-      const handleBalance = async (amount: ethers.BigNumber) => {
-        checkUserBalance(amount);
-        if (enoughBalance) {
+      const checkUserBalance = async (amount: number) => {
+        const { presaleContract } = await getPresaleContract();
+        presaleContract.whitelistDeposit(amount);
+        if (onyxBal.balance >= amount) {
           const { presaleContract } = await getPresaleContract();
           if (
             presaleContract.whitelist(ownerAddress) - presaleContract.deposits(ownerAddress) >=
-            Number(amount)
+            amount
           ) {
             presaleContract.whitelistDeposit(amount);
             setDepositEmpty(false);
@@ -165,15 +181,9 @@ export function registerPresaleModal() {
         }
       };
 
-      const getProgress = async () => {
-        const { onyxContract } = await getOnyxContract();
-        onyxContract.balanceOf(onyxPresaleAddress);
-        setProgress(progress / 1000);
-      };
-
-      const widthdraw = async () => {
+      const withdraw = async () => {
         const { presaleContract } = await getPresaleContract();
-        presaleContract.widthdraw();
+        presaleContract.withdraw();
         setDepositEmpty(true);
       };
 
@@ -184,7 +194,6 @@ export function registerPresaleModal() {
 
       /////////////////
       // DISPLAY
-
       return (
         <ModalWrapper
           id='presale'
@@ -196,7 +205,8 @@ export function registerPresaleModal() {
           ) : (
             <>
               <Content>
-                <Bar progress={progress} />
+                <ProgressBar current={progress} max={1000} />
+                <Rate quantityLeft={amount} quantityRight={amount * 1000} />
                 <InputButton>
                   <Input
                     ref={inputRef}
@@ -209,40 +219,39 @@ export function registerPresaleModal() {
                           e.key !== 'ArrowLeft' &&
                           e.key !== 'ArrowRight' &&
                           e.key !== 'ArrowUp' &&
-                          e.key !== 'ArrowDown'
+                          e.key !== 'ArrowDown' &&
+                          e.key !== '.'
                         )
                           e.preventDefault();
                       }
                     }}
                     onChange={(e) => {
-                      setAmount(BigNumber.from(e.target.value));
+                      setAmount(Number(e.target.value));
                     }}
                   />
                   {!isAllowed ? (
-                    <Button
+                    <ActionButton
+                      text='Approve'
                       onClick={() => {
                         checkOnyxAllowance();
-                        approveTx();
+                        handleApproveTx();
                       }}
-                    >
-                      Approve
-                    </Button>
+                    />
                   ) : (
-                    <Button
-                      disabled={amount <= BigNumber.from(0)}
+                    <ActionButton
+                      text='Buy'
+                      disabled={amount <= 0}
                       onClick={() => {
-                        handleBalance(amount);
+                        checkUserBalance(amount);
                       }}
-                    >
-                      Buy
-                    </Button>
+                    />
                   )}
                 </InputButton>
                 <Button
                   style={{ position: `absolute`, right: `1vw`, bottom: `1vw` }}
                   disabled={depositEmpty}
                   onClick={() => {
-                    widthdraw();
+                    withdraw();
                   }}
                 >
                   Withdraw
@@ -275,7 +284,7 @@ const InputButton = styled.div`
 `;
 
 const Input = styled.input`
-  line-height: 0.8vw;
+  line-height: 1.5vw;
   border-radius: 0.15vw;
   width: 50%;
 `;
