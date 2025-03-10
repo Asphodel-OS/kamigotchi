@@ -61,7 +61,11 @@ export const CraftButton = (props: Props) => {
 
   return (
     <Tooltip key='craft-tooltip' text={[tooltip]}>
-      <IconButton onClick={() => actions.craft(recipe, 1)} img={CraftIcon} disabled={disabled} />
+      <IconButton
+        onClick={() => actions.craft(recipe, quantity)}
+        img={CraftIcon}
+        disabled={disabled}
+      />
     </Tooltip>
   );
 };
