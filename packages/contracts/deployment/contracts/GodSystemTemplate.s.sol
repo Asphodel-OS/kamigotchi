@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.28;
 
-import "./Imports.sol";
+import "deployment/Imports.sol";
 
-import { SystemCall } from "./SystemCall.s.sol";
+import { SystemCall } from "deployment/SystemCall.s.sol";
 import { console } from "forge-std/console.sol";
 
 /// Copy this to GodSystem.s.sol to use

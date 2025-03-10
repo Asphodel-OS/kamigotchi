@@ -37,7 +37,7 @@ export async function genContractSystemData(clear?: boolean) {
 
   const { files: systems, ids: sysIDs } = await getMetadata(systemsDir);
   const { files: comps, ids: compIDs } = await getMetadata(componentsDir);
-  const bytecodes = systems.map((system) => `../../../../out/${system}.sol/${system}.json`);
+  const bytecodes = systems.map((system) => `../../../out/${system}.sol/${system}.json`);
 
   const SystemBytecodes = genSystemBytecodes(systems, sysIDs, bytecodes);
   const SystemMappings = genSystemMappings(systems, sysIDs);

@@ -15,10 +15,10 @@ artifacts/
 broadcast/
 /cache/
 out/
-src/deployment/contracts/initStream.json
-src/deployment/contracts/GodSystem.s.sol
-src/deployment/contracts/InitWorld.s.sol
-src/deployment/contracts/LibDeploy.sol
-src/deployment/contracts/Imports.sol
-src/test/utils/TestSetupImports.t.sol
+deployment/contracts/initStream.json
+deployment/contracts/GodSystem.s.sol
+deployment/contracts/InitWorld.s.sol
+deployment/contracts/LibDeploy.sol
+deployment/contracts/Imports.sol
+test/utils/TestSetupImports.t.sol
 /types/

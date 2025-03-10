@@ -5,11 +5,11 @@ import "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibDeploy, DeployResult } from "./LibDeploy.sol";
-import { LibDeployTokens } from "./LibDeployTokens.s.sol";
-import { LibDeployEmitter } from "./LibDeployEmitter.s.sol";
+import { LibDeploy, DeployResult } from "deployment/LibDeploy.sol";
+import { LibDeployTokens } from "deployment/LibDeployTokens.s.sol";
+import { LibDeployEmitter } from "deployment/LibDeployEmitter.s.sol";
 import { Emitter } from "solecs/Emitter.sol";
-import { InitWorld } from "./InitWorld.s.sol";
+import { InitWorld } from "deployment/InitWorld.s.sol";
 
 contract Deploy is InitWorld {
   function deploy(

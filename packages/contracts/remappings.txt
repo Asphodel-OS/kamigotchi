@@ -1,10 +1,10 @@
 solecs/=src/solecs
 
 components/=src/components
-deployment/=src/deployment/contracts
+deployment/=deployment/contracts
 libraries/=src/libraries
 systems/=src/systems
-tests/=src/test
+tests/=test
 utils/=src/utils
 tokens/=src/tokens
 

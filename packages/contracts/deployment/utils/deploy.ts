@@ -1,4 +1,4 @@
-import config from '../../../deploy.json';
+import config from '../../deploy.json';
 import { compToId } from '../contracts/mappings/ComponentMappings';
 import { systemToId } from '../contracts/mappings/SystemMappings';
 

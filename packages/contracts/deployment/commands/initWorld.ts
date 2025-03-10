@@ -56,7 +56,7 @@ async function initWorld(
     'forge',
     [
       'script',
-      'src/deployment/contracts/InitWorld.s.sol:InitWorld',
+      'deployment/contracts/InitWorld.s.sol:InitWorld',
       '--broadcast',
       '--sig',
       'initWorld(uint256,address)',

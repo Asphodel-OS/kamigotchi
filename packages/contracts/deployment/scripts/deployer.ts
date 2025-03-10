@@ -28,7 +28,7 @@ export async function deploy(
     'forge',
     [
       'script',
-      'src/deployment/contracts/Deploy.s.sol:Deploy',
+      'deployment/contracts/Deploy.s.sol:Deploy',
       '--broadcast',
       '--sig',
       'deploy(uint256,address,bool,bool,bool,address,string)',

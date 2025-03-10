@@ -55,7 +55,7 @@ export async function deprecateByAddress(
     'forge',
     [
       'script',
-      'src/deployment/contracts/Deprecate.s.sol:Deprecate',
+      'deployment/contracts/Deprecate.s.sol:Deprecate',
       '--broadcast',
       '--sig',
       'deprecateByAddress(uint256, address, address[])',
@@ -89,7 +89,7 @@ export async function deprecateByID(
     'forge',
     [
       'script',
-      'src/deployment/contracts/Deprecate.s.sol:Deprecate',
+      'deployment/contracts/Deprecate.s.sol:Deprecate',
       '--broadcast',
       '--sig',
       'deprecateByID(uint256, address, string[])',

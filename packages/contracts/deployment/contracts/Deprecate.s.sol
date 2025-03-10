@@ -2,10 +2,10 @@
 pragma solidity >=0.8.28;
 
 import { getAddrByID } from "solecs/utils.sol";
-import { SystemCall } from "./SystemCall.s.sol";
+import { SystemCall } from "deployment/SystemCall.s.sol";
 
 import "forge-std/Script.sol";
-import "./Imports.sol";
+import "deployment/Imports.sol";
 
 /// @notice deprecates a system
 contract Deprecate is SystemCall {

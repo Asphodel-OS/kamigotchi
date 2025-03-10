@@ -34,7 +34,7 @@ const executeGodSystem = async (
     'forge',
     [
       'script',
-      'src/deployment/contracts/GodSystem.s.sol:GodSystem',
+      'deployment/contracts/GodSystem.s.sol:GodSystem',
       '--broadcast',
       '--fork-url',
       rpc,
