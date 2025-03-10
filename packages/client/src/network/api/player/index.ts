@@ -3,6 +3,7 @@ import { TxQueue } from 'engine/queue';
 import { BigNumberish, ethers, utils } from 'ethers';
 import { approveERC20 } from 'network/chain';
 import { auctionsAPI } from './auctions';
+import { harvestAPI } from './harvest';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
@@ -192,29 +193,6 @@ export function createPlayerAPI(txQueue: TxQueue) {
   }
 
   /////////////////
-  // PRODUCTIONS
-
-  // @dev retrieves the amount due from a passive deposit harvest and resets the starting point
-  function collectProduction(harvestID: BigNumberish) {
-    return systems['system.harvest.collect'].executeTyped(harvestID);
-  }
-
-  // @dev liquidates a harvest, if able to, using the specified pet
-  function liquidateProduction(harvestID: BigNumberish, kamiID: BigNumberish) {
-    return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID);
-  }
-
-  // @dev starts a deposit harvest for a character. If none exists, it creates one.
-  function startProduction(kamiID: BigNumberish, nodeID: BigNumberish) {
-    return systems['system.harvest.start'].executeTyped(kamiID, nodeID);
-  }
-
-  // @dev retrieves the amount due from a passive deposit harvest and stops it.
-  function stopProduction(harvestID: BigNumberish) {
-    return systems['system.harvest.stop'].executeTyped(harvestID);
-  }
-
-  /////////////////
   //   QUESTS
 
   // @dev accept a quest for an account
@@ -387,12 +365,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
       reveal: revealPet,
       reroll: rerollPet,
     },
-    harvest: {
-      collect: collectProduction,
-      liquidate: liquidateProduction,
-      start: startProduction,
-      stop: stopProduction,
-    },
+    harvest: harvestAPI(systems),
     quests: {
       accept: acceptQuest,
       complete: completeQuest,

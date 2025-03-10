@@ -34,6 +34,7 @@ export interface HarvestStopSystemInterface extends utils.Interface {
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
+    "executeBatched(uint256[])": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
@@ -48,6 +49,7 @@ export interface HarvestStopSystemInterface extends utils.Interface {
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
+      | "executeBatched"
       | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
@@ -68,6 +70,10 @@ export interface HarvestStopSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeBatched",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
@@ -101,6 +107,10 @@ export interface HarvestStopSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "executeBatched",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
     data: BytesLike
@@ -221,6 +231,11 @@ export interface HarvestStopSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -265,6 +280,11 @@ export interface HarvestStopSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  executeBatched(
+    ids: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   executeTyped(
     id: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -304,6 +324,11 @@ export interface HarvestStopSystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
@@ -374,6 +399,11 @@ export interface HarvestStopSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -416,6 +446,11 @@ export interface HarvestStopSystem extends BaseContract {
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

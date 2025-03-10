@@ -55,4 +55,14 @@ contract HarvestStartSystem is System {
   function executeTyped(uint256 kamiID, uint256 nodeID) public returns (bytes memory) {
     return execute(abi.encode(kamiID, nodeID));
   }
+
+  // naive batched execution - todo: optimize
+  function executeBatched(
+    uint256[] memory kamiIDs,
+    uint256 nodeID
+  ) public returns (bytes[] memory) {
+    bytes[] memory results = new bytes[](kamiIDs.length);
+    for (uint256 i; i < kamiIDs.length; i++) results[i] = execute(abi.encode(kamiIDs[i], nodeID));
+    return results;
+  }
 }

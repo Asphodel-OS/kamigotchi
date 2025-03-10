@@ -68,4 +68,11 @@ contract HarvestCollectSystem is System {
   function executeTyped(uint256 id) public returns (bytes memory) {
     return execute(abi.encode(id));
   }
+
+  // naive batched execution - todo: optimize
+  function executeBatched(uint256[] memory ids) public returns (bytes[] memory) {
+    bytes[] memory results = new bytes[](ids.length);
+    for (uint256 i; i < ids.length; i++) results[i] = execute(abi.encode(ids[i]));
+    return results;
+  }
 }
