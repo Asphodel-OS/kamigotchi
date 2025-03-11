@@ -12,6 +12,7 @@ import { getConfigValue } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { TokenButton } from 'app/components/library/base/buttons';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -57,6 +58,9 @@ export function registerGachaModal() {
               maxRerolls: getConfigValue(world, components, 'GACHA_MAX_REROLLS'),
               poolKamis: queryKamis(components, { account: GACHA_ID }),
             },
+            display: {
+              TokenButton: (token: Item) => TokenButton({ network, token, amount: 1 }),
+            },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accountOptions),
               getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
@@ -77,7 +81,7 @@ export function registerGachaModal() {
           };
         })
       ),
-    ({ network, data, utils }) => {
+    ({ network, data, display, utils }) => {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
       const { getAccount, getAuction } = utils;
@@ -311,6 +315,7 @@ export function registerGachaModal() {
                 inventories: account.inventories ?? [],
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
               }}
+              display={display}
               state={{ tick, tab, setTab, mode, setMode }}
               utils={utils}
             />

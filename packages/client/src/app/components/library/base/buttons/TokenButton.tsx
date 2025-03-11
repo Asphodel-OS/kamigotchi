@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { getAddress } from 'viem';
 
 import { EntityID } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
@@ -7,12 +7,12 @@ import { useNetwork, useTokens } from 'app/stores';
 import { NetworkLayer } from 'network/create';
 import { Item } from 'network/shapes/Item';
 import { getCompAddr } from 'network/shapes/utils';
-import { ActionButton, ActionButtonProps } from './ActionButton';
+import { ActionButton } from './ActionButton';
 
-interface Props extends ActionButtonProps {
-  amount: number;
+interface Props {
   network: NetworkLayer;
   token: Item; // use token item registry
+  amount: number;
 }
 
 // ActionButton wrapper for token approval/spend flows
@@ -39,67 +39,26 @@ export const TokenButton = (props: Props) => {
   // FUNCTIONS
 
   const approveTx = async () => {
+    console.log(token.address, token.address?.length);
+    console.log(spender, spender.length);
     const api = apis.get(selectedAddress);
     if (!api) return console.error(`API not established for ${selectedAddress}`);
+    const checksumAddr = getAddress(token.address!);
+    const checksumSpender = getAddress(spender);
+    console.log({ checksumAddr, checksumSpender });
+    console.log({ len1: checksumAddr.length, len2: checksumSpender.length });
+
     const actionID = uuid() as EntityID;
     actions.add({
       id: actionID,
       action: 'Approve token',
-      params: [token.address!, spender, amount],
-      description: `Approve ${token.name} to be spent by ${spender}`,
+      params: [checksumAddr, checksumSpender, amount],
+      description: `Approve ${token.name} to be spent by ${checksumSpender}`,
       execute: async () => {
-        return api.erc20.approve(token.address!, spender, amount);
+        return api.erc20.approve(checksumAddr, checksumSpender, amount);
       },
     });
   };
 
-  const onClick = () => {
-    return approved ? props.onClick() : approveTx();
-  };
-
-  return <ActionButton {...props} onClick={onClick} text={approved ? props.text : 'Approve'} />;
+  return <ActionButton {...props} onClick={approveTx} text={'Approve'} />;
 };
-
-const Container = styled.div<{ scale: number }>`
-  border-right: 0.15vw solid black;
-  background-color: black;
-  height: 100%;
-  width: ${({ scale }) => scale}vw;
-  gap: 0.12vw;
-
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const Button = styled.div<{ scale: number; disabled?: boolean }>`
-  background-color: #fff;
-  height: 100%;
-  width: 100%;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-  pointer-events: auto;
-  user-select: none;
-
-  color: black;
-  font-size: ${({ scale }) => 0.6 * scale ** 0.5}vw;
-  text-align: center;
-
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
-
-  ${({ disabled }) =>
-    disabled &&
-    `
-  background-color: #bbb; 
-  cursor: default; 
-  pointer-events: none;`}
-`;

@@ -28,6 +28,9 @@ interface Props {
     saleItem: Item;
     balance: number;
   };
+  display: {
+    TokenButton: (token: Item) => JSX.Element;
+  };
   state: {
     mode: AuctionMode;
     setMode: (mode: AuctionMode) => void;
@@ -38,9 +41,10 @@ interface Props {
 
 //
 export const Controls = (props: Props) => {
-  const { actions, controls, data, state } = props;
+  const { actions, controls, data, display, state } = props;
   const { reveal } = actions;
   const { commits, payItem, balance } = data;
+  const { TokenButton } = display;
   const { tab } = state;
 
   return (
@@ -59,8 +63,9 @@ export const Controls = (props: Props) => {
       {tab === 'MINT' && <Mint controls={controls} />}
       {tab === 'REROLL' && <Reroll />}
       {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
-      <Overlay right={0.75} bottom={0.75}>
+      <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={balance.toFixed(1)} tooltip={[payItem.name]} reverse />
+        {payItem.address && TokenButton(payItem)}
       </Overlay>
     </Container>
   );

@@ -35,6 +35,9 @@ interface Props {
       reroll: Auction;
     };
   };
+  display: {
+    TokenButton: (token: Item) => JSX.Element;
+  };
   state: {
     tick: number;
     tab: TabType;
@@ -51,7 +54,7 @@ interface Props {
 }
 
 export const Sidebar = (props: Props) => {
-  const { actions, data, controls, state, utils } = props;
+  const { actions, controls, data, display, state, utils } = props;
   const { auctions, commits, inventories } = data;
   const { tick, tab, setTab, mode, setMode } = state;
   const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
@@ -101,6 +104,7 @@ export const Sidebar = (props: Props) => {
         actions={actions}
         controls={{ ...controls, price, setPrice, quantity, setQuantity }}
         data={{ payItem, saleItem, balance, commits }}
+        display={display}
         state={state}
       />
       <Footer
