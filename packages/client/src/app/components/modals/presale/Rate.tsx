@@ -12,7 +12,7 @@ export const Rate = (props: Props) => {
     <Content>
       <Tooltip text={[quantityLeft.toString()]}>
         <Column>
-          Ether
+          <label> Ether </label>
           <Numbers>{quantityLeft}</Numbers>
         </Column>
       </Tooltip>
@@ -31,7 +31,6 @@ const Content = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 1.5vw 0 1.5vw 0;
 `;
 
 const Arrow = styled.div`
@@ -41,12 +40,14 @@ const Arrow = styled.div`
   padding: 0.8vw;
   transform: rotate(-45deg);
   -webkit-transform: rotate(-45deg);
+  margin-right: 1vw;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 9ch;
 `;
 
 const Numbers = styled.div`
@@ -55,6 +56,5 @@ const Numbers = styled.div`
   text-overflow: ellipsis;
   max-width: 9ch;
   margin: 1vw;
-  justify-content: flex-start;
   line-height: 1.2vw;
 `;

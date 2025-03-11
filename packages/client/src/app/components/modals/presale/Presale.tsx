@@ -192,6 +192,14 @@ export function registerPresaleModal() {
         setDepositEmpty(presaleContract.deposits(ownerAddress).then((n: BigNumber) => n.eq(0)));
       };
 
+      const MockUpData = () => {
+        return (
+          <Data>
+            <div style={{ marginBottom: `0.5vw` }}> Allowance: 0 </div>
+            <div>Deposits: 0 </div>
+          </Data>
+        );
+      };
       /////////////////
       // DISPLAY
       return (
@@ -205,7 +213,7 @@ export function registerPresaleModal() {
           ) : (
             <>
               <Content>
-                <ProgressBar current={progress} max={1000} />
+                <ProgressBar current={progress} max={1000} /> <MockUpData />
                 <Rate quantityLeft={amount} quantityRight={amount * 1000} />
                 <InputButton>
                   <Input
@@ -298,4 +306,9 @@ const Button = styled.button`
     background-color: rgb(215 215 215);
     cursor: auto;
   }
+`;
+
+const Data = styled.div`
+  left: 30%;
+  top: 30%;
 `;
