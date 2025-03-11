@@ -42,13 +42,12 @@ jobs:
           rm -rf ./source-repo/packages/contracts/deployment
           rm -rf ./source-repo/packages/contracts/test
 
-          # Persist TARGET dirs
+          # Persist TARGET files
           mkdir ./temp_backup
           mv ./target_repo/.github ./target_repo/.git ./target_repo/LICENSE.md ./temp_backup
 
-
           rm -rf ./target_repo/*  
-          mv ./temp_backup/.git ./temp_backup/.github ./target_repo/LICENSE.md ./target_repo/  
+          mv ./temp_backup/.git ./temp_backup/.github ./temp_backup/LICENSE.md ./target_repo/  
 
           cp -r ./source-repo/. ./target_repo/
 
