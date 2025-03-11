@@ -1,7 +1,10 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { BigNumber, ethers } from 'ethers';
+import { useEffect, useRef, useState } from 'react';
 import { interval, map } from 'rxjs';
+import styled from 'styled-components';
+import { Address } from 'viem';
 
 import { getAccount } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
@@ -10,21 +13,16 @@ import {
   EmptyText,
   ModalHeader,
   ModalWrapper,
+  ProgressBar,
   Tooltip,
 } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
-
 import { useERC20Balance } from 'network/chain';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getOwnerAddress } from 'network/shapes/utils/component';
 import { waitForActionCompletion } from 'network/utils';
-import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { Address } from 'viem';
-
-import { ProgressBar } from 'app/components/library';
 import { Rate } from './Rate';
 
 export function registerPresaleModal() {
@@ -67,9 +65,9 @@ export function registerPresaleModal() {
     },
 
     // Render
-    ({ network, data, utils, tokens }) => {
+    ({ network, data, tokens }) => {
       const { accountEntity, onyxPresaleAddress, ownerAddress } = data;
-      const { selectedAddress, apis, signer } = useNetwork();
+      const { selectedAddress, signer } = useNetwork();
       const { actions, api, components, world } = network;
 
       const [isAllowed, setIsAllowed] = useState<boolean>(false);
@@ -84,7 +82,6 @@ export function registerPresaleModal() {
         }, 10000);
       });
 
-      // comment this if you want to check the approval button
       useEffect(() => {
         if (inputRef.current) inputRef.current.value = '';
         checkDeposits();
@@ -107,6 +104,10 @@ export function registerPresaleModal() {
         return { presaleContract };
       }
 
+      const { balances: presaleBal, refetch: refetchPresale } = useERC20Balance(
+        onyxPresaleAddress,
+        tokens.onyx
+      );
       /////////////////
       // ONYX CONTRACT
       // TODO: in the future change this to ETH
@@ -115,11 +116,6 @@ export function registerPresaleModal() {
         getAccount(world, components, accountEntity).ownerAddress as Address,
         tokens.onyx,
         onyxPresaleAddress
-      );
-
-      const { balances: presaleBal, refetch: refetchPresale } = useERC20Balance(
-        onyxPresaleAddress,
-        tokens.onyx
       );
 
       async function checkOnyxAllowance() {
@@ -203,10 +199,10 @@ export function registerPresaleModal() {
         return (
           <Data>
             <Tooltip text={['Allowance: 0']}>
-              <Numbers style={{ marginBottom: `0.2vw` }}> Allowance: 0 </Numbers>
+              <Numbers style={{ marginBottom: `0.2vw` }}>Allowance: 0</Numbers>
             </Tooltip>
             <Tooltip text={['Deposits: 0']}>
-              <Numbers style={{ marginBottom: `0.8vw` }}>Deposits: 0 </Numbers>
+              <Numbers style={{ marginBottom: `0.8vw` }}>Deposits: 0</Numbers>
             </Tooltip>
           </Data>
         );
@@ -219,22 +215,10 @@ export function registerPresaleModal() {
         return (
           <InputButton>
             <Input
+              type='number'
+              min={0}
               ref={inputRef}
               disabled={!isAllowed}
-              onKeyDown={(e) => {
-                if (isNaN(Number(e.key))) {
-                  if (
-                    e.key !== 'Backspace' &&
-                    e.key !== 'Delete' &&
-                    e.key !== 'ArrowLeft' &&
-                    e.key !== 'ArrowRight' &&
-                    e.key !== 'ArrowUp' &&
-                    e.key !== 'ArrowDown' &&
-                    e.key !== '.'
-                  )
-                    e.preventDefault();
-                }
-              }}
               onChange={(e) => {
                 setAmount(Number(e.target.value));
               }}
@@ -298,7 +282,6 @@ const Content = styled.div`
   justify-content: space-evenly;
   padding: 0.5vw;
   flex-flow: column;
-  overflow: hidden auto;
   align-items: center;
   flex-direction: column;
   gap: 0.6vw;

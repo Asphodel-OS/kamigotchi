@@ -1,5 +1,6 @@
-import { Tooltip } from 'app/components/library';
 import styled from 'styled-components';
+
+import { Tooltip } from 'app/components/library';
 
 interface Props {
   quantityLeft: number;
