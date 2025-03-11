@@ -216,7 +216,10 @@ export function registerPresaleModal() {
           <InputButton>
             <Input
               type='number'
-              min={0}
+              min='0'
+              onKeyDown={(e) => {
+                if (e.key === '-') e.preventDefault();
+              }}
               ref={inputRef}
               disabled={!isAllowed}
               onChange={(e) => {
