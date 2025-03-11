@@ -35,7 +35,6 @@ jobs:
           # Remove files from SOURCE
           rm -rf ./source-repo/.github
           rm -rf ./source-repo/.git
-          rm -rf ./source-repo/CODEOWNERS
           rm -rf ./source-repo/packages/contracts/deployment
           rm -rf ./source-repo/packages/contracts/test
 
