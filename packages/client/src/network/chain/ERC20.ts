@@ -1,14 +1,13 @@
 import { ethers } from 'ethers';
-import { Address } from 'viem';
+import { Address, erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
 
 import { parseTokenBalance } from 'utils/numbers';
-import { abi } from './abi/erc20';
 
-export function useBalance(address: Address, token: Address, spender?: Address) {
+export function useBalance(address: Address, token: Address, spender: Address) {
   const erc20 = {
     address: token,
-    abi: abi,
+    abi: erc20Abi,
   };
   const results = useReadContracts({
     contracts: [
@@ -27,7 +26,7 @@ export function useBalance(address: Address, token: Address, spender?: Address) 
 
 // uses ethersjs for RECS compatibility
 export function approve(addToQueue: any, token: string, spender: string, amount: BigInt) {
-  const iERC20 = new ethers.utils.Interface(abi);
+  const iERC20 = new ethers.utils.Interface(erc20Abi);
   return addToQueue({
     data: iERC20.encodeFunctionData('approve', [spender, amount]),
     to: token,

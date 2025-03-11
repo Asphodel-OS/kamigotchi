@@ -1,31 +1,13 @@
-import { GasExponent } from 'constants/gas';
 import { TxQueue } from 'engine/queue';
-import { BigNumberish, utils } from 'ethers';
-import { approveERC20 } from 'network/chain';
-import { parseEther } from 'viem';
+import { BigNumberish } from 'ethers';
 import { auctionsAPI } from './auctions';
+import { externalAPI } from './external';
 import { harvestAPI } from './harvest';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
 export function createPlayerAPI(txQueue: TxQueue) {
   const { call, systems } = txQueue;
-
-  /////////////////
-  // NON-MUD
-
-  // parses to wei (1e18) for convienience
-  function send(address: string, amount: number) {
-    return call({
-      to: address,
-      value: parseEther(amount.toString()),
-    });
-  }
-
-  // parses to wei (1e18) for convienience
-  function ERC20Approve(token: string, spender: string, amount: number) {
-    return approveERC20(call, token, spender, parseEther(amount.toString()));
-  }
 
   /////////////////
   // ECHO
@@ -58,22 +40,6 @@ export function createPlayerAPI(txQueue: TxQueue) {
 
   /////////////////
   //   ACCOUNT
-
-  // @dev funds an operator from owner address
-  // @param amount   amount to fund
-  function fundOperator(amount: string) {
-    return systems['system.account.fund'].ownerToOperator({
-      value: utils.parseUnits(amount, GasExponent),
-    });
-  }
-
-  // @dev refunds an operators balance to owner
-  // @param amount   amount to refund
-  function refundOwner(amount: string) {
-    return systems['system.account.fund'].operatorToOwner({
-      value: utils.parseUnits(amount, GasExponent),
-    });
-  }
 
   function useItemAccount(itemIndex: number, amt: number) {
     return systems['system.account.use.item'].executeTyped(itemIndex, amt);
@@ -310,10 +276,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
   }
 
   return {
-    send,
-    erc20: {
-      approve: ERC20Approve,
-    },
+    ...externalAPI(call),
     echo: {
       kami: echoKamis,
       room: echoRoom,

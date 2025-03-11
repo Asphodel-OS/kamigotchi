@@ -9,7 +9,6 @@ import { registerUIComponent } from 'app/root';
 import { useAccount, useTokens } from 'app/stores';
 import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
-import { useEffect } from 'react';
 
 export function registerTokenBalances() {
   registerUIComponent(
@@ -51,9 +50,9 @@ export function registerTokenBalances() {
         },
       });
 
-      useEffect(() => {
-        console.log('onyx bal', balances.get(tokens.onyx));
-      }, [balances]);
+      // useEffect(() => {
+      //   console.log('onyx bal', balances.get(tokens.onyx));
+      // }, [balances]);
 
       const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
         account.ownerAddress as Address,

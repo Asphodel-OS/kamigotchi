@@ -4,13 +4,7 @@ import styled from 'styled-components';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
-import {
-  AccountMenuButton,
-  MapMenuButton,
-  NodeMenuButton,
-  PartyMenuButton,
-  PresaleMenuButton,
-} from './buttons';
+import { AccountMenuButton, MapMenuButton, NodeMenuButton, PartyMenuButton } from './buttons';
 
 export function registerMenuLeft() {
   registerUIComponent(
@@ -41,7 +35,7 @@ export function registerMenuLeft() {
           <PartyMenuButton />
           <MapMenuButton />
           <NodeMenuButton disabled={!nodeEntity} />
-          <PresaleMenuButton />
+          {/* <PresaleMenuButton /> */}
         </Wrapper>
       );
     }

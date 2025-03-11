@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
-
 interface Props {
   quantityLeft: number;
   quantityRight: number;
@@ -11,19 +9,15 @@ export const Rate = (props: Props) => {
   const { quantityLeft, quantityRight } = props;
   return (
     <Content>
-      <Tooltip text={[quantityLeft.toString()]}>
-        <Column>
-          Ether
-          <Numbers>{quantityLeft}</Numbers>
-        </Column>
-      </Tooltip>
+      <Column>
+        Ether
+        <Numbers>{quantityLeft}</Numbers>
+      </Column>
       <Arrow />
-      <Tooltip text={[quantityRight.toString()]}>
-        <Column>
-          Onyx
-          <Numbers>{quantityRight}</Numbers>
-        </Column>
-      </Tooltip>
+      <Column>
+        Onyx
+        <Numbers>{quantityRight}</Numbers>
+      </Column>
     </Content>
   );
 };
