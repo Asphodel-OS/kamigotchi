@@ -3,7 +3,7 @@ name: Sync Files to Target Repo
 on:
   push:
     branches:
-      - main
+      - crt.open-source
 
 env:
   SOURCE_DIRS: >-
