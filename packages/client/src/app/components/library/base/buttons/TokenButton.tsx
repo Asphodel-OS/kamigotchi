@@ -1,8 +1,9 @@
+import { EntityID } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
+import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getAddress } from 'viem';
 
-import { EntityID } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { useNetwork, useTokens } from 'app/stores';
 import { NetworkLayer } from 'network/create';
 import { Item } from 'network/shapes/Item';
@@ -27,7 +28,8 @@ export const TokenButton = (props: Props) => {
   const [spender, setSpender] = useState<string>('');
 
   useEffect(() => {
-    setSpender(getCompAddr(world, components, 'component.token.allowance'));
+    const allowAddress = getCompAddr(world, components, 'component.token.allowance');
+    setSpender(utils.hexZeroPad(allowAddress, 20));
   }, [network]);
 
   useEffect(() => {
@@ -39,14 +41,10 @@ export const TokenButton = (props: Props) => {
   // FUNCTIONS
 
   const approveTx = async () => {
-    console.log(token.address, token.address?.length);
-    console.log(spender, spender.length);
     const api = apis.get(selectedAddress);
     if (!api) return console.error(`API not established for ${selectedAddress}`);
     const checksumAddr = getAddress(token.address!);
     const checksumSpender = getAddress(spender);
-    console.log({ checksumAddr, checksumSpender });
-    console.log({ len1: checksumAddr.length, len2: checksumSpender.length });
 
     const actionID = uuid() as EntityID;
     actions.add({
