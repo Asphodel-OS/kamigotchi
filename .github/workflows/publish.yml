@@ -44,11 +44,11 @@ jobs:
 
           # Persist TARGET dirs
           mkdir ./temp_backup
-          mv ./target_repo/.github ./target_repo/.git ./temp_backup
+          mv ./target_repo/.github ./target_repo/.git ./target_repo/LICENSE.md ./temp_backup
 
 
           rm -rf ./target_repo/*  
-          mv ../temp_backup/.git ../temp_backup/.github ./target_repo/  
+          mv ./temp_backup/.git ./temp_backup/.github ./target_repo/LICENSE.md ./target_repo/  
 
           cp -r ./source-repo/. ./target_repo/
 
