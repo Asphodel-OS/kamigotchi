@@ -69,7 +69,6 @@ export function registerGasHarasser() {
           validations.operatorMatches &&
           !validations.operatorHasGas;
 
-        if (isVisible) toggleModals(false);
         if (isVisible != validators.gasHarasser) {
           setValidators({
             walletConnector: false,
@@ -150,7 +149,7 @@ export function registerGasHarasser() {
           title='Embedded wallet is empty!'
           errorPrimary={`pls feed me pls a crumb of onyx ._.`}
         >
-          <Tooltip text={[account.operatorAddress, '(click to copy)']} align='center'>
+          <Tooltip text={[account.operatorAddress, '(click to copy)']}>
             <Description onClick={() => copy(account.operatorAddress)}>
               Address: {abbreviateAddress(account.operatorAddress)}
             </Description>
