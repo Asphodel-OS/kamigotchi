@@ -33,15 +33,24 @@ jobs:
           ssh-add ~/.ssh/id_rsa
 
           echo "Cloning target repo"  
-          git clone git@github.com:${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME }}.git
+          git clone git@github.com:${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME }}.git target_repo
 
+          # Remove files from SOURCE
           rm -rf ./source-repo/.github
           rm -rf ./source-repo/.git
           rm -rf ./source-repo/CODEOWNERS
           rm -rf ./source-repo/packages/contracts/deployment
           rm -rf ./source-repo/packages/contracts/test
 
-          cp -r ./source-repo/. ./${{ env.TARGET_REPO_NAME }}
+          # Persist TARGET dirs
+          mkdir ./temp_backup
+          mv ./target_repo/.github ./target_repo/.git ./temp_backup
+
+
+          rm -rf ./target_repo/*  
+          mv ../temp_backup/.git ../temp_backup/.github ./target_repo/  
+
+          cp -r ./source-repo/. ./target_repo/
 
           cd ./${{ env.TARGET_REPO_NAME }}
 
@@ -51,7 +60,7 @@ jobs:
           # Check for changes
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit -m "Sync packages from Kamigotchi repo
+            git commit -m "Sync from Kamigotchi repo
 
             Source Commit: ${{ github.sha }}
             Workflow: ${{ github.workflow }}
