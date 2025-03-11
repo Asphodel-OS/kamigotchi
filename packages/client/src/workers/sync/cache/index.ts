@@ -1,5 +1,5 @@
 export {
-  createCacheStore,
+  createStateCache,
   getCacheStoreEntries,
   getIndexDBCacheStoreBlockNumber,
   getStateCache,
@@ -7,5 +7,5 @@ export {
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
-} from './CacheStore';
-export type { CacheStore, ECSCache, State } from './CacheStore';
+} from '../../../cache/state/state';
+export type { CacheStore, ECSCache, State } from '../../../cache/state/state';

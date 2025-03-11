@@ -1,2 +1,2 @@
 export { initCache } from './cache';
-export { transformIterator } from './utils';
+export { VERSION as IDB_VERSION } from './db';

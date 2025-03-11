@@ -25,10 +25,18 @@ import {
   timer,
 } from 'rxjs';
 
-import { VERSION as IDB_VERSION } from 'cache/db';
+import { IDB_VERSION } from 'cache/';
+import {
+  createKamigazeSnapshotClient,
+  createKamigazeStreamService,
+  createTransformWorldEventsFromStream,
+  fetchStateFromKamigaze,
+} from 'clients/kamigaze';
 import { GodID, SyncState, SyncStatus } from 'engine/constants';
+import { createDecode } from 'engine/encoders';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/providers';
+import { getStateReport } from '../../cache/state/state';
 import { debug as parentDebug } from '../debug';
 import {
   isNetworkComponentUpdateEvent,
@@ -38,26 +46,18 @@ import {
   SyncWorkerConfig,
 } from '../types';
 import {
-  createCacheStore,
+  createStateCache,
   getCacheStoreEntries,
   getStateCache,
   loadIndexDbToCacheStore,
   saveCacheStoreToIndexDb,
   storeEvents,
 } from './cache';
-import { getStateReport } from './cache/CacheStore';
 import {
-  createKamigazeStreamService,
-  createTransformWorldEventsFromStream,
-} from './kamigazeStreamClient';
-import {
-  createDecode,
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
-  createSnapshotClient,
   fetchEventsInBlockRangeChunked,
-  fetchStateFromKamigaze,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -169,7 +169,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
     let outputLiveEvents = false;
-    const cacheStore = { current: createCacheStore() };
+    const cacheStore = { current: createStateCache() };
     const { blockNumber$ } = createBlockNumberStream(providers);
 
     // Setup RPC event stream
@@ -253,7 +253,13 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     };
     currentSubscription = subscribeToEventStream(latestEvent$);
 
-    const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
+    // load cache and determine block gap to backfill
+    this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
+    let initialState = await loadIndexDbToCacheStore(indexedDB);
+    const backfillFromBlock = initialState.lastKamigazeBlock;
+    const gapfillFromBlock = await awaitStreamValue(blockNumber$);
+    const blockDiff = gapfillFromBlock - backfillFromBlock;
+    console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
     /*
      * LOAD INITIAL STATE (BACKFILL)
@@ -264,26 +270,22 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     performance.mark('backfill');
     this.setLoadingState({ state: SyncState.BACKFILL, percentage: 0 });
 
-    // load cache
-    this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
-    let initialState = await loadIndexDbToCacheStore(indexedDB);
-    console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
-
     // retrieve snapshot if url provided
     // TODO: include a liveness check on the snapshot
-    if (snapshotUrl) {
+    if (blockDiff > 50 && snapshotUrl) {
       this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
-      const kamigazeClient = createSnapshotClient(snapshotUrl);
+      const kamigazeClient = createKamigazeSnapshotClient(snapshotUrl);
+      const numChunks = Math.ceil(blockDiff / 50000.0);
 
-      // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
-      // I removed it here just to make sure Kamigaze is working as expected
-      // TODO: chunk this in a smart way based on block gap
+      // NOTE(🥕) On the older version using the snapshot service is not mandatory,
+      // so it can do the sync block by block. removed here to make sure Kamigaze
+      // is working as expected.
       try {
         initialState = await fetchStateFromKamigaze(
           initialState,
           kamigazeClient,
           decode,
-          config.snapshotNumChunks ?? 10,
+          Math.min(numChunks, 10),
           (percentage: number) => this.setLoadingState({ percentage })
         );
       } catch (e) {
@@ -304,9 +306,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      * Q: shouldnt we just launch the live sync down here if we're chunking it anyways
      */
     performance.mark('gapfill');
-    const streamStartBlockNumber = await streamStartBlockNumberPromise;
     const startString = initialState.blockNumber.toLocaleString();
-    const endString = streamStartBlockNumber.toLocaleString();
+    const endString = gapfillFromBlock.toLocaleString();
     this.setLoadingState({
       state: SyncState.GAPFILL,
       msg: `Closing State Gap From Blocks ${startString} to ${endString}`,
@@ -316,7 +317,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const gapStateEvents = await fetchEventsInBlockRangeChunked(
       fetchWorldEvents,
       initialState.blockNumber,
-      streamStartBlockNumber,
+      gapfillFromBlock,
       50,
       (percentage: number) => this.setLoadingState({ percentage })
     );
