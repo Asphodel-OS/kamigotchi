@@ -45,13 +45,12 @@ jobs:
           # Persist TARGET files
           mkdir ./temp_backup
           mv ./target_repo/.github ./target_repo/.git ./target_repo/LICENSE.md ./temp_backup
-
           rm -rf ./target_repo/*  
           mv ./temp_backup/.git ./temp_backup/.github ./temp_backup/LICENSE.md ./target_repo/  
 
           cp -r ./source-repo/. ./target_repo/
 
-          cd ./${{ env.TARGET_REPO_NAME }}
+          cd ./target_repo
 
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
