@@ -1,14 +1,21 @@
-import { interval, map } from 'rxjs';
-
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { BigNumber, ethers } from 'ethers';
+import { interval, map } from 'rxjs';
+
 import { getAccount } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
-import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
+import {
+  ActionButton,
+  EmptyText,
+  ModalHeader,
+  ModalWrapper,
+  Tooltip,
+} from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
-import { BigNumber, ethers } from 'ethers';
+
 import { useERC20Balance } from 'network/chain';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getOwnerAddress } from 'network/shapes/utils/component';
@@ -195,8 +202,12 @@ export function registerPresaleModal() {
       const MockUpData = () => {
         return (
           <Data>
-            <div style={{ marginBottom: `0.5vw` }}> Allowance: 0 </div>
-            <div style={{ marginBottom: `0.8vw` }}>Deposits: 0 </div>
+            <Tooltip text={['Allowance: 0']}>
+              <Numbers style={{ marginBottom: `0.2vw` }}> Allowance: 0 </Numbers>
+            </Tooltip>
+            <Tooltip text={['Deposits: 0']}>
+              <Numbers style={{ marginBottom: `0.8vw` }}>Deposits: 0 </Numbers>
+            </Tooltip>
           </Data>
         );
       };
@@ -253,8 +264,15 @@ export function registerPresaleModal() {
             <>
               <Content>
                 <ProgressBar current={progress} max={1000} />
-                <div style={{ marginBottom: `2vw;` }}>
-                  <MockUpData />
+                <div
+                  style={{
+                    marginBottom: `2vw;`,
+                    display: `flex`,
+                    flexDirection: `column`,
+                    alignItems: `center`,
+                  }}
+                >
+                  {MockUpData()}
                   <Rate quantityLeft={amount} quantityRight={amount * 1000} />
                   {FlattenedInput()}
                 </div>
@@ -278,14 +296,13 @@ export function registerPresaleModal() {
 const Content = styled.div`
   display: flex;
   justify-content: space-evenly;
-  gap: 0.6vw;
   padding: 0.5vw;
-  width: 100%;
-  height: 100%;
   flex-flow: column;
   overflow: hidden auto;
   align-items: center;
   flex-direction: column;
+  gap: 0.6vw;
+  height: 100%;
 `;
 
 const InputButton = styled.div`
@@ -319,8 +336,18 @@ const Button = styled.button`
 `;
 
 const Data = styled.div`
+  margin-left: 12vw;
   font-size: 1vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  width: 25ch;
+`;
+
+const Numbers = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 25ch;
+  line-height: 1.2vw;
 `;
