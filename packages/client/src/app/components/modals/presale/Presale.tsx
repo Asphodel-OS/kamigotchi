@@ -200,6 +200,45 @@ export function registerPresaleModal() {
           </Data>
         );
       };
+
+      const onClick = () =>
+        isAllowed ? checkUserBalance(amount) : (checkOnyxAllowance(), handleApproveTx());
+
+      const FlattenedInput = () => {
+        return (
+          <InputButton>
+            <Input
+              ref={inputRef}
+              disabled={!isAllowed}
+              onKeyDown={(e) => {
+                if (isNaN(Number(e.key))) {
+                  if (
+                    e.key !== 'Backspace' &&
+                    e.key !== 'Delete' &&
+                    e.key !== 'ArrowLeft' &&
+                    e.key !== 'ArrowRight' &&
+                    e.key !== 'ArrowUp' &&
+                    e.key !== 'ArrowDown' &&
+                    e.key !== '.'
+                  )
+                    e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                setAmount(Number(e.target.value));
+              }}
+            />
+            <ActionButton
+              text={!isAllowed ? 'Approve' : 'Buy'}
+              disabled={amount <= 0}
+              onClick={() => {
+                onClick();
+              }}
+            />
+          </InputButton>
+        );
+      };
+
       /////////////////
       // DISPLAY
       return (
@@ -215,46 +254,7 @@ export function registerPresaleModal() {
               <Content>
                 <ProgressBar current={progress} max={1000} /> <MockUpData />
                 <Rate quantityLeft={amount} quantityRight={amount * 1000} />
-                <InputButton>
-                  <Input
-                    ref={inputRef}
-                    disabled={!isAllowed}
-                    onKeyDown={(e) => {
-                      if (isNaN(Number(e.key))) {
-                        if (
-                          e.key !== 'Backspace' &&
-                          e.key !== 'Delete' &&
-                          e.key !== 'ArrowLeft' &&
-                          e.key !== 'ArrowRight' &&
-                          e.key !== 'ArrowUp' &&
-                          e.key !== 'ArrowDown' &&
-                          e.key !== '.'
-                        )
-                          e.preventDefault();
-                      }
-                    }}
-                    onChange={(e) => {
-                      setAmount(Number(e.target.value));
-                    }}
-                  />
-                  {!isAllowed ? (
-                    <ActionButton
-                      text='Approve'
-                      onClick={() => {
-                        checkOnyxAllowance();
-                        handleApproveTx();
-                      }}
-                    />
-                  ) : (
-                    <ActionButton
-                      text='Buy'
-                      disabled={amount <= 0}
-                      onClick={() => {
-                        checkUserBalance(amount);
-                      }}
-                    />
-                  )}
-                </InputButton>
+                {FlattenedInput()}
                 <Button
                   style={{ position: `absolute`, right: `1vw`, bottom: `1vw` }}
                   disabled={depositEmpty}
