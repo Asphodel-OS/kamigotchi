@@ -196,7 +196,7 @@ export function registerPresaleModal() {
         return (
           <Data>
             <div style={{ marginBottom: `0.5vw` }}> Allowance: 0 </div>
-            <div>Deposits: 0 </div>
+            <div style={{ marginBottom: `0.8vw` }}>Deposits: 0 </div>
           </Data>
         );
       };
@@ -252,11 +252,13 @@ export function registerPresaleModal() {
           ) : (
             <>
               <Content>
-                <ProgressBar current={progress} max={1000} /> <MockUpData />
-                <Rate quantityLeft={amount} quantityRight={amount * 1000} />
-                {FlattenedInput()}
+                <ProgressBar current={progress} max={1000} />
+                <div style={{ marginBottom: `2vw;` }}>
+                  <MockUpData />
+                  <Rate quantityLeft={amount} quantityRight={amount * 1000} />
+                  {FlattenedInput()}
+                </div>
                 <Button
-                  style={{ position: `absolute`, right: `1vw`, bottom: `1vw` }}
                   disabled={depositEmpty}
                   onClick={() => {
                     withdraw();
@@ -289,6 +291,7 @@ const Content = styled.div`
 const InputButton = styled.div`
   display: flex;
   gap: 0.6vw;
+  justify-content: center;
 `;
 
 const Input = styled.input`
@@ -298,17 +301,26 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  border-radius: 0.15vw;
+  border-color: black;
+  position: absolute;
+  right: 1vw;
+  bottom: 1vw;
+  font-size: 0.8vw;
+  border-radius: 0.45vw;
+  border-width: 0.15vw;
   background-color: white;
+  color: black;
   width: fit-content;
-  padding: 0.1vw;
+  padding: 0.4vw 0.8vw;
+  cursor: pointer;
   &:disabled {
-    background-color: rgb(215 215 215);
-    cursor: auto;
+    background-color: rgb(178, 178, 178);
   }
 `;
 
 const Data = styled.div`
-  left: 30%;
-  top: 30%;
+  font-size: 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
