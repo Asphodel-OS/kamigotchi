@@ -1,6 +1,6 @@
 import { deferred } from 'utils/async';
+import { arrayToIterator, mergeIterators, transformIterator } from 'utils/iterators';
 import { initDb } from './db';
-import { arrayToIterator, mergeIterators, transformIterator } from './utils';
 
 type Stores = { [key: string]: unknown };
 type StoreKey<S extends Stores> = keyof S & string;

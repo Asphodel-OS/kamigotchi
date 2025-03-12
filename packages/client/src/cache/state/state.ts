@@ -1,9 +1,10 @@
 import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
 import { packTuple, unpackTuple } from '@mud-classic/utils';
 
-import { initCache, transformIterator } from 'cache/';
+import { initCache } from 'cache/';
 import { ECSStateReply } from 'engine/types/ecs-snapshot/ecs-snapshot';
 import { formatEntityID } from 'engine/utils';
+import { transformIterator } from 'utils/iterators';
 import { debug as parentDebug } from 'workers/debug';
 import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
 
@@ -11,7 +12,7 @@ const debug = parentDebug.extend('CacheStore');
 
 // TODO: either delineate or merge clear responssibilities between CacheStore and ECSCache
 export type State = Map<number, ComponentValue>;
-export type CacheStore = ReturnType<typeof createCacheStore>;
+export type CacheStore = ReturnType<typeof createStateCache>;
 export type ECSCache = Awaited<ReturnType<typeof getStateCache>>;
 type StateReport = {
   blockNumber: number;
@@ -26,7 +27,7 @@ type StateReport = {
   };
 };
 
-export function createCacheStore() {
+export function createStateCache() {
   const components: string[] = [];
   const componentToIndex = new Map<string, number>();
   const entities: string[] = [];
@@ -222,7 +223,7 @@ function getCacheId(namespace: string, chainId: number, worldAddress: string, ve
 
 // unused
 function mergeCacheStores(stores: CacheStore[]): CacheStore {
-  const result = createCacheStore();
+  const result = createStateCache();
 
   // Sort by block number (increasing)
   const sortedStores = [...stores].sort((a, b) => a.blockNumber - b.blockNumber);
