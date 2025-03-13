@@ -19,6 +19,7 @@ import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { GACHA_ID, getGachaCommits } from 'network/shapes/Gacha';
 import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
+import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
 import { Display } from './display/Display';
 import { Sidebar } from './sidebar/Sidebar';
@@ -60,6 +61,9 @@ export function registerGachaModal() {
             display: {
               TokenButton: (token: Item) => TokenButton({ network, token, amount: 1 }),
             },
+            tokens: {
+              spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
+            },
             utils: {
               getAccount: () => getAccount(world, components, accountEntity, accountOptions),
               getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
@@ -80,9 +84,10 @@ export function registerGachaModal() {
           };
         })
       ),
-    ({ network, data, display, utils }) => {
+    ({ network, data, display, tokens, utils }) => {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
+      const { spenderAddr } = tokens;
       const { getAccount, getAuction } = utils;
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
@@ -169,6 +174,22 @@ export function registerGachaModal() {
           actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
+      };
+
+      const approveTx = async (payItem: Item, price: number) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions.add({
+          id: actionID,
+          action: 'Approve token',
+          params: [payItem.address, spenderAddr, price],
+          description: `Approve ${price} ${payItem.name} to be spent`,
+          execute: async () => {
+            return api.erc20.approve(payItem.address!, spenderAddr, price);
+          },
+        });
       };
 
       // get a pet from gacha with Mint20
@@ -303,6 +324,7 @@ export function registerGachaModal() {
             />
             <Sidebar
               actions={{
+                approve: approveTx,
                 bid: auctionTx,
                 mint: handleMint,
                 reroll: handleReroll,

@@ -2,7 +2,6 @@ import { registerClock } from './fixtures/clock';
 import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
 import { registerNotificationFixture } from './fixtures/notifications';
 import { registerActionQueue } from './fixtures/queue';
-import { registerTokenBalances } from './fixtures/TokenBalances';
 
 import { registerAccountModal } from './modals/account';
 import { registerChatModal } from './modals/chat';
@@ -44,7 +43,6 @@ export function registerFixtures() {
   registerMenuLeft();
   registerMenuRight();
   registerNotificationFixture();
-  registerTokenBalances();
 }
 
 export function registerModals() {

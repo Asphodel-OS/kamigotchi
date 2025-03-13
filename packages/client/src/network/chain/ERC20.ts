@@ -32,3 +32,8 @@ export function approve(addToQueue: any, token: string, spender: string, amount:
     to: token,
   });
 }
+
+// game balance (mToken, 1e3) to whole token (ether, 1)
+export function toERC20DisplayUnits(amt: number) {
+  return amt / 1e3;
+}

@@ -4,6 +4,7 @@ import { BigNumber } from 'ethers';
 import { Affinity } from 'constants/affinities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { Address, getAddress } from 'viem';
 
 export const getAffinity = (components: Components, entity: EntityIndex): Affinity => {
   const { Affinity } = components;
@@ -218,11 +219,11 @@ export const getOperatorAddress = (components: Components, entity: EntityIndex):
   return result ?? '';
 };
 
-export const getTokenAddress = (components: Components, entity: EntityIndex): string => {
+export const getTokenAddress = (components: Components, entity: EntityIndex): Address => {
   const { TokenAddress } = components;
   const result = getComponentValue(TokenAddress, entity)?.value;
   if (result === undefined) console.warn('getTokenAddress(): undefined for entity', entity);
-  return result ?? '';
+  return getAddress(result ?? '');
 };
 
 ////////////////

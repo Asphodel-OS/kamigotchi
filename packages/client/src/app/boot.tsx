@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import 'app/styles/font.css';
 import { Layers } from 'network/';
 import { registerActionQueue, registerLoadingState } from './components';
+import { registerTokenBalances } from './components/fixtures/TokenBalances';
 import { Root } from './root/Root';
 
 export const mountReact: { current: (mount: boolean) => void } = {
@@ -24,4 +25,5 @@ export function boot() {
 
   // TODO: register this with other fixtures once subscriptions are fixed
   registerActionQueue();
+  registerTokenBalances();
 }

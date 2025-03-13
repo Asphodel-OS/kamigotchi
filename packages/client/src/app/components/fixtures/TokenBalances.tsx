@@ -4,9 +4,10 @@ import { map, merge } from 'rxjs';
 import { Address } from 'viem';
 import { useWatchBlockNumber } from 'wagmi';
 
-import { getConfigAddress } from 'app/cache/config';
+import { getItemByIndex } from 'app/cache/item';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useTokens } from 'app/stores';
+import { ONYX_INDEX } from 'constants/items';
 import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
 
@@ -27,11 +28,10 @@ export function registerTokenBalances() {
       return merge(actions.Action.update$, LoadingState.update$).pipe(
         map(() => {
           const { world, components } = network;
-
           return {
             tokens: {
               // todo: dynamically query based on items with address?
-              onyx: getConfigAddress(world, components, 'ONYX_ADDRESS') as Address,
+              onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
             },
             spender: getCompAddr(world, components, 'component.token.allowance'),
           };
@@ -42,11 +42,12 @@ export function registerTokenBalances() {
       const { account } = useAccount();
       const { balances, set } = useTokens();
 
-      // doesn't seem to work reliably - updates upon Action for additional trigger
       useWatchBlockNumber({
-        onBlockNumber: () => {
-          refetchOnyx();
-          set(tokens.onyx, onyxBal);
+        onBlockNumber(block) {
+          if (block % 4n === 0n) {
+            refetchOnyx();
+            set(tokens.onyx, onyxBal);
+          }
         },
       });
 

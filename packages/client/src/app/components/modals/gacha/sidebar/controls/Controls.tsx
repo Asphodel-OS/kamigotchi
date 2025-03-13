@@ -65,7 +65,6 @@ export const Controls = (props: Props) => {
       {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={balance.toFixed(1)} tooltip={[payItem.name]} reverse />
-        {payItem.address && TokenButton(payItem)}
       </Overlay>
     </Container>
   );

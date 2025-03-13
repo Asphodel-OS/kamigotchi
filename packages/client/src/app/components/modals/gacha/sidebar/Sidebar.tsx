@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcAuctionCost } from 'app/cache/auction';
-import { useVisibility } from 'app/stores';
+import { useTokens, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
+import { toERC20DisplayUnits } from 'network/chain';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
 import { Inventory } from 'network/shapes/Inventory';
@@ -16,6 +17,7 @@ import { Tabs } from './Tabs';
 
 interface Props {
   actions: {
+    approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
     mint: (balance: number) => Promise<boolean>;
     reroll: (kamis: BaseKami[], price: bigint) => Promise<boolean>;
@@ -58,6 +60,7 @@ export const Sidebar = (props: Props) => {
   const { auctions, commits, inventories } = data;
   const { tick, tab, setTab, mode, setMode } = state;
   const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
+  const { balances: tokenBal } = useTokens(); // ERC20
   const { modals } = useVisibility();
 
   const [payItem, setPayItem] = useState<Item>(NullItem);
@@ -71,7 +74,8 @@ export const Sidebar = (props: Props) => {
     if (!modals.gacha) return;
     if (tab != 'AUCTION') setPrice(quantity);
     else if (mode === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
-    else if (mode === 'REROLL') setPrice(calcAuctionCost(auctions.reroll, quantity));
+    else if (mode === 'REROLL')
+      setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.reroll, quantity)));
     else setPrice(0);
   }, [tab, mode, quantity, tick]);
 
@@ -92,7 +96,7 @@ export const Sidebar = (props: Props) => {
       } else if (mode === 'REROLL') {
         setPayItem(getItem(ONYX_INDEX));
         setSaleItem(getItem(REROLL_TICKET_INDEX));
-        setBalance(0);
+        setBalance(tokenBal.get(payItem.address || '')?.balance || 0);
       } else setBalance(0);
     }
   }, [tab, mode, tick]);

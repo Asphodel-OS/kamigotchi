@@ -248,6 +248,7 @@
         "IndexItem",
         "Balance",
         "TimeLast",
+        "TokenAllowance",
         "Type",
         "Value"
       ]

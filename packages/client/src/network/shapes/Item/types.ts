@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
+import { Address } from 'viem';
 import { DetailedEntity, getItemImage } from '../utils';
 import {
   getDescription,
@@ -21,7 +22,7 @@ export interface Item extends DetailedEntity {
   index: number;
   type: string;
   for: string;
-  address?: string;
+  address?: Address;
   requirements: Requirements;
   effects: Effects;
 }
