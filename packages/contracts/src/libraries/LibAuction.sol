@@ -123,7 +123,7 @@ library LibAuction {
 
     LibEmitter.emitSystemCall(
       world,
-      "auction.buy",
+      "AUCTION_BUY",
       _schema,
       abi.encode(buy.itemIndex, buy.accIndex, buy.amt, buy.price, block.timestamp)
     );
