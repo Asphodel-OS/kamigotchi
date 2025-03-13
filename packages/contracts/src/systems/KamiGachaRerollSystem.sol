@@ -22,10 +22,10 @@ contract KamiGachaRerollSystem is System {
     LibKami.verifyAccount(components, kamiIDs, accID);
     LibKami.verifyState(components, kamiIDs, "RESTING");
 
-    // get and check price (in wei)
+    // get previous data
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);
-    LibGacha.verifyMaxRerolls(components, prevRerolls);
-    LibERC20.spendOnyx(components, LibGacha.calcRerollsCost(components, prevRerolls), accID); // implicit balance check
+
+    // todo: spend reroll ticket
 
     // send pet into pool
     LibGacha.depositPets(components, kamiIDs);

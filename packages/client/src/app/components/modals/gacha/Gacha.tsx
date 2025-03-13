@@ -8,7 +8,6 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
-import { getConfigValue } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -18,7 +17,7 @@ import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/i
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
-import { GACHA_ID, calcRerollCost, getGachaCommits } from 'network/shapes/Gacha';
+import { GACHA_ID, getGachaCommits } from 'network/shapes/Gacha';
 import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
 import { playVend } from 'utils/sounds';
 import { Display } from './display/Display';
@@ -55,7 +54,7 @@ export function registerGachaModal() {
             data: {
               accountEntity,
               commits: getGachaCommits(world, components, accountID),
-              maxRerolls: getConfigValue(world, components, 'GACHA_MAX_REROLLS'),
+              maxRerolls: 10, // todo: remove
               poolKamis: queryKamis(components, { account: GACHA_ID }),
             },
             display: {
@@ -68,7 +67,7 @@ export function registerGachaModal() {
                 getAuctionByIndex(world, components, itemIndex, auctionOptions),
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
               getItem: (index: number) => getItemByIndex(world, components, index),
-              getRerollCost: (kami: Kami) => calcRerollCost(world, components, kami),
+              getRerollCost: (kami: Kami) => 0, // todo: remove
 
               // not sure if we  need the below or just a generic getBalance
               getGachaBalance: (inventories: Inventory[]) =>

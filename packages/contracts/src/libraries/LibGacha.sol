@@ -83,29 +83,6 @@ library LibGacha {
   /////////////////
   // CALC
 
-  /// @notice calculates the cost of a gacha roll
-  /// @dev assuming flat scaling - may change
-  function calcRerollCost(
-    IUintComp components,
-    uint256 rerollCount
-  ) internal view returns (uint256) {
-    uint256 baseCost = getBaseRerollCost(components);
-    return baseCost * (rerollCount + 1);
-  }
-
-  function calcRerollsCost(
-    IUintComp components,
-    uint256[] memory rerollCounts
-  ) internal view returns (uint256) {
-    uint256 baseCost = getBaseRerollCost(components);
-
-    uint256 total;
-    for (uint256 i; i < rerollCounts.length; i++) {
-      total += baseCost * (rerollCounts[i] + 1);
-    }
-    return total;
-  }
-
   /// @notice sort based on entityID
   function sortCommits(
     IUintComp components,
@@ -161,12 +138,6 @@ library LibGacha {
     for (uint256 i; i < ids.length; i++) {
       if (!LibString.eq(types[i], "GACHA_COMMIT")) revert("not gacha commit");
     }
-  }
-
-  /// @notice testnet2 function, rerolls are free but limited
-  function verifyMaxRerolls(IUintComp components, uint256[] memory counts) public view {
-    uint256 max = LibConfig.get(components, "GACHA_MAX_REROLLS");
-    for (uint256 i; i < counts.length; i++) if (counts[i] >= max) revert("too many rerolls");
   }
 
   /////////////////

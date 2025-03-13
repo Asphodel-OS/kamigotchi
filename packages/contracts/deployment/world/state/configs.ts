@@ -63,11 +63,7 @@ async function initLeveling(api: AdminAPI) {
   await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 }
 
-async function initMint(api: AdminAPI) {
-  // await api.config.set.number('GACHA_REROLL_PRICE', utils.parseEther('0.0001'));
-  await api.config.set.number('GACHA_REROLL_PRICE', 0);
-  await api.config.set.number('GACHA_MAX_REROLLS', 10);
-}
+async function initMint(api: AdminAPI) {}
 
 async function initStats(api: AdminAPI) {
   // base

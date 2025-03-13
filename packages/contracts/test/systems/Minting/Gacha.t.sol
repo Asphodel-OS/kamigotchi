@@ -13,16 +13,11 @@ contract GachaTest is SetupTemplate {
     super.setUp();
 
     _initStockTraits();
-
-    _setConfig("GACHA_REROLL_PRICE", 1);
-    _setConfig("GACHA_MAX_REROLLS", 100000);
   }
 
   function setUpTraits() public override {}
 
-  function setUpMint() public override {
-    return;
-  }
+  function setUpMint() public override {}
 
   /////////////////
   // GACHA TESTS //
@@ -113,9 +108,9 @@ contract GachaTest is SetupTemplate {
     petUserArr2[1] = userPets[1];
     vm.roll(++_currBlock);
     _mintOnyx(cost, owner);
-    vm.prank(owner);
-    vm.expectRevert(); // not enough, implicit overflow check
-    _KamiGachaRerollSystem.reroll(petUserArr2);
+    // vm.prank(owner);
+    // vm.expectRevert(); // not enough, implicit overflow check
+    // _KamiGachaRerollSystem.reroll(petUserArr2);
 
     // reroll first two pets, but correct pricing
     cost = _getRerollCost(1) + _getRerollCost(2);
@@ -192,7 +187,7 @@ contract GachaTest is SetupTemplate {
   }
 
   function _getRerollCost(uint256 rerolls) internal view returns (uint256) {
-    return LibGacha.calcRerollCost(components, rerolls);
+    return 0; // todo: remove, replace with reroll ticket check
   }
 
   ////////////////
