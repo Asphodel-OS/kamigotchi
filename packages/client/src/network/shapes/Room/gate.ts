@@ -21,10 +21,10 @@ export const queryGates = (
   toIndex: number,
   fromIndex: number
 ): EntityIndex[] => {
-  const { RoomID, ParentID } = components;
+  const { ToID, FromID } = components;
   const toQuery = [
-    HasValue(RoomID, { value: genGateAnchorTo(toIndex) }),
-    HasValue(ParentID, { value: fromIndex == 0 ? '0x00' : genGateAnchorFrom(fromIndex) }),
+    HasValue(ToID, { value: genGateAnchorTo(toIndex) }),
+    HasValue(FromID, { value: fromIndex == 0 ? '0x00' : genGateAnchorFrom(fromIndex) }),
   ];
   return Array.from(runQuery(toQuery));
 };
