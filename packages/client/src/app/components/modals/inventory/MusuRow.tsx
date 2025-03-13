@@ -13,43 +13,43 @@ export const MusuRow = (props: Props) => {
 
   return (
     <Container key='musu'>
-      <div style={{ display: 'flex', flexFlow: 'row', width: '50%', justifyContent: 'flex-end' }}>
-        <Tooltip text={['MUSU']}>
-          <Icon src={ItemImages.musu} />
-        </Tooltip>
-        <Balance>{balance.toLocaleString()}</Balance>
-      </div>
+      <Tooltip text={['MUSU']}>
+        <Icon src={ItemImages.musu} />
+      </Tooltip>
+      <Balance>{balance.toLocaleString()}</Balance>
     </Container>
   );
 };
 
 const Container = styled.div`
-  padding: 0.5vw;
+  width: 100%;
+  padding: 0.45vw;
+  gap: 0.45vw;
 
   display: flex;
-  flex-flow: column no-wrap;
+  flex-flow: row no-wrap;
   justify-content: flex-end;
   align-items: center;
-  width: 100%;
 `;
 
 const Icon = styled.img`
   width: 1.8vw;
   height: 1.8vw;
-  margin-right: 0.5vw;
+  margin-top: 0.12vw;
 `;
 
 const Balance = styled.div`
-  border: solid #666 0.15vw;
-  border-radius: 0.3vw;
-  padding: 0.5vw;
-  width: 100%;
+  border: solid #333 0.15vw;
+  border-radius: 0.6vw 0 0.6vw 0.6vw;
+  padding: 0.3vw;
+  width: 42%;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+  align-items: center;
 
   color: black;
-  font-family: Pixel;
-  font-size: 1vw;
+  font-size: 0.9vw;
+  line-height: 1.2vw;
 `;
