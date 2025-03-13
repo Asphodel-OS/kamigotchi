@@ -61,7 +61,6 @@ export type { IDOwnsRelationshipComponent } from "./IDOwnsRelationshipComponent"
 export type { IDOwnsSkillComponent } from "./IDOwnsSkillComponent";
 export type { IDOwnsTradeComponent } from "./IDOwnsTradeComponent";
 export type { IDParentComponent } from "./IDParentComponent";
-export type { IDRoomComponent } from "./IDRoomComponent";
 export type { IDToComponent } from "./IDToComponent";
 export type { IDTypeComponent } from "./IDTypeComponent";
 export type { IdDelegateeComponent } from "./IdDelegateeComponent";
@@ -259,7 +258,6 @@ export { IDOwnsRelationshipComponent__factory } from "./factories/IDOwnsRelation
 export { IDOwnsSkillComponent__factory } from "./factories/IDOwnsSkillComponent__factory";
 export { IDOwnsTradeComponent__factory } from "./factories/IDOwnsTradeComponent__factory";
 export { IDParentComponent__factory } from "./factories/IDParentComponent__factory";
-export { IDRoomComponent__factory } from "./factories/IDRoomComponent__factory";
 export { IDToComponent__factory } from "./factories/IDToComponent__factory";
 export { IDTypeComponent__factory } from "./factories/IDTypeComponent__factory";
 export { IdDelegateeComponent__factory } from "./factories/IdDelegateeComponent__factory";
