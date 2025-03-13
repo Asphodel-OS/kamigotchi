@@ -19,18 +19,15 @@ export async function initAuctions(api: AdminAPI, indices?: number[]) {
     const rate = Number(row['Rate']);
     const max = Number(row['Supply']);
 
-    const saleItemName = String(row['Sale Item']).split(' (')[0];
-    const payItemName = String(row['Pay Item']).split(' (')[0];
-
     try {
       console.log(
-        `Creating Auction: ${saleItemName} with ${max} units`,
-        `\n  for ${priceTarget} ${payItemName} decaying at ${decay / 1e6}`,
+        `Creating Auction: item ${saleItemIndex} with ${max} units`,
+        `\n  for ${priceTarget} of item ${payItemIndex} decaying at ${decay / 1e6}`,
         `\n  and emitting ${rate} units per ${period / 3600} hours`
       );
       await createAuction(api, saleItemIndex, payItemIndex, priceTarget, period, decay, rate, max);
     } catch {
-      console.error(`Could not create auction for ${saleItemName}`);
+      console.error(`Could not create auction for ${saleItemIndex}`);
     }
   }
 }

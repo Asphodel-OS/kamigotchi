@@ -280,7 +280,7 @@ contract NPCTest is SetupTemplate {
 
     // pre-buy
     assertEq(_getItemBal(alice, item), 0);
-    assertEq(_getTokenBal(tokenAddr, alice.owner), 100);
+    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(100));
 
     // buy
     _buy(alice, 1, item, 1);

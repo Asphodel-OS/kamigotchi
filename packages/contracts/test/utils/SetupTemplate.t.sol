@@ -174,9 +174,10 @@ abstract contract SetupTemplate is TestSetupImports {
     return _approveERC20(token, owner, address(_TokenAllowanceComponent));
   }
 
+  /// @dev automatically converts to 15dp (game token units, mToken)
   function _mintERC20(address tokenAddr, uint256 amount, address to) internal {
     OpenMintable token = OpenMintable(tokenAddr);
-    token.mint(to, amount);
+    token.mint(to, amount * 1e15);
   }
 
   function _mintOnyx(uint256 amount, address to) internal {

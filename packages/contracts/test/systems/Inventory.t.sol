@@ -155,7 +155,7 @@ contract InventoryTest is SetupTemplate {
     // spending
     _approveERC20(tokenAddr, alice.owner);
     _decItem(alice, itemIndex, 1);
-    assertEq(_getTokenBal(tokenAddr, alice.owner), 99);
+    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(99));
     _decItem(alice, itemIndex, 99);
     assertEq(_getTokenBal(tokenAddr, alice.owner), 0);
   }

@@ -12,6 +12,8 @@ import { TokenAllowanceComponent, ID as TokenAllowanceCompID } from "components/
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 
+uint constant UNIT_SHIFT = 3;
+
 /** @notice
  * LibERC20 handles all interactions involving ERC20 tokens, including onyx as a special case.
  *
@@ -32,21 +34,22 @@ library LibERC20 {
   //////////////
   // INTERACTIONS
 
-  function spend(IUintComp components, address token, uint256 amount, uint256 spender) internal {
+  function spend(IUintComp components, address token, uint256 amount, uint256 spenderID) internal {
     address to = LibConfig.getAddress(components, "ERC20_RECEIVER_ADDRESS");
-    return transfer(components, token, LibAccount.getOwner(components, spender), to, amount);
+    amount = toTokenUnits(amount); // convert from mToken to wei
+    return transfer(components, token, LibAccount.getOwner(components, spenderID), to, amount);
   }
 
   /// @dev specific for onyx
-  function spendOnyx(IUintComp components, uint256 amount, uint256 spender) internal {
-    return spend(components, getOnyxAddr(components), amount, spender);
+  function spendOnyx(IUintComp components, uint256 amount, uint256 spenderID) internal {
+    return spend(components, getOnyxAddr(components), amount, spenderID);
   }
 
   /// @notice spends using TokenAddressComponent
-  function spendFor(IUintComp components, uint256 id, uint256 amount, uint256 spender) internal {
+  function spendFor(IUintComp components, uint256 id, uint256 amount, uint256 spenderID) internal {
     address token = TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).safeGet(id);
     if (token == address(0)) revert("LibERC20: token not found");
-    return spend(components, token, amount, spender);
+    return spend(components, token, amount, spenderID);
   }
 
   function transfer(
@@ -73,5 +76,18 @@ library LibERC20 {
 
   function getOnyxAddr(IUintComp components) internal view returns (address) {
     return address(uint160(LibConfig.get(components, "ONYX_ADDRESS")));
+  }
+
+  ///////////
+  // UTILS
+
+  /// @notice converts from game units (mTokens, 3dp) to token units (wei, 18dp)
+  function toTokenUnits(uint256 amt) internal pure returns (uint256) {
+    return amt * 10 ** (18 - UNIT_SHIFT);
+  }
+
+  /// @notice converts from token units (wei, 18dp) to game units (mTokens, 3dp)
+  function toGameUnits(uint256 amt) internal pure returns (uint256) {
+    return amt * 10 ** UNIT_SHIFT;
   }
 }
