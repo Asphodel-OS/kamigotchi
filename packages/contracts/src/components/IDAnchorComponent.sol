@@ -2,8 +2,8 @@
 pragma solidity >=0.8.28;
 import "solecs/components/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.id.parent"));
+uint256 constant ID = uint256(keccak256("component.id.anchor"));
 
-contract IDParentComponent is Uint256Component {
+contract IDAnchorComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

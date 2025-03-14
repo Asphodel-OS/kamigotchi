@@ -14,7 +14,7 @@ export interface Droptable {
 }
 
 export interface DTCommit extends Commit {
-  parentID: EntityID;
+  anchorID: EntityID;
   rolls: number;
 }
 
@@ -112,7 +112,7 @@ export const queryDTCommits = (
   return commits.map((commit) => {
     return {
       ...commit,
-      parentID: formatEntityID((getComponentValue(SourceID, commit.entity)?.value || 0).toString()),
+      anchorID: formatEntityID((getComponentValue(SourceID, commit.entity)?.value || 0).toString()),
       rolls: (getComponentValue(Value, commit.entity)?.value as number) * 1,
     };
   });

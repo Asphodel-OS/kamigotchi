@@ -139,7 +139,7 @@ library LibQuests {
 
     // copy an objective
     uint256 id = genObjSnapshotID(questID, logicType, _type, index);
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, questID); // TODO: change to parentID (world3)
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, questID); // TODO: change to anchorID (world3)
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, amount);
     return id;
   }

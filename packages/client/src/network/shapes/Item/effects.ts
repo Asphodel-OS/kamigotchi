@@ -3,7 +3,7 @@ import { EntityID, World } from '@mud-classic/recs';
 import { Components } from 'network/components';
 import { Allo, getAllosOf } from '../Allo';
 import { genRef, hashArgs } from '../utils';
-import { genRefParentID } from './utils';
+import { genRefAnchorID } from './utils';
 
 export interface Effects {
   // burn: Allo[];
@@ -23,11 +23,11 @@ export const getActionAllos = (
   index: number,
   action: string
 ): Allo[] => {
-  const parentID = genAlloAnchor(index, action);
-  return getAllosOf(world, comps, parentID);
+  const anchorID = genAlloAnchor(index, action);
+  return getAllosOf(world, comps, anchorID);
 };
 
 export const genAlloAnchor = (index: number, action: string): EntityID => {
-  const actionID = genRef(action, genRefParentID(index));
+  const actionID = genRef(action, genRefAnchorID(index));
   return hashArgs(['item.allo', actionID], ['string', 'uint256']);
 };

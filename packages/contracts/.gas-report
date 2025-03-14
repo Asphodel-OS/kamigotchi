@@ -219,7 +219,7 @@
 | remove                                                                | 101691          | 113192 | 113192 | 124694 | 2       |
 | set                                                                   | 155997          | 156156 | 156117 | 156381 | 256     |
 
-| src/components/IDParentComponent.sol:IDParentComponent contract |                 |        |        |        |         |
+| src/components/IDAnchorComponent.sol:IDAnchorComponent contract |                 |        |        |        |         |
 | --------------------------------------------------------------- | --------------- | ------ | ------ | ------ | ------- |
 | Deployment Cost                                                 | Deployment Size |        |        |        |         |
 | 2683529                                                         | 11878           |        |        |        |         |

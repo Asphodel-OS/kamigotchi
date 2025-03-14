@@ -203,14 +203,14 @@ contract BonusTest is SetupTemplate {
     levels[3] = 3;
     levels[4] = 3;
     levels[5] = 1;
-    uint256[] memory regParentIDs = new uint256[](6);
+    uint256[] memory regAnchorIDs = new uint256[](6);
     for (uint256 i; i < 6; i++) {
-      regParentIDs[i] = _genParentEntity();
-      _createRegistry(regParentIDs[i], "BONUS_TYPE", "", 0, values[i]);
+      regAnchorIDs[i] = _genParentEntity();
+      _createRegistry(regAnchorIDs[i], "BONUS_TYPE", "", 0, values[i]);
     }
 
     // assigning from parents
-    for (uint256 i; i < 6; i++) _incBy(regParentIDs[i], holderAnchor, holderEntity, levels[i]);
+    for (uint256 i; i < 6; i++) _incBy(regAnchorIDs[i], holderAnchor, holderEntity, levels[i]);
 
     // asserting total
     assertEq(
@@ -224,20 +224,20 @@ contract BonusTest is SetupTemplate {
   // UTILS
 
   function _createRegistry(
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_,
     string memory endAnchor, // leave blank if permanent
     uint256 duration, // leave blank if not timed
     int256 value
   ) internal returns (uint256 id) {
     // vm.startPrank(deployer);
-    id = LibBonus.regCreate(components, parentID, type_, endAnchor, duration, value);
+    id = LibBonus.regCreate(components, anchorID, type_, endAnchor, duration, value);
     // vm.stopPrank();
   }
 
-  function _incBy(uint256 regParentID, uint256 anchorID, uint256 holderID, uint256 amt) internal {
+  function _incBy(uint256 regAnchorID, uint256 anchorID, uint256 holderID, uint256 amt) internal {
     // vm.startPrank(deployer);
-    LibBonus.incBy(components, regParentID, anchorID, holderID, amt);
+    LibBonus.incBy(components, regAnchorID, anchorID, holderID, amt);
     // vm.stopPrank();
   }
 
@@ -282,14 +282,14 @@ contract BonusTest is SetupTemplate {
   function _assertInstanceShape(uint256 id) internal {
     assertTrue(_IdSourceComponent.has(id));
     assertTrue(_IDTypeComponent.has(id));
-    assertTrue(_IDParentComponent.has(id));
+    assertTrue(_IDAnchorComponent.has(id));
     assertTrue(_LevelComponent.has(id));
   }
 
   function _assertInstanceNoShape(uint256 id) internal {
     assertFalse(_IdSourceComponent.has(id));
     assertFalse(_IDTypeComponent.has(id));
-    assertFalse(_IDParentComponent.has(id));
+    assertFalse(_IDAnchorComponent.has(id));
     assertFalse(_LevelComponent.has(id));
   }
 }
