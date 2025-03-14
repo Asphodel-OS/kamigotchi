@@ -117,7 +117,6 @@ export const Footer = (props: Props) => {
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>
           {getButtonText()}
-          {/* {ActionMap.get(tab) ?? 'Mint'} */}
         </Tooltip>
       </Submit>
     </Container>
@@ -154,7 +153,7 @@ const Quantity = styled.input`
 `;
 
 const Submit = styled.div<{ disabled?: boolean }>`
-  border-radius: 0 0 1.2vw 0;
+  border-radius: 0 0 1.05vw 0;
   width: 100%;
   height: 100%;
   text-align: center;
