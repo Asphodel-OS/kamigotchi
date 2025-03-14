@@ -44,7 +44,7 @@
     "encodedID": "0x40655593e868a25950fe329b42743107d2ad12ae762de5235676e5d683ec1e17"
   },
   "_RecipeRegistrySystem": {
-    "id": "system.recipe.registry.2",
+    "id": "system.recipe.registry",
     "encodedID": "0xd4e7c7a5f3f94a7ad9722dbed68c30cbc3fc0300ada84bfc5c3b2b78c816d515"
   },
   "_RelationshipRegistrySystem": {

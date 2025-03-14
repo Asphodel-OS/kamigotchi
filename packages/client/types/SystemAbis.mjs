@@ -82,7 +82,7 @@ export const SystemAbis = {
   "system.node.registry": _NodeRegistrySystem.abi,
   "system.npc.registry": _NPCRegistrySystem.abi,
   "system.quest.registry": _QuestRegistrySystem.abi,
-  "system.recipe.registry.2": _RecipeRegistrySystem.abi,
+  "system.recipe.registry": _RecipeRegistrySystem.abi,
   "system.relationship.registry": _RelationshipRegistrySystem.abi,
   "system.room.registry": _RoomRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
