@@ -159,7 +159,6 @@ library LibSkill {
 
     // check all other requirements
     uint256[] memory requirements = LibSkillRegistry.queryRequirements(components, skillIndex);
-    /// TODO: World2: include ForComp, separate requirements from accounts/pets
     return LibConditional.check(components, requirements, targetID);
   }
 
