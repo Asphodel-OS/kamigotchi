@@ -20,9 +20,9 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
  *   - Flags for entities (ie. Passport Holder flag for an Account)
  *
  * Entity Shape:
- *   - ID: hash(parentID, flagType)
+ *   - ID: hash(anchorID, flagType)
  *   - HasFlag: bool
- *   - [optional] IDParent: ID (for reverse mapping)
+ *   - [optional] IDAnchor: ID (for reverse mapping)
  *   - [optional] IDType: ID of parent shape, eg ITEM_BURNABLE (for reverse mapping)
  *   - [optional] Type: string (for FE reverse mapping)
  */
@@ -68,7 +68,7 @@ library LibFlag {
     else remove(components, id);
   }
 
-  /// @notice removes a flag. does not remove IDParent or Type (if any)
+  /// @notice removes a flag. does not remove IDAnchor or Type (if any)
   function remove(IUintComp components, uint256 id) internal {
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
   }
@@ -78,8 +78,8 @@ library LibFlag {
   }
 
   /// @notice deletes a full flag
-  function removeFull(IUintComp components, uint256 parentID, string memory flag) internal {
-    uint256 id = genID(parentID, flag);
+  function removeFull(IUintComp components, uint256 anchorID, string memory flag) internal {
+    uint256 id = genID(anchorID, flag);
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(id);
     getCompByID(components, IDOwnsFlagCompID).remove(id);
     getCompByID(components, IDTypeCompID).remove(id);
@@ -99,11 +99,11 @@ library LibFlag {
   /// @notice gets a flag, then sets to desired state
   function getAndSet(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory flagType,
     bool state
   ) internal returns (bool prev) {
-    uint256 id = genID(parentID, flagType);
+    uint256 id = genID(anchorID, flagType);
 
     HasFlagComponent flagComp = HasFlagComponent(getAddrByID(components, HasFlagCompID));
     prev = flagComp.has(id);
@@ -115,10 +115,10 @@ library LibFlag {
 
   function has(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory flagType
   ) internal view returns (bool) {
-    uint256 id = genID(parentID, flagType);
+    uint256 id = genID(anchorID, flagType);
     return HasFlagComponent(getAddrByID(components, HasFlagCompID)).has(id);
   }
 
@@ -126,12 +126,12 @@ library LibFlag {
   /// @param state if true, checks if all entites have flag. opposite if false
   function checkAll(
     IUintComp components,
-    uint256[] memory parentIDs,
+    uint256[] memory anchorIDs,
     string memory flagType,
     bool state
   ) internal view returns (bool) {
-    uint256[] memory ids = new uint256[](parentIDs.length);
-    for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagType);
+    uint256[] memory ids = new uint256[](anchorIDs.length);
+    for (uint256 i; i < anchorIDs.length; i++) ids[i] = genID(anchorIDs[i], flagType);
     return getCompByID(components, HasFlagCompID).allHave(ids, state);
   }
 
@@ -139,12 +139,12 @@ library LibFlag {
   /// @param state if true, checks if all entites have flag. opposite if false
   function checkAll(
     IUintComp components,
-    uint256[] memory parentIDs,
+    uint256[] memory anchorIDs,
     string[] memory flagTypes,
     bool state
   ) internal view returns (bool) {
-    uint256[] memory ids = new uint256[](parentIDs.length);
-    for (uint256 i; i < parentIDs.length; i++) ids[i] = genID(parentIDs[i], flagTypes[i]);
+    uint256[] memory ids = new uint256[](anchorIDs.length);
+    for (uint256 i; i < anchorIDs.length; i++) ids[i] = genID(anchorIDs[i], flagTypes[i]);
     return getCompByID(components, HasFlagCompID).allHave(ids, state);
   }
 
@@ -153,10 +153,10 @@ library LibFlag {
 
   function queryFor(
     IUintComp components,
-    uint256 parentID
+    uint256 anchorID
   ) internal view returns (uint256[] memory) {
     return
-      IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).getEntitiesWithValue(parentID);
+      IDOwnsFlagComponent(getAddrByID(components, IDOwnsFlagCompID)).getEntitiesWithValue(anchorID);
   }
 
   //////////////////

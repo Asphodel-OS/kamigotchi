@@ -6,8 +6,8 @@ import { hashArgs, queryChildrenOf } from '../utils';
 
 // query the Entity Indices of the bonuses of a Skill by its index
 export const queryBonuses = (components: Components, skillIndex: number): EntityIndex[] => {
-  const parentID = genBonusParentID(skillIndex);
-  return queryChildrenOf(components, parentID);
+  const anchorID = genBonusAnchorID(skillIndex);
+  return queryChildrenOf(components, anchorID);
 };
 
 // get the Bonus objects associated with a Skill by its index
@@ -19,6 +19,6 @@ export const getBonuses = (world: World, components: Components, skillIndex: num
 };
 
 // generate the EntityID of the bonuses parent for a skill
-export const genBonusParentID = (skillIndex: number): EntityID => {
+export const genBonusAnchorID = (skillIndex: number): EntityID => {
   return hashArgs(['registry.skill.bonus', skillIndex], ['string', 'uint32']);
 };

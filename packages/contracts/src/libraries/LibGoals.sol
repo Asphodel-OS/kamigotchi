@@ -89,7 +89,7 @@ library LibGoals {
     string memory name,
     uint256 cutoff // cutoff 0 signifies display only tier; does not distribute rewards
   ) internal returns (uint256 id) {
-    id = LibReference.create(components, "goal.tier", cutoff, genTierParentID(goalIndex));
+    id = LibReference.create(components, "goal.tier", cutoff, genTierAnchorID(goalIndex));
 
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, cutoff);
@@ -302,7 +302,7 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return LibReference.queryByParent(components, genTierParentID(goalIndex));
+    return LibReference.queryByParent(components, genTierAnchorID(goalIndex));
   }
 
   function getRequirements(
@@ -316,9 +316,9 @@ library LibGoals {
     IUintComp components,
     uint256[] memory tierIDs
   ) internal view returns (uint256[] memory) {
-    uint256[] memory parentIDs = new uint256[](tierIDs.length);
-    for (uint256 i; i < tierIDs.length; i++) parentIDs[i] = genAlloAnchor(tierIDs[i]);
-    return LibAllo.queryFor(components, parentIDs);
+    uint256[] memory anchorIDs = new uint256[](tierIDs.length);
+    for (uint256 i; i < tierIDs.length; i++) anchorIDs[i] = genAlloAnchor(tierIDs[i]);
+    return LibAllo.queryFor(components, anchorIDs);
   }
 
   /// @notice gets tiers that user qualifies for
@@ -365,7 +365,7 @@ library LibGoals {
     return uint256(keccak256(abi.encodePacked("goal.objective", goalID)));
   }
 
-  function genTierParentID(uint32 goalIndex) internal pure returns (uint256) {
+  function genTierAnchorID(uint32 goalIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.tier", goalIndex)));
   }
 
