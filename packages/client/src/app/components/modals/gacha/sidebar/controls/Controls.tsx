@@ -42,7 +42,6 @@ export const Controls = (props: Props) => {
   const { reveal } = actions;
   const { commits, payItem, balance } = data;
   const { mode, tab } = state;
-  console.log(data);
 
   const getBalanceText = () => {
     let numDecimals = 0;
