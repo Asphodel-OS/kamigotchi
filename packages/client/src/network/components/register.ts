@@ -29,7 +29,6 @@ export function createComponents(world: World) {
     EntityType: defineStringComponent(world, 'EntityType', 'component.type.entity', true),
     Exits: defineNumberArrayComponent(world, 'Exits', 'component.exits'),
     Experience: defineNumberComponent(world, 'Experience', 'component.experience'),
-    FarcasterIndex: defineNumberComponent(world, 'FarcasterIndex', 'component.index.farcaster', true),
     For: defineNumberComponent(world, 'For', 'component.for'),
     ForString: defineStringComponent(world, 'ForString', 'component.for.string'),
     HasFlag: defineBoolComponent(world, 'HasFlag', 'component.has.flag'),
