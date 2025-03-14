@@ -6,30 +6,30 @@ import { hashArgs } from './IDs';
 /////////////////
 // QUERIES
 
-export const queryRefsWithParent = (components: Components, parentID: EntityID): EntityIndex[] => {
-  const { ParentID } = components;
-  return Array.from(runQuery([HasValue(ParentID, { value: parentID })]));
+export const queryRefsWithParent = (components: Components, anchorID: EntityID): EntityIndex[] => {
+  const { AnchorID } = components;
+  return Array.from(runQuery([HasValue(AnchorID, { value: anchorID })]));
 };
 
 export const queryRefChildren = (
   components: Components,
   field: string,
-  parentID: EntityID,
+  anchorID: EntityID,
   key?: BigNumberish
 ): EntityIndex[] => {
-  const { ParentID } = components;
+  const { AnchorID } = components;
 
-  const id = genRef(field, parentID, key);
-  return Array.from(runQuery([HasValue(ParentID, { value: id })]));
+  const id = genRef(field, anchorID, key);
+  return Array.from(runQuery([HasValue(AnchorID, { value: id })]));
 };
 
 /////////////////
 // UTILS
 
-export const genRef = (field: string, parentID: EntityID, key?: BigNumberish): EntityID => {
+export const genRef = (field: string, anchorID: EntityID, key?: BigNumberish): EntityID => {
   const args = key
-    ? ['reference.instance', field, key, parentID]
-    : ['reference.instance', field, parentID];
+    ? ['reference.instance', field, key, anchorID]
+    : ['reference.instance', field, anchorID];
   const argTypes = key
     ? ['string', 'string', 'uint256', 'uint256']
     : ['string', 'string', 'uint256'];

@@ -8,7 +8,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -52,7 +52,7 @@ struct Condition {
  * - LogicTypeComponent (key)
  * - IndexComponent (key)
  * - ValueComponent (value)
- * - IDParentComponent (optional): for reverse mapping
+ * - IDAnchorComponent (optional): for reverse mapping
  * - ForComponent (optional): set target shape (ie ROOM, ACCOUNT, KAMI); if original target is KAMI, for=ACCOUNT get kami's owner. empty = no target change
  *
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
@@ -79,7 +79,7 @@ library LibConditional {
   }
 
   /// @notice creates a condition that points to another entity
-  /// @dev IDParentComponent used for pointing
+  /// @dev IDAnchorComponent used for pointing
   function createFor(
     IWorld world,
     IUintComp components,
@@ -88,7 +88,7 @@ library LibConditional {
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     create(components, id, details);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, pointerID);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, pointerID);
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -96,7 +96,7 @@ library LibConditional {
     LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(id);
     LibFor.remove(components, id);
   }
 
@@ -105,7 +105,7 @@ library LibConditional {
     LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).remove(ids);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(ids);
     LibFor.remove(components, ids);
   }
 
@@ -223,14 +223,14 @@ library LibConditional {
   // QUERIES
 
   function queryFor(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(id);
+    return IUintComp(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(id);
   }
 
   function queryFor(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(ids);
+    return IUintComp(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(ids);
   }
 
   /// @notice queries for conditions with subtype
@@ -242,7 +242,7 @@ library LibConditional {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDParentCompID),
+      getCompByID(components, IDAnchorCompID),
       abi.encode(id)
     );
     fragments[1] = QueryFragment(

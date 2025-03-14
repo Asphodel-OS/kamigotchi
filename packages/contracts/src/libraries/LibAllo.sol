@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -33,7 +33,7 @@ import { Stat, LibStat } from "libraries/LibStat.sol";
  *   - stats
  *   - flags
  *
- * Shape: deterministicID: (hash("reward.instance", parentID, type, index)) // todo: change to allo.instance
+ * Shape: deterministicID: (hash("reward.instance", anchorID, type, index)) // todo: change to allo.instance
  * - Pointer to parent
  * - Type
  * - Index
@@ -52,29 +52,29 @@ library LibAllo {
   /// @dev some allo types can be overridden
   function createBase(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_,
     uint32 index,
     bool canOverride
   ) internal returns (uint256 id) {
-    id = genID(parentID, type_, index);
+    id = genID(anchorID, type_, index);
     if (!canOverride) {
       require(!LibEntityType.has(components, id), "Allocation already exists");
     }
     LibEntityType.set(components, id, "ALLOCATION");
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
   }
 
   function createBasic(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_,
     uint32 index,
     uint256 value
   ) internal returns (uint256 id) {
-    id = createBase(components, parentID, type_, index, false);
+    id = createBase(components, anchorID, type_, index, false);
 
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
@@ -86,14 +86,14 @@ library LibAllo {
    */
   function createBonus(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory bonusType,
     string memory endType,
     uint256 duration,
     int256 value
   ) internal returns (uint256 id) {
     // create base each time, multiple bonuses to same allo
-    id = createBase(components, parentID, "BONUS", 1, true);
+    id = createBase(components, anchorID, "BONUS", 1, true);
 
     require(!endType.eq(""), "Allo: bonus must be temporary");
     uint256 bonusID = LibBonus.regCreate(components, id, bonusType, endType, duration, value);
@@ -102,23 +102,23 @@ library LibAllo {
   /// @notice this reward type does nothing. its for display.
   function createEmpty(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_
   ) internal returns (uint256 id) {
-    uint32 index = getIndexOverride(components, parentID, type_);
-    id = createBase(components, parentID, type_, index, false);
+    uint32 index = getIndexOverride(components, anchorID, type_);
+    id = createBase(components, anchorID, type_, index, false);
   }
 
   function createDT(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     uint32[] memory keys,
     uint256[] memory weights,
     uint256 value // rolls
   ) internal returns (uint256 id) {
     // droptable indexes = num of DT in rwd, for each to be unique
-    uint32 index = getIndexOverride(components, parentID, "ITEM_DROPTABLE");
-    id = createBase(components, parentID, "ITEM_DROPTABLE", index, false);
+    uint32 index = getIndexOverride(components, anchorID, "ITEM_DROPTABLE");
+    id = createBase(components, anchorID, "ITEM_DROPTABLE", index, false);
 
     LibDroptable.set(components, id, keys, weights);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
@@ -126,7 +126,7 @@ library LibAllo {
 
   function createStat(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory statType,
     int32 base,
     int32 shift,
@@ -134,7 +134,7 @@ library LibAllo {
     int32 sync
   ) internal returns (uint256 id) {
     uint32 index = LibStat.typeToIndex(statType);
-    id = createBase(components, parentID, "STAT", index, false);
+    id = createBase(components, anchorID, "STAT", index, false);
 
     uint256 value = Stat(base, shift, boost, sync).toUint(); // store in raw form
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
@@ -142,7 +142,7 @@ library LibAllo {
 
   function remove(IUintComp components, uint256[] memory ids) internal {
     LibEntityType.remove(components, ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(ids);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
@@ -152,7 +152,7 @@ library LibAllo {
 
   function remove(IUintComp components, uint256 id) internal {
     LibEntityType.remove(components, id);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
@@ -265,10 +265,10 @@ library LibAllo {
    */
   function getIndexOverride(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_
   ) internal view returns (uint32) {
-    uint256 length = queryByType(components, parentID, type_).length;
+    uint256 length = queryByType(components, anchorID, type_).length;
     return uint32(length + 1);
   }
 
@@ -278,28 +278,28 @@ library LibAllo {
   /// @notice gets rewards attached to a parent entity
   function queryFor(
     IUintComp components,
-    uint256 parentID
+    uint256 anchorID
   ) internal view returns (uint256[] memory) {
-    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
+    return IUintComp(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(anchorID);
   }
 
   function queryFor(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(ids);
+    return IUintComp(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(ids);
   }
 
   function queryByType(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDParentCompID),
-      abi.encode(parentID)
+      getCompByID(components, IDAnchorCompID),
+      abi.encode(anchorID)
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
@@ -314,10 +314,10 @@ library LibAllo {
   // IDs
 
   function genID(
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_,
     uint32 index
   ) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("reward.instance", parentID, type_, index)));
+    return uint256(keccak256(abi.encodePacked("reward.instance", anchorID, type_, index)));
   }
 }

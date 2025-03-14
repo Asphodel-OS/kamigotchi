@@ -28,8 +28,8 @@ export const getBonusValuesForType = (
 export const getBonusesByParent = (
   world: World,
   components: Components,
-  parentID: EntityID
+  anchorID: EntityID
 ): Bonus[] => {
-  const entities = queryForParent(components, parentID);
+  const entities = queryForParent(components, anchorID);
   return entities.map((entity) => getRegistry(world, components, entity));
 };

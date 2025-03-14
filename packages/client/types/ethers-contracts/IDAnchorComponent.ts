@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IDParentComponentInterface extends utils.Interface {
+export interface IDAnchorComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
@@ -488,12 +488,12 @@ export type UnauthorizedWriterEvent = TypedEvent<
 export type UnauthorizedWriterEventFilter =
   TypedEventFilter<UnauthorizedWriterEvent>;
 
-export interface IDParentComponent extends BaseContract {
+export interface IDAnchorComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IDParentComponentInterface;
+  interface: IDAnchorComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
