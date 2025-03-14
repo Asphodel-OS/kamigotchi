@@ -488,7 +488,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     stamina: number
   ) {
     genCall(
-      'system.recipe.registry.2',
+      'system.recipe.registry',
       [index, inputs, inputAmounts, outputs, outputAmounts, xp, stamina],
       'create',
       ['uint32', 'uint32[]', 'uint256[]', 'uint32[]', 'uint256[]', 'uint256', 'uint256']
@@ -496,7 +496,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   async function addRecipeAssigner(index: number, assigner: string) {
-    genCall('system.recipe.registry.2', [index, assigner], 'addAssigner');
+    genCall('system.recipe.registry', [index, assigner], 'addAssigner');
   }
 
   async function addRecipeRequirement(
@@ -507,15 +507,11 @@ export function createAdminAPI(compiledCalls: string[]) {
     value: number,
     for_: string
   ) {
-    genCall(
-      'system.recipe.registry.2',
-      [index, type, logic, index_, value, for_],
-      'addRequirement'
-    );
+    genCall('system.recipe.registry', [index, type, logic, index_, value, for_], 'addRequirement');
   }
 
   async function deleteRecipe(index: number) {
-    genCall('system.recipe.registry.2', [index], 'remove');
+    genCall('system.recipe.registry', [index], 'remove');
   }
 
   /////////////////
