@@ -78,7 +78,6 @@
     { "comp": "Time", "name": "Time", "type": "uint256" },
     { "comp": "TimeLastAction", "name": "LastActionTime", "type": "uint256" },
     { "comp": "TimeLast", "name": "LastTime", "type": "uint256" },
-    { "comp": "Timelock", "name": "Timelock", "type": "TimelockOp" },
     { "comp": "TimeReset", "name": "ResetTime", "type": "uint256" },
     { "comp": "TimeStart", "name": "StartTime", "type": "uint256" },
     { "comp": "Type", "name": "Type", "type": "string", "indexed": true },
@@ -697,7 +696,6 @@
     "LibSkillRegistry",
     "LibSkill",
     "LibStat",
-    "LibTimelock",
     "LibTrade",
     "LibTraitRegistry",
     "LibVIP"
