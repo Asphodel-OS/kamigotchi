@@ -7,7 +7,6 @@ import { create } from 'zustand';
 // as well as the validations run on
 interface State {
   account: Account;
-  farcaster: Farcaster; // kinda gross to have this in here
   validations: Validations;
   debug: Debug;
 }
@@ -15,7 +14,6 @@ interface State {
 interface Actions {
   setAccount: (data: Account) => void;
   setDebug: (data: Debug) => void;
-  setFarcaster: (data: Farcaster) => void;
   setValidations: (data: Validations) => void;
 }
 
@@ -46,14 +44,6 @@ interface Debug {
 }
 
 ////////////////
-// FARCASTER
-
-export interface Farcaster {
-  id: number;
-  signer: string; // neynar signer uuid
-}
-
-////////////////
 // VALIDATIONS
 
 // represents the result of key validations run on a connected set of EOAs
@@ -70,7 +60,6 @@ export const useAccount = create<State & Actions>((set) => {
   const initialState: State = {
     account: emptyAccountDetails(),
     debug: { cache: false },
-    farcaster: { id: 0, signer: '' },
     validations: {
       accountExists: false,
       operatorMatches: false,
@@ -81,7 +70,6 @@ export const useAccount = create<State & Actions>((set) => {
     ...initialState,
     setAccount: (data: Account) => set((state: State) => ({ ...state, account: data })),
     setDebug: (data: Debug) => set((state: State) => ({ ...state, debug: data })),
-    setFarcaster: (data: Farcaster) => set((state: State) => ({ ...state, farcaster: data })),
     setValidations: (data: Validations) => set((state: State) => ({ ...state, validations: data })),
   };
 });
