@@ -67,7 +67,7 @@ export function registerGachaModal() {
                 getAuctionByIndex(world, components, itemIndex, auctionOptions),
               getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
               getItem: (index: number) => getItemByIndex(world, components, index),
-              getRerollCost: (kami: Kami) => 0, // todo: remove
+              getRerollCost: (kami: Kami) => 0n, // todo: remove
 
               // not sure if we  need the below or just a generic getBalance
               getGachaBalance: (inventories: Inventory[]) =>
