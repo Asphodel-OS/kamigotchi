@@ -14,7 +14,6 @@
     { "comp": "EntityType", "name": "EntityType", "type": "string", "indexed": true },
     { "comp": "Exits", "name": "Exits", "type": "uint32[]" },
     { "comp": "Experience", "name": "Experience", "type": "uint256" },
-    { "comp": "FarcasterIndex", "name": "FarcasterIndex", "type": "uint32", "indexed": true },
     { "comp": "For", "name": "For", "type": "uint256" },
     { "comp": "ForString", "name": "ForString", "type": "string" },
     { "comp": "HasFlag", "name": "HasFlag", "type": "bool" },

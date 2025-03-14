@@ -1,4 +1,4 @@
-{ 
+{
   "OperatorAddress": {
     "id": "component.address.operator",
     "encodedID": "0x8a1264e7094de803414cccf0c32d2bd50f25c909fa2415b38f065f320e4eabe6"
@@ -46,10 +46,6 @@
   "Experience": {
     "id": "component.experience",
     "encodedID": "0xf751b4a95c9cfabe52899e09ae113eac17e41cc0cc2dad670d2789ecc1251add"
-  },
-  "FarcasterIndex": {
-    "id": "component.index.farcaster",
-    "encodedID": "0xe52fb4f348048b28b8ab655215c3747cbe8c2c4570c9602cc837a32381780496"
   },
   "For": {
     "id": "component.for",
@@ -326,5 +322,5 @@
   "Whitelist": {
     "id": "component.whitelist",
     "encodedID": "0x4e8e9e1c7a24cab87cf9c93105c2ba1e02c4738f22ecab88b312e4de35819ca6"
-  },
+  }
 }
