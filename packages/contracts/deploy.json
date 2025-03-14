@@ -14,8 +14,7 @@
     { "comp": "EntityType", "name": "EntityType", "type": "string", "indexed": true },
     { "comp": "Exits", "name": "Exits", "type": "uint32[]" },
     { "comp": "Experience", "name": "Experience", "type": "uint256" },
-    { "comp": "For", "name": "For", "type": "uint256" },
-    { "comp": "ForString", "name": "ForString", "type": "string" },
+    { "comp": "For", "name": "For", "type": "string" },
     { "comp": "HasFlag", "name": "HasFlag", "type": "bool" },
     { "comp": "Harmony", "name": "Harmony", "type": "Stat" },
     { "comp": "Health", "name": "Health", "type": "Stat" },
@@ -135,7 +134,7 @@
       "writeAccess": [
         "EntityType",
         "Experience",
-        "ForString",
+        "For",
         "IDFrom",
         "IDAnchor",
         "IDTo",
@@ -158,7 +157,7 @@
       "name": "_RoomRegistrySystem",
       "writeAccess": [
         "EntityType",
-        "ForString",
+        "For",
         "HasFlag",
         "IDOwnsFlag",
         "IDFrom",

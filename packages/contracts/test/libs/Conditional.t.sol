@@ -21,14 +21,14 @@ contract ConditionalTest is SetupTemplate {
     assertTrue(_LogicTypeComponent.has(conID));
     assertFalse(_IndexComponent.has(conID)); // index was 0, skipped
     assertTrue(_ValueComponent.has(conID));
-    assertFalse(_ForStringComponent.has(conID)); // for was empty, skipped
+    assertFalse(_ForComponent.has(conID)); // for was empty, skipped
 
     uint256 conID2 = _create("ITEM", "CURR_MIN", 1, 0, "for", anchorID);
     assertTrue(_TypeComponent.has(conID2));
     assertTrue(_LogicTypeComponent.has(conID2));
     assertTrue(_IndexComponent.has(conID2));
     assertFalse(_ValueComponent.has(conID2)); // value was 0, skipped
-    assertTrue(_ForStringComponent.has(conID2));
+    assertTrue(_ForComponent.has(conID2));
 
     /// querying
 
@@ -45,14 +45,14 @@ contract ConditionalTest is SetupTemplate {
     assertFalse(_LogicTypeComponent.has(conID));
     assertFalse(_IndexComponent.has(conID));
     assertFalse(_ValueComponent.has(conID));
-    assertFalse(_ForStringComponent.has(conID));
+    assertFalse(_ForComponent.has(conID));
 
     LibConditional.remove(components, conID2);
     assertFalse(_TypeComponent.has(conID2));
     assertFalse(_LogicTypeComponent.has(conID2));
     assertFalse(_IndexComponent.has(conID2));
     assertFalse(_ValueComponent.has(conID2));
-    assertFalse(_ForStringComponent.has(conID2));
+    assertFalse(_ForComponent.has(conID2));
   }
 
   function testConditionalForShapeParse() public {
