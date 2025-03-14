@@ -9,7 +9,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -28,13 +28,13 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  *   - Ensures updatability via Registry pattern
  *   - Allows removal for specific/all bonuses of type, eg. when respecing skill
  * Temporary vs Permanent bonuses:
- *  - Permanent are attached to an Entity (skill instance, equip) via IDParent
- *  - Temporary are attached to a EndAnchor (UPON_HARVEST_ACTION, TIMED) via IDParent=hash("UPON_HARVEST_ACTION")
+ *  - Permanent are attached to an Entity (skill instance, equip) via IDAnchor
+ *  - Temporary are attached to a EndAnchor (UPON_HARVEST_ACTION, TIMED) via IDAnchor=hash("UPON_HARVEST_ACTION")
  *
- * Registry shape: ID = hash("bonus.registry", parentID, type)
+ * Registry shape: ID = hash("bonus.registry", anchorID, type)
  * - IsRegistry
  * - EntityType: BONUS
- * - IDParent: Parent registry's ID (e.g. SkillRegistryID)
+ * - IDAnchor: Parent registry's ID (e.g. SkillRegistryID)
  * - Time [temporary only] - Duration of bonus, for timed bonuses only
  * - Type
  * - Subtype [temporary only] - EndAnchor (e.g. UPON_HARVEST_ACTION, TIMED)
@@ -42,7 +42,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  *
  * Instance shape: ID = hash("bonus.instance", registryID, holderID, duration)
  * - IdSource: relevant BonusRegistryID
- * - IDParent: for querying perm bonuses (eg. skill instance), or temp bonuses (e.g. UPON_HARVEST_ACTION)
+ * - IDAnchor: for querying perm bonuses (eg. skill instance), or temp bonuses (e.g. UPON_HARVEST_ACTION)
  * - IDType: type, used to query all bonuses of type [hash("bonus.type", type, holderID)]
  * - Level: bonus level, acts as a multiplier
  *
@@ -64,18 +64,18 @@ library LibBonus {
   /// @notice creates a registry entry
   function regCreate(
     IUintComp components,
-    uint256 parentID,
+    uint256 anchorID,
     string memory type_,
     string memory endAnchor, // leave blank if permanent
     uint256 duration, // leave 0 if permanent or not time based
     int256 value // can be negative, no safecast
   ) internal returns (uint256 id) {
-    id = genRegID(parentID, type_);
+    id = genRegID(anchorID, type_);
     require(!LibEntityType.has(components, id), "Bonus: already exists"); // no duplicate type for parent
     LibEntityType.set(components, id, "BONUS");
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
 
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, parentID);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, uint256(value));
 
@@ -112,11 +112,11 @@ library LibBonus {
     if (endTypeComp.has(regID)) {
       // temporary bonus (registry has endtype)
       uint256 endAnchor = genEndAnchor(endTypeComp.get(regID), holderID);
-      IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, endAnchor);
+      IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, endAnchor);
     } else {
       // permanent bonus (anchor to entity)
       if (anchorID == 0) revert("Bonus: anchorID needed for perm bonus");
-      IDParentComponent(getAddrByID(components, IDParentCompID)).set(id, anchorID);
+      IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
     }
   }
 
@@ -134,7 +134,7 @@ library LibBonus {
   function regRemove(IUintComp components, uint256[] memory ids) internal {
     LibEntityType.remove(components, ids);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(ids);
     TimeComponent(getAddrByID(components, TimeCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
     SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(ids);
@@ -145,7 +145,7 @@ library LibBonus {
   function unassign(IUintComp components, uint256 id) internal {
     IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(id);
     IDTypeComponent(getAddrByID(components, IDTypeCompID)).remove(id);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(id);
     LevelComponent(getAddrByID(components, LevelCompID)).remove(id);
     TimeComponent(getAddrByID(components, TimeCompID)).remove(id);
   }
@@ -154,7 +154,7 @@ library LibBonus {
   function unassign(IUintComp components, uint256[] memory ids) internal {
     IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(ids);
     IDTypeComponent(getAddrByID(components, IDTypeCompID)).remove(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(ids);
     LevelComponent(getAddrByID(components, LevelCompID)).remove(ids);
     TimeComponent(getAddrByID(components, TimeCompID)).remove(ids);
   }
@@ -165,12 +165,12 @@ library LibBonus {
   /// @notice increases bonus based on registry entry (eg skill)
   function incBy(
     IUintComp components,
-    uint256 regParentID,
+    uint256 regAnchorID,
     uint256 anchorID,
     uint256 holderID,
     uint256 amt
   ) internal returns (uint256[] memory instanceIDs) {
-    uint256[] memory regIDs = queryByParent(components, regParentID);
+    uint256[] memory regIDs = queryByParent(components, regAnchorID);
     instanceIDs = new uint256[](regIDs.length);
     for (uint256 i; i < regIDs.length; i++) {
       instanceIDs[i] = assign(components, regIDs[i], anchorID, holderID);
@@ -181,11 +181,11 @@ library LibBonus {
   /// @dev incBy, but only for temporary bonuses. implicitly checked by assign()
   function incByTemporary(
     IUintComp components,
-    uint256 regParentID,
+    uint256 regAnchorID,
     uint256 holderID,
     uint256 amt
   ) internal returns (uint256[] memory instanceIDs) {
-    return incBy(components, regParentID, 0, holderID, amt);
+    return incBy(components, regAnchorID, 0, holderID, amt);
   }
 
   /// @notice unassigns non-timed bonuses with given anchor
@@ -260,16 +260,16 @@ library LibBonus {
 
   function queryByParent(
     IUintComp components,
-    uint256 parentID
+    uint256 anchorID
   ) internal view returns (uint256[] memory) {
-    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentID);
+    return IUintComp(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(anchorID);
   }
 
   function queryByParent(
     IUintComp components,
-    uint256[] memory parentIDs
+    uint256[] memory anchorIDs
   ) internal view returns (uint256[] memory) {
-    return IUintComp(getAddrByID(components, IDParentCompID)).getEntitiesWithValue(parentIDs);
+    return IUintComp(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(anchorIDs);
   }
 
   function queryByType(
@@ -292,8 +292,8 @@ library LibBonus {
   //////////////
   // IDs
 
-  function genRegID(uint256 parentID, string memory type_) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("bonus.registry", parentID, type_)));
+  function genRegID(uint256 anchorID, string memory type_) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("bonus.registry", anchorID, type_)));
   }
 
   /// @dev world3: keep compatibility with old bonus instances

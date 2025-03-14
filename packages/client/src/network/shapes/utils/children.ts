@@ -2,14 +2,14 @@ import { EntityID, EntityIndex, HasValue, QueryFragment, runQuery } from '@mud-c
 import { Components } from 'network/';
 import { hashArgs } from './IDs';
 
-// libraries for interactions with IDParentComponent shapes (children)
+// libraries for interactions with IDAnchorComponent shapes (children)
 
 /////////////////
 // QUERIES
 
-export const queryChildrenOf = (components: Components, parentID: EntityID): EntityIndex[] => {
-  const { ParentID } = components;
-  const toQuery: QueryFragment[] = [HasValue(ParentID, { value: parentID })];
+export const queryChildrenOf = (components: Components, anchorID: EntityID): EntityIndex[] => {
+  const { AnchorID } = components;
+  const toQuery: QueryFragment[] = [HasValue(AnchorID, { value: anchorID })];
   return Array.from(runQuery(toQuery));
 };
 

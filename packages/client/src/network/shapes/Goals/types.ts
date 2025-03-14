@@ -80,7 +80,7 @@ export const getContribution = (
 };
 
 const getGoalTiers = (world: World, components: Components, goalIndex: number): Tier[] => {
-  const tiers = queryRefsWithParent(components, getTierParentID(goalIndex)).map(
+  const tiers = queryRefsWithParent(components, getTierAnchorID(goalIndex)).map(
     (entity: EntityIndex) => getTier(world, components, entity)
   );
   return tiers.sort((a, b) => a.cutoff - b.cutoff);
@@ -106,7 +106,7 @@ const getGoalRequirements = (
 };
 
 const getTierRewards = (world: World, components: Components, tierID: EntityID): Allo[] => {
-  return queryChildrenOf(components, getRwdParentID(tierID)).map((index: EntityIndex) =>
+  return queryChildrenOf(components, getRwdAnchorID(tierID)).map((index: EntityIndex) =>
     getAllo(world, components, index)
   );
 };
@@ -138,10 +138,10 @@ export const getObjEntityIndex = (world: World, goalID: EntityID): EntityIndex |
   return getEntityByHash(world, ['goal.objective', goalID], ['string', 'uint256']);
 };
 
-const getTierParentID = (goalIndex: number): EntityID => {
+const getTierAnchorID = (goalIndex: number): EntityID => {
   return hashArgs(['goal.tier', goalIndex], ['string', 'uint32']);
 };
 
-const getRwdParentID = (tierID: EntityID): EntityID => {
+const getRwdAnchorID = (tierID: EntityID): EntityID => {
   return hashArgs(['goal.reward', tierID], ['string', 'uint256'], true);
 };

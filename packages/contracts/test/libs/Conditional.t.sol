@@ -6,7 +6,7 @@ import "tests/utils/SetupTemplate.t.sol";
 contract ConditionalTest is SetupTemplate {
   Wrapper wrapper;
   uint256[] conditions;
-  uint256 parentID;
+  uint256 anchorID;
 
   function setUp() public override {
     super.setUp();
@@ -16,14 +16,14 @@ contract ConditionalTest is SetupTemplate {
   function testConditionalShape() public {
     /// creating
 
-    uint256 conID = _create("ITEM", "CURR_MIN", 0, 1, "", parentID);
+    uint256 conID = _create("ITEM", "CURR_MIN", 0, 1, "", anchorID);
     assertTrue(_TypeComponent.has(conID));
     assertTrue(_LogicTypeComponent.has(conID));
     assertFalse(_IndexComponent.has(conID)); // index was 0, skipped
     assertTrue(_ValueComponent.has(conID));
     assertFalse(_ForStringComponent.has(conID)); // for was empty, skipped
 
-    uint256 conID2 = _create("ITEM", "CURR_MIN", 1, 0, "for", parentID);
+    uint256 conID2 = _create("ITEM", "CURR_MIN", 1, 0, "for", anchorID);
     assertTrue(_TypeComponent.has(conID2));
     assertTrue(_LogicTypeComponent.has(conID2));
     assertTrue(_IndexComponent.has(conID2));
@@ -32,7 +32,7 @@ contract ConditionalTest is SetupTemplate {
 
     /// querying
 
-    uint256[] memory queryIDs = LibConditional.queryFor(components, parentID);
+    uint256[] memory queryIDs = LibConditional.queryFor(components, anchorID);
     assertEq(queryIDs.length, 2);
     assertEq(queryIDs[0], conID);
     assertEq(queryIDs[1], conID2);
@@ -84,9 +84,9 @@ contract ConditionalTest is SetupTemplate {
 
   function testConditionalForShapeSingle() public {
     uint256 kamiID = _mintKami(alice);
-    uint256 accCond = _create("ITEM", "CURR_MIN", 1, 1, "ACCOUNT", parentID);
+    uint256 accCond = _create("ITEM", "CURR_MIN", 1, 1, "ACCOUNT", anchorID);
     conditions.push(accCond);
-    uint256 kamiCond = _create("STATE", "BOOL_IS", 1, 1, "KAMI", parentID);
+    uint256 kamiCond = _create("STATE", "BOOL_IS", 1, 1, "KAMI", anchorID);
     conditions.push(kamiCond);
     _giveItem(alice, 1, 1);
 
@@ -108,7 +108,7 @@ contract ConditionalTest is SetupTemplate {
   // SPECIFIC CHECKS
 
   function testConditionalRoomFlag() public {
-    uint256 cond = _create("TEST_FLAG", "BOOL_IS", 0, 0, "ROOM", parentID);
+    uint256 cond = _create("TEST_FLAG", "BOOL_IS", 0, 0, "ROOM", anchorID);
     conditions.push(cond);
     _createRoomFlag(1, "TEST_FLAG");
     _createRoomFlag(3, "TEST_FLAG_NOT");
@@ -130,14 +130,14 @@ contract ConditionalTest is SetupTemplate {
     uint32 index,
     uint256 value,
     string memory for_,
-    uint256 _parentID
+    uint256 _anchorID
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     id = LibConditional.createFor(
       world,
       components,
       Condition(type_, logic, index, value, for_),
-      _parentID
+      _anchorID
     );
     vm.stopPrank();
   }

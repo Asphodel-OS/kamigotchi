@@ -99,8 +99,8 @@
     "id": "component.id.kami.owns",
     "encodedID": "0xdb1228220c36234210e3f04b6ac039f5d81c4d6d81f43d9b4a9d70c4d5bcfac1"
   },
-  "ParentID": {
-    "id": "component.id.parent",
+  "AnchorID": {
+    "id": "component.id.anchor",
     "encodedID": "0xbca01f994221da3049c3ee687ab5c6a1ebf40f2011941d5581d9cd500fdf2cd0"
   },
   "RoomID": {

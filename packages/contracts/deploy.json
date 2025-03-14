@@ -28,7 +28,7 @@
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
-    { "comp": "IDParent", "name": "ParentID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDAnchor", "name": "AnchorID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdSource", "name": "SourceID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDType", "name": "TypeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdTarget", "name": "TargetID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -137,7 +137,7 @@
         "Experience",
         "ForString",
         "IDFrom",
-        "IDParent",
+        "IDAnchor",
         "IDTo",
         "IndexRecipe",
         "Index",
@@ -164,7 +164,7 @@
         "IDFrom",
         "IDTo",
         "IDType",
-        "IDParent",
+        "IDAnchor",
         "IndexRoom",
         "Index",
         "Description",
@@ -291,19 +291,19 @@
     },
     {
       "name": "FriendAcceptSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendBlockSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendCancelSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendRequestSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     { "name": "GetterSystem", "writeAccess": [] },
     {
@@ -436,7 +436,7 @@
         "Health",
         "IdHolder",
         "IdSource",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "Index",
         "IndexItem",
@@ -456,7 +456,7 @@
         "EntityType",
         "Experience",
         "IdHolder",
-        "IDParent",
+        "IDAnchor",
         "IdSource",
         "IDType",
         "IDOwnsInventory",
@@ -503,7 +503,7 @@
         "Health",
         "IdHolder",
         "IdSource",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "Index",
         "IndexItem",
@@ -565,7 +565,7 @@
         "Health",
         "HasFlag",
         "IdHolder",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "IdSource",
         "IDOwnsSkill",
@@ -585,7 +585,7 @@
       "writeAccess": [
         "EntityType",
         "Health",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "IdSource",
         "IDOwnsSkill",
