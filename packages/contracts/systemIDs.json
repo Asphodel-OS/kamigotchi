@@ -87,10 +87,6 @@
     "id": "system.account.set.operator",
     "encodedID": "0x30e8932dc8e2362f4722824362c3a0895f6dbaa7f643b37560c1b38ea682d667"
   },
-  "AccountSetFarcasterDataSystem": {
-    "id": "system.account.set.farcaster",
-    "encodedID": "0xd34161e46727cb8efc2f04f8bd1b9f57ad4d38cf0467c0a23e3986643574408c"
-  },
   "CraftSystem": {
     "id": "system.craft",
     "encodedID": "0x91c8ca5f3d3d3a29a32ee18a732d1a758b78b1a39fd4442a9e86c11882a3ddf3"

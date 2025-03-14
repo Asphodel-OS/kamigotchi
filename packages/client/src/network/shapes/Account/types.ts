@@ -35,7 +35,6 @@ export interface BaseAccount {
 
 // standardized shape of an Account Entity
 export interface Account extends BaseAccount {
-  fid: number;
   coin: number;
   stamina: Stat;
   roomIndex: number;
@@ -90,14 +89,11 @@ export const getAccount = (
   entity: EntityIndex,
   options?: Options
 ): Account => {
-  const { FarcasterIndex } = components;
-
   const bareAcc = getBaseAccount(world, components, entity);
   const id = bareAcc.id;
 
   let account: Account = {
     ...bareAcc,
-    fid: getComponentValue(FarcasterIndex, entity)?.value as number,
     coin: getMusuBalance(world, components, entity),
     stamina: getStamina(components, entity),
     roomIndex: getRoomIndex(components, entity),
