@@ -117,5 +117,5 @@ export const getInstanceEntity = (
   id: EntityID
 ): EntityIndex | undefined => {
   // world3: change to 'quest.instance'
-  return getEntityByHash(world, ['registry.quest', index, id], ['string', 'uint32', 'uint256']);
+  return getEntityByHash(world, ['quest.instance', index, id], ['string', 'uint32', 'uint256']);
 };
