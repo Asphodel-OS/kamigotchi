@@ -93,7 +93,6 @@ export function createComponents(world: World) {
     Time: defineNumberComponent(world, 'Time', 'component.Time'),
     LastActionTime: defineNumberComponent(world, 'LastActionTime', 'component.Time.LastAction'),
     LastTime: defineNumberComponent(world, 'LastTime', 'component.Time.Last'),
-    Timelock: defineTimelockComponent(world, 'Timelock', 'component.Timelock'),
     ResetTime: defineNumberComponent(world, 'ResetTime', 'component.Time.Reset'),
     StartTime: defineNumberComponent(world, 'StartTime', 'component.Time.Start'),
     Type: defineStringComponent(world, 'Type', 'component.type', true),
