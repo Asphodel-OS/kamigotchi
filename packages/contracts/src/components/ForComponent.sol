@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
-import "solecs/components/Uint256Component.sol";
+
+import "solecs/components/StringBareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.for"));
 
-// world3: remove, replace with ForStringComponent
-contract ForComponent is Uint256Component {
-  constructor(address world) Uint256Component(world, ID) {}
+contract ForComponent is StringBareComponent {
+  constructor(address world) StringBareComponent(world, ID) {}
 }

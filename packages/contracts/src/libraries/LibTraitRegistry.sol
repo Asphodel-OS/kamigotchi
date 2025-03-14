@@ -9,7 +9,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
+import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
@@ -145,7 +145,7 @@ library LibTraitRegistry {
   function remove(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
-    ForComponent(getAddrByID(components, ForCompID)).remove(id);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(id);
     if (isBody(components, id))
       IndexBodyComponent(getAddrByID(components, IndexBodyCompID)).remove(id);
     if (isBackground(components, id))
@@ -240,7 +240,7 @@ library LibTraitRegistry {
   }
 
   function setReverseMappingPtr(IUintComp components, uint256 id, string memory _type) internal {
-    ForComponent(getAddrByID(components, ForCompID)).set(id, genReverseMappingPtr(_type));
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, genReverseMappingPtr(_type));
   }
 
   function setSlots(IUintComp components, uint256 id, int32 value) internal {
@@ -471,7 +471,7 @@ library LibTraitRegistry {
 
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, ForCompID),
+      getCompByID(components, IDAnchorCompID),
       abi.encode(genReverseMappingPtr(_type))
     );
     fragments[1] = QueryFragment(QueryType.Has, getCompByID(components, IsRegCompID), "");

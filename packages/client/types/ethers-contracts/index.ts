@@ -35,7 +35,6 @@ export type { EntityTypeComponent } from "./EntityTypeComponent";
 export type { ExitsComponent } from "./ExitsComponent";
 export type { ExperienceComponent } from "./ExperienceComponent";
 export type { ForComponent } from "./ForComponent";
-export type { ForStringComponent } from "./ForStringComponent";
 export type { FriendAcceptSystem } from "./FriendAcceptSystem";
 export type { FriendBlockSystem } from "./FriendBlockSystem";
 export type { FriendCancelSystem } from "./FriendCancelSystem";
@@ -231,7 +230,6 @@ export { EntityTypeComponent__factory } from "./factories/EntityTypeComponent__f
 export { ExitsComponent__factory } from "./factories/ExitsComponent__factory";
 export { ExperienceComponent__factory } from "./factories/ExperienceComponent__factory";
 export { ForComponent__factory } from "./factories/ForComponent__factory";
-export { ForStringComponent__factory } from "./factories/ForStringComponent__factory";
 export { FriendAcceptSystem__factory } from "./factories/FriendAcceptSystem__factory";
 export { FriendBlockSystem__factory } from "./factories/FriendBlockSystem__factory";
 export { FriendCancelSystem__factory } from "./factories/FriendCancelSystem__factory";
