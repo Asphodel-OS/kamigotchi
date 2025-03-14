@@ -296,15 +296,12 @@ library LibBonus {
     return uint256(keccak256(abi.encodePacked("bonus.registry", anchorID, type_)));
   }
 
-  /// @dev world3: keep compatibility with old bonus instances
   function genInstanceID(
     uint256 regID,
     uint256 holderID,
     uint256 duration
   ) internal pure returns (uint256) {
-    if (duration == 0)
-      return uint256(keccak256(abi.encodePacked("bonus.instance", regID, holderID)));
-    else return uint256(keccak256(abi.encodePacked("bonus.instance", regID, holderID, duration)));
+    return uint256(keccak256(abi.encodePacked("bonus.instance", regID, holderID, duration)));
   }
 
   function genTypeID(string memory type_, uint256 holderID) internal pure returns (uint256) {
