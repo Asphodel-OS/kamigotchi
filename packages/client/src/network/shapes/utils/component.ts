@@ -49,8 +49,8 @@ export const getEntityType = (components: Components, entity: EntityIndex): stri
 };
 
 export const getFor = (components: Components, entity: EntityIndex): string => {
-  const { ForString } = components;
-  const rawValue = getComponentValue(ForString, entity)?.value as string | '';
+  const { For } = components;
+  const rawValue = getComponentValue(For, entity)?.value as string | '';
   // for can be empty
   return rawValue;
 };

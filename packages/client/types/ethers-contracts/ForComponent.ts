@@ -33,9 +33,6 @@ export interface ForComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
-    "dec(uint256,uint256)": FunctionFragment;
-    "dec(uint256[],uint256)": FunctionFragment;
-    "dec(uint256[],uint256[])": FunctionFragment;
     "equal(uint256[],bytes)": FunctionFragment;
     "equal(uint256,bytes)": FunctionFragment;
     "extract(uint256[])": FunctionFragment;
@@ -44,16 +41,11 @@ export interface ForComponentInterface extends utils.Interface {
     "extractRaw(uint256)": FunctionFragment;
     "get(uint256[])": FunctionFragment;
     "get(uint256)": FunctionFragment;
-    "getAt(bytes,uint256)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
-    "getEntitiesWithValue(uint256)": FunctionFragment;
     "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
-    "inc(uint256[],uint256)": FunctionFragment;
-    "inc(uint256[],uint256[])": FunctionFragment;
-    "inc(uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "remove(uint256[])": FunctionFragment;
@@ -62,11 +54,10 @@ export interface ForComponentInterface extends utils.Interface {
     "requestOwnershipHandover()": FunctionFragment;
     "safeGet(uint256)": FunctionFragment;
     "safeGet(uint256[])": FunctionFragment;
-    "set(uint256,uint256)": FunctionFragment;
+    "set(uint256,string)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "set(uint256[],bytes[])": FunctionFragment;
-    "set(uint256[],uint256[])": FunctionFragment;
-    "size(bytes)": FunctionFragment;
+    "set(uint256[],string[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "writeAccess(address)": FunctionFragment;
@@ -77,9 +68,6 @@ export interface ForComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
-      | "dec(uint256,uint256)"
-      | "dec(uint256[],uint256)"
-      | "dec(uint256[],uint256[])"
       | "equal(uint256[],bytes)"
       | "equal(uint256,bytes)"
       | "extract(uint256[])"
@@ -88,16 +76,11 @@ export interface ForComponentInterface extends utils.Interface {
       | "extractRaw(uint256)"
       | "get(uint256[])"
       | "get(uint256)"
-      | "getAt"
-      | "getEntitiesWithValue(bytes)"
-      | "getEntitiesWithValue(uint256)"
+      | "getEntitiesWithValue"
       | "getRaw(uint256[])"
       | "getRaw(uint256)"
       | "has"
       | "id"
-      | "inc(uint256[],uint256)"
-      | "inc(uint256[],uint256[])"
-      | "inc(uint256,uint256)"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "remove(uint256[])"
@@ -106,11 +89,10 @@ export interface ForComponentInterface extends utils.Interface {
       | "requestOwnershipHandover"
       | "safeGet(uint256)"
       | "safeGet(uint256[])"
-      | "set(uint256,uint256)"
+      | "set(uint256,string)"
       | "set(uint256,bytes)"
       | "set(uint256[],bytes[])"
-      | "set(uint256[],uint256[])"
-      | "size"
+      | "set(uint256[],string[])"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "writeAccess"
@@ -127,18 +109,6 @@ export interface ForComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "dec(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "dec(uint256[],uint256)",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "dec(uint256[],uint256[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "equal(uint256[],bytes)",
@@ -173,16 +143,8 @@ export interface ForComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAt",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRaw(uint256[])",
@@ -197,18 +159,6 @@ export interface ForComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "inc(uint256[],uint256)",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "inc(uint256[],uint256[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "inc(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -239,8 +189,8 @@ export interface ForComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "set(uint256,string)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
@@ -251,12 +201,8 @@ export interface ForComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256[],uint256[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "size",
-    values: [PromiseOrValue<BytesLike>]
+    functionFragment: "set(uint256[],string[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -281,18 +227,6 @@ export interface ForComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "completeOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "dec(uint256,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "dec(uint256[],uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "dec(uint256[],uint256[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -327,13 +261,8 @@ export interface ForComponentInterface extends utils.Interface {
     functionFragment: "get(uint256)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(bytes)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(uint256)",
+    functionFragment: "getEntitiesWithValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -346,18 +275,6 @@ export interface ForComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "inc(uint256[],uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "inc(uint256[],uint256[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "inc(uint256,uint256)",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -388,7 +305,7 @@ export interface ForComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint256)",
+    functionFragment: "set(uint256,string)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -400,10 +317,9 @@ export interface ForComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256[],uint256[])",
+    functionFragment: "set(uint256[],string[])",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -529,24 +445,6 @@ export interface ForComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "dec(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "dec(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "dec(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -582,26 +480,15 @@ export interface ForComponent extends BaseContract {
     "get(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+    ): Promise<[string[]]>;
 
     "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[string]>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -621,24 +508,6 @@ export interface ForComponent extends BaseContract {
     ): Promise<[boolean]>;
 
     id(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "inc(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "inc(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "inc(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
 
@@ -668,16 +537,16 @@ export interface ForComponent extends BaseContract {
     "safeGet(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[string]>;
 
     "safeGet(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+    ): Promise<[string[]]>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,string)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -693,16 +562,11 @@ export interface ForComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256[],uint256[])"(
+    "set(uint256[],string[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -732,24 +596,6 @@ export interface ForComponent extends BaseContract {
   completeOwnershipHandover(
     pendingOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "dec(uint256,uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "dec(uint256[],uint256)"(
-    entities: PromiseOrValue<BigNumberish>[],
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "dec(uint256[],uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   "equal(uint256[],bytes)"(
@@ -787,26 +633,15 @@ export interface ForComponent extends BaseContract {
   "get(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  ): Promise<string[]>;
 
   "get(uint256)"(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<string>;
 
-  getAt(
-    value: PromiseOrValue<BytesLike>,
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getEntitiesWithValue(bytes)"(
-    value: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  "getEntitiesWithValue(uint256)"(
-    value: PromiseOrValue<BigNumberish>,
+  getEntitiesWithValue(
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -826,24 +661,6 @@ export interface ForComponent extends BaseContract {
   ): Promise<boolean>;
 
   id(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "inc(uint256[],uint256)"(
-    entities: PromiseOrValue<BigNumberish>[],
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "inc(uint256[],uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "inc(uint256,uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -873,16 +690,16 @@ export interface ForComponent extends BaseContract {
   "safeGet(uint256)"(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<string>;
 
   "safeGet(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  ): Promise<string[]>;
 
-  "set(uint256,uint256)"(
+  "set(uint256,string)"(
     entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -898,16 +715,11 @@ export interface ForComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256[],uint256[])"(
+  "set(uint256[],string[])"(
     entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  size(
-    value: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -937,24 +749,6 @@ export interface ForComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "dec(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "dec(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "dec(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -970,12 +764,12 @@ export interface ForComponent extends BaseContract {
     "extract(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<string[]>;
 
     "extract(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<string>;
 
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
@@ -990,26 +784,15 @@ export interface ForComponent extends BaseContract {
     "get(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<string[]>;
 
     "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<string>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -1029,24 +812,6 @@ export interface ForComponent extends BaseContract {
     ): Promise<boolean>;
 
     id(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "inc(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "inc(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "inc(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1072,16 +837,16 @@ export interface ForComponent extends BaseContract {
     "safeGet(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<string>;
 
     "safeGet(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<string[]>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,string)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1097,16 +862,11 @@ export interface ForComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256[],uint256[])"(
+    "set(uint256[],string[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1178,24 +938,6 @@ export interface ForComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "dec(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "dec(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "dec(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -1238,19 +980,8 @@ export interface ForComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1270,24 +1001,6 @@ export interface ForComponent extends BaseContract {
     ): Promise<BigNumber>;
 
     id(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "inc(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "inc(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "inc(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1324,9 +1037,9 @@ export interface ForComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,string)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1342,15 +1055,10 @@ export interface ForComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256[],uint256[])"(
+    "set(uint256[],string[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -1382,24 +1090,6 @@ export interface ForComponent extends BaseContract {
     completeOwnershipHandover(
       pendingOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "dec(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "dec(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "dec(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     "equal(uint256[],bytes)"(
@@ -1444,19 +1134,8 @@ export interface ForComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1476,24 +1155,6 @@ export interface ForComponent extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     id(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "inc(uint256[],uint256)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "inc(uint256[],uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "inc(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1530,9 +1191,9 @@ export interface ForComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,string)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1548,15 +1209,10 @@ export interface ForComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256[],uint256[])"(
+    "set(uint256[],string[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
