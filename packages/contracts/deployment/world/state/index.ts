@@ -1,10 +1,12 @@
 import { AdminAPI } from '../api';
+import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
 import { initConfigs, initLocalConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initItems, initLocalItems } from './items';
+import { initListings } from './listings';
 import { initNpcs } from './npcs';
 import { initLocalQuests } from './quests';
 import { initRelationships } from './relationships';
@@ -20,8 +22,8 @@ export async function initAll(api: AdminAPI, local: boolean) {
   // await initNodes(api);
   await initItems(api, undefined, true);
   await initNpcs(api);
-  // await initListings(api);
-  // await initAuctions(api);
+  await initListings(api, undefined, local);
+  await initAuctions(api);
   // await initQuests(api);
   await initSkills(api);
   await initTraits(api);
@@ -44,7 +46,6 @@ export async function initAllLocal(api: AdminAPI) {
   await initLocalConfigs(api);
   await initLocalQuests(api);
   await initLocalItems(api);
-  // await initLocalListings(api); // test onyx listing
   await api.setup.initAccounts();
   await api.setup.initPets();
   await api.setup.initHarvests();

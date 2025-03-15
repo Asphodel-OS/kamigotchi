@@ -1,15 +1,17 @@
 import { BigNumberish } from 'ethers';
-import { parseEther } from 'ethers/lib/utils';
 import { AdminAPI } from '../api';
 import { generateRegID, readFile } from './utils';
 
 // TODO: trigger more verbose console logs (e.g. item/npc names) and only on a verbose flag
-export async function initListings(api: AdminAPI, indices?: number[]) {
+export async function initListings(api: AdminAPI, indices?: number[], local?: boolean) {
   const listingCSV = await readFile('listings/listings.csv');
   const pricingCSV = await readFile('listings/pricing.csv');
   const requirementCSV = await readFile('listings/requirements.csv');
   const setBuy = api.listing.set.price.buy;
   const setSell = api.listing.set.price.sell;
+
+  const validStatuses = ['In-game'];
+  if (local) validStatuses.push('Local');
 
   for (let i = 0; i < listingCSV.length; i++) {
     const row = listingCSV[i];
@@ -18,16 +20,19 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
     const itemIndex = Number(row['Item Index']);
     if (indices && !indices.includes(itemIndex)) continue;
 
+    const status = String(row['Status']);
+    if (!validStatuses.includes(status)) continue;
+
     // Initial creation
     const npcIndex = Number(row['NPC Index']);
     const targetValue = Number(row['Value']);
     const currency = Number(row['Currency Index']);
 
     await createListing(api, npcIndex, itemIndex, currency, targetValue);
-    console.log(`created listing for npc ${npcIndex} of item ${itemIndex} for ${targetValue}`);
+    console.log(`Creating Listing: for npc ${npcIndex} of item ${itemIndex} for ${targetValue}`);
 
     // Set Buy Pricing
-    const buyKey = String(row['Buy Key']);
+    const buyKey = String(row['Buy Price']);
     if (buyKey) {
       const price = pricingCSV.find((p: any) => p['Key'] === buyKey);
       if (price) {
@@ -40,11 +45,11 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
           await setBuy.gda(npcIndex, itemIndex, period, decay, rate, false);
         }
         console.log(`  set buy price ${buyKey}`);
-      } else console.warn(`  Buy Price not found for ref ${buyKey}`);
+      } else console.log(`  Buy Price not found for ref ${buyKey}`);
     }
 
     // Set Sell Pricing
-    const sellKey = String(row['Sell Key']);
+    const sellKey = String(row['Sell Price']);
     if (sellKey) {
       const price = pricingCSV.find((p: any) => p['Key'] === sellKey);
       if (price) {
@@ -55,16 +60,16 @@ export async function initListings(api: AdminAPI, indices?: number[]) {
           await setSell.scaled(npcIndex, itemIndex, scale);
         }
         console.log(`  set sell price ${sellKey}`);
-      } else console.warn(`  Sell Price not found for ref ${sellKey}`);
+      } else console.log(`  Sell Price not found for ref ${sellKey}`);
     }
 
     // Set Requirements
     // Assume if the key is found, the requirement exists
-    const reqRefs = String(row['Requirements']).split(', ');
+    const reqRefs = String(row['Requirements']).split(',');
     for (let i = 0; i < reqRefs.length; i++) {
       if (!reqRefs[i]) continue;
-      const key = reqRefs[i].split(' (')[0];
-      const req = requirementCSV.find((r: any) => r['Name'] === key);
+      const key = reqRefs[i];
+      const req = requirementCSV.find((r: any) => r['Key'] === key);
       const reqType = String(req['Type']);
       const reqLogic = String(req['Logic']);
       const reqIndex = Number(req['Index'] ?? 0);
@@ -127,13 +132,13 @@ export async function createListing(
   await api.listing.create(merchantIndex, itemIndex, currencyIndex, value);
 }
 
-// to test ERC20 listings; sells a brick for 1 ONYX (18dp)
-export async function initLocalListings(api: AdminAPI) {
-  await api.listing.create(1, 101, 11, parseEther('0.05')); // 0.05 onyx
-  await api.listing.set.price.buy.fixed(1, 101); // hardcoded onyx index = 11
-  await api.listing.create(1, 102, 11, parseEther('1')); // 1 onyx
-  await api.listing.set.price.buy.fixed(1, 102); // hardcoded onyx index = 11
-}
+// // to test ERC20 listings; sells a brick for 1 ONYX (18dp)
+// export async function initLocalListings(api: AdminAPI) {
+//   await api.listing.create(1, 1001, 100, parseEther('0.05')); // 0.05 onyx
+//   await api.listing.set.price.buy.fixed(1, 1001); // hardcoded onyx index = 11
+//   await api.listing.create(1, 1002, 100, parseEther('1')); // 1 onyx
+//   await api.listing.set.price.buy.fixed(1, 1002); // hardcoded onyx index = 11
+// }
 
 export const setRequirement = async (
   api: AdminAPI,
