@@ -2,7 +2,7 @@ import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Auction, getAuction, NullAuction } from 'network/shapes/Auction';
-import { getBalance, getIndex, getItemIndex } from 'network/shapes/utils/component';
+import { getBalance, getCurrencyIndex, getItemIndex } from 'network/shapes/utils/component';
 import { getItemByIndex } from '../item';
 import { queryOne } from './queries';
 
@@ -51,8 +51,8 @@ export const get = (
     const updateTs = ItemUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.items) {
-      const auctionItemIndex = getIndex(components, entity);
-      const paymentItemIndex = getItemIndex(components, entity);
+      const auctionItemIndex = getItemIndex(components, entity);
+      const paymentItemIndex = getCurrencyIndex(components, entity);
       auction.auctionItem = getItemByIndex(world, components, auctionItemIndex);
       auction.paymentItem = getItemByIndex(world, components, paymentItemIndex);
       ItemUpdateTs.set(entity, now);
