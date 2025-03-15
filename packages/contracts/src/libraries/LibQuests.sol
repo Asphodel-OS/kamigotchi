@@ -8,6 +8,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
@@ -139,7 +140,7 @@ library LibQuests {
 
     // copy an objective
     uint256 id = genObjSnapshotID(questID, logicType, _type, index);
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, questID); // TODO: change to anchorID (world3)
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, genSnapshotAnchor(questID));
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, amount);
     return id;
   }
@@ -147,7 +148,7 @@ library LibQuests {
   function removeSnapshottedObjectives(IUintComp components, uint256 questID) internal {
     uint256[] memory objectives = querySnapshottedObjectives(components, questID);
 
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).remove(objectives);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(objectives);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(objectives);
   }
 
@@ -350,8 +351,8 @@ library LibQuests {
     IUintComp components,
     uint256 questID
   ) internal view returns (uint256[] memory) {
-    return
-      IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).getEntitiesWithValue(questID);
+    uint256 anchor = genSnapshotAnchor(questID);
+    return IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).getEntitiesWithValue(anchor);
   }
 
   ////////////////////
@@ -371,6 +372,10 @@ library LibQuests {
 
   function genQuestID(uint32 index, uint256 accID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("quest.instance", index, accID)));
+  }
+
+  function genSnapshotAnchor(uint256 questID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("snapshot.anchor", questID)));
   }
 
   function genObjSnapshotID(
