@@ -1,17 +1,12 @@
 import { AdminAPI } from '../api';
-import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
 import { initConfigs, initLocalConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
-import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
-import { initListings, initLocalListings } from './listings';
-import { initNodes } from './nodes';
 import { initNpcs } from './npcs';
-import { initLocalQuests, initQuests } from './quests';
-import { initRecipes } from './recipes';
+import { initLocalQuests } from './quests';
 import { initRelationships } from './relationships';
 import { initRooms } from './rooms';
 import { initSkills } from './skills';
@@ -22,17 +17,17 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initConfigs(api);
   await initFactions(api);
   await initRooms(api);
-  await initNodes(api);
+  // await initNodes(api);
   await initItems(api, undefined, true);
   await initNpcs(api);
-  await initListings(api);
-  await initAuctions(api);
-  await initQuests(api);
+  // await initListings(api);
+  // await initAuctions(api);
+  // await initQuests(api);
   await initSkills(api);
   await initTraits(api);
-  await initRecipes(api);
+  // await initRecipes(api);
   await initRelationships(api);
-  await initGoals(api);
+  // await initGoals(api);
 
   if (local) {
     await initGachaPool(api, 88);
@@ -49,7 +44,7 @@ export async function initAllLocal(api: AdminAPI) {
   await initLocalConfigs(api);
   await initLocalQuests(api);
   await initLocalItems(api);
-  await initLocalListings(api); // test onyx listing
+  // await initLocalListings(api); // test onyx listing
   await api.setup.initAccounts();
   await api.setup.initPets();
   await api.setup.initHarvests();

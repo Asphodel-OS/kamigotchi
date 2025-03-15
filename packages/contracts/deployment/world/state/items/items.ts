@@ -47,9 +47,9 @@ export async function initItems(api: AdminAPI, overrideIndices?: number[], deplo
     const effectsRaw = row['Effects'];
     if (!effectsRaw) continue;
 
-    const effects = effectsRaw.split(', ');
+    const effects = effectsRaw.split(',');
     for (let i = 0; i < effects.length; i++) {
-      const alloName = effects[i].split(' (')[0];
+      const alloName = effects[i];
       const alloRow = alloMap.get(alloName);
       if (!alloRow) console.warn(`  Could not find allo ${alloName} for item ${index}`);
       else await addAllo(api, index, alloRow);

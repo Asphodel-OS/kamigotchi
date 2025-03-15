@@ -1,8 +1,5 @@
 import { AdminAPI } from '../../api';
-import { parseKamiStateToIndex, stringToNumberArray } from '../utils';
-
-const STAT_TOTALS = ['HEALTH', 'POWER', 'VIOLENCE', 'HARMONY', 'STAMINA'];
-const STAT_POINTS = ['HP', 'SP'];
+import { parseKamiStateToIndex, readFile, stringToNumberArray } from '../utils';
 
 export async function addAllo(api: AdminAPI, itemIndex: number, entry: any) {
   const type = entry['Type'].toUpperCase();
@@ -12,7 +9,7 @@ export async function addAllo(api: AdminAPI, itemIndex: number, entry: any) {
   else if (type === 'BONUS') addBonus(alloAPI, itemIndex, entry);
   else if (type === 'FLAG') addFlag(alloAPI, itemIndex, entry);
   else if (type === 'STATE') addState(alloAPI, itemIndex, entry);
-  else if (type === 'ITEM_DROPTABLE') addDroptable(alloAPI, itemIndex, entry);
+  else if (type === 'ITEM_DROPTABLE') addDroptable2(alloAPI, itemIndex, entry);
   else addBasic(alloAPI, itemIndex, entry);
 }
 
@@ -42,6 +39,24 @@ async function addDroptable(api: any, itemIndex: number, entry: any) {
   await api.droptable(itemIndex, 'USE', keys, weights, 1);
 }
 
+// add a droptable allo to an item
+// NOTE: really inefficient rn
+// TODO: should centralize sheet loads/mappings in singleton pattern
+async function addDroptable2(api: any, itemIndex: number, entry: any) {
+  const dtCSV = await readFile('items/droptables.csv');
+
+  // find the droptable row
+  const dtKey = entry['Droptable'];
+  const dtRow = dtCSV.find((row: any) => row['Name'] === dtKey);
+
+  if (dtRow) {
+    console.log(`  adding droptable allo to ${itemIndex}`);
+    const indices = stringToNumberArray(dtRow['Indices']);
+    const tiers = stringToNumberArray(dtRow['Tiers']);
+    await api.droptable(itemIndex, 'USE', indices, tiers, 1);
+  } else console.log(`  Could not find droptable ${dtKey} row for ${itemIndex}`);
+}
+
 // add a flag allo to an item
 async function addFlag(api: any, itemIndex: number, entry: any) {
   let flag = entry['Descriptor'].toUpperCase() as string;
@@ -53,6 +68,9 @@ async function addFlag(api: any, itemIndex: number, entry: any) {
   }
   await api.basic(itemIndex, 'USE', `FLAG_${flag}`, 0, value);
 }
+
+const STAT_TOTALS = ['HEALTH', 'POWER', 'VIOLENCE', 'HARMONY', 'STAMINA'];
+const STAT_POINTS = ['HP', 'SP'];
 
 // add a stat allo to an item
 export async function addStat(api: any, itemIndex: number, entry: any) {

@@ -111,8 +111,11 @@ export async function readFile(file: string) {
   return await parse(result, { columns: true });
 }
 
+// a bit hardcoded
 export function stringToNumberArray(rawStr: string): number[] {
-  const str = rawStr.slice(1, -1);
+  const len = rawStr.length;
+  let str = rawStr;
+  if (rawStr[0] === '[' && rawStr[len - 1] === ']') str = rawStr.slice(1, -1);
   return str.split(',').map((s) => Number(s.trim()));
 }
 
