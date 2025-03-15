@@ -6,7 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
-import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
+import { IndexCurrencyComponent, ID as IndexCurrencyCompID } from "components/IndexCurrencyComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
@@ -51,8 +51,8 @@ library LibAuctionRegistry {
   function create(IUintComp comps, Params memory params) internal returns (uint256) {
     uint256 id = genID(params.itemIndex);
     LibEntityType.set(comps, id, "AUCTION");
-    IndexComponent(getAddrByID(comps, IndexCompID)).set(id, params.itemIndex);
-    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, params.payItemIndex);
+    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, params.itemIndex);
+    IndexCurrencyComponent(getAddrByID(comps, IndexCurrencyCompID)).set(id, params.payItemIndex);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, params.priceTarget);
     MaxComponent(getAddrByID(comps, MaxCompID)).set(id, params.max.toUint256());
     PeriodComponent(getAddrByID(comps, PeriodCompID)).set(id, params.period);
@@ -65,11 +65,11 @@ library LibAuctionRegistry {
 
   // remove an auction
   function remove(IUintComp comps, uint256 id) internal {
-    uint32 index = IndexComponent(getAddrByID(comps, IndexCompID)).get(id);
+    uint32 index = IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(id);
 
     LibEntityType.remove(comps, id);
-    IndexComponent(getAddrByID(comps, IndexCompID)).remove(id);
     IndexItemComponent(getAddrByID(comps, IndexItemCompID)).remove(id);
+    IndexCurrencyComponent(getAddrByID(comps, IndexCurrencyCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
     MaxComponent(getAddrByID(comps, MaxCompID)).remove(id);
     PeriodComponent(getAddrByID(comps, PeriodCompID)).remove(id);
@@ -111,6 +111,10 @@ library LibAuctionRegistry {
 
   function getReqs(IUintComp comps, uint256 id) internal view returns (uint256[] memory) {
     return LibConditional.queryFor(comps, genReqAnchor(id));
+  }
+
+  function getCurrencyIndex(IUintComp comps, uint256 id) internal view returns (uint32) {
+    return IndexCurrencyComponent(getAddrByID(comps, IndexCurrencyCompID)).get(id);
   }
 
   /////////////////

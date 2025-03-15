@@ -4,9 +4,9 @@ import { Components } from 'network/components';
 import { getItemByIndex, Item } from '../Item';
 import {
   getBalance,
+  getCurrencyIndex,
   getDecay,
   getEntityType,
-  getIndex,
   getItemIndex,
   getMax,
   getPeriod,
@@ -69,12 +69,12 @@ export const get = (
   };
 
   if (options?.auctionItem) {
-    const itemIndex = getIndex(components, entity);
+    const itemIndex = getItemIndex(components, entity);
     auction.auctionItem = getItemByIndex(world, components, itemIndex);
   }
 
   if (options?.paymentItem) {
-    const itemIndex = getItemIndex(components, entity);
+    const itemIndex = getCurrencyIndex(components, entity);
     auction.paymentItem = getItemByIndex(world, components, itemIndex);
   }
 

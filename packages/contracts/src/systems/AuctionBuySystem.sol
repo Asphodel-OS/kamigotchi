@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAuction } from "libraries/LibAuction.sol";
+import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.auction.buy"));
@@ -22,7 +23,7 @@ contract AuctionBuySystem is System {
 
     // process the buy
     uint256 cost = LibAuction.calcBuy(components, id, amt);
-    uint32 payItemIndex = LibInventory.getItemIndex(components, id);
+    uint32 payItemIndex = LibAuctionRegistry.getCurrencyIndex(components, id);
     LibInventory.decFor(components, accID, payItemIndex, cost);
     LibInventory.incFor(components, accID, itemIndex, amt);
     LibAuction.incBalance(components, id, amt);
