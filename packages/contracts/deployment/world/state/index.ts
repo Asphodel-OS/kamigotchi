@@ -7,32 +7,34 @@ import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
-import { initListings, initLocalListings } from './listings';
-import { initNodes } from './nodes';
+import { initListings } from './listings';
 import { initNpcs } from './npcs';
-import { initLocalQuests, initQuests } from './quests';
+import { initQuests } from './quests/quests';
 import { initRecipes } from './recipes';
 import { initRelationships } from './relationships';
-import { initRooms } from './rooms';
+import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
 import { initTraits } from './traits';
 
 export async function initAll(api: AdminAPI, local: boolean) {
+  // independent
   await initAuth(api);
   await initConfigs(api);
   await initFactions(api);
-  await initRooms(api);
-  await initNodes(api);
-  await initItems(api, undefined, true);
+  await initItems(api, [], local);
   await initNpcs(api);
-  await initListings(api);
-  await initAuctions(api);
-  await initQuests(api);
+  await initRooms(api, undefined, local);
   await initSkills(api);
   await initTraits(api);
-  await initRecipes(api);
-  await initRelationships(api);
+
+  // dependent
+  await initAuctions(api);
+  await initListings(api, undefined, local);
+  await initNodes(api);
   await initGoals(api);
+  await initQuests(api, undefined, local);
+  await initRecipes(api, [], local);
+  await initRelationships(api);
 
   if (local) {
     await initGachaPool(api, 88);
@@ -47,9 +49,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
 export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
-  await initLocalQuests(api);
   await initLocalItems(api);
-  await initLocalListings(api); // test onyx listing
   await api.setup.initAccounts();
   await api.setup.initPets();
   await api.setup.initHarvests();
@@ -68,11 +68,11 @@ export { initGachaPool, mintToGachaPool } from './gacha';
 export { deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
-export { deleteNodes, initNodes, reviseNodes } from './nodes';
 export { initNpcs } from './npcs';
-export { deleteQuests, initLocalQuests, initQuests, reviseQuests } from './quests';
+export { deleteQuests, initQuests, reviseQuests } from './quests/quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
 export { deleteRelationships, initRelationships } from './relationships';
-export { deleteRooms, initRooms, reviseRooms } from './rooms';
+export { deleteNodes, initNodes, reviseNodes } from './rooms/nodes';
+export { deleteRooms, initRooms, reviseRooms } from './rooms/rooms';
 export { deleteSkills, initSkills, reviseSkills } from './skills';
 export { initTraits } from './traits';
