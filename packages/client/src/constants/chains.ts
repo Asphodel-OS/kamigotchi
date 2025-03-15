@@ -2,18 +2,18 @@ import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
 import { Chain, localhost } from '@wagmi/core/chains';
 
 const rawYominet = {
-  id: 4471190363524365,
+  id: 428962654539583,
   name: 'yominet',
   nativeCurrency: {
     decimals: 18,
-    name: 'Onyx',
-    symbol: 'ONYX',
+    name: 'Ethereum',
+    symbol: 'ETH',
   },
   rpcUrls: {
     default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
   },
   blockExplorers: {
-    default: { name: 'Onyxscan', url: 'https://scan.testnet.initia.xyz/preyominet-1' },
+    default: { name: 'Yomiscan', url: 'https://scan.testnet.initia.xyz/preyominet-1' },
   },
 } as const satisfies Chain;
 
