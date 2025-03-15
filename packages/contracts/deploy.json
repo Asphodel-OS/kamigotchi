@@ -521,6 +521,7 @@
       "name": "QuestAcceptSystem",
       "writeAccess": [
         "EntityType",
+        "IDAnchor",
         "IDOwnsQuest",
         "IndexQuest",
         "IsComplete",
@@ -539,6 +540,7 @@
       "name": "QuestDropSystem",
       "writeAccess": [
         "EntityType",
+        "IDAnchor",
         "IDOwnsQuest",
         "IndexQuest",
         "IsComplete",

@@ -169,12 +169,10 @@ contract QuestsTest is SetupTemplate {
     uint256 questID = _acceptQuest(0, 1);
 
     // check that snapshots are correctly stored
-    vm.prank(deployer); // load bearing entity lol
-    _IDOwnsQuestComponent.set(1, 1); // load bearing entity lol
     uint256[] memory snapshots = LibQuests.querySnapshottedObjectives(components, questID);
-    assertEq(snapshots.length, 1);
-    assertEq(_IDOwnsQuestComponent.get(snapshots[0]), questID);
-    assertEq(_ValueComponent.get(snapshots[0]), startAmt);
+    assertEq(snapshots.length, 1, "original snapshot length mismatch");
+    assertEq(_IDAnchorComponent.get(snapshots[0]), LibQuests.genSnapshotAnchor(questID));
+    assertEq(_ValueComponent.get(snapshots[0]), startAmt, "original snapshot value mismatch");
 
     // check completability
     assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));
