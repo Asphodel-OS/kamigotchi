@@ -1,0 +1,11 @@
+﻿.,Description,Operator,DeltaType,Type,Index,Value
+,Harvest 1 minute,MIN,INC,HARVEST_TIME,,60
+,Harvest for >5 minutes,MIN,INC,HARVEST_TIME,,300
+,Give 10 MUSU,MIN,INC,ITEM_BURN,1,10
+,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
+,Own 1 Kamigotchi,MIN,INC,KAMI_NUM_OWNED,,1
+,Liquidate another Kamigotchi,MIN,INC,LIQUIDATE_TOTAL,,1
+,Have your Kami Liquidated,MIN,,LIQUIDATED_VICTIM,,1
+,Move 3 Times,MIN,INC,MOVE,,3
+,Move 7 Times,MIN,INC,MOVE,,
+,Scavenge 1 Item,MIN,CURR,SCAV_CLAIM_NODE,,1

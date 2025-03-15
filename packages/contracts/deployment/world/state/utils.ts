@@ -5,7 +5,28 @@ import { BigNumberish, utils } from 'ethers';
 // CONSTANTS
 
 export const MUSU_INDEX = 1;
-export const GACHA_TICKET_INDEX = 2;
+export const GACHA_TICKET_INDEX = 10;
+export const DataSheets = new Map<string, any>();
+
+////////////////
+// DATA SHEETS
+
+// for the management of data sheets in singleton pattern
+export const getSheet = async (category: string, name: string) => {
+  const key = category + '-' + name;
+  if (!DataSheets.has(key)) {
+    const csv = await readFile(`${category}/${name}.csv`);
+    DataSheets.set(key, csv);
+  }
+  return DataSheets.get(key);
+};
+
+export async function readFile(file: string) {
+  const fs = require('fs');
+  const path = require('path');
+  const result = fs.readFileSync(path.join(__dirname, '../data/', file), 'utf8');
+  return await parse(result, { columns: true });
+}
 
 ///////////////
 // GENERAL
@@ -29,6 +50,25 @@ export const toRevise = (entry: any): boolean => {
     entry['Status'] === 'Ingame' ||
     entry['Status'] === 'For Implementation'
   );
+};
+
+export const getCreationStatuses = (env: string): string[] => {
+  const statuses = ['To Deploy'];
+  if (env === 'local') statuses.push('In Game', 'Test', 'Ready');
+  else if (env === 'test') statuses.push('Ready');
+  return statuses;
+};
+
+// statuses to blanket delete from sheet reference (unspecified indices)
+export const getDeletionStatuses = (env: string): string[] => {
+  return ['To Delete'];
+};
+
+// statuses to blanket revise from sheet reference (unspecified indices)
+export const getRevisionStatuses = (env: string): string[] => {
+  const statuses = ['To Update'];
+  if (env === 'test') statuses.push('In Game', 'Ready');
+  return statuses;
 };
 
 ///////////////
@@ -104,15 +144,12 @@ export const parseKamiStateToIndex = (state: string): number => {
 ///////////////
 // MISC
 
-export async function readFile(file: string) {
-  const fs = require('fs');
-  const path = require('path');
-  const result = fs.readFileSync(path.join(__dirname, '../data/', file), 'utf8');
-  return await parse(result, { columns: true });
-}
-
+// a bit hardcoded
 export function stringToNumberArray(rawStr: string): number[] {
-  const str = rawStr.slice(1, -1);
+  if (rawStr === '') return [];
+  const len = rawStr.length;
+  let str = rawStr;
+  if (rawStr[0] === '[' && rawStr[len - 1] === ']') str = rawStr.slice(1, -1);
   return str.split(',').map((s) => Number(s.trim()));
 }
 

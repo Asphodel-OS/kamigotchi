@@ -127,8 +127,7 @@ export const filterByReward = (quests: Quest[], faction?: number) => {
 // filter out onwanted ongoing quests
 export const filterOngoing = (quests: Quest[]) => {
   if (quests.length === 0) return [];
-  quests = filterByNotObjective(quests, 1);
-  return quests.filter((quest: Quest) => quest.index !== 10001);
+  return filterByNotObjective(quests, 1);
 };
 
 /////////////////
