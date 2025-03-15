@@ -96,9 +96,9 @@ function createConfigRawYominet(externalProvider?: ExternalProvider): NetworkCon
     streamServiceUrl: 'https://kamigaze.test.asphodel.io',
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
-    chainId: 4471190363524365,
-    worldAddress: '0x89090F774BeC95420f6359003149f51fec207133',
-    initialBlockNumber: 418865,
+    chainId: 428962654539583,
+    worldAddress: '0xe32795B8A98Ca58641f5d887324da31464867f33',
+    initialBlockNumber: 1024,
   };
 
   if (externalProvider) config.externalProvider = externalProvider;
