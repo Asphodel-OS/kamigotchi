@@ -367,6 +367,8 @@ abstract contract SetupTemplate is TestSetupImports {
     _KamiUseItemSystem.executeTyped(kamiID, KAMI_REVIVE_INDEX);
   }
 
+  /* HARVEST */
+
   function _startHarvestByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
     return _startHarvest(kamiID, nodeID);
@@ -405,6 +407,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.prank(operator);
     _HarvestLiquidateSystem.executeTyped(harvestID, attackerID);
+  }
+
+  function _incHarvestBounty(uint harvestID, uint amt) internal {
+    vm.startPrank(deployer);
+    LibHarvest.incBounty(components, harvestID, amt);
+    vm.stopPrank();
   }
 
   /* QUESTS */

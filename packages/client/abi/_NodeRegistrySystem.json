@@ -50,7 +50,13 @@
           "internalType": "uint256"
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable"
     },
     {
@@ -142,7 +148,7 @@
       ],
       "outputs": [
         {
-          "name": "",
+          "name": "id",
           "type": "uint256",
           "internalType": "uint256"
         }
