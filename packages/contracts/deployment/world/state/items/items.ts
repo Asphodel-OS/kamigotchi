@@ -1,5 +1,5 @@
 import { AdminAPI } from '../../api';
-import { getItemImage, readFile } from '../utils';
+import { getItemImage, getSheet, readFile } from '../utils';
 import { addAllo } from './allos';
 import { addRequirement } from './requirements';
 
@@ -8,8 +8,11 @@ const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
 
 export async function initItems(api: AdminAPI, overrideIndices?: number[], deployAll?: boolean) {
-  const itemsCSV = await readFile('items/items.csv');
-  const allosCSV = await readFile('items/allos.csv');
+  const itemsCSV = await getSheet('items', 'items');
+  if (!itemsCSV) return console.log('No items/items.csv found');
+  const allosCSV = await getSheet('items', 'allos');
+  if (!allosCSV) return console.log('No items/allos.csv found');
+  console.log('\n==INITIALIZING ITEMS==');
 
   // construct the map of allos for easier lookup
   const alloMap = new Map<string, any>();

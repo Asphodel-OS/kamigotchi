@@ -1,12 +1,17 @@
 import { BigNumberish } from 'ethers';
 import { AdminAPI } from '../api';
-import { generateRegID, readFile } from './utils';
+import { generateRegID, getSheet, readFile } from './utils';
 
 // TODO: trigger more verbose console logs (e.g. item/npc names) and only on a verbose flag
 export async function initListings(api: AdminAPI, indices?: number[], local?: boolean) {
-  const listingCSV = await readFile('listings/listings.csv');
-  const pricingCSV = await readFile('listings/pricing.csv');
-  const requirementCSV = await readFile('listings/requirements.csv');
+  const listingCSV = await getSheet('listings', 'listings');
+  if (!listingCSV) return console.log('No listings/listings.csv found');
+  const pricingCSV = await getSheet('listings', 'pricing');
+  if (!pricingCSV) return console.log('No listings/pricing.csv found');
+  const requirementCSV = await getSheet('listings', 'requirements');
+  if (!requirementCSV) return console.log('No listings/requirements.csv found');
+  console.log('\n==INITIALIZING LISTINGS==');
+
   const setBuy = api.listing.set.price.buy;
   const setSell = api.listing.set.price.sell;
 

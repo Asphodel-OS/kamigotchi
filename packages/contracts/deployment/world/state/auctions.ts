@@ -1,10 +1,10 @@
 import { AdminAPI } from '../api';
-import { readFile } from './utils';
+import { getSheet } from './utils';
 
 export async function initAuctions(api: AdminAPI, indices?: number[]) {
-  const auctionsCSV = await readFile('auctions/auctions.csv');
-  // skip requirements for now
-  // const requirementsCSV = await readFile('auctions/requirements.csv');
+  const auctionsCSV = await getSheet('auctions', 'auctions');
+  if (!auctionsCSV) return console.log('No auctions/auctions.csv found');
+  console.log('\n==INITIALIZING AUCTIONS==');
 
   for (let i = 0; i < auctionsCSV.length; i++) {
     const row = auctionsCSV[i];

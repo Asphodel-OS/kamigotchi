@@ -7,23 +7,25 @@ export async function initRooms(api: AdminAPI, overrideIndices?: number[], local
   if (!roomsCSV) return console.log('No rooms/rooms.csv found');
   console.log('\n==INITIALIZING ROOMS==');
 
+  // Status-based processing
+  // TODO: status based processing based on environment
+  // - Local: Ready, To Deploy, In Game
+  // - Test: Ready, To Deploy
+  // - Prod: To Deploy
+  let validStatuses = ['To Deploy'];
+  if (local) {
+    validStatuses.push('In Game');
+    validStatuses.push('Ready');
+  }
+
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
-
+    const index = Number(room['Index']);
     // skip if indices are overridden and room isn't included
-    if (overrideIndices && !overrideIndices.includes(Number(room['Index']))) continue;
-    else {
-      // Status-based processing
-      // TODO: status based processing based on environment
-      // - Local: Ready, To Deploy, In Game
-      // - Test: Ready, To Deploy
-      // - Prod: To Deploy
+    if (overrideIndices && !overrideIndices.includes(index)) continue;
 
-      const status = room['Status'];
-      let validStatuses = ['To Deploy'];
-      if (local) validStatuses.push('In Game');
-      if (validStatuses.includes(status)) await initRoom(api, room);
-    }
+    const status = room['Status'];
+    if (validStatuses.includes(status)) await initRoom(api, room);
   }
 }
 
