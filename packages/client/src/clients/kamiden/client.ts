@@ -9,7 +9,7 @@ let Client: KamidenServiceClient | null = null;
 export function getClient(): KamidenServiceClient {
   if (!Client) {
     const channel = createChannel(
-      'https://kamiden-feed.test.asphodel.io', //'http://localhost:80', //
+      'https://api.prod.kamigotchi.io', //'http://localhost:80', //
       grpc.WebsocketTransport()
     );
     Client = createClient(KamidenServiceDefinition, channel);
