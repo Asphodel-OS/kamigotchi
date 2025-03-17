@@ -1,12 +1,8 @@
-import {
-  BaseProvider,
-  JsonRpcProvider,
-  TransactionRequest,
-  TransactionResponse,
-} from '@ethersproject/providers';
+import { BaseProvider, TransactionRequest, TransactionResponse } from '@ethersproject/providers';
 import { extractEncodedArguments } from '@mud-classic/utils';
-import { BigNumber, BigNumberish, Overrides } from 'ethers';
-import { defaultAbiCoder as abi } from 'ethers/lib/utils';
+import { baseGasPrice, DefaultChain } from 'constants/chains';
+import { Overrides, Signer } from 'ethers';
+import { defaultAbiCoder as abi, Deferrable } from 'ethers/lib/utils';
 
 /**
  * Get the revert reason from a given transaction hash
@@ -38,32 +34,32 @@ export async function waitForTx(txResponse: Promise<TransactionResponse>) {
   return response.wait();
 }
 
-export async function getTxGasData(
-  provider: JsonRpcProvider,
-  estimateGas: () => Promise<BigNumberish>
-) {
-  const gasOverrides: Overrides = {};
-  const estMaxFee = provider.send('eth_gasPrice', []);
-  const estMaxPrioFee = provider.send('eth_maxPriorityFeePerGas', []);
+/**
+ * Performant send tx, reducing as many calls as possible
+ * gasLimit is already estimated in prior step, passed in via txData
+ */
+export async function sendTx(
+  signer: Signer | undefined,
+  txData: Deferrable<TransactionRequest>
+): Promise<TransactionResponse> {
+  txData.chainId = DefaultChain.id;
+  txData.maxFeePerGas = baseGasPrice; // gas prices for minievm are fixed
+  txData.maxPriorityFeePerGas = 0;
+  return signer?.sendTransaction(txData)!;
+}
 
-  // Execute all promises and retrieve their results.
-  const results = await Promise.allSettled([estimateGas(), estMaxFee, estMaxPrioFee]);
-  if (results[0].status === 'rejected') throw results[0];
+// check if nonce should be incremented
+export function shouldIncNonce(error: any) {
+  // If tx was submitted, inc nonce regardless of error
+  const isMutationError = !!error?.transaction;
+  const isRejectedError = error?.reason?.includes('user rejected transaction'); //
+  return !isRejectedError && (!error || isMutationError);
+}
 
-  // Extract gas data from the results or provide default values in case of errors.
-  const gasLimit = results[0].value;
-  const maxFeeRaw = results[1].status === 'fulfilled' ? results[1].value : 0;
-  const maxPriorityFeeRaw = results[2].status === 'fulfilled' ? results[2].value : 0;
-
-  const maxFee = BigNumber.from(maxFeeRaw);
-  const maxPriorityFee = BigNumber.from(maxPriorityFeeRaw);
-  const baseFee = maxFee.sub(maxPriorityFee);
-
-  gasOverrides.gasLimit = gasLimit;
-  gasOverrides.maxPriorityFeePerGas = maxPriorityFee;
-  gasOverrides.maxFeePerGas = baseFee.mul(2).add(maxPriorityFee);
-
-  return gasOverrides;
+export function shouldResetNonce(error: any) {
+  const isExpirationError = error?.code === 'NONCE_EXPIRED';
+  const isRepeatError = error?.reason?.includes('transaction already imported');
+  return isExpirationError || isRepeatError;
 }
 
 export function isOverrides(obj: any): obj is Overrides {

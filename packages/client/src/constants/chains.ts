@@ -25,3 +25,6 @@ chainConfigs.set('staging', yominet);
 chainConfigs.set('production', yominet);
 
 export const DefaultChain = chainConfigs.get(import.meta.env.MODE ?? '')!;
+
+// yominet runs with a flat fee, hardcoded fee
+export const baseGasPrice = 3e7;
