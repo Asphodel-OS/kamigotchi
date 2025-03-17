@@ -7,6 +7,7 @@ struct ScavBarData {
   uint256 id; // registry id
   string field;
   uint32 index;
+  string affinity;
   uint256 tierCost;
 }
 
@@ -17,7 +18,12 @@ contract ScavengeTest is SetupTemplate {
     super.setUp();
 
     // create basic empty scavbar
-    scavbar1 = _createScavBar("test", 1, 5);
+    scavbar1 = _createScavBar("TEST", 1, "NORMAL", 5);
+  }
+
+  function testScavShape() public {
+    ScavBarData memory bar1 = _createScavBar("teST", 1, "NORMAL", 5);
+    assertEq(bar1.id, LibScavenge.genRegID("TEST", 1), "scav bar id mismatch");
   }
 
   function testScavPoints(uint256 amt) public {
@@ -35,11 +41,50 @@ contract ScavengeTest is SetupTemplate {
     _addReward(scavbar1.id, "ITEM", 1, 1);
 
     _incFor(alice, scavbar1, amt * scavbar1.tierCost + 3);
-    vm.prank(alice.operator);
-    _ScavengeClaimSystem.executeTyped(scavbar1.id);
+    _claim(alice, scavbar1.id);
 
     assertEq(_getItemBal(alice, 1), amt, "item balance mismatch");
     _assertPoints(alice, scavbar1, 3);
+  }
+
+  function testScavNodeClaim(uint256 scavCost, uint256 scavScore) public {
+    vm.assume(scavCost > 0 && scavScore > 0);
+    uint32 nodeIndex = 1;
+    vm.prank(deployer);
+    uint256 scavBarID = __NodeRegistrySystem.addScavBar(nodeIndex, scavCost);
+
+    // setup kami on node
+    uint256 kamiID = _mintKami(alice);
+    uint256 harvestID = _startHarvestByIndex(kamiID, nodeIndex);
+    _incHarvestBounty(harvestID, scavScore);
+    _fastForward(_idleRequirement);
+    _stopHarvest(harvestID);
+
+    // claim scav
+    uint256 expectedRolls = scavScore / scavCost;
+    uint256 expectedRemainder = scavScore % scavCost;
+    uint256 scavInstanceID = LibScavenge.genInstanceID("NODE", nodeIndex, alice.id);
+    assertEq(_ValueComponent.get(scavInstanceID), scavScore, "instance points mismatch");
+    if (expectedRolls == 0) {
+      vm.prank(alice.operator);
+      vm.expectRevert();
+      _ScavengeClaimSystem.executeTyped(scavBarID);
+    } else {
+      _claim(alice, scavBarID);
+      assertEq(
+        _ValueComponent.get(scavInstanceID),
+        expectedRemainder,
+        "post roll scav points mismatch"
+      );
+    }
+  }
+
+  /////////////////
+  // ACTIONS
+
+  function _claim(PlayerAccount memory acc, uint256 scavID) internal {
+    vm.prank(acc.operator);
+    _ScavengeClaimSystem.executeTyped(scavID);
   }
 
   /////////////////
@@ -59,8 +104,7 @@ contract ScavengeTest is SetupTemplate {
     uint256 numTiers = LibScavenge.extractNumTiers(
       components,
       scavBar.id,
-      scavBar.field,
-      scavBar.index,
+      testToBaseStruct(scavBar),
       acc.id
     );
     vm.stopPrank();
@@ -70,12 +114,13 @@ contract ScavengeTest is SetupTemplate {
   function _createScavBar(
     string memory field,
     uint32 index,
+    string memory affinity,
     uint256 tierCost
   ) internal returns (ScavBarData memory) {
     vm.startPrank(deployer);
-    uint256 id = LibScavenge.create(components, field, index, tierCost);
+    uint256 id = LibScavenge.create(components, LibScavenge.Base(field, index, affinity), tierCost);
     vm.stopPrank();
-    return ScavBarData(id, field, index, tierCost);
+    return ScavBarData(id, field, index, affinity, tierCost);
   }
 
   function _addReward(
@@ -92,7 +137,6 @@ contract ScavengeTest is SetupTemplate {
 
   function _addReward(
     uint256 scavBarID,
-    string memory type_,
     uint32[] memory keys,
     uint256[] memory weights,
     uint256 value
@@ -103,6 +147,12 @@ contract ScavengeTest is SetupTemplate {
     vm.stopPrank();
   }
 
+  function testToBaseStruct(
+    ScavBarData memory data
+  ) internal pure returns (LibScavenge.Base memory) {
+    return LibScavenge.Base(data.field, data.index, data.affinity);
+  }
+
   /////////////////
   // ASSERTIONS
 
@@ -110,7 +160,7 @@ contract ScavengeTest is SetupTemplate {
     PlayerAccount memory acc,
     ScavBarData memory scavBar,
     uint256 amt
-  ) internal {
+  ) internal view {
     uint256 instanceID = LibScavenge.genInstanceID(scavBar.field, scavBar.index, acc.id);
     uint256 curr = _ValueComponent.get(instanceID);
     assertEq(curr, amt, "scav points mismatch");

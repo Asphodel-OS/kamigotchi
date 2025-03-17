@@ -1,8 +1,4 @@
 {
-  "_AdminGiveSystem": {
-    "id": "system._Admin.Give",
-    "encodedID": "0x35c9e051ba86dabb8fb1bc795056a6053ae302ea916d577db765f16e22b719cc"
-  },
   "_AuthManageRoleSystem": {
     "id": "system._Auth.Manage.Role",
     "encodedID": "0xfa9684ace25361f5f40e40125a8684f447957b66a008ef8f8a173bccb6fce62c"

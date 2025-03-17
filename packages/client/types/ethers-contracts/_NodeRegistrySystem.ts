@@ -413,7 +413,7 @@ export interface _NodeRegistrySystem extends BaseContract {
       nodeIndex: PromiseOrValue<BigNumberish>,
       tierCost: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     addScavRewardBasic(
       arguments: PromiseOrValue<BytesLike>,

@@ -47,7 +47,7 @@ export const getBaseNode = (
 export const getNode = (world: World, components: Components, entity: EntityIndex): Node => {
   const { Description, RoomIndex, NodeIndex, Type } = components;
   const nodeIndex = getComponentValue(NodeIndex, entity)?.value as number;
-  const scavEntity = queryScavRegistry(world, 'node', nodeIndex)!;
+  const scavEntity = queryScavRegistry(world, 'NODE', nodeIndex)!;
   if (!nodeIndex) {
     console.warn(`Index not found for Node Entity ${entity}`);
     return NullNode;
