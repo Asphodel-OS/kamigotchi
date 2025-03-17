@@ -5,7 +5,28 @@ import { BigNumberish, utils } from 'ethers';
 // CONSTANTS
 
 export const MUSU_INDEX = 1;
-export const GACHA_TICKET_INDEX = 2;
+export const GACHA_TICKET_INDEX = 10;
+export const DataSheets = new Map<string, any>();
+
+////////////////
+// DATA SHEETS
+
+// for the management of data sheets in singleton pattern
+export const getSheet = async (category: string, name: string) => {
+  const key = category + '-' + name;
+  if (!DataSheets.has(key)) {
+    const csv = await readFile(`${category}/${name}.csv`);
+    DataSheets.set(key, csv);
+  }
+  return DataSheets.get(key);
+};
+
+export async function readFile(file: string) {
+  const fs = require('fs');
+  const path = require('path');
+  const result = fs.readFileSync(path.join(__dirname, '../data/', file), 'utf8');
+  return await parse(result, { columns: true });
+}
 
 ///////////////
 // GENERAL
@@ -103,13 +124,6 @@ export const parseKamiStateToIndex = (state: string): number => {
 
 ///////////////
 // MISC
-
-export async function readFile(file: string) {
-  const fs = require('fs');
-  const path = require('path');
-  const result = fs.readFileSync(path.join(__dirname, '../data/', file), 'utf8');
-  return await parse(result, { columns: true });
-}
 
 // a bit hardcoded
 export function stringToNumberArray(rawStr: string): number[] {
