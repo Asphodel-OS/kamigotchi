@@ -2,7 +2,6 @@
   export const systemToId = {
     __LocalSetupSystem: "system.local.setup",
   _721BatchMinterSystem: "system.Kami721.BatchMint",
-  _AdminGiveSystem: "system._Admin.Give",
   _AuctionRegistrySystem: "system.auction.registry",
   _AuthManageRoleSystem: "system._Auth.Manage.Role",
   _ConfigSetSystem: "system._Config.Set",
@@ -72,7 +71,6 @@
   export const idToSystem = {
     "system.local.setup": "__LocalSetupSystem",
   "system.Kami721.BatchMint": "_721BatchMinterSystem",
-  "system._Admin.Give": "_AdminGiveSystem",
   "system.auction.registry": "_AuctionRegistrySystem",
   "system._Auth.Manage.Role": "_AuthManageRoleSystem",
   "system._Config.Set": "_ConfigSetSystem",

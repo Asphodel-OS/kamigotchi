@@ -55,10 +55,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   /////////////////
   // ADMIN
 
-  async function adminGive(addr: string, type: string, itemIndex: number, amount: number) {
-    genCall('system._Admin.Give', [addr, type, itemIndex, amount]);
-  }
-
   /////////////////
   //  CONFIG
 
@@ -838,9 +834,6 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   return {
     gen: genCall,
-    admin: {
-      give: adminGive,
-    },
     auth: {
       roles: {
         add: addRole,
