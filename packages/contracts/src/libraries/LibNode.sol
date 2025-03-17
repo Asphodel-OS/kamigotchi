@@ -14,7 +14,6 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibFor } from "libraries/utils/LibFor.sol";
 
 import { LibData } from "libraries/LibData.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
@@ -24,26 +23,34 @@ import { LibScavenge } from "libraries/LibScavenge.sol";
  * LibNode handles all retrieval and manipulation of mining nodes/harvests
  */
 library LibNode {
+  using LibString for string;
+
+  struct Base {
+    uint32 index;
+    string type_;
+    uint32 room; // todo: ditch room comp entirely? since nodeIndex = roomIndex
+    string name;
+    string description; // todo: remove, room index is used instead
+    string affinity;
+  }
+
   //////////////
   // SHAPES
 
   // Create a Node as specified and return its id.
   // Type: [ HARVEST | HEALING | SACRIFICIAL | TRAINING ]
-  function create(
-    IUintComp components,
-    uint32 index,
-    string memory nodeType,
-    uint32 roomIndex,
-    string memory name,
-    string memory description
-  ) internal returns (uint256 id) {
-    id = genID(index);
+  function create(IUintComp components, Base memory node) internal returns (uint256 id) {
+    id = genID(node.index);
     LibEntityType.set(components, id, "NODE");
-    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, index);
-    TypeComponent(getAddrByID(components, TypeCompID)).set(id, nodeType);
-    IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, roomIndex);
-    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
+
+    IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, node.index);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, node.type_);
+    IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, node.room);
+    NameComponent(getAddrByID(components, NameCompID)).set(id, node.name);
+    DescriptionComponent(getAddrByID(components, DescCompID)).set(id, node.description);
+
+    if (!node.affinity.eq(""))
+      AffinityComponent(getAddrByID(components, AffCompID)).set(id, node.affinity.upper());
   }
 
   /// @notice requirements for kamis to be put on a node
@@ -57,14 +64,6 @@ library LibNode {
     id = LibConditional.createFor(world, components, req, genReqAnchor(nodeIndex));
   }
 
-  function addScavBar(
-    IUintComp components,
-    uint32 nodeIndex,
-    uint256 tierCost
-  ) internal returns (uint256 id) {
-    id = LibScavenge.create(components, "node", nodeIndex, tierCost);
-  }
-
   function remove(IUintComp components, uint256 id, uint32 nodeIndex) internal {
     LibEntityType.remove(components, id);
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).remove(id);
@@ -75,15 +74,10 @@ library LibNode {
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
 
     uint256[] memory reqs = getReqs(components, nodeIndex);
-    for (uint256 i; i < reqs.length; i++) removeRequirement(components, reqs[i]);
+    LibConditional.remove(components, reqs);
 
     uint256 scavID = getScavBar(components, nodeIndex);
     if (scavID != 0) LibScavenge.remove(components, scavID);
-  }
-
-  function removeRequirement(IUintComp components, uint256 id) internal {
-    LibConditional.remove(components, id);
-    LibFor.remove(components, id);
   }
 
   ///////////////
@@ -96,14 +90,7 @@ library LibNode {
     uint256 targetID
   ) internal {
     uint256 scavID = getScavBar(components, nodeIndex);
-    if (scavID != 0) LibScavenge.incFor(components, "node", nodeIndex, amt, targetID);
-  }
-
-  //////////////
-  // SETTERS
-
-  function setAffinity(IUintComp components, uint256 id, string memory affinity) internal {
-    AffinityComponent(getAddrByID(components, AffCompID)).set(id, affinity);
+    if (scavID != 0) LibScavenge.incFor(components, "NODE", nodeIndex, amt, targetID);
   }
 
   //////////////
@@ -134,8 +121,7 @@ library LibNode {
 
   // optional field for specific types of nodes, namely Harvesting Types
   function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    AffinityComponent comp = AffinityComponent(getAddrByID(components, AffCompID));
-    return comp.has(id) ? comp.get(id) : "";
+    return AffinityComponent(getAddrByID(components, AffCompID)).safeGet(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
@@ -152,7 +138,7 @@ library LibNode {
   }
 
   function getScavBar(IUintComp components, uint32 nodeIndex) internal view returns (uint256) {
-    return LibScavenge.getRegistryID(components, "node", nodeIndex);
+    return LibScavenge.getRegistryID(components, "NODE", nodeIndex);
   }
 
   /////////////////

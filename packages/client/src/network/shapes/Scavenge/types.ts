@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { Allo, getAllo } from '../Allo';
 import { queryChildrenOf } from '../utils';
-import { getIndex, getType, getValue } from '../utils/component';
+import { getAffinity, getIndex, getType, getValue } from '../utils/component';
 import { queryRewardAnchor } from './queries';
 
 export interface ScavBar {
@@ -10,6 +10,7 @@ export interface ScavBar {
   entity: EntityIndex;
   type: string;
   index: number;
+  affinity: string;
   cost: number;
   rewards: Allo[];
 }
@@ -30,8 +31,9 @@ export const get = (
     entity,
     type: type ?? getType(components, entity),
     index: index ?? getIndex(components, entity),
+    affinity: getAffinity(components, entity),
     cost: getValue(components, entity),
-    rewards: rewardEntities.map((entiti: EntityIndex) => getAllo(world, components, entiti)),
+    rewards: rewardEntities.map((entity: EntityIndex) => getAllo(world, components, entity)),
   };
 };
 
@@ -40,6 +42,7 @@ export const NullScavenge: ScavBar = {
   entity: 0 as EntityIndex,
   index: 0,
   type: '',
+  affinity: '',
   cost: 100,
   rewards: [],
 };

@@ -7,12 +7,14 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 
@@ -24,6 +26,7 @@ import { LibAllo } from "libraries/LibAllo.sol";
  * Shape (registry): hash("registry.scavenge", "field (e.g. node)", index)
  * - IsReg
  * - Value (cost per reward tier)
+ * - Affinity
  * - Rewards (x1 per tier)
  *   - Type (DROPTABLE | any other type)
  *   - Index + Value (flat reward)
@@ -33,26 +36,41 @@ import { LibAllo } from "libraries/LibAllo.sol";
  * - Value (current points)
  */
 library LibScavenge {
+  using LibString for string;
   //////////////
   // SHAPES
+
+  struct Base {
+    string field;
+    uint32 index;
+    string affinity;
+  }
 
   /// @notice creates a registry entry
   function create(
     IUintComp components,
-    string memory field,
-    uint32 index,
+    Base memory data,
     uint256 tierCost
   ) internal returns (uint256 id) {
-    id = genRegID(field, index);
+    data.affinity = data.affinity.upper();
+    data.field = data.field.upper();
+
+    id = genRegID(data.field, data.index);
+    LibEntityType.set(components, id, "SCAVENGE");
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
+
+    AffinityComponent(getAddrByID(components, AffinityCompID)).set(id, data.affinity.upper());
+    IndexComponent(getAddrByID(components, IndexCompID)).set(id, data.index);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, tierCost);
-    TypeComponent(getAddrByID(components, TypeCompID)).set(id, field);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, data.field);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
+    LibEntityType.remove(components, id);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
+
+    AffinityComponent(getAddrByID(components, AffinityCompID)).remove(id);
+    IndexComponent(getAddrByID(components, IndexCompID)).remove(id);
     ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
 
@@ -79,13 +97,12 @@ library LibScavenge {
   function extractNumTiers(
     IUintComp components,
     uint256 regID,
-    string memory field,
-    uint32 index,
+    Base memory data,
     uint256 holderID
   ) internal returns (uint256) {
     ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
 
-    uint256 instanceID = genInstanceID(field, index, holderID);
+    uint256 instanceID = genInstanceID(data.field, data.index, holderID);
     uint256 curr = valComp.safeGet(instanceID);
     uint256 tierCost = valComp.get(regID);
 
@@ -109,14 +126,13 @@ library LibScavenge {
   // GETTERS
 
   /// @notice gets fe
-  function getMetadata(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (string memory, uint32 index) {
-    return (
-      TypeComponent(getAddrByID(components, TypeCompID)).get(id),
-      IndexComponent(getAddrByID(components, IndexCompID)).get(id)
-    );
+  function getBase(IUintComp components, uint256 id) internal view returns (Base memory) {
+    return
+      Base(
+        TypeComponent(getAddrByID(components, TypeCompID)).get(id),
+        IndexComponent(getAddrByID(components, IndexCompID)).get(id),
+        AffinityComponent(getAddrByID(components, AffinityCompID)).get(id)
+      );
   }
 
   function getRegistryID(
@@ -138,20 +154,15 @@ library LibScavenge {
   /////////////////
   // LOGGING
 
-  function logClaim(
-    IUintComp components,
-    string memory field,
-    uint32 index,
-    uint256 amt,
-    uint256 accID
-  ) public {
-    LibData.inc(
-      components,
-      accID,
-      index,
-      LibString.concat("SCAV_CLAIM_", LibString.upper(field)),
-      amt
-    );
+  function logClaim(IUintComp components, Base memory data, uint256 amt, uint256 accID) public {
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = data.index; // rolls claim per index (e.g. node)
+    indices[1] = 0; // rolls claim per affinity (e.g. SCRAP, NORMAL)
+    string[] memory types = new string[](2);
+    types[0] = string("SCAV_CLAIM_").concat(data.field);
+    types[1] = string("SCAV_CLAIM_AFFINITY_").concat(data.affinity);
+
+    LibData.inc(components, accID, indices, types, amt);
   }
 
   /////////////////
