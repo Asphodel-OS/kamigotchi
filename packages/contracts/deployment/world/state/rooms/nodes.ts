@@ -3,7 +3,7 @@ import { getSheet, toDelete, toRevise } from '../utils';
 import { addScavenge } from './scavenges';
 
 // TODO: properly gate this based on status and room existence
-export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
+export async function initNodes(api: AdminAPI, indices?: number[]) {
   const nodesCSV = await getSheet('rooms', 'nodes');
   if (!nodesCSV) return console.log('No rooms/nodes.csv found');
   console.log('\n==INITIALIZING NODES==');
@@ -12,8 +12,10 @@ export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
     const entry = nodesCSV[i];
     const index = Number(entry['Index']);
 
-    // skip if indices are overridden and entry isn't included
-    if (overrideIndices && !overrideIndices.includes(index)) continue;
+    // if indices are overriden, skip if index isn't included
+    if (indices && indices.length > 0) {
+      if (!indices.includes(index)) continue;
+    }
 
     try {
       await initNode(api, entry);
@@ -51,6 +53,7 @@ export async function deleteNodes(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
+// NOTE: should always use override indices for the time being
 export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
   const nodesCSV = await getSheet('rooms', 'nodes');
   if (!nodesCSV) return console.log('No rooms/nodes.csv found');

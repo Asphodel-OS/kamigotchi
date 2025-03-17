@@ -20,7 +20,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initAuth(api);
   await initConfigs(api);
   await initFactions(api);
-  await initItems(api, undefined, local);
+  await initItems(api, [], local);
   await initNpcs(api);
   await initRooms(api, undefined, local);
   await initSkills(api);
