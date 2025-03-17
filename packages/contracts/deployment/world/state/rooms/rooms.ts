@@ -1,0 +1,91 @@
+import { AdminAPI } from '../../api';
+import { getSheet, toDelete, toRevise } from '../utils';
+import { createGates } from './gates';
+
+export async function initRooms(api: AdminAPI, overrideIndices?: number[], local?: boolean) {
+  const roomsCSV = await getSheet('rooms', 'rooms');
+  if (!roomsCSV) return console.log('No rooms/rooms.csv found');
+
+  for (let i = 0; i < roomsCSV.length; i++) {
+    const room = roomsCSV[i];
+
+    // skip if indices are overridden and room isn't included
+    if (overrideIndices && !overrideIndices.includes(Number(room['Index']))) continue;
+    else {
+      // Status-based processing
+      // TODO: status based processing based on environment
+      // - Local: Ready, To Deploy, In Game
+      // - Test: Ready, To Deploy
+      // - Prod: To Deploy
+
+      const status = room['Status'];
+      let validStatuses = ['To Deploy'];
+      if (local) validStatuses.push('In Game');
+      if (validStatuses.includes(status)) await initRoom(api, room);
+    }
+  }
+}
+
+// NOTE: standardize statuses on data sheets and deprecate toDelete() pattern
+export async function deleteRooms(api: AdminAPI, overrideIndices?: number[]) {
+  const roomsCSV = await getSheet('rooms', 'rooms');
+  if (!roomsCSV) return console.log('No rooms/rooms.csv found');
+
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    for (let i = 0; i < roomsCSV.length; i++) {
+      const index = Number(roomsCSV[i]['Index']);
+
+      if (toDelete(roomsCSV[i])) indices.push(index);
+    }
+  }
+
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      await api.room.delete(indices[i]);
+    } catch {
+      console.error('Could not delete room at roomIndex ' + indices[i]);
+    }
+  }
+}
+
+export async function reviseRooms(api: AdminAPI, overrideIndices?: number[]) {
+  const roomsCSV = await getSheet('rooms', 'rooms');
+  if (!roomsCSV) return console.log('No rooms/rooms.csv found');
+
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    for (let i = 0; i < roomsCSV.length; i++) {
+      if (toRevise(roomsCSV[i])) indices.push(Number(roomsCSV[i]['Index']));
+    }
+  }
+
+  await deleteRooms(api, indices);
+  await initRooms(api, indices);
+}
+
+async function initRoom(api: AdminAPI, entry: any) {
+  const index = Number(entry['Index']);
+  const name = entry['Name'];
+  const description = entry['Description'];
+  const x = Number(entry['X']);
+  const y = Number(entry['Y']);
+  const z = Number(entry['Z']);
+  const exits = entry['Exits'].split(',').map((n: string) => Number(n.trim()));
+
+  let success = true;
+  try {
+    console.log(
+      `Creating Room: (${index}) ${name} `,
+      `\n  at (${x}, ${y}, ${z}) with exits ${exits.join(', ')}`
+    );
+    await api.room.create(x, y, z, index, name, description, exits);
+  } catch (e) {
+    success = false;
+    console.error(`Could not create room ${index}`, e);
+  } finally {
+    if (success) await createGates(api, index);
+  }
+}
