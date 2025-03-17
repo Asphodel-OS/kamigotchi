@@ -123,7 +123,7 @@ async function addERC20(api: AdminAPI, entry: any) {
 
 // create a basic item
 async function createBasic(api: AdminAPI, entry: any) {
-  const createAPI = api.registry.item.create;
+  const createEP = api.registry.item.create;
   const index = Number(entry['Index']);
   const type = entry['Type'].toUpperCase();
   const name = entry['Name'].trim();
@@ -131,13 +131,13 @@ async function createBasic(api: AdminAPI, entry: any) {
   const image = getItemImage(name);
   console.log(`creating ${type} item ${name} (${index})`);
 
-  await createAPI.base(index, type, name, description, image);
+  await createEP.base(index, type, name, description, image);
 }
 
 // create a consumable item
 // TODO: set requirements more explicitly
 async function createConsumable(api: AdminAPI, entry: any) {
-  const createAPI = api.registry.item.create;
+  const createEP = api.registry.item.create;
   const index = Number(entry['Index']);
   const type = entry['Type'].toUpperCase();
   const name = entry['Name'].trim();
@@ -146,6 +146,6 @@ async function createConsumable(api: AdminAPI, entry: any) {
   const for_ = (entry['For'] ?? 'KAMI').toUpperCase();
   console.log(`creating ${type} item ${name} (${index}) for ${for_}`);
 
-  await createAPI.consumable(index, for_, name, description, type, image);
+  await createEP.consumable(index, for_, name, description, type, image);
   await addRequirement(api, entry); // hardcoded based on item types
 }
