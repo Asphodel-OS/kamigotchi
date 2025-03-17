@@ -37,15 +37,6 @@ export function createAdminAPI(txQueue: TxQueue) {
   }
 
   /////////////////
-  // COMMUNITY MANAGEMENT
-
-  // @dev for admins - give stuff to users
-  async function adminGive(addr: string, type: string, itemIndex: number, amount: number) {
-    await sleepIf();
-    return systems['system._Admin.Give'].executeTyped(addr, type, itemIndex, amount);
-  }
-
-  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
