@@ -9,7 +9,8 @@ import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
 import { initLocalQuests } from './quests';
-import { initRooms } from './rooms';
+import { initRelationships } from './relationships';
+import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
 import { initTraits } from './traits';
 
@@ -27,11 +28,11 @@ export async function initAll(api: AdminAPI, local: boolean) {
   // dependent
   await initAuctions(api);
   await initListings(api, undefined, local);
-  // await initNodes(api);
+  await initNodes(api);
   // await initGoals(api);
   // await initQuests(api);
   // await initRecipes(api);
-  // await initRelationships(api);
+  await initRelationships(api);
 
   if (local) {
     await initGachaPool(api, 88);

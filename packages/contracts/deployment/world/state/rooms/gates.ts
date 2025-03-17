@@ -21,7 +21,7 @@ export async function createGates(api: AdminAPI, roomIndex: number) {
   // uses placeholder gates above
   if (roomIndex in gates) {
     try {
-      console.log(`  Creating Gates for room ${roomIndex}`);
+      console.log(`  creating gates for room ${roomIndex}`);
       await gates[roomIndex as keyof typeof gates](api);
     } catch (e) {
       console.log('gate creation failure:', e);

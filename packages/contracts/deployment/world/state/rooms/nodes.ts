@@ -1,34 +1,37 @@
 import { AdminAPI } from '../../api';
-import { readFile, toDelete, toRevise } from '../utils';
+import { getSheet, toDelete, toRevise } from '../utils';
 import { addScavenge } from './scavenges';
 
+// TODO: properly gate this based on status and room existence
 export async function initNodes(api: AdminAPI, overrideIndices?: number[]) {
-  // nodes data are stored in rooms csv
-  const roomsCSV = await readFile('rooms/rooms.csv');
+  const nodesCSV = await getSheet('rooms', 'nodes');
+  if (!nodesCSV) return console.log('No rooms/nodes.csv found');
+  console.log('\n==INITIALIZING NODES==');
 
-  for (let i = 0; i < roomsCSV.length; i++) {
-    const entry = roomsCSV[i];
+  for (let i = 0; i < nodesCSV.length; i++) {
+    const entry = nodesCSV[i];
+    const index = Number(entry['Index']);
 
     // skip if indices are overridden and entry isn't included
-    if (overrideIndices && !overrideIndices.includes(Number(entry['Index']))) continue;
+    if (overrideIndices && !overrideIndices.includes(index)) continue;
 
-    if (entry['Enabled'] !== 'true') continue;
-    if (entry['Node'] === '' || entry['Node'] === 'NONE') continue;
     try {
       await initNode(api, entry);
+      if (entry['Level Limit'] !== '') await addRequirement(api, entry);
       if (entry['Scav Cost'] !== '') await addScavenge(api, entry);
-      if (entry['Level Limit'] !== '') await initRequirement(api, entry);
     } catch {
-      console.error('Could not create node', entry['Index']);
+      console.error(`Could not create node ${index}`);
     }
   }
 }
 
 export async function deleteNodes(api: AdminAPI, overrideIndices?: number[]) {
+  const nodesCSV = await getSheet('rooms', 'nodes');
+  if (!nodesCSV) return console.log('No rooms/nodes.csv found');
+
   let indices: number[] = [];
   if (overrideIndices) indices = overrideIndices;
   else {
-    const nodesCSV = await readFile('rooms/rooms.csv');
     for (let i = 0; i < nodesCSV.length; i++) {
       if (
         toDelete(nodesCSV[i]) &&
@@ -49,10 +52,12 @@ export async function deleteNodes(api: AdminAPI, overrideIndices?: number[]) {
 }
 
 export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
+  const nodesCSV = await getSheet('rooms', 'nodes');
+  if (!nodesCSV) return console.log('No rooms/nodes.csv found');
+
   let indices: number[] = [];
   if (overrideIndices) indices = overrideIndices;
   else {
-    const nodesCSV = await readFile('rooms/rooms.csv');
     for (let i = 0; i < nodesCSV.length; i++) {
       if (
         toRevise(nodesCSV[i]) &&
@@ -68,24 +73,28 @@ export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
 }
 
 async function initNode(api: AdminAPI, entry: any) {
-  await api.node.create(
-    Number(entry['Index']),
-    'HARVEST', // all nodes are harvesting nodes rn
-    Number(entry['Index']),
-    entry['Name'],
-    entry['Description'],
-    entry['Affinity'].toUpperCase()
-  );
+  const index = Number(entry['Index']);
+  const name = entry['Name'];
+  const description = 'placeholder';
+  const affinity = entry['Affinity'].toUpperCase();
+
+  try {
+    console.log(`Creating Node: (${index}) ${name} (${affinity})`);
+    await api.node.create(index, 'HARVEST', index, name, description, affinity);
+  } catch (e) {
+    console.error(`Could not create node ${index}`, e);
+  }
 }
 
 // hardcoded to only allow max levels rn
-async function initRequirement(api: AdminAPI, entry: any) {
-  await api.node.add.requirement(
-    Number(entry['Index']),
-    'LEVEL',
-    'CURR_MAX',
-    0,
-    Number(entry['Level Limit']),
-    'KAMI'
-  );
+async function addRequirement(api: AdminAPI, entry: any) {
+  const index = Number(entry['Index']);
+  const limit = Number(entry['Level Limit']);
+
+  try {
+    console.log(`  adding level ${limit} requirement for node ${index}`);
+    await api.node.add.requirement(index, 'LEVEL', 'CURR_MAX', 0, limit, 'KAMI');
+  } catch (e) {
+    console.error(`Could not create level requirement for node ${index}`, e);
+  }
 }

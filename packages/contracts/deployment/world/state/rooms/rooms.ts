@@ -1,10 +1,11 @@
 import { AdminAPI } from '../../api';
-import { getSheet, toDelete, toRevise } from '../utils';
+import { getSheet, stringToNumberArray, toDelete, toRevise } from '../utils';
 import { createGates } from './gates';
 
 export async function initRooms(api: AdminAPI, overrideIndices?: number[], local?: boolean) {
   const roomsCSV = await getSheet('rooms', 'rooms');
   if (!roomsCSV) return console.log('No rooms/rooms.csv found');
+  console.log('\n==INITIALIZING ROOMS==');
 
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
@@ -73,14 +74,12 @@ async function initRoom(api: AdminAPI, entry: any) {
   const x = Number(entry['X']);
   const y = Number(entry['Y']);
   const z = Number(entry['Z']);
-  const exits = entry['Exits'].split(',').map((n: string) => Number(n.trim()));
+  const exits = stringToNumberArray(entry['Exits']);
+  const exitsStr = exits.length > 0 ? `with exit(s) ${exits.join(', ')}` : '';
 
   let success = true;
   try {
-    console.log(
-      `Creating Room: (${index}) ${name} `,
-      `\n  at (${x}, ${y}, ${z}) with exits ${exits.join(', ')}`
-    );
+    console.log(`Creating Room: (${index}) ${name} `, `\n  at (${x}, ${y}, ${z}) ${exitsStr}`);
     await api.room.create(x, y, z, index, name, description, exits);
   } catch (e) {
     success = false;
