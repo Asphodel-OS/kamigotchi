@@ -47,7 +47,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
 
   function moveAccount(roomIndex: number) {
     // hardcode gas limit to 1.2m; approx upper bound for moving room with 1 gate
-    return systems['system.account.move'].executeTyped(roomIndex); //, { gasLimit: 1200000 });
+    return systems['system.account.move'].executeTyped(roomIndex, { gasLimit: 1200000 });
   }
 
   // @dev registers an account. should be called by Owner wallet
