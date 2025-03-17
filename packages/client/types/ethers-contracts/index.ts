@@ -177,7 +177,6 @@ export type { ViolenceComponent } from "./ViolenceComponent";
 export type { WeightsComponent } from "./WeightsComponent";
 export type { WhitelistComponent } from "./WhitelistComponent";
 export type { _721BatchMinterSystem } from "./_721BatchMinterSystem";
-export type { _AdminGiveSystem } from "./_AdminGiveSystem";
 export type { _AuctionRegistrySystem } from "./_AuctionRegistrySystem";
 export type { _AuthManageRoleSystem } from "./_AuthManageRoleSystem";
 export type { _ConfigSetSystem } from "./_ConfigSetSystem";
@@ -372,7 +371,6 @@ export { ViolenceComponent__factory } from "./factories/ViolenceComponent__facto
 export { WeightsComponent__factory } from "./factories/WeightsComponent__factory";
 export { WhitelistComponent__factory } from "./factories/WhitelistComponent__factory";
 export { _721BatchMinterSystem__factory } from "./factories/_721BatchMinterSystem__factory";
-export { _AdminGiveSystem__factory } from "./factories/_AdminGiveSystem__factory";
 export { _AuctionRegistrySystem__factory } from "./factories/_AuctionRegistrySystem__factory";
 export { _AuthManageRoleSystem__factory } from "./factories/_AuthManageRoleSystem__factory";
 export { _ConfigSetSystem__factory } from "./factories/_ConfigSetSystem__factory";
