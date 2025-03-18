@@ -5,6 +5,7 @@ import { initAuth, initLocalAuth } from './auth';
 import { initConfigs, initLocalConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
+import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
@@ -30,7 +31,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initAuctions(api);
   await initListings(api, undefined, local);
   await initNodes(api);
-  // await initGoals(api);
+  await initGoals(api);
   // await initQuests(api);
   await initRecipes(api, [], local);
   await initRelationships(api);
