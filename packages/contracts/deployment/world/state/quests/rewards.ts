@@ -16,6 +16,22 @@ export const getRewardsMap = async () => {
   return Rewards;
 };
 
+// find and add all the rewards of a quest
+export const addRewards = async (api: AdminAPI, questRow: any) => {
+  const index = Number(questRow['Index']);
+
+  const map = await getRewardsMap();
+  const keys = questRow['Rewards'].split(',');
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (!key) continue;
+
+    const reward = map.get(key);
+    if (reward) await addReward(api, index, reward);
+    else console.log(`Error: Could not find Reward ${key}`);
+  }
+};
+
 // add a reward to a quest
 export const addReward = async (api: AdminAPI, questIndex: number, entry: any) => {
   const key = entry['Description'];

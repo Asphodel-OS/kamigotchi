@@ -16,6 +16,22 @@ export const getRequirementsMap = async () => {
   return Requirements;
 };
 
+// find and add all the requirements of a quest
+export const addRequirements = async (api: AdminAPI, questRow: any) => {
+  const index = Number(questRow['Index']);
+
+  const map = await getRequirementsMap();
+  const keys = questRow['Requirements'].split(',');
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (!key) continue;
+
+    const req = map.get(key);
+    if (req) await addRequirement(api, index, req);
+    else console.log(`Error: Could not find Requirement ${key}`);
+  }
+};
+
 // add a requirement to a quest
 export const addRequirement = async (api: AdminAPI, questIndex: number, entry: any) => {
   const key = entry['Description'];

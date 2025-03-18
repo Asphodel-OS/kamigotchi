@@ -15,6 +15,22 @@ export const getObjectivesMap = async () => {
   return Objectives;
 };
 
+// find and add all the objectives of a quest
+export const addObjectives = async (api: AdminAPI, questRow: any) => {
+  const index = Number(questRow['Index']);
+
+  const map = await getObjectivesMap();
+  const keys = questRow['Objectives'].split(',');
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (!key) continue;
+
+    const obj = map.get(key);
+    if (obj) await addObjective(api, index, obj);
+    else console.log(`Error: Could not find Objective ${key}`);
+  }
+};
+
 // add a requirement to a quest
 export const addObjective = async (api: AdminAPI, questIndex: number, entry: any) => {
   const key = entry['Description'];

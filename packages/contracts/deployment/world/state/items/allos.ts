@@ -9,7 +9,7 @@ export async function addAllo(api: AdminAPI, itemIndex: number, entry: any) {
   else if (type === 'BONUS') addBonus(alloAPI, itemIndex, entry);
   else if (type === 'FLAG') addFlag(alloAPI, itemIndex, entry);
   else if (type === 'STATE') addState(alloAPI, itemIndex, entry);
-  else if (type === 'ITEM_DROPTABLE') addDroptable2(alloAPI, itemIndex, entry);
+  else if (type === 'ITEM_DROPTABLE') addDroptable(alloAPI, itemIndex, entry);
   else addBasic(alloAPI, itemIndex, entry);
 }
 
@@ -32,17 +32,9 @@ async function addBonus(api: any, itemIndex: number, entry: any) {
 }
 
 // add a droptable allo to an item
-async function addDroptable(api: any, itemIndex: number, entry: any) {
-  const keys = stringToNumberArray(entry['DTIndices']);
-  const weights = stringToNumberArray(entry['DTWeights']);
-  console.log(`  adding droptable allo ${itemIndex}`);
-  await api.droptable(itemIndex, 'USE', keys, weights, 1);
-}
-
-// add a droptable allo to an item
 // NOTE: really inefficient rn
 // TODO: should centralize sheet loads/mappings in singleton pattern
-async function addDroptable2(api: any, itemIndex: number, entry: any) {
+async function addDroptable(api: any, itemIndex: number, entry: any) {
   const dtCSV = await readFile('items/droptables.csv');
 
   // find the droptable row

@@ -9,7 +9,7 @@ import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
-import { initLocalQuests, initQuests } from './quests/quests';
+import { initQuests } from './quests/quests';
 import { initRecipes } from './recipes';
 import { initRelationships } from './relationships';
 import { initNodes, initRooms } from './rooms';
@@ -49,7 +49,6 @@ export async function initAll(api: AdminAPI, local: boolean) {
 export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
-  await initLocalQuests(api);
   await initLocalItems(api);
   await api.setup.initAccounts();
   await api.setup.initPets();
@@ -70,7 +69,7 @@ export { deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
 export { initNpcs } from './npcs';
-export { deleteQuests, initLocalQuests, initQuests, reviseQuests } from './quests/quests';
+export { deleteQuests, initQuests, reviseQuests } from './quests/quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
 export { deleteRelationships, initRelationships } from './relationships';
 export { deleteNodes, initNodes, reviseNodes } from './rooms/nodes';

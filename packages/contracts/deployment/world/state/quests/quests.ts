@@ -1,8 +1,8 @@
 import { AdminAPI } from '../../api';
-import { GACHA_TICKET_INDEX, getSheet, toDelete, toRevise } from '../utils';
-import { addObjective, getObjectivesMap } from './objectives';
-import { addRequirement, getRequirementsMap } from './requirements';
-import { addReward, getRewardsMap } from './rewards';
+import { getSheet, toDelete, toRevise } from '../utils';
+import { addObjectives } from './objectives';
+import { addRequirements } from './requirements';
+import { addRewards } from './rewards';
 
 export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
@@ -38,78 +38,44 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
   console.log('\n==INITIALIZING QUESTS==');
 
   // TODO: support test environment statuses
-  // TODO: standardize env->status mapping in helper shared helper function
+  // TODO: standardize env->status mapping in shared helper function
   const validStatuses = ['To Deploy'];
   if (local) validStatuses.push('In Game', 'Test');
-  console.log('valid statuses', validStatuses);
 
+  // process quests
   for (let i = 0; i < csv.length; i++) {
     const row = csv[i];
     const index = Number(row['Index']);
-    const name = row['Title'];
     const status = row['Status'];
 
     // skip if quest isnt included in overridden indices
     // if indices arent overriden, skip if status isnt valid
     if (indices && indices.length > 0) {
-      console.log('indices', indices);
       if (!indices.includes(index)) continue;
     } else if (!validStatuses.includes(status)) continue;
 
     // attempt to create the base quest entity
     const success = await initQuest(api, row);
+
     if (!success) continue;
-
-    // find and add all the requirements
-    const requirementsMap = await getRequirementsMap();
-    const requirements = row['Requirements'].split(',');
-    for (let i = 0; i < requirements.length; i++) {
-      const key = requirements[i];
-      if (!key) continue;
-
-      const req = requirementsMap.get(key);
-      if (req) await addRequirement(api, index, req);
-      else console.log(`Error: Could not find Requirement ${key}`);
-    }
-
-    // find and add all the objectives
-    const objectivesMap = await getObjectivesMap();
-    const objectives = row['Objectives'].split(',');
-    for (let i = 0; i < objectives.length; i++) {
-      const key = objectives[i];
-      if (!key) continue;
-
-      const obj = objectivesMap.get(key);
-      if (obj) await addObjective(api, index, obj);
-      else console.log(`Error: Could not find Objective ${key}`);
-    }
-
-    // find and add all the rewards
-    const rewardsMap = await getRewardsMap();
-    const rewards = row['Rewards'].split(',');
-    for (let i = 0; i < rewards.length; i++) {
-      const key = rewards[i];
-      if (!key) continue;
-
-      const rew = rewardsMap.get(key);
-      if (rew) await addReward(api, index, rew);
-      else console.log(`Error: Could not find Reward ${key}`);
-    }
+    addRequirements(api, row);
+    addObjectives(api, row);
+    addRewards(api, row);
   }
 }
 
-// initialize local quests
-// TODO: move this to sheet based local deploys
-export async function initLocalQuests(api: AdminAPI) {
-  api.registry.quest.create(
-    1000000,
-    'The Chosen Taruchi',
-    'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
-    'Was it really worth it?',
-    0
-  );
-  api.registry.quest.add.reward.basic(1000000, 'ITEM', GACHA_TICKET_INDEX, 111); // 111 tickets
-}
+// // initialize local quests
+// // TODO: move this to sheet based local deploys
+// export async function initLocalQuests(api: AdminAPI) {
+//   api.registry.quest.create(
+//     1000000,
+//     'The Chosen Taruchi',
+//     'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
+//     'Was it really worth it?',
+//     0
+//   );
+//   api.registry.quest.add.reward.basic(1000000, 'ITEM', GACHA_TICKET_INDEX, 111); // 111 tickets
+// }
 
 // delete quests
 export async function deleteQuests(api: AdminAPI, overrideIndices?: number[]) {
