@@ -21,7 +21,7 @@ Try this out for yourself. See what kind of present the Kami brings you!",Comple
 MSQ006,6,Needs Revision,What Kami Do: Liquidating,No,"If your Kami isn’t really enjoying Harvesting, it may not be built for such a bucolic existence. A Kami with a high Violence may find it lucrative to conflict with its peers. 
 
 Predatory Kami may use their violent nature to Liquidate other Kami and gain large amounts of $MUSU in the process. This may be antisocial, but there’s no harm done. Just like a Kami isn’t really hurt when it’s low on Health, a Kami isn’t really dead when it’s Liquidated. It may not be able to hold its body in shape, but it can always come back!",Complete MSQ005,Liquidate another Kamigotchi,4x Agency Reputation
-TTX01,10001,Test,Test Quest 1,No,Lorem ipsum dolor sit amet,,,10000x musu
+TTX01,10001,Test,Test Quest 1,No,Lorem ipsum dolor sit amet,,,33x Gacha Tickets
 TTX02,10002,Test,Test Quest 2,No,"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",Complete TTX01,Move 3 Times,"10000x musu,2x Agency Reputation"
 TTX03,10003,Test,Test Quest 3,No,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent laoreet dolor leo, non ultricies turpis rutrum vel",Complete TTX02,Harvest 1 minute,"1x XP Candy (Small),4x Agency Reputation"
 TTX04,10004,Test,Test Quest Dupe Title,No,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent laoreet dolor leo, non ultricies turpis rutrum vel. Aenean ornare pellentesque tincidunt. Ut facilisis, sem.",,"Scavenge 1 Item,Harvest 1 minute","1x Mint,6x Agency Reputation"
@@ -30,5 +30,5 @@ TTX05,10005,Test,Test Quest Dupe Title,No,"Lorem ipsum dolor sit amet, consectet
 Praesent laoreet dolor leo, non ultricies turpis rutrum vel. 
 
 Aenean ornare pellentesque tincidunt. Ut facilisis, sem.","Complete TTX03,Complete MSQ004",Give 1 Mint,4x Agency Reputation
-,,Test,Test Daily Blocked,Yes,Doot,Complete Goal: A Hole in Reality,Give 10 MUSU,2x Agency Reputation
-,,Test,Test Daily,Yes,Lorem when I eat. Lorem I sleep. Lorem every day.,In Room: Vending Machine,Give 10 MUSU,2x Agency Reputation
+,10006,Test,Test Daily Blocked,Yes,Doot,Complete Goal: A Hole in Reality,Give 10 MUSU,2x Agency Reputation
+,10007,Test,Test Daily,Yes,Lorem when I eat. Lorem I sleep. Lorem every day.,In Room: Vending Machine,Give 10 MUSU,2x Agency Reputation

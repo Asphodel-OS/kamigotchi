@@ -52,6 +52,25 @@ export const toRevise = (entry: any): boolean => {
   );
 };
 
+export const getCreationStatuses = (env: string): string[] => {
+  const statuses = ['To Deploy'];
+  if (env === 'local') statuses.push('In Game', 'Test', 'Ready');
+  else if (env === 'test') statuses.push('Ready');
+  return statuses;
+};
+
+// statuses to blanket delete from sheet reference (unspecified indices)
+export const getDeletionStatuses = (env: string): string[] => {
+  return ['To Delete'];
+};
+
+// statuses to blanket revise from sheet reference (unspecified indices)
+export const getRevisionStatuses = (env: string): string[] => {
+  const statuses = ['To Update'];
+  if (env === 'test') statuses.push('In Game', 'Ready');
+  return statuses;
+};
+
 ///////////////
 // GETTERS
 
