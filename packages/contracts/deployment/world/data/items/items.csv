@@ -1,59 +1,61 @@
 ﻿.,Status,Name,Index,Type,For,Address,Flags,Effects,Requirements,Description
-,Ingame,MUSU,1,Misc,,,,,,Kamigotchi kurrency
-,Ingame,Gacha Ticket,10,Misc,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
-,Ingame,Reroll Ticket,11,Misc,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
-,Ingame,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your path to salvation during playtest. Your ticket to great fortunes.
-,Ingame,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,Asphodel’s premium game currency. You want this. You want this so bad.
-,Ingame,Screwdriver,201,Material,,,,,,For driving screws. May be of practical use….
-,Ingame,Wooden Stick,1001,Material,,,,,,"Wood in its unprocessed form. Grows on trees. "
-,Ingame,Stone,1002,Material,,,,,,"It’s just a stone. Can be used to get Stone. "
-,Ingame,Plastic Bottle,1003,Material,,,,,,"Can be reprocessed into valuable raw Microplastics. "
-,Ingame,Pine Cone,1004,Material,,,,,,"It’s a pine cone. 
+,In Game,MUSU,1,Misc,,,,,,Kamigotchi kurrency
+,In Game,Gacha Ticket,10,Misc,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
+,In Game,Reroll Ticket,11,Misc,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
+,In Game,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your path to salvation during playtest. Your ticket to great fortunes.
+,In Game,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,Asphodel’s premium game currency. You want this. You want this so bad.
+,In Game,Screwdriver,201,Material,,,,,,For driving screws. May be of practical use….
+,In Game,Wooden Stick,1001,Material,,,,,,"Wood in its unprocessed form. Grows on trees. "
+,In Game,Stone,1002,Material,,,,,,"It’s just a stone. Can be used to get Stone. "
+,In Game,Plastic Bottle,1003,Material,,,,,,"Can be reprocessed into valuable raw Microplastics. "
+,In Game,Pine Cone,1004,Material,,,,,,"It’s a pine cone. 
 
 Slightly sacred. "
-,Ingame,Scrap Metal,1005,Material,,,,,,A small chunk of scrap metal. Maybe useful if processed.
-,Ingame,Glass Jar,1006,Material,,,,,,"A somehow-unbroken jar of clear glass. "
-,Ingame,Red Amber Crystal,1007,Material,,,,,,"A crystal of pure red amber, formed deep in the forest."
-,Ingame,Black Poppy,1010,Material,,,,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. "
-,Ingame,Daffodil,1011,Material,,,,,,"A reflection of fallen Narcissus… Has its own uses and applications. "
-,Ingame,Mint,1012,Material,,,,,,A herb with many applications. Not often found here….
-,Ingame,Microplastics,1103,Material,,,,,,"Fine translucent powder. A promising new substance in hexerei. "
-,Ingame,Pine Pollen,1104,Material,,,,,,"Some people think this is very good for you. "
-,Ingame,Black Poppy Extract,1110,Material,,,,,,Useful alkaloids in a sticky black goo. One of the most ancient ingredients.
-,Ingame,Essence of Daffodil,1111,Material,,,,,,"Poisonous to living things, but useful when making medicines and potions."
-,Ingame,Shredded Mint,1112,Material,,,,,,Makes a cooling and relaxing tea. Also used in various magical applications.
-,Ingame,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
+,In Game,Scrap Metal,1005,Material,,,,,,A small chunk of scrap metal. Maybe useful if processed.
+,In Game,Glass Jar,1006,Material,,,,,,"A somehow-unbroken jar of clear glass. "
+,In Game,Red Amber Crystal,1007,Material,,,,,,"A crystal of pure red amber, formed deep in the forest."
+,In Game,Black Poppy,1010,Material,,,,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. "
+,In Game,Daffodil,1011,Material,,,,,,"A reflection of fallen Narcissus… Has its own uses and applications. "
+,In Game,Mint,1012,Material,,,,,,A herb with many applications. Not often found here….
+,In Game,Microplastics,1103,Material,,,,,,"Fine translucent powder. A promising new substance in hexerei. "
+,In Game,Pine Pollen,1104,Material,,,,,,"Some people think this is very good for you. "
+,In Game,Black Poppy Extract,1110,Material,,,,,,Useful alkaloids in a sticky black goo. One of the most ancient ingredients.
+,In Game,Essence of Daffodil,1111,Material,,,,,,"Poisonous to living things, but useful when making medicines and potions."
+,In Game,Shredded Mint,1112,Material,,,,,,Makes a cooling and relaxing tea. Also used in various magical applications.
+,Test,Candle,,Material,,,,,,"A half-melted candle, somehow still burning. Perhaps this has some special use.…"
+,In Game,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. "
-,Ingame,Holy Dust,11011,Consumable,Kami,,,F_NAMEABLE,,This sacred dust can be used to rename Kamigotchi… At the proper place.
-,Ingame,Gaokerena Mochi,11110,Food,Kami,,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
-,Ingame,Sunset Apple Mochi,11120,Food,Kami,,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
-,Ingame,Kami Mochi,11130,Food,Kami,,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
-,Ingame,Mana Mochi,11140,Food,Kami,,,HARMONY+1,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
-,Ingame,XP Candy (Small),11201,Food,Kami,,,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
-,Ingame,XP Candy (Medium),11202,Food,Kami,,,"XP+100,HP+10",,"Provides a decent amount of XP when fed to a Kami. "
-,Ingame,XP Candy (Large),11203,Food,Kami,,,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
-,Ingame,XP Candy (Huge),11204,Food,Kami,,,"HP+50,XP+1000",,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.
-,Ingame,Maple-Flavor Ghost Gum,11301,Food,Kami,,,HP+25,,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
-,Ingame,Cheeseburger,11302,Food,Kami,,,HP+50,,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
-,Ingame,Pom-Pom Fruit Candy,11303,Food,Kami,,,HP+50,,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
-,Ingame,Gakki Cookie Sticks,11304,Food,Kami,,,HP+100,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
-,Ingame,Resin,11311,Food,Kami,,,HP+35,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…"
-,Ingame,XP Potion,11401,Food,Kami,,BYPASS_BONUS_RESET,"ITEM103,XP+1000",,Give to a Kami to increase their XP by 1000.
-,Ingame,Greater XP Potion,11402,Food,Kami,,BYPASS_BONUS_RESET,"ITEM106,XP+15000",,Give to a Kami to increase their XP by 15000.
-,Ingame,Respec Potion,11403,Food,Kami,,BYPASS_BONUS_RESET,"F_SKILL_RESET,ITEM103",,"Give to a Kami to reset their skill points. "
-,Ingame,"Grace Potion 
-",11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM103",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
-,Ingame,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM103",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
-,Ingame,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
+,In Game,Holy Dust,11011,Consumable,Kami,,,F_NAMEABLE,,This sacred dust can be used to rename Kamigotchi… At the proper place.
+,In Game,Gaokerena Mochi,11110,Food,Kami,,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
+,In Game,Sunset Apple Mochi,11120,Food,Kami,,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
+,In Game,Kami Mochi,11130,Food,Kami,,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
+,In Game,Mana Mochi,11140,Food,Kami,,,HARMONY+1,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
+,In Game,XP Candy (Small),11201,Food,Kami,,,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
+,In Game,XP Candy (Medium),11202,Food,Kami,,,"XP+100,HP+10",,"Provides a decent amount of XP when fed to a Kami. "
+,In Game,XP Candy (Large),11203,Food,Kami,,,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
+,In Game,XP Candy (Huge),11204,Food,Kami,,,"HP+50,XP+1000",,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.
+,In Game,Maple-Flavor Ghost Gum,11301,Food,Kami,,,HP+25,,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
+,In Game,Cheeseburger,11302,Food,Kami,,,HP+50,,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
+,In Game,Pom-Pom Fruit Candy,11303,Food,Kami,,,HP+50,,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
+,In Game,Gakki Cookie Sticks,11304,Food,Kami,,,HP+100,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
+,Test,Gingerbread Cookie,,Food,Kami,,,"XP+1000,HP+25",,A gingerbread cookie... feed this to a Kamigotchi for some extra experience.
+,In Game,Resin,11311,Food,Kami,,,HP+35,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…"
+,In Game,XP Potion,11401,Food,Kami,,BYPASS_BONUS_RESET,"ITEM103,XP+1000",,Give to a Kami to increase their XP by 1000.
+,In Game,Greater XP Potion,11402,Food,Kami,,BYPASS_BONUS_RESET,"ITEM106,XP+15000",,Give to a Kami to increase their XP by 15000.
+,In Game,Respec Potion,11403,Food,Kami,,BYPASS_BONUS_RESET,"F_SKILL_RESET,ITEM103",,"Give to a Kami to reset their skill points. "
+,In Game,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM103",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
+,In Game,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM103",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
+,Test,Mistletoe,,Food,Kami,,BYPASS_BONUS_RESET,BOUNTY+25%,,"Sacred, at this time of year..... can be used on Kami to Bless them!"
+,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,Ready,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
-,Ingame,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "
-,Ingame,Ice Cream,21201,Food,Account,,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
-,Ingame,Better Ice Cream,21202,Food,Account,,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
-,Ingame,Best Ice Cream,21203,Food,Account,,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
-,Ingame,Spice Grinder,23100,Tool,,,,,,Can be used to break down ingredients.
-,Ingame,Portable Burner,23101,Tool,,,,,,"Can be used to make Potions at a riverside. "
-,Ingame,Astrolabe Disk,100001,Key Item,,,,,,"Some sort of golden disk. Purpose: completely unknown. 
+,In Game,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "
+,In Game,Ice Cream,21201,Food,Account,,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
+,In Game,Better Ice Cream,21202,Food,Account,,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
+,In Game,Best Ice Cream,21203,Food,Account,,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
+,In Game,Spice Grinder,23100,Tool,,,,,,Can be used to break down ingredients.
+,In Game,Portable Burner,23101,Tool,,,,,,"Can be used to make Potions at a riverside. "
+,In Game,Astrolabe Disk,100001,Key Item,,,,,,"Some sort of golden disk. Purpose: completely unknown. 
 
 You feel like you should hold on to it. "
-,Ingame,Pomegranate,,Transferrer,,,,,,
+,In Game,Pomegranate,,Transferrer,,,,,,

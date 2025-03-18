@@ -29,7 +29,7 @@ export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => 
   // }
 };
 
-///////////////////
+/////////////////
 // SCRIPTS
 
 export async function initQuests(api: AdminAPI, indices?: number[], local?: boolean) {
@@ -65,6 +65,8 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
     const requirements = row['Requirements'].split(',');
     for (let i = 0; i < requirements.length; i++) {
       const key = requirements[i];
+      if (!key) continue;
+
       const req = requirementsMap.get(key);
       if (req) await addRequirement(api, index, req);
       else console.log(`Error: Could not find Requirement ${key}`);
@@ -75,6 +77,8 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
     const objectives = row['Objectives'].split(',');
     for (let i = 0; i < objectives.length; i++) {
       const key = objectives[i];
+      if (!key) continue;
+
       const obj = objectivesMap.get(key);
       if (obj) await addObjective(api, index, obj);
       else console.log(`Error: Could not find Objective ${key}`);
@@ -85,6 +89,8 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
     const rewards = row['Rewards'].split(',');
     for (let i = 0; i < rewards.length; i++) {
       const key = rewards[i];
+      if (!key) continue;
+
       const rew = rewardsMap.get(key);
       if (rew) await addReward(api, index, rew);
       else console.log(`Error: Could not find Reward ${key}`);

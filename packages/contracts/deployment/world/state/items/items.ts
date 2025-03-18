@@ -15,10 +15,7 @@ export async function initItems(api: AdminAPI, indices?: number[], local?: boole
   console.log('\n==INITIALIZING ITEMS==');
 
   const validStatuses = ['To Deploy'];
-  if (local) {
-    validStatuses.push('Ready');
-    validStatuses.push('In Game');
-  }
+  if (local) validStatuses.push('Ready', 'In Game');
 
   // construct the map of allos for easier lookup
   const alloMap = new Map<string, any>();
@@ -77,6 +74,7 @@ export async function reviseItems(api: AdminAPI, indices: number[]) {
   await initItems(api, indices);
 }
 
+// TODO: move this to sheet based local deploys
 export async function initLocalItems(api: AdminAPI) {
   const itemsCSV = await readFile('items/items.csv');
 
