@@ -27,7 +27,6 @@ export function createActionSystem<M = undefined>(
 
   /**
    * Schedules an Action from an ActionRequest and schedules it for execution.
-   * TODO(ja): set the action ID within the add function instead of passing it in on ActionRequest.
    * @param request ActionRequest to be scheduled
    * @returns EntityIndex of the entity created for the action
    */
@@ -71,7 +70,6 @@ export function createActionSystem<M = undefined>(
   /**
    * Executes the given Action and sets the corresponding fields accordingly.
    * @param index EntityIndex of the Action to be executed
-   * @returns void
    */
   async function execute(request: ActionRequest) {
     const actionState = getComponentValue(Action, request.index!)?.state;
@@ -87,9 +85,8 @@ export function createActionSystem<M = undefined>(
       updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
       if (tx) {
-        // const txConfirmed = await tx.wait().catch((e: any) => handleError(e, request));
-        const txConfirmed = await tx.wait();
-        if (request.awaitConfirmation) await txConfirmed;
+        if (request.awaitConfirmation) await tx.wait();
+        updateAction({ txHash: tx.hash });
       }
 
       updateAction({ state: ActionState.Complete });
