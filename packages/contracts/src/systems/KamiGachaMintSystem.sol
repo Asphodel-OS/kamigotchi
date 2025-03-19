@@ -20,7 +20,7 @@ contract KamiGachaMintSystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
-    // use gacha inventory balance
+    // use gacha tickets balance
     LibInventory.decFor(components, accID, GACHA_TICKET_INDEX, amount);
 
     // commits random seed for gacha roll

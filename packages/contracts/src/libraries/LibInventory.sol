@@ -24,6 +24,7 @@ import { LibStat } from "libraries/LibStat.sol";
 
 uint32 constant MUSU_INDEX = 1;
 uint32 constant GACHA_TICKET_INDEX = 10;
+uint32 constant REROLL_TICKET_INDEX = 11;
 
 // handles nonfungible inventory instances
 library LibInventory {
