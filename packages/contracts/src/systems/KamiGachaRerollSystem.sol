@@ -9,6 +9,7 @@ import { LibGacha } from "libraries/LibGacha.sol";
 import { LibInventory, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibERC20 } from "libraries/LibERC20.sol";
+import { LibInventory, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.reroll"));
 
@@ -43,9 +44,6 @@ contract KamiGachaRerollSystem is System {
     // standard logging and tracking
     LibGacha.logReroll(components, accID, kamiIDs.length);
     LibAccount.updateLastTs(components, accID);
-
-    // sending eth to owner
-    payable(owner()).transfer(address(this).balance);
 
     return commitIDs;
   }
