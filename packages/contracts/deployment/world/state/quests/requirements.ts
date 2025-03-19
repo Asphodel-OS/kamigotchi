@@ -3,7 +3,8 @@ import { getSheet, parseToInitCon } from '../utils';
 
 export const Requirements = new Map<string, any>();
 
-// get or generate the singleton Map of all Requirements
+// retrieve the singleton Map of all Requirements
+// if it hasn't been instantiated, populate it with the quest requirements sheet
 export const getRequirementsMap = async () => {
   if (Requirements.size > 0) return Requirements;
 

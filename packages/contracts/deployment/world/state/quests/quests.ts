@@ -22,11 +22,6 @@ export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => 
     success = false;
   }
   return success;
-
-  // const agencyRep = Number(entry['REPUTATION']);
-  // if (agencyRep || agencyRep > 0) {
-  //   await api.registry.quest.add.reward.basic(Number(entry['Index']), 'REPUTATION', 1, agencyRep);
-  // }
 };
 
 /////////////////
@@ -64,20 +59,7 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
   }
 }
 
-// // initialize local quests
-// // TODO: move this to sheet based local deploys
-// export async function initLocalQuests(api: AdminAPI) {
-//   api.registry.quest.create(
-//     1000000,
-//     'The Chosen Taruchi',
-//     'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
-//     'Was it really worth it?',
-//     0
-//   );
-//   api.registry.quest.add.reward.basic(1000000, 'ITEM', GACHA_TICKET_INDEX, 111); // 111 tickets
-// }
-
-// delete quests
+// delete specified or marked quests
 export async function deleteQuests(api: AdminAPI, overrideIndices?: number[]) {
   const csv = await getSheet('quests', 'quests');
   if (!csv) return console.log('No quests/quests.csv found');
@@ -101,6 +83,7 @@ export async function deleteQuests(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
+// revise specified or marked quests
 export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
   const csv = await getSheet('quests', 'quests');
 
@@ -117,38 +100,3 @@ export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
   await deleteQuests(api, indices);
   await initQuests(api, indices);
 }
-
-///////////////////
-
-// async function initQuestObjective(api: AdminAPI, entry: any) {
-//   const cond = parseToInitCon(
-//     '', // objective logic operators alr processed
-//     entry['SubType'],
-//     Number(entry['IndexFor'] ?? 0),
-//     Number(entry['ValueFor'] ?? 0)
-//   );
-//   await api.registry.quest.add.objective(
-//     Number(entry['Index']),
-//     entry['ConditionDescription'],
-//     entry['DeltaType'] + '_' + entry['Operator'],
-//     cond.type,
-//     cond.index,
-//     cond.value,
-//     ''
-//   );
-// }
-
-// async function initQuestReward(api: AdminAPI, entry: any) {
-//   const cond = parseToInitCon(
-//     '', // no reward logic operators
-//     entry['SubType'],
-//     Number(entry['IndexFor'] ?? 0),
-//     Number(entry['ValueFor'] ?? 0)
-//   );
-//   await api.registry.quest.add.reward.basic(
-//     Number(entry['Index']),
-//     cond.type,
-//     cond.index,
-//     cond.value
-//   );
-// }
