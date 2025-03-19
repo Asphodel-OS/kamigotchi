@@ -2,6 +2,7 @@
 pragma solidity >=0.8.28;
 
 import { GACHA_ID } from "libraries/LibGacha.sol";
+import { REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 import "tests/utils/SetupTemplate.t.sol";
 
 /** @dev
@@ -51,10 +52,8 @@ contract GachaTest is SetupTemplate {
   function testSingleReroll() public {
     uint256[] memory ogPool = _batchMint(2);
 
-    address owner = _owners[0];
-
     // minting first pet
-    uint256 petUser = _mintKami(0);
+    uint256 petUser = _mintKami(alice);
     uint256 petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
 
     // checking pet states
@@ -62,10 +61,9 @@ contract GachaTest is SetupTemplate {
     _assertInGacha(petPool);
 
     // rerolling
-    uint256 cost = _getRerollCost(1);
     uint256[] memory petUserArr = new uint256[](1);
     petUserArr[0] = petUser;
-    uint256[] memory reCommits = _reroll(0, cost, petUserArr);
+    uint256[] memory reCommits = _reroll(alice, petUserArr);
     _assertCommit(reCommits[0], 0, _currBlock, 1);
     vm.roll(++_currBlock);
     petUser = _KamiGachaRevealSystem.reveal(reCommits)[0];
@@ -74,9 +72,8 @@ contract GachaTest is SetupTemplate {
     _assertInGacha(petPool);
 
     // rerolling again
-    cost = _getRerollCost(2);
     petUserArr[0] = petUser;
-    reCommits = _reroll(0, cost, petUserArr);
+    reCommits = _reroll(alice, petUserArr);
     _assertCommit(reCommits[0], 0, _currBlock, 2);
     vm.roll(++_currBlock);
     petUser = _KamiGachaRevealSystem.reveal(reCommits)[0];
@@ -86,18 +83,15 @@ contract GachaTest is SetupTemplate {
   }
 
   function testMultipleReroll() public {
-    uint256[] memory ogPool = _batchMint(10);
-
-    address owner = _owners[0];
+    _batchMint(10);
 
     // minting first pet
-    uint256[] memory userPets = _mintKamis(0, 3);
+    uint256[] memory userPets = _mintKamis(alice, 3);
 
     // reroll the first pet, replace it with result
-    uint256 cost = _getRerollCost(1);
     uint256[] memory petUserArr = new uint256[](1);
     petUserArr[0] = userPets[0];
-    uint256[] memory reCommits = _reroll(0, cost, petUserArr);
+    uint256[] memory reCommits = _reroll(alice, petUserArr);
     vm.roll(++_currBlock);
     userPets[0] = _KamiGachaRevealSystem.reveal(reCommits)[0];
     _assertOutGacha(userPets[0], 0, 2);
@@ -107,14 +101,9 @@ contract GachaTest is SetupTemplate {
     petUserArr2[0] = userPets[0];
     petUserArr2[1] = userPets[1];
     vm.roll(++_currBlock);
-    _mintOnyx(cost, owner);
-    // vm.prank(owner);
-    // vm.expectRevert(); // not enough, implicit overflow check
-    // _KamiGachaRerollSystem.reroll(petUserArr2);
 
     // reroll first two pets, but correct pricing
-    cost = _getRerollCost(1) + _getRerollCost(2);
-    uint256[] memory reCommits2 = _reroll(0, cost, petUserArr2);
+    uint256[] memory reCommits2 = _reroll(alice, petUserArr2);
     vm.roll(++_currBlock);
     uint256[] memory outputs = _KamiGachaRevealSystem.reveal(reCommits2);
     // account for sort
@@ -144,8 +133,7 @@ contract GachaTest is SetupTemplate {
     counts[LibKami.getIndex(components, resultPets[0]) - 1]++;
 
     for (uint256 i = 0; i < 1000; i++) {
-      uint256 cost = _getRerollCost(i + 1);
-      uint256[] memory reCommits = _reroll(0, cost, resultPets);
+      uint256[] memory reCommits = _reroll(alice, resultPets);
       vm.roll(++_currBlock);
       resultPets[0] = _KamiGachaRevealSystem.reveal(reCommits)[0];
       counts[LibKami.getIndex(components, resultPets[0]) - 1]++;
@@ -168,14 +156,12 @@ contract GachaTest is SetupTemplate {
   }
 
   function _reroll(
-    uint256 accountIndex,
-    uint256 cost,
+    PlayerAccount memory acc,
     uint256[] memory kamiIDs
   ) internal returns (uint256[] memory results) {
     vm.roll(++_currBlock);
-    _mintOnyx(cost, _owners[accountIndex]);
-    _approveOnyx(_owners[accountIndex], address(_TokenAllowanceComponent));
-    vm.prank(_owners[accountIndex]);
+    _giveItem(acc, REROLL_TICKET_INDEX, kamiIDs.length);
+    vm.prank(acc.owner);
     results = _KamiGachaRerollSystem.reroll(kamiIDs);
   }
 
@@ -184,10 +170,6 @@ contract GachaTest is SetupTemplate {
     uint256[] memory commits = new uint256[](1);
     commits[0] = commitID;
     return _KamiGachaRevealSystem.reveal(commits)[0];
-  }
-
-  function _getRerollCost(uint256 rerolls) internal view returns (uint256) {
-    return 0; // todo: remove, replace with reroll ticket check
   }
 
   ////////////////
