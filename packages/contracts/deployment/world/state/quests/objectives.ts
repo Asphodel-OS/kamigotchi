@@ -3,6 +3,8 @@ import { getSheet, parseToInitCon } from '../utils';
 
 export const Objectives = new Map<string, any>();
 
+// retrieve the singleton Map of all Objectives
+// if it hasn't been instantiated, populate it with the quest objectives sheet
 export const getObjectivesMap = async () => {
   if (Objectives.size > 0) return Objectives;
 
@@ -31,7 +33,7 @@ export const addObjectives = async (api: AdminAPI, questRow: any) => {
   }
 };
 
-// add a requirement to a quest
+// add an objective to a quest
 export const addObjective = async (api: AdminAPI, questIndex: number, entry: any) => {
   const key = entry['Description'];
   const operator = entry['Operator'];

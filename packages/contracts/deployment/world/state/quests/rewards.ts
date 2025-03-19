@@ -3,7 +3,8 @@ import { getSheet, parseToInitCon } from '../utils';
 
 export const Rewards = new Map<string, any>();
 
-// get or generate the singleton Map of all Rewards
+// retrieve the singleton Map of all Rewards
+// if it hasn't been instantiated, populate it with the quest rewards sheet
 export const getRewardsMap = async () => {
   if (Rewards.size > 0) return Rewards;
 
