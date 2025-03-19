@@ -71,7 +71,7 @@ export function registerPresaleModal() {
 
       const { balances: currencyBal, refetch: refetchToken } = useERC20Balance(
         selectedAddress as Address,
-        getAddress(currency.address!),
+        getAddress(currency.address || '0x0000000000000000000000000000000000000000'),
         presaleAddress
       );
 
