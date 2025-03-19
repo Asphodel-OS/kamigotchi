@@ -658,7 +658,7 @@
     },
     {
       "name": "_721BatchMinterSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["*", "ProxyPermissionsERC721"]
     }
   ],
   "libraries": [
