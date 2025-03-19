@@ -7,4 +7,8 @@ uint256 constant ID = uint256(keccak256("components.proxy.Permissions.ERC721"));
 /// note: does not follow the typical ProxyComp flow to keep audited code frozen
 contract ProxyPermissionsERC721Component is ProxyComponent {
   constructor(address world) ProxyComponent(world, ID) {}
+
+  function writeAccess(address operator) public view override returns (bool) {
+    return !adminFreeze && super.writeAccess(operator);
+  }
 }
