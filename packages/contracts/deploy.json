@@ -88,6 +88,7 @@
     { "comp": "Weights", "name": "Weights", "type": "uint256[]" },
     { "comp": "Whitelist", "name": "Whitelist", "type": "uint32[]" }
   ],
+  "protectedComponents": ["ProxyPermissionsERC721", "TokenAllowance"],
   "systems": [
     { "name": "__LocalSetupSystem", "writeAccess": ["*"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },

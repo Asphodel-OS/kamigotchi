@@ -90,7 +90,9 @@ world.registerSystem(address(system), <%= system.name %>ID);
 <% system.writeAccess?.forEach(component=> { -%>
 <% if(component==="*" ) { -%>
 <% components.forEach(comp=> { -%>
+      <% if(protectedComponents.includes(comp)) { -%> 
 authorizeWriter(components, <%= comp.comp %>ComponentID, address(system));
+      <% } -%> 
 <% });-%>
 <% } else { -%>
 authorizeWriter(components, <%= component %>ComponentID, address(system));
