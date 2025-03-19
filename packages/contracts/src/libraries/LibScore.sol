@@ -4,6 +4,7 @@ pragma solidity >=0.8.28;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.sol";
@@ -33,7 +34,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
  *  - Epoch is a config field. Could be automated on block.timestamp in the future
  */
 library LibScore {
-  using LibComp for IUintComp;
+  using SafeCastLib for uint256;
 
   /////////////////
   // INTERACTIONS
@@ -66,7 +67,7 @@ library LibScore {
   }
 
   /// @notice adds score based on current epoch.
-  /// @dev wrapper function for epoch/type handling
+  /// @dev automatically handles epoch
   function incFor(
     IUintComp components,
     uint256 holderID,
@@ -74,9 +75,22 @@ library LibScore {
     string memory _type,
     uint256 amt
   ) internal {
-    uint256 epoch = getCurentEpoch(components);
+    uint256 epoch = getCurrentEpoch(components);
+    return incFor(components, holderID, epoch, index, _type, amt);
+  }
+
+  /// @notice adds score based on current epoch.
+  /// @dev manually handles epoch
+  function incFor(
+    IUintComp components,
+    uint256 holderID,
+    uint256 epoch,
+    uint32 index,
+    string memory _type,
+    uint256 amt
+  ) internal {
     uint256 id = genScoreID(holderID, epoch, index, _type);
-    incFor(components, id, holderID, genTypeID(epoch, index, _type), amt);
+    return incFor(components, id, holderID, genTypeID(epoch, index, _type), amt);
   }
 
   /// @notice decrements score balance, creates score if needed
@@ -94,7 +108,7 @@ library LibScore {
   }
 
   /// @notice decs score based on current epoch.
-  /// @dev wrapper function for epoch/type handling
+  /// @dev automatically handles epoch
   function decFor(
     IUintComp components,
     uint256 holderID,
@@ -102,9 +116,22 @@ library LibScore {
     string memory _type,
     uint256 amt
   ) internal {
-    uint256 epoch = getCurentEpoch(components);
+    uint256 epoch = getCurrentEpoch(components);
+    return decFor(components, holderID, epoch, index, _type, amt);
+  }
+
+  /// @notice decs score based on current epoch.
+  /// @dev manually handles epoch
+  function decFor(
+    IUintComp components,
+    uint256 holderID,
+    uint256 epoch,
+    uint32 index,
+    string memory _type,
+    uint256 amt
+  ) internal {
     uint256 id = genScoreID(holderID, epoch, index, _type);
-    decFor(components, id, holderID, genTypeID(epoch, index, _type), amt);
+    return decFor(components, id, holderID, genTypeID(epoch, index, _type), amt);
   }
 
   /////////////////
@@ -115,7 +142,7 @@ library LibScore {
   }
 
   // get current epoch for leaderboard
-  function getCurentEpoch(IUintComp components) internal view returns (uint256) {
+  function getCurrentEpoch(IUintComp components) internal view returns (uint256) {
     return LibConfig.get(components, "SCORE_EPOCH");
   }
 
