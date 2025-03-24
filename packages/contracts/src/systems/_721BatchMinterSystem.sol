@@ -52,6 +52,7 @@ import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 uint256 constant ID = uint256(keccak256("system.Kami721.BatchMint"));
 
 uint256 constant OFFSET_BIT_SIZE = 32;
+string constant BASE_NAME = string("test kamigotchi ");
 
 /////////////
 // STRUCTS //
@@ -361,7 +362,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
       idOwnsPetComp.set(id, GACHA_ID); // seed in gacha
       entityTypeComp.set(id, string("KAMI"));
       indexPetComp.set(id, index);
-      nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
+      nameComp.set(id, LibString.concat(BASE_NAME, LibString.toString(startIndex + i)));
       stateComp.set(id, string("RESTING"));
       timeStartComp.set(id, block.timestamp);
       timeLastComp.set(id, block.timestamp); // normally after reveal
