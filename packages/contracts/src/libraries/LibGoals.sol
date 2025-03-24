@@ -17,6 +17,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibReference } from "libraries/utils/LibReference.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
@@ -76,6 +77,7 @@ library LibGoals {
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
     if (roomIndex != 0)
       IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, roomIndex);
+    LibDisabled.set(components, id, true); // disabled initially
 
     // adding the objective
     uint256 objID = genObjID(id);
@@ -113,6 +115,7 @@ library LibGoals {
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(goalID);
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(goalID);
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(goalID);
+    LibDisabled.set(components, goalID, false);
 
     // remove objective
     uint256 objID = genObjID(goalID);
@@ -185,6 +188,10 @@ library LibGoals {
 
   ////////////////////
   // CHECKERS
+
+  function verifyEnabled(IUintComp components, uint256 goalID) public view {
+    return LibDisabled.verifyEnabled(components, goalID);
+  }
 
   function verifyClaimable(IUintComp components, uint256 goalID, uint256 accID) public view {
     if (!canClaim(components, goalID, accID)) revert("cannot claim from this goal");

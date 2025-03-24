@@ -66,6 +66,7 @@ export function createComponents(world: World) {
     RoomIndex: defineNumberComponent(world, 'RoomIndex', 'component.index.room', true),
     SkillIndex: defineNumberComponent(world, 'SkillIndex', 'component.index.skill'),
     IsComplete: defineBoolComponent(world, 'IsComplete', 'component.is.complete'),
+    IsDisabled: defineBoolComponent(world, 'IsDisabled', 'component.is.disabled'),
     IsKill: defineBoolComponent(world, 'IsKill', 'component.is.kill'),
     IsRegistry: defineBoolComponent(world, 'IsRegistry', 'component.is.registry'),
     IsRepeatable: defineBoolComponent(world, 'IsRepeatable', 'component.is.repeatable'),
