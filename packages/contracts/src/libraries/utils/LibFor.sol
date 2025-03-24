@@ -9,9 +9,6 @@ import { LibString } from "solady/utils/LibString.sol";
 import { BoolComponent } from "solecs/components/BoolComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 
-uint256 constant ForAccount = uint256(keccak256("for.account"));
-uint256 constant ForPet = uint256(keccak256("for.kami"));
-
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 

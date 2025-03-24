@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { LibGetter } from "libraries/utils/LibGetter.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 
@@ -130,11 +130,18 @@ contract _QuestRegistrySystem is System {
     return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
   }
 
-  function remove(uint32 index) public onlyOwner {
-    uint256 registryQuestID = LibQuestRegistry.getByIndex(components, index);
-    require(registryQuestID != 0, "Quest does not exist");
+  function setDisabled(uint32 index, bool disabled) public onlyOwner {
+    uint256 regID = LibQuestRegistry.getByIndex(components, index);
+    require(regID != 0, "Quest does not exist");
 
-    LibQuestRegistry.removeQuest(components, registryQuestID, index);
+    LibDisabled.set(components, regID, disabled);
+  }
+
+  function remove(uint32 index) public onlyOwner {
+    uint256 regID = LibQuestRegistry.getByIndex(components, index);
+    require(regID != 0, "Quest does not exist");
+
+    LibQuestRegistry.removeQuest(components, regID, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

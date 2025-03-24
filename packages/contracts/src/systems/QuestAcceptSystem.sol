@@ -21,6 +21,7 @@ contract QuestAcceptSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check requirements
+    LibQuests.verifyEnabled(components, index);
     LibQuests.verifyRequirements(components, index, accID);
 
     uint256 questID = LibQuests.getAccQuestIndex(components, accID, index);

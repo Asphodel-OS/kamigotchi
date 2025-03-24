@@ -51,6 +51,7 @@
     { "comp": "IndexRoom", "name": "RoomIndex", "type": "uint32", "indexed": true },
     { "comp": "IndexSkill", "name": "SkillIndex", "type": "uint32" },
     { "comp": "IsComplete", "name": "IsComplete", "type": "bool" },
+    { "comp": "IsDisabled", "name": "IsDisabled", "type": "bool" },
     { "comp": "IsKill", "name": "IsKill", "type": "bool" },
     { "comp": "IsRegistry", "name": "IsRegistry", "type": "bool" },
     { "comp": "IsRepeatable", "name": "IsRepeatable", "type": "bool" },

@@ -3,7 +3,9 @@ import { BigNumberish } from 'ethers';
 import { SystemBytecodes } from '../../contracts/mappings/SystemBytecodes';
 import { createCall, toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
+import { goalsAPI } from './goals';
 import { listingAPI } from './listings';
+import { questsAPI } from './quests';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
@@ -97,94 +99,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   /////////////////
   //  GOALS
 
-  async function createGoal(
-    goalIndex: number,
-    name: string,
-    description: string,
-    roomIndex: number,
-    type: string,
-    logic: string,
-    conIndex: number,
-    conValue: number
-  ) {
-    genCall(
-      'system.goal.registry',
-      [goalIndex, name, description, roomIndex, type, logic, conIndex, conValue],
-      'create',
-      ['uint32', 'string', 'string', 'uint32', 'string', 'string', 'uint32', 'uint256']
-    );
-  }
-
-  async function createGoalRequirement(
-    goalIndex: number,
-    type: string,
-    logic: string,
-    conIndex: number,
-    conValue: number,
-    conFor: string
-  ) {
-    genCall(
-      'system.goal.registry',
-      [goalIndex, type, logic, conIndex, conValue, conFor],
-      'addRequirement',
-      ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
-    );
-  }
-
-  async function createGoalRewardBasic(
-    goalIndex: number,
-    name: string,
-    cutoff: number,
-    type: string,
-    conIndex: number,
-    conValue: number
-  ) {
-    genCall(
-      'system.goal.registry',
-      [goalIndex, name, cutoff, type, conIndex, conValue],
-      'addRewardBasic',
-      ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256']
-    );
-  }
-
-  async function createGoalRewardDisplay(goalIndex: number, name: string) {
-    genCall('system.goal.registry', [goalIndex, name], 'addRewardDisplay', ['uint32', 'string']);
-  }
-
-  async function createGoalRewardDT(
-    goalIndex: number,
-    keys: number[],
-    weights: number[],
-    conValue: number
-  ) {
-    genCall('system.goal.registry', [goalIndex, keys, weights, conValue], 'addRewardDT', [
-      'uint32',
-      'uint32[]',
-      'uint256[]',
-      'uint256',
-    ]);
-  }
-
-  async function createGoalRewardStat(
-    goalIndex: number,
-    statType: string,
-    base: number,
-    shift: number,
-    boost: number,
-    sync: number
-  ) {
-    genCall(
-      'system.goal.registry',
-      [goalIndex, statType, base, shift, boost, sync],
-      'addRewardStat',
-      ['uint32', 'string', 'int32', 'int32', 'int32', 'int32']
-    );
-  }
-
-  async function deleteGoal(goalIndex: number) {
-    genCall('system.goal.registry', [goalIndex], 'remove');
-  }
-
   /////////////////
   //  NPCs
 
@@ -229,58 +143,6 @@ export function createAdminAPI(compiledCalls: string[]) {
     hand: number
   ) {
     genCall('system.Kami721.create', [accID, background, body, color, face, hand], 'create');
-  }
-
-  /////////////////
-  //  LISTINGS
-
-  // create a listing for an npc and item at a target value
-  async function createListing(npcIndex: number, itemIndex: number, value: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex, value], 'create', [
-      'uint32',
-      'uint32',
-      'uint256',
-    ]);
-  }
-
-  // add a fixed buy price to a listing
-  async function setListingBuyPriceFixed(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'setBuyFixed', ['uint32', 'uint32']);
-  }
-
-  // add a fixed sell price to a listing
-  async function setListingSellPriceFixed(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'setSellFixed', ['uint32', 'uint32']);
-  }
-
-  // add a scaled sell price to a listing
-  async function setListingSellPriceScaled(npcIndex: number, itemIndex: number, scale: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex, scale], 'setSellScaled', [
-      'uint32',
-      'uint32',
-      'uint32',
-    ]);
-  }
-
-  async function setListingRequirement(
-    npcIndex: number,
-    itemIndex: number,
-    conditionType: string,
-    logicType: string,
-    index: number,
-    value: BigNumberish,
-    for_: string
-  ) {
-    genCall(
-      'system.listing.registry',
-      [npcIndex, itemIndex, conditionType, logicType, index, value, for_],
-      'addRequirement',
-      ['uint32', 'uint32', 'string', 'string', 'uint32', 'uint256', 'string']
-    );
-  }
-
-  async function removeListing(npcIndex: number, itemIndex: number) {
-    genCall('system.listing.registry', [npcIndex, itemIndex], 'remove');
   }
 
   /////////////////
@@ -362,113 +224,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   // @dev deletes node
   async function deleteNode(index: number) {
     genCall('system.node.registry', [index], 'remove');
-  }
-
-  /////////////////
-  // QUESTS
-
-  // @dev creates an empty quest
-  // @param index       the human-readable index of the quest
-  // @param name        name of the quest
-  async function createQuest(
-    index: number,
-    name: string,
-    description: string,
-    endText: string,
-    repeatTime: number
-  ) {
-    genCall('system.quest.registry', [index, name, description, endText, repeatTime], 'create', [
-      'uint32',
-      'string',
-      'string',
-      'string',
-      'uint256',
-    ]);
-  }
-
-  // delete a quest along with its objectives, requirements and rewards
-  async function deleteQuest(index: number) {
-    genCall('system.quest.registry', [index], 'remove');
-  }
-
-  // creates a Objective for an existing Quest
-  async function addQuestObjective(
-    questIndex: number,
-    name: string,
-    logicType: string,
-    type: string,
-    index: number,
-    value: BigNumberish,
-    for_: string
-  ) {
-    genCall(
-      'system.quest.registry',
-      [questIndex, name, logicType, type, index, value, for_],
-      'addObjective',
-      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
-    );
-  }
-
-  // creates a Requirement for an existing Quest
-  async function addQuestRequirement(
-    questIndex: number,
-    logicType: string,
-    type: string,
-    index: number,
-    value: BigNumberish,
-    for_: string
-  ) {
-    genCall(
-      'system.quest.registry',
-      [questIndex, logicType, type, index, value, for_],
-      'addRequirement',
-      ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
-    );
-  }
-
-  // creates a Reward for an existing Quest
-  async function addQuestRewardBasic(
-    questIndex: number,
-    type: string,
-    index: number,
-    value: BigNumberish
-  ) {
-    genCall('system.quest.registry', [questIndex, type, index, value], 'addRewardBasic', [
-      'uint32',
-      'string',
-      'uint32',
-      'uint256',
-    ]);
-  }
-
-  async function addQuestRewardDT(
-    questIndex: number,
-    keys: number[],
-    weights: number[],
-    value: BigNumberish
-  ) {
-    genCall('system.quest.registry', [questIndex, keys, weights, value], 'addRewardDT', [
-      'uint32',
-      'uint32[]',
-      'uint256[]',
-      'uint256',
-    ]);
-  }
-
-  async function addQuestRewardStat(
-    questIndex: number,
-    statType: string,
-    base: number,
-    shift: number,
-    boost: number,
-    sync: number
-  ) {
-    genCall(
-      'system.quest.registry',
-      [questIndex, statType, base, shift, boost, sync],
-      'addRewardStat',
-      ['uint32', 'string', 'int32', 'int32', 'int32', 'int32']
-    );
   }
 
   /////////////////
@@ -853,19 +608,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       create: createFaction,
       delete: deleteFaction,
     },
-    goal: {
-      create: createGoal,
-      add: {
-        requirement: createGoalRequirement,
-        reward: {
-          basic: createGoalRewardBasic,
-          display: createGoalRewardDisplay,
-          droptable: createGoalRewardDT,
-          stat: createGoalRewardStat,
-        },
-      },
-      delete: deleteGoal,
-    },
+    goal: goalsAPI(genCall),
     listing: listingAPI(genCall),
     node: {
       create: createNode,
@@ -919,19 +662,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         create: registerTrait,
         delete: deleteTrait,
       },
-      quest: {
-        create: createQuest,
-        delete: deleteQuest,
-        add: {
-          objective: addQuestObjective,
-          requirement: addQuestRequirement,
-          reward: {
-            basic: addQuestRewardBasic,
-            droptable: addQuestRewardDT,
-            stat: addQuestRewardStat,
-          },
-        },
-      },
+      quest: questsAPI(genCall),
       recipe: {
         create: createRecipe,
         add: {

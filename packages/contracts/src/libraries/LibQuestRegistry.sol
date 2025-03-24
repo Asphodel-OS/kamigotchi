@@ -17,6 +17,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
@@ -48,6 +49,8 @@ library LibQuestRegistry {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).set(id, endText);
+
+    LibDisabled.set(components, id, true); // disabled initially
   }
 
   function setRepeatable(IUintComp components, uint256 regID, uint256 duration) internal {
@@ -85,6 +88,7 @@ library LibQuestRegistry {
     NameComponent(getAddrByID(components, NameCompID)).remove(questID);
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).remove(questID);
+    LibDisabled.set(components, questID, false);
 
     IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).remove(questID);
     TimeComponent(getAddrByID(components, TimeCompID)).remove(questID);
