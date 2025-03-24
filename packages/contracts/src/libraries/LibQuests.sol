@@ -21,6 +21,7 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
@@ -152,6 +153,19 @@ library LibQuests {
     ValueComponent(getAddrByID(components, ValueCompID)).remove(objectives);
   }
 
+  function distributeRewards(
+    IWorld world,
+    IUintComp components,
+    uint32 questIndex,
+    uint256 accID
+  ) internal {
+    uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, questIndex);
+    LibAllo.distribute(world, components, rewards, accID);
+  }
+
+  /////////////////
+  // CHECKERS
+
   function checkRepeat(
     IUintComp components,
     uint32 questIndex,
@@ -212,16 +226,6 @@ library LibQuests {
     return true;
   }
 
-  function distributeRewards(
-    IWorld world,
-    IUintComp components,
-    uint32 questIndex,
-    uint256 accID
-  ) internal {
-    uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, questIndex);
-    LibAllo.distribute(world, components, rewards, accID);
-  }
-
   function checkIncrease(
     IUintComp components,
     uint256 accID,
@@ -266,8 +270,10 @@ library LibQuests {
     return id != 0 ? isCompleted(components, id) : false;
   }
 
-  /////////////////
-  // CHECKERS
+  function verifyEnabled(IUintComp components, uint32 index) public view {
+    uint256 regID = LibQuestRegistry.getByIndex(components, index);
+    return LibDisabled.verifyEnabled(components, regID);
+  }
 
   function verifyNotCompleted(IUintComp components, uint256 id) public view {
     if (isCompleted(components, id)) revert("quest alr completed");
@@ -342,6 +348,10 @@ library LibQuests {
   ) internal view returns (uint256) {
     uint256 id = genObjSnapshotID(questID, data.logic, data.type_, data.index);
     return ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id);
+  }
+
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
+    return IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(id);
   }
 
   /////////////////

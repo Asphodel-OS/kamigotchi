@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibGoals } from "libraries/LibGoals.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 
@@ -34,6 +35,13 @@ contract _GoalRegistrySystem is System {
     require(!LibString.eq(objective.logic, ""), "Goal logic cannot be empty");
 
     return LibGoals.create(components, goalIndex, name, description, roomIndex, objective);
+  }
+
+  function setDisabled(uint32 index, bool disabled) public onlyOwner {
+    uint256 goalID = LibGoals.getByIndex(components, index);
+    require(goalID != 0, "Goal does not exist");
+
+    LibDisabled.set(components, goalID, disabled);
   }
 
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {

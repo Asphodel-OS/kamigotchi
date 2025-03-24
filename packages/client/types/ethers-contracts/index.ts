@@ -90,6 +90,7 @@ export type { Int256BareComponent } from "./Int256BareComponent";
 export type { Int32BareComponent } from "./Int32BareComponent";
 export type { Int32Component } from "./Int32Component";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
+export type { IsDisabledComponent } from "./IsDisabledComponent";
 export type { IsKillComponent } from "./IsKillComponent";
 export type { IsRegisterComponent } from "./IsRegisterComponent";
 export type { IsRegistryComponent } from "./IsRegistryComponent";
@@ -284,6 +285,7 @@ export { Int256BareComponent__factory } from "./factories/Int256BareComponent__f
 export { Int32BareComponent__factory } from "./factories/Int32BareComponent__factory";
 export { Int32Component__factory } from "./factories/Int32Component__factory";
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
+export { IsDisabledComponent__factory } from "./factories/IsDisabledComponent__factory";
 export { IsKillComponent__factory } from "./factories/IsKillComponent__factory";
 export { IsRegisterComponent__factory } from "./factories/IsRegisterComponent__factory";
 export { IsRegistryComponent__factory } from "./factories/IsRegistryComponent__factory";

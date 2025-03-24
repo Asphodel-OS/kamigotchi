@@ -53,9 +53,10 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
     const success = await initQuest(api, row);
 
     if (!success) continue;
-    addRequirements(api, row);
-    addObjectives(api, row);
-    addRewards(api, row);
+    await addRequirements(api, row);
+    await addObjectives(api, row);
+    await addRewards(api, row);
+    await enable(api, index);
   }
 }
 
@@ -99,4 +100,13 @@ export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
 
   await deleteQuests(api, indices);
   await initQuests(api, indices);
+}
+
+export async function enable(api: AdminAPI, index: number) {
+  try {
+    // console.log(`Enabling quest ${index}`);
+    await api.registry.quest.enable(index);
+  } catch (e) {
+    console.error(`!! Could not enable quest ${index}`, e);
+  }
 }

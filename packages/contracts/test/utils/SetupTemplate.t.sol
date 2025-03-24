@@ -551,21 +551,22 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32 index,
     uint32 roomIndex,
     Condition memory condition
-  ) internal returns (uint256) {
-    vm.prank(deployer);
-    return
-      __GoalRegistrySystem.create(
-        abi.encode(
-          index,
-          "name",
-          "description",
-          roomIndex,
-          condition.type_,
-          condition.logic,
-          condition.index,
-          condition.value
-        )
-      );
+  ) internal returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = __GoalRegistrySystem.create(
+      abi.encode(
+        index,
+        "name",
+        "description",
+        roomIndex,
+        condition.type_,
+        condition.logic,
+        condition.index,
+        condition.value
+      )
+    );
+    __GoalRegistrySystem.setDisabled(index, false);
+    vm.stopPrank();
   }
 
   function _createGoalRequirement(
@@ -768,12 +769,13 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
-  function _createQuest(uint32 index, uint duration) public returns (uint256) {
-    vm.prank(deployer);
-    return
-      __QuestRegistrySystem.create(
-        abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
-      );
+  function _createQuest(uint32 index, uint duration) public returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = __QuestRegistrySystem.create(
+      abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
+    );
+    __QuestRegistrySystem.setDisabled(index, false);
+    vm.stopPrank();
   }
 
   function _createQuestObjective(
