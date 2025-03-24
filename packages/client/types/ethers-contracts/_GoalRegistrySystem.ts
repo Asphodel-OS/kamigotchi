@@ -45,6 +45,7 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
     "remove(uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
+    "setDisabled(uint32,bool)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -65,6 +66,7 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
       | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "setDisabled"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -123,6 +125,10 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setDisabled",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -170,6 +176,10 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setDisabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -325,6 +335,12 @@ export interface _GoalRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setDisabled(
+      index: PromiseOrValue<BigNumberish>,
+      disabled: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -399,6 +415,12 @@ export interface _GoalRegistrySystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setDisabled(
+    index: PromiseOrValue<BigNumberish>,
+    disabled: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -464,6 +486,12 @@ export interface _GoalRegistrySystem extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
+
+    setDisabled(
+      index: PromiseOrValue<BigNumberish>,
+      disabled: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -568,6 +596,12 @@ export interface _GoalRegistrySystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setDisabled(
+      index: PromiseOrValue<BigNumberish>,
+      disabled: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -641,6 +675,12 @@ export interface _GoalRegistrySystem extends BaseContract {
 
     requestOwnershipHandover(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setDisabled(
+      index: PromiseOrValue<BigNumberish>,
+      disabled: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

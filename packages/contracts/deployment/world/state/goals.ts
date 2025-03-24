@@ -21,6 +21,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(1, 'Silver', 250, 'REPUTATION', 1, 5);
   await api.goal.add.reward.basic(1, 'Gold', 500, 'ITEM', 11203, 3);
   await api.goal.add.reward.basic(1, 'Gold', 500, 'REPUTATION', 1, 10);
+  await api.goal.enable(1);
 
   await api.goal.create(
     2,
@@ -38,6 +39,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(2, 'Bronze', 500, 'REPUTATION', 1, 5);
   await api.goal.add.reward.basic(2, 'Silver', 2500, 'REPUTATION', 1, 10);
   await api.goal.add.reward.basic(2, 'Gold', 5000, 'REPUTATION', 1, 10);
+  await api.goal.enable(2);
 
   await api.goal.create(
     3,
@@ -56,6 +58,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(3, 'Bronze', 1000, 'ITEM', 11203, 1);
   await api.goal.add.reward.basic(3, 'Silver', 5000, 'REPUTATION', 1, 5);
   await api.goal.add.reward.basic(3, 'Gold', 10000, 'REPUTATION', 1, 10);
+  await api.goal.enable(3);
 
   await api.goal.create(
     4,
@@ -75,6 +78,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(4, 'Silver', 5, 'ITEM', 100001, 1);
   await api.goal.add.reward.basic(4, 'Gold', 20, 'REPUTATION', 1, 5);
   await api.goal.add.reward.basic(4, 'Gold', 20, 'ITEM', 11110, 1);
+  await api.goal.enable(4);
 
   await api.goal.create(
     5,
@@ -94,6 +98,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(5, 'Silver', 5000, 'REPUTATION', 2, 10);
   await api.goal.add.reward.basic(5, 'Silver', 5000, 'ITEM', 11204, 3);
   await api.goal.add.reward.basic(5, 'Gold', 20000, 'REPUTATION', 2, 10);
+  await api.goal.enable(5);
 
   await api.goal.create(
     6,
@@ -110,6 +115,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(6, 'Bronze', 2500, 'ITEM', 11204, 1);
   await api.goal.add.reward.basic(6, 'Silver', 7500, 'REPUTATION', 1, 10);
   await api.goal.add.reward.basic(6, 'Gold', 25000, 'REPUTATION', 1, 5);
+  await api.goal.enable(6);
 
   // await api.goal.create(
   //   7,
@@ -124,25 +130,27 @@ export async function initGoals(api: AdminAPI) {
   // await api.goal.add.reward.basic(7, 'Bronze', 1000, 'REPUTATION', 1, 5);
   // await api.goal.add.reward.basic(7, 'Silver', 2500, 'REPUTATION', 1, 5);
   // await api.goal.add.reward.basic(7, 'Gold', 5000, 'REPUTATION', 1, 5);
+  // await api.goal.enable(7);
 
-  await api.goal.create(
-    8,
-    'Burn the Goat',
-    `There’s a new object on the path. It’s a straw goat, something from old Yuletide tradition. It seems so lonely standing there in the moonlight! Where’s all the warmth and good cheer?
+  //   await api.goal.create(
+  //     8,
+  //     'Burn the Goat',
+  //     `There’s a new object on the path. It’s a straw goat, something from old Yuletide tradition. It seems so lonely standing there in the moonlight! Where’s all the warmth and good cheer?
 
-What if you all set a ton of candles around this spot? It’ll be like everyone’s here with the old goat keeping it company!`,
-    55,
-    'ITEM',
-    'CURR_MIN',
-    116,
-    33333
-  );
-  await api.goal.add.reward.basic(8, 'Bronze', 3, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(8, 'Bronze', 3, 'ITEM', 11120, 1);
-  await api.goal.add.reward.basic(8, 'Silver', 33, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(8, 'Silver', 33, 'ITEM', 11120, 2);
-  await api.goal.add.reward.basic(8, 'Gold', 99, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(8, 'Gold', 99, 'ITEM', 11130, 3);
+  // What if you all set a ton of candles around this spot? It’ll be like everyone’s here with the old goat keeping it company!`,
+  //     55,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     116,
+  //     33333
+  //   );
+  //   await api.goal.add.reward.basic(8, 'Bronze', 3, 'REPUTATION', 1, 3);
+  //   await api.goal.add.reward.basic(8, 'Bronze', 3, 'ITEM', 11120, 1);
+  //   await api.goal.add.reward.basic(8, 'Silver', 33, 'REPUTATION', 1, 3);
+  //   await api.goal.add.reward.basic(8, 'Silver', 33, 'ITEM', 11120, 2);
+  //   await api.goal.add.reward.basic(8, 'Gold', 99, 'REPUTATION', 1, 3);
+  //   await api.goal.add.reward.basic(8, 'Gold', 99, 'ITEM', 11130, 3);
+  //   await api.goal.enable(8);
 }
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {
