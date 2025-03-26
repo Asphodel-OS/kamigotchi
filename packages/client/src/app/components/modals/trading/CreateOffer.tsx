@@ -6,8 +6,6 @@ import styled from 'styled-components';
 
 import { ActionButton, Popover } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { ItemImages } from 'assets/images/items';
-import { MUSU_INDEX } from 'constants/items';
 import { NetworkLayer } from 'network/create';
 import { Item } from 'network/shapes/Item';
 import { waitForActionCompletion } from 'network/utils';
@@ -123,20 +121,6 @@ export const CreateOffer = (props: Props) => {
     return actionID;
   };
 
-  const handlePrice = (e: any, sellToggle: boolean) => {
-    let min = 0;
-    let max = Infinity;
-    const quantityStr = e.target.value.replaceAll('[^\\d.]', '');
-    const rawQuantity = parseInt(quantityStr || '0');
-    const quantity = Math.max(min, Math.min(max, rawQuantity));
-    if (sellToggle) {
-      setBuyIndices(MUSU_INDEX);
-      setBuyAmts(quantity);
-    } else {
-      setSellIndices(MUSU_INDEX);
-      setSellAmts(quantity);
-    }
-  };
   return (
     <Content style={{ width: '50%' }}>
       <Cards>
@@ -176,20 +160,24 @@ export const CreateOffer = (props: Props) => {
               sellIndices={sellIndices}
               setSellIndices={setSellIndices}
               setItem={setItem}
+              price={false}
+            />
+            <Divider /> Price:
+            <CreateOfferCards
+              item={item}
+              sellToggle={sellToggle}
+              sellAmts={sellAmts}
+              setSellAmts={setSellAmts}
+              buyAmts={buyAmts}
+              setBuyAmts={setBuyAmts}
+              buyIndices={buyIndices}
+              setBuyIndices={setBuyIndices}
+              sellIndices={sellIndices}
+              setSellIndices={setSellIndices}
+              setItem={setItem}
+              price={true}
             />
           </Card>
-          <Divider /> Price:
-          <NumberXIcon>
-            <NumberInput
-              type='string'
-              placeholder={'0'}
-              value={sellToggle ? buyAmts.toString() : sellAmts.toString()}
-              onChange={(e) => {
-                handlePrice(e, sellToggle);
-              }}
-            />
-            <Icon src={ItemImages.musu} />
-          </NumberXIcon>
         </Label>
       </Cards>
       <Title style={{ bottom: 0, backgroundColor: `white` }}>
@@ -285,6 +273,7 @@ const Card = styled.div`
   flex-wrap: wrap;
   height: fit-content;
   justify-content: flex-start;
+  gap: 1vw;
 `;
 
 const PopOverButton = styled.button`
@@ -314,32 +303,6 @@ const Want = styled.div`
   display: flex;
   align-items: center;
   gap: 0.2vw;
-`;
-
-const NumberInput = styled.input`
-  min-width: 3vw;
-  min-height: 2.5vw;
-  padding: 0.3vw;
-  image-rendering: pixelated;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
-  font-size: 1.2vw;
-`;
-
-const Icon = styled.img`
-  width: 2.5vw;
-  height: 2.5vw;
-  padding: 0.3vw;
-  image-rendering: pixelated;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
-`;
-
-const NumberXIcon = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.3vw;
-  margin-top: 0.3vw;
 `;
 
 const Divider = styled.div`
