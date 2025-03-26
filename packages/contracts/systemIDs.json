@@ -3,10 +3,6 @@
     "id": "system._Auth.Manage.Role",
     "encodedID": "0xfa9684ace25361f5f40e40125a8684f447957b66a008ef8f8a173bccb6fce62c"
   },
-  "_CreatePetSystem": {
-    "id": "system.Kami721.create",
-    "encodedID": "0xdca10f2e8792bb3d426e9ae88798f80bdf42e5e4e21d6930cf9f211837099aa7"
-  },
   "_ConfigSetSystem": {
     "id": "system._Config.Set",
     "encodedID": "0x77ecdbeff66f6a1ed1858296770772bd6752009b6f5209269552793493aeed37"

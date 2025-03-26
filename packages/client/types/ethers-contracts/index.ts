@@ -181,7 +181,6 @@ export type { _721BatchMinterSystem } from "./_721BatchMinterSystem";
 export type { _AuctionRegistrySystem } from "./_AuctionRegistrySystem";
 export type { _AuthManageRoleSystem } from "./_AuthManageRoleSystem";
 export type { _ConfigSetSystem } from "./_ConfigSetSystem";
-export type { _CreatePetSystem } from "./_CreatePetSystem";
 export type { _FactionRegistrySystem } from "./_FactionRegistrySystem";
 export type { _GoalRegistrySystem } from "./_GoalRegistrySystem";
 export type { _ItemRegistrySystem } from "./_ItemRegistrySystem";
@@ -376,7 +375,6 @@ export { _721BatchMinterSystem__factory } from "./factories/_721BatchMinterSyste
 export { _AuctionRegistrySystem__factory } from "./factories/_AuctionRegistrySystem__factory";
 export { _AuthManageRoleSystem__factory } from "./factories/_AuthManageRoleSystem__factory";
 export { _ConfigSetSystem__factory } from "./factories/_ConfigSetSystem__factory";
-export { _CreatePetSystem__factory } from "./factories/_CreatePetSystem__factory";
 export { _FactionRegistrySystem__factory } from "./factories/_FactionRegistrySystem__factory";
 export { _GoalRegistrySystem__factory } from "./factories/_GoalRegistrySystem__factory";
 export { _ItemRegistrySystem__factory } from "./factories/_ItemRegistrySystem__factory";

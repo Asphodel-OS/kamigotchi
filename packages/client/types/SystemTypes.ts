@@ -4,7 +4,6 @@ import { _721BatchMinterSystem } from "./ethers-contracts/_721BatchMinterSystem"
 import { _AuctionRegistrySystem } from "./ethers-contracts/_AuctionRegistrySystem";
 import { _AuthManageRoleSystem } from "./ethers-contracts/_AuthManageRoleSystem";
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
-import { _CreatePetSystem } from "./ethers-contracts/_CreatePetSystem";
 import { _FactionRegistrySystem } from "./ethers-contracts/_FactionRegistrySystem";
 import { _GoalRegistrySystem } from "./ethers-contracts/_GoalRegistrySystem";
 import { _ItemRegistrySystem } from "./ethers-contracts/_ItemRegistrySystem";
@@ -73,7 +72,6 @@ export type SystemTypes = {
   "system.auction.registry": _AuctionRegistrySystem;
   "system._Auth.Manage.Role": _AuthManageRoleSystem;
   "system._Config.Set": _ConfigSetSystem;
-  "system.Kami721.create": _CreatePetSystem;
   "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
   "system.item.registry": _ItemRegistrySystem;

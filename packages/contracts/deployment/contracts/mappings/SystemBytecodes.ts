@@ -4,7 +4,6 @@ import _721BatchMinterSystem from "../../../out/_721BatchMinterSystem.sol/_721Ba
 import _AuctionRegistrySystem from "../../../out/_AuctionRegistrySystem.sol/_AuctionRegistrySystem.json";
 import _AuthManageRoleSystem from "../../../out/_AuthManageRoleSystem.sol/_AuthManageRoleSystem.json";
 import _ConfigSetSystem from "../../../out/_ConfigSetSystem.sol/_ConfigSetSystem.json";
-import _CreatePetSystem from "../../../out/_CreatePetSystem.sol/_CreatePetSystem.json";
 import _FactionRegistrySystem from "../../../out/_FactionRegistrySystem.sol/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../../../out/_GoalRegistrySystem.sol/_GoalRegistrySystem.json";
 import _ItemRegistrySystem from "../../../out/_ItemRegistrySystem.sol/_ItemRegistrySystem.json";
@@ -73,7 +72,6 @@ export const SystemBytecodes = {
   "system.auction.registry": _AuctionRegistrySystem,
   "system._Auth.Manage.Role": _AuthManageRoleSystem,
   "system._Config.Set": _ConfigSetSystem,
-  "system.Kami721.create": _CreatePetSystem,
   "system.faction.registry": _FactionRegistrySystem,
   "system.goal.registry": _GoalRegistrySystem,
   "system.item.registry": _ItemRegistrySystem,
