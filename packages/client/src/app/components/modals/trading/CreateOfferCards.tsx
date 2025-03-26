@@ -95,7 +95,7 @@ export const CreateOfferCards = (props: Props) => {
             disabled={!item}
             onChange={(e) => item && handleChange(e, sellToggle, item)}
           />
-          X{item && <Icon src={image} />}
+          X{item ? <Icon src={image} /> : <EmptyIcon />}
         </>
       ) : (
         <>
@@ -140,6 +140,14 @@ const Icon = styled.img`
   height: 2.5vw;
   padding: 0.3vw;
   image-rendering: pixelated;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
+`;
+
+const EmptyIcon = styled.div`
+  width: 2.5vw;
+  height: 2.5vw;
+  padding: 0.3vw;
   border: 0.15vw solid black;
   border-radius: 0.4vw;
 `;

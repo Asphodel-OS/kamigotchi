@@ -162,7 +162,7 @@ export const CreateOffer = (props: Props) => {
               setItem={setItem}
               price={false}
             />
-            <Divider /> Price:
+            <Divider /> For:
             <CreateOfferCards
               item={item}
               sellToggle={sellToggle}
