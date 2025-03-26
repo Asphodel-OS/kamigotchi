@@ -558,6 +558,17 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   ////////////////
+  // SETUP
+
+  function distributePassports(owners: string[], amts: number[]) {
+    genCall('system.setup.snapshot.t2', [owners, amts], 'distributePassports');
+  }
+
+  function distributeWhitelists(owners: string[]) {
+    genCall('system.setup.snapshot.t2', [owners], 'whitelistAccounts');
+  }
+
+  ////////////////
   // SETUP (LOCAL)
 
   function initAccounts() {
@@ -672,10 +683,16 @@ export function createAdminAPI(compiledCalls: string[]) {
       delete: deleteRoom,
     },
     setup: {
-      initAccounts: initAccounts,
-      initPets: initPets,
-      initHarvests: initHarvests,
-      attachItemERC20: attachItemERC20,
+      local: {
+        initAccounts: initAccounts,
+        initPets: initPets,
+        initHarvests: initHarvests,
+        attachItemERC20: attachItemERC20,
+      },
+      live: {
+        passports: distributePassports,
+        whitelists: distributeWhitelists,
+      },
     },
   };
 }

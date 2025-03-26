@@ -50,9 +50,9 @@ export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
   await initLocalItems(api);
-  await api.setup.initAccounts();
-  await api.setup.initPets();
-  await api.setup.initHarvests();
+  await api.setup.local.initAccounts();
+  await api.setup.local.initPets();
+  await api.setup.local.initHarvests();
 }
 
 export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';
