@@ -238,7 +238,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
   }
 
   /////////////////
-  //    MINT
+  //    GACHA
 
   // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
@@ -256,6 +256,14 @@ export function createPlayerAPI(txQueue: TxQueue) {
   // @param kamiID  kamiID
   function rerollPet(kamiIDs: BigNumberish[]) {
     return systems['system.kami.gacha.reroll'].reroll(kamiIDs);
+  }
+
+  function buyPublicGachaTicket(amount: number) {
+    return systems['system.buy.gacha.ticket'].buyPublic(amount);
+  }
+
+  function buyWLGachaTicket() {
+    return systems['system.buy.gacha.ticket'].buyWL();
   }
 
   /////////////////
@@ -324,6 +332,10 @@ export function createPlayerAPI(txQueue: TxQueue) {
       sell: sellToListing,
     },
     mint: {
+      gachaTicket: {
+        buyPublic: buyPublicGachaTicket,
+        buyWL: buyWLGachaTicket,
+      },
       mintPet: mintPet,
       reveal: revealPet,
       reroll: rerollPet,

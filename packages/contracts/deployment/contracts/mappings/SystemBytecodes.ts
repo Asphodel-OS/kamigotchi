@@ -33,6 +33,7 @@ import FriendAcceptSystem from "../../../out/FriendAcceptSystem.sol/FriendAccept
 import FriendBlockSystem from "../../../out/FriendBlockSystem.sol/FriendBlockSystem.json";
 import FriendCancelSystem from "../../../out/FriendCancelSystem.sol/FriendCancelSystem.json";
 import FriendRequestSystem from "../../../out/FriendRequestSystem.sol/FriendRequestSystem.json";
+import GachaBuyTicketSystem from "../../../out/GachaBuyTicketSystem.sol/GachaBuyTicketSystem.json";
 import GetterSystem from "../../../out/GetterSystem.sol/GetterSystem.json";
 import GoalClaimSystem from "../../../out/GoalClaimSystem.sol/GoalClaimSystem.json";
 import GoalContributeSystem from "../../../out/GoalContributeSystem.sol/GoalContributeSystem.json";
@@ -101,6 +102,7 @@ export const SystemBytecodes = {
   "system.friend.block": FriendBlockSystem,
   "system.friend.cancel": FriendCancelSystem,
   "system.friend.request": FriendRequestSystem,
+  "system.buy.gacha.ticket": GachaBuyTicketSystem,
   "system.getter": GetterSystem,
   "system.goal.claim": GoalClaimSystem,
   "system.goal.contribute": GoalContributeSystem,

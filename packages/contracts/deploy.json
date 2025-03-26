@@ -354,6 +354,10 @@
       ]
     },
     {
+      "name": "GachaBuyTicketSystem",
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"]
+    },
+    {
       "name": "Kami721IsInWorldSystem",
       "writeAccess": []
     },
