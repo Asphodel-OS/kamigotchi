@@ -6,6 +6,8 @@ import styled from 'styled-components';
 
 import { ActionButton, Popover } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
+import { ItemImages } from 'assets/images/items';
+import { MUSU_INDEX } from 'constants/items';
 import { NetworkLayer } from 'network/create';
 import { Item } from 'network/shapes/Item';
 import { waitForActionCompletion } from 'network/utils';
@@ -29,7 +31,7 @@ export const CreateOffer = (props: Props) => {
   const { getInventories, getAllItems } = utils;
 
   const [search, setSearch] = useState<string>('');
-  const [buyItem, setBuyItem] = useState<any>(null);
+  const [item, setItem] = useState<any>(null);
   const [buyIndices, setBuyIndices] = useState<number>(0);
   const [buyAmts, setBuyAmts] = useState<BigNumberish>(0);
   const [sellIndices, setSellIndices] = useState<number>(0);
@@ -41,27 +43,44 @@ export const CreateOffer = (props: Props) => {
     setSellIndices(0);
     setBuyAmts(0);
     setBuyIndices(0);
-    setBuyItem(null);
+    setItem(null);
   };
 
-  const OptionsMap = () => {
+  const BuyOptionsMap = () => {
     return getAllItems().map((item, i) => [
-      item.name.toLowerCase().includes(search.toLowerCase()) &&
-        ((sellIndices !== 0 && sellIndices !== 1 && item.index === 1) ||
-          (sellIndices !== 0 && sellIndices === 1 && item.index !== 1) ||
-          sellIndices === 0) && (
-          <PopOverButton
-            style={{ width: `22.5vw` }}
-            key={i}
-            onClick={() => {
-              setBuyItem(item);
-              setBuyAmts(0);
-              setBuyIndices(0);
-            }}
-          >
-            {item.name}
-          </PopOverButton>
-        ),
+      item.name.toLowerCase().includes(search.toLowerCase()) && item.name !== 'MUSU' && (
+        <PopOverButton
+          style={{ width: `22.5vw` }}
+          key={i}
+          onClick={() => {
+            reset();
+            setItem(item);
+            setBuyAmts(0);
+            setBuyIndices(0);
+          }}
+        >
+          {item.name}
+        </PopOverButton>
+      ),
+    ]);
+  };
+
+  const SellOptionsMap = () => {
+    return getInventories().map((item, i) => [
+      item.item.name.toLowerCase().includes(search.toLowerCase()) && item.item.name !== 'MUSU' && (
+        <PopOverButton
+          style={{ width: `22.5vw` }}
+          key={i}
+          onClick={() => {
+            reset();
+            setItem(item);
+            setBuyAmts(0);
+            setBuyIndices(0);
+          }}
+        >
+          {item.item.name}
+        </PopOverButton>
+      ),
     ]);
   };
 
@@ -108,67 +127,74 @@ export const CreateOffer = (props: Props) => {
     return actionID;
   };
 
+  const handlePrice = (e: any, sellToggle: boolean) => {
+    if (sellToggle) {
+      setBuyIndices(MUSU_INDEX);
+      setBuyAmts(e.target.value);
+    } else {
+      setSellIndices(MUSU_INDEX);
+      setSellAmts(e.target.value);
+    }
+  };
   return (
     <Content style={{ width: '50%' }}>
       <Cards>
         <Title style={{ padding: ` 1.2vw 1.2vw 2.4vw 1.2vw` }}>Create Offer</Title>
-        <Row>
-          <Label>
-            {sellToggle ? (
-              <Card>
-                {getInventories().length > 0 &&
-                  getInventories()?.map((item, i) => (
-                    <CreateOfferCards
-                      key={i}
-                      item={item}
-                      offer={true}
-                      sellAmts={sellAmts}
-                      setSellAmts={setSellAmts}
-                      buyAmts={buyAmts}
-                      setBuyAmts={setBuyAmts}
-                      buyIndices={buyIndices}
-                      setBuyIndices={setBuyIndices}
-                      sellIndices={sellIndices}
-                      setSellIndices={setSellIndices}
-                      setBuyItem={setBuyItem}
-                      reset={reset}
-                    />
-                  ))}
-              </Card>
-            ) : (
-              <Card style={{ flexDirection: 'column' }}>
-                <Popover closeOnClick={true} content={OptionsMap()}>
-                  <Search
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                    }}
-                    onBlur={(e) => {
-                      e.target.value = '';
-                    }}
-                    placeholder='Search an item...'
-                    disabled={sellIndices === 0}
-                  />
-                </Popover>
-                {buyItem !== null && (
-                  <CreateOfferCards
-                    item={buyItem}
-                    offer={false}
-                    sellAmts={sellAmts}
-                    setSellAmts={setSellAmts}
-                    buyAmts={buyAmts}
-                    setBuyAmts={setBuyAmts}
-                    buyIndices={buyIndices}
-                    setBuyIndices={setBuyIndices}
-                    sellIndices={sellIndices}
-                    setSellIndices={setSellIndices}
-                    setBuyItem={setBuyItem}
-                    reset={reset}
-                  />
-                )}
-              </Card>
-            )}
-          </Label>
-        </Row>
+
+        <Label>
+          <Want>
+            I want to:
+            <ActionButton
+              text={sellToggle ? 'Sell' : 'Buy'}
+              onClick={() => {
+                reset();
+                setSellToggle(!sellToggle);
+              }}
+            />
+          </Want>
+          <Card style={{ flexDirection: 'column' }}>
+            <Popover closeOnClick={true} content={sellToggle ? SellOptionsMap() : BuyOptionsMap()}>
+              <Search
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                onBlur={(e) => {
+                  e.target.value = '';
+                }}
+                placeholder='Search an item...'
+              />
+            </Popover>{' '}
+            <NumberXIcon>
+              <>
+                <CreateOfferCards
+                  item={item}
+                  sellToggle={sellToggle}
+                  sellAmts={sellAmts}
+                  setSellAmts={setSellAmts}
+                  buyAmts={buyAmts}
+                  setBuyAmts={setBuyAmts}
+                  buyIndices={buyIndices}
+                  setBuyIndices={setBuyIndices}
+                  sellIndices={sellIndices}
+                  setSellIndices={setSellIndices}
+                  setItem={setItem}
+                />
+                X
+                <Icon src={item && (sellToggle ? item.item.image : item.image)} />
+              </>
+            </NumberXIcon>
+          </Card>{' '}
+          <Divider /> Price:
+          <NumberXIcon>
+            <NumberInput
+              placeholder={'0'}
+              onChange={(e) => {
+                handlePrice(e, sellToggle);
+              }}
+            />
+            <Icon src={ItemImages.musu} />{' '}
+          </NumberXIcon>
+        </Label>
       </Cards>
       <Title style={{ bottom: 0, backgroundColor: `white` }}>
         <Buttons>
@@ -180,12 +206,6 @@ export const CreateOffer = (props: Props) => {
             disabled={buyIndices === 0 || buyAmts === 0 || sellIndices === 0 || sellAmts === 0}
           />
 
-          <ActionButton
-            text={sellToggle ? 'Buy Tab' : 'Sell Tab'}
-            onClick={() => {
-              setSellToggle(!sellToggle);
-            }}
-          />
           <ActionButton
             text='Reset'
             onClick={() => {
@@ -229,13 +249,6 @@ const Title = styled.div`
   z-index: 2;
 `;
 
-const Row = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  position: relative;
-`;
-
 const Label = styled.div`
   display: flex;
   flex-direction: column;
@@ -243,7 +256,8 @@ const Label = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  margin-bottom: 4.5vw;
+  margin-bottom: 6.5vw;
+  gap: 0.5vw;
 `;
 
 const Search = styled.input`
@@ -296,4 +310,43 @@ const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 0.3vw;
+`;
+
+const Want = styled.div`
+  padding-top: 1vw;
+  display: flex;
+  align-items: center;
+  gap: 0.2vw;
+`;
+
+const NumberInput = styled.input`
+  min-width: 3vw;
+  min-height: 2.5vw;
+  padding: 0.3vw;
+  image-rendering: pixelated;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
+`;
+
+const Icon = styled.img`
+  min-width: 3vw;
+  min-height: 2.5vw;
+  padding: 0.3vw;
+  image-rendering: pixelated;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
+`;
+
+const NumberXIcon = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+  margin-top: 0.3vw;
+`;
+
+const Divider = styled.div`
+  border: 0.1vw dashed black;
+  height: 0%;
+  width: 100%;
+  display: flex;
 `;

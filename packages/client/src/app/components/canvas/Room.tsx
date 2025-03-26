@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { useSelected, useVisibility } from 'app/stores';
 import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
-import { RoomAsset, rooms } from 'constants/rooms';
+import { rooms } from 'constants/rooms';
+import { RoomAsset } from 'constants/rooms/types';
 import { getCurrPhase } from 'utils/time';
 
 interface Props {
@@ -17,7 +18,7 @@ const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index } = props;
-  const { setModals } = useVisibility();
+  const { modals, setModals } = useVisibility();
   const { setNode } = useSelected();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
