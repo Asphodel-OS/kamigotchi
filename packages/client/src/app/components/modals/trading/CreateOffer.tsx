@@ -50,10 +50,8 @@ export const CreateOffer = (props: Props) => {
     return getAllItems().map((item, i) => [
       item.name.toLowerCase().includes(search.toLowerCase()) && item.name !== 'MUSU' && (
         <PopOverButton
-          style={{ width: `22.5vw` }}
           key={i}
           onClick={() => {
-            reset();
             setItem(item);
             setBuyAmts(0);
             setBuyIndices(0);
@@ -69,10 +67,8 @@ export const CreateOffer = (props: Props) => {
     return getInventories().map((item, i) => [
       item.item.name.toLowerCase().includes(search.toLowerCase()) && item.item.name !== 'MUSU' && (
         <PopOverButton
-          style={{ width: `22.5vw` }}
           key={i}
           onClick={() => {
-            reset();
             setItem(item);
             setBuyAmts(0);
             setBuyIndices(0);
@@ -128,19 +124,23 @@ export const CreateOffer = (props: Props) => {
   };
 
   const handlePrice = (e: any, sellToggle: boolean) => {
+    let min = 0;
+    let max = Infinity;
+    const quantityStr = e.target.value.replaceAll('[^\\d.]', '');
+    const rawQuantity = parseInt(quantityStr || '0');
+    const quantity = Math.max(min, Math.min(max, rawQuantity));
     if (sellToggle) {
       setBuyIndices(MUSU_INDEX);
-      setBuyAmts(e.target.value);
+      setBuyAmts(quantity);
     } else {
       setSellIndices(MUSU_INDEX);
-      setSellAmts(e.target.value);
+      setSellAmts(quantity);
     }
   };
   return (
     <Content style={{ width: '50%' }}>
       <Cards>
         <Title style={{ padding: ` 1.2vw 1.2vw 2.4vw 1.2vw` }}>Create Offer</Title>
-
         <Label>
           <Want>
             I want to:
@@ -163,36 +163,32 @@ export const CreateOffer = (props: Props) => {
                 }}
                 placeholder='Search an item...'
               />
-            </Popover>{' '}
-            <NumberXIcon>
-              <>
-                <CreateOfferCards
-                  item={item}
-                  sellToggle={sellToggle}
-                  sellAmts={sellAmts}
-                  setSellAmts={setSellAmts}
-                  buyAmts={buyAmts}
-                  setBuyAmts={setBuyAmts}
-                  buyIndices={buyIndices}
-                  setBuyIndices={setBuyIndices}
-                  sellIndices={sellIndices}
-                  setSellIndices={setSellIndices}
-                  setItem={setItem}
-                />
-                X
-                <Icon src={item && (sellToggle ? item.item.image : item.image)} />
-              </>
-            </NumberXIcon>
-          </Card>{' '}
+            </Popover>
+            <CreateOfferCards
+              item={item}
+              sellToggle={sellToggle}
+              sellAmts={sellAmts}
+              setSellAmts={setSellAmts}
+              buyAmts={buyAmts}
+              setBuyAmts={setBuyAmts}
+              buyIndices={buyIndices}
+              setBuyIndices={setBuyIndices}
+              sellIndices={sellIndices}
+              setSellIndices={setSellIndices}
+              setItem={setItem}
+            />
+          </Card>
           <Divider /> Price:
           <NumberXIcon>
             <NumberInput
+              type='string'
               placeholder={'0'}
+              value={sellToggle ? buyAmts.toString() : sellAmts.toString()}
               onChange={(e) => {
                 handlePrice(e, sellToggle);
               }}
             />
-            <Icon src={ItemImages.musu} />{' '}
+            <Icon src={ItemImages.musu} />
           </NumberXIcon>
         </Label>
       </Cards>
@@ -205,14 +201,13 @@ export const CreateOffer = (props: Props) => {
             }}
             disabled={buyIndices === 0 || buyAmts === 0 || sellIndices === 0 || sellAmts === 0}
           />
-
           <ActionButton
             text='Reset'
             onClick={() => {
               reset();
             }}
           />
-        </Buttons>{' '}
+        </Buttons>
       </Title>
     </Content>
   );
@@ -256,15 +251,16 @@ const Label = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  margin-top: 0.5vw;
   margin-bottom: 6.5vw;
-  gap: 0.5vw;
+  gap: 1vw;
 `;
 
 const Search = styled.input`
   width: 14.5vw;
   border-radius: 0.6vw;
   border: 0.15vw solid black;
-  margin: 4% 0 0 0;
+  margin: 0.3vw 0 0 0;
   min-height: 3vw;
   background: url(${ActionIcons.search}) no-repeat left center;
   background-origin: content-box;
@@ -278,7 +274,7 @@ const Search = styled.input`
 `;
 
 const Card = styled.div`
-  padding: 0.6vw;
+  padding: 0 0.6vw;
   margin: 0 0.3vw 0.3vw 0;
   justify-content: space-between;
   position: relative;
@@ -297,7 +293,8 @@ const PopOverButton = styled.button`
   align-items: flex-start;
   padding: 0.4vw;
   font-size: 1vw;
-  width: 19vw;
+  width: 14.5vw;
+  min-width: max-content;
   border-color: transparent;
   background-color: white;
   &:hover {
@@ -313,7 +310,7 @@ const Buttons = styled.div`
 `;
 
 const Want = styled.div`
-  padding-top: 1vw;
+  margin-top: 1vw;
   display: flex;
   align-items: center;
   gap: 0.2vw;
@@ -326,11 +323,12 @@ const NumberInput = styled.input`
   image-rendering: pixelated;
   border: 0.15vw solid black;
   border-radius: 0.4vw;
+  font-size: 1.2vw;
 `;
 
 const Icon = styled.img`
-  min-width: 3vw;
-  min-height: 2.5vw;
+  width: 2.5vw;
+  height: 2.5vw;
   padding: 0.3vw;
   image-rendering: pixelated;
   border: 0.15vw solid black;
@@ -349,4 +347,5 @@ const Divider = styled.div`
   height: 0%;
   width: 100%;
   display: flex;
+  margin: 0.8vw 0;
 `;

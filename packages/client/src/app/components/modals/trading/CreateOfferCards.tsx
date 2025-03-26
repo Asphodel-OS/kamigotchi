@@ -44,37 +44,41 @@ export const CreateOfferCards = (props: Props) => {
     const rawQuantity = parseInt(quantityStr || '0');
     const quantity = Math.max(min, Math.min(max, rawQuantity));
     if (sellToggle) {
-      //setItem(item);
+      setItem(item);
       setSellIndices(index);
       setSellAmts(quantity);
     } else {
-      //setItem(item);
+      setItem(item);
       setBuyIndices(index);
       setBuyAmts(quantity);
     }
   };
 
   return (
-    <Quantity
-      type='string'
-      value={
-        item
-          ? sellToggle
-            ? sellIndices === index
-              ? sellAmts.toString()
-              : '0'
-            : buyIndices === index
-              ? buyAmts.toString()
-              : '0'
-          : '0'
-      }
-      disabled={!item}
-      onChange={(e) => item && handleChange(e, sellToggle, item)}
-    />
+    <NumberXIcon>
+      <Content
+        type='string'
+        value={
+          item
+            ? sellToggle
+              ? sellIndices === index
+                ? sellAmts.toString()
+                : '0'
+              : buyIndices === index
+                ? buyAmts.toString()
+                : '0'
+            : '0'
+        }
+        disabled={!item}
+        onChange={(e) => item && handleChange(e, sellToggle, item)}
+      />
+      X
+      <Icon src={item && (sellToggle ? item.item.image : item.image)} />
+    </NumberXIcon>
   );
 };
 
-const Quantity = styled.input`
+const Content = styled.input`
   border: 0.15vw solid black;
   border-radius: 0.4vw;
   width: 4.5vw;
@@ -85,4 +89,20 @@ const Quantity = styled.input`
   color: black;
   font-size: 1.2vw;
   text-align: center;
+`;
+
+const NumberXIcon = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+  margin-top: 0.3vw;
+`;
+
+const Icon = styled.img`
+  width: 2.5vw;
+  height: 2.5vw;
+  padding: 0.3vw;
+  image-rendering: pixelated;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
 `;

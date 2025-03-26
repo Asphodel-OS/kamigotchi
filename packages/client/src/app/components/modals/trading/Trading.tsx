@@ -23,10 +23,10 @@ export function registerTradingModal() {
     'TradingModal',
     // Grid Config
     {
-      colStart: 30,
-      colEnd: 60,
-      rowStart: 15,
-      rowEnd: 85,
+      colStart: 25,
+      colEnd: 55,
+      rowStart: 3,
+      rowEnd: 99,
     },
     // Requirement
     (layers) =>
@@ -149,7 +149,7 @@ export function registerTradingModal() {
               {`Active Offers`}
             </Button>
             <Button
-              position={6.3}
+              position={20.6}
               disabled={activeTab === 1}
               onClick={() => {
                 setActiveTab(1);
@@ -303,6 +303,7 @@ const Button = styled.button<{ position: number }>`
   border-radius: 0 0 0.8vw 0.8vw;
   border-top: 0;
   z-index: 1;
+  width: 50%;
   background-color: #c5c5c5;
   &:hover {
     cursor: pointer;
