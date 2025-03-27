@@ -11,7 +11,6 @@ import {
   getRerolls,
   getState,
 } from '../utils/component';
-import { Battles, getBattles } from './battle';
 import { Bonuses, getBonuses } from './bonuses';
 import { Configs, getConfigs } from './configs';
 import { Flags, getFlags } from './flags';
@@ -37,7 +36,7 @@ export interface GachaKami extends BaseKami {
 // standardized shape of a Kami Entity
 export interface Kami extends BaseKami {
   state: string; // what do? // belongs with LastTime, LastActionTime and last health sync
-  battles?: Battles;
+  // battles?: Battles;
   bonuses?: Bonuses;
   config?: Configs;
   flags?: Flags;
@@ -97,7 +96,7 @@ export const get = (
     state: getState(comps, entity),
   };
 
-  if (options?.battles) kami.battles = getBattles(world, comps, entity);
+  // if (options?.battles) kami.battles = getBattles(world, comps, entity);
   if (options?.bonus) kami.bonuses = getBonuses(world, comps, entity);
   if (options?.config) kami.config = getConfigs(world, comps);
   if (options?.flags) kami.flags = getFlags(world, comps, entity);
