@@ -2,16 +2,13 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { ActionButton, Overlay, Tooltip } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { TabType } from '../../types';
 import { KamiBlock } from '../KamiBlock';
 
 interface Props {
-  actions: {
-    reroll: (kamis: Kami[]) => Promise<boolean>;
-  };
   data: {
     accountEntity: EntityIndex;
   };
@@ -27,8 +24,7 @@ interface Props {
 }
 
 export const Reroll = (props: Props) => {
-  const { actions, data, state, utils } = props;
-  const { reroll } = actions;
+  const { data, state, utils } = props;
   const { accountEntity } = data;
   const { setQuantity, selectedKamis, setSelectedKamis, tab } = state;
   const { getAccountKamis } = utils;
@@ -53,11 +49,6 @@ export const Reroll = (props: Props) => {
 
   /////////////////
   // INTERACTION
-
-  const handleReroll = () => {
-    reroll(selectedKamis);
-    setSelectedKamis([]);
-  };
 
   // select or deselect a kami
   const handleSelect = (kami: Kami) => {
@@ -105,9 +96,9 @@ export const Reroll = (props: Props) => {
           />
         </Tooltip>
       ))}
-      <Overlay bottom={0.9} right={0.6}>
+      {/* <Overlay bottom={0.9} right={0.6}>
         <ActionButton text='Buy More Rerolls Tickets' onClick={() => {}} />
-      </Overlay>
+      </Overlay> */}
     </Container>
   );
 };

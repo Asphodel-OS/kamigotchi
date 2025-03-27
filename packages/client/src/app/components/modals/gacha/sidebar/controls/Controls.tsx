@@ -44,7 +44,7 @@ export const Controls = (props: Props) => {
   const { reveal } = actions;
   const { tab } = controls;
   const { commits, payItem, balance } = data;
-  const { mode } = state;
+  const { mode, selectedKamis } = state;
 
   const getBalanceText = () => {
     let numDecimals = 0;
@@ -66,7 +66,7 @@ export const Controls = (props: Props) => {
         />
       )}
       {tab === 'MINT' && <Mint controls={controls} />}
-      {tab === 'REROLL' && <Reroll />}
+      {tab === 'REROLL' && <Reroll selectedKamis={selectedKamis} />}
       {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />

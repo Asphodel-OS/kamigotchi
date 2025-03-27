@@ -31,11 +31,12 @@ interface Props {
     balance: number;
   };
   state: {
-    selectedKamis: Kami[];
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
     setPrice: (price: number) => void;
+    selectedKamis: Kami[];
+    setSelectedKamis: (kamis: Kami[]) => void;
   };
 }
 
@@ -44,7 +45,7 @@ export const Footer = (props: Props) => {
   const { approve, bid, mint, reroll } = actions;
   const { tab } = controls;
   const { payItem, saleItem, balance } = data;
-  const { quantity, setQuantity, price, selectedKamis } = state;
+  const { quantity, setQuantity, price, selectedKamis, setSelectedKamis } = state;
 
   /////////////////
   // ERC20 APPROVAL
@@ -90,8 +91,10 @@ export const Footer = (props: Props) => {
     playClick();
     let success = false;
     if (tab === 'MINT') success = await mint(quantity);
-    else if (tab === 'REROLL') success = await reroll(selectedKamis);
-    else if (tab === 'AUCTION') {
+    else if (tab === 'REROLL') {
+      success = await reroll(selectedKamis);
+      if (success) setSelectedKamis([]);
+    } else if (tab === 'AUCTION') {
       if (needsApproval) approve(payItem, price);
       else bid(saleItem, quantity); // TODO: await on success
     }

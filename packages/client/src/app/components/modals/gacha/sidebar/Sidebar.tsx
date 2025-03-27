@@ -45,6 +45,7 @@ interface Props {
     quantity: number;
     setQuantity: (quantity: number) => void;
     selectedKamis: Kami[];
+    setSelectedKamis: (kamis: Kami[]) => void;
     tick: number;
   };
   utils: {

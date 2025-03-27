@@ -9,9 +9,6 @@ import { Pool } from './mint/Pool';
 import { Reroll } from './reroll/Reroll';
 
 interface Props {
-  actions: {
-    reroll: (kamis: Kami[]) => Promise<boolean>;
-  };
   caches: {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
@@ -43,9 +40,8 @@ interface Props {
 }
 
 export const Display = (props: Props) => {
-  const { state, controls, actions, data, caches, utils } = props;
+  const { state, controls, data, caches, utils } = props;
   const { tab, mode, setMode, setQuantity, selectedKamis, setSelectedKamis } = state;
-  const { reroll } = actions;
   const { auctions, poolKamis } = data;
 
   const Content = () => {
@@ -63,7 +59,6 @@ export const Display = (props: Props) => {
       case 'REROLL':
         return (
           <Reroll
-            actions={{ reroll }}
             data={data}
             state={{ setQuantity, selectedKamis, setSelectedKamis, tab }}
             utils={utils}

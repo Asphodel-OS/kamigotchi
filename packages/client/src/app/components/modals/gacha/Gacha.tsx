@@ -306,7 +306,6 @@ export function registerGachaModal() {
         >
           <Container>
             <Display
-              actions={{ reroll: handleReroll }}
               caches={{ kamiBlocks: KamiBlockCache }}
               controls={{ filters, sorts }}
               data={{
@@ -336,7 +335,7 @@ export function registerGachaModal() {
                 quantity,
                 setQuantity,
                 selectedKamis,
-
+                setSelectedKamis,
                 tick,
               }}
               utils={utils}

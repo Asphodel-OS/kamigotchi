@@ -17,7 +17,7 @@ interface Props {
 }
 
 export const Auction = (props: Props) => {
-  const { controls, state } = props;
+  const { state } = props;
   const { mode, price } = state;
 
   return (

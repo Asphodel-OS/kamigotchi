@@ -159,7 +159,7 @@ export const Pool = (props: Props) => {
 
         let aStat = 0;
         let bStat = 0;
-        if (field === 'INDEX') {
+        if (sort.field === 'INDEX') {
           aStat = a.index;
           bStat = b.index;
         } else if (sort.field === 'LEVEL') {
