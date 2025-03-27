@@ -30,7 +30,7 @@ export interface BaseKami extends DetailedEntity {
 
 // minimal gacha kami. reduced querying for performance
 export interface GachaKami extends BaseKami {
-  level: number;
+  level?: number;
   stats: Stats;
 }
 
@@ -102,7 +102,7 @@ export const get = (
   if (options?.config) kami.config = getConfigs(world, comps);
   if (options?.flags) kami.flags = getFlags(world, comps, entity);
   if (options?.harvest) kami.harvest = getHarvest(world, comps, entity);
-  if (options?.progress) kami.progress = getProgress(world, comps, entity);
+  if (options?.progress) kami.progress = getProgress(comps, entity);
   if (options?.rerolls) kami.rerolls = getRerolls(comps, entity);
   if (options?.skills) kami.skills = getSkills(world, comps, entity);
   if (options?.stats) kami.stats = getStats(world, comps, entity);

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { KamiStats } from 'network/shapes/Kami';
-import { BaseKami, GachaKami } from 'network/shapes/Kami/types';
+import { BaseKami, Kami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../../types';
 import { KamiBlock } from '../KamiBlock';
@@ -18,14 +18,13 @@ interface Props {
     filters: Filter[];
   };
   caches: {
-    kamis: Map<EntityIndex, GachaKami>;
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
     entities: EntityIndex[];
   };
   utils: {
-    getGachaKami: (entity: EntityIndex) => GachaKami;
+    getKami: (entity: EntityIndex) => Kami;
   };
   isVisible: boolean;
 }
@@ -33,13 +32,14 @@ interface Props {
 export const Pool = (props: Props) => {
   const { controls, caches, data, utils, isVisible } = props;
   const { filters, sorts } = controls;
-  const { kamiBlocks, kamis } = caches;
+  const { kamiBlocks } = caches;
   const { entities } = data;
+  const { getKami } = utils;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [filtered, setFiltered] = useState<GachaKami[]>([]);
+  const [filtered, setFiltered] = useState<Kami[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [limit, setLimit] = useState(20);
 
@@ -95,24 +95,20 @@ export const Pool = (props: Props) => {
     return scrollTop + clientHeight >= scrollHeight - 10; // 20px threshold
   };
 
-  // returns a kami from the cache, or creates a new one and sets it if not found
-  // NOTE: this is safe because we dont expect updates on kamis in the gacha pool
-  const getKami = (entity: EntityIndex) => {
-    if (!kamis.has(entity)) kamis.set(entity, utils.getGachaKami(entity));
-    return kamis.get(entity)!;
-  };
-
   // get the react component of a KamiBlock displayed in the pool
-  const getKamiBlock = (kami: GachaKami) => {
+  const getKamiBlock = (kami: Kami) => {
     const entity = kami.entity;
     if (!kamiBlocks.has(entity)) {
-      const tooltip = [
-        `Health: ${kami.stats.health.total}`,
-        `Power: ${kami.stats.power.total}`,
-        `Violence: ${kami.stats.violence.total}`,
-        `Harmony: ${kami.stats.harmony.total}`,
-        `Slots: ${kami.stats.slots.total}`,
-      ];
+      let tooltip: string[] = [];
+      if (kami.stats) {
+        tooltip = [
+          `Health: ${kami.stats.health.total}(+${kami.stats.health.shift})`,
+          `Power: ${kami.stats.power.total}(+${kami.stats.power.shift})`,
+          `Violence: ${kami.stats.violence.total}(+${kami.stats.violence.shift})`,
+          `Harmony: ${kami.stats.harmony.total}(+${kami.stats.harmony.shift})`,
+          `Slots: ${kami.stats.slots.total}(+${kami.stats.slots.shift})`,
+        ];
+      }
 
       kamiBlocks.set(
         entity,
@@ -131,11 +127,21 @@ export const Pool = (props: Props) => {
     const all = entities.map((entity) => getKami(entity));
     const newFiltered = all.filter((kami) => {
       return filters.every((filter) => {
-        if (filter.field === 'INDEX') return kami.index >= filter.min && kami.index <= filter.max;
-        if (filter.field === 'LEVEL') return kami.level >= filter.min && kami.level <= filter.max;
-        else {
-          const value = kami.stats[filter.field.toLowerCase() as keyof KamiStats].total;
-          return value >= filter.min && value <= filter.max;
+        const max = filter.max;
+        const min = filter.min;
+
+        if (filter.field === 'INDEX') {
+          const index = kami.index;
+          return index >= min && index <= max;
+        } else if (filter.field === 'LEVEL') {
+          const level = kami.progress?.level;
+          if (!level) return false;
+          return level >= min && level <= max;
+        } else {
+          const stats = kami?.stats;
+          if (!stats) return false;
+          const value = stats[filter.field.toLowerCase() as keyof KamiStats].total;
+          return value >= min && value <= max;
         }
       });
     });
@@ -143,7 +149,7 @@ export const Pool = (props: Props) => {
     setFiltered(newFiltered);
   };
 
-  const sortKamis = (kamis: GachaKami[]) => {
+  const sortKamis = (kamis: Kami[]) => {
     const sorted = [...kamis].sort((a, b) => {
       for (let i = 0; i < sorts.length; i++) {
         const sort = sorts[i];
@@ -152,10 +158,15 @@ export const Pool = (props: Props) => {
 
         let aStat = 0;
         let bStat = 0;
-        if (['INDEX', 'LEVEL'].includes(sort.field)) {
-          aStat = a[field as keyof GachaKami] as number;
-          bStat = b[field as keyof GachaKami] as number;
+        if (field === 'INDEX') {
+          aStat = a.index;
+          bStat = b.index;
+        } else if (sort.field === 'LEVEL') {
+          if (!a.progress || !b.progress) return 0;
+          aStat = a.progress.level;
+          bStat = b.progress.level;
         } else {
+          if (!a.stats || !b.stats) return 0;
           aStat = a.stats[field as keyof KamiStats].total;
           bStat = b.stats[field as keyof KamiStats].total;
         }

@@ -10,6 +10,7 @@ import { getAccount, getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
+import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
@@ -17,7 +18,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { GACHA_ID, getGachaCommits } from 'network/shapes/Gacha';
-import { BaseKami, GachaKami, Kami, getGachaKami, queryKamis } from 'network/shapes/Kami';
+import { BaseKami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
 import { Display } from './display/Display';
@@ -25,8 +26,7 @@ import { Sidebar } from './sidebar/Sidebar';
 import { AuctionMode, DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType } from './types';
 
 // TODO: rely on cache for these instead
-const kamiCache = new Map<EntityIndex, GachaKami>();
-const kamiBlockCache = new Map<EntityIndex, JSX.Element>();
+const KamiBlockCache = new Map<EntityIndex, JSX.Element>();
 
 export function registerGachaModal() {
   registerUIComponent(
@@ -46,7 +46,7 @@ export function registerGachaModal() {
           const accountID = world.entities[accountEntity];
           const accountOptions = { inventories: 2, live: 2 };
           const auctionOptions = { items: 3600, balance: 1 };
-          const kamiOptions = { live: 0, rerolls: 0 };
+          const kamiOptions = { live: 0, stats: 3600, traits: 3600 };
 
           // TODO: boot the poolKamis query to MainDisplay once we consolidate tab views under it
           return {
@@ -54,7 +54,6 @@ export function registerGachaModal() {
             data: {
               accountEntity,
               commits: getGachaCommits(world, components, accountID),
-              maxRerolls: 10, // todo: remove
               poolKamis: queryKamis(components, { account: GACHA_ID }),
             },
             tokens: {
@@ -65,9 +64,9 @@ export function registerGachaModal() {
               getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
               getAuction: (itemIndex: number) =>
                 getAuctionByIndex(world, components, itemIndex, auctionOptions),
-              getGachaKami: (entity: EntityIndex) => getGachaKami(world, components, entity),
               getItem: (index: number) => getItemByIndex(world, components, index),
-              getRerollCost: (kami: Kami) => 0n, // todo: remove
+              getKami: (entity: EntityIndex) => getKami(world, components, entity),
+              queryGachaKamis: () => queryKamis(components, { account: GACHA_ID }),
 
               // not sure if we  need the below or just a generic getBalance
               getGachaBalance: (inventories: Inventory[]) =>
@@ -130,6 +129,7 @@ export function registerGachaModal() {
 
       // reveal gacha result(s) when the number of commits changes
       // Q(jb): is it necessary to run this as an async
+      // We should pass over a function for
       useEffect(() => {
         const tx = async () => {
           const filtered = filterRevealableCommits(commits);
@@ -207,7 +207,7 @@ export function registerGachaModal() {
       };
 
       // reroll a pet with eth payment
-      const rerollTx = (kamis: BaseKami[], price: bigint) => {
+      const rerollTx = (kamis: BaseKami[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -218,10 +218,7 @@ export function registerGachaModal() {
           params: [kamis.map((n) => n.name)],
           description: `Rerolling ${kamis.length} Kami`,
           execute: async () => {
-            return api.mint.reroll(
-              kamis.map((n) => n.id),
-              price
-            );
+            return api.mint.reroll(kamis.map((n) => n.id));
           },
         });
         return actionID;
@@ -269,11 +266,11 @@ export function registerGachaModal() {
         return false;
       };
 
-      const handleReroll = async (kamis: BaseKami[], price: bigint) => {
+      const handleReroll = async (kamis: BaseKami[]) => {
         if (kamis.length === 0) return false;
         try {
           setWaitingToReveal(true);
-          const rerollActionID = rerollTx(kamis, price);
+          const rerollActionID = rerollTx(kamis);
           if (!rerollActionID) throw new Error('Reroll action failed');
 
           await waitForActionCompletion(
@@ -308,7 +305,7 @@ export function registerGachaModal() {
           <Container>
             <Display
               actions={{ reroll: handleReroll }}
-              caches={{ kamis: kamiCache, kamiBlocks: kamiBlockCache }}
+              caches={{ kamiBlocks: KamiBlockCache }}
               controls={{ filters, sorts }}
               data={{
                 ...data,

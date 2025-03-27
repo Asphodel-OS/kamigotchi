@@ -2,25 +2,23 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { ActionButton } from 'app/components/library';
+import { Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { TabType } from '../../types';
+import { KamiBlock } from '../KamiBlock';
 import { KamiGrid } from './KamiGrid';
-import { SideBalance } from './SideBalance';
 
 interface Props {
   actions: {
-    reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
+    reroll: (kamis: Kami[]) => Promise<boolean>;
   };
   tab: TabType;
   data: {
     accountEntity: EntityIndex;
     balance: bigint;
-    maxRerolls: number;
   };
   utils: {
-    getRerollCost: (kami: Kami) => bigint;
     getAccountKamis: () => Kami[];
   };
 }
@@ -28,13 +26,12 @@ interface Props {
 export const Reroll = (props: Props) => {
   const { actions, data, utils, tab } = props;
   const { reroll } = actions;
-  const { accountEntity, maxRerolls, balance } = data;
-  const { getAccountKamis, getRerollCost } = utils;
+  const { accountEntity, balance } = data;
+  const { getAccountKamis } = utils;
   const { modals } = useVisibility();
 
   const [partyKamis, setPartyKamis] = useState<Kami[]>([]);
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
-  const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   // ticking
@@ -54,15 +51,13 @@ export const Reroll = (props: Props) => {
   // update the reroll price of each kami when the list changes
   useEffect(() => {
     let price = BigInt(0);
-    selectedKamis.forEach((kami) => (price += getRerollCost(kami)));
-    setRerollPrice(price);
   }, [selectedKamis]);
 
   //////////////////
   // INTERACTION
 
   const handleReroll = () => {
-    reroll(selectedKamis, rerollPrice);
+    reroll(selectedKamis);
     setSelectedKamis([]);
   };
 
@@ -71,10 +66,6 @@ export const Reroll = (props: Props) => {
 
   const canRerollSelected = () => {
     let rerollPrice = BigInt(0);
-    for (const kami of selectedKamis) {
-      if (kami.rerolls ?? 0 >= maxRerolls) return false;
-      rerollPrice += getRerollCost(kami);
-    }
     if (rerollPrice > balance) return false;
     return true;
   };
@@ -86,8 +77,6 @@ export const Reroll = (props: Props) => {
     const text = [];
     text.push(kami.name);
     text.push('');
-    text.push(`Re-roll cost: ${props.utils.getRerollCost(kami)} Ξ`);
-    text.push(`Re-rolls done: ${kami.rerolls?.toString()} / ${maxRerolls}`);
     return text;
   };
 
@@ -119,40 +108,28 @@ export const Reroll = (props: Props) => {
     );
 
   return (
-    <OuterBox>
-      {Grid}
-      <Footer>
-        <SideBalance balance={maxRerolls.toString()} title='Re-roll cost' />
-        <div style={{ flexGrow: 6 }} />
-        <ActionButton
-          onClick={handleReroll}
-          text='Re-roll'
-          size='large'
-          disabled={selectedKamis.length === 0 || canRerollSelected()}
-          fill
-        />
-      </Footer>
-    </OuterBox>
+    <Container>
+      {partyKamis.map((kami) => (
+        <Tooltip key={kami.index} text={[]}>
+          <KamiBlock kami={kami} isSelectable />
+        </Tooltip>
+      ))}
+    </Container>
   );
 };
 
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 0.5vh 2vw 1vh;
-`;
-
-const OuterBox = styled.div`
+const Container = styled.div`
+  position: relative;
+  height: 100%;
   width: 100%;
-  background-color: white;
+  padding: 0.6vw;
+
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: stretch;
-  height: 50vh;
-  flex-grow: 1;
+
+  overflow-y: scroll;
 `;
 
 const EmptyText = styled.div`

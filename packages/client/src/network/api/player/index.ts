@@ -254,10 +254,8 @@ export function createPlayerAPI(txQueue: TxQueue) {
 
   // @dev reroll a pet
   // @param kamiID  kamiID
-  function rerollPet(kamiIDs: BigNumberish[], totalCost: BigNumberish) {
-    return systems['system.kami.gacha.reroll'].reroll(kamiIDs, {
-      value: totalCost,
-    });
+  function rerollPet(kamiIDs: BigNumberish[]) {
+    return systems['system.kami.gacha.reroll'].reroll(kamiIDs);
   }
 
   /////////////////

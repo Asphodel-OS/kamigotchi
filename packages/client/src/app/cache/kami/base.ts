@@ -170,7 +170,7 @@ export const get = (
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.progress) {
       if (debug) console.log(`  updating kami progress`);
-      kami.progress = getKamiProgress(world, components, entity);
+      kami.progress = getKamiProgress(components, entity);
       ProgressUpdateTs.set(entity, now);
     }
   }

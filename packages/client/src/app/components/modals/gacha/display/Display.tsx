@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
-import { GachaKami } from 'network/shapes/Kami/types';
 import { AuctionMode, Filter, Sort, TabType } from '../types';
 import { AuctionDisplay } from './auction/Auction';
 import { Pool } from './mint/Pool';
@@ -15,16 +14,14 @@ interface Props {
     sorts: Sort[];
   };
   actions: {
-    reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
+    reroll: (kamis: Kami[]) => Promise<boolean>;
   };
   caches: {
-    kamis: Map<EntityIndex, GachaKami>;
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
     accountEntity: EntityIndex;
     poolKamis: EntityIndex[];
-    maxRerolls: number;
     balance: bigint;
     auctions: {
       gacha: Auction;
@@ -37,9 +34,9 @@ interface Props {
     tab: TabType;
   };
   utils: {
-    getGachaKami: (entity: EntityIndex) => GachaKami;
-    getRerollCost: (kami: Kami) => bigint;
+    getKami: (entity: EntityIndex) => Kami;
     getAccountKamis: () => Kami[];
+    queryGachaKamis: () => EntityIndex[];
   };
 }
 

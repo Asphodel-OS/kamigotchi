@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
+import { LibInventory, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibERC20 } from "libraries/LibERC20.sol";
 
@@ -25,9 +26,8 @@ contract KamiGachaRerollSystem is System {
     // get previous data
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);
 
-    // todo: spend reroll ticket
-
-    // send pet into pool
+    // spend reroll tickets and send selected pets to pool
+    LibInventory.decFor(components, accID, REROLL_TICKET_INDEX, kamiIDs.length);
     LibGacha.depositPets(components, kamiIDs);
 
     // commits random seed for gacha roll

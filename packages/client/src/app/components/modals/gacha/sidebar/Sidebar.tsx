@@ -69,6 +69,12 @@ export const Sidebar = (props: Props) => {
   /////////////////
   // HOOKS
 
+  // on startup it should be set to mint
+  useEffect(() => {
+    updatePayItem();
+    updateBalance();
+  }, [modals.gacha]);
+
   // maybe consider controlling this hook and the one below with a dedicated payItem vs buyItem
   useEffect(() => {
     if (!modals.gacha) return;
@@ -108,12 +114,17 @@ export const Sidebar = (props: Props) => {
 
   // update the balance according to tab/mode
   const updateBalance = () => {
-    if (tab === 'MINT') setBalance(getGachaBalance(inventories));
-    else if (tab === 'REROLL') setBalance(getRerollBalance(inventories));
+    let newBalance = 0;
+    if (tab === 'MINT') newBalance = getGachaBalance(inventories);
+    else if (tab === 'REROLL') newBalance = getRerollBalance(inventories);
     else if (tab === 'AUCTION') {
-      if (mode === 'GACHA') setBalance(getMusuBalance(inventories));
-      else if (mode === 'REROLL') setBalance(tokenBal.get(payItem.address || '')?.balance || 0);
-    } else setBalance(0);
+      if (mode === 'GACHA') newBalance = getMusuBalance(inventories);
+      else if (mode === 'REROLL') newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
+    }
+
+    if (newBalance !== balance) {
+      setBalance(newBalance);
+    }
   };
 
   // update the price according to tab/mode

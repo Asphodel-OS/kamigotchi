@@ -1,22 +1,17 @@
-import { EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/components';
 import { getConfigFieldValue, getConfigFieldValueArray } from '../Config';
+import { getExperience, getLevel } from '../utils/component';
 
 export interface Progress {
   level: number;
   experience: number;
 }
 
-export const getProgress = (
-  world: World,
-  components: Components,
-  entity: EntityIndex
-): Progress => {
-  const { Level, Experience } = components;
-  const level = (getComponentValue(Level, entity)?.value ?? 0) * 1;
+export const getProgress = (components: Components, entity: EntityIndex): Progress => {
   return {
-    level,
-    experience: (getComponentValue(Experience, entity)?.value ?? 0) * 1,
+    level: getLevel(components, entity),
+    experience: getExperience(components, entity),
   };
 };
 

@@ -22,8 +22,10 @@ import { LibStat } from "libraries/LibStat.sol";
 ////////////////////
 // CONSTANTS
 
+// TODO: update these to match the actual item indices on new world
 uint32 constant MUSU_INDEX = 1;
 uint32 constant GACHA_TICKET_INDEX = 2;
+uint32 constant REROLL_TICKET_INDEX = 4;
 
 // handles nonfungible inventory instances
 library LibInventory {

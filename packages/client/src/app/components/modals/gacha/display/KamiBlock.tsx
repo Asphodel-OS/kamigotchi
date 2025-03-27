@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
-import { GachaKami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 
 interface Props {
-  kami: GachaKami;
+  kami: Kami;
   onClick?: () => void;
+  isSelectable?: boolean;
+  isSelected?: boolean;
 }
 
 export const KamiBlock = (props: Props) => {
   const { kami, onClick } = props;
-  const { index, level, name } = kami;
+  const { index, progress, name } = kami;
 
   return (
     <Container>
@@ -18,7 +20,7 @@ export const KamiBlock = (props: Props) => {
       <Overlay top={0.9} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
-          <Text size={0.6}>{level}</Text>
+          <Text size={0.6}>{progress?.level ?? '???'}</Text>
         </Grouping>
       </Overlay>
       <Overlay top={0.9} right={0.7}>
@@ -64,4 +66,20 @@ const Text = styled.div<{ size: number }>`
   color: white;
   font-size: ${(props) => props.size}vw;
   text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
+`;
+
+const ClickBox = styled.button<{ isSelected: boolean }>`
+  position: absolute;
+  bottom: 0.5vw;
+  right: 0.5vw;
+  width: 2vw;
+  height: 2vw;
+
+  border: ${({ isSelected }) => (isSelected ? 'solid .15vw #FFF' : 'solid .15vw #333')};
+  border-radius: 0.4vw;
+  opacity: 0.9;
+  backgroundColor: '#3498DB',
+  &:hover {
+    background-color: #aaa;
+  }
 `;

@@ -48,6 +48,13 @@ export const getEntityType = (components: Components, entity: EntityIndex): stri
   return result ?? '';
 };
 
+export const getExperience = (components: Components, entity: EntityIndex): number => {
+  const { Experience } = components;
+  const result = getComponentValue(Experience, entity)?.value;
+  if (result === undefined) console.warn('getExperience(): undefined for entity', entity);
+  return result ?? 0;
+};
+
 export const getFor = (components: Components, entity: EntityIndex): string => {
   const { ForString } = components;
   const rawValue = getComponentValue(ForString, entity)?.value as string | '';
