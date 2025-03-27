@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
-import { AuctionMode, TabType } from '../../../types';
+import { TabType, ViewMode } from '../../../types';
 
 interface Props {
   controls: {
     tab: TabType;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
   };
   state: {
-    mode: AuctionMode;
-    setMode: (mode: AuctionMode) => void;
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
@@ -17,8 +17,9 @@ interface Props {
 }
 
 export const Auction = (props: Props) => {
-  const { state } = props;
-  const { mode, price } = state;
+  const { controls, state } = props;
+  const { mode } = controls;
+  const { price } = state;
 
   return (
     <Container>

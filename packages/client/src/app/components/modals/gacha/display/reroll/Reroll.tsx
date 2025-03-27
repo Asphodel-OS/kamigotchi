@@ -1,6 +1,6 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton, Overlay } from 'app/components/library';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
@@ -32,11 +32,17 @@ interface Props {
 
 export const Reroll = (props: Props) => {
   const { controls, data, isVisible, state, utils } = props;
-  const { mode, setMode, tab } = controls;
+  const { mode, setMode } = controls;
+  const { auction } = data;
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
     else setMode('DEFAULT');
+  };
+
+  const getButtonText = () => {
+    if (mode === 'DEFAULT') return 'Get More Reroll Tickets';
+    else return 'Back to Reroll';
   };
 
   return (
@@ -47,9 +53,9 @@ export const Reroll = (props: Props) => {
         utils={utils}
         isVisible={isVisible && mode === 'DEFAULT'}
       />
-      <AuctionView data={data} isVisible={isVisible && mode === 'ALT'} />
+      <AuctionView auction={auction} isVisible={isVisible && mode === 'ALT'} />
       <Overlay bottom={0.9} right={0.6}>
-        <ActionButton text='Get More Rerolls Tickets' onClick={toggleMode} />
+        <ActionButton text={getButtonText()} onClick={toggleMode} />
       </Overlay>
     </Container>
   );

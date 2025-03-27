@@ -4,15 +4,12 @@ import { Auction } from 'network/shapes/Auction';
 import { Chart } from '../auction/Chart';
 
 export interface Props {
-  data: {
-    auction: Auction;
-  };
+  auction: Auction;
   isVisible: boolean;
 }
 
 export const AuctionView = (props: Props) => {
-  const { data, isVisible } = props;
-  const { auction } = data;
+  const { auction, isVisible } = props;
 
   return (
     <Container isVisible={isVisible}>

@@ -15,6 +15,8 @@ interface Props {
   };
   controls: {
     tab: TabType;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
     filters: Filter[];
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
@@ -27,8 +29,6 @@ interface Props {
     balance: number;
   };
   state: {
-    mode: ViewMode;
-    setMode: (mode: ViewMode) => void;
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
@@ -42,9 +42,9 @@ interface Props {
 export const Controls = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { reveal } = actions;
-  const { tab } = controls;
+  const { mode, tab } = controls;
   const { commits, payItem, balance } = data;
-  const { mode, selectedKamis } = state;
+  const { selectedKamis } = state;
 
   const getBalanceText = () => {
     let numDecimals = 0;

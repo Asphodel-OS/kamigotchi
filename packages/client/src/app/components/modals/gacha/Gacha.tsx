@@ -109,12 +109,12 @@ export function registerGachaModal() {
       // update the data when the modal is opened
       useEffect(() => {
         if (!modals.gacha) return;
-        if (tab === 'AUCTION') {
-          setGachaAuction(getAuction(GACHA_TICKET_INDEX));
-          setRerollAuction(getAuction(REROLL_TICKET_INDEX));
+        if (mode === 'ALT') {
+          if (tab === 'MINT') setGachaAuction(getAuction(GACHA_TICKET_INDEX));
+          else if (tab === 'REROLL') setRerollAuction(getAuction(REROLL_TICKET_INDEX));
         }
         setAccount(getAccount());
-      }, [modals.gacha, tab, accountEntity, tick]);
+      }, [modals.gacha, tab, mode, accountEntity, tick]);
 
       // open the party modal when the reveal is triggered
       useEffect(() => {
@@ -243,6 +243,11 @@ export function registerGachaModal() {
       ///////////////
       // HANDLERS
 
+      const handleSetTab = (tab: TabType) => {
+        setTab(tab);
+        setMode('DEFAULT');
+      };
+
       const handleMint = async (amount: number) => {
         try {
           setWaitingToReveal(true);
@@ -317,15 +322,22 @@ export function registerGachaModal() {
                 reroll: handleReroll,
                 reveal: revealTx,
               }}
-              controls={{ tab, setTab, filters, setFilters, sorts, setSorts }}
+              controls={{
+                mode,
+                setMode,
+                tab,
+                setTab: handleSetTab,
+                filters,
+                setFilters,
+                sorts,
+                setSorts,
+              }}
               data={{
                 ...data,
                 inventories: account.inventories ?? [],
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
               }}
               state={{
-                mode,
-                setMode,
                 quantity,
                 setQuantity,
                 selectedKamis,

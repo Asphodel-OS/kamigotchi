@@ -36,22 +36,27 @@ export const Chart = (props: Props) => {
   const endTs = Math.floor(Date.now() / 1000);
   const startTs = auction.time.start != 0 ? auction.time.start : endTs;
 
+  useEffect(() => {
+    console.log(`mounted ${auction.auctionItem?.name}, retrieving data`);
+    retrieveBuys();
+  }, []);
+
   // retrieve this auction's buy history
   // TODO: allow for partial pulls
   useEffect(() => {
     console.log('auction updated, retrieving data');
-    const retrieveBuys = async () => {
-      const auctionItem = auction.auctionItem;
-      if (auctionItem) {
-        const response = await kamidenClient.getAuctionBuys({
-          ItemIndex: auction.auctionItem?.index,
-        });
-        const buys = response.AuctionBuys;
-        setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
-      }
-    };
     retrieveBuys();
   }, [auction, auction.supply.sold]);
+  const retrieveBuys = async () => {
+    const auctionItem = auction.auctionItem;
+    if (auctionItem) {
+      const response = await kamidenClient.getAuctionBuys({
+        ItemIndex: auction.auctionItem?.index,
+      });
+      const buys = response.AuctionBuys;
+      setBuys(buys.sort((a, b) => a.Timestamp - b.Timestamp));
+    }
+  };
 
   // generate the price history data based on buy history and auction settings
   useEffect(() => {

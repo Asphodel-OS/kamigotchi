@@ -24,6 +24,8 @@ interface Props {
     reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
     tab: TabType;
     setTab: (tab: TabType) => void;
     filters: Filter[];
@@ -40,8 +42,6 @@ interface Props {
     };
   };
   state: {
-    mode: ViewMode;
-    setMode: (mode: ViewMode) => void;
     quantity: number;
     setQuantity: (quantity: number) => void;
     selectedKamis: Kami[];
@@ -56,9 +56,9 @@ interface Props {
 
 export const Sidebar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
-  const { tab, setTab } = controls;
+  const { mode, tab, setTab } = controls;
   const { auctions, commits } = data;
-  const { tick, mode, quantity } = state;
+  const { tick, quantity } = state;
   const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
   const { modals } = useVisibility();
