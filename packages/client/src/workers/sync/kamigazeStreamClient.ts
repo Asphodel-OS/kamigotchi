@@ -2,8 +2,9 @@ import { grpc } from '@improbable-eng/grpc-web';
 import { awaitPromise } from '@mud-classic/utils';
 import { BigNumber } from 'ethers';
 import { Channel, createChannel, createClient } from 'nice-grpc-web';
-import { Observable, concatMap, from, map, of } from 'rxjs';
+import { concatMap, from, map, Observable, of } from 'rxjs';
 
+import { EntityID } from '@mud-classic/recs';
 import {
   KamigazeServiceClient,
   KamigazeServiceDefinition,
@@ -75,7 +76,22 @@ export function createKamigazeStreamService(
         map(async (responseChunk) => {
           debug('[kamigaze] got events');
           const events = await transformWorldEvents(responseChunk);
-          if (includeSystemCalls && events.length > 0) {
+          if (events.length === 0) {
+            return [
+              {
+                type: NetworkEvents.NetworkComponentUpdate,
+                entity: '0' as EntityID,
+                component: 'KeepAlive',
+                value: undefined,
+                blockNumber: 0,
+                lastEventInTx: false,
+                txHash: 'KeepAlive',
+                txMetadata: undefined,
+              } as NetworkComponentUpdate,
+            ];
+          }
+
+          if (includeSystemCalls) {
             const systemCalls = parseSystemCallsFromStreamEvents(events);
             return [...events, ...systemCalls];
           }
