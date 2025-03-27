@@ -4,7 +4,7 @@ import { StatIcons } from 'constants/stats';
 export type TabType = 'MINT' | 'REROLL' | 'AUCTION';
 export const TABS: TabType[] = ['MINT', 'REROLL', 'AUCTION'];
 
-export type AuctionMode = 'GACHA' | 'REROLL';
+export type ViewMode = 'DEFAULT' | 'ALT';
 
 export type Stat = 'INDEX' | 'LEVEL' | 'HEALTH' | 'POWER' | 'VIOLENCE' | 'HARMONY' | 'SLOTS';
 

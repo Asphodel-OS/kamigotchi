@@ -4,7 +4,7 @@ import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { AuctionMode, Filter, Sort, TabType } from '../../types';
+import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { Auction } from './auction/Auction';
 import { Mint } from './mint/Mint';
 import { Reroll } from './reroll/Reroll';
@@ -27,8 +27,8 @@ interface Props {
     balance: number;
   };
   state: {
-    mode: AuctionMode;
-    setMode: (mode: AuctionMode) => void;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
@@ -48,7 +48,7 @@ export const Controls = (props: Props) => {
 
   const getBalanceText = () => {
     let numDecimals = 0;
-    if (tab === 'AUCTION' && mode === 'REROLL') numDecimals = 3;
+    if (tab === 'REROLL' && mode === 'ALT') numDecimals = 3;
     return balance.toFixed(numDecimals);
   };
 

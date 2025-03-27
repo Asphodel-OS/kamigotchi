@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
-import { AuctionMode, Filter, Sort, TabType } from '../types';
+import { Filter, Sort, TabType, ViewMode } from '../types';
 import { AuctionDisplay } from './auction/Auction';
 import { Pool } from './mint/Pool';
 import { Reroll } from './reroll/Reroll';
@@ -13,6 +13,9 @@ interface Props {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   controls: {
+    tab: TabType;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
     filters: Filter[];
     sorts: Sort[];
   };
@@ -25,12 +28,10 @@ interface Props {
     };
   };
   state: {
-    mode: AuctionMode;
-    setMode: (mode: AuctionMode) => void;
     setQuantity: (quantity: number) => void;
     selectedKamis: Kami[];
     setSelectedKamis: (selectedKamis: Kami[]) => void;
-    tab: TabType;
+    tick: number;
   };
   utils: {
     getKami: (entity: EntityIndex) => Kami;
@@ -41,29 +42,11 @@ interface Props {
 
 export const Display = (props: Props) => {
   const { state, controls, data, caches, utils } = props;
-  const { tab, mode, setMode, setQuantity, selectedKamis, setSelectedKamis } = state;
+  const { tab, mode, setMode } = controls;
   const { auctions, poolKamis } = data;
 
   const Content = () => {
     switch (tab) {
-      case 'MINT':
-        return (
-          <Pool
-            controls={controls}
-            caches={caches}
-            data={{ entities: poolKamis }}
-            utils={utils}
-            isVisible={true}
-          />
-        );
-      case 'REROLL':
-        return (
-          <Reroll
-            data={data}
-            state={{ setQuantity, selectedKamis, setSelectedKamis, tab }}
-            utils={utils}
-          />
-        );
       case 'AUCTION':
         return (
           <AuctionDisplay
@@ -76,7 +59,26 @@ export const Display = (props: Props) => {
     }
   };
 
-  return <Container>{Content()}</Container>;
+  return (
+    <Container>
+      <Pool
+        controls={controls}
+        caches={caches}
+        data={{ entities: poolKamis }}
+        utils={utils}
+        isVisible={tab === 'MINT'}
+      />
+
+      <Reroll
+        controls={controls}
+        data={{ ...data, auction: auctions.reroll }}
+        state={state}
+        utils={utils}
+        isVisible={tab === 'REROLL'}
+      />
+      {Content()}
+    </Container>
+  );
 };
 
 const Container = styled.div`

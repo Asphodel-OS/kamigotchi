@@ -37,7 +37,9 @@ export const Chart = (props: Props) => {
   const startTs = auction.time.start != 0 ? auction.time.start : endTs;
 
   // retrieve this auction's buy history
+  // TODO: allow for partial pulls
   useEffect(() => {
+    console.log('auction updated, retrieving data');
     const retrieveBuys = async () => {
       const auctionItem = auction.auctionItem;
       if (auctionItem) {
@@ -173,7 +175,7 @@ export const Chart = (props: Props) => {
       <Tooltip text={getTitleTooltip()}>
         <Title onClick={onClick}>{name}</Title>
       </Tooltip>
-      <Overlay right={3} top={2.1}>
+      <Overlay left={3} top={2.1}>
         <ActionListButton
           id='dt'
           text={dt}
@@ -195,7 +197,7 @@ export const Chart = (props: Props) => {
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 33vh;
+  height: 60vh;
 
   display: flex;
   flex-flow: column wrap;
@@ -207,7 +209,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   color: black;
-  font-size: 1.5vw;
+  font-size: 2.1vw;
   margin: 0.6vw;
 
   &:hover {

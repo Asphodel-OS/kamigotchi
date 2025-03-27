@@ -190,7 +190,7 @@ export const Pool = (props: Props) => {
   // DISPLAY
 
   return (
-    <Container ref={containerRef}>
+    <Container ref={containerRef} isVisible={isVisible}>
       <Overlay top={0.6} left={0.6}>
         <Text>
           {filtered.length}/{entities.length}
@@ -203,12 +203,12 @@ export const Pool = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   padding: 0.6vw;
   width: 100%;
 
-  display: flex;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: row wrap;
   align-items: flex-start;
   justify-content: center;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Auction } from 'network/shapes/Auction';
-import { AuctionMode, TabType } from '../../types';
+import { TabType, ViewMode } from '../../types';
 import { Chart } from './Chart';
 
 export interface Props {
@@ -12,21 +12,20 @@ export interface Props {
     };
   };
   state: {
-    mode: AuctionMode;
-    setMode: (mode: AuctionMode) => void;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
     tab: TabType;
   };
 }
 
 export const AuctionDisplay = (props: Props) => {
   const { data, state } = props;
-  const { gacha, reroll } = data.auctions;
+  const { gacha } = data.auctions;
   const { setMode } = state;
 
   return (
     <Container>
-      <Chart name='Gacha Tickets' auction={gacha} onClick={() => setMode('GACHA')} />
-      <Chart name='Reroll Tickets' auction={reroll} onClick={() => setMode('REROLL')} />
+      <Chart name='Gacha Tickets' auction={gacha} />
     </Container>
   );
 };
