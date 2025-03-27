@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
+import { Kami } from 'network/shapes/Kami';
 import { AuctionMode, Filter, Sort, TabType } from '../../types';
 import { Auction } from './auction/Auction';
 import { Mint } from './mint/Mint';
@@ -13,14 +14,11 @@ interface Props {
     reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
+    tab: TabType;
     filters: Filter[];
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
     setSorts: (sort: Sort[]) => void;
-    quantity: number;
-    setQuantity: (quantity: number) => void;
-    price: number;
-    setPrice: (price: number) => void;
   };
   data: {
     commits: Commit[];
@@ -31,7 +29,11 @@ interface Props {
   state: {
     mode: AuctionMode;
     setMode: (mode: AuctionMode) => void;
-    tab: TabType;
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
+    setPrice: (price: number) => void;
+    selectedKamis: Kami[];
     tick: number;
   };
 }
@@ -40,8 +42,9 @@ interface Props {
 export const Controls = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { reveal } = actions;
+  const { tab } = controls;
   const { commits, payItem, balance } = data;
-  const { mode, tab } = state;
+  const { mode } = state;
 
   const getBalanceText = () => {
     let numDecimals = 0;

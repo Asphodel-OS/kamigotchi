@@ -18,7 +18,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { GACHA_ID, getGachaCommits } from 'network/shapes/Gacha';
-import { BaseKami, queryKamis } from 'network/shapes/Kami';
+import { Kami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
 import { Display } from './display/Display';
@@ -46,7 +46,7 @@ export function registerGachaModal() {
           const accountID = world.entities[accountEntity];
           const accountOptions = { inventories: 2, live: 2 };
           const auctionOptions = { items: 3600, balance: 1 };
-          const kamiOptions = { live: 0, stats: 3600, traits: 3600 };
+          const kamiOptions = { live: 0, bonuses: 3600, progress: 3600, stats: 3600, traits: 3600 };
 
           // TODO: boot the poolKamis query to MainDisplay once we consolidate tab views under it
           return {
@@ -92,6 +92,8 @@ export function registerGachaModal() {
       const [mode, setMode] = useState<AuctionMode>('GACHA');
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
+      const [quantity, setQuantity] = useState(0);
+      const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
 
       const [account, setAccount] = useState<Account>(NullAccount);
       const [tick, setTick] = useState(Date.now());
@@ -207,7 +209,7 @@ export function registerGachaModal() {
       };
 
       // reroll a pet with eth payment
-      const rerollTx = (kamis: BaseKami[]) => {
+      const rerollTx = (kamis: Kami[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -266,7 +268,7 @@ export function registerGachaModal() {
         return false;
       };
 
-      const handleReroll = async (kamis: BaseKami[]) => {
+      const handleReroll = async (kamis: Kami[]) => {
         if (kamis.length === 0) return false;
         try {
           setWaitingToReveal(true);
@@ -309,10 +311,9 @@ export function registerGachaModal() {
               controls={{ filters, sorts }}
               data={{
                 ...data,
-                balance: 0n,
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
               }}
-              state={{ tab, mode, setMode }}
+              state={{ mode, setMode, setQuantity, selectedKamis, setSelectedKamis, tab }}
               utils={utils}
             />
             <Sidebar
@@ -323,13 +324,21 @@ export function registerGachaModal() {
                 reroll: handleReroll,
                 reveal: revealTx,
               }}
-              controls={{ filters, setFilters, sorts, setSorts }}
+              controls={{ tab, setTab, filters, setFilters, sorts, setSorts }}
               data={{
                 ...data,
                 inventories: account.inventories ?? [],
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
               }}
-              state={{ tick, tab, setTab, mode, setMode }}
+              state={{
+                mode,
+                setMode,
+                quantity,
+                setQuantity,
+                selectedKamis,
+
+                tick,
+              }}
               utils={utils}
             />
           </Container>

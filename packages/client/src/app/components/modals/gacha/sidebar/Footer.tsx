@@ -20,13 +20,10 @@ interface Props {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
     mint: (amount: number) => Promise<boolean>;
-    reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
+    reroll: (kamis: Kami[]) => Promise<boolean>;
   };
   controls: {
-    quantity: number;
-    setQuantity: (quantity: number) => void;
-    price: number;
-    setPrice: (price: number) => void;
+    tab: TabType;
   };
   data: {
     payItem: Item;
@@ -34,16 +31,20 @@ interface Props {
     balance: number;
   };
   state: {
-    tab: TabType;
+    selectedKamis: Kami[];
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
+    setPrice: (price: number) => void;
   };
 }
 
 export const Footer = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { approve, bid, mint, reroll } = actions;
-  const { quantity, setQuantity, price } = controls;
+  const { tab } = controls;
   const { payItem, saleItem, balance } = data;
-  const { tab } = state;
+  const { quantity, setQuantity, price, selectedKamis } = state;
 
   /////////////////
   // ERC20 APPROVAL
@@ -51,21 +52,31 @@ export const Footer = (props: Props) => {
   const { balances: tokenBal } = useTokens();
   const [needsApproval, setNeedsApproval] = useState(true);
   const [enoughBalance, setEnoughBalance] = useState(true);
-
-  const checkNeedsApproval = () =>
-    payItem.address !== undefined && (tokenBal.get(payItem.address!)?.allowance || 0) < price;
-  const checkEnoughBalance = () => {
-    if (payItem.address) return (tokenBal.get(payItem.address)?.balance || 0) >= price;
-    else return balance >= price;
-  };
+  const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    setNeedsApproval(checkNeedsApproval());
-    setEnoughBalance(checkEnoughBalance());
+    const needsApproval = checkNeedsApproval();
+    const enoughBalance = checkEnoughBalance();
+    setNeedsApproval(needsApproval);
+    setEnoughBalance(enoughBalance);
+    setIsDisabled(quantity <= 0 || !enoughBalance);
   }, [tokenBal, price]);
 
-  // const isDisabled = quantity <= 0 || price > balance;
-  const isDisabled = quantity <= 0 || !enoughBalance;
+  // check if a user needs further spend approval for a token
+  const checkNeedsApproval = () => {
+    if (!payItem.address) return false;
+    const allowance = tokenBal.get(payItem.address!)?.allowance || 0;
+    return allowance < price;
+  };
+
+  // check if a user has enough balance of a token to purchase
+  const checkEnoughBalance = () => {
+    if (payItem.address) {
+      const tokenBalance = tokenBal.get(payItem.address)?.balance || 0;
+      return tokenBalance >= price;
+    }
+    return balance >= price;
+  };
 
   /////////////////
   // COMPONENTS
@@ -79,7 +90,7 @@ export const Footer = (props: Props) => {
     playClick();
     let success = false;
     if (tab === 'MINT') success = await mint(quantity);
-    else if (tab === 'REROLL') success = await reroll([], BigInt(0));
+    else if (tab === 'REROLL') success = await reroll(selectedKamis);
     else if (tab === 'AUCTION') {
       if (needsApproval) approve(payItem, price);
       else bid(saleItem, quantity); // TODO: await on success
@@ -107,13 +118,15 @@ export const Footer = (props: Props) => {
   return (
     <Container>
       <Quantity type='string' value={quantity} onChange={(e) => handleChange(e)} />
-      <Stepper
-        value={quantity}
-        set={setQuantity}
-        scale={6}
-        disableInc={tab === 'REROLL' || !enoughBalance}
-        disableDec={tab === 'REROLL' || quantity <= 0}
-      />
+      {tab !== 'REROLL' && (
+        <Stepper
+          value={quantity}
+          set={setQuantity}
+          scale={6}
+          disableInc={!enoughBalance}
+          disableDec={quantity <= 0}
+        />
+      )}
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>
           {getButtonText()}

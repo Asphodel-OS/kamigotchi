@@ -4,22 +4,21 @@ import { AuctionMode, TabType } from '../../../types';
 
 interface Props {
   controls: {
-    quantity: number;
-    setQuantity: (quantity: number) => void;
-    price: number;
+    tab: TabType;
   };
   state: {
     mode: AuctionMode;
     setMode: (mode: AuctionMode) => void;
-    tab: TabType;
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
     tick: number;
   };
 }
 
 export const Auction = (props: Props) => {
   const { controls, state } = props;
-  const { quantity, setQuantity, price } = controls;
-  const { mode, setMode, tab, tick } = state;
+  const { mode, price } = state;
 
   return (
     <Container>

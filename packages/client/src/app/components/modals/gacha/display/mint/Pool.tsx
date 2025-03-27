@@ -10,6 +10,7 @@ import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../../types';
 import { KamiBlock } from '../KamiBlock';
 
+const EMPTY_TEXT = ['kachapon is empty', 'nothing to see here..'];
 const LOADING_TEXT = ['your gacha pool is loading', 'please be patient'];
 
 interface Props {
@@ -195,7 +196,8 @@ export const Pool = (props: Props) => {
           {filtered.length}/{entities.length}
         </Text>
       </Overlay>
-      {!loaded && <EmptyText size={2.5} text={LOADING_TEXT} />}
+      {!loaded && <EmptyText size={2.1} text={LOADING_TEXT} />}
+      {filtered.length < 1 && <EmptyText size={2.1} text={EMPTY_TEXT} />}
       {getVisibleKamis().map((kami) => getKamiBlock(kami))}
     </Container>
   );

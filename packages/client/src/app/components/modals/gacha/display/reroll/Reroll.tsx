@@ -2,21 +2,24 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { Tooltip } from 'app/components/library';
+import { ActionButton, Overlay, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { TabType } from '../../types';
 import { KamiBlock } from '../KamiBlock';
-import { KamiGrid } from './KamiGrid';
 
 interface Props {
   actions: {
     reroll: (kamis: Kami[]) => Promise<boolean>;
   };
-  tab: TabType;
   data: {
     accountEntity: EntityIndex;
-    balance: bigint;
+  };
+  state: {
+    setQuantity: (balance: number) => void;
+    selectedKamis: Kami[];
+    setSelectedKamis: (selectedKamis: Kami[]) => void;
+    tab: TabType;
   };
   utils: {
     getAccountKamis: () => Kami[];
@@ -24,14 +27,14 @@ interface Props {
 }
 
 export const Reroll = (props: Props) => {
-  const { actions, data, utils, tab } = props;
+  const { actions, data, state, utils } = props;
   const { reroll } = actions;
-  const { accountEntity, balance } = data;
+  const { accountEntity } = data;
+  const { setQuantity, selectedKamis, setSelectedKamis, tab } = state;
   const { getAccountKamis } = utils;
   const { modals } = useVisibility();
 
   const [partyKamis, setPartyKamis] = useState<Kami[]>([]);
-  const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   // ticking
@@ -44,16 +47,11 @@ export const Reroll = (props: Props) => {
   // update the list of kamis when the account changes
   useEffect(() => {
     if (tab !== 'REROLL' || !modals.gacha) return;
-    const party = getAccountKamis().filter((kami) => kami.state === 'RESTING');
+    const party = getAccountKamis();
     setPartyKamis(party);
   }, [accountEntity, lastRefresh]);
 
-  // update the reroll price of each kami when the list changes
-  useEffect(() => {
-    let price = BigInt(0);
-  }, [selectedKamis]);
-
-  //////////////////
+  /////////////////
   // INTERACTION
 
   const handleReroll = () => {
@@ -61,59 +59,55 @@ export const Reroll = (props: Props) => {
     setSelectedKamis([]);
   };
 
-  //////////////////
+  // select or deselect a kami
+  const handleSelect = (kami: Kami) => {
+    if (kami.state !== 'RESTING') return;
+
+    let newSelected = [];
+    if (selectedKamis.includes(kami)) {
+      newSelected = selectedKamis.filter((k) => k !== kami);
+    } else {
+      newSelected = [...selectedKamis, kami];
+    }
+    setQuantity(newSelected.length);
+    setSelectedKamis(newSelected);
+  };
+
+  /////////////////
   // INTERPRETATION
 
-  const canRerollSelected = () => {
-    let rerollPrice = BigInt(0);
-    if (rerollPrice > balance) return false;
-    return true;
+  // determines whether a kami can be rerolled
+  const canReroll = (kami: Kami) => {
+    return kami.state === 'RESTING';
   };
 
-  //////////////////
-  // DISPLAY
-
-  const getKamiText = (kami: Kami): string[] => {
-    const text = [];
-    text.push(kami.name);
-    text.push('');
-    return text;
+  // get the tooltip of a kami based on state and reroll selection
+  // maybe make the flavor text more randomized
+  const getKamiTooltip = (kami: Kami): string[] => {
+    if (selectedKamis.includes(kami)) return [`${kami.name} never liked you anyway..`];
+    if (kami.state !== 'RESTING') {
+      return [`${kami.name} is ${kami.state}`, '> only RESTING kamis can be rerolled'];
+    }
+    return [`Reroll ${kami.name} ?`];
   };
 
-  const Grid =
-    partyKamis.length > 0 ? (
-      <KamiGrid
-        kamis={partyKamis}
-        getKamiText={getKamiText}
-        amtShown={partyKamis.length} // here if truncation makes sense later
-        grossShowable={partyKamis.length}
-        incAmtShown={() => {}}
-        select={{
-          arr: selectedKamis,
-          set: setSelectedKamis,
-        }}
-      />
-    ) : (
-      <div
-        style={{
-          height: '60%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
-        <EmptyText>No kamigotchis to re-roll!</EmptyText>
-        <EmptyText>(Only happy and healthy kamis can be re-rolled)</EmptyText>
-      </div>
-    );
+  /////////////////
+  // RENDER
 
   return (
     <Container>
       {partyKamis.map((kami) => (
-        <Tooltip key={kami.index} text={[]}>
-          <KamiBlock kami={kami} isSelectable />
+        <Tooltip key={kami.index} text={getKamiTooltip(kami)}>
+          <KamiBlock
+            kami={kami}
+            select={{ isDisabled: !canReroll(kami), isSelected: selectedKamis.includes(kami) }}
+            onClick={() => handleSelect(kami)}
+          />
         </Tooltip>
       ))}
+      <Overlay bottom={0.9} right={0.6}>
+        <ActionButton text='Buy More Rerolls Tickets' onClick={() => {}} />
+      </Overlay>
     </Container>
   );
 };
@@ -125,19 +119,9 @@ const Container = styled.div`
   padding: 0.6vw;
 
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: center;
 
   overflow-y: scroll;
-`;
-
-const EmptyText = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: center;
-  color: #333;
-  padding: 0.7vh 0vw;
-
-  width: 100%;
 `;

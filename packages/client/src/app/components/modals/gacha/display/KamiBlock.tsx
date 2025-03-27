@@ -6,12 +6,14 @@ import { Kami } from 'network/shapes/Kami';
 interface Props {
   kami: Kami;
   onClick?: () => void;
-  isSelectable?: boolean;
-  isSelected?: boolean;
+  select?: {
+    isDisabled?: boolean;
+    isSelected?: boolean;
+  };
 }
 
 export const KamiBlock = (props: Props) => {
-  const { kami, onClick } = props;
+  const { kami, onClick, select } = props;
   const { index, progress, name } = kami;
 
   return (
@@ -29,6 +31,15 @@ export const KamiBlock = (props: Props) => {
       <Overlay bottom={0.6} fullWidth>
         <Text size={0.6}>{name}</Text>
       </Overlay>
+      {select && (
+        <Overlay bottom={0.5} right={0.5}>
+          <ClickBox
+            isDisabled={!!select.isDisabled}
+            isSelected={!!select.isSelected}
+            onClick={onClick}
+          />
+        </Overlay>
+      )}
     </Container>
   );
 };
@@ -68,18 +79,20 @@ const Text = styled.div<{ size: number }>`
   text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
 `;
 
-const ClickBox = styled.button<{ isSelected: boolean }>`
-  position: absolute;
-  bottom: 0.5vw;
-  right: 0.5vw;
+const ClickBox = styled.button<{ isDisabled: boolean; isSelected: boolean }>`
+  border: ${({ isSelected }) => (isSelected ? 'solid .15vw #fff' : 'solid .15vw #333')};
+  border-radius: 0.4vw;
   width: 2vw;
   height: 2vw;
 
-  border: ${({ isSelected }) => (isSelected ? 'solid .15vw #FFF' : 'solid .15vw #333')};
-  border-radius: 0.4vw;
   opacity: 0.9;
-  backgroundColor: '#3498DB',
+  cursor: ${({ isDisabled }) => (isDisabled ? 'disabled' : 'pointer')};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+  user-select: none;
+
+  background-color: ${({ isSelected }) => (isSelected ? '#3498DB' : '#ddd')};
+  ${({ isDisabled }) => (isDisabled ? 'background-color: #333' : '')};
   &:hover {
-    background-color: #aaa;
+    background-color: ${({ isSelected }) => (isSelected ? '#0468aB' : '#aaa')};
   }
 `;

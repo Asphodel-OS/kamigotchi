@@ -9,7 +9,7 @@ import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
-import { BaseKami } from 'network/shapes/Kami/types';
+import { Kami } from 'network/shapes/Kami/types';
 import { AuctionMode, Filter, Sort, TabType } from '../types';
 import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
@@ -20,10 +20,12 @@ interface Props {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
     mint: (balance: number) => Promise<boolean>;
-    reroll: (kamis: BaseKami[], price: bigint) => Promise<boolean>;
+    reroll: (kamis: Kami[]) => Promise<boolean>;
     reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
+    tab: TabType;
+    setTab: (tab: TabType) => void;
     filters: Filter[];
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
@@ -38,11 +40,12 @@ interface Props {
     };
   };
   state: {
-    tick: number;
-    tab: TabType;
-    setTab: (tab: TabType) => void;
     mode: AuctionMode;
     setMode: (mode: AuctionMode) => void;
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    selectedKamis: Kami[];
+    tick: number;
   };
   utils: {
     getItem: (index: number) => Item;
@@ -54,15 +57,15 @@ interface Props {
 
 export const Sidebar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
+  const { tab, setTab } = controls;
   const { auctions, commits, inventories } = data;
-  const { tick, tab, setTab, mode } = state;
+  const { tick, mode, quantity, setQuantity } = state;
   const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
   const { modals } = useVisibility();
 
   const [payItem, setPayItem] = useState<Item>(NullItem);
   const [saleItem, setSaleItem] = useState<Item>(NullItem);
-  const [quantity, setQuantity] = useState(0);
   const [balance, setBalance] = useState(0);
   const [price, setPrice] = useState(0);
 
@@ -141,15 +144,15 @@ export const Sidebar = (props: Props) => {
       <Tabs tab={tab} setTab={setTab} />
       <Controls
         actions={actions}
-        controls={{ ...controls, price, setPrice, quantity, setQuantity }}
+        controls={controls}
         data={{ payItem, saleItem, balance, commits }}
-        state={state}
+        state={{ ...state, price, setPrice }}
       />
       <Footer
         actions={actions}
-        controls={{ ...controls, price, setPrice, quantity, setQuantity }}
+        controls={controls}
         data={{ payItem, saleItem, balance }}
-        state={state}
+        state={{ ...state, price, setPrice }}
       />
     </Container>
   );

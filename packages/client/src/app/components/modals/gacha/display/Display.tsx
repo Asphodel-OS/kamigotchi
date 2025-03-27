@@ -9,20 +9,19 @@ import { Pool } from './mint/Pool';
 import { Reroll } from './reroll/Reroll';
 
 interface Props {
-  controls: {
-    filters: Filter[];
-    sorts: Sort[];
-  };
   actions: {
     reroll: (kamis: Kami[]) => Promise<boolean>;
   };
   caches: {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
+  controls: {
+    filters: Filter[];
+    sorts: Sort[];
+  };
   data: {
     accountEntity: EntityIndex;
     poolKamis: EntityIndex[];
-    balance: bigint;
     auctions: {
       gacha: Auction;
       reroll: Auction;
@@ -31,6 +30,9 @@ interface Props {
   state: {
     mode: AuctionMode;
     setMode: (mode: AuctionMode) => void;
+    setQuantity: (quantity: number) => void;
+    selectedKamis: Kami[];
+    setSelectedKamis: (selectedKamis: Kami[]) => void;
     tab: TabType;
   };
   utils: {
@@ -42,7 +44,7 @@ interface Props {
 
 export const Display = (props: Props) => {
   const { state, controls, actions, data, caches, utils } = props;
-  const { tab, mode, setMode } = state;
+  const { tab, mode, setMode, setQuantity, selectedKamis, setSelectedKamis } = state;
   const { reroll } = actions;
   const { auctions, poolKamis } = data;
 
@@ -59,7 +61,14 @@ export const Display = (props: Props) => {
           />
         );
       case 'REROLL':
-        return <Reroll tab={tab} actions={{ reroll }} data={data} utils={utils} />;
+        return (
+          <Reroll
+            actions={{ reroll }}
+            data={data}
+            state={{ setQuantity, selectedKamis, setSelectedKamis, tab }}
+            utils={utils}
+          />
+        );
       case 'AUCTION':
         return (
           <AuctionDisplay
