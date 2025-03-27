@@ -52,7 +52,6 @@ export const ComponentsSchema = {
   '0x1535e90af6f338896509b09caa109db4f5869e9c19245517da2f1d80a47832a2': { keys: ['value'], values: [10] },
   '0x9522897410526014691d8a863fac7bd2e048ab08176b6e3c6fa8a1f5195164bb': { keys: ['value'], values: [0] },
   '0xf5fd86907d4f5647b6d2d75edf01c4ff1a7d5bdf6bccf2d4828e86425b83b256': { keys: ['value'], values: [0] },
-  '0xb6bdcc62626ced423f5f38e4e456e04d992e999e95927e90a162c8101d228a1f': { keys: ['value'], values: [0] },
   '0xf70dee74a99a7bf98a6058c2e93635b82826d8267ec7a3a05d2f12dcbf92534d': { keys: ['value'], values: [0] },
   '0x55fc1d6f060c9a0b82cfb50cf47ed24d77ee495eb31e561183a9a9e9c41fd06b': { keys: ['value'], values: [0] },
   '0xc6a29e9d963ddf0ecc32d72ae16fddf22661517259c701d58065adfefd57eb02': { keys: ['value'], values: [28] },
