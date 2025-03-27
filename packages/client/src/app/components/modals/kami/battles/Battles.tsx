@@ -1,14 +1,14 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { EmptyText, Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kami } from 'network/shapes/Kami';
 import { KillLog } from 'network/shapes/Kill';
 import { getAffinityImage } from 'network/shapes/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { getDateString, getKamiDate, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
 import { TabType } from '../Kami';
@@ -28,13 +28,13 @@ export const Battles = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const [logs, setLogs] = useState<KillLog[]>([]);
 
-  useEffect(() => {
-    if (!modals.kami || tab !== 'BATTLES') return;
-    const kills = kami.battles?.kills ?? [];
-    const deaths = kami.battles?.deaths ?? [];
-    const battles = [...kills, ...deaths].sort((a, b) => b.time - a.time);
-    setLogs(battles);
-  }, [modals.kami, kami.index, tab]);
+  // useEffect(() => {
+  //   if (!modals.kami || tab !== 'BATTLES') return;
+  //   const kills = kami.battles?.kills ?? [];
+  //   const deaths = kami.battles?.deaths ?? [];
+  //   const battles = [...kills, ...deaths].sort((a, b) => b.time - a.time);
+  //   setLogs(battles);
+  // }, [modals.kami, kami.index, tab]);
 
   /////////////////
   // INTERPRETATION
@@ -139,6 +139,8 @@ export const Battles = (props: Props) => {
 
   /////////////////
   // RENDERING
+
+  return <EmptyText text={['Coming soon']} size={1} />;
 
   return (
     <Container style={{ overflowY: 'auto' }}>

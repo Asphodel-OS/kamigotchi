@@ -19,19 +19,13 @@ import {
   getState,
 } from 'network/shapes/utils/component';
 import { updateHarvestRate, updateHealthRate } from './calcs';
-import {
-  getKamiBattles,
-  getKamiFlags,
-  getKamiHarvest,
-  getKamiSkills,
-  getKamiTraits,
-} from './getters';
+import { getKamiFlags, getKamiHarvest, getKamiSkills, getKamiTraits } from './getters';
 
 // Kami caches and Kami cache checkers
 export const KamiCache = new Map<EntityIndex, Kami>(); // kami entity -> kami
 
 const LiveUpdateTs = new Map<EntityIndex, number>(); // last update of the live sub-object (s)
-const BattlesUpdateTs = new Map<EntityIndex, number>(); // last update of the battles sub-object (s)
+// const BattlesUpdateTs = new Map<EntityIndex, number>(); // last update of the battles sub-object (s)
 const BonusesUpdateTs = new Map<EntityIndex, number>(); // last update of the bonuses sub-object (s)
 const ConfigsUpdateTs = new Map<EntityIndex, number>(); // last update of the config sub-object (s)
 const FlagsUpdateTs = new Map<EntityIndex, number>(); // last update of the flags sub-object (s)
@@ -53,7 +47,7 @@ export const process = (world: World, components: Components, entity: EntityInde
 // stale limit to refresh data (seconds)
 export interface RefreshOptions {
   live?: number;
-  battles?: number;
+  // battles?: number;
   bonuses?: number;
   config?: number;
   flags?: number;
@@ -100,15 +94,15 @@ export const get = (
     }
   }
 
-  if (options.battles != undefined) {
-    const updateTs = BattlesUpdateTs.get(entity) ?? 0;
-    const updateDelta = (now - updateTs) / 1000; // convert to seconds
-    if (updateDelta > options.battles) {
-      if (debug) console.log(`  updating kami battles`);
-      kami.battles = getKamiBattles(world, components, entity);
-      BattlesUpdateTs.set(entity, now);
-    }
-  }
+  // if (options.battles != undefined) {
+  //   const updateTs = BattlesUpdateTs.get(entity) ?? 0;
+  //   const updateDelta = (now - updateTs) / 1000; // convert to seconds
+  //   if (updateDelta > options.battles) {
+  //     if (debug) console.log(`  updating kami battles`);
+  //     kami.battles = getKamiBattles(world, components, entity);
+  //     BattlesUpdateTs.set(entity, now);
+  //   }
+  // }
 
   // requires keccak id and trad querying, followed by component updates
   if (options.bonuses != undefined) {
