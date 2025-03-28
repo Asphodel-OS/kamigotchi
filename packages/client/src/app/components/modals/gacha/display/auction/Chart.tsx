@@ -6,7 +6,6 @@ import { calcAuctionCost, calcAuctionPrice } from 'app/cache/auction';
 import { ActionListButton, Overlay, Tooltip } from 'app/components/library';
 import { AuctionBuy, getKamidenClient } from 'clients/kamiden';
 import { Auction } from 'network/shapes/Auction';
-import { ViewMode } from '../../types';
 import { ChartOptions, CrosshairPlugin } from './chartOptions';
 import { DTs } from './constants';
 
@@ -23,11 +22,10 @@ interface Props {
   name: string;
   auction: Auction;
   onClick?: () => void;
-  mode: ViewMode;
 }
 
 export const Chart = (props: Props) => {
-  const { name, auction, onClick, mode } = props;
+  const { name, auction, onClick } = props;
   const chartRef = useRef<ChartJS>();
 
   const [buys, setBuys] = useState<AuctionBuy[]>([]);
@@ -43,7 +41,7 @@ export const Chart = (props: Props) => {
   useEffect(() => {
     console.log('auction updated, retrieving data');
     retrieveBuys();
-  }, [auction, auction.supply.sold, mode]);
+  }, [auction, auction.supply.sold]);
 
   const retrieveBuys = async () => {
     const auctionItem = auction.auctionItem;
@@ -69,6 +67,7 @@ export const Chart = (props: Props) => {
 
   // format and generate the chart from the data
   useEffect(() => {
+    if (!auction.auctionItem || !auction.auctionItem.index) return;
     if (chartRef.current) chartRef.current.destroy(); // destroy existing chart if it exists
     const canvas = document.getElementById(`chart-${name}`) as HTMLCanvasElement;
     if (!canvas) return;

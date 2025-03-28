@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../types';
-import { AuctionDisplay } from './auction/Auction';
-import { Pool } from './mint/Pool';
+import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
 interface Props {
@@ -42,33 +41,18 @@ interface Props {
 
 export const Display = (props: Props) => {
   const { state, controls, data, caches, utils } = props;
-  const { tab, mode, setMode } = controls;
+  const { tab } = controls;
   const { auctions, poolKamis } = data;
-
-  const Content = () => {
-    switch (tab) {
-      case 'AUCTION':
-        return (
-          <AuctionDisplay
-            data={{ auctions: { gacha: auctions.gacha, reroll: auctions.reroll } }}
-            state={{ mode, setMode, tab }}
-          />
-        );
-      default:
-        return null;
-    }
-  };
 
   return (
     <Container>
       <Pool
-        controls={controls}
         caches={caches}
-        data={{ entities: poolKamis }}
+        controls={controls}
+        data={{ auction: auctions.gacha, entities: poolKamis }}
         utils={utils}
         isVisible={tab === 'MINT'}
       />
-
       <Reroll
         controls={controls}
         data={{ ...data, auction: auctions.reroll }}
@@ -76,7 +60,6 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
-      {Content()}
     </Container>
   );
 };
@@ -88,5 +71,5 @@ const Container = styled.div`
   border-radius: 0 0 0 1.2vw;
 
   display: flex;
-  flex-direction: row;
+  flex-flow: row nowrap;
 `;

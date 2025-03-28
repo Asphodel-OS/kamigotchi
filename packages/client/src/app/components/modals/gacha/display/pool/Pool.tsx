@@ -3,37 +3,39 @@ import styled from 'styled-components';
 
 import { ActionButton, Overlay } from 'app/components/library';
 import { Auction } from 'network/shapes/Auction';
-import { Kami } from 'network/shapes/Kami';
-import { TabType, ViewMode } from '../../types';
+import { Kami } from 'network/shapes/Kami/types';
+import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { AuctionView } from '../auction/AuctionView';
-import { KamiView } from './KamiView';
+import { PoolView } from './KamiView';
 
 interface Props {
   controls: {
+    tab: TabType;
     mode: ViewMode;
     setMode: (mode: ViewMode) => void;
-    tab: TabType;
+    filters: Filter[];
+    sorts: Sort[];
+  };
+  caches: {
+    kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
-    accountEntity: EntityIndex;
     auction: Auction;
-  };
-  state: {
-    setQuantity: (balance: number) => void;
-    selectedKamis: Kami[];
-    setSelectedKamis: (selectedKamis: Kami[]) => void;
-    tick: number;
+    entities: EntityIndex[];
   };
   utils: {
-    getAccountKamis: () => Kami[];
+    getKami: (entity: EntityIndex) => Kami;
   };
   isVisible: boolean;
 }
 
-export const Reroll = (props: Props) => {
-  const { controls, data, isVisible, state, utils } = props;
+export const Pool = (props: Props) => {
+  const { controls, caches, data, utils, isVisible } = props;
   const { mode, setMode } = controls;
   const { auction } = data;
+
+  /////////////////
+  // INTERACTION
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
@@ -41,13 +43,22 @@ export const Reroll = (props: Props) => {
   };
 
   const getButtonText = () => {
-    if (mode === 'DEFAULT') return 'Get More Reroll Tickets';
-    else return 'Back to Reroll';
+    if (mode === 'DEFAULT') return 'Get More Gacha Tickets';
+    else return 'Back to Gacha';
   };
+
+  /////////////////
+  // DISPLAY
 
   return (
     <Container isVisible={isVisible}>
-      <KamiView data={data} state={state} utils={utils} isVisible={mode === 'DEFAULT'} />
+      <PoolView
+        controls={controls}
+        caches={caches}
+        data={data}
+        utils={utils}
+        isVisible={isVisible && mode === 'DEFAULT'}
+      />
       <AuctionView auction={auction} isVisible={mode === 'ALT'} />
       <Overlay bottom={0.9} right={0.6}>
         <ActionButton text={getButtonText()} onClick={toggleMode} />
@@ -58,9 +69,9 @@ export const Reroll = (props: Props) => {
 
 const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
-  height: 100%;
   width: 100%;
+  height: 100%;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  overflow-y: scroll;
+  overflow-y: auto;
 `;

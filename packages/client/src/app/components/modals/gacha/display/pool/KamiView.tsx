@@ -9,9 +9,7 @@ import { BaseKami, Kami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../../types';
 import { KamiBlock } from '../KamiBlock';
-
-const EMPTY_TEXT = ['kachapon is empty', 'nothing to see here..'];
-const LOADING_TEXT = ['your gacha pool is loading', 'please be patient'];
+import { EMPTY_TEXT, LOADING_TEXT } from './constants';
 
 interface Props {
   controls: {
@@ -30,7 +28,7 @@ interface Props {
   isVisible: boolean;
 }
 
-export const Pool = (props: Props) => {
+export const PoolView = (props: Props) => {
   const { controls, caches, data, utils, isVisible } = props;
   const { filters, sorts } = controls;
   const { kamiBlocks } = caches;
@@ -196,8 +194,8 @@ export const Pool = (props: Props) => {
           {filtered.length}/{entities.length}
         </Text>
       </Overlay>
-      {!loaded && <EmptyText size={2.1} text={LOADING_TEXT} />}
-      {filtered.length < 1 && <EmptyText size={2.1} text={EMPTY_TEXT} />}
+      <EmptyText size={2.1} text={LOADING_TEXT} isHidden={loaded} />
+      <EmptyText size={2.1} text={EMPTY_TEXT} isHidden={filtered.length > 0} />
       {getVisibleKamis().map((kami) => getKamiBlock(kami))}
     </Container>
   );
@@ -207,6 +205,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   padding: 0.6vw;
   width: 100%;
+  height: 100%;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: row wrap;
