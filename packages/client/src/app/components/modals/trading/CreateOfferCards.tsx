@@ -16,6 +16,7 @@ interface Props {
   setItem: Dispatch<SetStateAction<any>>;
   sellToggle: boolean;
   price: boolean;
+  max: any;
 }
 
 export const CreateOfferCards = (props: Props) => {
@@ -31,39 +32,28 @@ export const CreateOfferCards = (props: Props) => {
     setSellIndices,
     sellToggle,
     price,
+    max,
   } = props;
 
-  let max = sellToggle ? item?.balance : Infinity;
-  let itemParsed = sellToggle ? item?.item : item;
-  let index = itemParsed?.index ?? 0;
+  let index = item?.index ?? 0;
   let min = 0;
-  let image = itemParsed?.image ?? '';
+  let image = item?.image ?? '';
 
-  const handleChange = (e: any, sellToggle: boolean, itemParsed: any) => {
-    const quantityStr = e.target.value.replaceAll('[^\\d.]', '');
-    const rawQuantity = parseInt(quantityStr || '0');
-    const quantity = Math.max(min, Math.min(max, rawQuantity));
-    if (sellToggle) {
-      setSellIndices(index);
-      setSellAmts(quantity);
+  const handleChange = (e: any, sellToggle: boolean, price: boolean) => {
+    const quantity = Math.max(
+      min,
+      Math.min(max, parseInt(e.target.value.replaceAll('[^\\d.]', '') || '0'))
+    );
+    if (price) {
+      const targetIndices = sellToggle ? setBuyIndices : setSellIndices;
+      const targetAmts = sellToggle ? setBuyAmts : setSellAmts;
+      targetIndices(MUSU_INDEX);
+      targetAmts(quantity);
     } else {
-      setBuyIndices(index);
-      setBuyAmts(quantity);
-    }
-  };
-
-  const handlePrice = (e: any, sellToggle: boolean) => {
-    let min = 0;
-    let max = Infinity;
-    const quantityStr = e.target.value.replaceAll('[^\\d.]', '');
-    const rawQuantity = parseInt(quantityStr || '0');
-    const quantity = Math.max(min, Math.min(max, rawQuantity));
-    if (sellToggle) {
-      setBuyIndices(MUSU_INDEX);
-      setBuyAmts(quantity);
-    } else {
-      setSellIndices(MUSU_INDEX);
-      setSellAmts(quantity);
+      const targetIndices = sellToggle ? setSellIndices : setBuyIndices;
+      const targetAmts = sellToggle ? setSellAmts : setBuyAmts;
+      targetIndices(index);
+      targetAmts(quantity);
     }
   };
 
@@ -74,28 +64,26 @@ export const CreateOfferCards = (props: Props) => {
           <Quantity
             type='string'
             value={
-              itemParsed
-                ? sellToggle
-                  ? sellIndices === index
-                    ? sellAmts.toString()
-                    : '0'
-                  : buyIndices === index
-                    ? buyAmts.toString()
-                    : '0'
-                : '0'
+              sellToggle
+                ? sellIndices === index
+                  ? sellAmts.toString()
+                  : '0'
+                : buyIndices === index
+                  ? buyAmts.toString()
+                  : '0'
             }
-            disabled={!itemParsed}
-            onChange={(e) => itemParsed && handleChange(e, sellToggle, itemParsed)}
+            disabled={!item}
+            onChange={(e) => item && handleChange(e, sellToggle, false)}
           />
-          X{itemParsed ? <Icon src={image} /> : <EmptyIcon />}
+          X{item ? <Icon src={image} /> : <EmptyIcon />}
         </>
       ) : (
         <>
           <Quantity
             type='string'
             value={sellToggle ? buyAmts.toString() : sellAmts.toString()}
-            onChange={(e) => handlePrice(e, sellToggle)}
-            disabled={!itemParsed}
+            onChange={(e) => handleChange(e, sellToggle, true)}
+            disabled={!item}
           />
           X<Icon src={ItemImages.musu} />
         </>

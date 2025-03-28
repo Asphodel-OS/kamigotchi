@@ -21,15 +21,17 @@ interface Props {
       item: Item;
     }[];
     getAllItems: () => Item[];
+    getMusuBalance: () => number;
   };
 }
 export const CreateOffer = (props: Props) => {
   const { network, utils } = props;
   const { actions, api, world } = network;
-  const { getInventories, getAllItems } = utils;
+  const { getInventories, getAllItems, getMusuBalance } = utils;
 
   const [search, setSearch] = useState<string>('');
   const [item, setItem] = useState<any>(null);
+  const [max, setMax] = useState<any>(Infinity);
 
   const [buyIndices, setBuyIndices] = useState<number>(0);
   const [buyAmts, setBuyAmts] = useState<BigNumberish>(0);
@@ -42,6 +44,7 @@ export const CreateOffer = (props: Props) => {
     setSellIndices(0);
     setBuyAmts(0);
     setBuyIndices(0);
+    setMax(Infinity);
     setItem(null);
   };
 
@@ -50,7 +53,15 @@ export const CreateOffer = (props: Props) => {
     return items.map((item: any, i: number) => {
       const name = sellToggle ? item.item.name : item.name;
       return name.toLowerCase().includes(search.toLowerCase()) && name !== 'MUSU' ? (
-        <PopOverButton key={i} onClick={() => setItem(item)}>
+        <PopOverButton
+          key={i}
+          onClick={() => {
+            setItem(item);
+            sellToggle
+              ? (setMax(item.balance), setItem(item.item))
+              : (setMax(Infinity), setItem(item));
+          }}
+        >
           {name}
         </PopOverButton>
       ) : null;
@@ -140,6 +151,7 @@ export const CreateOffer = (props: Props) => {
               setSellIndices={setSellIndices}
               setItem={setItem}
               price={false}
+              max={max}
             />
             <Divider /> For:
             <CreateOfferCards
@@ -155,6 +167,7 @@ export const CreateOffer = (props: Props) => {
               setSellIndices={setSellIndices}
               setItem={setItem}
               price={true}
+              max={sellToggle ? Infinity : getMusuBalance()}
             />
           </Card>
         </Label>

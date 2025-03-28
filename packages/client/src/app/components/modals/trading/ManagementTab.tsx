@@ -18,6 +18,7 @@ interface Props {
       item: Item;
     }[];
     getAllItems: () => Item[];
+    getMusuBalance: () => number;
   };
   search: string;
   ascending: boolean;

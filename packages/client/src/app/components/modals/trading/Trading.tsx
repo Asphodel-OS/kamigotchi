@@ -12,7 +12,7 @@ import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getAllItems } from 'network/shapes/Item';
+import { getAllItems, getMusuBalance } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActiveOffers } from './ActiveOffers';
@@ -45,6 +45,7 @@ export function registerTradingModal() {
               getInventories: () => getAccountInventories(world, components, accountEntity),
               // TODO: check cache ?
               getAllItems: () => getAllItems(world, components),
+              getMusuBalance: () => getMusuBalance(world, components, accountEntity),
             },
           };
         })
