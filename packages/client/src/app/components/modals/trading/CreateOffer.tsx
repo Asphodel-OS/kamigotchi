@@ -44,7 +44,6 @@ export const CreateOffer = (props: Props) => {
     setSellIndices(0);
     setBuyAmts(0);
     setBuyIndices(0);
-    setMax(Infinity);
     setItem(null);
   };
 
@@ -109,10 +108,29 @@ export const CreateOffer = (props: Props) => {
     });
     return actionID;
   };
+  const CreateOffers = (price: boolean, max: any) => {
+    return (
+      <CreateOfferCards
+        item={item}
+        sellToggle={sellToggle}
+        sellAmts={sellAmts}
+        setSellAmts={setSellAmts}
+        buyAmts={buyAmts}
+        setBuyAmts={setBuyAmts}
+        buyIndices={buyIndices}
+        setBuyIndices={setBuyIndices}
+        sellIndices={sellIndices}
+        setSellIndices={setSellIndices}
+        setItem={setItem}
+        price={price}
+        max={max}
+      />
+    );
+  };
 
   return (
     <Content style={{ width: '50%' }}>
-      <Cards>
+      <Body>
         <Title style={{ padding: ` 1.2vw 1.2vw 2.4vw 1.2vw` }}>Create Offer</Title>
         <Label>
           <Want>
@@ -137,40 +155,12 @@ export const CreateOffer = (props: Props) => {
                 placeholder='Search an item...'
               />
             </Popover>
-            <CreateOfferCards
-              item={item}
-              sellToggle={sellToggle}
-              sellAmts={sellAmts}
-              setSellAmts={setSellAmts}
-              buyAmts={buyAmts}
-              setBuyAmts={setBuyAmts}
-              buyIndices={buyIndices}
-              setBuyIndices={setBuyIndices}
-              sellIndices={sellIndices}
-              setSellIndices={setSellIndices}
-              setItem={setItem}
-              price={false}
-              max={max}
-            />
+            {CreateOffers(false, max)}
             <Divider /> For:
-            <CreateOfferCards
-              item={item}
-              sellToggle={sellToggle}
-              sellAmts={sellAmts}
-              setSellAmts={setSellAmts}
-              buyAmts={buyAmts}
-              setBuyAmts={setBuyAmts}
-              buyIndices={buyIndices}
-              setBuyIndices={setBuyIndices}
-              sellIndices={sellIndices}
-              setSellIndices={setSellIndices}
-              setItem={setItem}
-              price={true}
-              max={sellToggle ? Infinity : getMusuBalance()}
-            />
+            {CreateOffers(true, sellToggle ? Infinity : getMusuBalance())}
           </Card>
         </Label>
-      </Cards>
+      </Body>
       <Title style={{ bottom: 0, backgroundColor: `white` }}>
         <Buttons>
           <ActionButton
@@ -198,7 +188,7 @@ const Content = styled.div`
   overflow: hidden hidden;
 `;
 
-const Cards = styled.div`
+const Body = styled.div`
   position: relative;
   height: max-content;
   display: flex;

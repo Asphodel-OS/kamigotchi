@@ -43,7 +43,6 @@ export function registerTradingModal() {
               getTrade: (entity: EntityIndex) => getTrade(world, components, entity),
               queryTrades: () => queryTrades(components),
               getInventories: () => getAccountInventories(world, components, accountEntity),
-              // TODO: check cache ?
               getAllItems: () => getAllItems(world, components),
               getMusuBalance: () => getMusuBalance(world, components, accountEntity),
             },
@@ -52,7 +51,6 @@ export function registerTradingModal() {
       ),
 
     // Render
-    // TODO: change trade trigger
     ({ network, utils }) => {
       const { actions, api } = network;
       const { getTrade, queryTrades, queryAccountFromEmbedded } = utils;
