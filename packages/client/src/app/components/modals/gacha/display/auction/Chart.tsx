@@ -6,6 +6,7 @@ import { calcAuctionCost, calcAuctionPrice } from 'app/cache/auction';
 import { ActionListButton, Overlay, Tooltip } from 'app/components/library';
 import { AuctionBuy, getKamidenClient } from 'clients/kamiden';
 import { Auction } from 'network/shapes/Auction';
+import { ViewMode } from '../../types';
 import { ChartOptions, CrosshairPlugin } from './chartOptions';
 import { DTs } from './constants';
 
@@ -22,10 +23,11 @@ interface Props {
   name: string;
   auction: Auction;
   onClick?: () => void;
+  mode: ViewMode;
 }
 
 export const Chart = (props: Props) => {
-  const { name, auction, onClick } = props;
+  const { name, auction, onClick, mode } = props;
   const chartRef = useRef<ChartJS>();
 
   const [buys, setBuys] = useState<AuctionBuy[]>([]);
@@ -36,17 +38,13 @@ export const Chart = (props: Props) => {
   const endTs = Math.floor(Date.now() / 1000);
   const startTs = auction.time.start != 0 ? auction.time.start : endTs;
 
-  useEffect(() => {
-    console.log(`mounted ${auction.auctionItem?.name}, retrieving data`);
-    retrieveBuys();
-  }, []);
-
   // retrieve this auction's buy history
   // TODO: allow for partial pulls
   useEffect(() => {
     console.log('auction updated, retrieving data');
     retrieveBuys();
-  }, [auction, auction.supply.sold]);
+  }, [auction, auction.supply.sold, mode]);
+
   const retrieveBuys = async () => {
     const auctionItem = auction.auctionItem;
     if (auctionItem) {

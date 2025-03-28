@@ -1,46 +1,36 @@
 import styled from 'styled-components';
 
-import { EmptyText } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
+import { ViewMode } from '../../../types';
+import { AuctionPanel } from './AuctionPanel';
+import { KamiPanel } from './KamiPanel';
 
 interface Props {
-  selectedKamis: Kami[];
+  state: {
+    balance: number;
+    price: number;
+    quantity: number;
+    selectedKamis: Kami[];
+  };
+  mode: ViewMode;
+  isVisible: boolean;
 }
 export const Reroll = (props: Props) => {
-  const { selectedKamis } = props;
+  const { state, mode, isVisible } = props;
+  const { price, quantity, selectedKamis } = state;
 
   return (
-    <Container>
-      {selectedKamis.length > 0 && <Title>Selected Victims</Title>}
-      {selectedKamis.map((kami) => (
-        <Text key={kami.index}>• {kami.name}</Text>
-      ))}
-      {selectedKamis.length < 1 && <EmptyText text={['No kamis selected']} />}
+    <Container isVisible={isVisible}>
+      <KamiPanel selectedKamis={selectedKamis} isVisible={isVisible && mode === 'DEFAULT'} />
+      <AuctionPanel state={{ price, quantity }} isVisible={isVisible && mode === 'ALT'} />
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 0.6vw;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   overflow-y: scroll;
-`;
-
-const Title = styled.div`
-  margin: 0.9vw;
-  font-size: 1.2vw;
-`;
-
-const Text = styled.div`
-  margin-left: 1.2vw;
-  font-size: 0.9vw;
-  line-height: 1.6vw;
 `;

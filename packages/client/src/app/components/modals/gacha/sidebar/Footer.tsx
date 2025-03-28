@@ -33,6 +33,7 @@ interface Props {
     balance: number;
   };
   state: {
+    balance: number;
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
@@ -96,10 +97,15 @@ export const Footer = (props: Props) => {
     let success = false;
     if (tab === 'MINT') {
       if (mode === 'DEFAULT') success = await mint(quantity);
-      success = await mint(quantity);
+      else if (mode === 'ALT') await bid(saleItem, quantity);
     } else if (tab === 'REROLL') {
-      success = await reroll(selectedKamis);
-      if (success) setSelectedKamis([]);
+      if (mode === 'DEFAULT') {
+        success = await reroll(selectedKamis);
+        if (success) setSelectedKamis([]);
+      } else if (mode === 'ALT') {
+        if (needsApproval) approve(payItem, price);
+        bid(saleItem, quantity);
+      }
     } else if (tab === 'AUCTION') {
       if (needsApproval) approve(payItem, price);
       else bid(saleItem, quantity); // TODO: await on success

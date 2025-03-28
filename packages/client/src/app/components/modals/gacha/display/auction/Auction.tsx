@@ -21,11 +21,11 @@ export interface Props {
 export const AuctionDisplay = (props: Props) => {
   const { data, state } = props;
   const { gacha } = data.auctions;
-  const { setMode } = state;
+  const { mode } = state;
 
   return (
     <Container>
-      <Chart name='Gacha Tickets' auction={gacha} />
+      <Chart name='Gacha Tickets' auction={gacha} mode={mode} />
     </Container>
   );
 };

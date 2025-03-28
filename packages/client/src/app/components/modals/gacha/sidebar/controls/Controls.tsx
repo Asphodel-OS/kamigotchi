@@ -29,10 +29,10 @@ interface Props {
     balance: number;
   };
   state: {
+    balance: number;
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
-    setPrice: (price: number) => void;
     selectedKamis: Kami[];
     tick: number;
   };
@@ -44,7 +44,6 @@ export const Controls = (props: Props) => {
   const { reveal } = actions;
   const { mode, tab } = controls;
   const { commits, payItem, balance } = data;
-  const { selectedKamis } = state;
 
   const getBalanceText = () => {
     let numDecimals = 0;
@@ -66,7 +65,7 @@ export const Controls = (props: Props) => {
         />
       )}
       {tab === 'MINT' && <Mint controls={controls} />}
-      {tab === 'REROLL' && <Reroll selectedKamis={selectedKamis} />}
+      <Reroll state={state} mode={mode} isVisible={tab === 'REROLL'} />
       {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />

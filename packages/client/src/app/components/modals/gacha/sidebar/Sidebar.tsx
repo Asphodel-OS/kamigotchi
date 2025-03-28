@@ -137,7 +137,7 @@ export const Sidebar = (props: Props) => {
 
   // update the price according to tab/mode
   const updatePrice = () => {
-    if (mode != 'DEFAULT') setPrice(quantity);
+    if (mode === 'DEFAULT') setPrice(quantity);
     else if (tab === 'MINT') setPrice(calcAuctionCost(auctions.gacha, quantity));
     else if (tab === 'REROLL')
       setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.reroll, quantity)));
@@ -151,13 +151,13 @@ export const Sidebar = (props: Props) => {
         actions={actions}
         controls={controls}
         data={{ payItem, saleItem, balance, commits }}
-        state={{ ...state, price, setPrice }}
+        state={{ ...state, balance, price }}
       />
       <Footer
         actions={actions}
         controls={controls}
         data={{ payItem, saleItem, balance }}
-        state={{ ...state, price, setPrice }}
+        state={{ ...state, balance, price, setPrice }}
       />
     </Container>
   );

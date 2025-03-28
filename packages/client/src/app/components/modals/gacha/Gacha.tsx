@@ -81,16 +81,18 @@ export function registerGachaModal() {
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
-      // modal state controls
+      // modal controls
       const [tab, setTab] = useState<TabType>('MINT');
       const [mode, setMode] = useState<ViewMode>('DEFAULT');
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
+
+      // modal state
       const [quantity, setQuantity] = useState(0);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
+      const [tick, setTick] = useState(Date.now());
 
       const [account, setAccount] = useState<Account>(NullAccount);
-      const [tick, setTick] = useState(Date.now());
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
       const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
@@ -243,9 +245,17 @@ export function registerGachaModal() {
       ///////////////
       // HANDLERS
 
+      // reset mode and quantity on tab change
       const handleSetTab = (tab: TabType) => {
         setTab(tab);
         setMode('DEFAULT');
+        setQuantity(0);
+      };
+
+      // reset quantity on mode change
+      const handleSetMode = (mode: ViewMode) => {
+        setMode(mode);
+        setQuantity(0);
       };
 
       const handleMint = async (amount: number) => {
@@ -306,7 +316,7 @@ export function registerGachaModal() {
           <Container>
             <Display
               caches={{ kamiBlocks: KamiBlockCache }}
-              controls={{ mode, setMode, tab, filters, sorts }}
+              controls={{ mode, setMode: handleSetMode, tab, filters, sorts }}
               data={{
                 ...data,
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
@@ -324,7 +334,7 @@ export function registerGachaModal() {
               }}
               controls={{
                 mode,
-                setMode,
+                setMode: handleSetMode,
                 tab,
                 setTab: handleSetTab,
                 filters,

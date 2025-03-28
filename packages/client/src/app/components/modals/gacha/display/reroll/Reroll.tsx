@@ -53,7 +53,7 @@ export const Reroll = (props: Props) => {
         utils={utils}
         isVisible={isVisible && mode === 'DEFAULT'}
       />
-      <AuctionView auction={auction} isVisible={isVisible && mode === 'ALT'} />
+      <AuctionView auction={auction} isVisible={isVisible && mode === 'ALT'} mode={mode} />
       <Overlay bottom={0.9} right={0.6}>
         <ActionButton text={getButtonText()} onClick={toggleMode} />
       </Overlay>
