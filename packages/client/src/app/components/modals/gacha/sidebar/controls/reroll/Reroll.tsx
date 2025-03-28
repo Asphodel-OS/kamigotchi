@@ -4,10 +4,13 @@ import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { ViewMode } from '../../../types';
-import { AuctionPanel } from './AuctionPanel';
+import { AuctionPanel } from '../auctions/AuctionPanel';
 import { KamiPanel } from './KamiPanel';
 
 interface Props {
+  controls: {
+    mode: ViewMode;
+  };
   data: {
     balance: number;
     commits: Commit[];
@@ -19,17 +22,21 @@ interface Props {
     quantity: number;
     selectedKamis: Kami[];
   };
-  mode: ViewMode;
   isVisible: boolean;
 }
 export const Reroll = (props: Props) => {
-  const { state, mode, isVisible } = props;
+  const { controls, data, state, isVisible } = props;
+  const { mode } = controls;
   const { price, quantity, selectedKamis } = state;
 
   return (
     <Container isVisible={isVisible}>
       <KamiPanel selectedKamis={selectedKamis} isVisible={isVisible && mode === 'DEFAULT'} />
-      <AuctionPanel state={{ price, quantity }} isVisible={isVisible && mode === 'ALT'} />
+      <AuctionPanel
+        data={data}
+        state={{ price, quantity }}
+        isVisible={isVisible && mode === 'ALT'}
+      />
     </Container>
   );
 };

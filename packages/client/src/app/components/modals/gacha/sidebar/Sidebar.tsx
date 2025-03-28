@@ -127,9 +127,8 @@ export const Sidebar = (props: Props) => {
     } else if (tab === 'REROLL') {
       if (mode === 'DEFAULT') newBalance = getItemBalance(REROLL_TICKET_INDEX);
       else if (mode === 'ALT') newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
-    } else if (tab === 'AUCTION') {
-      if (mode === 'DEFAULT') getItemBalance(MUSU_INDEX);
-      else if (mode === 'ALT') newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
+    } else if (tab === 'MINT') {
+      newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
     }
 
     if (newBalance !== balance) setBalance(newBalance);

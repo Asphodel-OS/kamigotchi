@@ -5,6 +5,7 @@ import { ActionButton, Overlay } from 'app/components/library';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../types';
+import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
@@ -77,6 +78,7 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
+      <Mint isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
         <ActionButton text={getButtonText()} onClick={toggleMode} />
       </Overlay>

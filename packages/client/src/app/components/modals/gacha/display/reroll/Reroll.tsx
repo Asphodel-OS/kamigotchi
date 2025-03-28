@@ -31,7 +31,7 @@ interface Props {
 
 export const Reroll = (props: Props) => {
   const { controls, data, isVisible, state, utils } = props;
-  const { mode, setMode } = controls;
+  const { mode } = controls;
   const { auction } = data;
 
   return (

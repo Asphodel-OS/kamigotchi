@@ -1,21 +1,16 @@
-import { EmptyText } from 'app/components/library';
 import styled from 'styled-components';
 
+import { EmptyText } from 'app/components/library';
+
 interface Props {
-  state: {
-    price: number;
-    quantity: number;
-  };
   isVisible: boolean;
 }
-
-export const AuctionPanel = (props: Props) => {
-  const { state, isVisible } = props;
-  const { price, quantity } = state;
+export const Mint = (props: Props) => {
+  const { isVisible } = props;
 
   return (
     <Container isVisible={isVisible}>
-      <EmptyText text={[`Total Price ${price} ONYX`, `for ${quantity} Reroll Tickets`]} />
+      <EmptyText text={['COMING SOON']} />
     </Container>
   );
 };

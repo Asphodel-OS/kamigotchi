@@ -1,8 +1,8 @@
 import { KamiIcon } from 'assets/images/icons/menu';
 import { StatIcons } from 'constants/stats';
 
-export type TabType = 'GACHA' | 'REROLL';
-export const TABS: TabType[] = ['GACHA', 'REROLL'];
+export type TabType = 'GACHA' | 'REROLL' | 'MINT';
+export const TABS: TabType[] = ['GACHA', 'REROLL', 'MINT'];
 
 export type ViewMode = 'DEFAULT' | 'ALT';
 

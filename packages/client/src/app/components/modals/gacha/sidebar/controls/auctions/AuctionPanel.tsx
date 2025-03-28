@@ -19,12 +19,15 @@ interface Props {
 }
 
 export const AuctionPanel = (props: Props) => {
-  const { state, isVisible } = props;
+  const { data, state, isVisible } = props;
+  const { payItem, saleItem } = data;
   const { price, quantity } = state;
 
   return (
     <Container isVisible={isVisible}>
-      <EmptyText text={[`Total Price ${price} MUSU`, `for ${quantity} Gacha Tickets`]} />
+      <EmptyText
+        text={[`Total Price ${price} ${payItem.name}`, `for ${quantity} ${saleItem.name}(s)`]}
+      />
     </Container>
   );
 };

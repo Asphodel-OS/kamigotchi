@@ -76,6 +76,7 @@ export const Footer = (props: Props) => {
 
   //////////////////
   // HANDLERS
+
   const handleSubmit = async () => {
     playClick();
     let success = false;
@@ -90,7 +91,7 @@ export const Footer = (props: Props) => {
         if (needsApproval) approve(payItem, price);
         bid(saleItem, quantity);
       }
-    } else if (tab === 'AUCTION') {
+    } else if (tab === 'MINT') {
       if (needsApproval) approve(payItem, price);
       else bid(saleItem, quantity); // TODO: await on success
     }

@@ -5,6 +5,7 @@ import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../../types';
+import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
@@ -63,7 +64,8 @@ export const Controls = (props: Props) => {
         />
       )}
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
-      <Reroll data={data} state={state} mode={mode} isVisible={tab === 'REROLL'} />
+      <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
+      <Mint isVisible={tab === 'MINT'} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>
