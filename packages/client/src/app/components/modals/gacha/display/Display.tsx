@@ -1,6 +1,7 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { ActionButton, Overlay } from 'app/components/library';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../types';
@@ -41,8 +42,24 @@ interface Props {
 
 export const Display = (props: Props) => {
   const { state, controls, data, caches, utils } = props;
-  const { tab } = controls;
+  const { mode, setMode, tab } = controls;
   const { auctions, poolKamis } = data;
+
+  const toggleMode = () => {
+    if (mode === 'DEFAULT') setMode('ALT');
+    else setMode('DEFAULT');
+  };
+
+  const getButtonText = () => {
+    if (tab === 'MINT') {
+      if (mode === 'DEFAULT') return 'Get Gacha Tickets';
+      else return 'Back to Gacha';
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') return 'Get Reroll Tickets';
+      else return 'Back to Reroll';
+    }
+    return '???';
+  };
 
   return (
     <Container>
@@ -60,16 +77,19 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
+      <Overlay top={0.9} right={0.6}>
+        <ActionButton text={getButtonText()} onClick={toggleMode} />
+      </Overlay>
     </Container>
   );
 };
 
 const Container = styled.div`
+  position: relative;
   background-color: #beb;
   max-height: 100%;
   width: 100%;
   border-radius: 0 0 0 1.2vw;
 
   display: flex;
-  flex-flow: row nowrap;
 `;

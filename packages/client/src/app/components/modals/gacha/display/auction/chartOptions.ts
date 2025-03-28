@@ -40,6 +40,7 @@ type CrosshairOptions = {
   color: string;
   dash: number[];
   displayPrice: boolean;
+  displayDate: boolean;
 };
 
 export const CrosshairPlugin = {
@@ -49,6 +50,7 @@ export const CrosshairPlugin = {
     color: 'black',
     dash: [3, 4],
     displayPrice: true,
+    displayDate: true,
   },
   afterInit: (chart: any, args: any, opts: CrosshairOptions) => {
     chart.crosshairs = {
@@ -71,12 +73,13 @@ export const CrosshairPlugin = {
     if (!chart.crosshairs) return;
     const { x, y, shouldDraw } = chart.crosshairs;
     const { top, bottom, left, right } = chart.chartArea;
-    const { y1: yScale } = chart.scales;
+    const { y1: yScale, x: xScale } = chart.scales;
 
     if (!shouldDraw) return;
 
     ctx.save();
 
+    // display crosshairs
     ctx.beginPath();
     ctx.lineWidth = opts.width;
     ctx.strokeStyle = opts.color;
@@ -87,7 +90,7 @@ export const CrosshairPlugin = {
     ctx.lineTo(right, y);
     ctx.stroke();
 
-    // price label
+    // add price label on crosshairs
     if (opts.displayPrice) {
       ctx.fillStyle = 'rgb(75, 192, 1)';
       const width = right - left;
@@ -102,6 +105,23 @@ export const CrosshairPlugin = {
       const price = Math.floor(yScale.getValueForPixel(y));
       ctx.fillText(price, right + rectWidth / 2, y);
     }
+
+    // // date label: TODO
+    // if (opts.displayDate) {
+    //   ctx.fillStyle = 'rgb(75, 192, 1)';
+    //   const width = right - left;
+    //   const rectWidth = width * 0.07;
+    //   const rectHeight = width * 0.024;
+    //   // left, top, width, height
+    //   ctx.fillRect(x - rectWidth / 2, bottom, rectWidth, rectHeight);
+
+    //   ctx.font = 'bold 0.75vw sans-serif';
+    //   ctx.fillStyle = 'white';
+    //   ctx.textAlign = 'center';
+    //   ctx.textBaseline = 'middle';
+    //   const date = Math.floor(xScale.getValueForPixel(x));
+    //   ctx.fillText(date, x, bottom);
+    // }
 
     ctx.restore();
   },

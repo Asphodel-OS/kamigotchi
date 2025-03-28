@@ -177,7 +177,7 @@ export const Chart = (props: Props) => {
       <Tooltip text={getTitleTooltip()}>
         <Title onClick={onClick}>{name}</Title>
       </Tooltip>
-      <Overlay left={3} top={2.1}>
+      <Overlay left={1.2} top={4.2}>
         <ActionListButton
           id='dt'
           text={dt}
