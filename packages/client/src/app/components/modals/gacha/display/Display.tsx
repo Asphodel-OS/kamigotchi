@@ -2,6 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { ActionButton, Overlay } from 'app/components/library';
+import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../types';
@@ -21,6 +22,7 @@ interface Props {
     sorts: Sort[];
   };
   data: {
+    account: Account;
     accountEntity: EntityIndex;
     poolKamis: EntityIndex[];
     auctions: {
@@ -37,14 +39,13 @@ interface Props {
   utils: {
     getKami: (entity: EntityIndex) => Kami;
     getAccountKamis: () => Kami[];
-    queryGachaKamis: () => EntityIndex[];
   };
 }
 
 export const Display = (props: Props) => {
   const { state, controls, data, caches, utils } = props;
   const { mode, setMode, tab } = controls;
-  const { auctions, poolKamis } = data;
+  const { account, auctions, poolKamis } = data;
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
@@ -67,7 +68,7 @@ export const Display = (props: Props) => {
       <Pool
         caches={caches}
         controls={controls}
-        data={{ auction: auctions.gacha, entities: poolKamis }}
+        data={{ account, auction: auctions.gacha, entities: poolKamis }}
         utils={utils}
         isVisible={tab === 'GACHA'}
       />

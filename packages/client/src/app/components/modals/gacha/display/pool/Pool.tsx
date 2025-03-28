@@ -1,11 +1,12 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami/types';
 import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { AuctionView } from '../auctions/AuctionView';
-import { PoolView } from './KamiView';
+import { KamiView } from './KamiView';
 
 interface Props {
   controls: {
@@ -19,6 +20,7 @@ interface Props {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
+    account: Account;
     auction: Auction;
     entities: EntityIndex[];
   };
@@ -35,7 +37,7 @@ export const Pool = (props: Props) => {
 
   return (
     <Container isVisible={isVisible}>
-      <PoolView
+      <KamiView
         controls={controls}
         caches={caches}
         data={data}

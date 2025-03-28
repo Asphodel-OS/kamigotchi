@@ -46,7 +46,7 @@ export function registerGachaModal() {
           const accountID = world.entities[accountEntity];
           const accountOptions = { inventories: 2, live: 2 };
           const auctionOptions = { items: 3600, balance: 1 };
-          const kamiOptions = { live: 0, bonuses: 3600, progress: 3600, stats: 3600, traits: 3600 };
+          const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
 
           // TODO: boot the poolKamis query to MainDisplay once we consolidate tab views under it
           return {
@@ -67,8 +67,8 @@ export function registerGachaModal() {
               getItem: (index: number) => getItemByIndex(world, components, index),
               getItemBalance: (inventories: Inventory[], index: number) =>
                 getInventoryBalance(inventories, index),
-              getKami: (entity: EntityIndex) => getKami(world, components, entity),
-              queryGachaKamis: () => queryKamis(components, { account: GACHA_ID }),
+              getKami: (entity: EntityIndex) =>
+                getKami(world, components, entity, kamiOptions, false),
             },
           };
         })
@@ -103,12 +103,14 @@ export function registerGachaModal() {
 
       // ticking
       useEffect(() => {
+        setAccount(getAccount());
+
         const tick = () => setTick(Date.now());
         const timerID = setInterval(tick, 1000);
         return () => clearInterval(timerID);
       }, []);
 
-      // update the data when the modal is opened
+      // update the data when the modal is open
       useEffect(() => {
         if (!modals.gacha) return;
         if (mode === 'ALT') {
@@ -319,6 +321,7 @@ export function registerGachaModal() {
               controls={{ mode, setMode: handleSetMode, tab, filters, sorts }}
               data={{
                 ...data,
+                account,
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
               }}
               state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}

@@ -4,12 +4,15 @@ import styled from 'styled-components';
 
 import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { Account } from 'network/shapes/Account';
 import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, Kami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
 import { Filter, Sort } from '../../types';
 import { KamiBlock } from '../KamiBlock';
 import { EMPTY_TEXT, LOADING_TEXT } from './constants';
+
+const LOAD_CHUNK_SIZE = 200; // Adjust based on performance needs
 
 interface Props {
   controls: {
@@ -20,6 +23,7 @@ interface Props {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
+    account: Account;
     entities: EntityIndex[];
   };
   utils: {
@@ -28,25 +32,26 @@ interface Props {
   isVisible: boolean;
 }
 
-export const PoolView = (props: Props) => {
+export const KamiView = (props: Props) => {
   const { controls, caches, data, utils, isVisible } = props;
   const { filters, sorts } = controls;
   const { kamiBlocks } = caches;
-  const { entities } = data;
+  const { account, entities } = data;
   const { getKami } = utils;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [filtered, setFiltered] = useState<Kami[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [limit, setLimit] = useState(20);
 
-  // filter (and implicitly populate) the pool of kamis on initial load
+  // filter (and implicitly populate) the pool of kamis on initial lod
   useEffect(() => {
-    filterKamis();
-    setLoaded(true);
-    console.log(`gacha pool loaded: ${entities.length} initial kamis`);
+    if (isLoaded || isLoading) return;
+    setIsLoading(true);
+    loadKamis();
   }, []);
 
   // when the entities or filters change, update the list of filtered kamis
@@ -122,6 +127,23 @@ export const PoolView = (props: Props) => {
   //////////////////
   // ORGANIZATION
 
+  // load the entire set of pool kamis into the cache
+  const loadKamis = () => {
+    console.log(`gacha pool is loading: ${entities.length} initial kamis`);
+    processInChunks(
+      entities,
+      LOAD_CHUNK_SIZE,
+      (chunk: EntityIndex[]) => chunk.map((entity) => getKami(entity)),
+      () => {
+        console.log(`gacha pool finished loading: ${entities.length} initial kamis`);
+        filterKamis();
+        setIsLoading(false);
+        setIsLoaded(true);
+      }
+    );
+  };
+
+  // filter the pool of kamis based on applied filters
   const filterKamis = () => {
     const all = entities.map((entity) => getKami(entity));
     const newFiltered = all.filter((kami) => {
@@ -148,6 +170,7 @@ export const PoolView = (props: Props) => {
     setFiltered(newFiltered);
   };
 
+  // sort kamis according a sequence of sorts
   const sortKamis = (kamis: Kami[]) => {
     const sorted = [...kamis].sort((a, b) => {
       for (let i = 0; i < sorts.length; i++) {
@@ -194,8 +217,8 @@ export const PoolView = (props: Props) => {
           {filtered.length}/{entities.length}
         </Text>
       </Overlay>
-      <EmptyText size={2.1} text={LOADING_TEXT} isHidden={loaded} />
-      <EmptyText size={2.1} text={EMPTY_TEXT} isHidden={filtered.length > 0} />
+      <EmptyText size={2.1} text={LOADING_TEXT} isHidden={!isLoading} />
+      <EmptyText size={2.1} text={EMPTY_TEXT} isHidden={!isLoaded || entities.length > 0} />
       {getVisibleKamis().map((kami) => getKamiBlock(kami))}
     </Container>
   );
@@ -217,3 +240,24 @@ const Container = styled.div<{ isVisible: boolean }>`
 const Text = styled.div`
   font-size: 0.6vw;
 `;
+
+// Helper function for not blocking renders on large computations
+const processInChunks = (
+  items: EntityIndex[],
+  chunkSize: number,
+  processChunk: (chunk: EntityIndex[]) => void,
+  onComplete: () => void
+) => {
+  let index = 0;
+
+  const process = () => {
+    const chunk = items.slice(index, index + chunkSize);
+    processChunk(chunk);
+    index += chunkSize;
+
+    if (index < items.length) requestAnimationFrame(process);
+    else onComplete();
+  };
+
+  requestAnimationFrame(process);
+};

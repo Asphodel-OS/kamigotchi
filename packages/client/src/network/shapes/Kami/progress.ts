@@ -10,7 +10,7 @@ export interface Progress {
 
 export const getProgress = (components: Components, entity: EntityIndex): Progress => {
   return {
-    level: getLevel(components, entity),
+    level: getLevel(components, entity, 1),
     experience: getExperience(components, entity),
   };
 };

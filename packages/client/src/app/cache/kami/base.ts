@@ -90,8 +90,8 @@ export const get = (
       kami.state = getState(components, entity);
       kami.time = {
         start: kami.time?.start ?? 0,
-        last: getLastTime(components, entity),
-        cooldown: getLastActionTime(components, entity),
+        last: getLastTime(components, entity, debug),
+        cooldown: getLastActionTime(components, entity, debug),
       };
 
       // populate health if it's defined
