@@ -5,8 +5,7 @@ import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../../types';
-import { Auction } from './auction/Auction';
-import { Mint } from './mint/Mint';
+import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
 interface Props {
@@ -23,13 +22,12 @@ interface Props {
     setSorts: (sort: Sort[]) => void;
   };
   data: {
+    balance: number;
     commits: Commit[];
     payItem: Item;
     saleItem: Item;
-    balance: number;
   };
   state: {
-    balance: number;
     quantity: number;
     setQuantity: (quantity: number) => void;
     price: number;
@@ -64,9 +62,8 @@ export const Controls = (props: Props) => {
           }}
         />
       )}
-      {tab === 'MINT' && <Mint controls={controls} />}
-      <Reroll state={state} mode={mode} isVisible={tab === 'REROLL'} />
-      {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
+      <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
+      <Reroll data={data} state={state} mode={mode} isVisible={tab === 'REROLL'} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>

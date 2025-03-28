@@ -99,7 +99,7 @@ export const Sidebar = (props: Props) => {
 
   // update the pay item according to tab/mode
   const updatePayItem = () => {
-    if (tab === 'MINT') {
+    if (tab === 'GACHA') {
       if (mode === 'DEFAULT') setPayItem(getItem(GACHA_TICKET_INDEX));
       if (mode === 'ALT') setPayItem(getItem(MUSU_INDEX));
     } else if (tab === 'REROLL') {
@@ -114,14 +114,14 @@ export const Sidebar = (props: Props) => {
   // update the sale item according to tab/mode
   const updateSaleItem = () => {
     if (mode !== 'ALT') return;
-    if (tab === 'MINT') setSaleItem(getItem(GACHA_TICKET_INDEX));
+    if (tab === 'GACHA') setSaleItem(getItem(GACHA_TICKET_INDEX));
     else if (tab === 'REROLL') setSaleItem(getItem(REROLL_TICKET_INDEX));
   };
 
   // update the balance according to tab/mode
   const updateBalance = () => {
     let newBalance = 0;
-    if (tab === 'MINT') {
+    if (tab === 'GACHA') {
       if (mode === 'DEFAULT') newBalance = getItemBalance(GACHA_TICKET_INDEX);
       else if (mode === 'ALT') newBalance = getItemBalance(MUSU_INDEX);
     } else if (tab === 'REROLL') {
@@ -138,7 +138,7 @@ export const Sidebar = (props: Props) => {
   // update the price according to tab/mode
   const updatePrice = () => {
     if (mode === 'DEFAULT') setPrice(quantity);
-    else if (tab === 'MINT') setPrice(calcAuctionCost(auctions.gacha, quantity));
+    else if (tab === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
     else if (tab === 'REROLL')
       setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.reroll, quantity)));
     else setPrice(0);
@@ -150,14 +150,14 @@ export const Sidebar = (props: Props) => {
       <Controls
         actions={actions}
         controls={controls}
-        data={{ payItem, saleItem, balance, commits }}
-        state={{ ...state, balance, price }}
+        data={{ balance, commits, payItem, saleItem }}
+        state={{ ...state, price }}
       />
       <Footer
         actions={actions}
         controls={controls}
-        data={{ payItem, saleItem, balance }}
-        state={{ ...state, balance, price, setPrice }}
+        data={{ balance, payItem, saleItem }}
+        state={{ ...state, price, setPrice }}
       />
     </Container>
   );
@@ -166,7 +166,7 @@ export const Sidebar = (props: Props) => {
 const Container = styled.div`
   border-left: solid black 0.15vw;
   height: 100%;
-  width: 25vw;
+  width: 32vw;
 
   display: flex;
   flex-flow: column nowrap;

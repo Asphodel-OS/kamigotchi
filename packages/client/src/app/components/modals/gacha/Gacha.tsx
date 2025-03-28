@@ -82,7 +82,7 @@ export function registerGachaModal() {
       const { selectedAddress, apis } = useNetwork();
 
       // modal controls
-      const [tab, setTab] = useState<TabType>('MINT');
+      const [tab, setTab] = useState<TabType>('GACHA');
       const [mode, setMode] = useState<ViewMode>('DEFAULT');
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
@@ -112,7 +112,7 @@ export function registerGachaModal() {
       useEffect(() => {
         if (!modals.gacha) return;
         if (mode === 'ALT') {
-          if (tab === 'MINT') setGachaAuction(getAuction(GACHA_TICKET_INDEX));
+          if (tab === 'GACHA') setGachaAuction(getAuction(GACHA_TICKET_INDEX));
           else if (tab === 'REROLL') setRerollAuction(getAuction(REROLL_TICKET_INDEX));
         }
         setAccount(getAccount());

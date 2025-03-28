@@ -51,7 +51,7 @@ export const Display = (props: Props) => {
   };
 
   const getButtonText = () => {
-    if (tab === 'MINT') {
+    if (tab === 'GACHA') {
       if (mode === 'DEFAULT') return 'Get Gacha Tickets';
       else return 'Back to Gacha';
     } else if (tab === 'REROLL') {
@@ -68,7 +68,7 @@ export const Display = (props: Props) => {
         controls={controls}
         data={{ auction: auctions.gacha, entities: poolKamis }}
         utils={utils}
-        isVisible={tab === 'MINT'}
+        isVisible={tab === 'GACHA'}
       />
       <Reroll
         controls={controls}

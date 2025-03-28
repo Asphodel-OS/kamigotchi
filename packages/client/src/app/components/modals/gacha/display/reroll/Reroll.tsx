@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { TabType, ViewMode } from '../../types';
-import { AuctionView } from '../auction/AuctionView';
+import { AuctionView } from '../auctions/AuctionView';
 import { KamiView } from './KamiView';
 
 interface Props {

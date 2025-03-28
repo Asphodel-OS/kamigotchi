@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami/types';
 import { Filter, Sort, TabType, ViewMode } from '../../types';
-import { AuctionView } from '../auction/AuctionView';
+import { AuctionView } from '../auctions/AuctionView';
 import { PoolView } from './KamiView';
 
 interface Props {
@@ -30,7 +30,7 @@ interface Props {
 
 export const Pool = (props: Props) => {
   const { controls, caches, data, utils, isVisible } = props;
-  const { mode, setMode } = controls;
+  const { mode } = controls;
   const { auction } = data;
 
   return (

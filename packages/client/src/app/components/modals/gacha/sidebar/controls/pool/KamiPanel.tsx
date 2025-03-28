@@ -11,10 +11,11 @@ interface Props {
     sorts: Sort[];
     setSorts: (sort: Sort[]) => void;
   };
+  isVisible: boolean;
 }
 
-export const Mint = (props: Props) => {
-  const { controls } = props;
+export const KamiPanel = (props: Props) => {
+  const { controls, isVisible } = props;
   const { filters, setFilters, sorts, setSorts } = controls;
 
   //////////////////
@@ -102,7 +103,7 @@ export const Mint = (props: Props) => {
   // RENDER
 
   return (
-    <Container>
+    <Container isVisible={isVisible}>
       <Row>
         {SortSelector()}
         {FilterSelector()}
@@ -150,13 +151,13 @@ export const Mint = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
   padding: 0.6vw;
 
-  display: flex;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
