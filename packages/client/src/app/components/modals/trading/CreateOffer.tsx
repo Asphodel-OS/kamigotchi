@@ -30,6 +30,7 @@ export const CreateOffer = (props: Props) => {
 
   const [search, setSearch] = useState<string>('');
   const [item, setItem] = useState<any>(null);
+
   const [buyIndices, setBuyIndices] = useState<number>(0);
   const [buyAmts, setBuyAmts] = useState<BigNumberish>(0);
   const [sellIndices, setSellIndices] = useState<number>(0);
@@ -44,38 +45,16 @@ export const CreateOffer = (props: Props) => {
     setItem(null);
   };
 
-  const BuyOptionsMap = () => {
-    return getAllItems().map((item, i) => [
-      item.name.toLowerCase().includes(search.toLowerCase()) && item.name !== 'MUSU' && (
-        <PopOverButton
-          key={i}
-          onClick={() => {
-            setItem(item);
-            setBuyAmts(0);
-            setBuyIndices(0);
-          }}
-        >
-          {item.name}
+  const OptionsMap = (sellToggle: boolean) => {
+    const items = sellToggle ? getInventories() : getAllItems();
+    return items.map((item: any, i: number) => {
+      const name = sellToggle ? item.item.name : item.name;
+      return name.toLowerCase().includes(search.toLowerCase()) && name !== 'MUSU' ? (
+        <PopOverButton key={i} onClick={() => setItem(item)}>
+          {name}
         </PopOverButton>
-      ),
-    ]);
-  };
-
-  const SellOptionsMap = () => {
-    return getInventories().map((item, i) => [
-      item.item.name.toLowerCase().includes(search.toLowerCase()) && item.item.name !== 'MUSU' && (
-        <PopOverButton
-          key={i}
-          onClick={() => {
-            setItem(item);
-            setBuyAmts(0);
-            setBuyIndices(0);
-          }}
-        >
-          {item.item.name}
-        </PopOverButton>
-      ),
-    ]);
+      ) : null;
+    });
   };
 
   /////////////////
@@ -137,7 +116,7 @@ export const CreateOffer = (props: Props) => {
             />
           </Want>
           <Card style={{ flexDirection: 'column' }}>
-            <Popover closeOnClick={true} content={sellToggle ? SellOptionsMap() : BuyOptionsMap()}>
+            <Popover closeOnClick={true} content={OptionsMap(sellToggle)}>
               <Search
                 onChange={(e) => {
                   setSearch(e.target.value);

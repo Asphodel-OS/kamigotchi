@@ -29,32 +29,24 @@ export const CreateOfferCards = (props: Props) => {
     setBuyIndices,
     sellIndices,
     setSellIndices,
-    setItem,
     sellToggle,
     price,
   } = props;
 
-  let index = item?.index ?? 0;
+  let max = sellToggle ? item?.balance : Infinity;
+  let itemParsed = sellToggle ? item?.item : item;
+  let index = itemParsed?.index ?? 0;
   let min = 0;
-  let max = Infinity;
-  let image = item?.image ?? '';
+  let image = itemParsed?.image ?? '';
 
-  if (sellToggle) {
-    index = item?.item.index ?? 0;
-    max = item?.balance ?? 0;
-    image = item?.item.image ?? '';
-  }
-
-  const handleChange = (e: any, sellToggle: boolean, item: any) => {
+  const handleChange = (e: any, sellToggle: boolean, itemParsed: any) => {
     const quantityStr = e.target.value.replaceAll('[^\\d.]', '');
     const rawQuantity = parseInt(quantityStr || '0');
     const quantity = Math.max(min, Math.min(max, rawQuantity));
     if (sellToggle) {
-      setItem(item);
       setSellIndices(index);
       setSellAmts(quantity);
     } else {
-      setItem(item);
       setBuyIndices(index);
       setBuyAmts(quantity);
     }
@@ -82,7 +74,7 @@ export const CreateOfferCards = (props: Props) => {
           <Quantity
             type='string'
             value={
-              item
+              itemParsed
                 ? sellToggle
                   ? sellIndices === index
                     ? sellAmts.toString()
@@ -92,10 +84,10 @@ export const CreateOfferCards = (props: Props) => {
                     : '0'
                 : '0'
             }
-            disabled={!item}
-            onChange={(e) => item && handleChange(e, sellToggle, item)}
+            disabled={!itemParsed}
+            onChange={(e) => itemParsed && handleChange(e, sellToggle, itemParsed)}
           />
-          X{item ? <Icon src={image} /> : <EmptyIcon />}
+          X{itemParsed ? <Icon src={image} /> : <EmptyIcon />}
         </>
       ) : (
         <>
@@ -103,7 +95,7 @@ export const CreateOfferCards = (props: Props) => {
             type='string'
             value={sellToggle ? buyAmts.toString() : sellAmts.toString()}
             onChange={(e) => handlePrice(e, sellToggle)}
-            disabled={!item}
+            disabled={!itemParsed}
           />
           X<Icon src={ItemImages.musu} />
         </>
