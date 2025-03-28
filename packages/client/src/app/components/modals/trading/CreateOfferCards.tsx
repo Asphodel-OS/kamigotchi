@@ -57,37 +57,27 @@ export const CreateOfferCards = (props: Props) => {
     }
   };
 
+  const value = price
+    ? sellToggle
+      ? buyAmts.toString()
+      : sellAmts.toString()
+    : sellToggle
+      ? sellIndices === index
+        ? sellAmts.toString()
+        : '0'
+      : buyIndices === index
+        ? buyAmts.toString()
+        : '0';
+
   return (
     <Content>
-      {!price ? (
-        <>
-          <Quantity
-            type='string'
-            value={
-              sellToggle
-                ? sellIndices === index
-                  ? sellAmts.toString()
-                  : '0'
-                : buyIndices === index
-                  ? buyAmts.toString()
-                  : '0'
-            }
-            disabled={!item}
-            onChange={(e) => item && handleChange(e, sellToggle, false)}
-          />
-          X{item ? <Icon src={image} /> : <EmptyIcon />}
-        </>
-      ) : (
-        <>
-          <Quantity
-            type='string'
-            value={sellToggle ? buyAmts.toString() : sellAmts.toString()}
-            onChange={(e) => handleChange(e, sellToggle, true)}
-            disabled={!item}
-          />
-          X<Icon src={ItemImages.musu} />
-        </>
-      )}
+      <Quantity
+        type='string'
+        value={value}
+        onChange={(e) => item && handleChange(e, sellToggle, price)}
+        disabled={!item}
+      />
+      X{(item && !price) || price ? <Icon src={price ? ItemImages.musu : image} /> : <EmptyIcon />}
     </Content>
   );
 };

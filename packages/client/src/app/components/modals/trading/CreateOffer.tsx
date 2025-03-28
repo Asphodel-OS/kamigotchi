@@ -56,7 +56,6 @@ export const CreateOffer = (props: Props) => {
         <PopOverButton
           key={i}
           onClick={() => {
-            setItem(item);
             sellToggle
               ? (setMax(item.balance), setItem(item.item))
               : (setMax(Infinity), setItem(item));
