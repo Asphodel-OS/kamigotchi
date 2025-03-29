@@ -450,6 +450,7 @@
         "IDAnchor",
         "IDType",
         "IDOwnsInventory",
+        "IdSource",
         "Index",
         "IndexItem",
         "Experience",
