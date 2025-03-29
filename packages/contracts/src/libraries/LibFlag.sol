@@ -77,6 +77,10 @@ library LibFlag {
     HasFlagComponent(getAddrByID(components, HasFlagCompID)).remove(ids);
   }
 
+  function remove(IUintComp components, uint256 holderID, string memory flagType) internal {
+    remove(components, genID(holderID, flagType));
+  }
+
   /// @notice deletes a full flag
   function removeFull(IUintComp components, uint256 anchorID, string memory flag) internal {
     uint256 id = genID(anchorID, flag);

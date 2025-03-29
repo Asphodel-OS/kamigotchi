@@ -3,7 +3,10 @@
 ,In Game,Gacha Ticket,10,Misc,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
 ,In Game,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your path to salvation during playtest. Your ticket to great fortunes.
-,In Game,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,Asphodel’s premium game currency. You want this. You want this so bad.
+,In Game,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,"Asphodel’s premium game currency.
+
+You want this. You want this so bad."
+,To Deploy,ETH,103,ERC20,,,,,,Ethereum
 ,In Game,Screwdriver,201,Material,,,,,,For driving screws. May be of practical use….
 ,In Game,Wooden Stick,1001,Material,,,,,,"Wood in its unprocessed form. Grows on trees. "
 ,In Game,Stone,1002,Material,,,,,,"It’s just a stone. Can be used to get Stone. "

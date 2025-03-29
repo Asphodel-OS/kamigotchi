@@ -63,7 +63,12 @@ async function initLeveling(api: AdminAPI) {
   await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 }
 
-async function initMint(api: AdminAPI) {}
+async function initMint(api: AdminAPI) {
+  await api.config.set.number('MINT_PRICE_PUBLIC', 100); // 0.1 ETH, 100 mETH
+  await api.config.set.number('MINT_PRICE_WL', 50); // 0.05 ETH, 50 mETH
+  await api.config.set.number('MINT_NUM_MAX', 3000);
+  await api.config.set.number('MINT_NUM_MAX_PER_ACC', 5);
+}
 
 async function initStats(api: AdminAPI) {
   // base
