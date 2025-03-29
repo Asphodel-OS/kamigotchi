@@ -4,7 +4,6 @@ import _721BatchMinterSystem from "../abi/_721BatchMinterSystem.json";
 import _AuctionRegistrySystem from "../abi/_AuctionRegistrySystem.json";
 import _AuthManageRoleSystem from "../abi/_AuthManageRoleSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
-import _CreatePetSystem from "../abi/_CreatePetSystem.json";
 import _FactionRegistrySystem from "../abi/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../abi/_GoalRegistrySystem.json";
 import _ItemRegistrySystem from "../abi/_ItemRegistrySystem.json";
@@ -73,7 +72,6 @@ export const SystemAbis = {
   "system.auction.registry": _AuctionRegistrySystem.abi,
   "system._Auth.Manage.Role": _AuthManageRoleSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
-  "system.Kami721.create": _CreatePetSystem.abi,
   "system.faction.registry": _FactionRegistrySystem.abi,
   "system.goal.registry": _GoalRegistrySystem.abi,
   "system.item.registry": _ItemRegistrySystem.abi,
