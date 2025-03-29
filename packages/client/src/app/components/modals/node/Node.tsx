@@ -112,7 +112,7 @@ export function registerNodeModal() {
               getValue: (entity: EntityIndex) => getValue(components, entity),
               parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
               queryScavInstance: (index: number, holderID: EntityID) =>
-                queryScavInstance(world, 'node', index, holderID),
+                queryScavInstance(world, 'NODE', index, holderID),
 
               // node header functions..
               // TODO: clean up this mess
