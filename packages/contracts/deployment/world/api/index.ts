@@ -130,21 +130,6 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.Kami721.BatchMint', [amount], 'batchMint');
   }
 
-  async function initCreatePet() {
-    genCall('system.Kami721.create', [], 'setTraits');
-  }
-
-  async function createPet(
-    accID: BigNumberish,
-    background: number,
-    body: number,
-    color: number,
-    face: number,
-    hand: number
-  ) {
-    genCall('system.Kami721.create', [accID, background, body, color, face, hand], 'create');
-  }
-
   /////////////////
   //  NODES
 
@@ -633,10 +618,6 @@ export function createAdminAPI(compiledCalls: string[]) {
       batchMinter: {
         init: initBatchMinter,
         mint: batchMint,
-      },
-      create: {
-        init: initCreatePet,
-        mint: createPet,
       },
     },
     registry: {

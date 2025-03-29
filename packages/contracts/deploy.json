@@ -96,7 +96,6 @@
       "name": "_AuthManageRoleSystem",
       "writeAccess": ["HasFlag", "IDOwnsFlag", "IDType", "Type"]
     },
-    { "name": "_CreatePetSystem", "writeAccess": ["*"] },
     {
       "name": "_ConfigSetSystem",
       "writeAccess": ["Value"]
