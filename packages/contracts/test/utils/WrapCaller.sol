@@ -24,6 +24,14 @@ contract WrapCaller {
     LibKami.sync(components, id);
   }
 
+  function createKami() public returns (uint256) {
+    return LibKamiCreate.create(components);
+  }
+
+  function createKami(uint256 amt) public returns (uint256[] memory) {
+    return LibKamiCreate.create(components, amt);
+  }
+
   /////////////
   // SETTERS //
 

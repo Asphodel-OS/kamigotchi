@@ -48,7 +48,6 @@ library LibGacha {
   // INTERACTIONS
 
   /// @notice deposits pets into the gacha pool
-  /// @dev doesnt use LibKami for batch efficiency
   function depositPets(IUintComp components, uint256[] memory kamiIDs) internal {
     IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
@@ -60,7 +59,6 @@ library LibGacha {
   }
 
   /// @notice transfers multiple pets from gacha to accounts
-  /// @dev doesnt use LibKami for batch efficiency
   function withdrawPets(
     IUintComp components,
     uint256[] memory kamiIDs,
