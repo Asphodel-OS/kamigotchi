@@ -87,7 +87,7 @@ export async function initLocalItems(api: AdminAPI) {
     if (status !== 'Ready' && status !== 'Ingame') continue;
 
     // deploys and attaches local erc20
-    if (type === 'ERC20') await api.setup.attachItemERC20(Number(row['Index']));
+    if (type === 'ERC20') await api.setup.local.attachItemERC20(Number(row['Index']));
   }
 }
 

@@ -91,6 +91,7 @@
   "protectedComponents": ["ProxyPermissionsERC721", "TokenAllowance"],
   "systems": [
     { "name": "__LocalSetupSystem", "writeAccess": ["*"] },
+    { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
