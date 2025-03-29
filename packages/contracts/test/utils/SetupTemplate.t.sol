@@ -524,6 +524,24 @@ abstract contract SetupTemplate is TestSetupImports {
     component.set(id, abi.encode(value));
   }
 
+  function _setData(uint256 holderID, uint32 index, string memory type_, uint256 value) internal {
+    vm.startPrank(deployer);
+    LibData.set(components, holderID, index, type_, value);
+    vm.stopPrank();
+  }
+
+  function _incData(uint256 holderID, uint32 index, string memory type_, uint256 value) internal {
+    vm.startPrank(deployer);
+    LibData.inc(components, holderID, index, type_, value);
+    vm.stopPrank();
+  }
+
+  function _setFlag(uint256 holderID, string memory flagType, bool state) internal {
+    vm.startPrank(deployer);
+    LibFlag.set(components, holderID, flagType, state);
+    vm.stopPrank();
+  }
+
   /////////////////
   // STAT MANIPULATION
 

@@ -33,6 +33,7 @@ import { FriendAcceptSystem } from "./ethers-contracts/FriendAcceptSystem";
 import { FriendBlockSystem } from "./ethers-contracts/FriendBlockSystem";
 import { FriendCancelSystem } from "./ethers-contracts/FriendCancelSystem";
 import { FriendRequestSystem } from "./ethers-contracts/FriendRequestSystem";
+import { GachaBuyTicketSystem } from "./ethers-contracts/GachaBuyTicketSystem";
 import { GetterSystem } from "./ethers-contracts/GetterSystem";
 import { GoalClaimSystem } from "./ethers-contracts/GoalClaimSystem";
 import { GoalContributeSystem } from "./ethers-contracts/GoalContributeSystem";
@@ -101,6 +102,7 @@ export type SystemTypes = {
   "system.friend.block": FriendBlockSystem;
   "system.friend.cancel": FriendCancelSystem;
   "system.friend.request": FriendRequestSystem;
+  "system.buy.gacha.ticket": GachaBuyTicketSystem;
   "system.getter": GetterSystem;
   "system.goal.claim": GoalClaimSystem;
   "system.goal.contribute": GoalContributeSystem;
