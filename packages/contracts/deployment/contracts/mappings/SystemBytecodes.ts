@@ -15,6 +15,7 @@ import _RecipeRegistrySystem from "../../../out/_RecipeRegistrySystem.sol/_Recip
 import _RelationshipRegistrySystem from "../../../out/_RelationshipRegistrySystem.sol/_RelationshipRegistrySystem.json";
 import _RoomRegistrySystem from "../../../out/_RoomRegistrySystem.sol/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../../../out/_SkillRegistrySystem.sol/_SkillRegistrySystem.json";
+import _SnapshotT2System from "../../../out/_SnapshotT2System.sol/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRegistrySystem.json";
 import AccountMoveSystem from "../../../out/AccountMoveSystem.sol/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../out/AccountRegisterSystem.sol/AccountRegisterSystem.json";
@@ -83,6 +84,7 @@ export const SystemBytecodes = {
   "system.relationship.registry": _RelationshipRegistrySystem,
   "system.room.registry": _RoomRegistrySystem,
   "system.skill.registry": _SkillRegistrySystem,
+  "system.setup.snapshot.t2": _SnapshotT2System,
   "system.trait.registry": _TraitRegistrySystem,
   "system.account.move": AccountMoveSystem,
   "system.account.register": AccountRegisterSystem,
