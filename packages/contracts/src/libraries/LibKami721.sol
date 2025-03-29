@@ -131,11 +131,11 @@ library LibKami721 {
     comps[4] = "Background";
 
     string[] memory names = new string[](5);
-    names[0] = LibTraitRegistry.getBodyNameOf(components, kamiID);
-    names[1] = LibTraitRegistry.getColorNameOf(components, kamiID);
-    names[2] = LibTraitRegistry.getFaceNameOf(components, kamiID);
-    names[3] = LibTraitRegistry.getHandNameOf(components, kamiID);
-    names[4] = LibTraitRegistry.getBackgroundNameOf(components, kamiID);
+    names[0] = LibTraitRegistry.getNameOf(components, kamiID, "BODY");
+    names[1] = LibTraitRegistry.getNameOf(components, kamiID, "COLOR");
+    names[2] = LibTraitRegistry.getNameOf(components, kamiID, "FACE");
+    names[3] = LibTraitRegistry.getNameOf(components, kamiID, "HAND");
+    names[4] = LibTraitRegistry.getNameOf(components, kamiID, "BACKGROUND");
 
     for (uint256 i; i < names.length; i++) {
       string memory entry = _traitToString(comps[i], names[i], true);
