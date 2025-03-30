@@ -13,38 +13,6 @@ contract TraitsTest is MintTemplate {
   }
 
   /////////////////
-  // HELPER FUNCTIONS
-
-  function _calcStatsFromTraits(uint kamiID) internal view returns (int32[] memory) {
-    int32 health = int32(int(LibConfig.get(components, "KAMI_BASE_HEALTH")));
-    int32 power = int32(int(LibConfig.get(components, "KAMI_BASE_POWER")));
-    int32 violence = int32(int(LibConfig.get(components, "KAMI_BASE_VIOLENCE")));
-    int32 harmony = int32(int(LibConfig.get(components, "KAMI_BASE_HARMONY")));
-    int32 slots = int32(int(LibConfig.get(components, "KAMI_BASE_SLOTS")));
-
-    // sum the stats from all traits
-    uint traitRegistryID;
-    uint[] memory traits = LibKami.getTraits(components, kamiID);
-    for (uint i = 0; i < traits.length; i++) {
-      traitRegistryID = traits[i];
-      health += LibStat.get(components, "HEALTH", traitRegistryID).base;
-      power += LibStat.get(components, "POWER", traitRegistryID).base;
-      violence += LibStat.get(components, "VIOLENCE", traitRegistryID).base;
-      harmony += LibStat.get(components, "HARMONY", traitRegistryID).base;
-      slots += LibStat.get(components, "SLOTS", traitRegistryID).base;
-    }
-
-    int32[] memory stats = new int32[](5);
-    stats[0] = health;
-    stats[1] = power;
-    stats[2] = violence;
-    stats[3] = harmony;
-    stats[4] = slots;
-
-    return stats;
-  }
-
-  /////////////////
   // TESTS
 
   // test that a kami's stats align with its traits upon creation
