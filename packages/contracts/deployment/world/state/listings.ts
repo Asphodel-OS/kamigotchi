@@ -3,7 +3,7 @@ import { AdminAPI } from '../api';
 import { generateRegID, getSheet, readFile } from './utils';
 
 // TODO: trigger more verbose console logs (e.g. item/npc names) and only on a verbose flag
-export async function initListings(api: AdminAPI, indices?: number[], local?: boolean) {
+export async function initListings(api: AdminAPI, indices?: number[], all?: boolean) {
   const listingCSV = await getSheet('listings', 'listings');
   if (!listingCSV) return console.log('No listings/listings.csv found');
   const pricingCSV = await getSheet('listings', 'pricing');
@@ -16,7 +16,7 @@ export async function initListings(api: AdminAPI, indices?: number[], local?: bo
   const setSell = api.listing.set.price.sell;
 
   const validStatuses = ['In-game'];
-  if (local) validStatuses.push('Local');
+  if (all) validStatuses.push('Local');
 
   for (let i = 0; i < listingCSV.length; i++) {
     const row = listingCSV[i];
