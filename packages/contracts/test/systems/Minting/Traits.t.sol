@@ -10,17 +10,7 @@ contract TraitsTest is MintTemplate {
 
   function setUp() public override {
     super.setUp();
-
-    // accounts must be created after new config set
-    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
-    _registerAccounts(10);
   }
-
-  function setUpTraits() public override {}
-
-  function setUpMint() public override {}
-
-  function setUpAccounts() public override {}
 
   /////////////////
   // TESTS

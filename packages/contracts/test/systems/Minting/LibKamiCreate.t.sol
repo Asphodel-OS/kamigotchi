@@ -27,10 +27,7 @@ contract KamiCreationTest is MintTemplate {
     uint256 maxKamis = 111;
     startKamis = startKamis % maxKamis;
     _initStockTraits();
-    vm.startPrank(deployer);
-    __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.batchMint(startKamis);
-    vm.stopPrank();
+    _batchMint(startKamis);
 
     // minting 1 more
     uint256 kamiID = createKami();

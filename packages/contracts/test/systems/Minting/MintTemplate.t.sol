@@ -4,6 +4,8 @@ pragma solidity >=0.8.28;
 import "tests/utils/SetupTemplate.t.sol";
 
 import { TraitStats } from "libraries/LibTraitRegistry.sol";
+import { GACHA_ID } from "libraries/LibGacha.sol";
+import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 
 struct KamiTraits {
   uint32 face;
@@ -16,16 +18,16 @@ struct KamiTraits {
 contract MintTemplate is SetupTemplate {
   mapping(string => mapping(uint32 => TraitStats)) internal _traitStats;
 
-  function setUp() public override {
+  function setUp() public virtual override {
     super.setUp();
 
     vm.roll(_currBlock++);
     vm.roll(_currBlock++);
   }
 
-  function setUpMint() public override {}
+  function setUpMint() public virtual override {}
 
-  function setUpTraits() public override {}
+  function setUpTraits() public virtual override {}
 
   function _initBasicTraits() internal {
     // index, health, power, violence, harmony, slots, rarity, affinity, name, type
@@ -76,6 +78,13 @@ contract MintTemplate is SetupTemplate {
 
   /////////////////
   // UTILS
+
+  function _batchMint(uint256 amount) internal returns (uint256[] memory results) {
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    results = __721BatchMinterSystem.batchMint(amount);
+    vm.stopPrank();
+  }
 
   function traitStructToArr(KamiTraits memory traits) internal pure returns (uint32[] memory) {
     uint32[] memory arr = new uint32[](5);
