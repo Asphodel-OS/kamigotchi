@@ -367,16 +367,35 @@
     {
       "name": "KamiGachaMintSystem",
       "writeAccess": [
+        "Affinity",
         "BlockReveal",
         "EntityType",
+        "Experience",
+        "Health",
+        "Harmony",
         "IDOwnsInventory",
         "IDOwnsKami",
         "IdHolder",
+        "IndexBackground",
+        "IndexBody",
+        "IndexColor",
+        "IndexFace",
+        "IndexHand",
         "IndexItem",
+        "IndexKami",
+        "Level",
+        "MediaURI",
+        "Name",
+        "Power",
         "Reroll",
+        "Slots",
+        "SkillPoint",
+        "State",
+        "ProxyPermissionsERC721",
         "TimeLast",
         "Type",
-        "Value"
+        "Value",
+        "Violence"
       ]
     },
     {

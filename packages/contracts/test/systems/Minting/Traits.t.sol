@@ -1,45 +1,31 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./MintTemplate.t.sol";
 
-import { ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
-import { ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
-import { ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
-import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
-import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
-
-contract TraitsTest is SetupTemplate {
+contract TraitsTest is MintTemplate {
   uint[] internal _listingIDs;
   uint[] internal _nodeIDs;
   mapping(uint => uint[]) internal _kamiIDs;
 
   function setUp() public override {
     super.setUp();
-
-    // accounts must be created after new config set
-    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
-    _registerAccounts(10);
   }
-
-  function setUpTraits() public override {}
-
-  function setUpMint() public override {}
-
-  function setUpAccounts() public override {}
 
   /////////////////
   // TESTS
 
   // test that a kami's stats align with its traits upon creation
-  function testTraitStats() public {
+  function testTraitStats(uint) public {
     _initStockTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.batchMint(150);
+    __721BatchMinterSystem.batchMint(100);
     vm.stopPrank();
 
-    uint numPets = 100;
+    uint numPets = 10;
+    vm.roll(++_currBlock);
+    vm.setBlockhash(_currBlock, bytes32(_random()));
     uint[] memory kamiIDs = _mintKamis(0, numPets);
 
     uint kamiID;

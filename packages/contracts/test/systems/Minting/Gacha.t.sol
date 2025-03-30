@@ -1,30 +1,24 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
-import { GACHA_ID } from "libraries/LibGacha.sol";
-import { REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
-import "tests/utils/SetupTemplate.t.sol";
+import "./MintTemplate.t.sol";
 
 /** @dev
  * this focuses on the gacha, with a strong emphasis on checking invarients
  * and proper component values
  */
-contract GachaTest is SetupTemplate {
+contract GachaTest is MintTemplate {
   function setUp() public override {
     super.setUp();
 
     _initStockTraits();
   }
 
-  function setUpTraits() public override {}
-
-  function setUpMint() public override {}
-
   /////////////////
   // GACHA TESTS //
   /////////////////
 
-  function testSingleMintState() public {
+  function testGachaSingleMintState() public {
     uint256 ogPet = _batchMint(1)[0];
     _assertInGacha(ogPet);
 
@@ -36,20 +30,47 @@ contract GachaTest is SetupTemplate {
     uint256 commitID = abi.decode(_KamiGachaMintSystem.executeTyped(1), (uint256[]))[0];
     _assertCommit(commitID, 0, _currBlock, 0);
 
-    uint256 newPet = _revealSingle(commitID);
+    uint256 newPet = _reveal(commitID);
     _assertOutGacha(newPet, 0, 1);
 
     assertEq(ogPet, newPet);
   }
 
-  function testGachaQuantity() public {
-    uint256 numInGacha = 5000;
-    _batchMint(numInGacha);
+  function testGachaMintQuantity() public {
+    uint256 poolAmt = 2222;
+    _batchMint(poolAmt);
+    assertPoolAmt(poolAmt);
 
-    _mintKami(0);
+    // minting 0, no change
+    _mint(alice, 0);
+    assertPoolAmt(poolAmt);
+
+    // minting 1
+    uint256 commitID = _mint(alice);
+    assertPoolAmt(poolAmt + 1); // new kami created, target not yet withdrawn
+    uint256 kamiID = _reveal(commitID); // target withdrawn
+    assertPoolAmt(poolAmt);
+
+    // minting a few
+    uint256[] memory commitIDs = _mint(alice, 7);
+    assertPoolAmt(poolAmt + 7);
+    _reveal(commitIDs);
+    assertPoolAmt(poolAmt);
+
+    // minting over max
+    _giveItem(alice, GACHA_TICKET_INDEX, 100);
+    vm.prank(alice.owner);
+    vm.expectRevert("too many mints");
+    _KamiGachaMintSystem.executeTyped(100);
+
+    // rerolling 1
+    commitID = _reroll(alice, kamiID);
+    assertPoolAmt(poolAmt + 1); // reroll in, target not yet withdrawn
+    kamiID = _reveal(commitID); // target withdrawn
+    assertPoolAmt(poolAmt);
   }
 
-  function testSingleReroll() public {
+  function testGachaRerollSingle() public {
     uint256[] memory ogPool = _batchMint(2);
 
     // minting first pet
@@ -82,7 +103,7 @@ contract GachaTest is SetupTemplate {
     _assertInGacha(petPool);
   }
 
-  function testMultipleReroll() public {
+  function testGachaRerollMultiple() public {
     _batchMint(10);
 
     // minting first pet
@@ -116,7 +137,7 @@ contract GachaTest is SetupTemplate {
     _assertOutGacha(outputs[1], 0, 2);
   }
 
-  function testDistribution() public {
+  function testGachaDistribution() public {
     uint256 length = 33;
     uint256[] memory ogPool = _batchMint(length);
     uint256[] memory counts = new uint256[](length + 1);
@@ -148,13 +169,6 @@ contract GachaTest is SetupTemplate {
   // UTILS //
   ///////////
 
-  function _batchMint(uint256 amount) internal returns (uint256[] memory results) {
-    vm.startPrank(deployer);
-    __721BatchMinterSystem.setTraits();
-    results = __721BatchMinterSystem.batchMint(amount);
-    vm.stopPrank();
-  }
-
   function _reroll(
     PlayerAccount memory acc,
     uint256[] memory kamiIDs
@@ -164,24 +178,51 @@ contract GachaTest is SetupTemplate {
     vm.prank(acc.owner);
     results = _KamiGachaRerollSystem.reroll(kamiIDs);
   }
+  function _reroll(PlayerAccount memory acc, uint256 kamiID) internal returns (uint256) {
+    uint256[] memory kamiIDs = new uint256[](1);
+    kamiIDs[0] = kamiID;
+    return _reroll(acc, kamiIDs)[0];
+  }
 
-  function _revealSingle(uint256 commitID) internal returns (uint256) {
+  function _mint(
+    PlayerAccount memory acc,
+    uint256 amount
+  ) internal returns (uint256[] memory results) {
     vm.roll(++_currBlock);
+    _giveItem(acc, GACHA_TICKET_INDEX, amount);
+    vm.prank(acc.owner);
+    return abi.decode(_KamiGachaMintSystem.executeTyped(amount), (uint256[]));
+  }
+
+  function _mint(PlayerAccount memory acc) internal returns (uint256) {
+    return _mint(acc, 1)[0];
+  }
+
+  function _reveal(uint256[] memory commitIDs) internal returns (uint256[] memory) {
+    vm.roll(++_currBlock);
+    return _KamiGachaRevealSystem.reveal(commitIDs);
+  }
+
+  function _reveal(uint256 commitID) internal returns (uint256) {
     uint256[] memory commits = new uint256[](1);
     commits[0] = commitID;
-    return _KamiGachaRevealSystem.reveal(commits)[0];
+    return _reveal(commits)[0];
   }
 
   ////////////////
   // ASSERTIONS //
   ////////////////
 
-  function _assertInGacha(uint256 kamiID) internal {
+  function assertPoolAmt(uint256 amount) internal view {
+    assertEq(_IDOwnsKamiComponent.size(abi.encode(GACHA_ID)), amount);
+  }
+
+  function _assertInGacha(uint256 kamiID) internal view {
     assertEq(_IDOwnsKamiComponent.get(kamiID), GACHA_ID);
     assertTrue(!_RerollComponent.has(kamiID));
   }
 
-  function _assertOutGacha(uint256 kamiID, uint256 account, uint256 rerolls) internal {
+  function _assertOutGacha(uint256 kamiID, uint256 account, uint256 rerolls) internal view {
     account = _getAccount(account);
     assertEq(_IDOwnsKamiComponent.get(kamiID), account);
     assertEq(_RerollComponent.get(kamiID), rerolls);
@@ -193,7 +234,7 @@ contract GachaTest is SetupTemplate {
     uint256 account,
     uint256 revealBlock,
     uint256 rerolls
-  ) internal {
+  ) internal view {
     account = _getAccount(account);
     assertTrue(rerolls == 0 ? !_RerollComponent.has(id) : _RerollComponent.get(id) == rerolls);
     assertEq(_IdHolderComponent.get(id), account);
