@@ -3,7 +3,7 @@ import { AdminAPI } from '../api';
 export async function initGachaPool(api: AdminAPI, numToMint: number) {
   await api.mint.batchMinter.init();
 
-  const batchSize = 5;
+  const batchSize = 50;
   const numLoops = Math.floor(numToMint / batchSize);
   for (let i = 0; i < numLoops; i++) {
     await api.mint.batchMinter.mint(batchSize);
