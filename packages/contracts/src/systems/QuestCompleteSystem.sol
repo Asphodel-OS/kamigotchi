@@ -28,7 +28,7 @@ contract QuestCompleteSystem is System {
 
     // standard logging and tracking
     LibQuests.logComplete(components, accID);
-    LibQuests.logCompleteRepeatable(components, accID, questID);
+    LibQuests.logCompleteRepeatable(components, accID, index);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

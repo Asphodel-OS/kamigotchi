@@ -15,25 +15,23 @@ contract QuestAcceptSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint32 index = abi.decode(arguments, (uint32));
-    uint256 regID = LibQuestRegistry.getByIndex(components, index);
-    if (regID == 0) revert("Quest not found");
-
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // check requirements
+    LibQuestRegistry.verifyExists(components, index);
     LibQuests.verifyEnabled(components, index);
     LibQuests.verifyRequirements(components, index, accID);
 
     uint256 questID = LibQuests.getAccQuestIndex(components, accID, index);
-    if (LibQuests.isRepeatable(components, regID)) {
+    if (LibQuestRegistry.isRepeatable(components, index)) {
       // repeatable quests - accepted before check is implicit
       // repeatable quests can only have 0 or 1 instances
       LibQuests.verifyRepeatable(components, index, questID);
-      questID = LibQuests.assignRepeatable(world, components, index, questID, accID);
+      questID = LibQuests.assignRepeatable(components, index, questID, accID);
     } else {
       // not repeatable - check that quest has not been accepted before
       if (questID != 0) revert("accepted before");
-      questID = LibQuests.assign(world, components, index, accID);
+      questID = LibQuests.assign(components, index, accID);
     }
 
     // standard logging and tracking
