@@ -117,6 +117,7 @@ async function addFlags(api: AdminAPI, entry: any) {
 async function addERC20(api: AdminAPI, entry: any) {
   const index = Number(entry['Index']);
   const address = entry['Address'];
+  if (address.length === 0) return;
   await api.registry.item.add.erc20(index, address);
 }
 
