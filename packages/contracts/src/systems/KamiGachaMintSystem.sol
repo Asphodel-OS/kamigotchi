@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
+import { LibKamiCreate } from "libraries/LibKamiCreate.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.mint"));
 
@@ -17,6 +18,7 @@ contract KamiGachaMintSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
+    require(amount <= 10, "too many mints");
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
@@ -24,7 +26,8 @@ contract KamiGachaMintSystem is System {
     LibInventory.decFor(components, accID, GACHA_TICKET_INDEX, amount);
 
     // commits random seed for gacha roll
-    uint256[] memory results = LibGacha.commitBatch(world, components, amount, accID, block.number);
+    uint256[] memory results = LibGacha.commit(world, components, amount, accID, block.number);
+    LibKamiCreate.create(components, amount); // create new kamis into pool
 
     // standard logging and tracking
     LibGacha.logMint(components, accID, amount);

@@ -39,7 +39,8 @@ library LibEcho {
     uint256[] memory compIDs = kamiIDs();
     for (uint256 i; i < compIDs.length; i++) {
       IComponent comp = getCompByID(components, compIDs[i]);
-      comp.set(id, comp.getRaw(id));
+      bytes memory raw = comp.getRaw(id);
+      if (raw.length > 0) comp.set(id, raw);
     }
   }
 
