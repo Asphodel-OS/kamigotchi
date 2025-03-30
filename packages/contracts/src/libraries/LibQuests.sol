@@ -10,7 +10,6 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
-import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
@@ -25,10 +24,10 @@ import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibAllo } from "libraries/LibAllo.sol";
 import { LOGIC, HANDLER, Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
-import { LibAllo } from "libraries/LibAllo.sol";
 
 /**
  * @notice LibQuests handles quests!
@@ -50,7 +49,6 @@ library LibQuests {
    * - completion status (defaults to false, therefore unassigned)
    */
   function assign(
-    IWorld world,
     IUintComp components,
     uint32 questIndex,
     uint256 accID
@@ -58,7 +56,7 @@ library LibQuests {
     id = genQuestID(questIndex, accID);
 
     LibEntityType.set(components, id, "QUEST");
-    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, accID); // TODO: change to holderID
+    IDOwnsQuestComponent(getAddrByID(components, OwnQuestCompID)).set(id, accID);
     IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).set(id, questIndex);
     TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
 
@@ -66,7 +64,6 @@ library LibQuests {
   }
 
   function assignRepeatable(
-    IWorld world,
     IUintComp components,
     uint32 questIndex,
     uint256 repeatQuestID,
@@ -75,15 +72,13 @@ library LibQuests {
     // if repeatable already exists, overwrite it
     if (repeatQuestID != 0) {
       id = repeatQuestID;
-
-      unsetCompleted(components, id);
+      removeCompleted(components, id);
       TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
 
       // previous objective snapshot are unset during quest completion
       snapshotObjectives(components, questIndex, id, accID);
     } else {
-      id = assign(world, components, questIndex, accID);
-      setIsRepeatable(components, id);
+      id = assign(components, questIndex, accID);
     }
   }
 
@@ -101,8 +96,6 @@ library LibQuests {
     IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).remove(questID);
     TimeStartComponent(getAddrByID(components, TimeStartCompID)).remove(questID);
 
-    unsetIsRepeatable(components, questID);
-
     removeSnapshottedObjectives(components, questID);
   }
 
@@ -112,7 +105,7 @@ library LibQuests {
     uint256 questID,
     uint256 accID
   ) internal {
-    uint256[] memory objectives = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
+    uint256[] memory objectives = LibQuestRegistry.getObjsByIndex(components, questIndex);
 
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = LogicTypeComponent(getAddrByID(components, LogicTypeCompID)).get(
@@ -159,7 +152,7 @@ library LibQuests {
     uint32 questIndex,
     uint256 accID
   ) internal {
-    uint256[] memory rewards = LibQuestRegistry.getRwdsByQuestIndex(components, questIndex);
+    uint256[] memory rewards = LibQuestRegistry.getRwdsByIndex(components, questIndex);
     LibAllo.distribute(world, components, rewards, accID);
   }
 
@@ -191,7 +184,7 @@ library LibQuests {
     uint32 questIndex,
     uint256 accID
   ) internal view returns (bool) {
-    uint256[] memory requirements = LibQuestRegistry.getReqsByQuestIndex(components, questIndex);
+    uint256[] memory requirements = LibQuestRegistry.getReqsByIndex(components, questIndex);
     return LibConditional.check(components, requirements, accID);
   }
 
@@ -201,7 +194,7 @@ library LibQuests {
     uint256 accID
   ) internal view returns (bool result) {
     uint32 questIndex = IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(questID);
-    uint256[] memory objIDs = LibQuestRegistry.getObjsByQuestIndex(components, questIndex);
+    uint256[] memory objIDs = LibQuestRegistry.getObjsByIndex(components, questIndex);
     Condition[] memory objs = LibConditional.get(components, objIDs);
 
     for (uint256 i; i < objs.length; i++) {
@@ -211,9 +204,9 @@ library LibQuests {
       if (handler == HANDLER.CURRENT) {
         result = LibConditional._checkCurr(components, targetID, objs[i], operator);
       } else if (handler == HANDLER.INCREASE) {
-        result = checkIncrease(components, targetID, questID, objIDs[i], objs[i], operator);
+        result = checkIncrease(components, targetID, questID, objs[i], operator);
       } else if (handler == HANDLER.DECREASE) {
-        result = checkDecrease(components, targetID, questID, objIDs[i], objs[i], operator);
+        result = checkDecrease(components, targetID, questID, objs[i], operator);
       } else if (handler == HANDLER.BOOLEAN) {
         result = LibConditional._checkBool(components, targetID, objs[i], operator);
       } else {
@@ -230,7 +223,6 @@ library LibQuests {
     IUintComp components,
     uint256 accID,
     uint256 questID,
-    uint256 conditionID,
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
@@ -247,7 +239,6 @@ library LibQuests {
     IUintComp components,
     uint256 accID,
     uint256 questID,
-    uint256 conditionID,
     Condition memory data,
     LOGIC logic
   ) internal view returns (bool) {
@@ -288,7 +279,7 @@ library LibQuests {
       revert("not ur quest");
   }
 
-  function verifyObjectives(IUintComp components, uint256 questID, uint256 accID) public {
+  function verifyObjectives(IUintComp components, uint256 questID, uint256 accID) public view {
     if (!checkObjectives(components, questID, accID)) revert("quest objs not met");
   }
 
@@ -298,10 +289,6 @@ library LibQuests {
 
   function verifyRepeatable(IUintComp components, uint32 index, uint256 questID) public view {
     if (!checkRepeat(components, index, questID)) revert("repeat cons not met");
-  }
-
-  function isRepeatable(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).has(id);
   }
 
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
@@ -315,16 +302,8 @@ library LibQuests {
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(id);
   }
 
-  function setIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(id);
-  }
-
-  function unsetCompleted(IUintComp components, uint256 id) internal {
+  function removeCompleted(IUintComp components, uint256 id) internal {
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(id);
-  }
-
-  function unsetIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).remove(id);
   }
 
   /////////////////
@@ -372,8 +351,8 @@ library LibQuests {
     LibData.inc(components, accID, 0, "QUEST_COMPLETE", 1);
   }
 
-  function logCompleteRepeatable(IUintComp components, uint256 accID, uint256 questID) public {
-    if (isRepeatable(components, questID))
+  function logCompleteRepeatable(IUintComp components, uint256 accID, uint32 index) public {
+    if (LibQuestRegistry.isRepeatable(components, index))
       LibData.inc(components, accID, 0, "QUEST_REPEATABLE_COMPLETE", 1);
   }
 
