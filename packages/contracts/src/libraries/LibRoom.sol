@@ -77,11 +77,8 @@ library LibRoom {
     ExitsComponent exitComp = ExitsComponent(getAddrByID(components, ExitsCompID));
     if (exitComp.has(id)) exitComp.remove(id);
 
-    uint256[] memory gates = queryAllGates(components, index);
-    removeGates(components, gates);
-
-    uint256[] memory flags = LibFlag.queryFor(components, id);
-    LibFlag.removeFull(components, flags);
+    removeGates(components, queryAllGates(components, index));
+    LibFlag.removeFull(components, LibFlag.queryFor(components, id));
   }
 
   function removeGates(IUintComp components, uint256[] memory ids) internal {
