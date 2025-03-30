@@ -1,7 +1,7 @@
 import ejs from 'ejs';
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
-import { deploymentDir } from './paths';
+import { deploymentDir } from '../../utils/paths';
 
 export async function generateInitWorld() {
   const callsPath = path.join(deploymentDir, 'contracts/initStream.json');

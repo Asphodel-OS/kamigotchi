@@ -6,7 +6,7 @@ import {
   componentSchemaPath,
   contractsDir,
   deployConfigPath,
-} from './paths';
+} from '../../utils/paths';
 
 /**
  * Generate Component register.ts and component schemas in client

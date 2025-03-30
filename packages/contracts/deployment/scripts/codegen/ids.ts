@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { extractIdFromFile, keccak256 } from '../../utils/ids';
-import { contractsDir, deployConfigPath } from './paths';
+import { contractsDir, deployConfigPath } from '../../utils/paths';
 
 export async function generateIDs() {
   const config = JSON.parse(await readFile(deployConfigPath, { encoding: 'utf8' }));

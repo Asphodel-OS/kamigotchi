@@ -3,7 +3,7 @@ import { glob } from 'glob';
 import path from 'path';
 import { deferred } from '../../utils/deferred';
 import { extractIdFromFile } from '../../utils/ids';
-import { clientDir, componentsDir, deploymentDir, systemsDir } from './paths';
+import { clientDir, componentsDir, deploymentDir, systemsDir } from '../../utils/paths';
 
 export async function genClientSystemData(clear?: boolean) {
   const outputDir = clientDir + 'types/';

@@ -2,14 +2,14 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 import { constants } from 'ethers';
-import { ignoreSolcErrors } from '../utils';
+import { getAllSystemIDs, ignoreSolcErrors } from '../utils';
 import execa = require('execa');
 
 import { getDeployerKey, getRpc, getWorld, setAutoMine } from '../utils';
 
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -mode <mode> -systems <address[]>')
-  .demandOption(['mode', 'systems'])
+  .demandOption(['mode'])
   .parse();
 dotenv.config();
 
@@ -17,7 +17,7 @@ const run = async () => {
   // setup
   const mode = argv.mode || 'DEV';
   const world = argv.world ? argv.world : getWorld(mode);
-  const systems: string[] = argv.systems;
+  const systems: string[] = argv.systems ? argv.systems : getAllSystemIDs();
   const idType = argv.byAddress ? 'ADDRESS' : 'ID';
 
   console.log(systems);

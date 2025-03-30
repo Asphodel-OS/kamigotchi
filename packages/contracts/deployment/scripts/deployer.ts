@@ -1,8 +1,8 @@
 import { constants } from 'ethers';
 import { ignoreSolcErrors } from '../utils';
 import { findLog } from '../utils/findLog';
+import { deploymentDir } from '../utils/paths';
 import { generateLibDeploy } from './codegen';
-import { deploymentDir } from './codegen/paths';
 import execa = require('execa');
 
 /**

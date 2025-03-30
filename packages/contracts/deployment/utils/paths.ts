@@ -1,6 +1,6 @@
 import path from 'path';
 
-export const deploymentDir = path.join(__dirname, '../../');
+export const deploymentDir = path.join(__dirname, '../');
 export const clientDir = path.join(deploymentDir, '../../client/');
 export const contractsDir = path.join(deploymentDir, '../');
 export const systemsDir = path.join(contractsDir, 'src/systems/');
