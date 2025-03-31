@@ -43,38 +43,11 @@ contract _TraitRegistrySystem is System {
       affinity
     );
 
-    uint256 id;
-    if (LibString.eq(traitType, "BODY")) {
-      id = LibTraitRegistry.createBody(components, index, values);
-    } else if (LibString.eq(traitType, "BACKGROUND")) {
-      id = LibTraitRegistry.createBackground(components, index, values);
-    } else if (LibString.eq(traitType, "COLOR")) {
-      id = LibTraitRegistry.createColor(components, index, values);
-    } else if (LibString.eq(traitType, "FACE")) {
-      id = LibTraitRegistry.createFace(components, index, values);
-    } else if (LibString.eq(traitType, "HAND")) {
-      id = LibTraitRegistry.createHand(components, index, values);
-    } else {
-      revert("invalid traitType");
-    }
-
-    return id;
+    return LibTraitRegistry.create(components, index, traitType, values);
   }
 
   function remove(uint32 index, string memory traitType) public onlyOwner {
-    uint256 traitID;
-    if (LibString.eq(traitType, "BODY"))
-      traitID = LibTraitRegistry.getByBodyIndex(components, index);
-    else if (LibString.eq(traitType, "BACKGROUND"))
-      traitID = LibTraitRegistry.getByBackgroundIndex(components, index);
-    else if (LibString.eq(traitType, "COLOR"))
-      traitID = LibTraitRegistry.getByColorIndex(components, index);
-    else if (LibString.eq(traitType, "FACE"))
-      traitID = LibTraitRegistry.getByFaceIndex(components, index);
-    else if (LibString.eq(traitType, "HAND"))
-      traitID = LibTraitRegistry.getByHandIndex(components, index);
-    else revert("invalid traitType");
-
+    uint256 traitID = LibTraitRegistry.getByIndex(components, index, traitType);
     require(traitID != 0, "Trait: does not exist");
     LibTraitRegistry.remove(components, traitID);
   }

@@ -1046,35 +1046,35 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initCommonTraits() internal {
     // Backgrounds
-    registerTrait(0, 0, 0, 0, 0, 0, 0, "", "Empty BG", "BACKGROUND");
+    registerTrait(0, 0, 0, 0, 0, 0, 1, "", "Empty BG", "BACKGROUND");
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health BG Basic", "BACKGROUND");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power BG Basic", "BACKGROUND");
     registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence BG Basic", "BACKGROUND");
     registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony BG Basic", "BACKGROUND");
 
     // Bodies
-    registerTrait(0, 0, 1, 1, 0, 0, 0, "INSECT", "Empty Body", "BODY");
+    registerTrait(0, 0, 1, 1, 0, 0, 1, "INSECT", "Empty Body", "BODY");
     registerTrait(1, 0, 1, 1, 0, 0, 9, "INSECT", "Insect Body Basic", "BODY");
     registerTrait(2, 10, 0, 0, 1, 0, 9, "SCRAP", "Scrap Body Basic", "BODY");
     registerTrait(3, 0, 0, 1, 1, 0, 9, "EERIE", "Eerie Body Basic", "BODY");
     registerTrait(4, 10, 0, 0, 0, 1, 9, "NORMAL", "Normal Body Basic", "BODY");
 
     // Colors
-    registerTrait(0, 10, 0, 0, 0, 0, 0, "", "Empty Color", "COLOR");
+    registerTrait(0, 10, 0, 0, 0, 0, 1, "", "Empty Color", "COLOR");
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health Color Basic", "COLOR");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power Color Basic", "COLOR");
     registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence Color Basic", "COLOR");
     registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony Color Basic", "COLOR");
 
     // Faces
-    registerTrait(0, 10, 0, 0, 0, 0, 0, "", "Empty Face", "FACE");
+    registerTrait(0, 10, 0, 0, 0, 0, 1, "", "Empty Face", "FACE");
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health Mask Basic", "FACE");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power Mask Basic", "FACE");
     registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence Mask Basic", "FACE");
     registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony Mask Basic", "FACE");
 
     // Hands
-    registerTrait(0, 0, 1, 1, 0, 0, 0, "INSECT", "Empty Hands", "HAND");
+    registerTrait(0, 0, 1, 1, 0, 0, 1, "INSECT", "Empty Hands", "HAND");
     registerTrait(1, 0, 1, 1, 0, 0, 9, "INSECT", "Insect Hands Basic", "HAND");
     registerTrait(2, 10, 0, 0, 1, 0, 9, "SCRAP", "Scrap Hands Basic", "HAND");
     registerTrait(3, 0, 0, 1, 1, 0, 9, "EERIE", "Eerie Hands Basic", "HAND");

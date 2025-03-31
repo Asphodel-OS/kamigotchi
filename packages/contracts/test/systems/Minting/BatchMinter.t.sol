@@ -1,26 +1,16 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./MintTemplate.t.sol";
 
-import { TraitWeights, TraitStats } from "systems/_721BatchMinterSystem.sol";
+import { TraitWeights } from "systems/_721BatchMinterSystem.sol";
 import { ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 
-contract BatchMinterTest is SetupTemplate {
-  function setUp() public override {
-    super.setUp();
-
-    vm.roll(_currBlock++);
-  }
-
-  function setUpTraits() public override {}
-
-  function setUpMint() public override {}
-
+contract BatchMinterTest is MintTemplate {
   /////////////////
   // Stats //
   /////////////////
