@@ -4,14 +4,14 @@ import { getSheet, readFile, stringToNumberArray, toDelete, toRevise } from './u
 ////////////////
 // SCRIPTS
 
-export async function initRecipes(api: AdminAPI, indices?: number[], local?: boolean) {
+export async function initRecipes(api: AdminAPI, indices?: number[], all?: boolean) {
   const recipesCSV = await getSheet('crafting', 'recipes');
   if (!recipesCSV) return console.log('No crafting/recipes.csv found');
   console.log('\n==INITIALIZING RECIPES==');
 
   // TODO: support test world status
   const validStatuses = ['To Deploy'];
-  if (local) {
+  if (all) {
     validStatuses.push('Ready');
     validStatuses.push('In Game');
   }

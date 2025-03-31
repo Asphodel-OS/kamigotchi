@@ -2,7 +2,7 @@ import { AdminAPI } from '../../api';
 import { getSheet, stringToNumberArray, toDelete, toRevise } from '../utils';
 import { createGates } from './gates';
 
-export async function initRooms(api: AdminAPI, overrideIndices?: number[], local?: boolean) {
+export async function initRooms(api: AdminAPI, overrideIndices?: number[], all?: boolean) {
   const roomsCSV = await getSheet('rooms', 'rooms');
   if (!roomsCSV) return console.log('No rooms/rooms.csv found');
   console.log('\n==INITIALIZING ROOMS==');
@@ -13,7 +13,7 @@ export async function initRooms(api: AdminAPI, overrideIndices?: number[], local
   // - Test: Ready, To Deploy
   // - Prod: To Deploy
   let validStatuses = ['To Deploy'];
-  if (local) {
+  if (all) {
     validStatuses.push('In Game');
     validStatuses.push('Ready');
   }

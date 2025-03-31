@@ -27,7 +27,7 @@ export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => 
 /////////////////
 // SCRIPTS
 
-export async function initQuests(api: AdminAPI, indices?: number[], local?: boolean) {
+export async function initQuests(api: AdminAPI, indices?: number[], all?: boolean) {
   const csv = await getSheet('quests', 'quests');
   if (!csv) return console.log('No quests/quests.csv found');
   console.log('\n==INITIALIZING QUESTS==');
@@ -35,7 +35,7 @@ export async function initQuests(api: AdminAPI, indices?: number[], local?: bool
   // TODO: support test environment statuses
   // TODO: standardize env->status mapping in shared helper function
   const validStatuses = ['To Deploy'];
-  if (local) validStatuses.push('In Game', 'Test');
+  if (all) validStatuses.push('In Game', 'Test');
 
   // process quests
   for (let i = 0; i < csv.length; i++) {

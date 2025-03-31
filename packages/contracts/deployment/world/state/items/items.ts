@@ -7,7 +7,7 @@ const IGNORE_TYPES = ['OTHER'];
 const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC20'];
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
 
-export async function initItems(api: AdminAPI, indices?: number[], local?: boolean) {
+export async function initItems(api: AdminAPI, indices?: number[], all?: boolean) {
   const itemsCSV = await getSheet('items', 'items');
   if (!itemsCSV) return console.log('No items/items.csv found');
   const allosCSV = await getSheet('items', 'allos');
@@ -15,7 +15,7 @@ export async function initItems(api: AdminAPI, indices?: number[], local?: boole
   console.log('\n==INITIALIZING ITEMS==');
 
   const validStatuses = ['To Deploy'];
-  if (local) validStatuses.push('Ready', 'In Game');
+  if (all) validStatuses.push('Ready', 'In Game');
 
   // construct the map of allos for easier lookup
   const alloMap = new Map<string, any>();

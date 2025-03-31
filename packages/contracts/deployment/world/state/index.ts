@@ -21,19 +21,19 @@ export async function initAll(api: AdminAPI, local: boolean) {
   await initAuth(api);
   await initConfigs(api);
   await initFactions(api);
-  await initItems(api, [], local);
+  await initItems(api, [], true);
   await initNpcs(api);
-  await initRooms(api, undefined, local);
+  await initRooms(api, undefined, true);
   await initSkills(api);
   await initTraits(api);
 
   // dependent
   await initAuctions(api);
-  await initListings(api, undefined, local);
+  await initListings(api, undefined, true);
   await initNodes(api);
   await initGoals(api);
-  await initQuests(api, undefined, local);
-  await initRecipes(api, [], local);
+  await initQuests(api, undefined, true);
+  await initRecipes(api, [], true);
   await initRelationships(api);
 
   if (local) {
