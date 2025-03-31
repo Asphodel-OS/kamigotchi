@@ -3,11 +3,12 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
-import { NPC, NullNPC, cleanNPCListings, getNPCByIndex, refreshNPCListings } from 'app/cache/npc';
+import { cleanNPCListings, getNPCByIndex, NPC, NullNPC, refreshNPCListings } from 'app/cache/npc';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getMusuBalance } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
@@ -44,6 +45,7 @@ export function registerMerchantModal() {
               cleanListings: (listings: Listing[], account: Account) =>
                 cleanNPCListings(world, components, listings, account),
               refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
+              getMusuBalance: () => getMusuBalance(world, components, accountEntity),
             },
             network,
           };
@@ -53,7 +55,7 @@ export function registerMerchantModal() {
     // Render
     ({ data, utils, network }) => {
       const { accountEntity } = data;
-      const { getAccount, getNPC, cleanListings, refreshListings } = utils;
+      const { getAccount, getNPC, cleanListings, refreshListings, getMusuBalance } = utils;
       const { actions, api } = network;
       const { npcIndex } = useSelected();
       const { modals } = useVisibility();
@@ -112,7 +114,7 @@ export function registerMerchantModal() {
       if (!merchant) return <></>;
       return (
         <ModalWrapper id='merchant' canExit overlay>
-          <Header merchant={merchant} player={account} />
+          <Header merchant={merchant} player={account} balance={getMusuBalance()} />
           <Body>
             <Catalog listings={listings} cart={cart} setCart={setCart} />
             <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
