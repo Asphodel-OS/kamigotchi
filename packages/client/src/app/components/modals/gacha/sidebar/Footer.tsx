@@ -137,7 +137,7 @@ export const Footer = (props: Props) => {
         scale={6}
         disableInc={!enoughBalance}
         disableDec={quantity <= 0}
-        isVisible={tab !== 'REROLL' || mode === 'ALT'}
+        isHidden={tab === 'REROLL' && mode === 'DEFAULT'}
       />
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>

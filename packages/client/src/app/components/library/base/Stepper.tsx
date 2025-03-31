@@ -9,13 +9,13 @@ interface Props {
   min?: number;
   disableInc?: boolean;
   disableDec?: boolean;
-  isVisible?: boolean;
+  isHidden?: boolean;
 }
 
 // just a pair of simple control buttons to adjust a value
 export const Stepper = (props: Props) => {
   const { value, set, max, min, scale = 1 } = props;
-  const { disableInc, disableDec, isVisible } = props;
+  const { disableInc, disableDec, isHidden } = props;
 
   const handleInc = () => {
     let newValue = value + 1;
@@ -32,7 +32,7 @@ export const Stepper = (props: Props) => {
   };
 
   return (
-    <Container scale={scale} isVisible={!!isVisible}>
+    <Container scale={scale} isHidden={!!isHidden}>
       <Button scale={scale} disabled={!!disableInc || (!!max && value >= max)} onClick={handleInc}>
         +
       </Button>
@@ -43,14 +43,14 @@ export const Stepper = (props: Props) => {
   );
 };
 
-const Container = styled.div<{ scale: number; isVisible: boolean }>`
+const Container = styled.div<{ scale: number; isHidden: boolean }>`
   border-right: 0.15vw solid black;
   background-color: black;
   height: 100%;
   width: ${({ scale }) => scale}vw;
   gap: 0.12vw;
 
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+  display: ${({ isHidden }) => (isHidden ? 'none' : 'flex')};
   flex-flow: column nowrap;
 `;
 
