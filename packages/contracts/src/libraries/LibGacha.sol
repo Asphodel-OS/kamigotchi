@@ -23,25 +23,15 @@ uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 library LibGacha {
   using LibComp for IComponent;
 
-  /// @notice Creates a commit for a gacha roll
-  function commit(
-    IWorld world,
-    IUintComp components,
-    uint256 accID,
-    uint256 revealBlock
-  ) internal returns (uint256 id) {
-    LibCommit.commit(world, components, accID, revealBlock, "GACHA_COMMIT");
-  }
-
   /// @notice Creates a commit for multiple gacha rolls (same account)
-  function commitBatch(
+  function commit(
     IWorld world,
     IUintComp components,
     uint256 amount,
     uint256 accID,
     uint256 revealBlock
-  ) internal returns (uint256[] memory ids) {
-    return LibCommit.commitBatch(world, components, accID, revealBlock, "GACHA_COMMIT", amount);
+  ) internal returns (uint256[] memory) {
+    return LibCommit.commit(world, components, accID, revealBlock, "GACHA_COMMIT", amount);
   }
 
   /////////////////

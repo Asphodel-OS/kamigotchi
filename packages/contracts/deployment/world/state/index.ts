@@ -40,7 +40,7 @@ export async function initAll(api: AdminAPI, local: boolean) {
     await initGachaPool(api, 88);
     await initAllLocal(api);
   } else {
-    await initGachaPool(api, 1000);
+    await initGachaPool(api, 2222);
   }
 
   // await initSnapshot(api);

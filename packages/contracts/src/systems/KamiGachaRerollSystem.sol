@@ -32,7 +32,7 @@ contract KamiGachaRerollSystem is System {
     LibGacha.depositPets(components, kamiIDs);
 
     // commits random seed for gacha roll
-    uint256[] memory commitIDs = LibGacha.commitBatch(
+    uint256[] memory commitIDs = LibGacha.commit(
       world,
       components,
       kamiIDs.length,

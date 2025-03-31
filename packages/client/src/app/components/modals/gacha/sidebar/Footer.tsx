@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { Stepper, Tooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
+import { GACHA_MAX_PER_TX } from 'constants/gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -48,14 +49,17 @@ export const Footer = (props: Props) => {
   const { balances: tokenBal } = useTokens();
   const [needsApproval, setNeedsApproval] = useState(true);
   const [enoughBalance, setEnoughBalance] = useState(true);
+  const [underMax, setUnderMax] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
     const needsApproval = checkNeedsApproval();
     const enoughBalance = checkEnoughBalance();
+    const underMax = checkMax();
     setNeedsApproval(needsApproval);
     setEnoughBalance(enoughBalance);
-    setIsDisabled(quantity <= 0 || !enoughBalance);
+    setUnderMax(underMax);
+    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
   }, [tokenBal, price]);
 
   // check if a user needs further spend approval for a token
@@ -72,6 +76,13 @@ export const Footer = (props: Props) => {
       return tokenBalance >= price;
     }
     return balance >= price;
+  };
+
+  // check if a user is under max amt per tx
+  const checkMax = () => {
+    if (mode === 'ALT') return true; // no max for auctions
+    if (tab === 'GACHA' || tab === 'REROLL') return GACHA_MAX_PER_TX >= quantity;
+    else return true; // minting max not implemented
   };
 
   //////////////////
@@ -117,6 +128,7 @@ export const Footer = (props: Props) => {
 
   const getSubmitTooltip = () => {
     if (!enoughBalance) return ['too poore'];
+    if (!underMax) return [`max ${GACHA_MAX_PER_TX} items per tx`];
     if (quantity <= 0) return ['no items to purchase'];
 
     let saleDesc = `Purchase ${quantity} ${saleItem.name}`;
