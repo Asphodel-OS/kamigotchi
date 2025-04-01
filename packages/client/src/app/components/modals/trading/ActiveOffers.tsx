@@ -10,22 +10,14 @@ import { Trade, TradeOrder } from 'network/shapes/Trade/types';
 interface Props {
   search: string;
   ascending: boolean;
-  accountEntityIndex: EntityIndex | undefined;
+  data: { accountEntity: EntityIndex };
   trades: Trade[];
   executeTrade: (tradeId: BigNumberish) => void;
   cancelTrade: (tradeId: BigNumberish) => void;
   managementTab: boolean;
 }
 export const ActiveOffers = (props: Props) => {
-  const {
-    search,
-    ascending,
-    executeTrade,
-    cancelTrade,
-    trades,
-    accountEntityIndex,
-    managementTab,
-  } = props;
+  const { search, ascending, executeTrade, cancelTrade, trades, data, managementTab } = props;
 
   const [processedData, setProcessedData] = useState<Trade[]>([]);
 
@@ -51,7 +43,7 @@ export const ActiveOffers = (props: Props) => {
   }, [ascending, trades]);
 
   const ownerCheck = (trade: Trade) => {
-    return trade.seller?.entity === accountEntityIndex;
+    return trade.seller?.entity === data.accountEntity;
   };
 
   const searchCheck = (tradeOrder: TradeOrder) => {

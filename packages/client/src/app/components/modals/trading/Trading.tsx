@@ -23,8 +23,8 @@ export function registerTradingModal() {
     'TradingModal',
     // Grid Config
     {
-      colStart: 25,
-      colEnd: 55,
+      colStart: 33,
+      colEnd: 66,
       rowStart: 3,
       rowEnd: 99,
     },
@@ -37,7 +37,7 @@ export function registerTradingModal() {
           const accountEntity = queryAccountFromEmbedded(network);
           return {
             network,
-            data: {},
+            data: { accountEntity },
             utils: {
               queryAccountFromEmbedded: () => queryAccountFromEmbedded(network),
               getTrade: (entity: EntityIndex) => getTrade(world, components, entity),
@@ -51,12 +51,11 @@ export function registerTradingModal() {
       ),
 
     // Render
-    ({ network, utils }) => {
+    ({ network, utils, data }) => {
       const { actions, api } = network;
       const { getTrade, queryTrades, queryAccountFromEmbedded } = utils;
       const { modals, setModals } = useVisibility();
 
-      const [entityIndex, setEntityIndex] = useState<EntityIndex>();
       const [search, setSearch] = useState<string>('');
       const [filter, setFilter] = useState<string>('Price \u0245');
       const [ascending, setAscending] = useState<boolean>(true);
@@ -65,7 +64,6 @@ export function registerTradingModal() {
 
       useEffect(() => {
         if (!modals.trading) return;
-        setEntityIndex(queryAccountFromEmbedded());
         setTimeout(() => {
           setTrades(queryTrades().map((entity: EntityIndex) => getTrade(entity)));
         }, 5000);
@@ -131,15 +129,9 @@ export function registerTradingModal() {
       };
 
       return (
-        <ModalWrapper
-          id='trading'
-          header={<Header style={{}}>Trade</Header>}
-          canExit
-          width='min-content'
-        >
+        <ModalWrapper id='trading' header={<Header style={{}}>Trade</Header>} canExit>
           <Buttons>
             <Button
-              position={0}
               disabled={activeTab === 0}
               onClick={() => {
                 setActiveTab(0);
@@ -148,7 +140,6 @@ export function registerTradingModal() {
               {`Active Offers`}
             </Button>
             <Button
-              position={20.6}
               disabled={activeTab === 1}
               onClick={() => {
                 setActiveTab(1);
@@ -176,7 +167,7 @@ export function registerTradingModal() {
                   </Label>
                 </Row>
                 <ActiveOffers
-                  accountEntityIndex={entityIndex}
+                  data={data}
                   trades={trades}
                   ascending={ascending}
                   search={search}
@@ -189,7 +180,7 @@ export function registerTradingModal() {
               <ManagementTab
                 network={network}
                 utils={utils}
-                accountEntityIndex={entityIndex}
+                data={data}
                 trades={trades}
                 ascending={ascending}
                 search={search}
@@ -211,7 +202,7 @@ const Content = styled.div`
   justify-content: flex-start;
   gap: 0.6vw;
   padding: 0.5vw;
-  width: 40vw;
+
   height: 100%;
   flex-wrap: nowrap;
   flex-direction: column;
@@ -242,7 +233,6 @@ const Label = styled.div`
 const Search = styled.input`
   border-radius: 0.6vw;
   border: 0.15vw solid black;
-
   margin: 4% 0 0 0;
   min-height: 3vw;
   background: url(${ActionIcons.search}) no-repeat left center;
@@ -250,9 +240,11 @@ const Search = styled.input`
   padding: 0.5vw 1vw;
   background-size: contain;
   text-align: center;
-  font-size: 1vw;
+  font-size: 0.8vw;
   &::placeholder {
-    overflow: visible;
+    position: absolute;
+    left: 20%;
+    background-color: white;
   }
 `;
 
@@ -287,14 +279,13 @@ const PopOverButton = styled.button`
 
 const Buttons = styled.div`
   top: 0;
-  left: 0;
   position: absolute;
   width: 100%;
+  display: flex;
+  margin-bottom: 1vw;
 `;
 
-const Button = styled.button<{ position: number }>`
-  position: absolute;
-  ${({ position }) => position && `left:${position}vw;`};
+const Button = styled.button`
   font-size: 1vw;
   padding: 0.4vw;
   padding-right: 2vw;

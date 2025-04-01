@@ -22,29 +22,20 @@ interface Props {
   };
   search: string;
   ascending: boolean;
-  accountEntityIndex: EntityIndex | undefined;
+  data: { accountEntity: EntityIndex };
   trades: Trade[];
   executeTrade: (tradeId: BigNumberish) => void;
   cancelTrade: (tradeId: BigNumberish) => void;
 }
 export const ManagementTab = (props: Props) => {
-  const {
-    network,
-    utils,
-    search,
-    ascending,
-    accountEntityIndex,
-    trades,
-    executeTrade,
-    cancelTrade,
-  } = props;
+  const { network, utils, search, ascending, data, trades, executeTrade, cancelTrade } = props;
 
   return (
     <Content>
       <CreateOffer network={network} utils={utils} />
       <Divider />
       <ActiveOffers
-        accountEntityIndex={accountEntityIndex}
+        data={data}
         trades={trades}
         ascending={ascending}
         search={search}

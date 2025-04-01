@@ -226,19 +226,21 @@ const Label = styled.div`
 `;
 
 const Search = styled.input`
-  width: 14.5vw;
+  width: 13vw;
   border-radius: 0.6vw;
   border: 0.15vw solid black;
-  margin: 0.3vw 0 0 0;
+  margin: 4% 0 0 0;
   min-height: 3vw;
   background: url(${ActionIcons.search}) no-repeat left center;
   background-origin: content-box;
   padding: 0.5vw 1vw;
   background-size: contain;
-  text-align: right;
+  text-align: center;
   font-size: 0.8vw;
-  &:disabled {
-    background-color: #d5d5d5;
+  &::placeholder {
+    position: absolute;
+    left: 20%;
+    background-color: white;
   }
 `;
 
