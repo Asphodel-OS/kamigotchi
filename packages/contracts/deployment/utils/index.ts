@@ -11,4 +11,4 @@ export {
 } from './deploy';
 export { findLog } from './findLog';
 export { ignoreSolcErrors } from './forge';
-export { extractIdFromFile, keccak256 } from './ids';
+export { extractIdFromFile, getAllCompIDs, getAllSystemIDs, keccak256 } from './ids';

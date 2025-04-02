@@ -2,8 +2,8 @@ import ejs from 'ejs';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import { DeployConfig, getDeployComponents, getDeploySystems } from '../../utils';
+import { deploymentDir } from '../../utils/paths';
 import { generateImports } from './imports';
-import { deploymentDir } from './paths';
 
 /**
  * Generate LibDeploy.sol from deploy.json
