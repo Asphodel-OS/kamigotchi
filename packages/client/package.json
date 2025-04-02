@@ -10,7 +10,7 @@
     }
   },
   "scripts": {
-    "dev": "pnpm run dev:production",
+    "dev": "pnpm run dev:prod",
     "dev:local": "vite --force --port 3000 --mode local",
     "dev:test": "vite --force --port 3000 --mode testing",
     "dev:prod": "vite --force --port 3000 --mode production",
