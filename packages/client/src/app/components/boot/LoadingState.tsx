@@ -7,7 +7,7 @@ import { GodID, SyncState } from 'engine/constants';
 import { registerFixtures, registerModals, registerScene, registerValidators } from '..';
 import { BootScreen } from './BootScreen';
 
-const FE_DISABLED = import.meta.env.MODE === 'production';
+const FE_DISABLED = import.meta.env.VITE_STATE === 'DISABLED';
 
 export function registerLoadingState() {
   registerUIComponent(
