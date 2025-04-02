@@ -26,13 +26,29 @@ interface Props {
   trades: Trade[];
   executeTrade: (tradeId: BigNumberish) => void;
   cancelTrade: (tradeId: BigNumberish) => void;
+  createTrade: (
+    buyIndices: Number,
+    buyAmts: BigNumberish,
+    sellIndices: Number,
+    sellAmts: BigNumberish
+  ) => EntityID;
 }
 export const ManagementTab = (props: Props) => {
-  const { network, utils, search, ascending, data, trades, executeTrade, cancelTrade } = props;
+  const {
+    network,
+    utils,
+    search,
+    ascending,
+    data,
+    trades,
+    executeTrade,
+    cancelTrade,
+    createTrade,
+  } = props;
 
   return (
     <Content>
-      <CreateOffer network={network} utils={utils} />
+      <CreateOffer network={network} utils={utils} createTrade={createTrade} />
       <Divider />
       <ActiveOffers
         data={data}

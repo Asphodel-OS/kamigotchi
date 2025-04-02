@@ -1,5 +1,4 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { BigNumberish } from 'ethers';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -13,6 +12,12 @@ import { CreateOfferCards } from './CreateOfferCards';
 
 interface Props {
   network: NetworkLayer;
+  createTrade: (
+    buyIndices: Number,
+    buyAmts: BigNumberish,
+    sellIndices: Number,
+    sellAmts: BigNumberish
+  ) => EntityID;
   utils: {
     getInventories: () => {
       id: EntityID;
@@ -25,7 +30,7 @@ interface Props {
   };
 }
 export const CreateOffer = (props: Props) => {
-  const { network, utils } = props;
+  const { network, utils, createTrade } = props;
   const { actions, api, world } = network;
   const { getInventories, getAllItems, getMusuBalance } = utils;
 
@@ -91,23 +96,6 @@ export const CreateOffer = (props: Props) => {
     }
   };
 
-  const createTrade = (
-    buyIndices: Number,
-    buyAmts: BigNumberish,
-    sellIndices: Number,
-    sellAmts: BigNumberish
-  ) => {
-    const actionID = uuid() as EntityID;
-    actions.add({
-      action: 'create trade',
-      params: [],
-      description: `creating Trade `,
-      execute: async () => {
-        return api.player.trade.create([buyIndices], [buyAmts], [sellIndices], [sellAmts], 0);
-      },
-    });
-    return actionID;
-  };
   const CreateOffers = (price: boolean, max: any) => {
     return (
       <CreateOfferCards

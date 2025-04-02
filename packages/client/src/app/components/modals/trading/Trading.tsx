@@ -103,6 +103,23 @@ export function registerTradingModal() {
 
       /////////////////
       // ACTIONS
+      const createTrade = (
+        buyIndices: Number,
+        buyAmts: BigNumberish,
+        sellIndices: Number,
+        sellAmts: BigNumberish
+      ) => {
+        const actionID = uuid() as EntityID;
+        actions.add({
+          action: 'create trade',
+          params: [],
+          description: `creating Trade `,
+          execute: async () => {
+            return api.player.trade.create([buyIndices], [buyAmts], [sellIndices], [sellAmts], 0);
+          },
+        });
+        return actionID;
+      };
 
       const executeTrade = (tradeId: BigNumberish) => {
         const actionID = uuid() as EntityID;
@@ -171,6 +188,7 @@ export function registerTradingModal() {
                 search={search}
                 executeTrade={executeTrade}
                 cancelTrade={cancelTrade}
+                createTrade={createTrade}
               />
             )}
           </Content>
