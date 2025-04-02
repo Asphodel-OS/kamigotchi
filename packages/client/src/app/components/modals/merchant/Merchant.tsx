@@ -3,7 +3,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
-import { findInventory } from 'app/cache/inventory';
+import { getInventoryBalance } from 'app/cache/inventory';
 import { cleanNPCListings, getNPCByIndex, NPC, NullNPC, refreshNPCListings } from 'app/cache/npc';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -48,7 +48,7 @@ export function registerMerchantModal() {
                 cleanNPCListings(world, components, listings, account),
               refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
               getMusuBalance: (inventories: Inventory[]) =>
-                findInventory(inventories, MUSU_INDEX)?.balance ?? 0,
+                getInventoryBalance(inventories, MUSU_INDEX),
             },
             network,
           };

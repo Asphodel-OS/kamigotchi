@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { Pairing } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 
 export interface Props {
@@ -13,8 +14,13 @@ export const Balance = (props: Props) => {
     <Container>
       <Title>Balance</Title>
       <Content>
-        <Icon src={ItemImages.musu} />
-        <Number>{balance}</Number>
+        <Pairing
+          icon={ItemImages.musu}
+          text={balance.toString()}
+          scale={0.9}
+          marginTop={0}
+          tooltip={[balance.toString()]}
+        />
       </Content>
     </Container>
   );
@@ -25,7 +31,7 @@ const Container = styled.div`
   border: solid black 0.15vw;
   border-radius: 0.4vw;
   margin: 2vw 1.2vw 1.2vw 1.2vw;
-  min-height: 70%;
+  height: 59%;
   user-select: none;
   overflow: hidden;
 
@@ -42,11 +48,11 @@ const Title = styled.div`
   background-color: #ddd;
   border-radius: 0 0.25vw 0 0;
   width: 100%;
-  padding: 1.2vw;
+  padding: 0.8vw;
   opacity: 0.9;
 
   color: black;
-  font-size: 1.2vw;
+  font-size: 1vw;
   text-align: left;
   z-index: 1;
 `;
@@ -65,17 +71,5 @@ const Content = styled.div`
   align-items: center;
   flex-direction: row;
   font-size: 0.9vw;
-`;
-
-const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
-  margin: 0px 0.3vw;
-`;
-
-const Number = styled.div`
-  overflow-wrap: break-word;
   inline-size: 80%;
-  line-height: 0.9vw;
-  height: 1vw;
 `;
