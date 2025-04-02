@@ -140,7 +140,7 @@ export const ActiveOffers = (props: Props) => {
 const Container = styled.div<{ managementTab: boolean }>`
   position: relative;
   height: max-content;
-  ${({ managementTab }) => (managementTab ? 'width: 50%;' : 'width: 100%;')}
+  ${({ managementTab }) => (managementTab ? 'width: 52%;' : 'width: 100%;')}
   display: flex;
   flex-direction: column;
   align-items: center;

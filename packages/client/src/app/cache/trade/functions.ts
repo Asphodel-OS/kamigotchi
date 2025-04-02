@@ -3,7 +3,7 @@ import { Components } from 'network/components';
 import { TradeOrder } from 'network/shapes/Trade/types';
 import { getItemByIndex } from '../item';
 
-export const getOrderCache = (
+export const getOrder = (
   world: World,
   components: Components,
   entity: EntityIndex | undefined
