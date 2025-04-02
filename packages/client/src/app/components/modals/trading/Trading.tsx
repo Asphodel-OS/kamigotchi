@@ -17,6 +17,8 @@ import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActiveOffers } from './ActiveOffers';
 import { ManagementTab } from './ManagementTab';
+import { Tabs } from './Tabs';
+import { TabType } from './types';
 
 export function registerTradingModal() {
   registerUIComponent(
@@ -53,14 +55,14 @@ export function registerTradingModal() {
     // Render
     ({ network, utils, data }) => {
       const { actions, api } = network;
-      const { getTrade, queryTrades, queryAccountFromEmbedded } = utils;
+      const { getTrade, queryTrades } = utils;
       const { modals, setModals } = useVisibility();
 
       const [search, setSearch] = useState<string>('');
       const [filter, setFilter] = useState<string>('Price \u0245');
       const [ascending, setAscending] = useState<boolean>(true);
       const [trades, setTrades] = useState<Trade[]>([]);
-      const [activeTab, setActiveTab] = useState(0);
+      const [tab, setTab] = useState<TabType>('ActiveOffers');
 
       useEffect(() => {
         if (!modals.trading) return;
@@ -130,26 +132,9 @@ export function registerTradingModal() {
 
       return (
         <ModalWrapper id='trading' header={<Header style={{}}>Trade</Header>} canExit>
-          <Buttons>
-            <Button
-              disabled={activeTab === 0}
-              onClick={() => {
-                setActiveTab(0);
-              }}
-            >
-              {`Active Offers`}
-            </Button>
-            <Button
-              disabled={activeTab === 1}
-              onClick={() => {
-                setActiveTab(1);
-              }}
-            >
-              {`Management Tab`}
-            </Button>
-          </Buttons>
+          <Tabs tab={tab} setTab={setTab} />
           <Content>
-            {activeTab === 0 ? (
+            {tab === `ActiveOffers` ? (
               <>
                 <Row>
                   <Label>
@@ -274,34 +259,5 @@ const PopOverButton = styled.button`
   &:hover {
     filter: brightness(0.8);
     cursor: pointer;
-  }
-`;
-
-const Buttons = styled.div`
-  top: 0;
-  position: absolute;
-  width: 100%;
-  display: flex;
-  margin-bottom: 1vw;
-`;
-
-const Button = styled.button`
-  font-size: 1vw;
-  padding: 0.4vw;
-  padding-right: 2vw;
-  padding-left: 2vw;
-  border-radius: 0 0 0.8vw 0.8vw;
-  border-top: 0;
-  z-index: 1;
-  width: 50%;
-  background-color: #c5c5c5;
-  &:hover {
-    cursor: pointer;
-  }
-  &: disabled {
-    background-color: rgb(255, 255, 255);
-    z-index: 2;
-    border-color: black;
-    cursor: default;
   }
 `;
