@@ -2,7 +2,7 @@ import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
 import { Chain, localhost } from '@wagmi/core/chains';
 
 // chain configuration for testnet
-const testnetRaw = {
+const TestnetRaw = {
   id: 4471190363524365,
   name: 'preyominet',
   nativeCurrency: {
@@ -19,7 +19,7 @@ const testnetRaw = {
 } as const satisfies Chain;
 
 // chain configuration for mainnet
-const yominetRaw = {
+const YominetRaw = {
   id: 428962654539583,
   name: 'yominet',
   nativeCurrency: {
@@ -36,8 +36,8 @@ const yominetRaw = {
 } as const satisfies Chain;
 
 // TODO: move everything below to the appropriate file
-const testnet = addRpcUrlOverrideToChain(testnetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
-const yominet = addRpcUrlOverrideToChain(yominetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
+const testnet = addRpcUrlOverrideToChain(TestnetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
+const yominet = addRpcUrlOverrideToChain(YominetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
 
 export const chainConfigs: Map<string, Chain> = new Map();
 chainConfigs.set('development', localhost);

@@ -7,11 +7,15 @@ import {
 } from '@ethersproject/providers';
 import { ConnectionInfo } from 'ethers/lib/utils';
 
+import { create } from './create';
+
 export enum ConnectionState {
   DISCONNECTED,
   CONNECTING,
   CONNECTED,
 }
+
+export type Providers = ReturnType<typeof create>;
 
 export interface ProviderConfig {
   chainId: number;

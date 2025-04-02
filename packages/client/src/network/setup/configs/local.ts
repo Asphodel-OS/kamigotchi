@@ -1,4 +1,5 @@
 import { ExternalProvider } from '@ethersproject/providers';
+import { Wallet } from 'ethers';
 
 import { NetworkConfig } from './types';
 
@@ -16,7 +17,7 @@ export const createLocal = (provider?: ExternalProvider): NetworkConfig => {
 
   // EOAs and privatekey
   if (provider) config.externalProvider = provider;
-  else config.privateKey = import.meta.env.VITE_DEV_DEPLOYER_KEY;
+  else config.privateKey = Wallet.createRandom().privateKey;
 
   return config;
 };

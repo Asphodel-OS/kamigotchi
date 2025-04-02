@@ -14,7 +14,7 @@ export const createTesting = (externalProvider?: ExternalProvider): NetworkConfi
     // faucetServiceUrl: 'https://faucet-lb.test.asphodel.io/',
 
     chainId: 4471190363524365,
-    worldAddress: '0x379FA7857b8722d2719f16f78753995BafEb4B9b',
+    worldAddress: '0x89090F774BeC95420f6359003149f51fec207133',
     initialBlockNumber: 44577,
   };
 

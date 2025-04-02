@@ -12,7 +12,7 @@ export const createProduction = (externalProvider?: ExternalProvider): NetworkCo
     snapshotServiceUrl: 'https://api.prod.kamigotchi.io',
     streamServiceUrl: 'https://api.prod.kamigotchi.io',
 
-    chainId: 4471190363524365,
+    chainId: 428962654539583,
     worldAddress: '0x379FA7857b8722d2719f16f78753995BafEb4B9b',
     initialBlockNumber: 44577,
   };
