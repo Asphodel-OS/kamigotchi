@@ -10,8 +10,10 @@
     }
   },
   "scripts": {
-    "dev": "vite --force --port 3000",
-    "dev:test": "vite --force --port 3000 --mode staging",
+    "dev": "pnpm run dev:production",
+    "dev:local": "vite --force --port 3000 --mode local",
+    "dev:test": "vite --force --port 3000 --mode testing",
+    "dev:prod": "vite --force --port 3000 --mode production",
     "build": "vite build",
     "preview": "rimraf dist/ && mkdir dist/ && vite preview",
     "lint": "eslint . --fix --ext .ts",
