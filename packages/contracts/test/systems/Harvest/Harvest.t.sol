@@ -24,6 +24,19 @@ contract HarvestTest is SetupTemplate {
     _stopHarvest(prodID);
   }
 
+  function testHarvestStart() public {
+    uint32 nodeIndex = 1;
+    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
+
+    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
+    vm.assertEq(prodID, LibHarvest.getForKami(components, aKamiID));
+
+    // try to start harvest again, fail
+    vm.prank(alice.operator);
+    vm.expectRevert("kami not RESTING");
+    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
+  }
+
   function testHarvestCollects() public {
     uint32 nodeIndex = 1;
     uint256 expectedTotal;
