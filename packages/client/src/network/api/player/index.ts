@@ -243,7 +243,8 @@ export function createPlayerAPI(txQueue: TxQueue) {
   // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
-    return systems['system.kami.gacha.mint'].executeTyped(amount);
+    // RPC does not simulate gas properly, hardcode needed
+    return systems['system.kami.gacha.mint'].executeTyped(amount, { gasLimit: 17000000 });
   }
 
   // @dev reveal a minted pet

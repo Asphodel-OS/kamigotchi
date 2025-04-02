@@ -41,7 +41,7 @@ const run = async () => {
   );
   console.log('createSystem: ' + minterSystem.address);
 
-  const increment = 50;
+  const increment = 10;
   for (let i = 0; i < toMint; i += increment) {
     try {
       const tx = await minterSystem.batchMint(increment, { gasLimit: 30000000 });

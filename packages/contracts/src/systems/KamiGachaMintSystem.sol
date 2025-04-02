@@ -18,7 +18,7 @@ contract KamiGachaMintSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
-    require(amount <= 10, "too many mints");
+    require(amount <= 5, "too many mints");
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 

@@ -72,7 +72,7 @@ string constant BASE_NAME = string("test kamigotchi ");
 library LibKamiCreate {
   using LibString for string;
 
-  function create(IUintComp comps) internal returns (uint256 id) {
+  function create(IUintComp comps) public returns (uint256 id) {
     uint32 index = getNextIndex(comps);
     id = LibKami.genID(index);
     if (LibEntityType.checkAndSet(comps, id, "KAMI")) revert("kami already exists");
@@ -85,7 +85,7 @@ library LibKamiCreate {
     nft.mint(address(nft), id);
   }
 
-  function create(IUintComp comps, uint256 amt) internal returns (uint256[] memory ids) {
+  function create(IUintComp comps, uint256 amt) public returns (uint256[] memory ids) {
     ids = new uint256[](amt);
     for (uint256 i; i < amt; i++) ids[i] = create(comps);
   }

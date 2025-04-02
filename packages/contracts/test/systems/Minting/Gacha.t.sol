@@ -52,8 +52,8 @@ contract GachaTest is MintTemplate {
     assertPoolAmt(poolAmt);
 
     // minting a few
-    uint256[] memory commitIDs = _mint(alice, 7);
-    assertPoolAmt(poolAmt + 7);
+    uint256[] memory commitIDs = _mint(alice, 3);
+    assertPoolAmt(poolAmt + 3);
     _reveal(commitIDs);
     assertPoolAmt(poolAmt);
 

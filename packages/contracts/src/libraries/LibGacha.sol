@@ -166,11 +166,11 @@ library LibGacha {
   /////////////////
   // LOGGING
 
-  function logMint(IUintComp components, uint256 accID, uint256 amount) internal {
+  function logMint(IUintComp components, uint256 accID, uint256 amount) public {
     LibData.inc(components, accID, 0, "KAMI_GACHA_MINT", amount);
   }
 
-  function logReroll(IUintComp components, uint256 accID, uint256 amount) internal {
+  function logReroll(IUintComp components, uint256 accID, uint256 amount) public {
     LibData.inc(components, accID, 0, "KAMI_GACHA_REROLL", amount);
   }
 
