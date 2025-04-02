@@ -9,6 +9,7 @@ import { ActiveOffers } from './ActiveOffers';
 import { CreateOffer } from './CreateOffer';
 
 interface Props {
+  isVisible: boolean;
   network: NetworkLayer;
   utils: {
     getInventories: () => {
@@ -35,6 +36,7 @@ interface Props {
 }
 export const ManagementTab = (props: Props) => {
   const {
+    isVisible,
     network,
     utils,
     search,
@@ -47,7 +49,7 @@ export const ManagementTab = (props: Props) => {
   } = props;
 
   return (
-    <Content>
+    <Content isVisible={isVisible}>
       <CreateOffer network={network} utils={utils} createTrade={createTrade} />
       <Divider />
       <ActiveOffers
@@ -63,8 +65,8 @@ export const ManagementTab = (props: Props) => {
   );
 };
 
-const Content = styled.div`
-  display: flex;
+const Content = styled.div<{ isVisible: boolean }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: row;
   align-items: flex-start;
   height: 100%;

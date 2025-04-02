@@ -151,46 +151,44 @@ export function registerTradingModal() {
         <ModalWrapper id='trading' header={<Header style={{}}>Trade</Header>} canExit>
           <Tabs tab={tab} setTab={setTab} />
           <Content>
-            {tab === `ActiveOffers` ? (
-              <>
-                <Row>
-                  <Label>
-                    SEARCH
-                    <Search
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder='Search and item...'
-                    />
-                  </Label>
-                  <Label>
-                    SORT BY
-                    <Popover closeOnClick={true} content={OptionsMap()}>
-                      <Sort>{filter} </Sort>
-                    </Popover>
-                  </Label>
-                </Row>
-                <ActiveOffers
-                  data={data}
-                  trades={trades}
-                  ascending={ascending}
-                  search={search}
-                  executeTrade={executeTrade}
-                  cancelTrade={cancelTrade}
-                  managementTab={false}
-                />
-              </>
-            ) : (
-              <ManagementTab
-                network={network}
-                utils={utils}
+            <ActiveOffersDiv isVisible={tab === `ActiveOffers`}>
+              <Row>
+                <Label>
+                  SEARCH
+                  <Search
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder='Search and item...'
+                  />
+                </Label>
+                <Label>
+                  SORT BY
+                  <Popover closeOnClick={true} content={OptionsMap()}>
+                    <Sort>{filter} </Sort>
+                  </Popover>
+                </Label>
+              </Row>
+              <ActiveOffers
                 data={data}
                 trades={trades}
                 ascending={ascending}
                 search={search}
                 executeTrade={executeTrade}
                 cancelTrade={cancelTrade}
-                createTrade={createTrade}
+                managementTab={false}
               />
-            )}
+            </ActiveOffersDiv>
+            <ManagementTab
+              isVisible={tab === `ManagementTab`}
+              network={network}
+              utils={utils}
+              data={data}
+              trades={trades}
+              ascending={ascending}
+              search={search}
+              executeTrade={executeTrade}
+              cancelTrade={cancelTrade}
+              createTrade={createTrade}
+            />
           </Content>
         </ModalWrapper>
       );
@@ -278,4 +276,9 @@ const PopOverButton = styled.button`
     filter: brightness(0.8);
     cursor: pointer;
   }
+`;
+
+const ActiveOffersDiv = styled.div<{ isVisible: boolean }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+  flex-direction: column;
 `;
