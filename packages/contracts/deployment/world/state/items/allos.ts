@@ -72,7 +72,7 @@ export async function addStat(api: any, itemIndex: number, entry: any) {
 
   let stat = { base: 0, shift: 0, boost: 0, sync: 0 };
   if (STAT_TOTALS.includes(statType)) stat.shift = value;
-  else if (STAT_POINTS.includes(statType)) stat.base = value;
+  else if (STAT_POINTS.includes(statType)) stat.sync = value;
 
   // convert stat to proper key
   if (statType === 'HP') statType = 'HEALTH';
