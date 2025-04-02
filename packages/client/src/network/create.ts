@@ -6,10 +6,9 @@ import { SystemAbis } from 'types/SystemAbis';
 import { SystemTypes } from 'types/SystemTypes';
 import { createAdminAPI, createPlayerAPI } from './api';
 import { createComponents } from './components';
-import { createConfig } from './config';
 import { initExplorer } from './explorer';
 import { initPlayground } from './playground';
-import { SetupContractConfig, setupMUDNetwork } from './setup';
+import { SetupContractConfig, createConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
 import { createDTRevealerSystem } from './systems/DTRevealerSystem';
 
