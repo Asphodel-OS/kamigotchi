@@ -7,16 +7,15 @@ import { createTesting } from './test';
 import { NetworkConfig } from './types';
 
 // Populate the network config based on url params
-export const createConfig = (
-  externalProvider?: ExternalProvider
-): SetupContractConfig | undefined => {
+export const createConfig = (provider?: ExternalProvider): SetupContractConfig | undefined => {
   let config: NetworkConfig = <NetworkConfig>{};
 
   // resolve the network config based on the environment mode
   let mode = import.meta.env.MODE;
-  if (mode === 'production') config = createProduction(externalProvider);
-  else if (mode === 'testing') config = createTesting(externalProvider);
-  else config = createLocal(externalProvider);
+  if (mode === 'production') config = createProduction(provider);
+  else if (mode === 'staging') config = createProduction(provider);
+  else if (mode === 'testing') config = createTesting(provider);
+  else config = createLocal(provider);
 
   if (
     config.worldAddress &&
