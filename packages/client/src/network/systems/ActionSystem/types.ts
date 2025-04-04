@@ -25,5 +25,5 @@ export type ActionRequest = {
 
   // Flag to set if the queue should wait for the underlying transaction to be confirmed (in addition to being reduced)
   on?: EntityIndex; // the entity this action is related to.
-  awaitConfirmation?: boolean; // whether the queue should await tx resolution
+  skipConfirmation?: boolean; // skip confirmation for this action
 };

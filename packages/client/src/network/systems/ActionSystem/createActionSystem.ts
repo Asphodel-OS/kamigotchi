@@ -85,7 +85,7 @@ export function createActionSystem<M = undefined>(
       updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
       if (tx) {
-        if (request.awaitConfirmation) await tx.wait();
+        if (!request.skipConfirmation) await tx.wait();
         updateAction({ txHash: tx.hash });
       }
 
@@ -137,7 +137,7 @@ export function createActionSystem<M = undefined>(
   // message as metadata. The rest of the error is logged as a warning and can
   // be bubbled up, but does not appear to be useful for clientside reporting.
   function handleError(error: any, action: ActionRequest) {
-    console.warn('handleError()', '\naction: ', action, '\nerror: ', error);
+    // console.warn('handleError()', '\naction: ', action, '\nerror: ', error);
     if (!action.index) return;
 
     let metadata = error;

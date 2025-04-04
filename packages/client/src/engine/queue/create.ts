@@ -11,14 +11,7 @@ import { Contracts } from 'engine/types';
 import { deferred } from 'utils/async';
 import { createPriorityQueue } from './priorityQueue';
 import { TxQueue } from './types';
-import {
-  getRevertReason,
-  isOverrides,
-  sendTx,
-  shouldIncNonce,
-  shouldResetNonce,
-  waitForTx,
-} from './utils';
+import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce, waitForTx } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -204,13 +197,12 @@ export function create<C extends Contracts>(
         const tx = await txResult.wait();
         console.log(`[TXQueue] TX Confirmed\n`, tx);
       } catch (e) {
-        console.warn('[TXQueue] tx failed in block', e);
-
-        // Decode and log the revert reason.
-        getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
-          console.warn('[TXQueue] Revert reason:', reason)
-        ); // calling then instead of await to avoid blocking
-        console.log(`txHash: ${txResult.hash}`);
+        console.warn('[TXQueue] tx failed in block');
+        throw e; // bubble up error
+        // // Decode and log the revert reason.
+        // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
+        //   console.warn('[TXQueue] Revert reason:', reason)
+        // ); // calling then instead of await to avoid blocking
       }
     }
 
