@@ -35,7 +35,7 @@ IComponent comp;
 <% components.forEach(component=> { %>
 console.log("Deploying <%= component.comp %>Component");
 comp = new <%= component.comp %>Component(address(result.world));
-result.world.registerComponent(address(comp), <%= component.comp %>ComponentID);
+result.world.registerComponent{ gas: 400000 }(address(comp), <%= component.comp %>ComponentID);
 console.log(address(comp));
 <% });%>
 }
@@ -49,7 +49,7 @@ IUint256Component components,
 uint256 componentId,
 address writer
 ) internal {
-Component(getAddrByID(components, componentId)).authorizeWriter(writer);
+Component(getAddrByID(components, componentId)).authorizeWriter{ gas: 400000 }(writer);
 }
 
 function unauthorizeWriter(
@@ -57,7 +57,7 @@ IUint256Component components,
 uint256 componentId,
 address writer
 ) internal {
-Component(getAddrByID(components, componentId)).unauthorizeWriter(writer);
+Component(getAddrByID(components, componentId)).unauthorizeWriter{ gas: 400000 }(writer);
 }
 
 function deploySystems(address _world, bool init) internal {
@@ -73,7 +73,7 @@ if(systems.getEntitiesWithValue(<%= system.name %>ID).length > 0) {
   address prevSysAddr = getAddrByID(systems, <%= system.name %>ID);
   console.log("unauthorizing writer for previous <%= system.name %> at address %s", prevSysAddr);
 
-  //<%= system.name %>(prevSysAddr).deprecate();
+  //<%= system.name %>(prevSysAddr).deprecate{ gas: 400000 }();
   <% system.writeAccess?.forEach(component=> { -%>
     <% if(component==="*" ) { -%>
     <% components.forEach(comp=> { -%>
@@ -86,7 +86,7 @@ if(systems.getEntitiesWithValue(<%= system.name %>ID).length > 0) {
 }
 console.log("Deploying <%= system.name %>");
 system = new <%= system.name %>(world, address(components));
-world.registerSystem(address(system), <%= system.name %>ID);
+world.registerSystem{ gas: 400000 }(address(system), <%= system.name %>ID);
 <% system.writeAccess?.forEach(component=> { -%>
 <% if(component==="*" ) { -%>
 <% components.forEach(comp=> { -%>
