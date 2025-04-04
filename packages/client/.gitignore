@@ -1,10 +1,5 @@
-node_modules
-dist
-.env
+.env*
 .parcel-cache
-cypress/videos
-cypress/screenshots
-cypress/reports
-.yarn/install-state.gz
-yarn-error.log
 .DS_Store
+dist
+node_modules
