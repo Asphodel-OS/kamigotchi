@@ -10,16 +10,18 @@
     }
   },
   "scripts": {
+    "build": "pnpm run build:prod",
+    "build:test": "vite build --mode testing",
+    "build:prod": "vite build --mode production",
     "dev": "pnpm run dev:prod",
     "dev:local": "vite --force --port 3000 --mode local",
     "dev:test": "vite --force --port 3000 --mode testing",
     "dev:prod": "vite --force --port 3000 --mode production",
-    "build": "vite build",
-    "preview": "rimraf dist/ && mkdir dist/ && vite preview",
     "lint": "eslint . --fix --ext .ts",
     "nuke": "rimraf node_modules dist",
     "prettier": "prettier src --check",
-    "prettier:fix": "pnpm run prettier --write"
+    "prettier:fix": "pnpm run prettier --write",
+    "preview": "rimraf dist/ && mkdir dist/ && vite preview"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
