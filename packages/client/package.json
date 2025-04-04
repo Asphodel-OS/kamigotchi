@@ -12,6 +12,7 @@
   "scripts": {
     "build": "pnpm run build:prod",
     "build:test": "vite build --mode testing",
+    "build:prev": "vite build --mode staging",
     "build:prod": "vite build --mode production",
     "dev": "pnpm run dev:prod",
     "dev:local": "vite --force --port 3000 --mode local",
