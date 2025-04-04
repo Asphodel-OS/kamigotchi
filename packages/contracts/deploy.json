@@ -26,6 +26,7 @@
     { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDAnchor", "name": "AnchorID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdSource", "name": "SourceID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -488,7 +489,9 @@
       "writeAccess": [
         "EntityType",
         "IDOwnsInventory",
+        "IDOwnsTax",
         "IdHolder",
+        "IdTarget",
         "IdSource",
         "IndexItem",
         "Health",

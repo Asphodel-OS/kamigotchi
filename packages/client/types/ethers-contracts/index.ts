@@ -59,6 +59,7 @@ export type { IDOwnsKamiComponent } from "./IDOwnsKamiComponent";
 export type { IDOwnsQuestComponent } from "./IDOwnsQuestComponent";
 export type { IDOwnsRelationshipComponent } from "./IDOwnsRelationshipComponent";
 export type { IDOwnsSkillComponent } from "./IDOwnsSkillComponent";
+export type { IDOwnsTaxComponent } from "./IDOwnsTaxComponent";
 export type { IDOwnsTradeComponent } from "./IDOwnsTradeComponent";
 export type { IDToComponent } from "./IDToComponent";
 export type { IDTypeComponent } from "./IDTypeComponent";
@@ -246,6 +247,7 @@ export { IDOwnsKamiComponent__factory } from "./factories/IDOwnsKamiComponent__f
 export { IDOwnsQuestComponent__factory } from "./factories/IDOwnsQuestComponent__factory";
 export { IDOwnsRelationshipComponent__factory } from "./factories/IDOwnsRelationshipComponent__factory";
 export { IDOwnsSkillComponent__factory } from "./factories/IDOwnsSkillComponent__factory";
+export { IDOwnsTaxComponent__factory } from "./factories/IDOwnsTaxComponent__factory";
 export { IDOwnsTradeComponent__factory } from "./factories/IDOwnsTradeComponent__factory";
 export { IDToComponent__factory } from "./factories/IDToComponent__factory";
 export { IDTypeComponent__factory } from "./factories/IDTypeComponent__factory";

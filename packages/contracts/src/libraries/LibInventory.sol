@@ -155,6 +155,17 @@ library LibInventory {
       ids[i] = incFor(components, holderID, itemIndices[i], amts[i]);
   }
 
+  function incFor(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32 itemIndex,
+    uint256[] memory amts
+  ) internal returns (uint256[] memory ids) {
+    ids = new uint256[](holderIDs.length);
+    for (uint256 i; i < holderIDs.length; i++)
+      ids[i] = incFor(components, holderIDs[i], itemIndex, amts[i]);
+  }
+
   /// @notice decrease, and creates new inventory if needed
   function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     // check if item is symbolink to ERC20
@@ -174,6 +185,15 @@ library LibInventory {
 
       LibData.dec(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
     }
+  }
+
+  function decFor(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32 itemIndex,
+    uint256[] memory amts
+  ) internal {
+    for (uint256 i; i < holderIDs.length; i++) decFor(components, holderIDs[i], itemIndex, amts[i]);
   }
 
   function decFor(

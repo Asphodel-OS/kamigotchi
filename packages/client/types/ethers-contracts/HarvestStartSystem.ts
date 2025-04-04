@@ -36,6 +36,7 @@ export interface HarvestStartSystemInterface extends utils.Interface {
     "execute(bytes)": FunctionFragment;
     "executeBatched(uint256[],uint256)": FunctionFragment;
     "executeTyped(uint256,uint256)": FunctionFragment;
+    "executeWithTax(uint256,uint256,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -51,6 +52,7 @@ export interface HarvestStartSystemInterface extends utils.Interface {
       | "execute"
       | "executeBatched"
       | "executeTyped"
+      | "executeWithTax"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
@@ -78,6 +80,15 @@ export interface HarvestStartSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeWithTax",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -113,6 +124,10 @@ export interface HarvestStartSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeWithTax",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -243,6 +258,14 @@ export interface HarvestStartSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    executeWithTax(
+      kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
+      taxerID: PromiseOrValue<BigNumberish>,
+      taxAmt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
 
     ownershipHandoverExpiresAt(
@@ -294,6 +317,14 @@ export interface HarvestStartSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  executeWithTax(
+    kamiID: PromiseOrValue<BigNumberish>,
+    nodeID: PromiseOrValue<BigNumberish>,
+    taxerID: PromiseOrValue<BigNumberish>,
+    taxAmt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   ownershipHandoverExpiresAt(
@@ -338,6 +369,14 @@ export interface HarvestStartSystem extends BaseContract {
     executeTyped(
       kamiID: PromiseOrValue<BigNumberish>,
       nodeID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    executeWithTax(
+      kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
+      taxerID: PromiseOrValue<BigNumberish>,
+      taxAmt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -417,6 +456,14 @@ export interface HarvestStartSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    executeWithTax(
+      kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
+      taxerID: PromiseOrValue<BigNumberish>,
+      taxAmt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownershipHandoverExpiresAt(
@@ -466,6 +513,14 @@ export interface HarvestStartSystem extends BaseContract {
     executeTyped(
       kamiID: PromiseOrValue<BigNumberish>,
       nodeID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    executeWithTax(
+      kamiID: PromiseOrValue<BigNumberish>,
+      nodeID: PromiseOrValue<BigNumberish>,
+      taxerID: PromiseOrValue<BigNumberish>,
+      taxAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
