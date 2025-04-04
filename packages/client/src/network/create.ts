@@ -7,7 +7,6 @@ import { SystemTypes } from 'types/SystemTypes';
 import { createAdminAPI, createPlayerAPI } from './api';
 import { createComponents } from './components';
 import { initExplorer } from './explorer';
-import { initPlayground } from './playground';
 import { SetupContractConfig, createConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
 import { createDTRevealerSystem } from './systems/DTRevealerSystem';
@@ -63,7 +62,6 @@ export async function createNetworkLayer(config: SetupContractConfig) {
       },
     },
     explorer: initExplorer(world, components),
-    playground: initPlayground(world, components, api),
   };
 
   return networkLayer;
