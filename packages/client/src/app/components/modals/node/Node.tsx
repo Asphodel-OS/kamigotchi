@@ -196,7 +196,7 @@ export function registerNodeModal() {
           params: [kami.id, node.id],
           description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
-            return api.player.harvest.start([kami.id], node.id);
+            return api.player.harvest.start([kami.id], node.index);
           },
         });
       };

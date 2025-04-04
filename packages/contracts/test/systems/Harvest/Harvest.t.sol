@@ -15,7 +15,7 @@ contract HarvestTest is SetupTemplate {
   function testHarvestShape() public {
     uint32 nodeIndex = 1;
 
-    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvest(aKamiID, nodeIndex);
     _fastForward(_idleRequirement + 50);
 
     _collectHarvest(prodID);
@@ -28,20 +28,20 @@ contract HarvestTest is SetupTemplate {
     uint32 nodeIndex = 1;
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
 
-    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvest(aKamiID, nodeIndex);
     vm.assertEq(prodID, LibHarvest.getForKami(components, aKamiID));
 
     // try to start harvest again, fail
     vm.prank(alice.operator);
     vm.expectRevert("kami not RESTING");
-    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeIndex, 0, 0);
   }
 
   function testHarvestCollects() public {
     uint32 nodeIndex = 1;
     uint256 expectedTotal;
 
-    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvest(aKamiID, nodeIndex);
 
     for (uint256 i = 0; i < 10; i++) {
       _fastForward(_idleRequirement + 15 minutes);
@@ -67,7 +67,7 @@ contract HarvestTest is SetupTemplate {
   }
 
   function testHarvestIntensityReset() public {
-    uint256 prodID = _startHarvestByIndex(aKamiID, 1);
+    uint256 prodID = _startHarvest(aKamiID, 1);
     _fastForward(_idleRequirement);
 
     // harvesting for a while, high intensity

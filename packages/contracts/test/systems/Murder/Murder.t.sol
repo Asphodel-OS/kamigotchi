@@ -32,11 +32,11 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // alice places pet, left to farm and die
-    uint256 aProdID = _startHarvest(victimID, _nodeIDs[0]);
+    uint256 aProdID = _startHarvestByNodeID(victimID, _nodeIDs[0]);
     _fastForward(24 hours);
 
     // bob places pet
-    uint256 bProdID = _startHarvest(killerID, _nodeIDs[0]);
+    uint256 bProdID = _startHarvestByNodeID(killerID, _nodeIDs[0]);
     _fastForward(_idleRequirement);
 
     // simulate a crime
@@ -73,7 +73,7 @@ contract MurderTest is SetupTemplate {
 
     // start harvest on node with other account's kamis, fast forward by idle time requirement
     for (uint i = 0; i < numAccounts; i++) {
-      for (uint j = 0; j < numPets; j++) _startHarvest(_kamiIDs[i][j], nodeID);
+      for (uint j = 0; j < numPets; j++) _startHarvestByNodeID(_kamiIDs[i][j], nodeID);
     }
     _fastForward(_idleRequirement);
 
@@ -102,7 +102,7 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // start harvest on the right Node
-    for (uint j = 0; j < numPets; j++) _startHarvest(_kamiIDs[playerIndex][j], nodeID);
+    for (uint j = 0; j < numPets; j++) _startHarvestByNodeID(_kamiIDs[playerIndex][j], nodeID);
     _fastForward(_idleRequirement);
 
     // move the Account to room 2
@@ -150,7 +150,7 @@ contract MurderTest is SetupTemplate {
 
       // start harvests for all pets
       for (uint j = 0; j < numPets; j++)
-        playerHarvestIDs[j] = _startHarvest(_kamiIDs[playerIndex][j], _nodeIDs[i]);
+        playerHarvestIDs[j] = _startHarvestByNodeID(_kamiIDs[playerIndex][j], _nodeIDs[i]);
       _fastForward(_idleRequirement);
 
       // attempt to liquidate, then stop harvest
@@ -169,7 +169,7 @@ contract MurderTest is SetupTemplate {
       _moveAccount(playerIndex, roomIndex);
 
     // start harvest on right Node for second account's kamis
-    for (uint i = 0; i < numPets; i++) _startHarvest(_kamiIDs[playerIndex][i], _nodeIDs[0]);
+    for (uint i = 0; i < numPets; i++) _startHarvestByNodeID(_kamiIDs[playerIndex][i], _nodeIDs[0]);
     _fastForward(_idleRequirement);
 
     // check that we CAN liquidate
@@ -192,7 +192,7 @@ contract MurderTest is SetupTemplate {
     // start harvesting on the same node as our victims
     uint[] memory playerHarvestIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++)
-      playerHarvestIDs[i] = _startHarvest(_kamiIDs[playerIndex][i], nodeID);
+      playerHarvestIDs[i] = _startHarvestByNodeID(_kamiIDs[playerIndex][i], nodeID);
 
     // check that we CANNOT liquidate anytime before the idle requirement is met
     uint numIncrements = 7; // KAMI_STANDARD_COOLDOWN must not be divisible by this number
@@ -228,7 +228,7 @@ contract MurderTest is SetupTemplate {
     // start and stop harvests for these pets so they're populated
     uint[] memory playerHarvestIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      playerHarvestIDs[i] = _startHarvest(_kamiIDs[playerIndex][i], nodeID);
+      playerHarvestIDs[i] = _startHarvestByNodeID(_kamiIDs[playerIndex][i], nodeID);
       _fastForward(_idleRequirement);
       _stopHarvest(playerHarvestIDs[i]);
     }
@@ -247,7 +247,7 @@ contract MurderTest is SetupTemplate {
     }
 
     // start out player's harvests and starve their pets
-    for (uint i = 0; i < numPets; i++) _startHarvest(_kamiIDs[playerIndex][i], nodeID);
+    for (uint i = 0; i < numPets; i++) _startHarvestByNodeID(_kamiIDs[playerIndex][i], nodeID);
     _fastForward(100 hours);
 
     // check that pets CANNOT liquidate when Starving
@@ -260,7 +260,7 @@ contract MurderTest is SetupTemplate {
     // kill off our player's pets
     uint[] memory supportHarvestIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      supportHarvestIDs[i] = _startHarvest(_kamiIDs[supportPlayerIndex][i], nodeID);
+      supportHarvestIDs[i] = _startHarvestByNodeID(_kamiIDs[supportPlayerIndex][i], nodeID);
       _fastForward(_idleRequirement);
       _liquidateHarvest(_kamiIDs[supportPlayerIndex][i], playerHarvestIDs[i]);
     }
@@ -282,7 +282,7 @@ contract MurderTest is SetupTemplate {
     for (uint i = 0; i < numPets; i++) {
       _reviveKami(_kamiIDs[playerIndex][i]);
       _fastForward(_idleRequirement);
-      _startHarvest(_kamiIDs[playerIndex][i], nodeID);
+      _startHarvestByNodeID(_kamiIDs[playerIndex][i], nodeID);
     }
     _fastForward(_idleRequirement);
 
@@ -317,7 +317,7 @@ contract MurderTest is SetupTemplate {
   //     for (uint j = 0; j < numPets; j++) {
   //       nodeID = _nodeIDs[uint(keccak256(abi.encodePacked(i, j))) % _nodeIDs.length];
   //       _moveAccount(i, LibNode.getRoom(components, nodeID));
-  //       _startHarvest(_kamiIDs[i][j], nodeID);
+  //       _startHarvestByNodeID(_kamiIDs[i][j], nodeID);
   //     }
   //   }
 
@@ -371,7 +371,7 @@ contract MurderTest is SetupTemplate {
   //       // put them on new node
   //       nodeID = _nodeIDs[rand % _nodeIDs.length];
   //       _moveAccount(_getOwnerPlayerIndex(victimID), LibNode.getRoom(components, nodeID));
-  //       _startHarvest(victimID, nodeID);
+  //       _startHarvestByNodeID(victimID, nodeID);
   //     }
   //   }
   // }
@@ -427,7 +427,7 @@ contract MurderTest is SetupTemplate {
 
     uint[] memory harvestIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
-      harvestIDs[i] = _startHarvest(_kamiIDs[playerIndex][i], nodeID);
+      harvestIDs[i] = _startHarvestByNodeID(_kamiIDs[playerIndex][i], nodeID);
     }
     _fastForward(100 hours);
     return harvestIDs;

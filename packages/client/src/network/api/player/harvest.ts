@@ -14,8 +14,10 @@ export function harvestAPI(systems: any) {
   }
 
   // @dev starts a deposit harvest for a character. If none exists, it creates one.
-  function start(kamiIDs: BigNumberish[], nodeID: BigNumberish) {
-    return systems['system.harvest.start'].executeBatched(kamiIDs, nodeID, { gasLimit: 2000000 });
+  function start(kamiIDs: BigNumberish[], nodeIndex: BigNumberish) {
+    return systems['system.harvest.start'].executeBatched(kamiIDs, nodeIndex, 0, 0, {
+      gasLimit: 2200000,
+    });
   }
 
   // @dev retrieves the amount due from a passive deposit harvest and stops it.

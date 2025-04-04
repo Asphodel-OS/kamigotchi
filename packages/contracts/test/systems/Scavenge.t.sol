@@ -55,7 +55,7 @@ contract ScavengeTest is SetupTemplate {
 
     // setup kami on node
     uint256 kamiID = _mintKami(alice);
-    uint256 harvestID = _startHarvestByIndex(kamiID, nodeIndex);
+    uint256 harvestID = _startHarvest(kamiID, nodeIndex);
     _incHarvestBounty(harvestID, scavScore);
     _fastForward(_idleRequirement);
     _stopHarvest(harvestID);

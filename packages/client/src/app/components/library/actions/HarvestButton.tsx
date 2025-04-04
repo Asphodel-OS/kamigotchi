@@ -128,7 +128,7 @@ const harvestStart = (network: NetworkLayer, kami: Kami, node: Node) => {
     params: [kami.id, node.id],
     description: `Deploying ${kami.name} onto ${node.name}`,
     execute: async () => {
-      return api.player.harvest.start([kami.id], node.id);
+      return api.player.harvest.start([kami.id], node.index);
     },
   });
 };

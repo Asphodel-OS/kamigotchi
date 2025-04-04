@@ -22,11 +22,14 @@ contract HarvestStartSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 kamiID, uint256 nodeID, uint256 taxerID, uint256 taxAmt) = abi.decode(
+    (uint256 kamiID, uint32 nodeIndex, uint256 taxerID, uint256 taxAmt) = abi.decode(
       arguments,
-      (uint256, uint256, uint256, uint256)
+      (uint256, uint32, uint256, uint256)
     );
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+
+    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
+    if (nodeID == 0) revert("node does not exist");
 
     // standard checks (ownership, cooldown, state)
     LibKami.verifyAccount(components, kamiID, accID);
@@ -39,7 +42,6 @@ contract HarvestStartSystem is System {
     LibRoom.verifySharedRoom(components, accID, nodeID);
 
     // check node requirements (if any)
-    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
     LibNode.verifyRequirements(components, nodeIndex, kamiID);
 
     // start the harvest, create if none exists
@@ -52,26 +54,25 @@ contract HarvestStartSystem is System {
     return abi.encode(id);
   }
 
-  function executeWithTax(
+  function executeTyped(
     uint256 kamiID,
-    uint256 nodeID,
+    uint32 nodeIndex,
     uint256 taxerID,
     uint256 taxAmt
   ) public returns (bytes memory) {
-    return execute(abi.encode(kamiID, nodeID, taxerID, taxAmt));
-  }
-
-  function executeTyped(uint256 kamiID, uint256 nodeID) public returns (bytes memory) {
-    return execute(abi.encode(kamiID, nodeID, 0, 0));
+    return execute(abi.encode(kamiID, nodeIndex, taxerID, taxAmt));
   }
 
   // naive batched execution - todo: optimize
   function executeBatched(
     uint256[] memory kamiIDs,
-    uint256 nodeID
+    uint32 nodeIndex,
+    uint256 taxerID,
+    uint256 taxAmt
   ) public returns (bytes[] memory) {
     bytes[] memory results = new bytes[](kamiIDs.length);
-    for (uint256 i; i < kamiIDs.length; i++) results[i] = executeTyped(kamiIDs[i], nodeID);
+    for (uint256 i; i < kamiIDs.length; i++)
+      results[i] = executeTyped(kamiIDs[i], nodeIndex, taxerID, taxAmt);
     return results;
   }
 }

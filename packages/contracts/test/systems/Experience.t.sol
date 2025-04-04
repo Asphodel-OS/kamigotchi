@@ -26,7 +26,7 @@ contract ExperienceTest is SetupTemplate {
     // start all harvests
     _fastForward(_idleRequirement);
     for (uint i = 0; i < _numPets; i++) {
-      _startHarvest(_kamiIDs[i], _nodeID);
+      _startHarvestByNodeID(_kamiIDs[i], _nodeID);
     }
 
     // fast forward an hour a number of times and each time check that the resulting

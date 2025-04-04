@@ -72,7 +72,17 @@
           "internalType": "uint256[]"
         },
         {
-          "name": "nodeID",
+          "name": "nodeIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "taxerID",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "taxAmt",
           "type": "uint256",
           "internalType": "uint256"
         }
@@ -96,33 +106,9 @@
           "internalType": "uint256"
         },
         {
-          "name": "nodeID",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "executeWithTax",
-      "inputs": [
-        {
-          "name": "kamiID",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "nodeID",
-          "type": "uint256",
-          "internalType": "uint256"
+          "name": "nodeIndex",
+          "type": "uint32",
+          "internalType": "uint32"
         },
         {
           "name": "taxerID",
@@ -280,9 +266,8 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeBatched(uint256[],uint256)": "8d3d8dd4",
-    "executeTyped(uint256,uint256)": "915657fb",
-    "executeWithTax(uint256,uint256,uint256,uint256)": "b8c275a3",
+    "executeBatched(uint256[],uint32,uint256,uint256)": "68f37c94",
+    "executeTyped(uint256,uint32,uint256,uint256)": "c8372a87",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",

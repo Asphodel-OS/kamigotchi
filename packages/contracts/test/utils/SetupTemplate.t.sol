@@ -369,18 +369,18 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* HARVEST */
 
-  function _startHarvestByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
-    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
-    return _startHarvest(kamiID, nodeID);
-  }
-
-  function _startHarvest(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+  function _startHarvest(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    bytes memory harvestID = _HarvestStartSystem.executeTyped(kamiID, nodeID);
+    bytes memory harvestID = _HarvestStartSystem.executeTyped(kamiID, nodeIndex, 0, 0);
     return abi.decode(harvestID, (uint));
+  }
+
+  function _startHarvestByNodeID(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+    return _startHarvest(kamiID, nodeIndex);
   }
 
   function _stopHarvest(uint harvestID) internal {

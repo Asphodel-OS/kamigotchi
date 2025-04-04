@@ -17,7 +17,7 @@ contract HarvestTrackerTest is SetupTemplate {
     uint256 startTime = block.timestamp;
     uint32 nodeIndex = 1;
 
-    uint256 prodID = _startHarvestByIndex(aKamiID, nodeIndex);
+    uint256 prodID = _startHarvest(aKamiID, nodeIndex);
     _fastForward(_idleRequirement + 50);
 
     // feed pet
