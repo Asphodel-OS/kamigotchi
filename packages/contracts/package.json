@@ -70,7 +70,7 @@
     "ts-node": "^10.7.0",
     "typechain": "^8.1.1",
     "typescript": "^4.6.2",
-    "vip-evm": "github:initia-labs/vip-evm#main",
+    "vip-evm": "github:initia-labs/vip-score-evm#main",
     "wait-on": "^6.0.1",
     "yargs": "^17.7.2"
   },
