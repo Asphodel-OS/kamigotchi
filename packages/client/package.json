@@ -15,7 +15,7 @@
     "build:prev": "vite build --mode staging",
     "build:prod": "vite build --mode production",
     "dev": "pnpm run dev:prod",
-    "dev:local": "vite --force --port 3000 --mode local",
+    "dev:puter": "vite --force --port 3000 --mode puter",
     "dev:test": "vite --force --port 3000 --mode testing",
     "dev:prod": "vite --force --port 3000 --mode production",
     "lint": "eslint . --fix --ext .ts",
