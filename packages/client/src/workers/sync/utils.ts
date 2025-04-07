@@ -1,14 +1,14 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { ComponentValue, Components, EntityID } from '@mud-classic/recs';
+import { grpc } from '@improbable-eng/grpc-web';
+import { Components, EntityID } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { World } from '@mud-classic/solecs/types/ethers-contracts';
 import { awaitPromise, range, to256BitString, unpackTuple } from '@mud-classic/utils';
-import { BigNumber, BytesLike } from 'ethers';
+import { BigNumber } from 'ethers';
 import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, map, of } from 'rxjs';
 
-import { grpc } from '@improbable-eng/grpc-web';
-import { createDecoder } from 'engine/encoders';
+import { createDecode } from 'engine/encoders';
 import {
   ECSStateReplyV2,
   ECSStateSnapshotServiceClient,
@@ -22,7 +22,6 @@ import {
   State,
 } from 'engine/types/kamigaze/kamigaze';
 import { formatComponentID, formatEntityID } from 'engine/utils';
-import { ComponentsSchema } from 'types/ComponentsSchema';
 import { uint8ArrayToHexString } from 'utils/numbers';
 import { ContractConfig } from 'workers/types';
 import { debug as parentDebug } from '../debug';
@@ -564,46 +563,6 @@ function createBlockCache(provider: JsonRpcProvider) {
 
 //   return cacheStore;
 // }
-
-/**
- * Create a function to decode raw component values.
- * Fetches component schemas from the contracts and caches them.
- *
- * @param worldConfig Contract address and interface of the World contract
- * @param provider ethers JsonRpcProvider
- * @returns Function to decode raw component values using their contract component id
- */
-export function createDecode() {
-  const decoders: { [key: string]: (data: BytesLike) => ComponentValue } = {};
-  // hardcode world.component.components and world.component.systems to use uint256 schema
-  // NOTE: maybe compute these keys with keccaks or keep a constants file for readability
-  decoders['0x4350dba81aa91e31664a09d24a668f006169a11b3d962b7557aed362d3252aec'] = createDecoder(
-    ['value'],
-    [13]
-  ); // world.component.components
-  decoders['0x017c816a964927a00e050edd780dcf113ca2756dfa9e9fda94a05c140d9317b0'] = createDecoder(
-    ['value'],
-    [13]
-  ); // world.component.systems
-  async function decode(componentId: string, data: BytesLike): Promise<ComponentValue> {
-    if (!decoders[componentId]) {
-      debug('Creating decoder for', componentId);
-      const compID = componentId as keyof typeof ComponentsSchema;
-      let schema = ComponentsSchema[compID];
-      if (!schema) {
-        console.warn(`No schema found for component ${String(compID)}`);
-        // set bool as a default schema - only to prevent errors
-        // TODO: whitelist components to listen to (need in snapshot & here)
-        schema = { keys: ['value'], values: [0] };
-      }
-      decoders[componentId] = createDecoder(schema.keys, schema.values);
-    }
-    // Decode the raw value
-    return decoders[componentId]!(data);
-  }
-
-  return decode;
-}
 
 export function groupByTxHash(events: NetworkComponentUpdate[]) {
   return events.reduce(

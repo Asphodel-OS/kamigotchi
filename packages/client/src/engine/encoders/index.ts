@@ -1,2 +1,2 @@
-export { createDecoder } from './createDecoder';
-export { createEncoder } from './createEncoder';
+export { createDecode, createDecoder } from './decode';
+export { createEncoder } from './encode';

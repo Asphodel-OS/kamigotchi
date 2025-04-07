@@ -1,17 +1,16 @@
 import { BigNumber } from 'ethers';
-import { BytesLike, defaultAbiCoder as abi } from 'ethers/lib/utils';
 
 import {
   ContractSchemaValue,
   ContractSchemaValueArrayToElement,
-  ContractSchemaValueId,
   ContractSchemaValueTypes,
 } from './types';
 
-function flattenValue<V extends ContractSchemaValue>(
+// flattens the structure of a decoded value
+export const flattenValue = <V extends ContractSchemaValue>(
   value: BigNumber | BigNumber[] | number | number[] | boolean | boolean[] | string | string[],
   valueType: V
-): ContractSchemaValueTypes[V] {
+): ContractSchemaValueTypes[V] => {
   // If value is array, recursively flatten elements
   if (Array.isArray(value))
     return value.map((v) =>
@@ -62,38 +61,4 @@ function flattenValue<V extends ContractSchemaValue>(
   }
 
   throw new Error('Unknown value type');
-}
-
-/**
- * Construct a decoder function from given keys and valueTypes.
- * The consumer is responsible for providing a type D matching the keys and valueTypes.
- *
- * @param keys Keys of the component value schema.
- * @param valueTypes Value types if the component value schema.
- * @returns Function to decode encoded hex value to component value.
- */
-export function createDecoder<D extends { [key: string]: unknown }>(
-  keys: (keyof D)[],
-  valueTypes: ContractSchemaValue[]
-): (data: BytesLike) => D {
-  return (data: BytesLike) => {
-    // Decode data with the schema values provided by the component
-    const decoded = abi.decode(
-      valueTypes.map((valueType) => ContractSchemaValueId[valueType]),
-      data
-    );
-
-    // Now keys and valueTypes lengths must match
-    if (keys.length !== valueTypes.length) {
-      throw new Error('Component schema keys and values length does not match');
-    }
-
-    // Construct the client component value
-    const result: Partial<{ [key in keyof D]: unknown }> = {};
-    for (let i = 0; i < keys.length; i++) {
-      result[keys[i]!] = flattenValue(decoded[i], valueTypes[i]!);
-    }
-
-    return result as D;
-  };
-}
+};
