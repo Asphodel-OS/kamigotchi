@@ -23,6 +23,7 @@ import {
 } from 'engine/types/kamigaze/kamigaze';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { ComponentsSchema } from 'types/ComponentsSchema';
+import { uint8ArrayToHexString } from 'utils/numbers';
 import { ContractConfig } from 'workers/types';
 import { debug as parentDebug } from '../debug';
 import {
@@ -182,7 +183,7 @@ export function storeComponents(cacheStore: CacheStore, components: Component[])
     cacheStore.components.push('0x0');
   }
   for (const component of components) {
-    var hexId = Uint8ArrayToHexString(component.id);
+    var hexId = uint8ArrayToHexString(component.id);
 
     //CHECK INDEX
     if (component.idx != cacheStore.components.length) {
@@ -205,7 +206,7 @@ export function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
   }
   if (cacheStore.entities.length == 0) cacheStore.entities.push('0x0');
   for (const entity of entities) {
-    var hexId = Uint8ArrayToHexString(entity.id);
+    var hexId = uint8ArrayToHexString(entity.id);
 
     //CHECK INDEX
     if (entity.idx != cacheStore.entities.length) {
@@ -287,14 +288,6 @@ export async function fetchSnapshotChunked(
   return cacheStore;
 }
 
-function Uint8ArrayToHexString(data: Uint8Array): string {
-  if (data.length === 0) return '0x00';
-  let hex = data.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
-  if (hex.substring(0, 2) == '0x') hex = hex.substring(2);
-  const prefix = hex.length % 2 !== 0 ? '0x0' : '0x';
-  return prefix + hex;
-}
-
 /**
  * Reduces a snapshot response by storing corresponding ECS events into the cache store.
  *
@@ -309,7 +302,7 @@ export async function reduceFetchedState(
   decode: ReturnType<typeof createDecode>
 ): Promise<void> {
   const { state, blockNumber, stateComponents, stateEntities } = response;
-  const stateEntitiesHex = stateEntities.map((e) => Uint8ArrayToHexString(e) as EntityID);
+  const stateEntitiesHex = stateEntities.map((e) => uint8ArrayToHexString(e) as EntityID);
   const stateComponentsHex = stateComponents.map((e) => to256BitString(e));
 
   for (const { componentIdIdx, entityIdIdx, value: rawValue } of state) {
