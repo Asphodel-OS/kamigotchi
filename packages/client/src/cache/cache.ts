@@ -2,25 +2,32 @@ import { deferred } from 'utils/async';
 import { arrayToIterator, mergeIterators, transformIterator } from 'utils/iterators';
 import { initDb } from './db';
 
+/**
+ * A Cache is a set of IndexedDB "Stores" (tables) that can be manipulated.
+ * This is a wrapper object with helper functions around that IndexedDB functionality.
+ *
+ **/
+
+export type Cache = ReturnType<typeof initCache>;
 type Stores = { [key: string]: unknown };
 type StoreKey<S extends Stores> = keyof S & string;
 
 /**
  * Initialize an abstracted Cache object to simplify interaction with the indexedDB database.
  *
- * @param id Id of the database to initialize.
+ * @param dbID Id of the database to initialize.
  * @param stores Keys of the stores to initialize.
  * @param version Optional: version of the database to initialize.
  * @param idb Optional: custom indexedDB factory
  * @returns Promise resolving with Cache object
  */
 export async function initCache<S extends Stores>(
-  id: string,
+  dbID: string,
   stores: StoreKey<S>[],
   version?: number,
   idb?: IDBFactory
 ) {
-  const db = await initDb(id, stores, version, idb);
+  const db = await initDb(dbID, stores, version, idb);
 
   /**
    * retrieve a store
