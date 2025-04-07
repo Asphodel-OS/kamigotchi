@@ -9,8 +9,21 @@ import { ActiveOffers } from './ActiveOffers';
 import { CreateOffer } from './CreateOffer';
 
 interface Props {
-  isVisible: boolean;
-  network: NetworkLayer;
+  actions: {
+    executeTrade: (tradeId: BigNumberish) => void;
+    cancelTrade: (tradeId: BigNumberish) => void;
+    createTrade: (
+      buyIndices: Number,
+      buyAmts: BigNumberish,
+      sellIndices: Number,
+      sellAmts: BigNumberish
+    ) => EntityID;
+  };
+  controls: {
+    search: string;
+    ascending: boolean;
+  };
+  data: { accountEntity: EntityIndex; trades: Trade[] };
   utils: {
     getInventories: () => {
       id: EntityID;
@@ -21,46 +34,18 @@ interface Props {
     getAllItems: () => Item[];
     getMusuBalance: () => number;
   };
-  search: string;
-  ascending: boolean;
-  data: { accountEntity: EntityIndex };
-  trades: Trade[];
-  executeTrade: (tradeId: BigNumberish) => void;
-  cancelTrade: (tradeId: BigNumberish) => void;
-  createTrade: (
-    buyIndices: Number,
-    buyAmts: BigNumberish,
-    sellIndices: Number,
-    sellAmts: BigNumberish
-  ) => EntityID;
+  network: NetworkLayer;
+  isVisible: boolean;
 }
 export const ManagementTab = (props: Props) => {
-  const {
-    isVisible,
-    network,
-    utils,
-    search,
-    ascending,
-    data,
-    trades,
-    executeTrade,
-    cancelTrade,
-    createTrade,
-  } = props;
+  const { isVisible, actions, controls, data, network, utils } = props;
+  const { createTrade } = actions;
 
   return (
     <Content isVisible={isVisible}>
       <CreateOffer network={network} utils={utils} createTrade={createTrade} />
       <Divider />
-      <ActiveOffers
-        data={data}
-        trades={trades}
-        ascending={ascending}
-        search={search}
-        executeTrade={executeTrade}
-        cancelTrade={cancelTrade}
-        managementTab={true}
-      />
+      <ActiveOffers actions={actions} data={data} controls={controls} managementTab={true} />
     </Content>
   );
 };

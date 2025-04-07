@@ -103,6 +103,7 @@ export function registerTradingModal() {
 
       /////////////////
       // ACTIONS
+
       const createTrade = (
         buyIndices: Number,
         buyAmts: BigNumberish,
@@ -168,26 +169,26 @@ export function registerTradingModal() {
                 </Label>
               </Row>
               <ActiveOffers
-                data={data}
-                trades={trades}
-                ascending={ascending}
-                search={search}
-                executeTrade={executeTrade}
-                cancelTrade={cancelTrade}
+                actions={{
+                  executeTrade,
+                  cancelTrade,
+                }}
+                data={{ ...data, trades }}
+                controls={{ ascending, search }}
                 managementTab={false}
               />
             </ActiveOffersDiv>
             <ManagementTab
               isVisible={tab === `ManagementTab`}
               network={network}
+              actions={{
+                executeTrade,
+                cancelTrade,
+                createTrade,
+              }}
+              controls={{ ascending, search }}
+              data={{ ...data, trades }}
               utils={utils}
-              data={data}
-              trades={trades}
-              ascending={ascending}
-              search={search}
-              executeTrade={executeTrade}
-              cancelTrade={cancelTrade}
-              createTrade={createTrade}
             />
           </Content>
         </ModalWrapper>

@@ -8,16 +8,22 @@ import { ItemImages } from 'assets/images/items';
 import { Trade, TradeOrder } from 'network/shapes/Trade/types';
 
 interface Props {
-  search: string;
-  ascending: boolean;
-  data: { accountEntity: EntityIndex };
-  trades: Trade[];
-  executeTrade: (tradeId: BigNumberish) => void;
-  cancelTrade: (tradeId: BigNumberish) => void;
+  actions: {
+    executeTrade: (tradeId: BigNumberish) => void;
+    cancelTrade: (tradeId: BigNumberish) => void;
+  };
+  controls: {
+    search: string;
+    ascending: boolean;
+  };
+  data: { accountEntity: EntityIndex; trades: Trade[] };
   managementTab: boolean;
 }
 export const ActiveOffers = (props: Props) => {
-  const { search, ascending, executeTrade, cancelTrade, trades, data, managementTab } = props;
+  const { actions, controls, data, managementTab } = props;
+  const { executeTrade, cancelTrade } = actions;
+  const { search, ascending } = controls;
+  const { trades } = data;
 
   const [processedData, setProcessedData] = useState<Trade[]>([]);
 
