@@ -42,6 +42,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     "setValue(string,uint256)": FunctionFragment;
     "setValueAddress(string,address)": FunctionFragment;
     "setValueArray(string,uint32[8])": FunctionFragment;
+    "setValueBool(string,bool)": FunctionFragment;
     "setValueString(string,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -60,6 +61,7 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
       | "setValue"
       | "setValueAddress"
       | "setValueArray"
+      | "setValueBool"
       | "setValueString"
       | "transferOwnership"
   ): FunctionFragment;
@@ -107,6 +109,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "setValueBool",
+    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setValueString",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -149,6 +155,10 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setValueArray",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setValueBool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -297,6 +307,12 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setValueBool(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setValueString(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<string>,
@@ -366,6 +382,12 @@ export interface _ConfigSetSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setValueBool(
+    name: PromiseOrValue<string>,
+    value: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setValueString(
     name: PromiseOrValue<string>,
     value: PromiseOrValue<string>,
@@ -424,6 +446,12 @@ export interface _ConfigSetSystem extends BaseContract {
     setValueArray(
       name: PromiseOrValue<string>,
       values: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setValueBool(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -525,6 +553,12 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setValueBool(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setValueString(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<string>,
@@ -592,6 +626,12 @@ export interface _ConfigSetSystem extends BaseContract {
     setValueArray(
       name: PromiseOrValue<string>,
       values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setValueBool(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

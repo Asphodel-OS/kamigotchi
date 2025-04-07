@@ -16,7 +16,6 @@ contract _ConfigSetSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (string memory name, uint256 value) = abi.decode(arguments, (string, uint256));
     LibConfig.set(components, name, value);
-
     return "";
   }
 
@@ -34,6 +33,10 @@ contract _ConfigSetSystem is System {
 
   function setValueArray(string memory name, uint32[8] memory values) public onlyOwner {
     LibConfig.setArray(components, name, values);
+  }
+
+  function setValueBool(string memory name, bool value) public onlyOwner {
+    LibConfig.setBool(components, name, value);
   }
 
   function setValueString(string memory name, string memory value) public onlyOwner {

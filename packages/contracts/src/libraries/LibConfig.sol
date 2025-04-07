@@ -26,33 +26,39 @@ library LibConfig {
   //////////////////
   // SETTERS
 
-  function set(IUintComp components, string memory field, uint256 value) internal {
+  function set(IUintComp comps, string memory field, uint256 value) internal {
     uint256 id = genID(field);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
+    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, value);
   }
 
-  function setAddress(IUintComp components, string memory field, address value) internal {
-    set(components, field, uint256(uint160(value)));
+  function setAddress(IUintComp comps, string memory field, address value) internal {
+    set(comps, field, uint256(uint160(value)));
   }
 
   /// @notice Set an array of values of a global config field entity
-  function setArray(IUintComp components, string memory field, uint32[8] memory values) internal {
-    set(components, field, LibPack.packArrU32(values));
+  function setArray(IUintComp comps, string memory field, uint32[8] memory values) internal {
+    set(comps, field, LibPack.packArrU32(values));
+  }
+
+  function setBool(IUintComp comps, string memory field, bool value) internal {
+    uint256 id = genID(field);
+    if (value) ValueComponent(getAddrByID(comps, ValueCompID)).set(id, 1);
+    else ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
   }
 
   /// @notice Set a string value of a global config field entity
-  function setString(IUintComp components, string memory field, string memory value) internal {
+  function setString(IUintComp comps, string memory field, string memory value) internal {
     require(bytes(value).length < 32, "LibConfig: string too long");
     require(bytes(value).length > 0, "LibConfig: string too short");
-    set(components, field, LibPack.stringToUint(value));
+    set(comps, field, LibPack.stringToUint(value));
   }
 
   //////////////////
   // CHECKERS
 
-  function has(IUintComp components, string memory field) internal view returns (bool) {
+  function has(IUintComp comps, string memory field) internal view returns (bool) {
     uint256 id = genID(field);
-    return ValueComponent(getAddrByID(components, ValueCompID)).has(id);
+    return ValueComponent(getAddrByID(comps, ValueCompID)).has(id);
   }
 
   //////////////////
@@ -60,48 +66,43 @@ library LibConfig {
 
   /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   /// @dev let call revert if value does not exist
-  function get(IUintComp components, string memory field) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(components, ValueCompID)).get(genID(field));
+  function get(IUintComp comps, string memory field) internal view returns (uint256) {
+    return ValueComponent(getAddrByID(comps, ValueCompID)).get(genID(field));
   }
 
-  function getAddress(IUintComp components, string memory field) internal view returns (address) {
-    return address(uint160(get(components, field)));
+  function getAddress(IUintComp comps, string memory field) internal view returns (address) {
+    return address(uint160(get(comps, field)));
   }
 
   /// @notice Retrieves a batch of values (without precision). Assumes all exists
-  function get(
-    IUintComp components,
-    string[] memory fields
-  ) internal view returns (uint256[] memory) {
+  function get(IUintComp comps, string[] memory fields) internal view returns (uint256[] memory) {
     uint256[] memory ids = new uint256[](fields.length);
     for (uint256 i = 0; i < fields.length; i++) ids[i] = genID(fields[i]);
-    return ValueComponent(getAddrByID(components, ValueCompID)).get(ids);
+    return ValueComponent(getAddrByID(comps, ValueCompID)).get(ids);
   }
 
   function getAddr(
-    IUintComp components,
+    IUintComp comps,
     string[] memory fields
   ) internal view returns (address[] memory addrs) {
-    uint256[] memory raws = get(components, fields);
+    uint256[] memory raws = get(comps, fields);
     addrs = new address[](raws.length);
     for (uint256 i = 0; i < raws.length; i++) addrs[i] = address(uint160(raws[i]));
   }
 
   /// @notice Retrieve an array of values. Assumes it exists
-  function getArray(
-    IUintComp components,
-    string memory name
-  ) internal view returns (uint32[8] memory) {
+  function getArray(IUintComp comps, string memory name) internal view returns (uint32[8] memory) {
     uint256 id = genID(name);
-    return LibPack.unpackArrU32(ValueComponent(getAddrByID(components, ValueCompID)).get(id));
+    return LibPack.unpackArrU32(ValueComponent(getAddrByID(comps, ValueCompID)).get(id));
+  }
+
+  function getBool(IUintComp comps, string memory name) internal view returns (bool) {
+    return has(comps, name);
   }
 
   /// @notice Retrieve the string value of a global config field entity. Assumes it exists
-  function getString(
-    IUintComp components,
-    string memory name
-  ) internal view returns (string memory) {
+  function getString(IUintComp comps, string memory name) internal view returns (string memory) {
     uint256 id = genID(name);
-    return LibPack.uintToString(ValueComponent(getAddrByID(components, ValueCompID)).get(id));
+    return LibPack.uintToString(ValueComponent(getAddrByID(comps, ValueCompID)).get(id));
   }
 }
