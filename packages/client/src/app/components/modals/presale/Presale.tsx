@@ -12,6 +12,7 @@ import { ActionButton } from 'app/components/library/base/buttons';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
+import { ONYX_INDEX } from 'constants/items';
 import { useERC20Balance, usePresaleInfo } from 'network/chain';
 import { useWatchBlockNumber } from 'wagmi';
 import { Rate } from './Rate';
@@ -35,7 +36,7 @@ export function registerPresaleModal() {
           return {
             network,
             presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
-            currency: getItemByIndex(world, components, 11), // onyx placeholder - to change to eth
+            currency: getItemByIndex(world, components, ONYX_INDEX), // onyx placeholder - to change to eth
           };
         })
       );
@@ -70,7 +71,7 @@ export function registerPresaleModal() {
 
       const { balances: currencyBal, refetch: refetchToken } = useERC20Balance(
         selectedAddress as Address,
-        getAddress(currency.address!),
+        getAddress(currency.address || '0x0000000000000000000000000000000000000000'),
         presaleAddress
       );
 

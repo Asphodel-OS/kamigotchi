@@ -19,16 +19,16 @@ contract ScavengeClaimSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // implicit existence check
-    (string memory scavField, uint32 scavIndex) = LibScavenge.getMetadata(components, scavBarID);
+    LibScavenge.Base memory scavData = LibScavenge.getBase(components, scavBarID);
 
     // get amt of rewards and distribute
-    uint256 count = LibScavenge.extractNumTiers(components, scavBarID, scavField, scavIndex, accID);
-    if (count == 0)
+    uint256 rolls = LibScavenge.extractNumTiers(components, scavBarID, scavData, accID);
+    if (rolls == 0)
       revert("no scav rolls. node modal may be out of sync, showing already claimed rolls");
-    LibScavenge.distributeRewards(world, components, scavBarID, count, accID);
+    LibScavenge.distributeRewards(world, components, scavBarID, rolls, accID);
 
     // standard logging and tracking
-    LibScavenge.logClaim(components, scavField, scavIndex, count, accID);
+    LibScavenge.logClaim(components, scavData, rolls, accID);
     LibAccount.updateLastTs(components, accID);
 
     return "";

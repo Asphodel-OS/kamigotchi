@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import { objectMinaRed } from 'assets/images/rooms/13_giftshop';
 import { Account } from 'network/shapes/Account';
 import { NPC } from 'network/shapes/Npc';
+import { Balance } from './Balance';
 
 export interface Props {
   merchant: NPC;
   player: Account;
+  balance: number;
 }
 
 export const Header = (props: Props) => {
-  const { merchant, player } = props;
+  const { merchant, player, balance } = props;
 
   return (
     <Container>
@@ -21,6 +23,7 @@ export const Header = (props: Props) => {
           <SubTitle>Buy something or get out.</SubTitle>
         </ShopDescription>
       </ShopDetails>
+      <Balance balance={balance} />
     </Container>
   );
 };
@@ -30,6 +33,7 @@ const Container = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 `;
 
 const ShopDetails = styled.div`

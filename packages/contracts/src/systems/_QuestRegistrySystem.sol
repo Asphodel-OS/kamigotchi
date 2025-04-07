@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { LibGetter } from "libraries/utils/LibGetter.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 
@@ -92,8 +92,8 @@ contract _QuestRegistrySystem is System {
     require(!LibString.eq(type_, ""), "Quest Reward type cannot be empty");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 parentID = LibQuestRegistry.genAlloAnchor(questIndex);
-    return LibAllo.createBasic(components, parentID, type_, index, value);
+    uint256 anchorID = LibQuestRegistry.genAlloAnchor(questIndex);
+    return LibAllo.createBasic(components, anchorID, type_, index, value);
   }
 
   function addRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -107,8 +107,8 @@ contract _QuestRegistrySystem is System {
     require(questID != 0, "Quest does not exist");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 parentID = LibQuestRegistry.genAlloAnchor(questIndex);
-    return LibAllo.createDT(components, parentID, keys, weights, value);
+    uint256 anchorID = LibQuestRegistry.genAlloAnchor(questIndex);
+    return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
   function addRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -126,15 +126,22 @@ contract _QuestRegistrySystem is System {
     require(questID != 0, "Quest does not exist");
 
     // create an empty Quest Reward and set any non-zero fields
-    uint256 parentID = LibQuestRegistry.genAlloAnchor(questIndex);
-    return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
+    uint256 anchorID = LibQuestRegistry.genAlloAnchor(questIndex);
+    return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
+  }
+
+  function setDisabled(uint32 index, bool disabled) public onlyOwner {
+    uint256 regID = LibQuestRegistry.getByIndex(components, index);
+    require(regID != 0, "Quest does not exist");
+
+    LibDisabled.set(components, regID, disabled);
   }
 
   function remove(uint32 index) public onlyOwner {
-    uint256 registryQuestID = LibQuestRegistry.getByIndex(components, index);
-    require(registryQuestID != 0, "Quest does not exist");
+    uint256 regID = LibQuestRegistry.getByIndex(components, index);
+    require(regID != 0, "Quest does not exist");
 
-    LibQuestRegistry.removeQuest(components, registryQuestID, index);
+    LibQuestRegistry.removeQuest(components, regID, index);
   }
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

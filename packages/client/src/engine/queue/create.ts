@@ -11,7 +11,7 @@ import { Contracts } from 'engine/types';
 import { deferred } from 'utils/async';
 import { createPriorityQueue } from './priorityQueue';
 import { TxQueue } from './types';
-import { getRevertReason, getTxGasData, isOverrides, waitForTx } from './utils';
+import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce, waitForTx } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -108,7 +108,7 @@ export function create<C extends Contracts>(
       try {
         // Populate config and Tx
         const populatedTx = { ...txRequest, ...txOverrides, ...callOverrides };
-        const tx = await signer?.sendTransaction(populatedTx!);
+        const tx = await sendTx(signer, populatedTx!);
         const hash = tx?.hash || '';
 
         const response = signer.provider!.getTransaction(hash); // todo: do we need to return response?
@@ -166,10 +166,10 @@ export function create<C extends Contracts>(
     // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
     const txResult = await submissionMutex.runExclusive(async () => {
       // First estimate gas to avoid increasing nonce before tx is sent
-      let txOverrides: Overrides;
+      let txOverrides: Overrides = {};
       try {
-        const { provider, nonce } = await awaitValue(readyState); // wait for network if not ready
-        txOverrides = await getTxGasData(provider, txRequest.estimateGas);
+        const { nonce } = await awaitValue(readyState); // wait for network if not ready
+        txOverrides.gasLimit = await txRequest.estimateGas();
         txOverrides.nonce = nonce;
       } catch (e) {
         console.warn('[TXQueue] GAS ESTIMATION FAILED');
@@ -184,20 +184,9 @@ export function create<C extends Contracts>(
         console.warn('[TXQueue] EXECUTION FAILED');
         error = e;
       } finally {
-        // If tx was submitted, inc nonce regardless of error
-        const isMutationError = !!error?.transaction;
-        const isRejectedError = error?.reason?.includes('user rejected transaction'); //
-        const doIncNonce = !isRejectedError && (!error || isMutationError);
-
-        const isExpirationError = error?.code === 'NONCE_EXPIRED';
-        const isRepeatError = error?.reason?.includes('transaction already imported');
-        const doResetNonce = isExpirationError || isRepeatError;
-
-        console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
-
-        // Nonce handling
-        if (doIncNonce) incNonce();
-        if (doResetNonce) await resetNonce();
+        // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
+        if (shouldIncNonce(error)) incNonce();
+        else if (shouldResetNonce(error)) await resetNonce();
         if (error) txRequest.cancel(error);
       }
     });
@@ -208,18 +197,15 @@ export function create<C extends Contracts>(
         const tx = await txResult.wait();
         console.log(`[TXQueue] TX Confirmed\n`, tx);
       } catch (e) {
-        console.warn('[TXQueue] tx failed in block', e);
-
-        // Decode and log the revert reason.
-        // Use `then` instead of `await` to avoid letting consumers wait.
-        getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
-          console.warn('[TXQueue] Revert reason:', reason)
-        );
-        console.log(`txHash: ${txResult.hash}`);
+        console.warn('[TXQueue] tx failed in block');
+        throw e; // bubble up error
+        // // Decode and log the revert reason.
+        // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
+        //   console.warn('[TXQueue] Revert reason:', reason)
+        // ); // calling then instead of await to avoid blocking
       }
     }
 
-    // Check if there are any transactions waiting to be processed
     processQueue();
   }
 
@@ -239,8 +225,7 @@ export function create<C extends Contracts>(
 
   const proxiedContracts = computed(() => {
     const contracts = readyState.get()?.contracts;
-    if (!contracts) return undefined;
-    return mapObject(contracts, proxyContract);
+    return contracts ? mapObject(contracts, proxyContract) : undefined;
   });
 
   const cachedProxiedContracts = cacheUntilReady(proxiedContracts);

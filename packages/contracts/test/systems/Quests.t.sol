@@ -27,10 +27,10 @@ contract QuestsTest is SetupTemplate {
       uint256 newID = _createQuestRequirement(1, "CURR_MIN", "ITEM", uint32(i + 1), 1);
       reqsArr[i] = newID;
 
-      uint256[] memory newArr = LibQuestRegistry.getReqsByQuestIndex(components, 1);
+      uint256[] memory newArr = LibQuestRegistry.getReqsByIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], reqsArr[j]);
     }
-    assertEq(LibQuestRegistry.getReqsByQuestIndex(components, 1).length, 5);
+    assertEq(LibQuestRegistry.getReqsByIndex(components, 1).length, 5);
 
     uint256[] memory objsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
@@ -44,20 +44,20 @@ contract QuestsTest is SetupTemplate {
       );
       objsArr[i] = newID;
 
-      uint256[] memory newArr = LibQuestRegistry.getObjsByQuestIndex(components, 1);
+      uint256[] memory newArr = LibQuestRegistry.getObjsByIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], objsArr[j]);
     }
-    assertEq(LibQuestRegistry.getObjsByQuestIndex(components, 1).length, 5);
+    assertEq(LibQuestRegistry.getObjsByIndex(components, 1).length, 5);
 
     uint256[] memory rewsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
       uint256 newID = _createQuestReward(1, "ITEM", uint32(i + 1), 1);
       rewsArr[i] = newID;
 
-      uint256[] memory newArr = LibQuestRegistry.getRwdsByQuestIndex(components, 1);
+      uint256[] memory newArr = LibQuestRegistry.getRwdsByIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], rewsArr[j]);
     }
-    assertEq(LibQuestRegistry.getRwdsByQuestIndex(components, 1).length, 5);
+    assertEq(LibQuestRegistry.getRwdsByIndex(components, 1).length, 5);
   }
 
   function testAcceptQuest() public {
@@ -169,12 +169,10 @@ contract QuestsTest is SetupTemplate {
     uint256 questID = _acceptQuest(0, 1);
 
     // check that snapshots are correctly stored
-    vm.prank(deployer); // load bearing entity lol
-    _IDOwnsQuestComponent.set(1, 1); // load bearing entity lol
     uint256[] memory snapshots = LibQuests.querySnapshottedObjectives(components, questID);
-    assertEq(snapshots.length, 1);
-    assertEq(_IDOwnsQuestComponent.get(snapshots[0]), questID);
-    assertEq(_ValueComponent.get(snapshots[0]), startAmt);
+    assertEq(snapshots.length, 1, "original snapshot length mismatch");
+    assertEq(_IDAnchorComponent.get(snapshots[0]), LibQuests.genSnapshotAnchor(questID));
+    assertEq(_ValueComponent.get(snapshots[0]), startAmt, "original snapshot value mismatch");
 
     // check completability
     assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));

@@ -8,9 +8,9 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 /** world2: revamp friendship IDComponents
- * IDParent (formally IDPointer): to split to something friendship specific (IDOwns?) or IDType is ok too
+ * IDAnchor (formally IDPointer): to split to something friendship specific (IDOwns?) or IDType is ok too
  */
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
@@ -48,7 +48,7 @@ library LibFriend {
     StateComponent(getAddrByID(components, StateCompID)).set(id, state);
 
     if (state.eq("REQUEST")) updateInReqCounter(components, id, targetID);
-    else if (state.eq("BLOCKED")) getCompByID(components, IDParentCompID).remove(id);
+    else if (state.eq("BLOCKED")) getCompByID(components, IDAnchorCompID).remove(id);
   }
 
   /// @notice Accepts a friend request from existing request. Updates request for bidirectional friendship.
@@ -88,13 +88,13 @@ library LibFriend {
     uint256[] memory pointers = new uint256[](2);
     pointers[0] = genCounterPtr(accID, "FRIEND");
     pointers[1] = genCounterPtr(targetID, "FRIEND");
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(ids, pointers);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(ids, pointers);
   }
 
   /// @notice update incoming request counter via pointer
   /// @dev used to track number of incoming requests
   function updateInReqCounter(IUintComp components, uint256 fsID, uint256 targetID) internal {
-    IDParentComponent(getAddrByID(components, IDParentCompID)).set(
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(
       fsID,
       genCounterPtr(targetID, "REQUEST")
     );
@@ -107,7 +107,7 @@ library LibFriend {
     IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(id);
     IdTargetComponent(getAddrByID(components, IdTargetCompID)).remove(id);
     StateComponent(getAddrByID(components, StateCompID)).remove(id);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(id);
+    IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(id);
   }
 
   /////////////////
@@ -164,12 +164,12 @@ library LibFriend {
 
   function getFriendCount(IUintComp components, uint256 accID) internal view returns (uint256) {
     uint256 id = genCounterPtr(accID, "FRIEND");
-    return IDParentComponent(getAddrByID(components, IDParentCompID)).size(abi.encode(id));
+    return IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).size(abi.encode(id));
   }
 
   function getRequestCount(IUintComp components, uint256 accID) internal view returns (uint256) {
     uint256 id = genCounterPtr(accID, "REQUEST");
-    return IDParentComponent(getAddrByID(components, IDParentCompID)).size(abi.encode(id));
+    return IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).size(abi.encode(id));
   }
 
   ////////////////////

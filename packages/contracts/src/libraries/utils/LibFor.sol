@@ -7,10 +7,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { BoolComponent } from "solecs/components/BoolComponent.sol";
-import { ForStringComponent, ID as ForStringCompID } from "components/ForStringComponent.sol";
-
-uint256 constant ForAccount = uint256(keccak256("for.account"));
-uint256 constant ForPet = uint256(keccak256("for.kami"));
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
@@ -39,25 +36,25 @@ library LibFor {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (string memory) {
-    return ForStringComponent(getAddrByID(components, ForStringCompID)).safeGet(id);
+    return ForComponent(getAddrByID(components, ForCompID)).safeGet(id);
   }
 
   function get(IUintComp components, uint256[] memory ids) internal view returns (string[] memory) {
-    return ForStringComponent(getAddrByID(components, ForStringCompID)).safeGet(ids);
+    return ForComponent(getAddrByID(components, ForCompID)).safeGet(ids);
   }
 
   /////////////////
   // SETTERS
 
   function set(IUintComp components, uint256 id, string memory for_) internal {
-    ForStringComponent(getAddrByID(components, ForStringCompID)).set(id, for_);
+    ForComponent(getAddrByID(components, ForCompID)).set(id, for_);
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    ForStringComponent(getAddrByID(components, ForStringCompID)).remove(id);
+    ForComponent(getAddrByID(components, ForCompID)).remove(id);
   }
 
   function remove(IUintComp components, uint256[] memory ids) internal {
-    ForStringComponent(getAddrByID(components, ForStringCompID)).remove(ids);
+    ForComponent(getAddrByID(components, ForCompID)).remove(ids);
   }
 }

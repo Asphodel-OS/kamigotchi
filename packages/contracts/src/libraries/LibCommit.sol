@@ -41,7 +41,7 @@ library LibCommit {
 
   /// @notice creates a batch of commits
   /// @dev assumes all commits are fungible
-  function commitBatch(
+  function commit(
     IWorld world,
     IUintComp components,
     uint256 holderID,

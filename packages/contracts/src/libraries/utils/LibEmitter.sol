@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.28;
 
-import { IWorld } from "../../solecs/interfaces/IWorld.sol";
-import { IEmitter } from "../../solecs/interfaces/IEmitter.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IEmitter } from "solecs/interfaces/IEmitter.sol";
 
 ///@notice library for centralized event emission calls to Emitter.sol
 library LibEmitter {

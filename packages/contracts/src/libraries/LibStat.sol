@@ -25,7 +25,6 @@ uint32 constant POWER_INDEX = 3;
 uint32 constant SLOTS_INDEX = 4;
 uint32 constant STAMINA_INDEX = 5;
 uint32 constant VIOLENCE_INDEX = 6;
-uint32 constant MAXHEALTH_INDEX = 7; // temporary
 
 /** @notice
  * LibStat manages the retrieval and update of stats. This library differs from
@@ -365,7 +364,6 @@ library LibStat {
     revert("LibStat: invalid stat type");
   }
 
-  // tbh kill me this is a mess get rid of it soon tm
   function compIDToType(uint256 compID) internal pure returns (string memory) {
     if (compID == HealthCompID) return "HEALTH";
     if (compID == PowerCompID) return "POWER";
@@ -383,7 +381,6 @@ library LibStat {
     if (type_.eq("SLOTS")) return SLOTS_INDEX;
     if (type_.eq("STAMINA")) return STAMINA_INDEX;
     if (type_.eq("VIOLENCE")) return VIOLENCE_INDEX;
-    if (type_.eq("MAXHEALTH")) return MAXHEALTH_INDEX;
     revert("LibStat: invalid stat type");
   }
 
@@ -394,7 +391,6 @@ library LibStat {
     if (index == SLOTS_INDEX) return SlotsCompID;
     if (index == STAMINA_INDEX) return StaminaCompID;
     if (index == VIOLENCE_INDEX) return ViolenceCompID;
-    if (index == MAXHEALTH_INDEX) return HealthCompID;
     revert("LibStat: invalid stat type");
   }
 

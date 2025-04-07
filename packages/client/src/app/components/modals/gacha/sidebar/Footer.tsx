@@ -3,30 +3,23 @@ import styled from 'styled-components';
 
 import { Stepper, Tooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
+import { GACHA_MAX_PER_TX } from 'constants/gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { TabType } from '../types';
-
-// action labels for the purchase footer
-const ActionMap = new Map<TabType, string>([
-  ['MINT', 'Mint'],
-  ['REROLL', 'Reroll'],
-  ['AUCTION', 'Bid'],
-]);
+import { TabType, ViewMode } from '../types';
 
 interface Props {
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
     mint: (amount: number) => Promise<boolean>;
-    reroll: (kamis: Kami[], price: bigint) => Promise<boolean>;
+    reroll: (kamis: Kami[]) => Promise<boolean>;
   };
   controls: {
-    quantity: number;
-    setQuantity: (quantity: number) => void;
-    price: number;
-    setPrice: (price: number) => void;
+    tab: TabType;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
   };
   data: {
     payItem: Item;
@@ -34,16 +27,21 @@ interface Props {
     balance: number;
   };
   state: {
-    tab: TabType;
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
+    setPrice: (price: number) => void;
+    selectedKamis: Kami[];
+    setSelectedKamis: (kamis: Kami[]) => void;
   };
 }
 
 export const Footer = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { approve, bid, mint, reroll } = actions;
-  const { quantity, setQuantity, price } = controls;
+  const { mode, setMode, tab } = controls;
   const { payItem, saleItem, balance } = data;
-  const { tab } = state;
+  const { quantity, setQuantity, price, selectedKamis, setSelectedKamis } = state;
 
   /////////////////
   // ERC20 APPROVAL
@@ -51,36 +49,60 @@ export const Footer = (props: Props) => {
   const { balances: tokenBal } = useTokens();
   const [needsApproval, setNeedsApproval] = useState(true);
   const [enoughBalance, setEnoughBalance] = useState(true);
-
-  const checkNeedsApproval = () =>
-    payItem.address !== undefined && (tokenBal.get(payItem.address!)?.allowance || 0) < price;
-  const checkEnoughBalance = () => {
-    if (payItem.address) return (tokenBal.get(payItem.address)?.balance || 0) >= price;
-    else return balance >= price;
-  };
+  const [underMax, setUnderMax] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    setNeedsApproval(checkNeedsApproval());
-    setEnoughBalance(checkEnoughBalance());
+    const needsApproval = checkNeedsApproval();
+    const enoughBalance = checkEnoughBalance();
+    const underMax = checkMax();
+    setNeedsApproval(needsApproval);
+    setEnoughBalance(enoughBalance);
+    setUnderMax(underMax);
+    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
   }, [tokenBal, price]);
 
-  // const isDisabled = quantity <= 0 || price > balance;
-  const isDisabled = quantity <= 0 || !enoughBalance;
-
-  /////////////////
-  // COMPONENTS
-
-  const getButtonText = () => {
-    if (tab === 'AUCTION') return needsApproval ? 'Approve' : 'Bid';
-    else return ActionMap.get(tab) ?? 'Mint';
+  // check if a user needs further spend approval for a token
+  const checkNeedsApproval = () => {
+    if (!payItem.address) return false;
+    const allowance = tokenBal.get(payItem.address!)?.allowance || 0;
+    return allowance < price;
   };
+
+  // check if a user has enough balance of a token to purchase
+  const checkEnoughBalance = () => {
+    if (payItem.address) {
+      const tokenBalance = tokenBal.get(payItem.address)?.balance || 0;
+      return tokenBalance >= price;
+    }
+    return balance >= price;
+  };
+
+  // check if a user is under max amt per tx
+  const checkMax = () => {
+    if (mode === 'ALT') return true; // no max for auctions
+    if (tab === 'GACHA' || tab === 'REROLL') return GACHA_MAX_PER_TX >= quantity;
+    else return true; // minting max not implemented
+  };
+
+  //////////////////
+  // HANDLERS
 
   const handleSubmit = async () => {
     playClick();
     let success = false;
-    if (tab === 'MINT') success = await mint(quantity);
-    else if (tab === 'REROLL') success = await reroll([], BigInt(0));
-    else if (tab === 'AUCTION') {
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') success = await mint(quantity);
+      else if (mode === 'ALT') bid(saleItem, quantity);
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') {
+        success = await reroll(selectedKamis);
+        if (success) setSelectedKamis([]);
+      } else if (mode === 'ALT') {
+        if (needsApproval) approve(payItem, price);
+        bid(saleItem, quantity);
+      }
+    } else if (tab === 'MINT') {
       if (needsApproval) approve(payItem, price);
       else bid(saleItem, quantity); // TODO: await on success
     }
@@ -94,15 +116,29 @@ export const Footer = (props: Props) => {
     setQuantity(quantity);
   };
 
+  /////////////////
+  // INTERPRETATION
+
+  const getButtonText = () => {
+    if (mode === 'ALT') return needsApproval ? 'Approve' : 'Bid';
+    else if (tab === 'GACHA') return 'Mint';
+    else if (tab === 'REROLL') return 'Reroll';
+    else return '';
+  };
+
   const getSubmitTooltip = () => {
     if (!enoughBalance) return ['too poore'];
+    if (!underMax) return [`max ${GACHA_MAX_PER_TX} items per tx`];
     if (quantity <= 0) return ['no items to purchase'];
 
     let saleDesc = `Purchase ${quantity} ${saleItem.name}`;
-    if (tab === 'MINT') saleDesc = `Mint ${quantity} Kami`;
+    if (tab === 'GACHA') saleDesc = `Mint ${quantity} Kami`;
     if (tab === 'REROLL') saleDesc = `Reroll ${quantity} Kami`;
     return [saleDesc, `for ${price} ${payItem.name}`];
   };
+
+  /////////////////
+  // DISPLAY
 
   return (
     <Container>
@@ -111,8 +147,9 @@ export const Footer = (props: Props) => {
         value={quantity}
         set={setQuantity}
         scale={6}
-        disableInc={tab === 'REROLL' || !enoughBalance}
-        disableDec={tab === 'REROLL' || quantity <= 0}
+        disableInc={!enoughBalance}
+        disableDec={quantity <= 0}
+        isHidden={tab === 'REROLL' && mode === 'DEFAULT'}
       />
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>

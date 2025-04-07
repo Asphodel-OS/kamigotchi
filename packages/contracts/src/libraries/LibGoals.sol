@@ -17,6 +17,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibReference } from "libraries/utils/LibReference.sol";
 import { LibSetter } from "libraries/utils/LibSetter.sol";
@@ -76,6 +77,7 @@ library LibGoals {
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
     if (roomIndex != 0)
       IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, roomIndex);
+    LibDisabled.set(components, id, true); // disabled initially
 
     // adding the objective
     uint256 objID = genObjID(id);
@@ -89,7 +91,7 @@ library LibGoals {
     string memory name,
     uint256 cutoff // cutoff 0 signifies display only tier; does not distribute rewards
   ) internal returns (uint256 id) {
-    id = LibReference.create(components, "goal.tier", cutoff, genTierParentID(goalIndex));
+    id = LibReference.create(components, "goal.tier", cutoff, genTierAnchorID(goalIndex));
 
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, cutoff);
@@ -113,6 +115,7 @@ library LibGoals {
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(goalID);
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(goalID);
     IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(goalID);
+    LibDisabled.set(components, goalID, false);
 
     // remove objective
     uint256 objID = genObjID(goalID);
@@ -185,6 +188,10 @@ library LibGoals {
 
   ////////////////////
   // CHECKERS
+
+  function verifyEnabled(IUintComp components, uint256 goalID) public view {
+    return LibDisabled.verifyEnabled(components, goalID);
+  }
 
   function verifyClaimable(IUintComp components, uint256 goalID, uint256 accID) public view {
     if (!canClaim(components, goalID, accID)) revert("cannot claim from this goal");
@@ -302,7 +309,7 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return LibReference.queryByParent(components, genTierParentID(goalIndex));
+    return LibReference.queryByParent(components, genTierAnchorID(goalIndex));
   }
 
   function getRequirements(
@@ -316,9 +323,9 @@ library LibGoals {
     IUintComp components,
     uint256[] memory tierIDs
   ) internal view returns (uint256[] memory) {
-    uint256[] memory parentIDs = new uint256[](tierIDs.length);
-    for (uint256 i; i < tierIDs.length; i++) parentIDs[i] = genAlloAnchor(tierIDs[i]);
-    return LibAllo.queryFor(components, parentIDs);
+    uint256[] memory anchorIDs = new uint256[](tierIDs.length);
+    for (uint256 i; i < tierIDs.length; i++) anchorIDs[i] = genAlloAnchor(tierIDs[i]);
+    return LibAllo.queryFor(components, anchorIDs);
   }
 
   /// @notice gets tiers that user qualifies for
@@ -365,7 +372,7 @@ library LibGoals {
     return uint256(keccak256(abi.encodePacked("goal.objective", goalID)));
   }
 
-  function genTierParentID(uint32 goalIndex) internal pure returns (uint256) {
+  function genTierAnchorID(uint32 goalIndex) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.tier", goalIndex)));
   }
 

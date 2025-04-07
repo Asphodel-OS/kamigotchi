@@ -112,7 +112,7 @@ export function registerNodeModal() {
               getValue: (entity: EntityIndex) => getValue(components, entity),
               parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
               queryScavInstance: (index: number, holderID: EntityID) =>
-                queryScavInstance(world, 'node', index, holderID),
+                queryScavInstance(world, 'NODE', index, holderID),
 
               // node header functions..
               // TODO: clean up this mess
@@ -196,7 +196,7 @@ export function registerNodeModal() {
           params: [kami.id, node.id],
           description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
-            return api.player.harvest.start([kami.id], node.id);
+            return api.player.harvest.start([kami.id], node.index);
           },
         });
       };

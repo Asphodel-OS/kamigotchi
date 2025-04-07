@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
-import { AuctionMode, Filter, Sort, TabType } from '../../types';
-import { Auction } from './auction/Auction';
+import { Kami } from 'network/shapes/Kami';
+import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { Mint } from './mint/Mint';
+import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
 interface Props {
@@ -13,25 +14,25 @@ interface Props {
     reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
+    tab: TabType;
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
     filters: Filter[];
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
     setSorts: (sort: Sort[]) => void;
-    quantity: number;
-    setQuantity: (quantity: number) => void;
-    price: number;
-    setPrice: (price: number) => void;
   };
   data: {
+    balance: number;
     commits: Commit[];
     payItem: Item;
     saleItem: Item;
-    balance: number;
   };
   state: {
-    mode: AuctionMode;
-    setMode: (mode: AuctionMode) => void;
-    tab: TabType;
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    price: number;
+    selectedKamis: Kami[];
     tick: number;
   };
 }
@@ -40,12 +41,12 @@ interface Props {
 export const Controls = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { reveal } = actions;
+  const { mode, tab } = controls;
   const { commits, payItem, balance } = data;
-  const { mode, tab } = state;
 
   const getBalanceText = () => {
     let numDecimals = 0;
-    if (tab === 'AUCTION' && mode === 'REROLL') numDecimals = 3;
+    if (tab === 'REROLL' && mode === 'ALT') numDecimals = 3;
     return balance.toFixed(numDecimals);
   };
 
@@ -62,9 +63,9 @@ export const Controls = (props: Props) => {
           }}
         />
       )}
-      {tab === 'MINT' && <Mint controls={controls} />}
-      {tab === 'REROLL' && <Reroll />}
-      {tab === 'AUCTION' && <Auction controls={controls} state={state} />}
+      <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
+      <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
+      <Mint isVisible={tab === 'MINT'} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>

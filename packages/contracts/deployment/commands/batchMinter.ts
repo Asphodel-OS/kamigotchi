@@ -41,10 +41,10 @@ const run = async () => {
   );
   console.log('createSystem: ' + minterSystem.address);
 
-  const increment = 5;
+  const increment = 10;
   for (let i = 0; i < toMint; i += increment) {
     try {
-      const tx = await minterSystem.batchMint(increment);
+      const tx = await minterSystem.batchMint(increment, { gasLimit: 30000000 });
       console.log(tx.hash);
       console.log('total minted: ' + i);
     } catch (e) {

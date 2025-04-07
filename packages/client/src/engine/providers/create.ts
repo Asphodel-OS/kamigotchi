@@ -12,9 +12,8 @@ import {
   MUDJsonRpcBatchProvider,
   MUDJsonRpcProvider,
   ProviderConfig,
+  Providers,
 } from './types';
-
-export type Providers = ReturnType<typeof createProvider>;
 
 /**
  * Create a JsonRpcProvider and WebsocketProvider pair
@@ -25,7 +24,7 @@ export type Providers = ReturnType<typeof createProvider>;
  *   ws: WebSocketProvider
  * }
  */
-export function createProvider({
+export function create({
   chainId,
   jsonRpcUrl,
   wsRpcUrl,
@@ -60,7 +59,7 @@ export function createProvider({
  * Automatically updates the returned provider pair if the config changes.
  * @returns Automatically reconnecting {@link createProvider provider pair} that updates if the config changes.
  */
-export async function createReconnectingProvider(config: IComputedValue<ProviderConfig>) {
+export async function createReconnecting(config: IComputedValue<ProviderConfig>) {
   const connected = observable.box<ConnectionState>(ConnectionState.DISCONNECTED);
   const providers = observable.box<Providers>() as IObservableValue<Providers>;
   const disposers: (() => void)[] = [];
@@ -84,7 +83,7 @@ export async function createReconnectingProvider(config: IComputedValue<Provider
 
     // Create new providers
     await callWithRetry(async () => {
-      const newProviders = createProvider(conf);
+      const newProviders = create(conf);
       // If the connection is not successful, this will throw an error, triggering a retry
       !conf?.options?.skipNetworkCheck &&
         (await ensureNetworkIsUp(newProviders.json, newProviders.ws));

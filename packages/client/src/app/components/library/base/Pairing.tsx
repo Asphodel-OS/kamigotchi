@@ -10,19 +10,29 @@ interface Props {
   tooltip?: string[];
   scale?: number;
   reverse?: boolean;
+  marginTop?: number;
 }
 
 export const Pairing = (props: Props) => {
-  const { icon, text, tooltip, scale, reverse } = props;
+  const { icon, text, tooltip, scale, reverse, marginTop } = props;
   const size = scale ?? SCALE_DEFAULT;
+  const margin = marginTop ?? 0.6;
 
   return (
     <Container scale={size}>
-      {reverse && <Text scale={size}>{text}</Text>}
+      {reverse && (
+        <Text scale={size} margin={margin}>
+          {text}
+        </Text>
+      )}
       <Tooltip text={tooltip ?? []}>
         <Icon src={icon} scale={size} />
       </Tooltip>
-      {!reverse && <Text scale={size}>{text}</Text>}
+      {!reverse && (
+        <Text scale={size} margin={margin}>
+          {text}
+        </Text>
+      )}
     </Container>
   );
 };
@@ -43,9 +53,9 @@ const Icon = styled.img<{ scale: number }>`
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
 `;
 
-const Text = styled.div<{ scale: number }>`
+const Text = styled.div<{ scale: number; margin: number }>`
   height: ${({ scale }) => scale}vw;
-  margin-top: 0.6vw;
+  margin-top: ${({ margin }) => margin}vw;
   font-size: 1vw;
   color: #333;
 `;

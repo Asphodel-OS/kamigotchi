@@ -48,9 +48,16 @@ export const getEntityType = (components: Components, entity: EntityIndex): stri
   return result ?? '';
 };
 
+export const getExperience = (components: Components, entity: EntityIndex): number => {
+  const { Experience } = components;
+  const result = getComponentValue(Experience, entity)?.value;
+  if (result === undefined) console.warn('getExperience(): undefined for entity', entity);
+  return result ?? 0;
+};
+
 export const getFor = (components: Components, entity: EntityIndex): string => {
-  const { ForString } = components;
-  const rawValue = getComponentValue(ForString, entity)?.value as string | '';
+  const { For } = components;
+  const rawValue = getComponentValue(For, entity)?.value as string | '';
   // for can be empty
   return rawValue;
 };
@@ -313,18 +320,27 @@ export const getSkillIndex = (components: Components, entity: EntityIndex): numb
 // TIME
 
 // get the last action time of an entity (cooldown reset)
-export const getLastActionTime = (components: Components, entity: EntityIndex): number => {
+export const getLastActionTime = (
+  components: Components,
+  entity: EntityIndex,
+  debug?: boolean
+): number => {
   const { LastActionTime } = components;
   const result = getComponentValue(LastActionTime, entity)?.value;
-  if (result === undefined) console.warn('getLastActionTime(): undefined for entity', entity);
+  if (debug && result === undefined)
+    console.warn('getLastActionTime(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 
 // get the last time of an entity
-export const getLastTime = (components: Components, entity: EntityIndex): number => {
+export const getLastTime = (
+  components: Components,
+  entity: EntityIndex,
+  debug?: boolean
+): number => {
   const { LastTime } = components;
   const result = getComponentValue(LastTime, entity)?.value;
-  if (result === undefined) console.warn('getLastTime(): undefined for entity', entity);
+  if (debug && result === undefined) console.warn('getLastTime(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 

@@ -1,77 +1,31 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.28;
 
-import "tests/utils/SetupTemplate.t.sol";
+import "./MintTemplate.t.sol";
 
-import { ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
-import { ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
-import { ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
-import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
-import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
-
-contract TraitsTest is SetupTemplate {
+contract TraitsTest is MintTemplate {
   uint[] internal _listingIDs;
   uint[] internal _nodeIDs;
   mapping(uint => uint[]) internal _kamiIDs;
 
   function setUp() public override {
     super.setUp();
-
-    // accounts must be created after new config set
-    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
-    _registerAccounts(10);
-  }
-
-  function setUpTraits() public override {}
-
-  function setUpMint() public override {}
-
-  function setUpAccounts() public override {}
-
-  /////////////////
-  // HELPER FUNCTIONS
-
-  function _calcStatsFromTraits(uint kamiID) internal view returns (int32[] memory) {
-    int32 health = int32(int(LibConfig.get(components, "KAMI_BASE_HEALTH")));
-    int32 power = int32(int(LibConfig.get(components, "KAMI_BASE_POWER")));
-    int32 violence = int32(int(LibConfig.get(components, "KAMI_BASE_VIOLENCE")));
-    int32 harmony = int32(int(LibConfig.get(components, "KAMI_BASE_HARMONY")));
-    int32 slots = int32(int(LibConfig.get(components, "KAMI_BASE_SLOTS")));
-
-    // sum the stats from all traits
-    uint traitRegistryID;
-    uint[] memory traits = LibKami.getTraits(components, kamiID);
-    for (uint i = 0; i < traits.length; i++) {
-      traitRegistryID = traits[i];
-      health += LibStat.get(components, "HEALTH", traitRegistryID).base;
-      power += LibStat.get(components, "POWER", traitRegistryID).base;
-      violence += LibStat.get(components, "VIOLENCE", traitRegistryID).base;
-      harmony += LibStat.get(components, "HARMONY", traitRegistryID).base;
-      slots += LibStat.get(components, "SLOTS", traitRegistryID).base;
-    }
-
-    int32[] memory stats = new int32[](5);
-    stats[0] = health;
-    stats[1] = power;
-    stats[2] = violence;
-    stats[3] = harmony;
-    stats[4] = slots;
-
-    return stats;
   }
 
   /////////////////
   // TESTS
 
   // test that a kami's stats align with its traits upon creation
-  function testTraitStats() public {
+  function testTraitStats(uint) public {
     _initStockTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.batchMint(150);
+    __721BatchMinterSystem.batchMint(100);
     vm.stopPrank();
 
-    uint numPets = 100;
+    uint numPets = 10;
+    vm.roll(++_currBlock);
+    vm.setBlockhash(_currBlock, bytes32(_random()));
     uint[] memory kamiIDs = _mintKamis(0, numPets);
 
     uint kamiID;
@@ -132,5 +86,37 @@ contract TraitsTest is SetupTemplate {
       }
       console.log("\n");
     }
+  }
+
+  /////////////////
+  // HELPER FUNCTIONS
+
+  function _calcStatsFromTraits(uint kamiID) internal view returns (int32[] memory) {
+    int32 health = int32(int(LibConfig.get(components, "KAMI_BASE_HEALTH")));
+    int32 power = int32(int(LibConfig.get(components, "KAMI_BASE_POWER")));
+    int32 violence = int32(int(LibConfig.get(components, "KAMI_BASE_VIOLENCE")));
+    int32 harmony = int32(int(LibConfig.get(components, "KAMI_BASE_HARMONY")));
+    int32 slots = int32(int(LibConfig.get(components, "KAMI_BASE_SLOTS")));
+
+    // sum the stats from all traits
+    uint traitRegistryID;
+    uint[] memory traits = LibKami.getTraits(components, kamiID);
+    for (uint i = 0; i < traits.length; i++) {
+      traitRegistryID = traits[i];
+      health += LibStat.get(components, "HEALTH", traitRegistryID).base;
+      power += LibStat.get(components, "POWER", traitRegistryID).base;
+      violence += LibStat.get(components, "VIOLENCE", traitRegistryID).base;
+      harmony += LibStat.get(components, "HARMONY", traitRegistryID).base;
+      slots += LibStat.get(components, "SLOTS", traitRegistryID).base;
+    }
+
+    int32[] memory stats = new int32[](5);
+    stats[0] = health;
+    stats[1] = power;
+    stats[2] = violence;
+    stats[3] = harmony;
+    stats[4] = slots;
+
+    return stats;
   }
 }

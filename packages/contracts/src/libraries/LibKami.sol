@@ -48,30 +48,7 @@ enum KamiState {
 /**
  * @notice library kamis!
  *
- * Shape (implemented in BatchMinter):
- * - EntityType: KAMI
- * - IDOwnsKami: Owner (usually Account, but can be other entities)
- * - IndexKami
- * - Name
- * - State [RESTING, HARVESTING, DEAD, 721_EXTERNAL]
- * - MediaURI
- * - TimeStart
- * - TimeLast
- * - Experience
- * - Level
- * - SkillPoints
- * - Traits
- *   - IndexFace
- *   - IndexHand
- *   - IndexBody
- *   - IndexBackground
- *   - IndexColor
- * - Stats
- *   - Health
- *   - Power
- *   - Violence
- *   - Harmony
- *   - Slots
+ * Shape: refer to LibKamiCreate
  * - Flags
  *   - NOT_NAMABLE: default false (kamis can be named by default)
  */
@@ -358,7 +335,7 @@ library LibKami {
 
   // get the last time a kami commited a syncing Action
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastComponent(getAddrByID(components, TimeLastCompID)).get(id);
+    return TimeLastComponent(getAddrByID(components, TimeLastCompID)).safeGet(id);
   }
 
   // Get the implied roomIndex of a kami based on its state.
@@ -399,29 +376,29 @@ library LibKami {
   // Get the traits of a kami, specifically the list of trait registry IDs
   function getTraits(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     uint256[] memory traits = new uint256[](5);
-    traits[0] = LibTraitRegistry.getBackgroundOf(components, id);
-    traits[1] = LibTraitRegistry.getBodyOf(components, id);
-    traits[2] = LibTraitRegistry.getColorOf(components, id);
-    traits[3] = LibTraitRegistry.getFaceOf(components, id);
-    traits[4] = LibTraitRegistry.getHandOf(components, id);
+    traits[0] = LibTraitRegistry.getByEntity(components, id, "FACE");
+    traits[1] = LibTraitRegistry.getByEntity(components, id, "HAND");
+    traits[2] = LibTraitRegistry.getByEntity(components, id, "BODY");
+    traits[3] = LibTraitRegistry.getByEntity(components, id, "BACKGROUND");
+    traits[4] = LibTraitRegistry.getByEntity(components, id, "COLOR");
     return traits;
   }
 
   // Get the kami's affinities. hardcoded to check for body and hands.
   function getAffinities(IUintComp components, uint256 id) internal view returns (string[] memory) {
     uint256[] memory regIDs = new uint256[](2);
-    regIDs[0] = LibTraitRegistry.getBodyOf(components, id);
-    regIDs[1] = LibTraitRegistry.getHandOf(components, id);
+    regIDs[0] = LibTraitRegistry.getByEntity(components, id, "BODY");
+    regIDs[1] = LibTraitRegistry.getByEntity(components, id, "HAND");
     return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regIDs);
   }
 
   function getBodyAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    uint256 regID = LibTraitRegistry.getBodyOf(components, id);
+    uint256 regID = LibTraitRegistry.getByEntity(components, id, "BODY");
     return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regID);
   }
 
   function getHandAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    uint256 regID = LibTraitRegistry.getHandOf(components, id);
+    uint256 regID = LibTraitRegistry.getByEntity(components, id, "HAND");
     return AffinityComponent(getAddrByID(components, AffinityCompID)).safeGet(regID);
   }
 

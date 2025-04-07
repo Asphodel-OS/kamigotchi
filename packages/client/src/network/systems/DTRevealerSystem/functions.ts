@@ -27,8 +27,8 @@ export async function notifyResult(
   if (!commit) return;
 
   await waitForRevealed(components, commit.entity);
-  const resultLog = getDTLogByHash(world, components, commit.holder, commit.parentID);
-  sendResultNotif(notifications, commit.parentID, commit.rolls, resultLog);
+  const resultLog = getDTLogByHash(world, components, commit.holder, commit.anchorID);
+  sendResultNotif(notifications, commit.anchorID, commit.rolls, resultLog);
 }
 
 export const sendKeepAliveNotif = (notifications: NotificationSystem, status: boolean) => {

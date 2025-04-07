@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@
 
 import { Components } from 'network/';
 import { Allo } from '../Allo';
+import { hasFlag } from '../Flag';
 import { getEntityByHash } from '../utils';
 import { Objective, getObjectives } from './objective';
 import { query } from './queries';
@@ -39,7 +40,7 @@ export const get = (world: World, components: Components, entity: EntityIndex): 
 
 // get a lightweight base quest without additional details
 export const getBase = (world: World, components: Components, entity: EntityIndex): BaseQuest => {
-  const { IsRepeatable, Description, Name, QuestIndex, Time } = components;
+  const { Description, Name, QuestIndex, Time } = components;
   const index = (getComponentValue(QuestIndex, entity)?.value ?? 0) as number;
   const registryEntityIndex = query(components, { index: index, registry: true })[0];
 
@@ -50,7 +51,7 @@ export const getBase = (world: World, components: Components, entity: EntityInde
     registryEntityIndex,
     name: getComponentValue(Name, registryEntityIndex)?.value ?? '',
     description: getComponentValue(Description, registryEntityIndex)?.value ?? '',
-    repeatable: hasComponent(IsRepeatable, registryEntityIndex),
+    repeatable: hasFlag(world, components, registryEntityIndex, 'REPEATABLE'),
     repeatDuration: getComponentValue(Time, registryEntityIndex)?.value ?? 0,
   };
 };
@@ -116,6 +117,5 @@ export const getInstanceEntity = (
   index: number,
   id: EntityID
 ): EntityIndex | undefined => {
-  // world3: change to 'quest.instance'
-  return getEntityByHash(world, ['registry.quest', index, id], ['string', 'uint32', 'uint256']);
+  return getEntityByHash(world, ['quest.instance', index, id], ['string', 'uint32', 'uint256']);
 };

@@ -47,7 +47,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
 
   function moveAccount(roomIndex: number) {
     // hardcode gas limit to 1.2m; approx upper bound for moving room with 1 gate
-    return systems['system.account.move'].executeTyped(roomIndex); //, { gasLimit: 1200000 });
+    return systems['system.account.move'].executeTyped(roomIndex, { gasLimit: 1200000 });
   }
 
   // @dev registers an account. should be called by Owner wallet
@@ -228,12 +228,13 @@ export function createPlayerAPI(txQueue: TxQueue) {
     return systems['system.trade.cancel'].executeTyped(tradeID);
   }
   /////////////////
-  //    MINT
+  //    GACHA
 
   // @dev mint a pet with a gacha ticket
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
-    return systems['system.kami.gacha.mint'].executeTyped(amount);
+    // RPC does not simulate gas properly, hardcode needed
+    return systems['system.kami.gacha.mint'].executeTyped(amount, { gasLimit: 17000000 });
   }
 
   // @dev reveal a minted pet
@@ -244,10 +245,16 @@ export function createPlayerAPI(txQueue: TxQueue) {
 
   // @dev reroll a pet
   // @param kamiID  kamiID
-  function rerollPet(kamiIDs: BigNumberish[], totalCost: BigNumberish) {
-    return systems['system.kami.gacha.reroll'].reroll(kamiIDs, {
-      value: totalCost,
-    });
+  function rerollPet(kamiIDs: BigNumberish[]) {
+    return systems['system.kami.gacha.reroll'].reroll(kamiIDs);
+  }
+
+  function buyPublicGachaTicket(amount: number) {
+    return systems['system.buy.gacha.ticket'].buyPublic(amount);
+  }
+
+  function buyWLGachaTicket() {
+    return systems['system.buy.gacha.ticket'].buyWL();
   }
 
   /////////////////
@@ -316,6 +323,10 @@ export function createPlayerAPI(txQueue: TxQueue) {
       sell: sellToListing,
     },
     mint: {
+      gachaTicket: {
+        buyPublic: buyPublicGachaTicket,
+        buyWL: buyWLGachaTicket,
+      },
       mintPet: mintPet,
       reveal: revealPet,
       reroll: rerollPet,

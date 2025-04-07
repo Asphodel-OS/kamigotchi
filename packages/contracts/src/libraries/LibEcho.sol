@@ -33,20 +33,14 @@ import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComp
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 
-/// @notice Library for data entity patterns. a key value store entity linked to an owner
-/** @dev
- * There are 2 types of data entities, all packed and stored into a single uint256.
- * - uint256
- * - uint32[8] (to store multiple values in a single entry)
- *
- * heavily influenced by LibConfig
- */
+/// @notice to re-emit state values, if needed
 library LibEcho {
   function kami(IUintComp components, uint256 id) internal {
     uint256[] memory compIDs = kamiIDs();
     for (uint256 i; i < compIDs.length; i++) {
       IComponent comp = getCompByID(components, compIDs[i]);
-      comp.set(id, comp.getRaw(id));
+      bytes memory raw = comp.getRaw(id);
+      if (raw.length > 0) comp.set(id, raw);
     }
   }
 

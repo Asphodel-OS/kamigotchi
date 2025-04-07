@@ -16,7 +16,9 @@ contract QuestCompleteSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    uint32 index = LibQuests.getIndex(components, questID);
 
+    LibQuests.verifyEnabled(components, index);
     LibQuests.verifyOwner(components, questID, accID);
     LibQuests.verifyNotCompleted(components, questID);
     LibQuests.verifyIsQuest(components, questID);
@@ -26,7 +28,7 @@ contract QuestCompleteSystem is System {
 
     // standard logging and tracking
     LibQuests.logComplete(components, accID);
-    LibQuests.logCompleteRepeatable(components, accID, questID);
+    LibQuests.logCompleteRepeatable(components, accID, index);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

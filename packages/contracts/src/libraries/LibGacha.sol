@@ -23,32 +23,21 @@ uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 library LibGacha {
   using LibComp for IComponent;
 
-  /// @notice Creates a commit for a gacha roll
-  function commit(
-    IWorld world,
-    IUintComp components,
-    uint256 accID,
-    uint256 revealBlock
-  ) internal returns (uint256 id) {
-    LibCommit.commit(world, components, accID, revealBlock, "GACHA_COMMIT");
-  }
-
   /// @notice Creates a commit for multiple gacha rolls (same account)
-  function commitBatch(
+  function commit(
     IWorld world,
     IUintComp components,
     uint256 amount,
     uint256 accID,
     uint256 revealBlock
-  ) internal returns (uint256[] memory ids) {
-    return LibCommit.commitBatch(world, components, accID, revealBlock, "GACHA_COMMIT", amount);
+  ) internal returns (uint256[] memory) {
+    return LibCommit.commit(world, components, accID, revealBlock, "GACHA_COMMIT", amount);
   }
 
   /////////////////
   // INTERACTIONS
 
   /// @notice deposits pets into the gacha pool
-  /// @dev doesnt use LibKami for batch efficiency
   function depositPets(IUintComp components, uint256[] memory kamiIDs) internal {
     IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     RerollComponent rerollComp = RerollComponent(getAddrByID(components, RerollCompID));
@@ -60,7 +49,6 @@ library LibGacha {
   }
 
   /// @notice transfers multiple pets from gacha to accounts
-  /// @dev doesnt use LibKami for batch efficiency
   function withdrawPets(
     IUintComp components,
     uint256[] memory kamiIDs,
@@ -178,11 +166,11 @@ library LibGacha {
   /////////////////
   // LOGGING
 
-  function logMint(IUintComp components, uint256 accID, uint256 amount) internal {
+  function logMint(IUintComp components, uint256 accID, uint256 amount) public {
     LibData.inc(components, accID, 0, "KAMI_GACHA_MINT", amount);
   }
 
-  function logReroll(IUintComp components, uint256 accID, uint256 amount) internal {
+  function logReroll(IUintComp components, uint256 accID, uint256 amount) public {
     LibData.inc(components, accID, 0, "KAMI_GACHA_REROLL", amount);
   }
 

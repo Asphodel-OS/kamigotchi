@@ -11,7 +11,6 @@ import {
   getRerolls,
   getState,
 } from '../utils/component';
-import { Battles, getBattles } from './battle';
 import { Bonuses, getBonuses } from './bonuses';
 import { Configs, getConfigs } from './configs';
 import { Flags, getFlags } from './flags';
@@ -30,14 +29,14 @@ export interface BaseKami extends DetailedEntity {
 
 // minimal gacha kami. reduced querying for performance
 export interface GachaKami extends BaseKami {
-  level: number;
+  level?: number;
   stats: Stats;
 }
 
 // standardized shape of a Kami Entity
 export interface Kami extends BaseKami {
   state: string; // what do? // belongs with LastTime, LastActionTime and last health sync
-  battles?: Battles;
+  // battles?: Battles;
   bonuses?: Bonuses;
   config?: Configs;
   flags?: Flags;
@@ -97,12 +96,12 @@ export const get = (
     state: getState(comps, entity),
   };
 
-  if (options?.battles) kami.battles = getBattles(world, comps, entity);
+  // if (options?.battles) kami.battles = getBattles(world, comps, entity);
   if (options?.bonus) kami.bonuses = getBonuses(world, comps, entity);
   if (options?.config) kami.config = getConfigs(world, comps);
   if (options?.flags) kami.flags = getFlags(world, comps, entity);
   if (options?.harvest) kami.harvest = getHarvest(world, comps, entity);
-  if (options?.progress) kami.progress = getProgress(world, comps, entity);
+  if (options?.progress) kami.progress = getProgress(comps, entity);
   if (options?.rerolls) kami.rerolls = getRerolls(comps, entity);
   if (options?.skills) kami.skills = getSkills(world, comps, entity);
   if (options?.stats) kami.stats = getStats(world, comps, entity);

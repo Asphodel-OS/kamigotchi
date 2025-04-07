@@ -1,15 +1,7 @@
 {
-  "_AdminGiveSystem": {
-    "id": "system._Admin.Give",
-    "encodedID": "0x35c9e051ba86dabb8fb1bc795056a6053ae302ea916d577db765f16e22b719cc"
-  },
   "_AuthManageRoleSystem": {
     "id": "system._Auth.Manage.Role",
     "encodedID": "0xfa9684ace25361f5f40e40125a8684f447957b66a008ef8f8a173bccb6fce62c"
-  },
-  "_CreatePetSystem": {
-    "id": "system.Kami721.create",
-    "encodedID": "0xdca10f2e8792bb3d426e9ae88798f80bdf42e5e4e21d6930cf9f211837099aa7"
   },
   "_ConfigSetSystem": {
     "id": "system._Config.Set",
@@ -44,7 +36,7 @@
     "encodedID": "0x40655593e868a25950fe329b42743107d2ad12ae762de5235676e5d683ec1e17"
   },
   "_RecipeRegistrySystem": {
-    "id": "system.recipe.registry.2",
+    "id": "system.recipe.registry",
     "encodedID": "0xd4e7c7a5f3f94a7ad9722dbed68c30cbc3fc0300ada84bfc5c3b2b78c816d515"
   },
   "_RelationshipRegistrySystem": {
@@ -86,10 +78,6 @@
   "AccountSetOperatorSystem": {
     "id": "system.account.set.operator",
     "encodedID": "0x30e8932dc8e2362f4722824362c3a0895f6dbaa7f643b37560c1b38ea682d667"
-  },
-  "AccountSetFarcasterDataSystem": {
-    "id": "system.account.set.farcaster",
-    "encodedID": "0xd34161e46727cb8efc2f04f8bd1b9f57ad4d38cf0467c0a23e3986643574408c"
   },
   "CraftSystem": {
     "id": "system.craft",

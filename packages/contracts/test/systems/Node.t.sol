@@ -24,15 +24,16 @@ contract NodeTest is SetupTemplate {
   function testNodeShape() public {
     vm.startPrank(deployer);
     // create node
+    uint32 nodeIndex = 1;
     uint256 nodeID = __NodeRegistrySystem.create(
-      abi.encode(1, "HARVEST", 1, "Test Node", "this is a node", "NORMAL")
+      abi.encode(nodeIndex, "HARVEST", 1, "Test Node", "this is a node", "NORMAL")
     );
     // add requirement
     __NodeRegistrySystem.addRequirement(abi.encode(1, "ROOM", "BOOL_IS", 1, 0, "ACCOUNT"));
     vm.stopPrank();
 
     // try starting basic harvest
-    _startHarvest(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeIndex);
 
     // delete all
     vm.prank(deployer);
@@ -49,14 +50,14 @@ contract NodeTest is SetupTemplate {
     assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
-    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeIndex, 0, 0);
 
     // leveling up
     _setLevel(aKamiID, 2);
 
     // can now add level 2 pet to node
     assertTrue(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
-    _startHarvest(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeIndex);
   }
 
   function testNodeRequirementsAccount() public {
@@ -70,14 +71,14 @@ contract NodeTest is SetupTemplate {
     assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
-    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeIndex, 0, 0);
 
     // leveling up
     _setLevel(alice.id, 2);
 
     // can now add level 2 account to node
     assertTrue(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
-    _startHarvest(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeIndex);
   }
 
   function testNodeRequirementsPetAndAccount() public {
@@ -92,7 +93,7 @@ contract NodeTest is SetupTemplate {
     assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
-    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeIndex, 0, 0);
 
     // leveling up pet
     _setLevel(aKamiID, 2);
@@ -101,14 +102,14 @@ contract NodeTest is SetupTemplate {
     assertFalse(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
     vm.prank(alice.operator);
     vm.expectRevert("node reqs not met");
-    _HarvestStartSystem.executeTyped(aKamiID, nodeID);
+    _HarvestStartSystem.executeTyped(aKamiID, nodeIndex, 0, 0);
 
     // leveling up account
     _setLevel(alice.id, 2);
 
     // all good
     assertTrue(checkNodeRequirements(nodeIndex, alice.id, aKamiID));
-    _startHarvest(aKamiID, nodeID);
+    _startHarvest(aKamiID, nodeIndex);
   }
 
   //////////////

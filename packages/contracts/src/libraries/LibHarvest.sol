@@ -29,6 +29,7 @@ import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
+import { LibTax } from "libraries/LibTax.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant RATE_PREC = 6;
@@ -45,6 +46,25 @@ library LibHarvest {
 
   /////////////////
   // INTERACTIONS
+
+  function startFor(
+    IUintComp components,
+    uint256 nodeID,
+    uint256 kamiID,
+    uint256 taxerID,
+    uint256 taxAmt
+  ) internal returns (uint256 id) {
+    id = getForKami(components, kamiID);
+    if (id == 0) id = create(components, nodeID, kamiID);
+    else setNode(components, id, nodeID);
+
+    // update taxes
+    LibTax.removeFor(components, id); // remove all prior
+    if (taxAmt > 0) LibTax.create(components, id, taxerID, taxAmt);
+
+    // starting harvest
+    start(components, id);
+  }
 
   // Creates a harvest for a pet at a deposit. Assumes one doesn't already exist.
   function create(
@@ -66,8 +86,16 @@ library LibHarvest {
     uint256 balance = valComp.safeGet(prodID);
     if (balance > 0) valComp.set(prodID, 0);
 
-    LibInventory.incFor(components, toID, MUSU_INDEX, balance);
-    return balance;
+    // calculate tax
+    (uint256[] memory recipientIDs, uint256[] memory toPay, uint256 amtLeft) = LibTax.getBillFor(
+      components,
+      balance,
+      prodID
+    );
+
+    LibInventory.incFor(components, recipientIDs, MUSU_INDEX, toPay); // to tax recipients
+    LibInventory.incFor(components, toID, MUSU_INDEX, amtLeft); // to original owner
+    return amtLeft;
   }
 
   function resetIntensity(IUintComp components, uint256 id) internal {

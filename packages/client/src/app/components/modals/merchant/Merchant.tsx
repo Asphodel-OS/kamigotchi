@@ -3,11 +3,14 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
-import { NPC, NullNPC, cleanNPCListings, getNPCByIndex, refreshNPCListings } from 'app/cache/npc';
+import { getInventoryBalance } from 'app/cache/inventory';
+import { cleanNPCListings, getNPCByIndex, NPC, NullNPC, refreshNPCListings } from 'app/cache/npc';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
+import { MUSU_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Inventory } from 'network/shapes/Inventory';
 import { Listing } from 'network/shapes/Listing';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
@@ -44,6 +47,8 @@ export function registerMerchantModal() {
               cleanListings: (listings: Listing[], account: Account) =>
                 cleanNPCListings(world, components, listings, account),
               refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
+              getMusuBalance: (inventories: Inventory[]) =>
+                getInventoryBalance(inventories, MUSU_INDEX),
             },
             network,
           };
@@ -53,7 +58,7 @@ export function registerMerchantModal() {
     // Render
     ({ data, utils, network }) => {
       const { accountEntity } = data;
-      const { getAccount, getNPC, cleanListings, refreshListings } = utils;
+      const { getAccount, getNPC, cleanListings, refreshListings, getMusuBalance } = utils;
       const { actions, api } = network;
       const { npcIndex } = useSelected();
       const { modals } = useVisibility();
@@ -63,6 +68,7 @@ export function registerMerchantModal() {
       const [listings, setListings] = useState<Listing[]>([]);
       const [cart, setCart] = useState<CartItem[]>([]);
       const [lastTick, setLastTick] = useState(Date.now());
+      const [musuBalance, setMusuBalance] = useState<number>(0);
 
       // ticking
       useEffect(() => {
@@ -74,6 +80,7 @@ export function registerMerchantModal() {
       // update the listings on each tick
       useEffect(() => {
         if (!modals.merchant || npcIndex != merchant.index) return;
+        setMusuBalance(getMusuBalance(account.inventories ?? []));
         refreshListings(merchant);
       }, [lastTick]);
 
@@ -112,7 +119,7 @@ export function registerMerchantModal() {
       if (!merchant) return <></>;
       return (
         <ModalWrapper id='merchant' canExit overlay>
-          <Header merchant={merchant} player={account} />
+          <Header merchant={merchant} player={account} balance={musuBalance} />
           <Body>
             <Catalog listings={listings} cart={cart} setCart={setCart} />
             <Cart account={account} cart={cart} setCart={setCart} buy={buy} />

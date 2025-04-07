@@ -12,7 +12,6 @@ import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
-import { FarcasterIndexComponent, ID as FarcarsterIndexCompID } from "components/FarcasterIndexComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { CacheOperatorComponent as CacheOpComponent, ID as CacheOpCompID } from "components/CacheOperatorComponent.sol";
@@ -130,10 +129,6 @@ library LibAccount {
     AddressOperatorComponent(getAddrByID(components, AddrOperatorCompID)).set(id, addr);
   }
 
-  function setFarcasterIndex(IUintComp components, uint256 id, uint32 fid) internal {
-    FarcasterIndexComponent(getAddrByID(components, FarcarsterIndexCompID)).set(id, fid);
-  }
-
   function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
     TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).set(id, ts);
   }
@@ -214,17 +209,6 @@ library LibAccount {
 
   /////////////////
   // QUERIES
-
-  // retrieves the account with farcaster index
-  function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
-    uint256[] memory results = LibEntityType.queryWithValue(
-      components,
-      "ACCOUNT",
-      getCompByID(components, FarcarsterIndexCompID),
-      abi.encode(fid)
-    );
-    return (results.length > 0) ? results[0] : 0;
-  }
 
   // retrieves the account with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {

@@ -367,18 +367,20 @@ abstract contract SetupTemplate is TestSetupImports {
     _KamiUseItemSystem.executeTyped(kamiID, KAMI_REVIVE_INDEX);
   }
 
-  function _startHarvestByIndex(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
-    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
-    return _startHarvest(kamiID, nodeID);
-  }
+  /* HARVEST */
 
-  function _startHarvest(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+  function _startHarvest(uint kamiID, uint32 nodeIndex) internal virtual returns (uint) {
     uint accID = LibKami.getAccount(components, kamiID);
     address operator = LibAccount.getOperator(components, accID);
 
     vm.prank(operator);
-    bytes memory harvestID = _HarvestStartSystem.executeTyped(kamiID, nodeID);
+    bytes memory harvestID = _HarvestStartSystem.executeTyped(kamiID, nodeIndex, 0, 0);
     return abi.decode(harvestID, (uint));
+  }
+
+  function _startHarvestByNodeID(uint kamiID, uint256 nodeID) internal virtual returns (uint) {
+    uint32 nodeIndex = LibNode.getIndex(components, nodeID);
+    return _startHarvest(kamiID, nodeIndex);
   }
 
   function _stopHarvest(uint harvestID) internal {
@@ -405,6 +407,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.prank(operator);
     _HarvestLiquidateSystem.executeTyped(harvestID, attackerID);
+  }
+
+  function _incHarvestBounty(uint harvestID, uint amt) internal {
+    vm.startPrank(deployer);
+    LibHarvest.incBounty(components, harvestID, amt);
+    vm.stopPrank();
   }
 
   /* QUESTS */
@@ -516,6 +524,24 @@ abstract contract SetupTemplate is TestSetupImports {
     component.set(id, abi.encode(value));
   }
 
+  function _setData(uint256 holderID, uint32 index, string memory type_, uint256 value) internal {
+    vm.startPrank(deployer);
+    LibData.set(components, holderID, index, type_, value);
+    vm.stopPrank();
+  }
+
+  function _incData(uint256 holderID, uint32 index, string memory type_, uint256 value) internal {
+    vm.startPrank(deployer);
+    LibData.inc(components, holderID, index, type_, value);
+    vm.stopPrank();
+  }
+
+  function _setFlag(uint256 holderID, string memory flagType, bool state) internal {
+    vm.startPrank(deployer);
+    LibFlag.set(components, holderID, flagType, state);
+    vm.stopPrank();
+  }
+
   /////////////////
   // STAT MANIPULATION
 
@@ -543,21 +569,22 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32 index,
     uint32 roomIndex,
     Condition memory condition
-  ) internal returns (uint256) {
-    vm.prank(deployer);
-    return
-      __GoalRegistrySystem.create(
-        abi.encode(
-          index,
-          "name",
-          "description",
-          roomIndex,
-          condition.type_,
-          condition.logic,
-          condition.index,
-          condition.value
-        )
-      );
+  ) internal returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = __GoalRegistrySystem.create(
+      abi.encode(
+        index,
+        "name",
+        "description",
+        roomIndex,
+        condition.type_,
+        condition.logic,
+        condition.index,
+        condition.value
+      )
+    );
+    __GoalRegistrySystem.setDisabled(index, false);
+    vm.stopPrank();
   }
 
   function _createGoalRequirement(
@@ -760,12 +787,13 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
-  function _createQuest(uint32 index, uint duration) public returns (uint256) {
-    vm.prank(deployer);
-    return
-      __QuestRegistrySystem.create(
-        abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
-      );
+  function _createQuest(uint32 index, uint duration) public returns (uint256 id) {
+    vm.startPrank(deployer);
+    id = __QuestRegistrySystem.create(
+      abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
+    );
+    __QuestRegistrySystem.setDisabled(index, false);
+    vm.stopPrank();
   }
 
   function _createQuestObjective(
@@ -1018,35 +1046,35 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initCommonTraits() internal {
     // Backgrounds
-    registerTrait(0, 0, 0, 0, 0, 0, 0, "", "Empty BG", "BACKGROUND");
+    registerTrait(0, 0, 0, 0, 0, 0, 1, "", "Empty BG", "BACKGROUND");
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health BG Basic", "BACKGROUND");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power BG Basic", "BACKGROUND");
     registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence BG Basic", "BACKGROUND");
     registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony BG Basic", "BACKGROUND");
 
     // Bodies
-    registerTrait(0, 0, 1, 1, 0, 0, 0, "INSECT", "Empty Body", "BODY");
+    registerTrait(0, 0, 1, 1, 0, 0, 1, "INSECT", "Empty Body", "BODY");
     registerTrait(1, 0, 1, 1, 0, 0, 9, "INSECT", "Insect Body Basic", "BODY");
     registerTrait(2, 10, 0, 0, 1, 0, 9, "SCRAP", "Scrap Body Basic", "BODY");
     registerTrait(3, 0, 0, 1, 1, 0, 9, "EERIE", "Eerie Body Basic", "BODY");
     registerTrait(4, 10, 0, 0, 0, 1, 9, "NORMAL", "Normal Body Basic", "BODY");
 
     // Colors
-    registerTrait(0, 10, 0, 0, 0, 0, 0, "", "Empty Color", "COLOR");
+    registerTrait(0, 10, 0, 0, 0, 0, 1, "", "Empty Color", "COLOR");
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health Color Basic", "COLOR");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power Color Basic", "COLOR");
     registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence Color Basic", "COLOR");
     registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony Color Basic", "COLOR");
 
     // Faces
-    registerTrait(0, 10, 0, 0, 0, 0, 0, "", "Empty Face", "FACE");
+    registerTrait(0, 10, 0, 0, 0, 0, 1, "", "Empty Face", "FACE");
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health Mask Basic", "FACE");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power Mask Basic", "FACE");
     registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence Mask Basic", "FACE");
     registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony Mask Basic", "FACE");
 
     // Hands
-    registerTrait(0, 0, 1, 1, 0, 0, 0, "INSECT", "Empty Hands", "HAND");
+    registerTrait(0, 0, 1, 1, 0, 0, 1, "INSECT", "Empty Hands", "HAND");
     registerTrait(1, 0, 1, 1, 0, 0, 9, "INSECT", "Insect Hands Basic", "HAND");
     registerTrait(2, 10, 0, 0, 1, 0, 9, "SCRAP", "Scrap Hands Basic", "HAND");
     registerTrait(3, 0, 0, 1, 1, 0, 9, "EERIE", "Eerie Hands Basic", "HAND");

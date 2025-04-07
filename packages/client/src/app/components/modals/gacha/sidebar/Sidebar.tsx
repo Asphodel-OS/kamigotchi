@@ -9,8 +9,8 @@ import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
-import { BaseKami } from 'network/shapes/Kami/types';
-import { AuctionMode, Filter, Sort, TabType } from '../types';
+import { Kami } from 'network/shapes/Kami/types';
+import { Filter, Sort, TabType, ViewMode } from '../types';
 import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
 import { Tabs } from './Tabs';
@@ -20,10 +20,14 @@ interface Props {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
     mint: (balance: number) => Promise<boolean>;
-    reroll: (kamis: BaseKami[], price: bigint) => Promise<boolean>;
+    reroll: (kamis: Kami[]) => Promise<boolean>;
     reveal: (commits: Commit[]) => Promise<void>;
   };
   controls: {
+    mode: ViewMode;
+    setMode: (mode: ViewMode) => void;
+    tab: TabType;
+    setTab: (tab: TabType) => void;
     filters: Filter[];
     setFilters: (filters: Filter[]) => void;
     sorts: Sort[];
@@ -38,36 +42,40 @@ interface Props {
     };
   };
   state: {
+    quantity: number;
+    setQuantity: (quantity: number) => void;
+    selectedKamis: Kami[];
+    setSelectedKamis: (kamis: Kami[]) => void;
     tick: number;
-    tab: TabType;
-    setTab: (tab: TabType) => void;
-    mode: AuctionMode;
-    setMode: (mode: AuctionMode) => void;
   };
   utils: {
     getItem: (index: number) => Item;
-    getGachaBalance: (inventories: Inventory[]) => number;
-    getRerollBalance: (inventories: Inventory[]) => number;
-    getMusuBalance: (inventories: Inventory[]) => number;
+    getItemBalance: (index: number) => number;
   };
 }
 
 export const Sidebar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
-  const { auctions, commits, inventories } = data;
-  const { tick, tab, setTab, mode } = state;
-  const { getItem, getGachaBalance, getRerollBalance, getMusuBalance } = utils;
+  const { mode, tab, setTab } = controls;
+  const { auctions, commits } = data;
+  const { tick, quantity } = state;
+  const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
   const { modals } = useVisibility();
 
   const [payItem, setPayItem] = useState<Item>(NullItem);
   const [saleItem, setSaleItem] = useState<Item>(NullItem);
-  const [quantity, setQuantity] = useState(0);
   const [balance, setBalance] = useState(0);
   const [price, setPrice] = useState(0);
 
   /////////////////
   // HOOKS
+
+  // on startup it should be set to mint
+  useEffect(() => {
+    updatePayItem();
+    updateBalance();
+  }, [modals.gacha]);
 
   // maybe consider controlling this hook and the one below with a dedicated payItem vs buyItem
   useEffect(() => {
@@ -91,36 +99,46 @@ export const Sidebar = (props: Props) => {
 
   // update the pay item according to tab/mode
   const updatePayItem = () => {
-    if (tab === 'MINT') setPayItem(getItem(GACHA_TICKET_INDEX));
-    else if (tab === 'REROLL') setPayItem(getItem(REROLL_TICKET_INDEX));
-    else {
-      if (mode === 'GACHA') setPayItem(getItem(MUSU_INDEX));
-      else if (mode === 'REROLL') setPayItem(getItem(ONYX_INDEX));
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') setPayItem(getItem(GACHA_TICKET_INDEX));
+      if (mode === 'ALT') setPayItem(getItem(MUSU_INDEX));
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') setPayItem(getItem(REROLL_TICKET_INDEX));
+      else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
+    } else {
+      if (mode === 'DEFAULT') setPayItem(getItem(MUSU_INDEX));
+      else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
     }
   };
 
   // update the sale item according to tab/mode
   const updateSaleItem = () => {
-    if (tab !== 'AUCTION') return;
-    if (mode === 'GACHA') setSaleItem(getItem(GACHA_TICKET_INDEX));
-    else if (mode === 'REROLL') setSaleItem(getItem(REROLL_TICKET_INDEX));
+    if (mode !== 'ALT') return;
+    if (tab === 'GACHA') setSaleItem(getItem(GACHA_TICKET_INDEX));
+    else if (tab === 'REROLL') setSaleItem(getItem(REROLL_TICKET_INDEX));
   };
 
   // update the balance according to tab/mode
   const updateBalance = () => {
-    if (tab === 'MINT') setBalance(getGachaBalance(inventories));
-    else if (tab === 'REROLL') setBalance(getRerollBalance(inventories));
-    else if (tab === 'AUCTION') {
-      if (mode === 'GACHA') setBalance(getMusuBalance(inventories));
-      else if (mode === 'REROLL') setBalance(tokenBal.get(payItem.address || '')?.balance || 0);
-    } else setBalance(0);
+    let newBalance = 0;
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') newBalance = getItemBalance(GACHA_TICKET_INDEX);
+      else if (mode === 'ALT') newBalance = getItemBalance(MUSU_INDEX);
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') newBalance = getItemBalance(REROLL_TICKET_INDEX);
+      else if (mode === 'ALT') newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
+    } else if (tab === 'MINT') {
+      newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
+    }
+
+    if (newBalance !== balance) setBalance(newBalance);
   };
 
   // update the price according to tab/mode
   const updatePrice = () => {
-    if (tab != 'AUCTION') setPrice(quantity);
-    else if (mode === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
-    else if (mode === 'REROLL')
+    if (mode === 'DEFAULT') setPrice(quantity);
+    else if (tab === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
+    else if (tab === 'REROLL')
       setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.reroll, quantity)));
     else setPrice(0);
   };
@@ -130,15 +148,15 @@ export const Sidebar = (props: Props) => {
       <Tabs tab={tab} setTab={setTab} />
       <Controls
         actions={actions}
-        controls={{ ...controls, price, setPrice, quantity, setQuantity }}
-        data={{ payItem, saleItem, balance, commits }}
-        state={state}
+        controls={controls}
+        data={{ balance, commits, payItem, saleItem }}
+        state={{ ...state, price }}
       />
       <Footer
         actions={actions}
-        controls={{ ...controls, price, setPrice, quantity, setQuantity }}
-        data={{ payItem, saleItem, balance }}
-        state={state}
+        controls={controls}
+        data={{ balance, payItem, saleItem }}
+        state={{ ...state, price, setPrice }}
       />
     </Container>
   );
@@ -147,7 +165,7 @@ export const Sidebar = (props: Props) => {
 const Container = styled.div`
   border-left: solid black 0.15vw;
   height: 100%;
-  width: 25vw;
+  width: 32vw;
 
   display: flex;
   flex-flow: column nowrap;

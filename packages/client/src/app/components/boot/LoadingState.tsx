@@ -7,6 +7,8 @@ import { GodID, SyncState } from 'engine/constants';
 import { registerFixtures, registerModals, registerScene, registerValidators } from '..';
 import { BootScreen } from './BootScreen';
 
+const FE_DISABLED = import.meta.env.VITE_STATE === 'DISABLED';
+
 export function registerLoadingState() {
   registerUIComponent(
     'LoadingState',
@@ -45,6 +47,8 @@ export function registerLoadingState() {
       const { state, msg, percentage } = loadingState;
 
       useEffect(() => {
+        if (FE_DISABLED) return;
+
         if (state === SyncState.LIVE) {
           console.log('State Live');
           setTimeout(() => setIsVisible(false), 3333);
@@ -70,6 +74,8 @@ export function registerLoadingState() {
       }, [state]);
 
       const getStatus = () => {
+        if (FE_DISABLED) return `Playtest is over 🎉 we'll see you again soon ^^`;
+
         if (state !== SyncState.LIVE) return msg;
         const rand = Math.random();
         const eEggOdds = 1 / 1e3;
@@ -84,7 +90,13 @@ export function registerLoadingState() {
         else return 'transporting you shortly~';
       };
 
-      return <BootScreen status={getStatus()} progress={percentage} isHidden={!isVisible} />;
+      return (
+        <BootScreen
+          status={getStatus()}
+          progress={percentage}
+          isHidden={!FE_DISABLED && !isVisible}
+        />
+      );
     }
   );
 }

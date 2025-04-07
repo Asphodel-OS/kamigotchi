@@ -11,7 +11,6 @@ import { Stat } from "solecs/components/types/Stat.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
-import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -146,25 +145,10 @@ library LibItem {
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
     LibERC20.remove(components, id);
 
-    {
-      uint256[] memory flags = LibFlag.queryFor(components, id);
-      LibFlag.removeFull(components, flags);
-    }
-
-    {
-      uint256[] memory reqs = getAllRequirements(components, index);
-      LibConditional.remove(components, reqs);
-    }
-
-    {
-      uint256[] memory allos = getAllAllos(components, index);
-      LibAllo.remove(components, allos);
-    }
-
-    {
-      uint256[] memory refs = getAllReferences(components, index);
-      LibReference.remove(components, refs);
-    }
+    LibFlag.removeFull(components, LibFlag.queryFor(components, id));
+    LibConditional.remove(components, getAllRequirements(components, index));
+    LibAllo.remove(components, getAllAllos(components, index));
+    LibReference.remove(components, getAllReferences(components, index));
   }
 
   /////////////////

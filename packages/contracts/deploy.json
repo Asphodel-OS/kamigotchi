@@ -14,9 +14,7 @@
     { "comp": "EntityType", "name": "EntityType", "type": "string", "indexed": true },
     { "comp": "Exits", "name": "Exits", "type": "uint32[]" },
     { "comp": "Experience", "name": "Experience", "type": "uint256" },
-    { "comp": "FarcasterIndex", "name": "FarcasterIndex", "type": "uint32", "indexed": true },
-    { "comp": "For", "name": "For", "type": "uint256" },
-    { "comp": "ForString", "name": "ForString", "type": "string" },
+    { "comp": "For", "name": "For", "type": "string" },
     { "comp": "HasFlag", "name": "HasFlag", "type": "bool" },
     { "comp": "Harmony", "name": "Harmony", "type": "Stat" },
     { "comp": "Health", "name": "Health", "type": "Stat" },
@@ -28,9 +26,9 @@
     { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
-    { "comp": "IDParent", "name": "ParentID", "type": "uint256", "FEtype": "string", "indexed": true },
-    { "comp": "IDRoom", "name": "RoomID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDAnchor", "name": "AnchorID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdSource", "name": "SourceID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDType", "name": "TypeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdTarget", "name": "TargetID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -54,9 +52,8 @@
     { "comp": "IndexRoom", "name": "RoomIndex", "type": "uint32", "indexed": true },
     { "comp": "IndexSkill", "name": "SkillIndex", "type": "uint32" },
     { "comp": "IsComplete", "name": "IsComplete", "type": "bool" },
-    { "comp": "IsKill", "name": "IsKill", "type": "bool" },
+    { "comp": "IsDisabled", "name": "IsDisabled", "type": "bool" },
     { "comp": "IsRegistry", "name": "IsRegistry", "type": "bool" },
-    { "comp": "IsRepeatable", "name": "IsRepeatable", "type": "bool" },
     { "comp": "Keys", "name": "Keys", "type": "uint32[]" },
     { "comp": "Level", "name": "Level", "type": "uint256" },
     { "comp": "Location", "name": "Location", "type": "Coord" },
@@ -80,7 +77,6 @@
     { "comp": "Time", "name": "Time", "type": "uint256" },
     { "comp": "TimeLastAction", "name": "LastActionTime", "type": "uint256" },
     { "comp": "TimeLast", "name": "LastTime", "type": "uint256" },
-    { "comp": "Timelock", "name": "Timelock", "type": "TimelockOp" },
     { "comp": "TimeReset", "name": "ResetTime", "type": "uint256" },
     { "comp": "TimeStart", "name": "StartTime", "type": "uint256" },
     { "comp": "Type", "name": "Type", "type": "string", "indexed": true },
@@ -92,15 +88,15 @@
     { "comp": "Weights", "name": "Weights", "type": "uint256[]" },
     { "comp": "Whitelist", "name": "Whitelist", "type": "uint32[]" }
   ],
+  "protectedComponents": ["ProxyPermissionsERC721", "TokenAllowance"],
   "systems": [
     { "name": "__LocalSetupSystem", "writeAccess": ["*"] },
-    { "name": "_AdminGiveSystem", "writeAccess": ["*"] },
+    { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
       "writeAccess": ["HasFlag", "IDOwnsFlag", "IDType", "Type"]
     },
-    { "name": "_CreatePetSystem", "writeAccess": ["*"] },
     {
       "name": "_ConfigSetSystem",
       "writeAccess": ["Value"]
@@ -138,9 +134,9 @@
       "writeAccess": [
         "EntityType",
         "Experience",
-        "ForString",
+        "For",
         "IDFrom",
-        "IDParent",
+        "IDAnchor",
         "IDTo",
         "IndexRecipe",
         "Index",
@@ -161,12 +157,13 @@
       "name": "_RoomRegistrySystem",
       "writeAccess": [
         "EntityType",
-        "ForString",
+        "For",
         "HasFlag",
         "IDOwnsFlag",
-        "IDParent",
+        "IDFrom",
+        "IDTo",
         "IDType",
-        "IDRoom",
+        "IDAnchor",
         "IndexRoom",
         "Index",
         "Description",
@@ -294,19 +291,19 @@
     },
     {
       "name": "FriendAcceptSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendBlockSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendCancelSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     {
       "name": "FriendRequestSystem",
-      "writeAccess": ["EntityType", "IdSource", "IDParent", "IdTarget", "State", "TimeLast"]
+      "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
     { "name": "GetterSystem", "writeAccess": [] },
     {
@@ -357,6 +354,10 @@
       ]
     },
     {
+      "name": "GachaBuyTicketSystem",
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"]
+    },
+    {
       "name": "Kami721IsInWorldSystem",
       "writeAccess": []
     },
@@ -367,25 +368,36 @@
     {
       "name": "KamiGachaMintSystem",
       "writeAccess": [
+        "Affinity",
         "BlockReveal",
         "EntityType",
+        "Experience",
+        "Health",
+        "Harmony",
         "IDOwnsInventory",
         "IDOwnsKami",
         "IdHolder",
+        "IndexBackground",
+        "IndexBody",
+        "IndexColor",
+        "IndexFace",
+        "IndexHand",
         "IndexItem",
+        "IndexKami",
+        "Level",
+        "MediaURI",
+        "Name",
+        "Power",
         "Reroll",
+        "Slots",
+        "SkillPoint",
+        "State",
+        "ProxyPermissionsERC721",
         "TimeLast",
         "Type",
-        "Value"
+        "Value",
+        "Violence"
       ]
-    },
-    {
-      "name": "Kami721StakeSystem",
-      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"]
-    },
-    {
-      "name": "Kami721UnstakeSystem",
-      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"]
     },
     {
       "name": "KamiGachaRerollSystem",
@@ -423,10 +435,6 @@
       ]
     },
     {
-      "name": "KamiNameSystem",
-      "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"]
-    },
-    {
       "name": "KamiUseItemSystem",
       "writeAccess": ["*"]
     },
@@ -439,7 +447,7 @@
         "Health",
         "IdHolder",
         "IdSource",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "Index",
         "IndexItem",
@@ -457,19 +465,16 @@
       "name": "HarvestLiquidateSystem",
       "writeAccess": [
         "EntityType",
-        "Experience",
         "IdHolder",
-        "IDParent",
-        "IdSource",
+        "IDAnchor",
         "IDType",
         "IDOwnsInventory",
-        "IdTarget",
+        "IdSource",
         "Index",
         "IndexItem",
-        "IndexNode",
-        "IsKill",
-        "Level",
+        "Experience",
         "Health",
+        "Level",
         "Rate",
         "State",
         "Time",
@@ -484,7 +489,9 @@
       "writeAccess": [
         "EntityType",
         "IDOwnsInventory",
+        "IDOwnsTax",
         "IdHolder",
+        "IdTarget",
         "IdSource",
         "IndexItem",
         "Health",
@@ -506,7 +513,7 @@
         "Health",
         "IdHolder",
         "IdSource",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "Index",
         "IndexItem",
@@ -525,10 +532,10 @@
       "name": "QuestAcceptSystem",
       "writeAccess": [
         "EntityType",
+        "IDAnchor",
         "IDOwnsQuest",
         "IndexQuest",
         "IsComplete",
-        "IsRepeatable",
         "TimeLastAction",
         "TimeLast",
         "TimeStart",
@@ -543,10 +550,10 @@
       "name": "QuestDropSystem",
       "writeAccess": [
         "EntityType",
+        "IDAnchor",
         "IDOwnsQuest",
         "IndexQuest",
         "IsComplete",
-        "IsRepeatable",
         "TimeLastAction",
         "TimeLast",
         "TimeStart",
@@ -568,7 +575,7 @@
         "Health",
         "HasFlag",
         "IdHolder",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "IdSource",
         "IDOwnsSkill",
@@ -588,7 +595,7 @@
       "writeAccess": [
         "EntityType",
         "Health",
-        "IDParent",
+        "IDAnchor",
         "IDType",
         "IdSource",
         "IDOwnsSkill",
@@ -659,7 +666,7 @@
     },
     {
       "name": "_721BatchMinterSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["*", "ProxyPermissionsERC721"]
     }
   ],
   "libraries": [
@@ -688,6 +695,7 @@
     "LibNPC",
     "LibKami",
     "LibKami721",
+    "LibKamiCreate",
     "LibERC20",
     "LibQuestRegistry",
     "LibQuests",
@@ -699,7 +707,6 @@
     "LibSkillRegistry",
     "LibSkill",
     "LibStat",
-    "LibTimelock",
     "LibTrade",
     "LibTraitRegistry",
     "LibVIP"

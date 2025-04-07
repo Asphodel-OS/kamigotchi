@@ -1,6 +1,7 @@
 import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
 
 import { boot as bootReact, mountReact, setLayers } from 'app/boot';
+import { DefaultChain } from 'constants/chains';
 import { Layers, createNetworkConfig, createNetworkLayer } from 'network/';
 
 // boot the whole thing
@@ -14,9 +15,10 @@ export async function boot() {
 
 // boot the game's network layer
 async function bootGame() {
-  let initialBoot = true;
+  const mode = import.meta.env.MODE;
+  console.log(`Booting in { ${mode} } mode (chain ${DefaultChain.id}).`);
 
-  const layers = await rebootGame(initialBoot);
+  const layers = await rebootGame(true);
   (window as any).network = layers.network;
 
   const ecs = {
@@ -37,7 +39,7 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
   // Set the game config
   const networkConfig = createNetworkConfig();
   if (!networkConfig) throw new Error('Invalid config');
-  console.log('Booted burner network config', networkConfig);
+  else console.log('Root Network Config', networkConfig);
 
   // Populate the layers
   if (!layers.network) layers.network = await createNetworkLayer(networkConfig);

@@ -6,7 +6,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { Uint32BareComponent } from "solecs/components/Uint32BareComponent.sol";
 import { System } from "solecs/System.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
@@ -14,6 +13,7 @@ import { Stat } from "solecs/components/types/Stat.sol";
 import { StatComponent } from "solecs/components/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { EntityTypeComponent, ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
+import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
@@ -24,7 +24,6 @@ import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceC
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IndexKamiComponent, ID as IndexPetCompID } from "components/IndexKamiComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -33,11 +32,7 @@ import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.
 import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol";
 import { SkillPointComponent, ID as SkillPointCompID } from "components/SkillPointComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
-import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
-import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { Kami721 } from "tokens/Kami721.sol";
 
@@ -52,6 +47,7 @@ import { LibTraitRegistry } from "libraries/LibTraitRegistry.sol";
 uint256 constant ID = uint256(keccak256("system.Kami721.BatchMint"));
 
 uint256 constant OFFSET_BIT_SIZE = 32;
+import { BASE_NAME } from "libraries/LibKamiCreate.sol";
 
 /////////////
 // STRUCTS //
@@ -291,12 +287,9 @@ contract _721BatchMinterSystem is System, TraitHandler {
   MediaURIComponent internal immutable mediaURIComp;
   NameComponent internal immutable nameComp;
   StateComponent internal immutable stateComp;
-  TimeStartComponent internal immutable timeStartComp;
-  TimeLastComponent internal immutable timeLastComp;
   LevelComponent internal immutable levelComp;
   ExperienceComponent internal immutable expComp;
   SkillPointComponent internal immutable skillPointComp;
-  ValueComponent internal immutable balanceComp;
 
   constructor(
     IWorld _world,
@@ -310,12 +303,9 @@ contract _721BatchMinterSystem is System, TraitHandler {
     mediaURIComp = MediaURIComponent(getAddrByID(components, MediaURICompID));
     nameComp = NameComponent(getAddrByID(components, NameCompID));
     stateComp = StateComponent(getAddrByID(components, StateCompID));
-    timeStartComp = TimeStartComponent(getAddrByID(components, TimeStartCompID));
-    timeLastComp = TimeLastComponent(getAddrByID(components, TimeLastCompID));
     levelComp = LevelComponent(getAddrByID(components, LevelCompID));
     expComp = ExperienceComponent(getAddrByID(components, ExperienceCompID));
     skillPointComp = SkillPointComponent(getAddrByID(components, SkillPointCompID));
-    balanceComp = ValueComponent(getAddrByID(components, ValueCompID));
   }
 
   /// @dev if calling many times, reduce call data by memozing address / bitpacking
@@ -361,10 +351,8 @@ contract _721BatchMinterSystem is System, TraitHandler {
       idOwnsPetComp.set(id, GACHA_ID); // seed in gacha
       entityTypeComp.set(id, string("KAMI"));
       indexPetComp.set(id, index);
-      nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
+      nameComp.set(id, LibString.concat(BASE_NAME, LibString.toString(startIndex + i)));
       stateComp.set(id, string("RESTING"));
-      timeStartComp.set(id, block.timestamp);
-      timeLastComp.set(id, block.timestamp); // normally after reveal
       levelComp.set(id, 1);
       expComp.set(id, 0);
       skillPointComp.set(id, 1);

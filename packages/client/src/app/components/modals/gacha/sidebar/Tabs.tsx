@@ -34,18 +34,22 @@ export const Tabs = (props: Props) => {
 };
 
 const Container = styled.div`
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: stretch;
   border-bottom: 0.15vw solid black;
+
+  display: flex;
+  width: 100%;
+
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-around;
 `;
 
 const Button = styled.button`
   border: none;
   padding: 1.2vw;
   justify-content: center;
-  background-color: white;
+  align-items: center;
+  width: 100%;
 
   font-size: 1.2vw;
   text-align: center;
@@ -60,7 +64,7 @@ const Button = styled.button`
     background-color: #ddd;
   }
   &:disabled {
-    background-color: #b2b2b2;
+    background-color: #bbb;
     cursor: default;
     pointer-events: none;
   }

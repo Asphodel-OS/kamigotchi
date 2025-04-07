@@ -17,7 +17,7 @@ uint256 constant ID = uint256(keccak256("system.node.registry"));
 contract _NodeRegistrySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyOwner returns (uint256 id) {
     (
       uint32 index,
       string memory nodeType,
@@ -26,15 +26,13 @@ contract _NodeRegistrySystem is System {
       string memory description,
       string memory affinity
     ) = abi.decode(arguments, (uint32, string, uint32, string, string, string));
-    uint256 id = LibNode.getByIndex(components, index);
-
+    id = LibNode.getByIndex(components, index);
     require(id == 0, "Node: already exists");
 
-    id = LibNode.create(components, index, nodeType, roomIndex, name, description);
-    if (!LibString.eq(affinity, "")) {
-      LibNode.setAffinity(components, id, affinity);
-    }
-    return id;
+    id = LibNode.create(
+      components,
+      LibNode.Base(index, nodeType, roomIndex, name, description, affinity)
+    );
   }
 
   function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -60,9 +58,12 @@ contract _NodeRegistrySystem is System {
       );
   }
 
-  function addScavBar(uint32 nodeIndex, uint256 tierCost) public onlyOwner {
-    require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
-    LibScavenge.create(components, "node", nodeIndex, tierCost);
+  function addScavBar(uint32 nodeIndex, uint256 tierCost) public onlyOwner returns (uint256) {
+    uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
+    require(nodeID != 0, "Node: does not exist");
+
+    string memory affinity = LibNode.getAffinity(components, nodeID);
+    return LibScavenge.create(components, LibScavenge.Base("NODE", nodeIndex, affinity), tierCost);
   }
 
   function addScavRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -75,8 +76,8 @@ contract _NodeRegistrySystem is System {
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 parentID = LibScavenge.genAlloAnchor(scavID);
-    return LibAllo.createBasic(components, parentID, rwdType, rwdIndex, value);
+    uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
+    return LibAllo.createBasic(components, anchorID, rwdType, rwdIndex, value);
   }
 
   function addScavRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -89,8 +90,8 @@ contract _NodeRegistrySystem is System {
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 parentID = LibScavenge.genAlloAnchor(scavID);
-    return LibAllo.createDT(components, parentID, keys, weights, value);
+    uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
+    return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
   function addScavRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -107,8 +108,8 @@ contract _NodeRegistrySystem is System {
     uint256 scavID = LibNode.getScavBar(components, nodeIndex);
     require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 parentID = LibScavenge.genAlloAnchor(scavID);
-    return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
+    uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
+    return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
   }
 
   function remove(uint32 index) public onlyOwner {

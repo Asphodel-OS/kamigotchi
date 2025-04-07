@@ -10,22 +10,21 @@ import { DescriptionAltComponent, ID as DescAltCompID } from "components/Descrip
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
-import { Condition, LibConditional } from "libraries/LibConditional.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
+import { Condition, LibConditional } from "libraries/LibConditional.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 
 // A registry for Quest related entities
-// Quest is copied to an Account, the rest are referenced
-
 library LibQuestRegistry {
   /////////////////
   // INTERACTIONS
@@ -48,10 +47,16 @@ library LibQuestRegistry {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).set(id, endText);
+
+    LibDisabled.set(components, id, true); // disabled initially
   }
 
+  /** @dev repeatable quests have
+   * - the repeatable flag
+   * - duration till next repeat
+   */
   function setRepeatable(IUintComp components, uint256 regID, uint256 duration) internal {
-    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(regID);
+    LibFlag.setFull(components, regID, "QUEST", "REPEATABLE");
     TimeComponent(getAddrByID(components, TimeCompID)).set(regID, duration);
   }
 
@@ -76,39 +81,36 @@ library LibQuestRegistry {
   }
 
   function removeQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
-    IndexQuestComponent indexQuestComp = IndexQuestComponent(
-      getAddrByID(components, IndexQuestCompID)
-    );
-    indexQuestComp.remove(questID);
     LibEntityType.remove(components, questID);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(questID);
+    IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).remove(questID);
     NameComponent(getAddrByID(components, NameCompID)).remove(questID);
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).remove(questID);
+    LibDisabled.set(components, questID, false);
 
-    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).remove(questID);
+    LibFlag.removeFull(components, LibFlag.queryFor(components, questID));
     TimeComponent(getAddrByID(components, TimeCompID)).remove(questID);
 
-    uint256[] memory objs = getObjsByQuestIndex(components, questIndex);
-    for (uint256 i; i < objs.length; i++) removeObjective(components, objs[i]);
-
-    uint256[] memory reqs = getReqsByQuestIndex(components, questIndex);
-    for (uint256 i; i < reqs.length; i++) LibConditional.remove(components, reqs[i]);
-
-    uint256[] memory rwds = getRwdsByQuestIndex(components, questIndex);
-    for (uint256 i; i < rwds.length; i++) LibAllo.remove(components, rwds[i]);
+    removeObjective(components, getObjsByIndex(components, questIndex));
+    LibConditional.remove(components, getReqsByIndex(components, questIndex));
+    LibAllo.remove(components, getRwdsByIndex(components, questIndex));
   }
 
-  function removeObjective(IUintComp components, uint256 objectiveID) internal {
-    LibConditional.remove(components, objectiveID);
-    NameComponent(getAddrByID(components, NameCompID)).remove(objectiveID);
+  function removeObjective(IUintComp components, uint256[] memory ids) internal {
+    LibConditional.remove(components, ids);
+    NameComponent(getAddrByID(components, NameCompID)).remove(ids);
   }
 
   /////////////////
-  // SETTERS
+  // CHECKS
 
-  function setIsRepeatable(IUintComp components, uint256 id) internal {
-    IsRepeatableComponent(getAddrByID(components, IsRepeatableCompID)).set(id);
+  function isRepeatable(IUintComp components, uint32 index) internal view returns (bool) {
+    return LibFlag.has(components, genQuestID(index), "REPEATABLE");
+  }
+
+  function verifyExists(IUintComp components, uint32 index) internal view {
+    if (getByIndex(components, index) == 0) revert("Quest does not exist");
   }
 
   /////////////////
@@ -121,7 +123,7 @@ library LibQuestRegistry {
   }
 
   // get Objectives by Quest index
-  function getObjsByQuestIndex(
+  function getObjsByIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
@@ -129,7 +131,7 @@ library LibQuestRegistry {
   }
 
   // get requirements by Quest index
-  function getReqsByQuestIndex(
+  function getReqsByIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
@@ -137,7 +139,7 @@ library LibQuestRegistry {
   }
 
   // get reward by Quest index
-  function getRwdsByQuestIndex(
+  function getRwdsByIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {

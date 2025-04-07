@@ -7,38 +7,40 @@ import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
-import { initListings, initLocalListings } from './listings';
-import { initNodes } from './nodes';
+import { initListings } from './listings';
 import { initNpcs } from './npcs';
-import { initLocalQuests, initQuests } from './quests';
+import { initQuests } from './quests/quests';
 import { initRecipes } from './recipes';
 import { initRelationships } from './relationships';
-import { initRooms } from './rooms';
+import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
 import { initTraits } from './traits';
 
 export async function initAll(api: AdminAPI, local: boolean) {
+  // independent
   await initAuth(api);
   await initConfigs(api);
   await initFactions(api);
-  await initRooms(api);
-  await initNodes(api);
-  await initItems(api, undefined, true);
+  await initItems(api, [], true);
   await initNpcs(api);
-  await initListings(api);
-  await initAuctions(api);
-  await initQuests(api);
+  await initRooms(api, undefined, true);
   await initSkills(api);
   await initTraits(api);
-  await initRecipes(api);
-  await initRelationships(api);
+
+  // dependent
+  await initAuctions(api);
+  await initListings(api, undefined, true);
+  await initNodes(api);
   await initGoals(api);
+  await initQuests(api, undefined, true);
+  await initRecipes(api, [], true);
+  await initRelationships(api);
 
   if (local) {
     await initGachaPool(api, 88);
     await initAllLocal(api);
   } else {
-    await initGachaPool(api, 2500);
+    await initGachaPool(api, 2222);
   }
 
   // await initSnapshot(api);
@@ -47,12 +49,10 @@ export async function initAll(api: AdminAPI, local: boolean) {
 export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
-  await initLocalQuests(api);
   await initLocalItems(api);
-  await initLocalListings(api); // test onyx listing
-  await api.setup.initAccounts();
-  await api.setup.initPets();
-  await api.setup.initHarvests();
+  await api.setup.local.initAccounts();
+  await api.setup.local.initPets();
+  await api.setup.local.initHarvests();
 }
 
 export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';
@@ -68,11 +68,11 @@ export { initGachaPool, mintToGachaPool } from './gacha';
 export { deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
-export { deleteNodes, initNodes, reviseNodes } from './nodes';
 export { initNpcs } from './npcs';
-export { deleteQuests, initLocalQuests, initQuests, reviseQuests } from './quests';
+export { deleteQuests, initQuests, reviseQuests } from './quests/quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
 export { deleteRelationships, initRelationships } from './relationships';
-export { deleteRooms, initRooms, reviseRooms } from './rooms';
+export { deleteNodes, initNodes, reviseNodes } from './rooms/nodes';
+export { deleteRooms, initRooms, reviseRooms } from './rooms/rooms';
 export { deleteSkills, initSkills, reviseSkills } from './skills';
 export { initTraits } from './traits';

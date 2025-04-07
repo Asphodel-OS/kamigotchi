@@ -1,3 +1,4 @@
+export { createConfig } from './configs';
 export { setupMUDNetwork } from './setupMUDNetwork';
 export type {
   ContractComponent,

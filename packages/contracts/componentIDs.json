@@ -1,4 +1,4 @@
-{ 
+{
   "OperatorAddress": {
     "id": "component.address.operator",
     "encodedID": "0x8a1264e7094de803414cccf0c32d2bd50f25c909fa2415b38f065f320e4eabe6"
@@ -47,16 +47,12 @@
     "id": "component.experience",
     "encodedID": "0xf751b4a95c9cfabe52899e09ae113eac17e41cc0cc2dad670d2789ecc1251add"
   },
-  "FarcasterIndex": {
-    "id": "component.index.farcaster",
-    "encodedID": "0xe52fb4f348048b28b8ab655215c3747cbe8c2c4570c9602cc837a32381780496"
-  },
   "For": {
     "id": "component.for",
     "encodedID": "0x0e980fab8730829e1930c8cdc024ae35650d9eec12d20425b19fc4ade883178c"
   },
-  "ForString": {
-    "id": "component.for.string",
+  "For": {
+    "id": "component.for",
     "encodedID": "0xd5a29ec804ba00516f4f308189ea7905739b5e45207909a6df03a0ccbf6aae9f"
   },
   "HasFlag": {
@@ -103,8 +99,8 @@
     "id": "component.id.kami.owns",
     "encodedID": "0xdb1228220c36234210e3f04b6ac039f5d81c4d6d81f43d9b4a9d70c4d5bcfac1"
   },
-  "ParentID": {
-    "id": "component.id.parent",
+  "AnchorID": {
+    "id": "component.id.anchor",
     "encodedID": "0xbca01f994221da3049c3ee687ab5c6a1ebf40f2011941d5581d9cd500fdf2cd0"
   },
   "RoomID": {
@@ -326,5 +322,5 @@
   "Whitelist": {
     "id": "component.whitelist",
     "encodedID": "0x4e8e9e1c7a24cab87cf9c93105c2ba1e02c4738f22ecab88b312e4de35819ca6"
-  },
+  }
 }

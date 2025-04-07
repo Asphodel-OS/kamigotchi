@@ -8,9 +8,8 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { Coord, CoordLib } from "solecs/components/types/Coord.sol";
 import { LibTypes } from "solecs/LibTypes.sol";
 
-import { IDRoomComponent, ID as IDRoomCompID } from "components/IDRoomComponent.sol";
-// world2: (formally IDPointer) change to IDTarget or IDTo/From
-import { IDParentComponent, ID as IDParentCompID } from "components/IDParentComponent.sol";
+import { IDFromComponent, ID as IDFromCompID } from "components/IDFromComponent.sol";
+import { IDToComponent, ID as IDToCompID } from "components/IDToComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol";
@@ -58,10 +57,10 @@ library LibRoom {
     id = world.getUniqueEntityId();
     LibConditional.create(components, id, data);
 
-    IDRoomComponent(getAddrByID(components, IDRoomCompID)).set(id, genGateAtPtr(roomIndex));
-    IDParentComponent sourceComp = IDParentComponent(getAddrByID(components, IDParentCompID));
-    if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
-    else sourceComp.set(id, 0);
+    IDToComponent(getAddrByID(components, IDToCompID)).set(id, genGateAtPtr(roomIndex));
+    IDFromComponent fromComp = IDFromComponent(getAddrByID(components, IDFromCompID));
+    if (sourceIndex != 0) fromComp.set(id, genGateSourcePtr(sourceIndex));
+    else fromComp.set(id, 0); // to enable queries
   }
 
   function addFlag(IUintComp components, uint32 index, string memory flag) internal {
@@ -78,16 +77,13 @@ library LibRoom {
     ExitsComponent exitComp = ExitsComponent(getAddrByID(components, ExitsCompID));
     if (exitComp.has(id)) exitComp.remove(id);
 
-    uint256[] memory gates = queryAllGates(components, index);
-    removeGates(components, gates);
-
-    uint256[] memory flags = LibFlag.queryFor(components, id);
-    LibFlag.removeFull(components, flags);
+    removeGates(components, queryAllGates(components, index));
+    LibFlag.removeFull(components, LibFlag.queryFor(components, id));
   }
 
   function removeGates(IUintComp components, uint256[] memory ids) internal {
-    IDRoomComponent(getAddrByID(components, IDRoomCompID)).remove(ids);
-    IDParentComponent(getAddrByID(components, IDParentCompID)).remove(ids);
+    IDToComponent(getAddrByID(components, IDToCompID)).remove(ids);
+    IDFromComponent(getAddrByID(components, IDFromCompID)).remove(ids);
     LibConditional.remove(components, ids);
   }
 
@@ -216,12 +212,12 @@ library LibRoom {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDRoomCompID),
+      getCompByID(components, IDToCompID),
       abi.encode(genGateAtPtr(toIndex))
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getCompByID(components, IDParentCompID),
+      getCompByID(components, IDFromCompID),
       abi.encode(0)
     );
 
@@ -239,9 +235,9 @@ library LibRoom {
     IUintComp components,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    uint256[] memory gatesTo = IDRoomComponent(getAddrByID(components, IDRoomCompID))
+    uint256[] memory gatesTo = IDToComponent(getAddrByID(components, IDToCompID))
       .getEntitiesWithValue(genGateAtPtr(toIndex));
-    uint256[] memory gatesFrom = IDParentComponent(getAddrByID(components, IDParentCompID))
+    uint256[] memory gatesFrom = IDFromComponent(getAddrByID(components, IDFromCompID))
       .getEntitiesWithValue(genGateSourcePtr(toIndex));
     return LibArray.concat(gatesTo, gatesFrom);
   }

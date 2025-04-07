@@ -86,8 +86,8 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createBasic(components, parentID, alloType, alloIndex, alloValue);
+    uint256 anchorID = LibItem.genAlloAnchor(refID);
+    return LibAllo.createBasic(components, anchorID, alloType, alloIndex, alloValue);
   }
 
   function addAlloBonus(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -102,8 +102,8 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createBonus(components, parentID, bonusType, endType, duration, bonusValue);
+    uint256 anchorID = LibItem.genAlloAnchor(refID);
+    return LibAllo.createBonus(components, anchorID, bonusType, endType, duration, bonusValue);
   }
 
   function addAlloDT(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -117,8 +117,8 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createDT(components, parentID, keys, weights, value);
+    uint256 anchorID = LibItem.genAlloAnchor(refID);
+    return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
   function addAlloStat(bytes memory arguments) public onlyOwner returns (uint256) {
@@ -134,8 +134,8 @@ contract _ItemRegistrySystem is System {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
-    uint256 parentID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createStat(components, parentID, statType, base, shift, boost, sync);
+    uint256 anchorID = LibItem.genAlloAnchor(refID);
+    return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
   }
 
   function remove(uint32 index) public onlyOwner {

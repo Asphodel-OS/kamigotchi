@@ -1,16 +1,20 @@
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
-import { GachaKami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 
 interface Props {
-  kami: GachaKami;
+  kami: Kami;
   onClick?: () => void;
+  select?: {
+    isDisabled?: boolean;
+    isSelected?: boolean;
+  };
 }
 
 export const KamiBlock = (props: Props) => {
-  const { kami, onClick } = props;
-  const { index, level, name } = kami;
+  const { kami, onClick, select } = props;
+  const { index, progress, name } = kami;
 
   return (
     <Container>
@@ -18,7 +22,7 @@ export const KamiBlock = (props: Props) => {
       <Overlay top={0.9} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
-          <Text size={0.6}>{level}</Text>
+          <Text size={0.6}>{progress?.level ?? '???'}</Text>
         </Grouping>
       </Overlay>
       <Overlay top={0.9} right={0.7}>
@@ -27,6 +31,15 @@ export const KamiBlock = (props: Props) => {
       <Overlay bottom={0.6} fullWidth>
         <Text size={0.6}>{name}</Text>
       </Overlay>
+      {select && (
+        <Overlay bottom={0.5} right={0.5}>
+          <ClickBox
+            isDisabled={!!select.isDisabled}
+            isSelected={!!select.isSelected}
+            onClick={onClick}
+          />
+        </Overlay>
+      )}
     </Container>
   );
 };
@@ -64,4 +77,22 @@ const Text = styled.div<{ size: number }>`
   color: white;
   font-size: ${(props) => props.size}vw;
   text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
+`;
+
+const ClickBox = styled.button<{ isDisabled: boolean; isSelected: boolean }>`
+  border: ${({ isSelected }) => (isSelected ? 'solid .15vw #fff' : 'solid .15vw #333')};
+  border-radius: 0.4vw;
+  width: 2vw;
+  height: 2vw;
+
+  opacity: 0.9;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'disabled' : 'pointer')};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+  user-select: none;
+
+  background-color: ${({ isSelected }) => (isSelected ? '#3498DB' : '#ddd')};
+  ${({ isDisabled }) => (isDisabled ? 'background-color: #333' : '')};
+  &:hover {
+    background-color: ${({ isSelected }) => (isSelected ? '#0468aB' : '#aaa')};
+  }
 `;

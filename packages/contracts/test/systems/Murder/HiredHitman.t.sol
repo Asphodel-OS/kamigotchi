@@ -27,13 +27,13 @@ contract HiredHitmanTest is SetupTemplate {
 
   /// @notice sets up a victim by placing a kami on a node and farm for 10h
   function setUpVictim(uint256 victimID) internal returns (uint256 prodID) {
-    prodID = _startHarvest(victimID, nodeID);
+    prodID = _startHarvestByNodeID(victimID, nodeID);
     _fastForward(10 hours);
   }
 
   /// @notice enters and liquidates a victim
   function snipeVictim(uint256 attackerID, uint256 victimProdID) internal returns (uint256 prodID) {
-    prodID = _startHarvest(attackerID, nodeID);
+    prodID = _startHarvestByNodeID(attackerID, nodeID);
     _fastForward(_idleRequirement);
     _liquidateHarvest(attackerID, victimProdID);
   }
