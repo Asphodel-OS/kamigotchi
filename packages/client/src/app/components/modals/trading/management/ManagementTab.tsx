@@ -1,11 +1,12 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-
 import { BigNumberish } from 'ethers';
+import { useState } from 'react';
+import styled from 'styled-components';
+
 import { NetworkLayer } from 'network/create';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
-import styled from 'styled-components';
-import { ActiveOffers } from './ActiveOffers';
+import { ActiveOffers } from '../ActiveOffers';
 import { CreateOffer } from './CreateOffer';
 
 interface Props {
@@ -18,10 +19,6 @@ interface Props {
       sellIndices: Number,
       sellAmts: BigNumberish
     ) => EntityID;
-  };
-  controls: {
-    search: string;
-    ascending: boolean;
   };
   data: { accountEntity: EntityIndex; trades: Trade[] };
   utils: {
@@ -37,15 +34,25 @@ interface Props {
   network: NetworkLayer;
   isVisible: boolean;
 }
+
 export const ManagementTab = (props: Props) => {
-  const { isVisible, actions, controls, data, network, utils } = props;
+  const { isVisible, actions, data, network, utils } = props;
   const { createTrade } = actions;
+
+  const [ascending, setAscending] = useState<boolean>(true);
+  const [filter, setFilter] = useState<string>('Price \u0245');
+  const [search, setSearch] = useState<string>('');
 
   return (
     <Content isVisible={isVisible}>
       <CreateOffer network={network} utils={utils} createTrade={createTrade} />
       <Divider />
-      <ActiveOffers actions={actions} data={data} controls={controls} managementTab={true} />
+      <ActiveOffers
+        actions={actions}
+        data={data}
+        controls={{ ascending, search }}
+        managementTab={true}
+      />
     </Content>
   );
 };

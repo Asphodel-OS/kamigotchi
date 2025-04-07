@@ -7,16 +7,15 @@ import styled from 'styled-components';
 
 import { getAccountInventories } from 'app/cache/account';
 import { getTrade } from 'app/cache/trade';
-import { ModalWrapper, Popover } from 'app/components/library';
+import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
-import { ActionIcons } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems, getMusuBalance } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
-import { ActiveOffers } from './ActiveOffers';
-import { ManagementTab } from './ManagementTab';
+import { ManagementTab } from './management/ManagementTab';
+import { OrderbookTab } from './orderbook';
 import { Tabs } from './Tabs';
 import { TabType } from './types';
 
@@ -58,11 +57,8 @@ export function registerTradingModal() {
       const { getTrade, queryTrades } = utils;
       const { modals, setModals } = useVisibility();
 
-      const [search, setSearch] = useState<string>('');
-      const [filter, setFilter] = useState<string>('Price \u0245');
-      const [ascending, setAscending] = useState<boolean>(true);
       const [trades, setTrades] = useState<Trade[]>([]);
-      const [tab, setTab] = useState<TabType>('ActiveOffers');
+      const [tab, setTab] = useState<TabType>('Orderbook');
 
       useEffect(() => {
         if (!modals.trading) return;
@@ -77,29 +73,6 @@ export function registerTradingModal() {
           setModals({ node: false, crafting: false, chat: false });
         }
       }, [modals.trading]);
-
-      const options = [
-        {
-          text: filter === 'Price \u0245' ? 'Price v' : 'Price \u0245',
-          onClick: () => {
-            if (filter === 'Price \u0245') {
-              setFilter('Price v');
-              setAscending(false);
-            } else {
-              setFilter('Price \u0245');
-              setAscending(true);
-            }
-          },
-        },
-      ];
-
-      const OptionsMap = () => {
-        return options.map((option, i) => (
-          <PopOverButton key={`div-${i}`} onClick={option.onClick}>
-            {option.text}
-          </PopOverButton>
-        ));
-      };
 
       /////////////////
       // ACTIONS
@@ -152,41 +125,24 @@ export function registerTradingModal() {
         <ModalWrapper id='trading' header={<Header style={{}}>Trade</Header>} canExit>
           <Tabs tab={tab} setTab={setTab} />
           <Content>
-            <ActiveOffersDiv isVisible={tab === `ActiveOffers`}>
-              <Row>
-                <Label>
-                  SEARCH
-                  <Search
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder='Search and item...'
-                  />
-                </Label>
-                <Label>
-                  SORT BY
-                  <Popover closeOnClick={true} content={OptionsMap()}>
-                    <Sort>{filter} </Sort>
-                  </Popover>
-                </Label>
-              </Row>
-              <ActiveOffers
-                actions={{
-                  executeTrade,
-                  cancelTrade,
-                }}
-                data={{ ...data, trades }}
-                controls={{ ascending, search }}
-                managementTab={false}
-              />
-            </ActiveOffersDiv>
+            <OrderbookTab
+              isVisible={tab === `Orderbook`}
+              actions={{
+                executeTrade,
+                cancelTrade,
+                createTrade,
+              }}
+              controls={{ tab }}
+              data={{ ...data, trades }}
+            />
             <ManagementTab
-              isVisible={tab === `ManagementTab`}
+              isVisible={tab === `Management`}
               network={network}
               actions={{
                 executeTrade,
                 cancelTrade,
                 createTrade,
               }}
-              controls={{ ascending, search }}
               data={{ ...data, trades }}
               utils={utils}
             />
@@ -216,70 +172,4 @@ const Content = styled.div`
 const Header = styled.div`
   padding: 2vw;
   font-size: 1.3vw;
-`;
-
-const Row = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-`;
-
-const Label = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 1vw;
-  position: relative;
-  width: 49%;
-`;
-
-const Search = styled.input`
-  border-radius: 0.6vw;
-  border: 0.15vw solid black;
-  margin: 4% 0 0 0;
-  min-height: 3vw;
-  background: url(${ActionIcons.search}) no-repeat left center;
-  background-origin: content-box;
-  padding: 0.5vw 1vw;
-  background-size: contain;
-  text-align: center;
-  font-size: 0.8vw;
-  &::placeholder {
-    position: absolute;
-    left: 20%;
-    background-color: white;
-  }
-`;
-
-const Sort = styled.button`
-  display: flex;
-  border-radius: 0.6vw;
-  border: 0.15vw solid black;
-
-  margin: 4% 0 0 0;
-  min-height: 3vw;
-  width: 100%;
-  font-size: 1vw;
-  align-items: center;
-  padding-left: 1vw;
-  background-color: white;
-`;
-
-const PopOverButton = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0.4vw;
-  font-size: 1vw;
-  width: 19vw;
-  border-color: transparent;
-  background-color: white;
-  &:hover {
-    filter: brightness(0.8);
-    cursor: pointer;
-  }
-`;
-
-const ActiveOffersDiv = styled.div<{ isVisible: boolean }>`
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  flex-direction: column;
 `;

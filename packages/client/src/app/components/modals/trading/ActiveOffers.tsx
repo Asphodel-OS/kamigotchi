@@ -1,8 +1,8 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton, Tooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { Trade, TradeOrder } from 'network/shapes/Trade/types';

@@ -29,6 +29,7 @@ interface Props {
     getMusuBalance: () => number;
   };
 }
+
 export const CreateOffer = (props: Props) => {
   const { network, utils, createTrade } = props;
   const { actions, api, world } = network;

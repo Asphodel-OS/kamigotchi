@@ -1,1 +1,1 @@
-export type TabType = 'ActiveOffers' | 'ManagementTab';
+export type TabType = 'Orderbook' | 'Management';

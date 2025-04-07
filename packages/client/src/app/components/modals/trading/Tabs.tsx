@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { TabType } from './types';
 
 interface Props {
@@ -11,17 +12,17 @@ export const Tabs = (props: Props) => {
   return (
     <Buttons>
       <Button
-        disabled={tab === `ActiveOffers`}
+        disabled={tab === `Orderbook`}
         onClick={() => {
-          setTab(`ActiveOffers`);
+          setTab(`Orderbook`);
         }}
       >
         {`Active Offers`}
       </Button>
       <Button
-        disabled={tab === `ManagementTab`}
+        disabled={tab === `Management`}
         onClick={() => {
-          setTab(`ManagementTab`);
+          setTab(`Management`);
         }}
       >
         {`Management Tab`}
