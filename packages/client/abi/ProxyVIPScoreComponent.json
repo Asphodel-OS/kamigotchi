@@ -145,6 +145,24 @@
     },
     {
       "type": "function",
+      "name": "finalizeStage",
+      "inputs": [
+        {
+          "name": "scorer",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "stage",
+          "type": "uint64",
+          "internalType": "uint64"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "getEntitiesWithValue",
       "inputs": [
         {
@@ -547,6 +565,7 @@
     "equal(uint256[],bytes)": "2dfbb801",
     "extractRaw(uint256)": "e9ff6c76",
     "extractRaw(uint256[])": "bcab0047",
+    "finalizeStage(address,uint64)": "fceb7dc3",
     "getEntitiesWithValue(bytes)": "b361be46",
     "getRaw(uint256)": "dd98e3c9",
     "getRaw(uint256[])": "a1c58425",

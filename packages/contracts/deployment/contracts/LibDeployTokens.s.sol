@@ -49,7 +49,7 @@ library LibDeployTokens {
   function deployVIP(IWorld world, IUint256Component components) internal returns (address) {
     require(!LibConfig.has(components, "VIP_SCORE_ADDRESS"), "vip score already deployed");
 
-    VipScore vipScore = new VipScore(0);
+    VipScore vipScore = new VipScore(1);
     LibConfig.setAddress(components, "VIP_SCORE_ADDRESS", address(vipScore));
 
     // set permissions for proxy contract

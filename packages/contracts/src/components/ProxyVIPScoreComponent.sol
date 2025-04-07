@@ -18,4 +18,8 @@ contract ProxyVIPScoreComponent is ProxyComponent {
   ) external onlyWriter isUnfrozen {
     VipScore(scorer).increaseScore(stage, accAddr, amount);
   }
+
+  function finalizeStage(address scorer, uint64 stage) external onlyWriter isUnfrozen {
+    VipScore(scorer).finalizeStage(stage);
+  }
 }

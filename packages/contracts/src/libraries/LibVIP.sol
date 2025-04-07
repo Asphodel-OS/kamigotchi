@@ -21,26 +21,42 @@ library LibVIP {
   //////////////
   // INTERACTIONS
 
-  function inc(IUintComp components, uint256 accID, uint256 amount) internal {
-    ProxyVIPScoreComponent(getAddrByID(components, ProxyVIPScoreCompID)).inc(
-      getAddress(components),
-      getStage(components),
-      LibAccount.getOwner(components, accID),
-      amount.toUint64()
+  /// @dev includes prev stage finalize logic
+  function inc(IUintComp comps, uint256 accID, uint256 amount) internal {
+    address vipAddr = getAddress(comps);
+    uint64 currStage = getStage(comps);
+    ProxyVIPScoreComponent vipComp = ProxyVIPScoreComponent(
+      getAddrByID(comps, ProxyVIPScoreCompID)
     );
+
+    finalizePrevStage(vipComp, vipAddr, currStage);
+    vipComp.inc(vipAddr, currStage, LibAccount.getOwner(comps, accID), amount.toUint64());
+  }
+
+  function finalizePrevStage(
+    ProxyVIPScoreComponent vipComp,
+    address vipAddr,
+    uint64 currStage
+  ) internal {
+    VipScore vip = VipScore(vipAddr);
+    if (currStage == 1 || currStage == 0) return; // no need to finalize 0 stage
+
+    (, , bool isFinalized) = vip.stages(currStage - 1);
+    if (isFinalized) return; // already finalized
+    vipComp.finalizeStage(vipAddr, currStage - 1);
   }
 
   ////////////
   // GETTERS
 
-  function getStage(IUintComp components) internal view returns (uint64) {
-    uint32[8] memory stageInfo = LibConfig.getArray(components, "VIP_STAGE");
+  function getStage(IUintComp comps) internal view returns (uint64) {
+    uint32[8] memory stageInfo = LibConfig.getArray(comps, "VIP_STAGE");
     uint256 start = stageInfo[0];
     uint256 epoch = stageInfo[1];
     return ((block.timestamp - start) / epoch).toUint64() + 1;
   }
 
-  function getAddress(IUintComp components) internal view returns (address) {
-    return LibConfig.getAddress(components, "VIP_SCORE_ADDRESS");
+  function getAddress(IUintComp comps) internal view returns (address) {
+    return LibConfig.getAddress(comps, "VIP_SCORE_ADDRESS");
   }
 }

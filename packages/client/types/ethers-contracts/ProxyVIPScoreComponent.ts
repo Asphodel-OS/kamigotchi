@@ -38,6 +38,7 @@ export interface ProxyVIPScoreComponentInterface extends utils.Interface {
     "equal(uint256,bytes)": FunctionFragment;
     "extractRaw(uint256[])": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
+    "finalizeStage(address,uint64)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
@@ -68,6 +69,7 @@ export interface ProxyVIPScoreComponentInterface extends utils.Interface {
       | "equal(uint256,bytes)"
       | "extractRaw(uint256[])"
       | "extractRaw(uint256)"
+      | "finalizeStage"
       | "getEntitiesWithValue"
       | "getRaw(uint256[])"
       | "getRaw(uint256)"
@@ -119,6 +121,10 @@ export interface ProxyVIPScoreComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "extractRaw(uint256)",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "finalizeStage",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue",
@@ -222,6 +228,10 @@ export interface ProxyVIPScoreComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "extractRaw(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "finalizeStage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -421,6 +431,12 @@ export interface ProxyVIPScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    finalizeStage(
+      scorer: PromiseOrValue<string>,
+      stage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getEntitiesWithValue(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -547,6 +563,12 @@ export interface ProxyVIPScoreComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  finalizeStage(
+    scorer: PromiseOrValue<string>,
+    stage: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   getEntitiesWithValue(
     arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -670,6 +692,12 @@ export interface ProxyVIPScoreComponent extends BaseContract {
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    finalizeStage(
+      scorer: PromiseOrValue<string>,
+      stage: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getEntitiesWithValue(
       arg0: PromiseOrValue<BytesLike>,
@@ -833,6 +861,12 @@ export interface ProxyVIPScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    finalizeStage(
+      scorer: PromiseOrValue<string>,
+      stage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getEntitiesWithValue(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -957,6 +991,12 @@ export interface ProxyVIPScoreComponent extends BaseContract {
 
     "extractRaw(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    finalizeStage(
+      scorer: PromiseOrValue<string>,
+      stage: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

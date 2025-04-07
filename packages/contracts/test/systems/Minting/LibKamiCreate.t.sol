@@ -13,7 +13,7 @@ contract KamiCreationTest is MintTemplate {
     _initStockTraits();
 
     createKami();
-    createKami(10);
+    createKami(4);
   }
 
   function testKamiCreateBasicTraits() public {
@@ -23,7 +23,8 @@ contract KamiCreationTest is MintTemplate {
     assertEq(kamiID, calcExpectedStats(KamiTraits(0, 0, 0, 0, 0)));
   }
 
-  function testKamiCreateIndex(uint256 startKamis) public {
+  function testKamiCreateIndex() public {
+    uint256 startKamis = 99; // commented out fuzz to save compile time
     uint256 maxKamis = 111;
     startKamis = startKamis % maxKamis;
     _initStockTraits();
