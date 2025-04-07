@@ -9,10 +9,7 @@ import { createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, map, of } from 'rxjs';
 
 import { createDecode } from 'engine/encoders';
-import {
-  ECSStateReplyV2,
-  ECSStateSnapshotServiceClient,
-} from 'engine/types/ecs-snapshot/ecs-snapshot';
+import { ECSStateReplyV2, ECSStateSnapshotServiceClient } from 'engine/types/ecs-snapshot';
 import {
   BlockResponse,
   Component,

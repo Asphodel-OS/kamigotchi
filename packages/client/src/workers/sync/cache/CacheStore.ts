@@ -2,7 +2,7 @@ import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/rec
 import { packTuple, unpackTuple } from '@mud-classic/utils';
 
 import { initCache } from 'cache/';
-import { ECSStateReply } from 'engine/types/ecs-snapshot/ecs-snapshot';
+import { ECSStateReply } from 'engine/types/ecs-snapshot';
 import { formatEntityID } from 'engine/utils';
 import { transformIterator } from 'utils/iterators';
 import { debug as parentDebug } from 'workers/debug';
@@ -219,24 +219,6 @@ export function getStateCache(
 
 function getCacheId(namespace: string, chainId: number, worldAddress: string, version: number) {
   return `${namespace}-${chainId}-${worldAddress}-v${version}`;
-}
-
-// unused
-function mergeCacheStores(stores: CacheStore[]): CacheStore {
-  const result = createCacheStore();
-
-  // Sort by block number (increasing)
-  const sortedStores = [...stores].sort((a, b) => a.blockNumber - b.blockNumber);
-
-  // Insert the cached events into the result store (from stores with low block number to high number)
-  for (const store of sortedStores) {
-    for (const updateEvent of getCacheStoreEntries(store)) {
-      storeEvent(result, updateEvent);
-    }
-    result.blockNumber = store.blockNumber;
-  }
-
-  return result;
 }
 
 // gets the state report of the CacheStore

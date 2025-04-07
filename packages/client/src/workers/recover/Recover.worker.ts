@@ -1,7 +1,7 @@
 import { verifyMessage } from 'ethers/lib/utils';
 import { expose } from 'threads';
 
-import { Message } from 'engine/types/ecs-relay/ecs-relay';
+import { Message } from 'engine/types/ecs-relay';
 import { messagePayload } from 'engine/utils';
 
 function recoverAddress(msg: Message) {

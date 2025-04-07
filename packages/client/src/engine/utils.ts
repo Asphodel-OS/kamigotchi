@@ -4,7 +4,7 @@ import { callWithRetry, range, sleep } from '@mud-classic/utils';
 import { BigNumber } from 'ethers';
 import { keccak256 } from 'ethers/lib/utils';
 
-import { Message } from './types/ecs-relay/ecs-relay';
+import { Message } from './types/ecs-relay';
 
 // Message payload to sign and use to recover signer
 export function messagePayload(msg: Message) {
