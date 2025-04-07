@@ -1,6 +1,8 @@
 node_modules
 dist
 .env
+.env.production
+.env.testing
 .parcel-cache
 cypress/videos
 cypress/screenshots

@@ -215,7 +215,7 @@ const Label = styled.div`
 `;
 
 const Search = styled.input`
-  width: 13vw;
+  width: 100%;
   border-radius: 0.6vw;
   border: 0.15vw solid black;
   margin: 4% 0 0 0;
@@ -225,7 +225,7 @@ const Search = styled.input`
   padding: 0.5vw 1vw;
   background-size: contain;
   text-align: center;
-  font-size: 0.8vw;
+  font-size: 0.7vw;
   &::placeholder {
     position: absolute;
     left: 20%;

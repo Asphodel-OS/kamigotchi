@@ -62,11 +62,11 @@ export const OrderbookTab = (props: Props) => {
   };
 
   return (
-    <Container isVisible={tab === `ActiveOffers`}>
+    <Container isVisible={tab === `Orderbook`}>
       <Row>
         <Label>
           SEARCH
-          <Search onChange={(e) => setSearch(e.target.value)} placeholder='Search and item...' />
+          <Search onChange={(e) => setSearch(e.target.value)} placeholder='Search an item...' />
         </Label>
         <Label>
           SORT BY

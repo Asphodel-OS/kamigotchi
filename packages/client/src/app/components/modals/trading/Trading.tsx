@@ -60,6 +60,7 @@ export function registerTradingModal() {
       const [trades, setTrades] = useState<Trade[]>([]);
       const [tab, setTab] = useState<TabType>('Orderbook');
 
+      // every 5 seconds trades are updated
       useEffect(() => {
         if (!modals.trading) return;
         setTimeout(() => {
@@ -67,11 +68,11 @@ export function registerTradingModal() {
         }, 5000);
       });
 
+      // sets trades upon opening modal
       useEffect(() => {
-        if (modals.trading) {
-          setTrades(queryTrades().map((entity: EntityIndex) => getTrade(entity)));
-          setModals({ node: false, crafting: false, chat: false });
-        }
+        if (!modals.trading) return;
+        setTrades(queryTrades().map((entity: EntityIndex) => getTrade(entity)));
+        setModals({ node: false, crafting: false, chat: false });
       }, [modals.trading]);
 
       /////////////////
