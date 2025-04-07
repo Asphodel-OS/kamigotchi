@@ -27,6 +27,7 @@ import {
 
 import { VERSION as IDB_VERSION } from 'cache/db';
 import { GodID, SyncState, SyncStatus } from 'engine/constants';
+import { createDecode } from 'engine/encoders';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/providers';
 import { debug as parentDebug } from '../debug';
@@ -51,7 +52,6 @@ import {
   createTransformWorldEventsFromStream,
 } from './kamigazeStreamClient';
 import {
-  createDecode,
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
