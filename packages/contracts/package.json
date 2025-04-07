@@ -6,7 +6,7 @@
   "scripts": {
     "----- TOP LEVEL COMMANDS -----": "---------------------------",
     "abi": "pnpm abi:gen && pnpm abi:types && pnpm abi:clean",
-    "build": "pnpm codegen && rimraf out && pnpm build:systems && pnpm abi",
+    "build": "rimraf out && pnpm build:systems && pnpm codegen && pnpm abi",
     "codegen": "pnpm codegen:clear && pnpm codegen:imports && pnpm codegen:deploy && pnpm codegen:tests",
     "deploy": "pnpm deploy:script",
     "dev": "pnpm prepare && pnpm start",
