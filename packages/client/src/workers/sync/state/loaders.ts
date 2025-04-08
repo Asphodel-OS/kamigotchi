@@ -7,7 +7,7 @@ import { StateStore } from './store';
 const debug = parentDebug.extend('StateCache');
 
 // saves a StateCache into an (IndexedDB) Cache
-export async function toStore(store: StateStore, cache: StateCache) {
+export const toStore = async (store: StateStore, cache: StateCache) => {
   debug('cache store with size', cache.state.size, 'at block', cache.blockNumber);
   await store.set('ComponentValues', 'current', cache.state);
   await store.set('Mappings', 'components', cache.components);
@@ -17,10 +17,10 @@ export async function toStore(store: StateStore, cache: StateCache) {
   await store.set('LastKamigazeEntity', 'current', cache.lastKamigazeEntity);
   await store.set('LastKamigazeComponent', 'current', cache.lastKamigazeComponent);
   await store.set('KamigazeNonce', 'current', cache.kamigazeNonce);
-}
+};
 
 // loads a StateCache from an (IndexedDB) Cache
-export async function fromStore(store: StateStore): Promise<StateCache> {
+export const fromStore = async (store: StateStore): Promise<StateCache> => {
   const state =
     (await store.get('ComponentValues', 'current')) ?? new Map<number, ComponentValue>();
   const blockNumber = (await store.get('BlockNumber', 'current')) ?? 0;
@@ -56,4 +56,4 @@ export async function fromStore(store: StateStore): Promise<StateCache> {
     lastKamigazeComponent,
     kamigazeNonce,
   };
-}
+};

@@ -2,6 +2,7 @@ import { initCache } from 'cache/';
 import { ECSStateReply } from 'engine/types/ecs-snapshot';
 import { StateEntry } from './types';
 
+// TODO: define this type more explicitly
 export type StateStore = Awaited<ReturnType<typeof get>>;
 export type StateStores = {
   ComponentValues: StateEntry;
@@ -35,9 +36,9 @@ export const get = (chainID: number, worldAddress: string, version: number, idb?
   );
 };
 
-export async function getBlockNumber(cache: StateStore): Promise<number> {
+export const getBlockNumber = async (cache: StateStore): Promise<number> => {
   return (await cache.get('BlockNumber', 'current')) ?? 0;
-}
+};
 
 // get the ID of a state cache based on its params
 export const getID = (

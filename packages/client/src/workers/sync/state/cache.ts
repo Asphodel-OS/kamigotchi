@@ -4,7 +4,7 @@ import { packTuple, unpackTuple } from '@mud-classic/utils';
 import { formatEntityID } from 'engine/utils';
 import { transformIterator } from 'utils/iterators';
 import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
-import { IDIndexMap, StateEntry } from './types';
+import { IDIndexMap, StateEntry, StateEvent } from './types';
 
 /**
  * A StateCache is the in-memory object representation of an IndexedDB-based
@@ -43,15 +43,9 @@ export const create = (): StateCache => {
 };
 
 // store an event into a StateCache
-export function storeEvent<Cm extends Components>(
-  stateCache: StateCache,
-  {
-    component,
-    entity,
-    value,
-    blockNumber,
-  }: Omit<NetworkComponentUpdate<Cm>, 'lastEventInTx' | 'txHash'>
-) {
+export const storeEvent = (stateCache: StateCache, event: StateEvent) => {
+  const { component, entity, value, blockNumber } = event;
+
   // Remove the 0 padding from all entityes
   const normalizedEntity = formatEntityID(entity);
 
@@ -80,21 +74,19 @@ export function storeEvent<Cm extends Components>(
   // (Events are expected to be ordered, so once a new block number appears,
   // the previous block number is done processing)
   stateCache.blockNumber = blockNumber - 1;
-}
+};
 
-export function storeEvents<Cm extends Components>(
-  stateCache: StateCache,
-  events: Omit<NetworkComponentUpdate<Cm>, 'lastEventInTx' | 'txHash'>[]
-) {
+// store multiple events into a StateCache at once
+export const storeEvents = (stateCache: StateCache, events: StateEvent[]) => {
   for (const event of events) {
     storeEvent(stateCache, event);
   }
-}
+};
 
 // get an iterable series of NetworkComponentUpdates from a StateCache
-export function getEntries<C extends Components>(
+export const getEntries = <C extends Components>(
   stateCache: StateCache
-): IterableIterator<NetworkComponentUpdate<C>> {
+): IterableIterator<NetworkComponentUpdate<C>> => {
   const { blockNumber, state, components, entities } = stateCache;
 
   return transformIterator(state.entries(), ([key, value]) => {
@@ -120,4 +112,4 @@ export function getEntries<C extends Components>(
 
     return ecsEvent;
   });
-}
+};
