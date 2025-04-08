@@ -2,14 +2,15 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 import { ethers } from 'ethers';
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 import { getSigner, getSystemAddr } from '../utils';
 
+// deprecated
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -mode <mode> -world <address>')
   .demandOption(['mode'])
   .parse();
-dotenv.config();
 
 /// CONSTANTS
 const abi = [
@@ -29,13 +30,12 @@ const abi = [
 ];
 
 const run = async () => {
-  const mode = argv.mode || 'DEV';
-  const signer = await getSigner(mode);
+  const signer = await getSigner();
 
   const toMint = argv.amount || 0;
 
   const minterSystem = new ethers.Contract(
-    await getSystemAddr(mode, 'system.Kami721.BatchMint'),
+    await getSystemAddr('system.Kami721.BatchMint'),
     abi,
     signer
   );

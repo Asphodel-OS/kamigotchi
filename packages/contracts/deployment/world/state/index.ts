@@ -16,28 +16,45 @@ import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
 import { initTraits } from './traits';
 
-export async function initAll(api: AdminAPI, local: boolean) {
+export async function initAll(api: AdminAPI) {
   // independent
   await initAuth(api);
+  console.log('\n---------------------------------------------\n');
   await initConfigs(api);
+  console.log('\n---------------------------------------------\n');
   await initFactions(api);
+  console.log('\n---------------------------------------------\n');
   await initItems(api, [], true);
+  console.log('\n---------------------------------------------\n');
   await initNpcs(api);
+  console.log('\n---------------------------------------------\n');
   await initRooms(api, undefined, true);
+  console.log('\n---------------------------------------------\n');
   await initSkills(api);
+  console.log('\n---------------------------------------------\n');
   await initTraits(api);
+  console.log('\n---------------------------------------------\n');
 
   // dependent
   await initAuctions(api);
+  console.log('\n---------------------------------------------\n');
   await initListings(api, undefined, true);
+  console.log('\n---------------------------------------------\n');
   await initNodes(api);
+  console.log('\n---------------------------------------------\n');
   await initGoals(api);
+  console.log('\n---------------------------------------------\n');
   await initQuests(api, undefined, true);
+  console.log('\n---------------------------------------------\n');
   await initRecipes(api, [], true);
+  console.log('\n---------------------------------------------\n');
   await initRelationships(api);
+  console.log('\n---------------------------------------------\n');
 
-  if (local) {
+  if (process.env.NODE_ENV === 'puter') {
+    console.log('generating local inits');
     await initGachaPool(api, 88);
+    console.log('\n---------------------------------------------\n');
     await initAllLocal(api);
   } else {
     await initGachaPool(api, 2222);

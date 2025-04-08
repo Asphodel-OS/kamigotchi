@@ -3,24 +3,20 @@ const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 import { constants } from 'ethers';
 import execa from 'execa';
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 import { genInitScript } from '../scripts/worldIniter';
-import { getDeployerKey, getRpc, getWorld, ignoreSolcErrors, setAutoMine } from '../utils';
+import { ignoreSolcErrors, setAutoMine } from '../utils';
 import { SubFunc, WorldAPI } from '../world/world';
 
 const argv = yargs(hideBin(process.argv))
-  .usage(
-    'Usage: $0 -mode <mode> -world <address> -categories <string | string[]> -action <string>  -args <number[]>'
-  )
+  .usage('Usage: $0 -world <address> -categories <string> -action <string>  -args <number[]>')
   .alias('category', 'c')
-  .demandOption(['mode'])
   .parse();
-dotenv.config();
 
 const run = async () => {
   // setup
-  const mode = argv.mode || 'DEV';
-  const world = argv.world ? argv.world : getWorld(mode);
+  const world = argv.world ? argv.world : process.env.WORLD;
   const category: keyof WorldAPI = argv.category ?? 'init';
   const action = argv.action ? (argv.action as keyof SubFunc) : 'init';
   const args = argv.args
@@ -30,15 +26,12 @@ const run = async () => {
         .map((a: string) => Number(a)) // cast to number
     : undefined;
 
-  if (mode === 'DEV') setAutoMine(true);
+  setAutoMine(true);
 
-  // generate init script and calls
-  await genInitScript(mode, category, action, args);
+  await genInitScript(category, action, args);
+  await initWorld(world, argv.forge); // running script.sol
 
-  // running script.sol
-  await initWorld(getDeployerKey(mode), getRpc(mode)!, world, argv.forgeOpts);
-
-  if (mode === 'DEV') setAutoMine(false);
+  setAutoMine(false);
 };
 
 run();
@@ -46,12 +39,7 @@ run();
 //////////////
 // FORGE CALL
 
-async function initWorld(
-  deployerPriv?: string,
-  rpc = 'http://localhost:8545',
-  worldAddress?: string,
-  forgeOpts?: string
-) {
+async function initWorld(worldAddress?: string, forge?: string) {
   const child = execa(
     'forge',
     [
@@ -60,14 +48,14 @@ async function initWorld(
       '--broadcast',
       '--sig',
       'initWorld(uint256,address)',
-      deployerPriv || constants.AddressZero, // Deployer
+      process.env.PRIV_KEY!,
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       '--fork-url',
-      rpc,
+      process.env.RPC!,
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.toString().split(/,| /) || []),
+      ...(forge?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );

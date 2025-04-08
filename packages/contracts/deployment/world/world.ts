@@ -64,15 +64,12 @@ export class WorldState {
   }
 
   api = {
-    init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
+    init: () => this.genCalls((api) => initAll(api)),
     local: {
       init: () => this.genCalls((api) => initAllLocal(api)),
     } as SubFunc,
     admin: {
       batchMint: (amt: number[]) => this.genCalls((api) => mintToGachaPool(api, amt)),
-    },
-    all: {
-      init: (local: boolean) => this.genCalls((api) => initAll(api, local)),
     },
     auctions: {
       init: (indices?: number[]) => this.genCalls((api) => initAuctions(api, indices)),

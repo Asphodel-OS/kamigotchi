@@ -1,6 +1,6 @@
 export { WorldAddresses, getAddrByID, getCompAddr, getSystemAddr } from './addresses';
 export { setAutoMine, setTimestamp } from './anvil';
-export { getDeployerKey, getMultisig, getProvider, getRpc, getSigner, getWorld } from './config';
+export { getProvider, getSigner } from './chain';
 export { deferred } from './deferred';
 export {
   DeployConfig,

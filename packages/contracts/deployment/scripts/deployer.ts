@@ -5,24 +5,12 @@ import { deploymentDir } from '../utils/paths';
 import { generateLibDeploy } from './codegen';
 import execa = require('execa');
 
-/**
- * Deploy world, components and systems from deploy.json
- * @param deployerPriv private key of deployer
- * @param rpc rpc url
- * @param worldAddress optional, address of existing world
- * @param reuseComponents optional, reuse existing components
- * @returns address of deployed world
- */
 export async function deploy(
-  deployerPriv?: string,
-  rpc = 'http://localhost:8545',
   reuseComponents?: boolean,
   worldAddress?: string,
   emitter?: boolean,
-  forgeOpts?: string,
-  initWorld?: boolean,
-  mode?: string,
-  multisig?: string
+  forge?: string,
+  initWorld?: boolean
 ) {
   const child = execa(
     'forge',
@@ -31,22 +19,22 @@ export async function deploy(
       'deployment/contracts/Deploy.s.sol:Deploy',
       '--broadcast',
       '--sig',
-      'deploy(uint256,address,bool,bool,bool,address,string)',
-      deployerPriv || constants.AddressZero, // Deployer
+      'deploy(uint256,address,bool,bool,bool,address,bool)',
+      process.env.PRIV_KEY!, // deployer
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       (reuseComponents || false).toString(), // Reuse components
       (initWorld || false).toString(), // Init world
       (emitter || false).toString(), // Deploy emitter
-      (multisig || constants.AddressZero).toString(), // Multisig address
-      (mode || 'DEV').toString(), // Mode
+      (process.env.MULTISIG || constants.AddressZero).toString(), // Multisig address
+      (process.env.NODE_ENV === 'puter').toString(), // Local mode
       '--fork-url',
-      rpc,
+      process.env.RPC!,
       '--skip',
       'test',
       '--gas-limit',
       '10000000000',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.toString().split(/,| /) || []),
+      ...(forge?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -68,17 +56,13 @@ export async function deploy(
 }
 
 export type DeployOptions = {
-  rpc: string;
-  deployerPriv: string;
   worldAddress?: string;
   components?: string;
   systems?: string;
   emitter?: boolean;
   initWorld?: boolean;
-  forgeOpts?: string;
-  mode?: string;
+  forge?: string;
   reuseComponents?: boolean;
-  multisig?: string;
 };
 
 export async function generateAndDeploy(args: DeployOptions) {
@@ -95,15 +79,11 @@ export async function generateAndDeploy(args: DeployOptions) {
 
     // Call deploy script
     const result = await deploy(
-      args.deployerPriv,
-      args.rpc,
       reuseComps,
       args.worldAddress,
       args.emitter,
-      args.forgeOpts,
-      args.initWorld,
-      args.mode,
-      args.multisig
+      args.forge,
+      args.initWorld
     );
     deployedWorldAddress = result.deployedWorldAddress;
     startBlock = result.startBlock;

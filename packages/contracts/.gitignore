@@ -2,7 +2,7 @@
 node_modules/
 
 # environment variables
-.env
+.env*
 
 # ???
 bindings/

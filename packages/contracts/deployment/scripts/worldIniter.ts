@@ -6,7 +6,7 @@ import { AdminAPI } from '../world/api';
 import { SubFunc, WorldAPI } from '../world/world';
 
 /// @dev generates a single call piggybacking off initWorld.s.sol
-export async function genSingleCall(mode: string, systemID: string, func: string, args: any[]) {
+export async function genSingleCall(systemID: string, func: string, args: any[]) {
   const world = new WorldState();
   const toCall = async (api: AdminAPI) => {
     const system = systemID as keyof typeof SystemBytecodes;
@@ -20,15 +20,13 @@ export async function genSingleCall(mode: string, systemID: string, func: string
 }
 
 export async function genInitScript(
-  mode: string,
   category: keyof WorldAPI,
   action: keyof SubFunc | keyof WorldAPI['admin'],
   args?: number[]
 ) {
-  const local = mode === 'DEV';
   const world = new WorldState();
 
-  if (category === 'init') await world.api.init(local);
+  if (category === 'init') await world.api.init();
   else if (category === 'admin') {
     // special case for admin actions
     const call = world.api.admin[action as keyof WorldAPI['admin']];

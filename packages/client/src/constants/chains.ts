@@ -40,7 +40,7 @@ const testnet = addRpcUrlOverrideToChain(TestnetRaw, import.meta.env.VITE_RPC_TR
 const yominet = addRpcUrlOverrideToChain(YominetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
 
 export const chainConfigs: Map<string, Chain> = new Map();
-chainConfigs.set('development', localhost);
+chainConfigs.set('puter', localhost);
 chainConfigs.set('testing', testnet);
 chainConfigs.set('staging', yominet);
 chainConfigs.set('production', yominet);

@@ -19,7 +19,7 @@ contract Deploy is InitWorld {
     bool initWorld,
     bool emitter,
     address multisig,
-    string memory MODE
+    bool local
   ) external returns (IWorld world, uint256 startBlock) {
     startBlock = block.number;
     address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
@@ -43,7 +43,7 @@ contract Deploy is InitWorld {
       _initWorld(address(world));
 
       // local non-mud setup
-      if (LibString.eq(MODE, "DEV")) {
+      if (local) {
         LibDeployTokens.deployPresale(world, components);
       }
     }

@@ -1,42 +1,34 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
-import { constants } from 'ethers';
-import { getAllSystemIDs, ignoreSolcErrors } from '../utils';
-import execa = require('execa');
+import execa from 'execa';
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
-import { getDeployerKey, getRpc, getWorld, setAutoMine } from '../utils';
+import { getAllSystemIDs, getSystemIDByName, ignoreSolcErrors, setAutoMine } from '../utils';
 
 const argv = yargs(hideBin(process.argv))
-  .usage('Usage: $0 -mode <mode> -systems <address[]>')
-  .demandOption(['mode'])
+  .usage('Usage: $0 -systems <strings | addresses> --byAddress <bool>')
   .parse();
-dotenv.config();
 
 const run = async () => {
   // setup
   const mode = argv.mode || 'DEV';
-  const world = argv.world ? argv.world : getWorld(mode);
-  const systems: string[] = argv.systems ? argv.systems : getAllSystemIDs();
-  const idType = argv.byAddress ? 'ADDRESS' : 'ID';
+  const world = argv.world ? argv.world : process.env.WORLD;
+  const systems: string[] = argv.systems ? argv.systems.split(',') : getAllSystemIDs();
+  const addressMode = argv.byAddress || false; // either system name (default) or address
+
+  // if system names are inputted, convert to IDs
+  if (!addressMode) systems.map((sys, i) => (systems[i] = getSystemIDByName(sys)));
 
   console.log(systems);
 
-  if (mode === 'DEV') setAutoMine(true);
+  setAutoMine(true);
 
   // generate init script and calls
-  if (idType === 'ADDRESS')
-    await deprecateByAddress(
-      `[${systems}]`,
-      world,
-      getDeployerKey(mode),
-      getRpc(mode)!,
-      argv.forgeOpts
-    );
-  else
-    await deprecateByID(`[${systems}]`, world, getDeployerKey(mode), getRpc(mode)!, argv.forgeOpts);
+  if (addressMode === 'ADDRESS') await deprecateByAddress(`[${systems}]`, world, argv.forge);
+  else await deprecateByID(`[${systems}]`, world, argv.forge);
 
-  if (mode === 'DEV') setAutoMine(false);
+  setAutoMine(false);
 };
 
 run();
@@ -44,13 +36,7 @@ run();
 ////////////
 // FORGE CALL
 
-export async function deprecateByAddress(
-  systems: string,
-  worldAddress: string,
-  deployerPriv?: string,
-  rpc = 'http://localhost:8545',
-  forgeOpts?: string
-) {
+export async function deprecateByAddress(systems: string, worldAddress: string, forge?: string) {
   const child = execa(
     'forge',
     [
@@ -59,15 +45,15 @@ export async function deprecateByAddress(
       '--broadcast',
       '--sig',
       'deprecateByAddress(uint256, address, address[])',
-      deployerPriv || constants.AddressZero, // Deployer priv
+      process.env.PRIV_KEY!,
       worldAddress,
       systems, // Systems
       '--fork-url',
-      rpc,
+      process.env.RPC!,
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.toString().split(/,| /) || []),
+      ...(forge?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
@@ -78,13 +64,7 @@ export async function deprecateByAddress(
   return { child: await child };
 }
 
-export async function deprecateByID(
-  systems: string,
-  worldAddress: string,
-  deployerPriv?: string,
-  rpc = 'http://localhost:8545',
-  forgeOpts?: string
-) {
+export async function deprecateByID(systems: string, worldAddress: string, forge?: string) {
   const child = execa(
     'forge',
     [
@@ -93,15 +73,15 @@ export async function deprecateByID(
       '--broadcast',
       '--sig',
       'deprecateByID(uint256, address, string[])',
-      deployerPriv || constants.AddressZero, // Deployer priv
+      process.env.PRIV_KEY!,
       worldAddress,
-      systems, // Systems
+      systems,
       '--fork-url',
-      rpc,
+      process.env.RPC!,
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.toString().split(/,| /) || []),
+      ...(forge?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );

@@ -2,34 +2,25 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
 import execa from 'execa';
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
-import { getDeployerKey, getRpc, getWorld, ignoreSolcErrors, setAutoMine } from '../utils';
+import { ignoreSolcErrors, setAutoMine } from '../utils';
 
-const argv = yargs(hideBin(process.argv))
-  .usage('Usage: $0 -mode <mode> -world <address>')
-  .demandOption(['mode'])
-  .parse();
-dotenv.config();
+const argv = yargs(hideBin(process.argv)).usage('Usage: $0 -world <address>').parse();
 
 const run = async () => {
   // setup
-  const mode = argv.mode || 'DEV';
-  const world = argv.world ? argv.world : getWorld(mode);
+  const world = argv.world ? argv.world : process.env.WORLD;
 
-  if (mode === 'DEV') setAutoMine(true);
-  await executeGodSystem(getRpc(mode)!, getDeployerKey(mode)!, world, argv.forgeOpts);
-  if (mode === 'DEV') setAutoMine(false);
+  setAutoMine(true);
+  await executeGodSystem(world, argv.forge);
+  setAutoMine(false);
 };
 
 /////////////
 // FORGE CALL
 
-const executeGodSystem = async (
-  rpc: string,
-  deployerKey: string,
-  world: string,
-  forgeOpts?: string
-) => {
+const executeGodSystem = async (world: string, forge?: string) => {
   const child = execa(
     'forge',
     [
@@ -37,15 +28,15 @@ const executeGodSystem = async (
       'deployment/contracts/GodSystem.s.sol:GodSystem',
       '--broadcast',
       '--fork-url',
-      rpc,
+      process.env.RPC!,
       '--sig',
       'run(uint256,address)',
-      deployerKey,
+      process.env.PRIV_KEY!,
       world || '0x00',
       '--skip',
       'test',
       ...ignoreSolcErrors,
-      ...(forgeOpts?.toString().split(/,| /) || []),
+      ...(forge?.toString().split(/,| /) || []),
     ],
     { stdio: ['inherit', 'pipe', 'pipe'] }
   );
