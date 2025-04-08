@@ -3,13 +3,13 @@ import { BigNumberish } from '@ethersproject/bignumber';
 export function harvestAPI(systems: any) {
   // @dev retrieves the amount due from a passive deposit harvest and resets the starting point
   function collect(harvestIDs: BigNumberish[]) {
-    return systems['system.harvest.collect'].executeBatched(harvestIDs, { gasLimit: 2500000 });
+    return systems['system.harvest.collect'].executeBatched(harvestIDs, { gasLimit: 2530000 });
   }
 
   // @dev liquidates a harvest, if able to, using the specified pet
   function liquidate(harvestID: BigNumberish, kamiID: BigNumberish) {
     return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID, {
-      gasLimit: 3200000,
+      // gasLimit: 3230000,
     });
   }
 
@@ -22,7 +22,7 @@ export function harvestAPI(systems: any) {
 
   // @dev retrieves the amount due from a passive deposit harvest and stops it.
   function stop(harvestIDs: BigNumberish[]) {
-    return systems['system.harvest.stop'].executeBatched(harvestIDs, { gasLimit: 2500000 });
+    return systems['system.harvest.stop'].executeBatched(harvestIDs, { gasLimit: 2530000 });
   }
 
   return {

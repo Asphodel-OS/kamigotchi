@@ -41,7 +41,7 @@ async function initBase(api: AdminAPI) {
 }
 
 async function initLeaderboard(api: AdminAPI) {
-  await api.config.set.number('LEADERBOARD_EPOCH', 1);
+  await api.config.set.number('SCORE_EPOCH', 1);
 }
 
 async function initAccount(api: AdminAPI) {

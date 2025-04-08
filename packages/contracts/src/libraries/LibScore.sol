@@ -10,21 +10,28 @@ import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
-
 import { LibConfig } from "libraries/LibConfig.sol";
 
-// entityID for leaderboard's current epoch. Contains just the Epoch component, declared in initSystem.
-uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
-
-// A score entity is similar to a fungible inventory entity.
-// This library is called whenever a pet conducts a score gaining operation,
-// like reaping harvest
-
-// Components:
-// EntityID: hash(IdHolder, score type, epoch)
-// IdType: reverse map to score type (e.g. hash(score type, epoch), goalID)
-// Balance: Score balance
-
+/** @notice
+ * Scores track points for an individual entity & total points for a type.
+ * It can be used on its own, or as part of a bigger shape (e.g. faction/goal)
+ *
+ * Scores > Data when:
+ *  - Value is reverse mappable on FE (e.g. leaderboards)
+ *  - A global total per type is tracked
+ *  - An individual's % in the total is needed
+ *
+ * Shape: (ID depends on context)
+ *  - IdHolder
+ *  - IDType (defined by context. defaults to hash(epoch, index, type))
+ *  - Value (score)
+ *  - Total: ValueComp with ID = hash("score.total", typeID)
+ *
+ * Epoch:
+ *  - Defaults to use epoch when a string is given for ScoreType
+ *  - To differentiate between default score use (points for a given epoch) and others (e.g. faction)
+ *  - Epoch is a config field. Could be automated on block.timestamp in the future
+ */
 library LibScore {
   using LibComp for IUintComp;
 
@@ -53,7 +60,9 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
+    valueComp.inc(id, amt); // increase individual score
+    valueComp.inc(genTotalStoreID(typeID), amt); // increase total score
   }
 
   /// @notice adds score based on current epoch.
@@ -79,7 +88,9 @@ library LibScore {
     uint256 amt
   ) internal {
     createFor(components, id, holderID, typeID);
-    ValueComponent(getAddrByID(components, ValueCompID)).dec(id, amt);
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
+    valueComp.dec(id, amt); // decrease individual score
+    valueComp.dec(genTotalStoreID(typeID), amt); // decrease total score
   }
 
   /// @notice decs score based on current epoch.
@@ -105,7 +116,7 @@ library LibScore {
 
   // get current epoch for leaderboard
   function getCurentEpoch(IUintComp components) internal view returns (uint256) {
-    return LibConfig.get(components, "LEADERBOARD_EPOCH");
+    return LibConfig.get(components, "SCORE_EPOCH");
   }
 
   /////////////////
@@ -113,7 +124,7 @@ library LibScore {
 
   /// @notice set current epoch for leaderboard. shoud only be called by owner
   function setCurrentEpoch(IUintComp components, uint256 epoch) internal {
-    LibConfig.set(components, "LEADERBOARD_EPOCH", epoch);
+    LibConfig.set(components, "SCORE_EPOCH", epoch);
   }
 
   /////////////////
@@ -134,5 +145,10 @@ library LibScore {
     string memory scoreType
   ) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("score.type", epoch, index, scoreType)));
+  }
+
+  // ID for total score of type
+  function genTotalStoreID(uint256 typeID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("score.total", typeID)));
   }
 }
