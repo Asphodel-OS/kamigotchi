@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibQuests } from "libraries/LibQuests.sol";
+import { LibQuest } from "libraries/LibQuest.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.complete"));
 
@@ -16,19 +16,19 @@ contract QuestCompleteSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint32 index = LibQuests.getIndex(components, questID);
+    uint32 index = LibQuest.getIndex(components, questID);
 
-    LibQuests.verifyEnabled(components, index);
-    LibQuests.verifyOwner(components, questID, accID);
-    LibQuests.verifyNotCompleted(components, questID);
-    LibQuests.verifyIsQuest(components, questID);
-    LibQuests.verifyObjectives(components, questID, accID);
+    LibQuest.verifyEnabled(components, index);
+    LibQuest.verifyOwner(components, questID, accID);
+    LibQuest.verifyNotCompleted(components, questID);
+    LibQuest.verifyIsQuest(components, questID);
+    LibQuest.verifyObjectives(components, questID, accID);
 
-    LibQuests.complete(world, components, questID, accID);
+    LibQuest.complete(world, components, questID, accID);
 
     // standard logging and tracking
-    LibQuests.logComplete(components, accID);
-    LibQuests.logCompleteRepeatable(components, accID, index);
+    LibQuest.logComplete(components, accID);
+    LibQuest.logCompleteRepeatable(components, accID, index);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

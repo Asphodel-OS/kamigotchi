@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibQuests } from "libraries/LibQuests.sol";
+import { LibQuest } from "libraries/LibQuest.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.drop"));
 
@@ -15,14 +15,14 @@ contract QuestDropSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    uint32 index = LibQuests.getIndex(components, questID);
+    uint32 index = LibQuest.getIndex(components, questID);
 
-    LibQuests.verifyEnabled(components, index);
-    LibQuests.verifyOwner(components, questID, accID);
-    LibQuests.verifyIsQuest(components, questID);
-    LibQuests.verifyNotCompleted(components, questID);
+    LibQuest.verifyEnabled(components, index);
+    LibQuest.verifyOwner(components, questID, accID);
+    LibQuest.verifyIsQuest(components, questID);
+    LibQuest.verifyNotCompleted(components, questID);
 
-    LibQuests.drop(components, questID);
+    LibQuest.drop(components, questID);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);

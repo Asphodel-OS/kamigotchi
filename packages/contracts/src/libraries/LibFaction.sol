@@ -32,7 +32,7 @@ import { LibScore } from "libraries/LibScore.sol";
  *     - id = hash("faction.reputation", factionID)
  *     - TypeID = factionID
  */
-library LibFactions {
+library LibFaction {
   /////////////////
   // SHAPES
 

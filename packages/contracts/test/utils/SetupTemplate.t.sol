@@ -427,7 +427,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _completeQuest(PlayerAccount memory account, uint32 questIndex) internal {
-    uint256 questID = LibQuests.getAccQuestIndex(components, account.id, questIndex);
+    uint256 questID = LibQuest.getAccQuestIndex(components, account.id, questIndex);
     return _completeQuest(account.index, questID);
   }
 
@@ -446,7 +446,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _hasQuest(PlayerAccount memory account, uint32 questIndex) internal view returns (bool) {
-    return LibQuests.getAccQuestIndex(components, account.id, questIndex) != 0;
+    return LibQuest.getAccQuestIndex(components, account.id, questIndex) != 0;
   }
 
   /* RELATIONSHIP */

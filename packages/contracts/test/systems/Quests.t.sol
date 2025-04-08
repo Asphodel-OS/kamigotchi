@@ -169,21 +169,21 @@ contract QuestsTest is SetupTemplate {
     uint256 questID = _acceptQuest(0, 1);
 
     // check that snapshots are correctly stored
-    uint256[] memory snapshots = LibQuests.querySnapshottedObjectives(components, questID);
+    uint256[] memory snapshots = LibQuest.querySnapshottedObjectives(components, questID);
     assertEq(snapshots.length, 1, "original snapshot length mismatch");
-    assertEq(_IDAnchorComponent.get(snapshots[0]), LibQuests.genSnapshotAnchor(questID));
+    assertEq(_IDAnchorComponent.get(snapshots[0]), LibQuest.genSnapshotAnchor(questID));
     assertEq(_ValueComponent.get(snapshots[0]), startAmt, "original snapshot value mismatch");
 
     // check completability
-    assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));
+    assertTrue(!LibQuest.checkObjectives(components, questID, _getAccount(0)));
     vm.startPrank(deployer);
     LibData.inc(components, expData.holderID, expData.index, expData.type_, useAmt);
     vm.stopPrank();
-    assertTrue(LibQuests.checkObjectives(components, questID, _getAccount(0)));
+    assertTrue(LibQuest.checkObjectives(components, questID, _getAccount(0)));
 
     // complete, check snapshots deleted
     _completeQuest(0, questID);
-    assertEq(LibQuests.querySnapshottedObjectives(components, questID).length, 0);
+    assertEq(LibQuest.querySnapshottedObjectives(components, questID).length, 0);
   }
 
   function testQuestCoinHave() public {
@@ -315,7 +315,7 @@ contract QuestsTest is SetupTemplate {
     // check that quest can be completed when objectives met
     _moveAccount(0, 4);
     _completeQuest(0, questID);
-    assertTrue(LibQuests.isCompleted(components, questID));
+    assertTrue(LibQuest.isCompleted(components, questID));
   }
 
   function testMintKami() public {
@@ -343,7 +343,7 @@ contract QuestsTest is SetupTemplate {
     // check that quest can be completed when objectives met
     _mintKami(0);
     _completeQuest(0, questID);
-    assertTrue(LibQuests.isCompleted(components, questID));
+    assertTrue(LibQuest.isCompleted(components, questID));
   }
 
   function testCompleteQuest() public {
@@ -368,7 +368,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest can be completed when objectives met
     _completeQuest(0, questID);
-    assertTrue(LibQuests.isCompleted(components, questID));
+    assertTrue(LibQuest.isCompleted(components, questID));
   }
 
   function testRewardFaction() public {
@@ -381,7 +381,7 @@ contract QuestsTest is SetupTemplate {
     _completeQuest(alice.index, questID);
 
     // check REPUTATION
-    assertEq(LibFactions.getRep(components, alice.id, 1), 111);
+    assertEq(LibFaction.getRep(components, alice.id, 1), 111);
   }
 
   //////////////////

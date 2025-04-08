@@ -32,9 +32,9 @@ contract GoalsTest is SetupTemplate {
     uint256 rewardID5 = _createGoalRewardDisplay(1, "name");
 
     // checking tiers
-    uint256[] memory tiers = LibGoals.getTiers(components, goalIndex);
+    uint256[] memory tiers = LibGoal.getTiers(components, goalIndex);
     assertEq(tiers.length, 3, "wrong tier count");
-    uint256[] memory rewards = LibGoals.getRewards(components, tiers);
+    uint256[] memory rewards = LibGoal.getRewards(components, tiers);
     assertEq(rewards.length, 5, "wrong reward count");
 
     vm.prank(deployer);
@@ -110,7 +110,7 @@ contract GoalsTest is SetupTemplate {
 
     {
       // not-even-bronze claims, gets nothing
-      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+      uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
         goalID,
@@ -118,7 +118,7 @@ contract GoalsTest is SetupTemplate {
       );
       assertEq(4, claimableTiers.length, "claimable tiers mismatch");
       for (uint256 i; i < claimableTiers.length; i++) assertEq(claimableTiers[i], 0);
-      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(0, rewards.length, "slacker rewards mismatch");
       vm.prank(accSlacker.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
@@ -129,13 +129,13 @@ contract GoalsTest is SetupTemplate {
 
     {
       // bronze claims, gets bronze tier
-      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+      uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
         goalID,
         accBronze.id
       );
-      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(1, rewards.length, "bronzer rewards mismatch");
       vm.prank(accBronze.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
@@ -146,13 +146,13 @@ contract GoalsTest is SetupTemplate {
 
     {
       // silver claims, gets silver tier
-      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+      uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
         goalID,
         accSilver.id
       );
-      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(2, rewards.length, "silverer rewards mismatch");
       vm.prank(accSilver.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
@@ -163,13 +163,13 @@ contract GoalsTest is SetupTemplate {
 
     {
       // gold claims, gets gold tier
-      uint256[] memory claimableTiers = LibGoals.getClaimableTiers(
+      uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
         goalID,
         accGold.id
       );
-      uint256[] memory rewards = LibGoals.getRewards(components, claimableTiers);
+      uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(3, rewards.length, "goldier rewards mismatch");
       vm.prank(accGold.operator);
       _GoalClaimSystem.executeTyped(goalIndex);
@@ -183,7 +183,7 @@ contract GoalsTest is SetupTemplate {
   // UTILS
 
   function _assertContribution(uint256 goalID, uint256 accID, uint256 amt) internal {
-    uint256 contributionID = LibGoals.genContributionID(goalID, accID);
+    uint256 contributionID = LibGoal.genContributionID(goalID, accID);
     assertEq(
       amt,
       _ValueComponent.has(contributionID) ? _ValueComponent.get(contributionID) : 0,

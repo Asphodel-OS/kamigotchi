@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibQuests } from "libraries/LibQuests.sol";
+import { LibQuest } from "libraries/LibQuest.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.accept"));
@@ -19,19 +19,19 @@ contract QuestAcceptSystem is System {
 
     // check requirements
     LibQuestRegistry.verifyExists(components, index);
-    LibQuests.verifyEnabled(components, index);
-    LibQuests.verifyRequirements(components, index, accID);
+    LibQuest.verifyEnabled(components, index);
+    LibQuest.verifyRequirements(components, index, accID);
 
-    uint256 questID = LibQuests.getAccQuestIndex(components, accID, index);
+    uint256 questID = LibQuest.getAccQuestIndex(components, accID, index);
     if (LibQuestRegistry.isRepeatable(components, index)) {
       // repeatable quests - accepted before check is implicit
       // repeatable quests can only have 0 or 1 instances
-      LibQuests.verifyRepeatable(components, index, questID);
-      questID = LibQuests.assignRepeatable(components, index, questID, accID);
+      LibQuest.verifyRepeatable(components, index, questID);
+      questID = LibQuest.assignRepeatable(components, index, questID, accID);
     } else {
       // not repeatable - check that quest has not been accepted before
       if (questID != 0) revert("accepted before");
-      questID = LibQuests.assign(components, index, accID);
+      questID = LibQuest.assign(components, index, accID);
     }
 
     // standard logging and tracking

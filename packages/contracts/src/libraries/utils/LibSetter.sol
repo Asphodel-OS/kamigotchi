@@ -12,16 +12,16 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
-import { LibFactions } from "libraries/LibFactions.sol";
+import { LibFaction } from "libraries/LibFaction.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
-import { LibGoals } from "libraries/LibGoals.sol";
+import { LibGoal } from "libraries/LibGoal.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
-import { LibQuests } from "libraries/LibQuests.sol";
+import { LibQuest } from "libraries/LibQuest.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
@@ -48,7 +48,7 @@ library LibSetter {
     } else if (_type.eq("XP")) {
       LibExperience.inc(components, targetID, amt);
     } else if (_type.eq("REPUTATION")) {
-      LibFactions.incRep(components, targetID, index, amt);
+      LibFaction.incRep(components, targetID, index, amt);
     } else if (_type.eq("ROOM")) {
       LibRoom.set(components, targetID, index);
     } else if (_type.startsWith("FLAG_")) {

@@ -6,7 +6,7 @@ import "tests/utils/SetupTemplate.t.sol";
 contract FactionTest is SetupTemplate {
   function testRegistryFaction() public {
     uint256 factionID = _createFaction(1, "test", "test");
-    assertEq(LibFactions.getByIndex(components, 1), factionID);
+    assertEq(LibFaction.getByIndex(components, 1), factionID);
 
     vm.prank(deployer);
     __FactionRegistrySystem.remove(1);
@@ -17,6 +17,6 @@ contract FactionTest is SetupTemplate {
 
     vm.prank(deployer);
     ExternalCaller.setterUpdate("REPUTATION", 1, 111, alice.id);
-    assertEq(LibFactions.getRep(components, alice.id, 1), 111);
+    assertEq(LibFaction.getRep(components, alice.id, 1), 111);
   }
 }

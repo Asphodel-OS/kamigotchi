@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibGoals } from "libraries/LibGoals.sol";
+import { LibGoal } from "libraries/LibGoal.sol";
 
 uint256 constant ID = uint256(keccak256("system.goal.contribute"));
 
@@ -16,15 +16,15 @@ contract GoalContributeSystem is System {
     (uint32 goalIndex, uint256 amt) = abi.decode(arguments, (uint32, uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    uint256 goalID = LibGoals.getByIndex(components, goalIndex);
+    uint256 goalID = LibGoal.getByIndex(components, goalIndex);
     if (goalID == 0) revert("goal not found");
-    LibGoals.verifyEnabled(components, goalIndex);
-    LibGoals.verifyContributable(components, goalIndex, goalID, accID);
+    LibGoal.verifyEnabled(components, goalIndex);
+    LibGoal.verifyContributable(components, goalIndex, goalID, accID);
 
-    amt = LibGoals.contribute(components, accID, goalID, amt);
+    amt = LibGoal.contribute(components, accID, goalID, amt);
 
     // standard logging and tracking
-    LibGoals.logContribution(components, accID, amt);
+    LibGoal.logContribution(components, accID, amt);
     LibAccount.updateLastTs(components, accID);
 
     return "";

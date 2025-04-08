@@ -30,12 +30,12 @@ import { LibData } from "libraries/LibData.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 
 /**
- * @notice LibQuests handles quests!
+ * @notice LibQuest handles quests!
  *
  * Quest have arrays of Requirements, Objectives, and Rewards
  * Only Quest is copied to an Account, the rest are referenced to a registry
  */
-library LibQuests {
+library LibQuest {
   using LibComp for IComp;
 
   /////////////////

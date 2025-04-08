@@ -29,7 +29,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 /**
- * @notice LibGoals handles goals - a community quests that can be contributed to by many players
+ * @notice LibGoal handles goals - a community quests that can be contributed to by many players
  *
  * Goals are made of
  * - Details (room, name, description, etc)
@@ -54,7 +54,7 @@ import { LibScore } from "libraries/LibScore.sol";
  * - stores Contribution Points in ValueComponent (via score)
  * - stores whether the goal has been completed in IsCompleteComponent
  */
-library LibGoals {
+library LibGoal {
   using LibString for string;
   using LibComp for IUintComp;
 

@@ -18,15 +18,15 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
-import { LibFactions } from "libraries/LibFactions.sol";
+import { LibFaction } from "libraries/LibFaction.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
-import { LibGoals } from "libraries/LibGoals.sol";
+import { LibGoal } from "libraries/LibGoal.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
-import { LibQuests } from "libraries/LibQuests.sol";
+import { LibQuest } from "libraries/LibQuest.sol";
 import { LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
@@ -64,7 +64,7 @@ library LibGetter {
     } else if (_type.eq("SKILL")) {
       balance = LibSkill.getPointsOf(components, id, index);
     } else if (_type.eq("REPUTATION")) {
-      balance = LibFactions.getRep(components, id, index);
+      balance = LibFaction.getRep(components, id, index);
     } else if (_type.eq("BLOCKTIME")) {
       balance = block.timestamp;
     } else {
@@ -84,7 +84,7 @@ library LibGetter {
       // check if entity has isCompleteComp, with expectedValue acting as entityID
       return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(value);
     } else if (_type.eq("QUEST")) {
-      return LibQuests.checkAccQuestComplete(components, index, targetID);
+      return LibQuest.checkAccQuestComplete(components, index, targetID);
     } else if (_type.eq("ROOM")) {
       return getRoom(components, targetID) == index;
     } else if (_type.eq("PHASE")) {
@@ -133,8 +133,8 @@ library LibGetter {
     string memory _type,
     uint32 index
   ) internal view returns (uint256) {
-    if (_type.eq("FACTION")) return LibFactions.getByIndex(components, index);
-    else if (_type.eq("GOAL")) return LibGoals.getByIndex(components, index);
+    if (_type.eq("FACTION")) return LibFaction.getByIndex(components, index);
+    else if (_type.eq("GOAL")) return LibGoal.getByIndex(components, index);
     else if (_type.eq("ITEM")) return LibItem.getByIndex(components, index);
     else if (_type.eq("NODE")) return LibNode.getByIndex(components, index);
     else if (_type.eq("NPC")) return LibNPC.get(components, index);

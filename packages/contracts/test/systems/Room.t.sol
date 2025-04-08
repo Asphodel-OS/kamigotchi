@@ -240,7 +240,7 @@ contract RoomTest is SetupTemplate {
     );
     _createRoom("1", Coord(1, 1, 0), 1); // original room, goal located here
     _createRoom("2", Coord(0, 1, 0), 2); // room to be gated
-    _createRoomGate(2, 0, 0, LibGoals.genGoalID(goalIndex), "COMPLETE_COMP", "BOOL_IS");
+    _createRoomGate(2, 0, 0, LibGoal.genGoalID(goalIndex), "COMPLETE_COMP", "BOOL_IS");
 
     // alice tries to move to room 2, but its closed
     vm.prank(alice.operator);

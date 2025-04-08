@@ -27,7 +27,7 @@ import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
-import { LibFactions } from "libraries/LibFactions.sol";
+import { LibFaction } from "libraries/LibFaction.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
